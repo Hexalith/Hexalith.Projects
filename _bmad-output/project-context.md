@@ -18,7 +18,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 ## Technology Stack & Versions
 
 - Root repository: umbrella repo composed of root-level Git submodules: `Hexalith.AI.Tools`, `Hexalith.Conversations`, `Hexalith.EventStore`, `Hexalith.Folders`, `Hexalith.FrontComposer`, `Hexalith.Parties`, and `Hexalith.Tenants`.
-- .NET SDK: `10.0.103` via `global.json` with `rollForward: latestPatch`; primary projects target `net10.0`.
+- .NET SDK: `10.0.300` via `global.json` with `rollForward: latestPatch`; primary projects target `net10.0`.
 - C#: nullable enabled, implicit usings enabled, warnings treated as errors; several modules set `LangVersion` to `latest`.
 - Package management: central NuGet package management via `Directory.Packages.props`; package versions belong there, not inline in project files.
 - Dapr: primary modules use `Dapr.Client`/`Dapr.AspNetCore` `1.17.7`; Parties still pins `Dapr.Actors`/`Dapr.Actors.AspNetCore` `1.16.1`.
