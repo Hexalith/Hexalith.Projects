@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PRD Validation: Hexalith.Projects</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e7e5e4;
+    --text: #1c1917;
+    --muted: #78716c;
+    --verdict-strong: #16a34a;
+    --verdict-adequate: #65a30d;
+    --verdict-thin: #d97706;
+    --verdict-broken: #dc2626;
+    --sev-low: #64748b;
+    --sev-medium: #ca8a04;
+    --sev-high: #ea580c;
+    --sev-critical: #dc2626;
+    --grade-exc: #16a34a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+  header.report-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .title h1 { margin: 0; font-size: 22px; font-weight: 600; }
+  .title .subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .grade { padding: 10px 18px; border-radius: 8px; font-weight: 600; color: white; font-size: 15px; white-space: nowrap; }
+  .grade-excellent { background: var(--grade-exc); }
+  .synthesis {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--muted);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    font-size: 15.5px;
+  }
+  .synthesis p { margin: 0; }
+  .dimension-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 24px; }
+  .dim-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  .dim-card .dim-name { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .dim-card .dim-verdict { font-size: 14px; font-weight: 600; color: var(--verdict-strong); }
+  section.dimension { margin-bottom: 14px; }
+  section.dimension details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  section summary {
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  section summary::-webkit-details-marker { display: none; }
+  section summary::before { content: "▸"; display: inline-block; color: var(--muted); transition: transform 0.15s ease; }
+  section details[open] summary::before { transform: rotate(90deg); }
+  section summary h2 { display: inline; margin: 0; font-size: 16px; font-weight: 600; flex: 1; }
+  .verdict-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: white;
+    background: var(--verdict-strong);
+  }
+  .dim-body { padding: 4px 20px 18px; }
+  .dim-judgment { color: var(--text); font-size: 14.5px; }
+  .dim-judgment p { margin: 0 0 10px; }
+  .findings-list { padding: 0 20px 4px; }
+  article.finding { padding: 14px 0; border-top: 1px solid var(--border); }
+  article.finding header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .badge { font-size: 10.5px; padding: 3px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.4; }
+  .badge-sev-low { background: rgba(100, 116, 139, 0.12); color: var(--sev-low); }
+  .finding-title { margin: 0; font-size: 15px; font-weight: 500; flex: 1; min-width: 200px; }
+  .finding-location { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; color: var(--muted); }
+  .finding-note, .finding-fix { margin-top: 6px; font-size: 14px; }
+  .mechanical { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-top: 24px; font-size: 14px; }
+  .mechanical h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .mechanical ul { margin: 0; padding-left: 20px; }
+  footer.report-footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  footer .meta { display: flex; gap: 24px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header class="report-header">
+      <div class="title">
+        <h1>Hexalith.Projects — Validation Report</h1>
+        <div class="subtitle">_bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md</div>
+      </div>
+      <div class="grade grade-excellent">Excellent</div>
+    </header>
+
+    <div class="synthesis">
+      <p>The PRD is strong enough to feed architecture, UX scoping, and story creation. Its product thesis is clear: <code>Hexalith.Projects</code> is a tenant-aware AI workspace boundary for Hexalith.Chatbot, not a generic project-management product. The only active risk is outside the PRD body: <code>.decision-log.md</code> records that final closeout remains blocked because external handoff configuration is missing.</p>
+    </div>
+
+    <div class="dimension-summary">
+      <div class="dim-card"><div class="dim-name">Decision-readiness</div><div class="dim-verdict">strong</div></div>
+      <div class="dim-card"><div class="dim-name">Substance over theater</div><div class="dim-verdict">strong</div></div>
+      <div class="dim-card"><div class="dim-name">Strategic coherence</div><div class="dim-verdict">strong</div></div>
+      <div class="dim-card"><div class="dim-name">Done-ness clarity</div><div class="dim-verdict">strong</div></div>
+      <div class="dim-card"><div class="dim-name">Scope honesty</div><div class="dim-verdict">strong</div></div>
+      <div class="dim-card"><div class="dim-name">Downstream usability</div><div class="dim-verdict">strong</div></div>
+      <div class="dim-card"><div class="dim-name">Shape fit</div><div class="dim-verdict">strong</div></div>
+    </div>
+
+    <section class="dimension">
+      <details>
+        <summary><h2>Decision-readiness</h2><span class="verdict-pill">strong</span></summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>The PRD makes the important v1 choices explicit. The Vision states that v1 is an internal platform and near-term implementation spec, and the feature requirements consistently preserve that boundary: Projects references Conversations, Folders, Files, and Memories without owning their payloads. The single-project Conversation membership, one canonical Project Folder, two lifecycle states, and conservative Project Resolution model are all stated as decisions rather than hidden implementation preferences.</p>
+            <p>The document has no open questions, and accepted planning decisions are listed in §10. The decision log adds one important process caveat: finalization is blocked until the missing external handoff is configured, executed, or waived.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header><span class="badge badge-sev-low">low</span><h3 class="finding-title">Finalization process remains blocked outside the PRD</h3><span class="finding-location">decision log / handoff-blocker.md</span></header>
+            <div class="finding-note">The PRD body is decision-ready, but the workspace is still marked <code>status: draft</code> because external handoff configuration is unresolved.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Configure the intended <code>external_handoffs</code> workflow entry, execute the handoff, or explicitly waive it before final closeout.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <section class="dimension"><details><summary><h2>Substance over theater</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>The PRD avoids template filler. The persona, journeys, non-goals, NFRs, and success metrics all support the same real concern: durable Chatbot continuity without payload duplication or cross-project/tenant leakage.</p></div></div></details></section>
+    <section class="dimension"><details><summary><h2>Strategic coherence</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>The feature set follows a coherent platform thesis. Workspace management, context references, Project Resolution, context assembly, setup quality, and audit/operations are the pieces needed for Chatbot to safely recover and apply project context across conversations.</p></div></div></details></section>
+    <section class="dimension"><details><summary><h2>Done-ness clarity</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>Every FR includes testable consequences, and most consequences are framed in terms that architecture and stories can verify. Authorization filtering, fail-closed behavior, metadata-only boundaries, lifecycle behavior, audit fields, and structured validation errors are all concrete.</p></div></div></details></section>
+    <section class="dimension"><details><summary><h2>Scope honesty</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>The PRD is explicit about omissions and bounded-context ownership. It repeatedly states that Projects does not store conversation transcripts, file contents, raw prompts, secrets, memory payloads, or unrestricted filesystem paths.</p></div></div></details></section>
+    <section class="dimension"><details><summary><h2>Downstream usability</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>The glossary is strong and uses stable domain nouns consistently. FR IDs are contiguous from FR-1 through FR-22, user journeys are numbered and actor-labelled, and success metrics cross-reference the relevant FRs.</p></div></div></details></section>
+    <section class="dimension"><details><summary><h2>Shape fit</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>The document fits an internal platform module. It includes enough user journey context to explain Chatbot interaction behavior, then keeps the main requirement body capability-focused.</p></div></div></details></section>
+
+    <div class="mechanical">
+      <h3>Mechanical notes</h3>
+      <ul>
+        <li><code>prd.md</code> frontmatter remains <code>status: draft</code>; this matches the documented external handoff blocker.</li>
+        <li>FR IDs are contiguous from FR-1 through FR-22.</li>
+        <li>Success metric IDs are contiguous from SM-1 through SM-4, with SM-C1 and SM-C2 counter-metrics present.</li>
+        <li>No <code>[ASSUMPTION]</code> or <code>[NOTE FOR PM]</code> markers remain in <code>prd.md</code>.</li>
+        <li>No <code>addendum.md</code> is currently present.</li>
+      </ul>
+    </div>
+
+    <footer class="report-footer">
+      <div class="meta">
+        <span>Rubric: .agents/skills/bmad-prd/assets/prd-validation-checklist.md</span>
+        <span>Run: 2026-05-24T16:44:40+02:00</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
