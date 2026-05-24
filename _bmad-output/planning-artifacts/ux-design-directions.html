@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hexalith.Projects UX Design Directions</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f5f5;
+      --surface: #ffffff;
+      --surface-alt: #fafafa;
+      --text: #242424;
+      --muted: #616161;
+      --border: #d1d1d1;
+      --primary: #0f6cbd;
+      --primary-dark: #0b4f8a;
+      --success: #107c10;
+      --warning: #bc6c00;
+      --error: #c50f1f;
+      --info: #0078d4;
+      --purple: #5c2e91;
+      --teal: #038387;
+      --radius: 6px;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .12);
+      font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(8px);
+    }
+
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 2px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    h3 {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    nav a,
+    .button {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      padding: 6px 10px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    nav a:hover,
+    .button:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .direction {
+      min-height: calc(100vh - 88px);
+      margin-bottom: 32px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .direction-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .tagline {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mock {
+      display: grid;
+      min-height: 640px;
+    }
+
+    .sidebar {
+      background: #fafafa;
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+    }
+
+    .side-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin: 8px 8px 10px;
+    }
+
+    .side-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    .side-item.active {
+      background: #e8f3ff;
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .workspace {
+      padding: 18px;
+      min-width: 0;
+    }
+
+    .toolbar,
+    .filterbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .input,
+    .select {
+      min-height: 32px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 6px 10px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .panel,
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .panel {
+      padding: 14px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .table th,
+    .table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #ededed;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .table th {
+      color: var(--muted);
+      font-weight: 600;
+      background: #fafafa;
+    }
+
+    .table tr:hover td {
+      background: #f8fbff;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 22px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .success {
+      color: var(--success);
+      background: #f1faf1;
+    }
+
+    .warning {
+      color: var(--warning);
+      background: #fff7ed;
+    }
+
+    .error {
+      color: var(--error);
+      background: #fdf3f4;
+    }
+
+    .info {
+      color: var(--info);
+      background: #eef6fc;
+    }
+
+    .neutral {
+      color: var(--muted);
+      background: #f5f5f5;
+    }
+
+    .id {
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-size: 12px;
+    }
+
+    .metric {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 2px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .event {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #ededed;
+      font-size: 13px;
+    }
+
+    .terminal {
+      background: #1f1f1f;
+      color: #f3f3f3;
+      border-radius: var(--radius);
+      padding: 14px;
+      overflow: auto;
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .json-key {
+      color: #9cdcfe;
+    }
+
+    .json-value {
+      color: #ce9178;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 12px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+    }
+
+    .three-pane {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr) 340px;
+    }
+
+    .top-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: #fafafa;
+      padding: 0 18px;
+      gap: 2px;
+    }
+
+    .tab {
+      padding: 12px 14px;
+      border-bottom: 2px solid transparent;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-color: var(--primary);
+      background: var(--surface);
+    }
+
+    .flow {
+      display: grid;
+      gap: 10px;
+    }
+
+    .flow-step {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .candidate {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: var(--surface);
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .three-pane,
+      .split,
+      .cols-2,
+      .cols-3,
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .direction {
+        min-height: auto;
+      }
+
+      .header-inner {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      nav {
+        justify-content: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div>
+        <h1>Hexalith.Projects UX Design Directions</h1>
+        <p class="subtitle">Operational CLI/MCP/Web UX concepts for metadata-only project-context diagnostics.</p>
+      </div>
+      <nav aria-label="Design directions">
+        <a href="#direction-1">1. Control Plane</a>
+        <a href="#direction-2">2. Resolution Trace</a>
+        <a href="#direction-3">3. Reference Health</a>
+        <a href="#direction-4">4. Incident Desk</a>
+        <a href="#direction-5">5. CLI/MCP Parity</a>
+        <a href="#direction-6">6. Audit First</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="direction-1" class="direction">
+      <div class="direction-header">
+        <div>
+          <h2>Direction 1: Metadata Control Plane</h2>
+          <p class="tagline">A FrontComposer resource console centered on projects, states, warnings, and safe actions.</p>
+        </div>
+        <span class="badge info">Balanced default</span>
+      </div>
+      <div class="mock hero-grid">
+        <aside class="sidebar">
+          <div class="side-title">Projects</div>
+          <div class="side-item active">Project inventory</div>
+          <div class="side-item">Resolution cases</div>
+          <div class="side-item">Reference health</div>
+          <div class="side-item">Audit events</div>
+          <div class="side-title">Scopes</div>
+          <div class="side-item">Tenant: contoso</div>
+          <div class="side-item">Mode: read-only</div>
+        </aside>
+        <section class="workspace">
+          <div class="toolbar">
+            <div>
+              <h2>Project Inventory</h2>
+              <p class="subtitle">Safe metadata only. Payload-bearing data remains in bounded contexts.</p>
+            </div>
+            <button class="button">Run diagnostics</button>
+          </div>
+          <div class="filterbar">
+            <div class="filters">
+              <input class="input" value="conversation:conv_01HZ..." aria-label="Search">
+              <select class="select" aria-label="Lifecycle"><option>Lifecycle: all</option></select>
+              <select class="select" aria-label="Warnings"><option>Warnings: active</option></select>
+            </div>
+          </div>
+          <div class="grid cols-3">
+            <div class="metric"><strong>42</strong><span>Visible projects</span></div>
+            <div class="metric"><strong>7</strong><span>Warnings</span></div>
+            <div class="metric"><strong>3</strong><span>Ambiguous resolutions</span></div>
+          </div>
+          <div class="panel" style="margin-top:12px;">
+            <table class="table">
+              <thead>
+                <tr><th>Project</th><th>Lifecycle</th><th>Resolution</th><th>Warnings</th><th>Updated</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Onboarding Copilot</strong><br><span class="id">proj_01J1K8</span></td>
+                  <td><span class="badge success">active</span></td>
+                  <td><span class="badge info">resolved</span></td>
+                  <td><span class="badge warning">stale_reference</span></td>
+                  <td>12 min ago</td>
+                </tr>
+                <tr>
+                  <td><strong>Tenant Migration</strong><br><span class="id">proj_01J1K9</span></td>
+                  <td><span class="badge warning">archived</span></td>
+                  <td><span class="badge neutral">excluded</span></td>
+                  <td><span class="badge neutral">none</span></td>
+                  <td>3 hours ago</td>
+                </tr>
+                <tr>
+                  <td><strong>Support Workflow</strong><br><span class="id">proj_01J1KB</span></td>
+                  <td><span class="badge success">active</span></td>
+                  <td><span class="badge warning">ambiguous</span></td>
+                  <td><span class="badge warning">2 candidates</span></td>
+                  <td>1 day ago</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="direction-2" class="direction">
+      <div class="direction-header">
+        <div>
+          <h2>Direction 2: Resolution Trace Workbench</h2>
+          <p class="tagline">A diagnostic-first layout for explaining why Projects matched, rejected, or stayed ambiguous.</p>
+        </div>
+        <span class="badge warning">Best for support</span>
+      </div>
+      <div class="mock three-pane">
+        <aside class="sidebar">
+          <div class="side-title">Case</div>
+          <div class="side-item active">res_01J9H...</div>
+          <div class="side-item">Input references</div>
+          <div class="side-item">Candidates</div>
+          <div class="side-item">Outcome</div>
+        </aside>
+        <section class="workspace">
+          <div class="toolbar">
+            <div>
+              <h2>Resolution Trace</h2>
+              <p class="subtitle">Tenant: <span class="id">contoso</span> · Correlation: <span class="id">cor_01J9H</span></p>
+            </div>
+            <button class="button">Replay dry-run</button>
+          </div>
+          <div class="flow">
+            <div class="flow-step">
+              <strong>1. Inputs evaluated</strong>
+              <div><span class="badge info">conversationReferenceMatched</span> <span class="badge info">folderReferenceMatched</span></div>
+            </div>
+            <div class="flow-step">
+              <strong>2. Candidate projects found</strong>
+              <div class="comparison">
+                <div class="candidate"><strong>Onboarding Copilot</strong><br><span class="badge success">score 0.91</span><p class="subtitle">folder + conversation match</p></div>
+                <div class="candidate"><strong>Support Workflow</strong><br><span class="badge warning">score 0.72</span><p class="subtitle">metadata match only</p></div>
+                <div class="candidate"><strong>Tenant Migration</strong><br><span class="badge neutral">excluded</span><p class="subtitle">archived by lifecycle</p></div>
+              </div>
+            </div>
+            <div class="flow-step">
+              <strong>3. Final outcome</strong>
+              <span class="badge warning">ambiguous_requires_confirmation</span>
+            </div>
+          </div>
+        </section>
+        <aside class="workspace" style="border-left:1px solid var(--border);background:#fafafa;">
+          <h3>Safe Explanation</h3>
+          <p>The system found multiple authorized candidates. It did not attach the conversation silently.</p>
+          <h3>Blocked Payloads</h3>
+          <p class="subtitle">Transcript text, file content, prompt text, and memory payloads were not read or displayed.</p>
+          <h3>Available Actions</h3>
+          <button class="button">Create support bundle</button>
+          <button class="button">Confirm candidate</button>
+        </aside>
+      </div>
+    </section>
+
+    <section id="direction-3" class="direction">
+      <div class="direction-header">
+        <div>
+          <h2>Direction 3: Reference Health Matrix</h2>
+          <p class="tagline">A dense view optimized for stale, unauthorized, unavailable, and invalid references.</p>
+        </div>
+        <span class="badge info">Best for maintenance</span>
+      </div>
+      <div class="mock">
+        <section class="workspace">
+          <div class="toolbar">
+            <div>
+              <h2>Reference Inventory: Onboarding Copilot</h2>
+              <p class="subtitle">Inspect linked bounded-context resources without browsing payloads.</p>
+            </div>
+            <div class="filters"><button class="button">Validate references</button><button class="button">Export metadata</button></div>
+          </div>
+          <div class="grid cols-2">
+            <div class="panel">
+              <h3>Reference Status</h3>
+              <table class="table">
+                <thead><tr><th>Type</th><th>Reference</th><th>State</th><th>Reason</th></tr></thead>
+                <tbody>
+                  <tr><td>Conversation</td><td class="id">conv_01HX</td><td><span class="badge success">included</span></td><td>ConversationLinked</td></tr>
+                  <tr><td>Folder</td><td class="id">fold_01AB</td><td><span class="badge warning">stale</span></td><td>ReferenceFreshnessExpired</td></tr>
+                  <tr><td>File</td><td class="id">file_0123</td><td><span class="badge error">unauthorized</span></td><td>FolderAuthorizationFailed</td></tr>
+                  <tr><td>Memory</td><td class="id">mem_88L0</td><td><span class="badge neutral">excluded</span></td><td>PolicyExcluded</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="panel">
+              <h3>Maintenance Preview</h3>
+              <p>Action: relink folder reference</p>
+              <p>Tenant: <span class="id">contoso</span></p>
+              <p>Project: <span class="id">proj_01J1K8</span></p>
+              <p>Expected audit event: <span class="id">ProjectFolderRelinked</span></p>
+              <div><span class="badge warning">dry-run required</span> <span class="badge info">metadata only</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="direction-4" class="direction">
+      <div class="direction-header">
+        <div>
+          <h2>Direction 4: Incident Desk</h2>
+          <p class="tagline">A support-oriented workflow for triaging warnings, failed operations, and safe handoff packages.</p>
+        </div>
+        <span class="badge warning">Best for operations</span>
+      </div>
+      <div class="mock split">
+        <section class="workspace">
+          <div class="toolbar">
+            <div>
+              <h2>Active Operational Warnings</h2>
+              <p class="subtitle">Prioritized by tenant, severity, and affected project context.</p>
+            </div>
+            <button class="button">Create support bundle</button>
+          </div>
+          <table class="table">
+            <thead><tr><th>Severity</th><th>Warning</th><th>Tenant</th><th>Project</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge error">high</span></td><td>tenant_mismatch</td><td class="id">contoso</td><td>Support Workflow</td><td>Inspect</td></tr>
+              <tr><td><span class="badge warning">medium</span></td><td>ambiguous_resolution</td><td class="id">northwind</td><td>2 candidates</td><td>Compare</td></tr>
+              <tr><td><span class="badge warning">medium</span></td><td>stale_reference</td><td class="id">contoso</td><td>Onboarding Copilot</td><td>Validate</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <aside class="workspace" style="background:#fafafa;border-left:1px solid var(--border);">
+          <h3>Safe Handoff</h3>
+          <p class="subtitle">Copy structured metadata for support without payload leakage.</p>
+          <pre class="terminal">{
+  <span class="json-key">"tenantId"</span>: <span class="json-value">"contoso"</span>,
+  <span class="json-key">"warning"</span>: <span class="json-value">"tenant_mismatch"</span>,
+  <span class="json-key">"projectId"</span>: <span class="json-value">"proj_01J1K8"</span>,
+  <span class="json-key">"auditEventIds"</span>: [<span class="json-value">"aud_011"</span>],
+  <span class="json-key">"payloadIncluded"</span>: false
+}</pre>
+        </aside>
+      </div>
+    </section>
+
+    <section id="direction-5" class="direction">
+      <div class="direction-header">
+        <div>
+          <h2>Direction 5: CLI/MCP Parity Console</h2>
+          <p class="tagline">A design direction that makes schema parity visible across command-line, MCP, and Web outputs.</p>
+        </div>
+        <span class="badge info">Best for automation</span>
+      </div>
+      <div class="mock">
+        <section class="workspace">
+          <div class="grid cols-2">
+            <div class="panel">
+              <h3>CLI Output</h3>
+              <pre class="terminal">$ hexalith projects describe proj_01J1K8 --tenant contoso --json
+{
+  <span class="json-key">"projectId"</span>: <span class="json-value">"proj_01J1K8"</span>,
+  <span class="json-key">"state"</span>: <span class="json-value">"active"</span>,
+  <span class="json-key">"resolutionStatus"</span>: <span class="json-value">"ambiguous"</span>,
+  <span class="json-key">"reasonCodes"</span>: [<span class="json-value">"FolderMatched"</span>],
+  <span class="json-key">"payloadIncluded"</span>: false
+}</pre>
+            </div>
+            <div class="panel">
+              <h3>MCP Resource</h3>
+              <pre class="terminal">projects://contoso/proj_01J1K8
+{
+  <span class="json-key">"projectId"</span>: <span class="json-value">"proj_01J1K8"</span>,
+  <span class="json-key">"state"</span>: <span class="json-value">"active"</span>,
+  <span class="json-key">"resolutionStatus"</span>: <span class="json-value">"ambiguous"</span>,
+  <span class="json-key">"reasonCodes"</span>: [<span class="json-value">"FolderMatched"</span>],
+  <span class="json-key">"payloadIncluded"</span>: false
+}</pre>
+            </div>
+          </div>
+          <div class="panel" style="margin-top:12px;">
+            <h3>Web View Uses Same Fields</h3>
+            <table class="table">
+              <thead><tr><th>Field</th><th>CLI</th><th>MCP</th><th>Web</th></tr></thead>
+              <tbody>
+                <tr><td>projectId</td><td class="badge success">same</td><td class="badge success">same</td><td class="badge success">same</td></tr>
+                <tr><td>resolutionStatus</td><td class="badge success">same</td><td class="badge success">same</td><td class="badge success">same</td></tr>
+                <tr><td>reasonCodes</td><td class="badge success">same</td><td class="badge success">same</td><td class="badge success">same</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="direction-6" class="direction">
+      <div class="direction-header">
+        <div>
+          <h2>Direction 6: Audit-First Maintenance</h2>
+          <p class="tagline">A conservative direction where every action starts with scope, impact, and audit evidence.</p>
+        </div>
+        <span class="badge error">Highest safety</span>
+      </div>
+      <div class="mock split">
+        <section class="workspace">
+          <h2>Maintenance Action: Archive Project</h2>
+          <div class="grid cols-2">
+            <div class="panel">
+              <h3>Scope</h3>
+              <p>Tenant: <span class="id">contoso</span></p>
+              <p>Project: <span class="id">proj_01J1K8</span></p>
+              <p>Current state: <span class="badge success">active</span></p>
+              <p>Requested state: <span class="badge warning">archived</span></p>
+            </div>
+            <div class="panel">
+              <h3>Expected Audit Evidence</h3>
+              <p>Event type: <span class="id">ProjectArchived</span></p>
+              <p>Surface: FrontComposer Web</p>
+              <p>Actor: <span class="id">user_01ADM</span></p>
+              <p>Payload included: <span class="badge success">false</span></p>
+            </div>
+          </div>
+          <div class="panel" style="margin-top:12px;">
+            <h3>Dry-Run Result</h3>
+            <p>No payload-bearing data will be read or copied. Automatic resolution will exclude this project unless explicitly requested.</p>
+            <button class="button">Confirm archive</button>
+            <button class="button">Cancel</button>
+          </div>
+        </section>
+        <aside class="workspace" style="background:#fafafa;border-left:1px solid var(--border);">
+          <h3>Audit Timeline</h3>
+          <div class="timeline">
+            <div class="event"><span class="subtitle">09:12</span><div><strong>ProjectOpened</strong><br><span class="id">aud_010</span></div></div>
+            <div class="event"><span class="subtitle">09:14</span><div><strong>ReferenceValidated</strong><br><span class="id">aud_011</span></div></div>
+            <div class="event"><span class="subtitle">09:15</span><div><strong>ArchiveDryRun</strong><br><span class="id">aud_012</span></div></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
