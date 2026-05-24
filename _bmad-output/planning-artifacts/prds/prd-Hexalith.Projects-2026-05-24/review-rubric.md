@@ -2,17 +2,17 @@
 
 ## Overall verdict
 
-The PRD is strong enough to feed architecture, UX scoping, and story creation. Its product thesis is clear: `Hexalith.Projects` is a tenant-aware AI workspace boundary for Hexalith.Chatbot, not a generic project-management product. The only active risk is outside the PRD body: `.decision-log.md` records that final closeout remains blocked because external handoff configuration is missing.
+The PRD is strong enough to feed architecture, UX scoping, and story creation. Its product thesis is clear: `Hexalith.Projects` is a tenant-aware AI workspace boundary for Hexalith.Chatbot, not a generic project-management product. The prior external handoff blocker has been explicitly waived for this PRD closeout and recorded in the decision log.
 
 ## Decision-readiness — strong
 
 The PRD makes the important v1 choices explicit. The Vision states that v1 is "an internal platform and near-term implementation spec" (§1, lines 16-20), and the feature requirements consistently preserve that boundary: Projects references Conversations, Folders, Files, and Memories without owning their payloads (FR-6 through FR-11, lines 126-182). The single-project Conversation membership, one canonical Project Folder, two lifecycle states, and conservative Project Resolution model are all stated as decisions rather than hidden implementation preferences.
 
-The document has no open questions (§9, lines 357-359), and accepted planning decisions are listed in §10. The decision log adds one important process caveat: finalization is blocked until the missing external handoff is configured, executed, or waived.
+The document has no open questions (§9, lines 357-359), and accepted planning decisions are listed in §10. The decision log records the external handoff waiver used to complete final closeout.
 
 ### Findings
 
-- **low** Finalization process remains blocked outside the PRD (§ decision log / `handoff-blocker.md`) — The PRD body is decision-ready, but the workspace is still marked `status: draft` because external handoff configuration is unresolved. *Fix:* Configure the intended `external_handoffs` workflow entry, execute the handoff, or explicitly waive it before final closeout.
+None. The previous external handoff blocker was resolved by explicit waiver for this PRD closeout.
 
 ## Substance over theater — strong
 
@@ -64,7 +64,7 @@ None.
 
 ## Mechanical notes
 
-- `prd.md` frontmatter remains `status: draft`; this matches the documented external handoff blocker.
+- `prd.md` frontmatter is `status: final`; the missing external handoff was explicitly waived for this PRD closeout.
 - FR IDs are contiguous from FR-1 through FR-22.
 - Success metric IDs are contiguous from SM-1 through SM-4, with SM-C1 and SM-C2 counter-metrics present.
 - No `[ASSUMPTION]` or `[NOTE FOR PM]` markers remain in `prd.md`.

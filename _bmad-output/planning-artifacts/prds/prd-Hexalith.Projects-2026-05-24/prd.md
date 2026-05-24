@@ -1,6 +1,6 @@
 ---
 title: "PRD: Hexalith.Projects"
-status: draft
+status: final
 created: 2026-05-24
 updated: 2026-05-24
 ---
