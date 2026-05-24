@@ -10,6 +10,7 @@ stepsCompleted:
   - 8
   - 9
   - 10
+  - 11
 inputDocuments:
   - _bmad-output/planning-artifacts/briefs/brief-Hexalith.Projects-2026-05-24/brief.md
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
@@ -648,3 +649,138 @@ Common patterns across all journeys:
 - Surface ambiguity instead of hiding it.
 - Never collapse tenant, authorization, lifecycle, freshness, and conflict issues into a generic error.
 - Make every state-changing action explicit, scoped, confirmed, and auditable.
+
+## Component Strategy
+
+### Design System Components
+
+Hexalith.Projects should rely on FrontComposer-generated views and Fluent UI Blazor-compatible components wherever possible.
+
+Foundation components expected from the existing UI stack:
+
+- Resource lists and data grids.
+- Detail panels and inspectors.
+- Tabs or pivots for project metadata, references, resolution, audit, and actions.
+- Command bars for diagnostic and maintenance actions.
+- Filter bars, search inputs, dropdowns, and segmented filters.
+- Status badges and message bars.
+- Dialogs and confirmation panels.
+- Forms for safe maintenance inputs.
+- Timeline/list patterns for audit events.
+- Empty, loading, denied, and error states.
+
+These components cover most Web UX needs. Projects should define the metadata, actions, state semantics, and generated-view descriptors that allow FrontComposer to compose the operational console.
+
+### Custom Components
+
+Custom components should be minimized. Where needed, they should be Projects-specific compositions built from foundation components.
+
+#### Project Diagnostic Header
+
+**Purpose:** Shows tenant scope, project identity, lifecycle state, warnings, and current mode.
+
+**Usage:** Top of project detail, resolution trace, and maintenance views.
+
+**Anatomy:** Tenant label, project ID/name, lifecycle badge, warning count, last updated timestamp, mode indicator such as `read-only`, `dry-run`, or `maintenance`.
+
+**States:** Active, archived, unavailable, unauthorized, stale warning, conflict warning.
+
+**Accessibility:** Lifecycle and warning badges must include text labels and accessible names. Tenant and project IDs should be copyable without relying on visual-only affordances.
+
+#### Reference Health Matrix
+
+**Purpose:** Shows linked Conversations, Project Folder, File References, and Memories as safe references with health and inclusion states.
+
+**Usage:** Project detail and maintenance flows.
+
+**Anatomy:** Reference type, reference ID, bounded-context owner, inclusion state, health state, reason code, last checked timestamp, available safe actions.
+
+**States:** Included, excluded, unauthorized, unavailable, stale, archived, conflict, invalidReference.
+
+**Accessibility:** Grid headers must be explicit. Status badges must not be color-only. Rows must expose action labels clearly.
+
+#### Resolution Trace
+
+**Purpose:** Explains how Project Resolution evaluated inputs, candidate projects, reason codes, exclusions, and final outcome.
+
+**Usage:** Resolution diagnosis and ambiguous-match troubleshooting.
+
+**Anatomy:** Input summary, candidate list, reason-code badges, inclusion/exclusion evidence, outcome panel, safe next actions.
+
+**States:** Resolved, no match, multiple candidates, excluded, failed closed.
+
+**Accessibility:** Trace order must be readable by screen readers. Candidate comparisons must have semantic headings and labels.
+
+#### Audit Timeline
+
+**Purpose:** Shows metadata-only maintenance and lifecycle history.
+
+**Usage:** Project detail, maintenance confirmation, and support handoff.
+
+**Anatomy:** Timestamp, actor/source surface, operation, previous state, new state, affected references, correlation ID, audit event ID.
+
+**States:** Normal event, warning event, failed action, dry-run event.
+
+**Accessibility:** Timeline must remain understandable as a list. Timestamps and event IDs must be copyable.
+
+#### Maintenance Action Panel
+
+**Purpose:** Makes state-changing actions explicit, scoped, previewable, and auditable.
+
+**Usage:** Archive, restore, relink, unlink, or re-run safe evaluation flows.
+
+**Anatomy:** Action name, tenant scope, target identifiers, current state, proposed state, warnings, dry-run result, expected audit event, confirmation control.
+
+**States:** Preview, dry-run required, dry-run passed, dry-run blocked, confirmation required, executing, succeeded, failed.
+
+**Accessibility:** Destructive or risky actions need clear button labels, focus handling, and confirmation messaging.
+
+#### Safe Diagnostic Export
+
+**Purpose:** Allows administrators to copy or export structured metadata for support handoff.
+
+**Usage:** Resolution diagnosis, incident desk, project detail, and failed maintenance flows.
+
+**Anatomy:** Safe JSON/structured metadata preview, included fields, excluded payload guarantee, copy/export action.
+
+**States:** Ready, copied, export failed, redaction applied.
+
+**Accessibility:** Export content must be keyboard-copyable and screen-reader accessible.
+
+### Component Implementation Strategy
+
+Projects should define components as FrontComposer-compatible descriptors and compositions before creating bespoke UI code.
+
+Implementation rules:
+
+- Prefer generated/admin patterns over custom components.
+- Build custom compositions from Fluent UI-compatible primitives.
+- Keep Projects-specific logic in metadata descriptors, action contracts, state models, and reason-code definitions.
+- Use shared state and reason-code contracts across CLI, MCP, and Web.
+- Ensure all components support loading, empty, unauthorized, unavailable, stale, conflict, validation failure, and success states.
+- Ensure every component preserves metadata-only display and safe redaction rules.
+- Add stable component keys or test IDs where needed for automation.
+
+### Implementation Roadmap
+
+**Phase 1 - Core Diagnostic Components**
+
+- Project Diagnostic Header.
+- Project list/detail descriptors.
+- Reference Health Matrix.
+- Resolution Trace.
+- Shared status/reason-code badge semantics.
+
+**Phase 2 - Maintenance Components**
+
+- Maintenance Action Panel.
+- Dry-run/preview flow.
+- Audit Timeline.
+- Safe Diagnostic Export.
+
+**Phase 3 - Operational Refinement**
+
+- Incident/warning dashboard composition.
+- Advanced filters for tenant, lifecycle, reference state, reason code, and timestamp.
+- CLI/MCP/Web parity validation views or evidence outputs.
+- Accessibility and automation refinements for generated FrontComposer views.
