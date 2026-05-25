@@ -1,0 +1,27 @@
+<Project>
+  <!-- Module root build properties. -->
+  <PropertyGroup>
+    <!-- Define path of the parent Directory.Build.props. -->
+    <ParentDirectoryBuildProps>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</ParentDirectoryBuildProps>
+    <!-- Define paths of the Hexalith build props (multi-level probe: root, ../, ../../). -->
+    <Hexalith1BuildBuildProps>$(MSBuildThisFileDirectory)Hexalith.Builds/Hexalith.Build.props</Hexalith1BuildBuildProps>
+    <Hexalith2BuildBuildProps>$(MSBuildThisFileDirectory)../Hexalith.Builds/Hexalith.Build.props</Hexalith2BuildBuildProps>
+    <Hexalith3BuildBuildProps>$(MSBuildThisFileDirectory)../../Hexalith.Builds/Hexalith.Build.props</Hexalith3BuildBuildProps>
+  </PropertyGroup>
+
+  <!-- Import the parent Directory.Build.props file if it exists -->
+  <Import Project="$(ParentDirectoryBuildProps)" Condition="Exists('$(ParentDirectoryBuildProps)')" />
+
+  <!-- Import the required Hexalith.Build.props file. -->
+  <Import Project="$(Hexalith1BuildBuildProps)" Condition="Exists('$(Hexalith1BuildBuildProps)') And '$(HexalithBuildLoaded)' != 'true'" />
+  <Import Project="$(Hexalith2BuildBuildProps)" Condition="Exists('$(Hexalith2BuildBuildProps)') And '$(HexalithBuildLoaded)' != 'true'" />
+  <Import Project="$(Hexalith3BuildBuildProps)" Condition="'$(HexalithBuildLoaded)' != 'true'" />
+
+  <PropertyGroup>
+    <Product>Hexalith.Projects</Product>
+    <RepositoryUrl>https://github.com/Hexalith/Hexalith.Projects.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Hexalith/Hexalith.Projects</PackageProjectUrl>
+    <PackageTags>projects;dapr;eventsourcing;dotnet;hexalith</PackageTags>
+    <Description>Hexalith Projects Module</Description>
+  </PropertyGroup>
+</Project>

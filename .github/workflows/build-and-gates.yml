@@ -1,0 +1,56 @@
+name: build-and-gates
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - next
+      - alpha
+      - beta
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-gates:
+    name: build, filtered tests and contract/generated-artifact gates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          # Root-detection (HexalithEventStoreRoot/HexalithTenantsRoot/...) resolves siblings when
+          # present; the Story 1.1 scaffold has no sibling project references, so the build is
+          # self-contained and does not need submodules checked out.
+          submodules: false
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Hexalith.Projects.slnx
+
+      - name: Build
+        run: dotnet build Hexalith.Projects.slnx --no-restore
+
+      - name: Run filtered test lane (Tier-1 + Contracts)
+        shell: pwsh
+        timeout-minutes: 15
+        run: ./tests/tools/run-filtered-tests.ps1 -NoBuild
+
+      # --- No-op-clean gates (AC-5). These become real gates in Story 1.3; do not remove. ---
+      - name: FrontComposer inspect gate (frontcomposer inspect --fail-on-warning)
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        timeout-minutes: 15
+        run: ./tests/tools/run-frontcomposer-inspect-gate.ps1
+
+      - name: OpenAPI fingerprint / compatibility gate
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        timeout-minutes: 15
+        run: ./tests/tools/run-openapi-fingerprint-gate.ps1

@@ -4,5 +4,18 @@
       "Bash(git config *)",
       "Bash(git ls-remote *)"
     ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "env 'PROJECT_ROOT=D:\\Hexalith.Projects\\.claude\\skills\\bmad-story-automator' 'D:\\Hexalith.Projects\\.claude\\skills\\bmad-story-automator\\scripts\\story-automator' stop-hook",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
   }
 }

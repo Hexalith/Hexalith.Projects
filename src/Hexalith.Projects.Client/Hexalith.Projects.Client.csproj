@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hexalith.Projects.Contracts.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />
+  </ItemGroup>
+</Project>

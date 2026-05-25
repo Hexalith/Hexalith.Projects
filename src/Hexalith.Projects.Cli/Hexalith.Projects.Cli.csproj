@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Hexalith.Projects.Cli</RootNamespace>
+    <AssemblyName>Hexalith.Projects.Cli</AssemblyName>
+    <Description>Hexalith Projects command-line adapter scaffold.</Description>
+    <PackageTags>projects;dapr;eventsourcing;dotnet;cli</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hexalith.Projects.Client\Hexalith.Projects.Client.csproj" />
+  </ItemGroup>
+</Project>
