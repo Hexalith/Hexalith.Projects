@@ -3,7 +3,8 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Client\Hexalith.Projects.Client.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Client\Generation\Shared\Hexalith.Projects.Client.Generation.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
@@ -14,6 +15,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 </Project>

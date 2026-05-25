@@ -3,9 +3,57 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Generation\**\*.cs" />
+    <EmbeddedResource Remove="Generation\**" />
+    <None Remove="Generation\**" />
+    <None Include="Generation\Hexalith.Projects.Client.Generation.csproj" Pack="false" />
+    <None Include="Generation\Program.cs" Pack="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="NSwag.MSBuild" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="Hexalith.Projects.Contracts.Tests" />
+    <InternalsVisibleTo Include="Hexalith.Projects.Client.Tests" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+    <HexalithProjectsContractSpine>$(MSBuildProjectDirectory)\..\Hexalith.Projects.Contracts\openapi\hexalith.projects.v1.yaml</HexalithProjectsContractSpine>
+    <HexalithProjectsGeneratedClient>$(MSBuildProjectDirectory)\Generated\HexalithProjectsClient.g.cs</HexalithProjectsGeneratedClient>
+    <HexalithProjectsGeneratedHelpers>$(MSBuildProjectDirectory)\Generated\HexalithProjectsIdempotencyHelpers.g.cs</HexalithProjectsGeneratedHelpers>
+    <HexalithProjectsHelperGeneratorProject>$(MSBuildProjectDirectory)\Generation\Hexalith.Projects.Client.Generation.csproj</HexalithProjectsHelperGeneratorProject>
+  </PropertyGroup>
+  <Target Name="GenerateHexalithProjectsClient"
+          BeforeTargets="BeforeCompile"
+          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)\nswag.json"
+          Outputs="$(HexalithProjectsGeneratedClient)"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <MakeDir Directories="$(MSBuildProjectDirectory)\Generated" />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
+          Command="$(NSwagExe_Net100) run nswag.json /variables:Configuration=$(Configuration)" />
+  </Target>
+  <Target Name="GenerateHexalithProjectsIdempotencyHelpers"
+          BeforeTargets="BeforeCompile"
+          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)\nswag.json;$(HexalithProjectsHelperGeneratorProject);$(MSBuildProjectDirectory)\Generation\Program.cs"
+          Outputs="$(HexalithProjectsGeneratedHelpers)"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
+          Command="dotnet run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; -- --repository-root &quot;$(MSBuildProjectDirectory)\..\..&quot; --contract &quot;$(HexalithProjectsContractSpine)&quot; --configuration &quot;$(MSBuildProjectDirectory)\nswag.json&quot; --output &quot;$(HexalithProjectsGeneratedHelpers)&quot;" />
+  </Target>
+  <Target Name="VerifyHexalithProjectsGeneratedArtifacts"
+          BeforeTargets="CoreCompile"
+          DependsOnTargets="GenerateHexalithProjectsClient;GenerateHexalithProjectsIdempotencyHelpers"
+          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)\nswag.json;$(HexalithProjectsGeneratedHelpers)"
+          Outputs="$(IntermediateOutputPath)HexalithProjectsGeneratedArtifacts.stamp"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="!Exists('$(HexalithProjectsGeneratedHelpers)')"
+           Text="Generated idempotency helper file is missing: $(HexalithProjectsGeneratedHelpers)" />
+    <Touch Files="$(IntermediateOutputPath)HexalithProjectsGeneratedArtifacts.stamp" AlwaysCreate="true" />
+  </Target>
 </Project>

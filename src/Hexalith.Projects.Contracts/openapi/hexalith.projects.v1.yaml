@@ -1,0 +1,599 @@
+openapi: 3.1.0
+info:
+  title: Hexalith.Projects API
+  version: v1
+  summary: Contract Spine foundation for tenant-scoped project workspace and context-resolution workflows.
+  description: >-
+    Canonical OpenAPI 3.1 foundation for Hexalith.Projects. This document defines
+    shared contract language only (the cross-cutting envelope: headers, RFC 9457
+    Problem Details, command-async 202, safe-denial, freshness/trust). Concrete
+    operation groups are added by later stories.
+
+    Tenant authority comes from authenticated principal claims and EventStore envelopes, never from request payloads, query parameters, or client-controlled headers.
+servers:
+  - url: /api/v1
+    description: URL-versioned REST surface. Deployment hosts and real issuer or audience values are supplied by environment configuration.
+tags:
+  - name: projects
+    description: Tenant-scoped project lifecycle contracts.
+  - name: query-status
+    description: Accepted command and projection status contracts.
+security:
+  - oidcBearer: []
+paths:
+  # SEED SHAPES ONLY. This story (1.3) authors the cross-cutting envelope plus one
+  # representative command-async POST and one freshness-carrying GET so the spine
+  # drives real generated output. The full Project operation catalog
+  # (CreateProject variants, GetProject, ListProjects, UpdateProjectSetup,
+  # ArchiveProject, reference link/unlink, resolution confirmation, ...) is
+  # explicitly DEFERRED to stories 1.4 / 1.7 / 1.8, which grow this spine that the
+  # fingerprint gate already protects.
+  /api/v1/projects:
+    post:
+      tags:
+        - projects
+      operationId: CreateProject
+      summary: Create a tenant-scoped project identity (command-async seed shape).
+      description: >
+        Creates opaque project identity and projected metadata. Returns 202 Accepted
+        with no read-after-write guarantee — confirm via a lifecycle-status query.
+        Tenant authority comes from authenticated principal claims and EventStore
+        envelopes, never from this request.
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/CreateProjectRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - project_metadata.display_name
+        - request_schema_version
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: eventstore-envelope-causation-reference
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-and-project-create-permission
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - internal_error
+  /api/v1/projects/{projectId}/lifecycle-status:
+    get:
+      tags:
+        - projects
+      operationId: GetProjectLifecycleStatus
+      summary: Inspect project lifecycle status (freshness-carrying query seed shape).
+      description: >
+        Returns metadata-only project lifecycle status with projection freshness
+        evidence. Reads are eventually consistent and carry the
+        X-Hexalith-Freshness response header. Idempotency-Key is not a parameter
+        on queries (it is rejected if present).
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Freshness"
+      responses:
+        "200":
+          description: Metadata-only project lifecycle status with freshness evidence.
+          headers:
+            X-Correlation-Id:
+              $ref: "#/components/headers/CorrelationId"
+            X-Hexalith-Freshness:
+              $ref: "#/components/headers/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectLifecycleStatus"
+              examples:
+                synthetic:
+                  $ref: "#/components/examples/ProjectLifecycleStatus"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-read-consistency:
+        class: eventually_consistent
+        freshnessBehavior: returns-projection-watermark-when-available
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: query-correlation-only
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-and-project-read-permission
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - not_found
+        - read_model_unavailable
+        - projection_stale
+        - projection_unavailable
+        - internal_error
+components:
+  securitySchemes:
+    oidcBearer:
+      type: openIdConnect
+      description: >
+        JWT token validated through pluggable OIDC configuration. Issuer and
+        audience values are pinned by deployment configuration and are not contract
+        literals. Claims are transformed by EventStore before tenant authority is
+        evaluated.
+      openIdConnectUrl: https://oidc.invalid/.well-known/openid-configuration
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.
+      schema:
+        $ref: "#/components/schemas/OpaqueIdentifier"
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Optional caller-provided correlation identifier; adapters may generate one when absent.
+      schema:
+        $ref: "#/components/schemas/OpaqueIdentifier"
+    TaskId:
+      name: X-Hexalith-Task-Id
+      in: header
+      required: false
+      description: Caller-provided task identity for task-scoped operations.
+      schema:
+        $ref: "#/components/schemas/OpaqueIdentifier"
+    Freshness:
+      name: X-Hexalith-Freshness
+      in: header
+      required: false
+      description: Requested read-consistency or projection freshness hint for query families.
+      schema:
+        $ref: "#/components/schemas/ReadConsistencyClass"
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      description: Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.
+      schema:
+        $ref: "#/components/schemas/OpaqueIdentifier"
+  headers:
+    CorrelationId:
+      description: Echoes the correlation identifier associated with the response.
+      schema:
+        $ref: "#/components/schemas/OpaqueIdentifier"
+    TaskId:
+      description: Echoes the task identifier associated with task-scoped work.
+      schema:
+        $ref: "#/components/schemas/OpaqueIdentifier"
+    Freshness:
+      description: Reports projection freshness semantics for a response.
+      schema:
+        $ref: "#/components/schemas/ReadConsistencyClass"
+  responses:
+    AcceptedCommand:
+      description: Command accepted for asynchronous processing. No read-after-write guarantee.
+      headers:
+        X-Correlation-Id:
+          $ref: "#/components/headers/CorrelationId"
+        X-Hexalith-Task-Id:
+          $ref: "#/components/headers/TaskId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AcceptedCommand"
+          examples:
+            synthetic:
+              $ref: "#/components/examples/AcceptedCommand"
+    FreshnessMetadata:
+      description: Projection freshness metadata for query and status responses.
+      headers:
+        X-Hexalith-Freshness:
+          $ref: "#/components/headers/Freshness"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/FreshnessMetadata"
+    SafeAuthorizationDenial401:
+      description: Authentication failure (no valid token). Externally indistinguishable across all caller cases.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/SafeAuthorizationDenial"
+          examples:
+            synthetic:
+              $ref: "#/components/examples/SafeDenial401Unauthorized"
+    SafeAuthorizationDenial403:
+      description: Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/SafeAuthorizationDenial"
+          examples:
+            synthetic:
+              $ref: "#/components/examples/SafeDenial403Forbidden"
+    SafeAuthorizationDenial404:
+      description: Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases — does not reveal protected resource existence.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/SafeAuthorizationDenial"
+          examples:
+            synthetic:
+              $ref: "#/components/examples/SafeDenial404NotFound"
+    ValidationFailure:
+      description: Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ValidationFailure"
+          examples:
+            synthetic:
+              $ref: "#/components/examples/ValidationFailure"
+    IdempotencyConflict:
+      description: Same idempotency key with non-equivalent tenant-scoped payload semantics.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/IdempotencyConflict"
+          examples:
+            synthetic:
+              $ref: "#/components/examples/IdempotencyConflict"
+    ReadModelUnavailable:
+      description: Read model is temporarily unavailable without leaking protected resource existence.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          examples:
+            synthetic:
+              $ref: "#/components/examples/ReadModelUnavailable"
+  examples:
+    SafeDenial401Unauthorized:
+      summary: Canonical 401 safe denial — caller is not authenticated. Envelope shape is identical across all caller cases.
+      value:
+        type: about:blank
+        title: Authentication required
+        status: 401
+        category: authentication_failure
+        code: authentication_required
+        message: Authentication is required to access this resource.
+        correlationId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        retryable: false
+        clientAction: check_credentials
+        details:
+          visibility: redacted
+    SafeDenial403Forbidden:
+      summary: Canonical 403 safe denial — authenticated caller lacks permission. Envelope shape is identical across all tenant/project cases.
+      value:
+        type: about:blank
+        title: Access unavailable
+        status: 403
+        category: tenant_access_denied
+        code: resource_unavailable
+        message: The requested resource is unavailable.
+        correlationId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        retryable: false
+        clientAction: no_action
+        details:
+          visibility: redacted
+    SafeDenial404NotFound:
+      summary: Canonical 404 safe denial — resource absent or cross-tenant. Envelope shape is identical across all of these cases (does not reveal protected resource existence).
+      value:
+        type: about:blank
+        title: Access unavailable
+        status: 404
+        category: tenant_access_denied
+        code: resource_unavailable
+        message: The requested resource is unavailable.
+        correlationId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        retryable: false
+        clientAction: no_action
+        details:
+          visibility: redacted
+    ValidationFailure:
+      summary: Canonical 400 validation failure — metadata-only, no echoed payload values.
+      value:
+        type: about:blank
+        title: Validation failed
+        status: 400
+        category: validation_error
+        code: validation_error
+        message: The request failed validation.
+        correlationId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        retryable: false
+        clientAction: revise_request
+        details:
+          visibility: metadata_only
+    IdempotencyConflict:
+      summary: Canonical 409 idempotency conflict — same key, non-equivalent semantics.
+      value:
+        type: about:blank
+        title: Idempotency conflict
+        status: 409
+        category: idempotency_conflict
+        code: idempotency_conflict
+        message: The idempotency key was reused with a non-equivalent request.
+        correlationId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        retryable: false
+        clientAction: revise_request
+        details:
+          visibility: metadata_only
+    ReadModelUnavailable:
+      value:
+        type: about:blank
+        title: Read model unavailable
+        status: 503
+        category: read_model_unavailable
+        code: projection_unavailable
+        message: Projection data is temporarily unavailable.
+        correlationId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        retryable: true
+        clientAction: retry
+        details:
+          visibility: metadata_only
+    AcceptedCommand:
+      value:
+        acceptedAt: "2026-05-12T12:34:56Z"
+        correlationId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        taskId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
+        status: accepted
+        idempotentReplay: false
+    CreateProjectRequest:
+      value:
+        requestSchemaVersion: v1
+        projectMetadata:
+          displayName: synthetic-project-alpha
+          metadataClass: tenant_sensitive
+    ProjectLifecycleStatus:
+      value:
+        projectId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        lifecycleState: active
+        freshness:
+          readConsistency: eventually_consistent
+          observedAt: "2026-05-12T12:34:56Z"
+          projectionWatermark: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
+          stale: false
+  schemas:
+    OpaqueIdentifier:
+      type: string
+      minLength: 16
+      maxLength: 128
+      pattern: "^[A-Za-z0-9][A-Za-z0-9_-]{15,127}$"
+      description: Synthetic opaque identifier (ULID-shaped). It is not a path, credential, token, or tenant authority. The pattern rejects dots and colons to keep keys disjoint from cache-key tenant-prefix notation and JWT-shaped values.
+      examples:
+        - opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+    UtcDateTime:
+      type: string
+      format: date-time
+      description: ISO-8601 UTC timestamp.
+      examples:
+        - "2026-05-12T12:34:56Z"
+    ProblemDetails:
+      type: object
+      additionalProperties: true
+      required:
+        - type
+        - title
+        - status
+        - category
+        - code
+        - message
+        - correlationId
+        - retryable
+        - clientAction
+        - details
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+          minimum: 100
+          maximum: 599
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        category:
+          $ref: "#/components/schemas/CanonicalErrorCategory"
+        code:
+          type: string
+          pattern: "^[a-z0-9][a-z0-9_:-]{0,127}$"
+        message:
+          type: string
+        correlationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        retryable:
+          type: boolean
+        clientAction:
+          type: string
+          enum:
+            - retry
+            - revise_request
+            - check_credentials
+            - wait_for_reconciliation
+            - contact_operator
+            - no_action
+        details:
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+          description: Metadata-only details. File contents, diffs, tokens, secrets, and unauthorized existence hints are forbidden.
+    SafeAuthorizationDenial:
+      allOf:
+        - $ref: "#/components/schemas/ProblemDetails"
+      description: Denial shape for tenant and project authorization failures. Unauthorized and nonexistent both surface as 404 so cross-tenant existence cannot be inferred.
+    ValidationFailure:
+      allOf:
+        - $ref: "#/components/schemas/ProblemDetails"
+      description: Input validation failure without echoing sensitive payload values.
+    IdempotencyConflict:
+      allOf:
+        - $ref: "#/components/schemas/ProblemDetails"
+      description: Idempotency conflict for same key and non-equivalent semantic request.
+    AcceptedCommand:
+      type: object
+      additionalProperties: false
+      required:
+        - acceptedAt
+        - correlationId
+        - taskId
+        - status
+      properties:
+        acceptedAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        correlationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        taskId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        status:
+          type: string
+          enum:
+            - accepted
+        idempotentReplay:
+          type: boolean
+          default: false
+    FreshnessMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        - readConsistency
+        - observedAt
+      properties:
+        readConsistency:
+          $ref: "#/components/schemas/ReadConsistencyClass"
+        observedAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        projectionWatermark:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        stale:
+          type: boolean
+          default: false
+    ReadConsistencyClass:
+      type: string
+      enum:
+        - snapshot_per_task
+        - read_your_writes
+        - eventually_consistent
+    SensitiveMetadataTier:
+      type: string
+      enum:
+        - public_metadata
+        - tenant_sensitive
+        - credential_sensitive
+        - secret
+      description: Display names and other project metadata default to tenant_sensitive unless stricter tenant policy applies.
+    ProjectLifecycleState:
+      type: string
+      description: Project lifecycle state. Mirrors the shared Hexalith.Projects.Contracts.Ui.ProjectLifecycle vocabulary (name-based wire shape); never a parallel enum.
+      enum:
+        - active
+        - archived
+    ProjectMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        - displayName
+        - metadataClass
+      properties:
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 160
+          description: Projected display metadata only; it is not aggregate identity.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        metadataClass:
+          $ref: "#/components/schemas/SensitiveMetadataTier"
+    CreateProjectRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - requestSchemaVersion
+        - projectMetadata
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        projectMetadata:
+          $ref: "#/components/schemas/ProjectMetadata"
+    ProjectLifecycleStatus:
+      type: object
+      additionalProperties: false
+      required:
+        - projectId
+        - lifecycleState
+        - freshness
+      properties:
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        lifecycleState:
+          $ref: "#/components/schemas/ProjectLifecycleState"
+        freshness:
+          $ref: "#/components/schemas/FreshnessMetadata"
+    CanonicalErrorCategory:
+      type: string
+      description: Canonical error category vocabulary surfaced in ProblemDetails. Aligns with the shared Hexalith.Projects vocabulary semantics; never a parallel error enum.
+      enum:
+        - success
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
+        - projection_stale
+        - projection_unavailable
+        - redacted
+        - internal_error

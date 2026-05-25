@@ -22,6 +22,7 @@ try {
 
     $projects = @(
         'tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj',
+        'tests/Hexalith.Projects.Client.Tests/Hexalith.Projects.Client.Tests.csproj',
         'tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj'
     )
 
