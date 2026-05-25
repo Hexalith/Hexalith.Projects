@@ -8,6 +8,7 @@ namespace Hexalith.Projects.Tests.Projections;
 using System;
 
 using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
@@ -50,6 +51,58 @@ public sealed class ProjectProjectionTests
         ProjectDetailItem detail = projection.Get(TenantA, ProjectIdValue)!;
         detail.Name.ShouldBe("Tracer Bullet");
         detail.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+    }
+
+    [Fact]
+    public void DetailProjection_AppliesProjectSetupUpdated()
+    {
+        ProjectDetailProjection projection = ProjectDetailProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, SetupUpdated(TenantA)),
+        ]);
+
+        ProjectDetailItem detail = projection.Get(TenantA, ProjectIdValue)!;
+        detail.Setup.ShouldNotBeNull();
+        detail.Setup.Goals.ShouldBe(["keep continuity current"]);
+        detail.UpdatedAt.ShouldBe(DateTimeOffset.UnixEpoch.AddMinutes(1));
+        detail.Sequence.ShouldBe(2);
+    }
+
+    [Fact]
+    public void ListProjection_SetupUpdatedKeepsRowMetadataOnly()
+    {
+        ProjectListProjection projection = ProjectListProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, SetupUpdated(TenantA)),
+        ]);
+
+        ProjectListItem item = projection.Get(TenantA, ProjectIdValue)!;
+        item.Name.ShouldBe("Tracer Bullet");
+        item.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+        item.UpdatedAt.ShouldBe(DateTimeOffset.UnixEpoch.AddMinutes(1));
+        item.Sequence.ShouldBe(2);
+    }
+
+    [Fact]
+    public void Projections_ArchiveUpdatesLifecycleAndListFilters()
+    {
+        ProjectListProjection list = ProjectListProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, Archived(TenantA)),
+        ]);
+        ProjectDetailProjection detail = ProjectDetailProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, Archived(TenantA)),
+        ]);
+
+        list.Get(TenantA, ProjectIdValue)!.Lifecycle.ShouldBe(ProjectLifecycle.Archived);
+        list.List(TenantA, ProjectLifecycle.Active).ShouldBeEmpty();
+        list.List(TenantA, ProjectLifecycle.Archived).Single().ProjectId.ShouldBe(ProjectIdValue);
+        detail.Get(TenantA, ProjectIdValue)!.Lifecycle.ShouldBe(ProjectLifecycle.Archived);
     }
 
     [Fact]
@@ -160,6 +213,35 @@ public sealed class ProjectProjectionTests
             idempotencyKey,
             fingerprint,
             DateTimeOffset.UnixEpoch);
+
+    private static ProjectSetupUpdated SetupUpdated(string tenant)
+        => new(
+            tenant,
+            ProjectIdValue,
+            new ProjectSetup(
+                ["keep continuity current"],
+                ["use safe metadata"],
+                [ProjectContextSourceKind.Conversation],
+                [ProjectContextSourceKind.FileReference],
+                new ConversationStartDefaults(LinkedSourcePolicy.ProjectsOwnedMetadataOnly)),
+            "actor-001",
+            "corr-setup",
+            "task-setup",
+            "idem-key-setup",
+            "sha256:setup",
+            DateTimeOffset.UnixEpoch.AddMinutes(1));
+
+    private static ProjectArchived Archived(string tenant)
+        => new(
+            tenant,
+            ProjectIdValue,
+            ProjectLifecycle.Archived,
+            "actor-001",
+            "corr-archive",
+            "task-archive",
+            "idem-key-archive",
+            "sha256:archive",
+            DateTimeOffset.UnixEpoch.AddMinutes(2));
 
     private sealed record UnknownProjectEvent : IProjectEvent
     {

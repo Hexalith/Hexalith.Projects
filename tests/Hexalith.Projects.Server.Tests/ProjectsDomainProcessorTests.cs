@@ -18,6 +18,7 @@ using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Server;
 
 using Shouldly;
@@ -101,6 +102,56 @@ public sealed class ProjectsDomainProcessorTests
         rejected.Reason.ShouldBe(Contracts.Ui.ReferenceState.Unauthorized);
     }
 
+    [Fact]
+    public async Task ProcessUpdateSetup_ExistingState_YieldsProjectSetupUpdated()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        ProjectState existing = ProjectState.Empty.Apply([ExistingCreatedEvent()], new ProjectIdentity(Tenant, new ProjectId(ProjectIdValue)));
+
+        DomainResult result = await processor.ProcessAsync(UpdateEnvelope(), existing).ConfigureAwait(true);
+
+        result.IsSuccess.ShouldBeTrue();
+        ProjectSetupUpdated updated = result.Events.Single().ShouldBeOfType<ProjectSetupUpdated>();
+        updated.Setup.Goals.ShouldBe(["keep continuity current"]);
+        updated.OccurredAt.ShouldBe(DateTimeOffset.UnixEpoch);
+    }
+
+    [Fact]
+    public async Task ProcessArchive_ExistingState_YieldsProjectArchived()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        ProjectState existing = ProjectState.Empty.Apply([ExistingCreatedEvent()], new ProjectIdentity(Tenant, new ProjectId(ProjectIdValue)));
+
+        DomainResult result = await processor.ProcessAsync(ArchiveEnvelope(), existing).ConfigureAwait(true);
+
+        result.IsSuccess.ShouldBeTrue();
+        result.Events.Single().ShouldBeOfType<ProjectArchived>().Lifecycle.ShouldBe(Contracts.Ui.ProjectLifecycle.Archived);
+    }
+
+    [Fact]
+    public async Task ProcessUpdateSetup_InvalidSetup_YieldsSetupRejected()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        ProjectState existing = ProjectState.Empty.Apply([ExistingCreatedEvent()], new ProjectIdentity(Tenant, new ProjectId(ProjectIdValue)));
+
+        DomainResult result = await processor.ProcessAsync(UpdateEnvelope(rawGoal: "token=abc"), existing).ConfigureAwait(true);
+
+        result.IsRejection.ShouldBeTrue();
+        result.Events.Single().ShouldBeOfType<ProjectSetupUpdateRejected>().RejectedField.ShouldBe("setup.goals");
+    }
+
+    [Fact]
+    public async Task ProcessUpdateSetup_MissingSchemaVersion_YieldsSetupRejected()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        ProjectState existing = ProjectState.Empty.Apply([ExistingCreatedEvent()], new ProjectIdentity(Tenant, new ProjectId(ProjectIdValue)));
+
+        DomainResult result = await processor.ProcessAsync(UpdateEnvelope(includeSchemaVersion: false), existing).ConfigureAwait(true);
+
+        result.IsRejection.ShouldBeTrue();
+        result.Events.Single().ShouldBeOfType<ProjectSetupUpdateRejected>().RejectedField.ShouldBe("requestSchemaVersion");
+    }
+
     private static ProjectsDomainProcessor CreateProcessor()
         => new(new FixedTimeProvider(DateTimeOffset.UnixEpoch), new AllowingProjectEventStoreAuthorizationValidator());
 
@@ -138,6 +189,73 @@ public sealed class ProjectsDomainProcessorTests
             CausationId: null,
             UserId: "principal-a",
             Extensions: new Dictionary<string, string> { ["taskId"] = "task-a" });
+    }
+
+    private static CommandEnvelope UpdateEnvelope(string rawGoal = "keep continuity current", bool includeSchemaVersion = true)
+    {
+        byte[] payload = includeSchemaVersion
+            ? JsonSerializer.SerializeToUtf8Bytes(new
+            {
+                requestSchemaVersion = "v1",
+                setup = new
+                {
+                    goals = new[] { rawGoal },
+                    userInstructions = new[] { "use safe metadata" },
+                    preferredSourceKinds = new[] { "conversation" },
+                    excludedSourceKinds = new[] { "fileReference" },
+                    conversationStartDefaults = new
+                    {
+                        linkedSourcePolicy = "authorizedReferences",
+                    },
+                },
+            })
+            : JsonSerializer.SerializeToUtf8Bytes(new
+            {
+                setup = new
+                {
+                    goals = new[] { rawGoal },
+                    userInstructions = new[] { "use safe metadata" },
+                    preferredSourceKinds = new[] { "conversation" },
+                    excludedSourceKinds = new[] { "fileReference" },
+                    conversationStartDefaults = new
+                    {
+                        linkedSourcePolicy = "authorizedReferences",
+                    },
+                },
+            });
+
+        return new CommandEnvelope(
+            MessageId: "idem-key-update",
+            TenantId: Tenant,
+            Domain: ProjectsServerModule.DomainName,
+            AggregateId: ProjectIdValue,
+            CommandType: ProjectsServerModule.UpdateProjectSetupCommandType,
+            Payload: payload,
+            CorrelationId: "corr-update",
+            CausationId: null,
+            UserId: "principal-a",
+            Extensions: new Dictionary<string, string> { ["taskId"] = "task-update" });
+    }
+
+    private static CommandEnvelope ArchiveEnvelope()
+    {
+        byte[] payload = JsonSerializer.SerializeToUtf8Bytes(new
+        {
+            archiveIntent = "archive",
+            requestSchemaVersion = "v1",
+        });
+
+        return new CommandEnvelope(
+            MessageId: "idem-key-archive",
+            TenantId: Tenant,
+            Domain: ProjectsServerModule.DomainName,
+            AggregateId: ProjectIdValue,
+            CommandType: ProjectsServerModule.ArchiveProjectCommandType,
+            Payload: payload,
+            CorrelationId: "corr-archive",
+            CausationId: null,
+            UserId: "principal-a",
+            Extensions: new Dictionary<string, string> { ["taskId"] = "task-archive" });
     }
 
     // Minimal deterministic TimeProvider so the /process callback stamps a fixed OccurredAt.

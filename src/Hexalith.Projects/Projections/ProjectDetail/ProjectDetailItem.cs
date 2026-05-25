@@ -7,6 +7,7 @@ namespace Hexalith.Projects.Projections.ProjectDetail;
 
 using System;
 
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 
 /// <summary>
@@ -19,6 +20,7 @@ using Hexalith.Projects.Contracts.Ui;
 /// <param name="Name">The project name (metadata only).</param>
 /// <param name="Description">Optional safe, metadata-only description.</param>
 /// <param name="SetupMetadata">Optional safe, reference-only setup-metadata reference.</param>
+/// <param name="Setup">Optional typed setup projected additively for Story 1.8.</param>
 /// <param name="Lifecycle">The current lifecycle state.</param>
 /// <param name="CreatedAt">The instant the project was created.</param>
 /// <param name="UpdatedAt">The instant the project was last updated (equals <paramref name="CreatedAt"/> at creation).</param>
@@ -29,6 +31,7 @@ public sealed record ProjectDetailItem(
     string Name,
     string? Description,
     string? SetupMetadata,
+    ProjectSetup? Setup,
     ProjectLifecycle Lifecycle,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt,

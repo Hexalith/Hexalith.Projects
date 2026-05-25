@@ -86,6 +86,90 @@ public sealed class EventStoreProjectCommandSubmitter(IEventStoreGatewayClient g
         return ProjectCommandSubmissionResult.Accepted(correlationId, IsIdempotentReplay(submitted.ResultPayload));
     }
 
+    /// <inheritdoc/>
+    public async Task<ProjectCommandSubmissionResult> SubmitUpdateProjectSetupAsync(
+        UpdateProjectSetup command,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        object payload = new
+        {
+            requestSchemaVersion = "v1",
+            setup = command.Setup,
+        };
+
+        return await SubmitAsync(
+            command,
+            ProjectsServerModule.UpdateProjectSetupCommandType,
+            payload,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    public async Task<ProjectCommandSubmissionResult> SubmitArchiveProjectAsync(
+        ArchiveProject command,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        object payload = new
+        {
+            archiveIntent = "archive",
+            requestSchemaVersion = "v1",
+        };
+
+        return await SubmitAsync(
+            command,
+            ProjectsServerModule.ArchiveProjectCommandType,
+            payload,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<ProjectCommandSubmissionResult> SubmitAsync(
+        IProjectCommand command,
+        string commandType,
+        object payload,
+        CancellationToken cancellationToken)
+    {
+        SubmitCommandResponse submitted;
+        try
+        {
+            submitted = await _gateway.SubmitCommandAsync(
+                new SubmitCommandRequest(
+                    MessageId: command.IdempotencyKey,
+                    Tenant: command.TenantId,
+                    Domain: ProjectsServerModule.DomainName,
+                    AggregateId: command.ProjectId.Value,
+                    CommandType: commandType,
+                    Payload: JsonSerializer.SerializeToElement(payload, PayloadJsonOptions),
+                    CorrelationId: command.CorrelationId,
+                    Extensions: new Dictionary<string, string>
+                    {
+                        ["taskId"] = command.TaskId,
+                    }),
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (EventStoreGatewayException ex)
+        {
+            return ToProblemOutcome(ex, command.CorrelationId);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            return new ProjectCommandSubmissionResult(ProjectCommandSubmissionOutcome.Unavailable, command.CorrelationId);
+        }
+
+        string correlationId = !string.IsNullOrWhiteSpace(submitted.CorrelationId)
+            ? submitted.CorrelationId
+            : command.CorrelationId;
+
+        return ProjectCommandSubmissionResult.Accepted(correlationId, IsIdempotentReplay(submitted.ResultPayload));
+    }
+
     private static ProjectCommandSubmissionResult ToProblemOutcome(EventStoreGatewayException exception, string correlationId)
         => exception.StatusCode switch
         {

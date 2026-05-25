@@ -12,6 +12,7 @@ using System.Linq;
 using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
@@ -45,6 +46,8 @@ public sealed class ProjectionRebuildDeterminismTests
     private static readonly DateTimeOffset Instant1 = DateTimeOffset.UnixEpoch;
     private static readonly DateTimeOffset Instant2 = new(2026, 5, 25, 12, 0, 0, TimeSpan.Zero);
     private static readonly DateTimeOffset Instant3 = new(2026, 5, 25, 13, 30, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset Instant4 = new(2026, 5, 25, 14, 0, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset Instant5 = new(2026, 5, 25, 14, 30, 0, TimeSpan.Zero);
 
     [Fact]
     public void ListProjection_FullConformanceMatrix_Holds()
@@ -109,11 +112,13 @@ public sealed class ProjectionRebuildDeterminismTests
 
         ProjectDetailProjection rebuilt = ProjectDetailProjection.Rebuild(stream);
 
-        // Project 1: sequence watermark = envelope.Sequence (1); CreatedAt == UpdatedAt == event OccurredAt.
+        // Project 1: create/setup/archive all fold from event-carried instants; latest sequence wins.
         ProjectDetailItem one = rebuilt.Get(TenantA, ProjectId1)!;
-        one.Sequence.ShouldBe(1);
+        one.Sequence.ShouldBe(5);
         one.CreatedAt.ShouldBe(Instant1);
-        one.UpdatedAt.ShouldBe(Instant1);
+        one.UpdatedAt.ShouldBe(Instant5);
+        one.Setup.ShouldNotBeNull();
+        one.Lifecycle.ShouldBe(ProjectLifecycle.Archived);
 
         // Project 2 (tenant A) and Project 3 (tenant B) carry their own fixed instants — never "now".
         rebuilt.Get(TenantA, ProjectId2)!.CreatedAt.ShouldBe(Instant2);
@@ -129,8 +134,9 @@ public sealed class ProjectionRebuildDeterminismTests
 
         ProjectListProjection rebuilt = ProjectListProjection.Rebuild(stream);
 
-        rebuilt.Get(TenantA, ProjectId1)!.Sequence.ShouldBe(1);
+        rebuilt.Get(TenantA, ProjectId1)!.Sequence.ShouldBe(5);
         rebuilt.Get(TenantA, ProjectId1)!.CreatedAt.ShouldBe(Instant1);
+        rebuilt.Get(TenantA, ProjectId1)!.Lifecycle.ShouldBe(ProjectLifecycle.Archived);
         rebuilt.Projects.Count.ShouldBe(3);
     }
 
@@ -169,15 +175,17 @@ public sealed class ProjectionRebuildDeterminismTests
             .ShouldBe(incremental.IdempotencyFingerprints["idem-" + ProjectId1]);
     }
 
-    // A small multi-project, multi-tenant ProjectCreated stream (>= 2 tenants so isolation is implicitly
-    // exercised under replay; FS-8 itself is owned by 1.4). Distinct sequences + distinct idempotency
-    // keys/fingerprints so the rebuild is unambiguous and the tiebreaker is exercised by the reversed/
-    // rotated rebuilds inside the conformance helper.
+    // A small multi-project, multi-tenant stream (>= 2 tenants so isolation is implicitly exercised
+    // under replay) that includes the Story 1.8 setup/archive events. Distinct sequences + distinct
+    // idempotency keys/fingerprints keep rebuild unambiguous while the conformance helper exercises
+    // reversed/rotated rebuilds and duplicate delivery.
     private static IReadOnlyList<ProjectProjectionEnvelope> Stream() =>
     [
         new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA, ProjectId1, "Tracer Bullet", Instant1)),
         new ProjectProjectionEnvelope(TenantA, 2, Created(TenantA, ProjectId2, "Second Project", Instant2)),
         new ProjectProjectionEnvelope(TenantB, 3, Created(TenantB, ProjectId3, "Tenant B Project", Instant3)),
+        new ProjectProjectionEnvelope(TenantA, 4, SetupUpdated(TenantA, ProjectId1, Instant4)),
+        new ProjectProjectionEnvelope(TenantA, 5, Archived(TenantA, ProjectId1, Instant5)),
     ];
 
     private static ProjectCreated Created(string tenant, string projectId, string name, DateTimeOffset occurredAt)
@@ -193,5 +201,34 @@ public sealed class ProjectionRebuildDeterminismTests
             "task-" + projectId,
             "idem-" + projectId,
             "sha256:" + projectId.ToLowerInvariant(),
+            occurredAt);
+
+    private static ProjectSetupUpdated SetupUpdated(string tenant, string projectId, DateTimeOffset occurredAt)
+        => new(
+            tenant,
+            projectId,
+            new ProjectSetup(
+                ["keep continuity current"],
+                ["use safe metadata"],
+                [ProjectContextSourceKind.Conversation],
+                [ProjectContextSourceKind.FileReference],
+                new ConversationStartDefaults(LinkedSourcePolicy.AuthorizedReferences)),
+            "actor-001",
+            "corr-setup-" + projectId,
+            "task-setup-" + projectId,
+            "idem-setup-" + projectId,
+            "sha256:setup-" + projectId.ToLowerInvariant(),
+            occurredAt);
+
+    private static ProjectArchived Archived(string tenant, string projectId, DateTimeOffset occurredAt)
+        => new(
+            tenant,
+            projectId,
+            ProjectLifecycle.Archived,
+            "actor-001",
+            "corr-archive-" + projectId,
+            "task-archive-" + projectId,
+            "idem-archive-" + projectId,
+            "sha256:archive-" + projectId.ToLowerInvariant(),
             occurredAt);
 }

@@ -39,6 +39,7 @@ public sealed class PayloadClassificationTests
     [InlineData("OpaqueId")]
     [InlineData("TenantId")]
     [InlineData("ReasonCode")]
+    [InlineData("SetupPreference")]
     [InlineData("CorrelationId")]
     public void SafeFieldsContainsExpectedCategories(string category)
     {

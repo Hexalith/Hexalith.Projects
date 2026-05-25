@@ -21,10 +21,9 @@ tags:
 security:
   - oidcBearer: []
 paths:
-  # Story 1.7 grows the Story 1.4 tracer bullet read surface into Open Project and List Projects.
+  # Story 1.8 adds the concrete setup-update and archive command-async mutations.
   # Mutations keep Idempotency-Key; queries do not accept it and reject it after authorization.
-  # UpdateProjectSetup, ArchiveProject, reference link/unlink, resolution confirmation, and context
-  # assembly remain deferred to later stories.
+  # Reference link/unlink, resolution confirmation, and context assembly remain deferred to later stories.
   /api/v1/projects:
     get:
       tags:
@@ -216,6 +215,145 @@ paths:
         - read_model_unavailable
         - projection_stale
         - projection_unavailable
+        - internal_error
+  /api/v1/projects/{projectId}/setup:
+    patch:
+      tags:
+        - projects
+      operationId: UpdateProjectSetup
+      summary: Update metadata-only project setup preferences (command-async).
+      description: >
+        Updates bounded, metadata-only Project setup preferences: goals, user instructions,
+        preferred and excluded source kinds, and conversation-start defaults. Returns 202 Accepted
+        with no read-after-write guarantee. Tenant authority comes from authenticated principal claims
+        and EventStore envelopes, never from this request.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectSetupRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/UpdateProjectSetupRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - project_setup.conversation_start_defaults.linked_source_policy
+        - project_setup.excluded_source_kinds
+        - project_setup.goals
+        - project_setup.preferred_source_kinds
+        - project_setup.user_instructions
+        - request_schema_version
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: eventstore-envelope-causation-reference
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-update-setup-permission-and-project-detail
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - internal_error
+  /api/v1/projects/{projectId}/archive:
+    post:
+      tags:
+        - projects
+      operationId: ArchiveProject
+      summary: Archive a tenant-scoped project (command-async).
+      description: >
+        Archives an active tenant-scoped Project workspace. Returns 202 Accepted with no
+        read-after-write guarantee; confirm via the GetProject query. Tenant authority comes from
+        authenticated principal claims and EventStore envelopes, never from this request.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArchiveProjectRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/ArchiveProjectRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - archive_intent
+        - request_schema_version
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: eventstore-envelope-causation-reference
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-archive-permission-and-project-detail
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
         - internal_error
 components:
   securitySchemes:
@@ -462,6 +600,25 @@ components:
         projectMetadata:
           displayName: synthetic-project-alpha
           metadataClass: tenant_sensitive
+    UpdateProjectSetupRequest:
+      value:
+        requestSchemaVersion: v1
+        projectSetup:
+          goals:
+            - keep continuity current
+          userInstructions:
+            - use safe project references
+          preferredSourceKinds:
+            - conversation
+            - memory
+          excludedSourceKinds:
+            - fileReference
+          conversationStartDefaults:
+            linkedSourcePolicy: authorizedReferences
+    ArchiveProjectRequest:
+      value:
+        requestSchemaVersion: v1
+        archiveIntent: archive
     ProjectLifecycleStatus:
       value:
         projectId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
@@ -480,6 +637,18 @@ components:
         createdAt: "2026-05-12T12:34:56Z"
         updatedAt: "2026-05-12T12:34:56Z"
         setupMetadata: synthetic-setup-reference
+        projectSetup:
+          goals:
+            - keep continuity current
+          userInstructions:
+            - use safe project references
+          preferredSourceKinds:
+            - conversation
+            - memory
+          excludedSourceKinds:
+            - fileReference
+          conversationStartDefaults:
+            linkedSourcePolicy: authorizedReferences
         contextActivation:
           enabled: true
           blockedReasonCode: null
@@ -691,6 +860,95 @@ components:
             - v1
         projectMetadata:
           $ref: "#/components/schemas/ProjectMetadata"
+    UpdateProjectSetupRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - requestSchemaVersion
+        - projectSetup
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        projectSetup:
+          $ref: "#/components/schemas/ProjectSetup"
+    ArchiveProjectRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - requestSchemaVersion
+        - archiveIntent
+      properties:
+        archiveIntent:
+          type: string
+          enum:
+            - archive
+          description: Command intent literal included in canonical idempotency equivalence.
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+    ProjectSetup:
+      type: object
+      additionalProperties: false
+      description: Bounded metadata-only Project setup preferences. Carries no transcript, file contents, memory body, raw prompt, secret, token, command body, unrestricted path, or local path.
+      required:
+        - goals
+        - userInstructions
+        - preferredSourceKinds
+        - excludedSourceKinds
+      properties:
+        goals:
+          type: array
+          maxItems: 16
+          items:
+            type: string
+            minLength: 1
+            maxLength: 512
+            x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        userInstructions:
+          type: array
+          maxItems: 16
+          items:
+            type: string
+            minLength: 1
+            maxLength: 512
+            x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        preferredSourceKinds:
+          type: array
+          maxItems: 4
+          items:
+            $ref: "#/components/schemas/ProjectContextSourceKind"
+        excludedSourceKinds:
+          type: array
+          maxItems: 4
+          items:
+            $ref: "#/components/schemas/ProjectContextSourceKind"
+        conversationStartDefaults:
+          nullable: true
+          $ref: "#/components/schemas/ConversationStartDefaults"
+    ConversationStartDefaults:
+      type: object
+      additionalProperties: false
+      required:
+        - linkedSourcePolicy
+      properties:
+        linkedSourcePolicy:
+          $ref: "#/components/schemas/LinkedSourcePolicy"
+    ProjectContextSourceKind:
+      type: string
+      enum:
+        - conversation
+        - projectFolder
+        - fileReference
+        - memory
+    LinkedSourcePolicy:
+      type: string
+      enum:
+        - none
+        - projectsOwnedMetadataOnly
+        - authorizedReferences
     ProjectLifecycleStatus:
       type: object
       additionalProperties: false
@@ -745,6 +1003,10 @@ components:
           maxLength: 512
           description: Optional safe setup metadata reference projected from Projects-owned data only; not a raw setup body, path, secret, token, or prompt.
           x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        projectSetup:
+          nullable: true
+          description: Optional bounded metadata-only Project setup preferences projected from Projects-owned events.
+          $ref: "#/components/schemas/ProjectSetup"
         contextActivation:
           $ref: "#/components/schemas/ContextActivation"
         references:

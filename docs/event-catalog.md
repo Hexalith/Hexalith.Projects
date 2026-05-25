@@ -30,6 +30,34 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
 - **Consumers:** `ProjectListProjection`, `ProjectDetailProjection`.
 
+### `ProjectSetupUpdated`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectSetupUpdated` (`IProjectEvent` → `IEventPayload`)
+- **Purpose:** Records a durable update to a Project's bounded, metadata-only setup preferences (Story 1.8).
+- **Emitted by:** `ProjectAggregate.Handle(UpdateProjectSetup)`.
+- **Sensitivity class:** metadata-only (`SetupPreference`).
+- **Fields:**
+  - `TenantId` — managed tenant (envelope tenant).
+  - `ProjectId` — opaque project identifier.
+  - `Setup` — bounded Projects-owned setup preferences: goals, user instructions, preferred/excluded source kinds, and conversation-start defaults. It never contains transcript text, file contents, memory bodies, raw prompts, tokens, secrets, command bodies, or paths.
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
+  - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
+- **Consumers:** `ProjectDetailProjection` stores the latest setup; `ProjectListProjection` updates freshness/sequence only.
+
+### `ProjectArchived`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectArchived` (`IProjectEvent` → `IEventPayload`)
+- **Purpose:** Records that a Project moved to `Archived` lifecycle (Story 1.8).
+- **Emitted by:** `ProjectAggregate.Handle(ArchiveProject)`.
+- **Sensitivity class:** metadata-only.
+- **Fields:**
+  - `TenantId` — managed tenant (envelope tenant).
+  - `ProjectId` — opaque project identifier.
+  - `Lifecycle` — shared `ProjectLifecycle` (`Archived`).
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
+  - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
+- **Consumers:** `ProjectListProjection`, `ProjectDetailProjection`.
+
 ## Rejection events
 
 ### `ProjectCreationRejected`
@@ -48,6 +76,24 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `CorrelationId` — optional correlation identifier.
   - `ProjectId` — optional project identifier (added additively in Story 1.4 for create-path correlation).
 - **Consumers:** the Server denial mapper (RFC 9457 ProblemDetails + safe-denial 404); audit/log scopes (metadata only).
+
+### `ProjectSetupUpdateRejected`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectSetupUpdateRejected` (`IRejectionEvent`)
+- **Purpose:** Records a refused setup-update command (validation failure, missing project, archived project, authorization failure, or idempotency conflict).
+- **Emitted by:** `ProjectAggregate.Handle(UpdateProjectSetup)` and `/process` fail-closed payload paths.
+- **Sensitivity class:** metadata-only.
+- **Fields:** `ProjectId`, `TenantId`, canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
+- **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
+
+### `ProjectArchiveRejected`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectArchiveRejected` (`IRejectionEvent`)
+- **Purpose:** Records a refused archive command (validation failure, missing project, already archived project, authorization failure, or idempotency conflict).
+- **Emitted by:** `ProjectAggregate.Handle(ArchiveProject)` and `/process` fail-closed payload paths.
+- **Sensitivity class:** metadata-only.
+- **Fields:** `ProjectId`, `TenantId`, canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
+- **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
 
 ## Consumed external events
 

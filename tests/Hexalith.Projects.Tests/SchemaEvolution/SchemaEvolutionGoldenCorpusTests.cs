@@ -10,6 +10,7 @@ using System.IO;
 using System.Text.Json;
 
 using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 
 using Shouldly;
@@ -18,8 +19,8 @@ using Xunit;
 
 /// <summary>
 /// FS-5 schema-evolution golden-corpus tests (AC 4): the frozen serialized samples of
-/// <c>ProjectCreated</c> + <c>ProjectCreationRejected</c> deserialize from the checked-in bytes via the
-/// production <see cref="System.Text.Json"/> converters and round-trip — proving additive,
+/// Projects v1 events deserialize from the checked-in bytes via the production
+/// <see cref="System.Text.Json"/> converters and round-trip — proving additive,
 /// backward-compatible deserialization (no <c>V2</c> event types). Line endings are normalized before
 /// comparison. Pure Tier-1.
 /// </summary>
@@ -64,6 +65,85 @@ public sealed class SchemaEvolutionGoldenCorpusTests
 
         string reserialized = JsonSerializer.Serialize(deserialized, Options);
         JsonSerializer.Deserialize<ProjectCreationRejected>(reserialized, Options).ShouldBe(deserialized);
+    }
+
+    [Fact]
+    public void ProjectSetupUpdated_DeserializesFromFrozenBytesAndRoundTrips()
+    {
+        string frozen = ReadGolden("ProjectSetupUpdated.v1.json");
+
+        ProjectSetupUpdated deserialized = JsonSerializer.Deserialize<ProjectSetupUpdated>(frozen, Options).ShouldNotBeNull();
+
+        deserialized.TenantId.ShouldBe("acme");
+        deserialized.ProjectId.ShouldBe("01HZ9K8YQ3W6V2N4R7T5P0X1AB");
+        deserialized.Setup.Goals.ShouldBe(["keep continuity current"]);
+        deserialized.Setup.PreferredSourceKinds.ShouldBe([ProjectContextSourceKind.Conversation, ProjectContextSourceKind.Memory]);
+        deserialized.Setup.ExcludedSourceKinds.ShouldBe([ProjectContextSourceKind.FileReference]);
+        deserialized.Setup.ConversationStartDefaults!.LinkedSourcePolicy.ShouldBe(LinkedSourcePolicy.AuthorizedReferences);
+        deserialized.IdempotencyFingerprint.ShouldBe("sha256:setup");
+        deserialized.OccurredAt.ShouldBe(DateTimeOffset.UnixEpoch);
+
+        string reserialized = JsonSerializer.Serialize(deserialized, Options);
+        ProjectSetupUpdated roundTrip = JsonSerializer.Deserialize<ProjectSetupUpdated>(reserialized, Options).ShouldNotBeNull();
+        roundTrip.TenantId.ShouldBe(deserialized.TenantId);
+        roundTrip.ProjectId.ShouldBe(deserialized.ProjectId);
+        roundTrip.Setup.Goals.ShouldBe(deserialized.Setup.Goals);
+        roundTrip.Setup.UserInstructions.ShouldBe(deserialized.Setup.UserInstructions);
+        roundTrip.Setup.PreferredSourceKinds.ShouldBe(deserialized.Setup.PreferredSourceKinds);
+        roundTrip.Setup.ExcludedSourceKinds.ShouldBe(deserialized.Setup.ExcludedSourceKinds);
+        roundTrip.Setup.ConversationStartDefaults.ShouldBe(deserialized.Setup.ConversationStartDefaults);
+        roundTrip.IdempotencyFingerprint.ShouldBe(deserialized.IdempotencyFingerprint);
+    }
+
+    [Fact]
+    public void ProjectArchived_DeserializesFromFrozenBytesAndRoundTrips()
+    {
+        string frozen = ReadGolden("ProjectArchived.v1.json");
+
+        ProjectArchived deserialized = JsonSerializer.Deserialize<ProjectArchived>(frozen, Options).ShouldNotBeNull();
+
+        deserialized.TenantId.ShouldBe("acme");
+        deserialized.ProjectId.ShouldBe("01HZ9K8YQ3W6V2N4R7T5P0X1AB");
+        deserialized.Lifecycle.ShouldBe(ProjectLifecycle.Archived);
+        deserialized.IdempotencyFingerprint.ShouldBe("sha256:archive");
+        deserialized.OccurredAt.ShouldBe(DateTimeOffset.UnixEpoch);
+
+        string reserialized = JsonSerializer.Serialize(deserialized, Options);
+        JsonSerializer.Deserialize<ProjectArchived>(reserialized, Options).ShouldBe(deserialized);
+    }
+
+    [Fact]
+    public void ProjectSetupUpdateRejected_DeserializesFromFrozenBytesAndRoundTrips()
+    {
+        string frozen = ReadGolden("ProjectSetupUpdateRejected.v1.json");
+
+        ProjectSetupUpdateRejected deserialized = JsonSerializer.Deserialize<ProjectSetupUpdateRejected>(frozen, Options).ShouldNotBeNull();
+
+        deserialized.ProjectId.Value.ShouldBe("01HZ9K8YQ3W6V2N4R7T5P0X1AB");
+        deserialized.TenantId.ShouldBe("acme");
+        deserialized.Reason.ShouldBe(ReferenceState.InvalidReference);
+        deserialized.RejectedField.ShouldBe("setup.goals");
+        deserialized.CorrelationId.ShouldBe("corr-setup");
+
+        string reserialized = JsonSerializer.Serialize(deserialized, Options);
+        JsonSerializer.Deserialize<ProjectSetupUpdateRejected>(reserialized, Options).ShouldBe(deserialized);
+    }
+
+    [Fact]
+    public void ProjectArchiveRejected_DeserializesFromFrozenBytesAndRoundTrips()
+    {
+        string frozen = ReadGolden("ProjectArchiveRejected.v1.json");
+
+        ProjectArchiveRejected deserialized = JsonSerializer.Deserialize<ProjectArchiveRejected>(frozen, Options).ShouldNotBeNull();
+
+        deserialized.ProjectId.Value.ShouldBe("01HZ9K8YQ3W6V2N4R7T5P0X1AB");
+        deserialized.TenantId.ShouldBe("acme");
+        deserialized.Reason.ShouldBe(ReferenceState.Archived);
+        deserialized.RejectedField.ShouldBe("lifecycle");
+        deserialized.CorrelationId.ShouldBe("corr-archive");
+
+        string reserialized = JsonSerializer.Serialize(deserialized, Options);
+        JsonSerializer.Deserialize<ProjectArchiveRejected>(reserialized, Options).ShouldBe(deserialized);
     }
 
     [Fact]

@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace Hexalith.Projects.Client.Idempotency;
@@ -67,6 +68,7 @@ public static class HexalithIdempotencyHasher
         JToken token = JToken.FromObject(value, JsonSerializer.Create(new JsonSerializerSettings
         {
             ContractResolver = IncludeNullContractResolver.Instance,
+            Converters = { new StringEnumConverter() },
             NullValueHandling = NullValueHandling.Include,
             Culture = CultureInfo.InvariantCulture,
         }));

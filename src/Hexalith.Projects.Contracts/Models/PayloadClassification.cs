@@ -52,6 +52,7 @@ public static class PayloadClassification
         "LifecycleState",
         "InclusionState",
         "ResolutionState",
+        "SetupPreference",
         "ReasonCode",
         "CorrelationId",
         "CausationId",
@@ -75,7 +76,8 @@ public static class PayloadClassification
     /// <summary>
     /// Gets the allowlist of reference-only / metadata-safe field categories that MAY appear on the wire
     /// (opaque IDs, ETags/versions, tenant ID, reference kind/owner-context, timestamps,
-    /// lifecycle/inclusion/resolution states, reason codes, correlation/causation/audit IDs).
+    /// lifecycle/inclusion/resolution states, bounded setup preferences, reason codes,
+    /// correlation/causation/audit IDs).
     /// </summary>
     public static IReadOnlyList<string> SafeFields => _safeFields;
 

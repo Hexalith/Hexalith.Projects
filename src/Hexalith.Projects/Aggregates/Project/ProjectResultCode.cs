@@ -25,6 +25,12 @@ public enum ProjectResultCode
     /// <summary>The create command was accepted and a <c>ProjectCreated</c> event was emitted.</summary>
     Created,
 
+    /// <summary>The setup update command was accepted and a <c>ProjectSetupUpdated</c> event was emitted.</summary>
+    SetupUpdated,
+
+    /// <summary>The archive command was accepted and a <c>ProjectArchived</c> event was emitted.</summary>
+    Archived,
+
     /// <summary>The command is a logical replay of an already-recorded idempotency key with an equivalent payload.</summary>
     IdempotentReplay,
 
@@ -33,6 +39,15 @@ public enum ProjectResultCode
 
     /// <summary>A project already exists on this stream; a second create is rejected.</summary>
     DuplicateProject,
+
+    /// <summary>The command requires an existing project but none has been created on this stream.</summary>
+    ProjectNotFound,
+
+    /// <summary>The project is already archived and cannot be archived again with a different idempotency key.</summary>
+    ProjectAlreadyArchived,
+
+    /// <summary>The project is archived and cannot accept setup updates.</summary>
+    ProjectIsArchived,
 
     /// <summary>The command failed boundary validation (blank name, unsafe setup metadata, malformed identifier).</summary>
     ValidationFailed,

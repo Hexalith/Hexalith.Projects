@@ -316,6 +316,61 @@ public sealed class OpenApiContractSpineTests
     }
 
     [Fact]
+    public void Spine_UpdateSetupAndArchive_AreCommandAsyncMutations()
+    {
+        YamlMappingNode update = RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/setup"), "patch");
+        YamlMappingNode archive = RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/archive"), "post");
+
+        GetScalar(update, "operationId").ShouldBe("UpdateProjectSetup");
+        GetScalar(archive, "operationId").ShouldBe("ArchiveProject");
+
+        foreach (YamlMappingNode operation in new[] { update, archive })
+        {
+            YamlMappingNode responses = RequiredMapping(operation, "responses");
+            GetScalar(RequiredMapping(responses, "202"), "$ref").ShouldBe("#/components/responses/AcceptedCommand");
+            GetScalar(RequiredMapping(responses, "400"), "$ref").ShouldBe("#/components/responses/ValidationFailure");
+            GetScalar(RequiredMapping(responses, "404"), "$ref").ShouldBe("#/components/responses/SafeAuthorizationDenial404");
+            GetScalar(RequiredMapping(responses, "409"), "$ref").ShouldBe("#/components/responses/IdempotencyConflict");
+
+            string[] parameterRefs = RequiredSequence(operation, "parameters")
+                .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
+            parameterRefs.ShouldContain("#/components/parameters/ProjectId");
+            parameterRefs.ShouldContain("#/components/parameters/IdempotencyKey");
+            parameterRefs.ShouldContain("#/components/parameters/CorrelationId");
+            parameterRefs.ShouldContain("#/components/parameters/TaskId");
+
+            string[] equivalence = RequiredSequence(operation, "x-hexalith-idempotency-equivalence")
+                .OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty).ToArray();
+            equivalence.ShouldNotBeEmpty();
+            equivalence.ShouldBe(equivalence.OrderBy(f => f, StringComparer.Ordinal).ToArray());
+        }
+    }
+
+    [Fact]
+    public void Spine_ProjectSetupSchemas_AreClosedCamelCaseAndMetadataOnly()
+    {
+        YamlMappingNode schemas = Schemas();
+        foreach (string schemaName in new[] { "UpdateProjectSetupRequest", "ArchiveProjectRequest", "ProjectSetup", "ConversationStartDefaults" })
+        {
+            YamlMappingNode schema = RequiredMapping(schemas, schemaName);
+            GetScalar(schema, "additionalProperties").ShouldBe("false");
+            foreach (string property in RequiredMapping(schema, "properties").Children.Keys
+                .OfType<YamlScalarNode>().Select(k => k.Value ?? string.Empty))
+            {
+                Regex.IsMatch(property, "^[a-z][A-Za-z0-9]*$").ShouldBeTrue($"property '{property}' on {schemaName} must be camelCase");
+            }
+        }
+
+        RequiredMapping(RequiredMapping(Schemas(), "Project"), "properties")
+            .Children.ContainsKey(new YamlScalarNode("projectSetup")).ShouldBeTrue();
+
+        RequiredEnumValues(RequiredMapping(schemas, "ProjectContextSourceKind"))
+            .ShouldBe(["conversation", "projectFolder", "fileReference", "memory"]);
+        RequiredEnumValues(RequiredMapping(schemas, "LinkedSourcePolicy"))
+            .ShouldBe(["none", "projectsOwnedMetadataOnly", "authorizedReferences"]);
+    }
+
+    [Fact]
     public void Spine_UsesCamelCaseAndIsoDateTimeAndOpaqueProjectIds()
     {
         YamlMappingNode schemas = Schemas();

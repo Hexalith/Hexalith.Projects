@@ -11,15 +11,15 @@ public sealed record HexalithProjectsGeneratedArtifactsVerification(bool IsCurre
 
 public static class HexalithProjectsGeneratedArtifacts
 {
-    public const string ContractSpineSha256 = "788beb928076bdbb34236d53c222f2192f43860ac5c99d3724560ec59cbafa15";
+    public const string ContractSpineSha256 = "4ca1114c4636f18089d1374ed50736330ba5995416ed23c8d71719d8e59b5585";
     public const string GenerationConfigurationSha256 = "57b05e6bb3aaec137283214dbc5e4b6fd19399a8f9b184745cfb5cbef1753548";
-    public const string GeneratedHelpersSha256 = "68586e4986157440681addcd754643f48ecb4009c0a6a8daac07c2a5672c9756";
+    public const string GeneratedHelpersSha256 = "97cfdcc7dc3220cddf75a0d4621af27fe1c9cf025994b9edb70a9d3896c0e781";
 
     // HelperSchemaVersion is a deterministic SHA-256 prefix of the canonical helper-signature
     // shape (schema names, parameter names in declared order, idempotency field paths per
     // variant). It changes whenever helper parameter shapes change, and only then. Not
     // included in the canonical hash.
-    public const string HelperSchemaVersion = "65e91c945cc52970";
+    public const string HelperSchemaVersion = "fdae5a315ef438b3";
 
     public static bool VerifyCurrent(string repositoryRoot) => VerifyCurrentDetailed(repositoryRoot).IsCurrent;
 
@@ -200,6 +200,19 @@ public partial class HexalithProjectsApiException
     }
 }
 
+public partial class ArchiveProjectRequest
+{
+    public string ComputeIdempotencyHash() =>
+        HexalithIdempotencyHasher.Compute(
+            "ArchiveProject",
+            new[]
+            {
+                new IdempotencyField("archive_intent", true, ArchiveIntent),
+                new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
+            })
+;
+}
+
 public partial class CreateProjectRequest
 {
     public string ComputeIdempotencyHash() =>
@@ -208,6 +221,23 @@ public partial class CreateProjectRequest
             new[]
             {
                 new IdempotencyField("project_metadata.display_name", ProjectMetadata is not null, ProjectMetadata?.DisplayName),
+                new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
+            })
+;
+}
+
+public partial class UpdateProjectSetupRequest
+{
+    public string ComputeIdempotencyHash() =>
+        HexalithIdempotencyHasher.Compute(
+            "UpdateProjectSetup",
+            new[]
+            {
+                new IdempotencyField("project_setup.conversation_start_defaults.linked_source_policy", ProjectSetup?.ConversationStartDefaults is not null, ProjectSetup?.ConversationStartDefaults?.LinkedSourcePolicy),
+                new IdempotencyField("project_setup.excluded_source_kinds", ProjectSetup is not null, ProjectSetup?.ExcludedSourceKinds),
+                new IdempotencyField("project_setup.goals", ProjectSetup is not null, ProjectSetup?.Goals),
+                new IdempotencyField("project_setup.preferred_source_kinds", ProjectSetup is not null, ProjectSetup?.PreferredSourceKinds),
+                new IdempotencyField("project_setup.user_instructions", ProjectSetup is not null, ProjectSetup?.UserInstructions),
                 new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
             })
 ;

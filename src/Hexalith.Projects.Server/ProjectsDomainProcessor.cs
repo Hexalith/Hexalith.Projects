@@ -20,6 +20,7 @@ using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
 
 /// <summary>
 /// The Projects <c>/process</c> aggregate-callback domain processor (Story 1.4). Mirrors the Folders
@@ -49,10 +50,22 @@ public sealed class ProjectsDomainProcessor(
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        if (!string.Equals(command.Domain, ProjectsServerModule.DomainName, StringComparison.Ordinal)
-            || !string.Equals(command.CommandType, ProjectsServerModule.CreateProjectCommandType, StringComparison.Ordinal))
+        if (!string.Equals(command.Domain, ProjectsServerModule.DomainName, StringComparison.Ordinal))
         {
-            return Rejection(command, ProjectResultCode.ValidationFailed, null);
+            return Rejection(command, ProjectResultCode.ValidationFailed, null, ProjectsServerModule.CreateProjectCommandType);
+        }
+
+        string? actionToken = command.CommandType switch
+        {
+            ProjectsServerModule.CreateProjectCommandType => ProjectAuthorizationGate.CreateProjectAction,
+            ProjectsServerModule.UpdateProjectSetupCommandType => ProjectAuthorizationGate.UpdateProjectSetupAction,
+            ProjectsServerModule.ArchiveProjectCommandType => ProjectAuthorizationGate.ArchiveProjectAction,
+            _ => null,
+        };
+
+        if (actionToken is null)
+        {
+            return Rejection(command, ProjectResultCode.ValidationFailed, null, command.CommandType);
         }
 
         EventStoreAuthorizationValidationResult validation;
@@ -62,7 +75,7 @@ public sealed class ProjectsDomainProcessor(
                 new EventStoreAuthorizationValidationRequest(
                     command.TenantId,
                     command.UserId,
-                    ProjectAuthorizationGate.CreateProjectAction,
+                    actionToken,
                     command.AggregateId,
                     command.CorrelationId,
                     ReadTaskId(command),
@@ -76,10 +89,16 @@ public sealed class ProjectsDomainProcessor(
 
         if (validation.Status != EventStoreAuthorizationValidationStatus.Allowed)
         {
-            return Rejection(command, ProjectResultCode.Unauthorized, null);
+            return Rejection(command, ProjectResultCode.Unauthorized, null, command.CommandType);
         }
 
-        return ProcessCreate(command, currentState);
+        return command.CommandType switch
+        {
+            ProjectsServerModule.CreateProjectCommandType => ProcessCreate(command, currentState),
+            ProjectsServerModule.UpdateProjectSetupCommandType => ProcessUpdateProjectSetup(command, currentState),
+            ProjectsServerModule.ArchiveProjectCommandType => ProcessArchiveProject(command, currentState),
+            _ => Rejection(command, ProjectResultCode.ValidationFailed, null, command.CommandType),
+        };
     }
 
     private DomainResult ProcessCreate(CommandEnvelope envelope, object? currentState)
@@ -92,12 +111,12 @@ public sealed class ProjectsDomainProcessor(
         catch (Exception ex) when (ex is JsonException or NotSupportedException)
         {
             // Malformed payload / type mismatch fails closed to a metadata-only rejection (no echo).
-            return Rejection(envelope, ProjectResultCode.ValidationFailed, null);
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
         }
 
         if (payload is null || string.IsNullOrWhiteSpace(payload.Name))
         {
-            return Rejection(envelope, ProjectResultCode.ValidationFailed, null);
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
         }
 
         ProjectId projectId;
@@ -107,7 +126,7 @@ public sealed class ProjectsDomainProcessor(
         }
         catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
         {
-            return Rejection(envelope, ProjectResultCode.ValidationFailed, null);
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
         }
 
         // Tenant comes from the verified EventStore envelope (authoritative authority), never the
@@ -134,7 +153,116 @@ public sealed class ProjectsDomainProcessor(
         {
             // Any unexpected exception from the pure aggregate must fail closed without leaking
             // type/stack metadata through the gateway response.
-            return Rejection(envelope, ProjectResultCode.ValidationFailed, null);
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessUpdateProjectSetup(CommandEnvelope envelope, object? currentState)
+    {
+        UpdateProjectSetupPayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<UpdateProjectSetupPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal))
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "requestSchemaVersion", envelope.CommandType);
+        }
+
+        if (payload.Setup is null)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "setup", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        UpdateProjectSetup command = new(
+            envelope.TenantId,
+            projectId,
+            payload.Setup,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessArchiveProject(CommandEnvelope envelope, object? currentState)
+    {
+        try
+        {
+            ArchiveProjectPayload? payload = JsonSerializer.Deserialize<ArchiveProjectPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+            if (payload is null || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal))
+            {
+                return Rejection(envelope, ProjectResultCode.ValidationFailed, "requestSchemaVersion", envelope.CommandType);
+            }
+
+            if (!string.Equals(payload.ArchiveIntent, "archive", StringComparison.Ordinal))
+            {
+                return Rejection(envelope, ProjectResultCode.ValidationFailed, "archiveIntent", envelope.CommandType);
+            }
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        ArchiveProject command = new(
+            envelope.TenantId,
+            projectId,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
         }
 
         return ToDomainResult(result);
@@ -151,7 +279,7 @@ public sealed class ProjectsDomainProcessor(
         => result.Code switch
         {
             // Persist-then-publish: the success event is persisted then published by the pipeline.
-            ProjectResultCode.Created => DomainResult.Success(result.Events),
+            ProjectResultCode.Created or ProjectResultCode.SetupUpdated or ProjectResultCode.Archived => DomainResult.Success(result.Events),
 
             // A logical replay produced no new event — acknowledge as a no-op (the prior event landed).
             ProjectResultCode.IdempotentReplay => DomainResult.NoOp(),
@@ -160,26 +288,31 @@ public sealed class ProjectsDomainProcessor(
             _ => DomainResult.Rejection([result.ToRejectionEvent()]),
         };
 
-    private static DomainResult Rejection(CommandEnvelope envelope, ProjectResultCode code, string? rejectedField)
+    private static DomainResult Rejection(CommandEnvelope envelope, ProjectResultCode code, string? rejectedField, string commandType)
     {
         // Build the metadata-only rejection directly from the envelope when no aggregate result is
         // available (malformed payload). Reason maps through the shared vocabulary.
         ProjectResult synthetic = ProjectResult.Rejected(
-            new CreateProject(
-                envelope.TenantId,
-                SafeProjectId(envelope.AggregateId),
-                "x",
-                null,
-                null,
-                envelope.UserId,
-                envelope.CorrelationId,
-                envelope.CorrelationId,
-                envelope.MessageId),
+            ToContractCommandType(commandType),
+            envelope.TenantId,
+            SafeProjectId(envelope.AggregateId).Value,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId,
             code,
             rejectedField);
 
         return DomainResult.Rejection([synthetic.ToRejectionEvent()]);
     }
+
+    private static string ToContractCommandType(string commandType)
+        => commandType switch
+        {
+            ProjectsServerModule.UpdateProjectSetupCommandType => nameof(UpdateProjectSetup),
+            ProjectsServerModule.ArchiveProjectCommandType => nameof(ArchiveProject),
+            _ => nameof(CreateProject),
+        };
 
     // Produces a placeholder ProjectId so the synthetic rejection result can be built even when the
     // envelope aggregate id is malformed; the rejection event never echoes it (SafePassthrough +
@@ -200,4 +333,12 @@ public sealed class ProjectsDomainProcessor(
         [property: JsonRequired] string? Name,
         string? Description,
         string? SetupMetadata);
+
+    private sealed record UpdateProjectSetupPayload(
+        string? RequestSchemaVersion,
+        ProjectSetup? Setup);
+
+    private sealed record ArchiveProjectPayload(
+        [property: JsonRequired] string? ArchiveIntent,
+        [property: JsonRequired] string? RequestSchemaVersion);
 }

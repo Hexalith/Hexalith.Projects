@@ -71,7 +71,7 @@ public sealed class ProjectAggregateHandleTests
         result.ToRejectionReason().ShouldBe(ReferenceState.Unauthorized);
 
         // Rejection is an event, not an exception.
-        ProjectCreationRejected rejection = result.ToRejectionEvent();
+        ProjectCreationRejected rejection = result.ToRejectionEvent().ShouldBeOfType<ProjectCreationRejected>();
         rejection.ShouldBeAssignableTo<IRejectionEvent>();
         rejection.Reason.ShouldBe(ReferenceState.Unauthorized);
     }
@@ -113,7 +113,7 @@ public sealed class ProjectAggregateHandleTests
         result.RejectedField.ShouldBe(nameof(CreateProject.SetupMetadata));
 
         // The rejection event carries the field NAME only; the rejected value never appears.
-        ProjectCreationRejected rejection = result.ToRejectionEvent();
+        ProjectCreationRejected rejection = result.ToRejectionEvent().ShouldBeOfType<ProjectCreationRejected>();
         rejection.RejectedField.ShouldBe(nameof(CreateProject.SetupMetadata));
         (rejection.RejectedField ?? string.Empty).ShouldNotContain(setup);
     }

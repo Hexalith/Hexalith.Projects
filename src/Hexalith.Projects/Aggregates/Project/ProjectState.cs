@@ -11,6 +11,7 @@ using System.Collections.Generic;
 
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 
 /// <summary>
@@ -25,6 +26,7 @@ using Hexalith.Projects.Contracts.Ui;
 /// <param name="Name">The recorded project name, or null before creation.</param>
 /// <param name="Description">The recorded safe description, or null.</param>
 /// <param name="SetupMetadata">The recorded safe setup-metadata reference, or null.</param>
+/// <param name="Setup">The latest typed metadata-only setup, or null before the first setup update.</param>
 /// <param name="Lifecycle">The recorded lifecycle state, or null before creation.</param>
 /// <param name="IdempotencyFingerprints">The recorded idempotency-key → fingerprint map for replay dedup.</param>
 public sealed record ProjectState(
@@ -34,12 +36,14 @@ public sealed record ProjectState(
     string? Name,
     string? Description,
     string? SetupMetadata,
+    ProjectSetup? Setup,
     ProjectLifecycle? Lifecycle,
     IReadOnlyDictionary<string, string> IdempotencyFingerprints)
 {
     /// <summary>Gets the empty starting state for a project stream that has no events applied.</summary>
     public static ProjectState Empty { get; } = new(
         false,
+        null,
         null,
         null,
         null,

@@ -34,7 +34,8 @@ boundaries.
   `IProjectListReadModel`. The current Story 1.7 in-memory implementation is
   `InMemoryProjectListReadModel`.
 - **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
-- **Source events:** `ProjectCreated`. For the current create-only event set, `UpdatedAt == CreatedAt`.
+- **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, and `ProjectArchived`. Setup updates refresh
+  `UpdatedAt`/sequence only; archive updates lifecycle to `Archived`.
 - **Tenant scoping:** envelope tenant and event tenant must match before the row is folded. Query reads
   filter rows by the authenticated authoritative tenant before response construction.
 - **Stored data:** metadata-only project id, display name, lifecycle state, sequence watermark, created
@@ -53,12 +54,13 @@ boundaries.
   `IProjectDetailReadModel`. The current Story 1.7 in-memory implementation is
   `InMemoryProjectDetailReadModel`.
 - **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
-- **Source events:** `ProjectCreated`. `SetupMetadata` is the safe setup metadata reference already
-  carried by the event; Story 1.7 does not introduce raw setup bodies.
+- **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, and `ProjectArchived`. `SetupMetadata` is the
+  safe setup metadata reference carried by creation; `ProjectSetupUpdated` stores the latest bounded
+  metadata-only setup preferences; `ProjectArchived` updates lifecycle to `Archived`.
 - **Tenant scoping:** envelope tenant and event tenant must match before detail is folded. Open Project
   reads filter the detail by authoritative tenant before response construction.
-- **Stored data:** metadata-only project id, name, description, setup metadata reference, lifecycle
-  state, created/updated timestamps, and sequence watermark.
+- **Stored data:** metadata-only project id, name, description, setup metadata reference, bounded setup
+  preferences, lifecycle state, created/updated timestamps, and sequence watermark.
 - **Rebuild behavior:** `Rebuild(envelopes)` delegates exactly to `Empty.Apply(envelopes)` and keeps the
   projection pure, deterministic, tenant-guarded, and throw-on-unknown-event.
 - **Freshness semantics:** Open Project responses derive freshness/trust metadata from projection state

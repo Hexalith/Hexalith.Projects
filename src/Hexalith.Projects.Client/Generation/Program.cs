@@ -183,7 +183,11 @@ static FieldModel ResolveField(
     }
 
     string rootProperty = ToPropertyName(bodyParts[0]);
-    return new FieldModel(field, $"{rootProperty} is not null", $"{rootProperty}?.{string.Join(".", bodyParts.Skip(1).Select(ToPropertyName))}");
+    string nullSafeExpression = rootProperty + "?." + string.Join("?.", bodyParts.Skip(1).Select(ToPropertyName));
+    string presentExpression = bodyParts.Length == 2
+        ? $"{rootProperty} is not null"
+        : rootProperty + "?." + string.Join("?.", bodyParts.Skip(1).Take(bodyParts.Length - 2).Select(ToPropertyName)) + " is not null";
+    return new FieldModel(field, presentExpression, nullSafeExpression);
 }
 
 static bool SchemaMatchesLogicalPrefix(string schemaName, string prefix)

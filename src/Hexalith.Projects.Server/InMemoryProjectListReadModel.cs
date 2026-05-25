@@ -18,17 +18,17 @@ public sealed class InMemoryProjectListReadModel : IProjectListReadModel
     private ProjectListProjection _projection = ProjectListProjection.Empty;
     private long _sequence;
 
-    /// <summary>Folds a single <c>ProjectCreated</c> event into the list projection.</summary>
+    /// <summary>Folds a single project event into the list projection.</summary>
     /// <param name="dispatchTenantId">The dispatch tenant the event was delivered for.</param>
-    /// <param name="created">The project-created event.</param>
-    public void Project(string dispatchTenantId, ProjectCreated created)
+    /// <param name="projectEvent">The project event.</param>
+    public void Project(string dispatchTenantId, IProjectEvent projectEvent)
     {
-        ArgumentNullException.ThrowIfNull(created);
+        ArgumentNullException.ThrowIfNull(projectEvent);
 
         lock (_gate)
         {
             long sequence = ++_sequence;
-            _projection = _projection.Apply([new ProjectProjectionEnvelope(dispatchTenantId, sequence, created)]);
+            _projection = _projection.Apply([new ProjectProjectionEnvelope(dispatchTenantId, sequence, projectEvent)]);
         }
     }
 

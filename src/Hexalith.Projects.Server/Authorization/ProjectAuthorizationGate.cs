@@ -28,6 +28,12 @@ public sealed class ProjectAuthorizationGate(
     /// <summary>The action token required to list project rows.</summary>
     public const string ListProjectsAction = "projects:list";
 
+    /// <summary>The action token required to update project setup.</summary>
+    public const string UpdateProjectSetupAction = "projects:update_setup";
+
+    /// <summary>The action token required to archive a project.</summary>
+    public const string ArchiveProjectAction = "projects:archive";
+
     /// <summary>Authorizes project creation.</summary>
     public async Task<ProjectAuthorizationResult> AuthorizeCreateAsync(
         IProjectTenantContextAccessor tenantContext,
@@ -81,6 +87,44 @@ public sealed class ProjectAuthorizationGate(
             taskId,
             allowBoundedStaleTenantProjection: true,
             requireProjectDetail: false,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes a project setup update.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeUpdateSetupAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            UpdateProjectSetupAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes a project archive mutation.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeArchiveAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            ArchiveProjectAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
             cancellationToken).ConfigureAwait(false);
 
     private async Task<ProjectAuthorizationResult> AuthorizeAsync(

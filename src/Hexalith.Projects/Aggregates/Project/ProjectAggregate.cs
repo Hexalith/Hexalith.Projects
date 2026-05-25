@@ -77,6 +77,114 @@ public static partial class ProjectAggregate
     }
 
     /// <summary>
+    /// Handles an <see cref="UpdateProjectSetup"/> command against the current state.
+    /// </summary>
+    /// <param name="state">The current aggregate state.</param>
+    /// <param name="command">The setup update command.</param>
+    /// <param name="occurredAt">The event timestamp supplied by the command pipeline.</param>
+    /// <returns>An accepted setup-update result, an idempotent replay, or a rejection.</returns>
+    public static ProjectResult Handle(ProjectState state, UpdateProjectSetup command, DateTimeOffset occurredAt)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult validation = ProjectCommandValidator.Validate(command);
+        if (!validation.IsAccepted)
+        {
+            return ProjectResult.Rejected(command, validation.Code, validation.RejectedField);
+        }
+
+        if (state.IdempotencyFingerprints.TryGetValue(command.IdempotencyKey, out string? priorFingerprint))
+        {
+            return string.Equals(priorFingerprint, validation.IdempotencyFingerprint, StringComparison.Ordinal)
+                ? ProjectResult.Rejected(command, ProjectResultCode.IdempotentReplay)
+                : ProjectResult.Rejected(command, ProjectResultCode.IdempotencyConflict);
+        }
+
+        if (!state.IsCreated)
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.ProjectNotFound);
+        }
+
+        if (!IsSameIdentity(state, command))
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.TenantMismatch);
+        }
+
+        if (state.Lifecycle == ProjectLifecycle.Archived)
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.ProjectIsArchived);
+        }
+
+        ProjectSetupUpdated updated = new(
+            command.TenantId,
+            command.ProjectId.Value,
+            validation.CanonicalSetup!,
+            command.ActorPrincipalId,
+            command.CorrelationId,
+            command.TaskId,
+            command.IdempotencyKey,
+            validation.IdempotencyFingerprint!,
+            occurredAt);
+
+        return ProjectResult.Accepted(command, ProjectResultCode.SetupUpdated, [updated]);
+    }
+
+    /// <summary>
+    /// Handles an <see cref="ArchiveProject"/> command against the current state.
+    /// </summary>
+    /// <param name="state">The current aggregate state.</param>
+    /// <param name="command">The archive command.</param>
+    /// <param name="occurredAt">The event timestamp supplied by the command pipeline.</param>
+    /// <returns>An accepted archive result, an idempotent replay, or a rejection.</returns>
+    public static ProjectResult Handle(ProjectState state, ArchiveProject command, DateTimeOffset occurredAt)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult validation = ProjectCommandValidator.Validate(command);
+        if (!validation.IsAccepted)
+        {
+            return ProjectResult.Rejected(command, validation.Code, validation.RejectedField);
+        }
+
+        if (state.IdempotencyFingerprints.TryGetValue(command.IdempotencyKey, out string? priorFingerprint))
+        {
+            return string.Equals(priorFingerprint, validation.IdempotencyFingerprint, StringComparison.Ordinal)
+                ? ProjectResult.Rejected(command, ProjectResultCode.IdempotentReplay)
+                : ProjectResult.Rejected(command, ProjectResultCode.IdempotencyConflict);
+        }
+
+        if (!state.IsCreated)
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.ProjectNotFound);
+        }
+
+        if (!IsSameIdentity(state, command))
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.TenantMismatch);
+        }
+
+        if (state.Lifecycle == ProjectLifecycle.Archived)
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.ProjectAlreadyArchived);
+        }
+
+        ProjectArchived archived = new(
+            command.TenantId,
+            command.ProjectId.Value,
+            ProjectLifecycle.Archived,
+            command.ActorPrincipalId,
+            command.CorrelationId,
+            command.TaskId,
+            command.IdempotencyKey,
+            validation.IdempotencyFingerprint!,
+            occurredAt);
+
+        return ProjectResult.Accepted(command, ProjectResultCode.Archived, [archived]);
+    }
+
+    /// <summary>
     /// Deterministic-timestamp test overload (mirrors Folders). Production callers must always supply
     /// <c>OccurredAt</c> from the pipeline's <c>TimeProvider</c> so events carry real wall-clock
     /// evidence rather than <see cref="DateTimeOffset.MinValue"/>.
@@ -86,4 +194,22 @@ public static partial class ProjectAggregate
     /// <returns>The handle result with a <see cref="DateTimeOffset.MinValue"/> timestamp.</returns>
     public static ProjectResult Handle(ProjectState state, CreateProject command)
         => Handle(state, command, DateTimeOffset.MinValue);
+
+    /// <summary>Deterministic-timestamp test overload for setup updates.</summary>
+    /// <param name="state">The current aggregate state.</param>
+    /// <param name="command">The setup update command.</param>
+    /// <returns>The handle result with a <see cref="DateTimeOffset.MinValue"/> timestamp.</returns>
+    public static ProjectResult Handle(ProjectState state, UpdateProjectSetup command)
+        => Handle(state, command, DateTimeOffset.MinValue);
+
+    /// <summary>Deterministic-timestamp test overload for archives.</summary>
+    /// <param name="state">The current aggregate state.</param>
+    /// <param name="command">The archive command.</param>
+    /// <returns>The handle result with a <see cref="DateTimeOffset.MinValue"/> timestamp.</returns>
+    public static ProjectResult Handle(ProjectState state, ArchiveProject command)
+        => Handle(state, command, DateTimeOffset.MinValue);
+
+    private static bool IsSameIdentity(ProjectState state, IProjectCommand command)
+        => string.Equals(state.TenantId, command.TenantId, StringComparison.Ordinal)
+            && string.Equals(state.ProjectId, command.ProjectId.Value, StringComparison.Ordinal);
 }

@@ -1,0 +1,28 @@
+{
+  "tenantId": "acme",
+  "projectId": "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+  "setup": {
+    "goals": [
+      "keep continuity current"
+    ],
+    "userInstructions": [
+      "use safe project references"
+    ],
+    "preferredSourceKinds": [
+      "conversation",
+      "memory"
+    ],
+    "excludedSourceKinds": [
+      "fileReference"
+    ],
+    "conversationStartDefaults": {
+      "linkedSourcePolicy": "authorizedReferences"
+    }
+  },
+  "actorPrincipalId": "actor-001",
+  "correlationId": "corr-001",
+  "taskId": "task-001",
+  "idempotencyKey": "idem-key-setup",
+  "idempotencyFingerprint": "sha256:setup",
+  "occurredAt": "1970-01-01T00:00:00+00:00"
+}

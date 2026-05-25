@@ -98,10 +98,37 @@ public sealed record ProjectDetailProjection
                         created.Name,
                         created.Description,
                         created.SetupMetadata,
+                        null,
                         created.Lifecycle,
                         created.OccurredAt,
                         created.OccurredAt,
                         envelope.Sequence);
+                    break;
+
+                case ProjectSetupUpdated updated:
+                    if (projects.TryGetValue(key, out ProjectDetailItem? setupDetail))
+                    {
+                        projects[key] = setupDetail with
+                        {
+                            Setup = updated.Setup,
+                            UpdatedAt = updated.OccurredAt,
+                            Sequence = envelope.Sequence,
+                        };
+                    }
+
+                    break;
+
+                case ProjectArchived archived:
+                    if (projects.TryGetValue(key, out ProjectDetailItem? archivedDetail))
+                    {
+                        projects[key] = archivedDetail with
+                        {
+                            Lifecycle = archived.Lifecycle,
+                            UpdatedAt = archived.OccurredAt,
+                            Sequence = envelope.Sequence,
+                        };
+                    }
+
                     break;
 
                 default:

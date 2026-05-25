@@ -23,6 +23,18 @@ public interface IProjectCommandSubmitter
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>The submission outcome.</returns>
     Task<ProjectCommandSubmissionResult> SubmitCreateProjectAsync(CreateProject command, CancellationToken cancellationToken = default);
+
+    /// <summary>Submits the setup update command and returns the accept/replay/denial outcome.</summary>
+    /// <param name="command">The validated setup update command.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The submission outcome.</returns>
+    Task<ProjectCommandSubmissionResult> SubmitUpdateProjectSetupAsync(UpdateProjectSetup command, CancellationToken cancellationToken = default);
+
+    /// <summary>Submits the archive command and returns the accept/replay/denial outcome.</summary>
+    /// <param name="command">The validated archive command.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The submission outcome.</returns>
+    Task<ProjectCommandSubmissionResult> SubmitArchiveProjectAsync(ArchiveProject command, CancellationToken cancellationToken = default);
 }
 
 /// <summary>The outcome category of a command submission through the EventStore command pipeline.</summary>

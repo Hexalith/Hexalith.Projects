@@ -34,6 +34,7 @@ These categories MAY appear in events, projections, DTOs, logs, and audit record
 | `LifecycleState` | `ProjectLifecycle` value (e.g. `Active`, `Archived`). |
 | `InclusionState` | `ReferenceState` value (e.g. `Included`, `Stale`, `Unauthorized`). |
 | `ResolutionState` | `ResolutionResult` value (e.g. `NoMatch`, `SingleCandidate`). |
+| `SetupPreference` | Bounded Projects-owned setup preferences such as goals, user instructions, source-kind choices, and conversation-start defaults. |
 | `ReasonCode` | `ProjectReasonCode` / `ReferenceState` code (the canonical, name-based signal). |
 | `CorrelationId` | Correlation identifier. |
 | `CausationId` | Causation identifier. |

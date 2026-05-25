@@ -23,6 +23,12 @@ public static class ProjectsServerModule
     /// <summary>The fully qualified <c>CreateProject</c> command type discriminator on the wire.</summary>
     public const string CreateProjectCommandType = "Hexalith.Projects.Commands.CreateProject";
 
+    /// <summary>The fully qualified <c>UpdateProjectSetup</c> command type discriminator on the wire.</summary>
+    public const string UpdateProjectSetupCommandType = "Hexalith.Projects.Commands.UpdateProjectSetup";
+
+    /// <summary>The fully qualified <c>ArchiveProject</c> command type discriminator on the wire.</summary>
+    public const string ArchiveProjectCommandType = "Hexalith.Projects.Commands.ArchiveProject";
+
     /// <summary>The aggregate-callback route the EventStore command pipeline invokes.</summary>
     public const string ProcessRoute = "/process";
 

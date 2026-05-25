@@ -64,7 +64,20 @@ public static class ProjectStateApply
                 Name = created.Name,
                 Description = created.Description,
                 SetupMetadata = created.SetupMetadata,
+                Setup = null,
                 Lifecycle = created.Lifecycle,
+                IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+            },
+
+            ProjectSetupUpdated updated => state with
+            {
+                Setup = updated.Setup,
+                IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+            },
+
+            ProjectArchived archived => state with
+            {
+                Lifecycle = archived.Lifecycle,
                 IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
             },
 

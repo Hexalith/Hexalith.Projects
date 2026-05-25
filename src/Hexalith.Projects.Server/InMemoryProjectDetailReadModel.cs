@@ -28,20 +28,20 @@ public sealed class InMemoryProjectDetailReadModel : IProjectDetailReadModel
     private long _sequence;
 
     /// <summary>
-    /// Folds a single <c>ProjectCreated</c> event into the projection (the dispatch path the Workers /
-    /// projection subscriber drives in Story 1.9). Pure projection update; tenant-guarded by the
-    /// envelope/event tenant agreement enforced inside the projection.
+    /// Folds a single project event into the projection (the dispatch path the Workers / projection
+    /// subscriber drives in Story 1.9). Pure projection update; tenant-guarded by the envelope/event
+    /// tenant agreement enforced inside the projection.
     /// </summary>
     /// <param name="dispatchTenantId">The dispatch (envelope) tenant the event was delivered for.</param>
-    /// <param name="created">The project-created event.</param>
-    public void Project(string dispatchTenantId, ProjectCreated created)
+    /// <param name="projectEvent">The project event.</param>
+    public void Project(string dispatchTenantId, IProjectEvent projectEvent)
     {
-        ArgumentNullException.ThrowIfNull(created);
+        ArgumentNullException.ThrowIfNull(projectEvent);
 
         lock (_gate)
         {
             long sequence = ++_sequence;
-            _projection = _projection.Apply([new ProjectProjectionEnvelope(dispatchTenantId, sequence, created)]);
+            _projection = _projection.Apply([new ProjectProjectionEnvelope(dispatchTenantId, sequence, projectEvent)]);
         }
     }
 

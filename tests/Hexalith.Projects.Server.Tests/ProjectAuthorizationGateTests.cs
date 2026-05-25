@@ -71,6 +71,55 @@ public sealed class ProjectAuthorizationGateTests
         result.EvaluatedLayers.ShouldBe(AuthorizationOrder.LayeredProjectAuthorization);
     }
 
+    [Theory]
+    [InlineData("setup")]
+    [InlineData("archive")]
+    public async Task AuthorizeMutation_WhenAllowed_RequiresProjectDetailAndEvaluatesDeclaredLayerOrder(string mutation)
+    {
+        IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
+        ProjectDetailItem detail = new(
+            "tenant-a",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "Project",
+            null,
+            null,
+            null,
+            ProjectLifecycle.Active,
+            Now,
+            Now,
+            1);
+        ProjectAuthorizationGate gate = new(
+            new TenantAccessAuthorizer(store, new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions()),
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new SingleProjectReadModel(detail));
+
+        FixedProjectTenantContextAccessor tenantContext = new(
+            "tenant-a",
+            "principal-a",
+            [ProjectAuthorizationGate.UpdateProjectSetupAction, ProjectAuthorizationGate.ArchiveProjectAction]);
+
+        ProjectAuthorizationResult result = mutation == "setup"
+            ? await gate.AuthorizeUpdateSetupAsync(
+                detail.ProjectId,
+                tenantContext,
+                new DefaultHttpContext(),
+                "corr-a",
+                "task-a",
+                TestContext.Current.CancellationToken).ConfigureAwait(true)
+            : await gate.AuthorizeArchiveAsync(
+                detail.ProjectId,
+                tenantContext,
+                new DefaultHttpContext(),
+                "corr-a",
+                "task-a",
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        result.IsAllowed.ShouldBeTrue();
+        result.ProjectDetail.ShouldBe(detail);
+        result.EvaluatedLayers.ShouldBe(AuthorizationOrder.LayeredProjectAuthorization);
+    }
+
     [Fact]
     public async Task AuthorizeList_WhenListPermissionMissing_DeniesAtClaimTransformLayer()
     {
@@ -106,6 +155,7 @@ public sealed class ProjectAuthorizationGateTests
             "Archived Project",
             "Safe description",
             "setup-reference",
+            null,
             ProjectLifecycle.Archived,
             Now,
             Now,

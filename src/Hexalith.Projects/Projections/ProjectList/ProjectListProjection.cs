@@ -109,6 +109,31 @@ public sealed record ProjectListProjection
                         created.OccurredAt);
                     break;
 
+                case ProjectSetupUpdated updated:
+                    if (projects.TryGetValue(key, out ProjectListItem? setupRow))
+                    {
+                        projects[key] = setupRow with
+                        {
+                            Sequence = envelope.Sequence,
+                            UpdatedAt = updated.OccurredAt,
+                        };
+                    }
+
+                    break;
+
+                case ProjectArchived archived:
+                    if (projects.TryGetValue(key, out ProjectListItem? archivedRow))
+                    {
+                        projects[key] = archivedRow with
+                        {
+                            Lifecycle = archived.Lifecycle,
+                            Sequence = envelope.Sequence,
+                            UpdatedAt = archived.OccurredAt,
+                        };
+                    }
+
+                    break;
+
                 default:
                     // Diverging from ProjectStateApply (which throws on unknown event types) would let
                     // new event types replay as no-ops in the projection while the aggregate fails

@@ -171,6 +171,76 @@ public sealed class ClientGenerationTests
     }
 
     [Fact]
+    public void UpdateProjectSetupHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new UpdateProjectSetupRequest
+        {
+            ProjectSetup = new ProjectSetup
+            {
+                Goals = ["keep continuity current"],
+                UserInstructions = ["use safe project references"],
+                PreferredSourceKinds = [ProjectContextSourceKind.Conversation, ProjectContextSourceKind.Memory],
+                ExcludedSourceKinds = [ProjectContextSourceKind.FileReference],
+                ConversationStartDefaults = new ConversationStartDefaults
+                {
+                    LinkedSourcePolicy = LinkedSourcePolicy.AuthorizedReferences,
+                },
+            },
+            RequestSchemaVersion = UpdateProjectSetupRequestRequestSchemaVersion.V1,
+        };
+
+        request.ComputeIdempotencyHash().ShouldBe(ExpectedHash(
+            "operation=UpdateProjectSetup",
+            "field=project_setup.conversation_start_defaults.linked_source_policy;present=true;value=s:authorizedReferences",
+            "field=project_setup.excluded_source_kinds;present=true;value=j:[\"fileReference\"]",
+            "field=project_setup.goals;present=true;value=j:[\"keep continuity current\"]",
+            "field=project_setup.preferred_source_kinds;present=true;value=j:[\"conversation\",\"memory\"]",
+            "field=project_setup.user_instructions;present=true;value=j:[\"use safe project references\"]",
+            "field=request_schema_version;present=true;value=s:v1"));
+    }
+
+    [Fact]
+    public void UpdateProjectSetupHelperTreatsOmittedConversationDefaultsAsOmitted()
+    {
+        var request = new UpdateProjectSetupRequest
+        {
+            ProjectSetup = new ProjectSetup
+            {
+                Goals = ["Quote \" marker = ok; keep"],
+                UserInstructions = ["Use metadata = yes; payload no"],
+                PreferredSourceKinds = [ProjectContextSourceKind.Conversation],
+                ExcludedSourceKinds = [],
+                ConversationStartDefaults = null,
+            },
+            RequestSchemaVersion = UpdateProjectSetupRequestRequestSchemaVersion.V1,
+        };
+
+        request.ComputeIdempotencyHash().ShouldBe(ExpectedHash(
+            "operation=UpdateProjectSetup",
+            "field=project_setup.conversation_start_defaults.linked_source_policy;present=false;value=omitted",
+            "field=project_setup.excluded_source_kinds;present=true;value=j:[]",
+            "field=project_setup.goals;present=true;value=j:[\"Quote \\\" marker = ok; keep\"]",
+            "field=project_setup.preferred_source_kinds;present=true;value=j:[\"conversation\"]",
+            "field=project_setup.user_instructions;present=true;value=j:[\"Use metadata = yes; payload no\"]",
+            "field=request_schema_version;present=true;value=s:v1"));
+    }
+
+    [Fact]
+    public void ArchiveProjectHelperUsesDeclaredIntentAndSchemaVersion()
+    {
+        var request = new ArchiveProjectRequest
+        {
+            ArchiveIntent = ArchiveProjectRequestArchiveIntent.Archive,
+            RequestSchemaVersion = ArchiveProjectRequestRequestSchemaVersion.V1,
+        };
+
+        request.ComputeIdempotencyHash().ShouldBe(ExpectedHash(
+            "operation=ArchiveProject",
+            "field=archive_intent;present=true;value=s:archive",
+            "field=request_schema_version;present=true;value=s:v1"));
+    }
+
+    [Fact]
     public void NullAndOmittedMetadataProduceDifferentCanonicalHashes()
     {
         var present = new CreateProjectRequest

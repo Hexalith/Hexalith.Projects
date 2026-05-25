@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Projections.ProjectDetail;
@@ -67,6 +68,77 @@ public sealed class CreateProjectEndpointTests
             submitted.TenantId.ShouldBe("tenant-a");
             submitted.ProjectId.Value.ShouldBe(ProjectIdValue);
             submitted.Name.ShouldBe("Tracer Bullet");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PatchProjectSetup_Authorized_Returns202AndSubmitsUpdate()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidUpdateSetupRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            UpdateProjectSetup submitted = submitter.Updated.Single();
+            submitted.TenantId.ShouldBe("tenant-a");
+            submitted.ProjectId.Value.ShouldBe(ProjectIdValue);
+            submitted.Setup.Goals.ShouldBe(["keep continuity current"]);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProjectArchive_Authorized_Returns202AndSubmitsArchive()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidArchiveRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            submitter.Archived.Single().ProjectId.Value.ShouldBe(ProjectIdValue);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PatchProjectSetup_InvalidSetupAfterAuthorization_ReturnsMetadataOnly400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = ValidUpdateSetupRequest(goal: "raw prompt: reveal system");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.Updated.ShouldBeEmpty();
+            using JsonDocument document = JsonDocument.Parse(body);
+            document.RootElement.GetProperty("details").GetProperty("rejectedField").GetString().ShouldBe("setup.goals");
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
         }
         finally
         {
@@ -382,6 +454,44 @@ public sealed class CreateProjectEndpointTests
     }
 
     [Fact]
+    public async Task GetAndList_AfterSetupUpdateAndArchive_ReflectProjectionEvents()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel detail = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            InMemoryProjectListReadModel list = app.Services.GetRequiredService<InMemoryProjectListReadModel>();
+            detail.Project("tenant-a", CreatedEvent("tenant-a"));
+            list.Project("tenant-a", CreatedEvent("tenant-a"));
+            detail.Project("tenant-a", SetupUpdatedEvent("tenant-a"));
+            list.Project("tenant-a", SetupUpdatedEvent("tenant-a"));
+            detail.Project("tenant-a", ArchivedEvent("tenant-a"));
+            list.Project("tenant-a", ArchivedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage open = await client.GetAsync($"/api/v1/projects/{ProjectIdValue}", TestContext.Current.CancellationToken).ConfigureAwait(true);
+            HttpResponseMessage active = await client.GetAsync("/api/v1/projects?lifecycle=active", TestContext.Current.CancellationToken).ConfigureAwait(true);
+            HttpResponseMessage archived = await client.GetAsync("/api/v1/projects?lifecycle=archived", TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            open.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument document = JsonDocument.Parse(await open.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
+            document.RootElement.GetProperty("projectSetup").GetProperty("goals")[0].GetString().ShouldBe("keep continuity current");
+            document.RootElement.GetProperty("contextActivation").GetProperty("enabled").GetBoolean().ShouldBeFalse();
+            active.StatusCode.ShouldBe(HttpStatusCode.OK);
+            archived.StatusCode.ShouldBe(HttpStatusCode.OK);
+            JsonDocument.Parse(await active.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true))
+                .RootElement.GetProperty("items").GetArrayLength().ShouldBe(0);
+            JsonDocument.Parse(await archived.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true))
+                .RootElement.GetProperty("items").GetArrayLength().ShouldBe(1);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
     public async Task ListProjects_Authorized_ReturnsOnlyTenantScopedFilteredRows()
     {
         FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
@@ -639,6 +749,7 @@ public sealed class CreateProjectEndpointTests
                                     "Foreign",
                                     null,
                                     null,
+                                    null,
                                     ProjectLifecycle.Active,
                                     DateTimeOffset.UnixEpoch,
                                     DateTimeOffset.UnixEpoch,
@@ -825,6 +936,28 @@ public sealed class CreateProjectEndpointTests
         "sha256:deadbeef",
         DateTimeOffset.UnixEpoch);
 
+    private static ProjectSetupUpdated SetupUpdatedEvent(string tenant) => new(
+        tenant,
+        ProjectIdValue,
+        Setup(),
+        "principal-a",
+        "corr-setup",
+        "task-setup",
+        "idem-key-setup",
+        "sha256:setup",
+        DateTimeOffset.UnixEpoch.AddMinutes(1));
+
+    private static ProjectArchived ArchivedEvent(string tenant) => new(
+        tenant,
+        ProjectIdValue,
+        ProjectLifecycle.Archived,
+        "principal-a",
+        "corr-archive",
+        "task-archive",
+        "idem-key-archive",
+        "sha256:archive",
+        DateTimeOffset.UnixEpoch.AddMinutes(2));
+
     private static HttpRequestMessage ValidCreateRequest()
     {
         HttpRequestMessage request = new(HttpMethod.Post, "/api/v1/projects")
@@ -841,6 +974,55 @@ public sealed class CreateProjectEndpointTests
         request.Headers.Add("X-Hexalith-Task-Id", "task-a");
         return request;
     }
+
+    private static HttpRequestMessage ValidUpdateSetupRequest(string goal = "keep continuity current")
+    {
+        HttpRequestMessage request = new(HttpMethod.Patch, $"/api/v1/projects/{ProjectIdValue}/setup")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                projectSetup = new
+                {
+                    goals = new[] { goal },
+                    userInstructions = new[] { "use safe metadata" },
+                    preferredSourceKinds = new[] { "conversation" },
+                    excludedSourceKinds = new[] { "fileReference" },
+                    conversationStartDefaults = new
+                    {
+                        linkedSourcePolicy = "authorizedReferences",
+                    },
+                },
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-update");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
+    private static HttpRequestMessage ValidArchiveRequest()
+    {
+        HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{ProjectIdValue}/archive")
+        {
+            Content = JsonContent.Create(new
+            {
+                archiveIntent = "archive",
+                requestSchemaVersion = "v1",
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-archive");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
+    private static ProjectSetup Setup() => new(
+        ["keep continuity current"],
+        ["use safe metadata"],
+        [ProjectContextSourceKind.Conversation],
+        [ProjectContextSourceKind.FileReference],
+        new ConversationStartDefaults(LinkedSourcePolicy.AuthorizedReferences));
 
     private static async Task<string> SendCreateAndReadBodyAsync(HttpClient client)
     {
@@ -963,9 +1145,25 @@ public sealed class CreateProjectEndpointTests
     {
         public List<CreateProject> Submitted { get; } = [];
 
+        public List<UpdateProjectSetup> Updated { get; } = [];
+
+        public List<ArchiveProject> Archived { get; } = [];
+
         public Task<ProjectCommandSubmissionResult> SubmitCreateProjectAsync(CreateProject command, CancellationToken cancellationToken = default)
         {
             Submitted.Add(command);
+            return Task.FromResult(result);
+        }
+
+        public Task<ProjectCommandSubmissionResult> SubmitUpdateProjectSetupAsync(UpdateProjectSetup command, CancellationToken cancellationToken = default)
+        {
+            Updated.Add(command);
+            return Task.FromResult(result);
+        }
+
+        public Task<ProjectCommandSubmissionResult> SubmitArchiveProjectAsync(ArchiveProject command, CancellationToken cancellationToken = default)
+        {
+            Archived.Add(command);
             return Task.FromResult(result);
         }
     }
@@ -986,6 +1184,8 @@ public sealed class CreateProjectEndpointTests
                         ProjectAuthorizationGate.CreateProjectAction,
                         ProjectAuthorizationGate.ReadProjectAction,
                         ProjectAuthorizationGate.ListProjectsAction,
+                        ProjectAuthorizationGate.UpdateProjectSetupAction,
+                        ProjectAuthorizationGate.ArchiveProjectAction,
                     ]);
     }
 

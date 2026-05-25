@@ -10,6 +10,7 @@ using System;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Testing.Leakage;
@@ -56,6 +57,56 @@ public sealed class NoPayloadLeakageTests
             new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"));
 
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(rejection));
+    }
+
+    [Fact]
+    public void ProjectSetupUpdated_SerializesMetadataOnly()
+    {
+        ProjectSetupUpdated updated = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            new ProjectSetup(
+                ["keep continuity current"],
+                ["use safe project references"],
+                [ProjectContextSourceKind.Conversation, ProjectContextSourceKind.Memory],
+                [ProjectContextSourceKind.FileReference],
+                new ConversationStartDefaults(LinkedSourcePolicy.AuthorizedReferences)),
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-key-setup",
+            "sha256:setup",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(updated));
+    }
+
+    [Fact]
+    public void ProjectArchived_SerializesMetadataOnly()
+    {
+        ProjectArchived archived = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            ProjectLifecycle.Archived,
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-key-archive",
+            "sha256:archive",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(archived));
+    }
+
+    [Fact]
+    public void SetupAndArchiveRejections_SerializeMetadataOnly()
+    {
+        var projectId = new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB");
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(
+            new ProjectSetupUpdateRejected(projectId, "acme", ReferenceState.InvalidReference, "setup.goals", "corr-setup")));
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(
+            new ProjectArchiveRejected(projectId, "acme", ReferenceState.Archived, "lifecycle", "corr-archive")));
     }
 
     [Fact]
