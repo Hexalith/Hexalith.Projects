@@ -11,6 +11,11 @@ stepsCompleted:
   - 9
   - 10
   - 11
+  - 12
+  - 13
+  - 14
+lastStep: 14
+status: complete
 inputDocuments:
   - _bmad-output/planning-artifacts/briefs/brief-Hexalith.Projects-2026-05-24/brief.md
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
@@ -784,3 +789,243 @@ Implementation rules:
 - Advanced filters for tenant, lifecycle, reference state, reason code, and timestamp.
 - CLI/MCP/Web parity validation views or evidence outputs.
 - Accessibility and automation refinements for generated FrontComposer views.
+
+## UX Consistency Patterns
+
+### Button Hierarchy
+
+Web UX should follow FrontComposer/Fluent UI action hierarchy.
+
+**Primary actions** are reserved for the main safe next step in the current context, such as inspect, run dry-run, confirm maintenance action, or export diagnostic metadata.
+
+**Secondary actions** support non-destructive alternatives such as cancel, return to diagnostics, copy ID, open related reference, or view audit event.
+
+**Destructive or state-changing actions** must not appear as casual primary actions. They require preview, dry-run where applicable, confirmation, tenant scope, target identifiers, expected impact, and expected audit event.
+
+**CLI and MCP parity:** CLI commands and MCP tools should mirror the same action hierarchy through command naming and tool classification:
+
+- Read-only diagnostics: `describe`, `inspect`, `trace`, `validate`, `list`.
+- Preview actions: `dry-run`, `preview`.
+- Mutating actions: `archive`, `restore`, `relink`, `unlink`, `reevaluate`, requiring explicit target and confirmation semantics.
+
+### Feedback Patterns
+
+Feedback must be specific, safe, and consistent across surfaces.
+
+**Success feedback** should include operation result, tenant scope, project/reference identifiers, timestamp, and audit event ID when state changed.
+
+**Warning feedback** should identify non-blocking risks such as `stale`, `archived`, `ambiguous`, `excluded`, or `partialReferenceAvailability`.
+
+**Error feedback** should use safe reason codes such as `tenant_mismatch`, `unauthorized`, `unavailable`, `conflict`, `invalidReference`, or `validationFailed`. Error text must not echo secrets, prompts, transcript snippets, file contents, memory payloads, or unsafe derived summaries.
+
+**Fail-closed feedback** should explain the safe category of refusal without exposing protected details.
+
+**Loading feedback** should distinguish metadata retrieval, reference validation, resolution trace loading, dry-run execution, and maintenance execution.
+
+### Form Patterns
+
+Forms are used only for operational filtering, diagnostic input, and safe maintenance actions.
+
+**Diagnostic forms** should accept safe identifiers such as tenant ID, project ID, conversation reference, folder reference, file reference, memory reference, resolution case ID, audit event ID, correlation ID, lifecycle state, reason code, and timestamp range.
+
+**Maintenance forms** must show current state, proposed state, affected identifiers, tenant scope, warnings, dry-run result, and expected audit event before execution.
+
+**Validation** should happen before state changes and should return field-specific safe errors. Validation messages should identify the invalid field or reference type without echoing unsafe values.
+
+**CLI and MCP parity:** CLI arguments and MCP tool schemas should use the same field names and validation semantics as Web forms.
+
+### Navigation Patterns
+
+Web navigation should follow operational resource-console patterns:
+
+- Project inventory as the main entry point.
+- Project detail as the central inspector.
+- Tabs or sections for metadata, references, resolution, audit, and actions.
+- Deep links from warnings, reference rows, resolution candidates, and audit events into the relevant detail view.
+- Breadcrumb or context header showing tenant, project, and mode.
+
+CLI navigation is command-based and should preserve predictable command grouping:
+
+- `projects list`
+- `projects describe`
+- `projects trace-resolution`
+- `projects validate-references`
+- `projects audit`
+- `projects dry-run`
+- `projects archive|restore|relink|unlink`
+
+MCP navigation is resource/tool-based and should separate read-only resources from mutating tools.
+
+### Additional Patterns
+
+#### Status and Reason-Code Pattern
+
+Every state must have a stable code, display label, accessible name, and severity mapping. Color is supportive only.
+
+Examples:
+
+- `active`
+- `archived`
+- `included`
+- `excluded`
+- `unauthorized`
+- `unavailable`
+- `stale`
+- `ambiguous`
+- `tenant_mismatch`
+- `conflict`
+- `invalidReference`
+
+#### Empty State Pattern
+
+Empty states must distinguish true absence from denied or unavailable data.
+
+Examples:
+
+- No projects found.
+- No references linked.
+- No audit events available.
+- Data unavailable.
+- Access denied.
+- Filter returned no results.
+
+These states must not collapse into a blank table.
+
+#### Audit Evidence Pattern
+
+Every state-changing action must end with metadata-only audit evidence including action, actor or source, tenant, project ID, affected reference IDs when applicable, timestamp, correlation ID, result, and audit event ID.
+
+#### Safe Export Pattern
+
+Diagnostic export should include only safe metadata fields and explicitly indicate that payload data is excluded. Export should be available through Web copy/download, CLI structured output, and MCP resource responses.
+
+#### Confirmation Pattern
+
+Confirmations are required for mutating actions. Confirmation surfaces must show tenant scope, target identifiers, current state, proposed state, warnings, expected audit event, and whether a dry-run passed.
+
+#### Cross-Surface Parity Pattern
+
+For the same project or resolution case, CLI, MCP, and Web must expose equivalent operational facts even when formatting differs.
+
+## Responsive Design & Accessibility
+
+### Responsive Strategy
+
+Hexalith.Projects Web UX should be desktop-optimized and responsive. The primary Web use case is operational diagnosis and maintenance, which benefits from larger screens, dense tables, inspector panels, timelines, and side-by-side comparisons.
+
+**Desktop**
+
+Desktop is the primary layout target. Use available width for:
+
+- Project inventory plus detail inspection.
+- Side navigation or resource navigation.
+- Filter bars and command bars.
+- Multi-column reference health and resolution trace layouts.
+- Audit timelines beside maintenance panels.
+- Side-by-side candidate comparison for ambiguous resolution.
+
+**Tablet**
+
+Tablet layouts should preserve operational inspection while reducing column count:
+
+- Collapse side navigation into top or drawer navigation.
+- Stack inspector panels below the main table or detail view.
+- Keep command bars visible but wrap secondary actions.
+- Preserve touch targets and avoid dense hover-only interactions.
+- Favor read-only inspection and lightweight maintenance actions.
+
+**Mobile**
+
+Mobile should support urgent inspection and safe metadata lookup, not full dense operations:
+
+- Prioritize project identity, tenant scope, lifecycle state, warnings, and top reason codes.
+- Collapse tables into stacked rows or summary lists.
+- Hide advanced comparison until explicitly expanded.
+- Keep state-changing actions available only when confirmation content remains fully visible and understandable.
+- Prefer CLI or desktop Web for complex maintenance when mobile space would hide critical evidence.
+
+CLI and MCP are inherently responsive through structured text/schema output and should not rely on terminal width, color, or prose formatting for meaning.
+
+### Breakpoint Strategy
+
+Use FrontComposer/Fluent UI responsive conventions where available. If explicit breakpoints are needed, use standard operational breakpoints:
+
+- Mobile: 320px to 767px.
+- Tablet: 768px to 1023px.
+- Desktop: 1024px and above.
+- Wide desktop: 1440px and above for side-by-side diagnostics and audit/maintenance split views.
+
+The Web UX may be desktop-first for layout planning, but components must degrade predictably. Critical metadata, warnings, reason codes, and action consequences must remain visible at every supported viewport.
+
+### Accessibility Strategy
+
+Target WCAG 2.2 AA for Web UX.
+
+Accessibility requirements:
+
+- Keyboard access for navigation, grids, filters, command bars, tabs, dialogs, and action panels.
+- Visible focus indicators.
+- Semantic headings and landmarks for project detail, references, resolution, audit, and actions.
+- Status indicators that include text labels and accessible names, not color alone.
+- Sufficient contrast for normal text, badges, warnings, errors, disabled states, and focus indicators.
+- Screen-reader-readable tables and timelines.
+- Clear labels for filters, search inputs, dropdowns, and action buttons.
+- Modal/dialog focus trapping and restoration.
+- Reduced-motion-safe interaction patterns.
+- No hover-only critical actions.
+- Safe error messages that do not expose payload values.
+
+CLI accessibility:
+
+- Do not rely on color.
+- Provide structured output modes.
+- Keep tables readable but offer JSON for assistive tooling and automation.
+- Use stable exit codes and safe reason codes.
+
+MCP accessibility and agent safety:
+
+- Return structured fields plus short explanations.
+- Avoid explanation-only output.
+- Use stable schemas so assistive workflows and agent tools can reason over the same safe metadata.
+
+### Testing Strategy
+
+Responsive testing should cover:
+
+- Desktop, tablet, mobile, and wide desktop viewports.
+- Dense tables and collapsed stacked layouts.
+- Long identifiers and reason codes.
+- Warning and error panels.
+- Dialogs and maintenance confirmation flows.
+- Side-by-side candidate comparison collapsing to single-column layouts.
+- High data volume and empty states.
+
+Accessibility testing should include:
+
+- Automated accessibility checks for generated FrontComposer Web views.
+- Keyboard-only navigation.
+- Screen reader spot checks for key views.
+- Focus management in dialogs and action panels.
+- Contrast validation for status badges and warning/error states.
+- Reduced-motion behavior.
+- Verification that status meaning is not color-only.
+
+Cross-surface testing should verify:
+
+- CLI, MCP, and Web expose equivalent state names, reason codes, and audit identifiers.
+- Payload-bearing fields are not displayed in any surface.
+- Fail-closed states remain specific and safe.
+- Maintenance actions produce metadata-only audit evidence.
+
+### Implementation Guidelines
+
+- Use FrontComposer and Fluent UI responsive primitives before custom layout code.
+- Prefer grids and tables that can collapse into readable stacked rows.
+- Keep command bars close to the data they affect.
+- Keep destructive or state-changing actions separated from read-only diagnostics.
+- Provide copyable identifiers for tenant, project, reference, correlation, and audit IDs.
+- Use semantic HTML and ARIA only where it improves native semantics.
+- Preserve stable component keys or test IDs for automation.
+- Avoid fixed-width layouts that truncate long identifiers without accessible full-value access.
+- Avoid mobile layouts that hide tenant scope, warnings, reason codes, or action impact.
+- Ensure CLI and MCP schemas remain independent of visual formatting.
