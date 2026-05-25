@@ -6,6 +6,7 @@
 namespace Hexalith.Projects.Contracts.Events;
 
 using Hexalith.EventStore.Contracts.Events;
+using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Ui;
 
 /// <summary>
@@ -23,8 +24,10 @@ using Hexalith.Projects.Contracts.Ui;
 /// <param name="Reason">The canonical rejection reason code from the shared reference-state vocabulary.</param>
 /// <param name="RejectedField">Optional name of the field that failed validation (the name only, never its value).</param>
 /// <param name="CorrelationId">Optional correlation identifier linking the rejection to the originating command.</param>
+/// <param name="ProjectId">Optional project identifier added additively (Story 1.4) for create-path correlation; never echoes unsafe input.</param>
 public sealed record ProjectCreationRejected(
     string TenantId,
     ReferenceState Reason,
     string? RejectedField = null,
-    string? CorrelationId = null) : IRejectionEvent;
+    string? CorrelationId = null,
+    ProjectId? ProjectId = null) : IRejectionEvent;

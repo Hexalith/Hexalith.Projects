@@ -1,0 +1,156 @@
+// <copyright file="ProjectProjectionTests.cs" company="Hexalith">
+// Copyright (c) Hexalith. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Hexalith.Projects.Tests.Projections;
+
+using System;
+
+using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Projections.ProjectDetail;
+using Hexalith.Projects.Projections.ProjectList;
+
+using Shouldly;
+
+using Xunit;
+
+/// <summary>
+/// Pure Tier-1 tests for <see cref="ProjectListProjection"/> + <see cref="ProjectDetailProjection"/>
+/// (AC 1, 6, 7): apply <c>ProjectCreated</c>, deterministic ordering, tenant-guard a foreign event,
+/// throw on unknown event, and the FS-8/SM-3 cross-tenant isolation negative test.
+/// </summary>
+public sealed class ProjectProjectionTests
+{
+    private const string TenantA = "tenant-a";
+    private const string TenantB = "tenant-b";
+    private const string ProjectIdValue = "01HZ9K8YQ3W6V2N4R7T5P0X1AB";
+
+    [Fact]
+    public void ListProjection_AppliesProjectCreated()
+    {
+        ProjectListProjection projection = ProjectListProjection.Empty
+            .Apply([new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA))]);
+
+        projection.Contains(TenantA, ProjectIdValue).ShouldBeTrue();
+        ProjectListItem item = projection.Get(TenantA, ProjectIdValue)!;
+        item.Name.ShouldBe("Tracer Bullet");
+        item.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+        item.Sequence.ShouldBe(1);
+    }
+
+    [Fact]
+    public void DetailProjection_AppliesProjectCreated()
+    {
+        ProjectDetailProjection projection = ProjectDetailProjection.Empty
+            .Apply([new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA))]);
+
+        ProjectDetailItem detail = projection.Get(TenantA, ProjectIdValue)!;
+        detail.Name.ShouldBe("Tracer Bullet");
+        detail.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+    }
+
+    [Fact]
+    public void ListProjection_ForeignTenantEnvelope_IsSkipped()
+    {
+        // Envelope dispatch tenant B but event tenant A → tenant-guard skips it (never lands in B).
+        ProjectListProjection projection = ProjectListProjection.Empty
+            .Apply([new ProjectProjectionEnvelope(TenantB, 1, Created(TenantA))]);
+
+        projection.Projects.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void ListProjection_DeterministicOrdering_AcrossEqualSequences()
+    {
+        ProjectCreated first = Created(TenantA, idempotencyKey: "key-aaa", fingerprint: "sha256:aaa");
+        ProjectCreated second = Created(TenantA, idempotencyKey: "key-bbb", fingerprint: "sha256:bbb", name: "Reordered");
+
+        // Same sequence; the tiebreaker (idempotency key ordinal) makes the fold deterministic.
+        ProjectListProjection forward = ProjectListProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, first),
+            new ProjectProjectionEnvelope(TenantA, 1, second),
+        ]);
+        ProjectListProjection reverse = ProjectListProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, second),
+            new ProjectProjectionEnvelope(TenantA, 1, first),
+        ]);
+
+        forward.Get(TenantA, ProjectIdValue)!.Name.ShouldBe(reverse.Get(TenantA, ProjectIdValue)!.Name);
+    }
+
+    [Fact]
+    public void ListProjection_UnknownEventType_Throws()
+    {
+        Should.Throw<InvalidOperationException>(() => ProjectListProjection.Empty
+            .Apply([new ProjectProjectionEnvelope(TenantA, 1, new UnknownProjectEvent())]));
+    }
+
+    [Fact]
+    public void DetailProjection_UnknownEventType_Throws()
+    {
+        Should.Throw<InvalidOperationException>(() => ProjectDetailProjection.Empty
+            .Apply([new ProjectProjectionEnvelope(TenantA, 1, new UnknownProjectEvent())]));
+    }
+
+    /// <summary>
+    /// FS-8 / SM-3 cross-tenant isolation negative test: a project created in tenant A never appears in
+    /// a tenant-B query on this trivial event set.
+    /// </summary>
+    [Fact]
+    public void CrossTenantIsolation_ProjectInTenantA_NeverAppearsInTenantBQuery()
+    {
+        ProjectListProjection list = ProjectListProjection.Empty
+            .Apply([new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA))]);
+        ProjectDetailProjection detail = ProjectDetailProjection.Empty
+            .Apply([new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA))]);
+
+        // Present for tenant A.
+        list.Contains(TenantA, ProjectIdValue).ShouldBeTrue();
+        detail.Get(TenantA, ProjectIdValue).ShouldNotBeNull();
+
+        // Absent for tenant B (same project id, different tenant → disjoint canonical key).
+        list.Contains(TenantB, ProjectIdValue).ShouldBeFalse();
+        list.Get(TenantB, ProjectIdValue).ShouldBeNull();
+        detail.Get(TenantB, ProjectIdValue).ShouldBeNull();
+    }
+
+    private static ProjectCreated Created(
+        string tenant,
+        string idempotencyKey = "idem-key-001",
+        string fingerprint = "sha256:deadbeef",
+        string name = "Tracer Bullet")
+        => new(
+            tenant,
+            ProjectIdValue,
+            name,
+            null,
+            null,
+            ProjectLifecycle.Active,
+            "actor-001",
+            "corr-001",
+            "task-001",
+            idempotencyKey,
+            fingerprint,
+            DateTimeOffset.UnixEpoch);
+
+    private sealed record UnknownProjectEvent : IProjectEvent
+    {
+        public string TenantId => TenantA;
+
+        public string ProjectId => ProjectIdValue;
+
+        public string CorrelationId => "corr-001";
+
+        public string TaskId => "task-001";
+
+        public string IdempotencyKey => "idem-key-zzz";
+
+        public string IdempotencyFingerprint => "sha256:feedface";
+
+        public DateTimeOffset OccurredAt => DateTimeOffset.UnixEpoch;
+    }
+}

@@ -21,24 +21,26 @@ tags:
 security:
   - oidcBearer: []
 paths:
-  # SEED SHAPES ONLY. This story (1.3) authors the cross-cutting envelope plus one
-  # representative command-async POST and one freshness-carrying GET so the spine
-  # drives real generated output. The full Project operation catalog
-  # (CreateProject variants, GetProject, ListProjects, UpdateProjectSetup,
-  # ArchiveProject, reference link/unlink, resolution confirmation, ...) is
-  # explicitly DEFERRED to stories 1.4 / 1.7 / 1.8, which grow this spine that the
-  # fingerprint gate already protects.
+  # Story 1.4 grows the seed CreateProject POST into the real Create-Project command-async
+  # operation and the seed GetProjectLifecycleStatus GET into the minimal GetProject query
+  # (the first vertical slice / tracer bullet). The CreateProjectRequest schema and its
+  # x-hexalith-idempotency-equivalence list are unchanged from the seed (the generated client
+  # + idempotency helper stay byte-stable). The remaining Project operation catalog
+  # (ListProjects, UpdateProjectSetup, ArchiveProject, reference link/unlink, resolution
+  # confirmation, ...) is still DEFERRED to stories 1.7 / 1.8, which grow this spine that the
+  # fingerprint gate protects.
   /api/v1/projects:
     post:
       tags:
         - projects
       operationId: CreateProject
-      summary: Create a tenant-scoped project identity (command-async seed shape).
+      summary: Create a tenant-scoped project (command-async).
       description: >
-        Creates opaque project identity and projected metadata. Returns 202 Accepted
-        with no read-after-write guarantee — confirm via a lifecycle-status query.
-        Tenant authority comes from authenticated principal claims and EventStore
-        envelopes, never from this request.
+        Creates a tenant-scoped Project workspace record durably as Active. Returns 202
+        Accepted with no read-after-write guarantee — confirm via the GetProject query.
+        The only required user input is the project name; default lifecycle is active. No
+        Project Folder is required (auto-folder is deferred). Tenant authority comes from
+        authenticated principal claims and EventStore envelopes, never from this request.
       parameters:
         - $ref: "#/components/parameters/IdempotencyKey"
         - $ref: "#/components/parameters/CorrelationId"
@@ -94,24 +96,26 @@ paths:
         - validation_error
         - idempotency_conflict
         - internal_error
-  /api/v1/projects/{projectId}/lifecycle-status:
+  /api/v1/projects/{projectId}:
     get:
       tags:
         - projects
-      operationId: GetProjectLifecycleStatus
-      summary: Inspect project lifecycle status (freshness-carrying query seed shape).
+      operationId: GetProject
+      summary: Read minimal project lifecycle/detail (freshness-carrying query).
       description: >
-        Returns metadata-only project lifecycle status with projection freshness
-        evidence. Reads are eventually consistent and carry the
-        X-Hexalith-Freshness response header. Idempotency-Key is not a parameter
-        on queries (it is rejected if present).
+        Returns the metadata-only project lifecycle/detail with projection freshness
+        evidence — the minimal read used to confirm a 202'd create landed. Reads are
+        eventually consistent and carry the X-Hexalith-Freshness response header.
+        Idempotency-Key is not a parameter on queries (it is rejected if present).
+        This is the minimal lifecycle/detail read; the full Open-Project surface is
+        deferred to Story 1.7.
       parameters:
         - $ref: "#/components/parameters/ProjectId"
         - $ref: "#/components/parameters/CorrelationId"
         - $ref: "#/components/parameters/Freshness"
       responses:
         "200":
-          description: Metadata-only project lifecycle status with freshness evidence.
+          description: Metadata-only project lifecycle/detail with freshness evidence.
           headers:
             X-Correlation-Id:
               $ref: "#/components/headers/CorrelationId"
@@ -120,10 +124,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ProjectLifecycleStatus"
+                $ref: "#/components/schemas/Project"
               examples:
                 synthetic:
-                  $ref: "#/components/examples/ProjectLifecycleStatus"
+                  $ref: "#/components/examples/Project"
         "401":
           $ref: "#/components/responses/SafeAuthorizationDenial401"
         "403":
@@ -396,6 +400,18 @@ components:
           observedAt: "2026-05-12T12:34:56Z"
           projectionWatermark: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
           stale: false
+    Project:
+      value:
+        projectId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        name: synthetic-project-alpha
+        lifecycleState: active
+        createdAt: "2026-05-12T12:34:56Z"
+        updatedAt: "2026-05-12T12:34:56Z"
+        freshness:
+          readConsistency: eventually_consistent
+          observedAt: "2026-05-12T12:34:56Z"
+          projectionWatermark: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
+          stale: false
   schemas:
     OpaqueIdentifier:
       type: string
@@ -579,6 +595,39 @@ components:
           $ref: "#/components/schemas/OpaqueIdentifier"
         lifecycleState:
           $ref: "#/components/schemas/ProjectLifecycleState"
+        freshness:
+          $ref: "#/components/schemas/FreshnessMetadata"
+    Project:
+      type: object
+      additionalProperties: false
+      description: Minimal metadata-only project lifecycle/detail returned by GetProject. Carries no transcript/file/memory body, secret, token, or path.
+      required:
+        - projectId
+        - name
+        - lifecycleState
+        - createdAt
+        - updatedAt
+        - freshness
+      properties:
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+          description: Projected project name metadata only; it is not aggregate identity.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        description:
+          type: string
+          maxLength: 512
+          description: Optional projected, metadata-only description.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        lifecycleState:
+          $ref: "#/components/schemas/ProjectLifecycleState"
+        createdAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        updatedAt:
+          $ref: "#/components/schemas/UtcDateTime"
         freshness:
           $ref: "#/components/schemas/FreshnessMetadata"
     CanonicalErrorCategory:

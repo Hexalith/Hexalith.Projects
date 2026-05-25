@@ -1,0 +1,49 @@
+// <copyright file="ProjectCommandValidationResult.cs" company="Hexalith">
+// Copyright (c) Hexalith. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Hexalith.Projects.Aggregates.Project;
+
+/// <summary>
+/// Pure result of <see cref="ProjectCommandValidator"/> (FR-19). Mirrors the Folders
+/// <c>FolderCommandValidationResult</c>: an accepted result carries the canonicalized name and the
+/// canonical idempotency fingerprint; a rejected result carries the control-flow code and the NAME of
+/// the offending field only (never its value).
+/// </summary>
+/// <param name="IsAccepted">Whether the command passed boundary validation.</param>
+/// <param name="Code">The control-flow result code.</param>
+/// <param name="CanonicalName">The trimmed, canonical project name (null when rejected).</param>
+/// <param name="CanonicalDescription">The trimmed, canonical description, or null (null when rejected or absent).</param>
+/// <param name="CanonicalSetupMetadata">The trimmed, canonical setup-metadata reference, or null (null when rejected or absent).</param>
+/// <param name="IdempotencyFingerprint">The canonical idempotency fingerprint (null when rejected).</param>
+/// <param name="RejectedField">The NAME of the rejected field (set only on validation rejection), never its value.</param>
+public sealed record ProjectCommandValidationResult(
+    bool IsAccepted,
+    ProjectResultCode Code,
+    string? CanonicalName,
+    string? CanonicalDescription,
+    string? CanonicalSetupMetadata,
+    string? IdempotencyFingerprint,
+    string? RejectedField)
+{
+    /// <summary>Creates an accepted validation result with the canonical fields and fingerprint.</summary>
+    /// <param name="canonicalName">The trimmed, canonical project name.</param>
+    /// <param name="canonicalDescription">The trimmed, canonical description or null.</param>
+    /// <param name="canonicalSetupMetadata">The trimmed, canonical setup-metadata reference or null.</param>
+    /// <param name="idempotencyFingerprint">The canonical idempotency fingerprint.</param>
+    /// <returns>An accepted <see cref="ProjectCommandValidationResult"/>.</returns>
+    public static ProjectCommandValidationResult Accepted(
+        string canonicalName,
+        string? canonicalDescription,
+        string? canonicalSetupMetadata,
+        string idempotencyFingerprint)
+        => new(true, ProjectResultCode.Created, canonicalName, canonicalDescription, canonicalSetupMetadata, idempotencyFingerprint, null);
+
+    /// <summary>Creates a rejected validation result carrying the code and the offending field NAME only.</summary>
+    /// <param name="code">The control-flow result code.</param>
+    /// <param name="rejectedField">The NAME of the rejected field (never its value), or null.</param>
+    /// <returns>A rejected <see cref="ProjectCommandValidationResult"/>.</returns>
+    public static ProjectCommandValidationResult Rejected(ProjectResultCode code, string? rejectedField)
+        => new(false, code, null, null, null, null, rejectedField);
+}

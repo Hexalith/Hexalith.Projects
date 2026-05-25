@@ -1,5 +1,6 @@
 # generated: 2026-05-25
 # last_updated: 2026-05-25
+# 1-4 set to review on 2026-05-25 via dev-story (build 0W/0E; filtered lane 188/188; fingerprint gate PASSED; frontcomposer gate skip-clean)
 # 1-1 set to in-progress then review on 2026-05-25 via dev-story
 # 1-1 set to done on 2026-05-25 via story-automator-review (0 CRITICAL; 1 MEDIUM line-ending issue auto-fixed)
 # 1-3 set to review on 2026-05-25 via dev-story (build 0W/0E; filtered lane 127/127; fingerprint gate PASSED; frontcomposer gate skip-clean)
@@ -47,6 +48,8 @@ project: Hexalith.Projects
 # 1-3 set to ready-for-dev on 2026-05-25 via create-story (epic-1 already in-progress; OpenAPI spine + NSwag client + idempotency hasher + fingerprint gate flip — mirrors Hexalith.Folders contract-spine pattern)
 # 1-3 set to in-progress on 2026-05-25 via dev-story (OpenAPI Contract Spine + NSwag typed client + idempotency hasher + fingerprint gate flip)
 # 1-3 set to done on 2026-05-25 via story-automator-review (0 CRITICAL/0 HIGH/0 MEDIUM; build 0W/0E, filtered lane 127/127, fingerprint gate PASSED, frontcomposer skip-clean; all 7 ACs verified against Folders oracle, generated artifacts LF/NUL-free + no path/host/token leakage, Client boundary clean, no submodule changes; auto-fixed 1 LOW: control-byte-> escape in hasher test)
+# 1-4 set to ready-for-dev on 2026-05-25 via create-story (epic-1 already in-progress; first end-to-end vertical slice / tracer bullet — CreateProject: command + ProjectCreated success event + pure ProjectAggregate.Handle/Apply + list/detail projections + ProjectCreationRejected fail-closed path + grow spine seed→real CreateProject/GetProject + Server 202 command-async endpoint + FS-2 NoPayloadLeakage harness + FS-5 schema-evolution corpus + FS-8 cross-tenant isolation test; mirrors Hexalith.Folders aggregate vertical slice; defers TenantAccessProjection/full authz (1.6), Get/List (1.7), Update/Archive (1.8), rebuild/idempotency proofs (1.5), Aspire/Workers (1.9), auto-folder (2.4))
+# 1-4 set to done on 2026-05-25 via story-automator-review (0 CRITICAL/0 HIGH/0 MEDIUM, 1 LOW tracked; build 0W/0E, filtered lane 188/188, fingerprint gate PASSED, frontcomposer skip-clean; all 7 ACs verified — pure Handle, rejection-as-event never-mixed, safe-denial 404 (missing-tenant/gateway-denial/cross-tenant), canonical ProjectIdentity derivation everywhere, FS-2 NoPayloadLeakage reusable harness, FS-5 golden round-trip + additive-tolerance, FS-8/SM-3 cross-tenant isolation Tier-1+Tier-2; boundaries clean (domain core pure, Contracts low-dep, Client/Server no domain-event/Dapr leakage), generated .g.cs LF+reproducible+NUL-free, hand-written CRLF, no compiler suppressions, no submodule pointer changes; LOW: CreateProject.CommandType=nameof(...) is vestigial vs wire FQN constant — non-functional, left as-is to preserve byte-stable client)
 project_key: NOKEY
 tracking_system: file-system
 story_location: "{project-root}/_bmad-output/implementation-artifacts"
@@ -57,7 +60,7 @@ development_status:
   1-1-module-scaffold-build-ci-wiring: done
   1-2-shared-vocabulary-identifiers-payload-taxonomy: done
   1-3-openapi-contract-spine-generated-typed-client: done
-  1-4-create-project-end-to-end-tracer-bullet: backlog
+  1-4-create-project-end-to-end-tracer-bullet: done
   1-5-projection-rebuild-replay-idempotency: backlog
   1-6-tenant-access-layered-fail-closed-authorization: backlog
   1-7-open-list-projects: backlog

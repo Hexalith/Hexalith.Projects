@@ -23,7 +23,10 @@ try {
     $projects = @(
         'tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj',
         'tests/Hexalith.Projects.Client.Tests/Hexalith.Projects.Client.Tests.csproj',
-        'tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj'
+        'tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj',
+        # Story 1.4: the Server Tier-2 endpoint/processor tests use in-memory fakes (no real
+        # Dapr/infra), so they belong in the fast lane alongside the Tier-1 domain-core tests.
+        'tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj'
     )
 
     $aggregateExitCode = 0
