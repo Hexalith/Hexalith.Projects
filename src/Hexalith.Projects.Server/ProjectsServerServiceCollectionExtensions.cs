@@ -8,7 +8,10 @@ namespace Hexalith.Projects.Server;
 using System;
 
 using Hexalith.EventStore.Client.Handlers;
+using Hexalith.Projects.Authorization;
+using Hexalith.Projects.Projections.TenantAccess;
 
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -32,10 +35,15 @@ public static class ProjectsServerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddHttpContextAccessor();
+        services.AddProjectsTenantAccess();
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<InMemoryProjectDetailReadModel>();
         services.TryAddSingleton<IProjectDetailReadModel>(sp => sp.GetRequiredService<InMemoryProjectDetailReadModel>());
         services.TryAddSingleton<IProjectTenantContextAccessor, HttpContextProjectTenantContextAccessor>();
+        services.TryAddSingleton<ProjectAuthorizationGate>();
+        services.TryAddSingleton<IProjectEventStoreAuthorizationValidator, DenyAllProjectEventStoreAuthorizationValidator>();
+        services.TryAddSingleton<IProjectDaprPolicyEvidenceProvider, DenyAllProjectDaprPolicyEvidenceProvider>();
+        services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();
         services.TryAddSingleton<IDomainProcessor, ProjectsDomainProcessor>();
 
         return services;

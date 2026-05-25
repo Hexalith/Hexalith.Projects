@@ -6,7 +6,11 @@
 namespace Hexalith.Projects.Server;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+
+using Hexalith.Projects.Authorization;
 
 using Microsoft.AspNetCore.Http;
 
@@ -20,6 +24,8 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
 {
     // Canonical tenant claim type carried after claim transformation; matches the Hexalith convention.
     private const string TenantClaimType = "tenantId";
+    private const string EventStoreTenantClaimType = "eventstore:tenant";
+    private const string EventStorePermissionClaimType = "eventstore:permission";
 
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
 
@@ -34,7 +40,7 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
                 return null;
             }
 
-            string? tenant = user.FindFirstValue(TenantClaimType);
+            string? tenant = user.FindFirstValue(EventStoreTenantClaimType) ?? user.FindFirstValue(TenantClaimType);
             return string.IsNullOrWhiteSpace(tenant) ? null : tenant;
         }
     }
@@ -53,5 +59,27 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
             string? principal = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
             return string.IsNullOrWhiteSpace(principal) ? null : principal;
         }
+    }
+
+    /// <inheritdoc/>
+    public EventStoreClaimTransformEvidence GetClaimTransformEvidence(string actionToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(actionToken);
+
+        ClaimsPrincipal? user = _httpContextAccessor.HttpContext?.User;
+        if (user?.Identity?.IsAuthenticated != true)
+        {
+            return EventStoreClaimTransformEvidence.Missing();
+        }
+
+        string? tenant = user.FindFirstValue(EventStoreTenantClaimType) ?? user.FindFirstValue(TenantClaimType);
+        string? principal = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
+        if (string.IsNullOrWhiteSpace(tenant) || string.IsNullOrWhiteSpace(principal))
+        {
+            return EventStoreClaimTransformEvidence.MalformedEvidence();
+        }
+
+        IEnumerable<string> permissions = user.FindAll(EventStorePermissionClaimType).Select(static claim => claim.Value);
+        return EventStoreClaimTransformEvidence.Allowed(tenant, principal, permissions);
     }
 }

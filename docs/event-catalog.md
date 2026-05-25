@@ -48,3 +48,19 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `CorrelationId` — optional correlation identifier.
   - `ProjectId` — optional project identifier (added additively in Story 1.4 for create-path correlation).
 - **Consumers:** the Server denial mapper (RFC 9457 ProblemDetails + safe-denial 404); audit/log scopes (metadata only).
+
+## Consumed external events
+
+### Hexalith.Tenants events for `TenantAccessProjection`
+
+- **Source:** `Hexalith.Tenants.Contracts.Events`.
+- **Consumed by:** `Hexalith.Projects.Workers.Tenants.TenantEventHandlers.ProjectsTenantEventHandler`.
+- **Purpose:** Maintain the local metadata-only `TenantAccessProjection` used by layered, fail-closed
+  Projects authorization.
+- **Events:** `TenantCreated`, `TenantUpdated`, `TenantEnabled`, `TenantDisabled`,
+  `UserAddedToTenant`, `UserRemovedFromTenant`, `UserRoleChanged`, `TenantConfigurationSet`, and
+  `TenantConfigurationRemoved`.
+- **Sensitivity class:** consumed metadata only. Projects stores lifecycle, membership, project-scoped
+  configuration keys, message fingerprints, and watermarks; it does not store raw Tenants payloads,
+  secrets, tokens, or caller-controlled authority.
+- **Ownership:** consumed only. Hexalith.Projects does not produce Tenants events.

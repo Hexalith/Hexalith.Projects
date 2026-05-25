@@ -7,6 +7,7 @@ namespace Hexalith.Projects.Server.Tests;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 using Hexalith.EventStore.Contracts.Commands;
 using Hexalith.EventStore.Contracts.Results;
 using Hexalith.Projects.Aggregates.Project;
+using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Server;
@@ -37,7 +39,7 @@ public sealed class ProjectsDomainProcessorTests
     [Fact]
     public async Task ProcessCreate_NewAggregate_YieldsSuccessDomainResultWithProjectCreated()
     {
-        ProjectsDomainProcessor processor = new(new FixedTimeProvider(DateTimeOffset.UnixEpoch));
+        ProjectsDomainProcessor processor = CreateProcessor();
 
         DomainResult result = await processor.ProcessAsync(Envelope(), currentState: null).ConfigureAwait(true);
 
@@ -52,7 +54,7 @@ public sealed class ProjectsDomainProcessorTests
     [Fact]
     public async Task ProcessCreate_DuplicateAgainstExistingState_YieldsRejectionNotException()
     {
-        ProjectsDomainProcessor processor = new(new FixedTimeProvider(DateTimeOffset.UnixEpoch));
+        ProjectsDomainProcessor processor = CreateProcessor();
 
         ProjectState existing = ProjectState.Empty.Apply(
             [ExistingCreatedEvent()],
@@ -68,7 +70,7 @@ public sealed class ProjectsDomainProcessorTests
     [Fact]
     public async Task ProcessCreate_MalformedPayload_FailsClosedToRejection()
     {
-        ProjectsDomainProcessor processor = new(new FixedTimeProvider(DateTimeOffset.UnixEpoch));
+        ProjectsDomainProcessor processor = CreateProcessor();
 
         CommandEnvelope envelope = new(
             MessageId: "idem-key-a",
@@ -86,6 +88,21 @@ public sealed class ProjectsDomainProcessorTests
 
         result.IsRejection.ShouldBeTrue();
     }
+
+    [Fact]
+    public async Task ProcessCreate_DenyByDefaultEventStoreValidator_FailsClosedToUnauthorizedRejection()
+    {
+        ProjectsDomainProcessor processor = new(new FixedTimeProvider(DateTimeOffset.UnixEpoch), new DenyAllProjectEventStoreAuthorizationValidator());
+
+        DomainResult result = await processor.ProcessAsync(Envelope(), currentState: null).ConfigureAwait(true);
+
+        result.IsRejection.ShouldBeTrue();
+        ProjectCreationRejected rejected = result.Events.Single().ShouldBeOfType<ProjectCreationRejected>();
+        rejected.Reason.ShouldBe(Contracts.Ui.ReferenceState.Unauthorized);
+    }
+
+    private static ProjectsDomainProcessor CreateProcessor()
+        => new(new FixedTimeProvider(DateTimeOffset.UnixEpoch), new AllowingProjectEventStoreAuthorizationValidator());
 
     private static ProjectCreated ExistingCreatedEvent() => new(
         Tenant,

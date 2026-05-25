@@ -11,10 +11,18 @@
     <!-- Floor raised from 10.0.0 to 10.0.3 in Story 1.2: the Contracts->FrontComposer.Contracts
          reference transitively pulls Microsoft.FluentUI.AspNetCore.Components (pinned RC) ->
          Microsoft.Extensions.Hosting.Abstractions 10.0.3 -> DI.Abstractions (>= 10.0.3). Pinning
-         10.0.3 resolves the NU1605 downgrade under TreatWarningsAsErrors. This is a base
-         Microsoft.Extensions abstraction (not a protected high-risk pin) and stays within the
-         ecosystem 10.0.x patch line (sibling Folders runs Hosting.Abstractions at 10.0.5). -->
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.3" />
+         10.0.3 resolved the original NU1605 downgrade under TreatWarningsAsErrors. Story 1.6 aligns
+         DI.Abstractions with the sibling Folders 10.0.8 Microsoft.Extensions baseline because
+         Logging.Abstractions/Options 10.0.8 require it transitively. These are base
+         Microsoft.Extensions abstractions (not protected high-risk pins) and stay within the
+         ecosystem 10.0.x patch line. -->
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.8" />
+  </ItemGroup>
+  <ItemGroup Label="Dapr">
+    <PackageVersion Include="Dapr.AspNetCore" Version="1.17.9" />
   </ItemGroup>
   <ItemGroup Label="Client generation (Story 1.3 — OpenAPI Contract Spine + NSwag typed client)">
     <!-- Versions reused verbatim from the sibling Hexalith.Folders/Directory.Packages.props (the

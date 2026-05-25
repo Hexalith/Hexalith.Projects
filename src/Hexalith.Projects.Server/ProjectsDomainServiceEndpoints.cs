@@ -61,18 +61,19 @@ public static partial class ProjectsDomainServiceEndpoints
             HttpContext httpContext,
             IProjectCommandSubmitter submitter,
             IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
             TimeProvider timeProvider,
             CancellationToken cancellationToken)
-            => await CreateProjectAsync(httpContext, submitter, tenantContext, timeProvider, cancellationToken).ConfigureAwait(false))
+            => await CreateProjectAsync(httpContext, submitter, tenantContext, authorizationGate, timeProvider, cancellationToken).ConfigureAwait(false))
             .WithName("CreateProject");
 
         endpoints.MapGet("/api/v1/projects/{projectId}", static async (
             string projectId,
             HttpContext httpContext,
-            IProjectDetailReadModel readModel,
             IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
             CancellationToken cancellationToken)
-            => await GetProjectAsync(projectId, httpContext, readModel, tenantContext, cancellationToken).ConfigureAwait(false))
+            => await GetProjectAsync(projectId, httpContext, tenantContext, authorizationGate, cancellationToken).ConfigureAwait(false))
             .WithName("GetProject");
 
         return endpoints;
@@ -82,6 +83,7 @@ public static partial class ProjectsDomainServiceEndpoints
         HttpContext httpContext,
         IProjectCommandSubmitter submitter,
         IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
         TimeProvider timeProvider,
         CancellationToken cancellationToken)
     {
@@ -99,12 +101,13 @@ public static partial class ProjectsDomainServiceEndpoints
         correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : idempotencyKey;
         taskId = IsCanonicalIdentifier(taskId) ? taskId : correlationId;
 
-        // Authenticate before parsing the body so unauthenticated callers cannot probe parsing feedback.
-        // Missing tenant context fails closed to a safe-denial 404 (unauthorized ≡ nonexistent).
-        if (string.IsNullOrWhiteSpace(tenantContext.AuthoritativeTenantId)
-            || string.Equals(tenantContext.AuthoritativeTenantId, ProjectsServerModule.ReservedSystemTenant, StringComparison.Ordinal))
+        // Authorize before parsing the body so unauthorized callers cannot probe parsing feedback.
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeCreateAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed)
         {
-            return SafeDenial(correlationId, taskId);
+            return SafeDenial(correlationId, taskId, authorization);
         }
 
         CreateProjectHttpRequest? body;
@@ -136,13 +139,16 @@ public static partial class ProjectsDomainServiceEndpoints
             return ValidationProblem(correlationId, taskId, "projectId");
         }
 
+        string authoritativeTenantId = tenantContext.AuthoritativeTenantId!;
+        string principalId = tenantContext.PrincipalId!;
+
         CreateProject command = new(
-            tenantContext.AuthoritativeTenantId,
+            authoritativeTenantId,
             projectId,
             body.Name,
             body.Description,
             body.SetupMetadata,
-            tenantContext.PrincipalId ?? "anonymous",
+            principalId,
             correlationId!,
             taskId!,
             idempotencyKey);
@@ -168,27 +174,12 @@ public static partial class ProjectsDomainServiceEndpoints
     private static async Task<IResult> GetProjectAsync(
         string projectId,
         HttpContext httpContext,
-        IProjectDetailReadModel readModel,
         IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
         CancellationToken cancellationToken)
     {
         string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
         correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : null;
-
-        // A stricter caller-requested freshness class is silently invalid for an eventually-consistent
-        // query; surface a 400 rather than downgrading.
-        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
-        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
-        {
-            return ValidationProblem(correlationId, null, "freshness");
-        }
-
-        // Unauthenticated or reserved-tenant context fails closed to safe-denial 404.
-        if (string.IsNullOrWhiteSpace(tenantContext.AuthoritativeTenantId)
-            || string.Equals(tenantContext.AuthoritativeTenantId, ProjectsServerModule.ReservedSystemTenant, StringComparison.Ordinal))
-        {
-            return SafeDenial(correlationId, null);
-        }
 
         if (string.IsNullOrWhiteSpace(projectId) || !IsCanonicalIdentifier(projectId))
         {
@@ -196,15 +187,23 @@ public static partial class ProjectsDomainServiceEndpoints
             return SafeDenial(correlationId, null);
         }
 
-        ProjectDetailItem? detail = await readModel
-            .GetAsync(tenantContext.AuthoritativeTenantId, projectId, cancellationToken)
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeReadAsync(projectId, tenantContext, httpContext, correlationId, null, cancellationToken)
             .ConfigureAwait(false);
-
-        // Absent or cross-tenant → safe-denial 404 (existence not inferable).
-        if (detail is null)
+        if (!authorization.IsAllowed || authorization.ProjectDetail is null)
         {
-            return SafeDenial(correlationId, null);
+            return SafeDenial(correlationId, null, authorization);
         }
+
+        // A stricter caller-requested freshness class is invalid for an eventually-consistent query,
+        // but only an authorized caller receives validation feedback.
+        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
+        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, null, "freshness");
+        }
+
+        ProjectDetailItem detail = authorization.ProjectDetail;
 
         if (!string.IsNullOrWhiteSpace(correlationId))
         {
@@ -237,32 +236,88 @@ public static partial class ProjectsDomainServiceEndpoints
     }
 
     private static IResult SafeDenial(string? correlationId, string? taskId)
-        => SafeProblem(StatusCodes.Status404NotFound, "tenant_access_denied", "resource_unavailable", retryable: false, correlationId, taskId);
+        => SafeProblem(
+            StatusCodes.Status404NotFound,
+            "tenant_access_denied",
+            "resource_unavailable",
+            retryable: false,
+            correlationId,
+            taskId,
+            message: "The requested resource is unavailable.",
+            clientAction: "no_action",
+            detailsVisibility: "redacted");
+
+    private static IResult SafeDenial(string? correlationId, string? taskId, ProjectAuthorizationResult authorization)
+        => SafeDenial(correlationId, taskId);
 
     private static IResult ValidationProblem(string? correlationId, string? taskId, string field)
-        => SafeProblem(StatusCodes.Status400BadRequest, "validation_error", "validation_error", retryable: false, correlationId, taskId, field);
+        => SafeProblem(
+            StatusCodes.Status400BadRequest,
+            "validation_error",
+            "validation_error",
+            retryable: false,
+            correlationId,
+            taskId,
+            rejectedField: field,
+            message: "The request failed validation.",
+            clientAction: "revise_request",
+            detailsVisibility: "metadata_only");
 
     private static IResult IdempotencyConflict(string? correlationId, string? taskId)
-        => SafeProblem(StatusCodes.Status409Conflict, "idempotency_conflict", "idempotency_conflict", retryable: false, correlationId, taskId);
+        => SafeProblem(
+            StatusCodes.Status409Conflict,
+            "idempotency_conflict",
+            "idempotency_conflict",
+            retryable: false,
+            correlationId,
+            taskId,
+            message: "The idempotency key conflicts with a previous request.",
+            clientAction: "revise_request",
+            detailsVisibility: "metadata_only");
 
     private static IResult ReadModelUnavailable(string? correlationId, string? taskId)
-        => SafeProblem(StatusCodes.Status503ServiceUnavailable, "read_model_unavailable", "read_model_unavailable", retryable: true, correlationId, taskId);
+        => SafeProblem(
+            StatusCodes.Status503ServiceUnavailable,
+            "read_model_unavailable",
+            "read_model_unavailable",
+            retryable: true,
+            correlationId,
+            taskId,
+            message: "The read model is temporarily unavailable.",
+            clientAction: "retry",
+            detailsVisibility: "metadata_only");
 
-    private static IResult SafeProblem(int statusCode, string category, string code, bool retryable, string? correlationId, string? taskId, string? rejectedField = null)
+    private static IResult SafeProblem(
+        int statusCode,
+        string category,
+        string code,
+        bool retryable,
+        string? correlationId,
+        string? taskId,
+        string? rejectedField = null,
+        string message = "The requested resource is unavailable.",
+        string clientAction = "no_action",
+        string detailsVisibility = "metadata_only")
     {
+        Dictionary<string, object?> details = new()
+        {
+            ["visibility"] = detailsVisibility,
+        };
+
+        if (!string.IsNullOrWhiteSpace(rejectedField))
+        {
+            details["rejectedField"] = rejectedField;
+        }
+
         Dictionary<string, object?> extensions = new()
         {
             ["category"] = category,
             ["code"] = code,
+            ["message"] = message,
             ["correlationId"] = correlationId,
             ["retryable"] = retryable,
-            ["clientAction"] = retryable ? "retry" : "no_action",
-            // details is metadata-only — a rejected field NAME never its value.
-            ["details"] = new Dictionary<string, object?>
-            {
-                ["visibility"] = "metadata_only",
-                ["rejectedField"] = rejectedField,
-            },
+            ["clientAction"] = clientAction,
+            ["details"] = details,
         };
 
         if (!string.IsNullOrWhiteSpace(taskId))

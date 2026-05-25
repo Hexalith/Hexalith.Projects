@@ -7,9 +7,11 @@ namespace Hexalith.Projects.Tests.Leakage;
 
 using System;
 
+using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Testing.Leakage;
 
 using Shouldly;
@@ -54,6 +56,64 @@ public sealed class NoPayloadLeakageTests
             new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"));
 
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(rejection));
+    }
+
+    [Fact]
+    public void TenantAccessProjection_SerializesMetadataOnly()
+    {
+        ProjectTenantAccessProjection projection = new()
+        {
+            TenantId = "acme",
+            Enabled = true,
+            Watermark = 1,
+            ProjectionWatermark = "acme:1",
+            LastEventTimestamp = DateTimeOffset.UnixEpoch,
+        };
+        projection.Principals["actor-001"] = new ProjectTenantPrincipalEvidence("actor-001", "TenantOwner");
+        projection.ProcessedMessages["msg-001"] = new ProjectTenantEventEvidence(
+            "msg-001",
+            "acme",
+            nameof(ProjectTenantAccessEventKind.UserAddedToTenant),
+            1,
+            DateTimeOffset.UnixEpoch,
+            "sha256:tenant-access-metadata");
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(projection));
+    }
+
+    [Fact]
+    public void ProjectTenantAccessEvent_SerializesMetadataOnly()
+    {
+        ProjectTenantAccessEvent @event = new(
+            ProjectTenantAccessEventKind.UserAddedToTenant,
+            "acme",
+            "msg-001",
+            1,
+            DateTimeOffset.UnixEpoch,
+            "corr-001",
+            "actor-001",
+            "TenantOwner",
+            null,
+            "projects.create.enabled",
+            "sha256:tenant-access-metadata");
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(@event));
+    }
+
+    [Fact]
+    public void TenantAccessAuthorizationResult_SerializesMetadataOnly()
+    {
+        TenantAccessAuthorizationResult result = new(
+            TenantAccessOutcome.StaleProjection,
+            "stale_projection",
+            "acme",
+            "acme:7",
+            DateTimeOffset.UnixEpoch,
+            TimeSpan.FromMinutes(20),
+            TenantProjectionFreshnessStatus.Stale,
+            "local-projection");
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(result));
     }
 
     [Fact]

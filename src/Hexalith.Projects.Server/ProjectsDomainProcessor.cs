@@ -9,6 +9,7 @@ using System;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Hexalith.EventStore.Client.Handlers;
@@ -16,6 +17,7 @@ using Hexalith.EventStore.Contracts.Commands;
 using Hexalith.EventStore.Contracts.Events;
 using Hexalith.EventStore.Contracts.Results;
 using Hexalith.Projects.Aggregates.Project;
+using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Identifiers;
 
@@ -28,7 +30,9 @@ using Hexalith.Projects.Contracts.Identifiers;
 /// replay). Domain rejections are events, never exceptions; only a malformed payload / unexpected
 /// failure fails closed to a metadata-only rejection.
 /// </summary>
-public sealed class ProjectsDomainProcessor(TimeProvider timeProvider) : IDomainProcessor
+public sealed class ProjectsDomainProcessor(
+    TimeProvider timeProvider,
+    IProjectEventStoreAuthorizationValidator authorizationValidator) : IDomainProcessor
 {
     private static readonly JsonSerializerOptions PayloadJsonOptions = new(JsonSerializerDefaults.Web)
     {
@@ -37,19 +41,45 @@ public sealed class ProjectsDomainProcessor(TimeProvider timeProvider) : IDomain
     };
 
     private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+    private readonly IProjectEventStoreAuthorizationValidator _authorizationValidator =
+        authorizationValidator ?? throw new ArgumentNullException(nameof(authorizationValidator));
 
     /// <inheritdoc/>
-    public Task<DomainResult> ProcessAsync(CommandEnvelope command, object? currentState)
+    public async Task<DomainResult> ProcessAsync(CommandEnvelope command, object? currentState)
     {
         ArgumentNullException.ThrowIfNull(command);
 
         if (!string.Equals(command.Domain, ProjectsServerModule.DomainName, StringComparison.Ordinal)
             || !string.Equals(command.CommandType, ProjectsServerModule.CreateProjectCommandType, StringComparison.Ordinal))
         {
-            return Task.FromResult(Rejection(command, ProjectResultCode.ValidationFailed, null));
+            return Rejection(command, ProjectResultCode.ValidationFailed, null);
         }
 
-        return Task.FromResult(ProcessCreate(command, currentState));
+        EventStoreAuthorizationValidationResult validation;
+        try
+        {
+            validation = await _authorizationValidator.ValidateAsync(
+                new EventStoreAuthorizationValidationRequest(
+                    command.TenantId,
+                    command.UserId,
+                    ProjectAuthorizationGate.CreateProjectAction,
+                    command.AggregateId,
+                    command.CorrelationId,
+                    ReadTaskId(command),
+                    [AuthorizationLayer.EventStoreValidator]),
+                CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            validation = EventStoreAuthorizationValidationResult.Unavailable();
+        }
+
+        if (validation.Status != EventStoreAuthorizationValidationStatus.Allowed)
+        {
+            return Rejection(command, ProjectResultCode.Unauthorized, null);
+        }
+
+        return ProcessCreate(command, currentState);
     }
 
     private DomainResult ProcessCreate(CommandEnvelope envelope, object? currentState)

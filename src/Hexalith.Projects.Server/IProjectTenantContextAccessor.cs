@@ -5,6 +5,8 @@
 
 namespace Hexalith.Projects.Server;
 
+using Hexalith.Projects.Authorization;
+
 /// <summary>
 /// Minimal authenticated-tenant context accessor (Story 1.4). The authoritative tenant and principal
 /// come from authenticated claims / EventStore claim-transform <b>only</b> — never from a request
@@ -19,4 +21,9 @@ public interface IProjectTenantContextAccessor
 
     /// <summary>Gets the authenticated principal identifier, or null when unauthenticated.</summary>
     string? PrincipalId { get; }
+
+    /// <summary>Gets metadata-only EventStore claim-transform evidence for the required action.</summary>
+    /// <param name="actionToken">The action token being authorized.</param>
+    /// <returns>The claim-transform evidence, or missing/malformed evidence when unavailable.</returns>
+    EventStoreClaimTransformEvidence GetClaimTransformEvidence(string actionToken);
 }
