@@ -25,6 +25,9 @@ public sealed class ProjectAuthorizationGate(
     /// <summary>The action token required to read a project detail.</summary>
     public const string ReadProjectAction = "projects:read";
 
+    /// <summary>The action token required to list project rows.</summary>
+    public const string ListProjectsAction = "projects:list";
+
     /// <summary>Authorizes project creation.</summary>
     public async Task<ProjectAuthorizationResult> AuthorizeCreateAsync(
         IProjectTenantContextAccessor tenantContext,
@@ -60,6 +63,24 @@ public sealed class ProjectAuthorizationGate(
             taskId,
             allowBoundedStaleTenantProjection: true,
             requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes a project list read.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeListAsync(
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            ListProjectsAction,
+            projectId: null,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: true,
+            requireProjectDetail: false,
             cancellationToken).ConfigureAwait(false);
 
     private async Task<ProjectAuthorizationResult> AuthorizeAsync(
@@ -141,9 +162,17 @@ public sealed class ProjectAuthorizationGate(
         ProjectDetailItem? detail = null;
         if (requireProjectDetail)
         {
-            detail = await projectDetailReadModel.GetAsync(authoritativeTenantId, projectId ?? string.Empty, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                detail = await projectDetailReadModel.GetAsync(authoritativeTenantId, projectId ?? string.Empty, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                return Deny(AuthorizationLayer.ProjectAcl, ReferenceState.Unavailable, "projection_unavailable", retryable: true, evaluatedLayers);
+            }
+
             detail = ProjectQueryTenantFilter.Filter(authoritativeTenantId, detail);
-            if (detail is null || detail.Lifecycle != ProjectLifecycle.Active)
+            if (detail is null)
             {
                 return Deny(AuthorizationLayer.ProjectAcl, ReferenceState.Unauthorized, "project_acl_denied", retryable: false, evaluatedLayers);
             }

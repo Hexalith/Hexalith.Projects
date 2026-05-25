@@ -15,7 +15,9 @@ using System.Threading.Tasks;
 
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
+using Hexalith.Projects.Projections.ProjectList;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -56,6 +58,15 @@ public static partial class ProjectsDomainServiceEndpoints
     public static IEndpointRouteBuilder MapProjectsDomainServiceEndpoints(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+
+        endpoints.MapGet("/api/v1/projects", static async (
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectListReadModel listReadModel,
+            CancellationToken cancellationToken)
+            => await ListProjectsAsync(httpContext, tenantContext, authorizationGate, listReadModel, cancellationToken).ConfigureAwait(false))
+            .WithName("ListProjects");
 
         endpoints.MapPost("/api/v1/projects", static async (
             HttpContext httpContext,
@@ -192,7 +203,14 @@ public static partial class ProjectsDomainServiceEndpoints
             .ConfigureAwait(false);
         if (!authorization.IsAllowed || authorization.ProjectDetail is null)
         {
-            return SafeDenial(correlationId, null, authorization);
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, null)
+                : SafeDenial(correlationId, null, authorization);
+        }
+
+        if (HasHeader(httpContext, "Idempotency-Key"))
+        {
+            return ValidationProblem(correlationId, null, "idempotency_key");
         }
 
         // A stricter caller-requested freshness class is invalid for an eventually-consistent query,
@@ -220,7 +238,80 @@ public static partial class ProjectsDomainServiceEndpoints
                 ToWireLifecycle(detail.Lifecycle),
                 detail.CreatedAt,
                 detail.UpdatedAt,
-                new FreshnessMetadataResponse(EventuallyConsistent, detail.UpdatedAt, null, false)),
+                detail.SetupMetadata,
+                new ContextActivationResponse(
+                    detail.Lifecycle == ProjectLifecycle.Active,
+                    detail.Lifecycle == ProjectLifecycle.Active ? null : "archived"),
+                [],
+                ToFreshness(detail.UpdatedAt, detail.Sequence)),
+            ResponseJsonOptions);
+    }
+
+    private static async Task<IResult> ListProjectsAsync(
+        HttpContext httpContext,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        IProjectListReadModel listReadModel,
+        CancellationToken cancellationToken)
+    {
+        string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
+        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : null;
+
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeListAsync(tenantContext, httpContext, correlationId, null, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed)
+        {
+            return SafeDenial(correlationId, null, authorization);
+        }
+
+        if (HasHeader(httpContext, "Idempotency-Key"))
+        {
+            return ValidationProblem(correlationId, null, "idempotency_key");
+        }
+
+        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
+        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, null, "freshness");
+        }
+
+        if (!TryReadLifecycleFilter(httpContext, out ProjectLifecycle? lifecycleFilter))
+        {
+            return ValidationProblem(correlationId, null, "lifecycle");
+        }
+
+        string authoritativeTenantId = tenantContext.AuthoritativeTenantId!;
+        IReadOnlyList<ProjectListItem> projectedRows;
+        try
+        {
+            projectedRows = await listReadModel
+                .ListAsync(authoritativeTenantId, lifecycleFilter, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return ReadModelUnavailable(correlationId, null);
+        }
+        IReadOnlyList<ProjectListItem> rows = ProjectQueryTenantFilter.FilterList(authoritativeTenantId, projectedRows);
+
+        if (!string.IsNullOrWhiteSpace(correlationId))
+        {
+            httpContext.Response.Headers["X-Correlation-Id"] = correlationId;
+        }
+
+        httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
+
+        return Results.Json(
+            new ProjectListResponse(
+                rows.Select(row => new ProjectListItemResponse(
+                    row.ProjectId,
+                    row.Name,
+                    ToWireLifecycle(row.Lifecycle),
+                    row.CreatedAt,
+                    row.UpdatedAt,
+                    ToFreshness(row.UpdatedAt, row.Sequence))).ToArray(),
+                ToListFreshness(rows)),
             ResponseJsonOptions);
     }
 
@@ -342,10 +433,70 @@ public static partial class ProjectsDomainServiceEndpoints
     private static string ToWireLifecycle(Contracts.Ui.ProjectLifecycle lifecycle)
         => lifecycle.ToString().ToLowerInvariant();
 
+    private static FreshnessMetadataResponse ToFreshness(DateTimeOffset observedAt, long sequence)
+        => new(
+            EventuallyConsistent,
+            observedAt,
+            sequence > 0 ? $"watermark_{sequence:D8}" : null,
+            false,
+            "trusted");
+
+    private static FreshnessMetadataResponse ToListFreshness(IReadOnlyList<ProjectListItem> rows)
+    {
+        if (rows.Count == 0)
+        {
+            return ToFreshness(DateTimeOffset.UnixEpoch, 0);
+        }
+
+        return ToFreshness(rows.Max(row => row.UpdatedAt), rows.Max(row => row.Sequence));
+    }
+
+    private static bool TryReadLifecycleFilter(HttpContext httpContext, out ProjectLifecycle? lifecycleFilter)
+    {
+        lifecycleFilter = null;
+        if (!httpContext.Request.Query.TryGetValue("lifecycle", out StringValues values))
+        {
+            return true;
+        }
+
+        string[] observed = values
+            .SelectMany(value => (value ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            .Where(value => value.Length > 0)
+            .ToArray();
+
+        if (observed.Length == 0)
+        {
+            return true;
+        }
+
+        if (observed.Length > 1)
+        {
+            return false;
+        }
+
+        switch (observed[0])
+        {
+            case "all":
+                lifecycleFilter = null;
+                return true;
+            case "active":
+                lifecycleFilter = ProjectLifecycle.Active;
+                return true;
+            case "archived":
+                lifecycleFilter = ProjectLifecycle.Archived;
+                return true;
+            default:
+                return false;
+        }
+    }
+
     private static bool IsCanonicalIdentifier(string? value)
         => !string.IsNullOrWhiteSpace(value)
             && value.Length <= ProjectsServerModule.MaxCanonicalIdentifierLength
             && CanonicalIdentifierRegex().IsMatch(value);
+
+    private static bool HasHeader(HttpContext httpContext, string name)
+        => httpContext.Request.Headers.ContainsKey(name);
 
     private static string? ReadHeader(HttpContext httpContext, string name)
     {
@@ -406,11 +557,38 @@ public static partial class ProjectsDomainServiceEndpoints
         string LifecycleState,
         DateTimeOffset CreatedAt,
         DateTimeOffset UpdatedAt,
+        [property: JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+        string? SetupMetadata,
+        ContextActivationResponse ContextActivation,
+        IReadOnlyList<ProjectReferenceSummaryResponse> References,
+        FreshnessMetadataResponse Freshness);
+
+    private sealed record ProjectListResponse(
+        IReadOnlyList<ProjectListItemResponse> Items,
+        FreshnessMetadataResponse Freshness);
+
+    private sealed record ProjectListItemResponse(
+        string ProjectId,
+        string Name,
+        string LifecycleState,
+        DateTimeOffset CreatedAt,
+        DateTimeOffset UpdatedAt,
+        FreshnessMetadataResponse Freshness);
+
+    private sealed record ContextActivationResponse(
+        bool Enabled,
+        [property: JsonIgnore(Condition = JsonIgnoreCondition.Never)]
+        string? BlockedReasonCode);
+
+    private sealed record ProjectReferenceSummaryResponse(
+        string ReferenceKind,
+        string ReferenceState,
         FreshnessMetadataResponse Freshness);
 
     private sealed record FreshnessMetadataResponse(
         string ReadConsistency,
         DateTimeOffset ObservedAt,
         string? ProjectionWatermark,
-        bool Stale);
+        bool Stale,
+        string TrustState);
 }

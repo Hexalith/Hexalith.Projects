@@ -39,6 +39,8 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<InMemoryProjectDetailReadModel>();
         services.TryAddSingleton<IProjectDetailReadModel>(sp => sp.GetRequiredService<InMemoryProjectDetailReadModel>());
+        services.TryAddSingleton<InMemoryProjectListReadModel>();
+        services.TryAddSingleton<IProjectListReadModel>(sp => sp.GetRequiredService<InMemoryProjectListReadModel>());
         services.TryAddSingleton<IProjectTenantContextAccessor, HttpContextProjectTenantContextAccessor>();
         services.TryAddSingleton<ProjectAuthorizationGate>();
         services.TryAddSingleton<IProjectEventStoreAuthorizationValidator, DenyAllProjectEventStoreAuthorizationValidator>();

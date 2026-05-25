@@ -19,10 +19,12 @@ using Hexalith.Projects.Contracts.Ui;
 /// <param name="Lifecycle">The current lifecycle state.</param>
 /// <param name="Sequence">The projection sequence watermark at which this row was last written.</param>
 /// <param name="CreatedAt">The instant the project was created.</param>
+/// <param name="UpdatedAt">The instant the project was last updated (equals <paramref name="CreatedAt"/> for the current create-only event set).</param>
 public sealed record ProjectListItem(
     string TenantId,
     string ProjectId,
     string Name,
     ProjectLifecycle Lifecycle,
     long Sequence,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    DateTimeOffset UpdatedAt);

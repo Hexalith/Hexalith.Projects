@@ -21,15 +21,73 @@ tags:
 security:
   - oidcBearer: []
 paths:
-  # Story 1.4 grows the seed CreateProject POST into the real Create-Project command-async
-  # operation and the seed GetProjectLifecycleStatus GET into the minimal GetProject query
-  # (the first vertical slice / tracer bullet). The CreateProjectRequest schema and its
-  # x-hexalith-idempotency-equivalence list are unchanged from the seed (the generated client
-  # + idempotency helper stay byte-stable). The remaining Project operation catalog
-  # (ListProjects, UpdateProjectSetup, ArchiveProject, reference link/unlink, resolution
-  # confirmation, ...) is still DEFERRED to stories 1.7 / 1.8, which grow this spine that the
-  # fingerprint gate protects.
+  # Story 1.7 grows the Story 1.4 tracer bullet read surface into Open Project and List Projects.
+  # Mutations keep Idempotency-Key; queries do not accept it and reject it after authorization.
+  # UpdateProjectSetup, ArchiveProject, reference link/unlink, resolution confirmation, and context
+  # assembly remain deferred to later stories.
   /api/v1/projects:
+    get:
+      tags:
+        - projects
+      operationId: ListProjects
+      summary: List authorized tenant-scoped project choices.
+      description: >
+        Lists metadata-only Projects visible to the authenticated tenant/principal context. The
+        optional lifecycle filter accepts active, archived, or all; absent is equivalent to all.
+        Tenant authority comes from authenticated principal claims and EventStore envelopes, never
+        from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected
+        if present after authorization.
+      parameters:
+        - $ref: "#/components/parameters/LifecycleFilter"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Freshness"
+      responses:
+        "200":
+          description: Authorized metadata-only project choices with freshness evidence.
+          headers:
+            X-Correlation-Id:
+              $ref: "#/components/headers/CorrelationId"
+            X-Hexalith-Freshness:
+              $ref: "#/components/headers/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectListResponse"
+              examples:
+                synthetic:
+                  $ref: "#/components/examples/ProjectListResponse"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-read-consistency:
+        class: eventually_consistent
+        freshnessBehavior: returns-projection-watermark-when-available
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: query-correlation-only
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-and-project-list-permission
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - validation_error
+        - not_found
+        - read_model_unavailable
+        - projection_stale
+        - projection_unavailable
+        - internal_error
     post:
       tags:
         - projects
@@ -101,21 +159,21 @@ paths:
       tags:
         - projects
       operationId: GetProject
-      summary: Read minimal project lifecycle/detail (freshness-carrying query).
+      summary: Open a project as metadata-only read context.
       description: >
-        Returns the metadata-only project lifecycle/detail with projection freshness
-        evidence — the minimal read used to confirm a 202'd create landed. Reads are
-        eventually consistent and carry the X-Hexalith-Freshness response header.
-        Idempotency-Key is not a parameter on queries (it is rejected if present).
-        This is the minimal lifecycle/detail read; the full Open-Project surface is
-        deferred to Story 1.7.
+        Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe
+        reference summaries, context-activation availability, and projection freshness/trust evidence.
+        The response is metadata-only: it carries no conversation transcript, file contents, memory
+        payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial
+        detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header.
+        Idempotency-Key is not a query parameter and is rejected if present after authorization.
       parameters:
         - $ref: "#/components/parameters/ProjectId"
         - $ref: "#/components/parameters/CorrelationId"
         - $ref: "#/components/parameters/Freshness"
       responses:
         "200":
-          description: Metadata-only project lifecycle/detail with freshness evidence.
+          description: Metadata-only Open Project body with freshness evidence.
           headers:
             X-Correlation-Id:
               $ref: "#/components/headers/CorrelationId"
@@ -130,6 +188,8 @@ paths:
                   $ref: "#/components/examples/Project"
         "401":
           $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
         "403":
           $ref: "#/components/responses/SafeAuthorizationDenial403"
         "404":
@@ -196,6 +256,17 @@ components:
       description: Requested read-consistency or projection freshness hint for query families.
       schema:
         $ref: "#/components/schemas/ReadConsistencyClass"
+    LifecycleFilter:
+      name: lifecycle
+      in: query
+      required: false
+      description: Optional lifecycle filter for list queries. Absent is equivalent to all; all returns active and archived rows visible to the caller.
+      schema:
+        type: string
+        enum:
+          - active
+          - archived
+          - all
     ProjectId:
       name: projectId
       in: path
@@ -404,14 +475,41 @@ components:
       value:
         projectId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
         name: synthetic-project-alpha
+        description: synthetic metadata description
         lifecycleState: active
         createdAt: "2026-05-12T12:34:56Z"
         updatedAt: "2026-05-12T12:34:56Z"
+        setupMetadata: synthetic-setup-reference
+        contextActivation:
+          enabled: true
+          blockedReasonCode: null
+        references: []
         freshness:
           readConsistency: eventually_consistent
           observedAt: "2026-05-12T12:34:56Z"
           projectionWatermark: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
           stale: false
+          trustState: trusted
+    ProjectListResponse:
+      value:
+        items:
+          - projectId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+            name: synthetic-project-alpha
+            lifecycleState: active
+            createdAt: "2026-05-12T12:34:56Z"
+            updatedAt: "2026-05-12T12:34:56Z"
+            freshness:
+              readConsistency: eventually_consistent
+              observedAt: "2026-05-12T12:34:56Z"
+              projectionWatermark: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
+              stale: false
+              trustState: trusted
+        freshness:
+          readConsistency: eventually_consistent
+          observedAt: "2026-05-12T12:34:56Z"
+          projectionWatermark: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
+          stale: false
+          trustState: trusted
   schemas:
     OpaqueIdentifier:
       type: string
@@ -525,6 +623,7 @@ components:
       required:
         - readConsistency
         - observedAt
+        - trustState
       properties:
         readConsistency:
           $ref: "#/components/schemas/ReadConsistencyClass"
@@ -535,12 +634,21 @@ components:
         stale:
           type: boolean
           default: false
+        trustState:
+          $ref: "#/components/schemas/ProjectionTrustState"
     ReadConsistencyClass:
       type: string
       enum:
         - snapshot_per_task
         - read_your_writes
         - eventually_consistent
+    ProjectionTrustState:
+      type: string
+      enum:
+        - trusted
+        - stale
+        - unavailable
+      description: Deterministic trust state derived from projection evidence, never wall-clock guessing.
     SensitiveMetadataTier:
       type: string
       enum:
@@ -600,13 +708,16 @@ components:
     Project:
       type: object
       additionalProperties: false
-      description: Minimal metadata-only project lifecycle/detail returned by GetProject. Carries no transcript/file/memory body, secret, token, or path.
+      description: Metadata-only Open Project response returned by GetProject. Carries no transcript/file/memory body, raw prompt, secret, token, command body, sibling denial detail, or path.
       required:
         - projectId
         - name
         - lifecycleState
         - createdAt
         - updatedAt
+        - setupMetadata
+        - contextActivation
+        - references
         - freshness
       properties:
         projectId:
@@ -628,6 +739,102 @@ components:
           $ref: "#/components/schemas/UtcDateTime"
         updatedAt:
           $ref: "#/components/schemas/UtcDateTime"
+        setupMetadata:
+          type: string
+          nullable: true
+          maxLength: 512
+          description: Optional safe setup metadata reference projected from Projects-owned data only; not a raw setup body, path, secret, token, or prompt.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        contextActivation:
+          $ref: "#/components/schemas/ContextActivation"
+        references:
+          type: array
+          maxItems: 64
+          description: Safe Projects-owned reference summaries. Empty is correct until Epic 2 reference events and ACLs can populate it.
+          items:
+            $ref: "#/components/schemas/ProjectReferenceSummary"
+        freshness:
+          $ref: "#/components/schemas/FreshnessMetadata"
+    ProjectListResponse:
+      type: object
+      additionalProperties: false
+      description: Tenant-scoped, authorization-filtered list of metadata-only Project choices.
+      required:
+        - items
+        - freshness
+      properties:
+        items:
+          type: array
+          maxItems: 200
+          items:
+            $ref: "#/components/schemas/ProjectListItem"
+        freshness:
+          $ref: "#/components/schemas/FreshnessMetadata"
+    ProjectListItem:
+      type: object
+      additionalProperties: false
+      description: Metadata-only row for presenting a Project choice. Does not carry tenantId or full Project Context.
+      required:
+        - projectId
+        - name
+        - lifecycleState
+        - createdAt
+        - updatedAt
+        - freshness
+      properties:
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+          description: Projected project name metadata only; it is not aggregate identity.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        lifecycleState:
+          $ref: "#/components/schemas/ProjectLifecycleState"
+        createdAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        updatedAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        freshness:
+          $ref: "#/components/schemas/FreshnessMetadata"
+    ContextActivation:
+      type: object
+      additionalProperties: false
+      description: Explicitly states whether the opened Project may become active conversation context by default.
+      required:
+        - enabled
+        - blockedReasonCode
+      properties:
+        enabled:
+          type: boolean
+        blockedReasonCode:
+          type: string
+          nullable: true
+          maxLength: 80
+          pattern: "^[a-z][a-z0-9_]{0,79}$"
+          description: Metadata-only reason code when activation is blocked; null when enabled.
+    ProjectReferenceSummary:
+      type: object
+      additionalProperties: false
+      description: Safe Projects-owned reference summary. This story may return an empty collection until sibling reference events and ACLs exist.
+      required:
+        - referenceKind
+        - referenceState
+        - freshness
+      properties:
+        referenceKind:
+          type: string
+          enum:
+            - conversation
+            - folder
+            - memory
+        referenceState:
+          type: string
+          enum:
+            - included
+            - unavailable
+            - redacted
         freshness:
           $ref: "#/components/schemas/FreshnessMetadata"
     CanonicalErrorCategory:

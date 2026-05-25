@@ -105,6 +105,7 @@ public sealed record ProjectListProjection
                         created.Name,
                         created.Lifecycle,
                         envelope.Sequence,
+                        created.OccurredAt,
                         created.OccurredAt);
                     break;
 
@@ -139,6 +140,25 @@ public sealed record ProjectListProjection
     {
         string? key = TryKey(tenantId, projectId);
         return key is not null && Projects.TryGetValue(key, out ProjectListItem? item) ? item : null;
+    }
+
+    /// <summary>Lists projected items for a tenant, optionally filtered by lifecycle state.</summary>
+    /// <param name="tenantId">The authoritative tenant identifier.</param>
+    /// <param name="lifecycleFilter">The lifecycle filter, or null for all lifecycle states.</param>
+    /// <returns>The matching items in deterministic project-id order.</returns>
+    public IReadOnlyList<ProjectListItem> List(string tenantId, Contracts.Ui.ProjectLifecycle? lifecycleFilter)
+    {
+        if (string.IsNullOrWhiteSpace(tenantId))
+        {
+            return [];
+        }
+
+        string tenant = tenantId.Trim();
+        return Projects.Values
+            .Where(item => string.Equals(item.TenantId, tenant, StringComparison.Ordinal))
+            .Where(item => lifecycleFilter is null || item.Lifecycle == lifecycleFilter.Value)
+            .OrderBy(item => item.ProjectId, StringComparer.Ordinal)
+            .ToArray();
     }
 
     // Derives the canonical key via ProjectIdentity. A structurally-invalid tenant/project yields null

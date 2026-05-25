@@ -38,6 +38,7 @@ public sealed class ProjectProjectionTests
         item.Name.ShouldBe("Tracer Bullet");
         item.Lifecycle.ShouldBe(ProjectLifecycle.Active);
         item.Sequence.ShouldBe(1);
+        item.UpdatedAt.ShouldBe(item.CreatedAt);
     }
 
     [Fact]
@@ -83,6 +84,27 @@ public sealed class ProjectProjectionTests
     }
 
     [Fact]
+    public void ListProjection_ListFiltersByTenantAndLifecycle()
+    {
+        const string archivedProjectId = "01HZ9K8YQ3W6V2N4R7T5P0X1AC";
+        ProjectListProjection projection = ProjectListProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA, name: "Active")),
+            new ProjectProjectionEnvelope(TenantA, 2, Created(TenantA, projectId: archivedProjectId, lifecycle: ProjectLifecycle.Archived, name: "Archived")),
+            new ProjectProjectionEnvelope(TenantB, 3, Created(TenantB, projectId: "01HZ9K8YQ3W6V2N4R7T5P0X1AD", name: "Foreign")),
+        ]);
+
+        projection.List(TenantA, ProjectLifecycle.Active).Select(item => item.ProjectId)
+            .ShouldBe([ProjectIdValue]);
+        projection.List(TenantA, ProjectLifecycle.Archived).Select(item => item.ProjectId)
+            .ShouldBe([archivedProjectId]);
+        projection.List(TenantA, lifecycleFilter: null).Select(item => item.ProjectId)
+            .ShouldBe([ProjectIdValue, archivedProjectId]);
+        projection.List(TenantB, lifecycleFilter: null).Select(item => item.ProjectId)
+            .ShouldBe(["01HZ9K8YQ3W6V2N4R7T5P0X1AD"]);
+    }
+
+    [Fact]
     public void ListProjection_UnknownEventType_Throws()
     {
         Should.Throw<InvalidOperationException>(() => ProjectListProjection.Empty
@@ -122,14 +144,16 @@ public sealed class ProjectProjectionTests
         string tenant,
         string idempotencyKey = "idem-key-001",
         string fingerprint = "sha256:deadbeef",
-        string name = "Tracer Bullet")
+        string name = "Tracer Bullet",
+        string projectId = ProjectIdValue,
+        ProjectLifecycle lifecycle = ProjectLifecycle.Active)
         => new(
             tenant,
-            ProjectIdValue,
+            projectId,
             name,
             null,
             null,
-            ProjectLifecycle.Active,
+            lifecycle,
             "actor-001",
             "corr-001",
             "task-001",

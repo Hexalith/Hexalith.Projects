@@ -47,6 +47,91 @@ public sealed class ProjectAuthorizationGateTests
     }
 
     [Fact]
+    public async Task AuthorizeList_WhenAllowed_EvaluatesDeclaredLayerOrder()
+    {
+        IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
+        ProjectAuthorizationGate gate = new(
+            new TenantAccessAuthorizer(store, new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions()),
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new EmptyReadModel());
+
+        ProjectAuthorizationResult result = await gate.AuthorizeListAsync(
+            new FixedProjectTenantContextAccessor(
+                "tenant-a",
+                "principal-a",
+                [ProjectAuthorizationGate.ListProjectsAction]),
+            new DefaultHttpContext(),
+            "corr-a",
+            "task-a",
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        result.IsAllowed.ShouldBeTrue();
+        result.ProjectDetail.ShouldBeNull();
+        result.EvaluatedLayers.ShouldBe(AuthorizationOrder.LayeredProjectAuthorization);
+    }
+
+    [Fact]
+    public async Task AuthorizeList_WhenListPermissionMissing_DeniesAtClaimTransformLayer()
+    {
+        IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
+        ProjectAuthorizationGate gate = new(
+            new TenantAccessAuthorizer(store, new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions()),
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new EmptyReadModel());
+
+        ProjectAuthorizationResult result = await gate.AuthorizeListAsync(
+            new FixedProjectTenantContextAccessor(
+                "tenant-a",
+                "principal-a",
+                [ProjectAuthorizationGate.ReadProjectAction]),
+            new DefaultHttpContext(),
+            "corr-a",
+            "task-a",
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        result.IsAllowed.ShouldBeFalse();
+        result.TerminalLayer.ShouldBe(AuthorizationLayer.EventStoreClaimTransform);
+        result.EvaluatedLayers.ShouldBe([AuthorizationLayer.JwtValidation, AuthorizationLayer.EventStoreClaimTransform]);
+    }
+
+    [Fact]
+    public async Task AuthorizeRead_WhenProjectIsArchived_AllowsMetadataRead()
+    {
+        IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
+        ProjectDetailItem archived = new(
+            "tenant-a",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "Archived Project",
+            "Safe description",
+            "setup-reference",
+            ProjectLifecycle.Archived,
+            Now,
+            Now,
+            1);
+        ProjectAuthorizationGate gate = new(
+            new TenantAccessAuthorizer(store, new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions()),
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new SingleProjectReadModel(archived));
+
+        ProjectAuthorizationResult result = await gate.AuthorizeReadAsync(
+            archived.ProjectId,
+            new FixedProjectTenantContextAccessor(
+                "tenant-a",
+                "principal-a",
+                [ProjectAuthorizationGate.ReadProjectAction]),
+            new DefaultHttpContext(),
+            "corr-a",
+            "task-a",
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        result.IsAllowed.ShouldBeTrue();
+        result.ProjectDetail.ShouldBe(archived);
+    }
+
+    [Fact]
     public async Task AuthorizeCreate_WhenClaimTransformFails_ShortCircuitsBeforeProjection()
     {
         IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
@@ -180,6 +265,16 @@ public sealed class ProjectAuthorizationGateTests
     {
         public Task<ProjectDetailItem?> GetAsync(string authoritativeTenantId, string projectId, CancellationToken cancellationToken = default)
             => Task.FromResult<ProjectDetailItem?>(null);
+    }
+
+    private sealed class SingleProjectReadModel(ProjectDetailItem item) : IProjectDetailReadModel
+    {
+        public Task<ProjectDetailItem?> GetAsync(string authoritativeTenantId, string projectId, CancellationToken cancellationToken = default)
+            => Task.FromResult<ProjectDetailItem?>(
+                string.Equals(item.TenantId, authoritativeTenantId, StringComparison.Ordinal)
+                    && string.Equals(item.ProjectId, projectId, StringComparison.Ordinal)
+                    ? item
+                    : null);
     }
 
     private sealed class MismatchedTenantProjectionStore : IProjectTenantAccessProjectionStore

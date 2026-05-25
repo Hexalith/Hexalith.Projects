@@ -28,6 +28,33 @@ namespace Hexalith.Projects.Client.Generated
     public partial interface IClient
     {
         /// <summary>
+        /// List authorized tenant-scoped project choices.
+        /// </summary>
+        /// <remarks>
+        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// </remarks>
+        /// <param name="lifecycle">Optional lifecycle filter for list queries. Absent is equivalent to all; all returns active and archived rows visible to the caller.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Authorized metadata-only project choices with freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectListResponse> ListProjectsAsync(Lifecycle? lifecycle, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List authorized tenant-scoped project choices.
+        /// </summary>
+        /// <remarks>
+        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// </remarks>
+        /// <param name="lifecycle">Optional lifecycle filter for list queries. Absent is equivalent to all; all returns active and archived rows visible to the caller.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Authorized metadata-only project choices with freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectListResponse> ListProjectsAsync(Lifecycle? lifecycle, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
         /// Create a tenant-scoped project (command-async).
         /// </summary>
         /// <remarks>
@@ -55,29 +82,29 @@ namespace Hexalith.Projects.Client.Generated
         System.Threading.Tasks.Task<AcceptedCommand> CreateProjectAsync(string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, CreateProjectRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
-        /// Read minimal project lifecycle/detail (freshness-carrying query).
+        /// Open a project as metadata-only read context.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only project lifecycle/detail with projection freshness evidence — the minimal read used to confirm a 202'd create landed. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a parameter on queries (it is rejected if present). This is the minimal lifecycle/detail read; the full Open-Project surface is deferred to Story 1.7.
+        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
-        /// <returns>Metadata-only project lifecycle/detail with freshness evidence.</returns>
+        /// <returns>Metadata-only Open Project body with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Read minimal project lifecycle/detail (freshness-carrying query).
+        /// Open a project as metadata-only read context.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only project lifecycle/detail with projection freshness evidence — the minimal read used to confirm a 202'd create landed. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a parameter on queries (it is rejected if present). This is the minimal lifecycle/detail read; the full Open-Project surface is deferred to Story 1.7.
+        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
-        /// <returns>Metadata-only project lifecycle/detail with freshness evidence.</returns>
+        /// <returns>Metadata-only Open Project body with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
 
@@ -114,6 +141,164 @@ namespace Hexalith.Projects.Client.Generated
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
+
+        /// <summary>
+        /// List authorized tenant-scoped project choices.
+        /// </summary>
+        /// <remarks>
+        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// </remarks>
+        /// <param name="lifecycle">Optional lifecycle filter for list queries. Absent is equivalent to all; all returns active and archived rows visible to the caller.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Authorized metadata-only project choices with freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ProjectListResponse> ListProjectsAsync(Lifecycle? lifecycle, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
+        {
+            return ListProjectsAsync(lifecycle, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List authorized tenant-scoped project choices.
+        /// </summary>
+        /// <remarks>
+        /// Lists metadata-only Projects visible to the authenticated tenant/principal context. The optional lifecycle filter accepts active, archived, or all; absent is equivalent to all. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from client-controlled tenant fields. Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        /// </remarks>
+        /// <param name="lifecycle">Optional lifecycle filter for list queries. Absent is equivalent to all; all returns active and archived rows visible to the caller.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Authorized metadata-only project choices with freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ProjectListResponse> ListProjectsAsync(Lifecycle? lifecycle, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Freshness != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Freshness", ConvertToString(x_Hexalith_Freshness, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects"
+                    urlBuilder_.Append("api/v1/projects");
+                    urlBuilder_.Append('?');
+                    if (lifecycle != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("lifecycle")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(lifecycle, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectListResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
 
         /// <summary>
         /// Create a tenant-scoped project (command-async).
@@ -172,7 +357,7 @@ namespace Hexalith.Projects.Client.Generated
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/v1/projects"
                     urlBuilder_.Append("api/v1/projects");
 
@@ -279,15 +464,15 @@ namespace Hexalith.Projects.Client.Generated
         }
 
         /// <summary>
-        /// Read minimal project lifecycle/detail (freshness-carrying query).
+        /// Open a project as metadata-only read context.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only project lifecycle/detail with projection freshness evidence — the minimal read used to confirm a 202'd create landed. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a parameter on queries (it is rejected if present). This is the minimal lifecycle/detail read; the full Open-Project surface is deferred to Story 1.7.
+        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
-        /// <returns>Metadata-only project lifecycle/detail with freshness evidence.</returns>
+        /// <returns>Metadata-only Open Project body with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
         {
@@ -296,15 +481,15 @@ namespace Hexalith.Projects.Client.Generated
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Read minimal project lifecycle/detail (freshness-carrying query).
+        /// Open a project as metadata-only read context.
         /// </summary>
         /// <remarks>
-        /// Returns the metadata-only project lifecycle/detail with projection freshness evidence — the minimal read used to confirm a 202'd create landed. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a parameter on queries (it is rejected if present). This is the minimal lifecycle/detail read; the full Open-Project surface is deferred to Story 1.7.
+        /// Returns authorized Project metadata, lifecycle state, safe setup metadata, empty-safe reference summaries, context-activation availability, and projection freshness/trust evidence. The response is metadata-only: it carries no conversation transcript, file contents, memory payload, raw prompt, secret, token, full command body, unrestricted path, or raw sibling denial detail. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization.
         /// </remarks>
         /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
         /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
-        /// <returns>Metadata-only project lifecycle/detail with freshness evidence.</returns>
+        /// <returns>Metadata-only Open Project body with freshness evidence.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
         {
@@ -327,7 +512,7 @@ namespace Hexalith.Projects.Client.Generated
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
-                
+
                     // Operation Path: "api/v1/projects/{projectId}"
                     urlBuilder_.Append("api/v1/projects/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
@@ -363,6 +548,16 @@ namespace Hexalith.Projects.Client.Generated
                                 throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
@@ -516,7 +711,7 @@ namespace Hexalith.Projects.Client.Generated
                     var field_ = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
                     if (field_ != null)
                     {
-                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field_, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field_, typeof(System.Runtime.Serialization.EnumMemberAttribute))
                             as System.Runtime.Serialization.EnumMemberAttribute;
                         if (attribute != null)
                         {
@@ -528,7 +723,7 @@ namespace Hexalith.Projects.Client.Generated
                     return converted == null ? string.Empty : converted;
                 }
             }
-            else if (value is bool) 
+            else if (value is bool)
             {
                 return System.Convert.ToString((bool)value, cultureInfo).ToLowerInvariant();
             }
@@ -651,6 +846,10 @@ namespace Hexalith.Projects.Client.Generated
         [Newtonsoft.Json.JsonProperty("stale", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool Stale { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("trustState", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectionTrustState TrustState { get; set; }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -665,6 +864,24 @@ namespace Hexalith.Projects.Client.Generated
 
         [System.Runtime.Serialization.EnumMember(Value = @"eventually_consistent")]
         Eventually_consistent = 2,
+
+    }
+
+    /// <summary>
+    /// Deterministic trust state derived from projection evidence, never wall-clock guessing.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectionTrustState
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"trusted")]
+        Trusted = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"stale")]
+        Stale = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unavailable")]
+        Unavailable = 2,
 
     }
 
@@ -750,7 +967,7 @@ namespace Hexalith.Projects.Client.Generated
     }
 
     /// <summary>
-    /// Minimal metadata-only project lifecycle/detail returned by GetProject. Carries no transcript/file/memory body, secret, token, or path.
+    /// Metadata-only Open Project response returned by GetProject. Carries no transcript/file/memory body, raw prompt, secret, token, command body, sibling denial detail, or path.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Project
@@ -780,6 +997,105 @@ namespace Hexalith.Projects.Client.Generated
 
         [Newtonsoft.Json.JsonProperty("updatedAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Optional safe setup metadata reference projected from Projects-owned data only; not a raw setup body, path, secret, token, or prompt.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("setupMetadata", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SetupMetadata { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("contextActivation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ContextActivation ContextActivation { get; set; } = new ContextActivation();
+
+        /// <summary>
+        /// Safe Projects-owned reference summaries. Empty is correct until Epic 2 reference events and ACLs can populate it.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("references", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ProjectReferenceSummary> References { get; set; } = new System.Collections.Generic.List<ProjectReferenceSummary>();
+
+        [Newtonsoft.Json.JsonProperty("freshness", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public FreshnessMetadata Freshness { get; set; } = new FreshnessMetadata();
+
+    }
+
+    /// <summary>
+    /// Tenant-scoped, authorization-filtered list of metadata-only Project choices.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectListResponse
+    {
+
+        [Newtonsoft.Json.JsonProperty("items", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ProjectListItem> Items { get; set; } = new System.Collections.Generic.List<ProjectListItem>();
+
+        [Newtonsoft.Json.JsonProperty("freshness", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public FreshnessMetadata Freshness { get; set; } = new FreshnessMetadata();
+
+    }
+
+    /// <summary>
+    /// Metadata-only row for presenting a Project choice. Does not carry tenantId or full Project Context.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectListItem
+    {
+
+        [Newtonsoft.Json.JsonProperty("projectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectId { get; set; }
+
+        /// <summary>
+        /// Projected project name metadata only; it is not aggregate identity.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("lifecycleState", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectLifecycleState LifecycleState { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("createdAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset CreatedAt { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("updatedAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset UpdatedAt { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("freshness", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public FreshnessMetadata Freshness { get; set; } = new FreshnessMetadata();
+
+    }
+
+    /// <summary>
+    /// Explicitly states whether the opened Project may become active conversation context by default.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ContextActivation
+    {
+
+        [Newtonsoft.Json.JsonProperty("enabled", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// Metadata-only reason code when activation is blocked; null when enabled.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("blockedReasonCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string BlockedReasonCode { get; set; }
+
+    }
+
+    /// <summary>
+    /// Safe Projects-owned reference summary. This story may return an empty collection until sibling reference events and ACLs exist.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectReferenceSummary
+    {
+
+        [Newtonsoft.Json.JsonProperty("referenceKind", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectReferenceSummaryReferenceKind ReferenceKind { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("referenceState", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectReferenceSummaryReferenceState ReferenceState { get; set; }
 
         [Newtonsoft.Json.JsonProperty("freshness", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public FreshnessMetadata Freshness { get; set; } = new FreshnessMetadata();
@@ -832,6 +1148,21 @@ namespace Hexalith.Projects.Client.Generated
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum Lifecycle
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"active")]
+        Active = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"archived")]
+        Archived = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"all")]
+        All = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum ProblemDetailsClientAction
     {
 
@@ -870,6 +1201,36 @@ namespace Hexalith.Projects.Client.Generated
 
         [System.Runtime.Serialization.EnumMember(Value = @"v1")]
         V1 = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectReferenceSummaryReferenceKind
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"conversation")]
+        Conversation = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"folder")]
+        Folder = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"memory")]
+        Memory = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectReferenceSummaryReferenceState
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"included")]
+        Included = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unavailable")]
+        Unavailable = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"redacted")]
+        Redacted = 2,
 
     }
 

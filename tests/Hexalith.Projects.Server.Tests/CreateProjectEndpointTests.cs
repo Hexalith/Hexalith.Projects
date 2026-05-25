@@ -20,6 +20,7 @@ using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Projections.ProjectDetail;
+using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server;
 using Hexalith.Projects.Testing.Leakage;
@@ -316,7 +317,13 @@ public sealed class CreateProjectEndpointTests
                 await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
             document.RootElement.GetProperty("projectId").GetString().ShouldBe(ProjectIdValue);
             document.RootElement.GetProperty("lifecycleState").GetString().ShouldBe("active");
+            document.RootElement.GetProperty("setupMetadata").GetString().ShouldBe("setup-reference");
+            document.RootElement.GetProperty("contextActivation").GetProperty("enabled").GetBoolean().ShouldBeTrue();
+            document.RootElement.GetProperty("contextActivation").TryGetProperty("blockedReasonCode", out JsonElement blockedReason).ShouldBeTrue();
+            blockedReason.ValueKind.ShouldBe(JsonValueKind.Null);
+            document.RootElement.GetProperty("references").GetArrayLength().ShouldBe(0);
             document.RootElement.GetProperty("freshness").GetProperty("readConsistency").GetString().ShouldBe("eventually_consistent");
+            document.RootElement.GetProperty("freshness").GetProperty("trustState").GetString().ShouldBe("trusted");
         }
         finally
         {
@@ -340,6 +347,186 @@ public sealed class CreateProjectEndpointTests
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task GetProject_ArchivedProject_ReturnsMetadataWithContextActivationBlocked()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel readModel = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            readModel.Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Archived));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument document = JsonDocument.Parse(
+                await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
+            document.RootElement.GetProperty("lifecycleState").GetString().ShouldBe("archived");
+            document.RootElement.GetProperty("contextActivation").GetProperty("enabled").GetBoolean().ShouldBeFalse();
+            document.RootElement.GetProperty("contextActivation").GetProperty("blockedReasonCode").GetString().ShouldBe("archived");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ListProjects_Authorized_ReturnsOnlyTenantScopedFilteredRows()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectListReadModel readModel = app.Services.GetRequiredService<InMemoryProjectListReadModel>();
+            readModel.Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Active, ProjectIdValue));
+            readModel.Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Archived, "01HZ9K8YQ3W6V2N4R7T5P0X1AC"));
+            readModel.Project("tenant-b", CreatedEvent("tenant-b", ProjectLifecycle.Active, "01HZ9K8YQ3W6V2N4R7T5P0X1AD"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+
+            HttpResponseMessage activeResponse = await client
+                .GetAsync("/api/v1/projects?lifecycle=active", TestContext.Current.CancellationToken)
+                .ConfigureAwait(true);
+            HttpResponseMessage allResponse = await client
+                .GetAsync("/api/v1/projects", TestContext.Current.CancellationToken)
+                .ConfigureAwait(true);
+
+            activeResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+            activeResponse.Headers.GetValues("X-Hexalith-Freshness").Single().ShouldBe("eventually_consistent");
+            using JsonDocument activeDocument = JsonDocument.Parse(
+                await activeResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
+            JsonElement activeItems = activeDocument.RootElement.GetProperty("items");
+            activeItems.GetArrayLength().ShouldBe(1);
+            activeItems[0].GetProperty("projectId").GetString().ShouldBe(ProjectIdValue);
+            activeItems[0].TryGetProperty("tenantId", out _).ShouldBeFalse();
+
+            allResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument allDocument = JsonDocument.Parse(
+                await allResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
+            allDocument.RootElement.GetProperty("items").GetArrayLength().ShouldBe(2);
+            allDocument.RootElement.GetProperty("freshness").GetProperty("trustState").GetString().ShouldBe("trusted");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task GetProject_AuthorizedQueryWithIdempotencyKey_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel readModel = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            readModel.Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            request.Headers.Add("Idempotency-Key", "idem-key-a");
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ListProjects_AuthorizedQueryWithIdempotencyKey_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = new(HttpMethod.Get, "/api/v1/projects");
+            request.Headers.Add("Idempotency-Key", "idem-key-a");
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task GetProject_CrossTenantIdempotencyKey_MapsToSafeDenial404()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-b", principalId: "principal-b").ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel readModel = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            readModel.Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            request.Headers.Add("Idempotency-Key", "idem-key-a");
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ListProjects_MissingTenantIdempotencyKey_MapsToSafeDenial404()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: null, principalId: null).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = new(HttpMethod.Get, "/api/v1/projects");
+            request.Headers.Add("Idempotency-Key", "idem-key-a");
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ListProjects_AuthorizedInvalidLifecycle_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+
+            HttpResponseMessage response = await client
+                .GetAsync("/api/v1/projects?lifecycle=deleted", TestContext.Current.CancellationToken)
+                .ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         }
         finally
         {
@@ -435,6 +622,8 @@ public sealed class CreateProjectEndpointTests
         {
             InMemoryProjectDetailReadModel readModel = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
             readModel.Project("tenant-a", CreatedEvent("tenant-a"));
+            InMemoryProjectListReadModel listReadModel = app.Services.GetRequiredService<InMemoryProjectListReadModel>();
+            listReadModel.Project("tenant-a", CreatedEvent("tenant-a"));
 
             await ProjectTenantIsolationConformance.AssertNoLeakageAsync(
                 [
@@ -475,6 +664,42 @@ public sealed class CreateProjectEndpointTests
                                 ? ProjectTenantIsolationResult.Leak("GET /api/v1/projects/{projectId}", "tenant-a", ProjectIdValue)
                                 : ProjectTenantIsolationResult.NoLeak("GET /api/v1/projects/{projectId}");
                         }),
+                    new ProjectTenantIsolationSurface(
+                        "list-query-filter",
+                        _ =>
+                        {
+                            IReadOnlyList<ProjectListItem> leaked = ProjectQueryTenantFilter.FilterList(
+                                "tenant-b",
+                                [
+                                    new ProjectListItem(
+                                        "tenant-a",
+                                        ProjectIdValue,
+                                        "Foreign",
+                                        ProjectLifecycle.Active,
+                                        1,
+                                        DateTimeOffset.UnixEpoch,
+                                        DateTimeOffset.UnixEpoch),
+                                ]);
+
+                            return Task.FromResult(leaked.Count == 0
+                                ? ProjectTenantIsolationResult.NoLeak("ProjectQueryTenantFilter.FilterList")
+                                : ProjectTenantIsolationResult.Leak("ProjectQueryTenantFilter.FilterList", leaked[0].TenantId, leaked[0].ProjectId));
+                        }),
+                    new ProjectTenantIsolationSurface(
+                        "list-endpoint",
+                        async cancellationToken =>
+                        {
+                            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+                            HttpResponseMessage response = await client.GetAsync("/api/v1/projects", cancellationToken).ConfigureAwait(true);
+                            string body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(true);
+                            bool leaked = response.StatusCode != HttpStatusCode.OK
+                                || body.Contains(ProjectIdValue, StringComparison.Ordinal)
+                                || body.Contains("tenant-a", StringComparison.Ordinal);
+
+                            return leaked
+                                ? ProjectTenantIsolationResult.Leak("GET /api/v1/projects", "tenant-a", ProjectIdValue)
+                                : ProjectTenantIsolationResult.NoLeak("GET /api/v1/projects");
+                        }),
                 ],
                 TestContext.Current.CancellationToken).ConfigureAwait(true);
         }
@@ -504,13 +729,95 @@ public sealed class CreateProjectEndpointTests
         }
     }
 
-    private static ProjectCreated CreatedEvent(string tenant) => new(
+    [Fact]
+    public async Task OpenAndListProjectResponses_AreMetadataOnly()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+            app.Services.GetRequiredService<InMemoryProjectListReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage open = await client.GetAsync($"/api/v1/projects/{ProjectIdValue}", TestContext.Current.CancellationToken).ConfigureAwait(true);
+            HttpResponseMessage list = await client.GetAsync("/api/v1/projects", TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            open.StatusCode.ShouldBe(HttpStatusCode.OK);
+            list.StatusCode.ShouldBe(HttpStatusCode.OK);
+            string openBody = await open.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string listBody = await list.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(openBody));
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(listBody));
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task GetProject_ReadModelUnavailable_ReturnsMetadataOnly503()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            detailReadUnavailable: true).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client
+                .GetAsync($"/api/v1/projects/{ProjectIdValue}", TestContext.Current.CancellationToken)
+                .ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ListProjects_ReadModelUnavailable_ReturnsMetadataOnly503()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            listReadUnavailable: true).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client
+                .GetAsync("/api/v1/projects", TestContext.Current.CancellationToken)
+                .ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    private static ProjectCreated CreatedEvent(
+        string tenant,
+        ProjectLifecycle lifecycle = ProjectLifecycle.Active,
+        string projectId = ProjectIdValue) => new(
         tenant,
-        ProjectIdValue,
+        projectId,
         "Tracer Bullet",
         "A safe description",
-        null,
-        ProjectLifecycle.Active,
+        "setup-reference",
+        lifecycle,
         "principal-a",
         "corr-a",
         "task-a",
@@ -564,7 +871,9 @@ public sealed class CreateProjectEndpointTests
         bool seedTenantAccess = true,
         bool tenantEnabled = true,
         string? membershipPrincipalId = null,
-        DateTimeOffset? lastTenantAccessTimestamp = null)
+        DateTimeOffset? lastTenantAccessTimestamp = null,
+        bool detailReadUnavailable = false,
+        bool listReadUnavailable = false)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
         {
@@ -579,6 +888,17 @@ public sealed class CreateProjectEndpointTests
         builder.Services.RemoveAll<IProjectTenantContextAccessor>();
         builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContextAccessor(tenantId, principalId));
         builder.Services.AddSingleton<IProjectCommandSubmitter>(submitter);
+        if (detailReadUnavailable)
+        {
+            builder.Services.RemoveAll<IProjectDetailReadModel>();
+            builder.Services.AddSingleton<IProjectDetailReadModel, ThrowingProjectDetailReadModel>();
+        }
+
+        if (listReadUnavailable)
+        {
+            builder.Services.RemoveAll<IProjectListReadModel>();
+            builder.Services.AddSingleton<IProjectListReadModel, ThrowingProjectListReadModel>();
+        }
 
         WebApplication app = builder.Build();
         if (seedTenantAccess && !string.IsNullOrWhiteSpace(tenantId) && !string.IsNullOrWhiteSpace(principalId))
@@ -662,6 +982,25 @@ public sealed class CreateProjectEndpointTests
                 : EventStoreClaimTransformEvidence.Allowed(
                     AuthoritativeTenantId,
                     PrincipalId,
-                    [ProjectAuthorizationGate.CreateProjectAction, ProjectAuthorizationGate.ReadProjectAction]);
+                    [
+                        ProjectAuthorizationGate.CreateProjectAction,
+                        ProjectAuthorizationGate.ReadProjectAction,
+                        ProjectAuthorizationGate.ListProjectsAction,
+                    ]);
+    }
+
+    private sealed class ThrowingProjectDetailReadModel : IProjectDetailReadModel
+    {
+        public Task<ProjectDetailItem?> GetAsync(string authoritativeTenantId, string projectId, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("Synthetic projection unavailable.");
+    }
+
+    private sealed class ThrowingProjectListReadModel : IProjectListReadModel
+    {
+        public Task<IReadOnlyList<ProjectListItem>> ListAsync(
+            string authoritativeTenantId,
+            ProjectLifecycle? lifecycleFilter,
+            CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("Synthetic projection unavailable.");
     }
 }

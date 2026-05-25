@@ -79,6 +79,7 @@ public sealed class ClientGenerationTests
         // The seed command-async + freshness query types are present.
         generated.ShouldContain("class CreateProjectRequest");
         generated.ShouldContain("class ProjectLifecycleStatus");
+        generated.ShouldContain("class ProjectListResponse");
         generated.ShouldContain("class ProblemDetails");
     }
 
@@ -123,6 +124,31 @@ public sealed class ClientGenerationTests
         Type statusType = clientAssembly.GetType("Hexalith.Projects.Client.Generated.ProjectLifecycleStatus").ShouldNotBeNull();
         statusType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
             .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
+
+        Type projectType = clientAssembly.GetType("Hexalith.Projects.Client.Generated.Project").ShouldNotBeNull();
+        projectType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
+
+        Type listResponseType = clientAssembly.GetType("Hexalith.Projects.Client.Generated.ProjectListResponse").ShouldNotBeNull();
+        listResponseType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GeneratedClientExposesListProjectsQueryWithoutIdempotencyParameter()
+    {
+        Assembly clientAssembly = typeof(CreateProjectRequest).Assembly;
+        Type clientInterface = clientAssembly.GetType("Hexalith.Projects.Client.Generated.IClient").ShouldNotBeNull();
+
+        MethodInfo[] listMethods = clientInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Where(m => m.Name == "ListProjectsAsync")
+            .ToArray();
+
+        listMethods.ShouldNotBeEmpty();
+        listMethods.Any(m => m.ReturnType.FullName?.Contains("ProjectListResponse", StringComparison.Ordinal) == true).ShouldBeTrue();
+        listMethods.SelectMany(m => m.GetParameters())
+            .Any(p => p.Name?.Contains("idempotency", StringComparison.OrdinalIgnoreCase) == true)
+            .ShouldBeFalse();
     }
 
     [Fact]

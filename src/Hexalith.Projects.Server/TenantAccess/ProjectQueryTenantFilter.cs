@@ -6,6 +6,7 @@
 namespace Hexalith.Projects.Server;
 
 using Hexalith.Projects.Projections.ProjectDetail;
+using Hexalith.Projects.Projections.ProjectList;
 
 /// <summary>Filters query-side records to the authoritative tenant before any response is built.</summary>
 public static class ProjectQueryTenantFilter
@@ -22,6 +23,22 @@ public static class ProjectQueryTenantFilter
     public static IReadOnlyList<ProjectDetailItem> FilterDetails(
         string? authoritativeTenantId,
         IEnumerable<ProjectDetailItem> items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+
+        if (string.IsNullOrWhiteSpace(authoritativeTenantId))
+        {
+            return [];
+        }
+
+        string tenant = authoritativeTenantId.Trim();
+        return items.Where(item => string.Equals(item.TenantId, tenant, StringComparison.Ordinal)).ToArray();
+    }
+
+    /// <summary>Filters a list collection to the authoritative tenant.</summary>
+    public static IReadOnlyList<ProjectListItem> FilterList(
+        string? authoritativeTenantId,
+        IEnumerable<ProjectListItem> items)
     {
         ArgumentNullException.ThrowIfNull(items);
 

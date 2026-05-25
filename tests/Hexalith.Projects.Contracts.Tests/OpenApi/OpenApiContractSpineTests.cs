@@ -56,6 +56,7 @@ public sealed class OpenApiContractSpineTests
         RequiredMapping(parameters, "TaskId");
         RequiredMapping(parameters, "Freshness");
         RequiredMapping(parameters, "ProjectId");
+        RequiredMapping(parameters, "LifecycleFilter");
 
         // Reusable response headers.
         YamlMappingNode headers = RequiredMapping(components, "headers");
@@ -182,15 +183,20 @@ public sealed class OpenApiContractSpineTests
     }
 
     [Fact]
-    public void Spine_SeedQuery_CarriesFreshnessAndRejectsIdempotencyKey()
+    public void Spine_QueryReads_CarryFreshnessAndRejectIdempotencyKey()
     {
         YamlMappingNode get = SeedQuery();
+        YamlMappingNode list = ListQuery();
 
         // Idempotency-Key is NOT a parameter on the query.
-        string[] parameterRefs = RequiredSequence(get, "parameters")
-            .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
-        parameterRefs.ShouldContain("#/components/parameters/Freshness");
-        parameterRefs.ShouldNotContain("#/components/parameters/IdempotencyKey");
+        foreach (YamlMappingNode operation in new[] { get, list })
+        {
+            string[] parameterRefs = RequiredSequence(operation, "parameters")
+                .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
+            parameterRefs.ShouldContain("#/components/parameters/Freshness");
+            parameterRefs.ShouldContain("#/components/parameters/CorrelationId");
+            parameterRefs.ShouldNotContain("#/components/parameters/IdempotencyKey");
+        }
 
         // 200 response carries the X-Hexalith-Freshness header + a freshness body field.
         YamlMappingNode ok = RequiredMapping(RequiredMapping(get, "responses"), "200");
@@ -209,20 +215,19 @@ public sealed class OpenApiContractSpineTests
     }
 
     [Fact]
-    public void Spine_GetProject_IsTheRealMinimalDetailQuery()
+    public void Spine_GetProject_IsExpandedOpenProjectQuery()
     {
-        // Story 1.4 grew the seed GetProjectLifecycleStatus GET into the real minimal GetProject query.
         YamlMappingNode get = SeedQuery();
         GetScalar(get, "operationId").ShouldBe("GetProject");
 
-        // The query returns the Project detail body, not the seed lifecycle-status shape.
         YamlMappingNode ok = RequiredMapping(RequiredMapping(get, "responses"), "200");
         string okSchemaRef = GetScalar(
             RequiredMapping(RequiredMapping(RequiredMapping(ok, "content"), "application/json"), "schema"),
             "$ref") ?? string.Empty;
         okSchemaRef.ShouldBe("#/components/schemas/Project");
 
-        // The Project schema is a closed, metadata-only envelope carrying lifecycle + freshness + timestamps.
+        // The Project schema is a closed, metadata-only Open Project envelope carrying lifecycle,
+        // setup metadata, context activation, empty-safe reference summaries, and freshness/trust state.
         YamlMappingNode project = RequiredMapping(Schemas(), "Project");
         GetScalar(project, "additionalProperties").ShouldBe("false");
         string[] required = RequiredSequence(project, "required")
@@ -232,7 +237,58 @@ public sealed class OpenApiContractSpineTests
         required.ShouldContain("lifecycleState");
         required.ShouldContain("createdAt");
         required.ShouldContain("updatedAt");
+        required.ShouldContain("setupMetadata");
+        required.ShouldContain("contextActivation");
+        required.ShouldContain("references");
         required.ShouldContain("freshness");
+
+        YamlMappingNode properties = RequiredMapping(project, "properties");
+        GetScalar(RequiredMapping(properties, "setupMetadata"), "type").ShouldBe("string");
+        GetScalar(RequiredMapping(properties, "contextActivation"), "$ref").ShouldBe("#/components/schemas/ContextActivation");
+        GetScalar(RequiredMapping(RequiredMapping(properties, "references"), "items"), "$ref").ShouldBe("#/components/schemas/ProjectReferenceSummary");
+    }
+
+    [Fact]
+    public void Spine_ListProjects_IsTenantScopedLifecycleFilterableQuery()
+    {
+        YamlMappingNode get = ListQuery();
+        GetScalar(get, "operationId").ShouldBe("ListProjects");
+
+        string[] parameterRefs = RequiredSequence(get, "parameters")
+            .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
+        parameterRefs.ShouldContain("#/components/parameters/LifecycleFilter");
+        parameterRefs.ShouldContain("#/components/parameters/CorrelationId");
+        parameterRefs.ShouldContain("#/components/parameters/Freshness");
+        parameterRefs.ShouldNotContain("#/components/parameters/IdempotencyKey");
+
+        string[] lifecycleFilter = RequiredEnumValues(RequiredMapping(RequiredMapping(Parameters(), "LifecycleFilter"), "schema"));
+        lifecycleFilter.ShouldBe(new[] { "active", "archived", "all" });
+
+        YamlMappingNode ok = RequiredMapping(RequiredMapping(get, "responses"), "200");
+        RequiredMapping(ok, "headers").Children.ContainsKey(new YamlScalarNode("X-Hexalith-Freshness")).ShouldBeTrue();
+        string okSchemaRef = GetScalar(
+            RequiredMapping(RequiredMapping(RequiredMapping(ok, "content"), "application/json"), "schema"),
+            "$ref") ?? string.Empty;
+        okSchemaRef.ShouldBe("#/components/schemas/ProjectListResponse");
+
+        YamlMappingNode list = RequiredMapping(Schemas(), "ProjectListResponse");
+        GetScalar(list, "additionalProperties").ShouldBe("false");
+        string[] required = RequiredSequence(list, "required")
+            .OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty).ToArray();
+        required.ShouldContain("items");
+        required.ShouldContain("freshness");
+
+        YamlMappingNode item = RequiredMapping(Schemas(), "ProjectListItem");
+        GetScalar(item, "additionalProperties").ShouldBe("false");
+        string[] itemProperties = RequiredMapping(item, "properties").Children.Keys
+            .OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty).ToArray();
+        itemProperties.ShouldContain("projectId");
+        itemProperties.ShouldContain("name");
+        itemProperties.ShouldContain("lifecycleState");
+        itemProperties.ShouldContain("createdAt");
+        itemProperties.ShouldContain("updatedAt");
+        itemProperties.ShouldContain("freshness");
+        itemProperties.ShouldNotContain("tenantId");
     }
 
     [Fact]
@@ -274,7 +330,18 @@ public sealed class OpenApiContractSpineTests
         GetScalar(opaque, "type").ShouldBe("string");
 
         // camelCase property names across closed envelope schemas.
-        foreach (string schemaName in new[] { "AcceptedCommand", "FreshnessMetadata", "CreateProjectRequest", "ProjectLifecycleStatus", "Project" })
+        foreach (string schemaName in new[]
+        {
+            "AcceptedCommand",
+            "FreshnessMetadata",
+            "CreateProjectRequest",
+            "ProjectLifecycleStatus",
+            "Project",
+            "ProjectListResponse",
+            "ProjectListItem",
+            "ProjectReferenceSummary",
+            "ContextActivation",
+        })
         {
             foreach (string property in RequiredMapping(RequiredMapping(schemas, schemaName), "properties").Children.Keys
                 .OfType<YamlScalarNode>().Select(k => k.Value ?? string.Empty))
@@ -468,8 +535,14 @@ public sealed class OpenApiContractSpineTests
     private static YamlMappingNode Schemas() =>
         RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "components"), "schemas");
 
+    private static YamlMappingNode Parameters() =>
+        RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "components"), "parameters");
+
     private static YamlMappingNode SeedMutation() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects"), "post");
+
+    private static YamlMappingNode ListQuery() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects"), "get");
 
     private static YamlMappingNode SeedQuery() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}"), "get");

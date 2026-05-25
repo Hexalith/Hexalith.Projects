@@ -26,3 +26,42 @@ boundaries.
 - **Query authorization:** `TenantAccessAuthorizer` gates membership before project ACL and EventStore
   validator layers. Query-side filters strip records whose tenant differs from the authoritative
   tenant.
+
+## `ProjectListProjection`
+
+- **Type:** `Hexalith.Projects.Projections.ProjectList.ProjectListProjection`.
+- **Owner:** Hexalith.Projects Workers host will fold persisted Project events; Server reads it through
+  `IProjectListReadModel`. The current Story 1.7 in-memory implementation is
+  `InMemoryProjectListReadModel`.
+- **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
+- **Source events:** `ProjectCreated`. For the current create-only event set, `UpdatedAt == CreatedAt`.
+- **Tenant scoping:** envelope tenant and event tenant must match before the row is folded. Query reads
+  filter rows by the authenticated authoritative tenant before response construction.
+- **Stored data:** metadata-only project id, display name, lifecycle state, sequence watermark, created
+  timestamp, and updated timestamp. No Project Context, transcript, file contents, memory payload,
+  prompt, token, secret, path, or sibling denial detail is stored.
+- **Rebuild behavior:** `Rebuild(envelopes)` delegates exactly to `Empty.Apply(envelopes)` so rebuild
+  and incremental projection share the same deterministic fold.
+- **Freshness semantics:** list responses derive `observedAt` and projection freshness/trust metadata
+  from the projected row timestamps/sequences; no wall-clock guessing is used.
+- **Leakage boundary:** list rows never include client-controlled `tenantId` in the external response.
+
+## `ProjectDetailProjection`
+
+- **Type:** `Hexalith.Projects.Projections.ProjectDetail.ProjectDetailProjection`.
+- **Owner:** Hexalith.Projects Workers host will fold persisted Project events; Server reads it through
+  `IProjectDetailReadModel`. The current Story 1.7 in-memory implementation is
+  `InMemoryProjectDetailReadModel`.
+- **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
+- **Source events:** `ProjectCreated`. `SetupMetadata` is the safe setup metadata reference already
+  carried by the event; Story 1.7 does not introduce raw setup bodies.
+- **Tenant scoping:** envelope tenant and event tenant must match before detail is folded. Open Project
+  reads filter the detail by authoritative tenant before response construction.
+- **Stored data:** metadata-only project id, name, description, setup metadata reference, lifecycle
+  state, created/updated timestamps, and sequence watermark.
+- **Rebuild behavior:** `Rebuild(envelopes)` delegates exactly to `Empty.Apply(envelopes)` and keeps the
+  projection pure, deterministic, tenant-guarded, and throw-on-unknown-event.
+- **Freshness semantics:** Open Project responses derive freshness/trust metadata from projection state
+  (`UpdatedAt` and `Sequence`), not from the response wall clock.
+- **Leakage boundary:** Open Project returns metadata/setup/reference summaries only and blocks context
+  activation explicitly when lifecycle or availability prevents active use.
