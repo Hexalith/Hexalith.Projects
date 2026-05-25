@@ -5,6 +5,10 @@
 
 namespace Hexalith.Projects.Workers;
 
+using Dapr;
+
+using Hexalith.EventStore.Contracts.Events;
+using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Workers.Tenants.TenantEventHandlers;
 using Hexalith.Tenants.Client.Configuration;
@@ -14,6 +18,7 @@ using Hexalith.Tenants.Client.Subscription;
 using Hexalith.Tenants.Contracts.Events;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -36,6 +41,21 @@ public static class ProjectsWorkersModule
     /// <summary>The Tenants event topic name.</summary>
     public const string TenantEventsTopicName = ProjectsTenantEventSubscription.TopicName;
 
+    /// <summary>The Tenants event dead-letter topic name.</summary>
+    public const string TenantEventsDeadLetterTopicName = "deadletter.system.tenants.events";
+
+    /// <summary>The internal Project event route.</summary>
+    public const string ProjectEventsRoute = "/projects/events";
+
+    /// <summary>The Dapr pub/sub component for Project events.</summary>
+    public const string ProjectEventsPubSubName = "pubsub";
+
+    /// <summary>The Project event topic name.</summary>
+    public const string ProjectEventsTopicName = "projects.events";
+
+    /// <summary>The Project event dead-letter topic name.</summary>
+    public const string ProjectEventsDeadLetterTopicName = "deadletter.projects.events";
+
     /// <summary>
     /// Gets the module name used in worker diagnostics and registration.
     /// </summary>
@@ -52,6 +72,7 @@ public static class ProjectsWorkersModule
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddDaprClient();
+        services.AddProjectsDaprInfrastructure();
         services.AddProjectsTenantAccess();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<HexalithTenantsOptions>, ProjectsTenantEventSubscriptionOptionsValidator>());
         services.AddHexalithTenants(options =>
@@ -73,7 +94,74 @@ public static class ProjectsWorkersModule
         ArgumentNullException.ThrowIfNull(endpoints);
 
         endpoints.MapGet("/", () => Description);
-        endpoints.MapTenantEventSubscription();
+        endpoints.MapProjectsTenantEventSubscription();
+        endpoints.MapProjectsProjectEventSubscription();
+
+        return endpoints;
+    }
+
+    private static IEndpointRouteBuilder MapProjectsTenantEventSubscription(this IEndpointRouteBuilder endpoints)
+    {
+        _ = endpoints.MapPost(TenantEventsRoute, async (
+            TenantEventEnvelope envelope,
+            TenantEventProcessor processor,
+            CancellationToken cancellationToken) =>
+        {
+            TenantEventProcessingResult result = await processor.ProcessAsync(envelope, cancellationToken).ConfigureAwait(false);
+            return result switch
+            {
+                TenantEventProcessingResult.Processed
+                    or TenantEventProcessingResult.Duplicate
+                    or TenantEventProcessingResult.SkippedUnknownEventType
+                    or TenantEventProcessingResult.SkippedNoHandlers => Results.Ok(new { status = result.ToString() }),
+                TenantEventProcessingResult.FailedInvalidPayload => Results.Problem(
+                    title: "Tenant event processing failed.",
+                    detail: "The tenant event payload could not be deserialized.",
+                    statusCode: StatusCodes.Status500InternalServerError),
+                _ => Results.Problem(statusCode: StatusCodes.Status500InternalServerError),
+            };
+        }).WithTopic(new TopicOptions
+        {
+            PubsubName = TenantEventsPubSubName,
+            Name = TenantEventsTopicName,
+            DeadLetterTopic = TenantEventsDeadLetterTopicName,
+        });
+
+        return endpoints;
+    }
+
+    private static IEndpointRouteBuilder MapProjectsProjectEventSubscription(this IEndpointRouteBuilder endpoints)
+    {
+        _ = endpoints.MapPost(ProjectEventsRoute, async (
+            EventEnvelope envelope,
+            ProjectEventProjectionProcessor processor,
+            CancellationToken cancellationToken) =>
+        {
+            ProjectProjectionAppendResult result = await processor.ProcessAsync(envelope, cancellationToken).ConfigureAwait(false);
+            return result.Status switch
+            {
+                ProjectProjectionAppendStatus.Applied
+                    or ProjectProjectionAppendStatus.Duplicate
+                    or ProjectProjectionAppendStatus.OutOfOrder
+                    or ProjectProjectionAppendStatus.SkippedForeignDomain
+                    or ProjectProjectionAppendStatus.SkippedUnknownEventType => Results.Ok(new
+                    {
+                        status = result.Status.ToString(),
+                        tenantId = result.TenantId,
+                        messageId = result.MessageId,
+                        sequence = result.Sequence,
+                    }),
+                _ => Results.Problem(
+                    title: "Project projection processing failed.",
+                    detail: "The project event could not be applied to the durable projection journal.",
+                    statusCode: StatusCodes.Status500InternalServerError),
+            };
+        }).WithTopic(new TopicOptions
+        {
+            PubsubName = ProjectEventsPubSubName,
+            Name = ProjectEventsTopicName,
+            DeadLetterTopic = ProjectEventsDeadLetterTopicName,
+        });
 
         return endpoints;
     }

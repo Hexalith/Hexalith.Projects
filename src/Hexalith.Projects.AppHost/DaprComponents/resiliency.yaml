@@ -1,0 +1,75 @@
+apiVersion: dapr.io/v1alpha1
+kind: Resiliency
+metadata:
+  name: projects-local-resiliency
+scopes:
+  - eventstore
+  - tenants
+  - projects
+  - projects-workers
+spec:
+  policies:
+    retries:
+      projectsServiceInvocationRetry:
+        policy: exponential
+        duration: 250ms
+        maxRetries: 5
+      projectsComponentRetry:
+        policy: exponential
+        duration: 500ms
+        maxRetries: 8
+      projectsPubSubRetry:
+        policy: exponential
+        duration: 1s
+        maxRetries: 10
+    timeouts:
+      projectsServiceInvocationTimeout: 10s
+      projectsComponentTimeout: 15s
+      projectsPubSubTimeout: 30s
+    circuitBreakers:
+      projectsServiceInvocationBreaker:
+        maxRequests: 1
+        timeout: 30s
+        trip: consecutiveFailures >= 5
+      projectsComponentBreaker:
+        maxRequests: 1
+        timeout: 30s
+        trip: consecutiveFailures >= 5
+  targets:
+    apps:
+      eventstore:
+        retry: projectsServiceInvocationRetry
+        timeout: projectsServiceInvocationTimeout
+        circuitBreaker: projectsServiceInvocationBreaker
+      tenants:
+        retry: projectsServiceInvocationRetry
+        timeout: projectsServiceInvocationTimeout
+        circuitBreaker: projectsServiceInvocationBreaker
+      projects:
+        retry: projectsServiceInvocationRetry
+        timeout: projectsServiceInvocationTimeout
+        circuitBreaker: projectsServiceInvocationBreaker
+      projects-workers:
+        retry: projectsServiceInvocationRetry
+        timeout: projectsServiceInvocationTimeout
+        circuitBreaker: projectsServiceInvocationBreaker
+    components:
+      statestore:
+        inbound:
+          retry: projectsComponentRetry
+          timeout: projectsComponentTimeout
+          circuitBreaker: projectsComponentBreaker
+        outbound:
+          retry: projectsComponentRetry
+          timeout: projectsComponentTimeout
+          circuitBreaker: projectsComponentBreaker
+      pubsub:
+        inbound:
+          retry: projectsPubSubRetry
+          timeout: projectsPubSubTimeout
+        outbound:
+          retry: projectsPubSubRetry
+          timeout: projectsPubSubTimeout
+# Dead-letter topics are set by the Projects Workers programmatic subscriptions:
+# - deadletter.system.tenants.events
+# - deadletter.projects.events

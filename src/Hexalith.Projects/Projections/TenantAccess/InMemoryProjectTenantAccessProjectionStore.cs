@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
-/// <summary>In-memory optimistic-concurrency implementation used by tests and pre-1.9 local hosts.</summary>
+/// <summary>In-memory optimistic-concurrency implementation used by tests and explicit pre-runtime fakes.</summary>
 public sealed class InMemoryProjectTenantAccessProjectionStore : IProjectTenantAccessProjectionStore
 {
     private readonly ConcurrentDictionary<string, ProjectTenantAccessProjection> _projections = new(StringComparer.Ordinal);

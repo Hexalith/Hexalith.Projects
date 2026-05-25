@@ -47,9 +47,8 @@ public sealed record ProjectDetailProjection
     /// Pure, deterministic, order-stable (the <c>(Sequence, IdempotencyKey, IdempotencyFingerprint)</c>
     /// ordering makes the fold insensitive to source enumerable order), tenant-guarded and
     /// throw-on-unknown-event (both inherited from <see cref="Apply"/>), and uses no wall-clock / random /
-    /// GUID — the watermark and timestamps come only from event-carried data. This is the <b>in-memory</b>
-    /// rebuild proof; the durable/production rebuild path (state-store reload + dead-letter replay runbook)
-    /// is Story 1.9.
+    /// GUID — the watermark and timestamps come only from event-carried data. Runtime durable rebuild
+    /// feeds this same fold after state-store reload or EventStore/dead-letter replay.
     /// </remarks>
     /// <param name="envelopes">The full event stream to rebuild from.</param>
     /// <returns>A projection rebuilt from the full stream, value-equal to incremental application.</returns>

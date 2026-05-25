@@ -1,0 +1,78 @@
+# WARNING: Local development only.
+# Production must use deny-by-default Dapr access control with mTLS, environment-specific trust
+# domains, and reviewed caller policies. This file exists to make local service-invocation paths
+# explicit; it is not a production security baseline.
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: projects-local-accesscontrol
+spec:
+  accessControl:
+    defaultAction: deny
+    trustDomain: "public"
+    policies:
+      - appId: eventstore
+        defaultAction: deny
+        trustDomain: "public"
+        namespace: "default"
+        operations:
+          - name: /process
+            httpVerb: ["POST"]
+            action: allow
+          - name: /api/v1/commands
+            httpVerb: ["POST"]
+            action: allow
+          - name: /api/v1/queries
+            httpVerb: ["POST"]
+            action: allow
+      - appId: tenants
+        defaultAction: deny
+        trustDomain: "public"
+        namespace: "default"
+        operations:
+          - name: /tenants/events
+            httpVerb: ["POST"]
+            action: allow
+      - appId: projects
+        defaultAction: deny
+        trustDomain: "public"
+        namespace: "default"
+        operations:
+          - name: /process
+            httpVerb: ["POST"]
+            action: allow
+          - name: /api/v1/projects
+            httpVerb: ["GET", "POST"]
+            action: allow
+          - name: /api/v1/projects/*
+            httpVerb: ["GET", "PATCH", "POST"]
+            action: allow
+          - name: /health
+            httpVerb: ["GET"]
+            action: allow
+          - name: /alive
+            httpVerb: ["GET"]
+            action: allow
+          - name: /ready
+            httpVerb: ["GET"]
+            action: allow
+      - appId: projects-workers
+        defaultAction: deny
+        trustDomain: "public"
+        namespace: "default"
+        operations:
+          - name: /tenants/events
+            httpVerb: ["POST"]
+            action: allow
+          - name: /projects/events
+            httpVerb: ["POST"]
+            action: allow
+          - name: /health
+            httpVerb: ["GET"]
+            action: allow
+          - name: /alive
+            httpVerb: ["GET"]
+            action: allow
+          - name: /ready
+            httpVerb: ["GET"]
+            action: allow

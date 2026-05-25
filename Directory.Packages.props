@@ -22,7 +22,25 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.8" />
   </ItemGroup>
   <ItemGroup Label="Dapr">
+    <PackageVersion Include="Dapr.Client" Version="1.17.9" />
     <PackageVersion Include="Dapr.AspNetCore" Version="1.17.9" />
+  </ItemGroup>
+  <ItemGroup Label="Aspire (Story 1.9 — local AppHost + Dapr topology)">
+    <!-- Versions mirror the sibling Hexalith.Folders topology pins so Projects uses the same proven
+         Aspire/Dapr integration family. Package references stay versionless in project files. -->
+    <PackageVersion Include="Aspire.Hosting" Version="13.3.5" />
+    <PackageVersion Include="Aspire.Hosting.Keycloak" Version="13.2.2-preview.1.26207.2" />
+    <PackageVersion Include="Aspire.Hosting.Redis" Version="13.3.5" />
+    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.Dapr" Version="13.0.0" />
+  </ItemGroup>
+  <ItemGroup Label="Aspire ServiceDefaults (Story 1.9)">
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.6.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.6.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.3" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.15.3" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.2" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
   </ItemGroup>
   <ItemGroup Label="Client generation (Story 1.3 — OpenAPI Contract Spine + NSwag typed client)">
     <!-- Versions reused verbatim from the sibling Hexalith.Folders/Directory.Packages.props (the

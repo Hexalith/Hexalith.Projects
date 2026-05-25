@@ -8,7 +8,8 @@ boundaries.
 
 - **Type:** `Hexalith.Projects.Projections.TenantAccess.ProjectTenantAccessProjection`.
 - **Owner:** Hexalith.Projects Workers host writes the projection through
-  `ProjectsTenantEventHandler`; Server reads it through `IProjectTenantAccessProjectionStore`.
+  `ProjectsTenantEventHandler`; runtime Server/Workers use
+  `DaprProjectTenantAccessProjectionStore` through `IProjectTenantAccessProjectionStore`.
 - **Key:** authoritative tenant id (`{tenantId}`), surfaced as `ProjectionWatermark = {tenant}:{sequence}`.
 - **Source events:** consumed Tenants lifecycle, membership, and configuration events:
   `TenantCreated`, `TenantUpdated`, `TenantEnabled`, `TenantDisabled`, `UserAddedToTenant`,
@@ -21,6 +22,9 @@ boundaries.
   token, secret, transcript, file content, or path is stored.
 - **Rebuild behavior:** replay Tenants events in sequence. A tenant is not usable until its projection
   is present, enabled, conflict-free, non-malformed, and fresh enough for the operation.
+- **Runtime store:** Dapr `statestore`, key `projects:tenant-access:{tenantId}`, with optimistic
+  concurrency and detached snapshots. In-memory storage remains only for tests and explicit
+  pre-runtime fakes.
 - **Freshness semantics:** mutations require the strict `MutationFreshnessBudget`; diagnostic reads may
   use the bounded-stale `DiagnosticStalenessBudget`. Stale or unavailable evidence fails closed.
 - **Query authorization:** `TenantAccessAuthorizer` gates membership before project ACL and EventStore
@@ -30,9 +34,8 @@ boundaries.
 ## `ProjectListProjection`
 
 - **Type:** `Hexalith.Projects.Projections.ProjectList.ProjectListProjection`.
-- **Owner:** Hexalith.Projects Workers host will fold persisted Project events; Server reads it through
-  `IProjectListReadModel`. The current Story 1.7 in-memory implementation is
-  `InMemoryProjectListReadModel`.
+- **Owner:** Hexalith.Projects Workers host folds persisted Project events through
+  `ProjectEventProjectionProcessor`; runtime Server reads it through `DaprProjectListReadModel`.
 - **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
 - **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, and `ProjectArchived`. Setup updates refresh
   `UpdatedAt`/sequence only; archive updates lifecycle to `Archived`.
@@ -43,6 +46,12 @@ boundaries.
   prompt, token, secret, path, or sibling denial detail is stored.
 - **Rebuild behavior:** `Rebuild(envelopes)` delegates exactly to `Empty.Apply(envelopes)` so rebuild
   and incremental projection share the same deterministic fold.
+- **Runtime store:** Dapr `statestore`, key `projects:projection-journal:{tenantId}`, stores a
+  metadata-bound event journal plus message-id/fingerprint evidence. The journal watermark is the
+  EventStore global position so multiple project aggregate streams can share one tenant journal
+  without treating each aggregate's sequence `1` event as out of order. Runtime reads rebuild through
+  `ProjectListProjection.Rebuild(...)`; in-memory read models remain only for tests and explicit
+  pre-runtime fakes.
 - **Freshness semantics:** list responses derive `observedAt` and projection freshness/trust metadata
   from the projected row timestamps/sequences; no wall-clock guessing is used.
 - **Leakage boundary:** list rows never include client-controlled `tenantId` in the external response.
@@ -50,9 +59,8 @@ boundaries.
 ## `ProjectDetailProjection`
 
 - **Type:** `Hexalith.Projects.Projections.ProjectDetail.ProjectDetailProjection`.
-- **Owner:** Hexalith.Projects Workers host will fold persisted Project events; Server reads it through
-  `IProjectDetailReadModel`. The current Story 1.7 in-memory implementation is
-  `InMemoryProjectDetailReadModel`.
+- **Owner:** Hexalith.Projects Workers host folds persisted Project events through
+  `ProjectEventProjectionProcessor`; runtime Server reads it through `DaprProjectDetailReadModel`.
 - **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
 - **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, and `ProjectArchived`. `SetupMetadata` is the
   safe setup metadata reference carried by creation; `ProjectSetupUpdated` stores the latest bounded
@@ -63,6 +71,10 @@ boundaries.
   preferences, lifecycle state, created/updated timestamps, and sequence watermark.
 - **Rebuild behavior:** `Rebuild(envelopes)` delegates exactly to `Empty.Apply(envelopes)` and keeps the
   projection pure, deterministic, tenant-guarded, and throw-on-unknown-event.
+- **Runtime store:** Dapr `statestore`, key `projects:projection-journal:{tenantId}`, shared with the
+  list projection journal. The stored projection sequence/watermark is EventStore global position, not
+  per-aggregate sequence. Runtime reads rebuild through `ProjectDetailProjection.Rebuild(...)` and fail
+  closed when the journal is absent, malformed, or in replay conflict.
 - **Freshness semantics:** Open Project responses derive freshness/trust metadata from projection state
   (`UpdatedAt` and `Sequence`), not from the response wall clock.
 - **Leakage boundary:** Open Project returns metadata/setup/reference summaries only and blocks context

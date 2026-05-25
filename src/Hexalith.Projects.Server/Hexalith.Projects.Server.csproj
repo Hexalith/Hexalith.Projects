@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Hexalith.Projects\Hexalith.Projects.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />
+    <ProjectReference Include="..\Hexalith.Projects.Infrastructure\Hexalith.Projects.Infrastructure.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.ServiceDefaults\Hexalith.Projects.ServiceDefaults.csproj" />
     <!-- Story 1.4: the Server takes the EventStore command-pipeline runtime deps (gateway client +
          /process domain-processor contracts). Domain core stays pure. Resolved via the

@@ -3,10 +3,16 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Hexalith.Projects.AppHost\Hexalith.Projects.AppHost.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Aspire\Hexalith.Projects.Aspire.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Infrastructure\Hexalith.Projects.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Hexalith.Projects.Server\Hexalith.Projects.Server.csproj" />
     <ProjectReference Include="..\..\src\Hexalith.Projects.Testing\Hexalith.Projects.Testing.csproj" />
+    <ProjectReference Include="..\..\src\Hexalith.Projects.Workers\Hexalith.Projects.Workers.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Shouldly" />
     <PackageReference Include="xunit.v3" />
