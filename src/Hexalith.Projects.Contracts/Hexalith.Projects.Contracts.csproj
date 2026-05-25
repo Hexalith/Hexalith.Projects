@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hexalith.Projects.Contracts.Tests" />
+  </ItemGroup>
+  <!-- First sibling Contracts references (Story 1.2). Resolved via the $(Hexalith*Root)
+       root-detection properties defined in the umbrella-root Directory.Build.props (Story 1.1).
+       ProjectReference is preferred (matches Story 1.1's self-contained submodules:false build);
+       both siblings are netstandard2.0-safe published *.Contracts packages. EventStore.Contracts
+       brings IRejectionEvent / IEventPayload + the canonical AggregateIdentity primitive;
+       FrontComposer.Contracts brings [ProjectionBadge] + BadgeSlot. -->
+  <ItemGroup>
+    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Contracts\Hexalith.EventStore.Contracts.csproj" />
+    <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Contracts\Hexalith.FrontComposer.Contracts.csproj" />
+  </ItemGroup>
+</Project>

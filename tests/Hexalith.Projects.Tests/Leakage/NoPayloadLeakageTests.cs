@@ -1,0 +1,76 @@
+// <copyright file="NoPayloadLeakageTests.cs" company="Hexalith">
+// Copyright (c) Hexalith. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Hexalith.Projects.Tests.Leakage;
+
+using System;
+
+using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Testing.Leakage;
+
+using Shouldly;
+
+using Xunit;
+
+/// <summary>
+/// FS-2 <c>NoPayloadLeakage</c> harness tests (AC 4): the reusable
+/// <see cref="NoPayloadLeakageAssertions"/> guard asserts the success and rejection events serialize
+/// metadata-only, and the harness itself detects a forbidden category when one is injected.
+/// </summary>
+public sealed class NoPayloadLeakageTests
+{
+    [Fact]
+    public void ProjectCreated_SerializesMetadataOnly()
+    {
+        ProjectCreated created = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "Tracer Bullet",
+            "A safe description",
+            null,
+            ProjectLifecycle.Active,
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-key-001",
+            "sha256:deadbeef",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(created));
+    }
+
+    [Fact]
+    public void ProjectCreationRejected_SerializesMetadataOnly()
+    {
+        ProjectCreationRejected rejection = new(
+            "acme",
+            ReferenceState.Unauthorized,
+            "SetupMetadata",
+            "corr-001",
+            new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"));
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(rejection));
+    }
+
+    [Fact]
+    public void ProjectCreated_LogScopeRendering_IsMetadataOnly()
+    {
+        // A representative structured log scope: ids/reason codes/correlation/freshness only.
+        string logScope = "tenant=acme project=01HZ9K8YQ3W6V2N4R7T5P0X1AB lifecycle=Active correlation=corr-001 occurredAt=1970-01-01T00:00:00Z";
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(logScope));
+    }
+
+    [Theory]
+    [InlineData("{\"fileContents\":\"...\"}")]
+    [InlineData("{\"value\":\"/home/user/secret\"}")]
+    [InlineData("{\"token\":\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.abcDEFghiJKL\"}")]
+    [InlineData("-----BEGIN RSA PRIVATE KEY-----")]
+    public void Harness_DetectsForbiddenContent(string leaky)
+    {
+        Should.Throw<PayloadLeakageException>(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(leaky));
+    }
+}

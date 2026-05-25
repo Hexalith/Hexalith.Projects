@@ -1,0 +1,263 @@
+// <copyright file="CreateProjectEndpointTests.cs" company="Hexalith">
+// Copyright (c) Hexalith. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Hexalith.Projects.Server.Tests;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Hexalith.Projects.Contracts.Commands;
+using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Server;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+
+using Shouldly;
+
+using Xunit;
+
+/// <summary>
+/// Tier-2 tests for the Story 1.4 Server slice (AC 1, 2, 5, 7): the <c>POST /api/v1/projects</c>
+/// endpoint returns <c>202 AcceptedCommand</c> on a valid create, maps a fail-closed denial to
+/// <c>404</c> (not 500, not 200), and the minimal <c>GetProject</c> read returns the projected detail
+/// with freshness after the projection updates. Uses an in-memory fake submitter / in-memory read
+/// model — a real boundary stand-in, not real Dapr/infra.
+/// </summary>
+public sealed class CreateProjectEndpointTests
+{
+    private const string ProjectIdValue = "01HZ9K8YQ3W6V2N4R7T5P0X1AB";
+
+    [Fact]
+    public async Task PostProject_ValidCreate_Returns202AcceptedCommand()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidCreateRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            using JsonDocument document = JsonDocument.Parse(
+                await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
+            document.RootElement.GetProperty("status").GetString().ShouldBe("accepted");
+            document.RootElement.GetProperty("idempotentReplay").GetBoolean().ShouldBeFalse();
+
+            submitter.Submitted.Count.ShouldBe(1);
+            CreateProject submitted = submitter.Submitted.Single();
+            submitted.TenantId.ShouldBe("tenant-a");
+            submitted.ProjectId.Value.ShouldBe(ProjectIdValue);
+            submitted.Name.ShouldBe("Tracer Bullet");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProject_MissingTenantContext_MapsToSafeDenial404()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: null, principalId: null).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidCreateRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            // Fail-closed denial is a safe-denial 404, never 500, never 200.
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            string json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+            using JsonDocument document = JsonDocument.Parse(json);
+            document.RootElement.GetProperty("category").GetString().ShouldBe("tenant_access_denied");
+
+            // The endpoint must not have reached the command pipeline for an unauthenticated caller.
+            submitter.Submitted.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProject_GatewayDenial_MapsToSafeDenial404()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Denied("corr-a"));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidCreateRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProject_MissingIdempotencyKey_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = ValidCreateRequest();
+            request.Headers.Remove("Idempotency-Key");
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.Submitted.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task GetProject_AfterProjectionUpdates_ReturnsProjectedDetailWithFreshness()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            // Drive the projection as the Workers/projection subscriber would after the 202'd create.
+            InMemoryProjectDetailReadModel readModel = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            readModel.Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            response.Headers.GetValues("X-Hexalith-Freshness").Single().ShouldBe("eventually_consistent");
+            using JsonDocument document = JsonDocument.Parse(
+                await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
+            document.RootElement.GetProperty("projectId").GetString().ShouldBe(ProjectIdValue);
+            document.RootElement.GetProperty("lifecycleState").GetString().ShouldBe("active");
+            document.RootElement.GetProperty("freshness").GetProperty("readConsistency").GetString().ShouldBe("eventually_consistent");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task GetProject_CrossTenant_MapsToSafeDenial404()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-b", principalId: "principal-b").ConfigureAwait(true);
+        try
+        {
+            // Project created in tenant A; the authenticated caller is tenant B → safe-denial 404.
+            InMemoryProjectDetailReadModel readModel = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            readModel.Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{ProjectIdValue}");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    private static ProjectCreated CreatedEvent(string tenant) => new(
+        tenant,
+        ProjectIdValue,
+        "Tracer Bullet",
+        "A safe description",
+        null,
+        ProjectLifecycle.Active,
+        "principal-a",
+        "corr-a",
+        "task-a",
+        "idem-key-a",
+        "sha256:deadbeef",
+        DateTimeOffset.UnixEpoch);
+
+    private static HttpRequestMessage ValidCreateRequest()
+    {
+        HttpRequestMessage request = new(HttpMethod.Post, "/api/v1/projects")
+        {
+            Content = JsonContent.Create(new
+            {
+                projectId = ProjectIdValue,
+                name = "Tracer Bullet",
+                description = "A safe description",
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-a");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
+    private static async Task<WebApplication> StartAppAsync(
+        FakeProjectCommandSubmitter submitter,
+        string? tenantId,
+        string? principalId)
+    {
+        WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+        {
+            EnvironmentName = Environments.Development,
+        });
+        builder.Configuration["urls"] = "http://127.0.0.1:0";
+        builder.Services.AddProjectsServer();
+        builder.Services.RemoveAll<IProjectTenantContextAccessor>();
+        builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContextAccessor(tenantId, principalId));
+        builder.Services.AddSingleton<IProjectCommandSubmitter>(submitter);
+
+        WebApplication app = builder.Build();
+        app.MapProjectsServerEndpoints();
+        await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+        return app;
+    }
+
+    private static async Task StopAsync(WebApplication app)
+    {
+        await app.StopAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+        await app.DisposeAsync().ConfigureAwait(true);
+    }
+
+    private sealed class FakeProjectCommandSubmitter(ProjectCommandSubmissionResult result) : IProjectCommandSubmitter
+    {
+        public List<CreateProject> Submitted { get; } = [];
+
+        public Task<ProjectCommandSubmissionResult> SubmitCreateProjectAsync(CreateProject command, CancellationToken cancellationToken = default)
+        {
+            Submitted.Add(command);
+            return Task.FromResult(result);
+        }
+    }
+
+    private sealed class FixedProjectTenantContextAccessor(string? tenantId, string? principalId) : IProjectTenantContextAccessor
+    {
+        public string? AuthoritativeTenantId { get; } = tenantId;
+
+        public string? PrincipalId { get; } = principalId;
+    }
+}
