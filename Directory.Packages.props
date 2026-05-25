@@ -8,7 +8,13 @@
        skeleton are listed here; later stories add versions as they introduce dependencies. Never
        invent versions and never add an inline Version= on a PackageReference. -->
   <ItemGroup Label="Microsoft.Extensions">
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <!-- Floor raised from 10.0.0 to 10.0.3 in Story 1.2: the Contracts->FrontComposer.Contracts
+         reference transitively pulls Microsoft.FluentUI.AspNetCore.Components (pinned RC) ->
+         Microsoft.Extensions.Hosting.Abstractions 10.0.3 -> DI.Abstractions (>= 10.0.3). Pinning
+         10.0.3 resolves the NU1605 downgrade under TreatWarningsAsErrors. This is a base
+         Microsoft.Extensions abstraction (not a protected high-risk pin) and stays within the
+         ecosystem 10.0.x patch line (sibling Folders runs Hosting.Abstractions at 10.0.5). -->
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.3" />
   </ItemGroup>
   <ItemGroup Label="Testing">
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
