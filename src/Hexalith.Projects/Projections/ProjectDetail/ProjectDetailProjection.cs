@@ -37,6 +37,27 @@ public sealed record ProjectDetailProjection
     public static ProjectDetailProjection Empty { get; } = new(FrozenDictionary<string, ProjectDetailItem>.Empty);
 
     /// <summary>
+    /// Rebuilds the projection from a full event stream (FS-6, AR-8, NFR-7) — the explicit, repeatable
+    /// "rebuild from the full event stream" entry point proven equivalent to incremental application in
+    /// Story 1.5.
+    /// </summary>
+    /// <remarks>
+    /// Defined as <b>exactly</b> <c><see cref="Empty"/>.<see cref="Apply"/>(envelopes)</c> so rebuild and
+    /// incremental application share the single deterministic fold (zero duplication → they cannot drift).
+    /// Pure, deterministic, order-stable (the <c>(Sequence, IdempotencyKey, IdempotencyFingerprint)</c>
+    /// ordering makes the fold insensitive to source enumerable order), tenant-guarded and
+    /// throw-on-unknown-event (both inherited from <see cref="Apply"/>), and uses no wall-clock / random /
+    /// GUID — the watermark and timestamps come only from event-carried data. This is the <b>in-memory</b>
+    /// rebuild proof; the durable/production rebuild path (state-store reload + dead-letter replay runbook)
+    /// is Story 1.9.
+    /// </remarks>
+    /// <param name="envelopes">The full event stream to rebuild from.</param>
+    /// <returns>A projection rebuilt from the full stream, value-equal to incremental application.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when an envelope carries an unknown event type.</exception>
+    public static ProjectDetailProjection Rebuild(IEnumerable<ProjectProjectionEnvelope> envelopes)
+        => Empty.Apply(envelopes);
+
+    /// <summary>
     /// Folds a batch of projection envelopes into a new projection. Pure and deterministic.
     /// </summary>
     /// <param name="envelopes">The envelopes to apply.</param>
