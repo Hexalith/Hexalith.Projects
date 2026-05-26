@@ -1,4 +1,41 @@
-# Test Automation Summary — Story 1.1 (Module scaffold & build/CI wiring)
+# Test Automation Summary
+
+## Story 2.1 - Conversation Reference Read ACL
+
+Workflow: `bmad-qa-generate-e2e-tests` (automate). Date: 2026-05-26.
+
+## Generated Tests
+
+### API / ACL Tests
+- [x] `tests/Hexalith.Projects.Server.Tests/Conversations/ConversationsProjectConversationDirectoryTests.cs` - Added fail-closed coverage for upstream `401`, `403`, `404`, `500`, and thrown upstream failures.
+
+### Pure Translator Tests
+- [x] `tests/Hexalith.Projects.Server.Tests/Conversations/ProjectConversationTranslatorTests.cs` - Added safe hydration display assertions and mismatch suppression coverage.
+
+### E2E Tests
+- [x] Not applicable for story 2.1. The story requires Tier 1 pure translator/access-decision tests only, with no Dapr, network, containers, or browser.
+
+## Coverage
+
+- ACL query construction and paging: covered.
+- Tenant/project mismatch fail-closed filtering: covered.
+- Forbidden/unauthorized/unavailable upstream read handling: covered.
+- Projection trust-state mapping, `MixedGeneration`, and safe hydration signals: covered.
+- Browser E2E: 0/0 applicable for this story.
+
+## Verification
+
+| Lane | Command | Result |
+|------|---------|--------|
+| Projects contracts | `dotnet test tests\Hexalith.Projects.Contracts.Tests\Hexalith.Projects.Contracts.Tests.csproj --no-restore` | Passed: 117, Failed: 0, Skipped: 0 |
+| Projects server | `dotnet test tests\Hexalith.Projects.Server.Tests\Hexalith.Projects.Server.Tests.csproj --no-restore` | Passed: 87, Failed: 0, Skipped: 0 |
+| Projects solution | `dotnet test Hexalith.Projects.slnx --no-restore` | Passed: 366, Failed: 0, Skipped: 0 |
+| Conversations client | `dotnet test Hexalith.Conversations\tests\Hexalith.Conversations.Client.Tests\Hexalith.Conversations.Client.Tests.csproj --no-restore` | Passed: 24, Failed: 0, Skipped: 0 |
+| Conversations contracts | `dotnet test Hexalith.Conversations\tests\Hexalith.Conversations.Contracts.Tests\Hexalith.Conversations.Contracts.Tests.csproj --no-restore` | Passed: 580, Failed: 0, Skipped: 0 |
+
+---
+
+# Test Automation Summary - Story 1.1 (Module scaffold & build/CI wiring)
 
 Workflow: `bmad-qa-generate-e2e-tests` (automate). Date: 2026-05-25.
 

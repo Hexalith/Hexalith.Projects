@@ -1,7 +1,9 @@
 # generated: 2026-05-25
-# last_updated: 2026-05-25
+# last_updated: 2026-05-26
 # 1-4 set to review on 2026-05-25 via dev-story (build 0W/0E; filtered lane 188/188; fingerprint gate PASSED; frontcomposer gate skip-clean)
 # 1-5 set to in-progress then review on 2026-05-25 via dev-story (FS-6 proof suite for existing 1.4 projections/state/aggregate; build 0W/0E; filtered lane 208/208 (+20 Replay tests); fingerprint gate PASSED (spine/.g.cs untouched); frontcomposer skip-clean; production change minimal/additive = static Rebuild(...) => Empty.Apply(...) on both projections (no fold duplication); new reusable Tier-1 ProjectionRebuildConformance helper in Hexalith.Projects.Testing (FS-6 per-epic hook, content-equality not record-equality); three SEPARATE Tier-1 files — rebuild-determinism (incl. aggregate-state replay + no-wall-clock), command-delivery dedup (replay vs conflict, field-scoped via fingerprint: in-set display_name->conflict, out-of-set Description/SetupMetadata->replay), projection-delivery idempotency (duplicate/out-of-order + state-apply replay-dedup); no V2/new event/authz/Dapr; no new package; no submodule pointer change; defers 1.6/1.7/1.8/1.9)
+# 2-1 set to review on 2026-05-26 via dev-story (Pattern A Projects-owned conversation read ACL; A1 Conversations typed-client ListConversationsAsync; Projects DTO/trust boundary + fail-closed directory + thin /projects/{projectId}/conversations endpoint; targeted Conversations client/contracts tests passed; Projects solution tests passed)
+# 2-1 set to done on 2026-05-26 via story-automator-review cycle 1 (0 CRITICAL/HIGH/MEDIUM/LOW remaining; auto-fixed 1 HIGH + 2 MEDIUM: scope-poisoned upstream rows now close the entire Projects page empty/unavailable, conversation ACL directory registered transient to avoid typed HttpClient singleton capture, story File List synced; Projects Server 87/87, Contracts 117/117, Projects solution 366/366, Conversations Client 24/24, Conversations Contracts 580/580; git diff --check clean with CRLF conversion warnings only; no submodule pointer change)
 # 1-1 set to in-progress then review on 2026-05-25 via dev-story
 # 1-1 set to done on 2026-05-25 via story-automator-review (0 CRITICAL; 1 MEDIUM line-ending issue auto-fixed)
 # 1-3 set to review on 2026-05-25 via dev-story (build 0W/0E; filtered lane 127/127; fingerprint gate PASSED; frontcomposer gate skip-clean)
@@ -40,7 +42,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-25
-last_updated: 2026-05-25
+last_updated: 2026-05-26
 # 1-5 set to ready-for-dev on 2026-05-25 via create-story (epic-1 already in-progress; FS-6 cross-cutting slice — projection rebuild/replay + idempotency PROOF SUITE for the EXISTING 1.4 ProjectCreated/ProjectListProjection/ProjectDetailProjection/ProjectState; adds a minimal additive Rebuild(...) factory (delegates to Empty.Apply, no fold duplication) + a reusable Tier-1 ProjectionRebuildConformance helper in Hexalith.Projects.Testing (FS-6 per-epic extension hook, mirrors 1.4 NoPayloadLeakageAssertions); three SEPARATE Tier-1 test files per the epic's "fail independently" rule — rebuild-determinism (rebuild==incremental, order-stable, no wall-clock + aggregate-state rebuild), command-delivery dedup (replay vs conflict, field-scoped via HexalithIdempotencyHasher), projection-delivery idempotency (duplicate/out-of-order + state-apply replay-dedup); mirrors Hexalith.Folders Folder*ProjectionReplayTests in xUnit v3+Shouldly; spine/.g.cs UNTOUCHED so fingerprint gate stays PASSED, frontcomposer skip-clean; defers Tenants-event dedup/durable store (1.6), queries (1.7), new lifecycle events (1.8), Aspire/Workers/durable-rebuild/runbook (1.9))
 project: Hexalith.Projects
 # 1-1 set to ready-for-dev and epic-1 to in-progress on 2026-05-25 via create-story
@@ -82,7 +84,7 @@ development_status:
 
   # Epic 2: Context References
   epic-2: in-progress
-  2-1-conversation-reference-read-acl: ready-for-dev
+  2-1-conversation-reference-read-acl: done
   2-2-conversation-project-reassignment-upstream-capability: backlog
   2-3-link-move-conversation-write-side: backlog
   2-4-set-auto-create-project-folder: backlog

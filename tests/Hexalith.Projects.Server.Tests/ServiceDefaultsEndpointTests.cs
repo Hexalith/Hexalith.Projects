@@ -7,6 +7,7 @@ namespace Hexalith.Projects.Server.Tests;
 
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Server;
+using Hexalith.Projects.Server.Conversations;
 using Hexalith.Projects.ServiceDefaults;
 
 using Microsoft.AspNetCore.Builder;
@@ -74,5 +75,17 @@ public sealed class ServiceDefaultsEndpointTests
             .ShouldBeOfType<AllowingProjectEventStoreAuthorizationValidator>();
         provider.GetRequiredService<IProjectDaprPolicyEvidenceProvider>()
             .ShouldBeOfType<AllowingProjectDaprPolicyEvidenceProvider>();
+    }
+
+    /// <summary>Verifies the ACL directory does not capture transient typed HTTP clients in a singleton.</summary>
+    [Fact]
+    public void AddProjectsServerShouldRegisterConversationDirectoryAsTransient()
+    {
+        ServiceCollection services = new();
+
+        services.AddProjectsServer();
+
+        ServiceDescriptor descriptor = services.Single(static service => service.ServiceType == typeof(IProjectConversationDirectory));
+        descriptor.Lifetime.ShouldBe(ServiceLifetime.Transient);
     }
 }

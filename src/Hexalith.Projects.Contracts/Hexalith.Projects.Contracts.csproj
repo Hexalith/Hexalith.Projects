@@ -13,6 +13,7 @@
        FrontComposer.Contracts brings [ProjectionBadge] + BadgeSlot. -->
   <ItemGroup>
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Contracts\Hexalith.EventStore.Contracts.csproj" />
+    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj" />
     <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Contracts\Hexalith.FrontComposer.Contracts.csproj" />
   </ItemGroup>
 </Project>

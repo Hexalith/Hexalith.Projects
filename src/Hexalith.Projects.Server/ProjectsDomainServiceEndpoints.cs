@@ -7,19 +7,23 @@ namespace Hexalith.Projects.Server;
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
+using ConversationTenantId = Hexalith.Conversations.Contracts.Identifiers.TenantId;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
+using Hexalith.Projects.Server.Conversations;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -88,6 +92,22 @@ public static partial class ProjectsDomainServiceEndpoints
             CancellationToken cancellationToken)
             => await GetProjectAsync(projectId, httpContext, tenantContext, authorizationGate, cancellationToken).ConfigureAwait(false))
             .WithName("GetProject");
+
+        endpoints.MapGet("/api/v1/projects/{projectId}/conversations", static async (
+            string projectId,
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectConversationDirectory conversationDirectory,
+            CancellationToken cancellationToken)
+            => await ListProjectConversationsAsync(
+                projectId,
+                httpContext,
+                tenantContext,
+                authorizationGate,
+                conversationDirectory,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("ListProjectConversations");
 
         endpoints.MapPatch("/api/v1/projects/{projectId}/setup", static async (
             string projectId,
@@ -270,6 +290,60 @@ public static partial class ProjectsDomainServiceEndpoints
                 [],
                 ToFreshness(detail.UpdatedAt, detail.Sequence)),
             ResponseJsonOptions);
+    }
+
+    private static async Task<IResult> ListProjectConversationsAsync(
+        string projectId,
+        HttpContext httpContext,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        IProjectConversationDirectory conversationDirectory,
+        CancellationToken cancellationToken)
+    {
+        string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
+        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : null;
+
+        if (string.IsNullOrWhiteSpace(projectId) || !IsCanonicalIdentifier(projectId))
+        {
+            return SafeDenial(correlationId, null);
+        }
+
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeReadAsync(projectId, tenantContext, httpContext, correlationId, null, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed || authorization.ProjectDetail is null)
+        {
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, null)
+                : SafeDenial(correlationId, null, authorization);
+        }
+
+        if (HasHeader(httpContext, "Idempotency-Key"))
+        {
+            return ValidationProblem(correlationId, null, "idempotency_key");
+        }
+
+        if (!TryReadPageRequest(httpContext, out PageRequest? page))
+        {
+            return ValidationProblem(correlationId, null, "page");
+        }
+
+        ProjectConversationsPage conversations = await conversationDirectory
+            .ListForProjectAsync(
+                new ProjectId(projectId),
+                new ConversationTenantId(tenantContext.AuthoritativeTenantId!),
+                new CallerPrincipalId(tenantContext.PrincipalId!),
+                page!,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        if (!string.IsNullOrWhiteSpace(correlationId))
+        {
+            httpContext.Response.Headers["X-Correlation-Id"] = correlationId;
+        }
+
+        httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
+        return Results.Json(conversations, ResponseJsonOptions);
     }
 
     private static async Task<IResult> UpdateProjectSetupAsync(
@@ -685,6 +759,33 @@ public static partial class ProjectsDomainServiceEndpoints
                 return true;
             default:
                 return false;
+        }
+    }
+
+    private static bool TryReadPageRequest(HttpContext httpContext, out PageRequest? page)
+    {
+        page = null;
+        int pageSize = 25;
+        if (httpContext.Request.Query.TryGetValue("pageSize", out StringValues pageValues)
+            && (!int.TryParse(pageValues.FirstOrDefault(), NumberStyles.Integer, CultureInfo.InvariantCulture, out pageSize)))
+        {
+            return false;
+        }
+
+        string? cursor = null;
+        if (httpContext.Request.Query.TryGetValue("cursor", out StringValues cursorValues))
+        {
+            cursor = cursorValues.FirstOrDefault();
+        }
+
+        try
+        {
+            page = new PageRequest(pageSize, cursor);
+            return true;
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            return false;
         }
     }
 

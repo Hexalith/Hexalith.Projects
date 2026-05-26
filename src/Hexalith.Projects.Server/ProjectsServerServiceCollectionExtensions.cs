@@ -6,12 +6,15 @@
 namespace Hexalith.Projects.Server;
 
 using System;
+using System.Linq;
 
+using Hexalith.Conversations.Client;
 using Hexalith.EventStore.Client.Handlers;
 using Hexalith.EventStore.Client.Registration;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Projections.TenantAccess;
+using Hexalith.Projects.Server.Conversations;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Routing;
@@ -45,6 +48,13 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IProjectListReadModel>(sp => sp.GetRequiredService<InMemoryProjectListReadModel>());
         services.TryAddSingleton<IProjectTenantContextAccessor, HttpContextProjectTenantContextAccessor>();
         services.TryAddSingleton<ProjectAuthorizationGate>();
+        services.TryAddTransient<IProjectConversationDirectory>(sp =>
+        {
+            IConversationClient? client = sp.GetService<IConversationClient>();
+            return client is null
+                ? new UnavailableProjectConversationDirectory()
+                : new ConversationsProjectConversationDirectory(client);
+        });
         services.TryAddSingleton<IProjectEventStoreAuthorizationValidator, DenyAllProjectEventStoreAuthorizationValidator>();
         services.TryAddSingleton<IProjectDaprPolicyEvidenceProvider, DenyAllProjectDaprPolicyEvidenceProvider>();
         services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();
@@ -75,6 +85,11 @@ public static class ProjectsServerServiceCollectionExtensions
         services.RemoveAll<IProjectDetailReadModel>();
         services.RemoveAll<InMemoryProjectDetailReadModel>();
         services.AddSingleton<IProjectDetailReadModel, DaprProjectDetailReadModel>();
+        if (!services.Any(static service => service.ServiceType == typeof(IConversationClient)))
+        {
+            services.AddHexalithConversationsClient(options => options.Endpoint = new Uri("http://conversations"));
+        }
+
         services.AddEventStoreGatewayClient(options => options.BaseAddress = new Uri("http://eventstore"));
         services.TryAddSingleton<IProjectCommandSubmitter, EventStoreProjectCommandSubmitter>();
 

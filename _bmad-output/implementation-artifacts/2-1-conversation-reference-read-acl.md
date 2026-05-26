@@ -1,6 +1,6 @@
 # Story 2.1: Conversation Reference Read ACL (Projects → Conversations)
 
-Status: ready-for-dev
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -26,19 +26,19 @@ This is the **Pattern A (query-by-back-reference) read MVP** from the technical 
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1 — Identifier & result boundary** (AC: 1, 4, 7)
-  - [ ] In `Projects.Contracts`, reference `Hexalith.Conversations.Contracts.Identifiers.ConversationId` (preferred) or define a thin `ConversationReference` value object wrapping the opaque string with eager validation (mirror `ProjectId.cs`).
-  - [ ] Define the Projects-shaped read DTOs: `ProjectConversationItem` (ConversationId, lifecycle/status, optional label, trust signal) and `ProjectConversationsPage` (items + page metadata + aggregate trust signal). Keep `Contracts` low-dependency (no Dapr/HTTP/EventStore-server).
-- [ ] **Task 2 — Close the typed-client gap** (AC: 2)
-  - [ ] Choose A1 or A2. For **A1**: add `ListConversationsAsync(ListConversationsQuery, CancellationToken)` to `IConversationClient`/`ConversationClient` forwarding to the existing `ConversationQueryHandler.ListAsync`. Confirm the real `ListConversationsQuery`/`ConversationPage` constructor shapes in `Hexalith.Conversations` source before coding (see Dev Notes). For **A2**: implement a typed read-API client against `ConversationReadApi`.
-  - [ ] If A1 touches `Hexalith.Conversations`, treat that as a scoped, additive change in that submodule (own commit, own tests there); do not mix submodule pointer churn into Projects work.
-- [ ] **Task 3 — ACL adapter + translator** (AC: 1, 3, 5, 6, 7, 8)
-  - [ ] Implement `IProjectConversationDirectory` + `ConversationsProjectConversationDirectory` in `Projects.Server`. Build `ConversationListFilterV1(ProjectId: …)`, call the client/read-API, translate `ConversationSummaryV1 → ProjectConversationItem`, and map `ProjectionTrustState`/`ConversationListResult` freshness → the Projects trust signal.
-  - [ ] Pass tenant + caller principal through; on `Hidden`/`Unavailable`/`Forbidden` return a Projects-safe empty/degraded page (fail closed). Map Conversations failures to Projects-safe errors; never rethrow raw upstream details.
-- [ ] **Task 4 — Expose for Project Context / project view** (AC: 1, 3, 6)
-  - [ ] Wire `IProjectConversationDirectory` into the Get-Project-Context conversation-reference read (FR-16) and/or the project conversation list, surfacing the trust signal. (If the FR-16 service does not exist yet, expose the directory via DI and add a thin query entry point; do not build the full context-assembly service here.)
-- [ ] **Task 5 — Tier 1 tests** (AC: 9)
-  - [ ] Translator tests (all trust states, empty, paging), and tenant-isolation negative-path tests using fakes. Place under `tests/Hexalith.Projects.Server.Tests` (and `Projects.Contracts.Tests` for the VO/DTOs).
+- [x] **Task 1 — Identifier & result boundary** (AC: 1, 4, 7)
+  - [x] In `Projects.Contracts`, reference `Hexalith.Conversations.Contracts.Identifiers.ConversationId` (preferred) or define a thin `ConversationReference` value object wrapping the opaque string with eager validation (mirror `ProjectId.cs`).
+  - [x] Define the Projects-shaped read DTOs: `ProjectConversationItem` (ConversationId, lifecycle/status, optional label, trust signal) and `ProjectConversationsPage` (items + page metadata + aggregate trust signal). Keep `Contracts` low-dependency (no Dapr/HTTP/EventStore-server).
+- [x] **Task 2 — Close the typed-client gap** (AC: 2)
+  - [x] Choose A1 or A2. For **A1**: add `ListConversationsAsync(ListConversationsQuery, CancellationToken)` to `IConversationClient`/`ConversationClient` forwarding to the existing `ConversationQueryHandler.ListAsync`. Confirm the real `ListConversationsQuery`/`ConversationPage` constructor shapes in `Hexalith.Conversations` source before coding (see Dev Notes). For **A2**: implement a typed read-API client against `ConversationReadApi`.
+  - [x] If A1 touches `Hexalith.Conversations`, treat that as a scoped, additive change in that submodule (own commit, own tests there); do not mix submodule pointer churn into Projects work.
+- [x] **Task 3 — ACL adapter + translator** (AC: 1, 3, 5, 6, 7, 8)
+  - [x] Implement `IProjectConversationDirectory` + `ConversationsProjectConversationDirectory` in `Projects.Server`. Build `ConversationListFilterV1(ProjectId: …)`, call the client/read-API, translate `ConversationSummaryV1 → ProjectConversationItem`, and map `ProjectionTrustState`/`ConversationListResult` freshness → the Projects trust signal.
+  - [x] Pass tenant + caller principal through; on `Hidden`/`Unavailable`/`Forbidden` return a Projects-safe empty/degraded page (fail closed). Map Conversations failures to Projects-safe errors; never rethrow raw upstream details.
+- [x] **Task 4 — Expose for Project Context / project view** (AC: 1, 3, 6)
+  - [x] Wire `IProjectConversationDirectory` into the Get-Project-Context conversation-reference read (FR-16) and/or the project conversation list, surfacing the trust signal. (If the FR-16 service does not exist yet, expose the directory via DI and add a thin query entry point; do not build the full context-assembly service here.)
+- [x] **Task 5 — Tier 1 tests** (AC: 9)
+  - [x] Translator tests (all trust states, empty, paging), and tenant-isolation negative-path tests using fakes. Place under `tests/Hexalith.Projects.Server.Tests` (and `Projects.Contracts.Tests` for the VO/DTOs).
 
 ## Dev Notes
 
@@ -95,12 +95,86 @@ This is the **Pattern A (query-by-back-reference) read MVP** from the technical 
 
 ### Agent Model Used
 
-_(to be filled by dev agent)_
+Codex (GPT-5)
 
 ### Debug Log References
 
+- Red phase: `dotnet test tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj --no-restore` failed with CS0234 because `Hexalith.Projects.Contracts.Queries` and the story DTOs did not exist yet.
+- Green phase: targeted Conversations client, Projects contracts, and Projects server tests were run and fixed until passing.
+- Regression: `dotnet test Hexalith.Projects.slnx --no-restore` passed.
+- Conversations submodule validation: `Hexalith.Conversations.Client.Tests` and `Hexalith.Conversations.Contracts.Tests` passed after the additive A1 client change. `dotnet test Hexalith.Conversations/Hexalith.Conversations.slnx --no-restore` was attempted; it still fails before story code because `Hexalith.Conversations/src/Hexalith.Conversations/Hexalith.Conversations.csproj` references `..\..\Hexalith.EventStore\...`, which is not present under the submodule path in this umbrella checkout.
+
 ### Completion Notes List
 
-- Decision required: record whether Task 2 used **A1** (typed-client `ListConversationsAsync`) or **A2** (read-API HTTP client), and the confirmed `ListConversationsQuery`/`ConversationPage` shapes.
+- Implemented the Projects-owned conversation reference boundary with `ProjectConversationItem`, `ProjectConversationsPage`, page metadata, `PageRequest`, `CallerPrincipalId`, and `ProjectConversationTrustSignal`; the reference identity reuses `Hexalith.Conversations.Contracts.Identifiers.ConversationId`.
+- Chose **A1**: added `IConversationClient.ListConversationsAsync(ListConversationsQuery, CancellationToken)` and `ConversationClient` support for the existing read-list route that reaches `ConversationReadApi` and `ConversationQueryHandler.ListAsync`. Confirmed shapes: `ListConversationsQuery(SchemaVersion, TenantId, string CallerPrincipalId, string CorrelationId, ConversationListFilterV1? Filter, ConversationPageRequest? Page)`; `ConversationPageRequest(int PageSize = 25, string? ContinuationCursor = null)`; result paging is `ConversationPageMetadata(int ReturnedCount, string? ContinuationCursor = null)`.
+- Implemented `IProjectConversationDirectory`, `ConversationsProjectConversationDirectory`, and translator logic that builds `ConversationListFilterV1(ProjectId: ...)`, passes tenant and caller through, closes the Projects page fail-closed on tenant/project mismatches, maps all `ProjectionTrustState` values plus `MixedGeneration` to a Projects signal, and surfaces only safe hydration label/status.
+- Added a fail-closed `UnavailableProjectConversationDirectory` for hosts/tests that have not configured the Conversations client, and runtime DI defaults to `http://conversations` when no client registration exists.
+- Added a thin project conversation list endpoint at `GET /api/v1/projects/{projectId}/conversations`; FR-16 full context assembly remains out of scope for this story.
 
 ### File List
+
+- `_bmad-output/implementation-artifacts/2-1-conversation-reference-read-acl.md`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `_bmad-output/implementation-artifacts/tests/test-summary.md`
+- `src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj`
+- `src/Hexalith.Projects.Contracts/Identifiers/CallerPrincipalId.cs`
+- `src/Hexalith.Projects.Contracts/Queries/PageRequest.cs`
+- `src/Hexalith.Projects.Contracts/Queries/ProjectConversationItem.cs`
+- `src/Hexalith.Projects.Contracts/Queries/ProjectConversationPageMetadata.cs`
+- `src/Hexalith.Projects.Contracts/Queries/ProjectConversationTrustSignal.cs`
+- `src/Hexalith.Projects.Contracts/Queries/ProjectConversationsPage.cs`
+- `src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj`
+- `src/Hexalith.Projects.Server/Conversations/ConversationsProjectConversationDirectory.cs`
+- `src/Hexalith.Projects.Server/Conversations/IProjectConversationDirectory.cs`
+- `src/Hexalith.Projects.Server/Conversations/ProjectConversationTranslator.cs`
+- `src/Hexalith.Projects.Server/Conversations/UnavailableProjectConversationDirectory.cs`
+- `src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs`
+- `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs`
+- `tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj`
+- `tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectConversationsContractTests.cs`
+- `tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj`
+- `tests/Hexalith.Projects.Server.Tests/Conversations/ConversationsProjectConversationDirectoryTests.cs`
+- `tests/Hexalith.Projects.Server.Tests/Conversations/ProjectConversationTranslatorTests.cs`
+- `tests/Hexalith.Projects.Server.Tests/ServiceDefaultsEndpointTests.cs`
+- `Hexalith.Conversations/src/Hexalith.Conversations.Client/ConversationClient.cs`
+- `Hexalith.Conversations/src/Hexalith.Conversations.Client/IConversationClient.cs`
+- `Hexalith.Conversations/tests/Hexalith.Conversations.Client.Tests/ConversationClientTest.cs`
+- `Hexalith.Conversations/tests/Hexalith.Conversations.Contracts.Tests/Documentation/IntegrationGuideWorkflowExampleTest.cs`
+- `Hexalith.Conversations/tests/Hexalith.Conversations.Contracts.Tests/Events/ConversationPublicationContractTest.cs`
+
+### Change Log
+
+- 2026-05-26: Implemented Pattern A conversation-reference read ACL, added A1 Conversations typed-client list support, exposed a thin project conversations read endpoint, and added Tier 1 boundary/translator/fail-closed tests.
+- 2026-05-26: Review cycle 1 auto-fixed fail-closed scope poisoning and ACL DI lifetime, updated story/test artifacts, and marked story done after all scoped checks passed.
+
+## Senior Developer Review (AI)
+
+Reviewer: Codex (GPT-5) on 2026-05-26
+
+Outcome: Approved after auto-fix. Story status set to `done`; sprint status synced. No CRITICAL issues remain.
+
+### Findings After Auto-Fix
+
+- CRITICAL: 0 remaining.
+- HIGH: 0 remaining. Fixed 1 HIGH: any upstream tenant/project scope escape now closes the entire Projects page as empty `Unavailable` instead of returning partial rows.
+- MEDIUM: 0 remaining. Fixed 2 MEDIUM: `IProjectConversationDirectory` no longer captures a typed `IConversationClient` in a singleton, and the story File List now includes review-touched/test-summary artifacts.
+- LOW: 0 remaining.
+
+### Review Evidence
+
+- Acceptance criteria cross-check: AC1-AC9 verified against the Projects ACL contracts/server implementation, Conversations typed-client addition, and Tier 1 tests.
+- Task audit: all `[x]` tasks have implementation evidence in the listed source/tests.
+- Boundary check: Conversations contracts are confined to the ACL/allowed `ConversationId` reference boundary; no Conversations state/projections/transcript content crosses into Projects DTOs.
+- Security check: fail-closed tenant/project mismatch, forbidden/unauthorized/upstream failure, and no-command-dispatch behavior verified through fakes.
+- Git/story check: unrelated working-tree changes under `.agents/`, `.codex/`, `.gitignore`, and story-automator orchestration artifacts were observed and left untouched as outside story 2.1 scope.
+- MCP documentation check: Microsoft Learn `IHttpClientFactory` typed-client guidance reviewed for typed-client DI lifetime behavior.
+
+### Verification
+
+- `dotnet test tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj --no-restore` passed: 87/87.
+- `dotnet test tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj --no-restore` passed: 117/117.
+- `dotnet test Hexalith.Conversations/tests/Hexalith.Conversations.Client.Tests/Hexalith.Conversations.Client.Tests.csproj --no-restore` passed: 24/24.
+- `dotnet test Hexalith.Conversations/tests/Hexalith.Conversations.Contracts.Tests/Hexalith.Conversations.Contracts.Tests.csproj --no-restore` passed: 580/580.
+- `dotnet test Hexalith.Projects.slnx --no-restore` passed: 366/366.
+- `git diff --check` passed for story-scoped Projects and Conversations paths with Git CRLF conversion warnings only.
