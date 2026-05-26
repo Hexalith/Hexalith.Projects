@@ -55,6 +55,7 @@
 
 generated: 2026-05-25
 last_updated: 2026-05-26
+# 2-5 set to ready-for-dev on 2026-05-26 via create-story (Link/Unlink File Reference; extends Story 2.4 Folders ACL/reference-index pattern for optional file references; hard HALT if Folders file metadata authorization path is unavailable and no approved degraded pending/unavailable behavior exists; no file-content/byte-range/path storage in Projects; no code implementation)
 # 1-5 set to ready-for-dev on 2026-05-25 via create-story (epic-1 already in-progress; FS-6 cross-cutting slice — projection rebuild/replay + idempotency PROOF SUITE for the EXISTING 1.4 ProjectCreated/ProjectListProjection/ProjectDetailProjection/ProjectState; adds a minimal additive Rebuild(...) factory (delegates to Empty.Apply, no fold duplication) + a reusable Tier-1 ProjectionRebuildConformance helper in Hexalith.Projects.Testing (FS-6 per-epic extension hook, mirrors 1.4 NoPayloadLeakageAssertions); three SEPARATE Tier-1 test files per the epic's "fail independently" rule — rebuild-determinism (rebuild==incremental, order-stable, no wall-clock + aggregate-state rebuild), command-delivery dedup (replay vs conflict, field-scoped via HexalithIdempotencyHasher), projection-delivery idempotency (duplicate/out-of-order + state-apply replay-dedup); mirrors Hexalith.Folders Folder*ProjectionReplayTests in xUnit v3+Shouldly; spine/.g.cs UNTOUCHED so fingerprint gate stays PASSED, frontcomposer skip-clean; defers Tenants-event dedup/durable store (1.6), queries (1.7), new lifecycle events (1.8), Aspire/Workers/durable-rebuild/runbook (1.9))
 project: Hexalith.Projects
 # 1-1 set to ready-for-dev and epic-1 to in-progress on 2026-05-25 via create-story
@@ -100,7 +101,7 @@ development_status:
   2-2-conversation-project-reassignment-upstream-capability: done
   2-3-link-move-conversation-write-side: done
   2-4-set-auto-create-project-folder: done
-  2-5-link-unlink-file-reference: backlog
+  2-5-link-unlink-file-reference: ready-for-dev
   2-6-memories-linkage-decision-spike: backlog
   2-7-link-unlink-memory: backlog
   epic-2-retrospective: optional
