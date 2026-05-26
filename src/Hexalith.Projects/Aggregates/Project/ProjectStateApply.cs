@@ -11,6 +11,8 @@ using System.Collections.Generic;
 
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Contracts.Ui;
 
 /// <summary>
 /// Pure <c>Apply</c> for the Project aggregate (AR-3, AR-4). Mirrors the Folders <c>FolderStateApply</c>:
@@ -65,6 +67,7 @@ public static class ProjectStateApply
                 Description = created.Description,
                 SetupMetadata = created.SetupMetadata,
                 Setup = null,
+                ProjectFolder = null,
                 Lifecycle = created.Lifecycle,
                 IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
             },
@@ -74,6 +77,33 @@ public static class ProjectStateApply
                 Setup = updated.Setup,
                 IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
             },
+
+            ProjectFolderSet folderSet => state with
+            {
+                ProjectFolder = new ProjectFolderReference(
+                    folderSet.FolderId,
+                    folderSet.FolderMetadata.DisplayName,
+                    ReferenceState.Included,
+                    null,
+                    folderSet.OccurredAt),
+                IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+            },
+
+            ProjectFolderCreationPending pending => state.ProjectFolder?.ReferenceState == ReferenceState.Included
+                ? state with
+                {
+                    IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+                }
+                : state with
+                {
+                    ProjectFolder = new ProjectFolderReference(
+                        null,
+                        pending.DisplayNameIntent,
+                        ReferenceState.Pending,
+                        pending.ReasonCode,
+                        pending.OccurredAt),
+                    IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+                },
 
             ProjectArchived archived => state with
             {

@@ -58,6 +58,35 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
 - **Consumers:** `ProjectListProjection`, `ProjectDetailProjection`.
 
+### `ProjectFolderCreationPending`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectFolderCreationPending` (`IProjectEvent` → `IEventPayload`)
+- **Purpose:** Records the degraded, retryable auto-create intent for a Project Folder when the Folders external create route is not mapped yet (Story 2.4).
+- **Emitted by:** `ProjectAggregate.Handle(CreateProject)` after `ProjectCreated` in the accepted degraded path.
+- **Sensitivity class:** metadata-only.
+- **Fields:**
+  - `TenantId`, `ProjectId` — canonical Projects identity.
+  - `DisplayNameIntent` — safe display-name intent derived from the Project name.
+  - `ReasonCode` — stable metadata-only reason such as `folder_create_external_unavailable`.
+  - `Retryable` — whether reconciliation may retry when Folders create becomes available.
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, derived `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
+  - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
+- **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection`.
+
+### `ProjectFolderSet`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectFolderSet` (`IProjectEvent` → `IEventPayload`)
+- **Purpose:** Records the single authorized Project Folder reference after Projects server-side ACL validation through Hexalith.Folders.
+- **Emitted by:** `ProjectAggregate.Handle(SetProjectFolder)` after the server has validated Folders lifecycle/effective-permissions evidence.
+- **Sensitivity class:** metadata-only.
+- **Fields:**
+  - `TenantId`, `ProjectId` — canonical Projects identity.
+  - `FolderId` — Folders-owned sibling reference string.
+  - `FolderMetadata` — safe display metadata only; never folder contents, paths, repository internals, tenant authority, or raw upstream ACL details.
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
+  - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
+- **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection`.
+
 ## Rejection events
 
 ### `ProjectCreationRejected`
@@ -93,6 +122,15 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
 - **Emitted by:** `ProjectAggregate.Handle(ArchiveProject)` and `/process` fail-closed payload paths.
 - **Sensitivity class:** metadata-only.
 - **Fields:** `ProjectId`, `TenantId`, canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
+- **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
+
+### `ProjectReferenceLinkRejected`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectReferenceLinkRejected` (`IRejectionEvent`)
+- **Purpose:** Records a refused sibling reference link/set attempt, including Project Folder set rejection paths (validation failure, replacement not confirmed, missing/archived project, authorization failure, or idempotency conflict).
+- **Emitted by:** `ProjectAggregate.Handle(SetProjectFolder)` rejection paths and `/process` fail-closed payload paths.
+- **Sensitivity class:** metadata-only.
+- **Fields:** `ProjectId`, `TenantId`, `ReferenceKind` (for Story 2.4, `folder`), `ReferenceId` sibling identifier when safe, canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
 - **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
 
 ## Consumed external events

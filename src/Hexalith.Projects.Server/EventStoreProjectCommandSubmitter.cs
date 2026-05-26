@@ -126,6 +126,30 @@ public sealed class EventStoreProjectCommandSubmitter(IEventStoreGatewayClient g
             cancellationToken).ConfigureAwait(false);
     }
 
+    /// <inheritdoc/>
+    public async Task<ProjectCommandSubmissionResult> SubmitSetProjectFolderAsync(
+        SetProjectFolder command,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        object payload = new
+        {
+            requestSchemaVersion = "v1",
+            operation = "set",
+            projectId = command.ProjectId.Value,
+            folderId = command.FolderId,
+            folderMetadata = command.FolderMetadata,
+            replacementConfirmed = command.ReplacementConfirmed,
+        };
+
+        return await SubmitAsync(
+            command,
+            ProjectsServerModule.SetProjectFolderCommandType,
+            payload,
+            cancellationToken).ConfigureAwait(false);
+    }
+
     private async Task<ProjectCommandSubmissionResult> SubmitAsync(
         IProjectCommand command,
         string commandType,

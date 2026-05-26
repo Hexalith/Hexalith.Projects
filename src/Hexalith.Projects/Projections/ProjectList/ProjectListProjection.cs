@@ -134,6 +134,30 @@ public sealed record ProjectListProjection
 
                     break;
 
+                case ProjectFolderSet folderSet:
+                    if (projects.TryGetValue(key, out ProjectListItem? folderRow))
+                    {
+                        projects[key] = folderRow with
+                        {
+                            Sequence = envelope.Sequence,
+                            UpdatedAt = folderSet.OccurredAt,
+                        };
+                    }
+
+                    break;
+
+                case ProjectFolderCreationPending pending:
+                    if (projects.TryGetValue(key, out ProjectListItem? pendingRow))
+                    {
+                        projects[key] = pendingRow with
+                        {
+                            Sequence = envelope.Sequence,
+                            UpdatedAt = pending.OccurredAt,
+                        };
+                    }
+
+                    break;
+
                 default:
                     // Diverging from ProjectStateApply (which throws on unknown event types) would let
                     // new event types replay as no-ops in the projection while the aggregate fails

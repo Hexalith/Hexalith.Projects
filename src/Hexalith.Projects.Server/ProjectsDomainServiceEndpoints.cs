@@ -25,6 +25,7 @@ using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Server.Conversations;
+using Hexalith.Projects.Server.Folders;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -170,6 +171,26 @@ public static partial class ProjectsDomainServiceEndpoints
                 cancellationToken).ConfigureAwait(false))
             .WithName("UnlinkProjectConversation");
 
+        endpoints.MapPut("/api/v1/projects/{projectId}/folder", static async (
+            string projectId,
+            HttpContext httpContext,
+            IProjectCommandSubmitter submitter,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectFolderDirectory folderDirectory,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await SetProjectFolderAsync(
+                projectId,
+                httpContext,
+                submitter,
+                tenantContext,
+                authorizationGate,
+                folderDirectory,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("SetProjectFolder");
+
         endpoints.MapPatch("/api/v1/projects/{projectId}/setup", static async (
             string projectId,
             HttpContext httpContext,
@@ -238,7 +259,33 @@ public static partial class ProjectsDomainServiceEndpoints
             return ValidationProblem(correlationId, taskId, "body");
         }
 
-        if (body is null || string.IsNullOrWhiteSpace(body.Name))
+        if (body is null)
+        {
+            return ValidationProblem(correlationId, taskId, "body");
+        }
+
+        if (body.ProjectMetadata is not null
+            && !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "requestSchemaVersion");
+        }
+
+        if (!string.IsNullOrWhiteSpace(body.RequestSchemaVersion)
+            && !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "requestSchemaVersion");
+        }
+
+        string? projectMetadataName = body.ProjectMetadata?.DisplayName;
+        if (!string.IsNullOrWhiteSpace(projectMetadataName)
+            && !string.IsNullOrWhiteSpace(body.Name)
+            && !string.Equals(projectMetadataName.Trim(), body.Name.Trim(), StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "name");
+        }
+
+        string? submittedName = string.IsNullOrWhiteSpace(projectMetadataName) ? body.Name : projectMetadataName;
+        if (string.IsNullOrWhiteSpace(submittedName))
         {
             return ValidationProblem(correlationId, taskId, "name");
         }
@@ -261,7 +308,7 @@ public static partial class ProjectsDomainServiceEndpoints
         CreateProject command = new(
             authoritativeTenantId,
             projectId,
-            body.Name,
+            submittedName,
             body.Description,
             body.SetupMetadata,
             principalId,
@@ -348,7 +395,7 @@ public static partial class ProjectsDomainServiceEndpoints
                 new ContextActivationResponse(
                     detail.Lifecycle == ProjectLifecycle.Active,
                     detail.Lifecycle == ProjectLifecycle.Active ? null : "archived"),
-                [],
+                ToProjectReferenceSummaries(detail),
                 ToFreshness(detail.UpdatedAt, detail.Sequence)),
             ResponseJsonOptions);
     }
@@ -627,6 +674,100 @@ public static partial class ProjectsDomainServiceEndpoints
         return AssignmentResult(httpContext, timeProvider, result, correlationId!, taskId!);
     }
 
+    private static async Task<IResult> SetProjectFolderAsync(
+        string projectId,
+        HttpContext httpContext,
+        IProjectCommandSubmitter submitter,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        IProjectFolderDirectory folderDirectory,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+    {
+        if (!TryReadMutationEnvelope(httpContext, out string? correlationId, out string? taskId, out string? idempotencyKey, out IResult? envelopeRejection))
+        {
+            return envelopeRejection!;
+        }
+
+        if (string.IsNullOrWhiteSpace(projectId) || !IsCanonicalIdentifier(projectId))
+        {
+            return SafeDenial(correlationId, taskId);
+        }
+
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeSetProjectFolderAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed || !IsActive(authorization.ProjectDetail))
+        {
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, taskId)
+                : SafeDenial(correlationId, taskId, authorization);
+        }
+
+        SetProjectFolderHttpRequest? body;
+        try
+        {
+            body = await httpContext.Request
+                .ReadFromJsonAsync<SetProjectFolderHttpRequest>(RequestJsonOptions, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (JsonException)
+        {
+            return ValidationProblem(correlationId, taskId, "body");
+        }
+
+        if (body is null
+            || !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(body.Operation, "set", StringComparison.Ordinal)
+            || !string.Equals(body.ProjectId, projectId, StringComparison.Ordinal)
+            || !IsCanonicalIdentifier(body.FolderId)
+            || body.FolderMetadata is null)
+        {
+            return ValidationProblem(correlationId, taskId, "identity");
+        }
+
+        ProjectFolderReference? existingFolder = authorization.ProjectDetail?.ProjectFolder;
+        if (existingFolder?.FolderId is { Length: > 0 } currentFolderId
+            && !string.Equals(currentFolderId, body.FolderId, StringComparison.Ordinal)
+            && body.ReplacementConfirmed != true)
+        {
+            return ValidationProblem(correlationId, taskId, "replacementConfirmed");
+        }
+
+        SetProjectFolder command = new(
+            tenantContext.AuthoritativeTenantId!,
+            new ProjectId(projectId),
+            body.FolderId!,
+            body.FolderMetadata,
+            body.ReplacementConfirmed == true,
+            tenantContext.PrincipalId!,
+            correlationId!,
+            taskId!,
+            idempotencyKey!);
+
+        ProjectCommandValidationResult validation = ProjectCommandValidator.Validate(command);
+        if (!validation.IsAccepted)
+        {
+            return ValidationProblem(correlationId, taskId, validation.RejectedField ?? "command");
+        }
+
+        ProjectFolderValidationResult folderValidation = await folderDirectory
+            .ValidateSetProjectFolderAsync(new ProjectId(projectId), body.FolderId!, correlationId!, cancellationToken)
+            .ConfigureAwait(false);
+
+        IResult? folderProblem = FolderValidationProblem(folderValidation, correlationId, taskId);
+        if (folderProblem is not null)
+        {
+            return folderProblem;
+        }
+
+        ProjectCommandSubmissionResult result = await submitter
+            .SubmitSetProjectFolderAsync(command, cancellationToken)
+            .ConfigureAwait(false);
+
+        return MutationResult(httpContext, timeProvider, result, correlationId!, taskId!);
+    }
+
     private static async Task<IResult> UpdateProjectSetupAsync(
         string projectId,
         HttpContext httpContext,
@@ -898,6 +1039,15 @@ public static partial class ProjectsDomainServiceEndpoints
         };
     }
 
+    private static IResult? FolderValidationProblem(ProjectFolderValidationResult result, string? correlationId, string? taskId)
+        => result.Outcome switch
+        {
+            ProjectFolderValidationOutcome.Accepted => null,
+            ProjectFolderValidationOutcome.ValidationFailed => ValidationProblem(correlationId, taskId, "folderId"),
+            ProjectFolderValidationOutcome.Stale or ProjectFolderValidationOutcome.Unavailable => ReadModelUnavailable(correlationId, taskId),
+            _ => SafeDenial(correlationId, taskId),
+        };
+
     private static bool TryReadMutationEnvelope(
         HttpContext httpContext,
         out string? correlationId,
@@ -1031,6 +1181,42 @@ public static partial class ProjectsDomainServiceEndpoints
     private static string ToWireLifecycle(Contracts.Ui.ProjectLifecycle lifecycle)
         => lifecycle.ToString().ToLowerInvariant();
 
+    private static IReadOnlyList<ProjectReferenceSummaryResponse> ToProjectReferenceSummaries(ProjectDetailItem detail)
+    {
+        if (detail.ProjectFolder is null)
+        {
+            return [];
+        }
+
+        return
+        [
+            new ProjectReferenceSummaryResponse(
+                "folder",
+                ToWireReferenceState(detail.ProjectFolder.ReferenceState),
+                detail.ProjectFolder.FolderId,
+                detail.ProjectFolder.DisplayName,
+                detail.ProjectFolder.ReasonCode,
+                ToFreshness(detail.ProjectFolder.ObservedAt, detail.Sequence)),
+        ];
+    }
+
+    private static string ToWireReferenceState(ReferenceState state)
+        => state switch
+        {
+            ReferenceState.Pending => "pending",
+            ReferenceState.Included => "included",
+            ReferenceState.Excluded => "excluded",
+            ReferenceState.Unauthorized => "unauthorized",
+            ReferenceState.Unavailable => "unavailable",
+            ReferenceState.Stale => "stale",
+            ReferenceState.Archived => "archived",
+            ReferenceState.Ambiguous => "ambiguous",
+            ReferenceState.TenantMismatch => "tenantMismatch",
+            ReferenceState.Conflict => "conflict",
+            ReferenceState.InvalidReference => "invalidReference",
+            _ => "unavailable",
+        };
+
     private static FreshnessMetadataResponse ToFreshness(DateTimeOffset observedAt, long sequence)
         => new(
             EventuallyConsistent,
@@ -1162,7 +1348,13 @@ public static partial class ProjectsDomainServiceEndpoints
         return false;
     }
 
+    private sealed record ProjectMetadataHttpRequest(
+        string? DisplayName,
+        string? MetadataClass);
+
     private sealed record CreateProjectHttpRequest(
+        string? RequestSchemaVersion,
+        ProjectMetadataHttpRequest? ProjectMetadata,
         string? ProjectId,
         string? Name,
         string? Description,
@@ -1197,6 +1389,14 @@ public static partial class ProjectsDomainServiceEndpoints
         string? UnlinkIntent,
         string? ProjectId,
         string? ConversationId);
+
+    private sealed record SetProjectFolderHttpRequest(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? ProjectId,
+        string? FolderId,
+        ProjectFolderMetadata? FolderMetadata,
+        bool? ReplacementConfirmed);
 
     private sealed record AcceptedCommandResponse(
         DateTimeOffset AcceptedAt,
@@ -1240,6 +1440,9 @@ public static partial class ProjectsDomainServiceEndpoints
     private sealed record ProjectReferenceSummaryResponse(
         string ReferenceKind,
         string ReferenceState,
+        string? ReferenceId,
+        string? DisplayName,
+        string? ReasonCode,
         FreshnessMetadataResponse Freshness);
 
     private sealed record FreshnessMetadataResponse(

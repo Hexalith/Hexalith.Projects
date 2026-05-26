@@ -171,6 +171,35 @@ public sealed class ProjectCommandValidatorTests
         ProjectCommandValidator.Validate(UpdateCommand(setup)).IdempotencyFingerprint.ShouldBe(expected);
     }
 
+    [Fact]
+    public void SetProjectFolderFingerprint_UsesDeclaredFields()
+    {
+        SetProjectFolder command = SetFolderCommand();
+
+        string expected = ExpectedHash(
+            "operation=SetProjectFolder",
+            "field=folder_id;present=true;value=s:folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+            "field=folder_metadata.display_name;present=true;value=s:Tracer Folder",
+            "field=operation;present=true;value=s:set",
+            "field=project_id;present=true;value=s:01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "field=replacement_confirmed;present=true;value=b:false",
+            "field=request_schema_version;present=true;value=s:v1");
+
+        ProjectCommandValidator.Validate(command).IdempotencyFingerprint.ShouldBe(expected);
+    }
+
+    [Theory]
+    [InlineData("folder with spaces")]
+    [InlineData("folder:bad")]
+    [InlineData("folder.bad")]
+    public void SetProjectFolder_InvalidFolderIdRejectedWithFieldName(string folderId)
+    {
+        ProjectCommandValidationResult result = ProjectCommandValidator.Validate(SetFolderCommand(folderId));
+
+        result.IsAccepted.ShouldBeFalse();
+        result.RejectedField.ShouldBe(nameof(SetProjectFolder.FolderId));
+    }
+
     private static CreateProject Command() => new(
         "acme",
         new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"),
@@ -190,6 +219,17 @@ public sealed class ProjectCommandValidatorTests
         "corr-001",
         "task-001",
         "idem-key-setup");
+
+    private static SetProjectFolder SetFolderCommand(string folderId = "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC") => new(
+        "acme",
+        new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"),
+        folderId,
+        new ProjectFolderMetadata("Tracer Folder"),
+        false,
+        "actor-001",
+        "corr-001",
+        "task-001",
+        "idem-key-folder");
 
     private static ProjectSetup Setup(
         IReadOnlyList<string>? goals = null,

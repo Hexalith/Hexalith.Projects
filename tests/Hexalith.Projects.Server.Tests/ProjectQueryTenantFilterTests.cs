@@ -62,6 +62,7 @@ public sealed class ProjectQueryTenantFilterTests
             "Synthetic description",
             "setup-reference",
             null,
+            null,
             ProjectLifecycle.Active,
             Timestamp,
             Timestamp,

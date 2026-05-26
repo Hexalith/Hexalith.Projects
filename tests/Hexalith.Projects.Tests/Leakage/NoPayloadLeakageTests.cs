@@ -7,7 +7,9 @@ namespace Hexalith.Projects.Tests.Leakage;
 
 using System;
 
+using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Authorization;
+using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
@@ -102,6 +104,43 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void ProjectFolderCreationPending_SerializesMetadataOnly()
+    {
+        ProjectFolderCreationPending pending = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "Tracer Bullet",
+            "folder_create_external_unavailable",
+            true,
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-folder-pending",
+            "sha256:folder-pending",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(pending));
+    }
+
+    [Fact]
+    public void ProjectFolderSet_SerializesMetadataOnly()
+    {
+        ProjectFolderSet folderSet = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+            new ProjectFolderMetadata("Tracer Folder"),
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-folder-set",
+            "sha256:folder-set",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(folderSet));
+    }
+
+    [Fact]
     public void SetupAndArchiveRejections_SerializeMetadataOnly()
     {
         var projectId = new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB");
@@ -110,6 +149,33 @@ public sealed class NoPayloadLeakageTests
             new ProjectSetupUpdateRejected(projectId, "acme", ReferenceState.InvalidReference, "setup.goals", "corr-setup")));
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(
             new ProjectArchiveRejected(projectId, "acme", ReferenceState.Archived, "lifecycle", "corr-archive")));
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(
+            new ProjectReferenceLinkRejected(projectId, "acme", "folder", "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC", ReferenceState.Unavailable, "folderId", "corr-folder")));
+    }
+
+    [Fact]
+    public void SetProjectFolderRejection_DropsUnsafeReferenceId()
+    {
+        SetProjectFolder command = new(
+            "acme",
+            new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"),
+            @"C:\Users\acme\secret.txt",
+            new ProjectFolderMetadata("Tracer Folder"),
+            false,
+            "actor-001",
+            "corr-folder",
+            "task-folder",
+            "idem-folder");
+
+        ProjectResult result = ProjectResult.Rejected(
+            command,
+            ProjectResultCode.ValidationFailed,
+            nameof(SetProjectFolder.FolderId));
+
+        ProjectReferenceLinkRejected rejection = result.ToRejectionEvent().ShouldBeOfType<ProjectReferenceLinkRejected>();
+        rejection.ReferenceId.ShouldBe("unknown");
+        rejection.RejectedField.ShouldBe(nameof(SetProjectFolder.FolderId));
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(rejection));
     }
 
     [Fact]

@@ -9,6 +9,7 @@ using System;
 
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 
 /// <summary>
@@ -26,6 +27,8 @@ using Hexalith.Projects.Contracts.Ui;
 /// </remarks>
 public static partial class ProjectAggregate
 {
+    private const string ProjectFolderCreationPendingReason = "folder_create_external_unavailable";
+
     /// <summary>
     /// Handles a <see cref="CreateProject"/> command against the current state.
     /// </summary>
@@ -73,7 +76,23 @@ public static partial class ProjectAggregate
             validation.IdempotencyFingerprint!,
             occurredAt);
 
-        return ProjectResult.Accepted(command, [created]);
+        string pendingIdempotencyKey = DeriveFolderPendingIdempotencyKey(command.IdempotencyKey);
+        ProjectFolderCreationPending pending = new(
+            command.TenantId,
+            command.ProjectId.Value,
+            validation.CanonicalName!,
+            ProjectFolderCreationPendingReason,
+            Retryable: true,
+            command.ActorPrincipalId,
+            command.CorrelationId,
+            command.TaskId,
+            pendingIdempotencyKey,
+            ProjectCommandValidator.ComputeProjectFolderCreationPendingFingerprint(
+                validation.CanonicalName!,
+                ProjectFolderCreationPendingReason),
+            occurredAt);
+
+        return ProjectResult.Accepted(command, [created, pending]);
     }
 
     /// <summary>
@@ -185,6 +204,81 @@ public static partial class ProjectAggregate
     }
 
     /// <summary>
+    /// Handles a <see cref="SetProjectFolder"/> command against the current state.
+    /// </summary>
+    /// <param name="state">The current aggregate state.</param>
+    /// <param name="command">The set-folder command.</param>
+    /// <param name="occurredAt">The event timestamp supplied by the command pipeline.</param>
+    /// <returns>An accepted set-folder result, an idempotent replay/no-op, or a rejection.</returns>
+    public static ProjectResult Handle(ProjectState state, SetProjectFolder command, DateTimeOffset occurredAt)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult validation = ProjectCommandValidator.Validate(command);
+        if (!validation.IsAccepted)
+        {
+            return ProjectResult.Rejected(command, validation.Code, validation.RejectedField);
+        }
+
+        if (state.IdempotencyFingerprints.TryGetValue(command.IdempotencyKey, out string? priorFingerprint))
+        {
+            return string.Equals(priorFingerprint, validation.IdempotencyFingerprint, StringComparison.Ordinal)
+                ? ProjectResult.Rejected(command, ProjectResultCode.IdempotentReplay)
+                : ProjectResult.Rejected(command, ProjectResultCode.IdempotencyConflict);
+        }
+
+        if (!state.IsCreated)
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.ProjectNotFound);
+        }
+
+        if (!IsSameIdentity(state, command))
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.TenantMismatch);
+        }
+
+        if (state.Lifecycle == ProjectLifecycle.Archived)
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.ProjectIsArchived);
+        }
+
+        if (state.ProjectFolder?.FolderId is { Length: > 0 } currentFolderId)
+        {
+            if (string.Equals(currentFolderId, command.FolderId, StringComparison.Ordinal)
+                && string.Equals(state.ProjectFolder.DisplayName, command.FolderMetadata.DisplayName?.Trim(), StringComparison.Ordinal))
+            {
+                return ProjectResult.Rejected(command, ProjectResultCode.IdempotentReplay);
+            }
+
+            if (!command.ReplacementConfirmed)
+            {
+                return ProjectResult.Rejected(
+                    command,
+                    ProjectResultCode.ProjectFolderReplacementRequiresConfirmation,
+                    nameof(command.ReplacementConfirmed));
+            }
+        }
+
+        ProjectFolderSet folderSet = new(
+            command.TenantId,
+            command.ProjectId.Value,
+            command.FolderId.Trim(),
+            new ProjectFolderMetadata(
+                string.IsNullOrWhiteSpace(command.FolderMetadata.DisplayName)
+                    ? null
+                    : command.FolderMetadata.DisplayName.Trim()),
+            command.ActorPrincipalId,
+            command.CorrelationId,
+            command.TaskId,
+            command.IdempotencyKey,
+            validation.IdempotencyFingerprint!,
+            occurredAt);
+
+        return ProjectResult.Accepted(command, ProjectResultCode.FolderSet, [folderSet]);
+    }
+
+    /// <summary>
     /// Deterministic-timestamp test overload (mirrors Folders). Production callers must always supply
     /// <c>OccurredAt</c> from the pipeline's <c>TimeProvider</c> so events carry real wall-clock
     /// evidence rather than <see cref="DateTimeOffset.MinValue"/>.
@@ -209,7 +303,25 @@ public static partial class ProjectAggregate
     public static ProjectResult Handle(ProjectState state, ArchiveProject command)
         => Handle(state, command, DateTimeOffset.MinValue);
 
+    /// <summary>Deterministic-timestamp test overload for set-folder.</summary>
+    /// <param name="state">The current aggregate state.</param>
+    /// <param name="command">The set-folder command.</param>
+    /// <returns>The handle result with a <see cref="DateTimeOffset.MinValue"/> timestamp.</returns>
+    public static ProjectResult Handle(ProjectState state, SetProjectFolder command)
+        => Handle(state, command, DateTimeOffset.MinValue);
+
     private static bool IsSameIdentity(ProjectState state, IProjectCommand command)
         => string.Equals(state.TenantId, command.TenantId, StringComparison.Ordinal)
             && string.Equals(state.ProjectId, command.ProjectId.Value, StringComparison.Ordinal);
+
+    private static string DeriveFolderPendingIdempotencyKey(string idempotencyKey)
+    {
+        const string suffix = "-project-folder-create";
+        if (idempotencyKey.Length + suffix.Length <= 128)
+        {
+            return idempotencyKey + suffix;
+        }
+
+        return idempotencyKey[..(128 - suffix.Length)] + suffix;
+    }
 }

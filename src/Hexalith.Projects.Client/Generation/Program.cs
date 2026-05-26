@@ -6,6 +6,12 @@ using YamlDotNet.RepresentationModel;
 using Hexalith.Projects.Client.Generation.Shared;
 using static Hexalith.Projects.Client.Generation.Shared.YamlContractLoader;
 
+if (args.Length == 2 && string.Equals(args[0], "--normalize-file", StringComparison.Ordinal))
+{
+    NormalizeGeneratedFile(args[1]);
+    return;
+}
+
 Dictionary<string, string> arguments = ParseArguments(args);
 string repositoryRoot = RequiredArgument(arguments, "--repository-root");
 string contractPath = RequiredArgument(arguments, "--contract");
@@ -37,6 +43,22 @@ int placeholderOffset = constLineIndex + ConstDeclarationPrefix.Length;
 output = output.Remove(placeholderOffset, PlaceholderToken.Length).Insert(placeholderOffset, helperHash);
 Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? ".");
 File.WriteAllText(outputPath, output, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+
+static void NormalizeGeneratedFile(string path)
+{
+    string normalized = Regex.Replace(
+        NormalizeText(File.ReadAllText(path)),
+        "[ \t]+$",
+        string.Empty,
+        RegexOptions.Multiline | RegexOptions.CultureInvariant);
+
+    if (!normalized.EndsWith('\n'))
+    {
+        normalized += "\n";
+    }
+
+    File.WriteAllText(path, normalized, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+}
 
 static IReadOnlyList<HelperModel> BuildHelpers(YamlMappingNode root, IReadOnlyList<OperationModel> operations)
 {

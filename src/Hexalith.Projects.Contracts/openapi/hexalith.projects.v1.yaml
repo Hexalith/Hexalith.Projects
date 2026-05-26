@@ -95,9 +95,11 @@ paths:
       description: >
         Creates a tenant-scoped Project workspace record durably as Active. Returns 202
         Accepted with no read-after-write guarantee — confirm via the GetProject query.
-        The only required user input is the project name; default lifecycle is active. No
-        Project Folder is required (auto-folder is deferred). Tenant authority comes from
-        authenticated principal claims and EventStore envelopes, never from this request.
+        The only required user input is the project name; default lifecycle is active. When no
+        Project Folder is supplied, Projects records a metadata-only pending folder-create intent
+        until the Folders create route is available and lifecycle/freshness evidence can confirm the
+        created folder. Tenant authority comes from authenticated principal claims and EventStore
+        envelopes, never from this request.
       parameters:
         - $ref: "#/components/parameters/IdempotencyKey"
         - $ref: "#/components/parameters/CorrelationId"
@@ -494,6 +496,81 @@ paths:
         adapterBehavior: caller-provided-or-generated-correlation
       x-hexalith-authorization:
         requirement: tenant-context-project-unlink-conversation-permission-and-project-detail
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
+        - internal_error
+  /api/v1/projects/{projectId}/folder:
+    put:
+      tags:
+        - projects
+      operationId: SetProjectFolder
+      summary: Set or explicitly replace a Project Folder reference.
+      description: >
+        Sets the single authorized Project Folder reference for an active Project. Hexalith.Folders
+        remains the lifecycle and authorization owner; Projects stores only the metadata-only folder
+        reference and safe display metadata. Replacing a different existing Project Folder requires
+        explicit replacement confirmation.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetProjectFolderRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/SetProjectFolderRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - folder_id
+        - folder_metadata.display_name
+        - operation
+        - project_id
+        - replacement_confirmed
+        - request_schema_version
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: task-id
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-set-folder-permission-project-detail-and-folders-acl
         tenantAuthority: authentication-context-and-eventstore-envelope
         safeDenial: externally-indistinguishable
       x-hexalith-canonical-error-categories:
@@ -967,7 +1044,18 @@ components:
         contextActivation:
           enabled: true
           blockedReasonCode: null
-        references: []
+        references:
+          - referenceKind: folder
+            referenceState: pending
+            referenceId: null
+            displayName: synthetic-project-alpha
+            reasonCode: folder_create_external_unavailable
+            freshness:
+              readConsistency: eventually_consistent
+              observedAt: "2026-05-12T12:34:56Z"
+              projectionWatermark: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
+              stale: false
+              trustState: trusted
         freshness:
           readConsistency: eventually_consistent
           observedAt: "2026-05-12T12:34:56Z"
@@ -1031,6 +1119,15 @@ components:
         unlinkIntent: clear
         projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
         conversationId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
+    SetProjectFolderRequest:
+      value:
+        requestSchemaVersion: v1
+        operation: set
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        folderId: folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7
+        folderMetadata:
+          displayName: synthetic-project-alpha
+        replacementConfirmed: true
   schemas:
     OpaqueIdentifier:
       type: string
@@ -1322,6 +1419,49 @@ components:
           $ref: "#/components/schemas/OpaqueIdentifier"
         conversationId:
           $ref: "#/components/schemas/OpaqueIdentifier"
+    ProjectFolderMetadata:
+      type: object
+      additionalProperties: false
+      description: Safe metadata-only Project Folder reference display metadata. It is not a path, tenant authority, repository detail, or folder content.
+      required:
+        - displayName
+      properties:
+        displayName:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 160
+          description: Safe display metadata for the folder reference.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+    SetProjectFolderRequest:
+      type: object
+      additionalProperties: false
+      description: Closed command body for setting or explicitly replacing the single Project Folder reference.
+      required:
+        - requestSchemaVersion
+        - operation
+        - projectId
+        - folderId
+        - folderMetadata
+        - replacementConfirmed
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        operation:
+          type: string
+          enum:
+            - set
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        folderId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        folderMetadata:
+          $ref: "#/components/schemas/ProjectFolderMetadata"
+        replacementConfirmed:
+          type: boolean
+          description: Must be true when replacing a different existing Project Folder reference.
     ProjectConversationsPage:
       type: object
       additionalProperties: false
@@ -1599,7 +1739,7 @@ components:
     ProjectReferenceSummary:
       type: object
       additionalProperties: false
-      description: Safe Projects-owned reference summary. This story may return an empty collection until sibling reference events and ACLs exist.
+      description: Safe Projects-owned reference summary. Folder references carry only metadata-only reference state and never folder contents or upstream raw authorization details.
       required:
         - referenceKind
         - referenceState
@@ -1614,9 +1754,33 @@ components:
         referenceState:
           type: string
           enum:
+            - pending
             - included
+            - excluded
+            - unauthorized
             - unavailable
-            - redacted
+            - stale
+            - archived
+            - ambiguous
+            - tenantMismatch
+            - conflict
+            - invalidReference
+        referenceId:
+          nullable: true
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        displayName:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 160
+          description: Safe display metadata for the referenced resource.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        reasonCode:
+          type: string
+          nullable: true
+          maxLength: 80
+          pattern: "^[a-z][a-z0-9_]{0,79}$"
+          description: Stable metadata-only reason code for pending or unavailable states.
         freshness:
           $ref: "#/components/schemas/FreshnessMetadata"
     CanonicalErrorCategory:

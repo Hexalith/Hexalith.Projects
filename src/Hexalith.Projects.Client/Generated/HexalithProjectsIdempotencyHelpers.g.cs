@@ -11,15 +11,15 @@ public sealed record HexalithProjectsGeneratedArtifactsVerification(bool IsCurre
 
 public static class HexalithProjectsGeneratedArtifacts
 {
-    public const string ContractSpineSha256 = "f491c771576b68028c7b73c103a71972de4542ffcaac645486fa645af0a37fc6";
+    public const string ContractSpineSha256 = "fc9d95028eef7f48743359100a7d9605db3c4e927cbb71a3d49cb10dfe9d36f3";
     public const string GenerationConfigurationSha256 = "57b05e6bb3aaec137283214dbc5e4b6fd19399a8f9b184745cfb5cbef1753548";
-    public const string GeneratedHelpersSha256 = "f68f4c34dbb95e2f8fd70fb8bf9405c55fbaa5c570d882c6af27df5686a87190";
+    public const string GeneratedHelpersSha256 = "38156a4b7f639983b4871a6fffcf5219a60bd8d493fb5974fb769c61a355b3c8";
 
     // HelperSchemaVersion is a deterministic SHA-256 prefix of the canonical helper-signature
     // shape (schema names, parameter names in declared order, idempotency field paths per
     // variant). It changes whenever helper parameter shapes change, and only then. Not
     // included in the canonical hash.
-    public const string HelperSchemaVersion = "a38d31d4a2073720";
+    public const string HelperSchemaVersion = "19581f98e75e3e6c";
 
     public static bool VerifyCurrent(string repositoryRoot) => VerifyCurrentDetailed(repositoryRoot).IsCurrent;
 
@@ -255,6 +255,23 @@ public partial class MoveProjectConversationRequest
                 new IdempotencyField("project_id", true, projectId),
                 new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
                 new IdempotencyField("source_project_id", true, SourceProjectId),
+            })
+;
+}
+
+public partial class SetProjectFolderRequest
+{
+    public string ComputeIdempotencyHash(string projectId) =>
+        HexalithIdempotencyHasher.Compute(
+            "SetProjectFolder",
+            new[]
+            {
+                new IdempotencyField("folder_id", true, FolderId),
+                new IdempotencyField("folder_metadata.display_name", FolderMetadata is not null, FolderMetadata?.DisplayName),
+                new IdempotencyField("operation", true, Operation),
+                new IdempotencyField("project_id", true, projectId),
+                new IdempotencyField("replacement_confirmed", true, ReplacementConfirmed),
+                new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
             })
 ;
 }

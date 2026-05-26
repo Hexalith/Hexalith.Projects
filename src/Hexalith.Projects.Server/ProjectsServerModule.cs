@@ -29,6 +29,9 @@ public static class ProjectsServerModule
     /// <summary>The fully qualified <c>ArchiveProject</c> command type discriminator on the wire.</summary>
     public const string ArchiveProjectCommandType = "Hexalith.Projects.Commands.ArchiveProject";
 
+    /// <summary>The fully qualified <c>SetProjectFolder</c> command type discriminator on the wire.</summary>
+    public const string SetProjectFolderCommandType = "Hexalith.Projects.Commands.SetProjectFolder";
+
     /// <summary>The aggregate-callback route the EventStore command pipeline invokes.</summary>
     public const string ProcessRoute = "/process";
 

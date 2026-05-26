@@ -21,6 +21,7 @@ using Hexalith.Projects.Contracts.Ui;
 /// <param name="Description">Optional safe, metadata-only description.</param>
 /// <param name="SetupMetadata">Optional safe, reference-only setup-metadata reference.</param>
 /// <param name="Setup">Optional typed setup projected additively for Story 1.8.</param>
+/// <param name="ProjectFolder">The metadata-only single Project Folder reference or pending state.</param>
 /// <param name="Lifecycle">The current lifecycle state.</param>
 /// <param name="CreatedAt">The instant the project was created.</param>
 /// <param name="UpdatedAt">The instant the project was last updated (equals <paramref name="CreatedAt"/> at creation).</param>
@@ -32,6 +33,7 @@ public sealed record ProjectDetailItem(
     string? Description,
     string? SetupMetadata,
     ProjectSetup? Setup,
+    ProjectFolderReference? ProjectFolder,
     ProjectLifecycle Lifecycle,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt,

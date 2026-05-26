@@ -106,6 +106,38 @@ public sealed class ProjectProjectionTests
     }
 
     [Fact]
+    public void DetailProjection_AppliesProjectFolderCreationPending()
+    {
+        ProjectDetailProjection projection = ProjectDetailProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, FolderPending(TenantA)),
+        ]);
+
+        ProjectDetailItem detail = projection.Get(TenantA, ProjectIdValue)!;
+        detail.ProjectFolder.ShouldNotBeNull();
+        detail.ProjectFolder.ReferenceState.ShouldBe(ReferenceState.Pending);
+        detail.ProjectFolder.ReasonCode.ShouldBe("folder_create_external_unavailable");
+    }
+
+    [Fact]
+    public void DetailProjection_AppliesProjectFolderSet()
+    {
+        ProjectDetailProjection projection = ProjectDetailProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, FolderPending(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 3, FolderSet(TenantA)),
+        ]);
+
+        ProjectDetailItem detail = projection.Get(TenantA, ProjectIdValue)!;
+        detail.ProjectFolder.ShouldNotBeNull();
+        detail.ProjectFolder.ReferenceState.ShouldBe(ReferenceState.Included);
+        detail.ProjectFolder.FolderId.ShouldBe("folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC");
+        detail.Sequence.ShouldBe(3);
+    }
+
+    [Fact]
     public void ListProjection_ForeignTenantEnvelope_IsSkipped()
     {
         // Envelope dispatch tenant B but event tenant A → tenant-guard skips it (never lands in B).
@@ -242,6 +274,33 @@ public sealed class ProjectProjectionTests
             "idem-key-archive",
             "sha256:archive",
             DateTimeOffset.UnixEpoch.AddMinutes(2));
+
+    private static ProjectFolderCreationPending FolderPending(string tenant)
+        => new(
+            tenant,
+            ProjectIdValue,
+            "Tracer Bullet",
+            "folder_create_external_unavailable",
+            true,
+            "actor-001",
+            "corr-folder",
+            "task-folder",
+            "idem-key-folder-pending",
+            "sha256:folder-pending",
+            DateTimeOffset.UnixEpoch.AddMinutes(3));
+
+    private static ProjectFolderSet FolderSet(string tenant)
+        => new(
+            tenant,
+            ProjectIdValue,
+            "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+            new ProjectFolderMetadata("Tracer Folder"),
+            "actor-001",
+            "corr-folder",
+            "task-folder",
+            "idem-key-folder-set",
+            "sha256:folder-set",
+            DateTimeOffset.UnixEpoch.AddMinutes(4));
 
     private sealed record UnknownProjectEvent : IProjectEvent
     {

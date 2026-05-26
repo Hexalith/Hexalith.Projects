@@ -161,7 +161,7 @@ public sealed class ProjectSetupArchiveAggregateTests
     private static ProjectCreated CreatedEvent()
     {
         ProjectResult result = ProjectAggregate.Handle(ProjectState.Empty, CreateCommand());
-        return result.Events.Single().ShouldBeOfType<ProjectCreated>();
+        return result.Events.OfType<ProjectCreated>().Single();
     }
 
     private static ProjectSetupUpdated SetupUpdatedEvent()

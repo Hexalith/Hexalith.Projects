@@ -11,6 +11,7 @@ using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 
 using Shouldly;
@@ -143,9 +144,9 @@ public sealed class CommandDeliveryIdempotencyTests
         CreateProject command = Command();
         ProjectIdentity identity = new(Tenant, new ProjectId(ProjectIdValue));
 
-        // First delivery: one ProjectCreated lands and is recorded.
+        // First delivery: ProjectCreated plus the degraded ProjectFolderCreationPending event land.
         ProjectResult first = ProjectAggregate.Handle(ProjectState.Empty, command);
-        first.Events.Count.ShouldBe(1);
+        first.Events.Count.ShouldBe(2);
         ProjectState afterFirst = ProjectState.Empty.Apply(first.Events.Cast<IProjectEvent>(), identity);
 
         // Second delivery of the same command: Handle dedupes to an empty replay, so nothing new folds.
@@ -153,10 +154,52 @@ public sealed class CommandDeliveryIdempotencyTests
         second.Events.ShouldBeEmpty();
         ProjectState afterSecond = afterFirst.Apply(second.Events.Cast<IProjectEvent>(), identity);
 
-        // Exactly one created event was ever produced across both deliveries; state is unchanged.
+        // Exactly one create result was ever produced across both deliveries; state is unchanged.
         afterSecond.IsCreated.ShouldBeTrue();
-        afterSecond.IdempotencyFingerprints.Count.ShouldBe(1);
+        afterSecond.IdempotencyFingerprints.Count.ShouldBe(2);
         afterSecond.ShouldBeSameAs(afterFirst);
+    }
+
+    [Fact]
+    public void RedeliveredSameSetProjectFolder_AgainstFolderState_IsIdempotentReplay_NoSecondEvent()
+    {
+        ProjectState withFolder = ApplySetFolder(ApplyCreated(Command()), SetFolderCommand());
+
+        ProjectResult result = ProjectAggregate.Handle(withFolder, SetFolderCommand());
+
+        result.IsAccepted.ShouldBeFalse();
+        result.IsIdempotentReplay.ShouldBeTrue();
+        result.Code.ShouldBe(ProjectResultCode.IdempotentReplay);
+        result.Events.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void RedeliveredSetProjectFolder_SameKeyDifferentFolder_IsConflict_NoSecondEvent()
+    {
+        ProjectState withFolder = ApplySetFolder(ApplyCreated(Command()), SetFolderCommand());
+
+        ProjectResult result = ProjectAggregate.Handle(
+            withFolder,
+            SetFolderCommand(folderId: "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AD"));
+
+        result.IsAccepted.ShouldBeFalse();
+        result.Code.ShouldBe(ProjectResultCode.IdempotencyConflict);
+        result.ToRejectionReason().ShouldBe(ReferenceState.Conflict);
+        result.Events.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void SetProjectFolder_SameFolderDifferentKey_IsSafeNoOpReplay()
+    {
+        ProjectState withFolder = ApplySetFolder(ApplyCreated(Command()), SetFolderCommand());
+
+        ProjectResult result = ProjectAggregate.Handle(
+            withFolder,
+            SetFolderCommand(idempotencyKey: "idem-folder-002"));
+
+        result.IsAccepted.ShouldBeFalse();
+        result.Code.ShouldBe(ProjectResultCode.IdempotentReplay);
+        result.Events.ShouldBeEmpty();
     }
 
     private static CreateProject Command() => new(
@@ -170,10 +213,30 @@ public sealed class CommandDeliveryIdempotencyTests
         "task-001",
         "idem-key-001");
 
+    private static SetProjectFolder SetFolderCommand(
+        string folderId = "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+        string idempotencyKey = "idem-folder-001") => new(
+        Tenant,
+        new ProjectId(ProjectIdValue),
+        folderId,
+        new ProjectFolderMetadata("Tracer Folder"),
+        false,
+        "actor-001",
+        "corr-001",
+        "task-001",
+        idempotencyKey);
+
     private static ProjectState ApplyCreated(CreateProject command)
     {
         ProjectResult accepted = ProjectAggregate.Handle(ProjectState.Empty, command);
         ProjectIdentity identity = new(command.TenantId, command.ProjectId);
         return ProjectState.Empty.Apply(accepted.Events.Cast<IProjectEvent>(), identity);
+    }
+
+    private static ProjectState ApplySetFolder(ProjectState state, SetProjectFolder command)
+    {
+        ProjectResult accepted = ProjectAggregate.Handle(state, command);
+        ProjectIdentity identity = new(command.TenantId, command.ProjectId);
+        return state.Apply(accepted.Events.Cast<IProjectEvent>(), identity);
     }
 }

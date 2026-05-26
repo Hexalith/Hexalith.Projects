@@ -41,6 +41,7 @@ public static class ProjectCommandValidator
     internal const int MaxSetupTextLength = 512;
     internal const int MaxSetupTextItems = 16;
     internal const int MaxSetupSourceKinds = 4;
+    internal const int MaxReferenceIdentifierLength = 128;
 
     // The request schema version the spine's CreateProjectRequest pins. Part of the idempotency
     // equivalence list, so it is canonicalized into the fingerprint.
@@ -190,6 +191,49 @@ public static class ProjectCommandValidator
     }
 
     /// <summary>
+    /// Validates a <see cref="SetProjectFolder"/> command and computes its canonical idempotency
+    /// fingerprint.
+    /// </summary>
+    /// <param name="command">The set-folder command.</param>
+    /// <returns>An accepted or rejected validation result.</returns>
+    public static ProjectCommandValidationResult Validate(SetProjectFolder command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult common = ValidateCommon(command);
+        if (!common.IsAccepted)
+        {
+            return common;
+        }
+
+        if (!IsSafeReferenceIdentifier(command.FolderId))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.FolderId));
+        }
+
+        if (command.FolderMetadata is null)
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.FolderMetadata));
+        }
+
+        if (!IsSafeOptionalMetadata(command.FolderMetadata.DisplayName, MaxNameLength))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, "folderMetadata.displayName");
+        }
+
+        string? displayName = string.IsNullOrWhiteSpace(command.FolderMetadata.DisplayName)
+            ? null
+            : command.FolderMetadata.DisplayName.Trim();
+
+        return ProjectCommandValidationResult.AcceptedFolder(
+            ComputeSetProjectFolderFingerprint(
+                command.ProjectId.Value,
+                command.FolderId.Trim(),
+                displayName,
+                command.ReplacementConfirmed));
+    }
+
+    /// <summary>
     /// Computes the canonical idempotency fingerprint for a <see cref="CreateProject"/> command using
     /// the Story 1.3 canonical hasher semantics over the spine's equivalence field list.
     /// </summary>
@@ -250,6 +294,53 @@ public static class ProjectCommandValidator
         [
             "operation=ArchiveProject",
             "field=archive_intent;present=true;value=s:archive",
+            "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+        ];
+
+        string canonical = string.Join('\n', lines);
+        byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(canonical));
+        return "sha256:" + Convert.ToHexString(digest).ToLowerInvariant();
+    }
+
+    /// <summary>Computes the canonical set-folder idempotency fingerprint.</summary>
+    /// <param name="projectId">The route/project identifier.</param>
+    /// <param name="folderId">The folder reference identifier.</param>
+    /// <param name="displayName">The safe display metadata, or null.</param>
+    /// <param name="replacementConfirmed">Whether replacement was explicitly confirmed.</param>
+    /// <returns>A <c>sha256:</c>-prefixed lowercase hex digest.</returns>
+    internal static string ComputeSetProjectFolderFingerprint(
+        string projectId,
+        string folderId,
+        string? displayName,
+        bool replacementConfirmed)
+    {
+        string[] lines =
+        [
+            "operation=SetProjectFolder",
+            "field=folder_id;present=true;value=s:" + Escape(folderId),
+            "field=folder_metadata.display_name;present=" + (displayName is null ? "false;value=omitted" : "true;value=s:" + Escape(displayName)),
+            "field=operation;present=true;value=s:set",
+            "field=project_id;present=true;value=s:" + Escape(projectId),
+            "field=replacement_confirmed;present=true;value=b:" + (replacementConfirmed ? "true" : "false"),
+            "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+        ];
+
+        string canonical = string.Join('\n', lines);
+        byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(canonical));
+        return "sha256:" + Convert.ToHexString(digest).ToLowerInvariant();
+    }
+
+    /// <summary>Computes the fingerprint for the degraded Project Folder creation-pending intent.</summary>
+    /// <param name="displayNameIntent">The safe intended display name.</param>
+    /// <param name="reasonCode">The stable pending reason code.</param>
+    /// <returns>A <c>sha256:</c>-prefixed lowercase hex digest.</returns>
+    internal static string ComputeProjectFolderCreationPendingFingerprint(string displayNameIntent, string reasonCode)
+    {
+        string[] lines =
+        [
+            "operation=ProjectFolderCreationPending",
+            "field=display_name_intent;present=true;value=s:" + Escape(displayNameIntent),
+            "field=reason_code;present=true;value=s:" + Escape(reasonCode),
             "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
         ];
 
@@ -454,6 +545,30 @@ public static class ProjectCommandValidator
         foreach (char c in value)
         {
             if (c == '\r' || c == '\n' || char.IsControl(c))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsSafeReferenceIdentifier(string? value)
+    {
+        if (!IsSafeEnvelopeIdentifier(value))
+        {
+            return false;
+        }
+
+        string trimmed = value!.Trim();
+        if (trimmed.Length > MaxReferenceIdentifierLength || !char.IsLetterOrDigit(trimmed[0]))
+        {
+            return false;
+        }
+
+        foreach (char c in trimmed)
+        {
+            if (!char.IsLetterOrDigit(c) && c is not '_' and not '-')
             {
                 return false;
             }

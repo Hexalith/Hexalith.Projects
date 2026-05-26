@@ -31,6 +31,8 @@ using Hexalith.Projects.Contracts.Ui;
 /// <param name="CommandType">The safe command type discriminator.</param>
 /// <param name="RejectedField">The NAME of the rejected field (never its value), or null.</param>
 /// <param name="Events">The emitted success events (empty on rejection).</param>
+/// <param name="ReferenceKind">Optional sibling reference kind for reference-link rejections.</param>
+/// <param name="ReferenceId">Optional sibling reference identifier for reference-link rejections.</param>
 public sealed record ProjectResult(
     ProjectResultCode Code,
     string? TenantId,
@@ -41,10 +43,15 @@ public sealed record ProjectResult(
     string? IdempotencyKey,
     string CommandType,
     string? RejectedField,
-    IReadOnlyList<IProjectEvent> Events)
+    IReadOnlyList<IProjectEvent> Events,
+    string? ReferenceKind = null,
+    string? ReferenceId = null)
 {
     /// <summary>Gets a value indicating whether the command was accepted (a success event was emitted).</summary>
-    public bool IsAccepted => Code is ProjectResultCode.Created or ProjectResultCode.SetupUpdated or ProjectResultCode.Archived;
+    public bool IsAccepted => Code is ProjectResultCode.Created
+        or ProjectResultCode.SetupUpdated
+        or ProjectResultCode.Archived
+        or ProjectResultCode.FolderSet;
 
     /// <summary>
     /// Gets a value indicating whether the result is a logical idempotent replay (no second event;
@@ -91,6 +98,9 @@ public sealed record ProjectResult(
     {
         ArgumentNullException.ThrowIfNull(command);
 
+        string? referenceKind = command is SetProjectFolder ? "folder" : null;
+        string? referenceId = command is SetProjectFolder setProjectFolder ? SafeReferenceIdentifier(setProjectFolder.FolderId) : null;
+
         return Rejected(
             command.CommandType,
             command.TenantId,
@@ -100,7 +110,9 @@ public sealed record ProjectResult(
             command.TaskId,
             command.IdempotencyKey,
             code,
-            rejectedField);
+            rejectedField,
+            referenceKind,
+            referenceId);
     }
 
     /// <summary>Creates a rejection result from already separated safe identity fields.</summary>
@@ -123,7 +135,9 @@ public sealed record ProjectResult(
         string? taskId,
         string? idempotencyKey,
         ProjectResultCode code,
-        string? rejectedField = null)
+        string? rejectedField = null,
+        string? referenceKind = null,
+        string? referenceId = null)
         => new(
             code,
             SafePassthrough(tenantId),
@@ -134,7 +148,9 @@ public sealed record ProjectResult(
             SafePassthrough(idempotencyKey),
             SafePassthrough(commandType) ?? string.Empty,
             rejectedField,
-            []);
+            [],
+            SafePassthrough(referenceKind),
+            SafeReferenceIdentifier(referenceId));
 
     /// <summary>
     /// Maps the aggregate-internal control-flow code to the externally-surfaced shared
@@ -148,6 +164,7 @@ public sealed record ProjectResult(
         ProjectResultCode.DuplicateProject => ReferenceState.Conflict,
         ProjectResultCode.ProjectAlreadyArchived => ReferenceState.Archived,
         ProjectResultCode.ProjectIsArchived => ReferenceState.Archived,
+        ProjectResultCode.ProjectFolderReplacementRequiresConfirmation => ReferenceState.Conflict,
         ProjectResultCode.IdempotencyConflict => ReferenceState.Conflict,
         ProjectResultCode.ProjectNotFound => ReferenceState.InvalidReference,
         ProjectResultCode.ValidationFailed => ReferenceState.InvalidReference,
@@ -179,6 +196,14 @@ public sealed record ProjectResult(
                 ToRejectionReason(),
                 RejectedField,
                 CorrelationId),
+            nameof(SetProjectFolder) => new ProjectReferenceLinkRejected(
+                projectId ?? new Contracts.Identifiers.ProjectId("unknown"),
+                TenantId ?? string.Empty,
+                ReferenceKind ?? "folder",
+                ReferenceId ?? "unknown",
+                ToRejectionReason(),
+                RejectedField,
+                CorrelationId),
             _ => new ProjectCreationRejected(
                 TenantId ?? string.Empty,
                 ToRejectionReason(),
@@ -206,5 +231,26 @@ public sealed record ProjectResult(
         }
 
         return value;
+    }
+
+    private static string? SafeReferenceIdentifier(string? value)
+    {
+        string? trimmed = SafePassthrough(value)?.Trim();
+        if (string.IsNullOrWhiteSpace(trimmed)
+            || trimmed.Length > ProjectCommandValidator.MaxReferenceIdentifierLength
+            || !char.IsLetterOrDigit(trimmed[0]))
+        {
+            return null;
+        }
+
+        foreach (char c in trimmed)
+        {
+            if (!char.IsLetterOrDigit(c) && c is not '_' and not '-')
+            {
+                return null;
+            }
+        }
+
+        return trimmed;
     }
 }

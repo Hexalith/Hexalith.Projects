@@ -45,6 +45,7 @@ public static class ProjectVocabularyDescriptors
         BuildDescriptors(
             new Dictionary<ReferenceState, (string DisplayLabel, string AccessibleName)>
             {
+                [ReferenceState.Pending] = ("Pending", "Reference is pending confirmation"),
                 [ReferenceState.Included] = ("Included", "Reference is included"),
                 [ReferenceState.Excluded] = ("Excluded", "Reference is excluded"),
                 [ReferenceState.Unauthorized] = ("Unauthorized", "Reference access is unauthorized"),

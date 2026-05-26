@@ -24,6 +24,7 @@ using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server;
+using Hexalith.Projects.Server.Folders;
 using Hexalith.Projects.Testing.Leakage;
 using Hexalith.Projects.Testing.TenantIsolation;
 
@@ -76,6 +77,28 @@ public sealed class CreateProjectEndpointTests
     }
 
     [Fact]
+    public async Task PostProject_GeneratedClientCreateShape_Returns202AcceptedCommand()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(GeneratedClientCreateRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            CreateProject submitted = submitter.Submitted.Single();
+            submitted.TenantId.ShouldBe("tenant-a");
+            submitted.ProjectId.Value.ShouldNotBeNullOrWhiteSpace();
+            submitted.Name.ShouldBe("Tracer Bullet");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
     public async Task PatchProjectSetup_Authorized_Returns202AndSubmitsUpdate()
     {
         FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
@@ -113,6 +136,180 @@ public sealed class CreateProjectEndpointTests
 
             response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
             submitter.Archived.Single().ProjectId.Value.ShouldBe(ProjectIdValue);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PutProjectFolder_AuthorizedAndFolderValidated_Returns202AndSubmitsSetFolder()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            folderDirectory: new FixedProjectFolderDirectory(ProjectFolderValidationOutcome.Accepted)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidSetFolderRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            SetProjectFolder submitted = submitter.FolderSet.Single();
+            submitted.ProjectId.Value.ShouldBe(ProjectIdValue);
+            submitted.FolderId.ShouldBe("folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC");
+            submitted.FolderMetadata.DisplayName.ShouldBe("Tracer Folder");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PutProjectFolder_UnavailableFolderEvidence_Returns503AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            folderDirectory: new FixedProjectFolderDirectory(ProjectFolderValidationOutcome.Unavailable)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidSetFolderRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            submitter.FolderSet.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PutProjectFolder_DeniedFolderEvidence_ReturnsSafe404MetadataOnlyAndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            folderDirectory: new FixedProjectFolderDirectory(ProjectFolderValidationOutcome.Denied)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidSetFolderRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            using JsonDocument document = JsonDocument.Parse(body);
+            document.RootElement.GetProperty("category").GetString().ShouldBe("tenant_access_denied");
+            document.RootElement.GetProperty("details").GetProperty("visibility").GetString().ShouldBe("redacted");
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+            submitter.FolderSet.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PutProjectFolder_ReplacingExistingFolderWithoutConfirmation_Returns400BeforeFoldersAcl()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        TrackingProjectFolderDirectory folderDirectory = new(ProjectFolderValidationOutcome.Accepted);
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            folderDirectory: folderDirectory).ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel readModel = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            readModel.Project("tenant-a", CreatedEvent("tenant-a"));
+            readModel.Project("tenant-a", FolderSetEvent("tenant-a", "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(
+                ValidSetFolderRequest(folderId: "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AD"),
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            folderDirectory.CallCount.ShouldBe(0);
+            submitter.FolderSet.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PutProjectFolder_ReplacingExistingFolderWithConfirmation_SubmitsReplacement()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            folderDirectory: new FixedProjectFolderDirectory(ProjectFolderValidationOutcome.Accepted)).ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel readModel = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            readModel.Project("tenant-a", CreatedEvent("tenant-a"));
+            readModel.Project("tenant-a", FolderSetEvent("tenant-a", "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(
+                ValidSetFolderRequest(
+                    folderId: "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AD",
+                    replacementConfirmed: true),
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            SetProjectFolder submitted = submitter.FolderSet.Single();
+            submitted.FolderId.ShouldBe("folder_01HZ9K8YQ3W6V2N4R7T5P0X1AD");
+            submitted.ReplacementConfirmed.ShouldBeTrue();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PutProjectFolder_RouteBodyMismatch_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            folderDirectory: new FixedProjectFolderDirectory(ProjectFolderValidationOutcome.Accepted)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(
+                ValidSetFolderRequest(projectId: "01HZ9K8YQ3W6V2N4R7T5P0X1ZZ"),
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.FolderSet.ShouldBeEmpty();
         }
         finally
         {
@@ -750,6 +947,7 @@ public sealed class CreateProjectEndpointTests
                                     null,
                                     null,
                                     null,
+                                    null,
                                     ProjectLifecycle.Active,
                                     DateTimeOffset.UnixEpoch,
                                     DateTimeOffset.UnixEpoch,
@@ -868,6 +1066,39 @@ public sealed class CreateProjectEndpointTests
     }
 
     [Fact]
+    public async Task GetProject_WithPendingAutoFolderReference_ExposesPendingReferenceMetadataOnly()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel readModel = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            readModel.Project("tenant-a", CreatedEvent("tenant-a"));
+            readModel.Project("tenant-a", FolderPendingEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.GetAsync(
+                $"/api/v1/projects/{ProjectIdValue}",
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument document = JsonDocument.Parse(body);
+            JsonElement reference = document.RootElement.GetProperty("references").EnumerateArray().Single();
+            reference.GetProperty("referenceKind").GetString().ShouldBe("folder");
+            reference.GetProperty("referenceState").GetString().ShouldBe("pending");
+            reference.TryGetProperty("referenceId", out _).ShouldBeFalse();
+            reference.GetProperty("displayName").GetString().ShouldBe("Tracer Bullet");
+            reference.GetProperty("reasonCode").GetString().ShouldBe("folder_create_external_unavailable");
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
     public async Task GetProject_ReadModelUnavailable_ReturnsMetadataOnly503()
     {
         FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", false));
@@ -958,6 +1189,31 @@ public sealed class CreateProjectEndpointTests
         "sha256:archive",
         DateTimeOffset.UnixEpoch.AddMinutes(2));
 
+    private static ProjectFolderCreationPending FolderPendingEvent(string tenant) => new(
+        tenant,
+        ProjectIdValue,
+        "Tracer Bullet",
+        "folder_create_external_unavailable",
+        true,
+        "principal-a",
+        "corr-folder-pending",
+        "task-folder-pending",
+        "idem-key-folder-pending",
+        "sha256:folder-pending",
+        DateTimeOffset.UnixEpoch.AddMinutes(3));
+
+    private static ProjectFolderSet FolderSetEvent(string tenant, string folderId) => new(
+        tenant,
+        ProjectIdValue,
+        folderId,
+        new ProjectFolderMetadata("Tracer Folder"),
+        "principal-a",
+        "corr-folder",
+        "task-folder",
+        "idem-key-folder",
+        "sha256:folder-set",
+        DateTimeOffset.UnixEpoch.AddMinutes(4));
+
     private static HttpRequestMessage ValidCreateRequest()
     {
         HttpRequestMessage request = new(HttpMethod.Post, "/api/v1/projects")
@@ -970,6 +1226,26 @@ public sealed class CreateProjectEndpointTests
             }),
         };
         request.Headers.Add("Idempotency-Key", "idem-key-a");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
+    private static HttpRequestMessage GeneratedClientCreateRequest()
+    {
+        HttpRequestMessage request = new(HttpMethod.Post, "/api/v1/projects")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                projectMetadata = new
+                {
+                    displayName = "Tracer Bullet",
+                    metadataClass = "tenant_sensitive",
+                },
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-generated");
         request.Headers.Add("X-Correlation-Id", "corr-a");
         request.Headers.Add("X-Hexalith-Task-Id", "task-a");
         return request;
@@ -1017,6 +1293,32 @@ public sealed class CreateProjectEndpointTests
         return request;
     }
 
+    private static HttpRequestMessage ValidSetFolderRequest(
+        string projectId = ProjectIdValue,
+        string folderId = "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+        bool replacementConfirmed = false)
+    {
+        HttpRequestMessage request = new(HttpMethod.Put, $"/api/v1/projects/{ProjectIdValue}/folder")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                operation = "set",
+                projectId,
+                folderId,
+                folderMetadata = new
+                {
+                    displayName = "Tracer Folder",
+                },
+                replacementConfirmed,
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-folder");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
     private static ProjectSetup Setup() => new(
         ["keep continuity current"],
         ["use safe metadata"],
@@ -1055,7 +1357,8 @@ public sealed class CreateProjectEndpointTests
         string? membershipPrincipalId = null,
         DateTimeOffset? lastTenantAccessTimestamp = null,
         bool detailReadUnavailable = false,
-        bool listReadUnavailable = false)
+        bool listReadUnavailable = false,
+        IProjectFolderDirectory? folderDirectory = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
         {
@@ -1070,6 +1373,12 @@ public sealed class CreateProjectEndpointTests
         builder.Services.RemoveAll<IProjectTenantContextAccessor>();
         builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContextAccessor(tenantId, principalId));
         builder.Services.AddSingleton<IProjectCommandSubmitter>(submitter);
+        if (folderDirectory is not null)
+        {
+            builder.Services.RemoveAll<IProjectFolderDirectory>();
+            builder.Services.AddSingleton(folderDirectory);
+        }
+
         if (detailReadUnavailable)
         {
             builder.Services.RemoveAll<IProjectDetailReadModel>();
@@ -1149,6 +1458,8 @@ public sealed class CreateProjectEndpointTests
 
         public List<ArchiveProject> Archived { get; } = [];
 
+        public List<SetProjectFolder> FolderSet { get; } = [];
+
         public Task<ProjectCommandSubmissionResult> SubmitCreateProjectAsync(CreateProject command, CancellationToken cancellationToken = default)
         {
             Submitted.Add(command);
@@ -1164,6 +1475,12 @@ public sealed class CreateProjectEndpointTests
         public Task<ProjectCommandSubmissionResult> SubmitArchiveProjectAsync(ArchiveProject command, CancellationToken cancellationToken = default)
         {
             Archived.Add(command);
+            return Task.FromResult(result);
+        }
+
+        public Task<ProjectCommandSubmissionResult> SubmitSetProjectFolderAsync(SetProjectFolder command, CancellationToken cancellationToken = default)
+        {
+            FolderSet.Add(command);
             return Task.FromResult(result);
         }
     }
@@ -1186,7 +1503,33 @@ public sealed class CreateProjectEndpointTests
                         ProjectAuthorizationGate.ListProjectsAction,
                         ProjectAuthorizationGate.UpdateProjectSetupAction,
                         ProjectAuthorizationGate.ArchiveProjectAction,
+                        ProjectAuthorizationGate.SetProjectFolderAction,
                     ]);
+    }
+
+    private sealed class FixedProjectFolderDirectory(ProjectFolderValidationOutcome outcome) : IProjectFolderDirectory
+    {
+        public Task<ProjectFolderValidationResult> ValidateSetProjectFolderAsync(
+            Hexalith.Projects.Contracts.Identifiers.ProjectId projectId,
+            string folderId,
+            string correlationId,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(new ProjectFolderValidationResult(outcome, correlationId));
+    }
+
+    private sealed class TrackingProjectFolderDirectory(ProjectFolderValidationOutcome outcome) : IProjectFolderDirectory
+    {
+        public int CallCount { get; private set; }
+
+        public Task<ProjectFolderValidationResult> ValidateSetProjectFolderAsync(
+            Hexalith.Projects.Contracts.Identifiers.ProjectId projectId,
+            string folderId,
+            string correlationId,
+            CancellationToken cancellationToken = default)
+        {
+            CallCount++;
+            return Task.FromResult(new ProjectFolderValidationResult(outcome, correlationId));
+        }
     }
 
     private sealed class ThrowingProjectDetailReadModel : IProjectDetailReadModel

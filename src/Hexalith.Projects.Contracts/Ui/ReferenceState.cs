@@ -22,6 +22,10 @@ using Hexalith.FrontComposer.Contracts.Attributes;
 [JsonConverter(typeof(JsonStringEnumConverter<ReferenceState>))]
 public enum ReferenceState
 {
+    /// <summary>The reference is queued or awaiting upstream confirmation.</summary>
+    [ProjectionBadge(BadgeSlot.Warning)]
+    Pending,
+
     /// <summary>The reference is included in the project context.</summary>
     [ProjectionBadge(BadgeSlot.Success)]
     Included,

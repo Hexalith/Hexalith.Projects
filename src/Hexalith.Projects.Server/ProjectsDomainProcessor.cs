@@ -60,6 +60,7 @@ public sealed class ProjectsDomainProcessor(
             ProjectsServerModule.CreateProjectCommandType => ProjectAuthorizationGate.CreateProjectAction,
             ProjectsServerModule.UpdateProjectSetupCommandType => ProjectAuthorizationGate.UpdateProjectSetupAction,
             ProjectsServerModule.ArchiveProjectCommandType => ProjectAuthorizationGate.ArchiveProjectAction,
+            ProjectsServerModule.SetProjectFolderCommandType => ProjectAuthorizationGate.SetProjectFolderAction,
             _ => null,
         };
 
@@ -97,6 +98,7 @@ public sealed class ProjectsDomainProcessor(
             ProjectsServerModule.CreateProjectCommandType => ProcessCreate(command, currentState),
             ProjectsServerModule.UpdateProjectSetupCommandType => ProcessUpdateProjectSetup(command, currentState),
             ProjectsServerModule.ArchiveProjectCommandType => ProcessArchiveProject(command, currentState),
+            ProjectsServerModule.SetProjectFolderCommandType => ProcessSetProjectFolder(command, currentState),
             _ => Rejection(command, ProjectResultCode.ValidationFailed, null, command.CommandType),
         };
     }
@@ -268,6 +270,65 @@ public sealed class ProjectsDomainProcessor(
         return ToDomainResult(result);
     }
 
+    private DomainResult ProcessSetProjectFolder(CommandEnvelope envelope, object? currentState)
+    {
+        SetProjectFolderPayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<SetProjectFolderPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null
+            || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(payload.Operation, "set", StringComparison.Ordinal)
+            || !string.Equals(payload.ProjectId, envelope.AggregateId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(payload.FolderId)
+            || payload.FolderMetadata is null)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "identity", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        SetProjectFolder command = new(
+            envelope.TenantId,
+            projectId,
+            payload.FolderId!,
+            payload.FolderMetadata,
+            payload.ReplacementConfirmed,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+
     private static string ReadTaskId(CommandEnvelope envelope)
         => envelope.Extensions is not null
             && envelope.Extensions.TryGetValue("taskId", out string? taskId)
@@ -279,7 +340,10 @@ public sealed class ProjectsDomainProcessor(
         => result.Code switch
         {
             // Persist-then-publish: the success event is persisted then published by the pipeline.
-            ProjectResultCode.Created or ProjectResultCode.SetupUpdated or ProjectResultCode.Archived => DomainResult.Success(result.Events),
+            ProjectResultCode.Created
+                or ProjectResultCode.SetupUpdated
+                or ProjectResultCode.Archived
+                or ProjectResultCode.FolderSet => DomainResult.Success(result.Events),
 
             // A logical replay produced no new event — acknowledge as a no-op (the prior event landed).
             ProjectResultCode.IdempotentReplay => DomainResult.NoOp(),
@@ -311,6 +375,7 @@ public sealed class ProjectsDomainProcessor(
         {
             ProjectsServerModule.UpdateProjectSetupCommandType => nameof(UpdateProjectSetup),
             ProjectsServerModule.ArchiveProjectCommandType => nameof(ArchiveProject),
+            ProjectsServerModule.SetProjectFolderCommandType => nameof(SetProjectFolder),
             _ => nameof(CreateProject),
         };
 
@@ -341,4 +406,12 @@ public sealed class ProjectsDomainProcessor(
     private sealed record ArchiveProjectPayload(
         [property: JsonRequired] string? ArchiveIntent,
         [property: JsonRequired] string? RequestSchemaVersion);
+
+    private sealed record SetProjectFolderPayload(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? ProjectId,
+        string? FolderId,
+        ProjectFolderMetadata? FolderMetadata,
+        bool ReplacementConfirmed);
 }

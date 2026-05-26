@@ -83,6 +83,7 @@ public sealed class ClientGenerationTests
         generated.ShouldContain("class LinkProjectConversationRequest");
         generated.ShouldContain("class MoveProjectConversationRequest");
         generated.ShouldContain("class UnlinkProjectConversationRequest");
+        generated.ShouldContain("class SetProjectFolderRequest");
         generated.ShouldContain("class ProjectConversationsPage");
         generated.ShouldContain("class ProblemDetails");
     }
@@ -124,6 +125,7 @@ public sealed class ClientGenerationTests
             typeof(LinkProjectConversationRequest),
             typeof(MoveProjectConversationRequest),
             typeof(UnlinkProjectConversationRequest),
+            typeof(SetProjectFolderRequest),
         })
         {
             MethodInfo[] mutationMethods = requestType
@@ -203,6 +205,25 @@ public sealed class ClientGenerationTests
             .ShouldNotBeNull();
         typeof(UnlinkProjectConversationRequest)
             .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
+            .ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void GeneratedClientExposesSetProjectFolderWithExpectedIdempotencyShape()
+    {
+        Assembly clientAssembly = typeof(CreateProjectRequest).Assembly;
+        Type clientInterface = clientAssembly.GetType("Hexalith.Projects.Client.Generated.IClient").ShouldNotBeNull();
+
+        MethodInfo[] methods = clientInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Where(m => m.Name == "SetProjectFolderAsync")
+            .ToArray();
+        methods.ShouldNotBeEmpty();
+        methods.SelectMany(m => m.GetParameters())
+            .Any(p => string.Equals(p.Name, "idempotency_Key", StringComparison.Ordinal))
+            .ShouldBeTrue();
+
+        typeof(SetProjectFolderRequest)
+            .GetMethod("ComputeIdempotencyHash", [typeof(string)])
             .ShouldNotBeNull();
     }
 
@@ -358,6 +379,32 @@ public sealed class ClientGenerationTests
             "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
             "field=request_schema_version;present=true;value=s:v1",
             "field=unlink_intent;present=true;value=s:clear"));
+    }
+
+    [Fact]
+    public void SetProjectFolderHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new SetProjectFolderRequest
+        {
+            RequestSchemaVersion = SetProjectFolderRequestRequestSchemaVersion.V1,
+            Operation = SetProjectFolderRequestOperation.Set,
+            ProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            FolderId = "folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7",
+            FolderMetadata = new ProjectFolderMetadata
+            {
+                DisplayName = "Synthetic Folder",
+            },
+            ReplacementConfirmed = true,
+        };
+
+        request.ComputeIdempotencyHash(request.ProjectId).ShouldBe(ExpectedHash(
+            "operation=SetProjectFolder",
+            "field=folder_id;present=true;value=s:folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7",
+            "field=folder_metadata.display_name;present=true;value=s:Synthetic Folder",
+            "field=operation;present=true;value=s:set",
+            "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            "field=replacement_confirmed;present=true;value=b:true",
+            "field=request_schema_version;present=true;value=s:v1"));
     }
 
     [Fact]

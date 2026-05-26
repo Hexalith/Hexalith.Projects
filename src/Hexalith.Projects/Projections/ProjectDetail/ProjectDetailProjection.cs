@@ -12,6 +12,8 @@ using System.Linq;
 
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectList;
 
 /// <summary>
@@ -98,6 +100,7 @@ public sealed record ProjectDetailProjection
                         created.Description,
                         created.SetupMetadata,
                         null,
+                        null,
                         created.Lifecycle,
                         created.OccurredAt,
                         created.OccurredAt,
@@ -111,6 +114,43 @@ public sealed record ProjectDetailProjection
                         {
                             Setup = updated.Setup,
                             UpdatedAt = updated.OccurredAt,
+                            Sequence = envelope.Sequence,
+                        };
+                    }
+
+                    break;
+
+                case ProjectFolderSet folderSet:
+                    if (projects.TryGetValue(key, out ProjectDetailItem? folderDetail))
+                    {
+                        projects[key] = folderDetail with
+                        {
+                            ProjectFolder = new ProjectFolderReference(
+                                folderSet.FolderId,
+                                folderSet.FolderMetadata.DisplayName,
+                                ReferenceState.Included,
+                                null,
+                                folderSet.OccurredAt),
+                            UpdatedAt = folderSet.OccurredAt,
+                            Sequence = envelope.Sequence,
+                        };
+                    }
+
+                    break;
+
+                case ProjectFolderCreationPending pending:
+                    if (projects.TryGetValue(key, out ProjectDetailItem? pendingDetail)
+                        && pendingDetail.ProjectFolder?.ReferenceState != ReferenceState.Included)
+                    {
+                        projects[key] = pendingDetail with
+                        {
+                            ProjectFolder = new ProjectFolderReference(
+                                null,
+                                pending.DisplayNameIntent,
+                                ReferenceState.Pending,
+                                pending.ReasonCode,
+                                pending.OccurredAt),
+                            UpdatedAt = pending.OccurredAt,
                             Sequence = envelope.Sequence,
                         };
                     }

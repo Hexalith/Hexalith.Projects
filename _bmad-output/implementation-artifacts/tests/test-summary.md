@@ -1,3 +1,49 @@
+# Test Automation Summary - Story 2.4 Set & Auto-Create Project Folder
+
+Workflow: `bmad-qa-generate-e2e-tests` (automate). Date: 2026-05-26.
+
+## Generated Tests
+
+### API Tests
+- [x] `tests/Hexalith.Projects.Server.Tests/CreateProjectEndpointTests.cs` - Added Set Project Folder replacement confirmation coverage, safe 404 metadata-only Folders denial mapping, and degraded pending auto-folder read response coverage.
+
+### Domain / Boundary Tests
+- [x] `tests/Hexalith.Projects.Server.Tests/ProjectFolderDirectoryTests.cs` - Added Folders ACL fail-closed mapping for archived lifecycle evidence, mismatched evidence, denied/stale/missing permissions, upstream 5xx, and transport failure.
+- [x] `tests/Hexalith.Projects.Tests/Replay/CommandDeliveryIdempotencyTests.cs` - Added SetProjectFolder replay/conflict/no-op idempotency proofs.
+- [x] `tests/Hexalith.Projects.Tests/Leakage/NoPayloadLeakageTests.cs` - Added metadata-only coverage for `ProjectFolderCreationPending`, `ProjectFolderSet`, and folder link rejection events.
+
+### E2E Tests
+- [x] Not applicable for story 2.4. The implemented surface is a Projects API/domain/projection/ACL/client contract story with no browser UI route; Tier-1/Tier-2 API and boundary tests are the intended automation lane.
+
+## Coverage
+
+- Degraded auto-create pending behavior: covered by aggregate/domain tests, project read projection tests, reference-index tests, and endpoint pending reference response coverage.
+- Set Project Folder replacement semantics: covered for missing confirmation rejection before Folders ACL and confirmed replacement dispatch.
+- Folders ACL fail-closed mapping: covered for lifecycle, permissions, safe denial, 5xx, and transport failure.
+- ProjectReferenceIndex projection: existing focused tests verified pending and set replacement behavior.
+- Idempotency: covered for create pending idempotency and SetProjectFolder same-key replay/conflict plus same-folder no-op replay.
+- Payload leakage: covered for new folder events, safe problem responses, and pending read response.
+- Browser E2E: 0/0 applicable.
+
+## Verification
+
+| Lane | Command | Result |
+|------|---------|--------|
+| Projects domain/projection/leakage filter | `dotnet test tests\Hexalith.Projects.Tests\Hexalith.Projects.Tests.csproj --no-restore --filter "FullyQualifiedName~CommandDeliveryIdempotencyTests|FullyQualifiedName~NoPayloadLeakageTests|FullyQualifiedName~ProjectReferenceIndexProjectionTests|FullyQualifiedName~ProjectProjectionTests|FullyQualifiedName~ProjectAggregateHandleTests|FullyQualifiedName~ProjectCommandValidatorTests"` | Passed: 88, Failed: 0, Skipped: 0 |
+| Projects server endpoint/ACL filter | `dotnet test tests\Hexalith.Projects.Server.Tests\Hexalith.Projects.Server.Tests.csproj --no-restore --filter "FullyQualifiedName~CreateProjectEndpointTests|FullyQualifiedName~ProjectFolderDirectoryTests|FullyQualifiedName~ProjectAuthorizationGateTests|FullyQualifiedName~ProjectsDomainProcessorTests"` | Passed: 68, Failed: 0, Skipped: 0 |
+| OpenAPI contract spine filter | `dotnet test tests\Hexalith.Projects.Contracts.Tests\Hexalith.Projects.Contracts.Tests.csproj --no-restore --filter "FullyQualifiedName~OpenApiContractSpineTests"` | Passed: 18, Failed: 0, Skipped: 0 |
+| Client generation filter | `dotnet test tests\Hexalith.Projects.Client.Tests\Hexalith.Projects.Client.Tests.csproj --no-restore --filter "FullyQualifiedName~ClientGenerationTests"` | Passed: 26, Failed: 0, Skipped: 0 |
+| Diff hygiene | `git diff --check` | Passed; Git reported existing LF-to-CRLF normalization warnings only |
+| Senior review Projects filter | `dotnet test tests\Hexalith.Projects.Tests\Hexalith.Projects.Tests.csproj --no-restore --filter "FullyQualifiedName~NoPayloadLeakageTests|FullyQualifiedName~ProjectAggregateHandleTests|FullyQualifiedName~ProjectCommandValidatorTests|FullyQualifiedName~CommandDeliveryIdempotencyTests|FullyQualifiedName~ProjectReferenceIndexProjectionTests"` | Passed: 76, Failed: 0, Skipped: 0 |
+| Senior review Server filter | `dotnet test tests\Hexalith.Projects.Server.Tests\Hexalith.Projects.Server.Tests.csproj --no-restore --filter "FullyQualifiedName~CreateProjectEndpointTests|FullyQualifiedName~ProjectFolderDirectoryTests|FullyQualifiedName~ProjectsDomainProcessorTests|FullyQualifiedName~ProjectAuthorizationGateTests"` | Passed: 69, Failed: 0, Skipped: 0 |
+| Senior review full Projects solution | `dotnet test Hexalith.Projects.slnx --no-restore` | Passed: 445, Failed: 0, Skipped: 0 |
+
+## Sprint Status
+
+- `2-4-set-auto-create-project-folder` is `done` after senior review auto-fixes.
+
+---
+
 # Test Automation Summary - Story 2.3 Link & Move Conversation Write-Side
 
 Workflow: `bmad-qa-generate-e2e-tests` (automate). Date: 2026-05-26.

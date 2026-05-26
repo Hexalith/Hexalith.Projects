@@ -1,6 +1,10 @@
 # generated: 2026-05-25
 # last_updated: 2026-05-26
+# 2-4 set to done on 2026-05-26 via story-automator-review cycle 1 (0 CRITICAL/HIGH/MEDIUM/LOW remaining; auto-fixed 2 MEDIUM: unsafe SetProjectFolder rejection reference-id echo now drops malformed folder IDs to unknown, and CreateProject endpoint accepts generated OpenAPI client request shape; focused lanes Projects 76/76, Server 69/69, OpenAPI 18/18, Client 26/26; full Projects solution 445/445; git diff --check clean with CRLF conversion warnings only; no commit, no nested recursive submodule init)
 # 2-3 set to done on 2026-05-26 via story-automator-review cycle 1 (0 CRITICAL/HIGH/MEDIUM/LOW remaining; auto-fixed 1 MEDIUM + 1 LOW: upstream accepted idempotency-key mismatch now fails closed, endpoint tests cover authority-header mismatch, missing idempotency, and link/move route/body identity mismatch; focused assignment lane 30/30, contract-spine gate PASSED, Contracts 120/120, Client 24/24, Server 117/117, Projects 129/129, leakage 14/14; git diff --check clean with CRLF conversion warnings only; no commit)
+# 2-4 set to review on 2026-05-26 via non-tmux dev-story (Projects-owned Project Folder reference behavior; selected degraded ProjectFolderCreationPending path because Folders CreateFolder external REST remains unmapped and no approved in-topology create path was found; SetProjectFolder endpoint/aggregate/state/projections/Folders ACL/OpenAPI/generated client/docs implemented; validation passed: Projects 140/140, Server 124/124, Contracts 123/123, Client 26/26, Integration 14/14, full Projects solution 427/427, git diff --check clean with CRLF warnings only; no commit, no nested recursive submodule init)
+# 2-4 set to in-progress on 2026-05-26 via non-tmux dev-story (starting Project Folder reference behavior; Folders create capability gate pending; no nested submodule init)
+# 2-4 set to ready-for-dev on 2026-05-26 via create-story (Project Folder reference + deferred auto-create slice; Folders CreateFolder is contract-ready via OpenAPI/generated client but current server lacks external POST /api/v1/folders mapping, so dev must use approved in-topology CreateFolderAsync path or queued/flagged ProjectFolderCreationPending degradation; no code implementation)
 # 2-3 set to review on 2026-05-26 via non-tmux dev-story (Projects link/move/unlink write-side over Conversations reassignment; ActorPartyId HALT resolved with IActorPartyResolver deterministic integration mapping; contract/client/server/leakage lanes passed; contract-spine gate PASSED under pwsh; git diff --check clean with CRLF warnings only; no commit)
 # 2-3 set to in-progress on 2026-05-26 via non-tmux dev-story (starting Projects write-side link/move/unlink orchestration; hard ActorPartyId trust-boundary gate pending before reassignment call coding; no nested submodule init)
 # 2-3 HALT on 2026-05-26 via non-tmux dev-story before coding reassignment calls: no stable server-derived Party id claim or approved principal-to-Party mapping found for ConversationCommandMetadata.ActorPartyId; development_status remains in-progress pending architecture direction
@@ -95,7 +99,7 @@ development_status:
   2-1-conversation-reference-read-acl: done
   2-2-conversation-project-reassignment-upstream-capability: done
   2-3-link-move-conversation-write-side: done
-  2-4-set-auto-create-project-folder: backlog
+  2-4-set-auto-create-project-folder: done
   2-5-link-unlink-file-reference: backlog
   2-6-memories-linkage-decision-spike: backlog
   2-7-link-unlink-memory: backlog

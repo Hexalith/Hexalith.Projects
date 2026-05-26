@@ -82,6 +82,8 @@ public sealed class OpenApiContractSpineTests
         RequiredMapping(schemas, "LinkProjectConversationRequest");
         RequiredMapping(schemas, "MoveProjectConversationRequest");
         RequiredMapping(schemas, "UnlinkProjectConversationRequest");
+        RequiredMapping(schemas, "SetProjectFolderRequest");
+        RequiredMapping(schemas, "ProjectFolderMetadata");
         RequiredMapping(schemas, "ProjectConversationsPage");
         RequiredMapping(schemas, "ProjectConversationItem");
         RequiredMapping(schemas, "ProjectConversationPageMetadata");
@@ -497,6 +499,68 @@ public sealed class OpenApiContractSpineTests
     }
 
     [Fact]
+    public void Spine_SetProjectFolder_IsCommandAsyncMutation()
+    {
+        YamlMappingNode operation = SetProjectFolderMutation();
+
+        GetScalar(operation, "operationId").ShouldBe("SetProjectFolder");
+
+        string schemaRef = GetScalar(
+            RequiredMapping(
+                RequiredMapping(
+                    RequiredMapping(RequiredMapping(operation, "requestBody"), "content"),
+                    "application/json"),
+                "schema"),
+            "$ref") ?? string.Empty;
+        schemaRef.ShouldBe("#/components/schemas/SetProjectFolderRequest");
+
+        YamlMappingNode responses = RequiredMapping(operation, "responses");
+        GetScalar(RequiredMapping(responses, "202"), "$ref").ShouldBe("#/components/responses/AcceptedCommand");
+        GetScalar(RequiredMapping(responses, "400"), "$ref").ShouldBe("#/components/responses/ValidationFailure");
+        GetScalar(RequiredMapping(responses, "404"), "$ref").ShouldBe("#/components/responses/SafeAuthorizationDenial404");
+        GetScalar(RequiredMapping(responses, "409"), "$ref").ShouldBe("#/components/responses/IdempotencyConflict");
+        GetScalar(RequiredMapping(responses, "503"), "$ref").ShouldBe("#/components/responses/ReadModelUnavailable");
+
+        string[] parameterRefs = RequiredSequence(operation, "parameters")
+            .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
+        parameterRefs.ShouldContain("#/components/parameters/ProjectId");
+        parameterRefs.ShouldContain("#/components/parameters/IdempotencyKey");
+        parameterRefs.ShouldContain("#/components/parameters/CorrelationId");
+        parameterRefs.ShouldContain("#/components/parameters/TaskId");
+
+        string[] equivalence = RequiredSequence(operation, "x-hexalith-idempotency-equivalence")
+            .OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty).ToArray();
+        equivalence.ShouldBe([
+            "folder_id",
+            "folder_metadata.display_name",
+            "operation",
+            "project_id",
+            "replacement_confirmed",
+            "request_schema_version",
+        ]);
+        equivalence.ShouldBe(equivalence.OrderBy(f => f, StringComparer.Ordinal).ToArray());
+    }
+
+    [Fact]
+    public void Spine_SetProjectFolderSchema_IsClosedMetadataOnly()
+    {
+        YamlMappingNode schemas = Schemas();
+        foreach (string schemaName in new[] { "SetProjectFolderRequest", "ProjectFolderMetadata" })
+        {
+            YamlMappingNode schema = RequiredMapping(schemas, schemaName);
+            GetScalar(schema, "additionalProperties").ShouldBe("false");
+            foreach (string property in RequiredMapping(schema, "properties").Children.Keys
+                .OfType<YamlScalarNode>().Select(k => k.Value ?? string.Empty))
+            {
+                Regex.IsMatch(property, "^[a-z][A-Za-z0-9]*$").ShouldBeTrue($"property '{property}' on {schemaName} must be camelCase");
+            }
+        }
+
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "SetProjectFolderRequest"), "properties"), "operation"))
+            .ShouldBe(["set"]);
+    }
+
+    [Fact]
     public void Spine_ProjectSetupSchemas_AreClosedCamelCaseAndMetadataOnly()
     {
         YamlMappingNode schemas = Schemas();
@@ -547,6 +611,8 @@ public sealed class OpenApiContractSpineTests
             "LinkProjectConversationRequest",
             "MoveProjectConversationRequest",
             "UnlinkProjectConversationRequest",
+            "SetProjectFolderRequest",
+            "ProjectFolderMetadata",
             "ProjectConversationsPage",
             "ProjectConversationItem",
             "ProjectConversationPageMetadata",
@@ -769,6 +835,9 @@ public sealed class OpenApiContractSpineTests
 
     private static YamlMappingNode UnlinkProjectConversationMutation() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations/{conversationId}"), "delete");
+
+    private static YamlMappingNode SetProjectFolderMutation() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/folder"), "put");
 
     private static string[] RequiredEnumValues(YamlMappingNode schema) =>
         RequiredSequence(schema, "enum").OfType<YamlScalarNode>().Select(v => v.Value ?? string.Empty).ToArray();

@@ -9,17 +9,21 @@ using System;
 using System.Linq;
 
 using Hexalith.Conversations.Client;
+using Hexalith.Folders.Client;
 using Hexalith.EventStore.Client.Handlers;
 using Hexalith.EventStore.Client.Registration;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server.Conversations;
+using Hexalith.Projects.Server.Folders;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+
+using FoldersClient = Hexalith.Folders.Client.Generated.IClient;
 
 /// <summary>
 /// DI registration for the Hexalith.Projects Server command-async + minimal-read slice (Story 1.4).
@@ -65,6 +69,13 @@ public static class ProjectsServerServiceCollectionExtensions
                     client,
                     sp.GetRequiredService<IActorPartyResolver>());
         });
+        services.TryAddTransient<IProjectFolderDirectory>(sp =>
+        {
+            FoldersClient? client = sp.GetService<FoldersClient>();
+            return client is null
+                ? new UnavailableProjectFolderDirectory()
+                : new FoldersProjectFolderDirectory(client);
+        });
         services.TryAddSingleton<IProjectEventStoreAuthorizationValidator, DenyAllProjectEventStoreAuthorizationValidator>();
         services.TryAddSingleton<IProjectDaprPolicyEvidenceProvider, DenyAllProjectDaprPolicyEvidenceProvider>();
         services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();
@@ -98,6 +109,11 @@ public static class ProjectsServerServiceCollectionExtensions
         if (!services.Any(static service => service.ServiceType == typeof(IConversationClient)))
         {
             services.AddHexalithConversationsClient(options => options.Endpoint = new Uri("http://conversations"));
+        }
+
+        if (!services.Any(static service => service.ServiceType == typeof(FoldersClient)))
+        {
+            services.AddFoldersClient(options => options.BaseAddress = new Uri("http://folders"));
         }
 
         services.AddEventStoreGatewayClient(options => options.BaseAddress = new Uri("http://eventstore"));

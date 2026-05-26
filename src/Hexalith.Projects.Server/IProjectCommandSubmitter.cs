@@ -35,6 +35,12 @@ public interface IProjectCommandSubmitter
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>The submission outcome.</returns>
     Task<ProjectCommandSubmissionResult> SubmitArchiveProjectAsync(ArchiveProject command, CancellationToken cancellationToken = default);
+
+    /// <summary>Submits the set-folder command and returns the accept/replay/denial outcome.</summary>
+    /// <param name="command">The validated set-folder command.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The submission outcome.</returns>
+    Task<ProjectCommandSubmissionResult> SubmitSetProjectFolderAsync(SetProjectFolder command, CancellationToken cancellationToken = default);
 }
 
 /// <summary>The outcome category of a command submission through the EventStore command pipeline.</summary>

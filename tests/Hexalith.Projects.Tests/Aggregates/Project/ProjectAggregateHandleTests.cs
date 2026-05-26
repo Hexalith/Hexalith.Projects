@@ -13,6 +13,7 @@ using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 
 using Shouldly;
@@ -29,13 +30,13 @@ public sealed class ProjectAggregateHandleTests
     private const string ProjectIdValue = "01HZ9K8YQ3W6V2N4R7T5P0X1AB";
 
     [Fact]
-    public void HappyPath_EmitsExactlyOneProjectCreatedActive()
+    public void HappyPath_EmitsProjectCreatedAndFolderCreationPending()
     {
         ProjectResult result = ProjectAggregate.Handle(ProjectState.Empty, Command());
 
         result.IsAccepted.ShouldBeTrue();
         result.Code.ShouldBe(ProjectResultCode.Created);
-        result.Events.Count.ShouldBe(1);
+        result.Events.Count.ShouldBe(2);
 
         ProjectCreated created = result.Events[0].ShouldBeOfType<ProjectCreated>();
         created.TenantId.ShouldBe(Tenant);
@@ -43,6 +44,11 @@ public sealed class ProjectAggregateHandleTests
         created.Name.ShouldBe("Tracer Bullet");
         created.Lifecycle.ShouldBe(ProjectLifecycle.Active);
         created.IdempotencyFingerprint.ShouldStartWith("sha256:");
+
+        ProjectFolderCreationPending pending = result.Events[1].ShouldBeOfType<ProjectFolderCreationPending>();
+        pending.DisplayNameIntent.ShouldBe("Tracer Bullet");
+        pending.ReasonCode.ShouldBe("folder_create_external_unavailable");
+        pending.Retryable.ShouldBeTrue();
     }
 
     [Fact]
@@ -119,13 +125,14 @@ public sealed class ProjectAggregateHandleTests
     }
 
     [Fact]
-    public void NoFolderSupplied_SucceedsWithoutOne()
+    public void NoFolderSupplied_RecordsFolderCreationPending()
     {
-        // The only required input is the name; absent setup metadata succeeds (no auto-folder).
+        // The only required input is the name; absent folder selection records the degraded pending lane.
         ProjectResult result = ProjectAggregate.Handle(ProjectState.Empty, Command() with { SetupMetadata = null, Description = null });
 
         result.IsAccepted.ShouldBeTrue();
         result.Events[0].ShouldBeOfType<ProjectCreated>().SetupMetadata.ShouldBeNull();
+        result.Events[1].ShouldBeOfType<ProjectFolderCreationPending>().DisplayNameIntent.ShouldBe("Tracer Bullet");
     }
 
     [Fact]
@@ -170,6 +177,51 @@ public sealed class ProjectAggregateHandleTests
     {
         ProjectResult result = ProjectAggregate.Handle(ProjectState.Empty, Command());
         result.Events[0].ShouldBeOfType<ProjectCreated>().OccurredAt.ShouldBe(DateTimeOffset.MinValue);
+        result.Events[1].ShouldBeOfType<ProjectFolderCreationPending>().OccurredAt.ShouldBe(DateTimeOffset.MinValue);
+    }
+
+    [Fact]
+    public void SetProjectFolder_InitialFolder_EmitsMetadataOnlyEvent()
+    {
+        ProjectState created = ApplyCreated(Command());
+
+        ProjectResult result = ProjectAggregate.Handle(created, SetFolderCommand());
+
+        result.IsAccepted.ShouldBeTrue();
+        result.Code.ShouldBe(ProjectResultCode.FolderSet);
+        ProjectFolderSet folderSet = result.Events.Single().ShouldBeOfType<ProjectFolderSet>();
+        folderSet.FolderId.ShouldBe("folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC");
+        folderSet.FolderMetadata.DisplayName.ShouldBe("Tracer Folder");
+    }
+
+    [Fact]
+    public void SetProjectFolder_DifferentExistingFolderWithoutConfirmation_Rejected()
+    {
+        ProjectState withFolder = ApplySetFolder(ApplyCreated(Command()), SetFolderCommand());
+
+        ProjectResult result = ProjectAggregate.Handle(
+            withFolder,
+            SetFolderCommand(folderId: "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AD", idempotencyKey: "idem-folder-002"));
+
+        result.IsAccepted.ShouldBeFalse();
+        result.Code.ShouldBe(ProjectResultCode.ProjectFolderReplacementRequiresConfirmation);
+        result.RejectedField.ShouldBe(nameof(SetProjectFolder.ReplacementConfirmed));
+    }
+
+    [Fact]
+    public void SetProjectFolder_DifferentExistingFolderWithConfirmation_Replaces()
+    {
+        ProjectState withFolder = ApplySetFolder(ApplyCreated(Command()), SetFolderCommand());
+
+        ProjectResult result = ProjectAggregate.Handle(
+            withFolder,
+            SetFolderCommand(
+                folderId: "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AD",
+                replacementConfirmed: true,
+                idempotencyKey: "idem-folder-002"));
+
+        result.IsAccepted.ShouldBeTrue();
+        result.Events.Single().ShouldBeOfType<ProjectFolderSet>().FolderId.ShouldBe("folder_01HZ9K8YQ3W6V2N4R7T5P0X1AD");
     }
 
     private static CreateProject Command() => new(
@@ -183,10 +235,31 @@ public sealed class ProjectAggregateHandleTests
         "task-001",
         "idem-key-001");
 
+    private static SetProjectFolder SetFolderCommand(
+        string folderId = "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+        bool replacementConfirmed = false,
+        string idempotencyKey = "idem-folder-001") => new(
+        Tenant,
+        new ProjectId(ProjectIdValue),
+        folderId,
+        new ProjectFolderMetadata("Tracer Folder"),
+        replacementConfirmed,
+        "actor-001",
+        "corr-001",
+        "task-001",
+        idempotencyKey);
+
     private static ProjectState ApplyCreated(CreateProject command)
     {
         ProjectResult accepted = ProjectAggregate.Handle(ProjectState.Empty, command);
         ProjectIdentity identity = new(command.TenantId, command.ProjectId);
         return ProjectState.Empty.Apply(accepted.Events.Cast<IProjectEvent>(), identity);
+    }
+
+    private static ProjectState ApplySetFolder(ProjectState state, SetProjectFolder command)
+    {
+        ProjectResult accepted = ProjectAggregate.Handle(state, command);
+        ProjectIdentity identity = new(command.TenantId, command.ProjectId);
+        return state.Apply(accepted.Events.Cast<IProjectEvent>(), identity);
     }
 }

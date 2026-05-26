@@ -58,7 +58,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Create a tenant-scoped project (command-async).
         /// </summary>
         /// <remarks>
-        /// Creates a tenant-scoped Project workspace record durably as Active. Returns 202 Accepted with no read-after-write guarantee — confirm via the GetProject query. The only required user input is the project name; default lifecycle is active. No Project Folder is required (auto-folder is deferred). Tenant authority comes from authenticated principal claims and EventStore envelopes, never from this request.
+        /// Creates a tenant-scoped Project workspace record durably as Active. Returns 202 Accepted with no read-after-write guarantee — confirm via the GetProject query. The only required user input is the project name; default lifecycle is active. When no Project Folder is supplied, Projects records a metadata-only pending folder-create intent until the Folders create route is available and lifecycle/freshness evidence can confirm the created folder. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from this request.
         /// </remarks>
         /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
@@ -72,7 +72,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Create a tenant-scoped project (command-async).
         /// </summary>
         /// <remarks>
-        /// Creates a tenant-scoped Project workspace record durably as Active. Returns 202 Accepted with no read-after-write guarantee — confirm via the GetProject query. The only required user input is the project name; default lifecycle is active. No Project Folder is required (auto-folder is deferred). Tenant authority comes from authenticated principal claims and EventStore envelopes, never from this request.
+        /// Creates a tenant-scoped Project workspace record durably as Active. Returns 202 Accepted with no read-after-write guarantee — confirm via the GetProject query. The only required user input is the project name; default lifecycle is active. When no Project Folder is supplied, Projects records a metadata-only pending folder-create intent until the Folders create route is available and lifecycle/freshness evidence can confirm the created folder. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from this request.
         /// </remarks>
         /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
@@ -231,6 +231,35 @@ namespace Hexalith.Projects.Client.Generated
         /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<AcceptedCommand> UnlinkProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, UnlinkProjectConversationRequest body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Set or explicitly replace a Project Folder reference.
+        /// </summary>
+        /// <remarks>
+        /// Sets the single authorized Project Folder reference for an active Project. Hexalith.Folders remains the lifecycle and authorization owner; Projects stores only the metadata-only folder reference and safe display metadata. Replacing a different existing Project Folder requires explicit replacement confirmation.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AcceptedCommand> SetProjectFolderAsync(string projectId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, SetProjectFolderRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Set or explicitly replace a Project Folder reference.
+        /// </summary>
+        /// <remarks>
+        /// Sets the single authorized Project Folder reference for an active Project. Hexalith.Folders remains the lifecycle and authorization owner; Projects stores only the metadata-only folder reference and safe display metadata. Replacing a different existing Project Folder requires explicit replacement confirmation.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AcceptedCommand> SetProjectFolderAsync(string projectId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, SetProjectFolderRequest body, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Update metadata-only project setup preferences (command-async).
@@ -486,7 +515,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Create a tenant-scoped project (command-async).
         /// </summary>
         /// <remarks>
-        /// Creates a tenant-scoped Project workspace record durably as Active. Returns 202 Accepted with no read-after-write guarantee — confirm via the GetProject query. The only required user input is the project name; default lifecycle is active. No Project Folder is required (auto-folder is deferred). Tenant authority comes from authenticated principal claims and EventStore envelopes, never from this request.
+        /// Creates a tenant-scoped Project workspace record durably as Active. Returns 202 Accepted with no read-after-write guarantee — confirm via the GetProject query. The only required user input is the project name; default lifecycle is active. When no Project Folder is supplied, Projects records a metadata-only pending folder-create intent until the Folders create route is available and lifecycle/freshness evidence can confirm the created folder. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from this request.
         /// </remarks>
         /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
@@ -503,7 +532,7 @@ namespace Hexalith.Projects.Client.Generated
         /// Create a tenant-scoped project (command-async).
         /// </summary>
         /// <remarks>
-        /// Creates a tenant-scoped Project workspace record durably as Active. Returns 202 Accepted with no read-after-write guarantee — confirm via the GetProject query. The only required user input is the project name; default lifecycle is active. No Project Folder is required (auto-folder is deferred). Tenant authority comes from authenticated principal claims and EventStore envelopes, never from this request.
+        /// Creates a tenant-scoped Project workspace record durably as Active. Returns 202 Accepted with no read-after-write guarantee — confirm via the GetProject query. The only required user input is the project name; default lifecycle is active. When no Project Folder is supplied, Projects records a metadata-only pending folder-create intent until the Folders create route is available and lifecycle/freshness evidence can confirm the created folder. Tenant authority comes from authenticated principal claims and EventStore envelopes, never from this request.
         /// </remarks>
         /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
         /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
@@ -1533,6 +1562,186 @@ namespace Hexalith.Projects.Client.Generated
         }
 
         /// <summary>
+        /// Set or explicitly replace a Project Folder reference.
+        /// </summary>
+        /// <remarks>
+        /// Sets the single authorized Project Folder reference for an active Project. Hexalith.Folders remains the lifecycle and authorization owner; Projects stores only the metadata-only folder reference and safe display metadata. Replacing a different existing Project Folder requires explicit replacement confirmation.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<AcceptedCommand> SetProjectFolderAsync(string projectId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, SetProjectFolderRequest body)
+        {
+            return SetProjectFolderAsync(projectId, idempotency_Key, x_Correlation_Id, x_Hexalith_Task_Id, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Set or explicitly replace a Project Folder reference.
+        /// </summary>
+        /// <remarks>
+        /// Sets the single authorized Project Folder reference for an active Project. Hexalith.Folders remains the lifecycle and authorization owner; Projects stores only the metadata-only folder reference and safe display metadata. Replacing a different existing Project Folder requires explicit replacement confirmation.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<AcceptedCommand> SetProjectFolderAsync(string projectId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, SetProjectFolderRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (projectId == null)
+                throw new System.ArgumentNullException("projectId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (idempotency_Key == null)
+                        throw new System.ArgumentNullException("idempotency_Key");
+                    request_.Headers.TryAddWithoutValidation("Idempotency-Key", ConvertToString(idempotency_Key, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Task_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Task-Id", ConvertToString(x_Hexalith_Task_Id, System.Globalization.CultureInfo.InvariantCulture));
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects/{projectId}/folder"
+                    urlBuilder_.Append("api/v1/projects/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/folder");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 202)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<AcceptedCommand>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Same idempotency key with non-equivalent tenant-scoped payload semantics.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
         /// Update metadata-only project setup preferences (command-async).
         /// </summary>
         /// <remarks>
@@ -2319,6 +2528,53 @@ namespace Hexalith.Projects.Client.Generated
     }
 
     /// <summary>
+    /// Safe metadata-only Project Folder reference display metadata. It is not a path, tenant authority, repository detail, or folder content.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectFolderMetadata
+    {
+
+        /// <summary>
+        /// Safe display metadata for the folder reference.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("displayName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string DisplayName { get; set; }
+
+    }
+
+    /// <summary>
+    /// Closed command body for setting or explicitly replacing the single Project Folder reference.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SetProjectFolderRequest
+    {
+
+        [Newtonsoft.Json.JsonProperty("requestSchemaVersion", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public SetProjectFolderRequestRequestSchemaVersion RequestSchemaVersion { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("operation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public SetProjectFolderRequestOperation Operation { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("projectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("folderId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string FolderId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("folderMetadata", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ProjectFolderMetadata FolderMetadata { get; set; } = new ProjectFolderMetadata();
+
+        /// <summary>
+        /// Must be true when replacing a different existing Project Folder reference.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("replacementConfirmed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool ReplacementConfirmed { get; set; }
+
+    }
+
+    /// <summary>
     /// Metadata-only page of Conversations references assigned to a Project. It carries no transcript, message body, local Project membership copy, token, secret, or prompt.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -2622,7 +2878,7 @@ namespace Hexalith.Projects.Client.Generated
     }
 
     /// <summary>
-    /// Safe Projects-owned reference summary. This story may return an empty collection until sibling reference events and ACLs exist.
+    /// Safe Projects-owned reference summary. Folder references carry only metadata-only reference state and never folder contents or upstream raw authorization details.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ProjectReferenceSummary
@@ -2635,6 +2891,21 @@ namespace Hexalith.Projects.Client.Generated
         [Newtonsoft.Json.JsonProperty("referenceState", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public ProjectReferenceSummaryReferenceState ReferenceState { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("referenceId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ReferenceId { get; set; }
+
+        /// <summary>
+        /// Safe display metadata for the referenced resource.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("displayName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string DisplayName { get; set; }
+
+        /// <summary>
+        /// Stable metadata-only reason code for pending or unavailable states.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("reasonCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ReasonCode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("freshness", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public FreshnessMetadata Freshness { get; set; } = new FreshnessMetadata();
@@ -2834,6 +3105,24 @@ namespace Hexalith.Projects.Client.Generated
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SetProjectFolderRequestRequestSchemaVersion
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"v1")]
+        V1 = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SetProjectFolderRequestOperation
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"set")]
+        Set = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum ProjectReferenceSummaryReferenceKind
     {
 
@@ -2852,14 +3141,38 @@ namespace Hexalith.Projects.Client.Generated
     public enum ProjectReferenceSummaryReferenceState
     {
 
+        [System.Runtime.Serialization.EnumMember(Value = @"pending")]
+        Pending = 0,
+
         [System.Runtime.Serialization.EnumMember(Value = @"included")]
-        Included = 0,
+        Included = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"excluded")]
+        Excluded = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unauthorized")]
+        Unauthorized = 3,
 
         [System.Runtime.Serialization.EnumMember(Value = @"unavailable")]
-        Unavailable = 1,
+        Unavailable = 4,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"redacted")]
-        Redacted = 2,
+        [System.Runtime.Serialization.EnumMember(Value = @"stale")]
+        Stale = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"archived")]
+        Archived = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ambiguous")]
+        Ambiguous = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"tenantMismatch")]
+        TenantMismatch = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"conflict")]
+        Conflict = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"invalidReference")]
+        InvalidReference = 10,
 
     }
 

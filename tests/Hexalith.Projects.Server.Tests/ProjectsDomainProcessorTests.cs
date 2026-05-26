@@ -45,11 +45,12 @@ public sealed class ProjectsDomainProcessorTests
         DomainResult result = await processor.ProcessAsync(Envelope(), currentState: null).ConfigureAwait(true);
 
         result.IsSuccess.ShouldBeTrue();
-        result.Events.Count.ShouldBe(1);
+        result.Events.Count.ShouldBe(2);
         ProjectCreated created = result.Events[0].ShouldBeOfType<ProjectCreated>();
         created.TenantId.ShouldBe(Tenant);
         created.ProjectId.ShouldBe(ProjectIdValue);
         created.OccurredAt.ShouldBe(DateTimeOffset.UnixEpoch);
+        result.Events[1].ShouldBeOfType<ProjectFolderCreationPending>();
     }
 
     [Fact]
@@ -126,6 +127,20 @@ public sealed class ProjectsDomainProcessorTests
 
         result.IsSuccess.ShouldBeTrue();
         result.Events.Single().ShouldBeOfType<ProjectArchived>().Lifecycle.ShouldBe(Contracts.Ui.ProjectLifecycle.Archived);
+    }
+
+    [Fact]
+    public async Task ProcessSetProjectFolder_ExistingState_YieldsProjectFolderSet()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        ProjectState existing = ProjectState.Empty.Apply([ExistingCreatedEvent()], new ProjectIdentity(Tenant, new ProjectId(ProjectIdValue)));
+
+        DomainResult result = await processor.ProcessAsync(SetFolderEnvelope(), existing).ConfigureAwait(true);
+
+        result.IsSuccess.ShouldBeTrue();
+        ProjectFolderSet folderSet = result.Events.Single().ShouldBeOfType<ProjectFolderSet>();
+        folderSet.FolderId.ShouldBe("folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC");
+        folderSet.FolderMetadata.DisplayName.ShouldBe("Tracer Folder");
     }
 
     [Fact]
@@ -256,6 +271,34 @@ public sealed class ProjectsDomainProcessorTests
             CausationId: null,
             UserId: "principal-a",
             Extensions: new Dictionary<string, string> { ["taskId"] = "task-archive" });
+    }
+
+    private static CommandEnvelope SetFolderEnvelope()
+    {
+        byte[] payload = JsonSerializer.SerializeToUtf8Bytes(new
+        {
+            requestSchemaVersion = "v1",
+            operation = "set",
+            projectId = ProjectIdValue,
+            folderId = "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+            folderMetadata = new
+            {
+                displayName = "Tracer Folder",
+            },
+            replacementConfirmed = false,
+        });
+
+        return new CommandEnvelope(
+            MessageId: "idem-key-folder",
+            TenantId: Tenant,
+            Domain: ProjectsServerModule.DomainName,
+            AggregateId: ProjectIdValue,
+            CommandType: ProjectsServerModule.SetProjectFolderCommandType,
+            Payload: payload,
+            CorrelationId: "corr-folder",
+            CausationId: null,
+            UserId: "principal-a",
+            Extensions: new Dictionary<string, string> { ["taskId"] = "task-folder" });
     }
 
     // Minimal deterministic TimeProvider so the /process callback stamps a fixed OccurredAt.

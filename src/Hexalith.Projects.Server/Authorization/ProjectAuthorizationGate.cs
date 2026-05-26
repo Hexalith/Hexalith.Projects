@@ -43,6 +43,9 @@ public sealed class ProjectAuthorizationGate(
     /// <summary>The action token required to unlink a conversation from a project.</summary>
     public const string UnlinkConversationAction = "projects:unlink_conversation";
 
+    /// <summary>The action token required to set or replace a Project Folder reference.</summary>
+    public const string SetProjectFolderAction = "projects:set_folder";
+
     /// <summary>Authorizes project creation.</summary>
     public async Task<ProjectAuthorizationResult> AuthorizeCreateAsync(
         IProjectTenantContextAccessor tenantContext,
@@ -186,6 +189,25 @@ public sealed class ProjectAuthorizationGate(
             tenantContext,
             httpContext,
             UnlinkConversationAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes setting or replacing a Project Folder reference.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeSetProjectFolderAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            SetProjectFolderAction,
             projectId,
             correlationId,
             taskId,

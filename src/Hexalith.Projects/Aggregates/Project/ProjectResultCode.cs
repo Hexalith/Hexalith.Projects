@@ -31,6 +31,9 @@ public enum ProjectResultCode
     /// <summary>The archive command was accepted and a <c>ProjectArchived</c> event was emitted.</summary>
     Archived,
 
+    /// <summary>The set-folder command was accepted and a <c>ProjectFolderSet</c> event was emitted.</summary>
+    FolderSet,
+
     /// <summary>The command is a logical replay of an already-recorded idempotency key with an equivalent payload.</summary>
     IdempotentReplay,
 
@@ -48,6 +51,9 @@ public enum ProjectResultCode
 
     /// <summary>The project is archived and cannot accept setup updates.</summary>
     ProjectIsArchived,
+
+    /// <summary>A different Project Folder is already set and replacement was not explicitly confirmed.</summary>
+    ProjectFolderReplacementRequiresConfirmation,
 
     /// <summary>The command failed boundary validation (blank name, unsafe setup metadata, malformed identifier).</summary>
     ValidationFailed,

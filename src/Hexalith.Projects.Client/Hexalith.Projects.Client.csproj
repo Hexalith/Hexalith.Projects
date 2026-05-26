@@ -37,6 +37,8 @@
     <MakeDir Directories="$(MSBuildProjectDirectory)\Generated" />
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
           Command="$(NSwagExe_Net100) run nswag.json /variables:Configuration=$(Configuration)" />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
+          Command="dotnet run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; -- --normalize-file &quot;$(HexalithProjectsGeneratedClient)&quot;" />
   </Target>
   <Target Name="GenerateHexalithProjectsIdempotencyHelpers"
           BeforeTargets="BeforeCompile"
