@@ -109,6 +109,130 @@ namespace Hexalith.Projects.Client.Generated
         System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
+        /// List metadata-only conversation references currently assigned to a Project.
+        /// </summary>
+        /// <remarks>
+        /// Lists authorized, metadata-only Conversations associated with the Project by querying Hexalith.Conversations through the Projects ACL. Reads are eventually consistent, carry freshness/trust evidence, and reject Idempotency-Key after authorization.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="pageSize">Requested page size for metadata-only conversation reference reads.</param>
+        /// <param name="cursor">Opaque continuation cursor from a previous authorized page.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only conversation references with Projects-owned trust signals.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectConversationsPage> ListProjectConversationsAsync(string projectId, int? pageSize, string cursor, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List metadata-only conversation references currently assigned to a Project.
+        /// </summary>
+        /// <remarks>
+        /// Lists authorized, metadata-only Conversations associated with the Project by querying Hexalith.Conversations through the Projects ACL. Reads are eventually consistent, carry freshness/trust evidence, and reject Idempotency-Key after authorization.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="pageSize">Requested page size for metadata-only conversation reference reads.</param>
+        /// <param name="cursor">Opaque continuation cursor from a previous authorized page.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only conversation references with Projects-owned trust signals.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectConversationsPage> ListProjectConversationsAsync(string projectId, int? pageSize, string cursor, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Link an existing conversation to a Project (command-async).
+        /// </summary>
+        /// <remarks>
+        /// Links an existing Conversation to the target Project only when the Conversation is unassigned or already assigned to the same Project. If the Conversation is assigned elsewhere, callers must use the explicit move operation. Actor Party attribution is server-derived from the authenticated tenant and principal; request bodies cannot provide tenant, principal, or actor authority.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AcceptedCommand> LinkProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, LinkProjectConversationRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Link an existing conversation to a Project (command-async).
+        /// </summary>
+        /// <remarks>
+        /// Links an existing Conversation to the target Project only when the Conversation is unassigned or already assigned to the same Project. If the Conversation is assigned elsewhere, callers must use the explicit move operation. Actor Party attribution is server-derived from the authenticated tenant and principal; request bodies cannot provide tenant, principal, or actor authority.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AcceptedCommand> LinkProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, LinkProjectConversationRequest body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Move a conversation from one Project to another with explicit confirmation.
+        /// </summary>
+        /// <remarks>
+        /// Moves a Conversation from an expected source Project to the target Project. Projects authorizes both source and target Project scopes before calling Conversations with the expected-current guard so stale clients cannot overwrite a newer assignment.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AcceptedCommand> MoveProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, MoveProjectConversationRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Move a conversation from one Project to another with explicit confirmation.
+        /// </summary>
+        /// <remarks>
+        /// Moves a Conversation from an expected source Project to the target Project. Projects authorizes both source and target Project scopes before calling Conversations with the expected-current guard so stale clients cannot overwrite a newer assignment.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AcceptedCommand> MoveProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, MoveProjectConversationRequest body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Unlink a conversation from the Project without deleting the Conversation.
+        /// </summary>
+        /// <remarks>
+        /// Clears the Conversation's current Project assignment only when it still points at the route Project. The underlying Conversation is not deleted, and Projects does not maintain a local mutable membership list.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AcceptedCommand> UnlinkProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, UnlinkProjectConversationRequest body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Unlink a conversation from the Project without deleting the Conversation.
+        /// </summary>
+        /// <remarks>
+        /// Clears the Conversation's current Project assignment only when it still points at the route Project. The underlying Conversation is not deleted, and Projects does not maintain a local mutable membership list.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AcceptedCommand> UnlinkProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, UnlinkProjectConversationRequest body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
         /// Update metadata-only project setup preferences (command-async).
         /// </summary>
         /// <remarks>
@@ -646,6 +770,737 @@ namespace Hexalith.Projects.Client.Generated
                                 throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// List metadata-only conversation references currently assigned to a Project.
+        /// </summary>
+        /// <remarks>
+        /// Lists authorized, metadata-only Conversations associated with the Project by querying Hexalith.Conversations through the Projects ACL. Reads are eventually consistent, carry freshness/trust evidence, and reject Idempotency-Key after authorization.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="pageSize">Requested page size for metadata-only conversation reference reads.</param>
+        /// <param name="cursor">Opaque continuation cursor from a previous authorized page.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only conversation references with Projects-owned trust signals.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ProjectConversationsPage> ListProjectConversationsAsync(string projectId, int? pageSize, string cursor, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
+        {
+            return ListProjectConversationsAsync(projectId, pageSize, cursor, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// List metadata-only conversation references currently assigned to a Project.
+        /// </summary>
+        /// <remarks>
+        /// Lists authorized, metadata-only Conversations associated with the Project by querying Hexalith.Conversations through the Projects ACL. Reads are eventually consistent, carry freshness/trust evidence, and reject Idempotency-Key after authorization.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="pageSize">Requested page size for metadata-only conversation reference reads.</param>
+        /// <param name="cursor">Opaque continuation cursor from a previous authorized page.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only conversation references with Projects-owned trust signals.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ProjectConversationsPage> ListProjectConversationsAsync(string projectId, int? pageSize, string cursor, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        {
+            if (projectId == null)
+                throw new System.ArgumentNullException("projectId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Freshness != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Freshness", ConvertToString(x_Hexalith_Freshness, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects/{projectId}/conversations"
+                    urlBuilder_.Append("api/v1/projects/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/conversations");
+                    urlBuilder_.Append('?');
+                    if (pageSize != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("pageSize")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(pageSize, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    if (cursor != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("cursor")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectConversationsPage>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Link an existing conversation to a Project (command-async).
+        /// </summary>
+        /// <remarks>
+        /// Links an existing Conversation to the target Project only when the Conversation is unassigned or already assigned to the same Project. If the Conversation is assigned elsewhere, callers must use the explicit move operation. Actor Party attribution is server-derived from the authenticated tenant and principal; request bodies cannot provide tenant, principal, or actor authority.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<AcceptedCommand> LinkProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, LinkProjectConversationRequest body)
+        {
+            return LinkProjectConversationAsync(projectId, conversationId, idempotency_Key, x_Correlation_Id, x_Hexalith_Task_Id, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Link an existing conversation to a Project (command-async).
+        /// </summary>
+        /// <remarks>
+        /// Links an existing Conversation to the target Project only when the Conversation is unassigned or already assigned to the same Project. If the Conversation is assigned elsewhere, callers must use the explicit move operation. Actor Party attribution is server-derived from the authenticated tenant and principal; request bodies cannot provide tenant, principal, or actor authority.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<AcceptedCommand> LinkProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, LinkProjectConversationRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (projectId == null)
+                throw new System.ArgumentNullException("projectId");
+
+            if (conversationId == null)
+                throw new System.ArgumentNullException("conversationId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (idempotency_Key == null)
+                        throw new System.ArgumentNullException("idempotency_Key");
+                    request_.Headers.TryAddWithoutValidation("Idempotency-Key", ConvertToString(idempotency_Key, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Task_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Task-Id", ConvertToString(x_Hexalith_Task_Id, System.Globalization.CultureInfo.InvariantCulture));
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects/{projectId}/conversations/{conversationId}/link"
+                    urlBuilder_.Append("api/v1/projects/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/conversations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(conversationId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/link");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 202)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<AcceptedCommand>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Same idempotency key with non-equivalent tenant-scoped payload semantics.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Move a conversation from one Project to another with explicit confirmation.
+        /// </summary>
+        /// <remarks>
+        /// Moves a Conversation from an expected source Project to the target Project. Projects authorizes both source and target Project scopes before calling Conversations with the expected-current guard so stale clients cannot overwrite a newer assignment.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<AcceptedCommand> MoveProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, MoveProjectConversationRequest body)
+        {
+            return MoveProjectConversationAsync(projectId, conversationId, idempotency_Key, x_Correlation_Id, x_Hexalith_Task_Id, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Move a conversation from one Project to another with explicit confirmation.
+        /// </summary>
+        /// <remarks>
+        /// Moves a Conversation from an expected source Project to the target Project. Projects authorizes both source and target Project scopes before calling Conversations with the expected-current guard so stale clients cannot overwrite a newer assignment.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<AcceptedCommand> MoveProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, MoveProjectConversationRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (projectId == null)
+                throw new System.ArgumentNullException("projectId");
+
+            if (conversationId == null)
+                throw new System.ArgumentNullException("conversationId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (idempotency_Key == null)
+                        throw new System.ArgumentNullException("idempotency_Key");
+                    request_.Headers.TryAddWithoutValidation("Idempotency-Key", ConvertToString(idempotency_Key, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Task_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Task-Id", ConvertToString(x_Hexalith_Task_Id, System.Globalization.CultureInfo.InvariantCulture));
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects/{projectId}/conversations/{conversationId}/move"
+                    urlBuilder_.Append("api/v1/projects/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/conversations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(conversationId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/move");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 202)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<AcceptedCommand>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Same idempotency key with non-equivalent tenant-scoped payload semantics.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Unlink a conversation from the Project without deleting the Conversation.
+        /// </summary>
+        /// <remarks>
+        /// Clears the Conversation's current Project assignment only when it still points at the route Project. The underlying Conversation is not deleted, and Projects does not maintain a local mutable membership list.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<AcceptedCommand> UnlinkProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, UnlinkProjectConversationRequest body)
+        {
+            return UnlinkProjectConversationAsync(projectId, conversationId, idempotency_Key, x_Correlation_Id, x_Hexalith_Task_Id, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Unlink a conversation from the Project without deleting the Conversation.
+        /// </summary>
+        /// <remarks>
+        /// Clears the Conversation's current Project assignment only when it still points at the route Project. The underlying Conversation is not deleted, and Projects does not maintain a local mutable membership list.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="conversationId">Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.</param>
+        /// <param name="idempotency_Key">Required on mutating commands and invalid on non-mutating queries. Adapters MUST source the key from the caller and propagate it through SDK/CLI/MCP surfaces without re-encoding.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Task_Id">Caller-provided task identity for task-scoped operations.</param>
+        /// <returns>Command accepted for asynchronous processing. No read-after-write guarantee.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<AcceptedCommand> UnlinkProjectConversationAsync(string projectId, string conversationId, string idempotency_Key, string x_Correlation_Id, string x_Hexalith_Task_Id, UnlinkProjectConversationRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (projectId == null)
+                throw new System.ArgumentNullException("projectId");
+
+            if (conversationId == null)
+                throw new System.ArgumentNullException("conversationId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (idempotency_Key == null)
+                        throw new System.ArgumentNullException("idempotency_Key");
+                    request_.Headers.TryAddWithoutValidation("Idempotency-Key", ConvertToString(idempotency_Key, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Task_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Task-Id", ConvertToString(x_Hexalith_Task_Id, System.Globalization.CultureInfo.InvariantCulture));
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects/{projectId}/conversations/{conversationId}"
+                    urlBuilder_.Append("api/v1/projects/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/conversations/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(conversationId, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 202)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<AcceptedCommand>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 409)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Same idempotency key with non-equivalent tenant-scoped payload semantics.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 503)
@@ -1379,6 +2234,189 @@ namespace Hexalith.Projects.Client.Generated
     }
 
     /// <summary>
+    /// Closed command body for link. Actor Party attribution is server-derived from authenticated tenant/principal context and is not accepted in this schema.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class LinkProjectConversationRequest
+    {
+
+        [Newtonsoft.Json.JsonProperty("requestSchemaVersion", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public LinkProjectConversationRequestRequestSchemaVersion RequestSchemaVersion { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("operation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public LinkProjectConversationRequestOperation Operation { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("projectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("conversationId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ConversationId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("expectedCurrentProjectId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ExpectedCurrentProjectId { get; set; }
+
+    }
+
+    /// <summary>
+    /// Closed command body for explicit source-to-target reassignment. Projects authorizes both source and target scopes before dispatch.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MoveProjectConversationRequest
+    {
+
+        [Newtonsoft.Json.JsonProperty("requestSchemaVersion", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public MoveProjectConversationRequestRequestSchemaVersion RequestSchemaVersion { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("operation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public MoveProjectConversationRequestOperation Operation { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("projectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("conversationId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ConversationId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("sourceProjectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SourceProjectId { get; set; }
+
+        /// <summary>
+        /// Must be true so clients cannot accidentally move a Conversation between Projects.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("confirmed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Confirmed { get; set; }
+
+    }
+
+    /// <summary>
+    /// Closed command body for clearing a Conversation's current Project assignment. It does not delete the Conversation.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UnlinkProjectConversationRequest
+    {
+
+        [Newtonsoft.Json.JsonProperty("requestSchemaVersion", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UnlinkProjectConversationRequestRequestSchemaVersion RequestSchemaVersion { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("operation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UnlinkProjectConversationRequestOperation Operation { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("unlinkIntent", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UnlinkProjectConversationRequestUnlinkIntent UnlinkIntent { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("projectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("conversationId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ConversationId { get; set; }
+
+    }
+
+    /// <summary>
+    /// Metadata-only page of Conversations references assigned to a Project. It carries no transcript, message body, local Project membership copy, token, secret, or prompt.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectConversationsPage
+    {
+
+        [Newtonsoft.Json.JsonProperty("projectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("items", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ProjectConversationItem> Items { get; set; } = new System.Collections.Generic.List<ProjectConversationItem>();
+
+        [Newtonsoft.Json.JsonProperty("page", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ProjectConversationPageMetadata Page { get; set; } = new ProjectConversationPageMetadata();
+
+        [Newtonsoft.Json.JsonProperty("trustSignal", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectConversationTrustSignal TrustSignal { get; set; }
+
+    }
+
+    /// <summary>
+    /// Metadata-only Conversation reference shaped by Projects after Conversations-owned assignment and authorization checks.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectConversationItem
+    {
+
+        [Newtonsoft.Json.JsonProperty("projectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("conversationId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ConversationId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("lifecycleStatus", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string LifecycleStatus { get; set; }
+
+        /// <summary>
+        /// Optional safe display label from Conversations metadata only.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("displayLabel", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string DisplayLabel { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("trustSignal", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectConversationTrustSignal TrustSignal { get; set; }
+
+        /// <summary>
+        /// Optional safe project hydration label supplied by Conversations.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("projectSafeLabel", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectSafeLabel { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("projectSafeStatus", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectSafeStatus { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectConversationPageMetadata
+    {
+
+        [Newtonsoft.Json.JsonProperty("returnedCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int ReturnedCount { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("continuationCursor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ContinuationCursor { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectConversationTrustSignal
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Current")]
+        Current = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Stale")]
+        Stale = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Rebuilding")]
+        Rebuilding = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unavailable")]
+        Unavailable = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Forbidden")]
+        Forbidden = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Redacted")]
+        Redacted = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MixedGeneration")]
+        MixedGeneration = 6,
+
+    }
+
+    /// <summary>
     /// Bounded metadata-only Project setup preferences. Carries no transcript, file contents, memory body, raw prompt, secret, token, command body, unrestricted path, or local path.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -1729,6 +2767,69 @@ namespace Hexalith.Projects.Client.Generated
 
         [System.Runtime.Serialization.EnumMember(Value = @"v1")]
         V1 = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum LinkProjectConversationRequestRequestSchemaVersion
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"v1")]
+        V1 = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum LinkProjectConversationRequestOperation
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"link")]
+        Link = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum MoveProjectConversationRequestRequestSchemaVersion
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"v1")]
+        V1 = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum MoveProjectConversationRequestOperation
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"move")]
+        Move = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum UnlinkProjectConversationRequestRequestSchemaVersion
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"v1")]
+        V1 = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum UnlinkProjectConversationRequestOperation
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"unlink")]
+        Unlink = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum UnlinkProjectConversationRequestUnlinkIntent
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"clear")]
+        Clear = 0,
 
     }
 

@@ -1,3 +1,45 @@
+# Test Automation Summary - Story 2.3 Link & Move Conversation Write-Side
+
+Workflow: `bmad-qa-generate-e2e-tests` (automate). Date: 2026-05-26.
+
+## Generated Tests
+
+### API Tests
+- [x] `tests/Hexalith.Projects.Server.Tests/ProjectConversationAssignmentEndpointTests.cs` - Extended endpoint coverage for explicit move confirmation rejection and authorized unlink dispatch, alongside existing link acceptance, request-supplied `actorPartyId` rejection, source-project fail-closed authorization, move dispatch, route/body mismatch, and safe write-ACL outcome mapping.
+
+### Domain / Boundary Tests
+- [x] `tests/Hexalith.Projects.Server.Tests/Conversations/ProjectConversationAssignmentDirectoryTests.cs` - Extended write-ACL coverage for expected-current conflict mapping, upstream reassignment failure status mapping, thrown upstream reassignment failures, and actor-party resolver fail-closed behavior without dispatch.
+
+### E2E Tests
+- [x] Not applicable for story 2.3. The implemented surface is a Projects API/server ACL/client contract story with no browser UI route; Tier-1/Tier-2 API and boundary tests are the intended automation lane.
+
+## Coverage
+
+- Projects link/move/unlink endpoint flows: covered.
+- Explicit move confirmation and source/expected-current guard behavior: covered.
+- Request body authority rejection for `actorPartyId`: covered at endpoint and OpenAPI closed-schema levels.
+- Server-derived actor Party mapping and fail-closed resolver behavior: covered.
+- Conversations reassignment failure mapping: covered for validation, hidden denial, conflict, unavailable, and thrown upstream failure.
+- Contract spine/client/idempotency helper/leakage regressions: verified through focused existing test lanes.
+- Browser E2E: 0/0 applicable.
+
+## Verification
+
+| Lane | Command | Result |
+|------|---------|--------|
+| Story 2.3 server filter | `dotnet test tests\Hexalith.Projects.Server.Tests\Hexalith.Projects.Server.Tests.csproj --no-restore --filter "FullyQualifiedName~ProjectConversationAssignment"` | Passed: 24, Failed: 0, Skipped: 0 |
+| Projects server | `dotnet test tests\Hexalith.Projects.Server.Tests\Hexalith.Projects.Server.Tests.csproj --no-restore` | Passed: 111, Failed: 0, Skipped: 0 |
+| OpenAPI contract spine filter | `dotnet test tests\Hexalith.Projects.Contracts.Tests\Hexalith.Projects.Contracts.Tests.csproj --no-restore --filter "FullyQualifiedName~OpenApiContractSpineTests"` | Passed: 16, Failed: 0, Skipped: 0 |
+| Client generation filter | `dotnet test tests\Hexalith.Projects.Client.Tests\Hexalith.Projects.Client.Tests.csproj --no-restore --filter "FullyQualifiedName~ClientGenerationTests"` | Passed: 24, Failed: 0, Skipped: 0 |
+| Payload leakage filter | `dotnet test tests\Hexalith.Projects.Tests\Hexalith.Projects.Tests.csproj --no-restore --filter "FullyQualifiedName~NoPayloadLeakageTests"` | Passed: 14, Failed: 0, Skipped: 0 |
+| Diff hygiene | `git diff --check` | Passed; Git reported existing LF-to-CRLF normalization warnings only |
+
+## Sprint Status
+
+- `2-3-link-move-conversation-write-side` remains `review`.
+
+---
+
 # Test Automation Summary - Story 2.2 Conversation Project Reassignment
 
 Workflow: `bmad-qa-generate-e2e-tests` (automate). Date: 2026-05-26.

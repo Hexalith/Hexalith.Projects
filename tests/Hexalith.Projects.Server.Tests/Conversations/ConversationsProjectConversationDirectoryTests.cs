@@ -189,6 +189,11 @@ public sealed class ConversationsProjectConversationDirectoryTests
             CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
 
+        public Task<ConversationClientResult<ConversationCommandAcceptedResult>> ReassignConversationProjectAsync(
+            ReassignConversationProjectCommand command,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
         public Task<ConversationClientResult<ConversationDetailResult>> GetConversationAsync(
             GetConversationQuery query,
             CancellationToken cancellationToken = default)

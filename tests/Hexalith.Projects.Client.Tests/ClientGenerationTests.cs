@@ -80,6 +80,10 @@ public sealed class ClientGenerationTests
         generated.ShouldContain("class CreateProjectRequest");
         generated.ShouldContain("class ProjectLifecycleStatus");
         generated.ShouldContain("class ProjectListResponse");
+        generated.ShouldContain("class LinkProjectConversationRequest");
+        generated.ShouldContain("class MoveProjectConversationRequest");
+        generated.ShouldContain("class UnlinkProjectConversationRequest");
+        generated.ShouldContain("class ProjectConversationsPage");
         generated.ShouldContain("class ProblemDetails");
     }
 
@@ -112,13 +116,23 @@ public sealed class ClientGenerationTests
     {
         Assembly clientAssembly = typeof(CreateProjectRequest).Assembly;
 
-        // The seed mutation request exposes ComputeIdempotencyHash.
-        MethodInfo[] mutationMethods = typeof(CreateProjectRequest)
-            .GetMethods(BindingFlags.Instance | BindingFlags.Public)
-            .Where(m => m.Name == "ComputeIdempotencyHash")
-            .ToArray();
-        mutationMethods.Length.ShouldBe(1);
-        mutationMethods[0].ReturnType.ShouldBe(typeof(string));
+        foreach (Type requestType in new[]
+        {
+            typeof(CreateProjectRequest),
+            typeof(UpdateProjectSetupRequest),
+            typeof(ArchiveProjectRequest),
+            typeof(LinkProjectConversationRequest),
+            typeof(MoveProjectConversationRequest),
+            typeof(UnlinkProjectConversationRequest),
+        })
+        {
+            MethodInfo[] mutationMethods = requestType
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Where(m => m.Name == "ComputeIdempotencyHash")
+                .ToArray();
+            mutationMethods.Length.ShouldBe(1, requestType.FullName);
+            mutationMethods[0].ReturnType.ShouldBe(typeof(string));
+        }
 
         // The seed query response type carries no idempotency helper.
         Type statusType = clientAssembly.GetType("Hexalith.Projects.Client.Generated.ProjectLifecycleStatus").ShouldNotBeNull();
@@ -131,6 +145,10 @@ public sealed class ClientGenerationTests
 
         Type listResponseType = clientAssembly.GetType("Hexalith.Projects.Client.Generated.ProjectListResponse").ShouldNotBeNull();
         listResponseType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
+
+        Type conversationsPageType = clientAssembly.GetType("Hexalith.Projects.Client.Generated.ProjectConversationsPage").ShouldNotBeNull();
+        conversationsPageType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
             .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
     }
 
@@ -149,6 +167,43 @@ public sealed class ClientGenerationTests
         listMethods.SelectMany(m => m.GetParameters())
             .Any(p => p.Name?.Contains("idempotency", StringComparison.OrdinalIgnoreCase) == true)
             .ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GeneratedClientExposesProjectConversationOperationsWithExpectedIdempotencyShape()
+    {
+        Assembly clientAssembly = typeof(CreateProjectRequest).Assembly;
+        Type clientInterface = clientAssembly.GetType("Hexalith.Projects.Client.Generated.IClient").ShouldNotBeNull();
+
+        MethodInfo[] listMethods = clientInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Where(m => m.Name == "ListProjectConversationsAsync")
+            .ToArray();
+        listMethods.ShouldNotBeEmpty();
+        listMethods.Any(m => m.ReturnType.FullName?.Contains("ProjectConversationsPage", StringComparison.Ordinal) == true).ShouldBeTrue();
+        listMethods.SelectMany(m => m.GetParameters())
+            .Any(p => p.Name?.Contains("idempotency", StringComparison.OrdinalIgnoreCase) == true)
+            .ShouldBeFalse();
+
+        foreach (string operation in new[] { "LinkProjectConversationAsync", "MoveProjectConversationAsync", "UnlinkProjectConversationAsync" })
+        {
+            MethodInfo[] methods = clientInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Where(m => m.Name == operation)
+                .ToArray();
+            methods.ShouldNotBeEmpty(operation);
+            methods.SelectMany(m => m.GetParameters())
+                .Any(p => string.Equals(p.Name, "idempotency_Key", StringComparison.Ordinal))
+                .ShouldBeTrue(operation);
+        }
+
+        typeof(LinkProjectConversationRequest)
+            .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
+            .ShouldNotBeNull();
+        typeof(MoveProjectConversationRequest)
+            .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
+            .ShouldNotBeNull();
+        typeof(UnlinkProjectConversationRequest)
+            .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
+            .ShouldNotBeNull();
     }
 
     [Fact]
@@ -238,6 +293,71 @@ public sealed class ClientGenerationTests
             "operation=ArchiveProject",
             "field=archive_intent;present=true;value=s:archive",
             "field=request_schema_version;present=true;value=s:v1"));
+    }
+
+    [Fact]
+    public void LinkProjectConversationHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new LinkProjectConversationRequest
+        {
+            RequestSchemaVersion = LinkProjectConversationRequestRequestSchemaVersion.V1,
+            Operation = LinkProjectConversationRequestOperation.Link,
+            ProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            ConversationId = "conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4",
+            ExpectedCurrentProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+        };
+
+        request.ComputeIdempotencyHash(request.ProjectId, request.ConversationId).ShouldBe(ExpectedHash(
+            "operation=LinkProjectConversation",
+            "field=conversation_id;present=true;value=s:conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4",
+            "field=expected_current_project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            "field=operation;present=true;value=s:link",
+            "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            "field=request_schema_version;present=true;value=s:v1"));
+    }
+
+    [Fact]
+    public void MoveProjectConversationHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new MoveProjectConversationRequest
+        {
+            RequestSchemaVersion = MoveProjectConversationRequestRequestSchemaVersion.V1,
+            Operation = MoveProjectConversationRequestOperation.Move,
+            ProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C5",
+            ConversationId = "conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4",
+            SourceProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            Confirmed = true,
+        };
+
+        request.ComputeIdempotencyHash(request.ProjectId, request.ConversationId).ShouldBe(ExpectedHash(
+            "operation=MoveProjectConversation",
+            "field=confirmed;present=true;value=b:true",
+            "field=conversation_id;present=true;value=s:conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4",
+            "field=operation;present=true;value=s:move",
+            "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C5",
+            "field=request_schema_version;present=true;value=s:v1",
+            "field=source_project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3"));
+    }
+
+    [Fact]
+    public void UnlinkProjectConversationHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new UnlinkProjectConversationRequest
+        {
+            RequestSchemaVersion = UnlinkProjectConversationRequestRequestSchemaVersion.V1,
+            Operation = UnlinkProjectConversationRequestOperation.Unlink,
+            UnlinkIntent = UnlinkProjectConversationRequestUnlinkIntent.Clear,
+            ProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            ConversationId = "conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4",
+        };
+
+        request.ComputeIdempotencyHash(request.ProjectId, request.ConversationId).ShouldBe(ExpectedHash(
+            "operation=UnlinkProjectConversation",
+            "field=conversation_id;present=true;value=s:conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4",
+            "field=operation;present=true;value=s:unlink",
+            "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            "field=request_schema_version;present=true;value=s:v1",
+            "field=unlink_intent;present=true;value=s:clear"));
     }
 
     [Fact]

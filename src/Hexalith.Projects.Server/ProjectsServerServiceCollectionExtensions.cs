@@ -48,12 +48,22 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IProjectListReadModel>(sp => sp.GetRequiredService<InMemoryProjectListReadModel>());
         services.TryAddSingleton<IProjectTenantContextAccessor, HttpContextProjectTenantContextAccessor>();
         services.TryAddSingleton<ProjectAuthorizationGate>();
+        services.TryAddSingleton<IActorPartyResolver, DeterministicActorPartyResolver>();
         services.TryAddTransient<IProjectConversationDirectory>(sp =>
         {
             IConversationClient? client = sp.GetService<IConversationClient>();
             return client is null
                 ? new UnavailableProjectConversationDirectory()
                 : new ConversationsProjectConversationDirectory(client);
+        });
+        services.TryAddTransient<IProjectConversationAssignmentDirectory>(sp =>
+        {
+            IConversationClient? client = sp.GetService<IConversationClient>();
+            return client is null
+                ? new UnavailableProjectConversationAssignmentDirectory()
+                : new ConversationsProjectConversationAssignmentDirectory(
+                    client,
+                    sp.GetRequiredService<IActorPartyResolver>());
         });
         services.TryAddSingleton<IProjectEventStoreAuthorizationValidator, DenyAllProjectEventStoreAuthorizationValidator>();
         services.TryAddSingleton<IProjectDaprPolicyEvidenceProvider, DenyAllProjectDaprPolicyEvidenceProvider>();

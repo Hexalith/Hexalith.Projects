@@ -21,9 +21,9 @@ tags:
 security:
   - oidcBearer: []
 paths:
-  # Story 1.8 adds the concrete setup-update and archive command-async mutations.
   # Mutations keep Idempotency-Key; queries do not accept it and reject it after authorization.
-  # Reference link/unlink, resolution confirmation, and context assembly remain deferred to later stories.
+  # Conversation reference membership is owned by Hexalith.Conversations and orchestrated through
+  # Projects write-side ACLs; no Project aggregate conversation list is modeled here.
   /api/v1/projects:
     get:
       tags:
@@ -215,6 +215,294 @@ paths:
         - read_model_unavailable
         - projection_stale
         - projection_unavailable
+        - internal_error
+  /api/v1/projects/{projectId}/conversations:
+    get:
+      tags:
+        - projects
+      operationId: ListProjectConversations
+      summary: List metadata-only conversation references currently assigned to a Project.
+      description: >
+        Lists authorized, metadata-only Conversations associated with the Project by querying
+        Hexalith.Conversations through the Projects ACL. Reads are eventually consistent, carry
+        freshness/trust evidence, and reject Idempotency-Key after authorization.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Freshness"
+      responses:
+        "200":
+          description: Metadata-only conversation references with Projects-owned trust signals.
+          headers:
+            X-Correlation-Id:
+              $ref: "#/components/headers/CorrelationId"
+            X-Hexalith-Freshness:
+              $ref: "#/components/headers/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectConversationsPage"
+              examples:
+                synthetic:
+                  $ref: "#/components/examples/ProjectConversationsPage"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-read-consistency:
+        class: eventually_consistent
+        freshnessBehavior: conversations-projection-trust-signal
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: query-correlation-only
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-read-permission-and-project-detail
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - validation_error
+        - not_found
+        - read_model_unavailable
+        - projection_stale
+        - projection_unavailable
+        - internal_error
+  /api/v1/projects/{projectId}/conversations/{conversationId}/link:
+    post:
+      tags:
+        - projects
+      operationId: LinkProjectConversation
+      summary: Link an existing conversation to a Project (command-async).
+      description: >
+        Links an existing Conversation to the target Project only when the Conversation is unassigned
+        or already assigned to the same Project. If the Conversation is assigned elsewhere, callers
+        must use the explicit move operation. Actor Party attribution is server-derived from the
+        authenticated tenant and principal; request bodies cannot provide tenant, principal, or actor
+        authority.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/ConversationId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkProjectConversationRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/LinkProjectConversationRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - conversation_id
+        - expected_current_project_id
+        - operation
+        - project_id
+        - request_schema_version
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: task-id
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-link-conversation-permission-and-project-detail
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
+        - internal_error
+  /api/v1/projects/{projectId}/conversations/{conversationId}/move:
+    post:
+      tags:
+        - projects
+      operationId: MoveProjectConversation
+      summary: Move a conversation from one Project to another with explicit confirmation.
+      description: >
+        Moves a Conversation from an expected source Project to the target Project. Projects
+        authorizes both source and target Project scopes before calling Conversations with the
+        expected-current guard so stale clients cannot overwrite a newer assignment.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/ConversationId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoveProjectConversationRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/MoveProjectConversationRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - confirmed
+        - conversation_id
+        - operation
+        - project_id
+        - request_schema_version
+        - source_project_id
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: task-id
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-move-conversation-permission-and-source-target-project-details
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
+        - internal_error
+  /api/v1/projects/{projectId}/conversations/{conversationId}:
+    delete:
+      tags:
+        - projects
+      operationId: UnlinkProjectConversation
+      summary: Unlink a conversation from the Project without deleting the Conversation.
+      description: >
+        Clears the Conversation's current Project assignment only when it still points at the route
+        Project. The underlying Conversation is not deleted, and Projects does not maintain a local
+        mutable membership list.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/ConversationId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnlinkProjectConversationRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/UnlinkProjectConversationRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - conversation_id
+        - operation
+        - project_id
+        - request_schema_version
+        - unlink_intent
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: task-id
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-unlink-conversation-permission-and-project-detail
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
         - internal_error
   /api/v1/projects/{projectId}/setup:
     patch:
@@ -412,6 +700,33 @@ components:
       description: Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.
       schema:
         $ref: "#/components/schemas/OpaqueIdentifier"
+    ConversationId:
+      name: conversationId
+      in: path
+      required: true
+      description: Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.
+      schema:
+        $ref: "#/components/schemas/OpaqueIdentifier"
+    PageSize:
+      name: pageSize
+      in: query
+      required: false
+      description: Requested page size for metadata-only conversation reference reads.
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 25
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Opaque continuation cursor from a previous authorized page.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 512
   headers:
     CorrelationId:
       description: Echoes the correlation identifier associated with the response.
@@ -679,6 +994,43 @@ components:
           projectionWatermark: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
           stale: false
           trustState: trusted
+    ProjectConversationsPage:
+      value:
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        items:
+          - projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+            conversationId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
+            lifecycleStatus: active
+            displayLabel: synthetic-conversation-reference
+            trustSignal: Current
+            projectSafeLabel: synthetic-project-alpha
+            projectSafeStatus: active
+        page:
+          returnedCount: 1
+          continuationCursor: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C6
+        trustSignal: Current
+    LinkProjectConversationRequest:
+      value:
+        requestSchemaVersion: v1
+        operation: link
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        conversationId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
+        expectedCurrentProjectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+    MoveProjectConversationRequest:
+      value:
+        requestSchemaVersion: v1
+        operation: move
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
+        conversationId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
+        sourceProjectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        confirmed: true
+    UnlinkProjectConversationRequest:
+      value:
+        requestSchemaVersion: v1
+        operation: unlink
+        unlinkIntent: clear
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        conversationId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
   schemas:
     OpaqueIdentifier:
       type: string
@@ -889,6 +1241,174 @@ components:
           type: string
           enum:
             - v1
+    LinkProjectConversationRequest:
+      type: object
+      additionalProperties: false
+      description: Closed command body for link. Actor Party attribution is server-derived from authenticated tenant/principal context and is not accepted in this schema.
+      required:
+        - requestSchemaVersion
+        - operation
+        - projectId
+        - conversationId
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        operation:
+          type: string
+          enum:
+            - link
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        conversationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        expectedCurrentProjectId:
+          nullable: true
+          $ref: "#/components/schemas/OpaqueIdentifier"
+    MoveProjectConversationRequest:
+      type: object
+      additionalProperties: false
+      description: Closed command body for explicit source-to-target reassignment. Projects authorizes both source and target scopes before dispatch.
+      required:
+        - requestSchemaVersion
+        - operation
+        - projectId
+        - conversationId
+        - sourceProjectId
+        - confirmed
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        operation:
+          type: string
+          enum:
+            - move
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        conversationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        sourceProjectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        confirmed:
+          type: boolean
+          description: Must be true so clients cannot accidentally move a Conversation between Projects.
+    UnlinkProjectConversationRequest:
+      type: object
+      additionalProperties: false
+      description: Closed command body for clearing a Conversation's current Project assignment. It does not delete the Conversation.
+      required:
+        - requestSchemaVersion
+        - operation
+        - unlinkIntent
+        - projectId
+        - conversationId
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        operation:
+          type: string
+          enum:
+            - unlink
+        unlinkIntent:
+          type: string
+          enum:
+            - clear
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        conversationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+    ProjectConversationsPage:
+      type: object
+      additionalProperties: false
+      description: Metadata-only page of Conversations references assigned to a Project. It carries no transcript, message body, local Project membership copy, token, secret, or prompt.
+      required:
+        - projectId
+        - items
+        - page
+        - trustSignal
+      properties:
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        items:
+          type: array
+          maxItems: 100
+          items:
+            $ref: "#/components/schemas/ProjectConversationItem"
+        page:
+          $ref: "#/components/schemas/ProjectConversationPageMetadata"
+        trustSignal:
+          $ref: "#/components/schemas/ProjectConversationTrustSignal"
+    ProjectConversationItem:
+      type: object
+      additionalProperties: false
+      description: Metadata-only Conversation reference shaped by Projects after Conversations-owned assignment and authorization checks.
+      required:
+        - projectId
+        - conversationId
+        - lifecycleStatus
+        - trustSignal
+      properties:
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        conversationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        lifecycleStatus:
+          type: string
+          minLength: 1
+          maxLength: 80
+          pattern: "^[A-Za-z][A-Za-z0-9_-]{0,79}$"
+        displayLabel:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 160
+          description: Optional safe display label from Conversations metadata only.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        trustSignal:
+          $ref: "#/components/schemas/ProjectConversationTrustSignal"
+        projectSafeLabel:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 160
+          description: Optional safe project hydration label supplied by Conversations.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        projectSafeStatus:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 80
+          pattern: "^[A-Za-z][A-Za-z0-9_-]{0,79}$"
+    ProjectConversationPageMetadata:
+      type: object
+      additionalProperties: false
+      required:
+        - returnedCount
+      properties:
+        returnedCount:
+          type: integer
+          format: int32
+          minimum: 0
+        continuationCursor:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 512
+    ProjectConversationTrustSignal:
+      type: string
+      enum:
+        - Current
+        - Stale
+        - Rebuilding
+        - Unavailable
+        - Forbidden
+        - Redacted
+        - MixedGeneration
     ProjectSetup:
       type: object
       additionalProperties: false

@@ -11,6 +11,7 @@ using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Testing.Leakage;
@@ -18,6 +19,8 @@ using Hexalith.Projects.Testing.Leakage;
 using Shouldly;
 
 using Xunit;
+
+using ConversationId = Hexalith.Conversations.Contracts.Identifiers.ConversationId;
 
 /// <summary>
 /// FS-2 <c>NoPayloadLeakage</c> harness tests (AC 4): the reusable
@@ -149,6 +152,28 @@ public sealed class NoPayloadLeakageTests
             "sha256:tenant-access-metadata");
 
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(@event));
+    }
+
+    [Fact]
+    public void ProjectConversationReferences_SerializeMetadataOnly()
+    {
+        ProjectId projectId = new("01HZ9K8YQ3W6V2N4R7T5P0X1AB");
+        ProjectConversationsPage page = new(
+            projectId,
+            [
+                new ProjectConversationItem(
+                    projectId,
+                    new ConversationId("01HZ9K8YQ3W6V2N4R7T5P0X1AC"),
+                    "Open",
+                    "Synthetic conversation reference",
+                    ProjectConversationTrustSignal.Current,
+                    "Synthetic project",
+                    "resolved"),
+            ],
+            new ProjectConversationPageMetadata(1, "cursor-001"),
+            ProjectConversationTrustSignal.Current);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(page));
     }
 
     [Fact]

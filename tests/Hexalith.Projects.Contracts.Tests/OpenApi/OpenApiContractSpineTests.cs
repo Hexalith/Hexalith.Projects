@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Contracts.Queries;
 
 using Shouldly;
 
@@ -56,6 +57,9 @@ public sealed class OpenApiContractSpineTests
         RequiredMapping(parameters, "TaskId");
         RequiredMapping(parameters, "Freshness");
         RequiredMapping(parameters, "ProjectId");
+        RequiredMapping(parameters, "ConversationId");
+        RequiredMapping(parameters, "PageSize");
+        RequiredMapping(parameters, "Cursor");
         RequiredMapping(parameters, "LifecycleFilter");
 
         // Reusable response headers.
@@ -75,6 +79,13 @@ public sealed class OpenApiContractSpineTests
         RequiredMapping(schemas, "ValidationFailure");
         RequiredMapping(schemas, "IdempotencyConflict");
         RequiredMapping(schemas, "CanonicalErrorCategory");
+        RequiredMapping(schemas, "LinkProjectConversationRequest");
+        RequiredMapping(schemas, "MoveProjectConversationRequest");
+        RequiredMapping(schemas, "UnlinkProjectConversationRequest");
+        RequiredMapping(schemas, "ProjectConversationsPage");
+        RequiredMapping(schemas, "ProjectConversationItem");
+        RequiredMapping(schemas, "ProjectConversationPageMetadata");
+        RequiredMapping(schemas, "ProjectConversationTrustSignal");
 
         // Shared responses.
         YamlMappingNode responses = RequiredMapping(components, "responses");
@@ -347,6 +358,145 @@ public sealed class OpenApiContractSpineTests
     }
 
     [Fact]
+    public void Spine_ProjectConversationRead_IsEventualQueryWithoutIdempotency()
+    {
+        YamlMappingNode get = ProjectConversationListQuery();
+
+        GetScalar(get, "operationId").ShouldBe("ListProjectConversations");
+
+        string[] parameterRefs = RequiredSequence(get, "parameters")
+            .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
+        parameterRefs.ShouldContain("#/components/parameters/ProjectId");
+        parameterRefs.ShouldContain("#/components/parameters/PageSize");
+        parameterRefs.ShouldContain("#/components/parameters/Cursor");
+        parameterRefs.ShouldContain("#/components/parameters/CorrelationId");
+        parameterRefs.ShouldContain("#/components/parameters/Freshness");
+        parameterRefs.ShouldNotContain("#/components/parameters/IdempotencyKey");
+
+        YamlMappingNode ok = RequiredMapping(RequiredMapping(get, "responses"), "200");
+        RequiredMapping(ok, "headers").Children.ContainsKey(new YamlScalarNode("X-Hexalith-Freshness")).ShouldBeTrue();
+        string okSchemaRef = GetScalar(
+            RequiredMapping(RequiredMapping(RequiredMapping(ok, "content"), "application/json"), "schema"),
+            "$ref") ?? string.Empty;
+        okSchemaRef.ShouldBe("#/components/schemas/ProjectConversationsPage");
+
+        GetScalar(RequiredMapping(get, "x-hexalith-read-consistency"), "class").ShouldBe("eventually_consistent");
+
+        YamlMappingNode pageSize = RequiredMapping(RequiredMapping(Parameters(), "PageSize"), "schema");
+        GetScalar(pageSize, "minimum").ShouldBe("1");
+        GetScalar(pageSize, "maximum").ShouldBe("100");
+        GetScalar(pageSize, "default").ShouldBe("25");
+    }
+
+    [Fact]
+    public void Spine_ConversationAssignmentOperations_AreCommandAsyncMutations()
+    {
+        (YamlMappingNode Operation, string OperationId, string RequestSchema, string[] Equivalence)[] operations =
+        [
+            (LinkProjectConversationMutation(), "LinkProjectConversation", "LinkProjectConversationRequest",
+                ["conversation_id", "expected_current_project_id", "operation", "project_id", "request_schema_version"]),
+            (MoveProjectConversationMutation(), "MoveProjectConversation", "MoveProjectConversationRequest",
+                ["confirmed", "conversation_id", "operation", "project_id", "request_schema_version", "source_project_id"]),
+            (UnlinkProjectConversationMutation(), "UnlinkProjectConversation", "UnlinkProjectConversationRequest",
+                ["conversation_id", "operation", "project_id", "request_schema_version", "unlink_intent"]),
+        ];
+
+        foreach ((YamlMappingNode operation, string operationId, string requestSchema, string[] expectedEquivalence) in operations)
+        {
+            GetScalar(operation, "operationId").ShouldBe(operationId);
+
+            string schemaRef = GetScalar(
+                RequiredMapping(
+                    RequiredMapping(
+                        RequiredMapping(RequiredMapping(operation, "requestBody"), "content"),
+                        "application/json"),
+                    "schema"),
+                "$ref") ?? string.Empty;
+            schemaRef.ShouldBe($"#/components/schemas/{requestSchema}");
+
+            YamlMappingNode responses = RequiredMapping(operation, "responses");
+            GetScalar(RequiredMapping(responses, "202"), "$ref").ShouldBe("#/components/responses/AcceptedCommand");
+            GetScalar(RequiredMapping(responses, "400"), "$ref").ShouldBe("#/components/responses/ValidationFailure");
+            GetScalar(RequiredMapping(responses, "401"), "$ref").ShouldBe("#/components/responses/SafeAuthorizationDenial401");
+            GetScalar(RequiredMapping(responses, "403"), "$ref").ShouldBe("#/components/responses/SafeAuthorizationDenial403");
+            GetScalar(RequiredMapping(responses, "404"), "$ref").ShouldBe("#/components/responses/SafeAuthorizationDenial404");
+            GetScalar(RequiredMapping(responses, "409"), "$ref").ShouldBe("#/components/responses/IdempotencyConflict");
+            GetScalar(RequiredMapping(responses, "503"), "$ref").ShouldBe("#/components/responses/ReadModelUnavailable");
+
+            string[] parameterRefs = RequiredSequence(operation, "parameters")
+                .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
+            parameterRefs.ShouldContain("#/components/parameters/ProjectId");
+            parameterRefs.ShouldContain("#/components/parameters/ConversationId");
+            parameterRefs.ShouldContain("#/components/parameters/IdempotencyKey");
+            parameterRefs.ShouldContain("#/components/parameters/CorrelationId");
+            parameterRefs.ShouldContain("#/components/parameters/TaskId");
+
+            GetScalar(RequiredMapping(operation, "x-hexalith-idempotency-key"), "required").ShouldBe("true");
+            string[] equivalence = RequiredSequence(operation, "x-hexalith-idempotency-equivalence")
+                .OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty).ToArray();
+            equivalence.ShouldBe(expectedEquivalence);
+            equivalence.ShouldBe(equivalence.OrderBy(f => f, StringComparer.Ordinal).ToArray());
+
+            GetScalar(RequiredMapping(operation, "x-hexalith-authorization"), "tenantAuthority")
+                .ShouldBe("authentication-context-and-eventstore-envelope");
+        }
+    }
+
+    [Fact]
+    public void Spine_ConversationAssignmentSchemas_AreClosedCamelCaseAndServerActorOnly()
+    {
+        YamlMappingNode schemas = Schemas();
+        foreach (string schemaName in new[]
+        {
+            "LinkProjectConversationRequest",
+            "MoveProjectConversationRequest",
+            "UnlinkProjectConversationRequest",
+        })
+        {
+            YamlMappingNode schema = RequiredMapping(schemas, schemaName);
+            GetScalar(schema, "additionalProperties").ShouldBe("false");
+
+            string[] properties = RequiredMapping(schema, "properties").Children.Keys
+                .OfType<YamlScalarNode>().Select(k => k.Value ?? string.Empty).ToArray();
+            foreach (string property in properties)
+            {
+                Regex.IsMatch(property, "^[a-z][A-Za-z0-9]*$").ShouldBeTrue($"property '{property}' on {schemaName} must be camelCase");
+            }
+
+            properties.ShouldContain("requestSchemaVersion");
+            properties.ShouldContain("operation");
+            properties.ShouldContain("projectId");
+            properties.ShouldContain("conversationId");
+            properties.ShouldNotContain("tenantId");
+            properties.ShouldNotContain("principalId");
+            properties.ShouldNotContain("actorPartyId");
+        }
+
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "LinkProjectConversationRequest"), "properties"), "operation"))
+            .ShouldBe(["link"]);
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "MoveProjectConversationRequest"), "properties"), "operation"))
+            .ShouldBe(["move"]);
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "UnlinkProjectConversationRequest"), "properties"), "operation"))
+            .ShouldBe(["unlink"]);
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "UnlinkProjectConversationRequest"), "properties"), "unlinkIntent"))
+            .ShouldBe(["clear"]);
+
+        foreach (string schemaName in new[] { "ProjectConversationsPage", "ProjectConversationItem", "ProjectConversationPageMetadata" })
+        {
+            YamlMappingNode schema = RequiredMapping(schemas, schemaName);
+            GetScalar(schema, "additionalProperties").ShouldBe("false");
+            foreach (string property in RequiredMapping(schema, "properties").Children.Keys
+                .OfType<YamlScalarNode>().Select(k => k.Value ?? string.Empty))
+            {
+                Regex.IsMatch(property, "^[a-z][A-Za-z0-9]*$").ShouldBeTrue($"property '{property}' on {schemaName} must be camelCase");
+            }
+        }
+
+        RequiredEnumValues(RequiredMapping(schemas, "ProjectConversationTrustSignal"))
+            .ShouldBe(Enum.GetNames<ProjectConversationTrustSignal>());
+    }
+
+    [Fact]
     public void Spine_ProjectSetupSchemas_AreClosedCamelCaseAndMetadataOnly()
     {
         YamlMappingNode schemas = Schemas();
@@ -394,6 +544,12 @@ public sealed class OpenApiContractSpineTests
             "Project",
             "ProjectListResponse",
             "ProjectListItem",
+            "LinkProjectConversationRequest",
+            "MoveProjectConversationRequest",
+            "UnlinkProjectConversationRequest",
+            "ProjectConversationsPage",
+            "ProjectConversationItem",
+            "ProjectConversationPageMetadata",
             "ProjectReferenceSummary",
             "ContextActivation",
         })
@@ -601,6 +757,18 @@ public sealed class OpenApiContractSpineTests
 
     private static YamlMappingNode SeedQuery() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}"), "get");
+
+    private static YamlMappingNode ProjectConversationListQuery() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations"), "get");
+
+    private static YamlMappingNode LinkProjectConversationMutation() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations/{conversationId}/link"), "post");
+
+    private static YamlMappingNode MoveProjectConversationMutation() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations/{conversationId}/move"), "post");
+
+    private static YamlMappingNode UnlinkProjectConversationMutation() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations/{conversationId}"), "delete");
 
     private static string[] RequiredEnumValues(YamlMappingNode schema) =>
         RequiredSequence(schema, "enum").OfType<YamlScalarNode>().Select(v => v.Value ?? string.Empty).ToArray();

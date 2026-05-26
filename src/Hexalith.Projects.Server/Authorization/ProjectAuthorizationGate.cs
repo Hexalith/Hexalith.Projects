@@ -34,6 +34,15 @@ public sealed class ProjectAuthorizationGate(
     /// <summary>The action token required to archive a project.</summary>
     public const string ArchiveProjectAction = "projects:archive";
 
+    /// <summary>The action token required to link a conversation to a project.</summary>
+    public const string LinkConversationAction = "projects:link_conversation";
+
+    /// <summary>The action token required to move a conversation between projects.</summary>
+    public const string MoveConversationAction = "projects:move_conversation";
+
+    /// <summary>The action token required to unlink a conversation from a project.</summary>
+    public const string UnlinkConversationAction = "projects:unlink_conversation";
+
     /// <summary>Authorizes project creation.</summary>
     public async Task<ProjectAuthorizationResult> AuthorizeCreateAsync(
         IProjectTenantContextAccessor tenantContext,
@@ -120,6 +129,63 @@ public sealed class ProjectAuthorizationGate(
             tenantContext,
             httpContext,
             ArchiveProjectAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes linking a conversation to a target project.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeLinkConversationAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            LinkConversationAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes moving a conversation into or out of a project.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeMoveConversationAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            MoveConversationAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes unlinking a conversation from a project.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeUnlinkConversationAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            UnlinkConversationAction,
             projectId,
             correlationId,
             taskId,

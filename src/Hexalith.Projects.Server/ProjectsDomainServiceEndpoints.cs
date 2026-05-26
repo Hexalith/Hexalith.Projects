@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using ConversationTenantId = Hexalith.Conversations.Contracts.Identifiers.TenantId;
+using ConversationId = Hexalith.Conversations.Contracts.Identifiers.ConversationId;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
@@ -108,6 +109,66 @@ public static partial class ProjectsDomainServiceEndpoints
                 conversationDirectory,
                 cancellationToken).ConfigureAwait(false))
             .WithName("ListProjectConversations");
+
+        endpoints.MapPost("/api/v1/projects/{projectId}/conversations/{conversationId}/link", static async (
+            string projectId,
+            string conversationId,
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectConversationAssignmentDirectory assignmentDirectory,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await LinkProjectConversationAsync(
+                projectId,
+                conversationId,
+                httpContext,
+                tenantContext,
+                authorizationGate,
+                assignmentDirectory,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("LinkProjectConversation");
+
+        endpoints.MapPost("/api/v1/projects/{projectId}/conversations/{conversationId}/move", static async (
+            string projectId,
+            string conversationId,
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectConversationAssignmentDirectory assignmentDirectory,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await MoveProjectConversationAsync(
+                projectId,
+                conversationId,
+                httpContext,
+                tenantContext,
+                authorizationGate,
+                assignmentDirectory,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("MoveProjectConversation");
+
+        endpoints.MapDelete("/api/v1/projects/{projectId}/conversations/{conversationId}", static async (
+            string projectId,
+            string conversationId,
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectConversationAssignmentDirectory assignmentDirectory,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await UnlinkProjectConversationAsync(
+                projectId,
+                conversationId,
+                httpContext,
+                tenantContext,
+                authorizationGate,
+                assignmentDirectory,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("UnlinkProjectConversation");
 
         endpoints.MapPatch("/api/v1/projects/{projectId}/setup", static async (
             string projectId,
@@ -344,6 +405,226 @@ public static partial class ProjectsDomainServiceEndpoints
 
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
         return Results.Json(conversations, ResponseJsonOptions);
+    }
+
+    private static async Task<IResult> LinkProjectConversationAsync(
+        string projectId,
+        string conversationId,
+        HttpContext httpContext,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        IProjectConversationAssignmentDirectory assignmentDirectory,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+    {
+        if (!TryReadMutationEnvelope(httpContext, out string? correlationId, out string? taskId, out string? idempotencyKey, out IResult? envelopeRejection))
+        {
+            return envelopeRejection!;
+        }
+
+        if (!IsCanonicalIdentifier(projectId) || !IsCanonicalIdentifier(conversationId))
+        {
+            return SafeDenial(correlationId, taskId);
+        }
+
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeLinkConversationAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed || !IsActive(authorization.ProjectDetail))
+        {
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, taskId)
+                : SafeDenial(correlationId, taskId, authorization);
+        }
+
+        LinkConversationHttpRequest? body;
+        try
+        {
+            body = await httpContext.Request
+                .ReadFromJsonAsync<LinkConversationHttpRequest>(RequestJsonOptions, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (JsonException)
+        {
+            return ValidationProblem(correlationId, taskId, "body");
+        }
+
+        if (body is null
+            || !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(body.Operation, "link", StringComparison.Ordinal)
+            || !string.Equals(body.ProjectId, projectId, StringComparison.Ordinal)
+            || !string.Equals(body.ConversationId, conversationId, StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "identity");
+        }
+
+        ProjectId? expectedCurrentProjectId = null;
+        if (!string.IsNullOrWhiteSpace(body.ExpectedCurrentProjectId))
+        {
+            if (!IsCanonicalIdentifier(body.ExpectedCurrentProjectId)
+                || !string.Equals(body.ExpectedCurrentProjectId, projectId, StringComparison.Ordinal))
+            {
+                return ValidationProblem(correlationId, taskId, "expectedCurrentProjectId");
+            }
+
+            expectedCurrentProjectId = new ProjectId(body.ExpectedCurrentProjectId);
+        }
+
+        ProjectConversationAssignmentResult result = await assignmentDirectory
+            .LinkAsync(
+                new ProjectId(projectId),
+                new ConversationId(conversationId),
+                new ConversationTenantId(tenantContext.AuthoritativeTenantId!),
+                new CallerPrincipalId(tenantContext.PrincipalId!),
+                new ProjectConversationCommandMetadata(correlationId!, taskId!, idempotencyKey!),
+                expectedCurrentProjectId,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        return AssignmentResult(httpContext, timeProvider, result, correlationId!, taskId!);
+    }
+
+    private static async Task<IResult> MoveProjectConversationAsync(
+        string projectId,
+        string conversationId,
+        HttpContext httpContext,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        IProjectConversationAssignmentDirectory assignmentDirectory,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+    {
+        if (!TryReadMutationEnvelope(httpContext, out string? correlationId, out string? taskId, out string? idempotencyKey, out IResult? envelopeRejection))
+        {
+            return envelopeRejection!;
+        }
+
+        if (!IsCanonicalIdentifier(projectId) || !IsCanonicalIdentifier(conversationId))
+        {
+            return SafeDenial(correlationId, taskId);
+        }
+
+        ProjectAuthorizationResult targetAuthorization = await authorizationGate
+            .AuthorizeMoveConversationAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!targetAuthorization.IsAllowed || !IsActive(targetAuthorization.ProjectDetail))
+        {
+            return targetAuthorization.Retryable && targetAuthorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, taskId)
+                : SafeDenial(correlationId, taskId, targetAuthorization);
+        }
+
+        MoveConversationHttpRequest? body;
+        try
+        {
+            body = await httpContext.Request
+                .ReadFromJsonAsync<MoveConversationHttpRequest>(RequestJsonOptions, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (JsonException)
+        {
+            return ValidationProblem(correlationId, taskId, "body");
+        }
+
+        if (body is null
+            || !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(body.Operation, "move", StringComparison.Ordinal)
+            || body.Confirmed != true
+            || !string.Equals(body.ProjectId, projectId, StringComparison.Ordinal)
+            || !string.Equals(body.ConversationId, conversationId, StringComparison.Ordinal)
+            || !IsCanonicalIdentifier(body.SourceProjectId)
+            || string.Equals(body.SourceProjectId, projectId, StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "move");
+        }
+
+        ProjectAuthorizationResult sourceAuthorization = await authorizationGate
+            .AuthorizeMoveConversationAsync(body.SourceProjectId!, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!sourceAuthorization.IsAllowed || !IsActive(sourceAuthorization.ProjectDetail))
+        {
+            return sourceAuthorization.Retryable && sourceAuthorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, taskId)
+                : SafeDenial(correlationId, taskId, sourceAuthorization);
+        }
+
+        ProjectConversationAssignmentResult result = await assignmentDirectory
+            .MoveAsync(
+                new ProjectId(projectId),
+                new ConversationId(conversationId),
+                new ProjectId(body.SourceProjectId!),
+                new ConversationTenantId(tenantContext.AuthoritativeTenantId!),
+                new CallerPrincipalId(tenantContext.PrincipalId!),
+                new ProjectConversationCommandMetadata(correlationId!, taskId!, idempotencyKey!),
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        return AssignmentResult(httpContext, timeProvider, result, correlationId!, taskId!);
+    }
+
+    private static async Task<IResult> UnlinkProjectConversationAsync(
+        string projectId,
+        string conversationId,
+        HttpContext httpContext,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        IProjectConversationAssignmentDirectory assignmentDirectory,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+    {
+        if (!TryReadMutationEnvelope(httpContext, out string? correlationId, out string? taskId, out string? idempotencyKey, out IResult? envelopeRejection))
+        {
+            return envelopeRejection!;
+        }
+
+        if (!IsCanonicalIdentifier(projectId) || !IsCanonicalIdentifier(conversationId))
+        {
+            return SafeDenial(correlationId, taskId);
+        }
+
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeUnlinkConversationAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed || !IsActive(authorization.ProjectDetail))
+        {
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, taskId)
+                : SafeDenial(correlationId, taskId, authorization);
+        }
+
+        UnlinkConversationHttpRequest? body;
+        try
+        {
+            body = await httpContext.Request
+                .ReadFromJsonAsync<UnlinkConversationHttpRequest>(RequestJsonOptions, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (JsonException)
+        {
+            return ValidationProblem(correlationId, taskId, "body");
+        }
+
+        if (body is null
+            || !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(body.Operation, "unlink", StringComparison.Ordinal)
+            || !string.Equals(body.UnlinkIntent, "clear", StringComparison.Ordinal)
+            || !string.Equals(body.ProjectId, projectId, StringComparison.Ordinal)
+            || !string.Equals(body.ConversationId, conversationId, StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "identity");
+        }
+
+        ProjectConversationAssignmentResult result = await assignmentDirectory
+            .UnlinkAsync(
+                new ProjectId(projectId),
+                new ConversationId(conversationId),
+                new ConversationTenantId(tenantContext.AuthoritativeTenantId!),
+                new CallerPrincipalId(tenantContext.PrincipalId!),
+                new ProjectConversationCommandMetadata(correlationId!, taskId!, idempotencyKey!),
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        return AssignmentResult(httpContext, timeProvider, result, correlationId!, taskId!);
     }
 
     private static async Task<IResult> UpdateProjectSetupAsync(
@@ -598,6 +879,51 @@ public static partial class ProjectsDomainServiceEndpoints
         };
     }
 
+    private static IResult AssignmentResult(
+        HttpContext httpContext,
+        TimeProvider timeProvider,
+        ProjectConversationAssignmentResult result,
+        string correlationId,
+        string taskId)
+    {
+        string acceptedCorrelationId = IsCanonicalIdentifier(result.CorrelationId) ? result.CorrelationId! : correlationId;
+        return result.Outcome switch
+        {
+            ProjectConversationAssignmentOutcome.Accepted =>
+                Accepted(httpContext, timeProvider, acceptedCorrelationId, taskId, idempotentReplay: false),
+            ProjectConversationAssignmentOutcome.ValidationFailed => ValidationProblem(acceptedCorrelationId, taskId, "command"),
+            ProjectConversationAssignmentOutcome.Conflict => IdempotencyConflict(acceptedCorrelationId, taskId),
+            ProjectConversationAssignmentOutcome.Unavailable => ReadModelUnavailable(acceptedCorrelationId, taskId),
+            _ => SafeDenial(acceptedCorrelationId, taskId),
+        };
+    }
+
+    private static bool TryReadMutationEnvelope(
+        HttpContext httpContext,
+        out string? correlationId,
+        out string? taskId,
+        out string? idempotencyKey,
+        out IResult? rejection)
+    {
+        idempotencyKey = ReadHeader(httpContext, "Idempotency-Key");
+        correlationId = ReadHeader(httpContext, "X-Correlation-Id");
+        taskId = ReadHeader(httpContext, "X-Hexalith-Task-Id");
+
+        if (string.IsNullOrWhiteSpace(idempotencyKey) || !IsCanonicalIdentifier(idempotencyKey))
+        {
+            rejection = ValidationProblem(correlationId, taskId, "idempotency_key");
+            return false;
+        }
+
+        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : idempotencyKey;
+        taskId = IsCanonicalIdentifier(taskId) ? taskId : correlationId;
+        rejection = null;
+        return true;
+    }
+
+    private static bool IsActive(ProjectDetailItem? detail)
+        => detail?.Lifecycle == ProjectLifecycle.Active;
+
     private static IResult SafeDenial(string? correlationId, string? taskId)
         => SafeProblem(
             StatusCodes.Status404NotFound,
@@ -849,6 +1175,28 @@ public static partial class ProjectsDomainServiceEndpoints
     private sealed record ArchiveProjectHttpRequest(
         string? ArchiveIntent,
         string? RequestSchemaVersion);
+
+    private sealed record LinkConversationHttpRequest(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? ProjectId,
+        string? ConversationId,
+        string? ExpectedCurrentProjectId);
+
+    private sealed record MoveConversationHttpRequest(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? ProjectId,
+        string? ConversationId,
+        string? SourceProjectId,
+        bool? Confirmed);
+
+    private sealed record UnlinkConversationHttpRequest(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? UnlinkIntent,
+        string? ProjectId,
+        string? ConversationId);
 
     private sealed record AcceptedCommandResponse(
         DateTimeOffset AcceptedAt,
