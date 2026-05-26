@@ -1,3 +1,40 @@
+# Test Automation Summary - Story 2.2 Conversation Project Reassignment
+
+Workflow: `bmad-qa-generate-e2e-tests` (automate). Date: 2026-05-26.
+
+## Generated Tests
+
+### API Tests
+- [x] `Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Api/ConversationCommandApiTest.cs` - Added project reassignment route happy-path coverage proving trusted tenant binding, typed `202 Accepted` result mapping, command type mapping, and metadata-only response safety.
+
+### Domain / Boundary Tests
+- [x] `Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ReassignConversationProjectCommandHandlerTest.cs` - Added duplicate idempotency replay coverage proving equivalent project reassignment requests replay the stored logical outcome without aggregate load or mutation.
+- [x] `Hexalith.Conversations/tests/Hexalith.Conversations.Tests/Aggregates/ConversationAggregateProjectAssignmentTest.cs` - Added explicit missing-target rejection coverage proving an omitted assignment target is not treated as clear/unassignment.
+
+### E2E Tests
+- [x] Not applicable for story 2.2. The implemented surface is a Conversations contract/domain/server API/client upstream capability with no browser UI route.
+
+## Coverage
+
+- Contract serialization and vocabulary: covered by existing story 2.2 contract tests.
+- Aggregate assign/reassign/clear/no-op/rejection/replay behavior: covered, with missing-target rejection added by this QA step.
+- Tenant-first server boundary and idempotency conflict/duplicate behavior: covered, with project-specific duplicate replay added by this QA step.
+- API/client mapping: covered, with project route happy path added by this QA step.
+- Projection materialization/list filtering after reassignment/clear: covered by existing story 2.2 projection/query tests.
+- UI E2E: 0/0 applicable.
+
+## Verification
+
+| Lane | Command | Result |
+|------|---------|--------|
+| Conversations contracts | `dotnet test tests/Hexalith.Conversations.Contracts.Tests/Hexalith.Conversations.Contracts.Tests.csproj --no-restore` | Passed: 587, Failed: 0, Skipped: 0 |
+| Conversations domain | `dotnet test tests/Hexalith.Conversations.Tests/Hexalith.Conversations.Tests.csproj --no-restore` | Passed: 173, Failed: 0, Skipped: 0 |
+| Conversations server/API | `dotnet test tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj --no-restore` | Passed: 513, Failed: 0, Skipped: 0 |
+| Conversations client | `dotnet test tests/Hexalith.Conversations.Client.Tests/Hexalith.Conversations.Client.Tests.csproj --no-restore` | Passed: 25, Failed: 0, Skipped: 0 |
+| Diff hygiene | `git diff --check` in `Hexalith.Conversations` | Passed; Git reported existing LF-to-CRLF normalization warnings only |
+
+---
+
 # Test Automation Summary
 
 ## Story 2.1 - Conversation Reference Read ACL
