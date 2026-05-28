@@ -38,6 +38,12 @@ public static class ProjectsServerModule
     /// <summary>The fully qualified <c>UnlinkFileReference</c> command type discriminator on the wire.</summary>
     public const string UnlinkFileReferenceCommandType = "Hexalith.Projects.Commands.UnlinkFileReference";
 
+    /// <summary>The fully qualified <c>LinkMemory</c> command type discriminator on the wire.</summary>
+    public const string LinkMemoryCommandType = "Hexalith.Projects.Commands.LinkMemory";
+
+    /// <summary>The fully qualified <c>UnlinkMemory</c> command type discriminator on the wire.</summary>
+    public const string UnlinkMemoryCommandType = "Hexalith.Projects.Commands.UnlinkMemory";
+
     /// <summary>The aggregate-callback route the EventStore command pipeline invokes.</summary>
     public const string ProcessRoute = "/process";
 

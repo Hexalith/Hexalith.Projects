@@ -53,6 +53,18 @@ public interface IProjectCommandSubmitter
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>The submission outcome.</returns>
     Task<ProjectCommandSubmissionResult> SubmitUnlinkFileReferenceAsync(UnlinkFileReference command, CancellationToken cancellationToken = default);
+
+    /// <summary>Submits the link-memory command and returns the accept/replay/denial outcome.</summary>
+    /// <param name="command">The validated link-memory command.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The submission outcome.</returns>
+    Task<ProjectCommandSubmissionResult> SubmitLinkMemoryAsync(LinkMemory command, CancellationToken cancellationToken = default);
+
+    /// <summary>Submits the unlink-memory command and returns the accept/replay/denial outcome.</summary>
+    /// <param name="command">The validated unlink-memory command.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The submission outcome.</returns>
+    Task<ProjectCommandSubmissionResult> SubmitUnlinkMemoryAsync(UnlinkMemory command, CancellationToken cancellationToken = default);
 }
 
 /// <summary>The outcome category of a command submission through the EventStore command pipeline.</summary>

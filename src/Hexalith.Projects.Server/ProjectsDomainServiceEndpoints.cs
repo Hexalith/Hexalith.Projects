@@ -26,6 +26,7 @@ using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Server.Conversations;
 using Hexalith.Projects.Server.Folders;
+using Hexalith.Projects.Server.Memories;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -232,6 +233,48 @@ public static partial class ProjectsDomainServiceEndpoints
                 timeProvider,
                 cancellationToken).ConfigureAwait(false))
             .WithName("UnlinkFileReference");
+
+        endpoints.MapPost("/api/v1/projects/{projectId}/memories/{memoryReferenceId}/link", static async (
+            string projectId,
+            string memoryReferenceId,
+            HttpContext httpContext,
+            [Microsoft.AspNetCore.Mvc.FromServices] IProjectCommandSubmitter submitter,
+            [Microsoft.AspNetCore.Mvc.FromServices] IProjectTenantContextAccessor tenantContext,
+            [Microsoft.AspNetCore.Mvc.FromServices] ProjectAuthorizationGate authorizationGate,
+            [Microsoft.AspNetCore.Mvc.FromServices] IProjectMemoryDirectory memoryDirectory,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await LinkMemoryAsync(
+                projectId,
+                memoryReferenceId,
+                httpContext,
+                submitter,
+                tenantContext,
+                authorizationGate,
+                memoryDirectory,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("LinkMemory");
+
+        endpoints.MapDelete("/api/v1/projects/{projectId}/memories/{memoryReferenceId}", static async (
+            string projectId,
+            string memoryReferenceId,
+            HttpContext httpContext,
+            [Microsoft.AspNetCore.Mvc.FromServices] IProjectCommandSubmitter submitter,
+            [Microsoft.AspNetCore.Mvc.FromServices] IProjectTenantContextAccessor tenantContext,
+            [Microsoft.AspNetCore.Mvc.FromServices] ProjectAuthorizationGate authorizationGate,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await UnlinkMemoryAsync(
+                projectId,
+                memoryReferenceId,
+                httpContext,
+                submitter,
+                tenantContext,
+                authorizationGate,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("UnlinkMemory");
 
         endpoints.MapPatch("/api/v1/projects/{projectId}/setup", static async (
             string projectId,
@@ -987,6 +1030,179 @@ public static partial class ProjectsDomainServiceEndpoints
         return MutationResult(httpContext, timeProvider, result, correlationId!, taskId!);
     }
 
+    private static async Task<IResult> LinkMemoryAsync(
+        string projectId,
+        string memoryReferenceId,
+        HttpContext httpContext,
+        IProjectCommandSubmitter submitter,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        IProjectMemoryDirectory memoryDirectory,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+    {
+        if (!TryReadMutationEnvelope(httpContext, out string? correlationId, out string? taskId, out string? idempotencyKey, out IResult? envelopeRejection))
+        {
+            return envelopeRejection!;
+        }
+
+        if (!IsCanonicalIdentifier(projectId) || !IsCanonicalIdentifier(memoryReferenceId))
+        {
+            return SafeDenial(correlationId, taskId);
+        }
+
+        // Gate the Project mutation intent BEFORE any Memories ACL call — unauthorized, hidden,
+        // archived, stale, or unavailable Project evidence must never touch Memories.
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeLinkMemoryAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed || !IsActive(authorization.ProjectDetail))
+        {
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, taskId)
+                : SafeDenial(correlationId, taskId, authorization);
+        }
+
+        LinkMemoryHttpRequest? body;
+        try
+        {
+            body = await httpContext.Request
+                .ReadFromJsonAsync<LinkMemoryHttpRequest>(RequestJsonOptions, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (JsonException)
+        {
+            return ValidationProblem(correlationId, taskId, "body");
+        }
+
+        if (body is null
+            || !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(body.Operation, "link", StringComparison.Ordinal)
+            || !string.Equals(body.ProjectId, projectId, StringComparison.Ordinal)
+            || !string.Equals(body.MemoryReferenceId, memoryReferenceId, StringComparison.Ordinal)
+            || body.MemoryMetadata is null)
+        {
+            return ValidationProblem(correlationId, taskId, "identity");
+        }
+
+        LinkMemory command = new(
+            tenantContext.AuthoritativeTenantId!,
+            new ProjectId(projectId),
+            memoryReferenceId,
+            body.MemoryMetadata,
+            tenantContext.PrincipalId!,
+            correlationId!,
+            taskId!,
+            idempotencyKey!);
+
+        ProjectCommandValidationResult validation = ProjectCommandValidator.Validate(command);
+        if (!validation.IsAccepted)
+        {
+            return ValidationProblem(correlationId, taskId, validation.RejectedField ?? "command");
+        }
+
+        // Memories-owned authorization/freshness is the authority for whether the case is currently
+        // usable; the client-supplied display metadata is comparison/display intent only.
+        ProjectMemoryValidationResult memoryValidation = await memoryDirectory
+            .ValidateLinkMemoryReferenceAsync(
+                new ProjectId(projectId),
+                memoryReferenceId,
+                tenantContext.AuthoritativeTenantId!,
+                correlationId!,
+                taskId!,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        IResult? memoryProblem = MemoryReferenceValidationProblem(memoryValidation, correlationId, taskId);
+        if (memoryProblem is not null)
+        {
+            return memoryProblem;
+        }
+
+        ProjectCommandSubmissionResult result = await submitter
+            .SubmitLinkMemoryAsync(command, cancellationToken)
+            .ConfigureAwait(false);
+
+        return MutationResult(httpContext, timeProvider, result, correlationId!, taskId!);
+    }
+
+    private static async Task<IResult> UnlinkMemoryAsync(
+        string projectId,
+        string memoryReferenceId,
+        HttpContext httpContext,
+        IProjectCommandSubmitter submitter,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+    {
+        if (!TryReadMutationEnvelope(httpContext, out string? correlationId, out string? taskId, out string? idempotencyKey, out IResult? envelopeRejection))
+        {
+            return envelopeRejection!;
+        }
+
+        if (!IsCanonicalIdentifier(projectId) || !IsCanonicalIdentifier(memoryReferenceId))
+        {
+            return SafeDenial(correlationId, taskId);
+        }
+
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeUnlinkMemoryAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed || !IsActive(authorization.ProjectDetail))
+        {
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, taskId)
+                : SafeDenial(correlationId, taskId, authorization);
+        }
+
+        UnlinkMemoryHttpRequest? body;
+        try
+        {
+            body = await httpContext.Request
+                .ReadFromJsonAsync<UnlinkMemoryHttpRequest>(RequestJsonOptions, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (JsonException)
+        {
+            return ValidationProblem(correlationId, taskId, "body");
+        }
+
+        if (body is null
+            || !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(body.Operation, "unlink", StringComparison.Ordinal)
+            || !string.Equals(body.UnlinkIntent, "removeReference", StringComparison.Ordinal)
+            || !string.Equals(body.ProjectId, projectId, StringComparison.Ordinal)
+            || !string.Equals(body.MemoryReferenceId, memoryReferenceId, StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "identity");
+        }
+
+        // Unlink removes only the Projects-to-memory association. It deliberately makes NO Memories
+        // call: the underlying Case and MemoryUnits are never read, deleted, archived, or otherwise
+        // touched.
+        UnlinkMemory command = new(
+            tenantContext.AuthoritativeTenantId!,
+            new ProjectId(projectId),
+            memoryReferenceId,
+            tenantContext.PrincipalId!,
+            correlationId!,
+            taskId!,
+            idempotencyKey!);
+
+        ProjectCommandValidationResult validation = ProjectCommandValidator.Validate(command);
+        if (!validation.IsAccepted)
+        {
+            return ValidationProblem(correlationId, taskId, validation.RejectedField ?? "command");
+        }
+
+        ProjectCommandSubmissionResult result = await submitter
+            .SubmitUnlinkMemoryAsync(command, cancellationToken)
+            .ConfigureAwait(false);
+
+        return MutationResult(httpContext, timeProvider, result, correlationId!, taskId!);
+    }
+
     private static async Task<IResult> UpdateProjectSetupAsync(
         string projectId,
         HttpContext httpContext,
@@ -1278,6 +1494,17 @@ public static partial class ProjectsDomainServiceEndpoints
             _ => SafeDenial(correlationId, taskId),
         };
 
+    private static IResult? MemoryReferenceValidationProblem(ProjectMemoryValidationResult result, string? correlationId, string? taskId)
+        => result.Outcome switch
+        {
+            ProjectMemoryValidationOutcome.Accepted => null,
+            ProjectMemoryValidationOutcome.ValidationFailed => ValidationProblem(correlationId, taskId, "memoryReference"),
+            ProjectMemoryValidationOutcome.Stale or ProjectMemoryValidationOutcome.Unavailable => ReadModelUnavailable(correlationId, taskId),
+            // Denied / Archived / TenantMismatch all collapse to an externally-indistinguishable safe
+            // denial so neither Memories existence nor case classification is disclosed through Projects.
+            _ => SafeDenial(correlationId, taskId),
+        };
+
     private static bool TryReadMutationEnvelope(
         HttpContext httpContext,
         out string? correlationId,
@@ -1435,6 +1662,17 @@ public static partial class ProjectsDomainServiceEndpoints
                 file.DisplayName,
                 file.ReasonCode,
                 ToFreshness(file.ObservedAt, detail.Sequence)));
+        }
+
+        foreach (ProjectMemoryReference memory in detail.MemoryReferences.OrderBy(reference => reference.MemoryReferenceId, StringComparer.Ordinal))
+        {
+            summaries.Add(new ProjectReferenceSummaryResponse(
+                "memory",
+                ToWireReferenceState(memory.ReferenceState),
+                memory.MemoryReferenceId,
+                memory.DisplayName,
+                memory.ReasonCode,
+                ToFreshness(memory.ObservedAt, detail.Sequence)));
         }
 
         return summaries;
@@ -1690,6 +1928,20 @@ public static partial class ProjectsDomainServiceEndpoints
         string? UnlinkIntent,
         string? ProjectId,
         string? FileReferenceId);
+
+    private sealed record LinkMemoryHttpRequest(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? ProjectId,
+        string? MemoryReferenceId,
+        ProjectMemoryReferenceMetadata? MemoryMetadata);
+
+    private sealed record UnlinkMemoryHttpRequest(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? UnlinkIntent,
+        string? ProjectId,
+        string? MemoryReferenceId);
 
     private sealed record AcceptedCommandResponse(
         DateTimeOffset AcceptedAt,

@@ -56,6 +56,14 @@
     <PackageVersion Include="NSwag.MSBuild" Version="14.7.1" />
     <PackageVersion Include="YamlDotNet" Version="17.1.0" />
   </ItemGroup>
+  <ItemGroup Label="Hexalith.Memories (Story 2.7 — Memory Reference ACL)">
+    <!-- Memories typed client + contracts: only the Server takes a direct dependency (the ACL adapter
+         under src/Hexalith.Projects.Server/Memories/). Per the Story 2.6 ADR, ACL calls only the stable
+         GetCaseAsync read route; zero HXL001/HXL002 surface is used. Version mirrors the
+         Hexalith.Memories submodule v1.2.0 release. -->
+    <PackageVersion Include="Hexalith.Memories.Client.Rest" Version="1.2.0" />
+    <PackageVersion Include="Hexalith.Memories.Contracts" Version="1.2.0" />
+  </ItemGroup>
   <ItemGroup Label="Testing">
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />

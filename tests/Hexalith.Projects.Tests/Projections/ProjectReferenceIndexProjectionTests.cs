@@ -118,6 +118,94 @@ public sealed class ProjectReferenceIndexProjectionTests
             .ShouldBe(["file_01HZ9K8YQ3W6V2N4R7T5P0X1F1", "file_01HZ9K8YQ3W6V2N4R7T5P0X1F2"]);
     }
 
+    [Fact]
+    public void MemoryLinked_IsIndexedAsIncludedMemoryRowOnDisjointLane()
+    {
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(Tenant, 1, Set()),
+            new ProjectProjectionEnvelope(Tenant, 2, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(Tenant, 3, MemLinked("case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+        ]);
+
+        ProjectReferenceIndexItem memory = projection.List(Tenant, ProjectId)
+            .Single(item => item.ReferenceKind == "memory");
+        memory.ReferenceId.ShouldBe("case_01HZ9K8YQ3W6V2N4R7T5P0X1M1");
+        memory.ReferenceState.ShouldBe(ReferenceState.Included);
+        memory.DisplayName.ShouldBe("Q3 product strategy memory");
+
+        // Folder and file lanes are untouched by the memory link.
+        projection.List(Tenant, ProjectId).Count(item => item.ReferenceKind == "folder").ShouldBe(1);
+        projection.List(Tenant, ProjectId).Count(item => item.ReferenceKind == "file").ShouldBe(1);
+    }
+
+    [Fact]
+    public void MemoryUnlinked_RemovesOnlyMemoryRowAndKeepsFolderAndFileRows()
+    {
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(Tenant, 1, Set()),
+            new ProjectProjectionEnvelope(Tenant, 2, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(Tenant, 3, MemLinked("case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+            new ProjectProjectionEnvelope(Tenant, 4, MemLinked("case_01HZ9K8YQ3W6V2N4R7T5P0X1M2")),
+            new ProjectProjectionEnvelope(Tenant, 5, MemUnlinked("case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+        ]);
+
+        var rows = projection.List(Tenant, ProjectId);
+        rows.Count(item => item.ReferenceKind == "folder").ShouldBe(1);
+        rows.Count(item => item.ReferenceKind == "file").ShouldBe(1);
+        rows.Where(item => item.ReferenceKind == "memory").Select(item => item.ReferenceId)
+            .ShouldBe(["case_01HZ9K8YQ3W6V2N4R7T5P0X1M2"]);
+    }
+
+    [Fact]
+    public void FileUnlink_DoesNotTouchMemoryRows()
+    {
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(Tenant, 1, Set()),
+            new ProjectProjectionEnvelope(Tenant, 2, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(Tenant, 3, MemLinked("case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+            new ProjectProjectionEnvelope(Tenant, 4, Unlinked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+        ]);
+
+        var rows = projection.List(Tenant, ProjectId);
+        rows.Count(item => item.ReferenceKind == "memory").ShouldBe(1);
+        rows.Count(item => item.ReferenceKind == "file").ShouldBe(0);
+        rows.Count(item => item.ReferenceKind == "folder").ShouldBe(1);
+    }
+
+    [Fact]
+    public void FolderReplacement_DoesNotTouchMemoryRows()
+    {
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(Tenant, 1, MemLinked("case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+            new ProjectProjectionEnvelope(Tenant, 2, Set()),
+        ]);
+
+        var rows = projection.List(Tenant, ProjectId);
+        rows.Count(item => item.ReferenceKind == "memory").ShouldBe(1);
+        rows.Single(item => item.ReferenceKind == "folder").ReferenceId.ShouldBe(FolderId);
+    }
+
+    [Fact]
+    public void MemoryUnlink_DoesNotTouchFolderOrFileRows()
+    {
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(Tenant, 1, Set()),
+            new ProjectProjectionEnvelope(Tenant, 2, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(Tenant, 3, MemLinked("case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+            new ProjectProjectionEnvelope(Tenant, 4, MemUnlinked("case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+        ]);
+
+        var rows = projection.List(Tenant, ProjectId);
+        rows.Count(item => item.ReferenceKind == "memory").ShouldBe(0);
+        rows.Count(item => item.ReferenceKind == "file").ShouldBe(1);
+        rows.Single(item => item.ReferenceKind == "folder").ReferenceId.ShouldBe(FolderId);
+    }
+
     private static FileReferenceLinked Linked(string fileReferenceId) => new(
         Tenant,
         ProjectId,
@@ -141,6 +229,29 @@ public sealed class ProjectReferenceIndexProjectionTests
         "idem-unlink-" + fileReferenceId,
         "sha256:unlink-" + fileReferenceId,
         DateTimeOffset.UnixEpoch.AddMinutes(3));
+
+    private static MemoryLinked MemLinked(string memoryReferenceId) => new(
+        Tenant,
+        ProjectId,
+        memoryReferenceId,
+        new ProjectMemoryReferenceMetadata("Q3 product strategy memory"),
+        "actor-001",
+        "corr-001",
+        "task-001",
+        "idem-" + memoryReferenceId,
+        "sha256:" + memoryReferenceId,
+        DateTimeOffset.UnixEpoch.AddMinutes(4));
+
+    private static MemoryUnlinked MemUnlinked(string memoryReferenceId) => new(
+        Tenant,
+        ProjectId,
+        memoryReferenceId,
+        "actor-001",
+        "corr-001",
+        "task-001",
+        "idem-unlink-" + memoryReferenceId,
+        "sha256:unlink-" + memoryReferenceId,
+        DateTimeOffset.UnixEpoch.AddMinutes(5));
 
     private static ProjectFolderCreationPending Pending() => new(
         Tenant,

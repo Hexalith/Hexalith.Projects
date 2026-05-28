@@ -115,6 +115,33 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
 - **Consumers:** `ProjectDetailProjection`, `ProjectReferenceIndexProjection` (removes only the targeted `file`-kind row).
 
+### `MemoryLinked`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.MemoryLinked` (`IProjectEvent` → `IEventPayload`)
+- **Purpose:** Records a Memory Reference link on an active Project after Projects server-side ACL validation of the Hexalith.Memories `Case` through the stable `MemoriesClient.GetCaseAsync` read route (FR-10, FR-11). Memory references are a bounded optional set; linking never clears, replaces, satisfies, or auto-creates the single Project Folder, and never touches file references.
+- **Emitted by:** `ProjectAggregate.Handle(LinkMemory)` after the server validated Memories case evidence (`GetCaseAsync`, never MemoryUnit content / embeddings / search / traversal payloads).
+- **Sensitivity class:** metadata-only.
+- **Fields:**
+  - `TenantId`, `ProjectId` — canonical Projects identity.
+  - `MemoryReferenceId` — opaque Memories case identifier (ULID-shaped sibling identifier).
+  - `MemoryMetadata` — safe display metadata only; never `MemoryUnit.Content`, `ContentBytes`, `ContentHash`, `SourceUri`, `SourceType`, `IngestedBy`, `Metadata`, `EmbeddingProvider`, `EmbeddingModel`, `EmbeddingDimensions`, `Classification`, raw `ErrorResponse.Message`/`Suggestion`, raw `MemoriesRemoteException.Message`, tokens, paths, or Memories-internal tenant identifier as payload.
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
+  - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
+- **Consumers:** `ProjectDetailProjection`, `ProjectReferenceIndexProjection` (`memory`-kind rows on a disjoint lane); Epic 3 Project Context assembly.
+
+### `MemoryUnlinked`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.MemoryUnlinked` (`IProjectEvent` → `IEventPayload`)
+- **Purpose:** Records removal of the Project-to-memory association only (FR-10, FR-11). It never calls Hexalith.Memories, never deletes, archives, reads, or mutates the underlying `Case` or any `MemoryUnit`, and never removes the single Project Folder or any File Reference.
+- **Emitted by:** `ProjectAggregate.Handle(UnlinkMemory)` when the targeted reference exists; unlinking a missing reference is a safe idempotent no-op that emits no event.
+- **Sensitivity class:** metadata-only.
+- **Fields:**
+  - `TenantId`, `ProjectId` — canonical Projects identity.
+  - `MemoryReferenceId` — opaque Memories case identifier that was unlinked.
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
+  - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
+- **Consumers:** `ProjectDetailProjection`, `ProjectReferenceIndexProjection` (removes only the targeted `memory`-kind row); Epic 3 Project Context assembly.
+
 ## Rejection events
 
 ### `ProjectCreationRejected`
@@ -155,19 +182,19 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
 ### `ProjectReferenceLinkRejected`
 
 - **Type:** `Hexalith.Projects.Contracts.Events.ProjectReferenceLinkRejected` (`IRejectionEvent`)
-- **Purpose:** Records a refused sibling reference link/set attempt, including Project Folder set (`folder`) and optional File Reference link (`file`) rejection paths (validation failure, replacement not confirmed, conflicting/over-limit file reference, missing/archived project, tenant mismatch, Folders ACL denial/redaction/staleness/unavailability, authorization failure, or idempotency conflict).
-- **Emitted by:** `ProjectAggregate.Handle(SetProjectFolder)` and `ProjectAggregate.Handle(LinkFileReference)` rejection paths, the server-side Folders ACL fail-closed mapping, and `/process` fail-closed payload paths.
+- **Purpose:** Records a refused sibling reference link/set attempt, including Project Folder set (`folder`), optional File Reference link (`file`), and Memory Reference link (`memory`) rejection paths (validation failure, replacement not confirmed, conflicting/over-limit reference, missing/archived project, tenant mismatch, Folders/Memories ACL denial/archived/staleness/unavailability, authorization failure, or idempotency conflict).
+- **Emitted by:** `ProjectAggregate.Handle(SetProjectFolder)`, `ProjectAggregate.Handle(LinkFileReference)`, and `ProjectAggregate.Handle(LinkMemory)` rejection paths, the server-side Folders/Memories ACL fail-closed mappings, and `/process` fail-closed payload paths.
 - **Sensitivity class:** metadata-only.
-- **Fields:** `ProjectId`, `TenantId`, `ReferenceKind` (`folder` or `file`), `ReferenceId` sibling identifier when safe (malformed identifiers are dropped to `unknown`, never echoed raw), canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
+- **Fields:** `ProjectId`, `TenantId`, `ReferenceKind` (`folder`, `file`, or `memory`), `ReferenceId` sibling identifier when safe (malformed identifiers are dropped to `unknown`, never echoed raw), canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
 - **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
 
 ### `ProjectReferenceUnlinkRejected`
 
 - **Type:** `Hexalith.Projects.Contracts.Events.ProjectReferenceUnlinkRejected` (`IRejectionEvent`)
-- **Purpose:** Records a refused sibling reference unlink attempt, including optional File Reference unlink (`file`) rejection paths (validation failure, missing/archived project, tenant mismatch, authorization failure, or idempotency conflict). Unlinking a reference that is not present is a safe idempotent no-op, not a rejection.
-- **Emitted by:** `ProjectAggregate.Handle(UnlinkFileReference)` rejection paths and `/process` fail-closed payload paths.
+- **Purpose:** Records a refused sibling reference unlink attempt, including optional File Reference unlink (`file`) and Memory Reference unlink (`memory`) rejection paths (validation failure, missing/archived project, tenant mismatch, authorization failure, or idempotency conflict). Unlinking a reference that is not present is a safe idempotent no-op, not a rejection.
+- **Emitted by:** `ProjectAggregate.Handle(UnlinkFileReference)`, `ProjectAggregate.Handle(UnlinkMemory)` rejection paths and `/process` fail-closed payload paths.
 - **Sensitivity class:** metadata-only.
-- **Fields:** `ProjectId`, `TenantId`, `ReferenceKind` (`file`), `ReferenceId` sibling identifier when safe (malformed dropped to `unknown`), canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
+- **Fields:** `ProjectId`, `TenantId`, `ReferenceKind` (`file` or `memory`), `ReferenceId` sibling identifier when safe (malformed dropped to `unknown`), canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
 - **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
 
 ## Consumed external events

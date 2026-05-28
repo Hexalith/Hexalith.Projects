@@ -309,6 +309,74 @@ public static class ProjectCommandValidator
     }
 
     /// <summary>
+    /// Validates a <see cref="LinkMemory"/> command and computes its canonical idempotency fingerprint.
+    /// </summary>
+    /// <param name="command">The link-memory command.</param>
+    /// <returns>An accepted or rejected validation result.</returns>
+    public static ProjectCommandValidationResult Validate(LinkMemory command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult common = ValidateCommon(command);
+        if (!common.IsAccepted)
+        {
+            return common;
+        }
+
+        if (!IsSafeReferenceIdentifier(command.MemoryReferenceId))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.MemoryReferenceId));
+        }
+
+        if (command.MemoryMetadata is null)
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.MemoryMetadata));
+        }
+
+        if (!IsSafeOptionalMetadata(command.MemoryMetadata.DisplayName, MaxNameLength))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, "memoryMetadata.displayName");
+        }
+
+        string? displayName = string.IsNullOrWhiteSpace(command.MemoryMetadata.DisplayName)
+            ? null
+            : command.MemoryMetadata.DisplayName.Trim();
+
+        return ProjectCommandValidationResult.AcceptedMemoryLink(
+            ComputeLinkMemoryFingerprint(
+                command.ProjectId.Value,
+                command.MemoryReferenceId.Trim(),
+                displayName));
+    }
+
+    /// <summary>
+    /// Validates an <see cref="UnlinkMemory"/> command and computes its canonical idempotency
+    /// fingerprint.
+    /// </summary>
+    /// <param name="command">The unlink-memory command.</param>
+    /// <returns>An accepted or rejected validation result.</returns>
+    public static ProjectCommandValidationResult Validate(UnlinkMemory command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult common = ValidateCommon(command);
+        if (!common.IsAccepted)
+        {
+            return common;
+        }
+
+        if (!IsSafeReferenceIdentifier(command.MemoryReferenceId))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.MemoryReferenceId));
+        }
+
+        return ProjectCommandValidationResult.AcceptedMemoryUnlink(
+            ComputeUnlinkMemoryFingerprint(
+                command.ProjectId.Value,
+                command.MemoryReferenceId.Trim()));
+    }
+
+    /// <summary>
     /// Computes the canonical idempotency fingerprint for a <see cref="CreateProject"/> command using
     /// the Story 1.3 canonical hasher semantics over the spine's equivalence field list.
     /// </summary>
@@ -443,6 +511,52 @@ public static class ProjectCommandValidator
         [
             "operation=UnlinkFileReference",
             "field=file_reference_id;present=true;value=s:" + Escape(fileReferenceId),
+            "field=operation;present=true;value=s:unlink",
+            "field=project_id;present=true;value=s:" + Escape(projectId),
+            "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+            "field=unlink_intent;present=true;value=s:removeReference",
+        ];
+
+        string canonical = string.Join('\n', lines);
+        byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(canonical));
+        return "sha256:" + Convert.ToHexString(digest).ToLowerInvariant();
+    }
+
+    /// <summary>Computes the canonical link-memory idempotency fingerprint.</summary>
+    /// <param name="projectId">The route/project identifier.</param>
+    /// <param name="memoryReferenceId">The opaque Memories case identifier.</param>
+    /// <param name="displayName">The safe display metadata, or null.</param>
+    /// <returns>A <c>sha256:</c>-prefixed lowercase hex digest.</returns>
+    internal static string ComputeLinkMemoryFingerprint(
+        string projectId,
+        string memoryReferenceId,
+        string? displayName)
+    {
+        string[] lines =
+        [
+            "operation=LinkMemory",
+            "field=memory_metadata.display_name;present=" + (displayName is null ? "false;value=omitted" : "true;value=s:" + Escape(displayName)),
+            "field=memory_reference_id;present=true;value=s:" + Escape(memoryReferenceId),
+            "field=operation;present=true;value=s:link",
+            "field=project_id;present=true;value=s:" + Escape(projectId),
+            "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+        ];
+
+        string canonical = string.Join('\n', lines);
+        byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(canonical));
+        return "sha256:" + Convert.ToHexString(digest).ToLowerInvariant();
+    }
+
+    /// <summary>Computes the canonical unlink-memory idempotency fingerprint.</summary>
+    /// <param name="projectId">The route/project identifier.</param>
+    /// <param name="memoryReferenceId">The opaque Memories case identifier.</param>
+    /// <returns>A <c>sha256:</c>-prefixed lowercase hex digest.</returns>
+    internal static string ComputeUnlinkMemoryFingerprint(string projectId, string memoryReferenceId)
+    {
+        string[] lines =
+        [
+            "operation=UnlinkMemory",
+            "field=memory_reference_id;present=true;value=s:" + Escape(memoryReferenceId),
             "field=operation;present=true;value=s:unlink",
             "field=project_id;present=true;value=s:" + Escape(projectId),
             "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),

@@ -12,11 +12,13 @@ using Hexalith.Conversations.Client;
 using Hexalith.Folders.Client;
 using Hexalith.EventStore.Client.Handlers;
 using Hexalith.EventStore.Client.Registration;
+using Hexalith.Memories.Client.Rest;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server.Conversations;
 using Hexalith.Projects.Server.Folders;
+using Hexalith.Projects.Server.Memories;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Routing;
@@ -83,6 +85,13 @@ public static class ProjectsServerServiceCollectionExtensions
                 ? new UnavailableProjectFileReferenceDirectory()
                 : new FoldersProjectFileReferenceDirectory(client);
         });
+        services.TryAddTransient<IProjectMemoryDirectory>(sp =>
+        {
+            MemoriesClient? client = sp.GetService<MemoriesClient>();
+            return client is null
+                ? new UnavailableProjectMemoryDirectory()
+                : new MemoriesProjectMemoryDirectory(client);
+        });
         services.TryAddSingleton<IProjectEventStoreAuthorizationValidator, DenyAllProjectEventStoreAuthorizationValidator>();
         services.TryAddSingleton<IProjectDaprPolicyEvidenceProvider, DenyAllProjectDaprPolicyEvidenceProvider>();
         services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();
@@ -121,6 +130,11 @@ public static class ProjectsServerServiceCollectionExtensions
         if (!services.Any(static service => service.ServiceType == typeof(FoldersClient)))
         {
             services.AddFoldersClient(options => options.BaseAddress = new Uri("http://folders"));
+        }
+
+        if (!services.Any(static service => service.ServiceType == typeof(MemoriesClient)))
+        {
+            services.AddMemoriesClient(options => options.Endpoint = new Uri("http://memories"));
         }
 
         services.AddEventStoreGatewayClient(options => options.BaseAddress = new Uri("http://eventstore"));

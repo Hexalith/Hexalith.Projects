@@ -197,6 +197,52 @@ public sealed class EventStoreProjectCommandSubmitter(IEventStoreGatewayClient g
             cancellationToken).ConfigureAwait(false);
     }
 
+    /// <inheritdoc/>
+    public async Task<ProjectCommandSubmissionResult> SubmitLinkMemoryAsync(
+        LinkMemory command,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        object payload = new
+        {
+            requestSchemaVersion = "v1",
+            operation = "link",
+            projectId = command.ProjectId.Value,
+            memoryReferenceId = command.MemoryReferenceId,
+            memoryMetadata = command.MemoryMetadata,
+        };
+
+        return await SubmitAsync(
+            command,
+            ProjectsServerModule.LinkMemoryCommandType,
+            payload,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    public async Task<ProjectCommandSubmissionResult> SubmitUnlinkMemoryAsync(
+        UnlinkMemory command,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        object payload = new
+        {
+            requestSchemaVersion = "v1",
+            operation = "unlink",
+            unlinkIntent = "removeReference",
+            projectId = command.ProjectId.Value,
+            memoryReferenceId = command.MemoryReferenceId,
+        };
+
+        return await SubmitAsync(
+            command,
+            ProjectsServerModule.UnlinkMemoryCommandType,
+            payload,
+            cancellationToken).ConfigureAwait(false);
+    }
+
     private async Task<ProjectCommandSubmissionResult> SubmitAsync(
         IProjectCommand command,
         string commandType,

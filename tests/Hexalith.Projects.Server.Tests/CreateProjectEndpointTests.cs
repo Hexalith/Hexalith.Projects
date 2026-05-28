@@ -25,6 +25,7 @@ using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server;
 using Hexalith.Projects.Server.Folders;
+using Hexalith.Projects.Server.Memories;
 using Hexalith.Projects.Testing.Leakage;
 using Hexalith.Projects.Testing.TenantIsolation;
 
@@ -48,6 +49,7 @@ public sealed class CreateProjectEndpointTests
 {
     private const string ProjectIdValue = "01HZ9K8YQ3W6V2N4R7T5P0X1AB";
     private const string FileRefId = "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1";
+    private const string MemoryRefId = "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1";
 
     [Fact]
     public async Task PostProject_ValidCreate_Returns202AcceptedCommand()
@@ -671,6 +673,292 @@ public sealed class CreateProjectEndpointTests
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
             submitter.FileUnlinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkMemory_Authorized_Returns202AndSubmitsLink()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        TrackingProjectMemoryDirectory memoryDirectory = new(ProjectMemoryValidationOutcome.Accepted);
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            memoryDirectory: memoryDirectory).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkMemoryRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            memoryDirectory.CallCount.ShouldBe(1);
+            LinkMemory submitted = submitter.MemoryLinked.Single();
+            submitted.MemoryReferenceId.ShouldBe(MemoryRefId);
+            submitted.MemoryMetadata.DisplayName.ShouldBe("Q3 product strategy memory");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkMemory_RouteBodyMismatch_Returns400BeforeMemoriesCall()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        TrackingProjectMemoryDirectory memoryDirectory = new(ProjectMemoryValidationOutcome.Accepted);
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            memoryDirectory: memoryDirectory).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(
+                ValidLinkMemoryRequest(bodyMemoryReferenceId: "case_01HZ9K8YQ3W6V2N4R7T5P0X1ZZ"),
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.MemoryLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkMemory_MissingIdempotencyKey_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            memoryDirectory: new TrackingProjectMemoryDirectory(ProjectMemoryValidationOutcome.Accepted)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpRequestMessage request = ValidLinkMemoryRequest();
+            request.Headers.Remove("Idempotency-Key");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.MemoryLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkMemory_UnknownBodyField_Returns400AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            memoryDirectory: new TrackingProjectMemoryDirectory(ProjectMemoryValidationOutcome.Accepted)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(LinkMemoryRequestWithUnknownField(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            // Closed request schema (JsonUnmappedMemberHandling.Disallow): unknown fields are rejected.
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.MemoryLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkMemory_ArchivedProject_ReturnsSafe404BeforeMemoriesCall()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        TrackingProjectMemoryDirectory memoryDirectory = new(ProjectMemoryValidationOutcome.Accepted);
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            memoryDirectory: memoryDirectory).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Archived));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkMemoryRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            // Archived/unauthorized Project must short-circuit BEFORE any Memories ACL call (AC 11).
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            memoryDirectory.CallCount.ShouldBe(0);
+            submitter.MemoryLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkMemory_DeniedMemoriesEvidence_ReturnsSafe404AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            memoryDirectory: new TrackingProjectMemoryDirectory(ProjectMemoryValidationOutcome.Denied)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkMemoryRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            // Denied / Archived / TenantMismatch collapse to externally-indistinguishable safe denial.
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            submitter.MemoryLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkMemory_ArchivedMemoriesEvidence_ReturnsSafe404AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            memoryDirectory: new TrackingProjectMemoryDirectory(ProjectMemoryValidationOutcome.Archived)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkMemoryRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            submitter.MemoryLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkMemory_UnavailableMemoriesEvidence_Returns503AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            memoryDirectory: new TrackingProjectMemoryDirectory(ProjectMemoryValidationOutcome.Unavailable)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkMemoryRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            // Unavailable Memories evidence is retryable: 503, never a false accept.
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            submitter.MemoryLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteMemory_Authorized_Returns202AndSubmitsUnlinkWithoutMemoriesCall()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+
+        // No memory-reference directory is registered: unlink must never call Memories. The default
+        // UnavailableProjectMemoryDirectory would fail closed if it were ever invoked.
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidUnlinkMemoryRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            UnlinkMemory submitted = submitter.MemoryUnlinked.Single();
+            submitted.MemoryReferenceId.ShouldBe(MemoryRefId);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteMemory_RouteBodyMismatch_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(
+                ValidUnlinkMemoryRequest(bodyMemoryReferenceId: "case_01HZ9K8YQ3W6V2N4R7T5P0X1ZZ"),
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.MemoryUnlinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteMemory_MissingIdempotencyKey_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpRequestMessage request = ValidUnlinkMemoryRequest();
+            request.Headers.Remove("Idempotency-Key");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.MemoryUnlinked.ShouldBeEmpty();
         }
         finally
         {
@@ -1310,6 +1598,7 @@ public sealed class CreateProjectEndpointTests
                                     null,
                                     null,
                                     [],
+                                    [],
                                     ProjectLifecycle.Active,
                                     DateTimeOffset.UnixEpoch,
                                     DateTimeOffset.UnixEpoch,
@@ -1760,6 +2049,76 @@ public sealed class CreateProjectEndpointTests
         return request;
     }
 
+    private static HttpRequestMessage ValidLinkMemoryRequest(
+        string projectId = ProjectIdValue,
+        string? bodyMemoryReferenceId = null)
+    {
+        HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{ProjectIdValue}/memories/{MemoryRefId}/link")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                operation = "link",
+                projectId,
+                memoryReferenceId = bodyMemoryReferenceId ?? MemoryRefId,
+                memoryMetadata = new
+                {
+                    displayName = "Q3 product strategy memory",
+                },
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-memory-link");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
+    private static HttpRequestMessage ValidUnlinkMemoryRequest(
+        string projectId = ProjectIdValue,
+        string? bodyMemoryReferenceId = null)
+    {
+        HttpRequestMessage request = new(HttpMethod.Delete, $"/api/v1/projects/{ProjectIdValue}/memories/{MemoryRefId}")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                operation = "unlink",
+                unlinkIntent = "removeReference",
+                projectId,
+                memoryReferenceId = bodyMemoryReferenceId ?? MemoryRefId,
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-memory-unlink");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
+    private static HttpRequestMessage LinkMemoryRequestWithUnknownField()
+    {
+        HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{ProjectIdValue}/memories/{MemoryRefId}/link")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                operation = "link",
+                projectId = ProjectIdValue,
+                memoryReferenceId = MemoryRefId,
+                memoryMetadata = new
+                {
+                    displayName = "Q3 product strategy memory",
+                },
+
+                // Unexpected field rejected by the closed request schema.
+                memoryUnitContent = "should-be-rejected",
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-memory-link");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
     private static HttpRequestMessage UnlinkFileRequestWithUnknownField()
     {
         HttpRequestMessage request = new(HttpMethod.Delete, $"/api/v1/projects/{ProjectIdValue}/files/{FileRefId}")
@@ -1822,7 +2181,8 @@ public sealed class CreateProjectEndpointTests
         bool detailReadUnavailable = false,
         bool listReadUnavailable = false,
         IProjectFolderDirectory? folderDirectory = null,
-        IProjectFileReferenceDirectory? fileReferenceDirectory = null)
+        IProjectFileReferenceDirectory? fileReferenceDirectory = null,
+        IProjectMemoryDirectory? memoryDirectory = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
         {
@@ -1847,6 +2207,12 @@ public sealed class CreateProjectEndpointTests
         {
             builder.Services.RemoveAll<IProjectFileReferenceDirectory>();
             builder.Services.AddSingleton(fileReferenceDirectory);
+        }
+
+        if (memoryDirectory is not null)
+        {
+            builder.Services.RemoveAll<IProjectMemoryDirectory>();
+            builder.Services.AddSingleton(memoryDirectory);
         }
 
         if (detailReadUnavailable)
@@ -1969,6 +2335,22 @@ public sealed class CreateProjectEndpointTests
             FileUnlinked.Add(command);
             return Task.FromResult(result);
         }
+
+        public List<LinkMemory> MemoryLinked { get; } = [];
+
+        public List<UnlinkMemory> MemoryUnlinked { get; } = [];
+
+        public Task<ProjectCommandSubmissionResult> SubmitLinkMemoryAsync(LinkMemory command, CancellationToken cancellationToken = default)
+        {
+            MemoryLinked.Add(command);
+            return Task.FromResult(result);
+        }
+
+        public Task<ProjectCommandSubmissionResult> SubmitUnlinkMemoryAsync(UnlinkMemory command, CancellationToken cancellationToken = default)
+        {
+            MemoryUnlinked.Add(command);
+            return Task.FromResult(result);
+        }
     }
 
     private sealed class FixedProjectTenantContextAccessor(string? tenantId, string? principalId) : IProjectTenantContextAccessor
@@ -1992,6 +2374,8 @@ public sealed class CreateProjectEndpointTests
                         ProjectAuthorizationGate.SetProjectFolderAction,
                         ProjectAuthorizationGate.LinkFileReferenceAction,
                         ProjectAuthorizationGate.UnlinkFileReferenceAction,
+                        ProjectAuthorizationGate.LinkMemoryAction,
+                        ProjectAuthorizationGate.UnlinkMemoryAction,
                     ]);
     }
 
@@ -2035,6 +2419,23 @@ public sealed class CreateProjectEndpointTests
         {
             CallCount++;
             return Task.FromResult(new ProjectFileReferenceValidationResult(outcome, correlationId));
+        }
+    }
+
+    private sealed class TrackingProjectMemoryDirectory(ProjectMemoryValidationOutcome outcome) : IProjectMemoryDirectory
+    {
+        public int CallCount { get; private set; }
+
+        public Task<ProjectMemoryValidationResult> ValidateLinkMemoryReferenceAsync(
+            Hexalith.Projects.Contracts.Identifiers.ProjectId projectId,
+            string memoryReferenceId,
+            string tenantId,
+            string correlationId,
+            string taskId,
+            CancellationToken cancellationToken = default)
+        {
+            CallCount++;
+            return Task.FromResult(new ProjectMemoryValidationResult(outcome, correlationId));
         }
     }
 

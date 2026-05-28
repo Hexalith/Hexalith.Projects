@@ -162,6 +162,31 @@ public sealed class ProjectProjectionTests
     }
 
     [Fact]
+    public void DetailProjection_AppliesMemoryLinkedAndUnlinked()
+    {
+        ProjectDetailProjection projection = ProjectDetailProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, FolderSet(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 3, FileLinked(TenantA, "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(TenantA, 4, MemoryLink(TenantA, "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+            new ProjectProjectionEnvelope(TenantA, 5, MemoryLink(TenantA, "case_01HZ9K8YQ3W6V2N4R7T5P0X1M2")),
+            new ProjectProjectionEnvelope(TenantA, 6, MemoryUnlink(TenantA, "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+        ]);
+
+        ProjectDetailItem detail = projection.Get(TenantA, ProjectIdValue)!;
+
+        // Memory link/unlink never touches the Project Folder or file references.
+        detail.ProjectFolder!.ReferenceState.ShouldBe(ReferenceState.Included);
+        detail.FileReferences.Count.ShouldBe(1);
+        detail.MemoryReferences.Select(reference => reference.MemoryReferenceId)
+            .ShouldBe(["case_01HZ9K8YQ3W6V2N4R7T5P0X1M2"]);
+        detail.MemoryReferences[0].ReferenceState.ShouldBe(ReferenceState.Included);
+        detail.MemoryReferences[0].DisplayName.ShouldBe("Q3 product strategy memory");
+        detail.Sequence.ShouldBe(6);
+    }
+
+    [Fact]
     public void ListProjection_ForeignTenantEnvelope_IsSkipped()
     {
         // Envelope dispatch tenant B but event tenant A → tenant-guard skips it (never lands in B).
@@ -351,6 +376,31 @@ public sealed class ProjectProjectionTests
             "idem-key-unlink-" + fileReferenceId,
             "sha256:unlink-" + fileReferenceId,
             DateTimeOffset.UnixEpoch.AddMinutes(6));
+
+    private static MemoryLinked MemoryLink(string tenant, string memoryReferenceId)
+        => new(
+            tenant,
+            ProjectIdValue,
+            memoryReferenceId,
+            new ProjectMemoryReferenceMetadata("Q3 product strategy memory"),
+            "actor-001",
+            "corr-memory",
+            "task-memory",
+            "idem-key-" + memoryReferenceId,
+            "sha256:" + memoryReferenceId,
+            DateTimeOffset.UnixEpoch.AddMinutes(7));
+
+    private static MemoryUnlinked MemoryUnlink(string tenant, string memoryReferenceId)
+        => new(
+            tenant,
+            ProjectIdValue,
+            memoryReferenceId,
+            "actor-001",
+            "corr-memory",
+            "task-memory",
+            "idem-key-unlink-" + memoryReferenceId,
+            "sha256:unlink-" + memoryReferenceId,
+            DateTimeOffset.UnixEpoch.AddMinutes(8));
 
     private sealed record UnknownProjectEvent : IProjectEvent
     {

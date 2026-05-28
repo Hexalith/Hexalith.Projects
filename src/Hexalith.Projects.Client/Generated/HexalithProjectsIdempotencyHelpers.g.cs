@@ -11,15 +11,15 @@ public sealed record HexalithProjectsGeneratedArtifactsVerification(bool IsCurre
 
 public static class HexalithProjectsGeneratedArtifacts
 {
-    public const string ContractSpineSha256 = "a9f4442f9c97a9a5f472db2e00f9db5647266edec06951f92cb3e4c1c12352cc";
+    public const string ContractSpineSha256 = "e9f2b2c646a3db82c4d3696c6e4c6bf564bf0d47cfa2f6d3228e5ad628318eb5";
     public const string GenerationConfigurationSha256 = "57b05e6bb3aaec137283214dbc5e4b6fd19399a8f9b184745cfb5cbef1753548";
-    public const string GeneratedHelpersSha256 = "fabe00cd298adbab73a7612c4f8639d38d8310e82955c3c7865ccf1e0d91b2ea";
+    public const string GeneratedHelpersSha256 = "9c052a59476c71925e56b9eb7ffb2fb401f0c2cb53a77cdba51efc0350e44ffa";
 
     // HelperSchemaVersion is a deterministic SHA-256 prefix of the canonical helper-signature
     // shape (schema names, parameter names in declared order, idempotency field paths per
     // variant). It changes whenever helper parameter shapes change, and only then. Not
     // included in the canonical hash.
-    public const string HelperSchemaVersion = "18c537ceaca65e8d";
+    public const string HelperSchemaVersion = "c0fb159f4e023247";
 
     public static bool VerifyCurrent(string repositoryRoot) => VerifyCurrentDetailed(repositoryRoot).IsCurrent;
 
@@ -243,6 +243,22 @@ public partial class LinkFileReferenceRequest
 ;
 }
 
+public partial class LinkMemoryRequest
+{
+    public string ComputeIdempotencyHash(string projectId, string memoryReferenceId) =>
+        HexalithIdempotencyHasher.Compute(
+            "LinkMemory",
+            new[]
+            {
+                new IdempotencyField("memory_metadata.display_name", MemoryMetadata is not null, MemoryMetadata?.DisplayName),
+                new IdempotencyField("memory_reference_id", true, memoryReferenceId),
+                new IdempotencyField("operation", true, Operation),
+                new IdempotencyField("project_id", true, projectId),
+                new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
+            })
+;
+}
+
 public partial class LinkProjectConversationRequest
 {
     public string ComputeIdempotencyHash(string projectId, string conversationId) =>
@@ -301,6 +317,22 @@ public partial class UnlinkFileReferenceRequest
             new[]
             {
                 new IdempotencyField("file_reference_id", true, fileReferenceId),
+                new IdempotencyField("operation", true, Operation),
+                new IdempotencyField("project_id", true, projectId),
+                new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
+                new IdempotencyField("unlink_intent", true, UnlinkIntent),
+            })
+;
+}
+
+public partial class UnlinkMemoryRequest
+{
+    public string ComputeIdempotencyHash(string projectId, string memoryReferenceId) =>
+        HexalithIdempotencyHasher.Compute(
+            "UnlinkMemory",
+            new[]
+            {
+                new IdempotencyField("memory_reference_id", true, memoryReferenceId),
                 new IdempotencyField("operation", true, Operation),
                 new IdempotencyField("project_id", true, projectId),
                 new IdempotencyField("request_schema_version", true, RequestSchemaVersion),

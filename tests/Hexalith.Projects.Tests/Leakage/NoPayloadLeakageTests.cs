@@ -192,6 +192,95 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void MemoryLinked_SerializesMetadataOnly()
+    {
+        MemoryLinked linked = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1",
+            new ProjectMemoryReferenceMetadata("Q3 product strategy memory"),
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-memory-link",
+            "sha256:memory-link",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(linked));
+    }
+
+    [Fact]
+    public void MemoryUnlinked_SerializesMetadataOnly()
+    {
+        MemoryUnlinked unlinked = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1",
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-memory-unlink",
+            "sha256:memory-unlink",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(unlinked));
+    }
+
+    [Fact]
+    public void MemoryReferenceLinkRejection_SerializesMetadataOnly()
+    {
+        ProjectReferenceLinkRejected rejection = new(
+            new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"),
+            "acme",
+            "memory",
+            "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1",
+            ReferenceState.Conflict,
+            "memoryReferenceId",
+            "corr-memory");
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(rejection));
+    }
+
+    [Fact]
+    public void MemoryReferenceUnlinkRejection_SerializesMetadataOnly()
+    {
+        ProjectReferenceUnlinkRejected rejection = new(
+            new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"),
+            "acme",
+            "memory",
+            "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1",
+            ReferenceState.TenantMismatch,
+            "memoryReferenceId",
+            "corr-memory");
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(rejection));
+    }
+
+    [Fact]
+    public void LinkMemoryRejection_DropsUnsafeReferenceId()
+    {
+        LinkMemory command = new(
+            "acme",
+            new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"),
+            @"C:\Users\acme\secret",
+            new ProjectMemoryReferenceMetadata("Q3 product strategy memory"),
+            "actor-001",
+            "corr-memory",
+            "task-memory",
+            "idem-memory");
+
+        ProjectResult result = ProjectResult.Rejected(
+            command,
+            ProjectResultCode.ValidationFailed,
+            nameof(LinkMemory.MemoryReferenceId));
+
+        ProjectReferenceLinkRejected rejection = result.ToRejectionEvent().ShouldBeOfType<ProjectReferenceLinkRejected>();
+        rejection.ReferenceKind.ShouldBe("memory");
+        rejection.ReferenceId.ShouldBe("unknown");
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(rejection));
+    }
+
+    [Fact]
     public void LinkFileReferenceRejection_DropsUnsafeReferenceId()
     {
         LinkFileReference command = new(

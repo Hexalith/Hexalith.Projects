@@ -52,6 +52,12 @@ public sealed class ProjectAuthorizationGate(
     /// <summary>The action token required to unlink an optional File Reference from a project.</summary>
     public const string UnlinkFileReferenceAction = "projects:unlink_file_reference";
 
+    /// <summary>The action token required to link a Memory Reference to a project.</summary>
+    public const string LinkMemoryAction = "projects:link_memory";
+
+    /// <summary>The action token required to unlink a Memory Reference from a project.</summary>
+    public const string UnlinkMemoryAction = "projects:unlink_memory";
+
     /// <summary>Authorizes project creation.</summary>
     public async Task<ProjectAuthorizationResult> AuthorizeCreateAsync(
         IProjectTenantContextAccessor tenantContext,
@@ -252,6 +258,44 @@ public sealed class ProjectAuthorizationGate(
             tenantContext,
             httpContext,
             UnlinkFileReferenceAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes linking a Memory Reference to a project.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeLinkMemoryAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            LinkMemoryAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes unlinking a Memory Reference from a project.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeUnlinkMemoryAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            UnlinkMemoryAction,
             projectId,
             correlationId,
             taskId,

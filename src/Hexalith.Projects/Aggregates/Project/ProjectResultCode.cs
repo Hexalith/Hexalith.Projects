@@ -40,6 +40,12 @@ public enum ProjectResultCode
     /// <summary>The unlink-file-reference command was accepted and a <c>FileReferenceUnlinked</c> event was emitted.</summary>
     FileReferenceUnlinked,
 
+    /// <summary>The link-memory command was accepted and a <c>MemoryLinked</c> event was emitted.</summary>
+    MemoryLinked,
+
+    /// <summary>The unlink-memory command was accepted and a <c>MemoryUnlinked</c> event was emitted.</summary>
+    MemoryUnlinked,
+
     /// <summary>The command is a logical replay of an already-recorded idempotency key with an equivalent payload.</summary>
     IdempotentReplay,
 
@@ -66,6 +72,12 @@ public enum ProjectResultCode
 
     /// <summary>The project already holds the maximum number of bounded file references.</summary>
     FileReferenceLimitExceeded,
+
+    /// <summary>The same memory reference is already linked with conflicting safe metadata.</summary>
+    MemoryReferenceConflict,
+
+    /// <summary>The project already holds the maximum number of bounded memory references.</summary>
+    MemoryReferenceLimitExceeded,
 
     /// <summary>The command failed boundary validation (blank name, unsafe setup metadata, malformed identifier).</summary>
     ValidationFailed,

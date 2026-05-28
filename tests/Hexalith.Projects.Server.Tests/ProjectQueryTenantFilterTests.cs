@@ -64,6 +64,7 @@ public sealed class ProjectQueryTenantFilterTests
             null,
             null,
             [],
+            [],
             ProjectLifecycle.Active,
             Timestamp,
             Timestamp,

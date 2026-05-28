@@ -69,6 +69,7 @@ public static class ProjectStateApply
                 Setup = null,
                 ProjectFolder = null,
                 FileReferences = FrozenDictionary<string, ProjectFileReference>.Empty,
+                MemoryReferences = FrozenDictionary<string, ProjectMemoryReference>.Empty,
                 Lifecycle = created.Lifecycle,
                 IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
             },
@@ -126,6 +127,25 @@ public static class ProjectStateApply
                 IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
             },
 
+            MemoryLinked memoryLinked => state with
+            {
+                MemoryReferences = AddMemoryReference(
+                    state.MemoryReferences,
+                    new ProjectMemoryReference(
+                        memoryLinked.MemoryReferenceId,
+                        memoryLinked.MemoryMetadata.DisplayName,
+                        ReferenceState.Included,
+                        null,
+                        memoryLinked.OccurredAt)),
+                IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+            },
+
+            MemoryUnlinked memoryUnlinked => state with
+            {
+                MemoryReferences = RemoveMemoryReference(state.MemoryReferences, memoryUnlinked.MemoryReferenceId),
+                IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+            },
+
             ProjectArchived archived => state with
             {
                 Lifecycle = archived.Lifecycle,
@@ -178,6 +198,31 @@ public static class ProjectStateApply
 
         Dictionary<string, ProjectFileReference> next = new(current, StringComparer.Ordinal);
         next.Remove(fileReferenceId);
+        return next.ToFrozenDictionary(StringComparer.Ordinal);
+    }
+
+    private static IReadOnlyDictionary<string, ProjectMemoryReference> AddMemoryReference(
+        IReadOnlyDictionary<string, ProjectMemoryReference> current,
+        ProjectMemoryReference reference)
+    {
+        Dictionary<string, ProjectMemoryReference> next = new(current, StringComparer.Ordinal)
+        {
+            [reference.MemoryReferenceId] = reference,
+        };
+        return next.ToFrozenDictionary(StringComparer.Ordinal);
+    }
+
+    private static IReadOnlyDictionary<string, ProjectMemoryReference> RemoveMemoryReference(
+        IReadOnlyDictionary<string, ProjectMemoryReference> current,
+        string memoryReferenceId)
+    {
+        if (!current.ContainsKey(memoryReferenceId))
+        {
+            return current;
+        }
+
+        Dictionary<string, ProjectMemoryReference> next = new(current, StringComparer.Ordinal);
+        next.Remove(memoryReferenceId);
         return next.ToFrozenDictionary(StringComparer.Ordinal);
     }
 

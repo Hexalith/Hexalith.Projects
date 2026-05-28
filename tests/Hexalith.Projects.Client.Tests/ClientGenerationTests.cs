@@ -86,6 +86,8 @@ public sealed class ClientGenerationTests
         generated.ShouldContain("class SetProjectFolderRequest");
         generated.ShouldContain("class LinkFileReferenceRequest");
         generated.ShouldContain("class UnlinkFileReferenceRequest");
+        generated.ShouldContain("class LinkMemoryRequest");
+        generated.ShouldContain("class UnlinkMemoryRequest");
         generated.ShouldContain("class ProjectFileReferenceMetadata");
         generated.ShouldContain("class ProjectConversationsPage");
         generated.ShouldContain("class ProblemDetails");
@@ -131,6 +133,8 @@ public sealed class ClientGenerationTests
             typeof(SetProjectFolderRequest),
             typeof(LinkFileReferenceRequest),
             typeof(UnlinkFileReferenceRequest),
+            typeof(LinkMemoryRequest),
+            typeof(UnlinkMemoryRequest),
         })
         {
             MethodInfo[] mutationMethods = requestType
@@ -435,6 +439,12 @@ public sealed class ClientGenerationTests
         typeof(UnlinkFileReferenceRequest)
             .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
             .ShouldNotBeNull();
+        typeof(LinkMemoryRequest)
+            .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
+            .ShouldNotBeNull();
+        typeof(UnlinkMemoryRequest)
+            .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
+            .ShouldNotBeNull();
     }
 
     [Fact]
@@ -477,6 +487,48 @@ public sealed class ClientGenerationTests
         request.ComputeIdempotencyHash(request.ProjectId, request.FileReferenceId).ShouldBe(ExpectedHash(
             "operation=UnlinkFileReference",
             "field=file_reference_id;present=true;value=s:file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1",
+            "field=operation;present=true;value=s:unlink",
+            "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            "field=request_schema_version;present=true;value=s:v1",
+            "field=unlink_intent;present=true;value=s:removeReference"));
+    }
+
+    [Fact]
+    public void LinkMemoryHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new LinkMemoryRequest
+        {
+            RequestSchemaVersion = LinkMemoryRequestRequestSchemaVersion.V1,
+            Operation = LinkMemoryRequestOperation.Link,
+            ProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            MemoryReferenceId = "case_01HZY7Z6N7J4Q2X8Y9V0A1B2E1",
+            MemoryMetadata = new ProjectMemoryReferenceMetadata { DisplayName = "synthetic-case-alpha" },
+        };
+
+        request.ComputeIdempotencyHash(request.ProjectId, request.MemoryReferenceId).ShouldBe(ExpectedHash(
+            "operation=LinkMemory",
+            "field=memory_metadata.display_name;present=true;value=s:synthetic-case-alpha",
+            "field=memory_reference_id;present=true;value=s:case_01HZY7Z6N7J4Q2X8Y9V0A1B2E1",
+            "field=operation;present=true;value=s:link",
+            "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            "field=request_schema_version;present=true;value=s:v1"));
+    }
+
+    [Fact]
+    public void UnlinkMemoryHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new UnlinkMemoryRequest
+        {
+            RequestSchemaVersion = UnlinkMemoryRequestRequestSchemaVersion.V1,
+            Operation = UnlinkMemoryRequestOperation.Unlink,
+            UnlinkIntent = UnlinkMemoryRequestUnlinkIntent.RemoveReference,
+            ProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            MemoryReferenceId = "case_01HZY7Z6N7J4Q2X8Y9V0A1B2E1",
+        };
+
+        request.ComputeIdempotencyHash(request.ProjectId, request.MemoryReferenceId).ShouldBe(ExpectedHash(
+            "operation=UnlinkMemory",
+            "field=memory_reference_id;present=true;value=s:case_01HZY7Z6N7J4Q2X8Y9V0A1B2E1",
             "field=operation;present=true;value=s:unlink",
             "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
             "field=request_schema_version;present=true;value=s:v1",

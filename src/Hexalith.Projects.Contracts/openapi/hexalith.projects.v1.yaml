@@ -735,6 +735,160 @@ paths:
         - not_found
         - read_model_unavailable
         - internal_error
+  /api/v1/projects/{projectId}/memories/{memoryReferenceId}/link:
+    post:
+      tags:
+        - projects
+      operationId: LinkMemory
+      summary: Link an authorized Memory Reference to an active Project.
+      description: >
+        Links a single authorized Memory Reference (a Hexalith.Memories Case) to an active Project
+        (FR-10, FR-11). Hexalith.Memories remains the lifecycle, content, classification, and
+        authorization owner; Projects stores only the opaque case identifier and safe display
+        metadata. The server validates the case through the Memories metadata-only ACL (the stable
+        GetCaseAsync read route) before accepting and never reads MemoryUnit content or embeddings.
+        Linking a memory never clears, replaces, satisfies, or auto-creates the single Project
+        Folder. Tenant authority comes from authenticated principal claims and EventStore
+        envelopes, never the request body.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/MemoryReferenceId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkMemoryRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/LinkMemoryRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - memory_metadata.display_name
+        - memory_reference_id
+        - operation
+        - project_id
+        - request_schema_version
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: task-id
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-link-memory-permission-project-detail-and-memories-case-acl
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
+        - internal_error
+  /api/v1/projects/{projectId}/memories/{memoryReferenceId}:
+    delete:
+      tags:
+        - projects
+      operationId: UnlinkMemory
+      summary: Unlink a Memory Reference from a Project without deleting the case.
+      description: >
+        Removes only the Project-to-memory association (FR-10, FR-11). It never calls
+        Hexalith.Memories, never deletes, archives, reads, or mutates the underlying Case or any
+        MemoryUnit, and it never removes the single Project Folder or any File Reference. Unlinking
+        a memory reference that is not present is a safe idempotent no-op.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/MemoryReferenceId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnlinkMemoryRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/UnlinkMemoryRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - memory_reference_id
+        - operation
+        - project_id
+        - request_schema_version
+        - unlink_intent
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: task-id
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-unlink-memory-permission-project-detail
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
+        - internal_error
   /api/v1/projects/{projectId}/setup:
     patch:
       tags:
@@ -943,6 +1097,13 @@ components:
       in: path
       required: true
       description: Opaque, Projects-owned stable file-reference identifier. It is a reference identity, not a path, tenant authority, or file content.
+      schema:
+        $ref: "#/components/schemas/OpaqueIdentifier"
+    MemoryReferenceId:
+      name: memoryReferenceId
+      in: path
+      required: true
+      description: Opaque Memories-owned case identifier (ULID-shaped sibling identifier). It is a reference identity, not Memories tenant authority, MemoryUnit content, content hash, or source URI.
       schema:
         $ref: "#/components/schemas/OpaqueIdentifier"
     PageSize:
@@ -1307,6 +1468,21 @@ components:
         unlinkIntent: removeReference
         projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
         fileReferenceId: file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1
+    LinkMemoryRequest:
+      value:
+        requestSchemaVersion: v1
+        operation: link
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        memoryReferenceId: case_01HZY7Z6N7J4Q2X8Y9V0A1B2E1
+        memoryMetadata:
+          displayName: synthetic-case-alpha
+    UnlinkMemoryRequest:
+      value:
+        requestSchemaVersion: v1
+        operation: unlink
+        unlinkIntent: removeReference
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        memoryReferenceId: case_01HZY7Z6N7J4Q2X8Y9V0A1B2E1
   schemas:
     OpaqueIdentifier:
       type: string
@@ -1721,6 +1897,72 @@ components:
         projectId:
           $ref: "#/components/schemas/OpaqueIdentifier"
         fileReferenceId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+    ProjectMemoryReferenceMetadata:
+      type: object
+      additionalProperties: false
+      description: Safe metadata-only Memory Reference display metadata. It is not Memories tenant authority, MemoryUnit content, content hash, source URI, embedding material, or raw upstream error text.
+      required:
+        - displayName
+      properties:
+        displayName:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 160
+          description: Safe display metadata for the memory reference.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+    LinkMemoryRequest:
+      type: object
+      additionalProperties: false
+      description: Closed command body for linking a Memory Reference (Hexalith.Memories Case). Tenant/principal/actor authority is server-derived and not accepted here. The Memories tenant is implicit (envelope tenant) and never accepted from the request body.
+      required:
+        - requestSchemaVersion
+        - operation
+        - projectId
+        - memoryReferenceId
+        - memoryMetadata
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        operation:
+          type: string
+          enum:
+            - link
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        memoryReferenceId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        memoryMetadata:
+          $ref: "#/components/schemas/ProjectMemoryReferenceMetadata"
+    UnlinkMemoryRequest:
+      type: object
+      additionalProperties: false
+      description: Closed command body for unlinking a Memory Reference. It removes only the Project-to-memory association and never calls Hexalith.Memories or mutates the underlying Case or any MemoryUnit.
+      required:
+        - requestSchemaVersion
+        - operation
+        - unlinkIntent
+        - projectId
+        - memoryReferenceId
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        operation:
+          type: string
+          enum:
+            - unlink
+        unlinkIntent:
+          type: string
+          enum:
+            - removeReference
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        memoryReferenceId:
           $ref: "#/components/schemas/OpaqueIdentifier"
     ProjectConversationsPage:
       type: object

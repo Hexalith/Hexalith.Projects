@@ -72,6 +72,110 @@ public sealed class ProjectAuthorizationGateTests
     }
 
     [Theory]
+    [InlineData("linkMemory")]
+    [InlineData("unlinkMemory")]
+    public async Task AuthorizeMemoryMutation_WhenAllowed_RequiresProjectDetailAndEvaluatesDeclaredLayerOrder(string mutation)
+    {
+        IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
+        ProjectDetailItem detail = new(
+            "tenant-a",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "Project",
+            null,
+            null,
+            null,
+            null,
+            [],
+            [],
+            ProjectLifecycle.Active,
+            Now,
+            Now,
+            1);
+        ProjectAuthorizationGate gate = new(
+            new TenantAccessAuthorizer(store, new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions()),
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new SingleProjectReadModel(detail));
+
+        FixedProjectTenantContextAccessor tenantContext = new(
+            "tenant-a",
+            "principal-a",
+            [ProjectAuthorizationGate.LinkMemoryAction, ProjectAuthorizationGate.UnlinkMemoryAction]);
+
+        ProjectAuthorizationResult result = mutation == "linkMemory"
+            ? await gate.AuthorizeLinkMemoryAsync(
+                detail.ProjectId,
+                tenantContext,
+                new DefaultHttpContext(),
+                "corr-a",
+                "task-a",
+                TestContext.Current.CancellationToken).ConfigureAwait(true)
+            : await gate.AuthorizeUnlinkMemoryAsync(
+                detail.ProjectId,
+                tenantContext,
+                new DefaultHttpContext(),
+                "corr-a",
+                "task-a",
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        result.IsAllowed.ShouldBeTrue();
+        result.ProjectDetail.ShouldBe(detail);
+        result.EvaluatedLayers.ShouldBe(AuthorizationOrder.LayeredProjectAuthorization);
+    }
+
+    [Fact]
+    public async Task AuthorizeLinkMemory_WhenLinkMemoryPermissionMissing_DeniesAtClaimTransformLayer()
+    {
+        IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
+        ProjectAuthorizationGate gate = new(
+            new TenantAccessAuthorizer(store, new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions()),
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new EmptyReadModel());
+
+        ProjectAuthorizationResult result = await gate.AuthorizeLinkMemoryAsync(
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            new FixedProjectTenantContextAccessor(
+                "tenant-a",
+                "principal-a",
+                [ProjectAuthorizationGate.ReadProjectAction]),
+            new DefaultHttpContext(),
+            "corr-a",
+            "task-a",
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        result.IsAllowed.ShouldBeFalse();
+        result.TerminalLayer.ShouldBe(AuthorizationLayer.EventStoreClaimTransform);
+        result.EvaluatedLayers.ShouldBe([AuthorizationLayer.JwtValidation, AuthorizationLayer.EventStoreClaimTransform]);
+    }
+
+    [Fact]
+    public async Task AuthorizeUnlinkMemory_WhenUnlinkMemoryPermissionMissing_DeniesAtClaimTransformLayer()
+    {
+        IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
+        ProjectAuthorizationGate gate = new(
+            new TenantAccessAuthorizer(store, new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions()),
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new EmptyReadModel());
+
+        ProjectAuthorizationResult result = await gate.AuthorizeUnlinkMemoryAsync(
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            new FixedProjectTenantContextAccessor(
+                "tenant-a",
+                "principal-a",
+                [ProjectAuthorizationGate.ReadProjectAction]),
+            new DefaultHttpContext(),
+            "corr-a",
+            "task-a",
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        result.IsAllowed.ShouldBeFalse();
+        result.TerminalLayer.ShouldBe(AuthorizationLayer.EventStoreClaimTransform);
+        result.EvaluatedLayers.ShouldBe([AuthorizationLayer.JwtValidation, AuthorizationLayer.EventStoreClaimTransform]);
+    }
+
+    [Theory]
     [InlineData("setup")]
     [InlineData("archive")]
     public async Task AuthorizeMutation_WhenAllowed_RequiresProjectDetailAndEvaluatesDeclaredLayerOrder(string mutation)
@@ -85,6 +189,7 @@ public sealed class ProjectAuthorizationGateTests
             null,
             null,
             null,
+            [],
             [],
             ProjectLifecycle.Active,
             Now,
@@ -159,6 +264,7 @@ public sealed class ProjectAuthorizationGateTests
             "setup-reference",
             null,
             null,
+            [],
             [],
             ProjectLifecycle.Archived,
             Now,

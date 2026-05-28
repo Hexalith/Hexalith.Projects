@@ -53,7 +53,9 @@ public sealed record ProjectResult(
         or ProjectResultCode.Archived
         or ProjectResultCode.FolderSet
         or ProjectResultCode.FileReferenceLinked
-        or ProjectResultCode.FileReferenceUnlinked;
+        or ProjectResultCode.FileReferenceUnlinked
+        or ProjectResultCode.MemoryLinked
+        or ProjectResultCode.MemoryUnlinked;
 
     /// <summary>
     /// Gets a value indicating whether the result is a logical idempotent replay (no second event;
@@ -105,6 +107,8 @@ public sealed record ProjectResult(
             SetProjectFolder setProjectFolder => ("folder", SafeReferenceIdentifier(setProjectFolder.FolderId)),
             LinkFileReference linkFileReference => ("file", SafeReferenceIdentifier(linkFileReference.FileReferenceId)),
             UnlinkFileReference unlinkFileReference => ("file", SafeReferenceIdentifier(unlinkFileReference.FileReferenceId)),
+            LinkMemory linkMemory => ("memory", SafeReferenceIdentifier(linkMemory.MemoryReferenceId)),
+            UnlinkMemory unlinkMemory => ("memory", SafeReferenceIdentifier(unlinkMemory.MemoryReferenceId)),
             _ => (null, null),
         };
 
@@ -174,6 +178,8 @@ public sealed record ProjectResult(
         ProjectResultCode.ProjectFolderReplacementRequiresConfirmation => ReferenceState.Conflict,
         ProjectResultCode.FileReferenceConflict => ReferenceState.Conflict,
         ProjectResultCode.FileReferenceLimitExceeded => ReferenceState.Conflict,
+        ProjectResultCode.MemoryReferenceConflict => ReferenceState.Conflict,
+        ProjectResultCode.MemoryReferenceLimitExceeded => ReferenceState.Conflict,
         ProjectResultCode.IdempotencyConflict => ReferenceState.Conflict,
         ProjectResultCode.ProjectNotFound => ReferenceState.InvalidReference,
         ProjectResultCode.ValidationFailed => ReferenceState.InvalidReference,
@@ -225,6 +231,22 @@ public sealed record ProjectResult(
                 projectId ?? new Contracts.Identifiers.ProjectId("unknown"),
                 TenantId ?? string.Empty,
                 ReferenceKind ?? "file",
+                ReferenceId ?? "unknown",
+                ToRejectionReason(),
+                RejectedField,
+                CorrelationId),
+            nameof(LinkMemory) => new ProjectReferenceLinkRejected(
+                projectId ?? new Contracts.Identifiers.ProjectId("unknown"),
+                TenantId ?? string.Empty,
+                ReferenceKind ?? "memory",
+                ReferenceId ?? "unknown",
+                ToRejectionReason(),
+                RejectedField,
+                CorrelationId),
+            nameof(UnlinkMemory) => new ProjectReferenceUnlinkRejected(
+                projectId ?? new Contracts.Identifiers.ProjectId("unknown"),
+                TenantId ?? string.Empty,
+                ReferenceKind ?? "memory",
                 ReferenceId ?? "unknown",
                 ToRejectionReason(),
                 RejectedField,

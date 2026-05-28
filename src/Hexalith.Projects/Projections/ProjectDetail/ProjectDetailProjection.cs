@@ -102,6 +102,7 @@ public sealed record ProjectDetailProjection
                         null,
                         null,
                         [],
+                        [],
                         created.Lifecycle,
                         created.OccurredAt,
                         created.OccurredAt,
@@ -192,6 +193,39 @@ public sealed record ProjectDetailProjection
 
                     break;
 
+                case MemoryLinked memoryLinked:
+                    if (projects.TryGetValue(key, out ProjectDetailItem? memoryLinkedDetail))
+                    {
+                        projects[key] = memoryLinkedDetail with
+                        {
+                            MemoryReferences = UpsertMemoryReference(
+                                memoryLinkedDetail.MemoryReferences,
+                                new ProjectMemoryReference(
+                                    memoryLinked.MemoryReferenceId,
+                                    memoryLinked.MemoryMetadata.DisplayName,
+                                    ReferenceState.Included,
+                                    null,
+                                    memoryLinked.OccurredAt)),
+                            UpdatedAt = memoryLinked.OccurredAt,
+                            Sequence = envelope.Sequence,
+                        };
+                    }
+
+                    break;
+
+                case MemoryUnlinked memoryUnlinked:
+                    if (projects.TryGetValue(key, out ProjectDetailItem? memoryUnlinkedDetail))
+                    {
+                        projects[key] = memoryUnlinkedDetail with
+                        {
+                            MemoryReferences = RemoveMemoryReference(memoryUnlinkedDetail.MemoryReferences, memoryUnlinked.MemoryReferenceId),
+                            UpdatedAt = memoryUnlinked.OccurredAt,
+                            Sequence = envelope.Sequence,
+                        };
+                    }
+
+                    break;
+
                 case ProjectArchived archived:
                     if (projects.TryGetValue(key, out ProjectDetailItem? archivedDetail))
                     {
@@ -257,5 +291,25 @@ public sealed record ProjectDetailProjection
         => current
             .Where(existing => !string.Equals(existing.FileReferenceId, fileReferenceId, StringComparison.Ordinal))
             .OrderBy(item => item.FileReferenceId, StringComparer.Ordinal)
+            .ToList();
+
+    private static IReadOnlyList<ProjectMemoryReference> UpsertMemoryReference(
+        IReadOnlyList<ProjectMemoryReference> current,
+        ProjectMemoryReference reference)
+    {
+        List<ProjectMemoryReference> next = current
+            .Where(existing => !string.Equals(existing.MemoryReferenceId, reference.MemoryReferenceId, StringComparison.Ordinal))
+            .Append(reference)
+            .OrderBy(item => item.MemoryReferenceId, StringComparer.Ordinal)
+            .ToList();
+        return next;
+    }
+
+    private static IReadOnlyList<ProjectMemoryReference> RemoveMemoryReference(
+        IReadOnlyList<ProjectMemoryReference> current,
+        string memoryReferenceId)
+        => current
+            .Where(existing => !string.Equals(existing.MemoryReferenceId, memoryReferenceId, StringComparison.Ordinal))
+            .OrderBy(item => item.MemoryReferenceId, StringComparer.Ordinal)
             .ToList();
 }

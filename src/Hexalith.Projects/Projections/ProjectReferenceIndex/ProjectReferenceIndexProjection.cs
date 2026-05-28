@@ -29,6 +29,7 @@ public sealed record ProjectReferenceIndexProjection
 {
     private const string FolderReferenceKind = "folder";
     private const string FileReferenceKind = "file";
+    private const string MemoryReferenceKind = "memory";
     private const string PendingFolderReferenceKey = "_pending_project_folder";
 
     private ProjectReferenceIndexProjection(IReadOnlyDictionary<string, ProjectReferenceIndexItem> references)
@@ -116,6 +117,23 @@ public sealed record ProjectReferenceIndexProjection
 
                 case FileReferenceUnlinked unlinked:
                     references.Remove(Key(unlinked.TenantId, unlinked.ProjectId, FileReferenceKind, unlinked.FileReferenceId));
+                    break;
+
+                case MemoryLinked memoryLinked:
+                    references[Key(memoryLinked.TenantId, memoryLinked.ProjectId, MemoryReferenceKind, memoryLinked.MemoryReferenceId)] = new ProjectReferenceIndexItem(
+                        memoryLinked.TenantId,
+                        memoryLinked.ProjectId,
+                        MemoryReferenceKind,
+                        memoryLinked.MemoryReferenceId,
+                        ReferenceState.Included,
+                        memoryLinked.MemoryMetadata.DisplayName,
+                        null,
+                        memoryLinked.OccurredAt,
+                        envelope.Sequence);
+                    break;
+
+                case MemoryUnlinked memoryUnlinked:
+                    references.Remove(Key(memoryUnlinked.TenantId, memoryUnlinked.ProjectId, MemoryReferenceKind, memoryUnlinked.MemoryReferenceId));
                     break;
 
                 default:
