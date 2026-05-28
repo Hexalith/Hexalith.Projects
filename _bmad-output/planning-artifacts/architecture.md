@@ -709,7 +709,9 @@ in Server, generated surfaces from contracts. Dependency direction is machine-ch
 - Concrete `ProjectSetup` field schema + validation rules (refine in contracts/story design).
 - Resolution scoring/confidence-band definition (compute heuristics) — design in the resolution story.
 - Memories linkage: confirm whether a Project Memory link maps to a Memories `Case` or individual
-  `MemoryUnit` references (Memories model is Tenant→Case→MemoryUnit).
+  `MemoryUnit` references (Memories model is Tenant→Case→MemoryUnit). **Resolved by Story 2.6
+  (PR-4 / AR-G4) — a Project Memory link targets a Memories `Case`; see
+  `docs/adr/memories-link-target.md`.**
 
 ### Validation Issues Addressed
 The conversation link/move dependency (Gap 1) is the highest-priority finding: it is a genuine
