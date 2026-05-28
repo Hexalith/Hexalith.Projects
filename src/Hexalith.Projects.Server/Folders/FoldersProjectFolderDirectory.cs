@@ -18,11 +18,26 @@ public sealed class FoldersProjectFolderDirectory(FoldersClient foldersClient) :
     private readonly FoldersClient _foldersClient = foldersClient ?? throw new ArgumentNullException(nameof(foldersClient));
 
     /// <inheritdoc />
-    public async Task<ProjectFolderValidationResult> ValidateSetProjectFolderAsync(
+    public Task<ProjectFolderValidationResult> ValidateSetProjectFolderAsync(
         ProjectId projectId,
         string folderId,
         string correlationId,
         CancellationToken cancellationToken = default)
+        => CheckFolderEvidenceAsync(projectId, folderId, correlationId, cancellationToken);
+
+    /// <inheritdoc />
+    public Task<ProjectFolderValidationResult> RefreshFolderReferenceAsync(
+        ProjectId projectId,
+        string folderId,
+        string correlationId,
+        CancellationToken cancellationToken = default)
+        => CheckFolderEvidenceAsync(projectId, folderId, correlationId, cancellationToken);
+
+    private async Task<ProjectFolderValidationResult> CheckFolderEvidenceAsync(
+        ProjectId projectId,
+        string folderId,
+        string correlationId,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(projectId);
 

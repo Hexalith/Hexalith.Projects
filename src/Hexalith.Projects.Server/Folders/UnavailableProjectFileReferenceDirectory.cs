@@ -20,4 +20,14 @@ internal sealed class UnavailableProjectFileReferenceDirectory : IProjectFileRef
         string taskId,
         CancellationToken cancellationToken = default)
         => Task.FromResult(new ProjectFileReferenceValidationResult(ProjectFileReferenceValidationOutcome.Unavailable, correlationId));
+
+    /// <inheritdoc />
+    public Task<ProjectFileReferenceValidationResult> RefreshFileReferenceAsync(
+        ProjectId projectId,
+        string fileReferenceId,
+        string folderId,
+        string correlationId,
+        string taskId,
+        CancellationToken cancellationToken = default)
+        => Task.FromResult(new ProjectFileReferenceValidationResult(ProjectFileReferenceValidationOutcome.Unavailable, correlationId));
 }

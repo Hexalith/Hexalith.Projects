@@ -25,4 +25,22 @@ public interface IProjectFolderDirectory
         string folderId,
         string correlationId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Re-checks the current state of an existing Project Folder reference against the Folders boundary
+    /// at Refresh time (Story 3.4, FR-18). This is a read-side recheck of an already-linked reference; it
+    /// does NOT validate a new assignment. The handler maps the safe outcome onto a fresh
+    /// <see cref="Hexalith.Projects.Contracts.Ui.ReferenceState"/> that overrides the projection-stored
+    /// state when the recheck disagrees.
+    /// </summary>
+    /// <param name="projectId">The Project whose folder reference is being re-checked.</param>
+    /// <param name="folderId">The Folders-owned folder reference identifier already stored on the projection.</param>
+    /// <param name="correlationId">The caller/project correlation identifier.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A safe Projects-shaped recheck result (same shape as Validate).</returns>
+    Task<ProjectFolderValidationResult> RefreshFolderReferenceAsync(
+        ProjectId projectId,
+        string folderId,
+        string correlationId,
+        CancellationToken cancellationToken = default);
 }

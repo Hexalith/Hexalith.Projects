@@ -17,4 +17,12 @@ internal sealed class UnavailableProjectFolderDirectory : IProjectFolderDirector
         string correlationId,
         CancellationToken cancellationToken = default)
         => Task.FromResult(new ProjectFolderValidationResult(ProjectFolderValidationOutcome.Unavailable, correlationId));
+
+    /// <inheritdoc />
+    public Task<ProjectFolderValidationResult> RefreshFolderReferenceAsync(
+        ProjectId projectId,
+        string folderId,
+        string correlationId,
+        CancellationToken cancellationToken = default)
+        => Task.FromResult(new ProjectFolderValidationResult(ProjectFolderValidationOutcome.Unavailable, correlationId));
 }

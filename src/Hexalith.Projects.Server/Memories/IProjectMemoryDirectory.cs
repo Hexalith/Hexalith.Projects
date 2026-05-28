@@ -36,4 +36,26 @@ public interface IProjectMemoryDirectory
         string correlationId,
         string taskId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Re-checks the current state of an existing Project Memory reference against the Hexalith.Memories
+    /// boundary at Refresh time (Story 3.4, FR-18). This is a read-side recheck of an already-linked
+    /// reference; it does NOT validate a new link. Both Validate and Refresh consume the same stable
+    /// <c>MemoriesClient.GetCaseAsync</c> route (Story 2.6 ADR) — Refresh interprets the response for
+    /// drift detection (state mapping), Validate for link-eligibility (commit-or-deny).
+    /// </summary>
+    /// <param name="projectId">The Project whose memory reference is being re-checked.</param>
+    /// <param name="memoryReferenceId">The opaque Memories case identifier (ULID-shaped).</param>
+    /// <param name="tenantId">The envelope tenant identifier (server-derived, never from request body).</param>
+    /// <param name="correlationId">The caller/project correlation identifier.</param>
+    /// <param name="taskId">The task identifier for task-scoped operations.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A safe Projects-shaped recheck result (same shape as Validate).</returns>
+    Task<ProjectMemoryValidationResult> RefreshMemoryReferenceAsync(
+        ProjectId projectId,
+        string memoryReferenceId,
+        string tenantId,
+        string correlationId,
+        string taskId,
+        CancellationToken cancellationToken = default);
 }

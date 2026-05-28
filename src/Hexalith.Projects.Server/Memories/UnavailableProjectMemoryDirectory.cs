@@ -19,4 +19,14 @@ internal sealed class UnavailableProjectMemoryDirectory : IProjectMemoryDirector
         string taskId,
         CancellationToken cancellationToken = default)
         => Task.FromResult(new ProjectMemoryValidationResult(ProjectMemoryValidationOutcome.Unavailable, correlationId));
+
+    /// <inheritdoc />
+    public Task<ProjectMemoryValidationResult> RefreshMemoryReferenceAsync(
+        ProjectId projectId,
+        string memoryReferenceId,
+        string tenantId,
+        string correlationId,
+        string taskId,
+        CancellationToken cancellationToken = default)
+        => Task.FromResult(new ProjectMemoryValidationResult(ProjectMemoryValidationOutcome.Unavailable, correlationId));
 }

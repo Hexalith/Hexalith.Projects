@@ -143,6 +143,34 @@ public sealed class FoldersProjectFileReferenceDirectory(FoldersClient foldersCl
         return string.IsNullOrWhiteSpace(segment) ? "file" : segment;
     }
 
+    /// <inheritdoc />
+    public Task<ProjectFileReferenceValidationResult> RefreshFileReferenceAsync(
+        ProjectId projectId,
+        string fileReferenceId,
+        string folderId,
+        string correlationId,
+        string taskId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(projectId);
+
+        // Story 3.4 capability-gate HALT (option (a)): the Folders typed client does not expose a stable
+        // read route that validates a file reference by opaque (folderId, fileReferenceId) without
+        // workspaceId / filePath inputs. Projects MUST NOT store workspaceId / filePath per
+        // docs/payload-taxonomy.md, so the recheck cannot be performed in v1. Fail closed by returning
+        // Unavailable; the outcome mapper translates that to ReferenceState.Unavailable when the handler
+        // chooses to invoke this method. The default Story 3.4 handler does NOT invoke this method —
+        // file references retain their projection-stored state until a Folders submodule story adds an
+        // opaque-id-only read route.
+        _ = fileReferenceId;
+        _ = folderId;
+        _ = taskId;
+        _ = cancellationToken;
+        return Task.FromResult(new ProjectFileReferenceValidationResult(
+            ProjectFileReferenceValidationOutcome.Unavailable,
+            correlationId));
+    }
+
     private static ProjectFileReferenceValidationOutcome MapFoldersStatus(int statusCode)
         => statusCode switch
         {

@@ -411,6 +411,73 @@ paths:
         - projection_stale
         - projection_unavailable
         - internal_error
+  /api/v1/projects/{projectId}/context/refresh:
+    get:
+      tags:
+        - projects
+      operationId: RefreshProjectContext
+      summary: Request a refreshed Project Context after links, setup, or resource availability change.
+      description: >
+        Returns the metadata-only Project Context (same wire shape as GetProjectContext) after an
+        on-the-fly recheck of every linked Folders / Memories reference against the sibling ACLs at
+        Refresh time, so the returned context reflects the current state rather than stale
+        projection assumptions. Realizes FR-18 / UJ-4 / AR-9. The handler is a thin orchestrator over
+        ProjectContextInclusionPolicy (Story 3.1) — it never duplicates any include/exclude /
+        fail-closed collapse / freshness mapping decision. Reads are eventually consistent and carry
+        the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is
+        rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and
+        ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Freshness"
+      responses:
+        "200":
+          description: Assembled Project Context after sibling-ACL recheck, with closed-vocabulary diagnostics and freshness evidence.
+          headers:
+            X-Correlation-Id:
+              $ref: "#/components/headers/CorrelationId"
+            X-Hexalith-Freshness:
+              $ref: "#/components/headers/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectContext"
+              examples:
+                synthetic:
+                  $ref: "#/components/examples/ProjectContext"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-read-consistency:
+        class: eventually_consistent
+        freshnessBehavior: returns-projection-watermark-when-available
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: query-correlation-only
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-and-project-read-permission
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - not_found
+        - read_model_unavailable
+        - referenced_resource_unavailable
+        - projection_stale
+        - projection_unavailable
+        - internal_error
   /api/v1/projects/{projectId}/conversations/{conversationId}/link:
     post:
       tags:

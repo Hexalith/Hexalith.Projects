@@ -2387,6 +2387,13 @@ public sealed class CreateProjectEndpointTests
             string correlationId,
             CancellationToken cancellationToken = default)
             => Task.FromResult(new ProjectFolderValidationResult(outcome, correlationId));
+
+        public Task<ProjectFolderValidationResult> RefreshFolderReferenceAsync(
+            Hexalith.Projects.Contracts.Identifiers.ProjectId projectId,
+            string folderId,
+            string correlationId,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(new ProjectFolderValidationResult(ProjectFolderValidationOutcome.Unavailable, correlationId));
     }
 
     private sealed class TrackingProjectFolderDirectory(ProjectFolderValidationOutcome outcome) : IProjectFolderDirectory
@@ -2402,6 +2409,13 @@ public sealed class CreateProjectEndpointTests
             CallCount++;
             return Task.FromResult(new ProjectFolderValidationResult(outcome, correlationId));
         }
+
+        public Task<ProjectFolderValidationResult> RefreshFolderReferenceAsync(
+            Hexalith.Projects.Contracts.Identifiers.ProjectId projectId,
+            string folderId,
+            string correlationId,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(new ProjectFolderValidationResult(ProjectFolderValidationOutcome.Unavailable, correlationId));
     }
 
     private sealed class TrackingProjectFileReferenceDirectory(ProjectFileReferenceValidationOutcome outcome) : IProjectFileReferenceDirectory
@@ -2420,6 +2434,15 @@ public sealed class CreateProjectEndpointTests
             CallCount++;
             return Task.FromResult(new ProjectFileReferenceValidationResult(outcome, correlationId));
         }
+
+        public Task<ProjectFileReferenceValidationResult> RefreshFileReferenceAsync(
+            Hexalith.Projects.Contracts.Identifiers.ProjectId projectId,
+            string fileReferenceId,
+            string folderId,
+            string correlationId,
+            string taskId,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(new ProjectFileReferenceValidationResult(ProjectFileReferenceValidationOutcome.Unavailable, correlationId));
     }
 
     private sealed class TrackingProjectMemoryDirectory(ProjectMemoryValidationOutcome outcome) : IProjectMemoryDirectory
@@ -2437,6 +2460,15 @@ public sealed class CreateProjectEndpointTests
             CallCount++;
             return Task.FromResult(new ProjectMemoryValidationResult(outcome, correlationId));
         }
+
+        public Task<ProjectMemoryValidationResult> RefreshMemoryReferenceAsync(
+            Hexalith.Projects.Contracts.Identifiers.ProjectId projectId,
+            string memoryReferenceId,
+            string tenantId,
+            string correlationId,
+            string taskId,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(new ProjectMemoryValidationResult(ProjectMemoryValidationOutcome.Unavailable, correlationId));
     }
 
     private sealed class ThrowingProjectDetailReadModel : IProjectDetailReadModel

@@ -152,6 +152,30 @@ public static partial class ProjectsDomainServiceEndpoints
                 cancellationToken).ConfigureAwait(false))
             .WithName("GetProjectContextExplanation");
 
+        endpoints.MapGet("/api/v1/projects/{projectId}/context/refresh", static async (
+            string projectId,
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectConversationDirectory conversationDirectory,
+            IProjectFolderDirectory folderDirectory,
+            IProjectMemoryDirectory memoryDirectory,
+            Hexalith.Projects.Context.ProjectContextInclusionPolicy contextPolicy,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await RefreshProjectContextAsync(
+                projectId,
+                httpContext,
+                tenantContext,
+                authorizationGate,
+                conversationDirectory,
+                folderDirectory,
+                memoryDirectory,
+                contextPolicy,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("RefreshProjectContext");
+
         endpoints.MapPost("/api/v1/projects/{projectId}/conversations/{conversationId}/link", static async (
             string projectId,
             string conversationId,

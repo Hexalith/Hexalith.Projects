@@ -36,4 +36,29 @@ public interface IProjectFileReferenceDirectory
         string correlationId,
         string taskId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Re-checks the current state of an existing Project File reference against the Folders boundary
+    /// at Refresh time (Story 3.4, FR-18). This is a read-side recheck of an already-linked reference; it
+    /// does NOT validate a new link. The Refresh recheck is by opaque file-reference id and stored
+    /// folder id — Projects must NEVER store workspaceId / filePath / path-like fields, so the recheck
+    /// uses only the safe identifiers already present on the projection. Implementations that cannot
+    /// perform an opaque-id recheck (because the upstream stable read route does not yet exist) MUST
+    /// fail closed and return <see cref="ProjectFileReferenceValidationOutcome.Unavailable"/>; the
+    /// outcome mapper translates that to <see cref="Hexalith.Projects.Contracts.Ui.ReferenceState.Unavailable"/>.
+    /// </summary>
+    /// <param name="projectId">The Project whose file reference is being re-checked.</param>
+    /// <param name="fileReferenceId">The Projects-owned opaque file-reference identifier.</param>
+    /// <param name="folderId">The Folders-owned folder identifier the file lives under (from the projection).</param>
+    /// <param name="correlationId">The caller/project correlation identifier.</param>
+    /// <param name="taskId">The task identifier for task-scoped operations.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A safe Projects-shaped recheck result (same shape as Validate).</returns>
+    Task<ProjectFileReferenceValidationResult> RefreshFileReferenceAsync(
+        ProjectId projectId,
+        string fileReferenceId,
+        string folderId,
+        string correlationId,
+        string taskId,
+        CancellationToken cancellationToken = default);
 }

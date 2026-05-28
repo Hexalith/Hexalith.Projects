@@ -27,13 +27,31 @@ public sealed class MemoriesProjectMemoryDirectory(MemoriesClient memoriesClient
     private readonly MemoriesClient _memoriesClient = memoriesClient ?? throw new ArgumentNullException(nameof(memoriesClient));
 
     /// <inheritdoc />
-    public async Task<ProjectMemoryValidationResult> ValidateLinkMemoryReferenceAsync(
+    public Task<ProjectMemoryValidationResult> ValidateLinkMemoryReferenceAsync(
         ProjectId projectId,
         string memoryReferenceId,
         string tenantId,
         string correlationId,
         string taskId,
         CancellationToken cancellationToken = default)
+        => CheckMemoryEvidenceAsync(projectId, memoryReferenceId, tenantId, correlationId, cancellationToken);
+
+    /// <inheritdoc />
+    public Task<ProjectMemoryValidationResult> RefreshMemoryReferenceAsync(
+        ProjectId projectId,
+        string memoryReferenceId,
+        string tenantId,
+        string correlationId,
+        string taskId,
+        CancellationToken cancellationToken = default)
+        => CheckMemoryEvidenceAsync(projectId, memoryReferenceId, tenantId, correlationId, cancellationToken);
+
+    private async Task<ProjectMemoryValidationResult> CheckMemoryEvidenceAsync(
+        ProjectId projectId,
+        string memoryReferenceId,
+        string tenantId,
+        string correlationId,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(projectId);
 
