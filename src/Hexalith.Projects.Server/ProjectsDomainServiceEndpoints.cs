@@ -176,6 +176,24 @@ public static partial class ProjectsDomainServiceEndpoints
                 cancellationToken).ConfigureAwait(false))
             .WithName("RefreshProjectContext");
 
+        endpoints.MapGet("/api/v1/projects/{projectId}/setup/conversation-start", static async (
+            string projectId,
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            Hexalith.Projects.Context.ProjectContextInclusionPolicy contextPolicy,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await GetConversationStartSetupAsync(
+                projectId,
+                httpContext,
+                tenantContext,
+                authorizationGate,
+                contextPolicy,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("GetConversationStartSetup");
+
         endpoints.MapPost("/api/v1/projects/{projectId}/conversations/{conversationId}/link", static async (
             string projectId,
             string conversationId,

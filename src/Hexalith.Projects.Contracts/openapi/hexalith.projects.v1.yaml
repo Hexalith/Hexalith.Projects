@@ -478,6 +478,77 @@ paths:
         - projection_stale
         - projection_unavailable
         - internal_error
+  /api/v1/projects/{projectId}/setup/conversation-start:
+    get:
+      tags:
+        - projects
+      operationId: GetConversationStartSetup
+      summary: Retrieve the bounded subset of Project Setup needed to start or resume a conversation.
+      description: >
+        Returns the bounded subset of Project Setup (goals, instructions, context preferences,
+        default linked-source policy) plus the lifecycle / observed-at / freshness envelope that
+        Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and
+        AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit
+        metadata and per-reference inventory; stable enough to use without re-querying every
+        bounded context first — no sibling ACL recheck, no conversation page fetch, no folder /
+        file / memory reference inventory. Consumers that need per-reference inventory or
+        exclusion diagnostics call GetProjectContext / GetProjectContextExplanation /
+        RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness
+        response header. Idempotency-Key is not a query parameter and is rejected if present after
+        authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both
+        collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Freshness"
+      responses:
+        "200":
+          description: Bounded conversation-start setup subset with closed-vocabulary lifecycle / freshness signals.
+          headers:
+            X-Correlation-Id:
+              $ref: "#/components/headers/CorrelationId"
+            X-Hexalith-Freshness:
+              $ref: "#/components/headers/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationStartSetup"
+              examples:
+                synthetic:
+                  $ref: "#/components/examples/ConversationStartSetup"
+                empty:
+                  $ref: "#/components/examples/ConversationStartSetupEmpty"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-read-consistency:
+        class: eventually_consistent
+        freshnessBehavior: returns-projection-watermark-when-available
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: query-correlation-only
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-and-project-read-permission
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - not_found
+        - read_model_unavailable
+        - projection_stale
+        - projection_unavailable
+        - internal_error
   /api/v1/projects/{projectId}/conversations/{conversationId}/link:
     post:
       tags:
@@ -1782,6 +1853,37 @@ components:
             reasonCode: null
             diagnostic: referenceArchived
             observedAt: "2026-05-12T12:34:56Z"
+    ConversationStartSetup:
+      summary: Synthetic conversation-start setup — populated goals + user instructions + preferred / excluded source kinds + authorized-references linked-source policy. The authoritative tenant is intentionally NOT on the wire (FS-8 / SM-3).
+      value:
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        lifecycle: Active
+        goals:
+          - generate weekly status reports
+          - identify project risks
+        userInstructions:
+          - use concise language
+          - reference project id in headers
+        preferredSourceKinds:
+          - conversation
+          - memory
+        excludedSourceKinds:
+          - fileReference
+        linkedSourcePolicy: authorizedReferences
+        observedAt: "2026-05-12T12:34:56Z"
+        freshness: Fresh
+    ConversationStartSetupEmpty:
+      summary: Synthetic empty conversation-start setup — no goals / instructions / source-kind preferences (the no-UpdateProjectSetup-yet happy path); LinkedSourcePolicy defaults to none.
+      value:
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        lifecycle: Active
+        goals: []
+        userInstructions: []
+        preferredSourceKinds: []
+        excludedSourceKinds: []
+        linkedSourcePolicy: none
+        observedAt: "2026-05-12T12:34:56Z"
+        freshness: Fresh
     LinkProjectConversationRequest:
       value:
         requestSchemaVersion: v1
@@ -2967,3 +3069,71 @@ components:
           pattern: "^[a-z][A-Za-z0-9]{0,79}$"
         observedAt:
           $ref: "#/components/schemas/UtcDateTime"
+    ConversationStartSetup:
+      type: object
+      additionalProperties: false
+      description: >
+        Bounded conversation-start subset of Project Setup returned by GetConversationStartSetup
+        (Story 3.5, FR-20). Carries goals, instructions, source-kind preferences, the default
+        linked-source policy, plus the lifecycle / observed-at / freshness envelope. Excludes
+        internal audit metadata (no createdAt / updatedAt / sequence / setupMetadata) and
+        per-reference inventory (no projectFolder / fileReferences / memoryReferences /
+        conversations / excluded / assemblyOutcome). Tenant authority is server-derived and
+        intentionally NOT carried on the wire (FS-8 / SM-3) — the C# DTO does not declare TenantId
+        at all (cleaner than the [JsonIgnore]-on-required-field pattern Story 3.2 used for
+        ProjectContext.TenantId).
+      required:
+        - projectId
+        - lifecycle
+        - goals
+        - userInstructions
+        - preferredSourceKinds
+        - excludedSourceKinds
+        - linkedSourcePolicy
+        - observedAt
+        - freshness
+      properties:
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        lifecycle:
+          description: Project lifecycle (PascalCase wire-name from the C# ProjectLifecycle enum).
+          type: string
+          enum:
+            - Active
+            - Archived
+        goals:
+          type: array
+          maxItems: 16
+          description: Bounded safe project goals (empty when setup is absent).
+          items:
+            type: string
+            minLength: 1
+            maxLength: 512
+            x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        userInstructions:
+          type: array
+          maxItems: 16
+          description: Bounded user-facing instructions (empty when setup is absent).
+          items:
+            type: string
+            minLength: 1
+            maxLength: 512
+            x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        preferredSourceKinds:
+          type: array
+          maxItems: 4
+          description: Preferred source kinds for future context selection (empty when setup is absent).
+          items:
+            $ref: "#/components/schemas/ProjectContextSourceKind"
+        excludedSourceKinds:
+          type: array
+          maxItems: 4
+          description: Excluded source kinds for future context selection (empty when setup is absent).
+          items:
+            $ref: "#/components/schemas/ProjectContextSourceKind"
+        linkedSourcePolicy:
+          $ref: "#/components/schemas/LinkedSourcePolicy"
+        observedAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        freshness:
+          $ref: "#/components/schemas/ProjectContextFreshness"

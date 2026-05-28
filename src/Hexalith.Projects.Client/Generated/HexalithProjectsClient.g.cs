@@ -221,6 +221,33 @@ namespace Hexalith.Projects.Client.Generated
         System.Threading.Tasks.Task<ProjectContext> RefreshProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
+        /// Retrieve the bounded subset of Project Setup needed to start or resume a conversation.
+        /// </summary>
+        /// <remarks>
+        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Bounded conversation-start setup subset with closed-vocabulary lifecycle / freshness signals.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ConversationStartSetup> GetConversationStartSetupAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Retrieve the bounded subset of Project Setup needed to start or resume a conversation.
+        /// </summary>
+        /// <remarks>
+        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Bounded conversation-start setup subset with closed-vocabulary lifecycle / freshness signals.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ConversationStartSetup> GetConversationStartSetupAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
         /// Link an existing conversation to a Project (command-async).
         /// </summary>
         /// <remarks>
@@ -1601,6 +1628,163 @@ namespace Hexalith.Projects.Client.Generated
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProjectContext>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Retrieve the bounded subset of Project Setup needed to start or resume a conversation.
+        /// </summary>
+        /// <remarks>
+        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Bounded conversation-start setup subset with closed-vocabulary lifecycle / freshness signals.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ConversationStartSetup> GetConversationStartSetupAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
+        {
+            return GetConversationStartSetupAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Retrieve the bounded subset of Project Setup needed to start or resume a conversation.
+        /// </summary>
+        /// <remarks>
+        /// Returns the bounded subset of Project Setup (goals, instructions, context preferences, default linked-source policy) plus the lifecycle / observed-at / freshness envelope that Hexalith.Chatbot needs to start or resume a conversation. Realizes FR-20 / UJ-1 / UJ-4 and AR-8 (ConversationStartSetupProjection) / AR-9 (inclusion policy). Excludes internal audit metadata and per-reference inventory; stable enough to use without re-querying every bounded context first — no sibling ACL recheck, no conversation page fetch, no folder / file / memory reference inventory. Consumers that need per-reference inventory or exclusion diagnostics call GetProjectContext / GetProjectContextExplanation / RefreshProjectContext. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Bounded conversation-start setup subset with closed-vocabulary lifecycle / freshness signals.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ConversationStartSetup> GetConversationStartSetupAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        {
+            if (projectId == null)
+                throw new System.ArgumentNullException("projectId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Freshness != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Freshness", ConvertToString(x_Hexalith_Freshness, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects/{projectId}/setup/conversation-start"
+                    urlBuilder_.Append("api/v1/projects/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/setup/conversation-start");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ConversationStartSetup>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -4824,6 +5008,61 @@ namespace Hexalith.Projects.Client.Generated
 
     }
 
+    /// <summary>
+    /// Bounded conversation-start subset of Project Setup returned by GetConversationStartSetup (Story 3.5, FR-20). Carries goals, instructions, source-kind preferences, the default linked-source policy, plus the lifecycle / observed-at / freshness envelope. Excludes internal audit metadata (no createdAt / updatedAt / sequence / setupMetadata) and per-reference inventory (no projectFolder / fileReferences / memoryReferences / conversations / excluded / assemblyOutcome). Tenant authority is server-derived and intentionally NOT carried on the wire (FS-8 / SM-3) — the C# DTO does not declare TenantId at all (cleaner than the [JsonIgnore]-on-required-field pattern Story 3.2 used for ProjectContext.TenantId).
+    /// <br/>
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ConversationStartSetup
+    {
+
+        [Newtonsoft.Json.JsonProperty("projectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectId { get; set; }
+
+        /// <summary>
+        /// Project lifecycle (PascalCase wire-name from the C# ProjectLifecycle enum).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("lifecycle", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ConversationStartSetupLifecycle Lifecycle { get; set; }
+
+        /// <summary>
+        /// Bounded safe project goals (empty when setup is absent).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("goals", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<string> Goals { get; set; } = new System.Collections.Generic.List<string>();
+
+        /// <summary>
+        /// Bounded user-facing instructions (empty when setup is absent).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("userInstructions", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<string> UserInstructions { get; set; } = new System.Collections.Generic.List<string>();
+
+        /// <summary>
+        /// Preferred source kinds for future context selection (empty when setup is absent).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("preferredSourceKinds", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public System.Collections.Generic.ICollection<ProjectContextSourceKind> PreferredSourceKinds { get; set; } = new System.Collections.Generic.List<ProjectContextSourceKind>();
+
+        /// <summary>
+        /// Excluded source kinds for future context selection (empty when setup is absent).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("excludedSourceKinds", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public System.Collections.Generic.ICollection<ProjectContextSourceKind> ExcludedSourceKinds { get; set; } = new System.Collections.Generic.List<ProjectContextSourceKind>();
+
+        [Newtonsoft.Json.JsonProperty("linkedSourcePolicy", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public LinkedSourcePolicy LinkedSourcePolicy { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("observedAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset ObservedAt { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("freshness", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextFreshness Freshness { get; set; }
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum Lifecycle
     {
@@ -5361,6 +5600,18 @@ namespace Hexalith.Projects.Client.Generated
 
         [System.Runtime.Serialization.EnumMember(Value = @"MetadataMatched")]
         MetadataMatched = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ConversationStartSetupLifecycle
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Active")]
+        Active = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Archived")]
+        Archived = 1,
 
     }
 
