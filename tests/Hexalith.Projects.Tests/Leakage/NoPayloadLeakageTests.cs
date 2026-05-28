@@ -569,6 +569,84 @@ public sealed class NoPayloadLeakageTests
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(result));
     }
 
+    [Fact]
+    public void ProjectContextExplanation_SerializesMetadataOnly()
+    {
+        // Structurally identical to ProjectContextAssemblyResult on the wire; Story 3.3 adds this
+        // mirror test so the wrapper's contract is fixed against future drift.
+        ProjectContextExplanation explanation = new(
+            new ProjectContext(
+                "acme",
+                "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+                ProjectLifecycle.Active,
+                Setup: null,
+                ProjectFolder: new ProjectContextReference(
+                    "folder", "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC", "Tracer Folder",
+                    ReferenceState.Included, ProjectReasonCode.ProjectFolderMatched, DateTimeOffset.UnixEpoch),
+                Conversations:
+                [
+                    new ProjectContextReference(
+                        "conversation", "conv_01HZ9K8YQ3W6V2N4R7T5P0X1C1", "Synthetic conversation",
+                        ReferenceState.Included, ProjectReasonCode.ConversationLinked, DateTimeOffset.UnixEpoch),
+                ],
+                FileReferences:
+                [
+                    new ProjectContextReference(
+                        "file", "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1", "contract.pdf",
+                        ReferenceState.Included, ProjectReasonCode.FileReferenceMatched, DateTimeOffset.UnixEpoch),
+                ],
+                MemoryReferences:
+                [
+                    new ProjectContextReference(
+                        "memory", "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1", "Q3 product strategy memory",
+                        ReferenceState.Included, ProjectReasonCode.MemoryMatched, DateTimeOffset.UnixEpoch),
+                ],
+                Excluded:
+                [
+                    new ProjectContextExclusion(
+                        "memory", "case_01HZ9K8YQ3W6V2N4R7T5P0X1M2",
+                        ReferenceState.Archived, null,
+                        ProjectContextInclusionCheck.ReferenceLifecycle,
+                        ProjectContextInclusionDiagnostic.ReferenceArchived),
+                ],
+                AssemblyOutcome: ProjectContextAssemblyOutcome.Assembled,
+                ObservedAt: DateTimeOffset.UnixEpoch,
+                Freshness: ProjectContextFreshness.Fresh),
+            Evaluations:
+            [
+                new ProjectContextEvaluation(
+                    "folder", "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+                    ReferenceState.Included,
+                    FailedCheck: null,
+                    ProjectReasonCode.ProjectFolderMatched,
+                    Diagnostic: null,
+                    DateTimeOffset.UnixEpoch),
+                new ProjectContextEvaluation(
+                    "file", "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1",
+                    ReferenceState.Included,
+                    FailedCheck: null,
+                    ProjectReasonCode.FileReferenceMatched,
+                    Diagnostic: null,
+                    DateTimeOffset.UnixEpoch),
+                new ProjectContextEvaluation(
+                    "memory", "case_01HZ9K8YQ3W6V2N4R7T5P0X1M2",
+                    ReferenceState.Archived,
+                    ProjectContextInclusionCheck.ReferenceLifecycle,
+                    ReasonCode: null,
+                    ProjectContextInclusionDiagnostic.ReferenceArchived,
+                    DateTimeOffset.UnixEpoch),
+                new ProjectContextEvaluation(
+                    "conversation", "conv_01HZ9K8YQ3W6V2N4R7T5P0X1C1",
+                    ReferenceState.Included,
+                    FailedCheck: null,
+                    ProjectReasonCode.ConversationLinked,
+                    Diagnostic: null,
+                    DateTimeOffset.UnixEpoch),
+            ]);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(explanation));
+    }
+
     // Memories-specific forbidden-term coverage extended from Story 2.7. These payload-classification
     // terms must never appear in any assembled ProjectContext, even as field names.
     [Theory]

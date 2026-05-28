@@ -167,6 +167,33 @@ namespace Hexalith.Projects.Client.Generated
         System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
+        /// Explain why each Project Context candidate was included or excluded.
+        /// </summary>
+        /// <remarks>
+        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Assembled Project Context plus per-candidate evaluation trace with closed-vocabulary diagnostics and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectContextExplanation> GetProjectContextExplanationAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Explain why each Project Context candidate was included or excluded.
+        /// </summary>
+        /// <remarks>
+        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Assembled Project Context plus per-candidate evaluation trace with closed-vocabulary diagnostics and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectContextExplanation> GetProjectContextExplanationAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
         /// Link an existing conversation to a Project (command-async).
         /// </summary>
         /// <remarks>
@@ -1233,6 +1260,163 @@ namespace Hexalith.Projects.Client.Generated
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProjectContext>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Explain why each Project Context candidate was included or excluded.
+        /// </summary>
+        /// <remarks>
+        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Assembled Project Context plus per-candidate evaluation trace with closed-vocabulary diagnostics and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ProjectContextExplanation> GetProjectContextExplanationAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
+        {
+            return GetProjectContextExplanationAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Explain why each Project Context candidate was included or excluded.
+        /// </summary>
+        /// <remarks>
+        /// Returns the metadata-only Project Context (Story 3.2 surface) plus the per-candidate evaluation trace ProjectContextInclusionPolicy (Story 3.1) emits — one row per candidate conversation, folder, file, or memory reference, naming the single failed inclusion check (when any) and the closed-vocabulary diagnostic string. Realizes FR-17 / UJ-4 so operators can diagnose incorrect context selection without exposing protected data. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Assembled Project Context plus per-candidate evaluation trace with closed-vocabulary diagnostics and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ProjectContextExplanation> GetProjectContextExplanationAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        {
+            if (projectId == null)
+                throw new System.ArgumentNullException("projectId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Freshness != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Freshness", ConvertToString(x_Hexalith_Freshness, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects/{projectId}/context/explain"
+                    urlBuilder_.Append("api/v1/projects/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/context/explain");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectContextExplanation>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -4384,6 +4568,78 @@ namespace Hexalith.Projects.Client.Generated
 
     }
 
+    /// <summary>
+    /// Wire-body wrapper returned by GetProjectContextExplanation (Story 3.3, FR-17, UJ-4, AR-9): carries the assembled metadata-only ProjectContext plus the per-candidate evaluation trace emitted by ProjectContextInclusionPolicy (Story 3.1). Operators read the per-candidate verdict (Included / Excluded with named failed check + closed-vocabulary diagnostic) without re-running the assembly. Tenant authority is server-derived and intentionally NOT carried on the wire (FS-8 / SM-3): the wrapped ProjectContext suppresses TenantId via JsonIgnore and evaluation rows carry only closed-vocabulary diagnostic strings.
+    /// <br/>
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectContextExplanation
+    {
+
+        [Newtonsoft.Json.JsonProperty("context", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ProjectContext Context { get; set; } = new ProjectContext();
+
+        /// <summary>
+        /// Per-candidate evaluation rows, ordered by (referenceKind, referenceId) Ordinal. One row per active candidate kind.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("evaluations", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ProjectContextEvaluation> Evaluations { get; set; } = new System.Collections.Generic.List<ProjectContextEvaluation>();
+
+    }
+
+    /// <summary>
+    /// Per-candidate evaluation row emitted by ProjectContextInclusionPolicy alongside the assembled ProjectContext. Identifies the candidate, the surfaced ReferenceState, the single failed inclusion check (or null when included), the optional shared-vocabulary ReasonCode (set on inclusion), the optional closed-vocabulary diagnostic, and the observation instant. Never carries free-form upstream message / path / token / payload text.
+    /// <br/>
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectContextEvaluation
+    {
+
+        /// <summary>
+        /// Allowlisted reference kind (folder, file, memory, conversation).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("referenceKind", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextEvaluationReferenceKind ReferenceKind { get; set; }
+
+        /// <summary>
+        /// Opaque sibling-owned reference identifier.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("referenceId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ReferenceId { get; set; }
+
+        /// <summary>
+        /// Shared-vocabulary ReferenceState (PascalCase wire-name from the C# enum) surfaced for the candidate.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("resultState", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextEvaluationResultState ResultState { get; set; }
+
+        /// <summary>
+        /// The single failed inclusion check, or null when the candidate was included.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("failedCheck", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextInclusionCheck? FailedCheck { get; set; }
+
+        /// <summary>
+        /// Optional shared-vocabulary ProjectReasonCode (typically set on inclusion).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("reasonCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextEvaluationReasonCode? ReasonCode { get; set; }
+
+        /// <summary>
+        /// Closed-vocabulary ProjectContextInclusionDiagnostic value. The 13 known values are tenantMismatch, projectUnknown, projectArchived, referenceUnauthorized, referenceUnavailable, referenceStale, referenceArchived, referenceConflict, referenceInvalidIdentifier, referenceKindNotAllowlisted, projectFolderPending, referenceAmbiguous, referenceRedacted.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("diagnostic", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Diagnostic { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("observedAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset ObservedAt { get; set; }
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum Lifecycle
     {
@@ -4827,6 +5083,84 @@ namespace Hexalith.Projects.Client.Generated
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum ProjectContextExclusionReasonCode
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ConversationLinked")]
+        ConversationLinked = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ProjectFolderMatched")]
+        ProjectFolderMatched = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FileReferenceMatched")]
+        FileReferenceMatched = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MemoryMatched")]
+        MemoryMatched = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MetadataMatched")]
+        MetadataMatched = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextEvaluationReferenceKind
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"folder")]
+        Folder = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"file")]
+        File = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"memory")]
+        Memory = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"conversation")]
+        Conversation = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextEvaluationResultState
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Pending")]
+        Pending = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Included")]
+        Included = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Excluded")]
+        Excluded = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unauthorized")]
+        Unauthorized = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unavailable")]
+        Unavailable = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Stale")]
+        Stale = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Archived")]
+        Archived = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Ambiguous")]
+        Ambiguous = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TenantMismatch")]
+        TenantMismatch = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Conflict")]
+        Conflict = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"InvalidReference")]
+        InvalidReference = 10,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextEvaluationReasonCode
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"ConversationLinked")]
