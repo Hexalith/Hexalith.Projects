@@ -1,4 +1,31 @@
 {
   "version": "1.0.0",
-  "presets": []
+  "presets": [
+    {
+      "name": "claude_fallback_codex",
+      "createdAt": "2026-05-28T18:48:21Z",
+      "config": {
+        "defaultPrimary": "claude",
+        "defaultFallback": "codex",
+        "perTask": {
+          "auto": {
+            "primary": "claude",
+            "fallback": "codex"
+          },
+          "create": {
+            "primary": "claude",
+            "fallback": "codex"
+          },
+          "dev": {
+            "primary": "claude",
+            "fallback": "codex"
+          },
+          "review": {
+            "primary": "claude",
+            "fallback": "codex"
+          }
+        }
+      }
+    }
+  ]
 }
