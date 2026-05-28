@@ -28,6 +28,7 @@ using Hexalith.Projects.Contracts.Ui;
 /// <param name="SetupMetadata">The recorded safe setup-metadata reference, or null.</param>
 /// <param name="Setup">The latest typed metadata-only setup, or null before the first setup update.</param>
 /// <param name="ProjectFolder">The metadata-only single Project Folder reference or pending creation state.</param>
+/// <param name="FileReferences">The bounded metadata-only optional File References keyed by file-reference id.</param>
 /// <param name="Lifecycle">The recorded lifecycle state, or null before creation.</param>
 /// <param name="IdempotencyFingerprints">The recorded idempotency-key → fingerprint map for replay dedup.</param>
 public sealed record ProjectState(
@@ -39,9 +40,13 @@ public sealed record ProjectState(
     string? SetupMetadata,
     ProjectSetup? Setup,
     ProjectFolderReference? ProjectFolder,
+    IReadOnlyDictionary<string, ProjectFileReference> FileReferences,
     ProjectLifecycle? Lifecycle,
     IReadOnlyDictionary<string, string> IdempotencyFingerprints)
 {
+    /// <summary>The maximum number of bounded optional File References a single Project may hold.</summary>
+    public const int MaxFileReferences = 100;
+
     /// <summary>Gets the empty starting state for a project stream that has no events applied.</summary>
     public static ProjectState Empty { get; } = new(
         false,
@@ -52,6 +57,7 @@ public sealed record ProjectState(
         null,
         null,
         null,
+        FrozenDictionary<string, ProjectFileReference>.Empty,
         null,
         FrozenDictionary<string, string>.Empty);
 

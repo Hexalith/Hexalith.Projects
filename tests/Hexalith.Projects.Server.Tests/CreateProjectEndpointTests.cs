@@ -47,6 +47,7 @@ using Xunit;
 public sealed class CreateProjectEndpointTests
 {
     private const string ProjectIdValue = "01HZ9K8YQ3W6V2N4R7T5P0X1AB";
+    private const string FileRefId = "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1";
 
     [Fact]
     public async Task PostProject_ValidCreate_Returns202AcceptedCommand()
@@ -310,6 +311,366 @@ public sealed class CreateProjectEndpointTests
 
             response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
             submitter.FolderSet.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkFile_AuthorizedAndFolderValidated_Returns202AndSubmitsLink()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            fileReferenceDirectory: new TrackingProjectFileReferenceDirectory(ProjectFileReferenceValidationOutcome.Accepted)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkFileRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            LinkFileReference submitted = submitter.FileLinked.Single();
+            submitted.FileReferenceId.ShouldBe(FileRefId);
+            submitted.FolderId.ShouldBe("folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC");
+            submitted.FileMetadata.DisplayName.ShouldBe("contract.pdf");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkFile_DeniedFoldersEvidence_ReturnsSafe404AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            fileReferenceDirectory: new TrackingProjectFileReferenceDirectory(ProjectFileReferenceValidationOutcome.Denied)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkFileRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+            submitter.FileLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkFile_StaleFoldersEvidence_Returns503AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            fileReferenceDirectory: new TrackingProjectFileReferenceDirectory(ProjectFileReferenceValidationOutcome.Stale)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkFileRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            submitter.FileLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkFile_MissingIdempotencyKey_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            fileReferenceDirectory: new TrackingProjectFileReferenceDirectory(ProjectFileReferenceValidationOutcome.Accepted)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpRequestMessage request = ValidLinkFileRequest();
+            request.Headers.Remove("Idempotency-Key");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.FileLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkFile_RouteBodyFileIdMismatch_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            fileReferenceDirectory: new TrackingProjectFileReferenceDirectory(ProjectFileReferenceValidationOutcome.Accepted)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(
+                ValidLinkFileRequest(bodyFileReferenceId: "file_01HZ9K8YQ3W6V2N4R7T5P0X1ZZ"),
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.FileLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkFile_ArchivedProject_ReturnsSafe404BeforeFoldersAcl()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        TrackingProjectFileReferenceDirectory fileDirectory = new(ProjectFileReferenceValidationOutcome.Accepted);
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            fileReferenceDirectory: fileDirectory).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Archived));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkFileRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            fileDirectory.CallCount.ShouldBe(0);
+            submitter.FileLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkFile_UnknownTenantProjection_ReturnsSafe404BeforeFoldersAcl()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        TrackingProjectFileReferenceDirectory fileDirectory = new(ProjectFileReferenceValidationOutcome.Accepted);
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            seedTenantAccess: false,
+            fileReferenceDirectory: fileDirectory).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkFileRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            fileDirectory.CallCount.ShouldBe(0);
+            submitter.FileLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteFile_Authorized_Returns202AndSubmitsUnlinkWithoutFoldersCall()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+
+        // No file-reference directory is registered: unlink must never call Folders. The default
+        // UnavailableProjectFileReferenceDirectory would fail closed if it were ever invoked.
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidUnlinkFileRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            UnlinkFileReference submitted = submitter.FileUnlinked.Single();
+            submitted.FileReferenceId.ShouldBe(FileRefId);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteFile_RouteBodyMismatch_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(
+                ValidUnlinkFileRequest(bodyFileReferenceId: "file_01HZ9K8YQ3W6V2N4R7T5P0X1ZZ"),
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.FileUnlinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteFile_MissingIdempotencyKey_Returns400()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpRequestMessage request = ValidUnlinkFileRequest();
+            request.Headers.Remove("Idempotency-Key");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.FileUnlinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkFile_RedactedFoldersEvidence_ReturnsSafe404AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            fileReferenceDirectory: new TrackingProjectFileReferenceDirectory(ProjectFileReferenceValidationOutcome.Redacted)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkFileRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            // Redacted/excluded/sensitivity evidence must collapse to an externally-indistinguishable safe
+            // denial (404) so file sensitivity is never disclosed through Projects, and must not submit.
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+            submitter.FileLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkFile_UnavailableFoldersEvidence_Returns503AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            fileReferenceDirectory: new TrackingProjectFileReferenceDirectory(ProjectFileReferenceValidationOutcome.Unavailable)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidLinkFileRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            // Unavailable Folders evidence is retryable: 503, never a false accept.
+            response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            submitter.FileLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task LinkFile_UnknownBodyField_Returns400AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            fileReferenceDirectory: new TrackingProjectFileReferenceDirectory(ProjectFileReferenceValidationOutcome.Accepted)).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(LinkFileRequestWithUnknownField(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            // Closed request schema (JsonUnmappedMemberHandling.Disallow): unknown fields are rejected.
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.FileLinked.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task DeleteFile_UnknownBodyField_Returns400AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a"));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(UnlinkFileRequestWithUnknownField(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.FileUnlinked.ShouldBeEmpty();
         }
         finally
         {
@@ -948,6 +1309,7 @@ public sealed class CreateProjectEndpointTests
                                     null,
                                     null,
                                     null,
+                                    [],
                                     ProjectLifecycle.Active,
                                     DateTimeOffset.UnixEpoch,
                                     DateTimeOffset.UnixEpoch,
@@ -1319,6 +1681,107 @@ public sealed class CreateProjectEndpointTests
         return request;
     }
 
+    private static HttpRequestMessage ValidLinkFileRequest(
+        string projectId = ProjectIdValue,
+        string? bodyFileReferenceId = null,
+        string folderId = "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+        string workspaceId = "workspace_01HZ9K8YQ3W6V2N4R7T5P0X1AD",
+        string filePath = "docs/contract.pdf")
+    {
+        HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{ProjectIdValue}/files/{FileRefId}/link")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                operation = "link",
+                projectId,
+                fileReferenceId = bodyFileReferenceId ?? FileRefId,
+                folderId,
+                workspaceId,
+                filePath,
+                fileMetadata = new
+                {
+                    displayName = "contract.pdf",
+                },
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-file-link");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
+    private static HttpRequestMessage ValidUnlinkFileRequest(
+        string projectId = ProjectIdValue,
+        string? bodyFileReferenceId = null)
+    {
+        HttpRequestMessage request = new(HttpMethod.Delete, $"/api/v1/projects/{ProjectIdValue}/files/{FileRefId}")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                operation = "unlink",
+                unlinkIntent = "removeReference",
+                projectId,
+                fileReferenceId = bodyFileReferenceId ?? FileRefId,
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-file-unlink");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
+    private static HttpRequestMessage LinkFileRequestWithUnknownField()
+    {
+        HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{ProjectIdValue}/files/{FileRefId}/link")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                operation = "link",
+                projectId = ProjectIdValue,
+                fileReferenceId = FileRefId,
+                folderId = "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+                workspaceId = "workspace_01HZ9K8YQ3W6V2N4R7T5P0X1AD",
+                filePath = "docs/contract.pdf",
+                fileMetadata = new
+                {
+                    displayName = "contract.pdf",
+                },
+
+                // Unexpected field rejected by the closed request schema.
+                rawContent = "should-be-rejected",
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-file-link");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
+    private static HttpRequestMessage UnlinkFileRequestWithUnknownField()
+    {
+        HttpRequestMessage request = new(HttpMethod.Delete, $"/api/v1/projects/{ProjectIdValue}/files/{FileRefId}")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                operation = "unlink",
+                unlinkIntent = "removeReference",
+                projectId = ProjectIdValue,
+                fileReferenceId = FileRefId,
+
+                // Unexpected field rejected by the closed request schema.
+                deleteUnderlyingFile = true,
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-file-unlink");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
     private static ProjectSetup Setup() => new(
         ["keep continuity current"],
         ["use safe metadata"],
@@ -1358,7 +1821,8 @@ public sealed class CreateProjectEndpointTests
         DateTimeOffset? lastTenantAccessTimestamp = null,
         bool detailReadUnavailable = false,
         bool listReadUnavailable = false,
-        IProjectFolderDirectory? folderDirectory = null)
+        IProjectFolderDirectory? folderDirectory = null,
+        IProjectFileReferenceDirectory? fileReferenceDirectory = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
         {
@@ -1377,6 +1841,12 @@ public sealed class CreateProjectEndpointTests
         {
             builder.Services.RemoveAll<IProjectFolderDirectory>();
             builder.Services.AddSingleton(folderDirectory);
+        }
+
+        if (fileReferenceDirectory is not null)
+        {
+            builder.Services.RemoveAll<IProjectFileReferenceDirectory>();
+            builder.Services.AddSingleton(fileReferenceDirectory);
         }
 
         if (detailReadUnavailable)
@@ -1483,6 +1953,22 @@ public sealed class CreateProjectEndpointTests
             FolderSet.Add(command);
             return Task.FromResult(result);
         }
+
+        public List<LinkFileReference> FileLinked { get; } = [];
+
+        public List<UnlinkFileReference> FileUnlinked { get; } = [];
+
+        public Task<ProjectCommandSubmissionResult> SubmitLinkFileReferenceAsync(LinkFileReference command, CancellationToken cancellationToken = default)
+        {
+            FileLinked.Add(command);
+            return Task.FromResult(result);
+        }
+
+        public Task<ProjectCommandSubmissionResult> SubmitUnlinkFileReferenceAsync(UnlinkFileReference command, CancellationToken cancellationToken = default)
+        {
+            FileUnlinked.Add(command);
+            return Task.FromResult(result);
+        }
     }
 
     private sealed class FixedProjectTenantContextAccessor(string? tenantId, string? principalId) : IProjectTenantContextAccessor
@@ -1504,6 +1990,8 @@ public sealed class CreateProjectEndpointTests
                         ProjectAuthorizationGate.UpdateProjectSetupAction,
                         ProjectAuthorizationGate.ArchiveProjectAction,
                         ProjectAuthorizationGate.SetProjectFolderAction,
+                        ProjectAuthorizationGate.LinkFileReferenceAction,
+                        ProjectAuthorizationGate.UnlinkFileReferenceAction,
                     ]);
     }
 
@@ -1529,6 +2017,24 @@ public sealed class CreateProjectEndpointTests
         {
             CallCount++;
             return Task.FromResult(new ProjectFolderValidationResult(outcome, correlationId));
+        }
+    }
+
+    private sealed class TrackingProjectFileReferenceDirectory(ProjectFileReferenceValidationOutcome outcome) : IProjectFileReferenceDirectory
+    {
+        public int CallCount { get; private set; }
+
+        public Task<ProjectFileReferenceValidationResult> ValidateLinkFileReferenceAsync(
+            Hexalith.Projects.Contracts.Identifiers.ProjectId projectId,
+            string folderId,
+            string workspaceId,
+            string filePath,
+            string correlationId,
+            string taskId,
+            CancellationToken cancellationToken = default)
+        {
+            CallCount++;
+            return Task.FromResult(new ProjectFileReferenceValidationResult(outcome, correlationId));
         }
     }
 

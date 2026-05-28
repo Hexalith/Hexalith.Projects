@@ -55,6 +55,93 @@ public sealed class ProjectReferenceIndexProjectionTests
         item.DisplayName.ShouldBe("Tracer Folder");
     }
 
+    [Fact]
+    public void FileReferenceLinked_IsIndexedAsIncludedFileRow()
+    {
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(Tenant, 1, Set()),
+            new ProjectProjectionEnvelope(Tenant, 2, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+        ]);
+
+        ProjectReferenceIndexItem file = projection.List(Tenant, ProjectId)
+            .Single(item => item.ReferenceKind == "file");
+        file.ReferenceId.ShouldBe("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1");
+        file.ReferenceState.ShouldBe(ReferenceState.Included);
+        file.DisplayName.ShouldBe("contract.pdf");
+    }
+
+    [Fact]
+    public void FileReferenceUnlinked_RemovesOnlyFileRowAndKeepsFolderRow()
+    {
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(Tenant, 1, Set()),
+            new ProjectProjectionEnvelope(Tenant, 2, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(Tenant, 3, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F2")),
+            new ProjectProjectionEnvelope(Tenant, 4, Unlinked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+        ]);
+
+        var rows = projection.List(Tenant, ProjectId);
+        rows.Count(item => item.ReferenceKind == "folder").ShouldBe(1);
+        rows.Where(item => item.ReferenceKind == "file").Select(item => item.ReferenceId)
+            .ShouldBe(["file_01HZ9K8YQ3W6V2N4R7T5P0X1F2"]);
+    }
+
+    [Fact]
+    public void FolderReplacement_KeepsFileRows()
+    {
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(Tenant, 1, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(Tenant, 2, Set()),
+        ]);
+
+        var rows = projection.List(Tenant, ProjectId);
+        rows.Count(item => item.ReferenceKind == "file").ShouldBe(1);
+        rows.Single(item => item.ReferenceKind == "folder").ReferenceId.ShouldBe(FolderId);
+    }
+
+    [Fact]
+    public void List_OrdersByReferenceKindThenReferenceId()
+    {
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(Tenant, 1, Set()),
+            new ProjectProjectionEnvelope(Tenant, 2, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F2")),
+            new ProjectProjectionEnvelope(Tenant, 3, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+        ]);
+
+        var rows = projection.List(Tenant, ProjectId);
+        rows.Select(item => item.ReferenceKind).ShouldBe(["file", "file", "folder"]);
+        rows.Where(item => item.ReferenceKind == "file").Select(item => item.ReferenceId)
+            .ShouldBe(["file_01HZ9K8YQ3W6V2N4R7T5P0X1F1", "file_01HZ9K8YQ3W6V2N4R7T5P0X1F2"]);
+    }
+
+    private static FileReferenceLinked Linked(string fileReferenceId) => new(
+        Tenant,
+        ProjectId,
+        fileReferenceId,
+        FolderId,
+        new ProjectFileReferenceMetadata("contract.pdf"),
+        "actor-001",
+        "corr-001",
+        "task-001",
+        "idem-" + fileReferenceId,
+        "sha256:" + fileReferenceId,
+        DateTimeOffset.UnixEpoch.AddMinutes(2));
+
+    private static FileReferenceUnlinked Unlinked(string fileReferenceId) => new(
+        Tenant,
+        ProjectId,
+        fileReferenceId,
+        "actor-001",
+        "corr-001",
+        "task-001",
+        "idem-unlink-" + fileReferenceId,
+        "sha256:unlink-" + fileReferenceId,
+        DateTimeOffset.UnixEpoch.AddMinutes(3));
+
     private static ProjectFolderCreationPending Pending() => new(
         Tenant,
         ProjectId,

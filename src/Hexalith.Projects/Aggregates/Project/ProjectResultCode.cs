@@ -34,6 +34,12 @@ public enum ProjectResultCode
     /// <summary>The set-folder command was accepted and a <c>ProjectFolderSet</c> event was emitted.</summary>
     FolderSet,
 
+    /// <summary>The link-file-reference command was accepted and a <c>FileReferenceLinked</c> event was emitted.</summary>
+    FileReferenceLinked,
+
+    /// <summary>The unlink-file-reference command was accepted and a <c>FileReferenceUnlinked</c> event was emitted.</summary>
+    FileReferenceUnlinked,
+
     /// <summary>The command is a logical replay of an already-recorded idempotency key with an equivalent payload.</summary>
     IdempotentReplay,
 
@@ -54,6 +60,12 @@ public enum ProjectResultCode
 
     /// <summary>A different Project Folder is already set and replacement was not explicitly confirmed.</summary>
     ProjectFolderReplacementRequiresConfirmation,
+
+    /// <summary>The same file reference is already linked with conflicting safe metadata.</summary>
+    FileReferenceConflict,
+
+    /// <summary>The project already holds the maximum number of bounded file references.</summary>
+    FileReferenceLimitExceeded,
 
     /// <summary>The command failed boundary validation (blank name, unsafe setup metadata, malformed identifier).</summary>
     ValidationFailed,

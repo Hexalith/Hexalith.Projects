@@ -46,6 +46,12 @@ public sealed class ProjectAuthorizationGate(
     /// <summary>The action token required to set or replace a Project Folder reference.</summary>
     public const string SetProjectFolderAction = "projects:set_folder";
 
+    /// <summary>The action token required to link an optional File Reference to a project.</summary>
+    public const string LinkFileReferenceAction = "projects:link_file_reference";
+
+    /// <summary>The action token required to unlink an optional File Reference from a project.</summary>
+    public const string UnlinkFileReferenceAction = "projects:unlink_file_reference";
+
     /// <summary>Authorizes project creation.</summary>
     public async Task<ProjectAuthorizationResult> AuthorizeCreateAsync(
         IProjectTenantContextAccessor tenantContext,
@@ -208,6 +214,44 @@ public sealed class ProjectAuthorizationGate(
             tenantContext,
             httpContext,
             SetProjectFolderAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes linking an optional File Reference to a project.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeLinkFileReferenceAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            LinkFileReferenceAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes unlinking an optional File Reference from a project.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeUnlinkFileReferenceAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            UnlinkFileReferenceAction,
             projectId,
             correlationId,
             taskId,

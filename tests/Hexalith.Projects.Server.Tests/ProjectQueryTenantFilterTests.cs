@@ -63,6 +63,7 @@ public sealed class ProjectQueryTenantFilterTests
             "setup-reference",
             null,
             null,
+            [],
             ProjectLifecycle.Active,
             Timestamp,
             Timestamp,

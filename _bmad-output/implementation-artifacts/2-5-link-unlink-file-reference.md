@@ -1,8 +1,12 @@
+---
+baseline_commit: 21da98fd8fd8ebc7f10ae152f232fc0f0f52f2e8
+---
+
 # Story 2.5: Link/Unlink File Reference
 
 ## Status
 
-ready-for-dev
+done
 
 ## Story
 
@@ -30,51 +34,51 @@ Story 2.4 already established the Project Folder reference pattern, the Folders 
 
 ## Tasks / Subtasks
 
-- [ ] Confirm the Folders file-reference authorization capability gate before coding. (AC: 5, 6)
-  - [ ] Inspect current Folders OpenAPI, generated client, and server endpoint mapping for metadata-only file validation routes such as `GetFolderFileMetadataAsync`, `ListFolderFilesAsync`, `SearchFolderFilesAsync`, or `GlobFolderFilesAsync`.
-  - [ ] Verify whether the chosen route is actually server-mapped in the current working tree; current evidence shows Folders server maps lifecycle/effective-permissions/archive, while context/file query routes may be contract/client-only.
-  - [ ] Record the selected path in the Dev Agent Record before implementation: verified available metadata route, approved in-topology route, or explicit degraded file-reference pending/unavailable behavior.
-  - [ ] HALT if no approved file-reference authorization path exists.
-- [ ] Add Projects contracts for file-reference link/unlink. (AC: 1, 8, 9)
-  - [ ] Add `LinkFileReference` and `UnlinkFileReference` command contracts under `src/Hexalith.Projects.Contracts/Commands`.
-  - [ ] Add safe metadata models for file references, for example `ProjectFileReference` and `ProjectFileReferenceMetadata`; keep them reference-only and bounded.
-  - [ ] Extend the OpenAPI spine with command-async routes, likely `POST /api/v1/projects/{projectId}/files/{fileReferenceId}/link` and `DELETE /api/v1/projects/{projectId}/files/{fileReferenceId}` or the local equivalent.
-  - [ ] Use closed camelCase request schemas with `requestSchemaVersion: "v1"`, explicit operation/unlink intent, route/body Project identity equality, and no tenant/principal/actor authority fields.
-  - [ ] Regenerate Projects generated client and idempotency helpers; do not hand-edit `.g.cs`.
-- [ ] Add Projects domain command/event/state behavior. (AC: 2, 3, 4, 8)
-  - [ ] Add `FileReferenceLinked` and `FileReferenceUnlinked` success events under `src/Hexalith.Projects.Contracts/Events`.
-  - [ ] Extend `ProjectAggregate.Handle(...)`, `ProjectState`, `ProjectStateApply`, `ProjectResult`, and `ProjectResultCode` for file-reference link/unlink.
-  - [ ] Keep a bounded file-reference collection or map in `ProjectState`; reject malformed identifiers, duplicates with conflicting metadata, missing Projects, archived Projects, tenant mismatches, and unsafe metadata.
-  - [ ] Treat equivalent duplicate link/unlink as idempotent replay/no-op and conflicting same-key as idempotency conflict.
-  - [ ] Map link rejections to `ProjectReferenceLinkRejected` and unlink rejections to `ProjectReferenceUnlinkRejected` with reference kind `file` and safe reference ids only.
-- [ ] Extend the Folders ACL boundary for file references. (AC: 5, 6)
-  - [ ] Extend `IProjectFolderDirectory` or add a narrowly named sibling such as `IProjectFileReferenceDirectory` in `src/Hexalith.Projects.Server/Folders/`.
-  - [ ] Validate file references using Folders-owned evidence only. Projects must not infer access from request payloads, cached local metadata, or the Project Folder reference alone.
-  - [ ] Map Folders `401/403/404` to safe denial, `409` or archived/inactive evidence to archived/conflict as appropriate, stale projection/freshness to retryable unavailable or stale, redacted/excluded metadata to fail-closed, and 5xx/transport/serialization failures to retryable unavailable.
-  - [ ] Keep generated Folders client usage transient/request-scoped as in Story 2.4; do not singleton a bearer-token-dependent typed client.
-  - [ ] Add fail-closed unavailable implementation for hosts/tests without a Folders client.
-- [ ] Wire Projects endpoints and command submission. (AC: 1, 5, 8)
-  - [ ] Add authorization action tokens such as `projects:link_file_reference` and `projects:unlink_file_reference` to `ProjectAuthorizationGate`.
-  - [ ] Gate Project mutation intent before any Folders ACL call. Unauthorized, hidden, archived, stale, or unavailable Project evidence must not touch Folders.
-  - [ ] Add endpoint handlers in `ProjectsDomainServiceEndpoints` using existing mutation envelope parsing, safe problem mapping, route/body checks, and command-async 202 response helpers.
-  - [ ] Extend `IProjectCommandSubmitter`, `EventStoreProjectCommandSubmitter`, `ProjectsDomainProcessor`, and `ProjectsServerModule` command type constants.
-  - [ ] Ensure the `/process` payload remains metadata-only and rejects unknown fields.
-- [ ] Extend projections and reads. (AC: 3, 7)
-  - [ ] Extend `ProjectDetailItem` and `ProjectDetailProjection` to expose file-reference summaries alongside the Project Folder reference.
-  - [ ] Extend `ProjectsDomainServiceEndpoints.ToProjectReferenceSummaries(...)` and the OpenAPI `ProjectReferenceSummary.referenceKind` enum to include `file`.
-  - [ ] Extend `ProjectReferenceIndexProjection` to index file links and remove file rows on unlink without removing the Project Folder row.
-  - [ ] Preserve deterministic ordering by reference kind then reference id.
-- [ ] Update documentation and validation artifacts. (AC: 9, 10, 11)
-  - [ ] Update `docs/event-catalog.md` with file-reference events and rejection cases.
-  - [ ] Update payload/no-leakage fixtures or assertions for all new DTOs/events/problems.
-  - [ ] Update story completion notes with the selected Folders capability path and any degraded behavior approval.
-- [ ] Validate the story implementation. (AC: 11)
-  - [ ] Run focused `Hexalith.Projects.Tests` aggregate/projection/no-leakage tests.
-  - [ ] Run focused `Hexalith.Projects.Server.Tests` endpoint/Folders ACL tests.
-  - [ ] Run `Hexalith.Projects.Contracts.Tests` OpenAPI contract-spine tests.
-  - [ ] Run `Hexalith.Projects.Client.Tests` generation/idempotency tests.
-  - [ ] Run `dotnet test Hexalith.Projects.slnx --no-restore` when scoped tests are clean.
-  - [ ] Run `git diff --check`; CRLF conversion warnings are acceptable only if they are repository-normal and no whitespace errors are reported.
+- [x] Confirm the Folders file-reference authorization capability gate before coding. (AC: 5, 6)
+  - [x] Inspect current Folders OpenAPI, generated client, and server endpoint mapping for metadata-only file validation routes such as `GetFolderFileMetadataAsync`, `ListFolderFilesAsync`, `SearchFolderFilesAsync`, or `GlobFolderFilesAsync`.
+  - [x] Verify whether the chosen route is actually server-mapped in the current working tree; current evidence shows Folders server maps lifecycle/effective-permissions/archive, while context/file query routes may be contract/client-only.
+  - [x] Record the selected path in the Dev Agent Record before implementation: verified available metadata route, approved in-topology route, or explicit degraded file-reference pending/unavailable behavior.
+  - [x] HALT if no approved file-reference authorization path exists. (Gate PASSED — no HALT required.)
+- [x] Add Projects contracts for file-reference link/unlink. (AC: 1, 8, 9)
+  - [x] Add `LinkFileReference` and `UnlinkFileReference` command contracts under `src/Hexalith.Projects.Contracts/Commands`.
+  - [x] Add safe metadata models for file references, for example `ProjectFileReference` and `ProjectFileReferenceMetadata`; keep them reference-only and bounded.
+  - [x] Extend the OpenAPI spine with command-async routes `POST /api/v1/projects/{projectId}/files/{fileReferenceId}/link` and `DELETE /api/v1/projects/{projectId}/files/{fileReferenceId}`.
+  - [x] Use closed camelCase request schemas with `requestSchemaVersion: "v1"`, explicit operation/unlink intent, route/body Project identity equality, and no tenant/principal/actor authority fields.
+  - [x] Regenerate Projects generated client and idempotency helpers; do not hand-edit `.g.cs`.
+- [x] Add Projects domain command/event/state behavior. (AC: 2, 3, 4, 8)
+  - [x] Add `FileReferenceLinked` and `FileReferenceUnlinked` success events under `src/Hexalith.Projects.Contracts/Events`.
+  - [x] Extend `ProjectAggregate.Handle(...)` (new `ProjectAggregate.References.cs` partial), `ProjectState`, `ProjectStateApply`, `ProjectResult`, and `ProjectResultCode` for file-reference link/unlink.
+  - [x] Keep a bounded file-reference collection or map in `ProjectState`; reject malformed identifiers, duplicates with conflicting metadata, missing Projects, archived Projects, tenant mismatches, and unsafe metadata.
+  - [x] Treat equivalent duplicate link/unlink as idempotent replay/no-op and conflicting same-key as idempotency conflict.
+  - [x] Map link rejections to `ProjectReferenceLinkRejected` and unlink rejections to `ProjectReferenceUnlinkRejected` with reference kind `file` and safe reference ids only.
+- [x] Extend the Folders ACL boundary for file references. (AC: 5, 6)
+  - [x] Add a narrowly named sibling `IProjectFileReferenceDirectory` in `src/Hexalith.Projects.Server/Folders/` (with `FoldersProjectFileReferenceDirectory`, `ProjectFileReferenceValidationResult`, `UnavailableProjectFileReferenceDirectory`).
+  - [x] Validate file references using Folders-owned evidence only (`GetFolderFileMetadata`, metadata-only). Projects does not infer access from request payloads, cached local metadata, or the Project Folder reference alone.
+  - [x] Map Folders `401/403/404` to safe denial, `409` to archived, redacted/excluded/binary-disallowed metadata to fail-closed, stale freshness to stale, and `408`/`413`/`422`/5xx/transport/serialization failures to validation-failed or retryable unavailable.
+  - [x] Keep generated Folders client usage transient/request-scoped as in Story 2.4 (`TryAddTransient`); no singleton bearer-token-dependent typed client.
+  - [x] Add fail-closed unavailable implementation for hosts/tests without a Folders client.
+- [x] Wire Projects endpoints and command submission. (AC: 1, 5, 8)
+  - [x] Add authorization action tokens `projects:link_file_reference` and `projects:unlink_file_reference` to `ProjectAuthorizationGate`.
+  - [x] Gate Project mutation intent before any Folders ACL call. Unauthorized, hidden, archived, stale, or unavailable Project evidence does not touch Folders.
+  - [x] Add endpoint handlers in `ProjectsDomainServiceEndpoints` using existing mutation envelope parsing, safe problem mapping, route/body checks, and command-async 202 response helpers.
+  - [x] Extend `IProjectCommandSubmitter`, `EventStoreProjectCommandSubmitter`, `ProjectsDomainProcessor`, and `ProjectsServerModule` command type constants.
+  - [x] Ensure the `/process` payload remains metadata-only and rejects unknown fields.
+- [x] Extend projections and reads. (AC: 3, 7)
+  - [x] Extend `ProjectDetailItem` and `ProjectDetailProjection` to expose file-reference summaries alongside the Project Folder reference.
+  - [x] Extend `ProjectsDomainServiceEndpoints.ToProjectReferenceSummaries(...)` and the OpenAPI `ProjectReferenceSummary.referenceKind` enum to include `file`.
+  - [x] Extend `ProjectReferenceIndexProjection` to index file links (per-kind key prefix) and remove file rows on unlink without removing the Project Folder row.
+  - [x] Preserve deterministic ordering by reference kind then reference id.
+- [x] Update documentation and validation artifacts. (AC: 9, 10, 11)
+  - [x] Update `docs/event-catalog.md` with file-reference events and rejection cases.
+  - [x] Update payload/no-leakage fixtures or assertions for all new DTOs/events/problems.
+  - [x] Update story completion notes with the selected Folders capability path and any degraded behavior approval.
+- [x] Validate the story implementation. (AC: 11)
+  - [x] Run focused `Hexalith.Projects.Tests` aggregate/projection/no-leakage tests. (179/179)
+  - [x] Run focused `Hexalith.Projects.Server.Tests` endpoint/Folders ACL tests. (158/158)
+  - [x] Run `Hexalith.Projects.Contracts.Tests` OpenAPI contract-spine tests. (126/126)
+  - [x] Run `Hexalith.Projects.Client.Tests` generation/idempotency tests. (29/29)
+  - [x] Run `dotnet test Hexalith.Projects.slnx` when scoped tests are clean. (506/506; Integration 14/14)
+  - [x] Run `git diff --check`; clean for story-touched files (no whitespace errors; hand-written sources normalized to the repository-normal LF used by HEAD).
 
 ## Dev Notes
 
@@ -265,7 +269,7 @@ If Folders file metadata requires a folder/workspace/path tuple rather than a st
 
 ### Agent Model Used
 
-GPT-5 Codex
+GPT-5 Codex (create-story); Claude Opus 4.7 (dev-story implementation, 2026-05-27)
 
 ### Debug Log References
 
@@ -274,15 +278,80 @@ GPT-5 Codex
 - 2026-05-26: Confirmed target sprint key `2-5-link-unlink-file-reference` was `backlog` before creating this artifact.
 - 2026-05-26: Created this story artifact and prepared sprint-status update to `ready-for-dev`.
 
+#### Capability gate decision (2026-05-27, Task 1 / AC 5,6) — PASSED, no HALT
+
+Selected path: **Available metadata path** via the Folders metadata-only route `GetFolderFileMetadata`.
+
+Evidence (verified directly in the current working tree, not just contract/client):
+- `Hexalith.Folders/src/Hexalith.Folders.Server/FoldersDomainServiceEndpoints.cs` maps the file-context query routes as real external HTTP endpoints: `POST .../context/metadata` (GetFolderFileMetadata, line 673), `GET .../context/tree` (ListFolderFiles, 648), `POST .../context/search` (721), `POST .../context/glob` (773). These are NOT contract/client-only.
+- `GetFolderFileMetadata` returns `FileMetadataResult` → `FileMetadataItem` (`path`, `kind`, `byteLength`, `sensitivity`, `redaction`) with **no content bytes**, enforced in documented order: `tenant_access → folder_acl → path_policy → sensitivity_classification → c4_bounds → query_execution`.
+- The only content-bearing route is `POST .../context/range-read` (ReadFileRange → `FileRangeReadResult.contentBytes`). It is explicitly **NOT used** by this story.
+- Generated client method `GetFolderFileMetadataAsync(folderId, workspaceId, correlationId, taskId, freshness, FileMetadataRequest)` exists in `HexalithFoldersClient.g.cs`.
+
+Consequences for the Projects design:
+- Folders addresses a file by `(folderId, workspaceId, workspace-relative path)`, not a single opaque file id. Per the story's explicit allowance ("the public Projects request may include the minimum safe identifier set needed by the Folders ACL"), the Projects link request carries `folderId`, `workspaceId`, and a bounded workspace-relative `filePath` solely so the server ACL can call `GetFolderFileMetadata`. `workspaceId`/`filePath` are transient (endpoint→ACL only) and are NOT stored in any command/event/projection/state.
+- Projects stores only: opaque `fileReferenceId`, owning `folderId`, safe `displayName`, shared `ReferenceState`, optional reason code, and an event-carried `observedAt` — honouring "prefer opaque file reference id plus safe display metadata over path-like fields" and "do not store raw paths".
+
+#### Environment notes
+- The repo SDK (`global.json` 10.0.300) lives at `/home/administrator/.dotnet`; `/usr/bin/dotnet` resolves to 10.0.108 and fails `rollForward: latestPatch`. All builds use `DOTNET_ROOT=/home/administrator/.dotnet` + that `dotnet`.
+- NSwag client regeneration works and is byte-deterministic. The `GenerateHexalithProjectsIdempotencyHelpers` MSBuild step passes a Windows-style `...Client\nswag.json` path that fails on Linux; the helper generator is therefore run manually with forward-slash paths (no `.g.cs` hand-edits).
+
 ### Completion Notes List
 
-- Story context created only. No source implementation, tests, generation, submodule initialization, submodule update, or commit was performed.
-- The story carries a hard Folders file-reference authorization gate. Development must confirm an available metadata-only Folders file validation route or get explicit approval for degraded pending/unavailable behavior before coding.
-- The story explicitly forbids Projects file-content storage and forbids using content-bearing Folders `ReadFileRangeAsync` for link validation.
-- The story extends the Story 2.4 reference-index/Folders ACL pattern while preserving the Project Folder as the required active Project boundary.
+- (Create-story) Story context created only — superseded by the implementation below.
+- **Capability gate (Task 1) PASSED, no HALT.** Selected the **Available metadata path** via the Folders server-mapped, metadata-only `GetFolderFileMetadata` route (`POST .../context/metadata`). No degraded pending/unavailable behavior was needed because a real metadata route exists. The content-bearing `ReadFileRange` route is never used. Full evidence and the file-addressing design decision are recorded in the Debug Log above.
+- **Optional file-reference slice implemented end-to-end:** `LinkFileReference`/`UnlinkFileReference` command-async mutations → metadata-only `FileReferenceLinked`/`FileReferenceUnlinked` events → pure `ProjectAggregate` handlers (bounded set, idempotent replay/no-op, conflict, archived/tenant/malformed rejections) → `ProjectState`/`ProjectStateApply` → `ProjectDetailProjection` + `ProjectReferenceIndexProjection` (per-kind keys so folder and file lanes are disjoint) → server endpoints + Folders file ACL + command submitter/processor → OpenAPI spine + regenerated client/idempotency helpers → `docs/event-catalog.md`.
+- **Project Folder rule preserved:** linking/unlinking a file never clears, replaces, satisfies, or auto-creates the single Project Folder, and folder replacement never removes file rows (proven by projection tests).
+- **Unlink never touches Folders:** the unlink endpoint takes no Folders dependency and makes no Folders call; link never calls the content/range-read route (proven by the recording-handler ACL test). No file contents, byte ranges, raw/workspace paths, provider payloads, tokens, or raw upstream problem bodies are stored or echoed (NoPayloadLeakage tests extended).
+- **Idempotency parity:** server-side fingerprints (`ComputeLinkFileReferenceFingerprint`/`ComputeUnlinkFileReferenceFingerprint`) match the regenerated client helper field lists and canonical line shape (cross-checked by `ClientGenerationTests`).
+- **Validation:** build 0W/0E; full solution `dotnet test Hexalith.Projects.slnx` = 506/506 (Tests 179, Server 158, Contracts 126, Client 29, Integration 14); `git diff --check` clean for story-touched files. NSwag client regen is deterministic; the idempotency-helper MSBuild step was run manually with forward-slash paths to work around a pre-existing Windows backslash path in the build target on Linux (no `.g.cs` hand-edits). No submodule pointer changes; no nested recursive submodule init; no commit.
 
 ### File List
 
+New:
+- `src/Hexalith.Projects.Contracts/Commands/LinkFileReference.cs`
+- `src/Hexalith.Projects.Contracts/Commands/UnlinkFileReference.cs`
+- `src/Hexalith.Projects.Contracts/Events/FileReferenceLinked.cs`
+- `src/Hexalith.Projects.Contracts/Events/FileReferenceUnlinked.cs`
+- `src/Hexalith.Projects.Contracts/Models/ProjectFileReference.cs`
+- `src/Hexalith.Projects.Contracts/Models/ProjectFileReferenceMetadata.cs`
+- `src/Hexalith.Projects/Aggregates/Project/ProjectAggregate.References.cs`
+- `src/Hexalith.Projects.Server/Folders/IProjectFileReferenceDirectory.cs`
+- `src/Hexalith.Projects.Server/Folders/FoldersProjectFileReferenceDirectory.cs`
+- `src/Hexalith.Projects.Server/Folders/ProjectFileReferenceValidationResult.cs`
+- `src/Hexalith.Projects.Server/Folders/UnavailableProjectFileReferenceDirectory.cs`
+- `tests/Hexalith.Projects.Tests/Aggregates/Project/ProjectAggregateFileReferenceTests.cs`
+- `tests/Hexalith.Projects.Server.Tests/ProjectFileReferenceDirectoryTests.cs`
+
+Modified:
+- `src/Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml`
+- `src/Hexalith.Projects.Client/Generated/HexalithProjectsClient.g.cs` (regenerated)
+- `src/Hexalith.Projects.Client/Generated/HexalithProjectsIdempotencyHelpers.g.cs` (regenerated)
+- `src/Hexalith.Projects/Aggregates/Project/ProjectState.cs`
+- `src/Hexalith.Projects/Aggregates/Project/ProjectStateApply.cs`
+- `src/Hexalith.Projects/Aggregates/Project/ProjectResult.cs`
+- `src/Hexalith.Projects/Aggregates/Project/ProjectResultCode.cs`
+- `src/Hexalith.Projects/Aggregates/Project/ProjectCommandValidator.cs`
+- `src/Hexalith.Projects/Aggregates/Project/ProjectCommandValidationResult.cs`
+- `src/Hexalith.Projects/Projections/ProjectDetail/ProjectDetailItem.cs`
+- `src/Hexalith.Projects/Projections/ProjectDetail/ProjectDetailProjection.cs`
+- `src/Hexalith.Projects/Projections/ProjectReferenceIndex/ProjectReferenceIndexProjection.cs`
+- `src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs`
+- `src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs`
+- `src/Hexalith.Projects.Server/IProjectCommandSubmitter.cs`
+- `src/Hexalith.Projects.Server/EventStoreProjectCommandSubmitter.cs`
+- `src/Hexalith.Projects.Server/ProjectsDomainProcessor.cs`
+- `src/Hexalith.Projects.Server/ProjectsServerModule.cs`
+- `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs`
+- `docs/event-catalog.md`
+- `tests/Hexalith.Projects.Tests/Leakage/NoPayloadLeakageTests.cs`
+- `tests/Hexalith.Projects.Tests/Projections/ProjectProjectionTests.cs`
+- `tests/Hexalith.Projects.Tests/Projections/ProjectReferenceIndexProjectionTests.cs`
+- `tests/Hexalith.Projects.Server.Tests/CreateProjectEndpointTests.cs`
+- `tests/Hexalith.Projects.Server.Tests/ProjectAuthorizationGateTests.cs`
+- `tests/Hexalith.Projects.Server.Tests/ProjectQueryTenantFilterTests.cs`
+- `tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs`
+- `tests/Hexalith.Projects.Client.Tests/ClientGenerationTests.cs`
 - `_bmad-output/implementation-artifacts/2-5-link-unlink-file-reference.md`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
 
@@ -291,6 +360,36 @@ GPT-5 Codex
 | Date | Version | Description | Author |
 | --- | --- | --- | --- |
 | 2026-05-26 | 1.0 | Created Story 2.5 artifact and set sprint status to ready-for-dev. | GPT-5 Codex |
+| 2026-05-27 | 1.1 | Implemented optional File Reference link/unlink end-to-end (contracts, OpenAPI + regenerated client/helpers, aggregate/state/projections, Folders metadata-only file ACL, endpoints, docs, tests). Capability gate PASSED (Available metadata path). Full solution tests 506/506; status set to review. | Claude Opus 4.7 |
+| 2026-05-28 | 1.2 | Adversarial senior review (story-automator-review). All 11 ACs verified implemented; build 0W/0E; full solution 511/511 (Tests 179, Server 163, Contracts 126, Client 29, Integration 14). 0 CRITICAL/HIGH/MEDIUM findings; 3 LOW observations recorded (not auto-fixed — see review notes). Status set to done. | Claude Opus 4.7 (review) |
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Jerome · **Date:** 2026-05-28 · **Mode:** story-automator-review (adversarial, auto-fix) · **Outcome:** Approve → done
+
+### Method
+
+Read every file in the Dev Agent Record File List (13 new + modified sources, tests, OpenAPI, generated client/helpers, event catalog). Built `Hexalith.Projects.slnx` (0 warnings / 0 errors). Ran the full solution test suite: **511/511 passing, 0 failed** (Tests 179, Server 163, Contracts 126, Client 29, Integration 14 — note the Server lane grew from the 158 recorded at dev time to 163, and the total exceeds the 506 the dev notes claimed; the delta is additional passing tests, nothing was removed or skipped). Verified cross-surface idempotency-fingerprint parity down to the generated enum `EnumMember` wire values (`v1`/`link`/`unlink`/`removeReference`) against the server `ProjectCommandValidator` fingerprint lines. Audited every `[x]` task and every Acceptance Criterion against the actual implementation, and checked `git status` for new source files not declared in the File List (none — the 13 untracked `.cs` files exactly match the declared New list).
+
+### Acceptance Criteria — all verified IMPLEMENTED
+
+- **AC1–AC4 (command-async link/unlink, metadata-only events, optional non-replacing refs, unlink-never-touches-Folders):** Endpoints require `Idempotency-Key`, preserve correlation/task, enforce route↔body identity equality, use closed (`UnmappedMemberHandling.Disallow`) schemas, return `AcceptedCommand` 202. The unlink endpoint takes **no** `IProjectFileReferenceDirectory` dependency, so it structurally cannot call Folders (proven by `DeleteFile_Authorized_Returns202AndSubmitsUnlinkWithoutFoldersCall`). Link never calls the content-bearing `range-read` route (proven by `ValidateLink_AuthorizedNotRedactedFile_Accepts` asserting `RequestPaths` excludes `/context/range-read`). Folder lane untouched by file ops (`LinkFileReference_DoesNotTouchProjectFolder`, disjoint per-kind index keys).
+- **AC5–AC6 (Folders ACL fail-closed + capability gate):** `FoldersProjectFileReferenceDirectory` maps 401/403/404→Denied, 409→Archived, 408/503/5xx→Unavailable, 400/413/422→ValidationFailed, redacted/excluded/non-`File` kind→fail-closed, stale freshness→Stale; `UnavailableProjectFileReferenceDirectory` fails closed when no client is registered. Gate recorded PASSED (Available metadata path via `GetFolderFileMetadata`).
+- **AC7 (state/projections/reads):** `ProjectState.FileReferences` (bounded, `MaxFileReferences=100`), `ProjectStateApply`, `ProjectDetailProjection`, and `ProjectReferenceIndexProjection` all extended; deterministic ordering (kind then id); throw-on-unknown-event preserved.
+- **AC8 (field-scoped idempotency):** Link fingerprint = {file_metadata.display_name, file_reference_id, folder_id, operation, project_id, request_schema_version}; unlink = {file_reference_id, operation, project_id, request_schema_version, unlink_intent}. Server fingerprint, OpenAPI `x-hexalith-idempotency-equivalence`, and generated helper field lists all agree.
+- **AC9–AC11 (contract spine, docs, tests):** OpenAPI is the single source; client + idempotency helpers regenerated, not hand-edited; `docs/event-catalog.md` documents both events and the link/unlink rejection paths; endpoint/ACL/aggregate/projection/leakage/generation tests are comprehensive.
+
+### Findings
+
+No CRITICAL, HIGH, or MEDIUM findings. Three LOW observations, intentionally **not** auto-fixed (each would trade a green build / stable contract for marginal or ambiguous benefit — surfaced here for the team instead):
+
+- **[LOW] `WorkspaceRelativePath` contract pattern is stricter than the server validator.** The OpenAPI pattern restricts to `[A-Za-z0-9._/-]`, while the server `IsWorkspaceRelativePath` accepts any non-control, non-backslash, non-leading-slash, non-`..`, non-empty-segment path (e.g. spaces, Unicode). Not a security gap (the value is transient, never stored, and Folders path policy is authoritative), but a contract/impl divergence. Deliberately left as-is: tightening the server could reject legitimate workspace filenames containing spaces/Unicode, and relaxing the contract weakens published guidance — the correct direction depends on what Folders workspaces actually permit, which is a team decision, not a safe unilateral edit.
+- **[LOW] `ProjectFileReferenceValidationOutcome.TenantMismatch` is never produced** by `FoldersProjectFileReferenceDirectory` (Folders surfaces tenant mismatch as 403/404 → Denied, by design, to avoid existence disclosure). It is part of the documented safe-outcome taxonomy and is handled by the endpoint's `_ → SafeDenial` default. Left for taxonomy symmetry with the folder ACL; harmless.
+- **[LOW, pre-existing / out of scope] Client vs server fingerprint `Escape` divergence for `U+2028`/`U+2029`.** The shared client hasher escapes line/paragraph separators while the server validator's `Escape` (which uses `char.IsControl`, false for `Zl`/`Zp`) leaves them literal, and `IsSafeMetadata` does not reject them. A display name containing `U+2028` would therefore hash differently on the two surfaces. This is a property of the pre-existing Story 1.3 hasher/validator shared by every command (CreateProject, SetProjectFolder, …), not introduced by Story 2.5, and server-side replay detection is internally consistent regardless. Flagged for a future hardening pass on the shared canonicaliser.
+
+### Conclusion
+
+The slice is correct, fail-closed, metadata-only, contract-clean, and well-tested. 0 CRITICAL → status advanced to **done**; no code changes applied (no fix-worthy defect).
 
 ## Validation Notes
 

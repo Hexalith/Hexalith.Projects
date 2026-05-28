@@ -6,6 +6,7 @@
 namespace Hexalith.Projects.Tests.Projections;
 
 using System;
+using System.Linq;
 
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Models;
@@ -135,6 +136,29 @@ public sealed class ProjectProjectionTests
         detail.ProjectFolder.ReferenceState.ShouldBe(ReferenceState.Included);
         detail.ProjectFolder.FolderId.ShouldBe("folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC");
         detail.Sequence.ShouldBe(3);
+    }
+
+    [Fact]
+    public void DetailProjection_AppliesFileReferenceLinkedAndUnlinked()
+    {
+        ProjectDetailProjection projection = ProjectDetailProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, FolderSet(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 3, FileLinked(TenantA, "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(TenantA, 4, FileLinked(TenantA, "file_01HZ9K8YQ3W6V2N4R7T5P0X1F2")),
+            new ProjectProjectionEnvelope(TenantA, 5, FileUnlinked(TenantA, "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+        ]);
+
+        ProjectDetailItem detail = projection.Get(TenantA, ProjectIdValue)!;
+
+        // The Project Folder survives file link/unlink.
+        detail.ProjectFolder!.ReferenceState.ShouldBe(ReferenceState.Included);
+        detail.FileReferences.Select(reference => reference.FileReferenceId)
+            .ShouldBe(["file_01HZ9K8YQ3W6V2N4R7T5P0X1F2"]);
+        detail.FileReferences[0].ReferenceState.ShouldBe(ReferenceState.Included);
+        detail.FileReferences[0].DisplayName.ShouldBe("contract.pdf");
+        detail.Sequence.ShouldBe(5);
     }
 
     [Fact]
@@ -301,6 +325,32 @@ public sealed class ProjectProjectionTests
             "idem-key-folder-set",
             "sha256:folder-set",
             DateTimeOffset.UnixEpoch.AddMinutes(4));
+
+    private static FileReferenceLinked FileLinked(string tenant, string fileReferenceId)
+        => new(
+            tenant,
+            ProjectIdValue,
+            fileReferenceId,
+            "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+            new ProjectFileReferenceMetadata("contract.pdf"),
+            "actor-001",
+            "corr-file",
+            "task-file",
+            "idem-key-" + fileReferenceId,
+            "sha256:" + fileReferenceId,
+            DateTimeOffset.UnixEpoch.AddMinutes(5));
+
+    private static FileReferenceUnlinked FileUnlinked(string tenant, string fileReferenceId)
+        => new(
+            tenant,
+            ProjectIdValue,
+            fileReferenceId,
+            "actor-001",
+            "corr-file",
+            "task-file",
+            "idem-key-unlink-" + fileReferenceId,
+            "sha256:unlink-" + fileReferenceId,
+            DateTimeOffset.UnixEpoch.AddMinutes(6));
 
     private sealed record UnknownProjectEvent : IProjectEvent
     {

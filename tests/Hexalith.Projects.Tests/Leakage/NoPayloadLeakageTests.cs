@@ -141,6 +141,82 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void FileReferenceLinked_SerializesMetadataOnly()
+    {
+        FileReferenceLinked linked = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1",
+            "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+            new ProjectFileReferenceMetadata("contract.pdf"),
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-file-link",
+            "sha256:file-link",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(linked));
+    }
+
+    [Fact]
+    public void FileReferenceUnlinked_SerializesMetadataOnly()
+    {
+        FileReferenceUnlinked unlinked = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1",
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-file-unlink",
+            "sha256:file-unlink",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(unlinked));
+    }
+
+    [Fact]
+    public void FileReferenceUnlinkRejection_SerializesMetadataOnly()
+    {
+        ProjectReferenceUnlinkRejected rejection = new(
+            new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"),
+            "acme",
+            "file",
+            "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1",
+            ReferenceState.TenantMismatch,
+            "fileReferenceId",
+            "corr-file");
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(rejection));
+    }
+
+    [Fact]
+    public void LinkFileReferenceRejection_DropsUnsafeReferenceId()
+    {
+        LinkFileReference command = new(
+            "acme",
+            new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"),
+            @"C:\Users\acme\secret.txt",
+            "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+            new ProjectFileReferenceMetadata("contract.pdf"),
+            "actor-001",
+            "corr-file",
+            "task-file",
+            "idem-file");
+
+        ProjectResult result = ProjectResult.Rejected(
+            command,
+            ProjectResultCode.ValidationFailed,
+            nameof(LinkFileReference.FileReferenceId));
+
+        ProjectReferenceLinkRejected rejection = result.ToRejectionEvent().ShouldBeOfType<ProjectReferenceLinkRejected>();
+        rejection.ReferenceKind.ShouldBe("file");
+        rejection.ReferenceId.ShouldBe("unknown");
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(rejection));
+    }
+
+    [Fact]
     public void SetupAndArchiveRejections_SerializeMetadataOnly()
     {
         var projectId = new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB");

@@ -68,6 +68,7 @@ public static class ProjectStateApply
                 SetupMetadata = created.SetupMetadata,
                 Setup = null,
                 ProjectFolder = null,
+                FileReferences = FrozenDictionary<string, ProjectFileReference>.Empty,
                 Lifecycle = created.Lifecycle,
                 IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
             },
@@ -105,6 +106,26 @@ public static class ProjectStateApply
                     IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
                 },
 
+            FileReferenceLinked linked => state with
+            {
+                FileReferences = AddFileReference(
+                    state.FileReferences,
+                    new ProjectFileReference(
+                        linked.FileReferenceId,
+                        linked.FolderId,
+                        linked.FileMetadata.DisplayName,
+                        ReferenceState.Included,
+                        null,
+                        linked.OccurredAt)),
+                IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+            },
+
+            FileReferenceUnlinked unlinked => state with
+            {
+                FileReferences = RemoveFileReference(state.FileReferences, unlinked.FileReferenceId),
+                IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+            },
+
             ProjectArchived archived => state with
             {
                 Lifecycle = archived.Lifecycle,
@@ -133,6 +154,31 @@ public static class ProjectStateApply
             throw new InvalidOperationException(
                 $"Malformed project event identity in Apply: result code {ProjectResultCode.TenantMismatch}.");
         }
+    }
+
+    private static IReadOnlyDictionary<string, ProjectFileReference> AddFileReference(
+        IReadOnlyDictionary<string, ProjectFileReference> current,
+        ProjectFileReference reference)
+    {
+        Dictionary<string, ProjectFileReference> next = new(current, StringComparer.Ordinal)
+        {
+            [reference.FileReferenceId] = reference,
+        };
+        return next.ToFrozenDictionary(StringComparer.Ordinal);
+    }
+
+    private static IReadOnlyDictionary<string, ProjectFileReference> RemoveFileReference(
+        IReadOnlyDictionary<string, ProjectFileReference> current,
+        string fileReferenceId)
+    {
+        if (!current.ContainsKey(fileReferenceId))
+        {
+            return current;
+        }
+
+        Dictionary<string, ProjectFileReference> next = new(current, StringComparer.Ordinal);
+        next.Remove(fileReferenceId);
+        return next.ToFrozenDictionary(StringComparer.Ordinal);
     }
 
     private static IReadOnlyDictionary<string, string> RecordIdempotency(

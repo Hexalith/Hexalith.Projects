@@ -1,3 +1,47 @@
+# Test Automation Summary - Story 2.5 Link/Unlink File Reference
+
+Workflow: `bmad-qa-generate-e2e-tests` (automate). Date: 2026-05-28.
+
+Story 2.5 arrived in `review` with extensive existing coverage (full solution 506/506). This QA run audited
+the implemented File Reference slice against the story's Testing Requirements and AC matrix, then auto-applied
+the discovered gaps. No production code was changed — gaps were closed with tests only.
+
+## Generated Tests
+
+### API / Endpoint Tests
+- [x] `tests/Hexalith.Projects.Server.Tests/CreateProjectEndpointTests.cs` — added four endpoint cases:
+  - `LinkFile_RedactedFoldersEvidence_ReturnsSafe404AndDoesNotSubmit` — Folders `Redacted`/excluded/sensitivity evidence collapses to an indistinguishable safe-denial **404**, asserts no payload leakage, and never submits (AC5; sensitivity non-disclosure). Previously untested at the endpoint.
+  - `LinkFile_UnavailableFoldersEvidence_Returns503AndDoesNotSubmit` — Folders `Unavailable` (retryable) maps to **503** and never false-accepts (AC5). The story requires "Folders ... unavailable mapping"; only `Denied`(404) and `Stale`(503) were previously covered.
+  - `LinkFile_UnknownBodyField_Returns400AndDoesNotSubmit` — closed request schema (`JsonUnmappedMemberHandling.Disallow`) rejects an unexpected `rawContent` field with **400** (AC1 "closed request schemas"; "unknown fields rejected by closed JSON binding").
+  - `DeleteFile_UnknownBodyField_Returns400AndDoesNotSubmit` — same closed-binding guarantee on the unlink route (rejects a planted `deleteUnderlyingFile` field).
+
+### Domain / Boundary (Folders ACL) Tests
+- [x] `tests/Hexalith.Projects.Server.Tests/ProjectFileReferenceDirectoryTests.cs` — added `ValidateLink_FoldersArchivedConflict_FailsClosedAsArchived` exercising the **409 → `Archived`** branch of `MapFoldersStatus` (the only mapped status code with no test; story task "Map Folders 409 to archived" + Testing Requirement "archived/inactive folder or file evidence").
+
+### E2E Tests
+- [x] `tests/e2e/specs/projects-file-reference.spec.ts` (new) — API-level Playwright spec mirroring the existing `test.fixme` scaffolds (lifecycle/resolution/maintenance). Five journeys: authorized link → 202 + read-model convergence as `referenceKind=file`; link never touches the single Project Folder lane (AC3); unlink removes only the association, never the Project Folder row (AC4); denied/redacted Folders evidence → safe-denial 404 with no path/content leakage (AC5); same-`Idempotency-Key` duplicate link replays to exactly one reference (AC8). Marked `test.fixme` because the running Aspire topology/file-reference routes are not yet wired into E2E (consistent with all other Projects specs); typechecks under the workspace `tsc --noEmit`.
+
+## Coverage
+
+- **Endpoint ACL-outcome → HTTP mapping** (`FileReferenceValidationProblem`): now exercised for `Accepted`(202), `Denied`(404), `Redacted`(404), `Stale`(503), `Unavailable`(503). `Archived`/`TenantMismatch` collapse to the same 404 safe-denial branch as `Denied`.
+- **Closed request binding**: link + unlink now prove unknown fields are rejected (400) and not submitted.
+- **Folders status mapping** (`MapFoldersStatus`): 401/403/404→Denied, 422→ValidationFailed, 409→Archived (new), 5xx/transport→Unavailable, all now covered.
+- **Security/no-leakage**: redacted-file safe-denial asserts `NoPayloadLeakageAssertions`; E2E denial asserts the raw path and the word `redacted` never appear in the response.
+- Not changed (already strong): aggregate link/unlink/idempotency (22), projection file add/remove vs folder lane, NoPayloadLeakage event scans, OpenAPI spine + client-helper hashes.
+- **Gaps intentionally not "filled"**: `ProjectFileReferenceValidationOutcome.TenantMismatch` is defined but unreachable in the directory by design — Folders tenant denial returns 401/403/404 → `Denied` (safe-denial), so a tenant-mismatch *ACL* test would assert unreachable behavior. Tenant mismatch is covered at the aggregate level (`UnlinkFileReference_TenantMismatch_IsRejected`, `LinkFileReference_TenantMismatch_IsRejected`). Flagged for the author rather than invented.
+
+## Verification
+
+| Lane | Command | Result |
+|------|---------|--------|
+| New file-ref endpoint + ACL filter | `dotnet test tests/Hexalith.Projects.Server.Tests/...csproj --filter "FullyQualifiedName~LinkFile\|FullyQualifiedName~DeleteFile\|FullyQualifiedName~ProjectFileReferenceDirectoryTests"` | Passed: 27, Failed: 0, Skipped: 0 |
+| Full Projects server project | `dotnet test tests/Hexalith.Projects.Server.Tests/...csproj --no-build` | Passed: 163, Failed: 0, Skipped: 0 (was 158; +5 new) |
+| E2E typecheck | `npm run typecheck` (in `tests/e2e`) | Passed (tsc --noEmit, 0 errors) |
+
+Environment: `DOTNET_ROOT=/home/administrator/.dotnet` (SDK 10.0.300 per `global.json`); `/usr/bin/dotnet` (10.0.108) fails `rollForward: latestPatch`.
+
+---
+
 # Test Automation Summary - Story 2.4 Set & Auto-Create Project Folder
 
 Workflow: `bmad-qa-generate-e2e-tests` (automate). Date: 2026-05-26.

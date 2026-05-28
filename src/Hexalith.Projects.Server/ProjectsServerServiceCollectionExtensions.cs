@@ -76,6 +76,13 @@ public static class ProjectsServerServiceCollectionExtensions
                 ? new UnavailableProjectFolderDirectory()
                 : new FoldersProjectFolderDirectory(client);
         });
+        services.TryAddTransient<IProjectFileReferenceDirectory>(sp =>
+        {
+            FoldersClient? client = sp.GetService<FoldersClient>();
+            return client is null
+                ? new UnavailableProjectFileReferenceDirectory()
+                : new FoldersProjectFileReferenceDirectory(client);
+        });
         services.TryAddSingleton<IProjectEventStoreAuthorizationValidator, DenyAllProjectEventStoreAuthorizationValidator>();
         services.TryAddSingleton<IProjectDaprPolicyEvidenceProvider, DenyAllProjectDaprPolicyEvidenceProvider>();
         services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();

@@ -101,6 +101,7 @@ public sealed record ProjectDetailProjection
                         created.SetupMetadata,
                         null,
                         null,
+                        [],
                         created.Lifecycle,
                         created.OccurredAt,
                         created.OccurredAt,
@@ -157,6 +158,40 @@ public sealed record ProjectDetailProjection
 
                     break;
 
+                case FileReferenceLinked linked:
+                    if (projects.TryGetValue(key, out ProjectDetailItem? linkedDetail))
+                    {
+                        projects[key] = linkedDetail with
+                        {
+                            FileReferences = UpsertFileReference(
+                                linkedDetail.FileReferences,
+                                new ProjectFileReference(
+                                    linked.FileReferenceId,
+                                    linked.FolderId,
+                                    linked.FileMetadata.DisplayName,
+                                    ReferenceState.Included,
+                                    null,
+                                    linked.OccurredAt)),
+                            UpdatedAt = linked.OccurredAt,
+                            Sequence = envelope.Sequence,
+                        };
+                    }
+
+                    break;
+
+                case FileReferenceUnlinked unlinked:
+                    if (projects.TryGetValue(key, out ProjectDetailItem? unlinkedDetail))
+                    {
+                        projects[key] = unlinkedDetail with
+                        {
+                            FileReferences = RemoveFileReference(unlinkedDetail.FileReferences, unlinked.FileReferenceId),
+                            UpdatedAt = unlinked.OccurredAt,
+                            Sequence = envelope.Sequence,
+                        };
+                    }
+
+                    break;
+
                 case ProjectArchived archived:
                     if (projects.TryGetValue(key, out ProjectDetailItem? archivedDetail))
                     {
@@ -201,4 +236,26 @@ public sealed record ProjectDetailProjection
             return null;
         }
     }
+
+    // Adds or replaces a file reference, keeping the list deterministically ordered by reference id so
+    // rebuild and incremental application stay value-equal regardless of delivery order.
+    private static IReadOnlyList<ProjectFileReference> UpsertFileReference(
+        IReadOnlyList<ProjectFileReference> current,
+        ProjectFileReference reference)
+    {
+        List<ProjectFileReference> next = current
+            .Where(existing => !string.Equals(existing.FileReferenceId, reference.FileReferenceId, StringComparison.Ordinal))
+            .Append(reference)
+            .OrderBy(item => item.FileReferenceId, StringComparer.Ordinal)
+            .ToList();
+        return next;
+    }
+
+    private static IReadOnlyList<ProjectFileReference> RemoveFileReference(
+        IReadOnlyList<ProjectFileReference> current,
+        string fileReferenceId)
+        => current
+            .Where(existing => !string.Equals(existing.FileReferenceId, fileReferenceId, StringComparison.Ordinal))
+            .OrderBy(item => item.FileReferenceId, StringComparer.Ordinal)
+            .ToList();
 }

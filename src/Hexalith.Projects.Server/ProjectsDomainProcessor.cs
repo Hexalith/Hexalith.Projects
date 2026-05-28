@@ -61,6 +61,8 @@ public sealed class ProjectsDomainProcessor(
             ProjectsServerModule.UpdateProjectSetupCommandType => ProjectAuthorizationGate.UpdateProjectSetupAction,
             ProjectsServerModule.ArchiveProjectCommandType => ProjectAuthorizationGate.ArchiveProjectAction,
             ProjectsServerModule.SetProjectFolderCommandType => ProjectAuthorizationGate.SetProjectFolderAction,
+            ProjectsServerModule.LinkFileReferenceCommandType => ProjectAuthorizationGate.LinkFileReferenceAction,
+            ProjectsServerModule.UnlinkFileReferenceCommandType => ProjectAuthorizationGate.UnlinkFileReferenceAction,
             _ => null,
         };
 
@@ -99,6 +101,8 @@ public sealed class ProjectsDomainProcessor(
             ProjectsServerModule.UpdateProjectSetupCommandType => ProcessUpdateProjectSetup(command, currentState),
             ProjectsServerModule.ArchiveProjectCommandType => ProcessArchiveProject(command, currentState),
             ProjectsServerModule.SetProjectFolderCommandType => ProcessSetProjectFolder(command, currentState),
+            ProjectsServerModule.LinkFileReferenceCommandType => ProcessLinkFileReference(command, currentState),
+            ProjectsServerModule.UnlinkFileReferenceCommandType => ProcessUnlinkFileReference(command, currentState),
             _ => Rejection(command, ProjectResultCode.ValidationFailed, null, command.CommandType),
         };
     }
@@ -329,6 +333,121 @@ public sealed class ProjectsDomainProcessor(
     }
 
 
+    private DomainResult ProcessLinkFileReference(CommandEnvelope envelope, object? currentState)
+    {
+        LinkFileReferencePayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<LinkFileReferencePayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null
+            || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(payload.Operation, "link", StringComparison.Ordinal)
+            || !string.Equals(payload.ProjectId, envelope.AggregateId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(payload.FileReferenceId)
+            || string.IsNullOrWhiteSpace(payload.FolderId)
+            || payload.FileMetadata is null)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "identity", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        LinkFileReference command = new(
+            envelope.TenantId,
+            projectId,
+            payload.FileReferenceId!,
+            payload.FolderId!,
+            payload.FileMetadata,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessUnlinkFileReference(CommandEnvelope envelope, object? currentState)
+    {
+        UnlinkFileReferencePayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<UnlinkFileReferencePayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null
+            || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(payload.Operation, "unlink", StringComparison.Ordinal)
+            || !string.Equals(payload.UnlinkIntent, "removeReference", StringComparison.Ordinal)
+            || !string.Equals(payload.ProjectId, envelope.AggregateId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(payload.FileReferenceId))
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "identity", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        UnlinkFileReference command = new(
+            envelope.TenantId,
+            projectId,
+            payload.FileReferenceId!,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
     private static string ReadTaskId(CommandEnvelope envelope)
         => envelope.Extensions is not null
             && envelope.Extensions.TryGetValue("taskId", out string? taskId)
@@ -343,7 +462,9 @@ public sealed class ProjectsDomainProcessor(
             ProjectResultCode.Created
                 or ProjectResultCode.SetupUpdated
                 or ProjectResultCode.Archived
-                or ProjectResultCode.FolderSet => DomainResult.Success(result.Events),
+                or ProjectResultCode.FolderSet
+                or ProjectResultCode.FileReferenceLinked
+                or ProjectResultCode.FileReferenceUnlinked => DomainResult.Success(result.Events),
 
             // A logical replay produced no new event — acknowledge as a no-op (the prior event landed).
             ProjectResultCode.IdempotentReplay => DomainResult.NoOp(),
@@ -376,6 +497,8 @@ public sealed class ProjectsDomainProcessor(
             ProjectsServerModule.UpdateProjectSetupCommandType => nameof(UpdateProjectSetup),
             ProjectsServerModule.ArchiveProjectCommandType => nameof(ArchiveProject),
             ProjectsServerModule.SetProjectFolderCommandType => nameof(SetProjectFolder),
+            ProjectsServerModule.LinkFileReferenceCommandType => nameof(LinkFileReference),
+            ProjectsServerModule.UnlinkFileReferenceCommandType => nameof(UnlinkFileReference),
             _ => nameof(CreateProject),
         };
 
@@ -414,4 +537,19 @@ public sealed class ProjectsDomainProcessor(
         string? FolderId,
         ProjectFolderMetadata? FolderMetadata,
         bool ReplacementConfirmed);
+
+    private sealed record LinkFileReferencePayload(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? ProjectId,
+        string? FileReferenceId,
+        string? FolderId,
+        ProjectFileReferenceMetadata? FileMetadata);
+
+    private sealed record UnlinkFileReferencePayload(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? UnlinkIntent,
+        string? ProjectId,
+        string? FileReferenceId);
 }

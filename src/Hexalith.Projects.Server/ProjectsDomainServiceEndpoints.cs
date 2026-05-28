@@ -191,6 +191,48 @@ public static partial class ProjectsDomainServiceEndpoints
                 cancellationToken).ConfigureAwait(false))
             .WithName("SetProjectFolder");
 
+        endpoints.MapPost("/api/v1/projects/{projectId}/files/{fileReferenceId}/link", static async (
+            string projectId,
+            string fileReferenceId,
+            HttpContext httpContext,
+            [Microsoft.AspNetCore.Mvc.FromServices] IProjectCommandSubmitter submitter,
+            [Microsoft.AspNetCore.Mvc.FromServices] IProjectTenantContextAccessor tenantContext,
+            [Microsoft.AspNetCore.Mvc.FromServices] ProjectAuthorizationGate authorizationGate,
+            [Microsoft.AspNetCore.Mvc.FromServices] IProjectFileReferenceDirectory fileReferenceDirectory,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await LinkFileReferenceAsync(
+                projectId,
+                fileReferenceId,
+                httpContext,
+                submitter,
+                tenantContext,
+                authorizationGate,
+                fileReferenceDirectory,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("LinkFileReference");
+
+        endpoints.MapDelete("/api/v1/projects/{projectId}/files/{fileReferenceId}", static async (
+            string projectId,
+            string fileReferenceId,
+            HttpContext httpContext,
+            [Microsoft.AspNetCore.Mvc.FromServices] IProjectCommandSubmitter submitter,
+            [Microsoft.AspNetCore.Mvc.FromServices] IProjectTenantContextAccessor tenantContext,
+            [Microsoft.AspNetCore.Mvc.FromServices] ProjectAuthorizationGate authorizationGate,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await UnlinkFileReferenceAsync(
+                projectId,
+                fileReferenceId,
+                httpContext,
+                submitter,
+                tenantContext,
+                authorizationGate,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("UnlinkFileReference");
+
         endpoints.MapPatch("/api/v1/projects/{projectId}/setup", static async (
             string projectId,
             HttpContext httpContext,
@@ -768,6 +810,183 @@ public static partial class ProjectsDomainServiceEndpoints
         return MutationResult(httpContext, timeProvider, result, correlationId!, taskId!);
     }
 
+    private static async Task<IResult> LinkFileReferenceAsync(
+        string projectId,
+        string fileReferenceId,
+        HttpContext httpContext,
+        IProjectCommandSubmitter submitter,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        IProjectFileReferenceDirectory fileReferenceDirectory,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+    {
+        if (!TryReadMutationEnvelope(httpContext, out string? correlationId, out string? taskId, out string? idempotencyKey, out IResult? envelopeRejection))
+        {
+            return envelopeRejection!;
+        }
+
+        if (!IsCanonicalIdentifier(projectId) || !IsCanonicalIdentifier(fileReferenceId))
+        {
+            return SafeDenial(correlationId, taskId);
+        }
+
+        // Gate the Project mutation intent BEFORE any Folders ACL call — unauthorized, hidden, archived,
+        // stale, or unavailable Project evidence must never touch Folders.
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeLinkFileReferenceAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed || !IsActive(authorization.ProjectDetail))
+        {
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, taskId)
+                : SafeDenial(correlationId, taskId, authorization);
+        }
+
+        LinkFileReferenceHttpRequest? body;
+        try
+        {
+            body = await httpContext.Request
+                .ReadFromJsonAsync<LinkFileReferenceHttpRequest>(RequestJsonOptions, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (JsonException)
+        {
+            return ValidationProblem(correlationId, taskId, "body");
+        }
+
+        if (body is null
+            || !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(body.Operation, "link", StringComparison.Ordinal)
+            || !string.Equals(body.ProjectId, projectId, StringComparison.Ordinal)
+            || !string.Equals(body.FileReferenceId, fileReferenceId, StringComparison.Ordinal)
+            || !IsCanonicalIdentifier(body.FolderId)
+            || !IsCanonicalIdentifier(body.WorkspaceId)
+            || !IsWorkspaceRelativePath(body.FilePath)
+            || body.FileMetadata is null)
+        {
+            return ValidationProblem(correlationId, taskId, "identity");
+        }
+
+        LinkFileReference command = new(
+            tenantContext.AuthoritativeTenantId!,
+            new ProjectId(projectId),
+            fileReferenceId,
+            body.FolderId!,
+            body.FileMetadata,
+            tenantContext.PrincipalId!,
+            correlationId!,
+            taskId!,
+            idempotencyKey!);
+
+        ProjectCommandValidationResult validation = ProjectCommandValidator.Validate(command);
+        if (!validation.IsAccepted)
+        {
+            return ValidationProblem(correlationId, taskId, validation.RejectedField ?? "command");
+        }
+
+        // Folders-owned authorization/freshness/redaction is the authority for whether the file is
+        // currently usable; the client-supplied metadata is comparison/display intent only.
+        ProjectFileReferenceValidationResult fileValidation = await fileReferenceDirectory
+            .ValidateLinkFileReferenceAsync(
+                new ProjectId(projectId),
+                body.FolderId!,
+                body.WorkspaceId!,
+                body.FilePath!,
+                correlationId!,
+                taskId!,
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        IResult? fileProblem = FileReferenceValidationProblem(fileValidation, correlationId, taskId);
+        if (fileProblem is not null)
+        {
+            return fileProblem;
+        }
+
+        ProjectCommandSubmissionResult result = await submitter
+            .SubmitLinkFileReferenceAsync(command, cancellationToken)
+            .ConfigureAwait(false);
+
+        return MutationResult(httpContext, timeProvider, result, correlationId!, taskId!);
+    }
+
+    private static async Task<IResult> UnlinkFileReferenceAsync(
+        string projectId,
+        string fileReferenceId,
+        HttpContext httpContext,
+        IProjectCommandSubmitter submitter,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+    {
+        if (!TryReadMutationEnvelope(httpContext, out string? correlationId, out string? taskId, out string? idempotencyKey, out IResult? envelopeRejection))
+        {
+            return envelopeRejection!;
+        }
+
+        if (!IsCanonicalIdentifier(projectId) || !IsCanonicalIdentifier(fileReferenceId))
+        {
+            return SafeDenial(correlationId, taskId);
+        }
+
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeUnlinkFileReferenceAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed || !IsActive(authorization.ProjectDetail))
+        {
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, taskId)
+                : SafeDenial(correlationId, taskId, authorization);
+        }
+
+        UnlinkFileReferenceHttpRequest? body;
+        try
+        {
+            body = await httpContext.Request
+                .ReadFromJsonAsync<UnlinkFileReferenceHttpRequest>(RequestJsonOptions, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (JsonException)
+        {
+            return ValidationProblem(correlationId, taskId, "body");
+        }
+
+        if (body is null
+            || !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(body.Operation, "unlink", StringComparison.Ordinal)
+            || !string.Equals(body.UnlinkIntent, "removeReference", StringComparison.Ordinal)
+            || !string.Equals(body.ProjectId, projectId, StringComparison.Ordinal)
+            || !string.Equals(body.FileReferenceId, fileReferenceId, StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "identity");
+        }
+
+        // Unlink removes only the Projects-to-file association. It deliberately makes NO Folders call:
+        // the underlying file is never read, deleted, archived, or otherwise touched.
+        UnlinkFileReference command = new(
+            tenantContext.AuthoritativeTenantId!,
+            new ProjectId(projectId),
+            fileReferenceId,
+            tenantContext.PrincipalId!,
+            correlationId!,
+            taskId!,
+            idempotencyKey!);
+
+        ProjectCommandValidationResult validation = ProjectCommandValidator.Validate(command);
+        if (!validation.IsAccepted)
+        {
+            return ValidationProblem(correlationId, taskId, validation.RejectedField ?? "command");
+        }
+
+        ProjectCommandSubmissionResult result = await submitter
+            .SubmitUnlinkFileReferenceAsync(command, cancellationToken)
+            .ConfigureAwait(false);
+
+        return MutationResult(httpContext, timeProvider, result, correlationId!, taskId!);
+    }
+
     private static async Task<IResult> UpdateProjectSetupAsync(
         string projectId,
         HttpContext httpContext,
@@ -1048,6 +1267,17 @@ public static partial class ProjectsDomainServiceEndpoints
             _ => SafeDenial(correlationId, taskId),
         };
 
+    private static IResult? FileReferenceValidationProblem(ProjectFileReferenceValidationResult result, string? correlationId, string? taskId)
+        => result.Outcome switch
+        {
+            ProjectFileReferenceValidationOutcome.Accepted => null,
+            ProjectFileReferenceValidationOutcome.ValidationFailed => ValidationProblem(correlationId, taskId, "fileReference"),
+            ProjectFileReferenceValidationOutcome.Stale or ProjectFileReferenceValidationOutcome.Unavailable => ReadModelUnavailable(correlationId, taskId),
+            // Denied / Redacted / Archived / TenantMismatch all collapse to an externally-indistinguishable
+            // safe denial so neither Folders existence nor sensitivity is disclosed through Projects.
+            _ => SafeDenial(correlationId, taskId),
+        };
+
     private static bool TryReadMutationEnvelope(
         HttpContext httpContext,
         out string? correlationId,
@@ -1183,21 +1413,31 @@ public static partial class ProjectsDomainServiceEndpoints
 
     private static IReadOnlyList<ProjectReferenceSummaryResponse> ToProjectReferenceSummaries(ProjectDetailItem detail)
     {
-        if (detail.ProjectFolder is null)
-        {
-            return [];
-        }
+        List<ProjectReferenceSummaryResponse> summaries = [];
 
-        return
-        [
-            new ProjectReferenceSummaryResponse(
+        if (detail.ProjectFolder is not null)
+        {
+            summaries.Add(new ProjectReferenceSummaryResponse(
                 "folder",
                 ToWireReferenceState(detail.ProjectFolder.ReferenceState),
                 detail.ProjectFolder.FolderId,
                 detail.ProjectFolder.DisplayName,
                 detail.ProjectFolder.ReasonCode,
-                ToFreshness(detail.ProjectFolder.ObservedAt, detail.Sequence)),
-        ];
+                ToFreshness(detail.ProjectFolder.ObservedAt, detail.Sequence)));
+        }
+
+        foreach (ProjectFileReference file in detail.FileReferences.OrderBy(reference => reference.FileReferenceId, StringComparer.Ordinal))
+        {
+            summaries.Add(new ProjectReferenceSummaryResponse(
+                "file",
+                ToWireReferenceState(file.ReferenceState),
+                file.FileReferenceId,
+                file.DisplayName,
+                file.ReasonCode,
+                ToFreshness(file.ObservedAt, detail.Sequence)));
+        }
+
+        return summaries;
     }
 
     private static string ToWireReferenceState(ReferenceState state)
@@ -1306,6 +1546,42 @@ public static partial class ProjectsDomainServiceEndpoints
             && value.Length <= ProjectsServerModule.MaxCanonicalIdentifierLength
             && CanonicalIdentifierRegex().IsMatch(value);
 
+    // A bounded, workspace-root-relative path used solely to address Folders file metadata. It is NEVER
+    // a local/absolute/unrestricted filesystem path and is never stored by Projects: it rejects control
+    // characters, backslashes, a leading slash, empty/`..`/`//` segments, and over-long input. Folders
+    // path policy remains the authority.
+    private static bool IsWorkspaceRelativePath(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value) || value.Length > 512)
+        {
+            return false;
+        }
+
+        if (value[0] == '/' || value.Contains('\\', StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        foreach (char c in value)
+        {
+            if (c == '\r' || c == '\n' || char.IsControl(c))
+            {
+                return false;
+            }
+        }
+
+        string[] segments = value.Split('/');
+        foreach (string segment in segments)
+        {
+            if (segment.Length == 0 || string.Equals(segment, "..", StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private static bool HasHeader(HttpContext httpContext, string name)
         => httpContext.Request.Headers.ContainsKey(name);
 
@@ -1397,6 +1673,23 @@ public static partial class ProjectsDomainServiceEndpoints
         string? FolderId,
         ProjectFolderMetadata? FolderMetadata,
         bool? ReplacementConfirmed);
+
+    private sealed record LinkFileReferenceHttpRequest(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? ProjectId,
+        string? FileReferenceId,
+        string? FolderId,
+        string? WorkspaceId,
+        string? FilePath,
+        ProjectFileReferenceMetadata? FileMetadata);
+
+    private sealed record UnlinkFileReferenceHttpRequest(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? UnlinkIntent,
+        string? ProjectId,
+        string? FileReferenceId);
 
     private sealed record AcceptedCommandResponse(
         DateTimeOffset AcceptedAt,

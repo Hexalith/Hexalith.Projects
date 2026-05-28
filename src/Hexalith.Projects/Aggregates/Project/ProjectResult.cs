@@ -51,7 +51,9 @@ public sealed record ProjectResult(
     public bool IsAccepted => Code is ProjectResultCode.Created
         or ProjectResultCode.SetupUpdated
         or ProjectResultCode.Archived
-        or ProjectResultCode.FolderSet;
+        or ProjectResultCode.FolderSet
+        or ProjectResultCode.FileReferenceLinked
+        or ProjectResultCode.FileReferenceUnlinked;
 
     /// <summary>
     /// Gets a value indicating whether the result is a logical idempotent replay (no second event;
@@ -98,8 +100,13 @@ public sealed record ProjectResult(
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        string? referenceKind = command is SetProjectFolder ? "folder" : null;
-        string? referenceId = command is SetProjectFolder setProjectFolder ? SafeReferenceIdentifier(setProjectFolder.FolderId) : null;
+        (string? referenceKind, string? referenceId) = command switch
+        {
+            SetProjectFolder setProjectFolder => ("folder", SafeReferenceIdentifier(setProjectFolder.FolderId)),
+            LinkFileReference linkFileReference => ("file", SafeReferenceIdentifier(linkFileReference.FileReferenceId)),
+            UnlinkFileReference unlinkFileReference => ("file", SafeReferenceIdentifier(unlinkFileReference.FileReferenceId)),
+            _ => (null, null),
+        };
 
         return Rejected(
             command.CommandType,
@@ -165,6 +172,8 @@ public sealed record ProjectResult(
         ProjectResultCode.ProjectAlreadyArchived => ReferenceState.Archived,
         ProjectResultCode.ProjectIsArchived => ReferenceState.Archived,
         ProjectResultCode.ProjectFolderReplacementRequiresConfirmation => ReferenceState.Conflict,
+        ProjectResultCode.FileReferenceConflict => ReferenceState.Conflict,
+        ProjectResultCode.FileReferenceLimitExceeded => ReferenceState.Conflict,
         ProjectResultCode.IdempotencyConflict => ReferenceState.Conflict,
         ProjectResultCode.ProjectNotFound => ReferenceState.InvalidReference,
         ProjectResultCode.ValidationFailed => ReferenceState.InvalidReference,
@@ -200,6 +209,22 @@ public sealed record ProjectResult(
                 projectId ?? new Contracts.Identifiers.ProjectId("unknown"),
                 TenantId ?? string.Empty,
                 ReferenceKind ?? "folder",
+                ReferenceId ?? "unknown",
+                ToRejectionReason(),
+                RejectedField,
+                CorrelationId),
+            nameof(LinkFileReference) => new ProjectReferenceLinkRejected(
+                projectId ?? new Contracts.Identifiers.ProjectId("unknown"),
+                TenantId ?? string.Empty,
+                ReferenceKind ?? "file",
+                ReferenceId ?? "unknown",
+                ToRejectionReason(),
+                RejectedField,
+                CorrelationId),
+            nameof(UnlinkFileReference) => new ProjectReferenceUnlinkRejected(
+                projectId ?? new Contracts.Identifiers.ProjectId("unknown"),
+                TenantId ?? string.Empty,
+                ReferenceKind ?? "file",
                 ReferenceId ?? "unknown",
                 ToRejectionReason(),
                 RejectedField,

@@ -84,6 +84,9 @@ public sealed class ClientGenerationTests
         generated.ShouldContain("class MoveProjectConversationRequest");
         generated.ShouldContain("class UnlinkProjectConversationRequest");
         generated.ShouldContain("class SetProjectFolderRequest");
+        generated.ShouldContain("class LinkFileReferenceRequest");
+        generated.ShouldContain("class UnlinkFileReferenceRequest");
+        generated.ShouldContain("class ProjectFileReferenceMetadata");
         generated.ShouldContain("class ProjectConversationsPage");
         generated.ShouldContain("class ProblemDetails");
     }
@@ -126,6 +129,8 @@ public sealed class ClientGenerationTests
             typeof(MoveProjectConversationRequest),
             typeof(UnlinkProjectConversationRequest),
             typeof(SetProjectFolderRequest),
+            typeof(LinkFileReferenceRequest),
+            typeof(UnlinkFileReferenceRequest),
         })
         {
             MethodInfo[] mutationMethods = requestType
@@ -405,6 +410,77 @@ public sealed class ClientGenerationTests
             "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
             "field=replacement_confirmed;present=true;value=b:true",
             "field=request_schema_version;present=true;value=s:v1"));
+    }
+
+    [Fact]
+    public void GeneratedClientExposesFileReferenceOperationsWithExpectedIdempotencyShape()
+    {
+        Assembly clientAssembly = typeof(CreateProjectRequest).Assembly;
+        Type clientInterface = clientAssembly.GetType("Hexalith.Projects.Client.Generated.IClient").ShouldNotBeNull();
+
+        foreach (string operation in new[] { "LinkFileReferenceAsync", "UnlinkFileReferenceAsync" })
+        {
+            MethodInfo[] methods = clientInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Where(m => m.Name == operation)
+                .ToArray();
+            methods.ShouldNotBeEmpty(operation);
+            methods.SelectMany(m => m.GetParameters())
+                .Any(p => string.Equals(p.Name, "idempotency_Key", StringComparison.Ordinal))
+                .ShouldBeTrue(operation);
+        }
+
+        typeof(LinkFileReferenceRequest)
+            .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
+            .ShouldNotBeNull();
+        typeof(UnlinkFileReferenceRequest)
+            .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
+            .ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void LinkFileReferenceHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new LinkFileReferenceRequest
+        {
+            RequestSchemaVersion = LinkFileReferenceRequestRequestSchemaVersion.V1,
+            Operation = LinkFileReferenceRequestOperation.Link,
+            ProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            FileReferenceId = "file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1",
+            FolderId = "folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7",
+            WorkspaceId = "workspace_01HZY7Z6N7J4Q2X8Y9V0A1B2D2",
+            FilePath = "docs/synthetic-note.md",
+            FileMetadata = new ProjectFileReferenceMetadata { DisplayName = "synthetic-note.md" },
+        };
+
+        request.ComputeIdempotencyHash(request.ProjectId, request.FileReferenceId).ShouldBe(ExpectedHash(
+            "operation=LinkFileReference",
+            "field=file_metadata.display_name;present=true;value=s:synthetic-note.md",
+            "field=file_reference_id;present=true;value=s:file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1",
+            "field=folder_id;present=true;value=s:folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7",
+            "field=operation;present=true;value=s:link",
+            "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            "field=request_schema_version;present=true;value=s:v1"));
+    }
+
+    [Fact]
+    public void UnlinkFileReferenceHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new UnlinkFileReferenceRequest
+        {
+            RequestSchemaVersion = UnlinkFileReferenceRequestRequestSchemaVersion.V1,
+            Operation = UnlinkFileReferenceRequestOperation.Unlink,
+            UnlinkIntent = UnlinkFileReferenceRequestUnlinkIntent.RemoveReference,
+            ProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            FileReferenceId = "file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1",
+        };
+
+        request.ComputeIdempotencyHash(request.ProjectId, request.FileReferenceId).ShouldBe(ExpectedHash(
+            "operation=UnlinkFileReference",
+            "field=file_reference_id;present=true;value=s:file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1",
+            "field=operation;present=true;value=s:unlink",
+            "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            "field=request_schema_version;present=true;value=s:v1",
+            "field=unlink_intent;present=true;value=s:removeReference"));
     }
 
     [Fact]

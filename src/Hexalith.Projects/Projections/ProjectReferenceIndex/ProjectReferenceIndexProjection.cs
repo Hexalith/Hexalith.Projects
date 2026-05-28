@@ -18,9 +18,17 @@ using Hexalith.Projects.Projections.ProjectList;
 /// <summary>
 /// Tenant-scoped, deterministic metadata-only index of Project sibling references.
 /// </summary>
+/// <remarks>
+/// Reference rows are keyed by tenant/project/<b>kind</b>/reference so the folder and file reference
+/// lanes are disjoint: replacing or pending-flagging the single Project Folder only ever touches the
+/// <c>folder</c>-kind rows, and linking/unlinking an optional File Reference only ever touches a single
+/// <c>file</c>-kind row. File unlink can never remove the Project Folder row and folder replacement can
+/// never remove file rows.
+/// </remarks>
 public sealed record ProjectReferenceIndexProjection
 {
     private const string FolderReferenceKind = "folder";
+    private const string FileReferenceKind = "file";
     private const string PendingFolderReferenceKey = "_pending_project_folder";
 
     private ProjectReferenceIndexProjection(IReadOnlyDictionary<string, ProjectReferenceIndexItem> references)
@@ -62,8 +70,8 @@ public sealed record ProjectReferenceIndexProjection
                     break;
 
                 case ProjectFolderSet folderSet:
-                    RemoveProjectFolderReferences(references, folderSet.TenantId, folderSet.ProjectId);
-                    references[Key(folderSet.TenantId, folderSet.ProjectId, folderSet.FolderId)] = new ProjectReferenceIndexItem(
+                    RemoveReferences(references, folderSet.TenantId, folderSet.ProjectId, FolderReferenceKind);
+                    references[Key(folderSet.TenantId, folderSet.ProjectId, FolderReferenceKind, folderSet.FolderId)] = new ProjectReferenceIndexItem(
                         folderSet.TenantId,
                         folderSet.ProjectId,
                         FolderReferenceKind,
@@ -78,8 +86,8 @@ public sealed record ProjectReferenceIndexProjection
                 case ProjectFolderCreationPending pending:
                     if (!HasIncludedProjectFolder(references, pending.TenantId, pending.ProjectId))
                     {
-                        RemoveProjectFolderReferences(references, pending.TenantId, pending.ProjectId);
-                        references[Key(pending.TenantId, pending.ProjectId, PendingFolderReferenceKey)] = new ProjectReferenceIndexItem(
+                        RemoveReferences(references, pending.TenantId, pending.ProjectId, FolderReferenceKind);
+                        references[Key(pending.TenantId, pending.ProjectId, FolderReferenceKind, PendingFolderReferenceKey)] = new ProjectReferenceIndexItem(
                             pending.TenantId,
                             pending.ProjectId,
                             FolderReferenceKind,
@@ -91,6 +99,23 @@ public sealed record ProjectReferenceIndexProjection
                             envelope.Sequence);
                     }
 
+                    break;
+
+                case FileReferenceLinked linked:
+                    references[Key(linked.TenantId, linked.ProjectId, FileReferenceKind, linked.FileReferenceId)] = new ProjectReferenceIndexItem(
+                        linked.TenantId,
+                        linked.ProjectId,
+                        FileReferenceKind,
+                        linked.FileReferenceId,
+                        ReferenceState.Included,
+                        linked.FileMetadata.DisplayName,
+                        null,
+                        linked.OccurredAt,
+                        envelope.Sequence);
+                    break;
+
+                case FileReferenceUnlinked unlinked:
+                    references.Remove(Key(unlinked.TenantId, unlinked.ProjectId, FileReferenceKind, unlinked.FileReferenceId));
                     break;
 
                 default:
@@ -106,10 +131,10 @@ public sealed record ProjectReferenceIndexProjection
     /// <summary>Lists references for a tenant/project.</summary>
     /// <param name="tenantId">The managed tenant identifier.</param>
     /// <param name="projectId">The project identifier.</param>
-    /// <returns>The matching reference rows.</returns>
+    /// <returns>The matching reference rows ordered by reference kind then reference id.</returns>
     public IReadOnlyList<ProjectReferenceIndexItem> List(string tenantId, string projectId)
     {
-        string? prefix = TryPrefix(tenantId, projectId);
+        string? prefix = TryProjectReferencesPrefix(tenantId, projectId);
         if (prefix is null)
         {
             return [];
@@ -123,12 +148,13 @@ public sealed record ProjectReferenceIndexProjection
             .ToArray();
     }
 
-    private static void RemoveProjectFolderReferences(
+    private static void RemoveReferences(
         Dictionary<string, ProjectReferenceIndexItem> references,
         string tenantId,
-        string projectId)
+        string projectId,
+        string referenceKind)
     {
-        string? prefix = TryPrefix(tenantId, projectId);
+        string? prefix = TryKindPrefix(tenantId, projectId, referenceKind);
         if (prefix is null)
         {
             return;
@@ -145,25 +171,31 @@ public sealed record ProjectReferenceIndexProjection
         string tenantId,
         string projectId)
     {
-        string? prefix = TryPrefix(tenantId, projectId);
+        string? prefix = TryKindPrefix(tenantId, projectId, FolderReferenceKind);
         return prefix is not null
             && references.Any(entry =>
                 entry.Key.StartsWith(prefix, StringComparison.Ordinal)
                 && entry.Value.ReferenceState == ReferenceState.Included);
     }
 
-    private static string Key(string tenantId, string projectId, string referenceId)
+    private static string Key(string tenantId, string projectId, string referenceKind, string referenceId)
     {
-        string? prefix = TryPrefix(tenantId, projectId);
+        string? prefix = TryKindPrefix(tenantId, projectId, referenceKind);
         return prefix is null ? referenceId : prefix + referenceId;
     }
 
-    private static string? TryPrefix(string tenantId, string projectId)
+    private static string? TryKindPrefix(string tenantId, string projectId, string referenceKind)
+    {
+        string? projectPrefix = TryProjectReferencesPrefix(tenantId, projectId);
+        return projectPrefix is null ? null : projectPrefix + referenceKind + ":";
+    }
+
+    private static string? TryProjectReferencesPrefix(string tenantId, string projectId)
     {
         try
         {
             string identity = new ProjectIdentity(tenantId, new ProjectId(projectId)).GlobalId;
-            return identity + ":references:" + FolderReferenceKind + ":";
+            return identity + ":references:";
         }
         catch (Exception exception) when (exception is ArgumentException or ArgumentNullException)
         {

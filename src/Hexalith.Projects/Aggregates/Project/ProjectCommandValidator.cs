@@ -234,6 +234,81 @@ public static class ProjectCommandValidator
     }
 
     /// <summary>
+    /// Validates a <see cref="LinkFileReference"/> command and computes its canonical idempotency
+    /// fingerprint.
+    /// </summary>
+    /// <param name="command">The link-file-reference command.</param>
+    /// <returns>An accepted or rejected validation result.</returns>
+    public static ProjectCommandValidationResult Validate(LinkFileReference command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult common = ValidateCommon(command);
+        if (!common.IsAccepted)
+        {
+            return common;
+        }
+
+        if (!IsSafeReferenceIdentifier(command.FileReferenceId))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.FileReferenceId));
+        }
+
+        if (!IsSafeReferenceIdentifier(command.FolderId))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.FolderId));
+        }
+
+        if (command.FileMetadata is null)
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.FileMetadata));
+        }
+
+        if (!IsSafeOptionalMetadata(command.FileMetadata.DisplayName, MaxNameLength))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, "fileMetadata.displayName");
+        }
+
+        string? displayName = string.IsNullOrWhiteSpace(command.FileMetadata.DisplayName)
+            ? null
+            : command.FileMetadata.DisplayName.Trim();
+
+        return ProjectCommandValidationResult.AcceptedFileLink(
+            ComputeLinkFileReferenceFingerprint(
+                command.ProjectId.Value,
+                command.FileReferenceId.Trim(),
+                command.FolderId.Trim(),
+                displayName));
+    }
+
+    /// <summary>
+    /// Validates an <see cref="UnlinkFileReference"/> command and computes its canonical idempotency
+    /// fingerprint.
+    /// </summary>
+    /// <param name="command">The unlink-file-reference command.</param>
+    /// <returns>An accepted or rejected validation result.</returns>
+    public static ProjectCommandValidationResult Validate(UnlinkFileReference command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult common = ValidateCommon(command);
+        if (!common.IsAccepted)
+        {
+            return common;
+        }
+
+        if (!IsSafeReferenceIdentifier(command.FileReferenceId))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.FileReferenceId));
+        }
+
+        return ProjectCommandValidationResult.AcceptedFileUnlink(
+            ComputeUnlinkFileReferenceFingerprint(
+                command.ProjectId.Value,
+                command.FileReferenceId.Trim()));
+    }
+
+    /// <summary>
     /// Computes the canonical idempotency fingerprint for a <see cref="CreateProject"/> command using
     /// the Story 1.3 canonical hasher semantics over the spine's equivalence field list.
     /// </summary>
@@ -323,6 +398,55 @@ public static class ProjectCommandValidator
             "field=project_id;present=true;value=s:" + Escape(projectId),
             "field=replacement_confirmed;present=true;value=b:" + (replacementConfirmed ? "true" : "false"),
             "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+        ];
+
+        string canonical = string.Join('\n', lines);
+        byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(canonical));
+        return "sha256:" + Convert.ToHexString(digest).ToLowerInvariant();
+    }
+
+    /// <summary>Computes the canonical link-file-reference idempotency fingerprint.</summary>
+    /// <param name="projectId">The route/project identifier.</param>
+    /// <param name="fileReferenceId">The opaque file-reference identifier.</param>
+    /// <param name="folderId">The owning folder reference identifier.</param>
+    /// <param name="displayName">The safe display metadata, or null.</param>
+    /// <returns>A <c>sha256:</c>-prefixed lowercase hex digest.</returns>
+    internal static string ComputeLinkFileReferenceFingerprint(
+        string projectId,
+        string fileReferenceId,
+        string folderId,
+        string? displayName)
+    {
+        string[] lines =
+        [
+            "operation=LinkFileReference",
+            "field=file_metadata.display_name;present=" + (displayName is null ? "false;value=omitted" : "true;value=s:" + Escape(displayName)),
+            "field=file_reference_id;present=true;value=s:" + Escape(fileReferenceId),
+            "field=folder_id;present=true;value=s:" + Escape(folderId),
+            "field=operation;present=true;value=s:link",
+            "field=project_id;present=true;value=s:" + Escape(projectId),
+            "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+        ];
+
+        string canonical = string.Join('\n', lines);
+        byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(canonical));
+        return "sha256:" + Convert.ToHexString(digest).ToLowerInvariant();
+    }
+
+    /// <summary>Computes the canonical unlink-file-reference idempotency fingerprint.</summary>
+    /// <param name="projectId">The route/project identifier.</param>
+    /// <param name="fileReferenceId">The opaque file-reference identifier.</param>
+    /// <returns>A <c>sha256:</c>-prefixed lowercase hex digest.</returns>
+    internal static string ComputeUnlinkFileReferenceFingerprint(string projectId, string fileReferenceId)
+    {
+        string[] lines =
+        [
+            "operation=UnlinkFileReference",
+            "field=file_reference_id;present=true;value=s:" + Escape(fileReferenceId),
+            "field=operation;present=true;value=s:unlink",
+            "field=project_id;present=true;value=s:" + Escape(projectId),
+            "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+            "field=unlink_intent;present=true;value=s:removeReference",
         ];
 
         string canonical = string.Join('\n', lines);

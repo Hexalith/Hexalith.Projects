@@ -581,6 +581,160 @@ paths:
         - not_found
         - read_model_unavailable
         - internal_error
+  /api/v1/projects/{projectId}/files/{fileReferenceId}/link:
+    post:
+      tags:
+        - projects
+      operationId: LinkFileReference
+      summary: Link an authorized optional File Reference to an active Project.
+      description: >
+        Links a single authorized optional File Reference to an active Project (FR-9, FR-11).
+        Hexalith.Folders remains the file lifecycle, content, path-policy, and authorization owner;
+        Projects stores only the opaque reference identifier, the owning folder identifier, and safe
+        display metadata. The server validates the file through the Folders metadata-only ACL before
+        accepting and never reads file contents. Linking a file never clears, replaces, satisfies, or
+        auto-creates the single Project Folder. Tenant authority comes from authenticated principal
+        claims and EventStore envelopes, never the request body.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/FileReferenceId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkFileReferenceRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/LinkFileReferenceRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - file_metadata.display_name
+        - file_reference_id
+        - folder_id
+        - operation
+        - project_id
+        - request_schema_version
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: task-id
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-link-file-reference-permission-project-detail-and-folders-file-acl
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
+        - internal_error
+  /api/v1/projects/{projectId}/files/{fileReferenceId}:
+    delete:
+      tags:
+        - projects
+      operationId: UnlinkFileReference
+      summary: Unlink an optional File Reference from a Project without deleting the file.
+      description: >
+        Removes only the Project-to-file association (FR-9, FR-11). It never deletes, removes, archives,
+        reads, mutates, or otherwise changes the underlying file in Hexalith.Folders, and it never
+        removes the single Project Folder reference. Unlinking a file reference that is not present is a
+        safe idempotent no-op.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/FileReferenceId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UnlinkFileReferenceRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/UnlinkFileReferenceRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - file_reference_id
+        - operation
+        - project_id
+        - request_schema_version
+        - unlink_intent
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: task-id
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-unlink-file-reference-permission-and-project-detail
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
+        - internal_error
   /api/v1/projects/{projectId}/setup:
     patch:
       tags:
@@ -782,6 +936,13 @@ components:
       in: path
       required: true
       description: Opaque Conversations-owned identifier. It is a reference identity, not tenant authority or transcript content.
+      schema:
+        $ref: "#/components/schemas/OpaqueIdentifier"
+    FileReferenceId:
+      name: fileReferenceId
+      in: path
+      required: true
+      description: Opaque, Projects-owned stable file-reference identifier. It is a reference identity, not a path, tenant authority, or file content.
       schema:
         $ref: "#/components/schemas/OpaqueIdentifier"
     PageSize:
@@ -1128,6 +1289,24 @@ components:
         folderMetadata:
           displayName: synthetic-project-alpha
         replacementConfirmed: true
+    LinkFileReferenceRequest:
+      value:
+        requestSchemaVersion: v1
+        operation: link
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        fileReferenceId: file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1
+        folderId: folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7
+        workspaceId: workspace_01HZY7Z6N7J4Q2X8Y9V0A1B2D2
+        filePath: docs/synthetic-note.md
+        fileMetadata:
+          displayName: synthetic-note.md
+    UnlinkFileReferenceRequest:
+      value:
+        requestSchemaVersion: v1
+        operation: unlink
+        unlinkIntent: removeReference
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        fileReferenceId: file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1
   schemas:
     OpaqueIdentifier:
       type: string
@@ -1462,6 +1641,87 @@ components:
         replacementConfirmed:
           type: boolean
           description: Must be true when replacing a different existing Project Folder reference.
+    ProjectFileReferenceMetadata:
+      type: object
+      additionalProperties: false
+      description: Safe metadata-only optional File Reference display metadata. It is not a path, tenant authority, repository detail, byte range, provider payload, or file content.
+      required:
+        - displayName
+      properties:
+        displayName:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 160
+          description: Safe display metadata for the file reference.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+    WorkspaceRelativePath:
+      type: string
+      minLength: 1
+      maxLength: 512
+      pattern: "^(?!/)(?!.*(?:^|/)\\.\\.(?:$|/))(?!.*//)[A-Za-z0-9._/-]+$"
+      description: Workspace-root-relative path used only to address Folders file metadata for the ACL check. It is never stored by Projects and is never a local, absolute, or unrestricted filesystem path. The pattern rejects a leading slash, parent-directory segments, and empty segments.
+    LinkFileReferenceRequest:
+      type: object
+      additionalProperties: false
+      description: Closed command body for linking an optional File Reference. Tenant/principal/actor authority is server-derived and not accepted here. The folder/workspace/path tuple is the minimum safe identifier set the Folders metadata-only ACL needs and is never persisted by Projects.
+      required:
+        - requestSchemaVersion
+        - operation
+        - projectId
+        - fileReferenceId
+        - folderId
+        - workspaceId
+        - filePath
+        - fileMetadata
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        operation:
+          type: string
+          enum:
+            - link
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        fileReferenceId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        folderId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        workspaceId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        filePath:
+          $ref: "#/components/schemas/WorkspaceRelativePath"
+        fileMetadata:
+          $ref: "#/components/schemas/ProjectFileReferenceMetadata"
+    UnlinkFileReferenceRequest:
+      type: object
+      additionalProperties: false
+      description: Closed command body for unlinking an optional File Reference. It removes only the Project-to-file association and never deletes, reads, or mutates the underlying file.
+      required:
+        - requestSchemaVersion
+        - operation
+        - unlinkIntent
+        - projectId
+        - fileReferenceId
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        operation:
+          type: string
+          enum:
+            - unlink
+        unlinkIntent:
+          type: string
+          enum:
+            - removeReference
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        fileReferenceId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
     ProjectConversationsPage:
       type: object
       additionalProperties: false
@@ -1750,6 +2010,7 @@ components:
           enum:
             - conversation
             - folder
+            - file
             - memory
         referenceState:
           type: string

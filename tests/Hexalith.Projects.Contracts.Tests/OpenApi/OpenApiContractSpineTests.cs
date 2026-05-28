@@ -58,6 +58,7 @@ public sealed class OpenApiContractSpineTests
         RequiredMapping(parameters, "Freshness");
         RequiredMapping(parameters, "ProjectId");
         RequiredMapping(parameters, "ConversationId");
+        RequiredMapping(parameters, "FileReferenceId");
         RequiredMapping(parameters, "PageSize");
         RequiredMapping(parameters, "Cursor");
         RequiredMapping(parameters, "LifecycleFilter");
@@ -84,6 +85,9 @@ public sealed class OpenApiContractSpineTests
         RequiredMapping(schemas, "UnlinkProjectConversationRequest");
         RequiredMapping(schemas, "SetProjectFolderRequest");
         RequiredMapping(schemas, "ProjectFolderMetadata");
+        RequiredMapping(schemas, "LinkFileReferenceRequest");
+        RequiredMapping(schemas, "UnlinkFileReferenceRequest");
+        RequiredMapping(schemas, "ProjectFileReferenceMetadata");
         RequiredMapping(schemas, "ProjectConversationsPage");
         RequiredMapping(schemas, "ProjectConversationItem");
         RequiredMapping(schemas, "ProjectConversationPageMetadata");
@@ -561,6 +565,92 @@ public sealed class OpenApiContractSpineTests
     }
 
     [Fact]
+    public void Spine_FileReferenceOperations_AreCommandAsyncMutations()
+    {
+        (YamlMappingNode Operation, string OperationId, string RequestSchema, string[] Equivalence)[] operations =
+        [
+            (LinkFileReferenceMutation(), "LinkFileReference", "LinkFileReferenceRequest",
+                ["file_metadata.display_name", "file_reference_id", "folder_id", "operation", "project_id", "request_schema_version"]),
+            (UnlinkFileReferenceMutation(), "UnlinkFileReference", "UnlinkFileReferenceRequest",
+                ["file_reference_id", "operation", "project_id", "request_schema_version", "unlink_intent"]),
+        ];
+
+        foreach ((YamlMappingNode operation, string operationId, string requestSchema, string[] expectedEquivalence) in operations)
+        {
+            GetScalar(operation, "operationId").ShouldBe(operationId);
+
+            string schemaRef = GetScalar(
+                RequiredMapping(
+                    RequiredMapping(
+                        RequiredMapping(RequiredMapping(operation, "requestBody"), "content"),
+                        "application/json"),
+                    "schema"),
+                "$ref") ?? string.Empty;
+            schemaRef.ShouldBe($"#/components/schemas/{requestSchema}");
+
+            YamlMappingNode responses = RequiredMapping(operation, "responses");
+            GetScalar(RequiredMapping(responses, "202"), "$ref").ShouldBe("#/components/responses/AcceptedCommand");
+            GetScalar(RequiredMapping(responses, "400"), "$ref").ShouldBe("#/components/responses/ValidationFailure");
+            GetScalar(RequiredMapping(responses, "404"), "$ref").ShouldBe("#/components/responses/SafeAuthorizationDenial404");
+            GetScalar(RequiredMapping(responses, "409"), "$ref").ShouldBe("#/components/responses/IdempotencyConflict");
+            GetScalar(RequiredMapping(responses, "503"), "$ref").ShouldBe("#/components/responses/ReadModelUnavailable");
+
+            string[] parameterRefs = RequiredSequence(operation, "parameters")
+                .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
+            parameterRefs.ShouldContain("#/components/parameters/ProjectId");
+            parameterRefs.ShouldContain("#/components/parameters/FileReferenceId");
+            parameterRefs.ShouldContain("#/components/parameters/IdempotencyKey");
+            parameterRefs.ShouldContain("#/components/parameters/CorrelationId");
+            parameterRefs.ShouldContain("#/components/parameters/TaskId");
+
+            GetScalar(RequiredMapping(operation, "x-hexalith-idempotency-key"), "required").ShouldBe("true");
+            GetScalar(RequiredMapping(operation, "x-hexalith-idempotency-key"), "queryBehavior").ShouldBe("rejected-if-present");
+            string[] equivalence = RequiredSequence(operation, "x-hexalith-idempotency-equivalence")
+                .OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty).ToArray();
+            equivalence.ShouldBe(expectedEquivalence);
+            equivalence.ShouldBe(equivalence.OrderBy(f => f, StringComparer.Ordinal).ToArray());
+
+            GetScalar(RequiredMapping(operation, "x-hexalith-authorization"), "tenantAuthority")
+                .ShouldBe("authentication-context-and-eventstore-envelope");
+        }
+    }
+
+    [Fact]
+    public void Spine_FileReferenceSchemas_AreClosedCamelCaseAndMetadataOnly()
+    {
+        YamlMappingNode schemas = Schemas();
+        foreach (string schemaName in new[] { "LinkFileReferenceRequest", "UnlinkFileReferenceRequest", "ProjectFileReferenceMetadata" })
+        {
+            YamlMappingNode schema = RequiredMapping(schemas, schemaName);
+            GetScalar(schema, "additionalProperties").ShouldBe("false");
+            string[] properties = RequiredMapping(schema, "properties").Children.Keys
+                .OfType<YamlScalarNode>().Select(k => k.Value ?? string.Empty).ToArray();
+            foreach (string property in properties)
+            {
+                Regex.IsMatch(property, "^[a-z][A-Za-z0-9]*$").ShouldBeTrue($"property '{property}' on {schemaName} must be camelCase");
+            }
+
+            properties.ShouldNotContain("tenantId");
+            properties.ShouldNotContain("principalId");
+            properties.ShouldNotContain("actorPartyId");
+        }
+
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "LinkFileReferenceRequest"), "properties"), "operation"))
+            .ShouldBe(["link"]);
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "UnlinkFileReferenceRequest"), "properties"), "operation"))
+            .ShouldBe(["unlink"]);
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "UnlinkFileReferenceRequest"), "properties"), "unlinkIntent"))
+            .ShouldBe(["removeReference"]);
+    }
+
+    [Fact]
+    public void Spine_ProjectReferenceSummary_IncludesFileReferenceKind()
+    {
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(Schemas(), "ProjectReferenceSummary"), "properties"), "referenceKind"))
+            .ShouldBe(["conversation", "folder", "file", "memory"]);
+    }
+
+    [Fact]
     public void Spine_ProjectSetupSchemas_AreClosedCamelCaseAndMetadataOnly()
     {
         YamlMappingNode schemas = Schemas();
@@ -838,6 +928,12 @@ public sealed class OpenApiContractSpineTests
 
     private static YamlMappingNode SetProjectFolderMutation() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/folder"), "put");
+
+    private static YamlMappingNode LinkFileReferenceMutation() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/files/{fileReferenceId}/link"), "post");
+
+    private static YamlMappingNode UnlinkFileReferenceMutation() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/files/{fileReferenceId}"), "delete");
 
     private static string[] RequiredEnumValues(YamlMappingNode schema) =>
         RequiredSequence(schema, "enum").OfType<YamlScalarNode>().Select(v => v.Value ?? string.Empty).ToArray();
