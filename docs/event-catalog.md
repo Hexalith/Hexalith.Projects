@@ -87,6 +87,34 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
 - **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection`.
 
+### `FileReferenceLinked`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.FileReferenceLinked` (`IProjectEvent` → `IEventPayload`)
+- **Purpose:** Records an optional File Reference link on an active Project after Projects server-side ACL validation of the file through the Hexalith.Folders metadata-only context route (FR-9, FR-11). File references are a bounded optional set; linking never clears, replaces, satisfies, or auto-creates the single Project Folder.
+- **Emitted by:** `ProjectAggregate.Handle(LinkFileReference)` after the server validated Folders file metadata evidence (`GetFolderFileMetadata`, never file content bytes).
+- **Sensitivity class:** metadata-only.
+- **Fields:**
+  - `TenantId`, `ProjectId` — canonical Projects identity.
+  - `FileReferenceId` — Projects-owned opaque, stable file-reference string.
+  - `FolderId` — owning Folders-owned folder reference string.
+  - `FileMetadata` — safe display metadata only; never file contents, byte ranges, raw/workspace paths, diffs, provider payloads, repository internals, tenant authority, or raw upstream ACL details.
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
+  - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
+- **Consumers:** `ProjectDetailProjection`, `ProjectReferenceIndexProjection` (`file`-kind rows).
+
+### `FileReferenceUnlinked`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.FileReferenceUnlinked` (`IProjectEvent` → `IEventPayload`)
+- **Purpose:** Records removal of the Project-to-file association only (FR-9, FR-11). It never deletes, removes, archives, reads, mutates, or otherwise changes the underlying file in Hexalith.Folders, and never removes the single Project Folder reference.
+- **Emitted by:** `ProjectAggregate.Handle(UnlinkFileReference)` when the targeted reference exists; unlinking a missing reference is a safe idempotent no-op that emits no event.
+- **Sensitivity class:** metadata-only.
+- **Fields:**
+  - `TenantId`, `ProjectId` — canonical Projects identity.
+  - `FileReferenceId` — Projects-owned opaque file-reference string that was unlinked.
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
+  - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
+- **Consumers:** `ProjectDetailProjection`, `ProjectReferenceIndexProjection` (removes only the targeted `file`-kind row).
+
 ## Rejection events
 
 ### `ProjectCreationRejected`
@@ -127,10 +155,19 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
 ### `ProjectReferenceLinkRejected`
 
 - **Type:** `Hexalith.Projects.Contracts.Events.ProjectReferenceLinkRejected` (`IRejectionEvent`)
-- **Purpose:** Records a refused sibling reference link/set attempt, including Project Folder set rejection paths (validation failure, replacement not confirmed, missing/archived project, authorization failure, or idempotency conflict).
-- **Emitted by:** `ProjectAggregate.Handle(SetProjectFolder)` rejection paths and `/process` fail-closed payload paths.
+- **Purpose:** Records a refused sibling reference link/set attempt, including Project Folder set (`folder`) and optional File Reference link (`file`) rejection paths (validation failure, replacement not confirmed, conflicting/over-limit file reference, missing/archived project, tenant mismatch, Folders ACL denial/redaction/staleness/unavailability, authorization failure, or idempotency conflict).
+- **Emitted by:** `ProjectAggregate.Handle(SetProjectFolder)` and `ProjectAggregate.Handle(LinkFileReference)` rejection paths, the server-side Folders ACL fail-closed mapping, and `/process` fail-closed payload paths.
 - **Sensitivity class:** metadata-only.
-- **Fields:** `ProjectId`, `TenantId`, `ReferenceKind` (for Story 2.4, `folder`), `ReferenceId` sibling identifier when safe, canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
+- **Fields:** `ProjectId`, `TenantId`, `ReferenceKind` (`folder` or `file`), `ReferenceId` sibling identifier when safe (malformed identifiers are dropped to `unknown`, never echoed raw), canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
+- **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
+
+### `ProjectReferenceUnlinkRejected`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectReferenceUnlinkRejected` (`IRejectionEvent`)
+- **Purpose:** Records a refused sibling reference unlink attempt, including optional File Reference unlink (`file`) rejection paths (validation failure, missing/archived project, tenant mismatch, authorization failure, or idempotency conflict). Unlinking a reference that is not present is a safe idempotent no-op, not a rejection.
+- **Emitted by:** `ProjectAggregate.Handle(UnlinkFileReference)` rejection paths and `/process` fail-closed payload paths.
+- **Sensitivity class:** metadata-only.
+- **Fields:** `ProjectId`, `TenantId`, `ReferenceKind` (`file`), `ReferenceId` sibling identifier when safe (malformed dropped to `unknown`), canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
 - **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
 
 ## Consumed external events

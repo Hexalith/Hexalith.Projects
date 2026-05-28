@@ -1,5 +1,6 @@
 # generated: 2026-05-25
 # last_updated: 2026-05-28
+# 2-6 set to ready-for-dev on 2026-05-28 via create-story (Memories linkage decision spike; PR-4 / AR-G4; deliverable is ADR docs/adr/memories-link-target.md deciding Case vs MemoryUnit (recommended: Case-level link via stable MemoriesClient.GetCaseAsync), the Memory reference identifier shape, IProjectMemoryDirectory ACL contract surface, deterministic eventual-consistency strategy (no sleeps), failure-to-shared-vocabulary mapping, Epic 3 allowlist fail-closed-clean treatment, and [Experimental("HXL001"/"HXL002")] containment strategy; no Projects source changes, no LinkMemory/UnlinkMemory commands/events/projections, no OpenAPI/client regeneration, no .g.cs hand-edits, no Memories submodule edits or pointer change, no nested recursive submodule init)
 # 2-5 set to done on 2026-05-28 via story-automator-review cycle 1 (0 CRITICAL/HIGH/MEDIUM remaining; no code changes — implementation verified correct; all 11 ACs implemented; build 0W/0E; full Projects solution 511/511 (Tests 179, Server 163, Contracts 126, Client 29, Integration 14); cross-surface idempotency fingerprint parity verified to generated enum EnumMember wire values; unlink endpoint takes no Folders dependency; link never calls range-read; 3 LOW observations recorded not auto-fixed (WorkspaceRelativePath contract stricter than server validator; unused TenantMismatch ACL outcome; pre-existing client/server Escape divergence for U+2028/U+2029); no commit, no submodule pointer change, no nested recursive submodule init)
 # 2-4 set to done on 2026-05-26 via story-automator-review cycle 1 (0 CRITICAL/HIGH/MEDIUM/LOW remaining; auto-fixed 2 MEDIUM: unsafe SetProjectFolder rejection reference-id echo now drops malformed folder IDs to unknown, and CreateProject endpoint accepts generated OpenAPI client request shape; focused lanes Projects 76/76, Server 69/69, OpenAPI 18/18, Client 26/26; full Projects solution 445/445; git diff --check clean with CRLF conversion warnings only; no commit, no nested recursive submodule init)
 # 2-3 set to done on 2026-05-26 via story-automator-review cycle 1 (0 CRITICAL/HIGH/MEDIUM/LOW remaining; auto-fixed 1 MEDIUM + 1 LOW: upstream accepted idempotency-key mismatch now fails closed, endpoint tests cover authority-header mismatch, missing idempotency, and link/move route/body identity mismatch; focused assignment lane 30/30, contract-spine gate PASSED, Contracts 120/120, Client 24/24, Server 117/117, Projects 129/129, leakage 14/14; git diff --check clean with CRLF conversion warnings only; no commit)
@@ -55,7 +56,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-25
-last_updated: 2026-05-27
+last_updated: 2026-05-28
 # 2-5 set to review on 2026-05-27 via dev-story (optional File Reference link/unlink implemented end-to-end via Folders metadata-only GetFolderFileMetadata ACL; bounded file-ref set in ProjectState; per-kind reference-index keys keep folder/file lanes disjoint; Project Folder rule preserved; unlink never calls Folders, link never calls range-read; OpenAPI spine + regenerated client/idempotency helpers; build 0W/0E; full solution dotnet test 506/506 — Tests 179, Server 158, Contracts 126, Client 29, Integration 14; git diff --check clean for story files; helper-gen run manually due to pre-existing Windows backslash path in build target on Linux; no submodule pointer change, no nested recursive submodule init, no commit)
 # 2-5 set to in-progress on 2026-05-27 via dev-story (capability gate PASSED: Folders server maps metadata-only GetFolderFileMetadata POST .../context/metadata returning FileMetadataResult/FileMetadataItem with no content bytes after tenant/folder-ACL/path-policy/sensitivity/freshness; selected Available-metadata path, no degraded behavior needed; ReadFileRange content route NOT used) Folders server maps metadata-only GetFolderFileMetadata POST .../context/metadata returning FileMetadataResult/FileMetadataItem with no content bytes after tenant/folder-ACL/path-policy/sensitivity/freshness; selected Available-metadata path, no degraded behavior needed; ReadFileRange content route NOT used)
 # 2-5 set to ready-for-dev on 2026-05-26 via create-story (Link/Unlink File Reference; extends Story 2.4 Folders ACL/reference-index pattern for optional file references; hard HALT if Folders file metadata authorization path is unavailable and no approved degraded pending/unavailable behavior exists; no file-content/byte-range/path storage in Projects; no code implementation)
@@ -105,7 +106,7 @@ development_status:
   2-3-link-move-conversation-write-side: done
   2-4-set-auto-create-project-folder: done
   2-5-link-unlink-file-reference: done
-  2-6-memories-linkage-decision-spike: backlog
+  2-6-memories-linkage-decision-spike: ready-for-dev
   2-7-link-unlink-memory: backlog
   epic-2-retrospective: optional
 
