@@ -3,6 +3,12 @@
     "allow": [
       "Bash(git config *)",
       "Bash(git ls-remote *)"
+    ],
+    "deny": [
+      "Read(./Hexalith.*/_bmad/**)",
+      "Read(./Hexalith.*/_bmad-output/**)",
+      "Read(./Hexalith.*/.claude/skills/bmad-*/**)",
+      "Read(./Hexalith.*/.codex/**)"
     ]
   },
   "hooks": {
@@ -11,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "env PROJECT_ROOT=/mnt/d/Hexalith.Projects /mnt/d/Hexalith.Projects/.claude/skills/bmad-story-automator/scripts/story-automator stop-hook",
+            "command": "env PROJECT_ROOT=/mnt/d/Hexalith.Projects/.claude/skills/bmad-story-automator /mnt/d/Hexalith.Projects/.claude/skills/bmad-story-automator/scripts/story-automator stop-hook",
             "timeout": 10
           }
         ]
