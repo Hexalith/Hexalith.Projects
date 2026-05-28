@@ -436,7 +436,11 @@ params; headers `Idempotency-Key`, `X-Correlation-Id`, `X-Hexalith-Task-Id`,
   idempotency-conflict / projection-unavailable). Story 3.2 promoted the per-story pattern to a
   repo-level checklist per Epic 2 retro Action Item 7.
 - **Resolution:** never silently attach on `MultipleCandidates`; inference never creates a
-  project without explicit confirmation; archived excluded unless explicitly requested.
+  persistent trace, and the scoring/confidence-band heuristic is tabulated in
+  [`docs/resolution-scoring-heuristic.md`](../../docs/resolution-scoring-heuristic.md)
+  (AR-10: compute-on-demand; persist only `ProjectResolutionConfirmed`). Resolution never
+  creates a project without explicit confirmation; archived projects are excluded unless
+  explicitly requested.
 - **Logging:** structured metadata only — tenant/project/reference ids, reason codes,
   correlation/causation, freshness, status. Never payloads, transcripts, file contents, memory
   payloads, prompts, secrets, raw tokens, command bodies, or unrestricted paths.

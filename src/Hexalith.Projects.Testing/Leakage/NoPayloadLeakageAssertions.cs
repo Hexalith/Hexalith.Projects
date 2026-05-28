@@ -7,6 +7,7 @@ namespace Hexalith.Projects.Testing.Leakage;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -43,6 +44,26 @@ public static class NoPayloadLeakageAssertions
     {
         ArgumentNullException.ThrowIfNull(value);
         AssertNoLeakageInText(JsonSerializer.Serialize(value, SerializerOptions));
+    }
+
+    /// <summary>
+    /// Asserts that a Project resolution DTO leaks no forbidden content and declares no TenantId
+    /// property anywhere in the wire payload.
+    /// </summary>
+    /// <param name="resolution">The resolution DTO to inspect.</param>
+    /// <exception cref="PayloadLeakageException">Thrown when forbidden content or tenant authority appears.</exception>
+    public static void AssertProjectResolutionNoLeakage(ProjectResolution resolution)
+    {
+        ArgumentNullException.ThrowIfNull(resolution);
+
+        string serialized = JsonSerializer.Serialize(resolution, SerializerOptions);
+        AssertNoLeakageInText(serialized);
+
+        using JsonDocument document = JsonDocument.Parse(serialized);
+        if (ContainsProperty(document.RootElement, "tenantId"))
+        {
+            throw new PayloadLeakageException("tenant authority field 'tenantId'");
+        }
     }
 
     /// <summary>
@@ -112,6 +133,21 @@ public static class NoPayloadLeakageAssertions
         }
 
         return builder.ToString();
+    }
+
+    private static bool ContainsProperty(JsonElement element, string propertyName)
+    {
+        if (element.ValueKind == JsonValueKind.Object)
+        {
+            if (element.EnumerateObject().Any(property => string.Equals(property.Name, propertyName, StringComparison.OrdinalIgnoreCase)))
+            {
+                return true;
+            }
+
+            return element.EnumerateObject().Any(property => ContainsProperty(property.Value, propertyName));
+        }
+
+        return element.ValueKind == JsonValueKind.Array && element.EnumerateArray().Any(item => ContainsProperty(item, propertyName));
     }
 }
 

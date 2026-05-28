@@ -1,6 +1,10 @@
+---
+baseline_commit: 9727968a754a2682e40261a45a4544cde44f60a7
+---
+
 # Story 4.1: Resolution engine (compute-on-demand)
 
-Status: ready-for-dev
+Status: in-progress
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

@@ -8,6 +8,7 @@ namespace Hexalith.Projects;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Context;
 using Hexalith.Projects.Projections.TenantAccess;
+using Hexalith.Projects.Resolution;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -33,6 +34,7 @@ public static class ProjectsServiceCollectionExtensions
 
         services.AddProjectsTenantAccess();
         services.TryAddTransient<ProjectContextInclusionPolicy>();
+        services.TryAddTransient<ProjectResolutionEngine>();
         return services;
     }
 
