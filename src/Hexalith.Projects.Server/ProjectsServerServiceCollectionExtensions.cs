@@ -46,7 +46,7 @@ public static class ProjectsServerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddHttpContextAccessor();
-        services.AddProjectsTenantAccess();
+        services.AddProjectsModule();
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<InMemoryProjectDetailReadModel>();
         services.TryAddSingleton<IProjectDetailReadModel>(sp => sp.GetRequiredService<InMemoryProjectDetailReadModel>());

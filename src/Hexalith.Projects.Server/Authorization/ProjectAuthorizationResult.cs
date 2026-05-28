@@ -10,6 +10,15 @@ using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 
 /// <summary>Host-side layered authorization result for Projects endpoints.</summary>
+/// <remarks>
+/// <para>
+/// Story 3.2 additively extended this record with <see cref="TenantAccessResult"/> so the
+/// GetProjectContext handler can hand the Story 1.6 tenant-access decision to
+/// <c>ProjectContextInclusionPolicy.Assemble(...)</c> without re-running tenant authorization. The
+/// property is optional and defaults to <see langword="null"/> on every existing call site —
+/// callers that do not need the typed result are unaffected (binary-compatible additive change).
+/// </para>
+/// </remarks>
 public sealed record ProjectAuthorizationResult(
     bool IsAllowed,
     AuthorizationLayer TerminalLayer,
@@ -17,12 +26,14 @@ public sealed record ProjectAuthorizationResult(
     string Code,
     bool Retryable,
     IReadOnlyList<AuthorizationLayer> EvaluatedLayers,
-    ProjectDetailItem? ProjectDetail)
+    ProjectDetailItem? ProjectDetail,
+    TenantAccessAuthorizationResult? TenantAccessResult = null)
 {
     /// <summary>Creates an allowed result.</summary>
     public static ProjectAuthorizationResult Allowed(
         IReadOnlyList<AuthorizationLayer> evaluatedLayers,
-        ProjectDetailItem? projectDetail)
+        ProjectDetailItem? projectDetail,
+        TenantAccessAuthorizationResult? tenantAccessResult = null)
         => new(
             IsAllowed: true,
             AuthorizationLayer.DaprDenyByDefaultPolicy,
@@ -30,7 +41,8 @@ public sealed record ProjectAuthorizationResult(
             "allowed",
             Retryable: false,
             evaluatedLayers,
-            projectDetail);
+            projectDetail,
+            tenantAccessResult);
 
     /// <summary>Creates a denied result.</summary>
     public static ProjectAuthorizationResult Denied(
@@ -38,7 +50,8 @@ public sealed record ProjectAuthorizationResult(
         ReferenceState reason,
         string code,
         bool retryable,
-        IReadOnlyList<AuthorizationLayer> evaluatedLayers)
+        IReadOnlyList<AuthorizationLayer> evaluatedLayers,
+        TenantAccessAuthorizationResult? tenantAccessResult = null)
         => new(
             IsAllowed: false,
             terminalLayer,
@@ -46,5 +59,6 @@ public sealed record ProjectAuthorizationResult(
             code,
             retryable,
             evaluatedLayers,
-            ProjectDetail: null);
+            ProjectDetail: null,
+            tenantAccessResult);
 }

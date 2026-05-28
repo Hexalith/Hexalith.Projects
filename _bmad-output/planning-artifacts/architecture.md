@@ -430,6 +430,11 @@ params; headers `Idempotency-Key`, `X-Correlation-Id`, `X-Hexalith-Task-Id`,
   inclusion state + reason code; exclusions are surfaced, never silent. (AR-9: the per-evidence-state ×
   operation fail-closed verdicts are tabulated in [`docs/context-assembly-decision-matrix.md`](../../docs/context-assembly-decision-matrix.md);
   Story 3.1 owns the initial cell semantics, Stories 3.2–3.5 extend additively.)
+- **Negative-test discipline:** every mutation and query endpoint exercises the canonical rows in
+  [`docs/checklists/mutation-and-query-negative-tests.md`](../../docs/checklists/mutation-and-query-negative-tests.md)
+  (malformed identifier / route-body identity / idempotency-key / freshness / cross-tenant /
+  idempotency-conflict / projection-unavailable). Story 3.2 promoted the per-story pattern to a
+  repo-level checklist per Epic 2 retro Action Item 7.
 - **Resolution:** never silently attach on `MultipleCandidates`; inference never creates a
   project without explicit confirmation; archived excluded unless explicitly requested.
 - **Logging:** structured metadata only — tenant/project/reference ids, reason codes,

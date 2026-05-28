@@ -7,6 +7,7 @@ namespace Hexalith.Projects.Contracts.Models;
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 using Hexalith.Projects.Contracts.Ui;
 
@@ -57,6 +58,15 @@ public sealed record ProjectContext(
     DateTimeOffset ObservedAt,
     ProjectContextFreshness Freshness)
 {
+    /// <summary>
+    /// Gets the authoritative managed tenant the project belongs to. Marked
+    /// <see cref="JsonIgnoreAttribute"/> so the wire body NEVER carries tenant authority
+    /// (Story 3.2 / FS-8 / SM-3 — tenant authority is a server-derived claim, never a wire field).
+    /// The policy continues to consume this field internally for inclusion / outcome logic.
+    /// </summary>
+    [JsonIgnore]
+    public string TenantId { get; } = TenantId;
+
     /// <summary>
     /// Builds the canonical <see cref="ProjectContextAssemblyOutcome.Unauthorized"/> empty Project Context.
     /// </summary>

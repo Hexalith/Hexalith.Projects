@@ -24,34 +24,49 @@
     <ProjectReference Include="..\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />
   </ItemGroup>
   <PropertyGroup>
-    <HexalithProjectsContractSpine>$(MSBuildProjectDirectory)\..\Hexalith.Projects.Contracts\openapi\hexalith.projects.v1.yaml</HexalithProjectsContractSpine>
-    <HexalithProjectsGeneratedClient>$(MSBuildProjectDirectory)\Generated\HexalithProjectsClient.g.cs</HexalithProjectsGeneratedClient>
-    <HexalithProjectsGeneratedHelpers>$(MSBuildProjectDirectory)\Generated\HexalithProjectsIdempotencyHelpers.g.cs</HexalithProjectsGeneratedHelpers>
-    <HexalithProjectsHelperGeneratorProject>$(MSBuildProjectDirectory)\Generation\Hexalith.Projects.Client.Generation.csproj</HexalithProjectsHelperGeneratorProject>
+    <!-- Story 3.2 / Epic 2 retro Action Item 1: forward-slash path composition + explicit dotnet
+         host resolution so the NSwag idempotency-helper regeneration target works on both Windows
+         and Linux. Two interacting issues had to be addressed.
+         (a) MSBuild path properties are platform-agnostic but `<Exec Command="...">` strings are
+             passed verbatim to the shell, where backslashes are NOT treated as directory
+             separators on Linux. Build scripts that previously embedded `\` in property values
+             failed when MSBuild concatenated them into shell commands on Linux.
+         (b) The inner `dotnet run` invocation resolves `dotnet` via the system PATH. On WSL/Linux
+             this can hit `/usr/bin/dotnet` (SDK 10.0.108), which fails the `global.json` 10.0.300
+             pin. Compute the parent dotnet host from `$(MSBuildToolsPath)` instead (which always
+             belongs to the SDK currently running the build). -->
+    <HexalithProjectsContractSpine>$(MSBuildProjectDirectory)/../Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml</HexalithProjectsContractSpine>
+    <HexalithProjectsGeneratedClient>$(MSBuildProjectDirectory)/Generated/HexalithProjectsClient.g.cs</HexalithProjectsGeneratedClient>
+    <HexalithProjectsGeneratedHelpers>$(MSBuildProjectDirectory)/Generated/HexalithProjectsIdempotencyHelpers.g.cs</HexalithProjectsGeneratedHelpers>
+    <HexalithProjectsHelperGeneratorProject>$(MSBuildProjectDirectory)/Generation/Hexalith.Projects.Client.Generation.csproj</HexalithProjectsHelperGeneratorProject>
+    <HexalithProjectsRepositoryRoot>$(MSBuildProjectDirectory)/../..</HexalithProjectsRepositoryRoot>
+    <HexalithProjectsDotnetHostFile Condition="'$(OS)' == 'Windows_NT'">dotnet.exe</HexalithProjectsDotnetHostFile>
+    <HexalithProjectsDotnetHostFile Condition="'$(OS)' != 'Windows_NT'">dotnet</HexalithProjectsDotnetHostFile>
+    <HexalithProjectsDotnetHostPath>$([System.IO.Path]::GetFullPath('$(MSBuildToolsPath)/../../$(HexalithProjectsDotnetHostFile)'))</HexalithProjectsDotnetHostPath>
   </PropertyGroup>
   <Target Name="GenerateHexalithProjectsClient"
           BeforeTargets="BeforeCompile"
-          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)\nswag.json"
+          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)/nswag.json"
           Outputs="$(HexalithProjectsGeneratedClient)"
           Condition="'$(DesignTimeBuild)' != 'true'">
-    <MakeDir Directories="$(MSBuildProjectDirectory)\Generated" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)/Generated" />
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
           Command="$(NSwagExe_Net100) run nswag.json /variables:Configuration=$(Configuration)" />
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
-          Command="dotnet run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; -- --normalize-file &quot;$(HexalithProjectsGeneratedClient)&quot;" />
+          Command="&quot;$(HexalithProjectsDotnetHostPath)&quot; run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; -- --normalize-file &quot;$(HexalithProjectsGeneratedClient)&quot;" />
   </Target>
   <Target Name="GenerateHexalithProjectsIdempotencyHelpers"
           BeforeTargets="BeforeCompile"
-          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)\nswag.json;$(HexalithProjectsHelperGeneratorProject);$(MSBuildProjectDirectory)\Generation\Program.cs"
+          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)/nswag.json;$(HexalithProjectsHelperGeneratorProject);$(MSBuildProjectDirectory)/Generation/Program.cs"
           Outputs="$(HexalithProjectsGeneratedHelpers)"
           Condition="'$(DesignTimeBuild)' != 'true'">
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
-          Command="dotnet run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; -- --repository-root &quot;$(MSBuildProjectDirectory)\..\..&quot; --contract &quot;$(HexalithProjectsContractSpine)&quot; --configuration &quot;$(MSBuildProjectDirectory)\nswag.json&quot; --output &quot;$(HexalithProjectsGeneratedHelpers)&quot;" />
+          Command="&quot;$(HexalithProjectsDotnetHostPath)&quot; run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; -- --repository-root &quot;$(HexalithProjectsRepositoryRoot)&quot; --contract &quot;$(HexalithProjectsContractSpine)&quot; --configuration &quot;$(MSBuildProjectDirectory)/nswag.json&quot; --output &quot;$(HexalithProjectsGeneratedHelpers)&quot;" />
   </Target>
   <Target Name="VerifyHexalithProjectsGeneratedArtifacts"
           BeforeTargets="CoreCompile"
           DependsOnTargets="GenerateHexalithProjectsClient;GenerateHexalithProjectsIdempotencyHelpers"
-          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)\nswag.json;$(HexalithProjectsGeneratedHelpers)"
+          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)/nswag.json;$(HexalithProjectsGeneratedHelpers)"
           Outputs="$(IntermediateOutputPath)HexalithProjectsGeneratedArtifacts.stamp"
           Condition="'$(DesignTimeBuild)' != 'true'">
     <Error Condition="!Exists('$(HexalithProjectsGeneratedHelpers)')"

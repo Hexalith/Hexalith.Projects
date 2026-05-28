@@ -281,6 +281,70 @@ paths:
         - projection_stale
         - projection_unavailable
         - internal_error
+  /api/v1/projects/{projectId}/context:
+    get:
+      tags:
+        - projects
+      operationId: GetProjectContext
+      summary: Assemble the authorization-filtered Project Context for a Project.
+      description: >
+        Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy
+        (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus
+        the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually
+        consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a
+        query parameter and is rejected if present after authorization. Internal AssemblyOutcome
+        values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP
+        boundary (existence-non-inference).
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Freshness"
+      responses:
+        "200":
+          description: Assembled metadata-only Project Context with closed-vocabulary diagnostics and freshness evidence.
+          headers:
+            X-Correlation-Id:
+              $ref: "#/components/headers/CorrelationId"
+            X-Hexalith-Freshness:
+              $ref: "#/components/headers/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectContext"
+              examples:
+                synthetic:
+                  $ref: "#/components/examples/ProjectContext"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-read-consistency:
+        class: eventually_consistent
+        freshnessBehavior: returns-projection-watermark-when-available
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: query-correlation-only
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-and-project-read-permission
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - not_found
+        - read_model_unavailable
+        - projection_stale
+        - projection_unavailable
+        - internal_error
   /api/v1/projects/{projectId}/conversations/{conversationId}/link:
     post:
       tags:
@@ -1419,6 +1483,67 @@ components:
           returnedCount: 1
           continuationCursor: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C6
         trustSignal: Current
+    ProjectContext:
+      summary: Synthetic assembled Project Context — one folder, two files (one included, one stale), one memory (excluded with referenceArchived), one conversation included, one conversation collapsed to Unauthorized at the boundary with tenantMismatch diagnostic. The authoritative tenant is intentionally NOT on the wire (FS-8 / SM-3).
+      value:
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        lifecycle: Active
+        setup:
+          goals:
+            - keep continuity current
+          userInstructions:
+            - use safe project references
+          preferredSourceKinds:
+            - conversation
+            - memory
+          excludedSourceKinds:
+            - fileReference
+          conversationStartDefaults:
+            linkedSourcePolicy: authorizedReferences
+        projectFolder:
+          referenceKind: folder
+          referenceId: folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7
+          displayName: synthetic-project-alpha
+          referenceState: Included
+          reasonCode: ProjectFolderMatched
+          observedAt: "2026-05-12T12:34:56Z"
+        conversations:
+          - referenceKind: conversation
+            referenceId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
+            displayName: synthetic-conversation-reference
+            referenceState: Included
+            reasonCode: ConversationLinked
+            observedAt: "2026-05-12T12:34:56Z"
+        fileReferences:
+          - referenceKind: file
+            referenceId: file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1
+            displayName: synthetic-note.md
+            referenceState: Included
+            reasonCode: FileReferenceMatched
+            observedAt: "2026-05-12T12:34:56Z"
+        memoryReferences: []
+        excluded:
+          - referenceKind: file
+            referenceId: file_01HZY7Z6N7J4Q2X8Y9V0A1B2D2
+            referenceState: Stale
+            reasonCode: null
+            failedCheck: ReferenceFreshness
+            diagnostic: referenceStale
+          - referenceKind: memory
+            referenceId: case_01HZY7Z6N7J4Q2X8Y9V0A1B2E1
+            referenceState: Archived
+            reasonCode: null
+            failedCheck: ReferenceLifecycle
+            diagnostic: referenceArchived
+          - referenceKind: conversation
+            referenceId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
+            referenceState: Unauthorized
+            reasonCode: null
+            failedCheck: ReferenceAuthorization
+            diagnostic: tenantMismatch
+        assemblyOutcome: Assembled
+        observedAt: "2026-05-12T12:34:56Z"
+        freshness: Fresh
     LinkProjectConversationRequest:
       value:
         requestSchemaVersion: v1
@@ -2302,3 +2427,216 @@ components:
         - projection_unavailable
         - redacted
         - internal_error
+    ProjectContext:
+      type: object
+      additionalProperties: false
+      description: >
+        Assembled, authorization-filtered, metadata-only Project Context emitted by
+        ProjectContextInclusionPolicy (AR-9, Story 3.1). Returned by GetProjectContext (Story 3.2).
+        Carries opaque ids, safe display labels, shared-vocabulary states, timestamps, and
+        closed-vocabulary diagnostic strings only. Never carries transcripts, file content,
+        memory bodies, prompts, paths, tokens, secrets, or upstream raw denial detail. Per
+        FS-8/SM-3, tenant authority is server-derived from the caller's claims and is
+        intentionally NOT carried on the wire (the C# DTO suppresses TenantId via JsonIgnore).
+      required:
+        - projectId
+        - lifecycle
+        - conversations
+        - fileReferences
+        - memoryReferences
+        - excluded
+        - assemblyOutcome
+        - observedAt
+        - freshness
+      properties:
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        lifecycle:
+          description: Project lifecycle (PascalCase wire-name from the C# ProjectLifecycle enum).
+          type: string
+          enum:
+            - Active
+            - Archived
+        setup:
+          nullable: true
+          description: Optional bounded metadata-only Project setup preferences (reused from the wider Project schema).
+          $ref: "#/components/schemas/ProjectSetup"
+        projectFolder:
+          nullable: true
+          description: Optional included single Project Folder reference.
+          $ref: "#/components/schemas/ProjectContextReference"
+        conversations:
+          type: array
+          maxItems: 100
+          description: Included conversation references, ordered by (kind, id).
+          items:
+            $ref: "#/components/schemas/ProjectContextReference"
+        fileReferences:
+          type: array
+          maxItems: 100
+          description: Included file references, ordered by (kind, id).
+          items:
+            $ref: "#/components/schemas/ProjectContextReference"
+        memoryReferences:
+          type: array
+          maxItems: 100
+          description: Included memory references, ordered by (kind, id).
+          items:
+            $ref: "#/components/schemas/ProjectContextReference"
+        excluded:
+          type: array
+          maxItems: 400
+          description: Per-candidate exclusion rows for each candidate the policy left out, ordered by (kind, id).
+          items:
+            $ref: "#/components/schemas/ProjectContextExclusion"
+        assemblyOutcome:
+          $ref: "#/components/schemas/ProjectContextAssemblyOutcome"
+        observedAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        freshness:
+          $ref: "#/components/schemas/ProjectContextFreshness"
+    ProjectContextReference:
+      type: object
+      additionalProperties: false
+      description: >
+        Metadata-only assembled reference inside a ProjectContext. Carries opaque identifier, safe
+        display label, shared-vocabulary ReferenceState, optional ReasonCode, and observation
+        instant. Never carries transcripts, file content, memory bodies, prompts, paths, tokens, or
+        secrets.
+      required:
+        - referenceKind
+        - referenceId
+        - referenceState
+        - observedAt
+      properties:
+        referenceKind:
+          type: string
+          description: Allowlisted reference kind (folder, file, memory, conversation).
+          enum:
+            - folder
+            - file
+            - memory
+            - conversation
+        referenceId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          description: Opaque sibling-owned reference identifier.
+        displayName:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 160
+          description: Safe display metadata for the referenced resource.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        referenceState:
+          description: Shared-vocabulary ReferenceState (PascalCase wire-name from the C# enum).
+          type: string
+          enum:
+            - Pending
+            - Included
+            - Excluded
+            - Unauthorized
+            - Unavailable
+            - Stale
+            - Archived
+            - Ambiguous
+            - TenantMismatch
+            - Conflict
+            - InvalidReference
+        reasonCode:
+          nullable: true
+          description: Optional shared-vocabulary ProjectReasonCode (PascalCase wire-name) explaining inclusion.
+          type: string
+          enum:
+            - ConversationLinked
+            - ProjectFolderMatched
+            - FileReferenceMatched
+            - MemoryMatched
+            - MetadataMatched
+        observedAt:
+          $ref: "#/components/schemas/UtcDateTime"
+    ProjectContextExclusion:
+      type: object
+      additionalProperties: false
+      description: >
+        Per-candidate exclusion row emitted by ProjectContextInclusionPolicy. Identifies the single
+        failed inclusion check and a closed-vocabulary diagnostic string from
+        ProjectContextInclusionDiagnostic. The diagnostic value is a member of the closed vocabulary
+        — free-form upstream message/path/token/payload text never appears here.
+      required:
+        - referenceKind
+        - referenceId
+        - referenceState
+        - failedCheck
+      properties:
+        referenceKind:
+          type: string
+          description: Allowlisted reference kind, or the candidate kind for non-allowlisted cases.
+          minLength: 1
+          maxLength: 32
+        referenceId:
+          type: string
+          minLength: 1
+          maxLength: 128
+          description: Opaque sibling-owned reference identifier.
+        referenceState:
+          description: Shared-vocabulary ReferenceState surfaced for the excluded reference.
+          type: string
+          enum:
+            - Pending
+            - Included
+            - Excluded
+            - Unauthorized
+            - Unavailable
+            - Stale
+            - Archived
+            - Ambiguous
+            - TenantMismatch
+            - Conflict
+            - InvalidReference
+        reasonCode:
+          nullable: true
+          description: Optional shared-vocabulary ProjectReasonCode (typically null for exclusions).
+          type: string
+          enum:
+            - ConversationLinked
+            - ProjectFolderMatched
+            - FileReferenceMatched
+            - MemoryMatched
+            - MetadataMatched
+        failedCheck:
+          $ref: "#/components/schemas/ProjectContextInclusionCheck"
+        diagnostic:
+          nullable: true
+          description: Closed-vocabulary ProjectContextInclusionDiagnostic value. The 13 known values are tenantMismatch, projectUnknown, projectArchived, referenceUnauthorized, referenceUnavailable, referenceStale, referenceArchived, referenceConflict, referenceInvalidIdentifier, referenceKindNotAllowlisted, projectFolderPending, referenceAmbiguous, referenceRedacted.
+          type: string
+          minLength: 1
+          maxLength: 80
+          pattern: "^[a-z][A-Za-z0-9]{0,79}$"
+    ProjectContextAssemblyOutcome:
+      type: string
+      description: Outer assembly outcome from ProjectContextInclusionPolicy (Story 3.1).
+      enum:
+        - Assembled
+        - ProjectUnavailable
+        - Unauthorized
+    ProjectContextFreshness:
+      type: string
+      description: Assembly-level freshness signal derived from the tenant-access projection.
+      enum:
+        - Fresh
+        - Stale
+        - Unavailable
+        - Unknown
+    ProjectContextInclusionCheck:
+      type: string
+      description: Inclusion-policy check identity — names the single failed check whose verdict excluded a candidate or collapsed the assembly. Mirrors ProjectContextInclusionOrder.Sequence.
+      enum:
+        - TenantAuthority
+        - ProjectVisibility
+        - ProjectLifecycle
+        - ReferenceAuthorization
+        - ReferenceLifecycle
+        - ReferenceFreshness
+        - ReferenceKindAllowlist

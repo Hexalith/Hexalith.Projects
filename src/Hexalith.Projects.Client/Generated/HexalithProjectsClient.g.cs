@@ -140,6 +140,33 @@ namespace Hexalith.Projects.Client.Generated
         System.Threading.Tasks.Task<ProjectConversationsPage> ListProjectConversationsAsync(string projectId, int? pageSize, string cursor, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
+        /// Assemble the authorization-filtered Project Context for a Project.
+        /// </summary>
+        /// <remarks>
+        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Assembled metadata-only Project Context with closed-vocabulary diagnostics and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Assemble the authorization-filtered Project Context for a Project.
+        /// </summary>
+        /// <remarks>
+        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Assembled metadata-only Project Context with closed-vocabulary diagnostics and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
         /// Link an existing conversation to a Project (command-async).
         /// </summary>
         /// <remarks>
@@ -1049,6 +1076,163 @@ namespace Hexalith.Projects.Client.Generated
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProjectConversationsPage>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Assemble the authorization-filtered Project Context for a Project.
+        /// </summary>
+        /// <remarks>
+        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Assembled metadata-only Project Context with closed-vocabulary diagnostics and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
+        {
+            return GetProjectContextAsync(projectId, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Assemble the authorization-filtered Project Context for a Project.
+        /// </summary>
+        /// <remarks>
+        /// Returns the metadata-only Project Context produced by ProjectContextInclusionPolicy (Story 3.1): tenant/project/lifecycle/authorization/freshness-filtered references plus the per-candidate excluded rows with closed-vocabulary diagnostics. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Internal AssemblyOutcome values Unauthorized and ProjectUnavailable both collapse to safe-denial 404 at the HTTP boundary (existence-non-inference).
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Assembled metadata-only Project Context with closed-vocabulary diagnostics and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ProjectContext> GetProjectContextAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        {
+            if (projectId == null)
+                throw new System.ArgumentNullException("projectId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Freshness != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Freshness", ConvertToString(x_Hexalith_Freshness, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects/{projectId}/context"
+                    urlBuilder_.Append("api/v1/projects/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/context");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectContext>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -3972,6 +4156,234 @@ namespace Hexalith.Projects.Client.Generated
 
     }
 
+    /// <summary>
+    /// Assembled, authorization-filtered, metadata-only Project Context emitted by ProjectContextInclusionPolicy (AR-9, Story 3.1). Returned by GetProjectContext (Story 3.2). Carries opaque ids, safe display labels, shared-vocabulary states, timestamps, and closed-vocabulary diagnostic strings only. Never carries transcripts, file content, memory bodies, prompts, paths, tokens, secrets, or upstream raw denial detail. Per FS-8/SM-3, tenant authority is server-derived from the caller's claims and is intentionally NOT carried on the wire (the C# DTO suppresses TenantId via JsonIgnore).
+    /// <br/>
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectContext
+    {
+
+        [Newtonsoft.Json.JsonProperty("projectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectId { get; set; }
+
+        /// <summary>
+        /// Project lifecycle (PascalCase wire-name from the C# ProjectLifecycle enum).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("lifecycle", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextLifecycle Lifecycle { get; set; }
+
+        /// <summary>
+        /// Optional bounded metadata-only Project setup preferences (reused from the wider Project schema).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("setup", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ProjectSetup Setup { get; set; }
+
+        /// <summary>
+        /// Optional included single Project Folder reference.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("projectFolder", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ProjectContextReference ProjectFolder { get; set; }
+
+        /// <summary>
+        /// Included conversation references, ordered by (kind, id).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("conversations", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ProjectContextReference> Conversations { get; set; } = new System.Collections.Generic.List<ProjectContextReference>();
+
+        /// <summary>
+        /// Included file references, ordered by (kind, id).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("fileReferences", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ProjectContextReference> FileReferences { get; set; } = new System.Collections.Generic.List<ProjectContextReference>();
+
+        /// <summary>
+        /// Included memory references, ordered by (kind, id).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("memoryReferences", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ProjectContextReference> MemoryReferences { get; set; } = new System.Collections.Generic.List<ProjectContextReference>();
+
+        /// <summary>
+        /// Per-candidate exclusion rows for each candidate the policy left out, ordered by (kind, id).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("excluded", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ProjectContextExclusion> Excluded { get; set; } = new System.Collections.Generic.List<ProjectContextExclusion>();
+
+        [Newtonsoft.Json.JsonProperty("assemblyOutcome", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextAssemblyOutcome AssemblyOutcome { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("observedAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset ObservedAt { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("freshness", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextFreshness Freshness { get; set; }
+
+    }
+
+    /// <summary>
+    /// Metadata-only assembled reference inside a ProjectContext. Carries opaque identifier, safe display label, shared-vocabulary ReferenceState, optional ReasonCode, and observation instant. Never carries transcripts, file content, memory bodies, prompts, paths, tokens, or secrets.
+    /// <br/>
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectContextReference
+    {
+
+        /// <summary>
+        /// Allowlisted reference kind (folder, file, memory, conversation).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("referenceKind", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextReferenceReferenceKind ReferenceKind { get; set; }
+
+        /// <summary>
+        /// Opaque sibling-owned reference identifier.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("referenceId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ReferenceId { get; set; }
+
+        /// <summary>
+        /// Safe display metadata for the referenced resource.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("displayName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string DisplayName { get; set; }
+
+        /// <summary>
+        /// Shared-vocabulary ReferenceState (PascalCase wire-name from the C# enum).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("referenceState", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextReferenceReferenceState ReferenceState { get; set; }
+
+        /// <summary>
+        /// Optional shared-vocabulary ProjectReasonCode (PascalCase wire-name) explaining inclusion.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("reasonCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextReferenceReasonCode? ReasonCode { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("observedAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset ObservedAt { get; set; }
+
+    }
+
+    /// <summary>
+    /// Per-candidate exclusion row emitted by ProjectContextInclusionPolicy. Identifies the single failed inclusion check and a closed-vocabulary diagnostic string from ProjectContextInclusionDiagnostic. The diagnostic value is a member of the closed vocabulary — free-form upstream message/path/token/payload text never appears here.
+    /// <br/>
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectContextExclusion
+    {
+
+        /// <summary>
+        /// Allowlisted reference kind, or the candidate kind for non-allowlisted cases.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("referenceKind", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ReferenceKind { get; set; }
+
+        /// <summary>
+        /// Opaque sibling-owned reference identifier.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("referenceId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ReferenceId { get; set; }
+
+        /// <summary>
+        /// Shared-vocabulary ReferenceState surfaced for the excluded reference.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("referenceState", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextExclusionReferenceState ReferenceState { get; set; }
+
+        /// <summary>
+        /// Optional shared-vocabulary ProjectReasonCode (typically null for exclusions).
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("reasonCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextExclusionReasonCode? ReasonCode { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("failedCheck", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectContextInclusionCheck FailedCheck { get; set; }
+
+        /// <summary>
+        /// Closed-vocabulary ProjectContextInclusionDiagnostic value. The 13 known values are tenantMismatch, projectUnknown, projectArchived, referenceUnauthorized, referenceUnavailable, referenceStale, referenceArchived, referenceConflict, referenceInvalidIdentifier, referenceKindNotAllowlisted, projectFolderPending, referenceAmbiguous, referenceRedacted.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("diagnostic", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Diagnostic { get; set; }
+
+    }
+
+    /// <summary>
+    /// Outer assembly outcome from ProjectContextInclusionPolicy (Story 3.1).
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextAssemblyOutcome
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Assembled")]
+        Assembled = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ProjectUnavailable")]
+        ProjectUnavailable = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unauthorized")]
+        Unauthorized = 2,
+
+    }
+
+    /// <summary>
+    /// Assembly-level freshness signal derived from the tenant-access projection.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextFreshness
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Fresh")]
+        Fresh = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Stale")]
+        Stale = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unavailable")]
+        Unavailable = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 3,
+
+    }
+
+    /// <summary>
+    /// Inclusion-policy check identity — names the single failed check whose verdict excluded a candidate or collapsed the assembly. Mirrors ProjectContextInclusionOrder.Sequence.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextInclusionCheck
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TenantAuthority")]
+        TenantAuthority = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ProjectVisibility")]
+        ProjectVisibility = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ProjectLifecycle")]
+        ProjectLifecycle = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ReferenceAuthorization")]
+        ReferenceAuthorization = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ReferenceLifecycle")]
+        ReferenceLifecycle = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ReferenceFreshness")]
+        ReferenceFreshness = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ReferenceKindAllowlist")]
+        ReferenceKindAllowlist = 6,
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum Lifecycle
     {
@@ -4281,6 +4693,156 @@ namespace Hexalith.Projects.Client.Generated
 
         [System.Runtime.Serialization.EnumMember(Value = @"invalidReference")]
         InvalidReference = 10,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextLifecycle
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Active")]
+        Active = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Archived")]
+        Archived = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextReferenceReferenceKind
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"folder")]
+        Folder = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"file")]
+        File = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"memory")]
+        Memory = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"conversation")]
+        Conversation = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextReferenceReferenceState
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Pending")]
+        Pending = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Included")]
+        Included = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Excluded")]
+        Excluded = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unauthorized")]
+        Unauthorized = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unavailable")]
+        Unavailable = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Stale")]
+        Stale = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Archived")]
+        Archived = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Ambiguous")]
+        Ambiguous = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TenantMismatch")]
+        TenantMismatch = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Conflict")]
+        Conflict = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"InvalidReference")]
+        InvalidReference = 10,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextReferenceReasonCode
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ConversationLinked")]
+        ConversationLinked = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ProjectFolderMatched")]
+        ProjectFolderMatched = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FileReferenceMatched")]
+        FileReferenceMatched = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MemoryMatched")]
+        MemoryMatched = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MetadataMatched")]
+        MetadataMatched = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextExclusionReferenceState
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Pending")]
+        Pending = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Included")]
+        Included = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Excluded")]
+        Excluded = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unauthorized")]
+        Unauthorized = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unavailable")]
+        Unavailable = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Stale")]
+        Stale = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Archived")]
+        Archived = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Ambiguous")]
+        Ambiguous = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TenantMismatch")]
+        TenantMismatch = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Conflict")]
+        Conflict = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"InvalidReference")]
+        InvalidReference = 10,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectContextExclusionReasonCode
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ConversationLinked")]
+        ConversationLinked = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ProjectFolderMatched")]
+        ProjectFolderMatched = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FileReferenceMatched")]
+        FileReferenceMatched = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MemoryMatched")]
+        MemoryMatched = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MetadataMatched")]
+        MetadataMatched = 4,
 
     }
 

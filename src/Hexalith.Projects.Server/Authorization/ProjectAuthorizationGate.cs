@@ -365,7 +365,8 @@ public sealed class ProjectAuthorizationGate(
                 TenantAccessOutcomeReferenceStateMapper.ToReferenceState(tenantAccess.Outcome),
                 tenantAccess.Code,
                 retryable: tenantAccess.Outcome is TenantAccessOutcome.StaleProjection or TenantAccessOutcome.UnavailableProjection,
-                evaluatedLayers);
+                evaluatedLayers,
+                tenantAccess);
         }
 
         if (!string.Equals(tenantAccess.TenantId?.Trim(), authoritativeTenantId, StringComparison.Ordinal))
@@ -375,7 +376,8 @@ public sealed class ProjectAuthorizationGate(
                 ReferenceState.InvalidReference,
                 "authorization_evidence_malformed",
                 retryable: false,
-                evaluatedLayers);
+                evaluatedLayers,
+                tenantAccess);
         }
 
         evaluatedLayers.Add(AuthorizationLayer.ProjectAcl);
@@ -388,13 +390,13 @@ public sealed class ProjectAuthorizationGate(
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                return Deny(AuthorizationLayer.ProjectAcl, ReferenceState.Unavailable, "projection_unavailable", retryable: true, evaluatedLayers);
+                return Deny(AuthorizationLayer.ProjectAcl, ReferenceState.Unavailable, "projection_unavailable", retryable: true, evaluatedLayers, tenantAccess);
             }
 
             detail = ProjectQueryTenantFilter.Filter(authoritativeTenantId, detail);
             if (detail is null)
             {
-                return Deny(AuthorizationLayer.ProjectAcl, ReferenceState.Unauthorized, "project_acl_denied", retryable: false, evaluatedLayers);
+                return Deny(AuthorizationLayer.ProjectAcl, ReferenceState.Unauthorized, "project_acl_denied", retryable: false, evaluatedLayers, tenantAccess);
             }
         }
 
@@ -425,7 +427,8 @@ public sealed class ProjectAuthorizationGate(
                 MapValidatorReason(validatorResult.Status),
                 validatorResult.OutcomeCode,
                 validatorResult.Retryable,
-                evaluatedLayers);
+                evaluatedLayers,
+                tenantAccess);
         }
 
         evaluatedLayers.Add(AuthorizationLayer.DaprDenyByDefaultPolicy);
@@ -448,10 +451,11 @@ public sealed class ProjectAuthorizationGate(
                 daprEvidence.Status == ProjectDaprPolicyEvidenceStatus.Unavailable ? ReferenceState.Unavailable : ReferenceState.Unauthorized,
                 daprEvidence.OutcomeCode,
                 daprEvidence.Retryable,
-                evaluatedLayers);
+                evaluatedLayers,
+                tenantAccess);
         }
 
-        return ProjectAuthorizationResult.Allowed(evaluatedLayers.ToArray(), detail);
+        return ProjectAuthorizationResult.Allowed(evaluatedLayers.ToArray(), detail, tenantAccess);
     }
 
     private static ProjectAuthorizationResult Deny(
@@ -459,8 +463,9 @@ public sealed class ProjectAuthorizationGate(
         ReferenceState reason,
         string code,
         bool retryable,
-        IReadOnlyList<AuthorizationLayer> evaluatedLayers)
-        => ProjectAuthorizationResult.Denied(layer, reason, code, retryable, evaluatedLayers.ToArray());
+        IReadOnlyList<AuthorizationLayer> evaluatedLayers,
+        TenantAccessAuthorizationResult? tenantAccessResult = null)
+        => ProjectAuthorizationResult.Denied(layer, reason, code, retryable, evaluatedLayers.ToArray(), tenantAccessResult);
 
     private static bool IsClaimTransformEvidenceValid(
         EventStoreClaimTransformEvidence evidence,

@@ -112,6 +112,26 @@ public static partial class ProjectsDomainServiceEndpoints
                 cancellationToken).ConfigureAwait(false))
             .WithName("ListProjectConversations");
 
+        endpoints.MapGet("/api/v1/projects/{projectId}/context", static async (
+            string projectId,
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectConversationDirectory conversationDirectory,
+            Hexalith.Projects.Context.ProjectContextInclusionPolicy contextPolicy,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await GetProjectContextAsync(
+                projectId,
+                httpContext,
+                tenantContext,
+                authorizationGate,
+                conversationDirectory,
+                contextPolicy,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("GetProjectContext");
+
         endpoints.MapPost("/api/v1/projects/{projectId}/conversations/{conversationId}/link", static async (
             string projectId,
             string conversationId,
