@@ -125,3 +125,52 @@ boundaries.
 - **Consumer guidance:** Epic 3 context assembly reads this projection lane-aware: a single Project
   Folder row (Included or Pending), zero-to-many File Reference rows, and zero-to-many Memory
   Reference rows. The lanes never share a key prefix.
+
+## `ConversationStartSetupProjection`
+
+- **Type:** `Hexalith.Projects.Projections.ConversationStartSetup.ConversationStartSetupProjector`.
+- **Design class:** **server-side projection over `ProjectContext.Setup`** — not an event-stream
+  projection. The projector is a pure `public static class` whose single
+  `Project(ProjectContext)` method delegates to
+  `Hexalith.Projects.Contracts.Models.ConversationStartSetup.FromContext(...)` (Story 3.5).
+- **Owner:** invoked synchronously by
+  `Hexalith.Projects.Server.Queries.GetConversationStartSetupEndpoint`. No Workers subscription
+  wiring, no `IProjectProjectionStore<>` registration, no durable store. The source-of-truth is the
+  same `ProjectContext` produced by `ProjectContextInclusionPolicy` (Story 3.1).
+- **Key:** none — the projector is stateless. The endpoint is keyed by canonical Project identity
+  `{tenant}:projects:{projectId}` via the policy, like every other Epic 3 query surface.
+- **Source events:** none directly. The projector consumes the assembled `ProjectContext.Setup`,
+  which is itself derived from `ProjectDetailItem` (and therefore from
+  `ProjectCreated`/`ProjectSetupUpdated`/`ProjectArchived` events via `ProjectDetailProjection`). A
+  separate event-stream projection over the same events would duplicate state — the Story 3.5
+  Design Decision explicitly avoids this.
+- **Tenant scoping:** inherited from the policy invocation — the same outer collapses that produce
+  safe-denial 404 on `ProjectContextAssemblyOutcome.Unauthorized` / `ProjectUnavailable` apply.
+  Story 3.5's handler additionally collapses those outcomes to HTTP 404 defensively (stricter than
+  Stories 3.2 / 3.3 / 3.4).
+- **Stored data:** none. The projection output is a `ConversationStartSetup` wire DTO that contains
+  only `ProjectId` / `Lifecycle` / `Goals` / `UserInstructions` / `PreferredSourceKinds` /
+  `ExcludedSourceKinds` / `LinkedSourcePolicy` / `ObservedAt` / `Freshness`. No `TenantId` (not
+  declared on the record — cleaner than the `[JsonIgnore]`-on-existing-field pattern Story 3.2
+  used for `ProjectContext.TenantId`), no audit metadata, no per-reference inventory, no
+  diagnostics field.
+- **Rebuild behavior:** N/A — the projector is pure and has no stored state. Re-running the policy
+  with the same inputs is the "rebuild" mechanism.
+- **Runtime store:** N/A. The wire body is computed per request from `ProjectContext.Setup`.
+- **Freshness semantics:** inherits `ObservedAt` and `Freshness` from the policy's outer outcome.
+  Empty references-evidence is passed to the policy explicitly (no sibling-ACL calls on the
+  conversation-start fast path — by handler-signature construction, asserted by the
+  `GetConversationStartSetup_DoesNotCallSiblingAcls` Tier-2 regression guard).
+- **Leakage boundary:** asserted by three Story-3.5-specific wire-shape invariants
+  (`BodyDoesNotContainTenantId`, `BodyDoesNotContainAuditMetadata`,
+  `BodyDoesNotContainReferenceInventory`) plus the `ConversationStartSetup_SerializesMetadataOnly`
+  Contracts-tier `NoPayloadLeakage` extension. The reference-inventory check uses
+  `JsonDocument.TryGetProperty(...)` rather than substring match to avoid a false-positive on
+  `excludedSourceKinds` containing the substring `excluded`.
+- **Consumer guidance:** Hexalith.Chatbot calls `GET
+  /api/v1/projects/{projectId}/setup/conversation-start` (FR-20) before the first response of a
+  conversation. The response is the bounded subset needed to start or resume — never the full
+  `ProjectContext` (consumers needing the full context call Story 3.2 `GetProjectContext`); never
+  the per-reference inventory (consumers needing inventory and diagnostics call Story 3.3
+  `ExplainContextSelection`); never the on-the-fly refresh (consumers needing current sibling
+  state call Story 3.4 `RefreshProjectContext`).
