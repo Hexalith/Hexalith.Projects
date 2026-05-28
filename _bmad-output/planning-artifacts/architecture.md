@@ -427,7 +427,9 @@ params; headers `Idempotency-Key`, `X-Correlation-Id`, `X-Hexalith-Task-Id`,
   evidence denies trust-bearing operations and ProjectContext inclusion.
 - **ProjectContext assembly:** allowlist inclusion — a reference is included only after tenant,
   project, lifecycle, authorization, and freshness checks pass; every reference carries an
-  inclusion state + reason code; exclusions are surfaced, never silent.
+  inclusion state + reason code; exclusions are surfaced, never silent. (AR-9: the per-evidence-state ×
+  operation fail-closed verdicts are tabulated in [`docs/context-assembly-decision-matrix.md`](../../docs/context-assembly-decision-matrix.md);
+  Story 3.1 owns the initial cell semantics, Stories 3.2–3.5 extend additively.)
 - **Resolution:** never silently attach on `MultipleCandidates`; inference never creates a
   project without explicit confirmation; archived excluded unless explicitly requested.
 - **Logging:** structured metadata only — tenant/project/reference ids, reason codes,

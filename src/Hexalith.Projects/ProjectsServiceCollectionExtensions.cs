@@ -6,6 +6,7 @@
 namespace Hexalith.Projects;
 
 using Hexalith.Projects.Authorization;
+using Hexalith.Projects.Context;
 using Hexalith.Projects.Projections.TenantAccess;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -13,14 +14,16 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 /// <summary>
-/// Placeholder service registration entry point for the Hexalith.Projects domain core.
-/// Later stories register aggregate handlers, projections, resolution and authorization
-/// services here. For the scaffold it only establishes the registration surface.
+/// Service-registration entry point for the Hexalith.Projects domain core.
+/// Wires the pure layered-fail-closed tenant-access services (Story 1.6) and the pure
+/// <see cref="ProjectContextInclusionPolicy"/> AR-9 inclusion policy (Story 3.1). Later stories
+/// add aggregate handlers, projections, and resolution behind this same call.
 /// </summary>
 public static class ProjectsServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds the Hexalith.Projects domain core services to the service collection.
+    /// Adds the Hexalith.Projects domain core services to the service collection — tenant-access
+    /// authorization (Story 1.6) and the pure context-assembly inclusion policy (Story 3.1).
     /// </summary>
     /// <param name="services">The service collection to add services to.</param>
     /// <returns>The same service collection so calls can be chained.</returns>
@@ -29,6 +32,7 @@ public static class ProjectsServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddProjectsTenantAccess();
+        services.TryAddTransient<ProjectContextInclusionPolicy>();
         return services;
     }
 

@@ -96,10 +96,12 @@ Runtime projection state is stored through the Dapr `statestore` component:
 - Tenant access key shape: `projects:tenant-access:{tenantId}`
 - Project projection journal key shape: `projects:projection-journal:{tenantId}`
 
-Project list/detail rebuild uses the same deterministic pure folds proven by the projection tests:
-`ProjectListProjection.Rebuild(...)` and `ProjectDetailProjection.Rebuild(...)`. A rebuild should feed
-EventStore `EventEnvelope` data back through the worker projection path or an approved admin drain that
-uses the same envelope shape. Do not create an alternate fold or write projected rows by hand.
+Project list/detail/reference-index rebuild uses the same deterministic pure folds proven by the
+projection tests: `ProjectListProjection.Rebuild(...)`, `ProjectDetailProjection.Rebuild(...)`, and
+`ProjectReferenceIndexProjection.Empty.Apply(...)` (the reference index has no separate `Rebuild`
+method — its rebuild path is `Empty.Apply(envelopes)`). A rebuild should feed EventStore
+`EventEnvelope` data back through the worker projection path or an approved admin drain that uses the
+same envelope shape. Do not create an alternate fold or write projected rows by hand.
 
 Safe rebuild order:
 

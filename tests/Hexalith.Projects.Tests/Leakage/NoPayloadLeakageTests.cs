@@ -440,4 +440,183 @@ public sealed class NoPayloadLeakageTests
     {
         Should.Throw<PayloadLeakageException>(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(leaky));
     }
+
+    // === Story 3.1 (AC 10) NoPayloadLeakage extension over the new ProjectContext assembly DTOs ===
+
+    [Fact]
+    public void ProjectContextReference_SerializesMetadataOnly()
+    {
+        ProjectContextReference reference = new(
+            ReferenceKind: "memory",
+            ReferenceId: "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1",
+            DisplayName: "Q3 product strategy memory",
+            ReferenceState: ReferenceState.Included,
+            ReasonCode: ProjectReasonCode.MemoryMatched,
+            ObservedAt: DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(reference));
+    }
+
+    [Fact]
+    public void ProjectContextExclusion_SerializesMetadataOnly()
+    {
+        ProjectContextExclusion exclusion = new(
+            ReferenceKind: "memory",
+            ReferenceId: "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1",
+            ReferenceState: ReferenceState.Unauthorized,
+            ReasonCode: null,
+            FailedCheck: ProjectContextInclusionCheck.ReferenceAuthorization,
+            Diagnostic: ProjectContextInclusionDiagnostic.TenantMismatch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(exclusion));
+    }
+
+    [Fact]
+    public void ProjectContextEvaluation_SerializesMetadataOnly()
+    {
+        ProjectContextEvaluation evaluation = new(
+            ReferenceKind: "file",
+            ReferenceId: "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1",
+            ResultState: ReferenceState.Stale,
+            FailedCheck: ProjectContextInclusionCheck.ReferenceFreshness,
+            ReasonCode: null,
+            Diagnostic: ProjectContextInclusionDiagnostic.ReferenceStale,
+            ObservedAt: DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(evaluation));
+    }
+
+    [Fact]
+    public void ProjectContext_HappyPath_SerializesMetadataOnly()
+    {
+        ProjectContext context = new(
+            TenantId: "acme",
+            ProjectId: "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            Lifecycle: ProjectLifecycle.Active,
+            Setup: null,
+            ProjectFolder: new ProjectContextReference(
+                "folder", "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC", "Tracer Folder",
+                ReferenceState.Included, ProjectReasonCode.ProjectFolderMatched, DateTimeOffset.UnixEpoch),
+            Conversations: Array.Empty<ProjectContextReference>(),
+            FileReferences:
+            [
+                new ProjectContextReference(
+                    "file", "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1", "contract.pdf",
+                    ReferenceState.Included, ProjectReasonCode.FileReferenceMatched, DateTimeOffset.UnixEpoch),
+            ],
+            MemoryReferences:
+            [
+                new ProjectContextReference(
+                    "memory", "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1", "Q3 product strategy memory",
+                    ReferenceState.Included, ProjectReasonCode.MemoryMatched, DateTimeOffset.UnixEpoch),
+            ],
+            Excluded: Array.Empty<ProjectContextExclusion>(),
+            AssemblyOutcome: ProjectContextAssemblyOutcome.Assembled,
+            ObservedAt: DateTimeOffset.UnixEpoch,
+            Freshness: ProjectContextFreshness.Fresh);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(context));
+    }
+
+    [Fact]
+    public void ProjectContext_ArchivedProjectWithExcludedRows_SerializesMetadataOnly()
+    {
+        ProjectContext context = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            ProjectLifecycle.Archived,
+            Setup: null,
+            ProjectFolder: null,
+            Conversations: Array.Empty<ProjectContextReference>(),
+            FileReferences: Array.Empty<ProjectContextReference>(),
+            MemoryReferences: Array.Empty<ProjectContextReference>(),
+            Excluded:
+            [
+                new ProjectContextExclusion(
+                    "memory",
+                    "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1",
+                    ReferenceState.Archived,
+                    null,
+                    ProjectContextInclusionCheck.ProjectLifecycle,
+                    ProjectContextInclusionDiagnostic.ProjectArchived),
+            ],
+            AssemblyOutcome: ProjectContextAssemblyOutcome.Assembled,
+            ObservedAt: DateTimeOffset.UnixEpoch,
+            Freshness: ProjectContextFreshness.Fresh);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(context));
+    }
+
+    [Fact]
+    public void ProjectContextAssemblyResult_SerializesMetadataOnly()
+    {
+        ProjectContextAssemblyResult result = new(
+            new ProjectContext(
+                "acme",
+                "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+                ProjectLifecycle.Active,
+                Setup: null,
+                ProjectFolder: null,
+                Conversations: Array.Empty<ProjectContextReference>(),
+                FileReferences: Array.Empty<ProjectContextReference>(),
+                MemoryReferences: Array.Empty<ProjectContextReference>(),
+                Excluded: Array.Empty<ProjectContextExclusion>(),
+                AssemblyOutcome: ProjectContextAssemblyOutcome.Assembled,
+                ObservedAt: DateTimeOffset.UnixEpoch,
+                Freshness: ProjectContextFreshness.Fresh),
+            Evaluations: Array.Empty<ProjectContextEvaluation>());
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(result));
+    }
+
+    // Memories-specific forbidden-term coverage extended from Story 2.7. These payload-classification
+    // terms must never appear in any assembled ProjectContext, even as field names.
+    [Theory]
+    [InlineData("Content")]
+    [InlineData("ContentBytes")]
+    [InlineData("ContentHash")]
+    [InlineData("SourceUri")]
+    [InlineData("SourceType")]
+    [InlineData("IngestedBy")]
+    [InlineData("EmbeddingProvider")]
+    [InlineData("EmbeddingModel")]
+    [InlineData("EmbeddingDimensions")]
+    [InlineData("FailureDetails")]
+    [InlineData("IngestionInput")]
+    public void MemoriesSpecificForbiddenTerms_AreNeverPresentInAssembledContext(string term)
+    {
+        ProjectContext context = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            ProjectLifecycle.Active,
+            Setup: null,
+            ProjectFolder: null,
+            Conversations: Array.Empty<ProjectContextReference>(),
+            FileReferences: Array.Empty<ProjectContextReference>(),
+            MemoryReferences:
+            [
+                new ProjectContextReference(
+                    "memory", "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1", "Q3 product strategy memory",
+                    ReferenceState.Included, ProjectReasonCode.MemoryMatched, DateTimeOffset.UnixEpoch),
+            ],
+            Excluded: Array.Empty<ProjectContextExclusion>(),
+            AssemblyOutcome: ProjectContextAssemblyOutcome.Assembled,
+            ObservedAt: DateTimeOffset.UnixEpoch,
+            Freshness: ProjectContextFreshness.Fresh);
+
+        string serialized = System.Text.Json.JsonSerializer.Serialize(context, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
+        serialized.ShouldNotContain(term, Case.Sensitive);
+    }
+
+    [Fact]
+    public void ClosedDiagnosticVocabulary_NeverIntroducesPayloadTaxonomyTerm()
+    {
+        foreach (string diagnostic in ProjectContextInclusionDiagnostic.Values)
+        {
+            foreach (string forbidden in PayloadClassification.ForbiddenContent)
+            {
+                diagnostic.ToLowerInvariant().ShouldNotContain(forbidden.ToLowerInvariant());
+            }
+        }
+    }
 }

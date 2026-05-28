@@ -11,6 +11,13 @@ contents, memory bodies, raw prompts, secrets, raw tokens, full command bodies, 
 file paths. Schema evolution is additive and serialization-tolerant — never introduce a `V2` event
 type; new fields must be optional and backward-compatibly deserializable (NFR-6, FS-5).
 
+> **See also (Epic 3 Story 3.1):** the per-`(evidence-state × operation)` fail-closed decision
+> matrix for `ProjectContext` assembly lives at
+> [`docs/context-assembly-decision-matrix.md`](context-assembly-decision-matrix.md); the
+> producer-of-last-resort tracker for shared-vocabulary outcomes is the
+> [`## Shared vocabulary — producer of last resort`](#shared-vocabulary--producer-of-last-resort)
+> section at the foot of this catalog.
+
 ## Success events
 
 ### `ProjectCreated`
@@ -212,3 +219,114 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   configuration keys, message fingerprints, and watermarks; it does not store raw Tenants payloads,
   secrets, tokens, or caller-controlled authority.
 - **Ownership:** consumed only. Hexalith.Projects does not produce Tenants events.
+
+## Shared vocabulary — producer of last resort
+
+Per the Epic 2 retrospective action item *"Track unproduced shared-vocabulary outcomes deliberately"*,
+this section enumerates every member of the shared-vocabulary enums consumed by the AR-9 Project
+Context inclusion policy (Story 3.1) and names the producer that actually emits each value today.
+Members marked `unproduced — taxonomy-only` are reserved for symmetry with the upstream surface but
+are not yet emitted anywhere; the linked future story is where the producer lands.
+
+### `ReferenceState` (`src/Hexalith.Projects.Contracts/Ui/ReferenceState.cs`)
+
+| Value              | Current producer                                                                         | Notes                                                                                  |
+| ------------------ | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `Pending`          | `ProjectFolderCreationPending` (Story 2.4 degraded folder path)                          | Surfaced by the inclusion policy as `ReferenceFreshness` exclusion.                    |
+| `Included`         | Every Story 2.x ACL (Folders, Memories, Conversations) on success                        | Default success state for assembled references.                                        |
+| `Excluded`         | Story 3.1 inclusion policy (conversation `Redacted` upstream signal)                     | Always carries `Diagnostic = "referenceRedacted"`.                                     |
+| `Unauthorized`     | Story 2.x ACLs (Folders, Memories, Conversations) on per-reference auth failure          | Plus Memories `TenantMismatch` collapsed at the assembly boundary (Story 2.6 ADR).     |
+| `Unavailable`      | Story 2.x ACLs (Folders, Memories, Conversations) when upstream is unreachable           | Fail-closed-clean exclusion.                                                           |
+| `Stale`            | Story 2.1 Conversation read ACL (`MixedGeneration` / `Stale` trust signals)              | **Folders/Memories `Stale` is `unproduced — taxonomy-only`** — Story 3.4 (Refresh) is the first slot where Projects materially produces `Stale` for Folders/Memories references. |
+| `Archived`         | Story 2.x ACLs (Folders archived; Memories `Case.Status` = `Closed`/`Deleting`)          | Plus Story 1.8 archived project lifecycle.                                             |
+| `Ambiguous`        | `unproduced — taxonomy-only`                                                             | Reserved for Story 4.x project-resolution policy (`MultipleCandidates` propagation).   |
+| `TenantMismatch`   | Story 1.6 `TenantAccessAuthorizer` + Story 2.6 Memories ADR (boundary collapse)          | **`unproduced` as a surfaced `ReferenceState`** — the assembly always collapses to `Unauthorized` with `Diagnostic = "tenantMismatch"`. Kept for symmetry with `TenantAccessOutcome.TenantMismatch`. |
+| `Conflict`         | `ProjectAggregate` (`MemoryReferenceConflict` / `FileReferenceConflict` rejection paths) | Surfaced by the inclusion policy as `ReferenceLifecycle` exclusion.                    |
+| `InvalidReference` | Story 2.x ACLs (malformed identifier) + Story 3.1 policy (non-allowlisted reference kind) | Diagnostic differs (`referenceInvalidIdentifier` vs `referenceKindNotAllowlisted`).    |
+
+### `ProjectLifecycle` (`src/Hexalith.Projects.Contracts/Ui/ProjectLifecycle.cs`)
+
+| Value      | Current producer                                                       | Notes                          |
+| ---------- | ---------------------------------------------------------------------- | ------------------------------ |
+| `Active`   | `ProjectAggregate.Handle(CreateProject)` (Story 1.4)                   | Default on success.            |
+| `Archived` | `ProjectAggregate.Handle(ArchiveProject)` (Story 1.8)                  | Surfaced unchanged in context. |
+
+### `ProjectReasonCode` (`src/Hexalith.Projects.Contracts/Ui/ProjectReasonCode.cs`)
+
+| Value                     | Current producer                                                                    | Notes                                                                            |
+| ------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `ConversationLinked`      | Story 3.1 inclusion policy (conversation included path)                             |                                                                                  |
+| `ProjectFolderMatched`    | Story 3.1 inclusion policy (Project Folder included path)                           |                                                                                  |
+| `FileReferenceMatched`    | Story 3.1 inclusion policy (file reference included path)                           |                                                                                  |
+| `MemoryMatched`           | Story 3.1 inclusion policy (memory reference included path)                         |                                                                                  |
+| `MetadataMatched`         | `unproduced — taxonomy-only`                                                        | Reserved for Story 4.x project-resolution policy (metadata-driven resolutions).  |
+
+### `ProjectContextInclusionCheck` (`src/Hexalith.Projects.Contracts/Ui/ProjectContextInclusionCheck.cs`, Story 3.1)
+
+| Value                      | Current producer                                                              |
+| -------------------------- | ----------------------------------------------------------------------------- |
+| `TenantAuthority`          | Story 3.1 inclusion policy (assembly-level collapse).                         |
+| `ProjectVisibility`        | Story 3.1 inclusion policy (assembly-level collapse).                         |
+| `ProjectLifecycle`         | Story 3.1 inclusion policy (per-reference exclusion on archived project).     |
+| `ReferenceAuthorization`   | Story 3.1 inclusion policy (per-reference auth failure).                      |
+| `ReferenceLifecycle`       | Story 3.1 inclusion policy (per-reference archived/ambiguous/conflict).       |
+| `ReferenceFreshness`       | Story 3.1 inclusion policy (per-reference stale/unavailable/pending/redacted). |
+| `ReferenceKindAllowlist`   | Story 3.1 inclusion policy (non-allowlisted kind or malformed identifier).    |
+
+### `ProjectContextAssemblyOutcome` (`src/Hexalith.Projects.Contracts/Ui/ProjectContextAssemblyOutcome.cs`, Story 3.1)
+
+| Value                | Current producer                                                                    |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| `Assembled`          | Story 3.1 inclusion policy (assembly succeeded; includes Archived-project case).    |
+| `ProjectUnavailable` | Story 3.1 inclusion policy (safe-denial 404 contract; cross-tenant or null detail). |
+| `Unauthorized`       | Story 3.1 inclusion policy (tenant authority failure / collapse).                   |
+
+### `ProjectContextFreshness` (`src/Hexalith.Projects.Contracts/Ui/ProjectContextFreshness.cs`, Story 3.1)
+
+| Value         | Current producer                                                                        | Notes                                                                |
+| ------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `Fresh`       | Story 3.1 inclusion policy (tenant projection `Fresh`).                                 |                                                                      |
+| `Stale`       | Story 3.1 inclusion policy (tenant projection `Stale` on read-only operations).         | Materialized as a `Refresh` surface in Story 3.4.                    |
+| `Unavailable` | Story 3.1 inclusion policy (tenant projection `Unavailable`).                           |                                                                      |
+| `Unknown`     | Story 3.1 inclusion policy (tenant projection `Future` / `Unknown` / authority missing).| Default sentinel; never collapses to `Stale` on its own.             |
+
+### `ProjectConversationTrustSignal` (`src/Hexalith.Projects.Contracts/Queries/ProjectConversationTrustSignal.cs`)
+
+| Value             | Current producer                                                                |
+| ----------------- | ------------------------------------------------------------------------------- |
+| `Current`         | Story 2.1 Conversation Reference Read ACL on success.                           |
+| `Stale`           | Story 2.1 ACL when upstream projection evidence is stale.                       |
+| `Rebuilding`      | Story 2.1 ACL when upstream read model is rebuilding.                           |
+| `Unavailable`     | Story 2.1 ACL when upstream is unreachable.                                     |
+| `Forbidden`       | Story 2.1 ACL on auth failure.                                                  |
+| `Redacted`        | Story 2.1 ACL when upstream metadata is policy-redacted.                        |
+| `MixedGeneration` | Story 2.1 ACL when upstream list detects mixed projection generations.          |
+
+### `TenantAccessOutcome` (`src/Hexalith.Projects/Authorization/TenantAccessOutcome.cs`)
+
+| Value                       | Current producer                                                                 | Notes                                                                       |
+| --------------------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `Allowed`                   | Story 1.6 `TenantAccessAuthorizer` on success.                                   |                                                                             |
+| `Denied`                    | Story 1.6 `TenantAccessAuthorizer` (explicit denial).                            |                                                                             |
+| `StaleProjection`           | Story 1.6 `TenantAccessAuthorizer` (bounded-stale projection observed).          |                                                                             |
+| `UnavailableProjection`     | Story 1.6 `TenantAccessAuthorizer` (projection rebuilding / absent).             |                                                                             |
+| `UnknownTenant`             | Story 1.6 `TenantAccessAuthorizer` (no tenant projection row).                   |                                                                             |
+| `DisabledTenant`            | Story 1.6 `TenantAccessAuthorizer` (tenant disabled).                            |                                                                             |
+| `MalformedEvidence`         | Story 1.6 `TenantAccessAuthorizer` (claim/projection mismatch).                  |                                                                             |
+| `TenantMismatch`            | Story 1.6 `TenantAccessAuthorizer` (cross-tenant claim).                         | Boundary-collapsed by Story 3.1 to `Unauthorized` with `tenantMismatch` diagnostic. |
+| `MissingAuthoritativeTenant`| Story 1.6 `TenantAccessAuthorizer` (no authoritative tenant claim).              |                                                                             |
+| `ReplayConflict`            | Story 1.6 `TenantAccessAuthorizer` (envelope-watermark replay conflict).         |                                                                             |
+
+### `TenantProjectionFreshnessStatus` (`src/Hexalith.Projects/Authorization/TenantProjectionFreshnessStatus.cs`)
+
+| Value         | Current producer                                                                | Notes                                                                  |
+| ------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `Unknown`     | Story 1.6 `TenantAccessAuthorizer` (no signal observed).                        |                                                                        |
+| `Fresh`       | Story 1.6 `TenantAccessAuthorizer` (projection watermark recent).               |                                                                        |
+| `Stale`       | Story 1.6 `TenantAccessAuthorizer` (projection watermark older than threshold). | Surfaced by Story 3.1 as `ProjectContextFreshness.Stale`.              |
+| `Future`      | Story 1.6 `TenantAccessAuthorizer` (projection watermark ahead of clock).       | Story 3.1 maps to `ProjectContextFreshness.Unknown`.                   |
+| `Unavailable` | Story 1.6 `TenantAccessAuthorizer` (no projection row observed).                | Surfaced by Story 3.1 as `ProjectContextFreshness.Unavailable`.        |
+
+**Maintenance rule.** Every new shared-vocabulary value (existing enum addition or new policy enum)
+MUST add a row here in the same PR. Stories 3.2–3.5 may add `current producer` annotations for
+existing values; they may not remove rows.

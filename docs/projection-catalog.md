@@ -37,8 +37,11 @@ boundaries.
 - **Owner:** Hexalith.Projects Workers host folds persisted Project events through
   `ProjectEventProjectionProcessor`; runtime Server reads it through `DaprProjectListReadModel`.
 - **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
-- **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, and `ProjectArchived`. Setup updates refresh
-  `UpdatedAt`/sequence only; archive updates lifecycle to `Archived`.
+- **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, `ProjectArchived`, `ProjectFolderSet`,
+  and `ProjectFolderCreationPending`. Setup, folder-set, and pending-folder events refresh
+  `UpdatedAt`/sequence only; archive updates lifecycle to `Archived`. Reference link/unlink events
+  (`FileReferenceLinked`/`FileReferenceUnlinked`/`MemoryLinked`/`MemoryUnlinked`) are routed to the
+  reference index projection, not the list row.
 - **Tenant scoping:** envelope tenant and event tenant must match before the row is folded. Query reads
   filter rows by the authenticated authoritative tenant before response construction.
 - **Stored data:** metadata-only project id, display name, lifecycle state, sequence watermark, created
@@ -62,9 +65,13 @@ boundaries.
 - **Owner:** Hexalith.Projects Workers host folds persisted Project events through
   `ProjectEventProjectionProcessor`; runtime Server reads it through `DaprProjectDetailReadModel`.
 - **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
-- **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, and `ProjectArchived`. `SetupMetadata` is the
-  safe setup metadata reference carried by creation; `ProjectSetupUpdated` stores the latest bounded
-  metadata-only setup preferences; `ProjectArchived` updates lifecycle to `Archived`.
+- **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, `ProjectArchived`, `ProjectFolderSet`,
+  `ProjectFolderCreationPending`, `FileReferenceLinked`, `FileReferenceUnlinked`, `MemoryLinked`,
+  and `MemoryUnlinked`. `SetupMetadata` is the safe setup metadata reference carried by creation;
+  `ProjectSetupUpdated` stores the latest bounded metadata-only setup preferences; `ProjectArchived`
+  updates lifecycle to `Archived`; folder events record the single Project Folder reference (or pending
+  intent when the Folders create capability is externally unavailable); file/memory link/unlink events
+  maintain the bounded per-kind reference sets on the detail row alongside the disjoint reference index.
 - **Tenant scoping:** envelope tenant and event tenant must match before detail is folded. Open Project
   reads filter the detail by authoritative tenant before response construction.
 - **Stored data:** metadata-only project id, name, description, setup metadata reference, bounded setup
@@ -79,3 +86,42 @@ boundaries.
   (`UpdatedAt` and `Sequence`), not from the response wall clock.
 - **Leakage boundary:** Open Project returns metadata/setup/reference summaries only and blocks context
   activation explicitly when lifecycle or availability prevents active use.
+
+## `ProjectReferenceIndexProjection`
+
+- **Type:** `Hexalith.Projects.Projections.ProjectReferenceIndex.ProjectReferenceIndexProjection`.
+- **Owner:** Hexalith.Projects Workers host folds persisted Project events through
+  `ProjectEventProjectionProcessor`; runtime callers consume it as a tenant-scoped read model.
+- **Key:** per-reference key `{tenant}:projects:{projectId}:references:{kind}:{referenceId}` where
+  `{kind}` is one of `folder`, `file`, or `memory`. The disjoint per-kind prefix is load-bearing:
+  replacing the single Project Folder only ever touches `folder`-kind rows; linking/unlinking a File
+  Reference or Memory Reference only ever touches a single row of its own kind. File unlink can
+  never remove the Project Folder row and folder replacement can never remove file or memory rows.
+- **Source events:** `ProjectFolderSet`, `ProjectFolderCreationPending`, `FileReferenceLinked`,
+  `FileReferenceUnlinked`, `MemoryLinked`, and `MemoryUnlinked`. `ProjectCreated`/`ProjectSetupUpdated`
+  /`ProjectArchived` are observed but produce no reference-index rows. Unknown event types throw to
+  keep the projection in sync with `ProjectStateApply`.
+- **Tenant scoping:** envelope tenant and event tenant must match before any row is folded. Query
+  reads filter by the authoritative tenant before response construction.
+- **Stored data:** metadata-only tenant id, project id, reference kind, reference id, inclusion state
+  (`Included` for set/link, `Pending` for pending folder), safe display name, optional reason code
+  (carried on `Pending` rows from `ProjectFolderCreationPending.ReasonCode`), occurred-at timestamp,
+  and the envelope sequence. No file contents, memory payload, transcript, prompt, secret, token,
+  unrestricted path, embedding vector, or sibling denial detail is stored.
+- **Rebuild behavior:** `Apply(envelopes)` orders by `(Sequence, IdempotencyKey, IdempotencyFingerprint)`
+  and folds deterministically. `Empty.Apply(envelopes)` is the rebuild path. Pending folder rows
+  are only written when no `Included` Project Folder is already present so a degraded create cannot
+  shadow an established folder.
+- **Runtime store:** the reference index uses the shared `projects:projection-journal:{tenantId}`
+  durable journal (EventStore global position watermark) — there is no separate per-projection store
+  in production. In-memory storage remains only for tests and explicit pre-runtime fakes.
+- **Freshness semantics:** consumers derive freshness/trust metadata from the projected
+  `OccurredAt`/`Sequence` carried per row, not from the response wall clock. Pending folder rows
+  surface their reason code so the view can show "folder creation queued/flagged" rather than treating
+  the absent folder as available.
+- **Leakage boundary:** reference rows expose only the safe identifier and the safe display name from
+  the corresponding folder/file/memory metadata; no upstream content, path, or denial detail is
+  retained. The `NoPayloadLeakage` harness asserts this per reference kind.
+- **Consumer guidance:** Epic 3 context assembly reads this projection lane-aware: a single Project
+  Folder row (Included or Pending), zero-to-many File Reference rows, and zero-to-many Memory
+  Reference rows. The lanes never share a key prefix.
