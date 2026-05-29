@@ -1296,6 +1296,86 @@ paths:
         - idempotency_conflict
         - not_found
         - internal_error
+  /api/v1/projects/resolution/from-conversation:
+    get:
+      tags:
+        - projects
+      operationId: ResolveProjectFromConversation
+      summary: Resolve candidate Projects for a conversation that has no explicit Project.
+      description: >
+        Computes candidate Projects for a project-less conversation by running the Story 4.1
+        resolution engine over pre-fetched, ACL-checked conversation metadata and the tenant's
+        authorized Projects (FR-12, UJ-3). A synchronous, compute-on-demand read: it writes no
+        event, projection, state, or resolution trace and returns no 202 — only the later
+        ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate /
+        MultipleCandidates with reason codes, and excludes archived Projects unless includeArchived
+        is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header.
+        Idempotency-Key is not a query parameter and is rejected if present after authorization.
+        Unauthorized callers and unverifiable tenant evidence collapse to safe-denial 404
+        (existence-non-inference). A well-formed conversation the caller cannot read in scope
+        (cross-tenant, unknown, or degraded trust) is not a 404 here: it fails closed to a
+        non-match and returns NoMatch (200) — the same response as a legitimately project-less
+        conversation — so no cross-tenant existence is leaked.
+      parameters:
+        - name: conversationId
+          in: query
+          required: true
+          description: Opaque Conversations-owned identifier of the conversation to resolve. A reference identity, not tenant authority or transcript content.
+          schema:
+            $ref: "#/components/schemas/OpaqueIdentifier"
+        - name: includeArchived
+          in: query
+          required: false
+          description: When true, archived Projects are eligible resolution candidates. Absent or false excludes archived Projects (the default).
+          schema:
+            type: boolean
+            default: false
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Freshness"
+      responses:
+        "200":
+          description: Metadata-only Project resolution outcome with ranked candidates, exclusion evidence, and freshness.
+          headers:
+            X-Correlation-Id:
+              $ref: "#/components/headers/CorrelationId"
+            X-Hexalith-Freshness:
+              $ref: "#/components/headers/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectResolution"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-read-consistency:
+        class: eventually_consistent
+        freshnessBehavior: returns-projection-watermark-when-available
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: query-correlation-only
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-and-project-read-permission
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - validation_error
+        - not_found
+        - read_model_unavailable
+        - projection_stale
+        - projection_unavailable
+        - internal_error
 components:
   securitySchemes:
     oidcBearer:
@@ -3137,3 +3217,138 @@ components:
           $ref: "#/components/schemas/UtcDateTime"
         freshness:
           $ref: "#/components/schemas/ProjectContextFreshness"
+    ProjectResolution:
+      type: object
+      additionalProperties: false
+      description: >
+        Metadata-only Project resolution outcome emitted by the Story 4.1 resolution engine and
+        returned by ResolveProjectFromConversation (Story 4.2). Carries the top-level outcome, the
+        ranked qualifying candidates, the per-candidate / per-signal exclusion evidence, and the
+        observation instant. Carries opaque ids, safe display labels, shared-vocabulary states, and
+        closed-vocabulary diagnostic strings only — never transcripts, prompts, file or memory
+        bodies, paths, tokens, secrets, or upstream raw denial detail. Per FS-8 / SM-3, tenant
+        authority is server-derived and intentionally NOT carried on the wire (the C# DTO declares
+        no TenantId).
+      required:
+        - result
+        - candidates
+        - excluded
+        - observedAt
+      properties:
+        result:
+          $ref: "#/components/schemas/ResolutionResult"
+        candidates:
+          type: array
+          maxItems: 100
+          description: Ranked qualifying candidates, ordered by score descending then projectId Ordinal ascending.
+          items:
+            $ref: "#/components/schemas/ResolutionCandidate"
+        excluded:
+          type: array
+          maxItems: 400
+          description: Per-candidate / per-signal exclusion evidence for fail-closed inputs.
+          items:
+            $ref: "#/components/schemas/ResolutionExclusion"
+        observedAt:
+          $ref: "#/components/schemas/UtcDateTime"
+    ResolutionResult:
+      type: string
+      description: Top-level project-resolution outcome (PascalCase wire-name from the C# ResolutionResult enum).
+      enum:
+        - NoMatch
+        - SingleCandidate
+        - MultipleCandidates
+    ResolutionCandidate:
+      type: object
+      additionalProperties: false
+      description: One ranked qualifying project candidate in a resolution outcome. Metadata-only.
+      required:
+        - projectId
+        - reasonCodes
+        - rank
+        - score
+      properties:
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        displayName:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 160
+          description: Safe display name for the candidate project.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        reasonCodes:
+          type: array
+          minItems: 1
+          maxItems: 5
+          description: Distinct shared-vocabulary ProjectReasonCode values that contributed to the score (conversation resolution uses only ConversationLinked and MetadataMatched).
+          items:
+            type: string
+            enum:
+              - ConversationLinked
+              - ProjectFolderMatched
+              - FileReferenceMatched
+              - MemoryMatched
+              - MetadataMatched
+        rank:
+          type: integer
+          format: int32
+          minimum: 1
+          description: One-based deterministic rank.
+        score:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Metadata-only relative score from the documented resolution heuristic.
+    ResolutionExclusion:
+      type: object
+      additionalProperties: false
+      description: >
+        Metadata-only exclusion evidence explaining why a candidate or candidate signal did not
+        contribute to a positive resolution match. The diagnostic value is a member of the closed
+        ProjectContextInclusionDiagnostic vocabulary — free-form upstream text never appears here.
+      required:
+        - projectId
+        - referenceState
+      properties:
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        displayName:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 160
+          description: Safe display name for the excluded project.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        referenceState:
+          description: Shared-vocabulary ReferenceState (PascalCase wire-name) surfaced for the exclusion.
+          type: string
+          enum:
+            - Pending
+            - Included
+            - Excluded
+            - Unauthorized
+            - Unavailable
+            - Stale
+            - Archived
+            - Ambiguous
+            - TenantMismatch
+            - Conflict
+            - InvalidReference
+        reasonCode:
+          nullable: true
+          description: Optional shared-vocabulary ProjectReasonCode associated with the failed signal.
+          type: string
+          enum:
+            - ConversationLinked
+            - ProjectFolderMatched
+            - FileReferenceMatched
+            - MemoryMatched
+            - MetadataMatched
+        diagnostic:
+          nullable: true
+          description: Closed-vocabulary ProjectContextInclusionDiagnostic value. The 13 known values are tenantMismatch, projectUnknown, projectArchived, referenceUnauthorized, referenceUnavailable, referenceStale, referenceArchived, referenceConflict, referenceInvalidIdentifier, referenceKindNotAllowlisted, projectFolderPending, referenceAmbiguous, referenceRedacted.
+          type: string
+          minLength: 1
+          maxLength: 80
+          pattern: "^[a-z][A-Za-z0-9]{0,79}$"

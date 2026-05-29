@@ -71,6 +71,13 @@ public static class ProjectsServerServiceCollectionExtensions
                     client,
                     sp.GetRequiredService<IActorPartyResolver>());
         });
+        services.TryAddTransient<IProjectConversationResolutionDirectory>(sp =>
+        {
+            IConversationClient? client = sp.GetService<IConversationClient>();
+            return client is null
+                ? new UnavailableProjectConversationResolutionDirectory()
+                : new ConversationsProjectConversationResolutionDirectory(client);
+        });
         services.TryAddTransient<IProjectFolderDirectory>(sp =>
         {
             FoldersClient? client = sp.GetService<FoldersClient>();
