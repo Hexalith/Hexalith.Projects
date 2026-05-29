@@ -4,7 +4,7 @@ baseline_commit: 9727968a754a2682e40261a45a4544cde44f60a7
 
 # Story 4.1: Resolution engine (compute-on-demand)
 
-Status: in-progress
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -44,50 +44,50 @@ So that **resolution is deterministic, testable, fail-closed, and never stores s
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1 — Author the scoring/confidence-band heuristic doc** (AC: #6, #11)
-  - [ ] Create `docs/resolution-scoring-heuristic.md` mirroring `docs/context-assembly-decision-matrix.md` structure: input → qualifying-match rule → per-reason-code weight → candidate score → confidence band → single-vs-multiple threshold, with a tabulated cell matrix.
-  - [ ] Document the fail-closed qualification (AC4): only `ReferenceState.Included` references score; everything else is exclusion evidence.
-  - [ ] Document the NFR-9 ambiguity bias: ties / near-ties / multiple qualifying candidates → `MultipleCandidates`; `SingleCandidate` requires exactly one qualifying candidate (or one candidate strictly dominating per the documented margin — keep conservative).
-  - [ ] Cross-link from `_bmad-output/planning-artifacts/architecture.md` (AR-10) the same way the decision-matrix doc is cross-linked.
+- [x] **Task 1 — Author the scoring/confidence-band heuristic doc** (AC: #6, #11)
+  - [x] Create `docs/resolution-scoring-heuristic.md` mirroring `docs/context-assembly-decision-matrix.md` structure: input → qualifying-match rule → per-reason-code weight → candidate score → confidence band → single-vs-multiple threshold, with a tabulated cell matrix.
+  - [x] Document the fail-closed qualification (AC4): only `ReferenceState.Included` references score; everything else is exclusion evidence.
+  - [x] Document the NFR-9 ambiguity bias: ties / near-ties / multiple qualifying candidates → `MultipleCandidates`; `SingleCandidate` requires exactly one qualifying candidate (or one candidate strictly dominating per the documented margin — keep conservative).
+  - [x] Cross-link from `_bmad-output/planning-artifacts/architecture.md` (AR-10) the same way the decision-matrix doc is cross-linked.
 
-- [ ] **Task 2 — Define the engine input evidence records (domain core)** (AC: #1, #4, #5, #9)
-  - [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionContext.cs` — sealed record: `AuthoritativeTenantId` (string?, server-derived), `RequestedTenantId` (string?), `IncludeArchived` (bool, default false), `Now` (DateTimeOffset — the only clock source), `CorrelationId`/`TaskId` (string?, logged, never output). Optional: a metadata-only summary of presented inputs (e.g. presented conversation/attachment ids) for trace.
-  - [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionCandidateEvidence.cs` — sealed record per candidate: `ProjectId` (string, eager-validated non-empty), `DisplayName` (string?, normalized to null if whitespace), `Lifecycle` (`ProjectLifecycle`), and the candidate's match signals (a list of per-reference signals carrying `ProjectReasonCode`, the matched reference's `ReferenceState`, opaque reference id, `ObservedAt`). Reuse `ProjectFolderReference` / `ProjectFileReference` / `ProjectMemoryReference` shapes where they fit; do not invent parallel reference models.
-  - [ ] Normalize null collections to empty (mirror `ProjectContextReferenceEvidence.Empty`); add an `Empty`/canonical-empty where useful.
-  - [ ] Eager-validate identifiers at construction (mirror `ProjectContextConversationEvidence`).
+- [x] **Task 2 — Define the engine input evidence records (domain core)** (AC: #1, #4, #5, #9)
+  - [x] `src/Hexalith.Projects/Resolution/ProjectResolutionContext.cs` — sealed record: `AuthoritativeTenantId` (string?, server-derived), `RequestedTenantId` (string?), `IncludeArchived` (bool, default false), `Now` (DateTimeOffset — the only clock source), `CorrelationId`/`TaskId` (string?, logged, never output). Optional: a metadata-only summary of presented inputs (e.g. presented conversation/attachment ids) for trace.
+  - [x] `src/Hexalith.Projects/Resolution/ProjectResolutionCandidateEvidence.cs` — sealed record per candidate: `ProjectId` (string, eager-validated non-empty), `DisplayName` (string?, normalized to null if whitespace), `Lifecycle` (`ProjectLifecycle`), and the candidate's match signals (a list of per-reference signals carrying `ProjectReasonCode`, the matched reference's `ReferenceState`, opaque reference id, `ObservedAt`). Reuse `ProjectFolderReference` / `ProjectFileReference` / `ProjectMemoryReference` shapes where they fit; do not invent parallel reference models.
+  - [x] Normalize null collections to empty (mirror `ProjectContextReferenceEvidence.Empty`); add an `Empty`/canonical-empty where useful.
+  - [x] Eager-validate identifiers at construction (mirror `ProjectContextConversationEvidence`).
 
-- [ ] **Task 3 — Define the output result DTOs (Contracts/Models)** (AC: #2, #3, #8, #11)
-  - [ ] `src/Hexalith.Projects.Contracts/Models/ProjectResolution.cs` — sealed record: `ResolutionResult Result`, `IReadOnlyList<ResolutionCandidate> Candidates` (ranked, qualifying), `IReadOnlyList<ResolutionExclusion> Excluded` (non-qualifying candidates with reason), `DateTimeOffset ObservedAt`. **No `TenantId` field on the wire** (FS-8/SM-3). Provide composition factories (`NoMatch(...)`, etc.) mirroring `ProjectContext` factory style.
-  - [ ] `ResolutionCandidate` — sealed record: `ProjectId`, `DisplayName?`, `IReadOnlyList<ProjectReasonCode> ReasonCodes` (≥1, deterministic order), `Rank` (int), and a metadata-only relative `Score` (int) — confidence *band* stays documented in the heuristic doc, **not** a new wire enum (see Dev Notes "Design decision: confidence band").
-  - [ ] `ResolutionExclusion` — sealed record: `ProjectId`, the surfaced `ReferenceState`/lifecycle reason, and an optional safe diagnostic from a closed vocabulary (reuse `ProjectContextInclusionDiagnostic` if the values fit, or document why a small resolution-specific closed set is needed — no free text).
-  - [ ] Apply name-based JSON + eager validation consistent with existing Contracts/Models records.
+- [x] **Task 3 — Define the output result DTOs (Contracts/Models)** (AC: #2, #3, #8, #11)
+  - [x] `src/Hexalith.Projects.Contracts/Models/ProjectResolution.cs` — sealed record: `ResolutionResult Result`, `IReadOnlyList<ResolutionCandidate> Candidates` (ranked, qualifying), `IReadOnlyList<ResolutionExclusion> Excluded` (non-qualifying candidates with reason), `DateTimeOffset ObservedAt`. **No `TenantId` field on the wire** (FS-8/SM-3). Provide composition factories (`NoMatch(...)`, etc.) mirroring `ProjectContext` factory style.
+  - [x] `ResolutionCandidate` — sealed record: `ProjectId`, `DisplayName?`, `IReadOnlyList<ProjectReasonCode> ReasonCodes` (≥1, deterministic order), `Rank` (int), and a metadata-only relative `Score` (int) — confidence *band* stays documented in the heuristic doc, **not** a new wire enum (see Dev Notes "Design decision: confidence band").
+  - [x] `ResolutionExclusion` — sealed record: `ProjectId`, the surfaced `ReferenceState`/lifecycle reason, and an optional safe diagnostic from a closed vocabulary (reuse `ProjectContextInclusionDiagnostic` if the values fit, or document why a small resolution-specific closed set is needed — no free text).
+  - [x] Apply name-based JSON + eager validation consistent with existing Contracts/Models records.
 
-- [ ] **Task 4 — Implement `ProjectResolutionEngine`** (AC: #1, #2, #3, #4, #5, #6, #7, #9)
-  - [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionEngine.cs` — sealed class, optional `ILogger`, single pure `Resolve(ProjectResolutionContext context, IReadOnlyList<ProjectResolutionCandidateEvidence> candidates)` method. `ArgumentNullException.ThrowIfNull` all inputs.
-  - [ ] For each candidate: drop non-`Included` match signals to exclusion evidence (AC4, fail-closed); if `Lifecycle == Archived` and not `IncludeArchived`, classify as excluded (AC5); compute score from surviving reason codes per the documented weights (AC6).
-  - [ ] Rank qualifying candidates deterministically (score desc, then `ProjectId` Ordinal asc). Decide outcome per the documented threshold: 0 qualifying → `NoMatch`; exactly 1 → `SingleCandidate`; ≥2 (or ambiguous) → `MultipleCandidates` (NFR-9 bias).
-  - [ ] Single side effect allowed: `_logger.LogWarning(...)` (structured metadata only — never reason payloads/ids beyond opaque safe values) for diagnostic edge conditions. No other side effects.
-  - [ ] Optional: a single-source-of-truth ordering/weights declaration (mirror `ProjectContextInclusionOrder`) so the heuristic isn't duplicated in branches.
+- [x] **Task 4 — Implement `ProjectResolutionEngine`** (AC: #1, #2, #3, #4, #5, #6, #7, #9)
+  - [x] `src/Hexalith.Projects/Resolution/ProjectResolutionEngine.cs` — sealed class, optional `ILogger`, single pure `Resolve(ProjectResolutionContext context, IReadOnlyList<ProjectResolutionCandidateEvidence> candidates)` method. `ArgumentNullException.ThrowIfNull` all inputs.
+  - [x] For each candidate: drop non-`Included` match signals to exclusion evidence (AC4, fail-closed); if `Lifecycle == Archived` and not `IncludeArchived`, classify as excluded (AC5); compute score from surviving reason codes per the documented weights (AC6).
+  - [x] Rank qualifying candidates deterministically (score desc, then `ProjectId` Ordinal asc). Decide outcome per the documented threshold: 0 qualifying → `NoMatch`; exactly 1 → `SingleCandidate`; ≥2 (or ambiguous) → `MultipleCandidates` (NFR-9 bias).
+  - [x] Single side effect allowed: `_logger.LogWarning(...)` (structured metadata only — never reason payloads/ids beyond opaque safe values) for diagnostic edge conditions. No other side effects.
+  - [x] Optional: a single-source-of-truth ordering/weights declaration (mirror `ProjectContextInclusionOrder`) so the heuristic isn't duplicated in branches.
 
-- [ ] **Task 5 — DI registration** (AC: #1)
-  - [ ] Register `ProjectResolutionEngine` via `TryAddTransient<ProjectResolutionEngine>()` in `src/Hexalith.Projects/ProjectsServiceCollectionExtensions.cs` (`AddProjectsModule`), exactly as `ProjectContextInclusionPolicy` is registered.
+- [x] **Task 5 — DI registration** (AC: #1)
+  - [x] Register `ProjectResolutionEngine` via `TryAddTransient<ProjectResolutionEngine>()` in `src/Hexalith.Projects/ProjectsServiceCollectionExtensions.cs` (`AddProjectsModule`), exactly as `ProjectContextInclusionPolicy` is registered.
 
-- [ ] **Task 6 — Extend the leakage harness** (AC: #8)
-  - [ ] Add `ProjectResolution`-shaped assertions to `src/Hexalith.Projects.Testing/Leakage/NoPayloadLeakageAssertions.cs` (or the per-story extension pattern used since Story 3.1), covering the new DTOs; confirm no Conversations/Folders/Memories forbidden terms and no `TenantId` field on the wire.
+- [x] **Task 6 — Extend the leakage harness** (AC: #8)
+  - [x] Add `ProjectResolution`-shaped assertions to `src/Hexalith.Projects.Testing/Leakage/NoPayloadLeakageAssertions.cs` (or the per-story extension pattern used since Story 3.1), covering the new DTOs; confirm no Conversations/Folders/Memories forbidden terms and no `TenantId` field on the wire.
 
-- [ ] **Task 7 — Tier-1 test suite** (AC: #4, #5, #6, #7, #8, #9, #10, #11)
-  - [ ] `tests/Hexalith.Projects.Tests/Resolution/` new folder. Add deterministic builders under `src/Hexalith.Projects.Testing/Resolution/` (mirror `ProjectContextEvidenceBuilder` + reuse `RecordingLogger`).
-  - [ ] `ProjectResolutionEngineTests.cs` — the five epic-named cases (no-match / single / multiple / archived-exclusion / unauthorized-resource-exclusion) + reason-code tagging + happy path.
-  - [ ] `ProjectResolutionScoringMatrixTests.cs` — doc↔code completeness over `docs/resolution-scoring-heuristic.md` cells (Theory-driven, hard-coded cells mirror the doc; AC6).
-  - [ ] `ProjectResolutionEngineDeterminismTests.cs` — stable ranking/tiebreak; input reordering yields identical output; no wall-clock (fixed `Now`).
-  - [ ] `ProjectResolutionPersistsNothingTests.cs` — positive proof (AC7): reflect over `ProjectResolutionEngine` constructor + fields asserting no EventStore/Dapr/command/projection/`HttpClient` dependency; assert `Resolve` is side-effect-free beyond optional logger via `RecordingLogger`.
-  - [ ] `ProjectResolutionLeakageTests.cs` — `NoPayloadLeakage` over result DTOs + no-`TenantId` assertion (AC8).
-  - [ ] `ProjectResolutionContractValidationTests.cs` — eager-validation + null-argument guards + name-based JSON round-trip + additive-deserialization tolerance.
+- [x] **Task 7 — Tier-1 test suite** (AC: #4, #5, #6, #7, #8, #9, #10, #11)
+  - [x] `tests/Hexalith.Projects.Tests/Resolution/` new folder. Add deterministic builders under `src/Hexalith.Projects.Testing/Resolution/` (mirror `ProjectContextEvidenceBuilder` + reuse `RecordingLogger`).
+  - [x] `ProjectResolutionEngineTests.cs` — the five epic-named cases (no-match / single / multiple / archived-exclusion / unauthorized-resource-exclusion) + reason-code tagging + happy path.
+  - [x] `ProjectResolutionScoringMatrixTests.cs` — doc↔code completeness over `docs/resolution-scoring-heuristic.md` cells (Theory-driven, hard-coded cells mirror the doc; AC6).
+  - [x] `ProjectResolutionEngineDeterminismTests.cs` — stable ranking/tiebreak; input reordering yields identical output; no wall-clock (fixed `Now`).
+  - [x] `ProjectResolutionPersistsNothingTests.cs` — positive proof (AC7): reflect over `ProjectResolutionEngine` constructor + fields asserting no EventStore/Dapr/command/projection/`HttpClient` dependency; assert `Resolve` is side-effect-free beyond optional logger via `RecordingLogger`.
+  - [x] `ProjectResolutionLeakageTests.cs` — `NoPayloadLeakage` over result DTOs + no-`TenantId` assertion (AC8).
+  - [x] `ProjectResolutionContractValidationTests.cs` — eager-validation + null-argument guards + name-based JSON round-trip + additive-deserialization tolerance.
 
-- [ ] **Task 8 — Build & verify (no contract-spine / .g.cs churn)** (AC: #1–#11)
-  - [ ] `dotnet build Hexalith.Projects.slnx` → 0 W / 0 E (use `/home/administrator/.dotnet` 10.0.300, not `/usr/bin/dotnet` — see Dev Notes).
-  - [ ] `dotnet test Hexalith.Projects.slnx --no-build` → all green; report per-lane counts.
-  - [ ] Confirm **no** OpenAPI spine change and **no** `.g.cs` regeneration (Story 4.1 adds no HTTP surface — the fingerprint gate must stay PASSED). Confirm no submodule pointer change and no nested recursive submodule init.
+- [x] **Task 8 — Build & verify (no contract-spine / .g.cs churn)** (AC: #1–#11)
+  - [x] `dotnet build Hexalith.Projects.slnx` → 0 W / 0 E (use `/home/administrator/.dotnet` 10.0.300, not `/usr/bin/dotnet` — see Dev Notes).
+  - [x] `dotnet test Hexalith.Projects.slnx --no-build` → all green; report per-lane counts.
+  - [x] Confirm **no** OpenAPI spine change and **no** `.g.cs` regeneration (Story 4.1 adds no HTTP surface — the fingerprint gate must stay PASSED). Confirm no submodule pointer change and no nested recursive submodule init.
 
 ## Dev Notes
 
@@ -209,17 +209,21 @@ Use the SDK at `/home/administrator/.dotnet` (10.0.300), **not** `/usr/bin/dotne
 
 ### Agent Model Used
 
-GPT-5 Codex
+GPT-5 Codex (initial implementation 2026-05-28); Claude Opus 4.8 (validation + completion 2026-05-29)
 
 ### Debug Log References
 
 - 2026-05-28: Implemented Story 4.1 code/docs/tests, then hit a validation blocker before completion: `/home/administrator/.dotnet/dotnet build Hexalith.Projects.slnx` and targeted Projects builds fail in this Linux workspace before compile/test execution because existing generated NuGet assets/project-reference evaluation contain Windows restore paths / multi-target sibling project evaluation failures. `Hexalith.EventStore.Contracts`, `Hexalith.Conversations.Contracts`, and `Hexalith.FrontComposer.Contracts` individual target builds can be made to pass, but the Projects solution/project build still fails with `Build FAILED. 0 Warning(s) 0 Error(s)` during referenced-project `GetTargetFrameworks` evaluation. Tasks remain unchecked and Status remains `in-progress` until the required build/test gate is green.
+- 2026-05-29: Re-ran the build with the pinned SDK at `/home/administrator/.dotnet` (10.0.300). The build did **not** fail on project-reference evaluation — it surfaced two real compile errors (`CS1739`) in `ProjectResolutionEngine.cs`: the two tenant/archived `CreateExclusion(...)` call sites used a PascalCase named argument `ReasonCode:` that did not match the method parameter `reasonCode`. Fixed both to `reasonCode:`. After the fix: `dotnet build Hexalith.Projects.slnx -warnaserror` → **0 Warning(s) / 0 Error(s)**. The earlier "Windows restore path / GetTargetFrameworks" diagnosis was a misread of the same `Build FAILED` line; the actual blocker was the named-argument mismatch.
 
 ### Completion Notes List
 
-- Implemented the compute-on-demand resolution design in source but did not mark story tasks complete because build/test validation is blocked.
-- Added deterministic scoring rules with distinct reason-code weights, fail-closed exclusion evidence, archived opt-in handling, no TenantId output, and no persistence/I/O dependencies in the engine implementation.
-- Added Tier-1 test files for engine behavior, scoring matrix, determinism, persist-nothing reflection, leakage/no-TenantId, and contract validation. Tests have not executed successfully due to the build environment blocker above.
+- ✅ Root cause of the prior validation blocker was a 2-site `CS1739` named-argument mismatch (`ReasonCode:` → `reasonCode:`) in `ProjectResolutionEngine.cs`, not an environment/restore issue. Fixed; solution now builds clean (0W/0E) with the pinned 10.0.300 SDK.
+- Implemented the compute-on-demand resolution design: deterministic scoring rules with distinct reason-code weights (single source of truth in `ProjectResolutionScoringRules`), fail-closed exclusion evidence (only `ReferenceState.Included` scores; everything else surfaces as a `ResolutionExclusion`), archived opt-in handling, missing/mismatched tenant authority fails closed, no `TenantId` on the wire, and no persistence/I/O/wall-clock dependency in the engine.
+- NFR-9 ambiguity bias holds: 0 qualifying → `NoMatch`, exactly 1 → `SingleCandidate`, ≥2 → `MultipleCandidates` (never collapses 2+ qualifying candidates into a silent single attach).
+- Tier-1 suite (xUnit v3 + Shouldly) covers the five epic-named cases (no-match / single / multiple / archived-exclusion / unauthorized-resource-exclusion) plus reason-code tagging, deterministic ranking/tiebreak, the scoring/threshold cells (doc↔code completeness), persist-nothing reflection proof, leakage + no-`TenantId`, and null/eager-validation guards.
+- Test results (pinned SDK, `--no-build`): Resolution-only 54/54; full Tier-1 `Hexalith.Projects.Tests` 496/496; Contracts.Tests 135/135; Client.Tests 43/43; Server.Tests 344/344; Integration.Tests 14/14. **Total 1032 passed, 0 failed, 0 skipped.** _(Superseded by the 2026-05-29 Senior Developer Review re-run — see that section; counts grew to Resolution 71/71, Tier-1 513/513, total 1049/1049 after additional working-tree tests.)_
+- Verified no OpenAPI spine change, no `.g.cs` regeneration, no submodule pointer change; `git diff --check` clean. _Correction (2026-05-29 review): the working tree contains more than the one-line `reasonCode:` fix — additional Tier-1 test cases were added across `ProjectResolutionContractValidationTests.cs`, `ProjectResolutionEngineDeterminismTests.cs`, `ProjectResolutionEngineTests.cs`, `ProjectResolutionPersistsNothingTests.cs`, `ProjectResolutionScoringMatrixTests.cs`, plus a new `ProjectResolutionTraceMappingTests.cs`. All are uncommitted and now reflected in the File List._
 
 ### File List
 
@@ -241,7 +245,31 @@ GPT-5 Codex
 - `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionLeakageTests.cs`
 - `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionPersistsNothingTests.cs`
 - `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionScoringMatrixTests.cs`
+- `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionTraceMappingTests.cs`
 
 ### Change Log
 
 - 2026-05-28: Added initial Story 4.1 resolution engine implementation, docs, DI registration, leakage harness extension, builders, and Tier-1 tests. Validation blocked before task completion by workspace build/project-reference evaluation issue.
+- 2026-05-29: Fixed the two `CS1739` named-argument errors (`ReasonCode:` → `reasonCode:`) in `ProjectResolutionEngine.cs` that were the real validation blocker. Built `Hexalith.Projects.slnx` clean (0W/0E) and ran the full solution test suite green (1032 passed / 0 failed / 0 skipped across all 5 lanes). Marked all tasks/subtasks complete and set Status to `review`.
+- 2026-05-29: story-automator-review cycle 1 (auto-fix). Re-verified build 0W/0E and full solution **1049/1049** (Resolution 71/71, Tier-1 `Hexalith.Projects.Tests` 513/513, Server 344/344, Contracts 135/135, Client 43/43, Integration 14/14; 0 failed / 0 skipped). Auto-fixed: added `ProjectResolutionTraceMappingTests.cs` to the File List (was present in the working tree but undocumented); corrected the stale "only working-tree change" Completion Note and test counts; clarified the Confidence Bands wording in `docs/resolution-scoring-heuristic.md` (band is informational; qualification depends only on score ≥ minimum). 0 CRITICAL / 0 HIGH findings; Status set to `done`.
+
+## Senior Developer Review (AI)
+
+**Reviewer:** jpiquot · **Date:** 2026-05-29 · **Outcome:** Approve (auto-fix applied)
+
+Adversarial review of Story 4.1 against the working tree, a clean build, and the full test suite. Every claim was cross-checked against `git` reality.
+
+**Verified correct (no action needed):**
+- All 11 Acceptance Criteria implemented and covered by Tier-1 tests (xUnit v3 + Shouldly). The five epic-named cases, reason-code tagging, deterministic ranking/tiebreak, doc↔code scoring completeness, persist-nothing reflection proof (ctor params + private fields + assembly references), no-`TenantId`-on-wire + leakage, null-argument guards, and AC11 trace-state reconstruction are all present and green.
+- Build `Hexalith.Projects.slnx -warnaserror` → **0W/0E** (pinned SDK 10.0.300).
+- Full solution **1049 passed / 0 failed / 0 skipped**.
+- No OpenAPI spine change, no `.g.cs` regeneration, no submodule pointer change; `git diff --check` clean. Engine takes no EventStore/Dapr/command/projection/`HttpClient` dependency and reads no wall-clock — purity holds (AC7/AC9).
+- Every file claimed in the File List exists on disk; no false "files changed" claims.
+
+**Findings (all auto-fixed — no CRITICAL/HIGH):**
+- **MEDIUM** — File List omitted `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionTraceMappingTests.cs` (present, untracked, supplies AC11 coverage). → Added to File List.
+- **MEDIUM** — Completion Note "the only working-tree source change is the one-line `reasonCode:` fix" was stale/false: the tree also holds added test cases across 5 fixtures plus the new trace-mapping fixture. → Corrected with a dated note.
+- **MEDIUM** — Reported test counts (Resolution 54/54, total 1032) were stale after the added tests. → Updated to the measured 71/71 and 1049/1049.
+- **LOW** — `docs/resolution-scoring-heuristic.md` Confidence Bands table conflated *qualifying* (score ≥ minimum) with producing `SingleCandidate`. → Reworded; the asserted `| 0 | none |` / `| 20-34 | low |` cells preserved (doc-reading fixtures re-run green, 27/27).
+
+**Note on uncommitted work:** the Story 4.1 additions remain uncommitted in the working tree; committing is left to the operator/automator (this review does not commit).

@@ -64,7 +64,7 @@ public sealed class ProjectResolutionEngine
                 excluded.Add(CreateExclusion(
                     candidate,
                     ReferenceState.TenantMismatch,
-                    ReasonCode: null,
+                    reasonCode: null,
                     ProjectContextInclusionDiagnostic.TenantMismatch));
                 continue;
             }
@@ -74,7 +74,7 @@ public sealed class ProjectResolutionEngine
                 excluded.Add(CreateExclusion(
                     candidate,
                     ReferenceState.Archived,
-                    ReasonCode: null,
+                    reasonCode: null,
                     ProjectContextInclusionDiagnostic.ProjectArchived));
                 continue;
             }

@@ -35,13 +35,15 @@ Weights are declared once in [`ProjectResolutionScoringRules.Weights`](../src/He
 
 Confidence bands are documented thresholds, not wire enum values. The wire result carries only a numeric `Score`, a `Rank`, and shared-vocabulary reason codes.
 
+A candidate **qualifies** whenever its score is at or above the minimum qualifying score (`20`). The band is **informational only** — it describes confidence strength and contributes to score-descending rank ordering. It does **not** decide the top-level outcome: whether the result is `SingleCandidate` or `MultipleCandidates` is determined solely by how many candidates qualify (see the Single-vs-Multiple Threshold section), never by the band.
+
 | Candidate score | Band | Result impact | Test fixture |
 | --------------- | ---- | ------------- | ------------ |
-| 0 | none | Candidate does not qualify. | `ProjectResolutionScoringMatrixTests` |
-| 20-34 | low | Candidate qualifies only if it is the sole qualifying candidate. | `ProjectResolutionScoringMatrixTests` |
-| 35-49 | medium | Candidate qualifies only if it is the sole qualifying candidate. | `ProjectResolutionScoringMatrixTests` |
-| 50-79 | high | Candidate qualifies only if it is the sole qualifying candidate. | `ProjectResolutionScoringMatrixTests` |
-| 80+ | strong | Candidate qualifies only if it is the sole qualifying candidate. | `ProjectResolutionScoringMatrixTests` |
+| 0 | none | Below the minimum qualifying score; the candidate cannot qualify. | `ProjectResolutionScoringMatrixTests` |
+| 20-34 | low | At or above the minimum; the candidate qualifies. Ranks below higher bands. | `ProjectResolutionScoringMatrixTests` |
+| 35-49 | medium | At or above the minimum; the candidate qualifies. Outranks `low`. | `ProjectResolutionScoringMatrixTests` |
+| 50-79 | high | At or above the minimum; the candidate qualifies. Outranks `medium`. | `ProjectResolutionScoringMatrixTests` |
+| 80+ | strong | At or above the minimum; the candidate qualifies. Highest rank band. | `ProjectResolutionScoringMatrixTests` |
 
 ## Single-vs-Multiple Threshold
 

@@ -70,6 +70,32 @@ public sealed class ProjectResolutionContractValidationTests
             new ResolutionCandidate("project-a", null, [ProjectReasonCode.MetadataMatched], Rank: 0, Score: 20));
 
     [Fact]
+    public void ResolutionCandidate_NegativeScore_Throws()
+        => Should.Throw<ArgumentOutOfRangeException>(() =>
+            new ResolutionCandidate("project-a", null, [ProjectReasonCode.MetadataMatched], Rank: 1, Score: -1));
+
+    [Fact]
+    public void ResolutionCandidate_DuplicateReasonCodes_AreDeduplicated()
+    {
+        ResolutionCandidate candidate = new(
+            "project-a",
+            null,
+            [ProjectReasonCode.MetadataMatched, ProjectReasonCode.MetadataMatched],
+            Rank: 1,
+            Score: 20);
+
+        candidate.ReasonCodes.ShouldBe([ProjectReasonCode.MetadataMatched]);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void MatchSignal_NullOrWhitespaceReferenceKind_Throws(string? referenceKind)
+        => Should.Throw<ArgumentException>(() =>
+            new ProjectResolutionMatchSignal(referenceKind!, "conversation-001", ProjectReasonCode.ConversationLinked, ReferenceState.Included, DefaultNow));
+
+    [Fact]
     public void ResolutionExclusion_OutOfVocabularyDiagnostic_Throws()
         => Should.Throw<ArgumentException>(() =>
             new ResolutionExclusion("project-a", null, ReferenceState.Unauthorized, null, "raw upstream message"));

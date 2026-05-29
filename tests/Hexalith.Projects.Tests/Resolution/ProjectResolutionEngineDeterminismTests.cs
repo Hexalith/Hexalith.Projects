@@ -59,4 +59,22 @@ public sealed class ProjectResolutionEngineDeterminismTests
 
         result.ObservedAt.ShouldBe(fixedNow);
     }
+
+    [Fact]
+    public void Resolve_ScoreDominatesProjectIdOrdering()
+    {
+        // project-z scores higher than the lexically-earlier project-a, so score-descending
+        // ranking must win over the ProjectId Ordinal tiebreak.
+        ProjectResolution result = new ProjectResolutionEngine().Resolve(
+            Context(),
+            [
+                Candidate("project-a", signals: [Signal(ProjectReasonCode.MetadataMatched, referenceId: "meta-a", kind: "metadata")]),
+                Candidate("project-z", signals: [Signal(ProjectReasonCode.ConversationLinked, referenceId: "conv-z")]),
+            ]);
+
+        result.Result.ShouldBe(ResolutionResult.MultipleCandidates);
+        result.Candidates.Select(static c => c.ProjectId).ShouldBe(["project-z", "project-a"]);
+        result.Candidates.Select(static c => c.Score).ShouldBe([50, 20]);
+        result.Candidates.Select(static c => c.Rank).ShouldBe([1, 2]);
+    }
 }

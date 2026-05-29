@@ -1,113 +1,97 @@
-# Test Automation Summary — Story 3.1 Context-Assembly Policy & Allowlist
+# Test Automation Summary — Story 4.1 (Resolution engine, compute-on-demand)
 
-Workflow: `bmad-qa-generate-e2e-tests`. Date: 2026-05-28.
+> Workflow: `bmad-qa-generate-e2e-tests` · Date: 2026-05-29 · Engineer: QA automation (for Jerome)
+> Story file: `_bmad-output/implementation-artifacts/4-1-resolution-engine-compute-on-demand.md`
+> Test framework detected: **xUnit v3 + Shouldly** (.NET 10, `Hexalith.Projects.Tests`)
 
-Story 3.1 ships the pure `ProjectContextInclusionPolicy` and its assembled-result DTOs. By explicit story
-scope (AC 15, "No OpenAPI spine change"; Dev Notes "Explicitly out of scope") the policy has **no HTTP
-endpoint**, **no Dapr binding**, and **no UI surface** — those land in Story 3.2 (`GetProjectContext`),
-Story 3.3 (`ExplainContextSelection`), Story 3.4 (`RefreshProjectContext`), and Story 3.5
-(`GetConversationStartSetup`). Consequently there is no API or browser E2E surface to drive in this story;
-QA coverage is **Tier-1 contract/policy tests only**.
+## Scope note — why no Playwright/HTTP "E2E"
 
-This QA run audited the existing 13 test files under `tests/Hexalith.Projects.Tests/Context/` and the FS-2
-leakage-harness extension at `tests/Hexalith.Projects.Tests/Leakage/NoPayloadLeakageTests.cs`, then
-auto-applied the discovered gaps. **No production code was changed** — gaps were closed with tests only.
+Story 4.1 is, by design, a **pure compute-on-demand engine** — it has **no HTTP endpoint, no UI, no command/event/projection, and no I/O** (Dev Notes: "IS NOT any HTTP endpoint… ACL call, read-model query, or persisted trace"). So the workflow's *API tests (if applicable)* and *E2E tests (if UI exists)* steps have no web surface to target. The engine's public method `ProjectResolutionEngine.Resolve(context, candidates)` **is** the end-to-end behavioral boundary; "automated tests" here means Tier-1 behavioral coverage driven through that boundary with realistic, fully-composed evidence — the same boundary the Epic 3 `ProjectContextInclusionPolicy` draws. HTTP/Playwright coverage belongs to Stories 4.2/4.3 (which fetch evidence and call this engine).
 
-## Generated Tests
+## Generated tests
 
-### Contract / Policy Tests
-- [x] `tests/Hexalith.Projects.Tests/Context/ProjectContextContractValidationTests.cs` (new) — **57 tests**
-  filling specific, AC-traceable gaps in the previously-shipped suite:
-  - **`ProjectContextReference` eager validation** (AC 9 / Task 2):
-    `NullOrWhitespaceReferenceKind_Throws` (×3), `NullOrWhitespaceReferenceId_Throws` (×3),
-    `WhitespaceDisplayName_NormalizedToNull` (×4), `NonWhitespaceDisplayName_Preserved`.
-  - **`ProjectContextExclusion` eager validation** (AC 9 / Task 2):
-    `NullOrWhitespaceReferenceKind_Throws` (×3), `NullOrWhitespaceReferenceId_Throws` (×3),
-    `EveryClosedVocabularyValue_IsAccepted`, `NullDiagnostic_IsAccepted`.
-  - **`ProjectContextEvaluation` eager validation** (AC 9 / Task 2):
-    `NullOrWhitespaceReferenceKind_Throws` (×3), `NullOrWhitespaceReferenceId_Throws` (×3),
-    `OutOfVocabularyDiagnostic_Throws` (×4 — incl. wrong-case `"TENANTMISMATCH"` + path/JWT-shaped
-    fixtures).
-  - **`ProjectContextInclusionDiagnostic.IsKnown(...)` closed-vocabulary boundary**
-    (AC 9, AC 17): `IsKnown_Null_ReturnsTrue`, `IsKnown_EveryShippedValue_ReturnsTrue`,
-    `IsKnown_UnknownOrWrongCase_ReturnsFalse` (×7 — empty/whitespace/case variants/known-token
-    free-text), `Values_AreImmutableAndOrdinal`.
-  - **`ProjectContextInclusionOrder.IsAllowlisted(...)` Ordinal/case-sensitive contract**
-    (AC 5): `WrongCaseOrSurroundingWhitespace_ReturnsFalse` (×8 — `"FILE"`, `"File"`, `"Folder"`,
-    `"MEMORY"`, `"Conversation"`, leading/trailing whitespace, tab), `ExactAllowlistedValues_AllReturnTrue`.
-  - **`ProjectContext` factory shapes** (Task 2):
-    `Unauthorized_Factory_ProducesEmptyContextWithUnauthorizedOutcome`,
-    `ProjectUnavailable_Factory_ProducesEmptyContextWithSafeDenialOutcome` (also asserts the safe-denial
-    rule "never `Unauthorized` at the boundary").
-  - **`ProjectContextInclusionPolicy.Assemble(...)` null-argument guards** (AC 1):
-    `NullContext_ThrowsArgumentNullException`, `NullProjectEvidence_…`, `NullTenantAccess_…`,
-    `NullReferenceEvidence_…`.
-  - **Correlation-metadata non-leakage** (AC 10, AC 17):
-    `CorrelationAndTaskIds_NeverLeakIntoAssembledContext` — injects a unique sentinel
-    `CorrelationId`/`TaskId` into `ProjectContextAssemblyContext`, serializes the assembled result, and
-    asserts neither sentinel appears anywhere in the JSON output.
-  - **`ProjectContextReferenceEvidence` defaults** (Task 3):
-    `NullCollections_DefaultToEmpty`, `Empty_IsTrulyEmpty`.
+All additions are pure Tier-1, deterministic (fixed `Now`, zero `Thread.Sleep`/`Task.Delay`/`SpinWait`/`Task.Yield`), reuse the existing `ProjectResolutionEvidenceBuilder` + `RecordingLogger`, and introduce no new shared-vocabulary values or magic strings.
 
-### API Tests
-- **N/A by design.** Story 3.1 ships no HTTP endpoint; AC 15 forbids OpenAPI spine churn in this story.
-  The `GetProjectContext` route lands in Story 3.2.
+### Gaps discovered and auto-applied (9)
 
-### E2E (browser / Aspire) Tests
-- **N/A by design.** Per Dev Notes "AppHost smoke-check restoration is deferred to Story 3.2", Story 3.1
-  is Tier-1 only — no Aspire topology to drive.
+| # | Gap (untested branch / AC) | Test added | File |
+|---|---|---|---|
+| A | Tenant **mismatch** — both tenant ids set but unequal (`IsTenantAuthorityVerified` false-equality branch). AC4 / doc row / security negative path. Previously only the `null` authority case was pinned. | `Resolve_RequestedTenantMismatch_FailsClosedForEveryCandidate` | `ProjectResolutionEngineTests.cs` |
+| B | `RequestedTenantId == null` + verified authority → candidate **qualifies** (the safe fail-open branch). | `Resolve_NullRequestedTenant_WithVerifiedAuthority_Qualifies` | `ProjectResolutionEngineTests.cs` |
+| C | Candidate enumerated with **zero signals** → `NoMatch`, no exclusion row (silent-contribution edge). | `Resolve_CandidateWithNoSignals_NeitherQualifiesNorSurfacesExclusion` | `ProjectResolutionEngineTests.cs` |
+| J | Archived **opt-in** candidate carrying a non-`Included` signal still **qualifies and surfaces the exclusion** (doc row line 20, AC5). | `Resolve_ArchivedOptInWithNonIncludedSignal_QualifiesAndStillSurfacesExclusion` | `ProjectResolutionEngineTests.cs` |
+| D | Score **dominates** the `ProjectId` Ordinal tiebreak — higher score on a lexically-later id ranks first (AC6/AC9 ranking; prior tiebreak test used equal scores only). | `Resolve_ScoreDominatesProjectIdOrdering` | `ProjectResolutionEngineDeterminismTests.cs` |
+| E | **AC11 trace reconstruction** — all five Resolution Trace states (`Resolved`/`NoMatch`/`MultipleCandidates`/`Excluded`/`FailedClosed`) reconstruct from engine evidence with no persisted trace; plus doc-table completeness. *No dedicated test existed.* | `ProjectResolutionTraceMappingTests` (4 cases) | `ProjectResolutionTraceMappingTests.cs` *(new)* |
+| F | `ProjectFolderMatched` (weight 45) confidence-band cell was missing from the band theory; `MinimumQualifyingScore` had no doc↔code assertion (AC6 completeness). | `ConfidenceBandCells_QualifyWhenSoleCandidate` (+1 case) and `MinimumQualifyingScoreCell_CodeAgreesWithDocument` | `ProjectResolutionScoringMatrixTests.cs` |
+| H | Validation branches with no coverage: negative `Score`, whitespace `ReferenceKind`, and `ResolutionCandidate` reason-code de-duplication. | `ResolutionCandidate_NegativeScore_Throws`, `MatchSignal_NullOrWhitespaceReferenceKind_Throws` (×3), `ResolutionCandidate_DuplicateReasonCodes_AreDeduplicated` | `ProjectResolutionContractValidationTests.cs` |
+| AC9 | Domain-core **assembly** references no sibling-context / web assemblies (`Hexalith.Conversations/Folders/Memories`, `Dapr`, `Microsoft.AspNetCore`) — complements the existing ctor/field reflection proof with an assembly-level purity guarantee. | `ProjectResolutionEngine_Assembly_ReferencesNoSiblingContextOrWebAssemblies` | `ProjectResolutionPersistsNothingTests.cs` |
+
+**New test cases added: 17** (4 + 1 + 2 + 5 + 1 + 4), raising the Resolution suite from 54 → **71**.
+
+### Files
+- [M] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionEngineTests.cs`
+- [M] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionEngineDeterminismTests.cs`
+- [M] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionScoringMatrixTests.cs`
+- [M] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionContractValidationTests.cs`
+- [M] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionPersistsNothingTests.cs`
+- [A] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionTraceMappingTests.cs`
 
 ## Coverage
 
-- **Existing Story 3.1 test inventory (pre-QA, all passing):**
-  `ProjectContextInclusionPolicyTests` (13), `…NonAllowlistedKindTests` (8),
-  `…TenantAuthorityTests` (16), `…ProjectVisibilityTests` (3),
-  `…LifecycleTests` (2), `…ConversationCandidateTests` (7),
-  `…MemoriesCandidateTests` (6), `…FileReferenceCandidateTests` (7),
-  `…ProjectFolderCandidateTests` (4), `…DeterminismTests` (4), `…CrossTenantTests` (1),
-  `…LeakageTests` (12), `ProjectContextDecisionMatrixCompletenessTests` (16), plus 7 leakage-harness
-  extensions in `NoPayloadLeakageTests`.
-- **QA-added (this run):** 57 new tests across `ProjectContextContractValidationTests.cs`. All
-  AC-traceable; no behavior overlap with the existing matrix coverage.
-- **Decision-matrix completeness (AC 7):** unchanged — every (`ReferenceState` × kind) and
-  (`ProjectConversationTrustSignal` × outcome) cell continues to pass.
-- **Tier-1 purity (AC 11):** no-sleep grep on the new file is clean (`Thread.Sleep` / `Task.Delay` /
-  `SpinWait` / `await Task.Yield()` all return zero hits).
-- **No production code changed** — only the new tests file under `tests/Hexalith.Projects.Tests/Context/`.
+| Acceptance criterion | Status after this run |
+|---|---|
+| AC1 pure engine type / optional `ILogger` | covered (pre-existing) |
+| AC2 typed `ResolutionResult` outcome | covered |
+| AC3 per-candidate reason codes (shared vocab) | covered |
+| AC4 fail-closed qualification (incl. tenant **mismatch**) | **gap closed (A, B)** |
+| AC5 archived exclusion + opt-in (incl. non-included signal) | **gap closed (J)** |
+| AC6 documented scoring/threshold cells | **completeness closed (F)** |
+| AC7 persist-nothing positive proof | covered |
+| AC8 metadata-only, no `TenantId` on the wire | covered |
+| AC9 purity & determinism (incl. **assembly** references + score-dominance ranking) | **gap closed (D, AC9)** |
+| AC10 Tier-1 five epic-named cases + guards | covered |
+| AC11 trace-ready output (5 states reconstructable) | **gap closed (E)** |
 
-### Gaps intentionally not "filled"
-- **`ProjectContextInclusionPolicy` non-allowlisted-kind logger warning end-to-end firing.** The
-  `EvaluateFileCandidate`/`…Memory…`/`…Conversation…`/`…Folder…` paths hardcode their `Kind` constant,
-  so the `RecordNonAllowlistedKind` warning is **defense-in-depth only and unreachable through the
-  public `Assemble(...)` surface**. The existing
-  `Logger_RecordsWarning_WhenInvalidIdentifierEncountered` asserts the recorder is wired up; coverage
-  of the helper contract is provided directly via `ProjectContextInclusionOrder.IsAllowlisted(...)` tests
-  (new + existing). Flagged for the author rather than invented as a synthetic injection point.
-- **Non-read-only `ProjectContextOperationKind`.** All four shipped values are read-only per
-  `IsReadOnlyOperation`, so the "trust-bearing operation → collapse to `Unauthorized` on stale tenant
-  projection" branch named in AC 6 is not reachable from the public surface today. Story 3.4 (Refresh)
-  is the right place to introduce a non-read-only kind and exercise that branch; no synthetic test is
-  added here to avoid asserting unreachable code.
-- **HTTP / Aspire / browser surface.** Out of scope per the story; will be tested in Stories 3.2–3.5.
+- **API endpoints:** N/A — Story 4.1 exposes none (deferred to Stories 4.2/4.3).
+- **UI features:** N/A — Story 4.1 has none (Resolution Trace view is Story 5.6).
+- **Engine behavioral surface (`Resolve`):** all 11 ACs now have at least one pinning Tier-1 test.
 
 ## Verification
 
-| Lane | Command | Result |
-|---|---|---|
-| New contract-validation tests | `dotnet test tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj --filter "FullyQualifiedName~ProjectContextContractValidationTests" --no-build` | **57 passed / 0 failed / 0 skipped** |
-| Full Projects.Tests lane (post-QA) | `dotnet test tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj --no-build` | **407 passed / 0 failed / 0 skipped** (was 350; +57 exactly) |
-| Full-solution suite | `dotnet test Hexalith.Projects.slnx --no-build` | **776 passed / 0 failed / 0 skipped** across Projects.Tests 407 / Server.Tests 196 / Contracts.Tests 128 / Client.Tests 31 / Integration.Tests 14 (was 719; +57 exactly) |
-| Build | `dotnet build tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj` | **0 warnings / 0 errors** |
-| No-sleep grep | `grep -rE "Thread\.Sleep\\(|Task\\.Delay\\(|SpinWait\\.|await Task\\.Yield\\(" tests/Hexalith.Projects.Tests/Context/ProjectContextContractValidationTests.cs` | **zero hits (clean)** |
+```
+dotnet build tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj -warnaserror
+  → 0 Warning(s) / 0 Error(s)
 
-## Files Added / Modified
+dotnet test … --filter FullyQualifiedName~Hexalith.Projects.Tests.Resolution --no-build
+  → Passed: 71, Failed: 0, Skipped: 0   (was 54; +17 exactly)
 
-- **Added:** `tests/Hexalith.Projects.Tests/Context/ProjectContextContractValidationTests.cs` (1 file,
-  57 tests).
-- **Modified:** none.
+dotnet test tests/Hexalith.Projects.Tests/…csproj --no-build   (full Tier-1 lane)
+  → Passed: 513, Failed: 0, Skipped: 0   (was 496; +17 exactly)
+```
 
-## Next Steps
+Pinned SDK `/home/administrator/.dotnet` 10.0.300. `git diff --check` clean; no `.g.cs`, OpenAPI spine, `src/`, or submodule-pointer changes — only the six Resolution test files above.
 
-- Run the full solution in CI to confirm the green pre-Story-3.2 baseline (now 776/776).
-- Story 3.2 will introduce the HTTP `GetProjectContext` endpoint; at that point the qa-generate-e2e-tests
-  workflow can produce API + Aspire E2E coverage on top of the now-fully-tested pure policy.
+## Gaps intentionally NOT filled
+
+- **`HttpClient`/Dapr in the assembly-reference test.** The new assembly test forbids sibling-context + `Microsoft.AspNetCore` + `Dapr` references; `HttpClient` is screened at the type level by the existing `…HaveNoPersistenceOrNetworkDependencies` reflection proof rather than by assembly name (`System.Net.Http` is a shared framework assembly), to avoid a false positive. The two tests are complementary.
+- **HTTP / Aspire / browser surface.** Out of scope for this pure engine — Stories 4.2/4.3 (resolve endpoints) and 5.6 (Resolution Trace UI) are the right place for API + E2E coverage.
+
+## Validation against `checklist.md`
+
+- [x] API tests generated (if applicable) — N/A by design (no HTTP surface); documented.
+- [x] E2E tests generated (if UI exists) — N/A by design (no UI); engine `Resolve(...)` boundary covered behaviorally.
+- [x] Tests use standard test framework APIs (xUnit v3 + Shouldly).
+- [x] Tests cover happy path.
+- [x] Tests cover critical error cases (tenant mismatch/missing, unauthorized, archived, null/validation guards).
+- [x] All generated tests run successfully (71/71 Resolution, 513/513 full Tier-1).
+- [x] Proper locators — N/A for non-UI; typed builders + shared-vocabulary enums (no magic strings).
+- [x] Tests have clear, intention-revealing descriptions.
+- [x] No hardcoded waits/sleeps (deterministic, fixed `Now`).
+- [x] Tests are independent (no shared mutable state / order dependency).
+- [x] Test summary created.
+- [x] Tests saved to appropriate directory (`tests/Hexalith.Projects.Tests/Resolution/`).
+- [x] Summary includes coverage metrics.
+
+## Next steps
+- Run on the standard CI Tier-1 lane (no infra dependencies).
+- When Stories 4.2/4.3 land the HTTP resolve surfaces, add API/integration tests there (Testcontainers/Dapr-slim where a real boundary is needed) — the pure-engine cases above remain the contract those endpoints must honor.

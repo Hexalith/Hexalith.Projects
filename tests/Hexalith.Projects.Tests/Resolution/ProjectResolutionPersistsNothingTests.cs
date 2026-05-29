@@ -70,4 +70,29 @@ public sealed class ProjectResolutionPersistsNothingTests
         logger.Entries.Count.ShouldBe(1);
         logger.Entries[0].Level.ShouldBe(LogLevel.Warning);
     }
+
+    [Fact]
+    public void ProjectResolutionEngine_Assembly_ReferencesNoSiblingContextOrWebAssemblies()
+    {
+        string[] forbidden =
+        [
+            "Hexalith.Conversations",
+            "Hexalith.Folders",
+            "Hexalith.Memories",
+            "Dapr",
+            "Microsoft.AspNetCore",
+        ];
+
+        string[] referenced = typeof(ProjectResolutionEngine).Assembly
+            .GetReferencedAssemblies()
+            .Select(static a => a.Name ?? string.Empty)
+            .ToArray();
+
+        foreach (string token in forbidden)
+        {
+            referenced.ShouldNotContain(
+                name => name.Contains(token, StringComparison.OrdinalIgnoreCase),
+                $"Domain-core resolution engine assembly must not reference {token} (AC9 purity).");
+        }
+    }
 }

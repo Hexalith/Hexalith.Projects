@@ -67,6 +67,7 @@ public sealed class ProjectResolutionScoringMatrixTests
     [InlineData(ProjectReasonCode.MetadataMatched, 20)]
     [InlineData(ProjectReasonCode.MemoryMatched, 30)]
     [InlineData(ProjectReasonCode.FileReferenceMatched, 35)]
+    [InlineData(ProjectReasonCode.ProjectFolderMatched, 45)]
     [InlineData(ProjectReasonCode.ConversationLinked, 50)]
     public void ConfidenceBandCells_QualifyWhenSoleCandidate(ProjectReasonCode reasonCode, int expectedScore)
     {
@@ -103,6 +104,16 @@ public sealed class ProjectResolutionScoringMatrixTests
         doc.ShouldContain("| 0 | `NoMatch` |");
         doc.ShouldContain("| 1 | `SingleCandidate` |");
         doc.ShouldContain("| 2+ | `MultipleCandidates` |");
+    }
+
+    [Fact]
+    public void MinimumQualifyingScoreCell_CodeAgreesWithDocument()
+    {
+        string doc = HeuristicDocument();
+
+        ProjectResolutionScoringRules.MinimumQualifyingScore.ShouldBe(20);
+        doc.ShouldContain("| 0 | none |");
+        doc.ShouldContain("| 20-34 | low |");
     }
 
     private static string HeuristicDocument()

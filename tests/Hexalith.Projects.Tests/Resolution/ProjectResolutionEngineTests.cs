@@ -133,4 +133,62 @@ public sealed class ProjectResolutionEngineTests
         result.Excluded.Select(static e => e.ReferenceState).Distinct().ShouldBe([ReferenceState.TenantMismatch]);
         result.Excluded.Select(static e => e.Diagnostic).Distinct().ShouldBe([ProjectContextInclusionDiagnostic.TenantMismatch]);
     }
+
+    [Fact]
+    public void Resolve_RequestedTenantMismatch_FailsClosedForEveryCandidate()
+    {
+        ProjectResolution result = new ProjectResolutionEngine().Resolve(
+            Context(authoritativeTenantId: "acme", requestedTenantId: "globex"),
+            [Candidate("project-a"), Candidate("project-b")]);
+
+        result.Result.ShouldBe(ResolutionResult.NoMatch);
+        result.Candidates.ShouldBeEmpty();
+        result.Excluded.Count.ShouldBe(2);
+        result.Excluded.Select(static e => e.ReferenceState).Distinct().ShouldBe([ReferenceState.TenantMismatch]);
+        result.Excluded.Select(static e => e.Diagnostic).Distinct().ShouldBe([ProjectContextInclusionDiagnostic.TenantMismatch]);
+    }
+
+    [Fact]
+    public void Resolve_NullRequestedTenant_WithVerifiedAuthority_Qualifies()
+    {
+        ProjectResolution result = new ProjectResolutionEngine().Resolve(
+            Context(authoritativeTenantId: DefaultTenant, requestedTenantId: null),
+            [Candidate()]);
+
+        result.Result.ShouldBe(ResolutionResult.SingleCandidate);
+        result.Candidates.Single().ProjectId.ShouldBe("project-a");
+        result.Excluded.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Resolve_CandidateWithNoSignals_NeitherQualifiesNorSurfacesExclusion()
+    {
+        ProjectResolution result = new ProjectResolutionEngine().Resolve(
+            Context(),
+            [Candidate(signals: [])]);
+
+        result.Result.ShouldBe(ResolutionResult.NoMatch);
+        result.Candidates.ShouldBeEmpty();
+        result.Excluded.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Resolve_ArchivedOptInWithNonIncludedSignal_QualifiesAndStillSurfacesExclusion()
+    {
+        ProjectResolution result = new ProjectResolutionEngine().Resolve(
+            Context(includeArchived: true),
+            [
+                Candidate(lifecycle: ProjectLifecycle.Archived, signals:
+                [
+                    Signal(ProjectReasonCode.ConversationLinked),
+                    Signal(ProjectReasonCode.FileReferenceMatched, ReferenceState.Stale, "file-001", "file"),
+                ]),
+            ]);
+
+        result.Result.ShouldBe(ResolutionResult.SingleCandidate);
+        result.Candidates.Single().ReasonCodes.ShouldBe([ProjectReasonCode.ConversationLinked]);
+        result.Excluded.Count.ShouldBe(1);
+        result.Excluded[0].ReferenceState.ShouldBe(ReferenceState.Stale);
+        result.Excluded[0].Diagnostic.ShouldBe(ProjectContextInclusionDiagnostic.ReferenceStale);
+    }
 }
