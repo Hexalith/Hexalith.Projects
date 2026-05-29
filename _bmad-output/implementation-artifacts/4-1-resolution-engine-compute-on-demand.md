@@ -209,10 +209,39 @@ Use the SDK at `/home/administrator/.dotnet` (10.0.300), **not** `/usr/bin/dotne
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+GPT-5 Codex
 
 ### Debug Log References
 
+- 2026-05-28: Implemented Story 4.1 code/docs/tests, then hit a validation blocker before completion: `/home/administrator/.dotnet/dotnet build Hexalith.Projects.slnx` and targeted Projects builds fail in this Linux workspace before compile/test execution because existing generated NuGet assets/project-reference evaluation contain Windows restore paths / multi-target sibling project evaluation failures. `Hexalith.EventStore.Contracts`, `Hexalith.Conversations.Contracts`, and `Hexalith.FrontComposer.Contracts` individual target builds can be made to pass, but the Projects solution/project build still fails with `Build FAILED. 0 Warning(s) 0 Error(s)` during referenced-project `GetTargetFrameworks` evaluation. Tasks remain unchecked and Status remains `in-progress` until the required build/test gate is green.
+
 ### Completion Notes List
 
+- Implemented the compute-on-demand resolution design in source but did not mark story tasks complete because build/test validation is blocked.
+- Added deterministic scoring rules with distinct reason-code weights, fail-closed exclusion evidence, archived opt-in handling, no TenantId output, and no persistence/I/O dependencies in the engine implementation.
+- Added Tier-1 test files for engine behavior, scoring matrix, determinism, persist-nothing reflection, leakage/no-TenantId, and contract validation. Tests have not executed successfully due to the build environment blocker above.
+
 ### File List
+
+- `_bmad-output/implementation-artifacts/4-1-resolution-engine-compute-on-demand.md`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `_bmad-output/planning-artifacts/architecture.md`
+- `docs/resolution-scoring-heuristic.md`
+- `src/Hexalith.Projects/ProjectsServiceCollectionExtensions.cs`
+- `src/Hexalith.Projects/Resolution/ProjectResolutionCandidateEvidence.cs`
+- `src/Hexalith.Projects/Resolution/ProjectResolutionContext.cs`
+- `src/Hexalith.Projects/Resolution/ProjectResolutionEngine.cs`
+- `src/Hexalith.Projects/Resolution/ProjectResolutionScoringRules.cs`
+- `src/Hexalith.Projects.Contracts/Models/ProjectResolution.cs`
+- `src/Hexalith.Projects.Testing/Leakage/NoPayloadLeakageAssertions.cs`
+- `src/Hexalith.Projects.Testing/Resolution/ProjectResolutionEvidenceBuilder.cs`
+- `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionContractValidationTests.cs`
+- `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionEngineDeterminismTests.cs`
+- `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionEngineTests.cs`
+- `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionLeakageTests.cs`
+- `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionPersistsNothingTests.cs`
+- `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionScoringMatrixTests.cs`
+
+### Change Log
+
+- 2026-05-28: Added initial Story 4.1 resolution engine implementation, docs, DI registration, leakage harness extension, builders, and Tier-1 tests. Validation blocked before task completion by workspace build/project-reference evaluation issue.
