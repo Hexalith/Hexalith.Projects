@@ -512,6 +512,80 @@ public sealed class OpenApiContractSpineTests
     }
 
     [Fact]
+    public void Spine_NewProjectProposalOperations_ArePreviewAndCommandAsyncConfirm()
+    {
+        YamlMappingNode preview = NewProjectProposalPreview();
+        GetScalar(preview, "operationId").ShouldBe("ProposeNewProject");
+        string[] previewParameters = RequiredSequence(preview, "parameters")
+            .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
+        previewParameters.ShouldContain("#/components/parameters/CorrelationId");
+        previewParameters.ShouldContain("#/components/parameters/Freshness");
+        previewParameters.ShouldNotContain("#/components/parameters/IdempotencyKey");
+        (GetScalar(RequiredMapping(RequiredMapping(preview, "responses"), "200"), "description") ?? string.Empty).ShouldContain("proposal");
+
+        YamlMappingNode confirm = ConfirmNewProjectProposalMutation();
+        GetScalar(confirm, "operationId").ShouldBe("ConfirmNewProjectProposal");
+        string[] confirmParameters = RequiredSequence(confirm, "parameters")
+            .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
+        confirmParameters.ShouldContain("#/components/parameters/IdempotencyKey");
+        confirmParameters.ShouldContain("#/components/parameters/CorrelationId");
+        confirmParameters.ShouldContain("#/components/parameters/TaskId");
+        GetScalar(RequiredMapping(RequiredMapping(confirm, "responses"), "202"), "$ref").ShouldBe("#/components/responses/AcceptedCommand");
+        GetScalar(RequiredMapping(RequiredMapping(confirm, "responses"), "409"), "$ref").ShouldBe("#/components/responses/IdempotencyConflict");
+
+        string[] equivalence = RequiredSequence(confirm, "x-hexalith-idempotency-equivalence")
+            .OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty).ToArray();
+        equivalence.ShouldBe([
+            "conversation_id",
+            "description",
+            "file_reference_ids",
+            "folder.folder_id",
+            "operation",
+            "project_id",
+            "project_metadata.display_name",
+            "request_schema_version",
+            "resolution_result",
+            "setup_metadata",
+        ]);
+        equivalence.ShouldBe(equivalence.OrderBy(f => f, StringComparer.Ordinal).ToArray());
+    }
+
+    [Fact]
+    public void Spine_NewProjectProposalSchemas_AreClosedMetadataOnly()
+    {
+        YamlMappingNode schemas = Schemas();
+        foreach (string schemaName in new[]
+        {
+            "ProjectCreationProposalRequest",
+            "ProjectCreationProposal",
+            "ConfirmNewProjectProposalRequest",
+            "ConfirmNewProjectProposalFolder",
+            "ConfirmNewProjectProposalFileReference",
+        })
+        {
+            YamlMappingNode schema = RequiredMapping(schemas, schemaName);
+            GetScalar(schema, "additionalProperties").ShouldBe("false");
+            RequiredMapping(schema, "properties").Children.Keys
+                .OfType<YamlScalarNode>()
+                .Select(k => k.Value ?? string.Empty)
+                .ShouldNotContain("tenantId");
+        }
+
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "ProjectCreationProposal"), "properties"), "resolutionResult"))
+            .ShouldBe(["NoMatch"]);
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "ConfirmNewProjectProposalRequest"), "properties"), "operation"))
+            .ShouldBe(["confirmNewProjectProposal"]);
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "ConfirmNewProjectProposalRequest"), "properties"), "resolutionResult"))
+            .ShouldBe(["NoMatch"]);
+
+        YamlMappingNode confirm = RequiredMapping(schemas, "ConfirmNewProjectProposalRequest");
+        RequiredSequence(confirm, "required").OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty)
+            .ShouldContain("fileReferenceIds");
+        RequiredMapping(RequiredMapping(confirm, "properties"), "fileReferenceIds")
+            .Children.ContainsKey(new YamlScalarNode("uniqueItems")).ShouldBeTrue();
+    }
+
+    [Fact]
     public void Spine_SetProjectFolder_IsCommandAsyncMutation()
     {
         YamlMappingNode operation = SetProjectFolderMutation();
@@ -1013,6 +1087,12 @@ public sealed class OpenApiContractSpineTests
 
     private static YamlMappingNode ConfirmProjectResolutionMutation() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations/{conversationId}/resolution/confirm"), "post");
+
+    private static YamlMappingNode NewProjectProposalPreview() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/resolution/new-project-proposal"), "post");
+
+    private static YamlMappingNode ConfirmNewProjectProposalMutation() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/proposals/confirm"), "post");
 
     private static YamlMappingNode UnlinkProjectConversationMutation() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations/{conversationId}"), "delete");

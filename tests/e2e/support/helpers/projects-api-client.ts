@@ -60,6 +60,29 @@ export interface ProjectResolution {
   excluded: ResolutionExclusion[];
 }
 
+export interface ProjectCreationProposalInput {
+  requestSchemaVersion: 'v1';
+  conversationId: string;
+  folderId?: string;
+  fileReferenceIds?: readonly string[];
+  suggestedName?: string;
+  description?: string;
+  setupMetadata?: string;
+}
+
+export interface ProjectCreationProposal {
+  resolutionResult: 'NoMatch';
+  suggestedName: string;
+  description?: string;
+  setupMetadata?: string;
+  conversationId: string;
+  folderId?: string;
+  fileReferenceIds: string[];
+  observedAt: string;
+  freshness: 'eventually_consistent';
+  warnings: string[];
+}
+
 export interface AcceptedCommand {
   /** Server-assigned aggregate id for the created/affected project. */
   projectId: string;
@@ -78,6 +101,47 @@ export interface ConfirmProjectResolutionInput {
   conversationId: string;
   candidateProjectIds: readonly string[];
   sourceProjectId?: string;
+}
+
+export interface ProjectMetadataInput {
+  displayName: string;
+  metadataClass: 'public_metadata' | 'tenant_sensitive' | 'credential_sensitive' | 'secret';
+}
+
+export interface ProjectFolderMetadataInput {
+  displayName: string;
+}
+
+export interface ProjectFileReferenceMetadataInput {
+  displayName: string;
+}
+
+export interface ConfirmNewProjectProposalFolderInput {
+  folderId: string;
+  folderMetadata: ProjectFolderMetadataInput;
+}
+
+export interface ConfirmNewProjectProposalFileReferenceInput {
+  fileReferenceId: string;
+  folderId: string;
+  workspaceId: string;
+  filePath: string;
+  fileMetadata: ProjectFileReferenceMetadataInput;
+}
+
+export interface ConfirmNewProjectProposalInput {
+  requestSchemaVersion: 'v1';
+  operation: 'confirmNewProjectProposal';
+  resolutionResult: 'NoMatch';
+  confirmed: true;
+  projectId: string;
+  conversationId: string;
+  projectMetadata: ProjectMetadataInput;
+  description?: string;
+  setupMetadata?: string;
+  folder?: ConfirmNewProjectProposalFolderInput;
+  fileReferences?: readonly ConfirmNewProjectProposalFileReferenceInput[];
+  fileReferenceIds: readonly string[];
 }
 
 export interface QueryRequestOptions extends AuthHeaderOptions {
@@ -164,6 +228,29 @@ export async function resolveProjectFromAttachments(
   return { status, body };
 }
 
+/** POST /api/v1/projects/resolution/new-project-proposal → 200 ProjectCreationProposal only for NoMatch. */
+export async function proposeNewProject(
+  apiRequest: ApiRequest,
+  tenantId: string,
+  input: ProjectCreationProposalInput,
+  headerOptions: QueryRequestOptions,
+): Promise<{ status: number; body: ProjectCreationProposal }> {
+  const headers = {
+    ...queryHeaders(headerOptions),
+    ...(headerOptions.freshness ? { 'X-Hexalith-Freshness': headerOptions.freshness } : {}),
+    ...headerOptions.extraHeaders,
+    'X-Hexalith-Tenant-Id': tenantId,
+  };
+  const { status, body } = await apiRequest<ProjectCreationProposal>({
+    method: 'POST',
+    path: '/api/v1/projects/resolution/new-project-proposal',
+    headers,
+    body: input,
+    retryConfig: { maxRetries: 0 },
+  });
+  return { status, body };
+}
+
 /** POST /api/v1/projects/{projectId}/conversations/{conversationId}/resolution/confirm → 202 AcceptedCommand (FR-14). */
 export async function confirmProjectResolution(
   apiRequest: ApiRequest,
@@ -185,6 +272,23 @@ export async function confirmProjectResolution(
       candidateProjectIds: input.candidateProjectIds,
       ...(input.sourceProjectId ? { sourceProjectId: input.sourceProjectId } : {}),
     },
+    retryConfig: { maxRetries: 0 },
+  });
+  return { status, body };
+}
+
+/** POST /api/v1/projects/proposals/confirm → 202 AcceptedCommand after explicit NoMatch confirmation. */
+export async function confirmNewProjectProposal(
+  apiRequest: ApiRequest,
+  tenantId: string,
+  input: ConfirmNewProjectProposalInput,
+  headerOptions: MutationHeaderOptions,
+): Promise<{ status: number; body: AcceptedCommand }> {
+  const { status, body } = await apiRequest<AcceptedCommand>({
+    method: 'POST',
+    path: '/api/v1/projects/proposals/confirm',
+    headers: { ...mutationHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
+    body: input,
     retryConfig: { maxRetries: 0 },
   });
   return { status, body };

@@ -1555,6 +1555,162 @@ paths:
         - projection_stale
         - projection_unavailable
         - internal_error
+  /api/v1/projects/resolution/new-project-proposal:
+    post:
+      tags:
+        - projects
+      operationId: ProposeNewProject
+      summary: Preview a metadata-only new Project proposal after NoMatch.
+      description: >
+        Read-style proposal preview for project-less context. The server recomputes resolution from
+        conversation and optional attachment metadata, returns a ProjectCreationProposal only when
+        the result remains NoMatch, writes no events/projections/state/trace, and rejects
+        Idempotency-Key after authorization. Tenant authority is server-derived and no transcript,
+        file content, path, prompt, memory body, token, or full request body is returned.
+      parameters:
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Freshness"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectCreationProposalRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/ProjectCreationProposalRequest"
+      responses:
+        "200":
+          description: Metadata-only proposal preview for a confirmed NoMatch.
+          headers:
+            X-Correlation-Id:
+              $ref: "#/components/headers/CorrelationId"
+            X-Hexalith-Freshness:
+              $ref: "#/components/headers/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectCreationProposal"
+              examples:
+                synthetic:
+                  $ref: "#/components/examples/ProjectCreationProposal"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-read-consistency:
+        class: eventually_consistent
+        freshnessBehavior: returns-projection-watermark-when-available
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: query-correlation-only
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-and-project-read-permission
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - validation_error
+        - not_found
+        - read_model_unavailable
+        - projection_stale
+        - projection_unavailable
+        - internal_error
+  /api/v1/projects/proposals/confirm:
+    post:
+      tags:
+        - projects
+      operationId: ConfirmNewProjectProposal
+      summary: Confirm a NoMatch proposal and create/link the new Project.
+      description: >
+        Explicit command-async mutation that confirms a NoMatch proposal, creates the caller-supplied
+        Project id through CreateProject, links the initiating conversation through Conversations,
+        and optionally links the Project Folder and File References after all ACL preflights pass.
+        The root Idempotency-Key guards the composite body; child keys are derived deterministically
+        for create, conversation, folder, and file operations. No proposal aggregate or
+        ProjectCreatedFromProposal event is emitted.
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfirmNewProjectProposalRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/ConfirmNewProjectProposalRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+        childKeyTemplate:
+          create: "{root}:create"
+          conversation: "{root}:conversation"
+          folder: "{root}:folder"
+          file: "{root}:file:{fileReferenceId}"
+      x-hexalith-idempotency-equivalence:
+        - conversation_id
+        - description
+        - file_reference_ids
+        - folder.folder_id
+        - operation
+        - project_id
+        - project_metadata.display_name
+        - request_schema_version
+        - resolution_result
+        - setup_metadata
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: composite-command-correlation
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-create-plus-conversation-folder-file-preflight
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
+        - internal_error
 components:
   securitySchemes:
     oidcBearer:
@@ -2170,6 +2326,55 @@ components:
           - project_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
           - project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
         sourceProjectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+    ProjectCreationProposalRequest:
+      value:
+        requestSchemaVersion: v1
+        conversationId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
+        folderId: folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7
+        fileReferenceIds:
+          - file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1
+        suggestedName: synthetic-project-alpha
+        description: synthetic metadata description
+        setupMetadata: synthetic-setup-reference
+    ProjectCreationProposal:
+      value:
+        resolutionResult: NoMatch
+        suggestedName: synthetic-project-alpha
+        description: synthetic metadata description
+        setupMetadata: synthetic-setup-reference
+        conversationId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
+        folderId: folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7
+        fileReferenceIds:
+          - file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1
+        observedAt: "2026-05-30T12:00:00Z"
+        freshness: eventually_consistent
+        warnings: []
+    ConfirmNewProjectProposalRequest:
+      value:
+        requestSchemaVersion: v1
+        operation: confirmNewProjectProposal
+        resolutionResult: NoMatch
+        confirmed: true
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        conversationId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
+        projectMetadata:
+          displayName: synthetic-project-alpha
+          metadataClass: tenant_sensitive
+        description: synthetic metadata description
+        setupMetadata: synthetic-setup-reference
+        folder:
+          folderId: folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7
+          folderMetadata:
+            displayName: synthetic-project-alpha
+        fileReferences:
+          - fileReferenceId: file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1
+            folderId: folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7
+            workspaceId: workspace_01HZY7Z6N7J4Q2X8Y9V0A1B2D2
+            filePath: docs/synthetic-note.md
+            fileMetadata:
+              displayName: synthetic-note.md
+        fileReferenceIds:
+          - file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1
     UnlinkProjectConversationRequest:
       value:
         requestSchemaVersion: v1
@@ -3450,6 +3655,194 @@ components:
           $ref: "#/components/schemas/UtcDateTime"
         freshness:
           $ref: "#/components/schemas/ProjectContextFreshness"
+    ProjectCreationProposalRequest:
+      type: object
+      additionalProperties: false
+      description: Closed, metadata-only read-style request for a NoMatch new-Project proposal preview.
+      required:
+        - requestSchemaVersion
+        - conversationId
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        conversationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        folderId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        fileReferenceIds:
+          type: array
+          maxItems: 32
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/OpaqueIdentifier"
+        suggestedName:
+          type: string
+          minLength: 1
+          maxLength: 160
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        description:
+          type: string
+          minLength: 1
+          maxLength: 512
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        setupMetadata:
+          type: string
+          minLength: 1
+          maxLength: 512
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+    ProjectCreationProposal:
+      type: object
+      additionalProperties: false
+      description: Metadata-only NoMatch proposal preview. No Project is created until ConfirmNewProjectProposal is accepted.
+      required:
+        - resolutionResult
+        - suggestedName
+        - conversationId
+        - fileReferenceIds
+        - observedAt
+        - freshness
+        - warnings
+      properties:
+        resolutionResult:
+          type: string
+          enum:
+            - NoMatch
+        suggestedName:
+          type: string
+          minLength: 1
+          maxLength: 160
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        description:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 512
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        setupMetadata:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 512
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        conversationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        folderId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        fileReferenceIds:
+          type: array
+          maxItems: 32
+          items:
+            $ref: "#/components/schemas/OpaqueIdentifier"
+        observedAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        freshness:
+          type: string
+          enum:
+            - eventually_consistent
+        warnings:
+          type: array
+          maxItems: 8
+          items:
+            type: string
+            enum:
+              - metadata_sanitized
+              - attachment_evidence_unavailable
+    ConfirmNewProjectProposalRequest:
+      type: object
+      additionalProperties: false
+      description: Closed command body for confirming a NoMatch proposal and creating/linking the new Project.
+      required:
+        - requestSchemaVersion
+        - operation
+        - resolutionResult
+        - confirmed
+        - projectId
+        - conversationId
+        - projectMetadata
+        - fileReferenceIds
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        operation:
+          type: string
+          enum:
+            - confirmNewProjectProposal
+        resolutionResult:
+          type: string
+          enum:
+            - NoMatch
+        confirmed:
+          type: boolean
+          const: true
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        conversationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        projectMetadata:
+          $ref: "#/components/schemas/ProjectMetadata"
+        description:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 512
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        setupMetadata:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 512
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        folder:
+          $ref: "#/components/schemas/ConfirmNewProjectProposalFolder"
+        fileReferences:
+          type: array
+          maxItems: 32
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/ConfirmNewProjectProposalFileReference"
+        fileReferenceIds:
+          type: array
+          maxItems: 32
+          uniqueItems: true
+          description: Sorted opaque ids used for idempotency equivalence; must match fileReferences[*].fileReferenceId.
+          items:
+            $ref: "#/components/schemas/OpaqueIdentifier"
+    ConfirmNewProjectProposalFolder:
+      type: object
+      additionalProperties: false
+      required:
+        - folderId
+        - folderMetadata
+      properties:
+        folderId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        folderMetadata:
+          $ref: "#/components/schemas/ProjectFolderMetadata"
+    ConfirmNewProjectProposalFileReference:
+      type: object
+      additionalProperties: false
+      description: File ACL input. workspaceId and filePath are transient ACL inputs and are never persisted by Projects.
+      required:
+        - fileReferenceId
+        - folderId
+        - workspaceId
+        - filePath
+        - fileMetadata
+      properties:
+        fileReferenceId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        folderId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        workspaceId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        filePath:
+          $ref: "#/components/schemas/WorkspaceRelativePath"
+        fileMetadata:
+          $ref: "#/components/schemas/ProjectFileReferenceMetadata"
     ProjectResolution:
       type: object
       additionalProperties: false

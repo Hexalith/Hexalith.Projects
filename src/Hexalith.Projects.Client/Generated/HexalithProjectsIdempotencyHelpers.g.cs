@@ -11,15 +11,15 @@ public sealed record HexalithProjectsGeneratedArtifactsVerification(bool IsCurre
 
 public static class HexalithProjectsGeneratedArtifacts
 {
-    public const string ContractSpineSha256 = "4c09d5e4d3939204097ef012aef7c8db682fd7a134d9b9ca6594756bdf7d9e38";
+    public const string ContractSpineSha256 = "96f0f6b5cd1bd6d1eb2484931218ac699f54eadc540be795533ce7de948870ec";
     public const string GenerationConfigurationSha256 = "57b05e6bb3aaec137283214dbc5e4b6fd19399a8f9b184745cfb5cbef1753548";
-    public const string GeneratedHelpersSha256 = "afa3f4683a2bfb8a911c7eb0707a6e9fb96023de84e6d262cddb4dbb3ccbece9";
+    public const string GeneratedHelpersSha256 = "221ed259025b3321a57ebe2888e0c0e2ce9f5cad80b2cb638178c4b596c7f49d";
 
     // HelperSchemaVersion is a deterministic SHA-256 prefix of the canonical helper-signature
     // shape (schema names, parameter names in declared order, idempotency field paths per
     // variant). It changes whenever helper parameter shapes change, and only then. Not
     // included in the canonical hash.
-    public const string HelperSchemaVersion = "9b2030bb6a6cc2c5";
+    public const string HelperSchemaVersion = "7c0ac65d16126675";
 
     public static bool VerifyCurrent(string repositoryRoot) => VerifyCurrentDetailed(repositoryRoot).IsCurrent;
 
@@ -209,6 +209,27 @@ public partial class ArchiveProjectRequest
             {
                 new IdempotencyField("archive_intent", true, ArchiveIntent),
                 new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
+            })
+;
+}
+
+public partial class ConfirmNewProjectProposalRequest
+{
+    public string ComputeIdempotencyHash() =>
+        HexalithIdempotencyHasher.Compute(
+            "ConfirmNewProjectProposal",
+            new[]
+            {
+                new IdempotencyField("conversation_id", true, ConversationId),
+                new IdempotencyField("description", true, Description),
+                new IdempotencyField("file_reference_ids", true, FileReferenceIds),
+                new IdempotencyField("folder.folder_id", Folder is not null, Folder?.FolderId),
+                new IdempotencyField("operation", true, Operation),
+                new IdempotencyField("project_id", true, ProjectId),
+                new IdempotencyField("project_metadata.display_name", ProjectMetadata is not null, ProjectMetadata?.DisplayName),
+                new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
+                new IdempotencyField("resolution_result", true, ResolutionResult),
+                new IdempotencyField("setup_metadata", true, SetupMetadata),
             })
 ;
 }

@@ -91,6 +91,9 @@ public sealed class ClientGenerationTests
         generated.ShouldContain("class UnlinkMemoryRequest");
         generated.ShouldContain("class ProjectFileReferenceMetadata");
         generated.ShouldContain("class ProjectConversationsPage");
+        generated.ShouldContain("class ProjectCreationProposalRequest");
+        generated.ShouldContain("class ProjectCreationProposal");
+        generated.ShouldContain("class ConfirmNewProjectProposalRequest");
         generated.ShouldContain("class ProblemDetails");
     }
 
@@ -137,6 +140,7 @@ public sealed class ClientGenerationTests
             typeof(UnlinkFileReferenceRequest),
             typeof(LinkMemoryRequest),
             typeof(UnlinkMemoryRequest),
+            typeof(ConfirmNewProjectProposalRequest),
         })
         {
             MethodInfo[] mutationMethods = requestType
@@ -162,6 +166,11 @@ public sealed class ClientGenerationTests
 
         Type conversationsPageType = clientAssembly.GetType("Hexalith.Projects.Client.Generated.ProjectConversationsPage").ShouldNotBeNull();
         conversationsPageType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
+
+        typeof(ProjectCreationProposalRequest).GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
+        typeof(ProjectCreationProposal).GetMethods(BindingFlags.Instance | BindingFlags.Public)
             .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
     }
 
@@ -257,6 +266,35 @@ public sealed class ClientGenerationTests
         methods.SelectMany(m => m.GetParameters())
             .Any(p => p.Name?.Contains("freshness", StringComparison.OrdinalIgnoreCase) == true)
             .ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GeneratedClientExposesNewProjectProposalPreviewAndConfirmShapes()
+    {
+        Assembly clientAssembly = typeof(CreateProjectRequest).Assembly;
+        Type clientInterface = clientAssembly.GetType("Hexalith.Projects.Client.Generated.IClient").ShouldNotBeNull();
+
+        MethodInfo[] previewMethods = clientInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Where(m => m.Name == "ProposeNewProjectAsync")
+            .ToArray();
+        previewMethods.ShouldNotBeEmpty();
+        previewMethods.Any(m => m.ReturnType.FullName?.Contains("ProjectCreationProposal", StringComparison.Ordinal) == true).ShouldBeTrue();
+        previewMethods.SelectMany(m => m.GetParameters())
+            .Any(p => p.Name?.Contains("idempotency", StringComparison.OrdinalIgnoreCase) == true)
+            .ShouldBeFalse();
+
+        MethodInfo[] confirmMethods = clientInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Where(m => m.Name == "ConfirmNewProjectProposalAsync")
+            .ToArray();
+        confirmMethods.ShouldNotBeEmpty();
+        confirmMethods.Any(m => m.ReturnType.FullName?.Contains("AcceptedCommand", StringComparison.Ordinal) == true).ShouldBeTrue();
+        confirmMethods.SelectMany(m => m.GetParameters())
+            .Any(p => string.Equals(p.Name, "idempotency_Key", StringComparison.Ordinal))
+            .ShouldBeTrue();
+
+        typeof(ConfirmNewProjectProposalRequest)
+            .GetMethod("ComputeIdempotencyHash", Type.EmptyTypes)
+            .ShouldNotBeNull();
     }
 
     [Fact]
@@ -460,6 +498,57 @@ public sealed class ClientGenerationTests
             "field=request_schema_version;present=true;value=s:v1",
             "field=resolution_result;present=true;value=s:MultipleCandidates",
             "field=source_project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3"));
+    }
+
+    [Fact]
+    public void ConfirmNewProjectProposalHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new ConfirmNewProjectProposalRequest
+        {
+            RequestSchemaVersion = ConfirmNewProjectProposalRequestRequestSchemaVersion.V1,
+            Operation = ConfirmNewProjectProposalRequestOperation.ConfirmNewProjectProposal,
+            ResolutionResult = ConfirmNewProjectProposalRequestResolutionResult.NoMatch,
+            Confirmed = true,
+            ProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            ConversationId = "conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4",
+            ProjectMetadata = new ProjectMetadata
+            {
+                DisplayName = "synthetic-project-alpha",
+                MetadataClass = SensitiveMetadataTier.Tenant_sensitive,
+            },
+            Description = "synthetic metadata description",
+            SetupMetadata = "synthetic-setup-reference",
+            Folder = new ConfirmNewProjectProposalFolder
+            {
+                FolderId = "folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7",
+                FolderMetadata = new ProjectFolderMetadata { DisplayName = "synthetic-project-alpha" },
+            },
+            FileReferenceIds = ["file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1"],
+            FileReferences =
+            [
+                new ConfirmNewProjectProposalFileReference
+                {
+                    FileReferenceId = "file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1",
+                    FolderId = "folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7",
+                    WorkspaceId = "workspace_01HZY7Z6N7J4Q2X8Y9V0A1B2D2",
+                    FilePath = "docs/synthetic-note.md",
+                    FileMetadata = new ProjectFileReferenceMetadata { DisplayName = "synthetic-note.md" },
+                },
+            ],
+        };
+
+        request.ComputeIdempotencyHash().ShouldBe(ExpectedHash(
+            "operation=ConfirmNewProjectProposal",
+            "field=conversation_id;present=true;value=s:conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4",
+            "field=description;present=true;value=s:synthetic metadata description",
+            "field=file_reference_ids;present=true;value=j:[\"file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1\"]",
+            "field=folder.folder_id;present=true;value=s:folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7",
+            "field=operation;present=true;value=s:confirmNewProjectProposal",
+            "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+            "field=project_metadata.display_name;present=true;value=s:synthetic-project-alpha",
+            "field=request_schema_version;present=true;value=s:v1",
+            "field=resolution_result;present=true;value=s:NoMatch",
+            "field=setup_metadata;present=true;value=s:synthetic-setup-reference"));
     }
 
     [Fact]

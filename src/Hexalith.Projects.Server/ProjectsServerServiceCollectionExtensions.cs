@@ -19,6 +19,7 @@ using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server.Conversations;
 using Hexalith.Projects.Server.Folders;
 using Hexalith.Projects.Server.Memories;
+using Hexalith.Projects.Server.Proposals;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Routing;
@@ -56,6 +57,7 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IProjectReferenceIndexReadModel>(sp => sp.GetRequiredService<InMemoryProjectReferenceIndexReadModel>());
         services.TryAddSingleton<IProjectTenantContextAccessor, HttpContextProjectTenantContextAccessor>();
         services.TryAddSingleton<ProjectAuthorizationGate>();
+        services.TryAddSingleton<IProjectProposalConfirmationIdempotencyLedger, InMemoryProjectProposalConfirmationIdempotencyLedger>();
         services.TryAddSingleton<IActorPartyResolver, DeterministicActorPartyResolver>();
         services.TryAddTransient<IProjectConversationDirectory>(sp =>
         {

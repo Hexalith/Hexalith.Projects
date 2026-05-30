@@ -232,6 +232,60 @@ public static partial class ProjectsDomainServiceEndpoints
                 cancellationToken).ConfigureAwait(false))
             .WithName("ResolveProjectFromAttachments");
 
+        endpoints.MapPost("/api/v1/projects/resolution/new-project-proposal", static async (
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            Hexalith.Projects.Server.Conversations.IProjectConversationResolutionDirectory conversationResolutionDirectory,
+            IProjectListReadModel listReadModel,
+            IProjectReferenceIndexReadModel referenceIndexReadModel,
+            Hexalith.Projects.Resolution.ProjectResolutionEngine resolutionEngine,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await ProposeNewProjectAsync(
+                httpContext,
+                tenantContext,
+                authorizationGate,
+                conversationResolutionDirectory,
+                listReadModel,
+                referenceIndexReadModel,
+                resolutionEngine,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("ProposeNewProject");
+
+        endpoints.MapPost("/api/v1/projects/proposals/confirm", static async (
+            HttpContext httpContext,
+            IProjectCommandSubmitter submitter,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            Hexalith.Projects.Server.Conversations.IProjectConversationResolutionDirectory conversationResolutionDirectory,
+            IProjectListReadModel listReadModel,
+            IProjectReferenceIndexReadModel referenceIndexReadModel,
+            IProjectConversationAssignmentDirectory assignmentDirectory,
+            IProjectFolderDirectory folderDirectory,
+            IProjectFileReferenceDirectory fileReferenceDirectory,
+            Hexalith.Projects.Resolution.ProjectResolutionEngine resolutionEngine,
+            Hexalith.Projects.Server.Proposals.IProjectProposalConfirmationIdempotencyLedger idempotencyLedger,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await ConfirmNewProjectProposalAsync(
+                httpContext,
+                submitter,
+                tenantContext,
+                authorizationGate,
+                conversationResolutionDirectory,
+                listReadModel,
+                referenceIndexReadModel,
+                assignmentDirectory,
+                folderDirectory,
+                fileReferenceDirectory,
+                resolutionEngine,
+                idempotencyLedger,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("ConfirmNewProjectProposal");
+
         endpoints.MapPost("/api/v1/projects/{projectId}/conversations/{conversationId}/link", static async (
             string projectId,
             string conversationId,
