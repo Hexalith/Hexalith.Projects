@@ -106,6 +106,43 @@ public sealed class ProjectVocabularyTests
     }
 
     [Fact]
+    public void InventoryRowProjectionCarriesFrontComposerMetadata()
+    {
+        Type type = typeof(ProjectInventoryRowProjection);
+        type.GetCustomAttributes(typeof(ProjectionAttribute), inherit: false).ShouldHaveSingleItem();
+        BoundedContextAttribute context = type.GetCustomAttributes(typeof(BoundedContextAttribute), inherit: false)
+            .ShouldHaveSingleItem()
+            .ShouldBeOfType<BoundedContextAttribute>();
+        context.Name.ShouldBe("Projects");
+        typeof(ProjectInventoryRowProjection)
+            .GetProperty(nameof(ProjectInventoryRowProjection.Lifecycle))!
+            .PropertyType.ShouldBe(typeof(ProjectLifecycle));
+        typeof(ProjectInventoryRowProjection)
+            .GetProperty(nameof(ProjectInventoryRowProjection.UpdatedAt))!
+            .GetCustomAttributes(typeof(RelativeTimeAttribute), inherit: false)
+            .ShouldHaveSingleItem();
+        typeof(ProjectInventoryRowProjection)
+            .GetProperty(nameof(ProjectInventoryRowProjection.Name))!
+            .GetCustomAttributes(typeof(ColumnPriorityAttribute), inherit: false)
+            .ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void DetailInspectorProjectionCarriesDetailRecordMetadata()
+    {
+        Type type = typeof(ProjectDetailInspectorProjection);
+        type.GetCustomAttributes(typeof(ProjectionAttribute), inherit: false).ShouldHaveSingleItem();
+        ProjectionRoleAttribute role = type.GetCustomAttributes(typeof(ProjectionRoleAttribute), inherit: false)
+            .ShouldHaveSingleItem()
+            .ShouldBeOfType<ProjectionRoleAttribute>();
+        role.Role.ShouldBe(ProjectionRole.DetailRecord);
+        typeof(ProjectDetailInspectorProjection)
+            .GetProperty(nameof(ProjectDetailInspectorProjection.FreshnessTrustState))!
+            .GetCustomAttributes(typeof(ProjectionFieldGroupAttribute), inherit: false)
+            .ShouldHaveSingleItem();
+    }
+
+    [Fact]
     public void OperatorDiagnosticShellProjectionMapsFromExistingDiagnosticDto()
     {
         ProjectOperatorDiagnostic diagnostic = new(
@@ -135,6 +172,53 @@ public sealed class ProjectVocabularyTests
         projection.WarningCount.ShouldBe(1);
         projection.LastUpdated.ShouldBe(diagnostic.UpdatedAt);
         projection.Mode.ShouldBe("maintenance");
+        projection.FreshnessTrustState.ShouldBe("trusted");
+    }
+
+    [Fact]
+    public void DetailInspectorProjectionMapsFromExistingDiagnosticDto()
+    {
+        ProjectOperatorDiagnostic diagnostic = new(
+            "project-001",
+            "Console Project",
+            null,
+            "active",
+            DateTimeOffset.UnixEpoch,
+            DateTimeOffset.UnixEpoch.AddMinutes(1),
+            null,
+            null,
+            new ProjectOperatorContextActivation(false, "context_disabled"),
+            [
+                new ProjectOperatorReferenceSummary("folder", "included", "folder-001", "Folder", null, Freshness()),
+            ],
+            [
+                new ProjectOperatorAuditTimelineItem(
+                    "audit-001",
+                    "project.created",
+                    DateTimeOffset.UnixEpoch,
+                    "actor-001",
+                    "corr-001",
+                    "task-001",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    1),
+            ],
+            Freshness());
+
+        ProjectDetailInspectorProjection projection = ProjectDetailInspectorProjection.FromDiagnostic(diagnostic);
+
+        projection.ProjectId.ShouldBe("project-001");
+        projection.Name.ShouldBe("Console Project");
+        projection.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+        projection.ContextActivationEnabled.ShouldBeFalse();
+        projection.ContextBlockedReasonCode.ShouldBe("context_disabled");
+        projection.ReferenceCount.ShouldBe(1);
+        projection.AuditEntryCount.ShouldBe(1);
         projection.FreshnessTrustState.ShouldBe("trusted");
     }
 

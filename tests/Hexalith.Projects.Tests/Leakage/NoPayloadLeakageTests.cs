@@ -443,6 +443,78 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void ProjectInventoryRowProjection_SerializesMetadataOnly()
+    {
+        ProjectInventoryRowProjection row = new()
+        {
+            Id = "project-target-001",
+            ProjectId = "project-target-001",
+            Name = "Operator Project",
+            Lifecycle = ProjectLifecycle.Active,
+            WarningSummary = ProjectInventoryRowProjection.WarningSummaryUnavailable,
+            CreatedAt = DateTimeOffset.UnixEpoch,
+            UpdatedAt = DateTimeOffset.UnixEpoch.AddMinutes(1),
+            TenantScope = "server-derived tenant",
+            FreshnessTrustState = "trusted",
+            ProjectionWatermark = "watermark_00000042",
+        };
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(row));
+        string serialized = System.Text.Json.JsonSerializer.Serialize(row);
+        serialized.ShouldNotContain("tenantId", Case.Insensitive);
+        serialized.ShouldNotContain("candidate", Case.Insensitive);
+        serialized.ShouldNotContain("score", Case.Insensitive);
+        serialized.ShouldNotContain("rank", Case.Insensitive);
+        serialized.ShouldNotContain("transcript", Case.Insensitive);
+        serialized.ShouldNotContain("prompt", Case.Insensitive);
+        serialized.ShouldNotContain("token", Case.Insensitive);
+        serialized.ShouldNotContain("path", Case.Insensitive);
+        serialized.ShouldNotContain("secret", Case.Insensitive);
+        serialized.ShouldNotContain("body", Case.Insensitive);
+    }
+
+    [Fact]
+    public void ProjectDetailInspectorProjection_SerializesMetadataOnly()
+    {
+        ProjectOperatorDiagnostic diagnostic = new(
+            "project-target-001",
+            "Operator Project",
+            "Safe metadata description",
+            "active",
+            DateTimeOffset.UnixEpoch,
+            DateTimeOffset.UnixEpoch.AddMinutes(1),
+            "safe-setup-metadata",
+            null,
+            new ProjectOperatorContextActivation(true, null),
+            [
+                new ProjectOperatorReferenceSummary(
+                    "folder",
+                    "included",
+                    "folder_001",
+                    "Safe Folder",
+                    null,
+                    new ProjectOperatorFreshnessMetadata("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark_00000001", false, "trusted")),
+            ],
+            [],
+            new ProjectOperatorFreshnessMetadata("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark_00000042", false, "trusted"));
+
+        ProjectDetailInspectorProjection projection = ProjectDetailInspectorProjection.FromDiagnostic(diagnostic);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(projection));
+        string serialized = System.Text.Json.JsonSerializer.Serialize(projection);
+        serialized.ShouldNotContain("tenantId", Case.Insensitive);
+        serialized.ShouldNotContain("candidate", Case.Insensitive);
+        serialized.ShouldNotContain("score", Case.Insensitive);
+        serialized.ShouldNotContain("rank", Case.Insensitive);
+        serialized.ShouldNotContain("transcript", Case.Insensitive);
+        serialized.ShouldNotContain("prompt", Case.Insensitive);
+        serialized.ShouldNotContain("token", Case.Insensitive);
+        serialized.ShouldNotContain("path", Case.Insensitive);
+        serialized.ShouldNotContain("secret", Case.Insensitive);
+        serialized.ShouldNotContain("body", Case.Insensitive);
+    }
+
+    [Fact]
     public void MemoryReferenceLinkRejection_SerializesMetadataOnly()
     {
         ProjectReferenceLinkRejected rejection = new(

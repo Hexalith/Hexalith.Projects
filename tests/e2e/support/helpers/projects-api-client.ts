@@ -21,16 +21,20 @@ export type ProjectLifecycle = 'active' | 'archived';
 
 export interface ProjectSummary {
   projectId: string;
-  tenantId: string;
   name: string;
-  lifecycle: ProjectLifecycle;
+  lifecycleState: ProjectLifecycle;
+  createdAt: string;
   updatedAt: string;
+  freshness: ProjectOperatorFreshnessMetadata;
+}
+
+export interface ProjectListResponse {
+  items: ProjectSummary[];
+  freshness: ProjectOperatorFreshnessMetadata;
 }
 
 export interface ProjectDetail extends ProjectSummary {
   description?: string;
-  /** Trust/freshness of the read (AR-16). */
-  freshness?: string;
 }
 
 export type ResolutionResult = 'NoMatch' | 'SingleCandidate' | 'MultipleCandidates';
@@ -228,12 +232,18 @@ export async function getProject(
   apiRequest: ApiRequest,
   tenantId: string,
   projectId: string,
-  headerOptions: AuthHeaderOptions,
+  headerOptions: QueryRequestOptions,
 ): Promise<{ status: number; body: ProjectDetail }> {
+  const headers = {
+    ...queryHeaders(headerOptions),
+    ...(headerOptions.freshness ? { 'X-Hexalith-Freshness': headerOptions.freshness } : {}),
+    ...headerOptions.extraHeaders,
+    'X-Hexalith-Tenant-Id': tenantId,
+  };
   const { status, body } = await apiRequest<ProjectDetail>({
     method: 'GET',
     path: `/api/v1/projects/${projectId}`,
-    headers: { ...queryHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
+    headers,
     // 404 is an expected safe-denial outcome, not a transport failure — don't retry it.
     retryConfig: { maxRetries: 0 },
   });
@@ -244,14 +254,21 @@ export async function getProject(
 export async function listProjects(
   apiRequest: ApiRequest,
   tenantId: string,
-  headerOptions: AuthHeaderOptions,
+  headerOptions: QueryRequestOptions,
   lifecycle?: ProjectLifecycle,
-): Promise<{ status: number; body: ProjectSummary[] }> {
-  const { status, body } = await apiRequest<ProjectSummary[]>({
+): Promise<{ status: number; body: ProjectListResponse }> {
+  const headers = {
+    ...queryHeaders(headerOptions),
+    ...(headerOptions.freshness ? { 'X-Hexalith-Freshness': headerOptions.freshness } : {}),
+    ...headerOptions.extraHeaders,
+    'X-Hexalith-Tenant-Id': tenantId,
+  };
+  const { status, body } = await apiRequest<ProjectListResponse>({
     method: 'GET',
     path: '/api/v1/projects',
     params: lifecycle ? { lifecycle } : undefined,
-    headers: { ...queryHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
+    headers,
+    retryConfig: { maxRetries: 0 },
   });
   return { status, body };
 }

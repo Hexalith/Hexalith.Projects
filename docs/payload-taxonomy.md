@@ -40,6 +40,7 @@ These categories MAY appear in events, projections, DTOs, logs, and audit record
 | `CausationId` | Causation identifier. |
 | `AuditId` | Audit-record identifier. |
 | `UiFeedbackCode` | UI feedback category / safe reason code / correlation id used by console primitives. |
+| `UiProjectionDescriptor` | FrontComposer descriptor/wrapper fields derived from approved metadata-only DTOs, such as inventory/detail field groups, selector-stable labels, freshness evidence, and disabled-filter explanations. |
 
 Notes:
 
@@ -48,6 +49,8 @@ Notes:
 - UI feedback messages may include safe categories and reason codes only; raw upstream problem
   details, response bodies, command bodies, prompts, tokens, file paths, proposal bodies, and sibling
   denial details remain forbidden.
+- UI projection descriptors may explain unavailable filter dimensions, but they must not imply hidden
+  sibling data exists or carry raw sibling denial evidence.
 
 ## Forbidden sibling-owned content (NEVER on the wire)
 

@@ -30,7 +30,7 @@ export async function waitForProject(
     (response) => {
       // Assertions inside the predicate: recurse stops when they pass (no `return true` needed).
       if (response.status !== 200) return false;
-      if (expected?.lifecycle && response.body.lifecycle !== expected.lifecycle) return false;
+      if (expected?.lifecycle && response.body.lifecycleState !== expected.lifecycle) return false;
       return true;
     },
     {

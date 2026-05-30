@@ -12,11 +12,15 @@ const FORBIDDEN_SHELL_MARKERS = [
 ];
 
 /**
- * Story 5.3 shell-level selector contract.
+ * Story 5.3 shell + shared empty-state/feedback selector contract.
+ *
+ * The Story 5.4 inventory and read-only detail journeys live in their dedicated spec
+ * (projects-inventory-detail.spec.ts); this file stays scoped to the shared shell, empty-state,
+ * and feedback selectors so the two specs do not maintain divergent copies of the same assertions.
  *
  * These remain fixme until the stable AppHost/UI fixture can launch the FrontComposer console
- * with authenticated operator context. Later stories own the concrete inventory/detail, reference
- * matrix, trace, audit, warning, mutation, and MCP/CLI journeys.
+ * with authenticated operator context. Later stories own the reference matrix, trace, audit export,
+ * warning dashboard, mutation, and MCP/CLI journeys.
  */
 test.describe('Projects console shell shared rendering', () => {
   test.fixme('renders the Project Diagnostic Header with lifecycle badge, copyable ids, and shell navigation selectors', async ({

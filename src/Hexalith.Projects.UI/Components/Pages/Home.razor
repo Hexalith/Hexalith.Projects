@@ -1,5 +1,188 @@
 @page "/"
+@page "/projects"
 @using Hexalith.Projects.Contracts.Ui
+@using Hexalith.Projects.UI.Diagnostics
+@inject IProjectInventorySource Inventory
 
-<ProjectEmptyStateView State="@ProjectEmptyState.NoProjects()" ProjectionType="@typeof(ProjectOperatorDiagnosticShellProjection)" />
+<section class="project-inventory" aria-labelledby="project-inventory-heading">
+    <header class="project-inventory__header">
+        <div>
+            <p class="project-inventory__scope" data-testid="project-inventory-tenant-scope">@TenantScope</p>
+            <h1 id="project-inventory-heading">Projects</h1>
+        </div>
+        <div class="project-inventory__freshness" data-testid="project-inventory-freshness">
+            @FreshnessSummary
+        </div>
+    </header>
 
+    <form class="project-inventory__filters" aria-label="Project inventory filters">
+        <label>
+            <span>Lifecycle</span>
+            <select data-testid="project-inventory-filter-lifecycle"
+                    value="@_selectedLifecycle"
+                    @onchange="OnLifecycleChangedAsync">
+                <option value="">All</option>
+                <option value="@ProjectLifecycle.Active">Active</option>
+                <option value="@ProjectLifecycle.Archived">Archived</option>
+            </select>
+        </label>
+        <label>
+            <span>Updated</span>
+            <select data-testid="project-inventory-filter-updated"
+                    value="@_updatedWindow"
+                    @onchange="OnUpdatedWindowChanged">
+                <option value="all">Any time</option>
+                <option value="24h">Last 24 hours</option>
+                <option value="7d">Last 7 days</option>
+                <option value="30d">Last 30 days</option>
+            </select>
+        </label>
+        <label>
+            <span>Warnings</span>
+            <select data-testid="project-inventory-filter-warning" disabled>
+                <option>Unavailable on list rows</option>
+            </select>
+        </label>
+        <label>
+            <span>Reason</span>
+            <select data-testid="project-inventory-filter-reason-code" disabled>
+                <option>Requires summary field</option>
+            </select>
+        </label>
+        <label>
+            <span>Reference</span>
+            <select data-testid="project-inventory-filter-reference-type" disabled>
+                <option>Requires summary field</option>
+            </select>
+        </label>
+    </form>
+
+    @if (_loading)
+    {
+        <ProjectFeedbackView Feedback="@ProjectConsoleFeedback.Loading("project_inventory_loading")" />
+    }
+    else if (_result?.Feedback is not null)
+    {
+        <ProjectFeedbackView Feedback="@_result.Feedback" />
+    }
+    else if (FilteredRows.Count == 0 && (_result?.Rows.Count ?? 0) == 0)
+    {
+        <div data-testid="project-inventory-empty">
+            <ProjectEmptyStateView State="@ProjectEmptyState.NoProjects()" ProjectionType="@typeof(ProjectInventoryRowProjection)" />
+        </div>
+    }
+    else if (FilteredRows.Count == 0)
+    {
+        <div data-testid="project-inventory-empty">
+            <ProjectEmptyStateView State="@ProjectEmptyState.FilterReturnedNoResults()" ProjectionType="@typeof(ProjectInventoryRowProjection)" />
+        </div>
+    }
+    else
+    {
+        <div class="project-inventory__table-wrap" data-testid="project-inventory-grid">
+            <table class="project-inventory__table">
+                <caption>Project inventory</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Project</th>
+                        <th scope="col">Lifecycle</th>
+                        <th scope="col">Warnings</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col">Freshness</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (ProjectInventoryRowProjection row in FilteredRows)
+                    {
+                        <tr data-testid="project-inventory-row">
+                            <th scope="row">
+                                <a href="@($"/projects/{Uri.EscapeDataString(row.ProjectId)}")"
+                                   data-testid="project-inventory-row-link"
+                                   aria-label="@($"Open project {row.Name}")">
+                                    <span>@row.Name</span>
+                                    <code>@row.ProjectId</code>
+                                </a>
+                            </th>
+                            <td>
+                                <ProjectStatusBadge Descriptor="@ProjectVocabularyDescriptors.Describe(row.Lifecycle)" ColumnHeader="Lifecycle" />
+                            </td>
+                            <td>
+                                <span data-testid="project-inventory-warning-summary">@row.WarningSummary</span>
+                            </td>
+                            <td>
+                                <time datetime="@row.UpdatedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">
+                                    @row.UpdatedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)
+                                </time>
+                            </td>
+                            <td>
+                                <span>@row.FreshnessTrustState</span>
+                                @if (!string.IsNullOrWhiteSpace(row.ProjectionWatermark))
+                                {
+                                    <code>@row.ProjectionWatermark</code>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+@code {
+    private ProjectInventoryLoadResult? _result;
+    private bool _loading = true;
+    private string _selectedLifecycle = string.Empty;
+    private string _updatedWindow = "all";
+
+    private string TenantScope => _result?.TenantScope ?? "server-derived tenant";
+
+    private string FreshnessSummary
+        => FilteredRows.Count == 0
+            ? "No rows"
+            : string.Join(", ", FilteredRows.Select(r => r.FreshnessTrustState).Distinct(StringComparer.OrdinalIgnoreCase));
+
+    private IReadOnlyList<ProjectInventoryRowProjection> FilteredRows
+        => ApplyUpdatedFilter(_result?.Rows ?? []);
+
+    protected override async Task OnInitializedAsync()
+        => await LoadAsync().ConfigureAwait(true);
+
+    private async Task OnLifecycleChangedAsync(ChangeEventArgs args)
+    {
+        _selectedLifecycle = args.Value?.ToString() ?? string.Empty;
+        await LoadAsync().ConfigureAwait(true);
+    }
+
+    private void OnUpdatedWindowChanged(ChangeEventArgs args)
+        => _updatedWindow = args.Value?.ToString() ?? "all";
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        _result = await Inventory
+            .ListProjectsAsync(ParseLifecycle(_selectedLifecycle), CancellationToken.None)
+            .ConfigureAwait(true);
+        _loading = false;
+    }
+
+    private IReadOnlyList<ProjectInventoryRowProjection> ApplyUpdatedFilter(IReadOnlyList<ProjectInventoryRowProjection> rows)
+    {
+        DateTimeOffset? since = _updatedWindow switch
+        {
+            "24h" => DateTimeOffset.UtcNow.AddHours(-24),
+            "7d" => DateTimeOffset.UtcNow.AddDays(-7),
+            "30d" => DateTimeOffset.UtcNow.AddDays(-30),
+            _ => null,
+        };
+
+        return since is null
+            ? rows
+            : rows.Where(row => row.UpdatedAt >= since.Value).ToArray();
+    }
+
+    private static ProjectLifecycle? ParseLifecycle(string? value)
+        => Enum.TryParse(value, ignoreCase: true, out ProjectLifecycle lifecycle)
+            ? lifecycle
+            : null;
+}

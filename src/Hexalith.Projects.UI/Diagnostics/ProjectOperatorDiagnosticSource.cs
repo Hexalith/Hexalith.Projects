@@ -5,21 +5,10 @@
 
 namespace Hexalith.Projects.UI.Diagnostics;
 
-using System.Globalization;
-
 using Hexalith.Projects.Client.Generated;
 using Hexalith.Projects.UI.Rendering;
 
-using ContractAuditItem = Hexalith.Projects.Contracts.Models.ProjectOperatorAuditTimelineItem;
-using ContractContextActivation = Hexalith.Projects.Contracts.Models.ProjectOperatorContextActivation;
-using ContractDiagnostic = Hexalith.Projects.Contracts.Models.ProjectOperatorDiagnostic;
-using ContractFreshness = Hexalith.Projects.Contracts.Models.ProjectOperatorFreshnessMetadata;
-using ContractReferenceSummary = Hexalith.Projects.Contracts.Models.ProjectOperatorReferenceSummary;
-
-using GeneratedAuditItem = Hexalith.Projects.Client.Generated.ProjectOperatorAuditTimelineItem;
 using GeneratedDiagnostic = Hexalith.Projects.Client.Generated.ProjectOperatorDiagnostic;
-using GeneratedFreshness = Hexalith.Projects.Client.Generated.FreshnessMetadata;
-using GeneratedReferenceSummary = Hexalith.Projects.Client.Generated.ProjectReferenceSummary;
 
 /// <summary>
 /// Generated-client backed source for project-scoped operator diagnostics.
@@ -44,7 +33,7 @@ public sealed class ProjectOperatorDiagnosticSource(IClient client) : IProjectOp
                 cancellationToken).ConfigureAwait(false);
 
             return ProjectDiagnosticLoadResult.FromDiagnostic(
-                ToContract(diagnostic),
+                ProjectGeneratedContractMapper.ToContract(diagnostic),
                 "server-derived tenant",
                 ProjectConsoleModes.ReadOnly);
         }
@@ -68,62 +57,12 @@ public sealed class ProjectOperatorDiagnosticSource(IClient client) : IProjectOp
             return ProjectDiagnosticLoadResult.FromFeedback(
                 ProjectConsoleFeedback.Error("diagnostic_query_failed", correlationId));
         }
+        catch (Exception)
+        {
+            // Transport/timeout/deserialization failures must not crash the Blazor circuit or echo raw
+            // exception text; collapse to the same safe reason code as an unclassified API failure.
+            return ProjectDiagnosticLoadResult.FromFeedback(
+                ProjectConsoleFeedback.Error("diagnostic_query_failed", correlationId));
+        }
     }
-
-    private static ContractDiagnostic ToContract(GeneratedDiagnostic diagnostic)
-        => new(
-            diagnostic.ProjectId ?? string.Empty,
-            diagnostic.Name ?? string.Empty,
-            diagnostic.Description,
-            EnumCode(diagnostic.LifecycleState),
-            diagnostic.CreatedAt,
-            diagnostic.UpdatedAt,
-            diagnostic.SetupMetadata,
-            null,
-            new ContractContextActivation(
-                diagnostic.ContextActivation?.Enabled ?? false,
-                diagnostic.ContextActivation?.BlockedReasonCode),
-            diagnostic.References.Select(ToContract).ToArray(),
-            diagnostic.AuditTimeline.Select(ToContract).ToArray(),
-            ToContract(diagnostic.Freshness));
-
-    private static ContractReferenceSummary ToContract(GeneratedReferenceSummary reference)
-        => new(
-            EnumCode(reference.ReferenceKind),
-            EnumCode(reference.ReferenceState),
-            reference.ReferenceId,
-            reference.DisplayName,
-            reference.ReasonCode,
-            ToContract(reference.Freshness));
-
-    private static ContractAuditItem ToContract(GeneratedAuditItem item)
-        => new(
-            item.AuditEventId ?? string.Empty,
-            item.OperationType ?? string.Empty,
-            item.OccurredAt,
-            item.ActorPrincipalId ?? string.Empty,
-            item.CorrelationId ?? string.Empty,
-            item.TaskId ?? string.Empty,
-            item.ReferenceKind is null ? null : EnumCode(item.ReferenceKind.Value),
-            item.ReferenceId,
-            item.PreviousState,
-            item.NewState,
-            item.ReasonCode,
-            item.ConversationId,
-            item.SourceProjectId,
-            item.ProjectionSequence);
-
-    private static ContractFreshness ToContract(GeneratedFreshness? freshness)
-        => freshness is null
-            ? new ContractFreshness("eventually_consistent", DateTimeOffset.UnixEpoch, null, false, "trusted")
-            : new ContractFreshness(
-                EnumCode(freshness.ReadConsistency),
-                freshness.ObservedAt,
-                freshness.ProjectionWatermark,
-                freshness.Stale,
-                EnumCode(freshness.TrustState));
-
-    private static string EnumCode<TEnum>(TEnum value)
-        where TEnum : struct, Enum
-        => value.ToString().ToLower(CultureInfo.InvariantCulture);
 }

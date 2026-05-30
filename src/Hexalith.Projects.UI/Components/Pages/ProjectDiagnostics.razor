@@ -1,16 +1,176 @@
 @page "/projects/{ProjectId}"
+@using Hexalith.Projects.Contracts.Models
+@using Hexalith.Projects.Contracts.Ui
 @using Hexalith.Projects.UI.Diagnostics
-@inject IProjectOperatorDiagnosticSource Diagnostics
+@inject IProjectDetailSource Details
 
 @if (_loading)
 {
-    <ProjectFeedbackView Feedback="@ProjectConsoleFeedback.Loading("operator_diagnostics_loading")" />
+    <ProjectFeedbackView Feedback="@ProjectConsoleFeedback.Loading("project_detail_loading")" />
 }
-else if (_result?.Diagnostic is not null)
+else if (_result?.Detail is not null)
 {
-    <ProjectDiagnosticHeader Diagnostic="@_result.Diagnostic"
-                             TenantScope="@(_result.TenantScope ?? "server-derived tenant")"
+    <ProjectDiagnosticHeader Diagnostic="@_result.Detail"
+                             TenantScope="@_result.TenantScope"
                              Mode="@_result.Mode" />
+
+    @if (_result.DiagnosticFeedback is not null)
+    {
+        <ProjectFeedbackView Feedback="@_result.DiagnosticFeedback" />
+    }
+
+    <section class="project-detail-inspector"
+             data-testid="project-detail-inspector"
+             aria-labelledby="project-detail-inspector-heading">
+        <h2 id="project-detail-inspector-heading">Inspector</h2>
+        <div class="project-detail-inspector__tabs" role="tablist" aria-label="Project detail sections">
+            @foreach (string section in Sections)
+            {
+                <button type="button"
+                        role="tab"
+                        data-testid="@($"project-detail-tab-{section}")"
+                        aria-selected="@(section == _selectedSection)"
+                        @onclick="() => _selectedSection = section">
+                    @SectionLabel(section)
+                </button>
+            }
+        </div>
+
+        @switch (_selectedSection)
+        {
+            case MetadataSection:
+                <section role="tabpanel" data-testid="project-detail-section-metadata">
+                    <dl class="project-detail-inspector__facts">
+                        <div>
+                            <dt>Project ID</dt>
+                            <dd><code>@_result.Detail.ProjectId</code></dd>
+                        </div>
+                        <div>
+                            <dt>Name</dt>
+                            <dd>@_result.Detail.Name</dd>
+                        </div>
+                        <div>
+                            <dt>Description</dt>
+                            <dd>@(_result.Detail.Description ?? "No description")</dd>
+                        </div>
+                        <div>
+                            <dt>Created</dt>
+                            <dd><time datetime="@_result.Detail.CreatedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@_result.Detail.CreatedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time></dd>
+                        </div>
+                        <div>
+                            <dt>Updated</dt>
+                            <dd><time datetime="@_result.Detail.UpdatedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@_result.Detail.UpdatedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time></dd>
+                        </div>
+                        <div>
+                            <dt>Freshness</dt>
+                            <dd data-testid="project-detail-freshness">@FreshnessText(_result.Detail.Freshness)</dd>
+                        </div>
+                    </dl>
+                </section>
+                break;
+            case SetupSection:
+                <section role="tabpanel" data-testid="project-detail-section-setup">
+                    <dl class="project-detail-inspector__facts">
+                        <div>
+                            <dt>Setup metadata</dt>
+                            <dd>@(_result.Detail.SetupMetadata ?? "No setup metadata")</dd>
+                        </div>
+                        <div>
+                            <dt>Context activation</dt>
+                            <dd data-testid="project-detail-context-activation">
+                                @(_result.Detail.ContextActivation.Enabled ? "Enabled" : $"Blocked: {_result.Detail.ContextActivation.BlockedReasonCode ?? "not_available"}")
+                            </dd>
+                        </div>
+                    </dl>
+                    <div class="project-detail-inspector__setup">
+                        @RenderList("Goals", _result.Detail.ProjectSetup?.Goals)
+                        @RenderList("User instructions", _result.Detail.ProjectSetup?.UserInstructions)
+                        @RenderList("Preferred sources", _result.Detail.ProjectSetup?.PreferredSourceKinds.Select(s => s.ToString()))
+                        @RenderList("Excluded sources", _result.Detail.ProjectSetup?.ExcludedSourceKinds.Select(s => s.ToString()))
+                        <p data-testid="project-detail-conversation-defaults">
+                            Conversation defaults:
+                            @(_result.Detail.ProjectSetup?.ConversationStartDefaults?.LinkedSourcePolicy.ToString() ?? "None")
+                        </p>
+                    </div>
+                </section>
+                break;
+            case ReferencesSection:
+                <section role="tabpanel" data-testid="project-detail-section-references">
+                    @if (_result.Detail.References.Count == 0)
+                    {
+                        <ProjectEmptyStateView State="@ProjectEmptyState.NoReferences()" ProjectionType="@typeof(ProjectDetailInspectorProjection)" />
+                    }
+                    else
+                    {
+                        <table class="project-detail-inspector__table" data-testid="project-detail-reference-summary">
+                            <caption>Reference summaries</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Kind</th>
+                                    <th scope="col">Identifier</th>
+                                    <th scope="col">State</th>
+                                    <th scope="col">Reason</th>
+                                    <th scope="col">Freshness</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (ProjectOperatorReferenceSummary reference in _result.Detail.References)
+                                {
+                                    <tr>
+                                        <td>@reference.ReferenceKind</td>
+                                        <td>
+                                            <span>@(reference.DisplayName ?? "Unnamed reference")</span>
+                                            @if (!string.IsNullOrWhiteSpace(reference.ReferenceId))
+                                            {
+                                                <code>@reference.ReferenceId</code>
+                                            }
+                                        </td>
+                                        <td>
+                                            <ProjectStatusBadge Descriptor="@ProjectVocabularyRendering.DescribeReferenceState(reference.ReferenceState)" ColumnHeader="Reference state" />
+                                        </td>
+                                        <td>@(reference.ReasonCode ?? "none")</td>
+                                        <td>@FreshnessText(reference.Freshness)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </section>
+                break;
+            case ResolutionSection:
+                <section role="tabpanel" data-testid="project-detail-section-resolution">
+                    <p>Resolution trace workbench is handled by Story 5.6.</p>
+                    <p>Current reference warning count: @ProjectDiagnosticRendering.CountWarnings(_result.Detail)</p>
+                </section>
+                break;
+            case AuditSection:
+                <section role="tabpanel" data-testid="project-detail-section-audit">
+                    @if (_result.Detail.AuditTimeline.Count == 0)
+                    {
+                        <ProjectEmptyStateView State="@ProjectEmptyState.NoAudit()" ProjectionType="@typeof(ProjectDetailInspectorProjection)" />
+                    }
+                    else
+                    {
+                        <ol class="project-detail-inspector__audit" data-testid="project-detail-audit-summary">
+                            @foreach (ProjectOperatorAuditTimelineItem item in _result.Detail.AuditTimeline)
+                            {
+                                <li>
+                                    <span>@item.OperationType</span>
+                                    <time datetime="@item.OccurredAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@item.OccurredAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time>
+                                    <code>@item.CorrelationId</code>
+                                </li>
+                            }
+                        </ol>
+                    }
+                </section>
+                break;
+            case ActionsSection:
+                <section role="tabpanel" data-testid="project-detail-section-actions">
+                    <p>Read-only inspector. Maintenance mutations are handled by Story 5.9.</p>
+                </section>
+                break;
+        }
+    </section>
 }
 else if (_result?.Feedback is not null)
 {
@@ -18,12 +178,29 @@ else if (_result?.Feedback is not null)
 }
 
 @code {
+    private const string MetadataSection = "metadata";
+    private const string SetupSection = "setup";
+    private const string ReferencesSection = "references";
+    private const string ResolutionSection = "resolution";
+    private const string AuditSection = "audit";
+    private const string ActionsSection = "actions";
+    private static readonly string[] Sections =
+    [
+        MetadataSection,
+        SetupSection,
+        ReferencesSection,
+        ResolutionSection,
+        AuditSection,
+        ActionsSection,
+    ];
+
     [Parameter]
     public string? ProjectId { get; set; }
 
     private bool _loading = true;
-    private ProjectDiagnosticLoadResult? _result;
+    private ProjectDetailLoadResult? _result;
     private string? _loadedProjectId;
+    private string _selectedSection = MetadataSection;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -34,10 +211,57 @@ else if (_result?.Feedback is not null)
 
         _loading = true;
         _loadedProjectId = ProjectId;
+        _selectedSection = MetadataSection;
         _result = string.IsNullOrWhiteSpace(ProjectId)
-            ? ProjectDiagnosticLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("invalid_project_id"))
-            : await Diagnostics.GetProjectDiagnosticsAsync(ProjectId, CancellationToken.None).ConfigureAwait(true);
+            ? ProjectDetailLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("invalid_project_id"))
+            : await Details.GetProjectDetailAsync(ProjectId, CancellationToken.None).ConfigureAwait(true);
         _loading = false;
     }
-}
 
+    private static string SectionLabel(string section)
+        => section switch
+        {
+            MetadataSection => "Metadata",
+            SetupSection => "Setup",
+            ReferencesSection => "References",
+            ResolutionSection => "Resolution",
+            AuditSection => "Audit",
+            ActionsSection => "Actions",
+            _ => section,
+        };
+
+    private static string FreshnessText(ProjectOperatorFreshnessMetadata freshness)
+        => string.IsNullOrWhiteSpace(freshness.ProjectionWatermark)
+            ? $"{freshness.ReadConsistency}; {freshness.TrustState}"
+            : $"{freshness.ReadConsistency}; {freshness.TrustState}; {freshness.ProjectionWatermark}";
+
+    private static RenderFragment RenderList(string heading, IEnumerable<string>? values)
+        => builder =>
+        {
+            string[] items = values?.Where(v => !string.IsNullOrWhiteSpace(v)).ToArray() ?? [];
+            builder.OpenElement(0, "section");
+            builder.OpenElement(1, "h3");
+            builder.AddContent(2, heading);
+            builder.CloseElement();
+            if (items.Length == 0)
+            {
+                builder.OpenElement(3, "p");
+                builder.AddContent(4, "None");
+                builder.CloseElement();
+            }
+            else
+            {
+                builder.OpenElement(5, "ul");
+                for (int i = 0; i < items.Length; i++)
+                {
+                    builder.OpenElement(6 + i, "li");
+                    builder.AddContent(100 + i, items[i]);
+                    builder.CloseElement();
+                }
+
+                builder.CloseElement();
+            }
+
+            builder.CloseElement();
+        };
+}

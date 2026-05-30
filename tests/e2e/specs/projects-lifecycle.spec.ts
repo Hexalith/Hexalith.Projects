@@ -47,9 +47,10 @@ test.describe('Projects lifecycle', () => {
   test.fixme("lists only the requesting tenant's active projects (FR-5)", async ({ apiRequest, authToken, seededProject, tenantContext }) => {
     const { status, body } = await listProjects(apiRequest, tenantContext.tenantId, { authToken }, 'active');
     expect(status).toBe(200);
-    expect(body.some((p) => p.projectId === seededProject.projectId)).toBe(true);
-    // Tenant-scoped + authorization-filtered (R1).
-    expect(body.every((p) => p.tenantId === tenantContext.tenantId)).toBe(true);
+    expect(body.items.some((p) => p.projectId === seededProject.projectId)).toBe(true);
+    expect(body.items.every((p) => p.lifecycleState === 'active')).toBe(true);
+    // Tenant-scoped + authorization-filtered (R1), without echoing tenantId on list rows.
+    expect(JSON.stringify(body.items)).not.toContain('tenantId');
   });
 
   test.fixme('opens a project in the console and renders metadata via data-testid', async ({ page, interceptNetworkCall, seededProject }) => {

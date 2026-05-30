@@ -58,6 +58,7 @@ public static class PayloadClassification
         "CausationId",
         "AuditId",
         "UiFeedbackCode",
+        "UiProjectionDescriptor",
     };
 
     private static readonly IReadOnlyList<string> _forbiddenContent = new[]

@@ -199,6 +199,44 @@ boundaries.
 - **Consumer guidance:** Stories 5.4-5.11 consume the shell seed and shared rendering primitives while
   owning their specific view/action contracts.
 
+## `ProjectInventoryRowProjection`
+
+- **Type:** `Hexalith.Projects.Contracts.Ui.ProjectInventoryRowProjection`.
+- **Owner:** Story 5.4 FrontComposer inventory descriptor/wrapper in Contracts. It is not a persisted
+  runtime projection.
+- **Source data:** thin metadata-only wrapper over the existing `ListProjects` response shape:
+  project id, name, lifecycle, created/updated timestamps, and freshness. No backend field was added
+  for warning/reason/reference filters in Story 5.4.
+- **Tenant scoping:** inherited from `ProjectListProjection` and `ProjectQueryTenantFilter`. The UI
+  displays a server-derived tenant scope label only; the wrapper has no tenant authority field and
+  external list rows still do not carry `tenantId`.
+- **Stored data:** none. It exists to carry Level-1 FrontComposer metadata for the Web inventory.
+- **Freshness semantics:** carries per-row/list freshness trust state, stale flag, and projection
+  watermark from the generated list DTO. It does not invent wall-clock freshness.
+- **Leakage boundary:** project id/name, lifecycle, warning unavailability text, timestamps, tenant
+  scope display label, and freshness evidence only. No transcript, file content, memory payload,
+  prompt, token, path, proposal body, command body, candidate score/rank, rejected candidate id, or
+  sibling denial detail.
+
+## `ProjectDetailInspectorProjection`
+
+- **Type:** `Hexalith.Projects.Contracts.Ui.ProjectDetailInspectorProjection`.
+- **Owner:** Story 5.4 FrontComposer DetailRecord descriptor/wrapper in Contracts. It is not a
+  persisted runtime projection.
+- **Source data:** thin metadata-only wrapper over `ProjectOperatorDiagnostic`, itself composed from
+  the generated `GetProject` detail DTO plus bounded operator diagnostic evidence when available.
+- **Tenant scoping:** inherited from the generated query clients and server query authorization. Client
+  route values select a project id only and never become tenant authority.
+- **Stored data:** none. It exists to describe the read-only inspector field groups: context,
+  references, audit, and freshness.
+- **Freshness semantics:** carries detail freshness trust state from `ProjectOperatorFreshnessMetadata`
+  and preserves generated-client eventual-consistency semantics.
+- **Leakage boundary:** project id/name, lifecycle, context activation state, bounded reference/audit
+  counts, update timestamp, and freshness trust state only. The rendered detail page may show bounded
+  setup preferences and safe reference/audit summaries from approved DTOs, but never transcript, file
+  content, memory payload, raw prompt, unrestricted path, token, proposal body, command body,
+  candidate score/rank, rejected candidate id, or sibling denial detail.
+
 ## `ConversationStartSetupProjection`
 
 - **Type:** `Hexalith.Projects.Projections.ConversationStartSetup.ConversationStartSetupProjector`.

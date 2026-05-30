@@ -16,7 +16,9 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddFluentUIComponents();
 builder.Services.AddProjectsClient();
+builder.Services.AddScoped<IProjectInventorySource, ProjectInventorySource>();
 builder.Services.AddScoped<IProjectOperatorDiagnosticSource, ProjectOperatorDiagnosticSource>();
+builder.Services.AddScoped<IProjectDetailSource, ProjectDetailSource>();
 
 builder.Services.AddHexalithFrontComposerQuickstart(
     o => o.ScanAssemblies(typeof(ProjectsFrontComposerDomain).Assembly));
@@ -35,4 +37,3 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
-
