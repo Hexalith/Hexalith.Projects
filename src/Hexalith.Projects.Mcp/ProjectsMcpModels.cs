@@ -112,6 +112,7 @@ public sealed record ProjectsMcpWarningQueueItem(
     DateTimeOffset LastObservedAt,
     string FreshnessTrustState,
     string? ProjectionWatermark,
+    int DiagnosticUnavailable,
     string TenantScope,
     string ShortExplanation,
     bool PayloadExcluded);

@@ -36,7 +36,7 @@ public sealed class ProjectDetailSource(IClient client) : IProjectDetailSource
                 cancellationToken).ConfigureAwait(false);
             detail = ProjectGeneratedContractMapper.ToContract(project);
         }
-        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 404)
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
         {
             return ProjectDetailLoadResult.FromFeedback(
                 ProjectConsoleFeedback.FailClosed("safe_denial", correlationId));
@@ -76,7 +76,7 @@ public sealed class ProjectDetailSource(IClient client) : IProjectDetailSource
                 cancellationToken).ConfigureAwait(false);
             diagnostic = ProjectGeneratedContractMapper.ToContract(generatedDiagnostic);
         }
-        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 404)
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
         {
             diagnosticFeedback = ProjectConsoleFeedback.FailClosed("safe_denial", correlationId);
         }
@@ -148,7 +148,7 @@ public sealed class ProjectDetailSource(IClient client) : IProjectDetailSource
         => statusCode switch
         {
             400 => ProjectConsoleFeedback.Error("validation_error", correlationId),
-            404 => ProjectConsoleFeedback.FailClosed("safe_denial", correlationId),
+            401 or 403 or 404 => ProjectConsoleFeedback.FailClosed("safe_denial", correlationId),
             503 => ProjectConsoleFeedback.Warning("data_unavailable", correlationId),
             _ => ProjectConsoleFeedback.Error("reference_health_query_failed", correlationId),
         };

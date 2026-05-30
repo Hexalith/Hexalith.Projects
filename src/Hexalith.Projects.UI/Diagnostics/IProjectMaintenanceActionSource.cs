@@ -430,7 +430,7 @@ public sealed class ProjectMaintenanceActionSource(Hexalith.Projects.Client.Gene
         => statusCode switch
         {
             400 => "validation_error",
-            404 => "safe_denial",
+            401 or 403 or 404 => "safe_denial",
             409 => "idempotency_conflict",
             503 => "data_unavailable",
             _ => "maintenance_action_failed",

@@ -92,6 +92,8 @@ public sealed class ProjectDetailSourceTests
 
     [Theory]
     [InlineData(400, ProjectConsoleFeedback.ErrorCategory, "validation_error")]
+    [InlineData(401, ProjectConsoleFeedback.FailClosedCategory, "safe_denial")]
+    [InlineData(403, ProjectConsoleFeedback.FailClosedCategory, "safe_denial")]
     [InlineData(404, ProjectConsoleFeedback.FailClosedCategory, "safe_denial")]
     [InlineData(503, ProjectConsoleFeedback.WarningCategory, "data_unavailable")]
     [InlineData(500, ProjectConsoleFeedback.ErrorCategory, "detail_query_failed")]
@@ -125,6 +127,49 @@ public sealed class ProjectDetailSourceTests
 
         // A failed base detail must short-circuit before the bounded diagnostics call (independently
         // recoverable contract): the secondary query must never fire when base detail fails.
+        await client.DidNotReceive()
+            .GetProjectOperatorDiagnosticsAsync(
+                Arg.Any<string>(),
+                Arg.Any<int?>(),
+                Arg.Any<string>(),
+                Arg.Any<ReadConsistencyClass?>(),
+                Arg.Any<CancellationToken>())
+            .ConfigureAwait(true);
+    }
+
+    [Fact]
+    public async Task SourceCollapsesCrossTenantDenialWithoutRenderingSiblingMetadata()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.GetProjectAsync(
+                "project-hidden",
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns<Task<Project>>(_ => throw new HexalithProjectsApiException(
+                "cross tenant project-hidden project-visible sibling-secret hidden-descriptor",
+                403,
+                "{\"projectId\":\"project-visible\",\"name\":\"Sibling Secret\",\"denial\":\"sibling detail\"}",
+                new Dictionary<string, IEnumerable<string>>(),
+                null!));
+
+        var source = new ProjectDetailSource(client);
+        ProjectDetailLoadResult result = await source
+            .GetProjectDetailAsync("project-hidden", CancellationToken.None)
+            .ConfigureAwait(true);
+
+        result.Detail.ShouldBeNull();
+        result.Feedback.ShouldNotBeNull();
+        result.Feedback.Category.ShouldBe(ProjectConsoleFeedback.FailClosedCategory);
+        result.Feedback.SafeReasonCode.ShouldBe("safe_denial");
+        string rendered = string.Join(
+            ' ',
+            result.Feedback.Message,
+            result.Feedback.SafeReasonCode,
+            result.Feedback.CorrelationId);
+        rendered.ShouldNotContain("project-visible");
+        rendered.ShouldNotContain("Sibling Secret");
+        rendered.ShouldNotContain("hidden-descriptor");
         await client.DidNotReceive()
             .GetProjectOperatorDiagnosticsAsync(
                 Arg.Any<string>(),

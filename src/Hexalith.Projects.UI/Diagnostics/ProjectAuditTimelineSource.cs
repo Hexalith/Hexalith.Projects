@@ -43,7 +43,7 @@ public sealed class ProjectAuditTimelineSource(IClient client) : IProjectAuditTi
                 ProjectGeneratedContractMapper.ToContract(diagnostic);
             return ProjectAuditTimelineLoadResult.FromRows(contract.AuditTimeline, contract.Freshness);
         }
-        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 404)
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
         {
             return ProjectAuditTimelineLoadResult.FromFeedback(
                 ProjectConsoleFeedback.FailClosed("safe_denial", correlationId));

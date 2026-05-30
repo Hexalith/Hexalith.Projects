@@ -51,6 +51,34 @@ public sealed class ProjectsMcpResourceReaderFailureTests
     }
 
     [Fact]
+    public async Task Query_Collapses_CrossTenant_Denial_To_UnknownResource_Without_Sibling_Metadata()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.ListProjectsAsync(
+                Lifecycle.All,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .ThrowsAsync(new HexalithProjectsApiException(
+                "cross tenant project-hidden project-visible hidden descriptor",
+                403,
+                "{\"projectId\":\"project-visible\",\"name\":\"Sibling Secret\",\"denial\":\"sibling detail\"}",
+                NoHeaders,
+                null!));
+        var reader = new ProjectsMcpResourceReader(client);
+
+        FrontComposerMcpException ex = await Should.ThrowAsync<FrontComposerMcpException>(
+            () => reader.QueryAsync<ProjectsMcpInventoryItem>(
+                new QueryRequest(typeof(ProjectsMcpInventoryItem).AssemblyQualifiedName!, "tenant-b"),
+                TestContext.Current.CancellationToken));
+
+        ex.Category.ShouldBe(FrontComposerMcpFailureCategory.UnknownResource);
+        ex.Message.ShouldNotContain("project-visible");
+        ex.Message.ShouldNotContain("Sibling Secret");
+        ex.Message.ShouldNotContain("hidden descriptor");
+    }
+
+    [Fact]
     public async Task Query_Rethrows_Cancellation_For_FrontComposer_To_Map()
     {
         IClient client = Substitute.For<IClient>();
@@ -109,7 +137,9 @@ public sealed class ProjectsMcpResourceReaderFailureTests
         dashboard.TotalVisibleProjects.ShouldBe(2);
         dashboard.ProjectsWithWarnings.ShouldBe(1);
         dashboard.DiagnosticUnavailable.ShouldBe(1);
-        warnings.ShouldHaveSingleItem().ProjectId.ShouldBe("project-1");
+        ProjectsMcpWarningQueueItem warning = warnings.ShouldHaveSingleItem();
+        warning.ProjectId.ShouldBe("project-1");
+        warning.DiagnosticUnavailable.ShouldBe(1);
     }
 
     private static HexalithProjectsApiException Api(int status)

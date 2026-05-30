@@ -170,14 +170,20 @@ base.describe('Projects warnings dashboard selector contract (no app required)',
     await warnings.warningStateFilter.selectOption('');
     await expect(visibleWarningRows).toHaveCount(1);
     await expect(visibleWarningRows.first()).toContainText('file-001');
+    await warnings.warningReferenceTypeFilter.selectOption('');
+    await expect(visibleWarningRows).toHaveCount(2);
 
     await page.getByRole('button', { name: 'Stale: 1' }).click();
     await expect(warnings.warningStateFilter).toHaveValue('Stale');
     await expect(visibleWarningRows).toHaveCount(1);
     await expect(visibleWarningRows.first()).toContainText('memory-001');
+    await warnings.warningStateFilter.focus();
+    await expect(warnings.warningStateFilter).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(warnings.warningReasonFilter).toBeFocused();
   });
 
-  base('keeps warning dashboard markup metadata-only and accessible', async ({ page }) => {
+  base('keeps warning dashboard markup metadata-only and accessible', async ({ page }, testInfo) => {
     await page.setContent(warningsDashboardFixture());
     const warnings = new ProjectDetailPage(page);
 
@@ -196,6 +202,8 @@ base.describe('Projects warnings dashboard selector contract (no app required)',
     for (const marker of FORBIDDEN_WARNING_MARKERS) {
       expect(bodyText).not.toContain(marker);
     }
+
+    await expectNoA11yViolations(page, testInfo, { include: 'main' });
   });
 });
 
@@ -205,6 +213,18 @@ function warningsDashboardFixture(): string {
   <head>
     <meta charset="utf-8" />
     <title>Warnings dashboard selector contract</title>
+    <style>
+      body { color: #111; background: #fff; font-family: Arial, sans-serif; }
+      label { display: inline-grid; gap: 4px; margin: 4px; }
+      button, select, a {
+        align-items: center;
+        display: inline-flex;
+        min-height: 24px;
+        margin: 4px;
+        padding: 4px 8px;
+      }
+      :focus-visible { outline: 3px solid #005a9e; outline-offset: 2px; }
+    </style>
     <script>
       function applyFilters() {
         const state = document.querySelector('[data-testid="project-warning-filter-state"]').value;

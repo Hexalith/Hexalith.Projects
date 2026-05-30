@@ -38,7 +38,7 @@ public sealed class ProjectWarningsDashboardSource(IClient client) : IProjectWar
                 .Select(item => ToProjection(item, response.Freshness))
                 .ToArray();
         }
-        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 404)
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
         {
             return ProjectWarningsDashboardLoadResult.FromFeedback(
                 ProjectConsoleFeedback.FailClosed("safe_denial", correlationId));
@@ -104,7 +104,7 @@ public sealed class ProjectWarningsDashboardSource(IClient client) : IProjectWar
         => statusCode switch
         {
             400 => "validation_error",
-            404 => "safe_denial",
+            401 or 403 or 404 => "safe_denial",
             503 => "data_unavailable",
             _ => "diagnostic_query_failed",
         };

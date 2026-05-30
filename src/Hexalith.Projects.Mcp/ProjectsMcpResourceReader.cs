@@ -281,6 +281,7 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
                     reference.Freshness.ObservedAt,
                     EnumCode(reference.Freshness.TrustState),
                     reference.Freshness.ProjectionWatermark,
+                    0,
                     TenantScope,
                     "Warning queue row is bounded and contains only safe reference metadata.",
                     PayloadExcluded: true)));
@@ -292,6 +293,7 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
                 .ThenBy(static item => item.ReferenceKind, StringComparer.Ordinal)
                 .ThenBy(static item => item.ReferenceId, StringComparer.Ordinal)
                 .Take(MaxRows)
+                .Select(item => item with { DiagnosticUnavailable = diagnosticUnavailable })
                 .ToArray(),
             diagnosticUnavailable);
     }

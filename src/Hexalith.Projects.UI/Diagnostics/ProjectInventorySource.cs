@@ -36,7 +36,7 @@ public sealed class ProjectInventorySource(IClient client) : IProjectInventorySo
 
             return ProjectInventoryLoadResult.FromRows(rows);
         }
-        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 404)
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
         {
             return ProjectInventoryLoadResult.FromFeedback(
                 ProjectConsoleFeedback.FailClosed("safe_denial", correlationId));

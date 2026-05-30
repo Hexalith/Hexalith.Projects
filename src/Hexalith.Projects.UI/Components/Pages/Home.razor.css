@@ -162,6 +162,7 @@
     border-bottom: 1px solid var(--neutral-stroke-rest);
     text-align: left;
     vertical-align: top;
+    overflow-wrap: anywhere;
 }
 
 .project-inventory__table tbody tr:last-child th,
@@ -199,6 +200,49 @@
 
     .project-operational-dashboard__tiles {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1023px) {
+    .project-inventory__filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .project-operational-dashboard__tiles {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .project-inventory__table {
+        min-width: 48rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .project-inventory__header {
+        align-items: start;
+        flex-direction: column;
+    }
+
+    .project-warnings-queue__actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .project-warnings-queue__actions a,
+    .project-warnings-queue__actions button {
+        width: 100%;
+        text-align: left;
+    }
+
+    .project-inventory__table {
+        min-width: 0;
+        width: 100%;
+    }
+}
+
+@media (min-width: 1440px) {
+    .project-operational-dashboard__tiles {
+        grid-template-columns: repeat(6, minmax(8rem, 1fr));
     }
 }
 

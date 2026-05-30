@@ -117,3 +117,22 @@ server-side authorization own tenant scope. Unknown, hidden, unauthorized, malfo
 requests collapse to safe denial/validation/unavailable categories without raw ProblemDetails bodies,
 exception text, command bodies, hidden descriptors, sibling denial detail, idempotency keys, paths, prompts,
 tokens, transcripts, file contents, memory payloads, or tenant existence hints.
+
+## Story 5.11 Final Cross-Surface Quality Contract
+
+Story 5.11 is the closing parity, responsive, accessibility, and leakage pass over the Web, MCP, and
+CLI surfaces delivered by Stories 5.3-5.10. It does not add new business operations. It freezes the
+evidence required to keep the three surfaces telling the same operational truth.
+
+| Quality axis | Web requirement | MCP requirement | CLI requirement |
+|--------------|-----------------|-----------------|-----------------|
+| Stable surface keys | Keep `data-testid` selectors for `project-inventory-grid`, `project-warnings-dashboard`, `project-warnings-queue`, `project-detail-inspector`, `project-reference-health-matrix`, `project-resolution-trace-workbench`, `audit-timeline`, `safe-diagnostic-export`, and `maintenance-action-panel`. | Keep resource names `projects.inventory`, `projects.detail`, `projects.operatorDiagnostic`, `projects.referenceHealth`, `projects.resolutionTrace`, `projects.auditTimeline`, `projects.safeDiagnosticExport`, `projects.warningQueue`, `projects.operationalDashboard`, and `projects.maintenanceAction`. | Keep commands `projects list`, `projects describe`, `projects inspect`, `projects validate`, `projects trace`, `projects audit`, `projects diagnostic export`, `projects warnings`, `projects dashboard`, `projects dry-run`, `projects preview`, `projects archive`, `projects restore`, `projects relink`, `projects unlink`, and `projects reevaluate`. |
+| Shared field names | Web selectors and projection fields must keep `projectId`, `tenantScope`, lifecycle, reference state, reason code, freshness, warning, audit id, correlation id, task id, and payload exclusion text visible or accessible. | Every resource row must expose `TenantScope`, `ShortExplanation`, and `PayloadExcluded`; warning/dashboard resources must expose `DiagnosticUnavailable` when bounded diagnostics partially fail. | JSON output must expose `tenantScope`, `payloadExcluded`, lifecycle/reference/reason fields, audit/correlation/task identifiers where relevant, and `diagnosticUnavailable` for warnings/dashboard. |
+| Responsive bands | CSS must explicitly cover mobile `320-767`, tablet `768-1023`, desktop `1024+`, and wide `1440+`; mobile keeps identity, server-derived tenant scope, lifecycle, warning count, top reason codes, safe action consequences, and full-value access for long ids. | Structured output is viewport-independent and must not rely on prose-only explanations. | JSON output is terminal-width independent and must not rely on color or table wrapping for meaning. |
+| Accessibility | Badges include visible labels and accessible names; tables/timelines keep captions, headers, list semantics, focus-visible outlines, non-color-only status text, reduced-motion-safe behavior, and no hover-only critical actions. | Resource/tool output includes structured fields plus short safe explanations with stable schemas. | stdout stays machine-readable JSON by default; stderr contains safe diagnostic codes only and no color-only meaning. |
+| Tenant and payload boundary | Cross-tenant and unavailable states render safe denial/unavailable feedback, never hidden rows or sibling denial details. No diagnostic, export, fixture, or markup may include payload categories excluded by `docs/payload-taxonomy.md`. | Resource/tool errors map to safe categories and never expose raw ProblemDetails, exception text, idempotency keys, command/proposal bodies, sibling payloads, paths, prompts, transcripts, file contents, memory payloads, tokens, or client-derived tenant authority. | Exit codes and stderr preserve safe denial/validation/unavailable semantics; stdout never includes idempotency keys, raw problem bodies, command/proposal bodies, sibling payloads, unrestricted paths, or client-derived tenant authority. |
+
+Unsupported/deferred behavior remains explicit: MCP single-project resources that are served through
+the current FrontComposer projection-read path cannot receive a per-resource id. They return safe,
+visible-project metadata only; parameterized single-project reads remain available through CLI commands
+that take `--project-id`.

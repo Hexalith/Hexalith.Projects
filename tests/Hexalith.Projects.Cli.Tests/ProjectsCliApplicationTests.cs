@@ -5,6 +5,8 @@
 
 namespace Hexalith.Projects.Cli.Tests;
 
+using System.Text.Json;
+
 using Hexalith.Projects.Cli;
 using Hexalith.Projects.Client.Generated;
 
@@ -120,4 +122,149 @@ public sealed class ProjectsCliApplicationTests
         stderr.ToString().Trim().ShouldBe(expectedCode);
         stderr.ToString().ShouldNotContain("secret-problem-detail");
     }
+
+    [Fact]
+    public async Task Describe_Collapses_CrossTenant_Denial_Without_Sibling_Metadata()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.GetProjectAsync(
+                "project-hidden",
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .ThrowsAsync(new HexalithProjectsApiException(
+                "cross tenant project-hidden project-visible hidden descriptor",
+                403,
+                "{\"projectId\":\"project-visible\",\"name\":\"Sibling Secret\",\"denial\":\"sibling detail\"}",
+                new Dictionary<string, IEnumerable<string>>(StringComparer.Ordinal),
+                null!));
+        using var stdout = new StringWriter();
+        using var stderr = new StringWriter();
+        var app = new ProjectsCliApplication(client, stdout, stderr);
+
+        int exitCode = await app.RunAsync(
+            ["projects", "describe", "--project-id", "project-hidden"],
+            TestContext.Current.CancellationToken);
+
+        exitCode.ShouldBe(ProjectsCliExitCodes.DenialOrNotFound);
+        stdout.ToString().ShouldBeEmpty();
+        stderr.ToString().Trim().ShouldBe("safe_denial");
+        stderr.ToString().ShouldNotContain("project-visible");
+        stderr.ToString().ShouldNotContain("Sibling Secret");
+        stderr.ToString().ShouldNotContain("hidden descriptor");
+    }
+
+    [Fact]
+    public async Task Warnings_And_Dashboard_Expose_Story511_Parity_Fields_And_Partial_Failure_Count()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.ListProjectsAsync(
+                Lifecycle.All,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(ProjectList("project-1", "project-2"));
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-1",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(DiagnosticWithWarning("project-1"));
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-2",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .ThrowsAsync(new HexalithProjectsApiException(
+                "unavailable",
+                503,
+                "{\"problem\":\"secret-problem-detail\"}",
+                new Dictionary<string, IEnumerable<string>>(StringComparer.Ordinal),
+                null!));
+
+        using var warningsStdout = new StringWriter();
+        using var warningsStderr = new StringWriter();
+        var warningsApp = new ProjectsCliApplication(client, warningsStdout, warningsStderr);
+
+        int warningsExit = await warningsApp.RunAsync(["projects", "warnings"], TestContext.Current.CancellationToken);
+
+        warningsExit.ShouldBe(ProjectsCliExitCodes.Success);
+        warningsStderr.ToString().ShouldBeEmpty();
+        using JsonDocument warnings = JsonDocument.Parse(warningsStdout.ToString());
+        JsonElement warningsRoot = warnings.RootElement;
+        warningsRoot.GetProperty("tenantScope").GetString().ShouldBe("server-derived tenant");
+        warningsRoot.GetProperty("payloadExcluded").GetBoolean().ShouldBeTrue();
+        warningsRoot.GetProperty("diagnosticUnavailable").GetInt32().ShouldBe(1);
+        JsonElement firstWarning = warningsRoot.GetProperty("items").EnumerateArray().Single();
+        firstWarning.GetProperty("referenceKind").GetString().ShouldBe("memory");
+        firstWarning.GetProperty("referenceState").GetString().ShouldBe("stale");
+        firstWarning.GetProperty("reasonCode").GetString().ShouldBe("MemoryMatched");
+        warningsStdout.ToString().ShouldNotContain("secret-problem-detail");
+
+        using var dashboardStdout = new StringWriter();
+        using var dashboardStderr = new StringWriter();
+        var dashboardApp = new ProjectsCliApplication(client, dashboardStdout, dashboardStderr);
+
+        int dashboardExit = await dashboardApp.RunAsync(["projects", "dashboard"], TestContext.Current.CancellationToken);
+
+        dashboardExit.ShouldBe(ProjectsCliExitCodes.Success);
+        dashboardStderr.ToString().ShouldBeEmpty();
+        using JsonDocument dashboard = JsonDocument.Parse(dashboardStdout.ToString());
+        JsonElement dashboardRoot = dashboard.RootElement;
+        dashboardRoot.GetProperty("totalVisibleProjects").GetInt32().ShouldBe(2);
+        dashboardRoot.GetProperty("projectsWithWarnings").GetInt32().ShouldBe(1);
+        dashboardRoot.GetProperty("diagnosticUnavailable").GetInt32().ShouldBe(1);
+        dashboardRoot.GetProperty("payloadExcluded").GetBoolean().ShouldBeTrue();
+        dashboardStdout.ToString().ShouldNotContain("secret-problem-detail");
+    }
+
+    private static ProjectListResponse ProjectList(params string[] projectIds)
+    {
+        var response = new ProjectListResponse();
+        foreach (string projectId in projectIds)
+        {
+            response.Items.Add(new ProjectListItem
+            {
+                ProjectId = projectId,
+                Name = projectId,
+                LifecycleState = ProjectLifecycleState.Active,
+                UpdatedAt = DateTimeOffset.UnixEpoch,
+                Freshness = Freshness(),
+            });
+        }
+
+        return response;
+    }
+
+    private static ProjectOperatorDiagnostic DiagnosticWithWarning(string projectId)
+        => new()
+        {
+            ProjectId = projectId,
+            Name = projectId,
+            LifecycleState = ProjectLifecycleState.Active,
+            Freshness = Freshness(),
+            References =
+            {
+                new ProjectReferenceSummary
+                {
+                    ReferenceKind = ProjectReferenceSummaryReferenceKind.Memory,
+                    ReferenceState = ProjectReferenceSummaryReferenceState.Stale,
+                    ReferenceId = "memory-001",
+                    ReasonCode = "MemoryMatched",
+                    Freshness = Freshness(),
+                },
+            },
+        };
+
+    private static FreshnessMetadata Freshness()
+        => new()
+        {
+            ReadConsistency = ReadConsistencyClass.Eventually_consistent,
+            ObservedAt = DateTimeOffset.UnixEpoch,
+            ProjectionWatermark = "watermark-001",
+            Stale = false,
+            TrustState = ProjectionTrustState.Trusted,
+        };
 }

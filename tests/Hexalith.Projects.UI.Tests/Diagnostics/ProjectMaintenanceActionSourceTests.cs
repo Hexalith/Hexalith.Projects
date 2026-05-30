@@ -363,6 +363,52 @@ public sealed class ProjectMaintenanceActionSourceTests
             .ConfigureAwait(true);
     }
 
+    [Theory]
+    [InlineData(401)]
+    [InlineData(403)]
+    [InlineData(404)]
+    public async Task ExecuteAsync_CollapsesUnauthorizedOrCrossTenantMutationToSafeDenial(int statusCode)
+    {
+        Generated.IClient client = Substitute.For<Generated.IClient>();
+        client.ArchiveProjectAsync(
+                "project-hidden",
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<Generated.ArchiveProjectRequest>(),
+                Arg.Any<CancellationToken>())
+            .Returns<Task<Generated.AcceptedCommand>>(_ => throw new Generated.HexalithProjectsApiException(
+                "cross tenant project-hidden project-visible sibling-secret",
+                statusCode,
+                "{\"projectId\":\"project-visible\",\"name\":\"Sibling Secret\"}",
+                new Dictionary<string, IEnumerable<string>>(),
+                null!));
+
+        ProjectMaintenanceActionSource source = new(client);
+
+        ProjectMaintenanceActionExecutionResult result = await source.ExecuteAsync(
+            new ProjectMaintenanceActionExecutionRequest(
+                "project-hidden",
+                ProjectMaintenanceActions.Archive,
+                null,
+                null,
+                null,
+                true,
+                null,
+                null,
+                null,
+                "project.archived"),
+            null,
+            TestContext.Current.CancellationToken);
+
+        result.Succeeded.ShouldBeFalse();
+        result.FeedbackCode.ShouldBe("safe_denial");
+        result.AuditEventId.ShouldBeNull();
+        string rendered = string.Join(' ', result.FeedbackCode, result.CorrelationId, result.TaskId);
+        rendered.ShouldNotContain("project-visible");
+        rendered.ShouldNotContain("Sibling Secret");
+    }
+
     [Fact]
     public void MaintenanceExecutionDtos_SerializeMetadataOnly()
     {

@@ -37,7 +37,7 @@ public sealed class ProjectOperatorDiagnosticSource(IClient client) : IProjectOp
                 "server-derived tenant",
                 ProjectConsoleModes.ReadOnly);
         }
-        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 404)
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
         {
             return ProjectDiagnosticLoadResult.FromFeedback(
                 ProjectConsoleFeedback.FailClosed("safe_denial", correlationId));

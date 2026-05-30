@@ -57,7 +57,7 @@ public sealed class ProjectResolutionTraceSource(IClient client) : IProjectResol
         {
             return ProjectResolutionTraceLoadResult.FromFeedback(ProjectConsoleFeedback.Error("validation_error"));
         }
-        catch (HexalithProjectsApiException ex) when (ex.StatusCode == 404)
+        catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
         {
             return ProjectResolutionTraceLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("safe_denial"));
         }

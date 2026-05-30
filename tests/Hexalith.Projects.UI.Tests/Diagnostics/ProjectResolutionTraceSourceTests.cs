@@ -102,6 +102,8 @@ public sealed class ProjectResolutionTraceSourceTests
 
     [Theory]
     [InlineData(400, ProjectConsoleFeedback.ErrorCategory, "validation_error")]
+    [InlineData(401, ProjectConsoleFeedback.FailClosedCategory, "safe_denial")]
+    [InlineData(403, ProjectConsoleFeedback.FailClosedCategory, "safe_denial")]
     [InlineData(404, ProjectConsoleFeedback.FailClosedCategory, "safe_denial")]
     [InlineData(503, ProjectConsoleFeedback.WarningCategory, "data_unavailable")]
     [InlineData(500, ProjectConsoleFeedback.ErrorCategory, "resolution_trace_query_failed")]
