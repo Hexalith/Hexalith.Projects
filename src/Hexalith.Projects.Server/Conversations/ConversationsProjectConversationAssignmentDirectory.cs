@@ -138,6 +138,84 @@ public sealed class ConversationsProjectConversationAssignmentDirectory(
             cancellationToken);
     }
 
+    /// <inheritdoc />
+    public async Task<ProjectConversationAssignmentResult> ConfirmResolutionAssignmentAsync(
+        ProjectId targetProjectId,
+        ConversationId conversationId,
+        ProjectId? expectedSourceProjectId,
+        TenantId tenantId,
+        CallerPrincipalId caller,
+        ProjectConversationCommandMetadata metadata,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(targetProjectId);
+        ArgumentNullException.ThrowIfNull(conversationId);
+        ArgumentNullException.ThrowIfNull(tenantId);
+        ArgumentNullException.ThrowIfNull(caller);
+        ArgumentNullException.ThrowIfNull(metadata);
+
+        if (expectedSourceProjectId is not null
+            && string.Equals(expectedSourceProjectId.Value, targetProjectId.Value, StringComparison.Ordinal))
+        {
+            return new(ProjectConversationAssignmentOutcome.ValidationFailed, metadata.CorrelationId);
+        }
+
+        CurrentProjectReadResult current = await ReadCurrentProjectAsync(
+            conversationId,
+            tenantId,
+            caller,
+            metadata.CorrelationId,
+            cancellationToken).ConfigureAwait(false);
+        if (current.Outcome != ProjectConversationAssignmentOutcome.Accepted)
+        {
+            return new(current.Outcome, metadata.CorrelationId);
+        }
+
+        if (current.ProjectId is not null
+            && string.Equals(current.ProjectId.Value, targetProjectId.Value, StringComparison.Ordinal))
+        {
+            return ProjectConversationAssignmentResult.Accepted(metadata.CorrelationId);
+        }
+
+        if (expectedSourceProjectId is null)
+        {
+            if (current.ProjectId is not null)
+            {
+                return new(ProjectConversationAssignmentOutcome.Conflict, metadata.CorrelationId);
+            }
+
+            return await DispatchAsync(
+                targetProjectId,
+                conversationId,
+                tenantId,
+                caller,
+                metadata,
+                new ConversationProjectAssignment(
+                    ConversationProjectAssignmentOperation.Assign,
+                    new ConversationProjectId(targetProjectId.Value)),
+                expectedCurrentProjectId: null,
+                cancellationToken).ConfigureAwait(false);
+        }
+
+        if (current.ProjectId is null
+            || !string.Equals(current.ProjectId.Value, expectedSourceProjectId.Value, StringComparison.Ordinal))
+        {
+            return new(ProjectConversationAssignmentOutcome.Conflict, metadata.CorrelationId);
+        }
+
+        return await DispatchAsync(
+            targetProjectId,
+            conversationId,
+            tenantId,
+            caller,
+            metadata,
+            new ConversationProjectAssignment(
+                ConversationProjectAssignmentOperation.Assign,
+                new ConversationProjectId(targetProjectId.Value)),
+            new ConversationProjectId(expectedSourceProjectId.Value),
+            cancellationToken).ConfigureAwait(false);
+    }
+
     private async Task<ProjectConversationAssignmentResult> DispatchAsync(
         ProjectId projectId,
         ConversationId conversationId,

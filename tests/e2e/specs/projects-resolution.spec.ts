@@ -1,6 +1,6 @@
 import { test, expect } from '../support/merged-fixtures.js';
 import { queryHeaders, mutationHeaders } from '../support/helpers/correlation.js';
-import { resolveProjectFromAttachments } from '../support/helpers/projects-api-client.js';
+import { confirmProjectResolution, resolveProjectFromAttachments } from '../support/helpers/projects-api-client.js';
 
 /**
  * F5 critical journey — resolution → confirm (FR-12/13/14; E1 / R10).
@@ -157,27 +157,72 @@ test.describe('Projects resolution', () => {
     expect(body.candidates.length).toBeGreaterThan(1);
   });
 
-  test.fixme('confirming a candidate persists only the confirmed choice (FR-14)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
-    const { status } = await apiRequest({
-      method: 'POST',
-      path: '/api/v1/resolution/confirm',
-      headers: { ...mutationHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
-      body: { conversationId: 'conv-ambiguous', projectId: seededProject.projectId },
-    });
-    expect(status).toBe(202);
-
-    // Converge on the persisted confirmation (no sleeps).
-    await recurse(
-      () =>
-        apiRequest<{ confirmedProjectId?: string }>({
-          method: 'GET',
-          path: '/api/v1/resolution/state',
-          params: { conversationId: 'conv-ambiguous' },
-          headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
-        }),
-      (res) => res.body.confirmedProjectId === seededProject.projectId,
-      { timeout: 30_000, interval: 1_000, log: 'Waiting for confirmed resolution to persist' },
+  test.fixme('confirming a candidate accepts only explicit MultipleCandidates evidence (FR-14 / AC2,3,4)', async ({
+    apiRequest,
+    authToken,
+    tenantContext,
+    seededProject,
+  }) => {
+    const sourceProjectId = 'project-source-001';
+    const { status, body } = await confirmProjectResolution(
+      apiRequest,
+      tenantContext.tenantId,
+      {
+        projectId: seededProject.projectId,
+        conversationId: 'conv-ambiguous',
+        candidateProjectIds: [seededProject.projectId, sourceProjectId],
+        sourceProjectId,
+      },
+      {
+        authToken,
+        correlationId: 'corr-resolution-confirm',
+        taskId: 'task-resolution-confirm',
+        idempotencyKey: 'idem-resolution-confirm',
+      },
     );
+
+    expect(status).toBe(202);
+    expect(body.correlationId).toBeTruthy();
+    assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
+  });
+
+  test.fixme('confirmation mutation requires Idempotency-Key and rejects non-ambiguous evidence (FR-14 / AC3,7)', async ({
+    apiRequest,
+    authToken,
+    tenantContext,
+    seededProject,
+  }) => {
+    const path = `/api/v1/projects/${seededProject.projectId}/conversations/conv-ambiguous/resolution/confirm`;
+    const body = {
+      requestSchemaVersion: 'v1',
+      operation: 'confirm',
+      projectId: seededProject.projectId,
+      conversationId: 'conv-ambiguous',
+      resolutionResult: 'MultipleCandidates',
+      confirmed: true,
+      candidateProjectIds: [seededProject.projectId, 'project-source-001'],
+    };
+
+    const missingIdempotency = await apiRequest({
+      method: 'POST',
+      path,
+      headers: { ...queryHeaders({ authToken, correlationId: 'corr-confirm-missing-idem' }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
+      body,
+      retryConfig: { maxRetries: 0 },
+    });
+    expect(missingIdempotency.status).toBe(400);
+
+    const notAmbiguous = await apiRequest({
+      method: 'POST',
+      path,
+      headers: {
+        ...mutationHeaders({ authToken, correlationId: 'corr-confirm-single', idempotencyKey: 'idem-confirm-single' }),
+        'X-Hexalith-Tenant-Id': tenantContext.tenantId,
+      },
+      body: { ...body, resolutionResult: 'SingleCandidate' },
+      retryConfig: { maxRetries: 0 },
+    });
+    expect(notAmbiguous.status).toBe(400);
   });
 
   test.fixme('archived projects are excluded from resolution unless explicitly requested (E1)', async ({ apiRequest, authToken, tenantContext }) => {

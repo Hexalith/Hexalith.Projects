@@ -227,6 +227,45 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void ProjectResolutionConfirmed_SerializesMetadataOnly()
+    {
+        ProjectResolutionConfirmed confirmed = new(
+            "acme",
+            "project-target-001",
+            "conversation-001",
+            "project-source-001",
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-confirm",
+            "sha256:confirm",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(confirmed));
+        string serialized = System.Text.Json.JsonSerializer.Serialize(confirmed);
+        serialized.ShouldNotContain("candidate", Case.Insensitive);
+        serialized.ShouldNotContain("score", Case.Insensitive);
+        serialized.ShouldNotContain("rank", Case.Insensitive);
+    }
+
+    [Fact]
+    public void ProjectResolutionConfirmationRejected_SerializesMetadataOnly()
+    {
+        ProjectResolutionConfirmationRejected rejection = new(
+            new ProjectId("project-target-001"),
+            "acme",
+            ReferenceState.Conflict,
+            "sourceProjectId",
+            "corr-001");
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(rejection));
+        string serialized = System.Text.Json.JsonSerializer.Serialize(rejection);
+        serialized.ShouldNotContain("candidate", Case.Insensitive);
+        serialized.ShouldNotContain("score", Case.Insensitive);
+        serialized.ShouldNotContain("rank", Case.Insensitive);
+    }
+
+    [Fact]
     public void MemoryReferenceLinkRejection_SerializesMetadataOnly()
     {
         ProjectReferenceLinkRejected rejection = new(

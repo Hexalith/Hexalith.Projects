@@ -18,8 +18,7 @@ using Hexalith.Projects.Contracts.Ui;
 /// echoed sensitive value — only safe identifiers, the canonical <see cref="ReferenceState"/> reason
 /// code from the shared vocabulary, an optional safe field NAME (never its value), and a correlation
 /// ID. Boundary is enforced against <c>docs/payload-taxonomy.md</c> by the FS-2 <c>NoPayloadLeakage</c>
-/// harness (Story 1.4). The matching success event and command land with the confirm-resolution
-/// command story (Epic 4 / 1.x resolution stories).
+/// harness (Story 1.4). The matching success command and event persist only confirmed-choice metadata.
 /// </remarks>
 /// <param name="ProjectId">The project that the rejected confirmation targeted.</param>
 /// <param name="TenantId">The managed tenant that owns the project.</param>

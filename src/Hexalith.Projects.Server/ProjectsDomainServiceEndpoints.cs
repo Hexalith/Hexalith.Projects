@@ -272,6 +272,28 @@ public static partial class ProjectsDomainServiceEndpoints
                 cancellationToken).ConfigureAwait(false))
             .WithName("MoveProjectConversation");
 
+        endpoints.MapPost("/api/v1/projects/{projectId}/conversations/{conversationId}/resolution/confirm", static async (
+            string projectId,
+            string conversationId,
+            HttpContext httpContext,
+            IProjectCommandSubmitter submitter,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectConversationAssignmentDirectory assignmentDirectory,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await ConfirmProjectResolutionAsync(
+                projectId,
+                conversationId,
+                httpContext,
+                submitter,
+                tenantContext,
+                authorizationGate,
+                assignmentDirectory,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("ConfirmProjectResolution");
+
         endpoints.MapDelete("/api/v1/projects/{projectId}/conversations/{conversationId}", static async (
             string projectId,
             string conversationId,

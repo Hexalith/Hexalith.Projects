@@ -722,6 +722,11 @@ public sealed class GetConversationStartSetupTests
 
         public Task<ProjectCommandSubmissionResult> SubmitUnlinkMemoryAsync(UnlinkMemory command, CancellationToken cancellationToken = default)
             => Task.FromResult(ProjectCommandSubmissionResult.Accepted("corr", false));
+
+        public Task<ProjectCommandSubmissionResult> SubmitConfirmProjectResolutionAsync(
+            ConfirmProjectResolution command,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(ProjectCommandSubmissionResult.Accepted("corr", false));
     }
 
     private sealed class StubProjectDetailReadModel(ProjectDetailItem detail) : IProjectDetailReadModel

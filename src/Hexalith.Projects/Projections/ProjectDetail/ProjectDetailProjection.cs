@@ -239,6 +239,18 @@ public sealed record ProjectDetailProjection
 
                     break;
 
+                case ProjectResolutionConfirmed confirmed:
+                    if (projects.TryGetValue(key, out ProjectDetailItem? confirmedDetail))
+                    {
+                        projects[key] = confirmedDetail with
+                        {
+                            UpdatedAt = confirmed.OccurredAt,
+                            Sequence = envelope.Sequence,
+                        };
+                    }
+
+                    break;
+
                 default:
                     throw new InvalidOperationException(
                         $"ProjectDetailProjection received an unsupported event type "

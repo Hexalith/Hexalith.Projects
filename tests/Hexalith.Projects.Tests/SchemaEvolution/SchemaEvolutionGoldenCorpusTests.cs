@@ -9,7 +9,9 @@ using System;
 using System.IO;
 using System.Text.Json;
 
+using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 
@@ -155,6 +157,103 @@ public sealed class SchemaEvolutionGoldenCorpusTests
 
         ProjectCreated deserialized = JsonSerializer.Deserialize<ProjectCreated>(withFutureField, Options).ShouldNotBeNull();
         deserialized.Name.ShouldBe("Tracer Bullet");
+    }
+
+    // === Story 4.4 (AC 4) additive/serialization-tolerant coverage for the confirm-resolution
+    // command and event. Frozen inline samples (no golden file needed) prove backward-compatible
+    // deserialization and round-trip equality for the net-new types. ===
+
+    [Fact]
+    public void ProjectResolutionConfirmed_DeserializesFromFrozenBytesAndRoundTrips()
+    {
+        const string frozen = """
+            {"tenantId":"acme","projectId":"project-target-001","conversationId":"conversation-001","sourceProjectId":"project-source-001","actorPrincipalId":"actor-001","correlationId":"corr-001","taskId":"task-001","idempotencyKey":"idem-confirm","idempotencyFingerprint":"sha256:confirm","occurredAt":"1970-01-01T00:00:00+00:00"}
+            """;
+
+        ProjectResolutionConfirmed deserialized = JsonSerializer.Deserialize<ProjectResolutionConfirmed>(frozen, Options).ShouldNotBeNull();
+        deserialized.TenantId.ShouldBe("acme");
+        deserialized.ProjectId.ShouldBe("project-target-001");
+        deserialized.ConversationId.ShouldBe("conversation-001");
+        deserialized.SourceProjectId.ShouldBe("project-source-001");
+        deserialized.IdempotencyFingerprint.ShouldBe("sha256:confirm");
+        deserialized.OccurredAt.ShouldBe(DateTimeOffset.UnixEpoch);
+
+        string reserialized = JsonSerializer.Serialize(deserialized, Options);
+        JsonSerializer.Deserialize<ProjectResolutionConfirmed>(reserialized, Options).ShouldBe(deserialized);
+    }
+
+    [Fact]
+    public void ProjectResolutionConfirmed_OmittedOptionalSourceProjectId_DeserializesAndRoundTrips()
+    {
+        const string frozen = """
+            {"tenantId":"acme","projectId":"project-target-001","conversationId":"conversation-001","sourceProjectId":null,"actorPrincipalId":"actor-001","correlationId":"corr-001","taskId":"task-001","idempotencyKey":"idem-confirm","idempotencyFingerprint":"sha256:confirm","occurredAt":"1970-01-01T00:00:00+00:00"}
+            """;
+
+        ProjectResolutionConfirmed deserialized = JsonSerializer.Deserialize<ProjectResolutionConfirmed>(frozen, Options).ShouldNotBeNull();
+        deserialized.SourceProjectId.ShouldBeNull();
+
+        string reserialized = JsonSerializer.Serialize(deserialized, Options);
+        JsonSerializer.Deserialize<ProjectResolutionConfirmed>(reserialized, Options).ShouldBe(deserialized);
+    }
+
+    [Fact]
+    public void ProjectResolutionConfirmed_ToleratesAdditiveUnknownField()
+    {
+        const string frozen = """
+            {"tenantId":"acme","projectId":"project-target-001","conversationId":"conversation-001","sourceProjectId":"project-source-001","actorPrincipalId":"actor-001","correlationId":"corr-001","taskId":"task-001","idempotencyKey":"idem-confirm","idempotencyFingerprint":"sha256:confirm","occurredAt":"1970-01-01T00:00:00+00:00","futureField":"ignored"}
+            """;
+
+        ProjectResolutionConfirmed deserialized = JsonSerializer.Deserialize<ProjectResolutionConfirmed>(frozen, Options).ShouldNotBeNull();
+        deserialized.TenantId.ShouldBe("acme");
+    }
+
+    [Fact]
+    public void ProjectResolutionConfirmationRejected_DeserializesFromFrozenBytesAndRoundTrips()
+    {
+        const string frozen = """
+            {"projectId":"project-target-001","tenantId":"acme","reason":"Conflict","rejectedField":"sourceProjectId","correlationId":"corr-001"}
+            """;
+
+        ProjectResolutionConfirmationRejected deserialized = JsonSerializer.Deserialize<ProjectResolutionConfirmationRejected>(frozen, Options).ShouldNotBeNull();
+        deserialized.ProjectId.Value.ShouldBe("project-target-001");
+        deserialized.TenantId.ShouldBe("acme");
+        deserialized.Reason.ShouldBe(ReferenceState.Conflict);
+        deserialized.RejectedField.ShouldBe("sourceProjectId");
+
+        string reserialized = JsonSerializer.Serialize(deserialized, Options);
+        JsonSerializer.Deserialize<ProjectResolutionConfirmationRejected>(reserialized, Options).ShouldBe(deserialized);
+    }
+
+    [Fact]
+    public void ConfirmProjectResolutionCommand_DeserializesFromFrozenBytesAndRoundTrips()
+    {
+        const string frozen = """
+            {"tenantId":"acme","projectId":"project-target-001","conversationId":"conversation-001","sourceProjectId":"project-source-001","actorPrincipalId":"actor-001","correlationId":"corr-001","taskId":"task-001","idempotencyKey":"idem-confirm"}
+            """;
+
+        ConfirmProjectResolution deserialized = JsonSerializer.Deserialize<ConfirmProjectResolution>(frozen, Options).ShouldNotBeNull();
+        deserialized.TenantId.ShouldBe("acme");
+        deserialized.ProjectId.ShouldBe(new ProjectId("project-target-001"));
+        deserialized.ConversationId.ShouldBe("conversation-001");
+        deserialized.SourceProjectId.ShouldBe(new ProjectId("project-source-001"));
+        deserialized.IdempotencyKey.ShouldBe("idem-confirm");
+
+        string reserialized = JsonSerializer.Serialize(deserialized, Options);
+        JsonSerializer.Deserialize<ConfirmProjectResolution>(reserialized, Options).ShouldBe(deserialized);
+    }
+
+    [Fact]
+    public void ConfirmProjectResolutionCommand_OmittedOptionalSourceProjectId_DeserializesAndRoundTrips()
+    {
+        const string frozen = """
+            {"tenantId":"acme","projectId":"project-target-001","conversationId":"conversation-001","sourceProjectId":null,"actorPrincipalId":"actor-001","correlationId":"corr-001","taskId":"task-001","idempotencyKey":"idem-confirm"}
+            """;
+
+        ConfirmProjectResolution deserialized = JsonSerializer.Deserialize<ConfirmProjectResolution>(frozen, Options).ShouldNotBeNull();
+        deserialized.SourceProjectId.ShouldBeNull();
+
+        string reserialized = JsonSerializer.Serialize(deserialized, Options);
+        JsonSerializer.Deserialize<ConfirmProjectResolution>(reserialized, Options).ShouldBe(deserialized);
     }
 
     private static string ReadGolden(string fileName)

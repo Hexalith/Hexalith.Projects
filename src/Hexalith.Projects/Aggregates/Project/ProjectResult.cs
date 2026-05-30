@@ -55,7 +55,8 @@ public sealed record ProjectResult(
         or ProjectResultCode.FileReferenceLinked
         or ProjectResultCode.FileReferenceUnlinked
         or ProjectResultCode.MemoryLinked
-        or ProjectResultCode.MemoryUnlinked;
+        or ProjectResultCode.MemoryUnlinked
+        or ProjectResultCode.ProjectResolutionConfirmed;
 
     /// <summary>
     /// Gets a value indicating whether the result is a logical idempotent replay (no second event;
@@ -109,6 +110,7 @@ public sealed record ProjectResult(
             UnlinkFileReference unlinkFileReference => ("file", SafeReferenceIdentifier(unlinkFileReference.FileReferenceId)),
             LinkMemory linkMemory => ("memory", SafeReferenceIdentifier(linkMemory.MemoryReferenceId)),
             UnlinkMemory unlinkMemory => ("memory", SafeReferenceIdentifier(unlinkMemory.MemoryReferenceId)),
+            ConfirmProjectResolution confirmProjectResolution => ("conversation", SafeReferenceIdentifier(confirmProjectResolution.ConversationId)),
             _ => (null, null),
         };
 
@@ -248,6 +250,12 @@ public sealed record ProjectResult(
                 TenantId ?? string.Empty,
                 ReferenceKind ?? "memory",
                 ReferenceId ?? "unknown",
+                ToRejectionReason(),
+                RejectedField,
+                CorrelationId),
+            nameof(ConfirmProjectResolution) => new ProjectResolutionConfirmationRejected(
+                projectId ?? new Contracts.Identifiers.ProjectId("unknown"),
+                TenantId ?? string.Empty,
                 ToRejectionReason(),
                 RejectedField,
                 CorrelationId),

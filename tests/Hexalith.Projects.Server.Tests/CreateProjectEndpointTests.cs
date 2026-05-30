@@ -2340,6 +2340,8 @@ public sealed class CreateProjectEndpointTests
 
         public List<UnlinkMemory> MemoryUnlinked { get; } = [];
 
+        public List<ConfirmProjectResolution> ResolutionConfirmed { get; } = [];
+
         public Task<ProjectCommandSubmissionResult> SubmitLinkMemoryAsync(LinkMemory command, CancellationToken cancellationToken = default)
         {
             MemoryLinked.Add(command);
@@ -2349,6 +2351,14 @@ public sealed class CreateProjectEndpointTests
         public Task<ProjectCommandSubmissionResult> SubmitUnlinkMemoryAsync(UnlinkMemory command, CancellationToken cancellationToken = default)
         {
             MemoryUnlinked.Add(command);
+            return Task.FromResult(result);
+        }
+
+        public Task<ProjectCommandSubmissionResult> SubmitConfirmProjectResolutionAsync(
+            ConfirmProjectResolution command,
+            CancellationToken cancellationToken = default)
+        {
+            ResolutionConfirmed.Add(command);
             return Task.FromResult(result);
         }
     }

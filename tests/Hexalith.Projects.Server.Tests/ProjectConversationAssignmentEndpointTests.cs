@@ -11,6 +11,7 @@ using System.Text.Json;
 
 using Hexalith.Conversations.Contracts.Identifiers;
 using Hexalith.Projects.Authorization;
+using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Ui;
@@ -313,6 +314,440 @@ public sealed class ProjectConversationAssignmentEndpointTests
     }
 
     [Fact]
+    public async Task ConfirmProjectResolution_Authorized_AssignsThenSubmitsCommand()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel detail = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            detail.Project("tenant-a", Created(TargetProjectId));
+            detail.Project("tenant-a", Created(SourceProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+
+            HttpResponseMessage response = await client
+                .SendAsync(ConfirmRequest(), TestContext.Current.CancellationToken)
+                .ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            AssignmentCall assignment = directory.Calls.Single();
+            assignment.Operation.ShouldBe("confirm");
+            assignment.SourceProjectId.ShouldBe(new ProjectId(SourceProjectId));
+            ConfirmProjectResolution command = submitter.ResolutionConfirmed.Single();
+            command.ProjectId.ShouldBe(new ProjectId(TargetProjectId));
+            command.ConversationId.ShouldBe(ConversationIdValue);
+            command.SourceProjectId.ShouldBe(new ProjectId(SourceProjectId));
+            command.ActorPrincipalId.ShouldBe("principal-a");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_AuthorizedWithoutSource_AssignsThenSubmitsCommand()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", Created(TargetProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = ConfirmRequest(ConfirmBody(
+                candidateProjectIds: [TargetProjectId, "project-other-001"],
+                sourceProjectId: null));
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            AssignmentCall assignment = directory.Calls.Single();
+            assignment.Operation.ShouldBe("confirm");
+            assignment.SourceProjectId.ShouldBeNull();
+            submitter.ResolutionConfirmed.Single().SourceProjectId.ShouldBeNull();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_MissingIdempotencyKey_Returns400BeforeAssignment()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", Created(TargetProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = ConfirmRequest();
+            request.Headers.Remove("Idempotency-Key");
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            directory.Calls.ShouldBeEmpty();
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_RouteBodyMismatch_Returns400BeforeAssignment()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", Created(TargetProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = ConfirmRequest(ConfirmBody(projectId: "project-other-001"));
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            directory.Calls.ShouldBeEmpty();
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_UnknownBodyMember_Returns400BeforeAssignment()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", Created(TargetProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            Dictionary<string, object?> body = ConfirmBody();
+            body["actorPrincipalId"] = "client-controlled";
+            using HttpRequestMessage request = ConfirmRequest(body);
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            directory.Calls.ShouldBeEmpty();
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_MalformedJson_Returns400BeforeAssignment()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", Created(TargetProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{TargetProjectId}/conversations/{ConversationIdValue}/resolution/confirm")
+            {
+                Content = new StringContent("{\"requestSchemaVersion\":\"v1\",", System.Text.Encoding.UTF8, "application/json"),
+            };
+            AddMutationHeaders(request, "idem-confirm");
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            directory.Calls.ShouldBeEmpty();
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_DuplicateCandidates_Returns400BeforeAssignment()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", Created(TargetProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = ConfirmRequest(new
+            {
+                requestSchemaVersion = "v1",
+                operation = "confirm",
+                projectId = TargetProjectId,
+                conversationId = ConversationIdValue,
+                resolutionResult = "MultipleCandidates",
+                confirmed = true,
+                candidateProjectIds = new[] { TargetProjectId, TargetProjectId },
+            });
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            directory.Calls.ShouldBeEmpty();
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Theory]
+    [InlineData("SingleCandidate", true, new[] { TargetProjectId, SourceProjectId })]
+    [InlineData("MultipleCandidates", false, new[] { TargetProjectId, SourceProjectId })]
+    [InlineData("MultipleCandidates", true, new[] { SourceProjectId, "project-other-001" })]
+    [InlineData("MultipleCandidates", true, new[] { TargetProjectId })]
+    public async Task ConfirmProjectResolution_InvalidConfirmationEvidence_Returns400BeforeAssignment(
+        string resolutionResult,
+        bool confirmed,
+        string[] candidateProjectIds)
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", Created(TargetProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = ConfirmRequest(ConfirmBody(
+                resolutionResult: resolutionResult,
+                confirmed: confirmed,
+                candidateProjectIds: candidateProjectIds));
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            directory.Calls.ShouldBeEmpty();
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_SourceEqualsTarget_Returns400BeforeAssignment()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", Created(TargetProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = ConfirmRequest(ConfirmBody(sourceProjectId: TargetProjectId));
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            directory.Calls.ShouldBeEmpty();
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_SourceProjectHidden_Returns404BeforeAssignment()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", Created(TargetProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+
+            HttpResponseMessage response = await client.SendAsync(ConfirmRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            directory.Calls.ShouldBeEmpty();
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_ArchivedTarget_Returns404BeforeAssignment()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel detail = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            detail.Project("tenant-a", Archived(TargetProjectId));
+            detail.Project("tenant-a", Created(SourceProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+
+            HttpResponseMessage response = await client.SendAsync(ConfirmRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            directory.Calls.ShouldBeEmpty();
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_ArchivedSource_Returns404BeforeAssignment()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel detail = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            detail.Project("tenant-a", Created(TargetProjectId));
+            detail.Project("tenant-a", Archived(SourceProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+
+            HttpResponseMessage response = await client.SendAsync(ConfirmRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            directory.Calls.ShouldBeEmpty();
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Theory]
+    [InlineData(ProjectConversationAssignmentOutcome.Conflict, HttpStatusCode.Conflict)]
+    [InlineData(ProjectConversationAssignmentOutcome.Unavailable, HttpStatusCode.ServiceUnavailable)]
+    [InlineData(ProjectConversationAssignmentOutcome.Denied, HttpStatusCode.NotFound)]
+    [InlineData(ProjectConversationAssignmentOutcome.ValidationFailed, HttpStatusCode.BadRequest)]
+    public async Task ConfirmProjectResolution_AssignmentFailure_DoesNotSubmitProjectsCommand(
+        ProjectConversationAssignmentOutcome outcome,
+        HttpStatusCode expectedStatusCode)
+    {
+        CapturingAssignmentDirectory directory = new(new ProjectConversationAssignmentResult(outcome, "assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel detail = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            detail.Project("tenant-a", Created(TargetProjectId));
+            detail.Project("tenant-a", Created(SourceProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+
+            HttpResponseMessage response = await client.SendAsync(ConfirmRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(expectedStatusCode);
+            directory.Calls.Single().Operation.ShouldBe("confirm");
+            submitter.ResolutionConfirmed.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Theory]
+    [InlineData(ProjectCommandSubmissionOutcome.IdempotentReplay, HttpStatusCode.Accepted)]
+    [InlineData(ProjectCommandSubmissionOutcome.IdempotencyConflict, HttpStatusCode.Conflict)]
+    [InlineData(ProjectCommandSubmissionOutcome.Unavailable, HttpStatusCode.ServiceUnavailable)]
+    [InlineData(ProjectCommandSubmissionOutcome.ValidationFailed, HttpStatusCode.BadRequest)]
+    [InlineData(ProjectCommandSubmissionOutcome.Denied, HttpStatusCode.NotFound)]
+    public async Task ConfirmProjectResolution_CommandSubmissionOutcome_MapsAfterAssignmentAccepted(
+        ProjectCommandSubmissionOutcome outcome,
+        HttpStatusCode expectedStatusCode)
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        CapturingProjectCommandSubmitter submitter = new(new ProjectCommandSubmissionResult(outcome, "projects-corr"));
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel detail = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            detail.Project("tenant-a", Created(TargetProjectId));
+            detail.Project("tenant-a", Created(SourceProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+
+            HttpResponseMessage response = await client.SendAsync(ConfirmRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(expectedStatusCode);
+            directory.Calls.Single().Operation.ShouldBe("confirm");
+            submitter.ResolutionConfirmed.Single().IdempotencyKey.ShouldBe("idem-confirm");
+            if (outcome == ProjectCommandSubmissionOutcome.IdempotentReplay)
+            {
+                using JsonDocument document = JsonDocument.Parse(
+                    await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
+                document.RootElement.GetProperty("idempotentReplay").GetBoolean().ShouldBeTrue();
+            }
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task ConfirmProjectResolution_SameIdempotencyKeyDifferentBody_Returns409Conflict()
+    {
+        CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        IdempotencyTrackingProjectCommandSubmitter submitter = new();
+        WebApplication app = await StartAppAsync(directory, submitter).ConfigureAwait(true);
+        try
+        {
+            InMemoryProjectDetailReadModel detail = app.Services.GetRequiredService<InMemoryProjectDetailReadModel>();
+            detail.Project("tenant-a", Created(TargetProjectId));
+            detail.Project("tenant-a", Created(SourceProjectId));
+            detail.Project("tenant-a", Created("project-other-001"));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+
+            // First request with idempotency key "idem-confirm" and source = SourceProjectId.
+            HttpResponseMessage first = await client
+                .SendAsync(ConfirmRequest(), TestContext.Current.CancellationToken)
+                .ConfigureAwait(true);
+            first.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+
+            // Second request reuses the same idempotency key but a different body (no source project).
+            using HttpRequestMessage secondRequest = ConfirmRequest(ConfirmBody(
+                candidateProjectIds: [TargetProjectId, "project-other-001"],
+                sourceProjectId: null));
+            HttpResponseMessage second = await client
+                .SendAsync(secondRequest, TestContext.Current.CancellationToken)
+                .ConfigureAwait(true);
+
+            second.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+            submitter.ResolutionConfirmed.Count.ShouldBe(2);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
     public async Task UnlinkConversation_RouteBodyMismatch_Returns400BeforeWriteAcl()
     {
         CapturingAssignmentDirectory directory = new(ProjectConversationAssignmentResult.Accepted("upstream-corr"));
@@ -417,6 +852,37 @@ public sealed class ProjectConversationAssignmentEndpointTests
         return request;
     }
 
+    private static HttpRequestMessage ConfirmRequest(object? body = null)
+    {
+        HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{TargetProjectId}/conversations/{ConversationIdValue}/resolution/confirm")
+        {
+            Content = JsonContent.Create(body ?? ConfirmBody()),
+        };
+        AddMutationHeaders(request, "idem-confirm");
+        return request;
+    }
+
+    private static Dictionary<string, object?> ConfirmBody(
+        string requestSchemaVersion = "v1",
+        string operation = "confirm",
+        string projectId = TargetProjectId,
+        string conversationId = ConversationIdValue,
+        string resolutionResult = "MultipleCandidates",
+        bool confirmed = true,
+        string[]? candidateProjectIds = null,
+        string? sourceProjectId = SourceProjectId)
+        => new(StringComparer.Ordinal)
+        {
+            ["requestSchemaVersion"] = requestSchemaVersion,
+            ["operation"] = operation,
+            ["projectId"] = projectId,
+            ["conversationId"] = conversationId,
+            ["resolutionResult"] = resolutionResult,
+            ["confirmed"] = confirmed,
+            ["candidateProjectIds"] = candidateProjectIds ?? [TargetProjectId, SourceProjectId],
+            ["sourceProjectId"] = sourceProjectId,
+        };
+
     private static void AddMutationHeaders(HttpRequestMessage request, string idempotencyKey)
     {
         request.Headers.Add("Idempotency-Key", idempotencyKey);
@@ -438,7 +904,12 @@ public sealed class ProjectConversationAssignmentEndpointTests
         "sha256:project",
         DateTimeOffset.UnixEpoch);
 
-    private static async Task<WebApplication> StartAppAsync(CapturingAssignmentDirectory directory)
+    private static ProjectCreated Archived(string projectId)
+        => Created(projectId) with { Lifecycle = ProjectLifecycle.Archived };
+
+    private static async Task<WebApplication> StartAppAsync(
+        CapturingAssignmentDirectory directory,
+        IProjectCommandSubmitter? submitter = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
         {
@@ -454,6 +925,11 @@ public sealed class ProjectConversationAssignmentEndpointTests
         builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContextAccessor());
         builder.Services.RemoveAll<IProjectConversationAssignmentDirectory>();
         builder.Services.AddSingleton<IProjectConversationAssignmentDirectory>(directory);
+        if (submitter is not null)
+        {
+            builder.Services.RemoveAll<IProjectCommandSubmitter>();
+            builder.Services.AddSingleton<IProjectCommandSubmitter>(submitter);
+        }
 
         WebApplication app = builder.Build();
         await SeedTenantAccessAsync(app.Services).ConfigureAwait(true);
@@ -496,11 +972,12 @@ public sealed class ProjectConversationAssignmentEndpointTests
             => EventStoreClaimTransformEvidence.Allowed(
                 "tenant-a",
                 "principal-a",
-                [
-                    ProjectAuthorizationGate.LinkConversationAction,
-                    ProjectAuthorizationGate.MoveConversationAction,
-                    ProjectAuthorizationGate.UnlinkConversationAction,
-                ]);
+                    [
+                        ProjectAuthorizationGate.LinkConversationAction,
+                        ProjectAuthorizationGate.MoveConversationAction,
+                        ProjectAuthorizationGate.UnlinkConversationAction,
+                        ProjectAuthorizationGate.ConfirmProjectResolutionAction,
+                    ]);
     }
 
     private sealed class CapturingAssignmentDirectory(ProjectConversationAssignmentResult result) : IProjectConversationAssignmentDirectory
@@ -544,6 +1021,19 @@ public sealed class ProjectConversationAssignmentEndpointTests
             Calls.Add(new("unlink", projectId, conversationId, tenantId, caller, metadata, SourceProjectId: null));
             return Task.FromResult(result);
         }
+
+        public Task<ProjectConversationAssignmentResult> ConfirmResolutionAssignmentAsync(
+            ProjectId targetProjectId,
+            ConversationId conversationId,
+            ProjectId? expectedSourceProjectId,
+            TenantId tenantId,
+            CallerPrincipalId caller,
+            ProjectConversationCommandMetadata metadata,
+            CancellationToken cancellationToken = default)
+        {
+            Calls.Add(new("confirm", targetProjectId, conversationId, tenantId, caller, metadata, expectedSourceProjectId));
+            return Task.FromResult(result);
+        }
     }
 
     private sealed record AssignmentCall(
@@ -554,4 +1044,93 @@ public sealed class ProjectConversationAssignmentEndpointTests
         CallerPrincipalId Caller,
         ProjectConversationCommandMetadata Metadata,
         ProjectId? SourceProjectId);
+
+    private sealed class CapturingProjectCommandSubmitter(ProjectCommandSubmissionResult result) : IProjectCommandSubmitter
+    {
+        public List<ConfirmProjectResolution> ResolutionConfirmed { get; } = [];
+
+        public Task<ProjectCommandSubmissionResult> SubmitCreateProjectAsync(CreateProject command, CancellationToken cancellationToken = default)
+            => Task.FromResult(result);
+
+        public Task<ProjectCommandSubmissionResult> SubmitUpdateProjectSetupAsync(UpdateProjectSetup command, CancellationToken cancellationToken = default)
+            => Task.FromResult(result);
+
+        public Task<ProjectCommandSubmissionResult> SubmitArchiveProjectAsync(ArchiveProject command, CancellationToken cancellationToken = default)
+            => Task.FromResult(result);
+
+        public Task<ProjectCommandSubmissionResult> SubmitSetProjectFolderAsync(SetProjectFolder command, CancellationToken cancellationToken = default)
+            => Task.FromResult(result);
+
+        public Task<ProjectCommandSubmissionResult> SubmitLinkFileReferenceAsync(LinkFileReference command, CancellationToken cancellationToken = default)
+            => Task.FromResult(result);
+
+        public Task<ProjectCommandSubmissionResult> SubmitUnlinkFileReferenceAsync(UnlinkFileReference command, CancellationToken cancellationToken = default)
+            => Task.FromResult(result);
+
+        public Task<ProjectCommandSubmissionResult> SubmitLinkMemoryAsync(LinkMemory command, CancellationToken cancellationToken = default)
+            => Task.FromResult(result);
+
+        public Task<ProjectCommandSubmissionResult> SubmitUnlinkMemoryAsync(UnlinkMemory command, CancellationToken cancellationToken = default)
+            => Task.FromResult(result);
+
+        public Task<ProjectCommandSubmissionResult> SubmitConfirmProjectResolutionAsync(
+            ConfirmProjectResolution command,
+            CancellationToken cancellationToken = default)
+        {
+            ResolutionConfirmed.Add(command);
+            return Task.FromResult(result);
+        }
+    }
+
+    // Stateful submitter that records the first confirm-resolution fingerprint per idempotency key and
+    // returns IdempotencyConflict when the same key is reused with a divergent body. This exercises the
+    // real same-key/different-body conflict at the HTTP mutation surface (negative-test checklist row 8).
+    private sealed class IdempotencyTrackingProjectCommandSubmitter : IProjectCommandSubmitter
+    {
+        private readonly Dictionary<string, string> _seen = new(StringComparer.Ordinal);
+
+        public List<ConfirmProjectResolution> ResolutionConfirmed { get; } = [];
+
+        public Task<ProjectCommandSubmissionResult> SubmitCreateProjectAsync(CreateProject command, CancellationToken cancellationToken = default)
+            => Task.FromResult(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+
+        public Task<ProjectCommandSubmissionResult> SubmitUpdateProjectSetupAsync(UpdateProjectSetup command, CancellationToken cancellationToken = default)
+            => Task.FromResult(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+
+        public Task<ProjectCommandSubmissionResult> SubmitArchiveProjectAsync(ArchiveProject command, CancellationToken cancellationToken = default)
+            => Task.FromResult(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+
+        public Task<ProjectCommandSubmissionResult> SubmitSetProjectFolderAsync(SetProjectFolder command, CancellationToken cancellationToken = default)
+            => Task.FromResult(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+
+        public Task<ProjectCommandSubmissionResult> SubmitLinkFileReferenceAsync(LinkFileReference command, CancellationToken cancellationToken = default)
+            => Task.FromResult(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+
+        public Task<ProjectCommandSubmissionResult> SubmitUnlinkFileReferenceAsync(UnlinkFileReference command, CancellationToken cancellationToken = default)
+            => Task.FromResult(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+
+        public Task<ProjectCommandSubmissionResult> SubmitLinkMemoryAsync(LinkMemory command, CancellationToken cancellationToken = default)
+            => Task.FromResult(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+
+        public Task<ProjectCommandSubmissionResult> SubmitUnlinkMemoryAsync(UnlinkMemory command, CancellationToken cancellationToken = default)
+            => Task.FromResult(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+
+        public Task<ProjectCommandSubmissionResult> SubmitConfirmProjectResolutionAsync(
+            ConfirmProjectResolution command,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(command);
+            ResolutionConfirmed.Add(command);
+            string fingerprint = $"{command.ConversationId}|{command.SourceProjectId?.Value ?? "<none>"}";
+            if (_seen.TryGetValue(command.IdempotencyKey, out string? prior))
+            {
+                return Task.FromResult(string.Equals(prior, fingerprint, StringComparison.Ordinal)
+                    ? ProjectCommandSubmissionResult.Accepted("projects-corr", true)
+                    : new ProjectCommandSubmissionResult(ProjectCommandSubmissionOutcome.IdempotencyConflict, "projects-corr"));
+            }
+
+            _seen[command.IdempotencyKey] = fingerprint;
+            return Task.FromResult(ProjectCommandSubmissionResult.Accepted("projects-corr", false));
+        }
+    }
 }

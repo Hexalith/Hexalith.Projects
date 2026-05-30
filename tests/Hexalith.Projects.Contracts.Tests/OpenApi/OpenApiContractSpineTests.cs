@@ -405,6 +405,8 @@ public sealed class OpenApiContractSpineTests
                 ["conversation_id", "expected_current_project_id", "operation", "project_id", "request_schema_version"]),
             (MoveProjectConversationMutation(), "MoveProjectConversation", "MoveProjectConversationRequest",
                 ["confirmed", "conversation_id", "operation", "project_id", "request_schema_version", "source_project_id"]),
+            (ConfirmProjectResolutionMutation(), "ConfirmProjectResolution", "ConfirmProjectResolutionRequest",
+                ["confirmed", "conversation_id", "operation", "project_id", "request_schema_version", "resolution_result", "source_project_id"]),
             (UnlinkProjectConversationMutation(), "UnlinkProjectConversation", "UnlinkProjectConversationRequest",
                 ["conversation_id", "operation", "project_id", "request_schema_version", "unlink_intent"]),
         ];
@@ -458,6 +460,7 @@ public sealed class OpenApiContractSpineTests
         {
             "LinkProjectConversationRequest",
             "MoveProjectConversationRequest",
+            "ConfirmProjectResolutionRequest",
             "UnlinkProjectConversationRequest",
         })
         {
@@ -484,6 +487,10 @@ public sealed class OpenApiContractSpineTests
             .ShouldBe(["link"]);
         RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "MoveProjectConversationRequest"), "properties"), "operation"))
             .ShouldBe(["move"]);
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "ConfirmProjectResolutionRequest"), "properties"), "operation"))
+            .ShouldBe(["confirm"]);
+        RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "ConfirmProjectResolutionRequest"), "properties"), "resolutionResult"))
+            .ShouldBe(["MultipleCandidates"]);
         RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "UnlinkProjectConversationRequest"), "properties"), "operation"))
             .ShouldBe(["unlink"]);
         RequiredEnumValues(RequiredMapping(RequiredMapping(RequiredMapping(schemas, "UnlinkProjectConversationRequest"), "properties"), "unlinkIntent"))
@@ -1003,6 +1010,9 @@ public sealed class OpenApiContractSpineTests
 
     private static YamlMappingNode MoveProjectConversationMutation() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations/{conversationId}/move"), "post");
+
+    private static YamlMappingNode ConfirmProjectResolutionMutation() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations/{conversationId}/resolution/confirm"), "post");
 
     private static YamlMappingNode UnlinkProjectConversationMutation() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations/{conversationId}"), "delete");

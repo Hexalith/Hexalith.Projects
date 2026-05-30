@@ -511,6 +511,11 @@ public sealed class GetProjectContextTests
 
         public Task<ProjectCommandSubmissionResult> SubmitUnlinkMemoryAsync(UnlinkMemory command, CancellationToken cancellationToken = default)
             => Task.FromResult(ProjectCommandSubmissionResult.Accepted("corr", false));
+
+        public Task<ProjectCommandSubmissionResult> SubmitConfirmProjectResolutionAsync(
+            ConfirmProjectResolution command,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(ProjectCommandSubmissionResult.Accepted("corr", false));
     }
 
     private sealed class StubConversationDirectory(bool includeOneConversation) : IProjectConversationDirectory

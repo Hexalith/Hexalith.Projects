@@ -89,6 +89,12 @@ public sealed record ProjectCommandValidationResult(
     public static ProjectCommandValidationResult AcceptedMemoryUnlink(string idempotencyFingerprint)
         => new(true, ProjectResultCode.MemoryUnlinked, null, null, null, null, idempotencyFingerprint, null);
 
+    /// <summary>Creates an accepted validation result for a confirm-resolution command.</summary>
+    /// <param name="idempotencyFingerprint">The canonical idempotency fingerprint.</param>
+    /// <returns>An accepted <see cref="ProjectCommandValidationResult"/>.</returns>
+    public static ProjectCommandValidationResult AcceptedResolutionConfirmation(string idempotencyFingerprint)
+        => new(true, ProjectResultCode.ProjectResolutionConfirmed, null, null, null, null, idempotencyFingerprint, null);
+
     /// <summary>Creates a rejected validation result carrying the code and the offending field NAME only.</summary>
     /// <param name="code">The control-flow result code.</param>
     /// <param name="rejectedField">The NAME of the rejected field (never its value), or null.</param>

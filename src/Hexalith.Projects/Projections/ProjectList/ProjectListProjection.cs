@@ -158,8 +158,8 @@ public sealed record ProjectListProjection
 
                     break;
 
-                case FileReferenceLinked or FileReferenceUnlinked or MemoryLinked or MemoryUnlinked:
-                    // File/Memory reference events do not change list-visible fields (Name/Lifecycle) but
+                case FileReferenceLinked or FileReferenceUnlinked or MemoryLinked or MemoryUnlinked or ProjectResolutionConfirmed:
+                    // File/Memory reference and resolution-confirmation events do not change list-visible fields (Name/Lifecycle) but
                     // must be tolerated here: the durable journal is shared, so ListAsync rebuilds this
                     // projection over EVERY project event. ProjectStateApply and ProjectDetailProjection
                     // already handle these; omitting them here desynced the projection from the aggregate

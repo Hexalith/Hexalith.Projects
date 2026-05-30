@@ -152,6 +152,11 @@ public static class ProjectStateApply
                 IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
             },
 
+            ProjectResolutionConfirmed => state with
+            {
+                IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+            },
+
             // Unknown event types fail loudly. Silently no-op'ing would let a future event type poison
             // the idempotency ledger on cold replay against an older code path (mirrors Folders).
             _ => throw new InvalidOperationException(

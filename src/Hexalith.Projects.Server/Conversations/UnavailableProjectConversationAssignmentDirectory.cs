@@ -45,6 +45,17 @@ internal sealed class UnavailableProjectConversationAssignmentDirectory : IProje
         CancellationToken cancellationToken = default)
         => Task.FromResult(Unavailable(metadata));
 
+    /// <inheritdoc />
+    public Task<ProjectConversationAssignmentResult> ConfirmResolutionAssignmentAsync(
+        ProjectId targetProjectId,
+        ConversationId conversationId,
+        ProjectId? expectedSourceProjectId,
+        TenantId tenantId,
+        CallerPrincipalId caller,
+        ProjectConversationCommandMetadata metadata,
+        CancellationToken cancellationToken = default)
+        => Task.FromResult(Unavailable(metadata));
+
     private static ProjectConversationAssignmentResult Unavailable(ProjectConversationCommandMetadata metadata)
         => new(ProjectConversationAssignmentOutcome.Unavailable, metadata.CorrelationId);
 }

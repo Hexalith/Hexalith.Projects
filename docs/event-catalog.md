@@ -149,6 +149,21 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
 - **Consumers:** `ProjectDetailProjection`, `ProjectReferenceIndexProjection` (removes only the targeted `memory`-kind row); Epic 3 Project Context assembly.
 
+### `ProjectResolutionConfirmed`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectResolutionConfirmed` (`IProjectEvent` → `IEventPayload`)
+- **Purpose:** Records the user-confirmed Project choice from a `MultipleCandidates` resolution result after the Conversation assignment has been accepted through Hexalith.Conversations.
+- **Emitted by:** `ProjectAggregate.Handle(ConfirmProjectResolution)` after the server validates confirmation evidence and assignment orchestration succeeds.
+- **Sensitivity class:** metadata-only.
+- **Fields:**
+  - `TenantId`, `ProjectId` — canonical confirmed target Project identity.
+  - `ConversationId` — confirmed Conversation identifier.
+  - `SourceProjectId` — optional expected current source Project identifier.
+  - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
+  - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
+- **Forbidden payload:** candidate ids, rejected candidates, scores, ranks, raw resolution results, transcripts, file contents, prompts, memory bodies, paths, tokens, and full request bodies.
+- **Consumers:** `ProjectStateApply` records idempotency only; `ProjectListProjection` and `ProjectDetailProjection` update freshness/sequence only; `ProjectReferenceIndexProjection` intentionally ignores it.
+
 ## Rejection events
 
 ### `ProjectCreationRejected`

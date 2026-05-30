@@ -43,6 +43,9 @@ public sealed class ProjectAuthorizationGate(
     /// <summary>The action token required to unlink a conversation from a project.</summary>
     public const string UnlinkConversationAction = "projects:unlink_conversation";
 
+    /// <summary>The action token required to confirm an ambiguous Project resolution.</summary>
+    public const string ConfirmProjectResolutionAction = "projects:confirm_resolution";
+
     /// <summary>The action token required to set or replace a Project Folder reference.</summary>
     public const string SetProjectFolderAction = "projects:set_folder";
 
@@ -201,6 +204,25 @@ public sealed class ProjectAuthorizationGate(
             tenantContext,
             httpContext,
             UnlinkConversationAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes confirming an ambiguous Project resolution for a target or source project.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeConfirmProjectResolutionAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            ConfirmProjectResolutionAction,
             projectId,
             correlationId,
             taskId,

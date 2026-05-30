@@ -65,6 +65,7 @@ public sealed class ProjectsDomainProcessor(
             ProjectsServerModule.UnlinkFileReferenceCommandType => ProjectAuthorizationGate.UnlinkFileReferenceAction,
             ProjectsServerModule.LinkMemoryCommandType => ProjectAuthorizationGate.LinkMemoryAction,
             ProjectsServerModule.UnlinkMemoryCommandType => ProjectAuthorizationGate.UnlinkMemoryAction,
+            ProjectsServerModule.ConfirmProjectResolutionCommandType => ProjectAuthorizationGate.ConfirmProjectResolutionAction,
             _ => null,
         };
 
@@ -107,6 +108,7 @@ public sealed class ProjectsDomainProcessor(
             ProjectsServerModule.UnlinkFileReferenceCommandType => ProcessUnlinkFileReference(command, currentState),
             ProjectsServerModule.LinkMemoryCommandType => ProcessLinkMemory(command, currentState),
             ProjectsServerModule.UnlinkMemoryCommandType => ProcessUnlinkMemory(command, currentState),
+            ProjectsServerModule.ConfirmProjectResolutionCommandType => ProcessConfirmProjectResolution(command, currentState),
             _ => Rejection(command, ProjectResultCode.ValidationFailed, null, command.CommandType),
         };
     }
@@ -565,6 +567,68 @@ public sealed class ProjectsDomainProcessor(
         return ToDomainResult(result);
     }
 
+    private DomainResult ProcessConfirmProjectResolution(CommandEnvelope envelope, object? currentState)
+    {
+        ConfirmProjectResolutionPayload? payload;
+        try
+        {
+            payload = JsonSerializer.Deserialize<ConfirmProjectResolutionPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        if (payload is null
+            || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal)
+            || !string.Equals(payload.Operation, "confirm", StringComparison.Ordinal)
+            || !string.Equals(payload.ProjectId, envelope.AggregateId, StringComparison.Ordinal)
+            || string.IsNullOrWhiteSpace(payload.ConversationId)
+            || !string.Equals(payload.ResolutionResult, "MultipleCandidates", StringComparison.Ordinal))
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "identity", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        ProjectId? sourceProjectId = null;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+            if (!string.IsNullOrWhiteSpace(payload.SourceProjectId))
+            {
+                sourceProjectId = new ProjectId(payload.SourceProjectId!);
+            }
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        ConfirmProjectResolution command = new(
+            envelope.TenantId,
+            projectId,
+            payload.ConversationId!,
+            sourceProjectId,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
     private static string ReadTaskId(CommandEnvelope envelope)
         => envelope.Extensions is not null
             && envelope.Extensions.TryGetValue("taskId", out string? taskId)
@@ -583,7 +647,8 @@ public sealed class ProjectsDomainProcessor(
                 or ProjectResultCode.FileReferenceLinked
                 or ProjectResultCode.FileReferenceUnlinked
                 or ProjectResultCode.MemoryLinked
-                or ProjectResultCode.MemoryUnlinked => DomainResult.Success(result.Events),
+                or ProjectResultCode.MemoryUnlinked
+                or ProjectResultCode.ProjectResolutionConfirmed => DomainResult.Success(result.Events),
 
             // A logical replay produced no new event — acknowledge as a no-op (the prior event landed).
             ProjectResultCode.IdempotentReplay => DomainResult.NoOp(),
@@ -620,6 +685,7 @@ public sealed class ProjectsDomainProcessor(
             ProjectsServerModule.UnlinkFileReferenceCommandType => nameof(UnlinkFileReference),
             ProjectsServerModule.LinkMemoryCommandType => nameof(LinkMemory),
             ProjectsServerModule.UnlinkMemoryCommandType => nameof(UnlinkMemory),
+            ProjectsServerModule.ConfirmProjectResolutionCommandType => nameof(ConfirmProjectResolution),
             _ => nameof(CreateProject),
         };
 
@@ -687,4 +753,12 @@ public sealed class ProjectsDomainProcessor(
         string? UnlinkIntent,
         string? ProjectId,
         string? MemoryReferenceId);
+
+    private sealed record ConfirmProjectResolutionPayload(
+        string? RequestSchemaVersion,
+        string? Operation,
+        string? ProjectId,
+        string? ConversationId,
+        string? SourceProjectId,
+        string? ResolutionResult);
 }

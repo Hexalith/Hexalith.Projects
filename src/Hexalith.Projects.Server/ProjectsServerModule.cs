@@ -44,6 +44,9 @@ public static class ProjectsServerModule
     /// <summary>The fully qualified <c>UnlinkMemory</c> command type discriminator on the wire.</summary>
     public const string UnlinkMemoryCommandType = "Hexalith.Projects.Commands.UnlinkMemory";
 
+    /// <summary>The fully qualified <c>ConfirmProjectResolution</c> command type discriminator on the wire.</summary>
+    public const string ConfirmProjectResolutionCommandType = "Hexalith.Projects.Commands.ConfirmProjectResolution";
+
     /// <summary>The aggregate-callback route the EventStore command pipeline invokes.</summary>
     public const string ProcessRoute = "/process";
 

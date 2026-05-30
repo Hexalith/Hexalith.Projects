@@ -144,6 +144,22 @@ public sealed class ProjectsDomainProcessorTests
     }
 
     [Fact]
+    public async Task ProcessConfirmProjectResolution_ExistingState_YieldsProjectResolutionConfirmed()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        ProjectState existing = ProjectState.Empty.Apply([ExistingCreatedEvent()], new ProjectIdentity(Tenant, new ProjectId(ProjectIdValue)));
+
+        DomainResult result = await processor.ProcessAsync(ConfirmEnvelope(), existing).ConfigureAwait(true);
+
+        result.IsSuccess.ShouldBeTrue();
+        ProjectResolutionConfirmed confirmed = result.Events.Single().ShouldBeOfType<ProjectResolutionConfirmed>();
+        confirmed.ProjectId.ShouldBe(ProjectIdValue);
+        confirmed.ConversationId.ShouldBe("conversation-001");
+        confirmed.SourceProjectId.ShouldBe("project-source-001");
+        confirmed.OccurredAt.ShouldBe(DateTimeOffset.UnixEpoch);
+    }
+
+    [Fact]
     public async Task ProcessUpdateSetup_InvalidSetup_YieldsSetupRejected()
     {
         ProjectsDomainProcessor processor = CreateProcessor();
@@ -299,6 +315,31 @@ public sealed class ProjectsDomainProcessorTests
             CausationId: null,
             UserId: "principal-a",
             Extensions: new Dictionary<string, string> { ["taskId"] = "task-folder" });
+    }
+
+    private static CommandEnvelope ConfirmEnvelope()
+    {
+        byte[] payload = JsonSerializer.SerializeToUtf8Bytes(new
+        {
+            requestSchemaVersion = "v1",
+            operation = "confirm",
+            projectId = ProjectIdValue,
+            conversationId = "conversation-001",
+            sourceProjectId = "project-source-001",
+            resolutionResult = "MultipleCandidates",
+        });
+
+        return new CommandEnvelope(
+            MessageId: "idem-key-confirm",
+            TenantId: Tenant,
+            Domain: ProjectsServerModule.DomainName,
+            AggregateId: ProjectIdValue,
+            CommandType: ProjectsServerModule.ConfirmProjectResolutionCommandType,
+            Payload: payload,
+            CorrelationId: "corr-confirm",
+            CausationId: null,
+            UserId: "principal-a",
+            Extensions: new Dictionary<string, string> { ["taskId"] = "task-confirm" });
     }
 
     // Minimal deterministic TimeProvider so the /process callback stamps a fixed OccurredAt.

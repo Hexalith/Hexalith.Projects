@@ -83,6 +83,7 @@ public sealed class ClientGenerationTests
         generated.ShouldContain("class LinkProjectConversationRequest");
         generated.ShouldContain("class MoveProjectConversationRequest");
         generated.ShouldContain("class UnlinkProjectConversationRequest");
+        generated.ShouldContain("class ConfirmProjectResolutionRequest");
         generated.ShouldContain("class SetProjectFolderRequest");
         generated.ShouldContain("class LinkFileReferenceRequest");
         generated.ShouldContain("class UnlinkFileReferenceRequest");
@@ -130,6 +131,7 @@ public sealed class ClientGenerationTests
             typeof(LinkProjectConversationRequest),
             typeof(MoveProjectConversationRequest),
             typeof(UnlinkProjectConversationRequest),
+            typeof(ConfirmProjectResolutionRequest),
             typeof(SetProjectFolderRequest),
             typeof(LinkFileReferenceRequest),
             typeof(UnlinkFileReferenceRequest),
@@ -232,6 +234,29 @@ public sealed class ClientGenerationTests
         typeof(UnlinkProjectConversationRequest)
             .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
             .ShouldNotBeNull();
+        typeof(ConfirmProjectResolutionRequest)
+            .GetMethod("ComputeIdempotencyHash", [typeof(string), typeof(string)])
+            .ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void GeneratedClientExposesConfirmProjectResolutionMutationWithoutFreshnessParameter()
+    {
+        Assembly clientAssembly = typeof(CreateProjectRequest).Assembly;
+        Type clientInterface = clientAssembly.GetType("Hexalith.Projects.Client.Generated.IClient").ShouldNotBeNull();
+
+        MethodInfo[] methods = clientInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Where(m => m.Name == "ConfirmProjectResolutionAsync")
+            .ToArray();
+
+        methods.ShouldNotBeEmpty();
+        methods.Any(m => m.ReturnType.FullName?.Contains("AcceptedCommand", StringComparison.Ordinal) == true).ShouldBeTrue();
+        methods.SelectMany(m => m.GetParameters())
+            .Any(p => string.Equals(p.Name, "idempotency_Key", StringComparison.Ordinal))
+            .ShouldBeTrue();
+        methods.SelectMany(m => m.GetParameters())
+            .Any(p => p.Name?.Contains("freshness", StringComparison.OrdinalIgnoreCase) == true)
+            .ShouldBeFalse();
     }
 
     [Fact]
@@ -405,6 +430,36 @@ public sealed class ClientGenerationTests
             "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
             "field=request_schema_version;present=true;value=s:v1",
             "field=unlink_intent;present=true;value=s:clear"));
+    }
+
+    [Fact]
+    public void ConfirmProjectResolutionHelperUsesDeclaredLexicographicFields()
+    {
+        var request = new ConfirmProjectResolutionRequest
+        {
+            RequestSchemaVersion = ConfirmProjectResolutionRequestRequestSchemaVersion.V1,
+            Operation = ConfirmProjectResolutionRequestOperation.Confirm,
+            ProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C5",
+            ConversationId = "conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4",
+            ResolutionResult = ConfirmProjectResolutionRequestResolutionResult.MultipleCandidates,
+            Confirmed = true,
+            CandidateProjectIds =
+            [
+                "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+                "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C5",
+            ],
+            SourceProjectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3",
+        };
+
+        request.ComputeIdempotencyHash(request.ProjectId, request.ConversationId).ShouldBe(ExpectedHash(
+            "operation=ConfirmProjectResolution",
+            "field=confirmed;present=true;value=b:true",
+            "field=conversation_id;present=true;value=s:conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4",
+            "field=operation;present=true;value=s:confirm",
+            "field=project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C5",
+            "field=request_schema_version;present=true;value=s:v1",
+            "field=resolution_result;present=true;value=s:MultipleCandidates",
+            "field=source_project_id;present=true;value=s:project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3"));
     }
 
     [Fact]

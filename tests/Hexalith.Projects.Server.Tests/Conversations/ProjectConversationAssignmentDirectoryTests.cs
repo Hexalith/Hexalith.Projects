@@ -136,6 +136,82 @@ public sealed class ProjectConversationAssignmentDirectoryTests
     }
 
     [Fact]
+    public async Task ConfirmResolutionAssignmentAsync_AlreadyAtTarget_ReturnsAcceptedWithoutDuplicateDispatch()
+    {
+        CapturingConversationClient client = new()
+        {
+            DetailResult = Detail(new ConversationProjectId(TargetProject.Value)),
+            ReassignResult = Accepted(),
+        };
+        ConversationsProjectConversationAssignmentDirectory directory = new(client, new CapturingActorPartyResolver(ResolvedActor));
+
+        ProjectConversationAssignmentResult result = await directory
+            .ConfirmResolutionAssignmentAsync(TargetProject, Conversation, SourceProject, Tenant, Caller, Metadata, TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectConversationAssignmentOutcome.Accepted);
+        client.CapturedReassign.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task ConfirmResolutionAssignmentAsync_CurrentIsExpectedSource_DispatchesMoveGuard()
+    {
+        CapturingConversationClient client = new()
+        {
+            DetailResult = Detail(new ConversationProjectId(SourceProject.Value)),
+            ReassignResult = Accepted(),
+        };
+        ConversationsProjectConversationAssignmentDirectory directory = new(client, new CapturingActorPartyResolver(ResolvedActor));
+
+        ProjectConversationAssignmentResult result = await directory
+            .ConfirmResolutionAssignmentAsync(TargetProject, Conversation, SourceProject, Tenant, Caller, Metadata, TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectConversationAssignmentOutcome.Accepted);
+        client.CapturedReassign.ShouldNotBeNull();
+        client.CapturedReassign!.Target.ProjectId.ShouldBe(new ConversationProjectId(TargetProject.Value));
+        client.CapturedReassign.ExpectedCurrentProjectId.ShouldBe(new ConversationProjectId(SourceProject.Value));
+    }
+
+    [Fact]
+    public async Task ConfirmResolutionAssignmentAsync_UnassignedWithoutSource_DispatchesLink()
+    {
+        CapturingConversationClient client = new()
+        {
+            DetailResult = Detail(projectId: null),
+            ReassignResult = Accepted(),
+        };
+        ConversationsProjectConversationAssignmentDirectory directory = new(client, new CapturingActorPartyResolver(ResolvedActor));
+
+        ProjectConversationAssignmentResult result = await directory
+            .ConfirmResolutionAssignmentAsync(TargetProject, Conversation, expectedSourceProjectId: null, Tenant, Caller, Metadata, TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectConversationAssignmentOutcome.Accepted);
+        client.CapturedReassign.ShouldNotBeNull();
+        client.CapturedReassign!.ExpectedCurrentProjectId.ShouldBeNull();
+        client.CapturedReassign.Target.ProjectId.ShouldBe(new ConversationProjectId(TargetProject.Value));
+    }
+
+    [Fact]
+    public async Task ConfirmResolutionAssignmentAsync_UnexpectedThirdProject_ReturnsConflictWithoutDispatch()
+    {
+        CapturingConversationClient client = new()
+        {
+            DetailResult = Detail(new ConversationProjectId("project-third")),
+            ReassignResult = Accepted(),
+        };
+        ConversationsProjectConversationAssignmentDirectory directory = new(client, new CapturingActorPartyResolver(ResolvedActor));
+
+        ProjectConversationAssignmentResult result = await directory
+            .ConfirmResolutionAssignmentAsync(TargetProject, Conversation, SourceProject, Tenant, Caller, Metadata, TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectConversationAssignmentOutcome.Conflict);
+        client.CapturedReassign.ShouldBeNull();
+    }
+
+    [Fact]
     public async Task MoveAsync_UpstreamAcceptedWithDifferentIdempotencyKey_ReturnsUnavailable()
     {
         CapturingConversationClient client = new() { ReassignResult = Accepted(idempotencyKey: "idem-other") };

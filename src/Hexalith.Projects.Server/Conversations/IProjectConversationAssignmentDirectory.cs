@@ -41,4 +41,17 @@ public interface IProjectConversationAssignmentDirectory
         CallerPrincipalId caller,
         ProjectConversationCommandMetadata metadata,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Idempotently confirms a resolution assignment by reading the current Conversation assignment
+    /// before dispatching a write.
+    /// </summary>
+    Task<ProjectConversationAssignmentResult> ConfirmResolutionAssignmentAsync(
+        ProjectId targetProjectId,
+        ConversationId conversationId,
+        ProjectId? expectedSourceProjectId,
+        TenantId tenantId,
+        CallerPrincipalId caller,
+        ProjectConversationCommandMetadata metadata,
+        CancellationToken cancellationToken = default);
 }

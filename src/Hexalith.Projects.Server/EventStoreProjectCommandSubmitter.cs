@@ -243,6 +243,30 @@ public sealed class EventStoreProjectCommandSubmitter(IEventStoreGatewayClient g
             cancellationToken).ConfigureAwait(false);
     }
 
+    /// <inheritdoc/>
+    public async Task<ProjectCommandSubmissionResult> SubmitConfirmProjectResolutionAsync(
+        ConfirmProjectResolution command,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        object payload = new
+        {
+            requestSchemaVersion = "v1",
+            operation = "confirm",
+            projectId = command.ProjectId.Value,
+            conversationId = command.ConversationId,
+            sourceProjectId = command.SourceProjectId?.Value,
+            resolutionResult = "MultipleCandidates",
+        };
+
+        return await SubmitAsync(
+            command,
+            ProjectsServerModule.ConfirmProjectResolutionCommandType,
+            payload,
+            cancellationToken).ConfigureAwait(false);
+    }
+
     private async Task<ProjectCommandSubmissionResult> SubmitAsync(
         IProjectCommand command,
         string commandType,

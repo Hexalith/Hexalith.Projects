@@ -67,7 +67,7 @@ public sealed record ProjectReferenceIndexProjection
 
             switch (envelope.Event)
             {
-                case ProjectCreated or ProjectSetupUpdated or ProjectArchived:
+                case ProjectCreated or ProjectSetupUpdated or ProjectArchived or ProjectResolutionConfirmed:
                     break;
 
                 case ProjectFolderSet folderSet:

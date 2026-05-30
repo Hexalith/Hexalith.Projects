@@ -11,15 +11,15 @@ public sealed record HexalithProjectsGeneratedArtifactsVerification(bool IsCurre
 
 public static class HexalithProjectsGeneratedArtifacts
 {
-    public const string ContractSpineSha256 = "3b1a3ef0b0a999e6f6d3fb7aff3ed06193c01eda8fa2df84e049eac29693eff4";
+    public const string ContractSpineSha256 = "4c09d5e4d3939204097ef012aef7c8db682fd7a134d9b9ca6594756bdf7d9e38";
     public const string GenerationConfigurationSha256 = "57b05e6bb3aaec137283214dbc5e4b6fd19399a8f9b184745cfb5cbef1753548";
-    public const string GeneratedHelpersSha256 = "7dba97345c2dcd87e839e7b52ce0ab9a749e15be624ff471aa807f1ab0982aa7";
+    public const string GeneratedHelpersSha256 = "afa3f4683a2bfb8a911c7eb0707a6e9fb96023de84e6d262cddb4dbb3ccbece9";
 
     // HelperSchemaVersion is a deterministic SHA-256 prefix of the canonical helper-signature
     // shape (schema names, parameter names in declared order, idempotency field paths per
     // variant). It changes whenever helper parameter shapes change, and only then. Not
     // included in the canonical hash.
-    public const string HelperSchemaVersion = "c0fb159f4e023247";
+    public const string HelperSchemaVersion = "9b2030bb6a6cc2c5";
 
     public static bool VerifyCurrent(string repositoryRoot) => VerifyCurrentDetailed(repositoryRoot).IsCurrent;
 
@@ -209,6 +209,24 @@ public partial class ArchiveProjectRequest
             {
                 new IdempotencyField("archive_intent", true, ArchiveIntent),
                 new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
+            })
+;
+}
+
+public partial class ConfirmProjectResolutionRequest
+{
+    public string ComputeIdempotencyHash(string projectId, string conversationId) =>
+        HexalithIdempotencyHasher.Compute(
+            "ConfirmProjectResolution",
+            new[]
+            {
+                new IdempotencyField("confirmed", true, Confirmed),
+                new IdempotencyField("conversation_id", true, conversationId),
+                new IdempotencyField("operation", true, Operation),
+                new IdempotencyField("project_id", true, projectId),
+                new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
+                new IdempotencyField("resolution_result", true, ResolutionResult),
+                new IdempotencyField("source_project_id", true, SourceProjectId),
             })
 ;
 }

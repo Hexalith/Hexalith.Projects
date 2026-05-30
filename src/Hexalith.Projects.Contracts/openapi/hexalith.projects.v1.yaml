@@ -700,6 +700,84 @@ paths:
         - not_found
         - read_model_unavailable
         - internal_error
+  /api/v1/projects/{projectId}/conversations/{conversationId}/resolution/confirm:
+    post:
+      tags:
+        - projects
+      operationId: ConfirmProjectResolution
+      summary: Confirm one Project from an ambiguous resolution result.
+      description: >
+        Confirms a user-selected Project from a MultipleCandidates resolution result. The candidate
+        list is validation evidence only; the persisted Projects event records only the confirmed
+        target Project, Conversation, optional expected source Project, and correlation/idempotency
+        metadata. Projects first ensures the Conversation assignment through the existing
+        Conversations reassignment ACL, then submits the metadata-only confirmation command.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/ConversationId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfirmProjectResolutionRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/ConfirmProjectResolutionRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - confirmed
+        - conversation_id
+        - operation
+        - project_id
+        - request_schema_version
+        - resolution_result
+        - source_project_id
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: task-id
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-confirm-resolution-permission-and-source-target-project-details
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - read_model_unavailable
+        - internal_error
   /api/v1/projects/{projectId}/conversations/{conversationId}:
     delete:
       tags:
@@ -2080,6 +2158,18 @@ components:
         conversationId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
         sourceProjectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
         confirmed: true
+    ConfirmProjectResolutionRequest:
+      value:
+        requestSchemaVersion: v1
+        operation: confirm
+        projectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
+        conversationId: conversation_01HZY7Z6N7J4Q2X8Y9V0A1B2C4
+        resolutionResult: MultipleCandidates
+        confirmed: true
+        candidateProjectIds:
+          - project_01HZY7Z6N7J4Q2X8Y9V0A1B2C5
+          - project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
+        sourceProjectId: project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
     UnlinkProjectConversationRequest:
       value:
         requestSchemaVersion: v1
@@ -2393,6 +2483,48 @@ components:
         confirmed:
           type: boolean
           description: Must be true so clients cannot accidentally move a Conversation between Projects.
+    ConfirmProjectResolutionRequest:
+      type: object
+      additionalProperties: false
+      description: Closed command body for confirming a MultipleCandidates Project resolution. Candidate Project ids are validation evidence only and are not persisted by the aggregate event.
+      required:
+        - requestSchemaVersion
+        - operation
+        - projectId
+        - conversationId
+        - resolutionResult
+        - confirmed
+        - candidateProjectIds
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        operation:
+          type: string
+          enum:
+            - confirm
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        conversationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        resolutionResult:
+          type: string
+          enum:
+            - MultipleCandidates
+        confirmed:
+          type: boolean
+          description: Must be true so ambiguous resolution is never silently attached.
+        candidateProjectIds:
+          type: array
+          minItems: 2
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/OpaqueIdentifier"
+          description: Validation evidence proving the selected route Project appeared in a two-or-more candidate set. Not persisted in ProjectResolutionConfirmed.
+        sourceProjectId:
+          nullable: true
+          $ref: "#/components/schemas/OpaqueIdentifier"
     UnlinkProjectConversationRequest:
       type: object
       additionalProperties: false

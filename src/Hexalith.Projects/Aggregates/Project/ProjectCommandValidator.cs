@@ -377,6 +377,40 @@ public static class ProjectCommandValidator
     }
 
     /// <summary>
+    /// Validates a <see cref="ConfirmProjectResolution"/> command and computes its canonical
+    /// idempotency fingerprint.
+    /// </summary>
+    /// <param name="command">The confirm-resolution command.</param>
+    /// <returns>An accepted or rejected validation result.</returns>
+    public static ProjectCommandValidationResult Validate(ConfirmProjectResolution command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult common = ValidateCommon(command);
+        if (!common.IsAccepted)
+        {
+            return common;
+        }
+
+        if (!IsSafeReferenceIdentifier(command.ConversationId))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.ConversationId));
+        }
+
+        if (command.SourceProjectId is not null
+            && string.Equals(command.SourceProjectId.Value, command.ProjectId.Value, StringComparison.Ordinal))
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.SourceProjectId));
+        }
+
+        return ProjectCommandValidationResult.AcceptedResolutionConfirmation(
+            ComputeConfirmProjectResolutionFingerprint(
+                command.ProjectId.Value,
+                command.ConversationId.Trim(),
+                command.SourceProjectId?.Value));
+    }
+
+    /// <summary>
     /// Computes the canonical idempotency fingerprint for a <see cref="CreateProject"/> command using
     /// the Story 1.3 canonical hasher semantics over the spine's equivalence field list.
     /// </summary>
@@ -580,6 +614,32 @@ public static class ProjectCommandValidator
             "field=display_name_intent;present=true;value=s:" + Escape(displayNameIntent),
             "field=reason_code;present=true;value=s:" + Escape(reasonCode),
             "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+        ];
+
+        string canonical = string.Join('\n', lines);
+        byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(canonical));
+        return "sha256:" + Convert.ToHexString(digest).ToLowerInvariant();
+    }
+
+    /// <summary>Computes the canonical confirm-resolution idempotency fingerprint.</summary>
+    /// <param name="projectId">The confirmed target Project identifier.</param>
+    /// <param name="conversationId">The confirmed Conversation identifier.</param>
+    /// <param name="sourceProjectId">The optional expected source Project identifier.</param>
+    /// <returns>A <c>sha256:</c>-prefixed lowercase hex digest.</returns>
+    internal static string ComputeConfirmProjectResolutionFingerprint(
+        string projectId,
+        string conversationId,
+        string? sourceProjectId)
+    {
+        string[] lines =
+        [
+            "operation=ConfirmProjectResolution",
+            "field=confirmation_intent;present=true;value=s:confirm",
+            "field=conversation_id;present=true;value=s:" + Escape(conversationId),
+            "field=project_id;present=true;value=s:" + Escape(projectId),
+            "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+            "field=resolution_result;present=true;value=s:MultipleCandidates",
+            "field=source_project_id;present=" + (string.IsNullOrWhiteSpace(sourceProjectId) ? "false;value=omitted" : "true;value=s:" + Escape(sourceProjectId)),
         ];
 
         string canonical = string.Join('\n', lines);

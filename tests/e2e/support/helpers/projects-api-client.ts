@@ -73,6 +73,13 @@ export interface ResolveProjectFromAttachmentsInput {
   includeArchived?: boolean;
 }
 
+export interface ConfirmProjectResolutionInput {
+  projectId: string;
+  conversationId: string;
+  candidateProjectIds: readonly string[];
+  sourceProjectId?: string;
+}
+
 export interface QueryRequestOptions extends AuthHeaderOptions {
   freshness?: string;
   extraHeaders?: Record<string, string>;
@@ -152,6 +159,32 @@ export async function resolveProjectFromAttachments(
     method: 'GET',
     path: `/api/v1/projects/resolution/from-attachments${query ? `?${query}` : ''}`,
     headers,
+    retryConfig: { maxRetries: 0 },
+  });
+  return { status, body };
+}
+
+/** POST /api/v1/projects/{projectId}/conversations/{conversationId}/resolution/confirm → 202 AcceptedCommand (FR-14). */
+export async function confirmProjectResolution(
+  apiRequest: ApiRequest,
+  tenantId: string,
+  input: ConfirmProjectResolutionInput,
+  headerOptions: MutationHeaderOptions,
+): Promise<{ status: number; body: AcceptedCommand }> {
+  const { status, body } = await apiRequest<AcceptedCommand>({
+    method: 'POST',
+    path: `/api/v1/projects/${input.projectId}/conversations/${input.conversationId}/resolution/confirm`,
+    headers: { ...mutationHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
+    body: {
+      requestSchemaVersion: 'v1',
+      operation: 'confirm',
+      projectId: input.projectId,
+      conversationId: input.conversationId,
+      resolutionResult: 'MultipleCandidates',
+      confirmed: true,
+      candidateProjectIds: input.candidateProjectIds,
+      ...(input.sourceProjectId ? { sourceProjectId: input.sourceProjectId } : {}),
+    },
     retryConfig: { maxRetries: 0 },
   });
   return { status, body };

@@ -65,6 +65,14 @@ public interface IProjectCommandSubmitter
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>The submission outcome.</returns>
     Task<ProjectCommandSubmissionResult> SubmitUnlinkMemoryAsync(UnlinkMemory command, CancellationToken cancellationToken = default);
+
+    /// <summary>Submits the confirm-resolution command and returns the accept/replay/denial outcome.</summary>
+    /// <param name="command">The validated confirm-resolution command.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The submission outcome.</returns>
+    Task<ProjectCommandSubmissionResult> SubmitConfirmProjectResolutionAsync(
+        ConfirmProjectResolution command,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>The outcome category of a command submission through the EventStore command pipeline.</summary>

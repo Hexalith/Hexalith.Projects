@@ -46,6 +46,9 @@ public enum ProjectResultCode
     /// <summary>The unlink-memory command was accepted and a <c>MemoryUnlinked</c> event was emitted.</summary>
     MemoryUnlinked,
 
+    /// <summary>The confirm-resolution command was accepted and a <c>ProjectResolutionConfirmed</c> event was emitted.</summary>
+    ProjectResolutionConfirmed,
+
     /// <summary>The command is a logical replay of an already-recorded idempotency key with an equivalent payload.</summary>
     IdempotentReplay,
 
