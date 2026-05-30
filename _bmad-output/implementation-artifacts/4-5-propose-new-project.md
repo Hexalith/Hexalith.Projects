@@ -4,7 +4,7 @@ baseline_commit: 935caf5
 
 # Story 4.5: Propose New Project
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -330,8 +330,11 @@ GPT-5 Codex via `bmad-dev-story`.
 - Preview reuses the existing resolution engine plus Story 4.2 conversation and Story 4.3 attachment evidence, rejects `Idempotency-Key`, fails closed on degraded conversation evidence, and returns a proposal only for `NoMatch`.
 - Confirm preflights create authorization, conversation readability, folder ACL, and file ACL before the first Project write; then orchestrates `CreateProject`, `ConfirmResolutionAssignmentAsync`, `SetProjectFolder`, and `LinkFileReference` with deterministic child idempotency keys.
 - Added a root confirm idempotency ledger so same root key with a different body returns `409` before duplicate submission.
-- No new Project event, proposal aggregate, local conversation membership state, package upgrade, nested submodule initialization, or submodule BMAD read was introduced. No submodule pointer change was introduced by this story; `Hexalith.Folders` was already modified in the working tree before implementation and was left untouched.
-- Negative-test checklist: preview covers row 1 malformed ids, row 4 unauthorized/missing authority, row 5 read-model/reference-index unavailable, row 6 freshness validation, and row 8 idempotency-key rejection; rows 2/3/7 are mutation-only for preview. Confirm covers row 1 malformed ids/body, row 2 missing/malformed `Idempotency-Key`, row 3 same-key/different-body conflict, row 6 command/reference unavailable retry behavior, row 7 folder/file preflight denial before create, and row 8 payload-leakage assertions; route/body mismatch is non-applicable because the confirm route has no identity path parameter.
+- No new Project event, proposal aggregate, local conversation membership state, package upgrade, nested submodule initialization, or submodule BMAD read was introduced.
+- **Correction (review, 2026-05-30):** an earlier draft of this note claimed "No submodule pointer change was introduced by this story". That was inaccurate. The `Hexalith.Folders` submodule pointer **was** moved from `3d0cc42` (baseline `935caf5`) to `e7b174e` across commits `301e8b7` and `747b093` ("chore: Update subproject commit reference in Hexalith.Folders"). Story 4.5 reuses only the pre-existing Folders ACL surfaces and does not require a newer Folders, so this pointer move is an unrelated chore that should not have ridden with the story. See AC11 caveat in the Senior Developer Review — left in place pending an explicit decision to revert (revert is a submodule-relationship change and was not auto-applied).
+- Negative-test checklist (docs/checklists/mutation-and-query-negative-tests.md), corrected labels:
+  - **Preview** (query-style read): row 1 malformed ids → 400/safe-denial; row 4 `Idempotency-Key`-on-query rejected after authorization; row 5 non-`eventually_consistent` freshness rejected; row 6 cross-tenant / unauthorized caller → safe-denial 404; row 8 read-model/reference-index unavailable → 503. Rows 2/3/7 are mutation-only (N/A for preview).
+  - **Confirm** (mutation): row 1 malformed ids/body → 400; row 3 missing/malformed `Idempotency-Key` → 400; row 6 cross-tenant / unauthorized caller → safe-denial 404 (enforced by `ProjectAuthorizationGate.AuthorizeCreateAsync` + tenant filters); row 7 same-root-key/different-body → 409; row 8 conversation/folder/file preflight unavailable → 503. Row 2 (route↔body identity mismatch) is N/A because the confirm route carries no identity path parameter. AC8 payload-leakage is asserted separately on confirm 202/error responses (not a checklist row).
 
 ### File List
 
@@ -351,7 +354,40 @@ GPT-5 Codex via `bmad-dev-story`.
 - `tests/Hexalith.Projects.Server.Tests/Queries/ProposeNewProjectEndpointTests.cs`
 - `tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs`
 - `tests/Hexalith.Projects.Client.Tests/ClientGenerationTests.cs`
+- `tests/e2e/specs/projects-proposal.spec.ts` (F5 critical-journey scaffolds: NoMatch proposal preview → explicit confirm; `test.fixme` pending AppHost cross-module ACL fixtures, same pattern as Story 4.3)
+- `tests/e2e/support/helpers/projects-api-client.ts` (e2e `proposeNewProject` and `confirmNewProjectProposal` helpers)
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Jerome — adversarial story-automator review, 2026-05-30. Multi-agent fan-out (7 review dimensions: AC1-4, AC5-8, AC9-11, task audit, code/security, tests, contract lockstep) with adversarial verification of every finding. 28 raw findings → 26 confirmed (5 CRITICAL incl. duplicates, 8 HIGH, 12 MEDIUM, 1 LOW), 2 false positives. **Outcome: Changes Requested → auto-fixed.** All CRITICAL and HIGH/MEDIUM issues were fixed in this pass; build clean (0 warnings/0 errors); affected lanes green.
+
+### CRITICAL — fixed
+
+1. **Idempotency ledger recorded before authorization** (`ProposeNewProjectEndpoint.cs` confirm path). `idempotencyLedger.TryRecord` ran before `AuthorizeCreateAsync`, so an unauthorized/denied caller could poison the root key and a later legitimate retry would get a spurious `409` (AC6/AC7 violation). **Fix:** the fingerprint is now recorded only after authorization + every ACL preflight + the `NoMatch` resolution re-check pass, immediately before the first `CreateProject` write. Same-root-key/different-body still returns `409` before any write.
+2. **Confirm preflight reads lacked fail-closed exception handling.** The conversation read, folder validation, and file-reference validation in the confirm path were not wrapped in try/catch, so a degraded ACL boundary would surface a `500` instead of the AC6-required retryable `503` (asymmetric with the preview endpoint and the resolution re-check). **Fix:** wrapped all three preflights in a single `try/catch (Exception ex) when (ex is not OperationCanceledException) → ReadModelUnavailable`.
+3. **Idempotency-equivalence field-name drift** (AC9 lockstep). The server fingerprint used flat `folder_id` while the OpenAPI `x-hexalith-idempotency-equivalence` list and the generated client helper use the dotted `folder.folder_id` (the server already used dotted `project_metadata.display_name`). **Fix:** aligned the server fingerprint to `folder.folder_id`.
+
+### HIGH / MEDIUM — fixed
+
+- **AC9 lockstep — `metadataClass` not enforced.** The shared `ProjectMetadata` schema marks `metadataClass` required, but the confirm endpoint validated only `displayName`. **Fix:** the confirm endpoint now validates `metadataClass` against the `SensitiveMetadataTier` enum (`IsValidSensitiveMetadataTier`); test body updated. (Note: the pre-existing `CreateProject` endpoint, Story 1.4, has the same unenforced-required gap — left untouched as out-of-scope; flagged as a follow-up.)
+- **Test coverage gaps (AC10) — added.** `Confirm_UnauthorizedCaller_ReturnsSafeDenialBeforeWrites`, `Confirm_ConversationPreflightFailure_FailsClosedBeforeWrites` (Theory: Unavailable/Stale→503, Unauthorized→404), `Confirm_ConversationReadThrows_FailsClosedBeforeWrites`, `Confirm_ResponsesDoNotLeakPayload` (202 + error ProblemDetails leakage assertions), `Confirm_MissingMetadataClass_ReturnsValidationProblemBeforeWrites`, `Confirm_NoFolderNoFiles_SubmitsOnlyCreateAndAssignment`, `Confirm_DuplicateFileReferenceIds_ReturnsValidationProblemBeforeWrites`, `Confirm_TooManyFileReferences_ReturnsValidationProblemBeforeWrites`, `Preview_InvalidFreshness_ReturnsValidationProblem`. Server endpoint lane: 19 → 30 cases, all green.
+- **File List incomplete** — added the two `tests/e2e/*` artifacts.
+- **Dev Agent Record false claim / mislabeled rows** — corrected the submodule-pointer claim and the negative-test checklist row labels (see Completion Notes).
+- **Proposal name derivation (Task 2) — attachment-label tier.** The preview passes `attachmentLabel: null`. This is correct-by-construction, not a bug: the read-style preview carries only ids, and a `NoMatch` reference-index lookup yields no included candidate rows from which a safe folder/file label could be read. Documented inline; the builder retains the parameter for callers that can supply a label.
+
+### Caveats / remaining items (tracked, non-blocking)
+
+- **AC11 submodule pointer (HIGH, requires a decision).** `Hexalith.Folders` was moved `3d0cc42`→`e7b174e` (commits `301e8b7`, `747b093`). Not required by Story 4.5. **Not auto-reverted** because reverting a committed submodule relationship is a deliberate, hard-to-reverse change; recommend reverting commit `747b093`'s pointer bump (and the one in `301e8b7`) back to `3d0cc42` unless the newer Folders is intentionally required workspace-wide.
+- **Pre-existing CreateProject `metadataClass` gap (Story 1.4)** — uniform enforcement or relaxing the shared OpenAPI `required` is a separate cross-story follow-up.
+- **LOW — redundant `operation=` discriminator line in the confirm fingerprint** kept intentionally (operation discriminator prevents cross-operation hash collisions); internal-only, no functional impact.
+
+### Validation
+
+- `dotnet build Hexalith.Projects.slnx -warnaserror -m:1 -nr:false` → 0 warnings / 0 errors.
+- Executable xUnit lanes (sandbox disabled): `ProposeNewProjectEndpointTests` 30/30, `Hexalith.Projects.Tests` 559/559, `Hexalith.Projects.Contracts.Tests` 137/137, `Hexalith.Projects.Client.Tests` 51/51. Full `Hexalith.Projects.Server.Tests` VSTest lane remains sandbox-blocked (Kestrel socket creation); Story 4.5 endpoint tests use direct handler invocation and pass.
+- `git diff --check` → clean.
 
 ## Change Log
 
 - 2026-05-30: Implemented Story 4.5 proposal preview and confirm workflow, regenerated client artifacts, added pure/contract/client/server coverage, and moved story to review.
+- 2026-05-30: Adversarial review (story-automator). Auto-fixed 3 CRITICAL (idempotency-before-auth ordering, missing fail-closed try/catch on confirm preflights, `folder.folder_id` fingerprint lockstep) plus HIGH/MEDIUM (`metadataClass` enforcement, +11 confirm/preview test cases, File List + Dev Agent Record corrections). Build clean; targeted lanes green. Status → done. Open caveat: AC11 `Hexalith.Folders` submodule pointer move left in place pending a revert decision.

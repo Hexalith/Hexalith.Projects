@@ -145,6 +145,12 @@ public static partial class ProjectsDomainServiceEndpoints
             body.ConversationId!,
             body.SuggestedName,
             conversation.SafeLabel,
+
+            // The attachment-label tier is intentionally unused here: the read-style preview carries
+            // only ids, and a NoMatch reference-index lookup yields no included candidate rows from
+            // which a safe folder/file display label could be read. Caller suggestion, conversation
+            // label, then the deterministic fallback cover the reachable cases. The builder keeps the
+            // attachment-label parameter for callers (e.g. confirm-side flows) that can supply one.
             attachmentLabel: null,
             body.Description,
             body.SetupMetadata,
@@ -205,12 +211,6 @@ public static partial class ProjectsDomainServiceEndpoints
             return ValidationProblem(correlationId, taskId, rejectedField ?? "confirmation");
         }
 
-        string rootFingerprint = ComputeConfirmProposalFingerprint(body!);
-        if (!idempotencyLedger.TryRecord(idempotencyKey!, rootFingerprint))
-        {
-            return IdempotencyConflict(correlationId, taskId);
-        }
-
         ProjectAuthorizationResult authorization = await authorizationGate
             .AuthorizeCreateAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
             .ConfigureAwait(false);
@@ -225,50 +225,61 @@ public static partial class ProjectsDomainServiceEndpoints
         string principalId = tenantContext.PrincipalId!;
         ProjectId projectId = new(body!.ProjectId!);
 
-        ConversationResolutionMetadata conversation = await conversationResolutionDirectory
-            .ReadConversationMetadataAsync(
-                new ConversationId(body.ConversationId!),
-                new ConversationTenantId(authoritativeTenantId),
-                new CallerPrincipalId(principalId),
-                correlationId!,
-                cancellationToken)
-            .ConfigureAwait(false);
-
-        IResult? conversationProblem = ConversationPreflightProblem(conversation.ReferenceState, correlationId, taskId);
-        if (conversationProblem is not null)
+        // Preflight the conversation, folder, and file ACLs before any write. These boundaries are
+        // designed to return safe result outcomes, but an unexpected throw from a degraded read model
+        // must still fail closed as a retryable 503 (AC6) rather than surface a 500 - mirroring the
+        // preview endpoint and the resolution re-check below.
+        try
         {
-            return conversationProblem;
-        }
-
-        if (body.Folder is not null)
-        {
-            ProjectFolderValidationResult folderValidation = await folderDirectory
-                .ValidateSetProjectFolderAsync(projectId, body.Folder.FolderId!, correlationId!, cancellationToken)
-                .ConfigureAwait(false);
-            IResult? folderProblem = FolderValidationProblem(folderValidation, correlationId, taskId);
-            if (folderProblem is not null)
-            {
-                return folderProblem;
-            }
-        }
-
-        foreach (ConfirmProposalFileReferenceHttpRequest file in fileReferences)
-        {
-            ProjectFileReferenceValidationResult fileValidation = await fileReferenceDirectory
-                .ValidateLinkFileReferenceAsync(
-                    projectId,
-                    file.FolderId!,
-                    file.WorkspaceId!,
-                    file.FilePath!,
+            ConversationResolutionMetadata conversation = await conversationResolutionDirectory
+                .ReadConversationMetadataAsync(
+                    new ConversationId(body.ConversationId!),
+                    new ConversationTenantId(authoritativeTenantId),
+                    new CallerPrincipalId(principalId),
                     correlationId!,
-                    taskId!,
                     cancellationToken)
                 .ConfigureAwait(false);
-            IResult? fileProblem = FileReferenceValidationProblem(fileValidation, correlationId, taskId);
-            if (fileProblem is not null)
+
+            IResult? conversationProblem = ConversationPreflightProblem(conversation.ReferenceState, correlationId, taskId);
+            if (conversationProblem is not null)
             {
-                return fileProblem;
+                return conversationProblem;
             }
+
+            if (body.Folder is not null)
+            {
+                ProjectFolderValidationResult folderValidation = await folderDirectory
+                    .ValidateSetProjectFolderAsync(projectId, body.Folder.FolderId!, correlationId!, cancellationToken)
+                    .ConfigureAwait(false);
+                IResult? folderProblem = FolderValidationProblem(folderValidation, correlationId, taskId);
+                if (folderProblem is not null)
+                {
+                    return folderProblem;
+                }
+            }
+
+            foreach (ConfirmProposalFileReferenceHttpRequest file in fileReferences)
+            {
+                ProjectFileReferenceValidationResult fileValidation = await fileReferenceDirectory
+                    .ValidateLinkFileReferenceAsync(
+                        projectId,
+                        file.FolderId!,
+                        file.WorkspaceId!,
+                        file.FilePath!,
+                        correlationId!,
+                        taskId!,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+                IResult? fileProblem = FileReferenceValidationProblem(fileValidation, correlationId, taskId);
+                if (fileProblem is not null)
+                {
+                    return fileProblem;
+                }
+            }
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return ReadModelUnavailable(correlationId, taskId);
         }
 
         ProjectResolution resolution;
@@ -299,6 +310,15 @@ public static partial class ProjectsDomainServiceEndpoints
         if (resolution.Result != ResolutionResult.NoMatch)
         {
             return ValidationProblem(correlationId, taskId, "resolutionResult");
+        }
+
+        // Record the root idempotency fingerprint only after authorization and every ACL preflight
+        // succeed, so an unauthorized or denied attempt never poisons the key (AC6). Same root key +
+        // different body returns 409 here, before the first CreateProject write (AC7).
+        string rootFingerprint = ComputeConfirmProposalFingerprint(body!);
+        if (!idempotencyLedger.TryRecord(idempotencyKey!, rootFingerprint))
+        {
+            return IdempotencyConflict(correlationId, taskId);
         }
 
         CreateProject create = new(
@@ -586,6 +606,7 @@ public static partial class ProjectsDomainServiceEndpoints
 
         if (body.ProjectMetadata is null
             || string.IsNullOrWhiteSpace(body.ProjectMetadata.DisplayName)
+            || !IsValidSensitiveMetadataTier(body.ProjectMetadata.MetadataClass)
             || !ProjectCreationProposalBuilder.IsSafeCreateMetadata(body.ProjectMetadata.DisplayName!, body.Description, body.SetupMetadata))
         {
             rejectedField = "projectMetadata";
@@ -692,6 +713,12 @@ public static partial class ProjectsDomainServiceEndpoints
     private static string DeriveChildIdempotencyKey(string root, string child)
         => root + ":" + child;
 
+    // Mirrors the OpenAPI SensitiveMetadataTier enum. metadataClass is required by the ProjectMetadata
+    // contract schema; it is a classification hint that is validated then dropped (never persisted on
+    // the metadata-only CreateProject command).
+    private static bool IsValidSensitiveMetadataTier(string? value)
+        => value is "public_metadata" or "tenant_sensitive" or "credential_sensitive" or "secret";
+
     private static string ComputeConfirmProposalFingerprint(ConfirmNewProjectProposalHttpRequest body)
     {
         string[] fileIds = (body.FileReferences ?? Array.Empty<ConfirmProposalFileReferenceHttpRequest>())
@@ -708,7 +735,7 @@ public static partial class ProjectsDomainServiceEndpoints
             "field=conversation_id;present=true;value=s:" + EscapeFingerprint(body.ConversationId!),
             "field=description;present=true;value=" + (description is null ? "null" : "s:" + EscapeFingerprint(description)),
             "field=file_reference_ids;present=true;value=j:[" + string.Join(",", fileIds.Select(static id => "\"" + EscapeJson(id) + "\"")) + "]",
-            "field=folder_id;present=" + (string.IsNullOrWhiteSpace(folderId) ? "false;value=omitted" : "true;value=s:" + EscapeFingerprint(folderId!)),
+            "field=folder.folder_id;present=" + (string.IsNullOrWhiteSpace(folderId) ? "false;value=omitted" : "true;value=s:" + EscapeFingerprint(folderId!)),
             "field=operation;present=true;value=s:confirmNewProjectProposal",
             "field=project_id;present=true;value=s:" + EscapeFingerprint(body.ProjectId!),
             "field=project_metadata.display_name;present=true;value=s:" + EscapeFingerprint(body.ProjectMetadata!.DisplayName!.Trim()),

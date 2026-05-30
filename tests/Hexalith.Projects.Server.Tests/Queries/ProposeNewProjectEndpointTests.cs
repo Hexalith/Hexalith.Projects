@@ -308,11 +308,180 @@ public sealed class ProposeNewProjectEndpointTests
         submitter.Created.ShouldBeEmpty();
     }
 
+    [Fact]
+    public async Task Confirm_UnauthorizedCaller_ReturnsSafeDenialBeforeWrites()
+    {
+        CapturingProjectCommandSubmitter submitter = new();
+        using ServiceProvider provider = await BuildProviderAsync(submitter: submitter, tenantId: null, principalId: null).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(provider, ConfirmBody()).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        response.Body.ShouldNotContain(ConversationIdValue);
+        response.Body.ShouldNotContain(ProjectIdValue);
+        submitter.Created.ShouldBeEmpty();
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(response.Body));
+    }
+
+    [Theory]
+    [InlineData(ReferenceState.Unavailable, HttpStatusCode.ServiceUnavailable)]
+    [InlineData(ReferenceState.Stale, HttpStatusCode.ServiceUnavailable)]
+    [InlineData(ReferenceState.Unauthorized, HttpStatusCode.NotFound)]
+    public async Task Confirm_ConversationPreflightFailure_FailsClosedBeforeWrites(ReferenceState state, HttpStatusCode expectedStatus)
+    {
+        CapturingProjectCommandSubmitter submitter = new();
+        using ServiceProvider provider = await BuildProviderAsync(
+            submitter: submitter,
+            conversation: ConversationResolutionMetadata.FailClosed(ConversationIdValue, state)).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(provider, ConfirmBody()).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(expectedStatus);
+        submitter.Created.ShouldBeEmpty();
+        submitter.Folders.ShouldBeEmpty();
+        submitter.Files.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Confirm_ConversationReadThrows_FailsClosedBeforeWrites()
+    {
+        CapturingProjectCommandSubmitter submitter = new();
+        using ServiceProvider provider = await BuildProviderAsync(submitter: submitter, conversationThrows: true).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(provider, ConfirmBody()).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+        submitter.Created.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Confirm_ResponsesDoNotLeakPayload()
+    {
+        using ServiceProvider denyProvider = await BuildProviderAsync(folderDirectory: new RecordingFolderDirectory(ProjectFolderValidationOutcome.Denied)).ConfigureAwait(true);
+        EndpointResponse denied = await SendConfirmAsync(denyProvider, ConfirmBody()).ConfigureAwait(true);
+        denied.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(denied.Body));
+
+        using ServiceProvider acceptProvider = await BuildProviderAsync(submitter: new CapturingProjectCommandSubmitter()).ConfigureAwait(true);
+        EndpointResponse accepted = await SendConfirmAsync(acceptProvider, ConfirmBody()).ConfigureAwait(true);
+        accepted.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(accepted.Body));
+    }
+
+    [Fact]
+    public async Task Confirm_MissingMetadataClass_ReturnsValidationProblemBeforeWrites()
+    {
+        CapturingProjectCommandSubmitter submitter = new();
+        using ServiceProvider provider = await BuildProviderAsync(submitter: submitter).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(provider, ConfirmBody(metadataClass: null)).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        response.Body.ShouldContain("projectMetadata");
+        submitter.Created.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Confirm_NoFolderNoFiles_SubmitsOnlyCreateAndAssignment()
+    {
+        CapturingProjectCommandSubmitter submitter = new();
+        CapturingAssignmentDirectory assignment = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        using ServiceProvider provider = await BuildProviderAsync(submitter: submitter, assignmentDirectory: assignment).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(provider, ConfirmBodyMinimal()).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        submitter.Created.Count.ShouldBe(1);
+        submitter.Created.Single().IdempotencyKey.ShouldBe(IdempotencyKeyValue + ":create");
+        assignment.Confirmed.Count.ShouldBe(1);
+        submitter.Folders.ShouldBeEmpty();
+        submitter.Files.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Confirm_DuplicateFileReferenceIds_ReturnsValidationProblemBeforeWrites()
+    {
+        CapturingProjectCommandSubmitter submitter = new();
+        using ServiceProvider provider = await BuildProviderAsync(submitter: submitter).ConfigureAwait(true);
+
+        string body = $$"""
+            {
+              "requestSchemaVersion": "v1",
+              "operation": "confirmNewProjectProposal",
+              "resolutionResult": "NoMatch",
+              "confirmed": true,
+              "projectId": "{{ProjectIdValue}}",
+              "conversationId": "{{ConversationIdValue}}",
+              "projectMetadata": { "displayName": "Suggested Project", "metadataClass": "tenant_sensitive" },
+              "fileReferences": [
+                { "fileReferenceId": "{{FileIdValue}}", "folderId": "{{FolderIdValue}}", "workspaceId": "{{WorkspaceIdValue}}", "filePath": "docs/a.md", "fileMetadata": { "displayName": "A" } },
+                { "fileReferenceId": "{{FileIdValue}}", "folderId": "{{FolderIdValue}}", "workspaceId": "{{WorkspaceIdValue}}", "filePath": "docs/b.md", "fileMetadata": { "displayName": "B" } }
+              ],
+              "fileReferenceIds": ["{{FileIdValue}}", "{{FileIdValue}}"]
+            }
+            """;
+
+        EndpointResponse response = await SendConfirmAsync(provider, body).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        response.Body.ShouldContain("fileReferences");
+        submitter.Created.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Confirm_TooManyFileReferences_ReturnsValidationProblemBeforeWrites()
+    {
+        CapturingProjectCommandSubmitter submitter = new();
+        using ServiceProvider provider = await BuildProviderAsync(submitter: submitter).ConfigureAwait(true);
+
+        string[] ids = Enumerable.Range(0, 33).Select(static i => $"file-{i:D3}").ToArray();
+        string fileReferences = string.Join(
+            ",",
+            ids.Select(static id => $$"""{ "fileReferenceId": "{{id}}", "folderId": "{{FolderIdValue}}", "workspaceId": "{{WorkspaceIdValue}}", "filePath": "docs/{{id}}.md", "fileMetadata": { "displayName": "{{id}}" } }"""));
+        string idArray = string.Join(",", ids.Select(static id => $"\"{id}\""));
+        string body = $$"""
+            {
+              "requestSchemaVersion": "v1",
+              "operation": "confirmNewProjectProposal",
+              "resolutionResult": "NoMatch",
+              "confirmed": true,
+              "projectId": "{{ProjectIdValue}}",
+              "conversationId": "{{ConversationIdValue}}",
+              "projectMetadata": { "displayName": "Suggested Project", "metadataClass": "tenant_sensitive" },
+              "fileReferences": [{{fileReferences}}],
+              "fileReferenceIds": [{{idArray}}]
+            }
+            """;
+
+        EndpointResponse response = await SendConfirmAsync(provider, body).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        response.Body.ShouldContain("fileReferences");
+        submitter.Created.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Preview_InvalidFreshness_ReturnsValidationProblem()
+    {
+        using ServiceProvider provider = await BuildProviderAsync().ConfigureAwait(true);
+
+        EndpointResponse response = await SendPreviewAsync(
+            provider,
+            PreviewBody(),
+            headers: new Dictionary<string, string>(StringComparer.Ordinal) { ["X-Hexalith-Freshness"] = "strong" }).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        using JsonDocument document = JsonDocument.Parse(response.Body);
+        document.RootElement.GetProperty("category").GetString().ShouldBe("validation_error");
+        document.RootElement.GetProperty("details").GetProperty("rejectedField").GetString().ShouldBe("freshness");
+    }
+
     private static async Task<ServiceProvider> BuildProviderAsync(
         IReadOnlyList<ProjectListItem>? listRows = null,
         IReadOnlyList<ProjectReferenceIndexCandidateRow>? referenceRows = null,
         bool referenceIndexThrows = false,
         ConversationResolutionMetadata? conversation = null,
+        bool conversationThrows = false,
         CapturingProjectCommandSubmitter? submitter = null,
         CapturingAssignmentDirectory? assignmentDirectory = null,
         RecordingFolderDirectory? folderDirectory = null,
@@ -332,7 +501,8 @@ public sealed class ProposeNewProjectEndpointTests
         services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContext(tenantId, principalId));
         services.RemoveAll<IProjectConversationResolutionDirectory>();
         services.AddSingleton<IProjectConversationResolutionDirectory>(new StubConversationResolutionDirectory(
-            conversation ?? new ConversationResolutionMetadata(ConversationIdValue, null, "Conversation Project", ReferenceState.Included)));
+            conversation ?? new ConversationResolutionMetadata(ConversationIdValue, null, "Conversation Project", ReferenceState.Included),
+            conversationThrows));
         services.RemoveAll<IProjectListReadModel>();
         services.AddSingleton<IProjectListReadModel>(new StubProjectListReadModel(listRows ?? []));
         services.RemoveAll<IProjectReferenceIndexReadModel>();
@@ -477,8 +647,12 @@ public sealed class ProposeNewProjectEndpointTests
             }
             """;
 
-    private static string ConfirmBody(string displayName = "Suggested Project")
-        => $$"""
+    private static string ConfirmBody(string displayName = "Suggested Project", string? metadataClass = "tenant_sensitive")
+    {
+        string projectMetadata = metadataClass is null
+            ? $$"""{ "displayName": "{{displayName}}" }"""
+            : $$"""{ "displayName": "{{displayName}}", "metadataClass": "{{metadataClass}}" }""";
+        return $$"""
             {
               "requestSchemaVersion": "v1",
               "operation": "confirmNewProjectProposal",
@@ -486,7 +660,7 @@ public sealed class ProposeNewProjectEndpointTests
               "confirmed": true,
               "projectId": "{{ProjectIdValue}}",
               "conversationId": "{{ConversationIdValue}}",
-              "projectMetadata": { "displayName": "{{displayName}}" },
+              "projectMetadata": {{projectMetadata}},
               "description": "Safe project description",
               "setupMetadata": "Safe setup note",
               "folder": {
@@ -503,6 +677,20 @@ public sealed class ProposeNewProjectEndpointTests
                 }
               ],
               "fileReferenceIds": ["{{FileIdValue}}"]
+            }
+            """;
+    }
+
+    private static string ConfirmBodyMinimal()
+        => $$"""
+            {
+              "requestSchemaVersion": "v1",
+              "operation": "confirmNewProjectProposal",
+              "resolutionResult": "NoMatch",
+              "confirmed": true,
+              "projectId": "{{ProjectIdValue}}",
+              "conversationId": "{{ConversationIdValue}}",
+              "projectMetadata": { "displayName": "Suggested Project", "metadataClass": "tenant_sensitive" }
             }
             """;
 
@@ -558,7 +746,7 @@ public sealed class ProposeNewProjectEndpointTests
                     ]);
     }
 
-    private sealed class StubConversationResolutionDirectory(ConversationResolutionMetadata metadata) : IProjectConversationResolutionDirectory
+    private sealed class StubConversationResolutionDirectory(ConversationResolutionMetadata metadata, bool throws = false) : IProjectConversationResolutionDirectory
     {
         public Task<ConversationResolutionMetadata> ReadConversationMetadataAsync(
             ConversationId conversationId,
@@ -566,7 +754,9 @@ public sealed class ProposeNewProjectEndpointTests
             CallerPrincipalId caller,
             string correlationId,
             CancellationToken cancellationToken = default)
-            => Task.FromResult(metadata);
+            => throws
+                ? Task.FromException<ConversationResolutionMetadata>(new InvalidOperationException("conversation metadata unavailable"))
+                : Task.FromResult(metadata);
     }
 
     private sealed class StubProjectListReadModel(IReadOnlyList<ProjectListItem> rows) : IProjectListReadModel
