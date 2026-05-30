@@ -59,6 +59,39 @@ public sealed class ProjectSetupArchiveAggregateTests
     }
 
     [Fact]
+    public void RestoreProject_ExistingArchivedProject_EmitsProjectRestored()
+    {
+        ProjectState archived = ProjectState.Empty.Apply(
+            [CreatedEvent(), ArchivedEvent()],
+            Identity());
+
+        ProjectResult result = ProjectAggregate.Handle(archived, RestoreCommand(), DateTimeOffset.UnixEpoch.AddMinutes(3));
+
+        result.IsAccepted.ShouldBeTrue();
+        result.Code.ShouldBe(ProjectResultCode.Restored);
+        ProjectRestored restored = result.Events.Single().ShouldBeOfType<ProjectRestored>();
+        restored.TenantId.ShouldBe(Tenant);
+        restored.ProjectId.ShouldBe(ProjectIdValue);
+        restored.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+    }
+
+    [Fact]
+    public void RestoreProject_ActiveProject_RejectedUnlessSameIdempotentReplay()
+    {
+        ProjectState restored = ProjectState.Empty.Apply(
+            [CreatedEvent(), ArchivedEvent(), RestoredEvent()],
+            Identity());
+
+        ProjectResult replay = ProjectAggregate.Handle(restored, RestoreCommand());
+        ProjectResult differentKey = ProjectAggregate.Handle(restored, RestoreCommand() with { IdempotencyKey = "restore-key-002" });
+
+        replay.IsIdempotentReplay.ShouldBeTrue();
+        differentKey.IsAccepted.ShouldBeFalse();
+        differentKey.Code.ShouldBe(ProjectResultCode.ProjectAlreadyActive);
+        differentKey.ToRejectionEvent().ShouldBeOfType<ProjectRestoreRejected>().Reason.ShouldBe(ReferenceState.Conflict);
+    }
+
+    [Fact]
     public void UpdateProjectSetup_ArchivedProject_RejectedWithoutStateMutation()
     {
         ProjectState archived = ProjectState.Empty.Apply(
@@ -151,6 +184,14 @@ public sealed class ProjectSetupArchiveAggregateTests
         "task-a",
         "archive-key-001");
 
+    private static RestoreProject RestoreCommand() => new(
+        Tenant,
+        new ProjectId(ProjectIdValue),
+        "principal-a",
+        "corr-a",
+        "task-a",
+        "restore-key-001");
+
     private static ProjectSetup Setup() => new(
         ["keep continuity current"],
         ["use safe project references"],
@@ -174,5 +215,14 @@ public sealed class ProjectSetupArchiveAggregateTests
     {
         ProjectResult result = ProjectAggregate.Handle(CreatedState(), ArchiveCommand());
         return result.Events.Single().ShouldBeOfType<ProjectArchived>();
+    }
+
+    private static ProjectRestored RestoredEvent()
+    {
+        ProjectState archived = ProjectState.Empty.Apply(
+            [CreatedEvent(), ArchivedEvent()],
+            Identity());
+        ProjectResult result = ProjectAggregate.Handle(archived, RestoreCommand());
+        return result.Events.Single().ShouldBeOfType<ProjectRestored>();
     }
 }

@@ -36,6 +36,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         Services.AddSingleton(source);
         Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
         Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
+        Services.AddSingleton(Substitute.For<IProjectMaintenanceActionSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -63,7 +64,8 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Find("[data-testid='safe-diagnostic-export-preview']").TextContent.ShouldContain("audit-001");
 
         cut.Find("[data-testid='project-detail-tab-actions']").Click();
-        cut.Find("[data-testid='project-detail-section-actions']").TextContent.ShouldContain("Story 5.9");
+        cut.Find("[data-testid='maintenance-action-panel']").TextContent.ShouldContain("Maintenance actions");
+        cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("Preview");
     }
 
     [Fact]
@@ -104,6 +106,137 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("No references");
         cut.Find("[data-testid='project-detail-tab-audit']").Click();
         cut.Find("[data-testid='project-detail-section-audit']").TextContent.ShouldContain("No audit events");
+    }
+
+    [Fact]
+    public void MaintenancePanelRequiresDryRunAndConfirmationBeforeSubmit()
+    {
+        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectMaintenanceActionSource maintenance = Substitute.For<IProjectMaintenanceActionSource>();
+        maintenance.ExecuteAsync(Arg.Any<ProjectMaintenanceActionExecutionRequest>(), Arg.Any<IProgress<string>?>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectMaintenanceActionExecutionResult.Confirmed("corr-001", "task-001", "audit-archive")));
+        Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
+        Services.AddSingleton(maintenance);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-actions']").Click();
+
+        cut.Find("[data-testid='maintenance-action-submit']").HasAttribute("disabled").ShouldBeTrue();
+        cut.Find("[data-testid='maintenance-action-confirm']").HasAttribute("disabled").ShouldBeTrue();
+        cut.Find("[data-testid='maintenance-action-dry-run-run']").Click();
+
+        // A successful dry-run surfaces the distinct DryRunPassed state and keeps submit disabled until
+        // explicit confirmation advances the panel to ConfirmationRequired.
+        cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("DryRunPassed");
+        cut.Find("[data-testid='maintenance-action-confirm']").HasAttribute("disabled").ShouldBeFalse();
+        cut.Find("[data-testid='maintenance-action-submit']").HasAttribute("disabled").ShouldBeTrue();
+        cut.Find("[data-testid='maintenance-action-confirm']").Change(true);
+        cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("ConfirmationRequired");
+        cut.Find("[data-testid='maintenance-action-submit']").HasAttribute("disabled").ShouldBeFalse();
+        cut.Find("[data-testid='maintenance-action-submit']").Click();
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("Succeeded"));
+        cut.Find("[data-testid='maintenance-action-feedback']").TextContent.ShouldContain("confirmed");
+        cut.Markup.ShouldNotContain("token");
+        cut.Markup.ShouldNotContain("ProblemDetails");
+    }
+
+    [Fact]
+    public async Task MaintenancePanelBlocksRelinkUntilExplicitReplacementTargetExists()
+    {
+        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectMaintenanceActionSource maintenance = Substitute.For<IProjectMaintenanceActionSource>();
+        Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
+        Services.AddSingleton(maintenance);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-actions']").Click();
+        cut.Find("[data-testid='maintenance-action-select']").Change(ProjectMaintenanceActions.Relink);
+
+        cut.Find("[data-testid='maintenance-action-reference-kind']").TextContent.ShouldContain("Folder");
+        cut.Find("[data-testid='maintenance-action-dry-run-run']").Click();
+
+        cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("DryRunBlocked");
+        cut.Find("[data-testid='maintenance-action-feedback']").TextContent.ShouldContain("invalid_reference");
+        cut.Find("[data-testid='maintenance-action-submit']").HasAttribute("disabled").ShouldBeTrue();
+        await maintenance.DidNotReceive()
+            .ExecuteAsync(
+                Arg.Any<ProjectMaintenanceActionExecutionRequest>(),
+                Arg.Any<IProgress<string>?>(),
+                Arg.Any<CancellationToken>())
+            .ConfigureAwait(true);
+    }
+
+    [Fact]
+    public void MaintenancePanelEntersDryRunRequiredAndBlocksRestoreOnActiveProjectWithSafeFeedback()
+    {
+        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
+        Services.AddSingleton(Substitute.For<IProjectMaintenanceActionSource>());
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-actions']").Click();
+
+        // Selecting a new action requires a fresh dry-run before any confirmation.
+        cut.Find("[data-testid='maintenance-action-select']").Change(ProjectMaintenanceActions.Restore);
+        cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("DryRunRequired");
+
+        // Restore against an active project is blocked with a safe reason and a disabled submit.
+        cut.Find("[data-testid='maintenance-action-dry-run-run']").Click();
+        cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("DryRunBlocked");
+        cut.Find("[data-testid='maintenance-action-feedback']").TextContent.ShouldContain("invalid_lifecycle");
+        cut.Find("[data-testid='maintenance-action-submit']").HasAttribute("disabled").ShouldBeTrue();
+    }
+
+    [Fact]
+    public void MaintenancePanelRendersFailedStateAndSafeFeedbackWhenSourceRejects()
+    {
+        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectMaintenanceActionSource maintenance = Substitute.For<IProjectMaintenanceActionSource>();
+        maintenance.ExecuteAsync(Arg.Any<ProjectMaintenanceActionExecutionRequest>(), Arg.Any<IProgress<string>?>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectMaintenanceActionExecutionResult.Rejected("corr-001", "task-001", "idempotency_conflict")));
+        Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
+        Services.AddSingleton(maintenance);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-actions']").Click();
+
+        cut.Find("[data-testid='maintenance-action-dry-run-run']").Click();
+        cut.Find("[data-testid='maintenance-action-confirm']").Change(true);
+        cut.Find("[data-testid='maintenance-action-submit']").Click();
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("Failed"));
+        cut.Find("[data-testid='maintenance-action-feedback']").TextContent.ShouldContain("idempotency_conflict");
+        cut.Markup.ShouldNotContain("ProblemDetails");
+        cut.Markup.ShouldNotContain("token");
     }
 
     [Fact]

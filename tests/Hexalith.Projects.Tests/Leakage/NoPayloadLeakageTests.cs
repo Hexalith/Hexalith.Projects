@@ -105,6 +105,40 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void ProjectRestored_SerializesMetadataOnly()
+    {
+        ProjectRestored restored = new(
+            "acme",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            ProjectLifecycle.Active,
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-key-restore",
+            "sha256:restore",
+            DateTimeOffset.UnixEpoch);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(restored));
+    }
+
+    [Fact]
+    public void RestoreProject_SerializesMetadataOnly()
+    {
+        // Story 5.9: the new RestoreProject command carries only safe metadata (tenant/project/actor ids,
+        // correlation/task ids, and the internal idempotency key). It must never serialize sibling-owned
+        // payload content.
+        RestoreProject command = new(
+            "acme",
+            new ProjectId("01HZ9K8YQ3W6V2N4R7T5P0X1AB"),
+            "actor-001",
+            "corr-restore",
+            "task-restore",
+            "idem-restore");
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(command));
+    }
+
+    [Fact]
     public void ProjectFolderCreationPending_SerializesMetadataOnly()
     {
         ProjectFolderCreationPending pending = new(
@@ -723,6 +757,8 @@ public sealed class NoPayloadLeakageTests
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(
             new ProjectArchiveRejected(projectId, "acme", ReferenceState.Archived, "lifecycle", "corr-archive")));
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(
+            new ProjectRestoreRejected(projectId, "acme", ReferenceState.Archived, "lifecycle", "corr-restore")));
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(
             new ProjectReferenceLinkRejected(projectId, "acme", "folder", "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC", ReferenceState.Unavailable, "folderId", "corr-folder")));
     }
 
@@ -1149,5 +1185,54 @@ public sealed class NoPayloadLeakageTests
         };
 
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(dashboard));
+    }
+
+    [Fact]
+    public void MaintenanceActionProjection_SerializesMetadataOnly()
+    {
+        // Story 5.9: the maintenance-action descriptor is the central new FrontComposer wrapper. It carries
+        // several free-text-ish carriers (current/proposed state, warning, dry-run status, expected audit)
+        // that must remain metadata-only across Web and future MCP/CLI parity surfaces.
+        var descriptor = new ProjectMaintenanceActionProjection
+        {
+            Id = "project-001:maintenance:restore",
+            Action = ProjectMaintenanceActions.Restore,
+            State = ProjectMaintenancePanelState.ConfirmationRequired,
+            PanelState = ProjectMaintenancePanelStates.ConfirmationRequired,
+            CommandLifecycleState = ProjectMaintenanceCommandLifecycleStates.Acknowledged,
+            ProjectId = "project-001",
+            TenantScope = "server-derived tenant",
+            ReferenceKind = "memory",
+            ReferenceId = "memory-001",
+            CurrentState = ProjectLifecycle.Archived.ToString(),
+            ProposedState = ProjectLifecycle.Active.ToString(),
+            Warning = "References remain associated and audit-visible.",
+            DryRunStatus = "dry-run passed; explicit confirmation required",
+            ExpectedAuditOperation = "project.restored",
+            ConfirmationRequired = true,
+            SafeFeedbackCode = "dry_run_passed",
+            CorrelationId = "corr-restore",
+            TaskId = "task-restore",
+            AuditEventId = "audit-restore-001",
+        };
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(descriptor));
+    }
+
+    [Fact]
+    public void MaintenanceActionProjection_ForbiddenValueInFreeTextCarrier_IsDetected()
+    {
+        // Negative proof: the descriptor's free-text carriers (e.g. Warning) must remain guarded. If a
+        // forbidden sibling-owned value ever reached one, the leakage harness must fire — proving the
+        // metadata-only fact above is a real guard, not a vacuous shape check.
+        var leaking = new ProjectMaintenanceActionProjection
+        {
+            Id = "project-001:maintenance:relink",
+            Action = ProjectMaintenanceActions.Relink,
+            ProjectId = "project-001",
+            Warning = "leaked memory_body content from /etc/shadow",
+        };
+
+        Should.Throw<PayloadLeakageException>(() => NoPayloadLeakageAssertions.AssertNoLeakage(leaking));
     }
 }

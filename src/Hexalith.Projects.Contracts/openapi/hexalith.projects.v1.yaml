@@ -1437,6 +1437,74 @@ paths:
         - idempotency_conflict
         - not_found
         - internal_error
+  /api/v1/projects/{projectId}/restore:
+    post:
+      tags:
+        - projects
+      operationId: RestoreProject
+      summary: Restore an archived tenant-scoped project (command-async).
+      description: >
+        Restores an archived tenant-scoped Project workspace to active lifecycle metadata. Returns
+        202 Accepted with no read-after-write guarantee; confirm via detail/operator diagnostic audit
+        reload. Restore does not relink references, mutate sibling resources, or accept tenant
+        authority from this request.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestoreProjectRequest"
+            examples:
+              synthetic:
+                $ref: "#/components/examples/RestoreProjectRequest"
+      responses:
+        "202":
+          $ref: "#/components/responses/AcceptedCommand"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "409":
+          $ref: "#/components/responses/IdempotencyConflict"
+      x-hexalith-idempotency-key:
+        required: true
+        adapterSourcing:
+          - rest-header
+          - sdk-caller-or-provider
+          - cli-flag-or-allow-auto-key
+          - mcp-input
+        missingBehavior: validation_error
+        malformedBehavior: validation_error
+        queryBehavior: rejected-if-present
+      x-hexalith-idempotency-equivalence:
+        - request_schema_version
+        - restore_intent
+      x-hexalith-idempotency-ttl-tier: mutation
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: eventstore-envelope-causation-reference
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-project-restore-permission-and-project-detail
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - validation_error
+        - idempotency_conflict
+        - not_found
+        - internal_error
   /api/v1/projects/resolution/from-conversation:
     get:
       tags:
@@ -2090,6 +2158,10 @@ components:
       value:
         requestSchemaVersion: v1
         archiveIntent: archive
+    RestoreProjectRequest:
+      value:
+        requestSchemaVersion: v1
+        restoreIntent: restore
     ProjectLifecycleStatus:
       value:
         projectId: opaque_01HZY7Z6N7J4Q2X8Y9V0A1B2C3
@@ -2708,6 +2780,22 @@ components:
           type: string
           enum:
             - v1
+    RestoreProjectRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - requestSchemaVersion
+        - restoreIntent
+      properties:
+        requestSchemaVersion:
+          type: string
+          enum:
+            - v1
+        restoreIntent:
+          type: string
+          enum:
+            - restore
+          description: Command intent literal included in canonical idempotency equivalence.
     LinkProjectConversationRequest:
       type: object
       additionalProperties: false

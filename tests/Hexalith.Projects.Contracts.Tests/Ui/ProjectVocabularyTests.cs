@@ -209,6 +209,31 @@ public sealed class ProjectVocabularyTests
     }
 
     [Fact]
+    public void MaintenanceActionProjectionCarriesActionQueueMetadataAndSharedStates()
+    {
+        Type type = typeof(ProjectMaintenanceActionProjection);
+        type.GetCustomAttributes(typeof(ProjectionAttribute), inherit: false).ShouldHaveSingleItem();
+        ProjectionRoleAttribute role = type.GetCustomAttributes(typeof(ProjectionRoleAttribute), inherit: false)
+            .ShouldHaveSingleItem()
+            .ShouldBeOfType<ProjectionRoleAttribute>();
+        role.Role.ShouldBe(ProjectionRole.ActionQueue);
+        string whenState = role.WhenState.ShouldNotBeNull();
+        whenState.ShouldContain(ProjectMaintenancePanelStates.DryRunRequired);
+        whenState.ShouldContain(ProjectMaintenancePanelStates.Succeeded);
+
+        ProjectMaintenanceActionProjection.ContractVersionValue.ShouldBe("projects.maintenance-action.ui.v1");
+        ProjectMaintenanceActions.Archive.ShouldBe("archive");
+        ProjectMaintenanceCommandLifecycleStates.Acknowledged.ShouldBe("Acknowledged(202)");
+        typeof(ProjectMaintenanceActionProjection)
+            .GetProperty(nameof(ProjectMaintenanceActionProjection.State))!
+            .PropertyType.ShouldBe(typeof(ProjectMaintenancePanelState));
+        typeof(ProjectMaintenanceActionProjection)
+            .GetProperty(nameof(ProjectMaintenanceActionProjection.ProjectId))!
+            .GetCustomAttributes(typeof(ColumnPriorityAttribute), inherit: false)
+            .ShouldHaveSingleItem();
+    }
+
+    [Fact]
     public void ReferenceHealthRowProjectionMapsFromExistingReferenceSummary()
     {
         ProjectReferenceHealthRowProjection row = ProjectReferenceHealthRowProjection.FromReferenceSummary(

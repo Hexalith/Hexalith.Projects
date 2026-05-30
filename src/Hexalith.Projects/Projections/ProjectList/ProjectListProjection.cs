@@ -134,6 +134,19 @@ public sealed record ProjectListProjection
 
                     break;
 
+                case ProjectRestored restored:
+                    if (projects.TryGetValue(key, out ProjectListItem? restoredRow))
+                    {
+                        projects[key] = restoredRow with
+                        {
+                            Lifecycle = restored.Lifecycle,
+                            Sequence = envelope.Sequence,
+                            UpdatedAt = restored.OccurredAt,
+                        };
+                    }
+
+                    break;
+
                 case ProjectFolderSet folderSet:
                     if (projects.TryGetValue(key, out ProjectListItem? folderRow))
                     {

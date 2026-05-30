@@ -107,6 +107,28 @@ public sealed class ProjectProjectionTests
     }
 
     [Fact]
+    public void Projections_RestoreUpdatesLifecycleAndListFilters()
+    {
+        ProjectListProjection list = ProjectListProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, Archived(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 3, Restored(TenantA)),
+        ]);
+        ProjectDetailProjection detail = ProjectDetailProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, Archived(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 3, Restored(TenantA)),
+        ]);
+
+        list.Get(TenantA, ProjectIdValue)!.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+        list.List(TenantA, ProjectLifecycle.Archived).ShouldBeEmpty();
+        list.List(TenantA, ProjectLifecycle.Active).Single().ProjectId.ShouldBe(ProjectIdValue);
+        detail.Get(TenantA, ProjectIdValue)!.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+    }
+
+    [Fact]
     public void ListProjection_ToleratesFileAndMemoryReferenceEvents()
     {
         // Regression: the durable journal is shared, so ListAsync rebuilds the list projection over
@@ -350,6 +372,18 @@ public sealed class ProjectProjectionTests
             "idem-key-archive",
             "sha256:archive",
             DateTimeOffset.UnixEpoch.AddMinutes(2));
+
+    private static ProjectRestored Restored(string tenant)
+        => new(
+            tenant,
+            ProjectIdValue,
+            ProjectLifecycle.Active,
+            "actor-001",
+            "corr-restore",
+            "task-restore",
+            "idem-key-restore",
+            "sha256:restore",
+            DateTimeOffset.UnixEpoch.AddMinutes(3));
 
     private static ProjectFolderCreationPending FolderPending(string tenant)
         => new(

@@ -204,6 +204,60 @@ public static partial class ProjectAggregate
     }
 
     /// <summary>
+    /// Handles a <see cref="RestoreProject"/> command against the current state.
+    /// </summary>
+    /// <param name="state">The current aggregate state.</param>
+    /// <param name="command">The restore command.</param>
+    /// <param name="occurredAt">The event timestamp supplied by the command pipeline.</param>
+    /// <returns>An accepted restore result, an idempotent replay, or a rejection.</returns>
+    public static ProjectResult Handle(ProjectState state, RestoreProject command, DateTimeOffset occurredAt)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult validation = ProjectCommandValidator.Validate(command);
+        if (!validation.IsAccepted)
+        {
+            return ProjectResult.Rejected(command, validation.Code, validation.RejectedField);
+        }
+
+        if (state.IdempotencyFingerprints.TryGetValue(command.IdempotencyKey, out string? priorFingerprint))
+        {
+            return string.Equals(priorFingerprint, validation.IdempotencyFingerprint, StringComparison.Ordinal)
+                ? ProjectResult.Rejected(command, ProjectResultCode.IdempotentReplay)
+                : ProjectResult.Rejected(command, ProjectResultCode.IdempotencyConflict);
+        }
+
+        if (!state.IsCreated)
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.ProjectNotFound);
+        }
+
+        if (!IsSameIdentity(state, command))
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.TenantMismatch);
+        }
+
+        if (state.Lifecycle == ProjectLifecycle.Active)
+        {
+            return ProjectResult.Rejected(command, ProjectResultCode.ProjectAlreadyActive);
+        }
+
+        ProjectRestored restored = new(
+            command.TenantId,
+            command.ProjectId.Value,
+            ProjectLifecycle.Active,
+            command.ActorPrincipalId,
+            command.CorrelationId,
+            command.TaskId,
+            command.IdempotencyKey,
+            validation.IdempotencyFingerprint!,
+            occurredAt);
+
+        return ProjectResult.Accepted(command, ProjectResultCode.Restored, [restored]);
+    }
+
+    /// <summary>
     /// Handles a <see cref="SetProjectFolder"/> command against the current state.
     /// </summary>
     /// <param name="state">The current aggregate state.</param>
@@ -301,6 +355,13 @@ public static partial class ProjectAggregate
     /// <param name="command">The archive command.</param>
     /// <returns>The handle result with a <see cref="DateTimeOffset.MinValue"/> timestamp.</returns>
     public static ProjectResult Handle(ProjectState state, ArchiveProject command)
+        => Handle(state, command, DateTimeOffset.MinValue);
+
+    /// <summary>Deterministic-timestamp test overload for restores.</summary>
+    /// <param name="state">The current aggregate state.</param>
+    /// <param name="command">The restore command.</param>
+    /// <returns>The handle result with a <see cref="DateTimeOffset.MinValue"/> timestamp.</returns>
+    public static ProjectResult Handle(ProjectState state, RestoreProject command)
         => Handle(state, command, DateTimeOffset.MinValue);
 
     /// <summary>Deterministic-timestamp test overload for set-folder.</summary>

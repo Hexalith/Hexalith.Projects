@@ -147,6 +147,111 @@ public sealed class CreateProjectEndpointTests
     }
 
     [Fact]
+    public async Task PostProjectRestore_Authorized_Returns202AndSubmitsRestore()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Archived));
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidRestoreRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            RestoreProject submitted = submitter.Restored.Single();
+            submitted.ProjectId.Value.ShouldBe(ProjectIdValue);
+            submitted.TenantId.ShouldBe("tenant-a");
+            submitted.IdempotencyKey.ShouldBe("idem-key-restore");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProjectRestore_UnknownTenantProjection_ReturnsSafe404AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(
+            submitter,
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            seedTenantAccess: false).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(ValidRestoreRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            // Unauthorized / hidden / cross-tenant identifiers fail closed as an indistinguishable safe 404.
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            submitter.Restored.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProjectRestore_MissingIdempotencyKey_Returns400AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Archived));
+
+            HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{ProjectIdValue}/restore")
+            {
+                Content = JsonContent.Create(new { requestSchemaVersion = "v1", restoreIntent = "restore" }),
+            };
+            request.Headers.Add("X-Correlation-Id", "corr-a");
+            request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.Restored.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProjectRestore_InvalidRestoreIntent_Returns400AndDoesNotSubmit()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", CreatedEvent("tenant-a", ProjectLifecycle.Archived));
+
+            HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{ProjectIdValue}/restore")
+            {
+                Content = JsonContent.Create(new { requestSchemaVersion = "v1", restoreIntent = "reactivate" }),
+            };
+            request.Headers.Add("Idempotency-Key", "idem-key-restore");
+            request.Headers.Add("X-Correlation-Id", "corr-a");
+            request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.Restored.ShouldBeEmpty();
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
     public async Task PutProjectFolder_AuthorizedAndFolderValidated_Returns202AndSubmitsSetFolder()
     {
         FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
@@ -1944,6 +2049,22 @@ public sealed class CreateProjectEndpointTests
         return request;
     }
 
+    private static HttpRequestMessage ValidRestoreRequest()
+    {
+        HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{ProjectIdValue}/restore")
+        {
+            Content = JsonContent.Create(new
+            {
+                requestSchemaVersion = "v1",
+                restoreIntent = "restore",
+            }),
+        };
+        request.Headers.Add("Idempotency-Key", "idem-key-restore");
+        request.Headers.Add("X-Correlation-Id", "corr-a");
+        request.Headers.Add("X-Hexalith-Task-Id", "task-a");
+        return request;
+    }
+
     private static HttpRequestMessage ValidSetFolderRequest(
         string projectId = ProjectIdValue,
         string folderId = "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
@@ -2294,6 +2415,8 @@ public sealed class CreateProjectEndpointTests
 
         public List<ArchiveProject> Archived { get; } = [];
 
+        public List<RestoreProject> Restored { get; } = [];
+
         public List<SetProjectFolder> FolderSet { get; } = [];
 
         public Task<ProjectCommandSubmissionResult> SubmitCreateProjectAsync(CreateProject command, CancellationToken cancellationToken = default)
@@ -2311,6 +2434,12 @@ public sealed class CreateProjectEndpointTests
         public Task<ProjectCommandSubmissionResult> SubmitArchiveProjectAsync(ArchiveProject command, CancellationToken cancellationToken = default)
         {
             Archived.Add(command);
+            return Task.FromResult(result);
+        }
+
+        public Task<ProjectCommandSubmissionResult> SubmitRestoreProjectAsync(RestoreProject command, CancellationToken cancellationToken = default)
+        {
+            Restored.Add(command);
             return Task.FromResult(result);
         }
 
@@ -2381,6 +2510,7 @@ public sealed class CreateProjectEndpointTests
                         ProjectAuthorizationGate.ListProjectsAction,
                         ProjectAuthorizationGate.UpdateProjectSetupAction,
                         ProjectAuthorizationGate.ArchiveProjectAction,
+                        ProjectAuthorizationGate.RestoreProjectAction,
                         ProjectAuthorizationGate.SetProjectFolderAction,
                         ProjectAuthorizationGate.LinkFileReferenceAction,
                         ProjectAuthorizationGate.UnlinkFileReferenceAction,

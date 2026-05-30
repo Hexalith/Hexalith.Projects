@@ -45,6 +45,7 @@ public sealed class ProjectAuditTimelineProjectionTests
             "file_reference.linked",
             "project.folder_set",
             "project.folder_creation_pending",
+            "project.restored",
             "project.archived",
             "project.setup_updated",
             "project.created",
@@ -59,6 +60,8 @@ public sealed class ProjectAuditTimelineProjectionTests
 
         rows.Single(static row => row.OperationType == "project.archived").PreviousState.ShouldBe(ProjectLifecycle.Active.ToString());
         rows.Single(static row => row.OperationType == "project.archived").NewState.ShouldBe(ProjectLifecycle.Archived.ToString());
+        rows.Single(static row => row.OperationType == "project.restored").PreviousState.ShouldBe(ProjectLifecycle.Archived.ToString());
+        rows.Single(static row => row.OperationType == "project.restored").NewState.ShouldBe(ProjectLifecycle.Active.ToString());
 
         ProjectAuditTimelineItem pending = rows.Single(static row => row.OperationType == "project.folder_creation_pending");
         pending.ReferenceKind.ShouldBe("folder");
@@ -182,13 +185,14 @@ public sealed class ProjectAuditTimelineProjectionTests
         new(TenantA, 1, Created()),
         new(TenantA, 2, SetupUpdated()),
         new(TenantA, 3, Archived()),
-        new(TenantA, 4, FolderPending()),
-        new(TenantA, 5, FolderSet()),
-        new(TenantA, 6, FileLinked()),
-        new(TenantA, 7, FileUnlinked()),
-        new(TenantA, 8, MemoryLinked()),
-        new(TenantA, 9, MemoryUnlinked()),
-        new(TenantA, 10, ResolutionConfirmed()),
+        new(TenantA, 4, Restored()),
+        new(TenantA, 5, FolderPending()),
+        new(TenantA, 6, FolderSet()),
+        new(TenantA, 7, FileLinked()),
+        new(TenantA, 8, FileUnlinked()),
+        new(TenantA, 9, MemoryLinked()),
+        new(TenantA, 10, MemoryUnlinked()),
+        new(TenantA, 11, ResolutionConfirmed()),
     ];
 
     private static ProjectCreated Created(
@@ -231,6 +235,17 @@ public sealed class ProjectAuditTimelineProjectionTests
         "idem-archive",
         "sha256:archive",
         DateTimeOffset.UnixEpoch.AddMinutes(2));
+
+    private static ProjectRestored Restored() => new(
+        TenantA,
+        ProjectIdValue,
+        ProjectLifecycle.Active,
+        "actor-001",
+        "corr-restore",
+        "task-restore",
+        "idem-restore",
+        "sha256:restore",
+        DateTimeOffset.UnixEpoch.AddMinutes(2.5));
 
     private static ProjectFolderCreationPending FolderPending() => new(
         TenantA,

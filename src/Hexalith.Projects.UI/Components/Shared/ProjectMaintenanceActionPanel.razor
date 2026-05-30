@@ -1,0 +1,419 @@
+@using Hexalith.Projects.Contracts.Models
+@using Hexalith.Projects.Contracts.Ui
+@using Hexalith.Projects.UI.Diagnostics
+@using Microsoft.AspNetCore.Components.Web
+@inject IProjectMaintenanceActionSource MaintenanceActions
+
+<section class="project-maintenance-action-panel"
+         data-testid="maintenance-action-panel"
+         aria-labelledby="maintenance-action-panel-heading">
+    <h3 id="maintenance-action-panel-heading">Maintenance actions</h3>
+
+    <div class="project-maintenance-action-panel__controls">
+        <label>
+            Action
+            <select data-testid="maintenance-action-select" disabled="@IsExecuting" @bind="_action" @bind:after="ActionChanged">
+                <option value="@ProjectMaintenanceActions.Archive" data-testid="maintenance-action-archive">Archive</option>
+                <option value="@ProjectMaintenanceActions.Restore" data-testid="maintenance-action-restore">Restore</option>
+                <option value="@ProjectMaintenanceActions.Relink" data-testid="maintenance-action-relink">Relink</option>
+                <option value="@ProjectMaintenanceActions.Unlink" data-testid="maintenance-action-unlink">Unlink</option>
+                <option value="@ProjectMaintenanceActions.Reevaluate" data-testid="maintenance-action-reevaluate">Re-evaluate</option>
+            </select>
+        </label>
+
+        @if (ReferenceTargetRequired)
+        {
+            <label>
+                Reference type
+                <select data-testid="maintenance-action-reference-kind" disabled="@IsExecuting" @bind="_targetReferenceKind" @bind:after="InvalidatePreview">
+                    <option value="folder">Folder</option>
+                    <option value="file">File</option>
+                    <option value="memory">Memory</option>
+                    <option value="conversation">Conversation</option>
+                </select>
+            </label>
+            <label>
+                Reference ID
+                <input data-testid="maintenance-action-reference-id"
+                       value="@_targetReferenceId"
+                       @onchange="ReferenceIdChanged"
+                       disabled="@IsExecuting"
+                       autocomplete="off" />
+            </label>
+        }
+    </div>
+
+    <dl class="project-maintenance-action-panel__facts">
+        <div>
+            <dt>Panel state</dt>
+            <dd data-testid="maintenance-action-state" role="status" aria-live="assertive">@_panelState</dd>
+        </div>
+        <div>
+            <dt>Command lifecycle</dt>
+            <dd data-testid="maintenance-action-lifecycle" role="status" aria-live="polite">@_commandLifecycleState</dd>
+        </div>
+        <div>
+            <dt>Tenant scope</dt>
+            <dd>@TenantScope</dd>
+        </div>
+        <div>
+            <dt>Project ID</dt>
+            <dd><code>@Detail.ProjectId</code></dd>
+        </div>
+        <div>
+            <dt>Target</dt>
+            <dd>@TargetText</dd>
+        </div>
+        <div>
+            <dt>Current state</dt>
+            <dd data-testid="maintenance-action-current-state">@CurrentState</dd>
+        </div>
+        <div>
+            <dt>Proposed state</dt>
+            <dd data-testid="maintenance-action-proposed-state">@ProposedState</dd>
+        </div>
+        <div>
+            <dt>Expected audit</dt>
+            <dd data-testid="maintenance-action-audit-event">@ExpectedAuditOperation</dd>
+        </div>
+    </dl>
+
+    <p class="project-maintenance-action-panel__warning" data-testid="maintenance-action-warning" aria-live="polite">
+        @WarningText
+    </p>
+    <p data-testid="maintenance-action-dry-run" role="status" aria-live="assertive" tabindex="-1" @ref="_dryRunFocus">@_dryRunStatus</p>
+    <p class="project-maintenance-action-panel__guarantee">@ProjectMaintenanceActionProjection.PayloadExclusionGuaranteeText</p>
+
+    <div class="project-maintenance-action-panel__confirmation">
+        <label>
+            <input type="checkbox"
+                   data-testid="maintenance-action-confirm"
+                   checked="@_confirmed"
+                   disabled="@(!CanConfirm)"
+                   @onchange="ConfirmChanged" />
+            Confirm @ActionLabel for @Detail.ProjectId in @TenantScope
+        </label>
+    </div>
+
+    <div class="project-maintenance-action-panel__actions">
+        <button type="button" data-testid="maintenance-action-dry-run-run" disabled="@IsExecuting" @onclick="RunDryRunAsync">Preview / dry-run</button>
+        <button type="button"
+                data-testid="maintenance-action-submit"
+                disabled="@(!CanSubmit)"
+                @onclick="SubmitAsync">
+            Submit
+        </button>
+    </div>
+
+    <p data-testid="maintenance-action-feedback" role="status" aria-live="polite" tabindex="-1" @ref="_feedbackFocus">@_feedbackCode</p>
+</section>
+
+@code {
+    [Parameter, EditorRequired]
+    public ProjectOperatorDiagnostic Detail { get; set; } = default!;
+
+    [Parameter]
+    public IReadOnlyList<ProjectReferenceHealthRowProjection> ReferenceRows { get; set; } = [];
+
+    [Parameter]
+    public string TenantScope { get; set; } = "server-derived tenant";
+
+    private string _action = ProjectMaintenanceActions.Archive;
+    private string _panelState = ProjectMaintenancePanelStates.Preview;
+    private string _commandLifecycleState = ProjectMaintenanceCommandLifecycleStates.Idle;
+    private string _dryRunStatus = "Preview not yet run";
+    private string _feedbackCode = "idle";
+    private string _targetReferenceKind = "folder";
+    private string _targetReferenceId = string.Empty;
+    private bool _confirmed;
+    private ElementReference _dryRunFocus;
+    private ElementReference _feedbackFocus;
+
+    private ProjectReferenceHealthRowProjection? FirstReference
+        => ReferenceRows.FirstOrDefault(static row => !string.IsNullOrWhiteSpace(row.ReferenceId));
+
+    private ProjectReferenceHealthRowProjection? TargetReference
+        => ReferenceRows.FirstOrDefault(row =>
+            string.Equals(row.ReferenceKind, _targetReferenceKind, StringComparison.Ordinal)
+            && string.Equals(row.ReferenceId, TargetReferenceId, StringComparison.Ordinal));
+
+    private ProjectReferenceHealthRowProjection? ExistingReferenceForRelinkKind
+        => ReferenceRows.FirstOrDefault(row =>
+            string.Equals(row.ReferenceKind, _targetReferenceKind, StringComparison.Ordinal)
+            && !string.IsNullOrWhiteSpace(row.ReferenceId));
+
+    private bool ReferenceTargetRequired
+        => _action is ProjectMaintenanceActions.Relink or ProjectMaintenanceActions.Unlink;
+
+    private bool IsExecuting
+        => string.Equals(_panelState, ProjectMaintenancePanelStates.Executing, StringComparison.Ordinal);
+
+    private bool CanConfirm
+        => !IsExecuting
+            && (_panelState == ProjectMaintenancePanelStates.DryRunPassed
+                || _panelState == ProjectMaintenancePanelStates.ConfirmationRequired);
+
+    private bool CanSubmit
+        => _confirmed
+            && _panelState == ProjectMaintenancePanelStates.ConfirmationRequired
+            && (_action == ProjectMaintenanceActions.Archive
+                || _action == ProjectMaintenanceActions.Restore
+                || _action == ProjectMaintenanceActions.Relink
+                || _action == ProjectMaintenanceActions.Unlink
+                || _action == ProjectMaintenanceActions.Reevaluate);
+
+    private string ActionLabel => _action switch
+    {
+        ProjectMaintenanceActions.Archive => "archive",
+        ProjectMaintenanceActions.Restore => "restore",
+        ProjectMaintenanceActions.Relink => "relink",
+        ProjectMaintenanceActions.Unlink => "unlink",
+        ProjectMaintenanceActions.Reevaluate => "re-evaluate",
+        _ => _action,
+    };
+
+    private string TargetText
+        => ReferenceTargetRequired
+            ? TargetReferenceId is null ? "No reference selected" : $"{_targetReferenceKind}:{TargetReferenceId}"
+            : $"project:{Detail.ProjectId}";
+
+    private const string NoStateLabel = "—";
+
+    private string CurrentState => _action switch
+    {
+        ProjectMaintenanceActions.Archive => Detail.LifecycleState,
+        ProjectMaintenanceActions.Restore => Detail.LifecycleState,
+        ProjectMaintenanceActions.Relink => ExistingReferenceForRelinkKind?.InclusionState.ToString() ?? NoStateLabel,
+        ProjectMaintenanceActions.Unlink => TargetReference?.InclusionState.ToString() ?? NoStateLabel,
+        ProjectMaintenanceActions.Reevaluate => Detail.Freshness.TrustState,
+        _ => "unknown",
+    };
+
+    // Proposed states are expressed through the shared ProjectLifecycle / ReferenceState vocabulary
+    // (never Web-only magic strings). When no reference target exists the dry-run/feedback channel
+    // carries the blocker, so the proposed-state fact stays a neutral placeholder.
+    private string ProposedState => _action switch
+    {
+        ProjectMaintenanceActions.Archive => ProjectLifecycle.Archived.ToString(),
+        ProjectMaintenanceActions.Restore => ProjectLifecycle.Active.ToString(),
+        ProjectMaintenanceActions.Relink => TargetReferenceId is null ? NoStateLabel : ReferenceState.Included.ToString(),
+        ProjectMaintenanceActions.Unlink => TargetReferenceId is null ? NoStateLabel : ReferenceState.Excluded.ToString(),
+        ProjectMaintenanceActions.Reevaluate => "recomputed diagnostics",
+        _ => "unknown",
+    };
+
+    private string ExpectedAuditOperation => _action switch
+    {
+        ProjectMaintenanceActions.Archive => "project.archived",
+        ProjectMaintenanceActions.Restore => "project.restored",
+        ProjectMaintenanceActions.Relink => _targetReferenceKind switch
+        {
+            "folder" => "project.folder_set",
+            "file" => "file_reference.linked",
+            "memory" => "memory.linked",
+            _ => "reference.linked",
+        },
+        ProjectMaintenanceActions.Unlink => _targetReferenceKind switch
+        {
+            "file" => "file_reference.unlinked",
+            "memory" => "memory.unlinked",
+            // Conversation unlink is Conversations-owned: it emits no Projects audit row, so the
+            // expected-audit fact reports the assignment ownership rather than a fabricated operation.
+            "conversation" => "conversation assignment (Conversations-owned)",
+            _ => "reference.unlinked",
+        },
+        // Re-evaluate is a read-only recompute and intentionally produces no audit event.
+        ProjectMaintenanceActions.Reevaluate => "none (read-only recompute)",
+        _ => "unknown",
+    };
+
+    private string WarningText => _action switch
+    {
+        ProjectMaintenanceActions.Archive => "References stay associated and remain audit-visible; no sibling resources are changed.",
+        ProjectMaintenanceActions.Restore => "Restore changes only Project lifecycle metadata and does not relink references.",
+        ProjectMaintenanceActions.Relink => "Relink requires sibling ACL validation; workspace and path inputs stay transient.",
+        ProjectMaintenanceActions.Unlink => "Unlink removes only the Project association; sibling resources are not deleted.",
+        ProjectMaintenanceActions.Reevaluate => "Re-evaluate reloads diagnostics and does not persist resolution traces or candidate scores.",
+        _ => "Unsupported action.",
+    };
+
+    private string? TargetReferenceId
+        => string.IsNullOrWhiteSpace(_targetReferenceId) ? null : _targetReferenceId.Trim();
+
+    private void ActionChanged()
+    {
+        _targetReferenceKind = FirstReference?.ReferenceKind switch
+        {
+            "folder" or "file" or "memory" or "conversation" => FirstReference.ReferenceKind,
+            _ => "folder",
+        };
+        _targetReferenceId = _action == ProjectMaintenanceActions.Unlink ? FirstReference?.ReferenceId ?? string.Empty : string.Empty;
+        InvalidatePreview();
+    }
+
+    private void ReferenceIdChanged(ChangeEventArgs args)
+    {
+        _targetReferenceId = args.Value?.ToString()?.Trim() ?? string.Empty;
+        InvalidatePreview();
+    }
+
+    private void InvalidatePreview()
+    {
+        // A newly-selected action invalidates any prior dry-run: a fresh dry-run is required before the
+        // operator can confirm a state change.
+        _confirmed = false;
+        _panelState = ProjectMaintenancePanelStates.DryRunRequired;
+        _commandLifecycleState = ProjectMaintenanceCommandLifecycleStates.Idle;
+        _dryRunStatus = "Dry-run required before confirmation";
+        _feedbackCode = "dry_run_required";
+    }
+
+    private async Task RunDryRunAsync()
+    {
+        if (_action == ProjectMaintenanceActions.Restore
+            && !string.Equals(Detail.LifecycleState, ProjectLifecycle.Archived.ToString(), StringComparison.OrdinalIgnoreCase))
+        {
+            _panelState = ProjectMaintenancePanelStates.DryRunBlocked;
+            _dryRunStatus = "blocked: restore requires an archived Project";
+            _feedbackCode = "invalid_lifecycle";
+            await FocusDryRunAsync().ConfigureAwait(true);
+            return;
+        }
+
+        if (_action == ProjectMaintenanceActions.Archive
+            && string.Equals(Detail.LifecycleState, ProjectLifecycle.Archived.ToString(), StringComparison.OrdinalIgnoreCase))
+        {
+            _panelState = ProjectMaintenancePanelStates.DryRunBlocked;
+            _dryRunStatus = "blocked: project is already archived";
+            _feedbackCode = "invalid_lifecycle";
+            await FocusDryRunAsync().ConfigureAwait(true);
+            return;
+        }
+
+        if (ReferenceTargetRequired && TargetReferenceId is null)
+        {
+            _panelState = ProjectMaintenancePanelStates.DryRunBlocked;
+            _dryRunStatus = "blocked: reference target is required";
+            _feedbackCode = "invalid_reference";
+            await FocusDryRunAsync().ConfigureAwait(true);
+            return;
+        }
+
+        if (_action == ProjectMaintenanceActions.Relink && string.Equals(_targetReferenceKind, "conversation", StringComparison.Ordinal))
+        {
+            _panelState = ProjectMaintenancePanelStates.DryRunBlocked;
+            _dryRunStatus = "blocked: conversation relink remains Conversations-owned";
+            _feedbackCode = "unsupported_reference_kind";
+            await FocusDryRunAsync().ConfigureAwait(true);
+            return;
+        }
+
+        if (_action == ProjectMaintenanceActions.Relink && string.Equals(_targetReferenceKind, "file", StringComparison.Ordinal))
+        {
+            _panelState = ProjectMaintenancePanelStates.DryRunBlocked;
+            _dryRunStatus = "blocked: file relink requires transient workspace/path validation outside this payload-safe panel";
+            _feedbackCode = "transient_validation_required";
+            await FocusDryRunAsync().ConfigureAwait(true);
+            return;
+        }
+
+        if (_action == ProjectMaintenanceActions.Relink
+            && ExistingReferenceForRelinkKind is not null
+            && string.Equals(ExistingReferenceForRelinkKind.ReferenceId, TargetReferenceId, StringComparison.Ordinal))
+        {
+            _panelState = ProjectMaintenancePanelStates.DryRunBlocked;
+            _dryRunStatus = "blocked: replacement target must differ from the current reference";
+            _feedbackCode = "conflict_current_state";
+            await FocusDryRunAsync().ConfigureAwait(true);
+            return;
+        }
+
+        // Dry-run passed: surface the distinct DryRunPassed state. Explicit confirmation then advances
+        // the panel to ConfirmationRequired before any state-changing control becomes enabled.
+        _panelState = ProjectMaintenancePanelStates.DryRunPassed;
+        _dryRunStatus = "dry-run passed; explicit confirmation required";
+        _feedbackCode = "dry_run_passed";
+        await FocusDryRunAsync().ConfigureAwait(true);
+    }
+
+    private void ConfirmChanged(ChangeEventArgs args)
+    {
+        _confirmed = args.Value is bool value && value;
+
+        if (_confirmed && _panelState == ProjectMaintenancePanelStates.DryRunPassed)
+        {
+            _panelState = ProjectMaintenancePanelStates.ConfirmationRequired;
+        }
+        else if (!_confirmed && _panelState == ProjectMaintenancePanelStates.ConfirmationRequired)
+        {
+            _panelState = ProjectMaintenancePanelStates.DryRunPassed;
+        }
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (!CanSubmit)
+        {
+            return;
+        }
+
+        _panelState = ProjectMaintenancePanelStates.Executing;
+        _commandLifecycleState = ProjectMaintenanceCommandLifecycleStates.Submitting;
+        _feedbackCode = "submitting";
+
+        // Render intermediate Acknowledged(202) and Syncing lifecycle states as the source reports them,
+        // keeping the 202 acknowledgement observably distinct from the final audit confirmation.
+        IProgress<string> lifecycleProgress = new Progress<string>(state =>
+        {
+            _commandLifecycleState = state;
+            InvokeAsync(StateHasChanged);
+        });
+
+        ProjectMaintenanceActionExecutionResult result = await MaintenanceActions.ExecuteAsync(
+            new ProjectMaintenanceActionExecutionRequest(
+                Detail.ProjectId,
+                _action,
+                ReferenceTargetRequired ? _targetReferenceKind : null,
+                ReferenceTargetRequired ? TargetReferenceId : null,
+                TargetReference?.DisplayLabel,
+                _confirmed,
+                null,
+                null,
+                null,
+                ExpectedAuditOperation),
+            lifecycleProgress,
+            CancellationToken.None).ConfigureAwait(true);
+
+        _commandLifecycleState = result.LifecycleState;
+        _panelState = result.Succeeded ? ProjectMaintenancePanelStates.Succeeded : ProjectMaintenancePanelStates.Failed;
+        _feedbackCode = result.FeedbackCode ?? "confirmed";
+        _dryRunStatus = result.AuditEventId is null ? _dryRunStatus : $"confirmed audit {result.AuditEventId}";
+        await FocusFeedbackAsync().ConfigureAwait(true);
+    }
+
+    private async Task FocusDryRunAsync()
+    {
+        await InvokeAsync(StateHasChanged).ConfigureAwait(true);
+        try
+        {
+            await _dryRunFocus.FocusAsync().ConfigureAwait(true);
+        }
+        catch (InvalidOperationException)
+        {
+            // Focus is best-effort for prerendered/test renderers; aria-live still announces the result.
+        }
+    }
+
+    private async Task FocusFeedbackAsync()
+    {
+        await InvokeAsync(StateHasChanged).ConfigureAwait(true);
+        try
+        {
+            await _feedbackFocus.FocusAsync().ConfigureAwait(true);
+        }
+        catch (InvalidOperationException)
+        {
+            // Focus is best-effort for prerendered/test renderers; aria-live still announces the result.
+        }
+    }
+}

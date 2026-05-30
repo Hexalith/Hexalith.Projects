@@ -51,6 +51,7 @@ public sealed record ProjectResult(
     public bool IsAccepted => Code is ProjectResultCode.Created
         or ProjectResultCode.SetupUpdated
         or ProjectResultCode.Archived
+        or ProjectResultCode.Restored
         or ProjectResultCode.FolderSet
         or ProjectResultCode.FileReferenceLinked
         or ProjectResultCode.FileReferenceUnlinked
@@ -176,6 +177,7 @@ public sealed record ProjectResult(
         ProjectResultCode.TenantMismatch => ReferenceState.TenantMismatch,
         ProjectResultCode.DuplicateProject => ReferenceState.Conflict,
         ProjectResultCode.ProjectAlreadyArchived => ReferenceState.Archived,
+        ProjectResultCode.ProjectAlreadyActive => ReferenceState.Conflict,
         ProjectResultCode.ProjectIsArchived => ReferenceState.Archived,
         ProjectResultCode.ProjectFolderReplacementRequiresConfirmation => ReferenceState.Conflict,
         ProjectResultCode.FileReferenceConflict => ReferenceState.Conflict,
@@ -208,6 +210,12 @@ public sealed record ProjectResult(
                 RejectedField,
                 CorrelationId),
             nameof(ArchiveProject) => new ProjectArchiveRejected(
+                projectId ?? new Contracts.Identifiers.ProjectId("unknown"),
+                TenantId ?? string.Empty,
+                ToRejectionReason(),
+                RejectedField,
+                CorrelationId),
+            nameof(RestoreProject) => new ProjectRestoreRejected(
                 projectId ?? new Contracts.Identifiers.ProjectId("unknown"),
                 TenantId ?? string.Empty,
                 ToRejectionReason(),

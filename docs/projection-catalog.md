@@ -37,11 +37,12 @@ boundaries.
 - **Owner:** Hexalith.Projects Workers host folds persisted Project events through
   `ProjectEventProjectionProcessor`; runtime Server reads it through `DaprProjectListReadModel`.
 - **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
-- **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, `ProjectArchived`, `ProjectFolderSet`,
-  `ProjectFolderCreationPending`, `FileReferenceLinked`, `FileReferenceUnlinked`, `MemoryLinked`,
-  `MemoryUnlinked`, and `ProjectResolutionConfirmed`. Setup, folder-set, pending-folder,
+- **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, `ProjectArchived`, `ProjectRestored`,
+  `ProjectFolderSet`, `ProjectFolderCreationPending`, `FileReferenceLinked`, `FileReferenceUnlinked`,
+  `MemoryLinked`, `MemoryUnlinked`, and `ProjectResolutionConfirmed`. Setup, folder-set, pending-folder,
   reference-link/unlink, and resolution-confirmation events refresh `UpdatedAt`/sequence only;
-  archive updates lifecycle to `Archived`. File/Memory reference events are also routed to the
+  archive updates lifecycle to `Archived` and `ProjectRestored` (Story 5.9) updates lifecycle back to
+  `Active` without relinking references. File/Memory reference events are also routed to the
   reference index projection; the list projection must still tolerate them because runtime rebuilds
   fold the shared tenant journal over every Project event.
 - **Tenant scoping:** envelope tenant and event tenant must match before the row is folded. Query reads
@@ -67,11 +68,12 @@ boundaries.
 - **Owner:** Hexalith.Projects Workers host folds persisted Project events through
   `ProjectEventProjectionProcessor`; runtime Server reads it through `DaprProjectDetailReadModel`.
 - **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
-- **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, `ProjectArchived`, `ProjectFolderSet`,
-  `ProjectFolderCreationPending`, `FileReferenceLinked`, `FileReferenceUnlinked`, `MemoryLinked`,
-  `MemoryUnlinked`, and `ProjectResolutionConfirmed`. `SetupMetadata` is the safe setup metadata reference carried by creation;
+- **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, `ProjectArchived`, `ProjectRestored`,
+  `ProjectFolderSet`, `ProjectFolderCreationPending`, `FileReferenceLinked`, `FileReferenceUnlinked`,
+  `MemoryLinked`, `MemoryUnlinked`, and `ProjectResolutionConfirmed`. `SetupMetadata` is the safe setup metadata reference carried by creation;
   `ProjectSetupUpdated` stores the latest bounded metadata-only setup preferences; `ProjectArchived`
-  updates lifecycle to `Archived`; folder events record the single Project Folder reference (or pending
+  updates lifecycle to `Archived` and `ProjectRestored` (Story 5.9) folds lifecycle back to `Active`;
+  folder events record the single Project Folder reference (or pending
   intent when the Folders create capability is externally unavailable); file/memory link/unlink events
   maintain the bounded per-kind reference sets on the detail row alongside the disjoint reference index;
   `ProjectResolutionConfirmed` updates freshness/sequence only and stores no candidate scores, ranks,
@@ -103,7 +105,8 @@ boundaries.
   never remove the Project Folder row and folder replacement can never remove file or memory rows.
 - **Source events:** `ProjectFolderSet`, `ProjectFolderCreationPending`, `FileReferenceLinked`,
   `FileReferenceUnlinked`, `MemoryLinked`, and `MemoryUnlinked`. `ProjectCreated`/`ProjectSetupUpdated`
-  /`ProjectArchived`/`ProjectResolutionConfirmed` are observed but produce no reference-index rows.
+  /`ProjectArchived`/`ProjectRestored`/`ProjectResolutionConfirmed` are observed but produce no
+  reference-index rows (restore is a metadata-only lifecycle change and never relinks references).
   Unknown event types throw to keep the projection in sync with `ProjectStateApply`.
 - **Tenant scoping:** envelope tenant and event tenant must match before any row is folded. Query
   reads filter by the authoritative tenant before response construction.
@@ -142,7 +145,7 @@ boundaries.
   reference identity where applicable. It never uses `Guid.NewGuid()`, wall-clock generation time,
   random values, or Dapr state as the audit id source.
 - **Source events:** every current Project success event: `ProjectCreated`, `ProjectSetupUpdated`,
-  `ProjectArchived`, `ProjectFolderCreationPending`, `ProjectFolderSet`, `FileReferenceLinked`,
+  `ProjectArchived`, `ProjectRestored`, `ProjectFolderCreationPending`, `ProjectFolderSet`, `FileReferenceLinked`,
   `FileReferenceUnlinked`, `MemoryLinked`, `MemoryUnlinked`, and `ProjectResolutionConfirmed`.
   Unknown future `IProjectEvent` types throw during fold until they are explicitly mapped or
   intentionally documented.

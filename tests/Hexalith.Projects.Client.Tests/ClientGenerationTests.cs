@@ -131,6 +131,7 @@ public sealed class ClientGenerationTests
             typeof(CreateProjectRequest),
             typeof(UpdateProjectSetupRequest),
             typeof(ArchiveProjectRequest),
+            typeof(RestoreProjectRequest),
             typeof(LinkProjectConversationRequest),
             typeof(MoveProjectConversationRequest),
             typeof(UnlinkProjectConversationRequest),
@@ -424,6 +425,21 @@ public sealed class ClientGenerationTests
             "operation=ArchiveProject",
             "field=archive_intent;present=true;value=s:archive",
             "field=request_schema_version;present=true;value=s:v1"));
+    }
+
+    [Fact]
+    public void RestoreProjectHelperUsesDeclaredIntentAndSchemaVersion()
+    {
+        var request = new RestoreProjectRequest
+        {
+            RequestSchemaVersion = RestoreProjectRequestRequestSchemaVersion.V1,
+            RestoreIntent = RestoreProjectRequestRestoreIntent.Restore,
+        };
+
+        request.ComputeIdempotencyHash().ShouldBe(ExpectedHash(
+            "operation=RestoreProject",
+            "field=request_schema_version;present=true;value=s:v1",
+            "field=restore_intent;present=true;value=s:restore"));
     }
 
     [Fact]

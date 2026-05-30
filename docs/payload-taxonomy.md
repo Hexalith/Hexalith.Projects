@@ -58,6 +58,10 @@ Notes:
   lifecycle/reference states, reason codes, correlation/audit ids, UI feedback codes, and UI projection
   descriptor metadata. Its excluded-category list uses safe labels and the export guarantee states that
   payload-bearing data is excluded without serializing forbidden category names or values.
+- Story 5.9 maintenance actions reuse existing safe categories only: opaque ids, lifecycle/reference
+  states, reason/feedback codes, correlation/task/audit ids, timestamps, and UI projection descriptor
+  metadata. Idempotency keys remain internal command evidence and are not public audit/operator/UI
+  output.
 
 ## Forbidden sibling-owned content (NEVER on the wire)
 

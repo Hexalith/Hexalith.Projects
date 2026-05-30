@@ -127,6 +127,26 @@ public sealed class EventStoreProjectCommandSubmitter(IEventStoreGatewayClient g
     }
 
     /// <inheritdoc/>
+    public async Task<ProjectCommandSubmissionResult> SubmitRestoreProjectAsync(
+        RestoreProject command,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        object payload = new
+        {
+            requestSchemaVersion = "v1",
+            restoreIntent = "restore",
+        };
+
+        return await SubmitAsync(
+            command,
+            ProjectsServerModule.RestoreProjectCommandType,
+            payload,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
     public async Task<ProjectCommandSubmissionResult> SubmitSetProjectFolderAsync(
         SetProjectFolder command,
         CancellationToken cancellationToken = default)

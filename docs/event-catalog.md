@@ -65,6 +65,16 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
 - **Consumers:** `ProjectListProjection`, `ProjectDetailProjection`, `ProjectAuditTimelineProjection`.
 
+### `ProjectRestored`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectRestored` (`IProjectEvent` → `IEventPayload`)
+- **Purpose:** Records that a Project moved from `Archived` back to `Active` lifecycle (Story 5.9).
+- **Emitted by:** `ProjectAggregate.Handle(RestoreProject)`.
+- **Sensitivity class:** metadata-only.
+- **Fields:** `TenantId`, `ProjectId`, `Lifecycle` (`Active`), actor/correlation/task/idempotency metadata, and `OccurredAt`.
+- **Consumers:** `ProjectListProjection`, `ProjectDetailProjection`, `ProjectAuditTimelineProjection`.
+- **Boundary:** restore changes Project lifecycle metadata only. It does not relink references, copy setup payloads, include archived Projects in automatic resolution, or mutate sibling resources.
+
 ### `ProjectFolderCreationPending`
 
 - **Type:** `Hexalith.Projects.Contracts.Events.ProjectFolderCreationPending` (`IProjectEvent` → `IEventPayload`)
@@ -209,6 +219,15 @@ conversation assignment effects outside this aggregate, optional `ProjectFolderS
 - **Fields:** `ProjectId`, `TenantId`, canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
 - **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
 
+### `ProjectRestoreRejected`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectRestoreRejected` (`IRejectionEvent`)
+- **Purpose:** Records a refused restore command (validation failure, missing project, already active project, authorization failure, or idempotency conflict).
+- **Emitted by:** `ProjectAggregate.Handle(RestoreProject)` and `/process` fail-closed payload paths.
+- **Sensitivity class:** metadata-only.
+- **Fields:** `ProjectId`, `TenantId`, canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
+- **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
+
 ### `ProjectReferenceLinkRejected`
 
 - **Type:** `Hexalith.Projects.Contracts.Events.ProjectReferenceLinkRejected` (`IRejectionEvent`)
@@ -225,6 +244,15 @@ conversation assignment effects outside this aggregate, optional `ProjectFolderS
 - **Emitted by:** `ProjectAggregate.Handle(UnlinkFileReference)`, `ProjectAggregate.Handle(UnlinkMemory)` rejection paths and `/process` fail-closed payload paths.
 - **Sensitivity class:** metadata-only.
 - **Fields:** `ProjectId`, `TenantId`, `ReferenceKind` (`file` or `memory`), `ReferenceId` sibling identifier when safe (malformed dropped to `unknown`), canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
+- **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
+
+### `ProjectResolutionConfirmationRejected`
+
+- **Type:** `Hexalith.Projects.Contracts.Events.ProjectResolutionConfirmationRejected` (`IRejectionEvent`)
+- **Purpose:** Records a refused ambiguous-resolution confirmation (validation failure, missing/archived project, tenant mismatch, authorization failure, or idempotency conflict) — the rejection counterpart of `ProjectResolutionConfirmed` (Story 4.4).
+- **Emitted by:** `ProjectAggregate.Handle(ConfirmProjectResolution)` rejection paths and `/process` fail-closed payload paths.
+- **Sensitivity class:** metadata-only.
+- **Fields:** `ProjectId`, `TenantId`, canonical `Reason`, optional `RejectedField` name, optional `CorrelationId`.
 - **Consumers:** Server denial/problem mapping; audit/log scopes (metadata only).
 
 ## Consumed external events
@@ -271,7 +299,7 @@ are not yet emitted anywhere; the linked future story is where the producer land
 
 | Value      | Current producer                                                       | Notes                          |
 | ---------- | ---------------------------------------------------------------------- | ------------------------------ |
-| `Active`   | `ProjectAggregate.Handle(CreateProject)` (Story 1.4)                   | Default on success.            |
+| `Active`   | `ProjectAggregate.Handle(CreateProject)` (Story 1.4); `ProjectAggregate.Handle(RestoreProject)` (Story 5.9) | Default on success; restore folds an archived project back to `Active`. |
 | `Archived` | `ProjectAggregate.Handle(ArchiveProject)` (Story 1.8)                  | Surfaced unchanged in context. |
 
 ### `ProjectReasonCode` (`src/Hexalith.Projects.Contracts/Ui/ProjectReasonCode.cs`)

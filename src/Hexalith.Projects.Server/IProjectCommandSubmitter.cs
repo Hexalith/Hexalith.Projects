@@ -5,6 +5,7 @@
 
 namespace Hexalith.Projects.Server;
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,6 +36,16 @@ public interface IProjectCommandSubmitter
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>The submission outcome.</returns>
     Task<ProjectCommandSubmissionResult> SubmitArchiveProjectAsync(ArchiveProject command, CancellationToken cancellationToken = default);
+
+    /// <summary>Submits the restore command and returns the accept/replay/denial outcome.</summary>
+    /// <param name="command">The validated restore command.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The submission outcome.</returns>
+    Task<ProjectCommandSubmissionResult> SubmitRestoreProjectAsync(RestoreProject command, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+        return Task.FromResult(new ProjectCommandSubmissionResult(ProjectCommandSubmissionOutcome.Unavailable, command.CorrelationId));
+    }
 
     /// <summary>Submits the set-folder command and returns the accept/replay/denial outcome.</summary>
     /// <param name="command">The validated set-folder command.</param>

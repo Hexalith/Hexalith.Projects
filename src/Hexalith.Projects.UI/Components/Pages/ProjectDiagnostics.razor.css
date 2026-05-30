@@ -183,6 +183,92 @@
     font-size: .75rem;
 }
 
+.project-maintenance-action-panel {
+    display: grid;
+    gap: 1rem;
+    max-width: 72rem;
+}
+
+.project-maintenance-action-panel h3 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.3;
+    letter-spacing: 0;
+}
+
+.project-maintenance-action-panel__controls,
+.project-maintenance-action-panel__confirmation,
+.project-maintenance-action-panel__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+    align-items: center;
+}
+
+.project-maintenance-action-panel select,
+.project-maintenance-action-panel input[type="text"],
+.project-maintenance-action-panel input:not([type]),
+.project-maintenance-action-panel button {
+    min-height: 2.25rem;
+    border: 1px solid var(--neutral-stroke-rest);
+    border-radius: 4px;
+    padding: .375rem .625rem;
+    background: var(--neutral-fill-rest);
+    color: var(--neutral-foreground-rest);
+}
+
+.project-maintenance-action-panel button:disabled {
+    color: var(--neutral-foreground-hint);
+}
+
+.project-maintenance-action-panel input[type="text"],
+.project-maintenance-action-panel input:not([type]) {
+    min-width: 16rem;
+}
+
+.project-maintenance-action-panel select:focus-visible,
+.project-maintenance-action-panel button:focus-visible,
+.project-maintenance-action-panel input:focus-visible {
+    outline: 2px solid var(--accent-fill-rest);
+    outline-offset: 2px;
+}
+
+.project-maintenance-action-panel__facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .75rem 1rem;
+    margin: 0;
+}
+
+.project-maintenance-action-panel__facts div {
+    min-width: 0;
+}
+
+.project-maintenance-action-panel__facts dt {
+    margin-bottom: .25rem;
+    color: var(--neutral-foreground-hint);
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.project-maintenance-action-panel__facts dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.project-maintenance-action-panel__warning {
+    margin: 0;
+    padding: .625rem .75rem;
+    border-left: 3px solid var(--warning-fill-rest);
+    background: var(--neutral-layer-1);
+}
+
+.project-maintenance-action-panel__guarantee {
+    margin: 0;
+    color: var(--neutral-foreground-hint);
+    font-size: .875rem;
+}
+
 .project-detail-inspector__audit li {
     display: grid;
     grid-template-columns: minmax(8rem, 1fr) minmax(10rem, auto) minmax(8rem, auto);
@@ -193,7 +279,8 @@
 
 @media (max-width: 900px) {
     .project-detail-inspector__facts,
-    .project-detail-inspector__setup {
+    .project-detail-inspector__setup,
+    .project-maintenance-action-panel__facts {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -212,7 +299,8 @@
     }
 
     .project-detail-inspector__facts,
-    .project-detail-inspector__setup {
+    .project-detail-inspector__setup,
+    .project-maintenance-action-panel__facts {
         grid-template-columns: 1fr;
     }
 

@@ -152,6 +152,12 @@ public static class ProjectStateApply
                 IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
             },
 
+            ProjectRestored restored => state with
+            {
+                Lifecycle = restored.Lifecycle,
+                IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
+            },
+
             ProjectResolutionConfirmed => state with
             {
                 IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),

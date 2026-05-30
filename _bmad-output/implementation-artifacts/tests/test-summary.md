@@ -3,41 +3,42 @@
 ## Generated Tests
 
 ### API Tests
-- [x] `tests/e2e/specs/projects-warnings-dashboard.spec.ts` - Playwright fixme coverage for Story 5.8 bounded dashboard query enrichment through tenant-scoped `listProjects(...)` plus per-visible-project `getProjectOperatorDiagnostics(..., auditLimit: 25)` with eventual consistency.
-- [x] `tests/e2e/specs/projects-warnings-dashboard.spec.ts` - Playwright fixme negative coverage for read-only warning dashboard query misuse: `Idempotency-Key` rejection on list and operator-diagnostic enrichment without echoing project metadata.
+- [x] `tests/e2e/specs/projects-maintenance.spec.ts` - AppHost-dependent Playwright fixme coverage for archive command submission, asserting the `POST /api/v1/projects/{projectId}/archive` call returns `202` before final projection confirmation.
 
 ### E2E Tests
-- [x] `tests/e2e/specs/projects-warnings-dashboard.spec.ts` - AppHost-dependent warning dashboard journey for tiles, queue rows, filters, empty-state fallback, safe read-only drill-ins, and Story 5.9 mutation boundary labels.
-- [x] `tests/e2e/specs/projects-warnings-dashboard.spec.ts` - AppHost-dependent no-payload-leakage and axe accessibility journeys for `/projects/warnings`.
-- [x] `tests/e2e/specs/projects-warnings-dashboard.spec.ts` - Runnable no-AppHost Playwright selector contract self-check for dashboard tile drill-in, warning state/reference filters, filter-empty feedback, safe action links, disabled maintenance action, semantic table headings, freshness timestamp, and forbidden marker exclusion.
+- [x] `tests/e2e/specs/projects-maintenance.spec.ts` - AppHost-dependent fixme journeys for archive, restore, relink, unlink, and re-evaluate maintenance previews through `/projects/{projectId}` Actions.
+- [x] `tests/e2e/specs/projects-maintenance.spec.ts` - Runnable no-AppHost selector contract for the Story 5.9 maintenance panel stable selectors and safe text.
+- [x] `tests/e2e/specs/projects-maintenance.spec.ts` - Runnable no-AppHost dry-run and confirmation gating for archive execution.
+- [x] `tests/e2e/specs/projects-maintenance.spec.ts` - Runnable no-AppHost blocked dry-run coverage for restore invalid lifecycle, missing reference target, and file relink transient validation.
+- [x] `tests/e2e/specs/projects-maintenance.spec.ts` - Runnable no-AppHost restore, unlink, and re-evaluate audit/safety semantics coverage.
+- [x] `tests/e2e/specs/projects-maintenance.spec.ts` - Runnable no-AppHost mobile viewport visibility coverage for the panel controls.
+- [x] `tests/e2e/support/page-objects/project-detail.page.ts` - Added `maintenanceDryRunRun` page-object locator for the shared dry-run button selector.
 
 ## Coverage
 
-- API endpoints covered: `GET /api/v1/projects` and `GET /api/v1/projects/{projectId}/operator-diagnostics?auditLimit=25` through existing E2E typed helpers.
-- UI features covered: `/projects/warnings` dashboard, warning queue, state/reason/reference/lifecycle filters, queue empty state, non-color-only state/reason/reference/freshness text, and read-only safe actions.
-- Happy path coverage: visible project list plus bounded diagnostic enrichment, dashboard tile/filter interaction, populated warning rows, and safe drill-in links.
-- Critical error coverage: query idempotency rejection for list and diagnostic enrichment, plus payload non-echo checks.
-- Selector coverage: `project-warnings-dashboard`, `project-dashboard-tile`, `project-warnings-queue`, `project-warning-row`, `project-warning-state`, `project-warning-reason`, `project-warning-reference`, `project-warning-freshness`, `project-warning-safe-action`, `project-warning-filter-state`, `project-warning-filter-reason`, `project-warning-filter-reference-type`, `project-warning-filter-lifecycle`, and `project-warning-empty`.
-- Leakage coverage: transcript, raw prompt, command/proposal body, idempotency key, candidate score/rank, rejected candidate id, private key marker, bearer token marker, and secret token marker.
+- API endpoints covered: `POST /api/v1/projects/{projectId}/archive` in the AppHost-backed `test.fixme` lane.
+- UI features covered: maintenance panel action selection, stable selectors, preview state, dry-run state, confirmation gating, submit enablement, safe feedback codes, expected audit operation, and mobile visibility.
+- Happy path coverage: archive dry-run to confirmation to succeeded state, restore preview for archived projects, unlink preview, and re-evaluate diagnostic preview.
+- Critical error coverage: restore on active project, relink/unlink with missing reference, file relink requiring transient validation, and forbidden payload marker exclusion.
+- Selector coverage: `maintenance-action-panel`, `maintenance-action-select`, `maintenance-action-state`, `maintenance-action-current-state`, `maintenance-action-proposed-state`, `maintenance-action-warning`, `maintenance-action-dry-run`, `maintenance-action-dry-run-run`, `maintenance-action-confirm`, `maintenance-action-submit`, `maintenance-action-feedback`, `maintenance-action-audit-event`, and per-action option selectors.
 
 ## Validation
 
-- [x] `git diff --check`
+- [x] `git diff --check -- tests/e2e/specs/projects-maintenance.spec.ts tests/e2e/support/page-objects/project-detail.page.ts`
 - [ ] `npm --prefix tests/e2e run typecheck` - blocked because `tests/e2e/node_modules` is absent and `tsc` is not installed in this workspace.
-- [ ] `npm --prefix tests/e2e run test:smoke -- --project=chromium` - blocked because `tests/e2e/node_modules` is absent and `playwright` is not installed in this workspace.
-- [ ] Full AppHost-backed `/projects/warnings` Playwright journeys - intentionally remain `test.fixme` until authenticated AppHost/browser provisioning is available, matching the existing E2E convention in this repository.
+- [ ] Focused Playwright execution - blocked because `tests/e2e/node_modules` is absent and no Playwright binary is installed in this workspace.
 
 ## Checklist Notes
 
-- API tests generated: yes, for bounded warning dashboard query enrichment and idempotency misuse.
-- E2E tests generated: yes, including AppHost-dependent journeys and runnable no-AppHost selector contract self-checks.
-- Standard framework APIs: yes, Playwright `test`, locators, role selectors, `data-testid`, and existing typed API helpers/page object.
+- API tests generated: yes, where command submission is observable in the AppHost-backed lane.
+- E2E tests generated: yes, with live fixme journeys plus runnable no-AppHost selector/interaction coverage.
+- Standard framework APIs: yes, Playwright `test`, `expect`, semantic roles, stable `data-testid` locators, and the existing page object.
 - Happy path covered: yes.
-- Critical error cases covered: yes, query misuse and payload non-echo.
-- Proper locators: yes, stable selectors plus semantic role/table/link/button assertions.
+- Critical error cases covered: yes.
+- Proper locators: yes.
 - Clear descriptions: yes.
 - No hardcoded waits or sleeps: yes.
-- Independent tests: yes; no-AppHost checks use local page content, AppHost checks use isolated fixtures when unskipped.
+- Independent tests: yes; no-AppHost tests use isolated page content, AppHost tests use existing fixtures when unskipped.
 - Test summary created: yes.
-- Tests saved to appropriate directory: yes, `tests/e2e/specs`.
+- Tests saved to appropriate directory: yes.
 - Summary includes coverage metrics: yes.

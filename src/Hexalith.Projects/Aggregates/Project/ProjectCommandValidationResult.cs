@@ -59,6 +59,12 @@ public sealed record ProjectCommandValidationResult(
     public static ProjectCommandValidationResult AcceptedArchive(string idempotencyFingerprint)
         => new(true, ProjectResultCode.Archived, null, null, null, null, idempotencyFingerprint, null);
 
+    /// <summary>Creates an accepted validation result for a restore command.</summary>
+    /// <param name="idempotencyFingerprint">The canonical idempotency fingerprint.</param>
+    /// <returns>An accepted <see cref="ProjectCommandValidationResult"/>.</returns>
+    public static ProjectCommandValidationResult AcceptedRestore(string idempotencyFingerprint)
+        => new(true, ProjectResultCode.Restored, null, null, null, null, idempotencyFingerprint, null);
+
     /// <summary>Creates an accepted validation result for a set-folder command.</summary>
     /// <param name="idempotencyFingerprint">The canonical idempotency fingerprint.</param>
     /// <returns>An accepted <see cref="ProjectCommandValidationResult"/>.</returns>

@@ -34,6 +34,9 @@ public sealed class ProjectAuthorizationGate(
     /// <summary>The action token required to archive a project.</summary>
     public const string ArchiveProjectAction = "projects:archive";
 
+    /// <summary>The action token required to restore an archived project.</summary>
+    public const string RestoreProjectAction = "projects:restore";
+
     /// <summary>The action token required to link a conversation to a project.</summary>
     public const string LinkConversationAction = "projects:link_conversation";
 
@@ -147,6 +150,25 @@ public sealed class ProjectAuthorizationGate(
             tenantContext,
             httpContext,
             ArchiveProjectAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: true,
+            cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Authorizes a project restore mutation.</summary>
+    public async Task<ProjectAuthorizationResult> AuthorizeRestoreAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        CancellationToken cancellationToken = default)
+        => await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            RestoreProjectAction,
             projectId,
             correlationId,
             taskId,

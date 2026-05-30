@@ -31,6 +31,9 @@ public enum ProjectResultCode
     /// <summary>The archive command was accepted and a <c>ProjectArchived</c> event was emitted.</summary>
     Archived,
 
+    /// <summary>The restore command was accepted and a <c>ProjectRestored</c> event was emitted.</summary>
+    Restored,
+
     /// <summary>The set-folder command was accepted and a <c>ProjectFolderSet</c> event was emitted.</summary>
     FolderSet,
 
@@ -63,6 +66,9 @@ public enum ProjectResultCode
 
     /// <summary>The project is already archived and cannot be archived again with a different idempotency key.</summary>
     ProjectAlreadyArchived,
+
+    /// <summary>The project is already active and cannot be restored with a different idempotency key.</summary>
+    ProjectAlreadyActive,
 
     /// <summary>The project is archived and cannot accept setup updates.</summary>
     ProjectIsArchived,

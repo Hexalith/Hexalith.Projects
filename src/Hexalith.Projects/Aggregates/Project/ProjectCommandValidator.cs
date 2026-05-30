@@ -191,6 +191,22 @@ public static class ProjectCommandValidator
     }
 
     /// <summary>
+    /// Validates a <see cref="RestoreProject"/> command and computes its canonical idempotency
+    /// fingerprint.
+    /// </summary>
+    /// <param name="command">The restore command.</param>
+    /// <returns>An accepted or rejected validation result.</returns>
+    public static ProjectCommandValidationResult Validate(RestoreProject command)
+    {
+        ArgumentNullException.ThrowIfNull(command);
+
+        ProjectCommandValidationResult common = ValidateCommon(command);
+        return common.IsAccepted
+            ? ProjectCommandValidationResult.AcceptedRestore(ComputeRestoreProjectFingerprint())
+            : common;
+    }
+
+    /// <summary>
     /// Validates a <see cref="SetProjectFolder"/> command and computes its canonical idempotency
     /// fingerprint.
     /// </summary>
@@ -472,6 +488,22 @@ public static class ProjectCommandValidator
             "operation=ArchiveProject",
             "field=archive_intent;present=true;value=s:archive",
             "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+        ];
+
+        string canonical = string.Join('\n', lines);
+        byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(canonical));
+        return "sha256:" + Convert.ToHexString(digest).ToLowerInvariant();
+    }
+
+    /// <summary>Computes the canonical restore idempotency fingerprint.</summary>
+    /// <returns>A <c>sha256:</c>-prefixed lowercase hex digest.</returns>
+    internal static string ComputeRestoreProjectFingerprint()
+    {
+        string[] lines =
+        [
+            "operation=RestoreProject",
+            "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
+            "field=restore_intent;present=true;value=s:restore",
         ];
 
         string canonical = string.Join('\n', lines);

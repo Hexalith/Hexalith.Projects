@@ -11,15 +11,15 @@ public sealed record HexalithProjectsGeneratedArtifactsVerification(bool IsCurre
 
 public static class HexalithProjectsGeneratedArtifacts
 {
-    public const string ContractSpineSha256 = "8f4e8def181604e5ac819d8edeee94ea80617bad646301c3a149bec9166d5530";
+    public const string ContractSpineSha256 = "ebd1028ed5ba826f21ed17b647cb35ee654151fa19c6548ac8c0ad92bbbad500";
     public const string GenerationConfigurationSha256 = "57b05e6bb3aaec137283214dbc5e4b6fd19399a8f9b184745cfb5cbef1753548";
-    public const string GeneratedHelpersSha256 = "852f54e2a8b2f6d2376c63c3312eb76ae231aac18658ea612ebc3393c2cf923f";
+    public const string GeneratedHelpersSha256 = "40612b15fc64bc209195434c8f95650820cd401b75032d9c6b0a49c3e94cb0f9";
 
     // HelperSchemaVersion is a deterministic SHA-256 prefix of the canonical helper-signature
     // shape (schema names, parameter names in declared order, idempotency field paths per
     // variant). It changes whenever helper parameter shapes change, and only then. Not
     // included in the canonical hash.
-    public const string HelperSchemaVersion = "7c0ac65d16126675";
+    public const string HelperSchemaVersion = "d466a861986c3a51";
 
     public static bool VerifyCurrent(string repositoryRoot) => VerifyCurrentDetailed(repositoryRoot).IsCurrent;
 
@@ -331,6 +331,19 @@ public partial class MoveProjectConversationRequest
 ;
 }
 
+public partial class RestoreProjectRequest
+{
+    public string ComputeIdempotencyHash() =>
+        HexalithIdempotencyHasher.Compute(
+            "RestoreProject",
+            new[]
+            {
+                new IdempotencyField("request_schema_version", true, RequestSchemaVersion),
+                new IdempotencyField("restore_intent", true, RestoreIntent),
+            })
+;
+}
+
 public partial class SetProjectFolderRequest
 {
     public string ComputeIdempotencyHash(string projectId) =>
@@ -412,4 +425,3 @@ public partial class UpdateProjectSetupRequest
             })
 ;
 }
-

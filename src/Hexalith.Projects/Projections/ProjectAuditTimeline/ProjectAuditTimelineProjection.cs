@@ -71,6 +71,7 @@ public sealed record ProjectAuditTimelineProjection
                 ProjectCreated created => Item(envelope, created, created.ActorPrincipalId, "project.created", null, null, null, created.Lifecycle.ToString(), null, null, null),
                 ProjectSetupUpdated updated => Item(envelope, updated, updated.ActorPrincipalId, "project.setup_updated", null, null, null, "Updated", null, null, null),
                 ProjectArchived archived => Item(envelope, archived, archived.ActorPrincipalId, "project.archived", null, null, ProjectLifecycle.Active.ToString(), archived.Lifecycle.ToString(), null, null, null),
+                ProjectRestored restored => Item(envelope, restored, restored.ActorPrincipalId, "project.restored", null, null, ProjectLifecycle.Archived.ToString(), restored.Lifecycle.ToString(), null, null, null),
                 ProjectFolderCreationPending pending => Item(envelope, pending, pending.ActorPrincipalId, "project.folder_creation_pending", FolderReferenceKind, null, null, ReferenceState.Pending.ToString(), pending.ReasonCode, null, null),
                 ProjectFolderSet folderSet => Item(envelope, folderSet, folderSet.ActorPrincipalId, "project.folder_set", FolderReferenceKind, folderSet.FolderId, null, ReferenceState.Included.ToString(), null, null, null),
                 FileReferenceLinked linked => Item(envelope, linked, linked.ActorPrincipalId, "file_reference.linked", FileReferenceKind, linked.FileReferenceId, null, ReferenceState.Included.ToString(), null, null, null),

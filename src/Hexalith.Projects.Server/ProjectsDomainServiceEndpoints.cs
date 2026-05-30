@@ -513,6 +513,17 @@ public static partial class ProjectsDomainServiceEndpoints
             => await ArchiveProjectAsync(projectId, httpContext, submitter, tenantContext, authorizationGate, timeProvider, cancellationToken).ConfigureAwait(false))
             .WithName("ArchiveProject");
 
+        endpoints.MapPost("/api/v1/projects/{projectId}/restore", static async (
+            string projectId,
+            HttpContext httpContext,
+            IProjectCommandSubmitter submitter,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await RestoreProjectAsync(projectId, httpContext, submitter, tenantContext, authorizationGate, timeProvider, cancellationToken).ConfigureAwait(false))
+            .WithName("RestoreProject");
+
         return endpoints;
     }
 
@@ -1660,6 +1671,85 @@ public static partial class ProjectsDomainServiceEndpoints
         return MutationResult(httpContext, timeProvider, result, correlationId!, taskId!);
     }
 
+    private static async Task<IResult> RestoreProjectAsync(
+        string projectId,
+        HttpContext httpContext,
+        IProjectCommandSubmitter submitter,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        TimeProvider timeProvider,
+        CancellationToken cancellationToken)
+    {
+        string? idempotencyKey = ReadHeader(httpContext, "Idempotency-Key");
+        string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
+        string? taskId = ReadHeader(httpContext, "X-Hexalith-Task-Id");
+
+        if (string.IsNullOrWhiteSpace(idempotencyKey) || !IsCanonicalIdentifier(idempotencyKey))
+        {
+            return ValidationProblem(correlationId, taskId, "idempotency_key");
+        }
+
+        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : idempotencyKey;
+        taskId = IsCanonicalIdentifier(taskId) ? taskId : correlationId;
+
+        if (string.IsNullOrWhiteSpace(projectId) || !IsCanonicalIdentifier(projectId))
+        {
+            return SafeDenial(correlationId, taskId);
+        }
+
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeRestoreAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed)
+        {
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, taskId)
+                : SafeDenial(correlationId, taskId, authorization);
+        }
+
+        RestoreProjectHttpRequest? body;
+        try
+        {
+            body = await httpContext.Request
+                .ReadFromJsonAsync<RestoreProjectHttpRequest>(RequestJsonOptions, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (JsonException)
+        {
+            return ValidationProblem(correlationId, taskId, "body");
+        }
+
+        if (body is null || !string.Equals(body.RequestSchemaVersion, "v1", StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "requestSchemaVersion");
+        }
+
+        if (!string.Equals(body.RestoreIntent, "restore", StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, taskId, "restoreIntent");
+        }
+
+        RestoreProject command = new(
+            tenantContext.AuthoritativeTenantId!,
+            new ProjectId(projectId),
+            tenantContext.PrincipalId!,
+            correlationId!,
+            taskId!,
+            idempotencyKey);
+
+        ProjectCommandValidationResult validation = ProjectCommandValidator.Validate(command);
+        if (!validation.IsAccepted)
+        {
+            return ValidationProblem(correlationId, taskId, validation.RejectedField ?? "command");
+        }
+
+        ProjectCommandSubmissionResult result = await submitter
+            .SubmitRestoreProjectAsync(command, cancellationToken)
+            .ConfigureAwait(false);
+
+        return MutationResult(httpContext, timeProvider, result, correlationId!, taskId!);
+    }
+
     private static async Task<IResult> ListProjectsAsync(
         HttpContext httpContext,
         IProjectTenantContextAccessor tenantContext,
@@ -2292,6 +2382,10 @@ public static partial class ProjectsDomainServiceEndpoints
     private sealed record ArchiveProjectHttpRequest(
         string? ArchiveIntent,
         string? RequestSchemaVersion);
+
+    private sealed record RestoreProjectHttpRequest(
+        string? RequestSchemaVersion,
+        string? RestoreIntent);
 
     private sealed record LinkConversationHttpRequest(
         string? RequestSchemaVersion,

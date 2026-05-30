@@ -31,6 +31,7 @@ public sealed class RejectionEventTaxonomyTests
         typeof(ProjectCreationRejected),
         typeof(ProjectSetupUpdateRejected),
         typeof(ProjectArchiveRejected),
+        typeof(ProjectRestoreRejected),
         typeof(ProjectReferenceLinkRejected),
         typeof(ProjectReferenceUnlinkRejected),
         typeof(ProjectResolutionConfirmationRejected),
@@ -40,8 +41,8 @@ public sealed class RejectionEventTaxonomyTests
         => _rejectionEvents.Select(t => new object[] { t });
 
     [Fact]
-    public void AllSixRejectionEventsAreDefined()
-        => _rejectionEvents.Length.ShouldBe(6);
+    public void AllSevenRejectionEventsAreDefined()
+        => _rejectionEvents.Length.ShouldBe(7);
 
     [Theory]
     [MemberData(nameof(RejectionEventTypes))]

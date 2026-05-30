@@ -179,7 +179,9 @@ else if (_result?.Detail is not null)
                 break;
             case ActionsSection:
                 <section role="tabpanel" data-testid="project-detail-section-actions">
-                    <p>Read-only inspector. Maintenance mutations are handled by Story 5.9.</p>
+                    <ProjectMaintenanceActionPanel Detail="@_result.Detail"
+                                                   ReferenceRows="@_result.ReferenceHealthRows"
+                                                   TenantScope="@_result.TenantScope" />
                 </section>
                 break;
         }

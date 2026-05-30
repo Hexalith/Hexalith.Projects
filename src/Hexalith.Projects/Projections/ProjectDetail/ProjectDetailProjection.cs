@@ -239,6 +239,19 @@ public sealed record ProjectDetailProjection
 
                     break;
 
+                case ProjectRestored restored:
+                    if (projects.TryGetValue(key, out ProjectDetailItem? restoredDetail))
+                    {
+                        projects[key] = restoredDetail with
+                        {
+                            Lifecycle = restored.Lifecycle,
+                            UpdatedAt = restored.OccurredAt,
+                            Sequence = envelope.Sequence,
+                        };
+                    }
+
+                    break;
+
                 case ProjectResolutionConfirmed confirmed:
                     if (projects.TryGetValue(key, out ProjectDetailItem? confirmedDetail))
                     {

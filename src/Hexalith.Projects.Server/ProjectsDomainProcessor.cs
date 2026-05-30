@@ -60,6 +60,7 @@ public sealed class ProjectsDomainProcessor(
             ProjectsServerModule.CreateProjectCommandType => ProjectAuthorizationGate.CreateProjectAction,
             ProjectsServerModule.UpdateProjectSetupCommandType => ProjectAuthorizationGate.UpdateProjectSetupAction,
             ProjectsServerModule.ArchiveProjectCommandType => ProjectAuthorizationGate.ArchiveProjectAction,
+            ProjectsServerModule.RestoreProjectCommandType => ProjectAuthorizationGate.RestoreProjectAction,
             ProjectsServerModule.SetProjectFolderCommandType => ProjectAuthorizationGate.SetProjectFolderAction,
             ProjectsServerModule.LinkFileReferenceCommandType => ProjectAuthorizationGate.LinkFileReferenceAction,
             ProjectsServerModule.UnlinkFileReferenceCommandType => ProjectAuthorizationGate.UnlinkFileReferenceAction,
@@ -103,6 +104,7 @@ public sealed class ProjectsDomainProcessor(
             ProjectsServerModule.CreateProjectCommandType => ProcessCreate(command, currentState),
             ProjectsServerModule.UpdateProjectSetupCommandType => ProcessUpdateProjectSetup(command, currentState),
             ProjectsServerModule.ArchiveProjectCommandType => ProcessArchiveProject(command, currentState),
+            ProjectsServerModule.RestoreProjectCommandType => ProcessRestoreProject(command, currentState),
             ProjectsServerModule.SetProjectFolderCommandType => ProcessSetProjectFolder(command, currentState),
             ProjectsServerModule.LinkFileReferenceCommandType => ProcessLinkFileReference(command, currentState),
             ProjectsServerModule.UnlinkFileReferenceCommandType => ProcessUnlinkFileReference(command, currentState),
@@ -258,6 +260,59 @@ public sealed class ProjectsDomainProcessor(
         }
 
         ArchiveProject command = new(
+            envelope.TenantId,
+            projectId,
+            envelope.UserId,
+            envelope.CorrelationId,
+            ReadTaskId(envelope),
+            envelope.MessageId);
+
+        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+
+        ProjectResult result;
+        try
+        {
+            result = ProjectAggregate.Handle(state, command, _timeProvider.GetUtcNow());
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        return ToDomainResult(result);
+    }
+
+    private DomainResult ProcessRestoreProject(CommandEnvelope envelope, object? currentState)
+    {
+        try
+        {
+            RestoreProjectPayload? payload = JsonSerializer.Deserialize<RestoreProjectPayload>(Encoding.UTF8.GetString(envelope.Payload), PayloadJsonOptions);
+            if (payload is null || !string.Equals(payload.RequestSchemaVersion, "v1", StringComparison.Ordinal))
+            {
+                return Rejection(envelope, ProjectResultCode.ValidationFailed, "requestSchemaVersion", envelope.CommandType);
+            }
+
+            if (!string.Equals(payload.RestoreIntent, "restore", StringComparison.Ordinal))
+            {
+                return Rejection(envelope, ProjectResultCode.ValidationFailed, "restoreIntent", envelope.CommandType);
+            }
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, "body", envelope.CommandType);
+        }
+
+        ProjectId projectId;
+        try
+        {
+            projectId = new ProjectId(envelope.AggregateId);
+        }
+        catch (Exception ex) when (ex is ArgumentException or ArgumentNullException)
+        {
+            return Rejection(envelope, ProjectResultCode.ValidationFailed, null, envelope.CommandType);
+        }
+
+        RestoreProject command = new(
             envelope.TenantId,
             projectId,
             envelope.UserId,
@@ -643,6 +698,7 @@ public sealed class ProjectsDomainProcessor(
             ProjectResultCode.Created
                 or ProjectResultCode.SetupUpdated
                 or ProjectResultCode.Archived
+                or ProjectResultCode.Restored
                 or ProjectResultCode.FolderSet
                 or ProjectResultCode.FileReferenceLinked
                 or ProjectResultCode.FileReferenceUnlinked
@@ -680,6 +736,7 @@ public sealed class ProjectsDomainProcessor(
         {
             ProjectsServerModule.UpdateProjectSetupCommandType => nameof(UpdateProjectSetup),
             ProjectsServerModule.ArchiveProjectCommandType => nameof(ArchiveProject),
+            ProjectsServerModule.RestoreProjectCommandType => nameof(RestoreProject),
             ProjectsServerModule.SetProjectFolderCommandType => nameof(SetProjectFolder),
             ProjectsServerModule.LinkFileReferenceCommandType => nameof(LinkFileReference),
             ProjectsServerModule.UnlinkFileReferenceCommandType => nameof(UnlinkFileReference),
@@ -716,6 +773,10 @@ public sealed class ProjectsDomainProcessor(
     private sealed record ArchiveProjectPayload(
         [property: JsonRequired] string? ArchiveIntent,
         [property: JsonRequired] string? RequestSchemaVersion);
+
+    private sealed record RestoreProjectPayload(
+        [property: JsonRequired] string? RequestSchemaVersion,
+        [property: JsonRequired] string? RestoreIntent);
 
     private sealed record SetProjectFolderPayload(
         string? RequestSchemaVersion,

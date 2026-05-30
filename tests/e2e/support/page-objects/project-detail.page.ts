@@ -85,9 +85,21 @@ export class ProjectDetailPage {
   readonly safeDiagnosticExportDownload: Locator;
   readonly safeDiagnosticExportFeedback: Locator;
   readonly actionsSection: Locator;
-  readonly archiveAction: Locator;
-  readonly archiveDryRun: Locator;
-  readonly archiveConfirm: Locator;
+  readonly maintenancePanel: Locator;
+  readonly maintenanceActionSelect: Locator;
+  readonly maintenanceReferenceKind: Locator;
+  readonly maintenanceReferenceId: Locator;
+  readonly maintenanceActionState: Locator;
+  readonly maintenanceActionLifecycle: Locator;
+  readonly maintenanceCurrentState: Locator;
+  readonly maintenanceProposedState: Locator;
+  readonly maintenanceWarning: Locator;
+  readonly maintenanceDryRun: Locator;
+  readonly maintenanceDryRunRun: Locator;
+  readonly maintenanceConfirm: Locator;
+  readonly maintenanceSubmit: Locator;
+  readonly maintenanceFeedback: Locator;
+  readonly maintenanceAuditEvent: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -166,9 +178,21 @@ export class ProjectDetailPage {
     this.safeDiagnosticExportDownload = page.getByTestId('safe-diagnostic-export-download');
     this.safeDiagnosticExportFeedback = page.getByTestId('safe-diagnostic-export-feedback');
     this.actionsSection = page.getByTestId('project-detail-section-actions');
-    this.archiveAction = page.getByTestId('action-archive');
-    this.archiveDryRun = page.getByTestId('action-archive-dry-run');
-    this.archiveConfirm = page.getByTestId('action-archive-confirm');
+    this.maintenancePanel = page.getByTestId('maintenance-action-panel');
+    this.maintenanceActionSelect = page.getByTestId('maintenance-action-select');
+    this.maintenanceReferenceKind = page.getByTestId('maintenance-action-reference-kind');
+    this.maintenanceReferenceId = page.getByTestId('maintenance-action-reference-id');
+    this.maintenanceActionState = page.getByTestId('maintenance-action-state');
+    this.maintenanceActionLifecycle = page.getByTestId('maintenance-action-lifecycle');
+    this.maintenanceCurrentState = page.getByTestId('maintenance-action-current-state');
+    this.maintenanceProposedState = page.getByTestId('maintenance-action-proposed-state');
+    this.maintenanceWarning = page.getByTestId('maintenance-action-warning');
+    this.maintenanceDryRun = page.getByTestId('maintenance-action-dry-run');
+    this.maintenanceDryRunRun = page.getByTestId('maintenance-action-dry-run-run');
+    this.maintenanceConfirm = page.getByTestId('maintenance-action-confirm');
+    this.maintenanceSubmit = page.getByTestId('maintenance-action-submit');
+    this.maintenanceFeedback = page.getByTestId('maintenance-action-feedback');
+    this.maintenanceAuditEvent = page.getByTestId('maintenance-action-audit-event');
   }
 
   async goto(projectId: string): Promise<void> {
