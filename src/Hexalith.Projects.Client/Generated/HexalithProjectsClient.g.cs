@@ -109,6 +109,35 @@ namespace Hexalith.Projects.Client.Generated
         System.Threading.Tasks.Task<Project> GetProjectAsync(string projectId, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
+        /// Read metadata-only operator diagnostics for one Project.
+        /// </summary>
+        /// <remarks>
+        /// Returns an authorization-gated, tenant-scoped, metadata-only diagnostic model for a single Project. The response reuses Project detail/reference summaries and Story 5.1 audit timeline rows, bounded by auditLimit. It carries lifecycle, setup preferences, reference summaries, freshness/watermark evidence, and safe audit metadata only. It never returns tenant authority, write capability, transcripts, file or memory payloads, raw prompts, raw tokens, unrestricted paths, candidate scores or ranks, rejected candidate ids, proposal bodies, full command bodies, or sibling denial detail.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="auditLimit">Optional maximum number of audit timeline rows returned by operator diagnostics. Defaults to 25 and is bounded by 100.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only operator diagnostic model with bounded audit timeline and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectOperatorDiagnostic> GetProjectOperatorDiagnosticsAsync(string projectId, int? auditLimit, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read metadata-only operator diagnostics for one Project.
+        /// </summary>
+        /// <remarks>
+        /// Returns an authorization-gated, tenant-scoped, metadata-only diagnostic model for a single Project. The response reuses Project detail/reference summaries and Story 5.1 audit timeline rows, bounded by auditLimit. It carries lifecycle, setup preferences, reference summaries, freshness/watermark evidence, and safe audit metadata only. It never returns tenant authority, write capability, transcripts, file or memory payloads, raw prompts, raw tokens, unrestricted paths, candidate scores or ranks, rejected candidate ids, proposal bodies, full command bodies, or sibling denial detail.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="auditLimit">Optional maximum number of audit timeline rows returned by operator diagnostics. Defaults to 25 and is bounded by 100.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only operator diagnostic model with bounded audit timeline and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectOperatorDiagnostic> GetProjectOperatorDiagnosticsAsync(string projectId, int? auditLimit, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
         /// List metadata-only conversation references currently assigned to a Project.
         /// </summary>
         /// <remarks>
@@ -1129,6 +1158,171 @@ namespace Hexalith.Projects.Client.Generated
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<Project>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Read metadata-only operator diagnostics for one Project.
+        /// </summary>
+        /// <remarks>
+        /// Returns an authorization-gated, tenant-scoped, metadata-only diagnostic model for a single Project. The response reuses Project detail/reference summaries and Story 5.1 audit timeline rows, bounded by auditLimit. It carries lifecycle, setup preferences, reference summaries, freshness/watermark evidence, and safe audit metadata only. It never returns tenant authority, write capability, transcripts, file or memory payloads, raw prompts, raw tokens, unrestricted paths, candidate scores or ranks, rejected candidate ids, proposal bodies, full command bodies, or sibling denial detail.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="auditLimit">Optional maximum number of audit timeline rows returned by operator diagnostics. Defaults to 25 and is bounded by 100.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only operator diagnostic model with bounded audit timeline and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ProjectOperatorDiagnostic> GetProjectOperatorDiagnosticsAsync(string projectId, int? auditLimit, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
+        {
+            return GetProjectOperatorDiagnosticsAsync(projectId, auditLimit, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Read metadata-only operator diagnostics for one Project.
+        /// </summary>
+        /// <remarks>
+        /// Returns an authorization-gated, tenant-scoped, metadata-only diagnostic model for a single Project. The response reuses Project detail/reference summaries and Story 5.1 audit timeline rows, bounded by auditLimit. It carries lifecycle, setup preferences, reference summaries, freshness/watermark evidence, and safe audit metadata only. It never returns tenant authority, write capability, transcripts, file or memory payloads, raw prompts, raw tokens, unrestricted paths, candidate scores or ranks, rejected candidate ids, proposal bodies, full command bodies, or sibling denial detail.
+        /// </remarks>
+        /// <param name="projectId">Opaque tenant-scoped project identifier. It is an addressable resource reference, not tenant authority.</param>
+        /// <param name="auditLimit">Optional maximum number of audit timeline rows returned by operator diagnostics. Defaults to 25 and is bounded by 100.</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only operator diagnostic model with bounded audit timeline and freshness evidence.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ProjectOperatorDiagnostic> GetProjectOperatorDiagnosticsAsync(string projectId, int? auditLimit, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        {
+            if (projectId == null)
+                throw new System.ArgumentNullException("projectId");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Freshness != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Freshness", ConvertToString(x_Hexalith_Freshness, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects/{projectId}/operator-diagnostics"
+                    urlBuilder_.Append("api/v1/projects/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(projectId, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/operator-diagnostics");
+                    urlBuilder_.Append('?');
+                    if (auditLimit != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("auditLimit")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(auditLimit, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectOperatorDiagnostic>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -5601,6 +5795,135 @@ namespace Hexalith.Projects.Client.Generated
     }
 
     /// <summary>
+    /// Metadata-only operator diagnostic model for one Project. Reuses the safe Project metadata, context activation, reference summary, and freshness vocabulary, and adds a bounded Story 5.1 audit timeline window. It does not carry tenantId, write commands, idempotency keys, transcripts, file or memory payloads, raw prompts, raw tokens, unrestricted paths, candidate scores or ranks, rejected candidate ids, proposal bodies, full command bodies, or sibling denial detail.
+    /// <br/>
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectOperatorDiagnostic
+    {
+
+        [Newtonsoft.Json.JsonProperty("projectId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ProjectId { get; set; }
+
+        /// <summary>
+        /// Projected project name metadata only; it is not aggregate identity.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Optional projected, metadata-only description.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Description { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("lifecycleState", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectLifecycleState LifecycleState { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("createdAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset CreatedAt { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("updatedAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Optional safe setup metadata reference projected from Projects-owned data only; not a raw setup body, path, secret, token, or prompt.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("setupMetadata", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SetupMetadata { get; set; }
+
+        /// <summary>
+        /// Optional bounded metadata-only Project setup preferences projected from Projects-owned events.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("projectSetup", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ProjectSetup ProjectSetup { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("contextActivation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public ContextActivation ContextActivation { get; set; } = new ContextActivation();
+
+        /// <summary>
+        /// Safe Projects-owned reference summaries filtered to the authoritative tenant.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("references", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ProjectReferenceSummary> References { get; set; } = new System.Collections.Generic.List<ProjectReferenceSummary>();
+
+        /// <summary>
+        /// Bounded newest-first safe audit timeline rows from Story 5.1.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("auditTimeline", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<ProjectOperatorAuditTimelineItem> AuditTimeline { get; set; } = new System.Collections.Generic.List<ProjectOperatorAuditTimelineItem>();
+
+        [Newtonsoft.Json.JsonProperty("freshness", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public FreshnessMetadata Freshness { get; set; } = new FreshnessMetadata();
+
+    }
+
+    /// <summary>
+    /// Metadata-only audit row exposed through operator diagnostics. It excludes idempotency keys and raw command payloads.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ProjectOperatorAuditTimelineItem
+    {
+
+        [Newtonsoft.Json.JsonProperty("auditEventId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string AuditEventId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("operationType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string OperationType { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("occurredAt", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset OccurredAt { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("actorPrincipalId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ActorPrincipalId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("correlationId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string CorrelationId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("taskId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string TaskId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("referenceKind", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ProjectOperatorAuditTimelineItemReferenceKind? ReferenceKind { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("referenceId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ReferenceId { get; set; }
+
+        /// <summary>
+        /// Previous safe state code when known.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("previousState", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string PreviousState { get; set; }
+
+        /// <summary>
+        /// New safe state code when known.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("newState", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string NewState { get; set; }
+
+        /// <summary>
+        /// Stable metadata-only reason code when available.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("reasonCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ReasonCode { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("conversationId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string ConversationId { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("sourceProjectId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string SourceProjectId { get; set; }
+
+        /// <summary>
+        /// Projection/global-position sequence used as freshness evidence.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty("projectionSequence", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long ProjectionSequence { get; set; }
+
+    }
+
+    /// <summary>
     /// Tenant-scoped, authorization-filtered list of metadata-only Project choices.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -6659,6 +6982,24 @@ namespace Hexalith.Projects.Client.Generated
 
         [System.Runtime.Serialization.EnumMember(Value = @"removeReference")]
         RemoveReference = 0,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ProjectOperatorAuditTimelineItemReferenceKind
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"conversation")]
+        Conversation = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"folder")]
+        Folder = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"file")]
+        File = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"memory")]
+        Memory = 3,
 
     }
 

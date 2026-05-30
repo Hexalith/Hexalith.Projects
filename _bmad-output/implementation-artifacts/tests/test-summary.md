@@ -3,39 +3,41 @@
 ## Generated Tests
 
 ### API Tests
-- [x] Not applicable for Story 5.1: the story intentionally adds an internal audit read-model seam only; public operator/API access belongs to Stories 5.2 and 5.7.
+- [x] `tests/Hexalith.Projects.Server.Tests/Queries/OperatorReadAccessTests.cs` - Story 5.2 operator diagnostics endpoint coverage for happy path metadata-only response, audit limit validation, query idempotency rejection ordering, freshness validation, cross-tenant audit row filtering, and audit projection unavailability.
+- [x] `tests/Hexalith.Projects.Server.Tests/ProjectAuthorizationGateTests.cs` - Focused authorization coverage for read/list/operator access paths.
+- [x] `tests/Hexalith.Projects.Contracts.Tests/OpenApi/OpenApiContractSpineTests.cs` - Contract-spine assertions for the operator diagnostics route, schemas, query freshness, safe denial, and absence of query idempotency.
+- [x] `tests/Hexalith.Projects.Client.Tests/ClientGenerationTests.cs` - Generated client/idempotency helper coverage for the new read query.
+- [x] `tests/Hexalith.Projects.Tests/Leakage/NoPayloadLeakageTests.cs` - Serialization leakage proof for operator DTOs.
 
 ### E2E Tests
-- [x] Not applicable for Story 5.1: no audit UI or public audit route exists yet. Existing Playwright audit specs remain `test.fixme` until the Story 5.7 surface exists.
-
-### Server/Projection Tests
-- [x] `tests/Hexalith.Projects.Server.Tests/InMemoryProjectAuditTimelineReadModelTests.cs` - Added server-facing audit read-model coverage for tenant/project filtering, limit ordering, dispatch-tenant mismatch dropping, and metadata-only folder audit rows.
-- [x] `tests/Hexalith.Projects.Server.Tests/ServiceDefaultsEndpointTests.cs` - Added runtime DI coverage proving the audit read-model seam is replaced by the Dapr-backed implementation.
-- [x] Existing `tests/Hexalith.Projects.Tests/Projections/ProjectAuditTimelineProjectionTests.cs` - Re-run for all mapped audit event types, deterministic IDs, tenant/project filtering, proposal-chain semantics, and unknown-event failure.
-- [x] Existing `tests/Hexalith.Projects.Tests/Leakage/NoPayloadLeakageTests.cs` - Re-run for `ProjectAuditTimelineItem_SerializesMetadataOnly`.
-- [x] Existing `tests/Hexalith.Projects.Integration.Tests/DaprProjectionStoreTests.cs` - Re-run for durable journal rebuild, duplicate handling, replay conflict, malformed evidence, missing journal, and tenant/project scoping.
+- [x] `tests/e2e/support/helpers/projects-api-client.ts` - Added typed `getProjectOperatorDiagnostics(...)` client and Story 5.2 operator diagnostic DTO shapes.
+- [x] `tests/e2e/specs/projects-operator-read-access.spec.ts` - Added Playwright Story 5.2 operator read journey covering metadata-only diagnostics, bounded audit evidence, query idempotency/freshness negatives, malformed safe denial, unauthenticated probe non-disclosure, and forbidden payload markers.
 
 ## Coverage
-- Audit projection event mapping: all current Project success events covered.
-- Read-model seam: in-memory server seam plus Dapr runtime replacement covered.
-- Tenant isolation: authoritative tenant filtering, project filtering, cross-tenant event mismatch, and durable tenant journal scoping covered.
-- Metadata-only boundary: audit row serialization and folder metadata payload exclusion covered.
-- Public API/UI: intentionally not generated for this story because no public audit route or audit UI is part of Story 5.1.
+- Operator public read routes: 1/1 covered (`GET /api/v1/projects/{projectId}/operator-diagnostics`).
+- Query contract negatives: idempotency header, non-eventual freshness, malformed identifier, safe denial, projection unavailable, and no protected body disclosure covered in xUnit; mirrored in Playwright domain E2E scaffolding.
+- Tenant isolation: authoritative tenant/project filtering and cross-tenant audit row dropping covered.
+- Metadata-only boundary: operator DTO leakage coverage plus E2E forbidden marker assertions.
+- UI views: 0/0 for Story 5.2; later Epic 5 stories own Web rendering/export/maintenance views.
 
 ## Validation
-- [x] `dotnet build Hexalith.Projects.slnx -m:1 /nr:false -warnaserror`
-- [x] `dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class "Hexalith.Projects.Server.Tests.InMemoryProjectAuditTimelineReadModelTests" -class "Hexalith.Projects.Server.Tests.ServiceDefaultsEndpointTests" -parallel none -noColor`
-- [x] `dotnet tests/Hexalith.Projects.Tests/bin/Debug/net10.0/Hexalith.Projects.Tests.dll -class "Hexalith.Projects.Tests.Projections.ProjectAuditTimelineProjectionTests" -parallel none -noColor`
-- [x] `dotnet tests/Hexalith.Projects.Tests/bin/Debug/net10.0/Hexalith.Projects.Tests.dll -method "Hexalith.Projects.Tests.Leakage.NoPayloadLeakageTests.ProjectAuditTimelineItem_SerializesMetadataOnly" -parallel none -noColor`
-- [x] `dotnet tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll -class "Hexalith.Projects.Integration.Tests.DaprProjectionStoreTests" -parallel none -noColor`
+- [x] `dotnet build Hexalith.Projects.slnx -warnaserror -m:1 -nr:false --no-restore`
+- [x] `dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class "*OperatorReadAccessTests" -class "*ProjectAuthorizationGateTests" -parallel none -noLogo` - 22 passed.
+- [x] `dotnet tests/Hexalith.Projects.Contracts.Tests/bin/Debug/net10.0/Hexalith.Projects.Contracts.Tests.dll -class "*OpenApiContractSpineTests" -parallel none -noLogo` - 26 passed.
+- [x] `dotnet tests/Hexalith.Projects.Client.Tests/bin/Debug/net10.0/Hexalith.Projects.Client.Tests.dll -class "*ClientGenerationTests" -parallel none -noLogo` - 37 passed.
+- [x] `dotnet tests/Hexalith.Projects.Tests/bin/Debug/net10.0/Hexalith.Projects.Tests.dll -class "*NoPayloadLeakageTests" -parallel none -noLogo` - 49 passed.
 - [x] `git diff --check`
+- [ ] `npm run typecheck` - blocked because `tsc` is not installed in `tests/e2e`.
+- [ ] `npm run test:smoke` - blocked because `playwright` is not installed in `tests/e2e`.
+- [ ] `npm ci --ignore-scripts` - blocked by registry DNS (`EAI_AGAIN registry.npmjs.org`) and the local runtime is Node `v22.22.1` while the E2E package requires Node `>=24.0.0`.
+- [ ] `dotnet test Hexalith.Projects.slnx --filter "FullyQualifiedName~OperatorRead|FullyQualifiedName~OpenApi|FullyQualifiedName~NoPayloadLeakage|FullyQualifiedName~ProjectAuthorizationGate" -m:1 -nr:false --no-restore` - blocked by VSTest socket permissions (`System.Net.Sockets.SocketException (13): Permission denied`); equivalent xUnit v3 in-process lanes passed.
 
 ## Checklist Notes
-- API tests generated: not applicable; no public API surface for Story 5.1.
-- E2E tests generated: not applicable; no UI route for Story 5.1.
-- Standard framework APIs: yes, xUnit v3 and Shouldly patterns.
-- Happy path coverage: yes, projection fold, in-memory read model, and durable journal rebuild.
-- Critical error coverage: yes, dispatch-tenant mismatch, replay conflict, malformed evidence, missing journal, and unknown event types.
-- Semantic UI locators: not applicable.
+- API tests generated: yes, through the existing Story 5.2 xUnit API/contract/leakage coverage.
+- E2E tests generated: yes, new Story 5.2 Playwright operator read spec and typed API helper.
+- Standard framework APIs: yes, xUnit v3, Shouldly, and Playwright test APIs.
+- Happy path coverage: yes, operator diagnostics metadata and audit evidence.
+- Critical error coverage: yes, query contract negatives, safe denial, projection unavailability, and leakage.
+- Semantic UI locators: not applicable for Story 5.2; no UI surface is part of this story.
 - No hardcoded waits/sleeps: yes.
-- Independent tests: yes.
+- Independent tests: yes; E2E tests follow existing isolated tenant/seeded project fixture patterns and remain `test.fixme` until real AppHost/operator fixtures are enabled.

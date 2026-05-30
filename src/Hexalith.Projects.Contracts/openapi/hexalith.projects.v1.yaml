@@ -218,6 +218,69 @@ paths:
         - projection_stale
         - projection_unavailable
         - internal_error
+  /api/v1/projects/{projectId}/operator-diagnostics:
+    get:
+      tags:
+        - projects
+      operationId: GetProjectOperatorDiagnostics
+      summary: Read metadata-only operator diagnostics for one Project.
+      description: >
+        Returns an authorization-gated, tenant-scoped, metadata-only diagnostic model for a
+        single Project. The response reuses Project detail/reference summaries and Story 5.1
+        audit timeline rows, bounded by auditLimit. It carries lifecycle, setup preferences,
+        reference summaries, freshness/watermark evidence, and safe audit metadata only. It never
+        returns tenant authority, write capability, transcripts, file or memory payloads, raw
+        prompts, raw tokens, unrestricted paths, candidate scores or ranks, rejected candidate ids,
+        proposal bodies, full command bodies, or sibling denial detail.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/OperatorAuditLimit"
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Freshness"
+      responses:
+        "200":
+          description: Metadata-only operator diagnostic model with bounded audit timeline and freshness evidence.
+          headers:
+            X-Correlation-Id:
+              $ref: "#/components/headers/CorrelationId"
+            X-Hexalith-Freshness:
+              $ref: "#/components/headers/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectOperatorDiagnostic"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-read-consistency:
+        class: eventually_consistent
+        freshnessBehavior: returns-projection-watermark-when-available
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: query-correlation-only
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-and-project-read-permission
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - validation_error
+        - not_found
+        - read_model_unavailable
+        - projection_stale
+        - projection_unavailable
+        - internal_error
   /api/v1/projects/{projectId}/conversations:
     get:
       tags:
@@ -1761,6 +1824,17 @@ components:
           - active
           - archived
           - all
+    OperatorAuditLimit:
+      name: auditLimit
+      in: query
+      required: false
+      description: Optional maximum number of audit timeline rows returned by operator diagnostics. Defaults to 25 and is bounded by 100.
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 25
     ProjectId:
       name: projectId
       in: path
@@ -3162,6 +3236,139 @@ components:
             $ref: "#/components/schemas/ProjectReferenceSummary"
         freshness:
           $ref: "#/components/schemas/FreshnessMetadata"
+    ProjectOperatorDiagnostic:
+      type: object
+      additionalProperties: false
+      description: >
+        Metadata-only operator diagnostic model for one Project. Reuses the safe Project metadata,
+        context activation, reference summary, and freshness vocabulary, and adds a bounded Story
+        5.1 audit timeline window. It does not carry tenantId, write commands, idempotency keys,
+        transcripts, file or memory payloads, raw prompts, raw tokens, unrestricted paths, candidate
+        scores or ranks, rejected candidate ids, proposal bodies, full command bodies, or sibling
+        denial detail.
+      required:
+        - projectId
+        - name
+        - lifecycleState
+        - createdAt
+        - updatedAt
+        - setupMetadata
+        - contextActivation
+        - references
+        - auditTimeline
+        - freshness
+      properties:
+        projectId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 160
+          description: Projected project name metadata only; it is not aggregate identity.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        description:
+          type: string
+          maxLength: 512
+          description: Optional projected, metadata-only description.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        lifecycleState:
+          $ref: "#/components/schemas/ProjectLifecycleState"
+        createdAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        updatedAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        setupMetadata:
+          type: string
+          nullable: true
+          maxLength: 512
+          description: Optional safe setup metadata reference projected from Projects-owned data only; not a raw setup body, path, secret, token, or prompt.
+          x-hexalith-sensitive-metadata-tier: tenant_sensitive
+        projectSetup:
+          nullable: true
+          description: Optional bounded metadata-only Project setup preferences projected from Projects-owned events.
+          $ref: "#/components/schemas/ProjectSetup"
+        contextActivation:
+          $ref: "#/components/schemas/ContextActivation"
+        references:
+          type: array
+          maxItems: 64
+          description: Safe Projects-owned reference summaries filtered to the authoritative tenant.
+          items:
+            $ref: "#/components/schemas/ProjectReferenceSummary"
+        auditTimeline:
+          type: array
+          maxItems: 100
+          description: Bounded newest-first safe audit timeline rows from Story 5.1.
+          items:
+            $ref: "#/components/schemas/ProjectOperatorAuditTimelineItem"
+        freshness:
+          $ref: "#/components/schemas/FreshnessMetadata"
+    ProjectOperatorAuditTimelineItem:
+      type: object
+      additionalProperties: false
+      description: Metadata-only audit row exposed through operator diagnostics. It excludes idempotency keys and raw command payloads.
+      required:
+        - auditEventId
+        - operationType
+        - occurredAt
+        - actorPrincipalId
+        - correlationId
+        - taskId
+        - projectionSequence
+      properties:
+        auditEventId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        operationType:
+          type: string
+          minLength: 1
+          maxLength: 120
+          pattern: "^[a-z][a-z0-9_.-]{0,119}$"
+        occurredAt:
+          $ref: "#/components/schemas/UtcDateTime"
+        actorPrincipalId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        correlationId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        taskId:
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        referenceKind:
+          type: string
+          nullable: true
+          enum:
+            - conversation
+            - folder
+            - file
+            - memory
+        referenceId:
+          nullable: true
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        previousState:
+          type: string
+          nullable: true
+          maxLength: 80
+          description: Previous safe state code when known.
+        newState:
+          type: string
+          nullable: true
+          maxLength: 80
+          description: New safe state code when known.
+        reasonCode:
+          type: string
+          nullable: true
+          maxLength: 80
+          pattern: "^[a-z][a-z0-9_]{0,79}$"
+          description: Stable metadata-only reason code when available.
+        conversationId:
+          nullable: true
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        sourceProjectId:
+          nullable: true
+          $ref: "#/components/schemas/OpaqueIdentifier"
+        projectionSequence:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Projection/global-position sequence used as freshness evidence.
     ProjectListResponse:
       type: object
       additionalProperties: false

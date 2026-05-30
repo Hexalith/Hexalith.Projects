@@ -57,6 +57,39 @@ rows 3 and 7 are N/A (mutation-only).
 - Row 8 (stale/unavailable projection) → covered through the `ReadModelUnavailable` branch in
   `GetProjectContextAsync` (`authorization.Retryable && Reason == Unavailable`).
 
+## Story 5.2 reference application
+
+Story 5.2 (`Operator Read Access`) adds `GET /api/v1/projects/{projectId}/operator-diagnostics`.
+It is a query and applies rows 1, 4, 5, 6, 8. Row 2 is N/A (no body), rows 3 and 7 are N/A
+(mutation-only).
+
+- Row 1 (malformed identifier) →
+  `GetOperatorDiagnostics_MalformedProjectId_ReturnsSafeDenial404` (theory over whitespace, `..`,
+  encoded traversal, embedded slash, and injection-shaped input) over the shared
+  `GetProjectOperatorDiagnosticsAsync` canonical identifier guard.
+- Row 4 (Idempotency-Key on query) →
+  `GetOperatorDiagnostics_IdempotencyKeyPresentAndUnauthorized_ReturnsSafeDenial404` (an
+  unauthorized caller stays a safe-denial 404 — no validation hint) and
+  `GetOperatorDiagnostics_IdempotencyKeyAfterAuthorization_ReturnsValidationProblem` (an authorized
+  caller receives the 400 validation only after authorization).
+- Row 5 (stricter freshness rejected) →
+  `GetOperatorDiagnostics_FreshnessProbeAfterAuthorization_ReturnsValidationProblem`.
+- Row 6 (cross-tenant) →
+  `GetOperatorDiagnostics_CrossTenantProject_ReturnsSafeDenial404` (a foreign-tenant project is a
+  safe-denial 404 with no existence disclosure) and
+  `GetOperatorDiagnostics_DropsCrossTenantAuditRowsReturnedByReadModel` (read-model rows for another
+  tenant are stripped before serialization).
+- Row 8 (stale/unavailable projection) →
+  `GetOperatorDiagnostics_AuditProjectionUnavailable_Returns503`.
+- Missing-authoritative-tenant safe-denial →
+  `GetOperatorDiagnostics_MissingAuthoritativeTenant_ReturnsSafeDenial404`.
+- Audit-limit validation after authorization →
+  `GetOperatorDiagnostics_InvalidAuditLimitAfterAuthorization_ReturnsValidationProblem` (theory over
+  `0` / `-5` / `101` / `abc`), with accepted `1` and `100` boundaries proven by
+  `GetOperatorDiagnostics_BoundaryAuditLimit_IsAccepted`.
+- Error-body redaction → the 400/404/503 paths assert the response body carries no project
+  identifier and run `NoPayloadLeakageAssertions.AssertNoLeakageInText`.
+
 ## Maintenance
 
 - Append a new row only when a load-bearing invariant is shared across two or more surfaces.

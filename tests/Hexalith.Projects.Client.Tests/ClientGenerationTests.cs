@@ -168,6 +168,10 @@ public sealed class ClientGenerationTests
         conversationsPageType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
             .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
 
+        Type operatorDiagnosticType = clientAssembly.GetType("Hexalith.Projects.Client.Generated.ProjectOperatorDiagnostic").ShouldNotBeNull();
+        operatorDiagnosticType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
+
         typeof(ProjectCreationProposalRequest).GetMethods(BindingFlags.Instance | BindingFlags.Public)
             .Any(m => m.Name == "ComputeIdempotencyHash").ShouldBeFalse();
         typeof(ProjectCreationProposal).GetMethods(BindingFlags.Instance | BindingFlags.Public)
@@ -203,6 +207,23 @@ public sealed class ClientGenerationTests
 
         methods.ShouldNotBeEmpty();
         methods.Any(m => m.ReturnType.FullName?.Contains("ProjectResolution", StringComparison.Ordinal) == true).ShouldBeTrue();
+        methods.SelectMany(m => m.GetParameters())
+            .Any(p => p.Name?.Contains("idempotency", StringComparison.OrdinalIgnoreCase) == true)
+            .ShouldBeFalse();
+    }
+
+    [Fact]
+    public void GeneratedClientExposesOperatorDiagnosticsQueryWithoutIdempotencyParameter()
+    {
+        Assembly clientAssembly = typeof(CreateProjectRequest).Assembly;
+        Type clientInterface = clientAssembly.GetType("Hexalith.Projects.Client.Generated.IClient").ShouldNotBeNull();
+
+        MethodInfo[] methods = clientInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Where(m => m.Name == "GetProjectOperatorDiagnosticsAsync")
+            .ToArray();
+
+        methods.ShouldNotBeEmpty();
+        methods.Any(m => m.ReturnType.FullName?.Contains("ProjectOperatorDiagnostic", StringComparison.Ordinal) == true).ShouldBeTrue();
         methods.SelectMany(m => m.GetParameters())
             .Any(p => p.Name?.Contains("idempotency", StringComparison.OrdinalIgnoreCase) == true)
             .ShouldBeFalse();

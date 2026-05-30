@@ -292,6 +292,46 @@ public sealed class ProjectAuthorizationGateTests
     }
 
     [Fact]
+    public async Task AuthorizeRead_WhenReadPermissionMissing_DeniesAtClaimTransformLayer()
+    {
+        IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
+        ProjectDetailItem detail = new(
+            "tenant-a",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "Project",
+            null,
+            null,
+            null,
+            null,
+            [],
+            [],
+            ProjectLifecycle.Active,
+            Now,
+            Now,
+            1);
+        ProjectAuthorizationGate gate = new(
+            new TenantAccessAuthorizer(store, new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions()),
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new SingleProjectReadModel(detail));
+
+        ProjectAuthorizationResult result = await gate.AuthorizeReadAsync(
+            detail.ProjectId,
+            new FixedProjectTenantContextAccessor(
+                "tenant-a",
+                "principal-a",
+                [ProjectAuthorizationGate.ListProjectsAction]),
+            new DefaultHttpContext(),
+            "corr-a",
+            "task-a",
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        result.IsAllowed.ShouldBeFalse();
+        result.TerminalLayer.ShouldBe(AuthorizationLayer.EventStoreClaimTransform);
+        result.EvaluatedLayers.ShouldBe([AuthorizationLayer.JwtValidation, AuthorizationLayer.EventStoreClaimTransform]);
+    }
+
+    [Fact]
     public async Task AuthorizeCreate_WhenClaimTransformFails_ShortCircuitsBeforeProjection()
     {
         IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);

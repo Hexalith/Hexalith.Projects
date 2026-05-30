@@ -302,6 +302,95 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void ProjectOperatorDiagnostic_SerializesMetadataOnly()
+    {
+        ProjectOperatorDiagnostic diagnostic = new(
+            "project-target-001",
+            "Operator Project",
+            "Safe metadata description",
+            "active",
+            DateTimeOffset.UnixEpoch,
+            DateTimeOffset.UnixEpoch.AddMinutes(1),
+            "safe-setup-metadata",
+            new ProjectSetup(
+                ["keep project continuity"],
+                ["use metadata-only references"],
+                [ProjectContextSourceKind.Conversation],
+                [ProjectContextSourceKind.FileReference],
+                new ConversationStartDefaults(LinkedSourcePolicy.AuthorizedReferences)),
+            new ProjectOperatorContextActivation(true, null),
+            [
+                new ProjectOperatorReferenceSummary(
+                    "folder",
+                    "included",
+                    "folder_001",
+                    "Safe Folder",
+                    null,
+                    new ProjectOperatorFreshnessMetadata("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark_00000001", false, "trusted")),
+            ],
+            [
+                new ProjectOperatorAuditTimelineItem(
+                    "audit_001",
+                    "project.resolution_confirmed",
+                    DateTimeOffset.UnixEpoch,
+                    "actor-001",
+                    "corr-001",
+                    "task-001",
+                    "conversation",
+                    "conversation-001",
+                    null,
+                    "confirmed",
+                    "confirmation_accepted",
+                    "conversation-001",
+                    "project-source-001",
+                    42L),
+            ],
+            new ProjectOperatorFreshnessMetadata("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark_00000042", false, "trusted"));
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(diagnostic));
+        string serialized = System.Text.Json.JsonSerializer.Serialize(diagnostic);
+        serialized.ShouldNotContain("candidate", Case.Insensitive);
+        serialized.ShouldNotContain("score", Case.Insensitive);
+        serialized.ShouldNotContain("rank", Case.Insensitive);
+        serialized.ShouldNotContain("transcript", Case.Insensitive);
+        serialized.ShouldNotContain("prompt", Case.Insensitive);
+        serialized.ShouldNotContain("content", Case.Insensitive);
+        serialized.ShouldNotContain("token", Case.Insensitive);
+        serialized.ShouldNotContain("path", Case.Insensitive);
+        serialized.ShouldNotContain("secret", Case.Insensitive);
+        serialized.ShouldNotContain("body", Case.Insensitive);
+        serialized.ShouldNotContain("idempotency", Case.Insensitive);
+    }
+
+    [Fact]
+    public void ProjectOperatorDiagnostic_ForbiddenValueInFreeTextCarrier_IsDetected()
+    {
+        // Negative proof: the operator diagnostic's only free-text carriers are ProjectSetup.Goals /
+        // UserInstructions. If a forbidden value ever reached one, the leakage harness must fire — this
+        // guarantees the metadata-only proof above is a real guard, not a vacuous shape check.
+        ProjectOperatorDiagnostic leaking = new(
+            "project-target-001",
+            "Operator Project",
+            null,
+            "active",
+            DateTimeOffset.UnixEpoch,
+            DateTimeOffset.UnixEpoch,
+            null,
+            new ProjectSetup(
+                ["a leaked Secret value and /etc/shadow path"],
+                ["raw transcript body content"],
+                [],
+                [],
+                null),
+            new ProjectOperatorContextActivation(true, null),
+            [],
+            [],
+            new ProjectOperatorFreshnessMetadata("eventually_consistent", DateTimeOffset.UnixEpoch, null, false, "trusted"));
+
+        Should.Throw<PayloadLeakageException>(() => NoPayloadLeakageAssertions.AssertNoLeakage(leaking));
+    }
+
+    [Fact]
     public void MemoryReferenceLinkRejection_SerializesMetadataOnly()
     {
         ProjectReferenceLinkRejected rejection = new(

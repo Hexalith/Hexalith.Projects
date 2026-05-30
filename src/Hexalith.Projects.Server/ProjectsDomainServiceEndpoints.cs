@@ -22,6 +22,7 @@ using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Aggregates.Project;
+using Hexalith.Projects.Projections.ProjectAuditTimeline;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Server.Conversations;
@@ -46,6 +47,8 @@ public static partial class ProjectsDomainServiceEndpoints
 {
     private const string FreshnessHeaderName = "X-Hexalith-Freshness";
     private const string EventuallyConsistent = "eventually_consistent";
+    private const int DefaultOperatorAuditLimit = 25;
+    private const int MaxOperatorAuditLimit = 100;
 
     private static readonly JsonSerializerOptions ResponseJsonOptions = new(JsonSerializerDefaults.Web)
     {
@@ -95,6 +98,22 @@ public static partial class ProjectsDomainServiceEndpoints
             CancellationToken cancellationToken)
             => await GetProjectAsync(projectId, httpContext, tenantContext, authorizationGate, cancellationToken).ConfigureAwait(false))
             .WithName("GetProject");
+
+        endpoints.MapGet("/api/v1/projects/{projectId}/operator-diagnostics", static async (
+            string projectId,
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectAuditTimelineReadModel auditTimelineReadModel,
+            CancellationToken cancellationToken)
+            => await GetProjectOperatorDiagnosticsAsync(
+                projectId,
+                httpContext,
+                tenantContext,
+                authorizationGate,
+                auditTimelineReadModel,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("GetProjectOperatorDiagnostics");
 
         endpoints.MapGet("/api/v1/projects/{projectId}/conversations", static async (
             string projectId,
@@ -678,6 +697,94 @@ public static partial class ProjectsDomainServiceEndpoints
                     detail.Lifecycle == ProjectLifecycle.Active ? null : "archived"),
                 ToProjectReferenceSummaries(detail),
                 ToFreshness(detail.UpdatedAt, detail.Sequence)),
+            ResponseJsonOptions);
+    }
+
+    internal static async Task<IResult> GetProjectOperatorDiagnosticsAsync(
+        string projectId,
+        HttpContext httpContext,
+        IProjectTenantContextAccessor tenantContext,
+        ProjectAuthorizationGate authorizationGate,
+        IProjectAuditTimelineReadModel auditTimelineReadModel,
+        CancellationToken cancellationToken)
+    {
+        string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
+        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : null;
+
+        if (string.IsNullOrWhiteSpace(projectId) || !IsCanonicalIdentifier(projectId))
+        {
+            return SafeDenial(correlationId, null);
+        }
+
+        ProjectAuthorizationResult authorization = await authorizationGate
+            .AuthorizeReadAsync(projectId, tenantContext, httpContext, correlationId, null, cancellationToken)
+            .ConfigureAwait(false);
+        if (!authorization.IsAllowed || authorization.ProjectDetail is null)
+        {
+            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
+                ? ReadModelUnavailable(correlationId, null)
+                : SafeDenial(correlationId, null, authorization);
+        }
+
+        if (HasHeader(httpContext, "Idempotency-Key"))
+        {
+            return ValidationProblem(correlationId, null, "idempotency_key");
+        }
+
+        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
+        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, null, "freshness");
+        }
+
+        if (!TryReadOperatorAuditLimit(httpContext, out int auditLimit))
+        {
+            return ValidationProblem(correlationId, null, "auditLimit");
+        }
+
+        string authoritativeTenantId = tenantContext.AuthoritativeTenantId!;
+        IReadOnlyList<ProjectAuditTimelineItem> projectedAuditRows;
+        try
+        {
+            projectedAuditRows = await auditTimelineReadModel
+                .ListAsync(authoritativeTenantId, projectId, auditLimit, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return ReadModelUnavailable(correlationId, null);
+        }
+
+        ProjectDetailItem detail = authorization.ProjectDetail;
+        IReadOnlyList<ProjectAuditTimelineItem> auditRows = projectedAuditRows
+            .Where(row => string.Equals(row.TenantId, authoritativeTenantId, StringComparison.Ordinal)
+                && string.Equals(row.ProjectId, projectId, StringComparison.Ordinal))
+            .Take(auditLimit)
+            .ToArray();
+
+        if (!string.IsNullOrWhiteSpace(correlationId))
+        {
+            httpContext.Response.Headers["X-Correlation-Id"] = correlationId;
+        }
+
+        httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
+
+        return Results.Json(
+            new ProjectOperatorDiagnostic(
+                detail.ProjectId,
+                detail.Name,
+                detail.Description,
+                ToWireLifecycle(detail.Lifecycle),
+                detail.CreatedAt,
+                detail.UpdatedAt,
+                detail.SetupMetadata,
+                detail.Setup,
+                new ProjectOperatorContextActivation(
+                    detail.Lifecycle == ProjectLifecycle.Active,
+                    detail.Lifecycle == ProjectLifecycle.Active ? null : "archived"),
+                ToOperatorReferenceSummaries(detail),
+                auditRows.Select(ToOperatorAuditTimelineItem).ToArray(),
+                ToOperatorDiagnosticFreshness(detail, auditRows)),
             ResponseJsonOptions);
     }
 
@@ -1874,6 +1981,69 @@ public static partial class ProjectsDomainServiceEndpoints
         return summaries;
     }
 
+    private static IReadOnlyList<ProjectOperatorReferenceSummary> ToOperatorReferenceSummaries(ProjectDetailItem detail)
+    {
+        List<ProjectOperatorReferenceSummary> summaries = [];
+
+        if (detail.ProjectFolder is not null)
+        {
+            summaries.Add(new ProjectOperatorReferenceSummary(
+                "folder",
+                ToWireReferenceState(detail.ProjectFolder.ReferenceState),
+                detail.ProjectFolder.FolderId,
+                detail.ProjectFolder.DisplayName,
+                detail.ProjectFolder.ReasonCode,
+                ToOperatorFreshness(detail.ProjectFolder.ObservedAt, detail.Sequence)));
+        }
+
+        foreach (ProjectFileReference file in detail.FileReferences.OrderBy(reference => reference.FileReferenceId, StringComparer.Ordinal))
+        {
+            summaries.Add(new ProjectOperatorReferenceSummary(
+                "file",
+                ToWireReferenceState(file.ReferenceState),
+                file.FileReferenceId,
+                file.DisplayName,
+                file.ReasonCode,
+                ToOperatorFreshness(file.ObservedAt, detail.Sequence)));
+        }
+
+        foreach (ProjectMemoryReference memory in detail.MemoryReferences.OrderBy(reference => reference.MemoryReferenceId, StringComparer.Ordinal))
+        {
+            summaries.Add(new ProjectOperatorReferenceSummary(
+                "memory",
+                ToWireReferenceState(memory.ReferenceState),
+                memory.MemoryReferenceId,
+                memory.DisplayName,
+                memory.ReasonCode,
+                ToOperatorFreshness(memory.ObservedAt, detail.Sequence)));
+        }
+
+        return summaries;
+    }
+
+    private static ProjectOperatorAuditTimelineItem ToOperatorAuditTimelineItem(ProjectAuditTimelineItem row)
+        => new(
+            row.AuditEventId,
+            row.OperationType,
+            row.OccurredAt,
+            row.ActorPrincipalId,
+            row.CorrelationId,
+            row.TaskId,
+            row.ReferenceKind,
+            row.ReferenceId,
+            ToWireAuditState(row.PreviousState),
+            ToWireAuditState(row.NewState),
+            row.ReasonCode,
+            row.ConversationId,
+            row.SourceProjectId,
+            row.Sequence);
+
+    // Story 5.1 audit rows carry single-word PascalCase state codes (e.g. "Included", "Confirmed", "Active").
+    // Normalize them to the same lowercase wire vocabulary the reference summaries emit so the single
+    // operator diagnostic model presents one consistent state spelling across references and audit rows (AC9).
+    private static string? ToWireAuditState(string? state)
+        => string.IsNullOrEmpty(state) ? state : state.ToLowerInvariant();
+
     private static string ToWireReferenceState(ReferenceState state)
         => state switch
         {
@@ -1898,6 +2068,30 @@ public static partial class ProjectsDomainServiceEndpoints
             sequence > 0 ? $"watermark_{sequence:D8}" : null,
             false,
             "trusted");
+
+    private static ProjectOperatorFreshnessMetadata ToOperatorFreshness(DateTimeOffset observedAt, long sequence)
+        => new(
+            EventuallyConsistent,
+            observedAt,
+            sequence > 0 ? $"watermark_{sequence:D8}" : null,
+            false,
+            "trusted");
+
+    private static ProjectOperatorFreshnessMetadata ToOperatorDiagnosticFreshness(
+        ProjectDetailItem detail,
+        IReadOnlyList<ProjectAuditTimelineItem> auditRows)
+    {
+        if (auditRows.Count == 0)
+        {
+            return ToOperatorFreshness(detail.UpdatedAt, detail.Sequence);
+        }
+
+        DateTimeOffset observedAt = auditRows.Max(row => row.OccurredAt) > detail.UpdatedAt
+            ? auditRows.Max(row => row.OccurredAt)
+            : detail.UpdatedAt;
+        long sequence = Math.Max(detail.Sequence, auditRows.Max(row => row.Sequence));
+        return ToOperatorFreshness(observedAt, sequence);
+    }
 
     private static FreshnessMetadataResponse ToListFreshness(IReadOnlyList<ProjectListItem> rows)
     {
@@ -1946,6 +2140,27 @@ public static partial class ProjectsDomainServiceEndpoints
             default:
                 return false;
         }
+    }
+
+    private static bool TryReadOperatorAuditLimit(HttpContext httpContext, out int auditLimit)
+    {
+        auditLimit = DefaultOperatorAuditLimit;
+        if (!httpContext.Request.Query.TryGetValue("auditLimit", out StringValues values))
+        {
+            return true;
+        }
+
+        string? raw = values.FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(raw)
+            || !int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsed)
+            || parsed < 1
+            || parsed > MaxOperatorAuditLimit)
+        {
+            return false;
+        }
+
+        auditLimit = parsed;
+        return true;
     }
 
     private static bool TryReadPageRequest(HttpContext httpContext, out PageRequest? page)

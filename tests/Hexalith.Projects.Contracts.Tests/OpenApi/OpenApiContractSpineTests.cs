@@ -62,6 +62,7 @@ public sealed class OpenApiContractSpineTests
         RequiredMapping(parameters, "PageSize");
         RequiredMapping(parameters, "Cursor");
         RequiredMapping(parameters, "LifecycleFilter");
+        RequiredMapping(parameters, "OperatorAuditLimit");
 
         // Reusable response headers.
         YamlMappingNode headers = RequiredMapping(components, "headers");
@@ -94,6 +95,8 @@ public sealed class OpenApiContractSpineTests
         RequiredMapping(schemas, "ProjectConversationItem");
         RequiredMapping(schemas, "ProjectConversationPageMetadata");
         RequiredMapping(schemas, "ProjectConversationTrustSignal");
+        RequiredMapping(schemas, "ProjectOperatorDiagnostic");
+        RequiredMapping(schemas, "ProjectOperatorAuditTimelineItem");
 
         // Shared responses.
         YamlMappingNode responses = RequiredMapping(components, "responses");
@@ -308,6 +311,73 @@ public sealed class OpenApiContractSpineTests
         itemProperties.ShouldContain("updatedAt");
         itemProperties.ShouldContain("freshness");
         itemProperties.ShouldNotContain("tenantId");
+    }
+
+    [Fact]
+    public void Spine_ProjectOperatorDiagnostics_IsMetadataOnlyEventuallyConsistentQuery()
+    {
+        YamlMappingNode get = ProjectOperatorDiagnosticsQuery();
+        GetScalar(get, "operationId").ShouldBe("GetProjectOperatorDiagnostics");
+
+        string[] parameterRefs = RequiredSequence(get, "parameters")
+            .OfType<YamlMappingNode>().Select(p => GetScalar(p, "$ref") ?? string.Empty).ToArray();
+        parameterRefs.ShouldContain("#/components/parameters/ProjectId");
+        parameterRefs.ShouldContain("#/components/parameters/OperatorAuditLimit");
+        parameterRefs.ShouldContain("#/components/parameters/CorrelationId");
+        parameterRefs.ShouldContain("#/components/parameters/Freshness");
+        parameterRefs.ShouldNotContain("#/components/parameters/IdempotencyKey");
+
+        YamlMappingNode limit = RequiredMapping(RequiredMapping(Parameters(), "OperatorAuditLimit"), "schema");
+        GetScalar(limit, "minimum").ShouldBe("1");
+        GetScalar(limit, "maximum").ShouldBe("100");
+        GetScalar(limit, "default").ShouldBe("25");
+
+        YamlMappingNode responses = RequiredMapping(get, "responses");
+        RequiredMapping(responses, "400");
+        RequiredMapping(responses, "401");
+        RequiredMapping(responses, "403");
+        RequiredMapping(responses, "404");
+        RequiredMapping(responses, "503");
+        RequiredMapping(RequiredMapping(responses, "200"), "headers").Children.ContainsKey(new YamlScalarNode("X-Hexalith-Freshness")).ShouldBeTrue();
+
+        string okSchemaRef = GetScalar(
+            RequiredMapping(RequiredMapping(RequiredMapping(RequiredMapping(responses, "200"), "content"), "application/json"), "schema"),
+            "$ref") ?? string.Empty;
+        okSchemaRef.ShouldBe("#/components/schemas/ProjectOperatorDiagnostic");
+        GetScalar(RequiredMapping(get, "x-hexalith-read-consistency"), "class").ShouldBe("eventually_consistent");
+
+        YamlMappingNode diagnostic = RequiredMapping(Schemas(), "ProjectOperatorDiagnostic");
+        GetScalar(diagnostic, "additionalProperties").ShouldBe("false");
+        string[] diagnosticRequired = RequiredSequence(diagnostic, "required")
+            .OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty).ToArray();
+        diagnosticRequired.ShouldContain("projectId");
+        diagnosticRequired.ShouldContain("references");
+        diagnosticRequired.ShouldContain("auditTimeline");
+        diagnosticRequired.ShouldContain("freshness");
+
+        YamlMappingNode properties = RequiredMapping(diagnostic, "properties");
+        properties.Children.Keys.OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty).ShouldNotContain("tenantId");
+        GetScalar(RequiredMapping(properties, "auditTimeline"), "maxItems").ShouldBe("100");
+        GetScalar(RequiredMapping(RequiredMapping(properties, "auditTimeline"), "items"), "$ref").ShouldBe("#/components/schemas/ProjectOperatorAuditTimelineItem");
+
+        YamlMappingNode audit = RequiredMapping(Schemas(), "ProjectOperatorAuditTimelineItem");
+        GetScalar(audit, "additionalProperties").ShouldBe("false");
+        string[] auditProperties = RequiredMapping(audit, "properties").Children.Keys
+            .OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty).ToArray();
+        auditProperties.ShouldContain("auditEventId");
+        auditProperties.ShouldContain("operationType");
+        auditProperties.ShouldContain("occurredAt");
+        auditProperties.ShouldContain("actorPrincipalId");
+        auditProperties.ShouldContain("correlationId");
+        auditProperties.ShouldContain("taskId");
+        auditProperties.ShouldContain("referenceKind");
+        auditProperties.ShouldContain("referenceId");
+        auditProperties.ShouldContain("reasonCode");
+        auditProperties.ShouldContain("projectionSequence");
+        auditProperties.ShouldNotContain("idempotencyKey");
+        auditProperties.ShouldNotContain("candidate");
+        auditProperties.ShouldNotContain("score");
+        auditProperties.ShouldNotContain("rank");
     }
 
     [Fact]
@@ -1075,6 +1145,9 @@ public sealed class OpenApiContractSpineTests
 
     private static YamlMappingNode SeedQuery() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}"), "get");
+
+    private static YamlMappingNode ProjectOperatorDiagnosticsQuery() =>
+        RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/operator-diagnostics"), "get");
 
     private static YamlMappingNode ProjectConversationListQuery() =>
         RequiredMapping(RequiredMapping(RequiredMapping(LoadYamlMapping(OpenApiPath), "paths"), "/api/v1/projects/{projectId}/conversations"), "get");

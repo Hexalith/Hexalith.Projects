@@ -173,7 +173,11 @@ boundaries.
   events and safe correlation/task/idempotency metadata).
 - **Consumer guidance:** Stories 5.2 and 5.7 can render timestamp, actor/source metadata, operation,
   previous-to-new state where available, affected reference, correlation id, task id, audit event id,
-  and safe reason/state codes from this read model without refolding EventStore payloads.
+  safe reason/state codes, and safe resolution identifiers through
+  `GET /api/v1/projects/{projectId}/operator-diagnostics`. Story 5.2 deliberately omits the
+  stored idempotency key from the public operator diagnostic DTO and bounds the audit window with
+  `auditLimit` (default 25, max 100). Later Web/MCP/CLI adapters must reuse this DTO shape rather
+  than composing raw projection rows directly.
 
 ## `ConversationStartSetupProjection`
 

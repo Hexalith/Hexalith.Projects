@@ -60,6 +60,60 @@ export interface ProjectResolution {
   excluded: ResolutionExclusion[];
 }
 
+export interface ProjectOperatorFreshnessMetadata {
+  readConsistency: 'eventually_consistent';
+  observedAt: string;
+  projectionWatermark?: string | null;
+  stale: boolean;
+  trustState: string;
+}
+
+export interface ProjectOperatorContextActivation {
+  enabled: boolean;
+  blockedReasonCode?: string | null;
+}
+
+export interface ProjectOperatorReferenceSummary {
+  referenceKind: 'conversation' | 'folder' | 'file' | 'memory';
+  referenceState: string;
+  referenceId?: string | null;
+  displayName?: string | null;
+  reasonCode?: string | null;
+  freshness: ProjectOperatorFreshnessMetadata;
+}
+
+export interface ProjectOperatorAuditTimelineItem {
+  auditEventId: string;
+  operationType: string;
+  occurredAt: string;
+  actorPrincipalId: string;
+  correlationId: string;
+  taskId: string;
+  referenceKind?: 'conversation' | 'folder' | 'file' | 'memory' | null;
+  referenceId?: string | null;
+  previousState?: string | null;
+  newState?: string | null;
+  reasonCode?: string | null;
+  conversationId?: string | null;
+  sourceProjectId?: string | null;
+  projectionSequence: number;
+}
+
+export interface ProjectOperatorDiagnostic {
+  projectId: string;
+  name: string;
+  description?: string | null;
+  lifecycleState: ProjectLifecycle;
+  createdAt: string;
+  updatedAt: string;
+  setupMetadata?: string | null;
+  projectSetup?: unknown;
+  contextActivation: ProjectOperatorContextActivation;
+  references: ProjectOperatorReferenceSummary[];
+  auditTimeline: ProjectOperatorAuditTimelineItem[];
+  freshness: ProjectOperatorFreshnessMetadata;
+}
+
 export interface ProjectCreationProposalInput {
   requestSchemaVersion: 'v1';
   conversationId: string;
@@ -149,6 +203,10 @@ export interface QueryRequestOptions extends AuthHeaderOptions {
   extraHeaders?: Record<string, string>;
 }
 
+export interface OperatorDiagnosticOptions extends QueryRequestOptions {
+  auditLimit?: number;
+}
+
 /** POST /api/v1/projects → 202 AcceptedCommand (FR-1). */
 export async function createProject(
   apiRequest: ApiRequest,
@@ -194,6 +252,29 @@ export async function listProjects(
     path: '/api/v1/projects',
     params: lifecycle ? { lifecycle } : undefined,
     headers: { ...queryHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
+  });
+  return { status, body };
+}
+
+/** GET /api/v1/projects/{id}/operator-diagnostics (Story 5.2). */
+export async function getProjectOperatorDiagnostics(
+  apiRequest: ApiRequest,
+  tenantId: string,
+  projectId: string,
+  headerOptions: OperatorDiagnosticOptions,
+): Promise<{ status: number; body: ProjectOperatorDiagnostic }> {
+  const headers = {
+    ...queryHeaders(headerOptions),
+    ...(headerOptions.freshness ? { 'X-Hexalith-Freshness': headerOptions.freshness } : {}),
+    ...headerOptions.extraHeaders,
+    'X-Hexalith-Tenant-Id': tenantId,
+  };
+  const { status, body } = await apiRequest<ProjectOperatorDiagnostic>({
+    method: 'GET',
+    path: `/api/v1/projects/${projectId}/operator-diagnostics`,
+    params: headerOptions.auditLimit === undefined ? undefined : { auditLimit: headerOptions.auditLimit },
+    headers,
+    retryConfig: { maxRetries: 0 },
   });
   return { status, body };
 }
