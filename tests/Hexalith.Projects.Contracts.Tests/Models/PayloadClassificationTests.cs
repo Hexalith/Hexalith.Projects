@@ -41,6 +41,7 @@ public sealed class PayloadClassificationTests
     [InlineData("ReasonCode")]
     [InlineData("SetupPreference")]
     [InlineData("CorrelationId")]
+    [InlineData("TransientTraceMetadata")]
     public void SafeFieldsContainsExpectedCategories(string category)
     {
         PayloadClassification.IsSafe(category).ShouldBeTrue();

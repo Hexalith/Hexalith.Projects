@@ -260,6 +260,41 @@ boundaries.
   file content, memory payload, raw prompt, unrestricted path, token, proposal body, command body,
   candidate score/rank, rejected candidate id, or sibling denial detail.
 
+## `ProjectResolutionTraceProjection`
+
+- **Type:** `Hexalith.Projects.Contracts.Ui.ProjectResolutionTraceProjection` with row descriptors
+  `ProjectResolutionTraceCandidateProjection` and `ProjectResolutionTraceExclusionProjection`.
+- **Owner:** Story 5.6 FrontComposer DetailRecord descriptor/wrapper in Contracts. It is not a
+  persisted runtime projection, trace store, audit event source, export model, or trace-history row.
+- **Contract version:** `projects.resolution-trace.ui.v1`.
+- **Source data:** existing generated query clients only:
+  `ResolveProjectFromConversationAsync(...)` and `ResolveProjectFromAttachmentsAsync(...)`, mapped
+  from generated `ProjectResolution` / candidate / exclusion DTOs. The UI source performs no scoring
+  recomputation and does not call resolution on page load.
+- **Tenant scoping:** inherited from generated query clients and server authorization. The descriptor
+  carries opaque presented ids only and has no `tenantId`, correlation id, task id, or trace id field.
+- **Stored data:** none. The Web workbench keeps the latest trace in Blazor component state and
+  discards it when replaced or cleared. Candidate `Rank` and `Score` appear only on
+  `ProjectResolutionTraceCandidateProjection` for transient side-by-side comparison.
+- **Freshness semantics:** trace queries send `X-Hexalith-Freshness: eventually_consistent` and render
+  the response `ObservedAt`. The workbench does not invent wall-clock freshness or projection
+  watermarks.
+- **Leakage boundary:** input mode, presented opaque conversation/folder/file ids, include-archived
+  flag, observed timestamp, shared `ResolutionResult`, candidate project id/display name/rank/score,
+  shared reason codes, exclusion project id/display name/reference state/reason code, and closed
+  `ProjectContextInclusionDiagnostic` only. No transcript, prompt, file path/content, byte range,
+  workspace id, memory payload, secret, token, command body, proposal body, raw ProblemDetails, raw
+  sibling denial detail, tenant id, correlation id, task id, persisted trace id, or rejected-candidate
+  export is allowed.
+- **FrontComposer level:** Level 2 descriptor/wrapper metadata was added first for inspect/parity
+  gates. The rendered workbench reuses the existing Story 5.4 hand-authored detail page and a
+  focused shared component (Level 4) because the required form state, explicit query submission,
+  failure feedback, side-by-side candidate comparison, exclusion evidence, cancellation behavior, and
+  responsive table/list semantics are not representable as a static generated DetailRecord alone.
+- **Consumer guidance:** Story 5.10 MCP/CLI parity should reuse the field names and query modes from
+  `docs/parity-matrix.md#story-56-resolution-trace-contract`; Story 5.7 audit export must not export
+  candidate score/rank or transient trace history.
+
 ## `ConversationStartSetupProjection`
 
 - **Type:** `Hexalith.Projects.Projections.ConversationStartSetup.ConversationStartSetupProjector`.

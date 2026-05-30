@@ -560,6 +560,45 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void ResolutionTraceUiDescriptors_SerializeMetadataOnly()
+    {
+        var trace = new ProjectResolutionTraceProjection
+        {
+            InputMode = "conversation",
+            PresentedConversationId = "conversation-001",
+            ObservedAt = DateTimeOffset.UnixEpoch,
+            Result = ResolutionResult.SingleCandidate,
+            CandidateCount = 1,
+        };
+        var candidate = new ProjectResolutionTraceCandidateProjection
+        {
+            Id = "candidate:project-001",
+            ProjectId = "project-001",
+            DisplayName = "Safe project",
+            Rank = 1,
+            Score = 70,
+            ReasonCodes = "ConversationLinked, MetadataMatched",
+        };
+        var exclusion = new ProjectResolutionTraceExclusionProjection
+        {
+            Id = "exclusion:project-archived",
+            ProjectId = "project-archived",
+            ReferenceState = ReferenceState.Archived,
+            ReasonCode = ProjectReasonCode.ConversationLinked,
+            Diagnostic = ProjectContextInclusionDiagnostic.ReferenceArchived,
+        };
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(trace));
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(candidate));
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(exclusion));
+        string serialized = System.Text.Json.JsonSerializer.Serialize(new { trace, candidate, exclusion });
+        serialized.ShouldNotContain("tenantId", Case.Insensitive);
+        serialized.ShouldNotContain("correlation", Case.Insensitive);
+        serialized.ShouldNotContain("task", Case.Insensitive);
+        serialized.ShouldNotContain("traceId", Case.Insensitive);
+    }
+
+    [Fact]
     public void MemoryReferenceUnlinkRejection_SerializesMetadataOnly()
     {
         ProjectReferenceUnlinkRejected rejection = new(

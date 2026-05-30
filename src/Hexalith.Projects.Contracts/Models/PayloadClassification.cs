@@ -59,6 +59,7 @@ public static class PayloadClassification
         "AuditId",
         "UiFeedbackCode",
         "UiProjectionDescriptor",
+        "TransientTraceMetadata",
     };
 
     private static readonly IReadOnlyList<string> _forbiddenContent = new[]
@@ -79,7 +80,7 @@ public static class PayloadClassification
     /// Gets the allowlist of reference-only / metadata-safe field categories that MAY appear on the wire
     /// (opaque IDs, ETags/versions, tenant ID, reference kind/owner-context, timestamps,
     /// lifecycle/inclusion/resolution states, bounded setup preferences, reason codes,
-    /// correlation/causation/audit IDs).
+    /// correlation/causation/audit IDs, and transient trace metadata).
     /// </summary>
     public static IReadOnlyList<string> SafeFields => _safeFields;
 

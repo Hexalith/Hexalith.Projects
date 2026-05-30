@@ -41,6 +41,7 @@ These categories MAY appear in events, projections, DTOs, logs, and audit record
 | `AuditId` | Audit-record identifier. |
 | `UiFeedbackCode` | UI feedback category / safe reason code / correlation id used by console primitives. |
 | `UiProjectionDescriptor` | FrontComposer descriptor/wrapper fields derived from approved metadata-only DTOs, such as inventory/detail field groups, selector-stable labels, freshness evidence, and disabled-filter explanations. |
+| `TransientTraceMetadata` | Compute-on-demand resolution trace metadata such as input mode, presented opaque ids, observed timestamp, result state, exclusion evidence, and candidate score/rank while rendered in the Story 5.6 workbench only. |
 
 Notes:
 
@@ -51,6 +52,8 @@ Notes:
   denial details remain forbidden.
 - UI projection descriptors may explain unavailable filter dimensions, but they must not imply hidden
   sibling data exists or carry raw sibling denial evidence.
+- Candidate `score` and `rank` are safe only as transient resolution trace metadata. They must not be
+  persisted, copied into audit/reference-health rows, or exported by later audit surfaces.
 
 ## Forbidden sibling-owned content (NEVER on the wire)
 

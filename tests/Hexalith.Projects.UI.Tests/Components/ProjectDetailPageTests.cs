@@ -34,6 +34,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
         Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -54,7 +55,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Find("[data-testid='project-reference-safe-actions']").TextContent.ShouldContain("Story 5.9");
 
         cut.Find("[data-testid='project-detail-tab-resolution']").Click();
-        cut.Find("[data-testid='project-detail-section-resolution']").TextContent.ShouldContain("Story 5.6");
+        cut.Find("[data-testid='project-resolution-trace-workbench']").TextContent.ShouldContain("No trace has been run yet");
 
         cut.Find("[data-testid='project-detail-tab-audit']").Click();
         cut.Find("[data-testid='project-detail-audit-summary']").TextContent.ShouldContain("project.created");
@@ -72,6 +73,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
                 Detail(),
                 ProjectConsoleFeedback.Warning("data_unavailable", "corr-001"))));
         Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -88,6 +90,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(DetailWithoutReferencesOrAudit())));
         Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -108,6 +111,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
                 DetailWithReferenceHealthRows(),
                 referenceHealthRows: ReferenceHealthRows())));
         Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -137,12 +141,198 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromFeedback(
                 ProjectConsoleFeedback.FailClosed("safe_denial", "corr-001"))));
         Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-feedback-fail-closed']").TextContent.ShouldContain("safe_denial"));
         cut.Markup.ShouldNotContain("secret");
+        cut.Markup.ShouldNotContain("token");
+    }
+
+    [Fact]
+    public void ResolutionTraceWorkbenchRendersConversationTrace()
+    {
+        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        traceSource.LoadTraceAsync(
+                Arg.Is<ProjectResolutionTraceRequest>(request =>
+                    request.Mode == ProjectResolutionTraceRequest.ConversationMode
+                    && request.ConversationId == "conversation-001"),
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(SingleCandidateTrace()));
+        Services.AddSingleton(detailSource);
+        Services.AddSingleton(traceSource);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-resolution']").Click();
+        cut.Find("[data-testid='project-resolution-trace-conversation-id']").Change("conversation-001");
+        cut.Find("[data-testid='project-resolution-trace-run']").Click();
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-resolution-trace-outcome']").TextContent.ShouldContain("Resolved"));
+        cut.Find("[data-testid='project-resolution-trace-input-summary']").TextContent.ShouldContain("conversation-001");
+        cut.Find("[data-testid='project-resolution-trace-candidate']").TextContent.ShouldContain("project-001");
+        cut.FindAll("[data-testid='project-resolution-trace-reason']").Count.ShouldBe(2);
+
+        // AC9: badges must not be color-only — each reason carries a visible text label.
+        cut.FindAll("[data-testid='project-resolution-trace-reason']")
+            .ShouldAllBe(reason => !string.IsNullOrWhiteSpace(reason.TextContent));
+        cut.Find("[data-testid='project-resolution-trace-candidate']").TextContent.ShouldContain("ConversationLinked");
+
+        cut.Markup.ShouldNotContain("transcript");
+        cut.Markup.ShouldNotContain("token");
+    }
+
+    [Fact]
+    public void ResolutionTraceWorkbenchRendersAttachmentTraceAndExclusionEvidence()
+    {
+        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        traceSource.LoadTraceAsync(
+                Arg.Is<ProjectResolutionTraceRequest>(request =>
+                    request.Mode == ProjectResolutionTraceRequest.AttachmentsMode
+                    && request.IncludeArchived),
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(MultipleCandidateTraceWithExclusion()));
+        Services.AddSingleton(detailSource);
+        Services.AddSingleton(traceSource);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-resolution']").Click();
+        cut.Find("[data-testid='project-resolution-trace-mode']").Change(ProjectResolutionTraceRequest.AttachmentsMode);
+        cut.Find("[data-testid='project-resolution-trace-folder-id']").Change("folder-001");
+        cut.Find("[data-testid='project-resolution-trace-file-id']").Change("file-001");
+        cut.Find("[data-testid='project-resolution-trace-include-archived']").Change(true);
+        cut.Find("[data-testid='project-resolution-trace-run']").Click();
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-resolution-trace-outcome']").TextContent.ShouldContain("MultipleCandidates"));
+        cut.Find("[data-testid='project-resolution-trace-candidate-comparison']").TextContent.ShouldContain("project-002");
+
+        // AC9: candidate comparison must use semantic table structure, not a styled div.
+        cut.Find("[data-testid='project-resolution-trace-candidate-comparison'] caption").TextContent.ShouldBe("Candidate comparison");
+        cut.FindAll("[data-testid='project-resolution-trace-candidate-comparison'] thead th[scope='col']").Count.ShouldBe(4);
+        cut.FindAll("[data-testid='project-resolution-trace-candidate-comparison'] tbody tr").Count.ShouldBe(2);
+        cut.FindAll("[data-testid='project-resolution-trace-candidate-comparison'] tbody th[scope='row']").Count.ShouldBe(2);
+
+        cut.Find("[data-testid='project-resolution-trace-exclusion']").TextContent.ShouldContain("referenceUnavailable");
+        cut.Find("[data-testid='project-detail-section-resolution']").TextContent.ShouldNotContain("Story 5.6");
+        cut.Markup.ShouldNotContain("payload");
+        cut.Markup.ShouldNotContain("secret");
+    }
+
+    [Fact]
+    public void ResolutionTraceWorkbenchRendersSafeValidationFeedback()
+    {
+        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        traceSource.LoadTraceAsync(Arg.Any<ProjectResolutionTraceRequest>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectResolutionTraceLoadResult.FromFeedback(
+                ProjectConsoleFeedback.Error("conversation_id_required"))));
+        Services.AddSingleton(detailSource);
+        Services.AddSingleton(traceSource);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-resolution']").Click();
+        cut.Find("[data-testid='project-resolution-trace-run']").Click();
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-resolution-trace-feedback']").TextContent.ShouldContain("conversation_id_required"));
+        cut.Find("[data-testid='project-resolution-trace-feedback']").TextContent.ShouldNotContain("conversation-001");
+    }
+
+    [Fact]
+    public void ResolutionTraceWorkbenchRendersNoMatchOutcome()
+    {
+        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        traceSource.LoadTraceAsync(Arg.Any<ProjectResolutionTraceRequest>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(NoMatchTrace()));
+        Services.AddSingleton(detailSource);
+        Services.AddSingleton(traceSource);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-resolution']").Click();
+        cut.Find("[data-testid='project-resolution-trace-conversation-id']").Change("conversation-001");
+        cut.Find("[data-testid='project-resolution-trace-run']").Click();
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-resolution-trace-outcome']").TextContent.ShouldContain("NoMatch"));
+        cut.Find("[data-testid='project-resolution-trace-input-summary']").TextContent.ShouldContain("conversation-001");
+        cut.Find("[data-testid='project-detail-section-resolution']").TextContent.ShouldContain("No candidates returned.");
+        cut.FindAll("[data-testid='project-resolution-trace-candidate']").ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void ResolutionTraceWorkbenchRendersExcludedOutcomeFromArchivedEvidence()
+    {
+        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        traceSource.LoadTraceAsync(Arg.Any<ProjectResolutionTraceRequest>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ExcludedTrace()));
+        Services.AddSingleton(detailSource);
+        Services.AddSingleton(traceSource);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-resolution']").Click();
+        cut.Find("[data-testid='project-resolution-trace-conversation-id']").Change("conversation-001");
+        cut.Find("[data-testid='project-resolution-trace-run']").Click();
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-resolution-trace-outcome']").TextContent.ShouldContain("Excluded"));
+        cut.Find("[data-testid='project-resolution-trace-exclusion']").TextContent.ShouldContain("project-archived");
+        cut.Find("[data-testid='project-resolution-trace-exclusion']").TextContent.ShouldContain("referenceArchived");
+    }
+
+    [Fact]
+    public void ResolutionTraceWorkbenchRendersFailedClosedOutcomeFromDeniedEvidenceAndKeepsLongIdsReadable()
+    {
+        IProjectDetailSource detailSource = Substitute.For<IProjectDetailSource>();
+        detailSource.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
+        traceSource.LoadTraceAsync(Arg.Any<ProjectResolutionTraceRequest>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(FailedClosedTrace()));
+        Services.AddSingleton(detailSource);
+        Services.AddSingleton(traceSource);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-resolution']").Click();
+        cut.Find("[data-testid='project-resolution-trace-conversation-id']").Change("conversation-001");
+        cut.Find("[data-testid='project-resolution-trace-run']").Click();
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-resolution-trace-outcome']").TextContent.ShouldContain("FailedClosed"));
+        AngleSharp.Dom.IElement excludedProjectId = cut.Find("[data-testid='project-resolution-trace-exclusion'] code");
+        excludedProjectId.TextContent.ShouldContain("project-denied-with-a-very-long-opaque-identifier-001");
+        string ariaLabel = excludedProjectId.GetAttribute("aria-label").ShouldNotBeNull();
+        ariaLabel.ShouldContain("project-denied-with-a-very-long-opaque-identifier-001");
+        cut.Find("[data-testid='project-resolution-trace-exclusion']").TextContent.ShouldContain("referenceUnauthorized");
+        cut.Markup.ShouldNotContain("ProblemDetails");
         cut.Markup.ShouldNotContain("token");
     }
 
@@ -327,4 +517,129 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
 
     private static ProjectOperatorFreshnessMetadata Freshness()
         => new("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark-001", false, "trusted");
+
+    private static ProjectResolutionTraceLoadResult SingleCandidateTrace()
+        => ProjectResolutionTraceLoadResult.FromTrace(
+            new ProjectResolutionTraceProjection
+            {
+                InputMode = ProjectResolutionTraceRequest.ConversationMode,
+                PresentedConversationId = "conversation-001",
+                IncludeArchived = false,
+                ObservedAt = DateTimeOffset.UnixEpoch,
+                Result = ResolutionResult.SingleCandidate,
+                CandidateCount = 1,
+            },
+            [
+                new ProjectResolutionTraceCandidateProjection
+                {
+                    Id = "candidate:project-001",
+                    ProjectId = "project-001",
+                    DisplayName = "Trace Project",
+                    Rank = 1,
+                    Score = 70,
+                    ReasonCodes = "ConversationLinked, MetadataMatched",
+                },
+            ],
+            []);
+
+    private static ProjectResolutionTraceLoadResult MultipleCandidateTraceWithExclusion()
+        => ProjectResolutionTraceLoadResult.FromTrace(
+            new ProjectResolutionTraceProjection
+            {
+                InputMode = ProjectResolutionTraceRequest.AttachmentsMode,
+                PresentedFolderIds = "folder-001",
+                PresentedFileIds = "file-001",
+                IncludeArchived = true,
+                ObservedAt = DateTimeOffset.UnixEpoch,
+                Result = ResolutionResult.MultipleCandidates,
+                CandidateCount = 2,
+                ExclusionCount = 1,
+            },
+            [
+                new ProjectResolutionTraceCandidateProjection
+                {
+                    Id = "candidate:project-001",
+                    ProjectId = "project-001",
+                    Rank = 1,
+                    Score = 45,
+                    ReasonCodes = "ProjectFolderMatched",
+                },
+                new ProjectResolutionTraceCandidateProjection
+                {
+                    Id = "candidate:project-002",
+                    ProjectId = "project-002",
+                    Rank = 2,
+                    Score = 35,
+                    ReasonCodes = "FileReferenceMatched",
+                },
+            ],
+            [
+                new ProjectResolutionTraceExclusionProjection
+                {
+                    Id = "exclusion:project-denied",
+                    ProjectId = "project-denied",
+                    ReferenceState = ReferenceState.Unavailable,
+                    ReasonCode = ProjectReasonCode.FileReferenceMatched,
+                    Diagnostic = ProjectContextInclusionDiagnostic.ReferenceUnavailable,
+                },
+            ]);
+
+    private static ProjectResolutionTraceLoadResult NoMatchTrace()
+        => ProjectResolutionTraceLoadResult.FromTrace(
+            new ProjectResolutionTraceProjection
+            {
+                InputMode = ProjectResolutionTraceRequest.ConversationMode,
+                PresentedConversationId = "conversation-001",
+                IncludeArchived = false,
+                ObservedAt = DateTimeOffset.UnixEpoch,
+                Result = ResolutionResult.NoMatch,
+            },
+            [],
+            []);
+
+    private static ProjectResolutionTraceLoadResult ExcludedTrace()
+        => ProjectResolutionTraceLoadResult.FromTrace(
+            new ProjectResolutionTraceProjection
+            {
+                InputMode = ProjectResolutionTraceRequest.ConversationMode,
+                PresentedConversationId = "conversation-001",
+                IncludeArchived = false,
+                ObservedAt = DateTimeOffset.UnixEpoch,
+                Result = ResolutionResult.NoMatch,
+                ExclusionCount = 1,
+            },
+            [],
+            [
+                new ProjectResolutionTraceExclusionProjection
+                {
+                    Id = "exclusion:project-archived",
+                    ProjectId = "project-archived",
+                    ReferenceState = ReferenceState.Archived,
+                    ReasonCode = ProjectReasonCode.ConversationLinked,
+                    Diagnostic = ProjectContextInclusionDiagnostic.ReferenceArchived,
+                },
+            ]);
+
+    private static ProjectResolutionTraceLoadResult FailedClosedTrace()
+        => ProjectResolutionTraceLoadResult.FromTrace(
+            new ProjectResolutionTraceProjection
+            {
+                InputMode = ProjectResolutionTraceRequest.ConversationMode,
+                PresentedConversationId = "conversation-001",
+                IncludeArchived = false,
+                ObservedAt = DateTimeOffset.UnixEpoch,
+                Result = ResolutionResult.NoMatch,
+                ExclusionCount = 1,
+            },
+            [],
+            [
+                new ProjectResolutionTraceExclusionProjection
+                {
+                    Id = "exclusion:project-denied-with-a-very-long-opaque-identifier-001",
+                    ProjectId = "project-denied-with-a-very-long-opaque-identifier-001",
+                    ReferenceState = ReferenceState.Unauthorized,
+                    ReasonCode = ProjectReasonCode.ConversationLinked,
+                    Diagnostic = ProjectContextInclusionDiagnostic.ReferenceUnauthorized,
+                },
+            ]);
 }

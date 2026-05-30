@@ -1,0 +1,194 @@
+.project-resolution-trace {
+    display: grid;
+    gap: 1rem;
+}
+
+.project-resolution-trace h3,
+.project-resolution-trace h4 {
+    margin: 0;
+    line-height: 1.3;
+    letter-spacing: 0;
+}
+
+.project-resolution-trace h3 {
+    font-size: 1.05rem;
+}
+
+.project-resolution-trace h4 {
+    font-size: .95rem;
+}
+
+.project-resolution-trace__form {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .75rem;
+    align-items: end;
+}
+
+.project-resolution-trace__field {
+    display: grid;
+    gap: .25rem;
+    min-width: 0;
+}
+
+.project-resolution-trace__field label,
+.project-resolution-trace__check {
+    color: var(--neutral-foreground-hint);
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.project-resolution-trace__field input,
+.project-resolution-trace__field select,
+.project-resolution-trace__field textarea {
+    width: 100%;
+    min-height: 2.25rem;
+    border: 1px solid var(--neutral-stroke-rest);
+    border-radius: 4px;
+    padding: .375rem .5rem;
+    background: var(--neutral-fill-rest);
+    color: var(--neutral-foreground-rest);
+    font: inherit;
+}
+
+.project-resolution-trace__field textarea {
+    min-height: 4.75rem;
+    resize: vertical;
+}
+
+.project-resolution-trace__field input:focus-visible,
+.project-resolution-trace__field select:focus-visible,
+.project-resolution-trace__field textarea:focus-visible,
+.project-resolution-trace button:focus-visible,
+.project-resolution-trace tr:focus,
+.project-resolution-trace li:focus {
+    outline: 2px solid var(--accent-fill-rest);
+    outline-offset: 2px;
+}
+
+.project-resolution-trace__check {
+    display: flex;
+    gap: .375rem;
+    align-items: center;
+}
+
+.project-resolution-trace button {
+    min-height: 2.25rem;
+    border: 1px solid var(--neutral-stroke-rest);
+    border-radius: 4px;
+    padding: .375rem .75rem;
+    background: var(--accent-fill-rest);
+    color: var(--neutral-foreground-on-brand-rest);
+    font-weight: 600;
+}
+
+.project-resolution-trace button:disabled {
+    background: var(--neutral-fill-disabled);
+    color: var(--neutral-foreground-disabled);
+}
+
+.project-resolution-trace__outcome,
+.project-resolution-trace__comparison,
+.project-resolution-trace__exclusions {
+    display: grid;
+    gap: .75rem;
+}
+
+.project-resolution-trace__outcome-line,
+.project-resolution-trace__badges,
+.project-resolution-trace__exclusions li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+}
+
+.project-resolution-trace__summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .75rem 1rem;
+    margin: 0;
+}
+
+.project-resolution-trace__summary div {
+    min-width: 0;
+}
+
+.project-resolution-trace__summary dt {
+    margin-bottom: .25rem;
+    color: var(--neutral-foreground-hint);
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.project-resolution-trace__summary dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.project-resolution-trace__table-wrap {
+    overflow-x: auto;
+}
+
+.project-resolution-trace table {
+    width: 100%;
+    min-width: 42rem;
+    border-collapse: collapse;
+}
+
+.project-resolution-trace caption {
+    margin-bottom: .5rem;
+    color: var(--neutral-foreground-hint);
+    font-size: .875rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+.project-resolution-trace th,
+.project-resolution-trace td {
+    padding: .75rem;
+    border-bottom: 1px solid var(--neutral-stroke-rest);
+    text-align: left;
+    vertical-align: top;
+}
+
+.project-resolution-trace th span,
+.project-resolution-trace th code {
+    display: block;
+}
+
+.project-resolution-trace code {
+    overflow-wrap: anywhere;
+    font-family: var(--fontFamilyMonospace);
+}
+
+.project-resolution-trace__exclusions ul {
+    display: grid;
+    gap: .5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.project-resolution-trace__exclusions li {
+    padding: .625rem 0;
+    border-bottom: 1px solid var(--neutral-stroke-rest);
+}
+
+@media (max-width: 900px) {
+    .project-resolution-trace__form,
+    .project-resolution-trace__summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .project-resolution-trace__form,
+    .project-resolution-trace__summary {
+        grid-template-columns: 1fr;
+    }
+
+    .project-resolution-trace table {
+        min-width: 34rem;
+    }
+}

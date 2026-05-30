@@ -27,7 +27,14 @@ const consoleViews: ConsoleView[] = [
       await page.getByTestId('project-detail-tab-references').click();
     },
   },
-  { name: 'resolution trace', path: (id: string) => `/projects/${id}/resolution`, anchorTestId: 'resolution-trace' },
+  {
+    name: 'resolution trace',
+    path: (id: string) => `/projects/${id}`,
+    anchorTestId: 'project-resolution-trace-workbench',
+    prepare: async (page: Page) => {
+      await page.getByTestId('project-detail-tab-resolution').click();
+    },
+  },
   { name: 'audit timeline', path: (id: string) => `/projects/${id}/audit`, anchorTestId: 'audit-timeline' },
 ];
 

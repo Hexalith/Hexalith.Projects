@@ -1,0 +1,251 @@
+@using Hexalith.Projects.Contracts.Ui
+@using Hexalith.Projects.UI.Diagnostics
+@inject IProjectResolutionTraceSource TraceSource
+@implements IDisposable
+
+<section class="project-resolution-trace"
+         data-testid="project-resolution-trace-workbench"
+         aria-labelledby="project-resolution-trace-heading">
+    <h3 id="project-resolution-trace-heading">Resolution Trace Workbench</h3>
+
+    <form class="project-resolution-trace__form">
+        <div class="project-resolution-trace__field">
+            <label for="project-resolution-trace-mode">Trace mode</label>
+            <select id="project-resolution-trace-mode"
+                    data-testid="project-resolution-trace-mode"
+                    @bind="_mode">
+                <option value="@ProjectResolutionTraceRequest.ConversationMode">Conversation</option>
+                <option value="@ProjectResolutionTraceRequest.AttachmentsMode">Attachments</option>
+            </select>
+        </div>
+
+        @if (_mode == ProjectResolutionTraceRequest.ConversationMode)
+        {
+            <div class="project-resolution-trace__field">
+                <label for="project-resolution-trace-conversation-id">Conversation ID</label>
+                <input id="project-resolution-trace-conversation-id"
+                       data-testid="project-resolution-trace-conversation-id"
+                       autocomplete="off"
+                       spellcheck="false"
+                       @bind="_conversationId" />
+            </div>
+        }
+        else
+        {
+            <div class="project-resolution-trace__field">
+                <label for="project-resolution-trace-folder-id">Folder IDs</label>
+                <textarea id="project-resolution-trace-folder-id"
+                          data-testid="project-resolution-trace-folder-id"
+                          spellcheck="false"
+                          @bind="_folderIds"></textarea>
+            </div>
+            <div class="project-resolution-trace__field">
+                <label for="project-resolution-trace-file-id">File IDs</label>
+                <textarea id="project-resolution-trace-file-id"
+                          data-testid="project-resolution-trace-file-id"
+                          spellcheck="false"
+                          @bind="_fileIds"></textarea>
+            </div>
+        }
+
+        <label class="project-resolution-trace__check" for="project-resolution-trace-include-archived">
+            <input id="project-resolution-trace-include-archived"
+                   data-testid="project-resolution-trace-include-archived"
+                   type="checkbox"
+                   @bind="_includeArchived" />
+            <span>Include archived</span>
+        </label>
+
+        <button type="button"
+                data-testid="project-resolution-trace-run"
+                @onclick="RunTraceAsync"
+                disabled="@_loading">
+            Run trace
+        </button>
+    </form>
+
+    @if (_loading)
+    {
+        <div data-testid="project-resolution-trace-feedback">
+            <ProjectFeedbackView Feedback="@ProjectConsoleFeedback.Loading("resolution_trace_loading")" />
+        </div>
+    }
+    else if (_result?.Feedback is not null)
+    {
+        <div data-testid="project-resolution-trace-feedback">
+            <ProjectFeedbackView Feedback="@_result.Feedback" />
+        </div>
+    }
+    else if (_result?.Trace is not null)
+    {
+        <section class="project-resolution-trace__outcome"
+                 data-testid="project-resolution-trace-outcome"
+                 aria-labelledby="project-resolution-trace-outcome-heading">
+            <h4 id="project-resolution-trace-outcome-heading">Outcome</h4>
+            <div class="project-resolution-trace__outcome-line">
+                <ProjectStatusBadge Descriptor="@ProjectVocabularyDescriptors.Describe(_result.Trace.Result)" ColumnHeader="Resolution result" />
+                <span>@ProjectResolutionTraceMapper.DeriveOutcomeLabel(_result.Trace, _result.Exclusions)</span>
+            </div>
+            <dl data-testid="project-resolution-trace-input-summary" class="project-resolution-trace__summary">
+                <div>
+                    <dt>Mode</dt>
+                    <dd>@_result.Trace.InputMode</dd>
+                </div>
+                <div>
+                    <dt>Conversation ID</dt>
+                    <dd><code>@(_result.Trace.PresentedConversationId ?? "none")</code></dd>
+                </div>
+                <div>
+                    <dt>Folder IDs</dt>
+                    <dd><code>@(string.IsNullOrWhiteSpace(_result.Trace.PresentedFolderIds) ? "none" : _result.Trace.PresentedFolderIds)</code></dd>
+                </div>
+                <div>
+                    <dt>File IDs</dt>
+                    <dd><code>@(string.IsNullOrWhiteSpace(_result.Trace.PresentedFileIds) ? "none" : _result.Trace.PresentedFileIds)</code></dd>
+                </div>
+                <div>
+                    <dt>Include archived</dt>
+                    <dd>@(_result.Trace.IncludeArchived ? "Yes" : "No")</dd>
+                </div>
+                <div>
+                    <dt>Observed</dt>
+                    <dd><time datetime="@_result.Trace.ObservedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@_result.Trace.ObservedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time></dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="project-resolution-trace__comparison"
+                 aria-labelledby="project-resolution-trace-candidates-heading">
+            <h4 id="project-resolution-trace-candidates-heading">Candidates</h4>
+            @if (_result.Candidates.Count == 0)
+            {
+                <p>No candidates returned.</p>
+            }
+            else
+            {
+                <div class="project-resolution-trace__table-wrap">
+                    <table data-testid="project-resolution-trace-candidate-comparison">
+                        <caption>Candidate comparison</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Project</th>
+                                <th scope="col">Rank</th>
+                                <th scope="col">Score</th>
+                                <th scope="col">Reasons</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (ProjectResolutionTraceCandidateProjection candidate in _result.Candidates)
+                            {
+                                <tr data-testid="project-resolution-trace-candidate" tabindex="0">
+                                    <th scope="row">
+                                        <span>@(candidate.DisplayName ?? "Unnamed project")</span>
+                                        <code aria-label="@($"Project ID {candidate.ProjectId}")">@candidate.ProjectId</code>
+                                    </th>
+                                    <td>@candidate.Rank</td>
+                                    <td>@candidate.Score</td>
+                                    <td>
+                                        <div class="project-resolution-trace__badges">
+                                            @foreach (ProjectReasonCode reason in ReasonCodes(candidate.ReasonCodes))
+                                            {
+                                                <span data-testid="project-resolution-trace-reason">
+                                                    <ProjectStatusBadge Descriptor="@ProjectVocabularyDescriptors.Describe(reason)" ColumnHeader="Reason code" />
+                                                    <span>@reason</span>
+                                                </span>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+
+        @if (_result.Exclusions.Count > 0)
+        {
+            <section class="project-resolution-trace__exclusions"
+                     aria-labelledby="project-resolution-trace-exclusions-heading">
+                <h4 id="project-resolution-trace-exclusions-heading">Exclusion Evidence</h4>
+                <ul>
+                    @foreach (ProjectResolutionTraceExclusionProjection exclusion in _result.Exclusions)
+                    {
+                        <li data-testid="project-resolution-trace-exclusion" tabindex="0">
+                            <span>@(exclusion.DisplayName ?? "Unnamed project")</span>
+                            <code aria-label="@($"Excluded Project ID {exclusion.ProjectId}")">@exclusion.ProjectId</code>
+                            <ProjectStatusBadge Descriptor="@ProjectVocabularyDescriptors.Describe(exclusion.ReferenceState)" ColumnHeader="Reference state" />
+                            @if (exclusion.ReasonCode is not null)
+                            {
+                                <span data-testid="project-resolution-trace-reason">
+                                    <ProjectStatusBadge Descriptor="@ProjectVocabularyDescriptors.Describe(exclusion.ReasonCode.Value)" ColumnHeader="Reason code" />
+                                    <span>@exclusion.ReasonCode</span>
+                                </span>
+                            }
+                            <span>@(exclusion.Diagnostic ?? "no diagnostic")</span>
+                        </li>
+                    }
+                </ul>
+            </section>
+        }
+    }
+    else
+    {
+        <p data-testid="project-resolution-trace-feedback">No trace has been run yet.</p>
+    }
+</section>
+
+@code {
+    [Parameter]
+    public string? ProjectId { get; set; }
+
+    private string _mode = ProjectResolutionTraceRequest.ConversationMode;
+    private string? _conversationId;
+    private string? _folderIds;
+    private string? _fileIds;
+    private bool _includeArchived;
+    private bool _loading;
+    private ProjectResolutionTraceLoadResult? _result;
+    private CancellationTokenSource? _traceCts;
+
+    private async Task RunTraceAsync()
+    {
+        _traceCts?.Cancel();
+        _traceCts?.Dispose();
+        _traceCts = new CancellationTokenSource();
+
+        _loading = true;
+        _result = null;
+        try
+        {
+            ProjectResolutionTraceRequest request = _mode == ProjectResolutionTraceRequest.ConversationMode
+                ? ProjectResolutionTraceRequest.ForConversation(_conversationId, _includeArchived)
+                : ProjectResolutionTraceRequest.ForAttachments([_folderIds ?? string.Empty], [_fileIds ?? string.Empty], _includeArchived);
+
+            _result = await TraceSource.LoadTraceAsync(request, _traceCts.Token).ConfigureAwait(true);
+        }
+        catch (OperationCanceledException) when (_traceCts?.IsCancellationRequested == true)
+        {
+            _result = null;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private static IReadOnlyList<ProjectReasonCode> ReasonCodes(string value)
+        => value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(static item => Enum.TryParse(item, ignoreCase: false, out ProjectReasonCode reason)
+                ? (ProjectReasonCode?)reason
+                : null)
+            .Where(static reason => reason is not null)
+            .Select(static reason => reason!.Value)
+            .ToArray();
+
+    public void Dispose()
+    {
+        _traceCts?.Cancel();
+        _traceCts?.Dispose();
+    }
+}

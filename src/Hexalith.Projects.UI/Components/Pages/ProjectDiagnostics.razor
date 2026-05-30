@@ -169,8 +169,7 @@ else if (_result?.Detail is not null)
                 break;
             case ResolutionSection:
                 <section role="tabpanel" data-testid="project-detail-section-resolution">
-                    <p>Resolution trace workbench is handled by Story 5.6.</p>
-                    <p>Current reference warning count: @ProjectDiagnosticRendering.CountWarnings(_result.Detail)</p>
+                    <ProjectResolutionTraceWorkbench ProjectId="@_result.Detail.ProjectId" />
                 </section>
                 break;
             case AuditSection:

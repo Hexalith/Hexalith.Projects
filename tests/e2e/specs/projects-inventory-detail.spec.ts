@@ -151,7 +151,8 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
     await page.getByTestId('project-detail-tab-references').click();
     await expect(detail.referencesSection).toBeVisible();
     await page.getByTestId('project-detail-tab-resolution').click();
-    await expect(detail.resolutionSection).toContainText('Story 5.6');
+    await expect(detail.resolutionTraceWorkbench).toBeVisible();
+    await expect(detail.resolutionTraceFeedback).toContainText('No trace has been run yet');
     await page.getByTestId('project-detail-tab-audit').click();
     await expect(detail.auditSection).toBeVisible();
     await page.getByTestId('project-detail-tab-actions').click();
