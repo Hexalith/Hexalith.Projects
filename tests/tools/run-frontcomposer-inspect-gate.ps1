@@ -34,7 +34,37 @@ if (-not $annotatedContracts -or $annotatedContracts.Count -eq 0) {
 Write-Host "frontcomposer-inspect-gate: inputs detected ($($annotatedContracts.Count) annotated contract file(s)) — running real gate."
 
 # Real invocation: fail the gate on any FrontComposer regeneration/staleness warning.
-& dotnet frontcomposer inspect --fail-on-warning --project (Join-Path $contractsRoot 'Hexalith.Projects.Contracts.csproj')
+$contractsProject = Join-Path $contractsRoot 'Hexalith.Projects.Contracts.csproj'
+
+# Resolve the FrontComposer CLI. Prefer an installed `frontcomposer` dotnet tool when present;
+# otherwise fall back to the repo-local FrontComposer submodule CLI so the gate is self-contained
+# and does not require a manually installed tool or an ad-hoc PATH shim. The FrontComposer submodule
+# is already required to build the FrontComposer-annotated Contracts project, so its CLI is present
+# whenever this gate runs for real.
+$frontComposerToolAvailable = $false
+try {
+    & dotnet frontcomposer --version *> $null
+    $frontComposerToolAvailable = ($LASTEXITCODE -eq 0)
+}
+catch {
+    $frontComposerToolAvailable = $false
+}
+
+$cliProject = Join-Path $repositoryRoot 'Hexalith.FrontComposer/src/Hexalith.FrontComposer.Cli/Hexalith.FrontComposer.Cli.csproj'
+
+if ($frontComposerToolAvailable) {
+    Write-Host 'frontcomposer-inspect-gate: using the installed `frontcomposer` dotnet tool.'
+    & dotnet frontcomposer inspect --fail-on-warning --project $contractsProject
+}
+elseif (Test-Path $cliProject) {
+    Write-Host "frontcomposer-inspect-gate: 'frontcomposer' tool not on PATH — using repo-local FrontComposer CLI ($cliProject)."
+    & dotnet run --project $cliProject --verbosity quiet -- inspect --fail-on-warning --project $contractsProject
+}
+else {
+    Write-Error 'frontcomposer-inspect-gate: FAILED — no `frontcomposer` dotnet tool on PATH and the repo-local FrontComposer CLI was not found. Install the FrontComposer CLI tool or check out the Hexalith.FrontComposer submodule.'
+    exit 1
+}
+
 $exitCode = $LASTEXITCODE
 if ($exitCode -ne 0) {
     Write-Error "frontcomposer-inspect-gate: FAILED — 'frontcomposer inspect --fail-on-warning' reported regeneration/staleness warnings. Regenerate the FrontComposer surfaces and commit the updated output."

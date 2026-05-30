@@ -36,6 +36,7 @@ if (!string.Equals(builder.Configuration["EnableKeycloak"], "false", StringCompa
 IResourceBuilder<ProjectResource> eventStore = builder.AddProject<Projects.Hexalith_EventStore>(ProjectsAspireModule.EventStoreAppId);
 IResourceBuilder<ProjectResource> tenants = builder.AddProject<Projects.Hexalith_Tenants>(ProjectsAspireModule.TenantsAppId);
 IResourceBuilder<ProjectResource> projects = builder.AddProject<Projects.Hexalith_Projects_Server>(ProjectsAspireModule.ProjectsAppId);
+IResourceBuilder<ProjectResource> projectsUi = builder.AddProject<Projects.Hexalith_Projects_UI>(ProjectsAspireModule.ProjectsUiAppId);
 IResourceBuilder<ProjectResource> projectsWorkers = builder.AddProject<Projects.Hexalith_Projects_Workers>(ProjectsAspireModule.ProjectsWorkersAppId);
 
 _ = builder.AddHexalithProjects(
@@ -52,8 +53,14 @@ if (keycloak is not null && realmUrl is not null)
     ConfigureJwt(eventStore, keycloak, realmUrl);
     ConfigureJwt(tenants, keycloak, realmUrl);
     ConfigureJwt(projects, keycloak, realmUrl);
+    ConfigureJwt(projectsUi, keycloak, realmUrl);
     ConfigureJwt(projectsWorkers, keycloak, realmUrl);
 }
+
+_ = projectsUi
+    .WithReference(projects)
+    .WaitFor(projects)
+    .WithEnvironment("Projects__BaseAddress", ReferenceExpression.Create($"{projects.GetEndpoint("http")}"));
 
 builder.Build().Run();
 

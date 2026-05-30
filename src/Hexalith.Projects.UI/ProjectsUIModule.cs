@@ -6,8 +6,9 @@
 namespace Hexalith.Projects.UI;
 
 /// <summary>
-/// Placeholder anchor for the Hexalith.Projects read-only operational console.
-/// FrontComposer-generated components and the Fluent UI shell land in Epic-5 stories.
+/// Assembly anchor for the Hexalith.Projects read-only operational console. Used as the Blazor
+/// router app-assembly for the FrontComposer/Fluent UI shell delivered in Story 5.3; later Epic 5
+/// stories add the specific inventory, detail, reference, trace, audit, warning, and mutation views.
 /// </summary>
 public static class ProjectsUIModule
 {

@@ -25,3 +25,18 @@ rules.
   default 25 and max 100.
 - Rendering/export/maintenance workflows are owned by later Epic 5 stories; this matrix only fixes the
   shared safe model and parity contract.
+
+## Story 5.3 Shell / Shared Rendering Contract
+
+| Surface primitive | Source of truth | Web rendering contract | MCP/CLI parity handoff |
+|-------------------|-----------------|------------------------|------------------------|
+| FrontComposer navigation seed | `ProjectOperatorDiagnosticShellProjection` over `ProjectOperatorDiagnostic` | Generated `RegisterDomain` metadata groups the Projects operational console under the `Projects` bounded context. The seed is shell/navigation metadata only, not the full 5.4 inventory/detail view. | Reuse the same field names and shared vocabulary when command/resource descriptors land. |
+| Project Diagnostic Header | `ProjectOperatorDiagnostic` | Shows tenant scope label, project id/name, lifecycle badge, warning count, last-updated timestamp, mode label (`read-only`, `dry-run`, `maintenance`), and copyable project id. | Expose the same header fields as columns/fields; do not add tenant authority from client input. |
+| Lifecycle/reference/result/reason badges | `ProjectVocabularyDescriptors` and `[ProjectionBadge]` enum metadata | Badge rendering uses visible labels plus accessible names through `FcStatusBadge`; color is supportive only. | CLI/MCP fields should use the descriptor `Code`/label vocabulary and avoid adapter-local mappings. |
+| Empty states | `ProjectEmptyState` | Distinguishes no projects/references/audit, access denied, data unavailable, and filter returned no results through stable categories and visible text. No blank tables. | Preserve the categories as explicit adapter states rather than returning empty rows for denial/unavailable. |
+| Feedback | `ProjectConsoleFeedback` | Distinguishes success, warning, error, fail-closed, and loading. Messages expose safe reason codes/correlation ids only. | Return safe reason codes only; never echo raw problem details, prompts, bodies, paths, tokens, proposal bodies, or sibling denial details. |
+| Operator diagnostic query | Generated `GetProjectOperatorDiagnosticsAsync(...)` | UI source calls the generated query client with `X-Hexalith-Freshness: eventually_consistent`, no `Idempotency-Key`, and maps 400/404/503 to safe feedback. | MCP/CLI query adapters must preserve the same query semantics. |
+
+Stories 5.4-5.11 consume these primitives and own their specific inventory/detail, reference health,
+resolution trace, audit export, warning queue, maintenance mutation, MCP/CLI, and final accessibility
+behavior.

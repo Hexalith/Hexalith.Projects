@@ -1,0 +1,25 @@
+<FluentMessageBar Intent="@Intent"
+                  AllowDismiss="false"
+                  data-testid="@($"project-feedback-{Feedback.Category}")"
+                  aria-label="@($"Project feedback {Feedback.Category}: {Feedback.SafeReasonCode}")">
+    <span>@Feedback.Message</span>
+    <span class="project-feedback__reason">@Feedback.SafeReasonCode</span>
+    @if (!string.IsNullOrWhiteSpace(Feedback.CorrelationId))
+    {
+        <span class="project-feedback__correlation">@Feedback.CorrelationId</span>
+    }
+</FluentMessageBar>
+
+@code {
+    [Parameter, EditorRequired]
+    public ProjectConsoleFeedback Feedback { get; set; } = default!;
+
+    private MessageBarIntent Intent => Feedback.Category switch
+    {
+        ProjectConsoleFeedback.SuccessCategory => MessageBarIntent.Success,
+        ProjectConsoleFeedback.WarningCategory => MessageBarIntent.Warning,
+        ProjectConsoleFeedback.LoadingCategory => MessageBarIntent.Info,
+        _ => MessageBarIntent.Error,
+    };
+}
+

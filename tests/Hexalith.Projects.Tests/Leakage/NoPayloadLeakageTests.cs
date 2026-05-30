@@ -391,6 +391,58 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void ProjectOperatorDiagnosticShellProjection_SerializesMetadataOnly()
+    {
+        // Story 5.3: the Contracts-resident FrontComposer shell seed is a metadata-only wrapper over
+        // the Story 5.2 operator diagnostic. It must carry the same leakage guarantee in the canonical
+        // harness, not only in the UI test project.
+        ProjectOperatorDiagnostic diagnostic = new(
+            "project-target-001",
+            "Operator Project",
+            "Safe metadata description",
+            "active",
+            DateTimeOffset.UnixEpoch,
+            DateTimeOffset.UnixEpoch.AddMinutes(1),
+            "safe-setup-metadata",
+            null,
+            new ProjectOperatorContextActivation(true, null),
+            [
+                new ProjectOperatorReferenceSummary(
+                    "folder",
+                    "included",
+                    "folder_001",
+                    "Safe Folder",
+                    null,
+                    new ProjectOperatorFreshnessMetadata("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark_00000001", false, "trusted")),
+                new ProjectOperatorReferenceSummary(
+                    "file",
+                    "unavailable",
+                    "file_001",
+                    "Safe File",
+                    null,
+                    new ProjectOperatorFreshnessMetadata("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark_00000002", false, "trusted")),
+            ],
+            [],
+            new ProjectOperatorFreshnessMetadata("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark_00000042", false, "trusted"));
+
+        ProjectOperatorDiagnosticShellProjection projection =
+            ProjectOperatorDiagnosticShellProjection.FromDiagnostic(diagnostic, "maintenance");
+
+        projection.WarningCount.ShouldBe(1);
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(projection));
+        string serialized = System.Text.Json.JsonSerializer.Serialize(projection);
+        serialized.ShouldNotContain("candidate", Case.Insensitive);
+        serialized.ShouldNotContain("score", Case.Insensitive);
+        serialized.ShouldNotContain("rank", Case.Insensitive);
+        serialized.ShouldNotContain("transcript", Case.Insensitive);
+        serialized.ShouldNotContain("prompt", Case.Insensitive);
+        serialized.ShouldNotContain("token", Case.Insensitive);
+        serialized.ShouldNotContain("path", Case.Insensitive);
+        serialized.ShouldNotContain("secret", Case.Insensitive);
+        serialized.ShouldNotContain("body", Case.Insensitive);
+    }
+
+    [Fact]
     public void MemoryReferenceLinkRejection_SerializesMetadataOnly()
     {
         ProjectReferenceLinkRejected rejection = new(

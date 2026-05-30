@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsPackable>true</IsPackable>
+    <NoWarn>$(NoWarn);ASP0006</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Hexalith.Projects.Contracts.Tests" />
@@ -15,5 +16,28 @@
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Contracts\Hexalith.EventStore.Contracts.csproj" />
     <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj" />
     <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Contracts\Hexalith.FrontComposer.Contracts.csproj" />
+    <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Shell\Hexalith.FrontComposer.Shell.csproj" />
+    <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.SourceTools\Hexalith.FrontComposer.SourceTools.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false"
+                      SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.SourceTools\bin\$(Configuration)\netstandard2.0\Hexalith.FrontComposer.SourceTools.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Fluxor.Blazor.Web" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
+  </ItemGroup>
+  <Target Name="FlattenFrontComposerGeneratedFiles" AfterTargets="CoreCompile" Condition="'$(EmitCompilerGeneratedFiles)' == 'true'">
+    <ItemGroup>
+      <_FrontComposerGeneratedFiles Include="$(CompilerGeneratedFilesOutputPath)\Hexalith.FrontComposer.SourceTools\Hexalith.FrontComposer.SourceTools.FrontComposerGenerator\*.g.cs" />
+      <_FrontComposerGeneratedFiles Include="$(CompilerGeneratedFilesOutputPath)\Hexalith.FrontComposer.SourceTools\Hexalith.FrontComposer.SourceTools.FrontComposerGenerator\*.g.razor.cs" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_FrontComposerGeneratedFiles)"
+          DestinationFolder="$(CompilerGeneratedFilesOutputPath)"
+          SkipUnchangedFiles="true"
+          Condition="'@(_FrontComposerGeneratedFiles)' != ''" />
+  </Target>
 </Project>

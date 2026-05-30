@@ -1,0 +1,77 @@
+@using Hexalith.Projects.Contracts.Models
+@using Hexalith.Projects.Contracts.Ui
+@inject Microsoft.JSInterop.IJSRuntime JsRuntime
+
+<section class="project-diagnostic-header"
+         data-testid="project-diagnostic-header"
+         aria-label="Project diagnostic header">
+    <div class="project-diagnostic-header__identity">
+        <div class="project-diagnostic-header__tenant">
+            <span class="project-diagnostic-header__label">Tenant</span>
+            <span>@TenantScope</span>
+            <button type="button"
+                    class="project-diagnostic-header__copy"
+                    data-testid="project-copy-tenant-scope"
+                    data-copy-value="@TenantScope"
+                    aria-label="@($"Copy tenant scope {TenantScope}")"
+                    @onclick="() => CopyAsync(TenantScope)">
+                Copy
+            </button>
+        </div>
+        <h1 class="project-diagnostic-header__title" data-testid="project-detail-name">@Diagnostic.Name</h1>
+        <div class="project-diagnostic-header__ids">
+            <span class="project-diagnostic-header__id">@Diagnostic.ProjectId</span>
+            <button type="button"
+                    class="project-diagnostic-header__copy"
+                    data-testid="project-copy-project-id"
+                    data-copy-value="@Diagnostic.ProjectId"
+                    aria-label="@($"Copy project id {Diagnostic.ProjectId}")"
+                    @onclick="() => CopyAsync(Diagnostic.ProjectId)">
+                Copy
+            </button>
+        </div>
+    </div>
+    <dl class="project-diagnostic-header__facts">
+        <div class="project-diagnostic-header__fact" data-testid="project-lifecycle-badge">
+            <dt>Lifecycle</dt>
+            <dd><ProjectStatusBadge Descriptor="@_lifecycle" ColumnHeader="Lifecycle" /></dd>
+        </div>
+        <div class="project-diagnostic-header__fact" data-testid="project-warning-count">
+            <dt>Warnings</dt>
+            <dd>@_warningCount</dd>
+        </div>
+        <div class="project-diagnostic-header__fact" data-testid="project-last-updated">
+            <dt>Last updated</dt>
+            <dd><time datetime="@Diagnostic.UpdatedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@Diagnostic.UpdatedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time></dd>
+        </div>
+        <div class="project-diagnostic-header__fact" data-testid="project-mode-indicator">
+            <dt>Mode</dt>
+            <dd><span class="project-diagnostic-header__mode" aria-label="@($"Console mode {ResolvedMode}")">@ResolvedMode</span></dd>
+        </div>
+    </dl>
+</section>
+
+@code {
+    private VocabularyDescriptor _lifecycle = ProjectVocabularyDescriptors.Describe(ProjectLifecycle.Active);
+    private int _warningCount;
+
+    [Parameter, EditorRequired]
+    public ProjectOperatorDiagnostic Diagnostic { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public string TenantScope { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Mode { get; set; } = ProjectConsoleModes.ReadOnly;
+
+    private string ResolvedMode => string.IsNullOrWhiteSpace(Mode) ? ProjectConsoleModes.ReadOnly : Mode;
+
+    protected override void OnParametersSet()
+    {
+        _lifecycle = ProjectVocabularyRendering.DescribeLifecycle(Diagnostic.LifecycleState);
+        _warningCount = ProjectDiagnosticRendering.CountWarnings(Diagnostic);
+    }
+
+    private async Task CopyAsync(string value)
+        => await JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", value).ConfigureAwait(true);
+}

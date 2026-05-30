@@ -13,6 +13,10 @@ export class ProjectDetailPage {
   readonly diagnosticHeader: Locator;
   readonly name: Locator;
   readonly lifecycleBadge: Locator;
+  readonly tenantCopy: Locator;
+  readonly projectIdCopy: Locator;
+  readonly emptyState: Locator;
+  readonly feedbackRegion: Locator;
   readonly archiveAction: Locator;
   readonly archiveDryRun: Locator;
   readonly archiveConfirm: Locator;
@@ -22,6 +26,10 @@ export class ProjectDetailPage {
     this.diagnosticHeader = page.getByTestId('project-diagnostic-header');
     this.name = page.getByTestId('project-detail-name');
     this.lifecycleBadge = page.getByTestId('project-lifecycle-badge');
+    this.tenantCopy = page.getByTestId('project-copy-tenant-scope');
+    this.projectIdCopy = page.getByTestId('project-copy-project-id');
+    this.emptyState = page.getByTestId(/^project-empty-/);
+    this.feedbackRegion = page.getByTestId(/^project-feedback-/);
     this.archiveAction = page.getByTestId('action-archive');
     this.archiveDryRun = page.getByTestId('action-archive-dry-run');
     this.archiveConfirm = page.getByTestId('action-archive-confirm');

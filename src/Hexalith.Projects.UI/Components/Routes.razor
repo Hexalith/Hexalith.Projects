@@ -1,0 +1,20 @@
+@using System.Reflection
+@using Hexalith.Projects.Contracts.Ui
+
+<Router AppAssembly="@typeof(ProjectsUIModule).Assembly"
+        AdditionalAssemblies="@AdditionalAssemblies">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(Layout.MainLayout)">
+            <ProjectEmptyStateView State="@ProjectEmptyState.NoProjects()" ProjectionType="@typeof(ProjectOperatorDiagnosticShellProjection)" />
+        </LayoutView>
+    </NotFound>
+</Router>
+
+@code {
+    private static readonly Assembly[] AdditionalAssemblies = [typeof(ProjectsFrontComposerDomain).Assembly];
+}
+

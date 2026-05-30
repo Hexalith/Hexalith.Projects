@@ -39,11 +39,15 @@ These categories MAY appear in events, projections, DTOs, logs, and audit record
 | `CorrelationId` | Correlation identifier. |
 | `CausationId` | Causation identifier. |
 | `AuditId` | Audit-record identifier. |
+| `UiFeedbackCode` | UI feedback category / safe reason code / correlation id used by console primitives. |
 
 Notes:
 
 - A rejected **field NAME** (e.g. `"Title"`) is safe; the rejected field **VALUE** is never echoed.
 - Reason codes are emitted by **name** (name-based JSON), never as integer ordinals.
+- UI feedback messages may include safe categories and reason codes only; raw upstream problem
+  details, response bodies, command bodies, prompts, tokens, file paths, proposal bodies, and sibling
+  denial details remain forbidden.
 
 ## Forbidden sibling-owned content (NEVER on the wire)
 

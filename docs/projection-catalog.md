@@ -179,6 +179,26 @@ boundaries.
   `auditLimit` (default 25, max 100). Later Web/MCP/CLI adapters must reuse this DTO shape rather
   than composing raw projection rows directly.
 
+## `ProjectOperatorDiagnosticShellProjection`
+
+- **Type:** `Hexalith.Projects.Contracts.Ui.ProjectOperatorDiagnosticShellProjection`.
+- **Owner:** Story 5.3 FrontComposer shell/navigation seed in Contracts. It is a generated UI/MCP/CLI
+  descriptor input, not a persisted runtime projection and not the Story 5.4 inventory/detail view.
+- **Source data:** thin metadata-only wrapper over
+  `Hexalith.Projects.Contracts.Models.ProjectOperatorDiagnostic` from Story 5.2. It reuses the shared
+  `ProjectLifecycle` vocabulary and computes only shell-level warning count from reference states.
+- **Tenant scoping:** inherited from the server-side operator diagnostic query; the seed never accepts
+  or derives tenant authority from client input.
+- **Stored data:** none. The generated FrontComposer artifacts are build output under
+  `obj/{Config}/{TFM}/generated/HexalithFrontComposer/`.
+- **Freshness semantics:** carries `LastUpdated` from the diagnostic DTO and `FreshnessTrustState` from
+  `ProjectOperatorFreshnessMetadata`. It does not invent wall-clock freshness.
+- **Leakage boundary:** project id/name, lifecycle, warning count, last-updated timestamp, mode label,
+  and freshness trust state only. No transcript, file content, memory payload, prompt, token, path,
+  proposal body, command body, candidate score/rank, rejected candidate id, or sibling denial detail.
+- **Consumer guidance:** Stories 5.4-5.11 consume the shell seed and shared rendering primitives while
+  owning their specific view/action contracts.
+
 ## `ConversationStartSetupProjection`
 
 - **Type:** `Hexalith.Projects.Projections.ConversationStartSetup.ConversationStartSetupProjector`.

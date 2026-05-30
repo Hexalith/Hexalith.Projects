@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 
 using Hexalith.FrontComposer.Contracts.Attributes;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 
 using Shouldly;
@@ -89,6 +90,54 @@ public sealed class ProjectVocabularyTests
     public void GetSeverityThrowsWhenMemberLacksBadgeAttribute()
         => Should.Throw<InvalidOperationException>(() => ProjectVocabularyDescriptors.GetSeverity(UnbadgedEnum.Member));
 
+    [Fact]
+    public void OperatorDiagnosticShellProjectionCarriesFrontComposerMetadata()
+    {
+        Type type = typeof(ProjectOperatorDiagnosticShellProjection);
+        type.GetCustomAttributes(typeof(ProjectionAttribute), inherit: false).ShouldHaveSingleItem();
+        BoundedContextAttribute context = type.GetCustomAttributes(typeof(BoundedContextAttribute), inherit: false)
+            .ShouldHaveSingleItem()
+            .ShouldBeOfType<BoundedContextAttribute>();
+        context.Name.ShouldBe("Projects");
+        context.DisplayLabel.ShouldBe("Projects");
+        typeof(ProjectOperatorDiagnosticShellProjection)
+            .GetProperty(nameof(ProjectOperatorDiagnosticShellProjection.Lifecycle))!
+            .PropertyType.ShouldBe(typeof(ProjectLifecycle));
+    }
+
+    [Fact]
+    public void OperatorDiagnosticShellProjectionMapsFromExistingDiagnosticDto()
+    {
+        ProjectOperatorDiagnostic diagnostic = new(
+            "project-001",
+            "Console Project",
+            null,
+            "active",
+            DateTimeOffset.UnixEpoch,
+            DateTimeOffset.UnixEpoch.AddMinutes(1),
+            null,
+            null,
+            new ProjectOperatorContextActivation(true, null),
+            [
+                new ProjectOperatorReferenceSummary("folder", "included", "folder-001", "Folder", null, Freshness()),
+                new ProjectOperatorReferenceSummary("file", "unavailable", "file-001", "File", null, Freshness()),
+            ],
+            [],
+            Freshness());
+
+        ProjectOperatorDiagnosticShellProjection projection =
+            ProjectOperatorDiagnosticShellProjection.FromDiagnostic(diagnostic, "maintenance");
+
+        projection.Id.ShouldBe("project-001");
+        projection.ProjectId.ShouldBe(diagnostic.ProjectId);
+        projection.Name.ShouldBe(diagnostic.Name);
+        projection.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+        projection.WarningCount.ShouldBe(1);
+        projection.LastUpdated.ShouldBe(diagnostic.UpdatedAt);
+        projection.Mode.ShouldBe("maintenance");
+        projection.FreshnessTrustState.ShouldBe("trusted");
+    }
+
     private static IEnumerable<object[]> Members<TEnum>()
         where TEnum : struct, Enum
     {
@@ -145,4 +194,7 @@ public sealed class ProjectVocabularyTests
     {
         Member,
     }
+
+    private static ProjectOperatorFreshnessMetadata Freshness()
+        => new("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark-001", false, "trusted");
 }

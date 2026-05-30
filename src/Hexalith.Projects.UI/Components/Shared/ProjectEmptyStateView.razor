@@ -1,0 +1,18 @@
+@using Hexalith.FrontComposer.Shell.Components.Rendering
+
+<div class="project-empty-state"
+     data-testid="@($"project-empty-{State.Category}")"
+     aria-label="@State.AriaLabel">
+    <FcProjectionEmptyPlaceholder ProjectionType="@ProjectionType"
+                                  EntityPluralOverride="@State.EntityPlural"
+                                  SecondaryText="@State.SecondaryText" />
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public ProjectEmptyState State { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public Type ProjectionType { get; set; } = default!;
+}
+

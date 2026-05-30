@@ -1,0 +1,43 @@
+@page "/projects/{ProjectId}"
+@using Hexalith.Projects.UI.Diagnostics
+@inject IProjectOperatorDiagnosticSource Diagnostics
+
+@if (_loading)
+{
+    <ProjectFeedbackView Feedback="@ProjectConsoleFeedback.Loading("operator_diagnostics_loading")" />
+}
+else if (_result?.Diagnostic is not null)
+{
+    <ProjectDiagnosticHeader Diagnostic="@_result.Diagnostic"
+                             TenantScope="@(_result.TenantScope ?? "server-derived tenant")"
+                             Mode="@_result.Mode" />
+}
+else if (_result?.Feedback is not null)
+{
+    <ProjectFeedbackView Feedback="@_result.Feedback" />
+}
+
+@code {
+    [Parameter]
+    public string? ProjectId { get; set; }
+
+    private bool _loading = true;
+    private ProjectDiagnosticLoadResult? _result;
+    private string? _loadedProjectId;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (string.Equals(_loadedProjectId, ProjectId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _loading = true;
+        _loadedProjectId = ProjectId;
+        _result = string.IsNullOrWhiteSpace(ProjectId)
+            ? ProjectDiagnosticLoadResult.FromFeedback(ProjectConsoleFeedback.FailClosed("invalid_project_id"))
+            : await Diagnostics.GetProjectDiagnosticsAsync(ProjectId, CancellationToken.None).ConfigureAwait(true);
+        _loading = false;
+    }
+}
+

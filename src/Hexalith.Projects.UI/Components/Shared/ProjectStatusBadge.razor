@@ -1,0 +1,15 @@
+@using Hexalith.FrontComposer.Shell.Components.Badges
+@using Hexalith.Projects.Contracts.Ui
+
+<FcStatusBadge Slot="@Descriptor.Severity"
+               Label="@Descriptor.DisplayLabel"
+               ColumnHeader="@ColumnHeader" />
+
+@code {
+    [Parameter, EditorRequired]
+    public VocabularyDescriptor Descriptor { get; set; } = default!;
+
+    [Parameter]
+    public string? ColumnHeader { get; set; }
+}
+

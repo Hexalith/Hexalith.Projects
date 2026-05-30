@@ -1,0 +1,97 @@
+.project-diagnostic-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: start;
+    padding: 1rem;
+    border-bottom: 1px solid var(--neutral-stroke-rest);
+    background: var(--neutral-layer-1);
+}
+
+.project-diagnostic-header__identity {
+    min-width: 0;
+}
+
+.project-diagnostic-header__tenant,
+.project-diagnostic-header__ids {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+    color: var(--neutral-foreground-hint);
+    font-size: .875rem;
+}
+
+.project-diagnostic-header__label {
+    font-weight: 600;
+    color: var(--neutral-foreground-rest);
+}
+
+.project-diagnostic-header__title {
+    margin: .25rem 0;
+    font-size: 1.5rem;
+    line-height: 1.25;
+    letter-spacing: 0;
+}
+
+.project-diagnostic-header__id {
+    overflow-wrap: anywhere;
+    font-family: var(--fontFamilyMonospace);
+}
+
+.project-diagnostic-header__copy {
+    min-height: 2rem;
+    border: 1px solid var(--neutral-stroke-rest);
+    border-radius: 4px;
+    padding: .25rem .625rem;
+    background: var(--neutral-layer-2);
+    color: var(--neutral-foreground-rest);
+}
+
+.project-diagnostic-header__facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(7rem, auto));
+    gap: .75rem;
+    margin: 0;
+}
+
+.project-diagnostic-header__fact {
+    min-width: 0;
+}
+
+.project-diagnostic-header__fact dt {
+    margin-bottom: .25rem;
+    color: var(--neutral-foreground-hint);
+    font-size: .75rem;
+    font-weight: 600;
+}
+
+.project-diagnostic-header__fact dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.project-diagnostic-header__mode {
+    display: inline-block;
+    border: 1px solid var(--neutral-stroke-rest);
+    border-radius: 4px;
+    padding: .125rem .5rem;
+    background: var(--neutral-layer-2);
+}
+
+@media (max-width: 900px) {
+    .project-diagnostic-header {
+        grid-template-columns: 1fr;
+    }
+
+    .project-diagnostic-header__facts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .project-diagnostic-header__facts {
+        grid-template-columns: 1fr;
+    }
+}
+
