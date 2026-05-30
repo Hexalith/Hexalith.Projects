@@ -38,10 +38,12 @@ boundaries.
   `ProjectEventProjectionProcessor`; runtime Server reads it through `DaprProjectListReadModel`.
 - **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
 - **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, `ProjectArchived`, `ProjectFolderSet`,
-  and `ProjectFolderCreationPending`. Setup, folder-set, and pending-folder events refresh
-  `UpdatedAt`/sequence only; archive updates lifecycle to `Archived`. Reference link/unlink events
-  (`FileReferenceLinked`/`FileReferenceUnlinked`/`MemoryLinked`/`MemoryUnlinked`) are routed to the
-  reference index projection, not the list row.
+  `ProjectFolderCreationPending`, `FileReferenceLinked`, `FileReferenceUnlinked`, `MemoryLinked`,
+  `MemoryUnlinked`, and `ProjectResolutionConfirmed`. Setup, folder-set, pending-folder,
+  reference-link/unlink, and resolution-confirmation events refresh `UpdatedAt`/sequence only;
+  archive updates lifecycle to `Archived`. File/Memory reference events are also routed to the
+  reference index projection; the list projection must still tolerate them because runtime rebuilds
+  fold the shared tenant journal over every Project event.
 - **Tenant scoping:** envelope tenant and event tenant must match before the row is folded. Query reads
   filter rows by the authenticated authoritative tenant before response construction.
 - **Stored data:** metadata-only project id, display name, lifecycle state, sequence watermark, created
@@ -67,11 +69,13 @@ boundaries.
 - **Key:** canonical Project identity `{tenant}:projects:{projectId}` derived by `ProjectIdentity`.
 - **Source events:** `ProjectCreated`, `ProjectSetupUpdated`, `ProjectArchived`, `ProjectFolderSet`,
   `ProjectFolderCreationPending`, `FileReferenceLinked`, `FileReferenceUnlinked`, `MemoryLinked`,
-  and `MemoryUnlinked`. `SetupMetadata` is the safe setup metadata reference carried by creation;
+  `MemoryUnlinked`, and `ProjectResolutionConfirmed`. `SetupMetadata` is the safe setup metadata reference carried by creation;
   `ProjectSetupUpdated` stores the latest bounded metadata-only setup preferences; `ProjectArchived`
   updates lifecycle to `Archived`; folder events record the single Project Folder reference (or pending
   intent when the Folders create capability is externally unavailable); file/memory link/unlink events
-  maintain the bounded per-kind reference sets on the detail row alongside the disjoint reference index.
+  maintain the bounded per-kind reference sets on the detail row alongside the disjoint reference index;
+  `ProjectResolutionConfirmed` updates freshness/sequence only and stores no candidate scores, ranks,
+  rejected ids, or trace payload.
 - **Tenant scoping:** envelope tenant and event tenant must match before detail is folded. Open Project
   reads filter the detail by authoritative tenant before response construction.
 - **Stored data:** metadata-only project id, name, description, setup metadata reference, bounded setup
@@ -99,8 +103,8 @@ boundaries.
   never remove the Project Folder row and folder replacement can never remove file or memory rows.
 - **Source events:** `ProjectFolderSet`, `ProjectFolderCreationPending`, `FileReferenceLinked`,
   `FileReferenceUnlinked`, `MemoryLinked`, and `MemoryUnlinked`. `ProjectCreated`/`ProjectSetupUpdated`
-  /`ProjectArchived` are observed but produce no reference-index rows. Unknown event types throw to
-  keep the projection in sync with `ProjectStateApply`.
+  /`ProjectArchived`/`ProjectResolutionConfirmed` are observed but produce no reference-index rows.
+  Unknown event types throw to keep the projection in sync with `ProjectStateApply`.
 - **Tenant scoping:** envelope tenant and event tenant must match before any row is folded. Query
   reads filter by the authoritative tenant before response construction.
 - **Stored data:** metadata-only tenant id, project id, reference kind, reference id, inclusion state
@@ -124,7 +128,8 @@ boundaries.
   retained. The `NoPayloadLeakage` harness asserts this per reference kind.
 - **Consumer guidance:** Epic 3 context assembly reads this projection lane-aware: a single Project
   Folder row (Included or Pending), zero-to-many File Reference rows, and zero-to-many Memory
-  Reference rows. The lanes never share a key prefix.
+  Reference rows. Story 4.3 attachment resolution also uses the reverse-by-reference read model over
+  this projection for `folder` and `file` inputs. The lanes never share a key prefix.
 
 ## `ConversationStartSetupProjection`
 

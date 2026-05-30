@@ -24,7 +24,7 @@ notes which surface category (mutation / query / both) must tick it.
 | 5 | Non-`eventually_consistent` `X-Hexalith-Freshness` requested on an eventually-consistent query. | Query | **400 validation_error** with field `freshness` AFTER authorization. | Stories 1.7, 3.2 (AC 4f) |
 | 6 | Cross-tenant scope (tenant-A claim, tenant-B resource). | Mutation + Query | Safe-denial **404** (NEVER 403). The response Problem Details body never echoes the requested tenant id or any resource metadata. Reuses the FS-8 / SM-3 cross-tenant harness. | Stories 1.4, 1.6, 3.1, 3.2 (AC 11) |
 | 7 | Unknown / mismatched `Idempotency-Key` on a mutation retry (same fingerprint, different idempotency key OR different fingerprint, same idempotency key). | Mutation | **409 IdempotencyConflict** with the canonical problem-details oracle. | Stories 1.4, 2.3, 2.5, 2.7 |
-| 8 | Authorized but stale / unavailable projection (`ReferenceState.Unavailable && Retryable`). | Query | **503 ReadModelUnavailable** with `Retryable=true`. Mutations apply the analogous retryable rejection path (see 1.4 mutation flow). | Stories 1.4, 1.7, 3.2 (AC 4d) |
+| 8 | Authorized but stale / unavailable projection or sibling ACL/preflight (`ReferenceState.Unavailable && Retryable`). | Mutation + Query | **503 ReadModelUnavailable** with `Retryable=true` before writes for mutations and before response bodies for queries. Query examples include stale/unavailable read models; mutation examples include retryable command-readiness failures and proposal/confirmation ACL preflight failures. | Stories 1.4, 1.7, 3.2 (AC 4d), 4.4, 4.5 |
 
 ## How to apply
 
@@ -40,7 +40,7 @@ Negative-test checklist (docs/checklists/mutation-and-query-negative-tests.md):
 [ ] 5 Stricter freshness on eventually-consistent query
 [ ] 6 Cross-tenant scope
 [ ] 7 Unknown Idempotency-Key retry
-[ ] 8 Stale/unavailable projection
+[ ] 8 Stale/unavailable projection or preflight
 ```
 
 ## Story 3.2 reference application

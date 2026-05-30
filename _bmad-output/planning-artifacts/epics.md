@@ -42,8 +42,8 @@ _Source: PRD §4 (FR-1–FR-22). Each FR has testable consequences in the PRD; a
 
 **Context References**
 
-- **FR-6: Link Conversation** — Link an existing Conversation to a Project (single-project membership in v1). Records stable Conversation identity + metadata, no transcript copy. Linking a Conversation already in another Project requires an explicit move. Fails if Conversation tenant authorization cannot be established. (UJ-1, UJ-3) ⚠️ *upstream Conversations dependency — see AR-G1.*
-- **FR-7: Move Conversation Between Projects** — Move a Conversation between Projects on explicit user confirmation. Removes prior membership before creating the new one; auditable; fails closed when authorization to either Project or the Conversation cannot be established. ⚠️ *upstream Conversations dependency — see AR-G1.*
+- **FR-6: Link Conversation** — Link an existing Conversation to a Project (single-project membership in v1). Records stable Conversation identity + metadata, no transcript copy. Linking a Conversation already in another Project requires an explicit move. Fails if Conversation tenant authorization cannot be established. (UJ-1, UJ-3) Resolved through AR-G1 Conversations-owned reassignment ACLs.
+- **FR-7: Move Conversation Between Projects** — Move a Conversation between Projects on explicit user confirmation. Removes prior membership before creating the new one; auditable; fails closed when authorization to either Project or the Conversation cannot be established. Resolved through AR-G1 Conversations-owned reassignment ACLs.
 - **FR-8: Set Project Folder** — Set the single authorized Project Folder for a Project (exactly one in v1). Records stable Folder identity + metadata; replacement only via explicit update; no file contents/paths stored; folder authorization delegated to Hexalith.Folders. (UJ-2)
 - **FR-9: Link File Reference** — Link authorized File References (optional, do not replace the Project Folder). Records stable File identity + metadata; authorization delegated to Hexalith.Folders.
 - **FR-10: Link Memory** — Link authorized Memory references. Records stable Memory identity + metadata, no payload copy; authorization delegated to Hexalith.Memories. (UJ-1, UJ-3)
@@ -54,7 +54,7 @@ _Source: PRD §4 (FR-1–FR-22). Each FR has testable consequences in the PRD; a
 - **FR-12: Resolve Project From Conversation** — Resolve Candidate Projects for a Conversation with no explicit Project. Returns `NoMatch`/`SingleCandidate`/`MultipleCandidates` with reason code(s); excludes archived unless explicitly requested; never accesses unauthorized resources. (UJ-3)
 - **FR-13: Resolve Project From Attachments** — Resolve Candidate Projects from attached Project Folder / File References. Identifies `ProjectFolderMatched`/`FileReferenceMatched`; fails closed when authorization is missing/stale; never treats raw file contents as Project data. (UJ-2)
 - **FR-14: Confirm Ambiguous Project** — On `MultipleCandidates`, present candidates and record the user's confirmed choice. Never silently attaches; confirmation creates/updates the Project-to-Conversation association; rejected candidates are not linked.
-- **FR-15: Propose New Project** — When no suitable Project is found, propose creating one from the current Conversation, attachments, and setup metadata. Includes a suggested name + initial setup; no Project is created from inference until authorized confirmation; the created Project links the initiating Conversation and authorized attachments. ⚠️ *"link initiating conversation" has upstream Conversations dependency — see AR-G1.*
+- **FR-15: Propose New Project** — When no suitable Project is found, propose creating one from the current Conversation, attachments, and setup metadata. Includes a suggested name + initial setup; no Project is created from inference until authorized confirmation; the created Project links the initiating Conversation and authorized attachments through AR-G1 Conversations-owned reassignment ACLs.
 
 **Project Context Assembly**
 
@@ -133,7 +133,7 @@ _Source: Architecture Decision Document (decisions, structure, implementation se
 
 **Cross-module upstream dependency gaps (track as ADRs + upstream stories)**
 
-- **AR-G1 (blocks FR-6/FR-7/FR-15 end-to-end):** Conversations' `ProjectId` is currently **immutable** (set only at `ConversationCreated`; no re-parent event). Post-creation project assignment/move requires a **new Conversations command/event**. Record as ADR + upstream Conversations story before scheduling FR-6/FR-7 write-side stories. Preferred resolution preserves Pattern A + Conversations ownership.
+- **AR-G1 (resolved by Epic 2/4 implementation):** Conversation assignment/move remains owned by **`Hexalith.Conversations`**. Projects calls the Conversations reassignment API through ACLs and does not store local conversation membership. Story 4.4/4.5 confirmation paths run the assignment boundary before the Projects EventStore command and use idempotent recovery for already-target / expected-source / unassigned cases.
 - **AR-G2 (prerequisite for conversation-aware view/resolution — this is the existing Story 2.1):** `IConversationClient` lacks list/search; add `ListConversationsAsync` (forwarding to the server handler) **or** call `ConversationReadApi` over HTTP. The server-side `ConversationListFilterV1.ProjectId` + `ConversationQueryHandler.ListAsync` discovery path already exists and is tenant-scoped/fail-closed.
 - **AR-G3 (FR-1 auto-folder-create):** Folders' `CreateFolder` is contract-defined but **not yet mapped to external REST** (processes via `/process`). Either land the Folders server story or invoke in-topology via the typed client/Dapr; confirm availability before the create-project-with-folder story. (Note: `AddFoldersClient` DI helper recently drafted in the Folders submodule, pending commit.)
 - **AR-G4 (nice-to-have):** Confirm whether a Project Memory link maps to a Memories `Case` or individual `MemoryUnit` references (Memories model is Tenant → Case → MemoryUnit). Resolve in the Memory-link story. Note Memories core write methods are `[Experimental("HXL001")]` and ingestion is async/eventually-consistent.
@@ -201,8 +201,8 @@ _Source: UX Design Specification + FrontComposer web-UX research. The UX scope i
 - **FR-3 Update Project Setup:** Epic 1 — `UpdateProjectSetup`; durable, additive setup.
 - **FR-4 Archive Project:** Epic 1 — `ArchiveProject`; lifecycle `Active`/`Archived`.
 - **FR-5 List Projects:** Epic 1 — `ListProjects` over `ProjectListProjection`, filterable by lifecycle.
-- **FR-6 Link Conversation:** Epic 2 — Conversation read ACL (Story 2.1) + write-side link (gated on AR-G1).
-- **FR-7 Move Conversation:** Epic 2 — explicit move; auditable; gated on AR-G1 upstream re-parent event.
+- **FR-6 Link Conversation:** Epic 2 — Conversation read ACL (Story 2.1) + write-side link through AR-G1 Conversations-owned reassignment.
+- **FR-7 Move Conversation:** Epic 2 — explicit move through AR-G1 Conversations-owned reassignment; auditable and fail-closed.
 - **FR-8 Set Project Folder:** Epic 2 — `SetProjectFolder` (single Folder ref) + Folders ACL.
 - **FR-9 Link File Reference:** Epic 2 — `LinkFileReference` + Folders ACL.
 - **FR-10 Link Memory:** Epic 2 — `LinkMemory` + Memories ACL.
@@ -237,9 +237,9 @@ Stand up a deployable, tenant-isolated, authenticated `Hexalith.Projects` servic
 Make a project a true workspace boundary by connecting it to its conversations, its single Project Folder, optional file references, and memories — every reference held by-ID, tenant-scoped, and fail-closed behind the four Projects-owned Anti-Corruption Layers (Conversations, Folders, Memories, Tenants). Delivers the `ProjectReferenceIndexProjection` and the folder/file/memory aggregate write events, plus safe discovery/listing of a project's conversations.
 
 **FRs covered:** FR-6, FR-7, FR-8, FR-9, FR-10, FR-11
-**Key ARs:** AR-9 (reference index), AR-11, AR-12, AR-14 · **Dependencies/Gaps:** AR-G1 (Conversations re-parent event — ADR + upstream story before FR-6/FR-7 write-side), AR-G2 (Story 2.1 `ListConversationsAsync`), AR-G3 (Folders `CreateFolder` REST for FR-1 auto-folder), AR-G4 (Memories Case-vs-Unit) · **NFRs:** NFR-1, NFR-2, NFR-3
+**Key ARs:** AR-9 (reference index), AR-11, AR-12, AR-14 · **Dependencies/Gaps:** AR-G1 (resolved by Conversations-owned reassignment ACLs), AR-G2 (Story 2.1 `ListConversationsAsync`), AR-G3 (Folders `CreateFolder` REST for FR-1 auto-folder), AR-G4 (Memories Case-vs-Unit) · **NFRs:** NFR-1, NFR-2, NFR-3
 **Standalone:** Yes — builds on Epic 1; does not require Epics 3–5.
-**Notes:** **Story 2.1 = the existing `2-1-conversation-reference-read-acl.md`** (Conversation Reference Read ACL, Pattern A, read-only discovery — reconcile, don't duplicate). FR-6/FR-7 write-side (durable link + move) is gated on the AR-G1 upstream Conversations capability; the read-discovery path (2.1) is not blocked. Folder/File/Memory links are `ProjectAggregate` writes; conversation membership stays Conversations-owned.
+**Notes:** **Story 2.1 = the existing `2-1-conversation-reference-read-acl.md`** (Conversation Reference Read ACL, Pattern A, read-only discovery — reconcile, don't duplicate). FR-6/FR-7 write-side (durable link + move) consumes the AR-G1 Conversations reassignment capability through ACLs. Folder/File/Memory links are `ProjectAggregate` writes; conversation membership stays Conversations-owned.
 
 ### Epic 3: Project Context Assembly
 
@@ -255,7 +255,7 @@ Give Chatbot the assembled context it needs to start or resume a conversation: a
 When a conversation arrives without an explicit project, help Chatbot find the right one: resolve candidate projects from conversation metadata (FR-12) and from attached Folder/File references (FR-13), returning `NoMatch`/`SingleCandidate`/`MultipleCandidates` with reason codes; let the user confirm an ambiguous match (FR-14); and propose a new project when none fits (FR-15). Resolution is compute-on-demand and never silently attaches; inference never creates a project without explicit confirmation, and archived projects are excluded unless explicitly requested.
 
 **FRs covered:** FR-12, FR-13, FR-14, FR-15
-**Key ARs:** AR-10 (compute-on-demand + `ProjectResolutionConfirmed`), AR-9 (reads reference index) · **Dependencies:** AR-G1 (FR-15 "link initiating conversation") · **NFRs:** NFR-2, NFR-3, NFR-9
+**Key ARs:** AR-10 (compute-on-demand + `ProjectResolutionConfirmed`), AR-9 (reads reference index), AR-G1 (resolved Conversations-owned assignment for FR-15 "link initiating conversation") · **NFRs:** NFR-2, NFR-3, NFR-9
 **Standalone:** Yes — builds on Epics 1–2; independent of Epic 3 and Epic 5.
 **Notes:** Only the confirmed choice is persisted (`ProjectResolutionConfirmed`); resolution traces are computed, not stored (persisted-trace history is deferred). Define scoring/confidence-band heuristics in the resolution stories.
 
@@ -287,7 +287,7 @@ _Captured from the Step-2 multi-agent review (Winston/John/Murat/Amelia). These 
 
 _How AR-G1–G4 are sequenced so no story is blocked mid-flight. Each upstream change is a separate submodule-first PR (never mixed with Projects code or submodule-pointer churn)._
 
-- **PR-1 — AR-G1 (OWNED → scheduled prerequisite):** Add an additive "reassign / move conversation project" command + event to **`Hexalith.Conversations`** (own submodule PR; additive, no `V2`). **Lands before** Epic 2's conversation write-side (FR-6, FR-7) and Epic 4's FR-15 "link initiating conversation." Sequenced, not quarantined.
+- **PR-1 — AR-G1 (resolved):** Additive "reassign / move conversation project" capability in **`Hexalith.Conversations`** is consumed through Projects ACLs. Projects preserves Pattern A ownership and never persists local conversation membership.
 - **PR-2 — AR-G2 (prerequisite for Story 2.1):** Add `IConversationClient.ListConversationsAsync` (forwarding to the existing `ConversationQueryHandler.ListAsync`) **or** consume `ConversationReadApi` — as a separate Conversations-submodule PR + version bump — then consume it in Story 2.1's ACL. Optionally write a consumer-driven contract test first so the ACL translator (Tier-1 pure) can progress against a verified double.
 - **PR-3 — AR-G3 (FR-1 auto-folder split):** `CreateProject` (Epic 1, Story 1a) ships **without** auto-folder. Auto-folder-create becomes a separate story gated on Folders' `CreateFolder` being exposed as external REST (or invoked in-topology via the typed client/Dapr).
 - **PR-4 — AR-G4 (Memories deferred behind decision spike):** A decision spike resolves whether a Project Memory link maps to a Memories `Case` or individual `MemoryUnit` references **before** any Memories write-side story. Memories writes are `[Experimental]`/async/eventually-consistent → Memories reference write-side sits at the **back of Epic 2** (or a follow-up); Epic 3's allowlist treats an absent/unavailable Memories reference as a **fail-closed-clean** state.
@@ -901,8 +901,10 @@ So that **I can reconstruct what happened to a Project without accessing any pay
 **Acceptance Criteria:**
 
 **Given** any Project operation
-**When** it occurs (creation, setup update, archival, conversation link/move, Project Folder change, file/memory link/unlink, resolution confirmation, new-Project-from-proposal)
+**When** it occurs (creation, setup update, archival, conversation link/move, Project Folder change, file/memory link/unlink, resolution confirmation, new Project created from a proposal)
 **Then** the `ProjectAuditTimelineProjection` records an audit event including tenant, Project identity, operation type, timestamp, actor identity where available, and affected reference identifiers.
+
+**And** a new Project created from a proposal is derived from the explicit `CreateProject` + assignment/folder/file command chain and composite metadata; Story 4.5 intentionally emits no `ProjectCreatedFromProposal` event and stores no proposal aggregate.
 
 **Given** the metadata-only rule
 **When** audit events are recorded/serialized

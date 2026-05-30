@@ -252,9 +252,9 @@ are not yet emitted anywhere; the linked future story is where the producer land
 | `Excluded`         | Story 3.1 inclusion policy (conversation `Redacted` upstream signal)                     | Always carries `Diagnostic = "referenceRedacted"`.                                     |
 | `Unauthorized`     | Story 2.x ACLs (Folders, Memories, Conversations) on per-reference auth failure          | Plus Memories `TenantMismatch` collapsed at the assembly boundary (Story 2.6 ADR).     |
 | `Unavailable`      | Story 2.x ACLs (Folders, Memories, Conversations) when upstream is unreachable           | Fail-closed-clean exclusion.                                                           |
-| `Stale`            | Story 2.1 Conversation read ACL (`MixedGeneration` / `Stale` trust signals)              | **Folders/Memories `Stale` is `unproduced — taxonomy-only`** — Story 3.4 (Refresh) is the first slot where Projects materially produces `Stale` for Folders/Memories references. |
+| `Stale`            | Story 2.1 Conversation read ACL (`MixedGeneration` / `Stale` trust signals); Story 3.4 refresh mappers for Folder/Memory ACL rechecks; Epic 4 resolution mappers preserve stale evidence as non-qualifying exclusions. | Fails closed for inclusion/resolution; never contributes a positive match. |
 | `Archived`         | Story 2.x ACLs (Folders archived; Memories `Case.Status` = `Closed`/`Deleting`)          | Plus Story 1.8 archived project lifecycle.                                             |
-| `Ambiguous`        | `unproduced — taxonomy-only`                                                             | Reserved for Story 4.x project-resolution policy (`MultipleCandidates` propagation).   |
+| `Ambiguous`        | Resolution engine output as `ResolutionResult.MultipleCandidates`; not currently emitted as a `ReferenceState` row. | Reserved for future reference-health views that need to label ambiguous reference evidence directly. |
 | `TenantMismatch`   | Story 1.6 `TenantAccessAuthorizer` + Story 2.6 Memories ADR (boundary collapse)          | **`unproduced` as a surfaced `ReferenceState`** — the assembly always collapses to `Unauthorized` with `Diagnostic = "tenantMismatch"`. Kept for symmetry with `TenantAccessOutcome.TenantMismatch`. |
 | `Conflict`         | `ProjectAggregate` (`MemoryReferenceConflict` / `FileReferenceConflict` rejection paths) | Surfaced by the inclusion policy as `ReferenceLifecycle` exclusion.                    |
 | `InvalidReference` | Story 2.x ACLs (malformed identifier) + Story 3.1 policy (non-allowlisted reference kind) | Diagnostic differs (`referenceInvalidIdentifier` vs `referenceKindNotAllowlisted`).    |
@@ -270,11 +270,11 @@ are not yet emitted anywhere; the linked future story is where the producer land
 
 | Value                     | Current producer                                                                    | Notes                                                                            |
 | ------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `ConversationLinked`      | Story 3.1 inclusion policy (conversation included path)                             |                                                                                  |
-| `ProjectFolderMatched`    | Story 3.1 inclusion policy (Project Folder included path)                           |                                                                                  |
-| `FileReferenceMatched`    | Story 3.1 inclusion policy (file reference included path)                           |                                                                                  |
-| `MemoryMatched`           | Story 3.1 inclusion policy (memory reference included path)                         |                                                                                  |
-| `MetadataMatched`         | `unproduced — taxonomy-only`                                                        | Reserved for Story 4.x project-resolution policy (metadata-driven resolutions).  |
+| `ConversationLinked`      | Story 3.1 inclusion policy (conversation included path); Story 4.2 conversation-resolution mapper. | Resolution weight: 50. |
+| `ProjectFolderMatched`    | Story 3.1 inclusion policy (Project Folder included path); Story 4.3 attachment-resolution mapper. | Resolution weight: 45. |
+| `FileReferenceMatched`    | Story 3.1 inclusion policy (file reference included path); Story 4.3 attachment-resolution mapper. | Resolution weight: 35. |
+| `MemoryMatched`           | Story 3.1 inclusion policy (memory reference included path); Story 4.1 engine supports this signal for future memory-backed resolution evidence. | Resolution weight: 30. |
+| `MetadataMatched`         | Story 4.2 conversation-resolution mapper (safe-label/project-name metadata equality). | Resolution weight: 20. |
 
 ### `ProjectContextInclusionCheck` (`src/Hexalith.Projects.Contracts/Ui/ProjectContextInclusionCheck.cs`, Story 3.1)
 

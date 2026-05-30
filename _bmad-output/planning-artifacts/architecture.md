@@ -92,9 +92,11 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 - **Dapr is the only infrastructure abstraction** — no direct Redis/Postgres/Cosmos/broker in
   contracts/client/domain; pub/sub is at-least-once → idempotent handlers.
 - **Reference-don't-own** boundary to Conversations/Folders/Memories via ACLs. Conversations
-  already owns the immutable `ProjectId` link; its typed client currently lacks a list method
-  (must add `ListConversationsAsync` or call the read API). Folders contract is ahead of its
-  wired REST server (CreateFolder/ACL not yet external) — plan against the typed client.
+  owns Conversation-to-Project assignment; Projects calls the Conversations reassignment API through
+  ACLs (`ConfirmResolutionAssignmentAsync` / `ReassignConversationProjectAsync`) rather than storing
+  local conversation membership. Conversation list/read gaps were closed by the Epic 2/4 ACL paths.
+  Folders contract is ahead of its wired REST server (CreateFolder/ACL not yet external) — plan
+  against the typed client.
 - **FrontComposer** generates Web+MCP+CLI from `[Projection]`/`[Command]` contracts; Fluent UI
   v5 RC is pinned/high-risk. Pinned set (do not casually bump): Fluent UI, Dapr, Aspire,
   Roslyn, xUnit generation, .NET SDK.
@@ -669,16 +671,14 @@ in Server, generated surfaces from contracts. Dependency direction is machine-ch
 **Functional Requirements (22/22 mapped):**
 - **FR-1–5 (Workspace):** ✅ `ProjectAggregate` + List/Detail projections + queries.
 - **FR-8–11 (Folder/File/Memory refs):** ✅ aggregate events + reference index + Folders/Memories ACLs.
-- **FR-12–14 (Resolution + confirm):** ✅ compute-on-demand + `ConfirmProjectResolution`.
+- **FR-6, FR-7, FR-12–15 (Conversation assignment + resolution/proposal):** ✅ conversation
+  assignment remains owned by Conversations through the reassignment ACL; Projects resolution is
+  compute-on-demand, `ConfirmProjectResolution` persists only the confirmed choice, and NoMatch
+  proposal confirmation creates the Project then links the initiating conversation/authorized
+  attachments through explicit commands.
 - **FR-16–18 (Context assembly):** ✅ `Context/` allowlist assembly + get/explain/refresh.
 - **FR-19–20 (Setup quality):** ✅ setup validator + conversation-start-setup projection.
 - **FR-21–22 (Audit/Ops):** ✅ audit-timeline projection + metadata-only operator queries.
-- **FR-6, FR-7, FR-15 (conversation link/move/proposal-link):** ⚠️ **partial — upstream
-  dependency.** Pattern A keeps conversation membership owned by Conversations, whose
-  `ProjectId` is currently **immutable (set only at `ConversationCreated`)**. Linking an
-  already-created conversation (FR-6), moving a conversation (FR-7), and "link the initiating
-  conversation" (FR-15) all require Conversations to support **post-creation project
-  (re)assignment** (new Conversations command/event). See Gap Analysis.
 
 **Non-Functional Requirements:**
 - **Security/privacy:** ✅ tenant isolation (canonical identity + query-side filtering),
@@ -703,15 +703,7 @@ in Server, generated surfaces from contracts. Dependency direction is machine-ch
 **Critical Gaps (block implementation):** None internal to Projects.
 
 **Important Gaps (cross-module dependencies — track as upstream stories + ADRs):**
-1. **Conversations post-creation project assignment/move** (blocks FR-6/FR-7/FR-15 end-to-end).
-   Resolution options: (a) add Conversations commands/events to set/change a conversation's
-   `ProjectId` after creation [preferred — preserves Pattern A + Conversations ownership];
-   (b) v1-scope conversation linking to creation-time only, modeling "move" as user re-association.
-   **Record as ADR + upstream Conversations story before FR-6/FR-7 stories.**
-2. **Conversations typed-client list method** — `IConversationClient` lacks list/search; Pattern A
-   needs `ListConversationsAsync` (forwarding to the existing server handler) or a `ConversationReadApi`
-   HTTP call. Prerequisite for any conversation-aware view/resolution.
-3. **Folders `CreateFolder` external endpoint** — FR-1 auto-folder-create depends on a Folders
+1. **Folders `CreateFolder` external endpoint** — FR-1 auto-folder-create depends on a Folders
    operation that is contract-defined but **not yet mapped to external REST** (processes internally
    via `/process`). Either land the Folders server story or, in-topology, invoke via the typed
    client/Dapr; confirm availability before the create-project-with-folder story.
@@ -725,12 +717,11 @@ in Server, generated surfaces from contracts. Dependency direction is machine-ch
   `docs/adr/memories-link-target.md`.**
 
 ### Validation Issues Addressed
-The conversation link/move dependency (Gap 1) is the highest-priority finding: it is a genuine
-tension between the PRD (FR-6/FR-7 mutable membership) and the current Conversations capability
-(immutable link). The architecture resolves it cleanly under Pattern A *provided* Conversations
-gains a post-creation assignment capability; this is documented as a required ADR + upstream story
-rather than worked around by having Projects own conversation membership (which would violate the
-chosen ownership model and risk drift).
+The conversation link/move dependency was resolved without violating Pattern A: Projects still does
+not own conversation membership, and confirmation/proposal flows call the Conversations assignment
+ACL before the Projects EventStore command. The remaining external dependency is Folders
+CreateFolder exposure for automatic folder creation; the implemented proposal flow links only
+caller-supplied, preflight-authorized folder/file references.
 
 ### Architecture Completeness Checklist
 
