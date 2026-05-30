@@ -96,44 +96,74 @@ else if (_result?.Detail is not null)
                 break;
             case ReferencesSection:
                 <section role="tabpanel" data-testid="project-detail-section-references">
-                    @if (_result.Detail.References.Count == 0)
+                    @if (_result.ReferenceHealthRows.Count == 0)
                     {
                         <ProjectEmptyStateView State="@ProjectEmptyState.NoReferences()" ProjectionType="@typeof(ProjectDetailInspectorProjection)" />
                     }
                     else
                     {
-                        <table class="project-detail-inspector__table" data-testid="project-detail-reference-summary">
-                            <caption>Reference summaries</caption>
+                        <div class="project-reference-health">
+                        <table class="project-detail-inspector__table project-reference-health__matrix" data-testid="project-reference-health-matrix">
+                            <caption>Reference Health Matrix</caption>
                             <thead>
                                 <tr>
-                                    <th scope="col">Kind</th>
-                                    <th scope="col">Identifier</th>
-                                    <th scope="col">State</th>
-                                    <th scope="col">Reason</th>
+                                    <th scope="col">Reference type</th>
+                                    <th scope="col">Reference ID</th>
+                                    <th scope="col">Owner</th>
+                                    <th scope="col">Inclusion state</th>
+                                    <th scope="col">Health state</th>
+                                    <th scope="col">Reason code</th>
+                                    <th scope="col">Diagnostic</th>
+                                    <th scope="col">Last checked</th>
                                     <th scope="col">Freshness</th>
+                                    <th scope="col">Safe actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (ProjectOperatorReferenceSummary reference in _result.Detail.References)
+                                @foreach (ProjectReferenceHealthRowProjection reference in _result.ReferenceHealthRows)
                                 {
-                                    <tr>
-                                        <td>@reference.ReferenceKind</td>
+                                    <tr data-testid="project-reference-health-row" tabindex="0">
+                                        <td data-testid="project-reference-kind">@reference.ReferenceKind</td>
                                         <td>
-                                            <span>@(reference.DisplayName ?? "Unnamed reference")</span>
-                                            @if (!string.IsNullOrWhiteSpace(reference.ReferenceId))
+                                            <span>@(reference.DisplayLabel ?? "Unnamed reference")</span>
+                                            <code>@reference.ReferenceId</code>
+                                        </td>
+                                        <td data-testid="project-reference-owner">@reference.OwnerContext</td>
+                                        <td data-testid="project-reference-state">
+                                            <ProjectStatusBadge Descriptor="@ProjectVocabularyDescriptors.Describe(reference.InclusionState)" ColumnHeader="Inclusion state" />
+                                            <span class="project-reference-health__status-text">@ProjectVocabularyDescriptors.Describe(reference.InclusionState).AccessibleName</span>
+                                        </td>
+                                        <td>
+                                            <ProjectStatusBadge Descriptor="@ProjectVocabularyDescriptors.Describe(reference.HealthState)" ColumnHeader="Health state" />
+                                            <span class="project-reference-health__status-text">@ProjectVocabularyDescriptors.Describe(reference.HealthState).AccessibleName</span>
+                                        </td>
+                                        <td data-testid="project-reference-reason">@ReasonText(reference.ReasonCode)</td>
+                                        <td>
+                                            <span>@(reference.InclusionCheck?.ToString() ?? "none")</span>
+                                            <span>@(reference.DiagnosticCode ?? "none")</span>
+                                        </td>
+                                        <td data-testid="project-reference-last-checked">
+                                            <time datetime="@reference.LastCheckedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@reference.LastCheckedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time>
+                                        </td>
+                                        <td>
+                                            <span>@reference.FreshnessTrustState</span>
+                                            @if (!string.IsNullOrWhiteSpace(reference.ProjectionWatermark))
                                             {
-                                                <code>@reference.ReferenceId</code>
+                                                <code>@reference.ProjectionWatermark</code>
                                             }
                                         </td>
-                                        <td>
-                                            <ProjectStatusBadge Descriptor="@ProjectVocabularyRendering.DescribeReferenceState(reference.ReferenceState)" ColumnHeader="Reference state" />
+                                        <td data-testid="project-reference-safe-actions">
+                                            <div class="project-reference-health__actions" aria-label="@($"Safe actions for {reference.ReferenceKind} {reference.ReferenceId}")">
+                                                <button type="button" aria-disabled="true">Inspect</button>
+                                                <button type="button" aria-disabled="true">Copy ID</button>
+                                                <span>@reference.SafeActionAvailabilityLabel</span>
+                                            </div>
                                         </td>
-                                        <td>@(reference.ReasonCode ?? "none")</td>
-                                        <td>@FreshnessText(reference.Freshness)</td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
+                        </div>
                     }
                 </section>
                 break;
@@ -234,6 +264,11 @@ else if (_result?.Feedback is not null)
         => string.IsNullOrWhiteSpace(freshness.ProjectionWatermark)
             ? $"{freshness.ReadConsistency}; {freshness.TrustState}"
             : $"{freshness.ReadConsistency}; {freshness.TrustState}; {freshness.ProjectionWatermark}";
+
+    private static string ReasonText(ProjectReasonCode? reason)
+        => reason is null
+            ? "none"
+            : $"{ProjectVocabularyDescriptors.Describe(reason.Value).DisplayLabel} ({reason.Value})";
 
     private static RenderFragment RenderList(string heading, IEnumerable<string>? values)
         => builder =>

@@ -515,6 +515,36 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void ProjectReferenceHealthRowProjection_SerializesMetadataOnly()
+    {
+        ProjectReferenceHealthRowProjection row = ProjectReferenceHealthRowProjection.FromReferenceSummary(
+            "project-target-001",
+            new ProjectOperatorReferenceSummary(
+                "conversation",
+                "unauthorized",
+                "conversation_001",
+                "Safe conversation",
+                "ConversationLinked",
+                new ProjectOperatorFreshnessMetadata("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark_00000042", false, "trusted")));
+
+        row.InclusionCheck = ProjectContextInclusionCheck.ReferenceAuthorization;
+        row.DiagnosticCode = ProjectContextInclusionDiagnostic.ReferenceUnauthorized;
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(row));
+        string serialized = System.Text.Json.JsonSerializer.Serialize(row);
+        serialized.ShouldNotContain("tenantId", Case.Insensitive);
+        serialized.ShouldNotContain("candidate", Case.Insensitive);
+        serialized.ShouldNotContain("score", Case.Insensitive);
+        serialized.ShouldNotContain("rank", Case.Insensitive);
+        serialized.ShouldNotContain("transcript", Case.Insensitive);
+        serialized.ShouldNotContain("prompt", Case.Insensitive);
+        serialized.ShouldNotContain("token", Case.Insensitive);
+        serialized.ShouldNotContain("path", Case.Insensitive);
+        serialized.ShouldNotContain("secret", Case.Insensitive);
+        serialized.ShouldNotContain("body", Case.Insensitive);
+    }
+
+    [Fact]
     public void MemoryReferenceLinkRejection_SerializesMetadataOnly()
     {
         ProjectReferenceLinkRejected rejection = new(

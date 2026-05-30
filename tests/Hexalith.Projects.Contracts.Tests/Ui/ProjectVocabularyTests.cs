@@ -7,6 +7,7 @@ namespace Hexalith.Projects.Contracts.Tests.Ui;
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text.Json;
 
 using Hexalith.FrontComposer.Contracts.Attributes;
@@ -140,6 +141,51 @@ public sealed class ProjectVocabularyTests
             .GetProperty(nameof(ProjectDetailInspectorProjection.FreshnessTrustState))!
             .GetCustomAttributes(typeof(ProjectionFieldGroupAttribute), inherit: false)
             .ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void ReferenceHealthRowProjectionCarriesDetailRecordMetadata()
+    {
+        Type type = typeof(ProjectReferenceHealthRowProjection);
+        type.GetCustomAttributes(typeof(ProjectionAttribute), inherit: false).ShouldHaveSingleItem();
+        ProjectionRoleAttribute role = type.GetCustomAttributes(typeof(ProjectionRoleAttribute), inherit: false)
+            .ShouldHaveSingleItem()
+            .ShouldBeOfType<ProjectionRoleAttribute>();
+        role.Role.ShouldBe(ProjectionRole.DetailRecord);
+
+        PropertyInfo lastChecked = type.GetProperty(nameof(ProjectReferenceHealthRowProjection.LastCheckedAt))!;
+        lastChecked.GetCustomAttributes(typeof(RelativeTimeAttribute), inherit: false).ShouldHaveSingleItem();
+        type.GetProperty(nameof(ProjectReferenceHealthRowProjection.FreshnessTrustState))!
+            .GetCustomAttributes(typeof(ProjectionFieldGroupAttribute), inherit: false)
+            .ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void ReferenceHealthRowProjectionMapsFromExistingReferenceSummary()
+    {
+        ProjectReferenceHealthRowProjection row = ProjectReferenceHealthRowProjection.FromReferenceSummary(
+            "project-001",
+            new ProjectOperatorReferenceSummary(
+                "memory",
+                "stale",
+                "memory-001",
+                "Case memory",
+                "MemoryMatched",
+                Freshness()));
+
+        row.Id.ShouldBe("project-001:memory:memory-001");
+        row.ProjectId.ShouldBe("project-001");
+        row.ReferenceKind.ShouldBe("memory");
+        row.OwnerContext.ShouldBe("Memories");
+        row.ReferenceId.ShouldBe("memory-001");
+        row.DisplayLabel.ShouldBe("Case memory");
+        row.InclusionState.ShouldBe(ReferenceState.Stale);
+        row.HealthState.ShouldBe(ReferenceState.Stale);
+        row.ReasonCode.ShouldBe(ProjectReasonCode.MemoryMatched);
+        row.LastCheckedAt.ShouldBe(DateTimeOffset.UnixEpoch);
+        row.FreshnessTrustState.ShouldBe("trusted");
+        row.ProjectionWatermark.ShouldBe("watermark-001");
+        row.SafeActionAvailabilityLabel.ShouldContain("Story 5.9");
     }
 
     [Fact]

@@ -10,6 +10,7 @@ using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.UI.Rendering;
 
 using ContractDiagnostic = Hexalith.Projects.Contracts.Models.ProjectOperatorDiagnostic;
+using GeneratedContextExplanation = Hexalith.Projects.Client.Generated.ProjectContextExplanation;
 using GeneratedDiagnostic = Hexalith.Projects.Client.Generated.ProjectOperatorDiagnostic;
 
 /// <summary>
@@ -98,8 +99,57 @@ public sealed class ProjectDetailSource(IClient client) : IProjectDetailSource
             diagnosticFeedback = ProjectConsoleFeedback.Error("diagnostic_query_failed", correlationId);
         }
 
+        GeneratedContextExplanation? contextExplanation = null;
+        try
+        {
+            contextExplanation = await client.GetProjectContextExplanationAsync(
+                projectId,
+                correlationId,
+                ReadConsistencyClass.Eventually_consistent,
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (HexalithProjectsApiException ex)
+        {
+            diagnosticFeedback ??= MapReferenceHealthFailure(ex.StatusCode, correlationId);
+        }
+        catch (Exception)
+        {
+            diagnosticFeedback ??= ProjectConsoleFeedback.Error("reference_health_query_failed", correlationId);
+        }
+
+        ProjectConversationsPage? conversations = null;
+        try
+        {
+            conversations = await client.ListProjectConversationsAsync(
+                projectId,
+                pageSize: 100,
+                cursor: null!,
+                x_Correlation_Id: correlationId,
+                x_Hexalith_Freshness: ReadConsistencyClass.Eventually_consistent,
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (HexalithProjectsApiException ex)
+        {
+            diagnosticFeedback ??= MapReferenceHealthFailure(ex.StatusCode, correlationId);
+        }
+        catch (Exception)
+        {
+            diagnosticFeedback ??= ProjectConsoleFeedback.Error("reference_health_query_failed", correlationId);
+        }
+
+        ContractDiagnostic merged = ProjectGeneratedContractMapper.Merge(detail, diagnostic);
         return ProjectDetailLoadResult.FromDetail(
-            ProjectGeneratedContractMapper.Merge(detail, diagnostic),
-            diagnosticFeedback);
+            merged,
+            diagnosticFeedback,
+            ProjectReferenceHealthMapper.BuildRows(merged, contextExplanation, conversations));
     }
+
+    private static ProjectConsoleFeedback MapReferenceHealthFailure(int statusCode, string correlationId)
+        => statusCode switch
+        {
+            400 => ProjectConsoleFeedback.Error("validation_error", correlationId),
+            404 => ProjectConsoleFeedback.FailClosed("safe_denial", correlationId),
+            503 => ProjectConsoleFeedback.Warning("data_unavailable", correlationId),
+            _ => ProjectConsoleFeedback.Error("reference_health_query_failed", correlationId),
+        };
 }

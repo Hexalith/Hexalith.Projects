@@ -37,6 +37,20 @@ public sealed class ProjectDetailSourceTests
                 ReadConsistencyClass.Eventually_consistent,
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateDiagnostic()));
+        client.GetProjectContextExplanationAsync(
+                "project-001",
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateExplanation()));
+        client.ListProjectConversationsAsync(
+                "project-001",
+                100,
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateConversations()));
 
         var source = new ProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
@@ -48,6 +62,8 @@ public sealed class ProjectDetailSourceTests
         result.Detail.ProjectId.ShouldBe("project-001");
         result.Detail.ProjectSetup.ShouldNotBeNull();
         result.Detail.References.ShouldHaveSingleItem();
+        result.ReferenceHealthRows.Count.ShouldBe(2);
+        result.ReferenceHealthRows.Any(row => row.ReferenceKind == "conversation" && row.ReferenceId == "conversation-001").ShouldBeTrue();
         result.Detail.AuditTimeline.ShouldHaveSingleItem();
         await client.Received(1).GetProjectAsync(
             "project-001",
@@ -57,6 +73,18 @@ public sealed class ProjectDetailSourceTests
         await client.Received(1).GetProjectOperatorDiagnosticsAsync(
             "project-001",
             25,
+            Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)),
+            ReadConsistencyClass.Eventually_consistent,
+            Arg.Any<CancellationToken>()).ConfigureAwait(true);
+        await client.Received(1).GetProjectContextExplanationAsync(
+            "project-001",
+            Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)),
+            ReadConsistencyClass.Eventually_consistent,
+            Arg.Any<CancellationToken>()).ConfigureAwait(true);
+        await client.Received(1).ListProjectConversationsAsync(
+            "project-001",
+            100,
+            Arg.Any<string>(),
             Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)),
             ReadConsistencyClass.Eventually_consistent,
             Arg.Any<CancellationToken>()).ConfigureAwait(true);
@@ -153,6 +181,20 @@ public sealed class ProjectDetailSourceTests
                 "secret token transcript body",
                 new Dictionary<string, IEnumerable<string>>(),
                 null!));
+        client.GetProjectContextExplanationAsync(
+                "project-001",
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateExplanation()));
+        client.ListProjectConversationsAsync(
+                "project-001",
+                100,
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateConversations()));
 
         var source = new ProjectDetailSource(client);
         ProjectDetailLoadResult result = await source
@@ -164,6 +206,57 @@ public sealed class ProjectDetailSourceTests
         result.DiagnosticFeedback.ShouldNotBeNull();
         result.DiagnosticFeedback.Category.ShouldBe(ProjectConsoleFeedback.WarningCategory);
         result.DiagnosticFeedback.SafeReasonCode.ShouldBe("data_unavailable");
+        result.ReferenceHealthRows.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task SourceMapsReferenceHealthFailuresToSafeNonBlockingFeedback()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.GetProjectAsync(
+                "project-001",
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateProject()));
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-001",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateDiagnostic()));
+        client.GetProjectContextExplanationAsync(
+                "project-001",
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns<Task<ProjectContextExplanation>>(_ => throw new HexalithProjectsApiException(
+                "unsafe response hidden",
+                400,
+                "secret token transcript body",
+                new Dictionary<string, IEnumerable<string>>(),
+                null!));
+        client.ListProjectConversationsAsync(
+                "project-001",
+                100,
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns<Task<ProjectConversationsPage>>(_ => throw new System.Net.Http.HttpRequestException("secret upstream body"));
+
+        var source = new ProjectDetailSource(client);
+        ProjectDetailLoadResult result = await source
+            .GetProjectDetailAsync("project-001", CancellationToken.None)
+            .ConfigureAwait(true);
+
+        result.Detail.ShouldNotBeNull();
+        result.ReferenceHealthRows.ShouldHaveSingleItem();
+        result.DiagnosticFeedback.ShouldNotBeNull();
+        result.DiagnosticFeedback.SafeReasonCode.ShouldBe("validation_error");
+        result.DiagnosticFeedback.Message.ShouldNotContain("secret");
+        result.DiagnosticFeedback.Message.ShouldNotContain("transcript");
     }
 
     private static Project CreateProject()
@@ -227,6 +320,52 @@ public sealed class ProjectDetailSourceTests
             ReferenceId = "folder-001",
             DisplayName = "Folder",
             Freshness = Freshness(),
+        };
+
+    private static ProjectContextExplanation CreateExplanation()
+        => new()
+        {
+            Context = new ProjectContext
+            {
+                ProjectId = "project-001",
+                Lifecycle = ProjectContextLifecycle.Active,
+                AssemblyOutcome = ProjectContextAssemblyOutcome.Assembled,
+                ObservedAt = DateTimeOffset.UnixEpoch,
+                Freshness = ProjectContextFreshness.Fresh,
+            },
+            Evaluations =
+            [
+                new ProjectContextEvaluation
+                {
+                    ReferenceKind = ProjectContextEvaluationReferenceKind.Folder,
+                    ReferenceId = "folder-001",
+                    ResultState = ProjectContextEvaluationResultState.Included,
+                    FailedCheck = null,
+                    ReasonCode = ProjectContextEvaluationReasonCode.ProjectFolderMatched,
+                    ObservedAt = DateTimeOffset.UnixEpoch.AddMinutes(2),
+                },
+            ],
+        };
+
+    private static ProjectConversationsPage CreateConversations()
+        => new()
+        {
+            ProjectId = "project-001",
+            TrustSignal = ProjectConversationTrustSignal.Current,
+            Items =
+            [
+                new ProjectConversationItem
+                {
+                    ProjectId = "project-001",
+                    ConversationId = "conversation-001",
+                    DisplayLabel = "Support conversation",
+                    LifecycleStatus = "Active",
+                    ProjectSafeLabel = "Detail Project",
+                    ProjectSafeStatus = "Active",
+                    TrustSignal = ProjectConversationTrustSignal.Current,
+                },
+            ],
+            Page = new ProjectConversationPageMetadata { ReturnedCount = 1 },
         };
 
     private static FreshnessMetadata Freshness()

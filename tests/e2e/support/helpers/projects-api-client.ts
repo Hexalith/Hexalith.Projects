@@ -86,6 +86,74 @@ export interface ProjectOperatorReferenceSummary {
   freshness: ProjectOperatorFreshnessMetadata;
 }
 
+export interface ProjectContextReference {
+  referenceKind: 'conversation' | 'folder' | 'file' | 'memory';
+  referenceId?: string | null;
+  displayName?: string | null;
+  referenceState: string;
+  reasonCode?: string | null;
+  observedAt: string;
+}
+
+export interface ProjectContextExcludedReference {
+  referenceKind: 'conversation' | 'folder' | 'file' | 'memory';
+  referenceId?: string | null;
+  referenceState: string;
+  reasonCode?: string | null;
+  failedCheck?: string | null;
+  diagnostic?: string | null;
+}
+
+export interface ProjectContext {
+  projectId: string;
+  lifecycle: string;
+  projectFolder?: ProjectContextReference | null;
+  conversations: ProjectContextReference[];
+  fileReferences: ProjectContextReference[];
+  memoryReferences: ProjectContextReference[];
+  excluded: ProjectContextExcludedReference[];
+  assemblyOutcome: string;
+  observedAt: string;
+  freshness: string;
+}
+
+export interface ProjectContextEvaluation {
+  referenceKind: 'conversation' | 'folder' | 'file' | 'memory';
+  referenceId?: string | null;
+  resultState: string;
+  failedCheck?: string | null;
+  reasonCode?: string | null;
+  diagnostic?: string | null;
+  observedAt: string;
+}
+
+export interface ProjectContextExplanation {
+  context: ProjectContext;
+  evaluations: ProjectContextEvaluation[];
+}
+
+export interface ProjectConversationItem {
+  projectId: string;
+  conversationId: string;
+  lifecycleStatus: string;
+  displayLabel?: string | null;
+  trustSignal: string;
+  projectSafeLabel?: string | null;
+  projectSafeStatus?: string | null;
+}
+
+export interface ProjectConversationPageMetadata {
+  returnedCount: number;
+  continuationCursor?: string | null;
+}
+
+export interface ProjectConversationsPage {
+  projectId: string;
+  items: ProjectConversationItem[];
+  page: ProjectConversationPageMetadata;
+  trustSignal: string;
+}
+
 export interface ProjectOperatorAuditTimelineItem {
   auditEventId: string;
   operationType: string;
@@ -211,6 +279,11 @@ export interface OperatorDiagnosticOptions extends QueryRequestOptions {
   auditLimit?: number;
 }
 
+export interface ProjectConversationListOptions extends QueryRequestOptions {
+  pageSize?: number;
+  cursor?: string;
+}
+
 /** POST /api/v1/projects → 202 AcceptedCommand (FR-1). */
 export async function createProject(
   apiRequest: ApiRequest,
@@ -290,6 +363,54 @@ export async function getProjectOperatorDiagnostics(
     method: 'GET',
     path: `/api/v1/projects/${projectId}/operator-diagnostics`,
     params: headerOptions.auditLimit === undefined ? undefined : { auditLimit: headerOptions.auditLimit },
+    headers,
+    retryConfig: { maxRetries: 0 },
+  });
+  return { status, body };
+}
+
+/** GET /api/v1/projects/{id}/context/explain (Story 3.3, reused by Story 5.5 health rows). */
+export async function getProjectContextExplanation(
+  apiRequest: ApiRequest,
+  tenantId: string,
+  projectId: string,
+  headerOptions: QueryRequestOptions,
+): Promise<{ status: number; body: ProjectContextExplanation }> {
+  const headers = {
+    ...queryHeaders(headerOptions),
+    ...(headerOptions.freshness ? { 'X-Hexalith-Freshness': headerOptions.freshness } : {}),
+    ...headerOptions.extraHeaders,
+    'X-Hexalith-Tenant-Id': tenantId,
+  };
+  const { status, body } = await apiRequest<ProjectContextExplanation>({
+    method: 'GET',
+    path: `/api/v1/projects/${projectId}/context/explain`,
+    headers,
+    retryConfig: { maxRetries: 0 },
+  });
+  return { status, body };
+}
+
+/** GET /api/v1/projects/{id}/conversations (Story 2.1, reused by Story 5.5 health rows). */
+export async function listProjectConversations(
+  apiRequest: ApiRequest,
+  tenantId: string,
+  projectId: string,
+  headerOptions: ProjectConversationListOptions,
+): Promise<{ status: number; body: ProjectConversationsPage }> {
+  const headers = {
+    ...queryHeaders(headerOptions),
+    ...(headerOptions.freshness ? { 'X-Hexalith-Freshness': headerOptions.freshness } : {}),
+    ...headerOptions.extraHeaders,
+    'X-Hexalith-Tenant-Id': tenantId,
+  };
+  const { status, body } = await apiRequest<ProjectConversationsPage>({
+    method: 'GET',
+    path: `/api/v1/projects/${projectId}/conversations`,
+    params: {
+      ...(headerOptions.pageSize === undefined ? {} : { pageSize: String(headerOptions.pageSize) }),
+      ...(headerOptions.cursor === undefined ? {} : { cursor: headerOptions.cursor }),
+    },
     headers,
     retryConfig: { maxRetries: 0 },
   });

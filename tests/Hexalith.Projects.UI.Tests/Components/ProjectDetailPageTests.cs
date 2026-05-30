@@ -9,6 +9,7 @@ using Bunit;
 
 using Hexalith.FrontComposer.Testing;
 using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.UI.Components.Pages;
 using Hexalith.Projects.UI.Diagnostics;
 using Hexalith.Projects.UI.Rendering;
@@ -48,7 +49,9 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Find("[data-testid='project-detail-context-activation']").TextContent.ShouldContain("Enabled");
 
         cut.Find("[data-testid='project-detail-tab-references']").Click();
-        cut.Find("[data-testid='project-detail-reference-summary']").TextContent.ShouldContain("folder-001");
+        cut.Find("[data-testid='project-reference-health-matrix']").TextContent.ShouldContain("folder-001");
+        cut.Find("[data-testid='project-reference-owner']").TextContent.ShouldContain("Folders");
+        cut.Find("[data-testid='project-reference-safe-actions']").TextContent.ShouldContain("Story 5.9");
 
         cut.Find("[data-testid='project-detail-tab-resolution']").Click();
         cut.Find("[data-testid='project-detail-section-resolution']").TextContent.ShouldContain("Story 5.6");
@@ -94,6 +97,36 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("No references");
         cut.Find("[data-testid='project-detail-tab-audit']").Click();
         cut.Find("[data-testid='project-detail-section-audit']").TextContent.ShouldContain("No audit events");
+    }
+
+    [Fact]
+    public void DetailRendersReferenceHealthMatrixForAllReferenceKindsAndFailureStates()
+    {
+        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(
+                DetailWithReferenceHealthRows(),
+                referenceHealthRows: ReferenceHealthRows())));
+        Services.AddSingleton(source);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-references']").Click();
+
+        cut.Find("[data-testid='project-reference-health-matrix']").TextContent.ShouldContain("Reference Health Matrix");
+        cut.FindAll("[data-testid='project-reference-health-row']").Count.ShouldBe(7);
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("conversation-001");
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("referenceUnauthorized");
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("ReferenceAuthorization");
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("Stale");
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("Archived");
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("Conflict");
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("Unavailable");
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("Invalid reference");
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldNotContain("transcript");
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldNotContain("token");
     }
 
     [Fact]
@@ -171,6 +204,126 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
             [],
             [],
             Freshness());
+
+    private static ProjectOperatorDiagnostic DetailWithReferenceHealthRows()
+        => new(
+            "project-001",
+            "Detail Project",
+            "Safe metadata",
+            "active",
+            DateTimeOffset.UnixEpoch,
+            DateTimeOffset.UnixEpoch.AddMinutes(1),
+            "safe-setup",
+            null,
+            new ProjectOperatorContextActivation(true, null),
+            [
+                new ProjectOperatorReferenceSummary(
+                    "conversation",
+                    "unauthorized",
+                    "conversation-001",
+                    "Support conversation",
+                    "ConversationLinked",
+                    Freshness()),
+                new ProjectOperatorReferenceSummary(
+                    "folder",
+                    "included",
+                    "folder-001",
+                    "Folder",
+                    "ProjectFolderMatched",
+                    Freshness()),
+                new ProjectOperatorReferenceSummary(
+                    "file",
+                    "unavailable",
+                    "file-001",
+                    "File",
+                    null,
+                    Freshness()),
+                new ProjectOperatorReferenceSummary(
+                    "memory",
+                    "invalidReference",
+                    "memory-001",
+                    "Memory",
+                    null,
+                    Freshness()),
+            ],
+            [],
+            Freshness());
+
+    private static IReadOnlyList<ProjectReferenceHealthRowProjection> ReferenceHealthRows()
+        =>
+        [
+            UnauthorizedConversationHealthRow(),
+            ProjectReferenceHealthRowProjection.FromReferenceSummary(
+                "project-001",
+                new ProjectOperatorReferenceSummary(
+                    "folder",
+                    "included",
+                    "folder-001",
+                    "Folder",
+                    "ProjectFolderMatched",
+                    Freshness())),
+            ProjectReferenceHealthRowProjection.FromReferenceSummary(
+                "project-001",
+                new ProjectOperatorReferenceSummary(
+                    "file",
+                    "unavailable",
+                    "file-001",
+                    "File",
+                    null,
+                    Freshness())),
+            ProjectReferenceHealthRowProjection.FromReferenceSummary(
+                "project-001",
+                new ProjectOperatorReferenceSummary(
+                    "file",
+                    "stale",
+                    "file-stale-001",
+                    "Stale file",
+                    null,
+                    Freshness())),
+            ProjectReferenceHealthRowProjection.FromReferenceSummary(
+                "project-001",
+                new ProjectOperatorReferenceSummary(
+                    "folder",
+                    "conflict",
+                    "folder-conflict-001",
+                    "Conflicting folder",
+                    null,
+                    Freshness())),
+            ProjectReferenceHealthRowProjection.FromReferenceSummary(
+                "project-001",
+                new ProjectOperatorReferenceSummary(
+                    "memory",
+                    "invalidReference",
+                    "memory-001",
+                    "Memory",
+                    null,
+                    Freshness())),
+            ProjectReferenceHealthRowProjection.FromReferenceSummary(
+                "project-001",
+                new ProjectOperatorReferenceSummary(
+                    "memory",
+                    "archived",
+                    "memory-archived-001",
+                    "Archived memory",
+                    null,
+                    Freshness())),
+        ];
+
+    private static ProjectReferenceHealthRowProjection UnauthorizedConversationHealthRow()
+    {
+        ProjectReferenceHealthRowProjection row = ProjectReferenceHealthRowProjection.FromReferenceSummary(
+            "project-001",
+            new ProjectOperatorReferenceSummary(
+                "conversation",
+                "unauthorized",
+                "conversation-001",
+                "Support conversation",
+                "ConversationLinked",
+                Freshness()));
+        row.InclusionCheck = ProjectContextInclusionCheck.ReferenceAuthorization;
+        row.DiagnosticCode = ProjectContextInclusionDiagnostic.ReferenceUnauthorized;
+        return row;
+    }
 
     private static ProjectOperatorFreshnessMetadata Freshness()
         => new("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark-001", false, "trusted");

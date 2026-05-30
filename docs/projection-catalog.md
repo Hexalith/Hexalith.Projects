@@ -237,6 +237,29 @@ boundaries.
   content, memory payload, raw prompt, unrestricted path, token, proposal body, command body,
   candidate score/rank, rejected candidate id, or sibling denial detail.
 
+## `ProjectReferenceHealthRowProjection`
+
+- **Type:** `Hexalith.Projects.Contracts.Ui.ProjectReferenceHealthRowProjection`.
+- **Owner:** Story 5.5 FrontComposer DetailRecord descriptor/wrapper in Contracts. It is not a
+  persisted runtime projection and does not add a conversation lane to
+  `ProjectReferenceIndexProjection`.
+- **Source data:** metadata-only merge of existing `ProjectOperatorReferenceSummary` rows,
+  `ProjectContextExplanation.Evaluations`, and `ListProjectConversations` ACL rows. Folder/file/memory
+  rows continue to come from Project detail/operator diagnostics; conversation rows are derived from
+  the Conversations-owned ACL/context-evaluation path.
+- **Tenant scoping:** inherited from generated query clients and server authorization. The row carries
+  `projectId` and opaque sibling reference ids only; it has no `tenantId` authority field.
+- **Stored data:** none. It exists to describe the read-only reference health matrix field groups:
+  diagnostics, freshness, and safe actions.
+- **Freshness semantics:** carries last-checked timestamps from reference freshness or context
+  evaluation observations, plus trust state/watermark where the existing DTO exposes them. It does not
+  invent wall-clock freshness.
+- **Leakage boundary:** reference kind, reference id, bounded-context owner, safe display label,
+  shared inclusion/health state, optional shared reason code, optional inclusion check, optional
+  closed diagnostic code, freshness evidence, and read-only safe action labels only. No transcript,
+  file content, memory payload, raw prompt, unrestricted path, token, proposal body, command body,
+  candidate score/rank, rejected candidate id, or sibling denial detail.
+
 ## `ConversationStartSetupProjection`
 
 - **Type:** `Hexalith.Projects.Projections.ConversationStartSetup.ConversationStartSetupProjector`.
