@@ -20,6 +20,7 @@ builder.Services.AddScoped<IProjectInventorySource, ProjectInventorySource>();
 builder.Services.AddScoped<IProjectOperatorDiagnosticSource, ProjectOperatorDiagnosticSource>();
 builder.Services.AddScoped<IProjectDetailSource, ProjectDetailSource>();
 builder.Services.AddScoped<IProjectResolutionTraceSource, ProjectResolutionTraceSource>();
+builder.Services.AddScoped<IProjectAuditTimelineSource, ProjectAuditTimelineSource>();
 
 builder.Services.AddHexalithFrontComposerQuickstart(
     o => o.ScanAssemblies(typeof(ProjectsFrontComposerDomain).Assembly));

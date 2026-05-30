@@ -174,23 +174,7 @@ else if (_result?.Detail is not null)
                 break;
             case AuditSection:
                 <section role="tabpanel" data-testid="project-detail-section-audit">
-                    @if (_result.Detail.AuditTimeline.Count == 0)
-                    {
-                        <ProjectEmptyStateView State="@ProjectEmptyState.NoAudit()" ProjectionType="@typeof(ProjectDetailInspectorProjection)" />
-                    }
-                    else
-                    {
-                        <ol class="project-detail-inspector__audit" data-testid="project-detail-audit-summary">
-                            @foreach (ProjectOperatorAuditTimelineItem item in _result.Detail.AuditTimeline)
-                            {
-                                <li>
-                                    <span>@item.OperationType</span>
-                                    <time datetime="@item.OccurredAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@item.OccurredAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time>
-                                    <code>@item.CorrelationId</code>
-                                </li>
-                            }
-                        </ol>
-                    }
+                    <ProjectAuditTimelineSection Result="@_result" />
                 </section>
                 break;
             case ActionsSection:

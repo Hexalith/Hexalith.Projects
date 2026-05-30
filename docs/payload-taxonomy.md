@@ -54,6 +54,10 @@ Notes:
   sibling data exists or carry raw sibling denial evidence.
 - Candidate `score` and `rank` are safe only as transient resolution trace metadata. They must not be
   persisted, copied into audit/reference-health rows, or exported by later audit surfaces.
+- Story 5.7 safe diagnostic export reuses existing safe categories only: opaque ids, timestamps,
+  lifecycle/reference states, reason codes, correlation/audit ids, UI feedback codes, and UI projection
+  descriptor metadata. Its excluded-category list uses safe labels and the export guarantee states that
+  payload-bearing data is excluded without serializing forbidden category names or values.
 
 ## Forbidden sibling-owned content (NEVER on the wire)
 

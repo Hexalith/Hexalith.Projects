@@ -295,6 +295,52 @@ boundaries.
   `docs/parity-matrix.md#story-56-resolution-trace-contract`; Story 5.7 audit export must not export
   candidate score/rank or transient trace history.
 
+## `ProjectAuditTimelineRowProjection`
+
+- **Type:** `Hexalith.Projects.Contracts.Ui.ProjectAuditTimelineRowProjection`.
+- **Owner:** Story 5.7 FrontComposer DetailRecord descriptor/wrapper in Contracts. It is not the
+  persisted `ProjectAuditTimelineProjection`; it is a UI/parity wrapper over public operator
+  diagnostic rows.
+- **Contract version:** `projects.audit-timeline-row.ui.v1`.
+- **Source data:** existing `ProjectOperatorAuditTimelineItem` rows returned by
+  `GetProjectOperatorDiagnosticsAsync(projectId, auditLimit, correlationId, eventually_consistent,
+  cancellationToken)`. Web does not read EventStore payloads or `ProjectAuditTimelineProjection`
+  directly.
+- **Stored data:** none. The rendered Audit tab keeps the current bounded row window in Blazor
+  component state for reload/export preview only.
+- **Freshness semantics:** carries `projectionSequence` per row and uses operator diagnostic
+  freshness metadata for export/context evidence. Web supports audit limits 25, 50, and 100 while the
+  source bounds all calls to endpoint default 25 / max 100.
+- **Leakage boundary:** audit event id, operation type, timestamp, actor/source principal,
+  correlation id, task id, affected reference kind/id, previous/new safe state, reason code,
+  conversation id, source Project id, and projection sequence only. The public operator diagnostic DTO
+  intentionally omits idempotency keys even though the persisted projection stores them internally for
+  deterministic rebuild/audit id derivation. No command/proposal bodies, raw prompts, sibling payloads,
+  candidate score/rank, rejected candidate ids, or raw denial details are exposed.
+
+## `ProjectSafeDiagnosticExportProjection`
+
+- **Type:** `Hexalith.Projects.Contracts.Ui.ProjectSafeDiagnosticExportProjection`.
+- **Owner:** Story 5.7 FrontComposer DetailRecord descriptor/wrapper in Contracts. It is a Web/export
+  descriptor, not a persisted projection, audit event, Dapr state entry, maintenance action, or CLI/MCP
+  implementation.
+- **Contract version:** `projects.safe-diagnostic-export.v1`.
+- **Source data:** already-authorized `ProjectDetailLoadResult`: project identity/name/lifecycle,
+  server-derived tenant scope display label, bounded setup-preference counts/enums, freshness,
+  reference-health rows, audit rows, and safe feedback reason codes.
+- **Stored data:** none. Web copy/download serializes the current authorized diagnostic context and does
+  not write state.
+- **Freshness semantics:** export JSON includes the export generation timestamp plus the bounded
+  diagnostic freshness metadata. It does not invent historical audit evidence.
+- **Leakage boundary:** the export includes an explicit payload-exclusion guarantee and deterministic
+  included/excluded field lists. It does not include tenant authority derived from URL/client state,
+  raw setup text, transcript text, file path/content, memory payload, prompt, secret, token, raw
+  ProblemDetails body, command/proposal body, idempotency key, candidate score/rank, rejected candidate
+  id, or sibling denial detail.
+- **Consumer guidance:** Story 5.10 MCP/CLI parity should expose the same field names documented in
+  `docs/parity-matrix.md#story-57-audit-timeline--safe-export-contract`; Story 5.7 deliberately stops
+  at descriptors, Web copy/download, and handoff documentation.
+
 ## `ConversationStartSetupProjection`
 
 - **Type:** `Hexalith.Projects.Projections.ConversationStartSetup.ConversationStartSetupProjector`.

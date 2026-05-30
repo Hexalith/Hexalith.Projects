@@ -599,6 +599,57 @@ public sealed class NoPayloadLeakageTests
     }
 
     [Fact]
+    public void AuditTimelineAndSafeExportUiDescriptors_SerializeMetadataOnly()
+    {
+        ProjectAuditTimelineRowProjection auditRow = ProjectAuditTimelineRowProjection.FromAuditItem(
+            "project-target-001",
+            new ProjectOperatorAuditTimelineItem(
+                "audit_001",
+                "project.resolution_confirmed",
+                DateTimeOffset.UnixEpoch,
+                "actor-001",
+                "corr-001",
+                "task-001",
+                "conversation",
+                "conversation-001",
+                null,
+                "confirmed",
+                "confirmation_accepted",
+                "conversation-001",
+                "project-source-001",
+                42L));
+        var export = new ProjectSafeDiagnosticExportProjection
+        {
+            GeneratedAt = DateTimeOffset.UnixEpoch,
+            ProjectId = "project-target-001",
+            ProjectName = "Operator Project",
+            LifecycleState = "active",
+            TenantScopeLabel = "server-derived tenant",
+            FreshnessTrustState = "trusted",
+            ProjectionWatermark = "watermark_00000042",
+            ReferenceHealthRowCount = 1,
+            AuditRowCount = 1,
+            SafeFeedbackCodes = "data_unavailable",
+            IncludedFieldNames = "auditRows.auditEventId, auditRows.correlationId",
+            ExcludedPayloadCategories = "conversation-text, file-data, memory-data, request-material, resolution-metrics",
+        };
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(auditRow));
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(export));
+        string serialized = System.Text.Json.JsonSerializer.Serialize(new { auditRow, export });
+        serialized.ShouldNotContain("tenantId", Case.Insensitive);
+        serialized.ShouldNotContain("transcript", Case.Insensitive);
+        serialized.ShouldNotContain("prompt", Case.Insensitive);
+        serialized.ShouldNotContain("token", Case.Insensitive);
+        serialized.ShouldNotContain("path", Case.Insensitive);
+        serialized.ShouldNotContain("secret", Case.Insensitive);
+        serialized.ShouldNotContain("body", Case.Insensitive);
+        serialized.ShouldNotContain("score", Case.Insensitive);
+        serialized.ShouldNotContain("rank", Case.Insensitive);
+        serialized.ShouldNotContain("idempotency", Case.Insensitive);
+    }
+
+    [Fact]
     public void MemoryReferenceUnlinkRejection_SerializesMetadataOnly()
     {
         ProjectReferenceUnlinkRejected rejection = new(

@@ -3,44 +3,50 @@
 ## Generated Tests
 
 ### API / Source Tests
-- [x] `tests/Hexalith.Projects.UI.Tests/Diagnostics/ProjectResolutionTraceSourceTests.cs` - Generated-client backed trace source coverage for conversation mode, attachment mode, deterministic attachment input normalization, safe validation, 400/404/503/API failure mapping, transport/deserialization failure mapping, cancellation propagation, outcome derivation, and metadata-only serialization.
+- [x] `tests/Hexalith.Projects.UI.Tests/Diagnostics/ProjectAuditTimelineSourceTests.cs` - Bounded operator-diagnostic audit reload coverage for default/min/max limits, eventual consistency, safe 400/404/503/API failure mapping, and transport/deserialization failure mapping without leaking exception text.
 
 ### Component / Contract / Leakage Tests
-- [x] `tests/Hexalith.Projects.UI.Tests/Components/ProjectDetailPageTests.cs` - bUnit coverage for Resolution tab selector stability, initial state, conversation trace, attachment trace, NoMatch, MultipleCandidates, Excluded, FailedClosed, exclusion evidence, long readable identifiers, validation feedback, and payload-leakage guards.
-- [x] `tests/Hexalith.Projects.Contracts.Tests/Ui/ProjectResolutionTraceProjectionTests.cs` - descriptor metadata, contract version, shared-vocabulary, and forbidden-field coverage for transient trace contracts.
-- [x] `tests/Hexalith.Projects.Tests/Leakage/NoPayloadLeakageTests.cs` - metadata-only serialization checks for resolution trace descriptor, candidate, and exclusion rows.
+- [x] `tests/Hexalith.Projects.UI.Tests/Components/ProjectDetailPageTests.cs` - bUnit coverage for full Audit Timeline rendering, stable selectors, copy affordances, bounded reloads, empty audit state, validation/denial/unavailable reload feedback states, safe export preview/guarantee, and metadata-only leakage guards.
+- [x] `tests/Hexalith.Projects.UI.Tests/Diagnostics/ProjectSafeDiagnosticExportBuilderTests.cs` - Deterministic safe diagnostic export JSON, included/excluded fields, feedback codes, counts, and forbidden payload exclusions.
+- [x] `tests/Hexalith.Projects.Contracts.Tests/Ui/ProjectAuditExportProjectionTests.cs` - FrontComposer descriptor metadata, bounded context, contract version, operator audit field mapping, and forbidden export field coverage.
+- [x] `tests/Hexalith.Projects.Tests/Leakage/NoPayloadLeakageTests.cs` - Metadata-only serialization checks for audit timeline row and safe diagnostic export descriptors.
 
 ### E2E Tests
-- [x] `tests/e2e/specs/projects-resolution-trace.spec.ts` - Playwright fixme scaffolding for trace selector stability, keyboard path, conversation and attachment trace journeys, axe accessibility scan, and no payload leakage.
-- [x] `tests/e2e/support/page-objects/project-detail.page.ts` - Resolution Trace Workbench selectors added to the existing Project detail page object.
+- [x] `tests/e2e/specs/projects-audit.spec.ts` - Playwright fixme scaffolding for the Story 5.2 operator-diagnostic audit contract, timeline rendering, safe export preview/download selectors, and no payload leakage.
+- [x] `tests/e2e/support/page-objects/project-detail.page.ts` - Audit Timeline and Safe Diagnostic Export selectors added to the existing Project detail page object.
 
 ## Coverage
 
-- Query modes covered: conversation id and folder/file attachment ids.
-- UI outcomes covered: Resolved, NoMatch, MultipleCandidates, Excluded, and FailedClosed.
-- Error cases covered: empty conversation input, empty attachment input, mixed inputs, 400 validation, 404 safe denial, 503 data unavailable, generic API failure, transport/deserialization failure, and cancellation.
-- Selector coverage: `project-resolution-trace-workbench`, mode/input controls, include archived, run button, feedback, outcome, input summary, candidate rows, candidate comparison, reasons, and exclusions.
-- Leakage coverage: tenant id, correlation/task/trace history, transcript, prompt, file path/content, workspace, memory payload, secret/token, command/proposal body, raw ProblemDetails, candidate score/rank persistence boundaries.
+- API/source paths covered: existing `GetProjectOperatorDiagnosticsAsync(...)` contract, audit limit bounds 25/50/100, eventual consistency, and generated-client failure mapping.
+- UI paths covered: populated audit timeline, no audit events, safe reload feedback for validation error, access denied, data unavailable, copyable IDs/timestamps, and safe diagnostic export preview/download markup.
+- Error cases covered: 400 validation, 404 safe denial, 503 data unavailable, generic API failure, and transport/deserialization failure.
+- Selector coverage: `audit-timeline`, `audit-timeline-entry`, `audit-timeline-operation`, `audit-timeline-state-delta`, `audit-timeline-reference`, `audit-timeline-actor`, `audit-timeline-correlation-id`, `audit-timeline-task-id`, `audit-timeline-event-id`, `audit-timeline-copy`, `audit-timeline-feedback`, `safe-diagnostic-export`, `safe-diagnostic-export-preview`, `safe-diagnostic-export-guarantee`, `safe-diagnostic-export-copy`, `safe-diagnostic-export-download`, and `safe-diagnostic-export-feedback`.
+- Leakage coverage: transcript, prompt, file path/content, workspace, memory payload, secret/token, raw ProblemDetails body, command/proposal body, idempotency key, candidate score/rank, rejected candidate ids, and sibling denial details.
 
 ## Validation
 
-- [x] `MSBUILDDISABLENODEREUSE=1 dotnet build Hexalith.Projects.slnx -warnaserror --no-restore -m:1 -nr:false /p:UseSharedCompilation=false /p:NuGetAudit=false -v:minimal`
-- [x] xUnit v3 in-process `Hexalith.Projects.UI.Tests` focused classes: 22/22 passed (dev pass; superseded by the full VSTest run below).
-- [x] xUnit v3 in-process `Hexalith.Projects.Contracts.Tests` focused classes: 24/24 passed (dev pass; the story Debug Log's "59/59" referred to a wider focused set — both are superseded by the full VSTest run below).
-- [x] xUnit v3 in-process `Hexalith.Projects.Tests` `NoPayloadLeakageTests`: 55/55 passed (dev pass; superseded by the full VSTest run below).
+- [x] `dotnet build tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj --no-restore --disable-build-servers -m:1 /p:UseSharedCompilation=false /p:NuGetAudit=false -v:minimal`
+- [x] `dotnet build Hexalith.Projects.slnx --no-restore --disable-build-servers -m:1 /p:UseSharedCompilation=false /p:NuGetAudit=false -v:minimal`
+- [x] xUnit v3 in-process focused UI classes: 26/26 passed.
+- [x] xUnit v3 in-process focused Contracts classes: 39/39 passed.
+- [x] xUnit v3 in-process `NoPayloadLeakageTests`: 56/56 passed.
+- [x] xUnit v3 in-process full `Hexalith.Projects.Contracts.Tests`: 156/156 passed.
+- [x] xUnit v3 in-process full `Hexalith.Projects.Client.Tests`: 52/52 passed.
+- [x] xUnit v3 in-process full `Hexalith.Projects.Tests`: 575/575 passed.
+- [x] xUnit v3 in-process full `Hexalith.Projects.UI.Tests`: 96/96 passed.
+- [x] xUnit v3 in-process full `Hexalith.Projects.Integration.Tests`: 15/15 passed.
 - [x] `pwsh tests/tools/run-frontcomposer-inspect-gate.ps1`
 - [x] `git diff --check`
-- [x] `dotnet test` VSTest lane (re-run 2026-05-30 in review with the sandbox local-socket constraint lifted): `Hexalith.Projects.Contracts.Tests` 152/152, `Hexalith.Projects.UI.Tests` 74/74 (81/81 after review auto-fixes), `Hexalith.Projects.Tests` incl. `NoPayloadLeakageTests` 574/574 — all green. These full-project counts are authoritative and supersede the focused in-process subset counts above.
-- [ ] `npm run typecheck` in `tests/e2e` - blocked because `tsc` is not installed locally (`node_modules` absent).
-- [ ] Playwright browser execution - not attempted because E2E dependencies/AppHost fixture are not installed/running; Story 5.6 specs remain `test.fixme` per current fixture convention.
+- [ ] `dotnet test` VSTest lane - blocked in this sandbox by local socket permission (`System.Net.Sockets.SocketException (13): Permission denied`) before execution.
+- [ ] `npm run typecheck` / Playwright browser execution in `tests/e2e` - blocked because `tests/e2e/node_modules` is absent and AppHost/browser provisioning is not running.
 
 ## Checklist Notes
 
-- API/source tests generated: yes, for the two compute-on-demand trace query modes and safe failure mapping.
+- API/source tests generated: yes, for bounded operator-diagnostic audit reloads and safe failure mapping.
 - E2E tests generated: yes, as Playwright fixme scaffolding using existing fixtures and page-object patterns.
 - Standard framework APIs: yes, xUnit v3, bUnit, NSubstitute, Shouldly, and Playwright.
-- Happy path coverage: yes, conversation and attachment trace flows.
-- Critical error coverage: yes, safe validation and failure mapping paths.
-- Semantic locators: yes, stable `data-testid` selectors plus accessible labels and readable identifiers.
+- Happy path coverage: yes, populated timeline render and bounded reload.
+- Critical error coverage: yes, validation, denial, unavailable, generic API, and transport/deserialization failures.
+- Semantic locators: yes, stable selectors plus accessible copy/download labels and readable identifiers.
 - No hardcoded waits/sleeps: yes.
-- Independent tests: yes, each source/component test creates isolated fakes and trace results.
+- Independent tests: yes, each source/component test creates isolated fakes and results.

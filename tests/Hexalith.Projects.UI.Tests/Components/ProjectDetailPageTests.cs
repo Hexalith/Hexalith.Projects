@@ -35,6 +35,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
         Services.AddSingleton(source);
         Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -58,7 +59,8 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Find("[data-testid='project-resolution-trace-workbench']").TextContent.ShouldContain("No trace has been run yet");
 
         cut.Find("[data-testid='project-detail-tab-audit']").Click();
-        cut.Find("[data-testid='project-detail-audit-summary']").TextContent.ShouldContain("project.created");
+        cut.Find("[data-testid='audit-timeline']").TextContent.ShouldContain("project.created");
+        cut.Find("[data-testid='safe-diagnostic-export-preview']").TextContent.ShouldContain("audit-001");
 
         cut.Find("[data-testid='project-detail-tab-actions']").Click();
         cut.Find("[data-testid='project-detail-section-actions']").TextContent.ShouldContain("Story 5.9");
@@ -74,6 +76,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
                 ProjectConsoleFeedback.Warning("data_unavailable", "corr-001"))));
         Services.AddSingleton(source);
         Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -91,6 +94,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
             .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(DetailWithoutReferencesOrAudit())));
         Services.AddSingleton(source);
         Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -103,6 +107,100 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     }
 
     [Fact]
+    public async Task DetailRendersFullAuditTimelineAndReloadsBoundedLimit()
+    {
+        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectAuditTimelineSource auditSource = Substitute.For<IProjectAuditTimelineSource>();
+        auditSource.GetAuditTimelineAsync("project-001", 50, Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectAuditTimelineLoadResult.FromRows(
+                [
+                    new ProjectOperatorAuditTimelineItem(
+                        "audit-050",
+                        "project.updated",
+                        DateTimeOffset.UnixEpoch.AddMinutes(5),
+                        "actor-050",
+                        "corr-050",
+                        "task-050",
+                        "folder",
+                        "folder-050",
+                        "active",
+                        "archived",
+                        "project_archived",
+                        null,
+                        null,
+                        50),
+                ],
+                Freshness())));
+        Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(auditSource);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-audit']").Click();
+
+        cut.FindAll("[data-testid='audit-timeline-entry']").Count.ShouldBe(1);
+        cut.Find("[data-testid='audit-timeline-operation']").TextContent.ShouldContain("project.created");
+        cut.Find("[data-testid='audit-timeline-state-delta']").TextContent.ShouldContain("none");
+        cut.Find("[data-testid='audit-timeline-reference']").TextContent.ShouldContain("folder-001");
+        cut.Find("[data-testid='audit-timeline-actor']").TextContent.ShouldContain("actor-001");
+        cut.Find("[data-testid='audit-timeline-correlation-id']").TextContent.ShouldContain("corr-001");
+        cut.Find("[data-testid='audit-timeline-task-id']").TextContent.ShouldContain("task-001");
+        cut.Find("[data-testid='audit-timeline-event-id']").TextContent.ShouldContain("audit-001");
+        cut.FindAll("[data-testid='audit-timeline-copy']").Count.ShouldBeGreaterThanOrEqualTo(3);
+        cut.Find("[data-testid='safe-diagnostic-export-guarantee']").TextContent.ShouldContain("Payload-bearing data is excluded");
+        cut.Find("[data-testid='safe-diagnostic-export-preview']").TextContent.ShouldNotContain("token");
+        cut.Find("[data-testid='safe-diagnostic-export-preview']").TextContent.ShouldNotContain("score");
+
+        cut.Find("[data-testid='audit-timeline-limit']").Change("50");
+        cut.Find("[data-testid='audit-timeline-reload']").Click();
+
+        await auditSource.Received(1)
+            .GetAuditTimelineAsync("project-001", 50, Arg.Any<CancellationToken>())
+            .ConfigureAwait(true);
+        cut.WaitForAssertion(() => cut.Find("[data-testid='audit-timeline-operation']").TextContent.ShouldContain("project.updated"));
+        cut.Find("[data-testid='safe-diagnostic-export-preview']").TextContent.ShouldContain("audit-050");
+    }
+
+    [Theory]
+    [MemberData(nameof(AuditReloadFeedbackCases))]
+    public async Task DetailRendersAuditReloadFeedbackStatesWithoutBlankTimeline(ProjectConsoleFeedback feedback)
+    {
+        ArgumentNullException.ThrowIfNull(feedback);
+
+        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+        IProjectAuditTimelineSource auditSource = Substitute.For<IProjectAuditTimelineSource>();
+        auditSource.GetAuditTimelineAsync("project-001", 25, Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectAuditTimelineLoadResult.FromFeedback(feedback)));
+        Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(auditSource);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-audit']").Click();
+        cut.Find("[data-testid='audit-timeline-reload']").Click();
+
+        await auditSource.Received(1)
+            .GetAuditTimelineAsync("project-001", 25, Arg.Any<CancellationToken>())
+            .ConfigureAwait(true);
+        cut.WaitForAssertion(() => cut.Find("[data-testid='audit-timeline-feedback']").TextContent.ShouldContain(feedback.SafeReasonCode));
+        cut.FindAll("[data-testid='audit-timeline-entry']").ShouldBeEmpty();
+        cut.Find("[data-testid='safe-diagnostic-export-preview']").TextContent.ShouldContain(feedback.SafeReasonCode);
+        cut.Markup.ShouldNotContain("secret");
+        cut.Markup.ShouldNotContain("token");
+        cut.Markup.ShouldNotContain("ProblemDetails");
+    }
+
+    [Fact]
     public void DetailRendersReferenceHealthMatrixForAllReferenceKindsAndFailureStates()
     {
         IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
@@ -112,6 +210,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
                 referenceHealthRows: ReferenceHealthRows())));
         Services.AddSingleton(source);
         Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -142,6 +241,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
                 ProjectConsoleFeedback.FailClosed("safe_denial", "corr-001"))));
         Services.AddSingleton(source);
         Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -166,6 +266,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
             .Returns(Task.FromResult(SingleCandidateTrace()));
         Services.AddSingleton(detailSource);
         Services.AddSingleton(traceSource);
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -204,6 +305,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
             .Returns(Task.FromResult(MultipleCandidateTraceWithExclusion()));
         Services.AddSingleton(detailSource);
         Services.AddSingleton(traceSource);
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -243,6 +345,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
                 ProjectConsoleFeedback.Error("conversation_id_required"))));
         Services.AddSingleton(detailSource);
         Services.AddSingleton(traceSource);
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -266,6 +369,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
             .Returns(Task.FromResult(NoMatchTrace()));
         Services.AddSingleton(detailSource);
         Services.AddSingleton(traceSource);
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -292,6 +396,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
             .Returns(Task.FromResult(ExcludedTrace()));
         Services.AddSingleton(detailSource);
         Services.AddSingleton(traceSource);
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -317,6 +422,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
             .Returns(Task.FromResult(FailedClosedTrace()));
         Services.AddSingleton(detailSource);
         Services.AddSingleton(traceSource);
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
 
         IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
             .Add(p => p.ProjectId, "project-001"));
@@ -369,11 +475,11 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
                     "actor-001",
                     "corr-001",
                     "task-001",
+                    "folder",
+                    "folder-001",
                     null,
                     null,
-                    null,
-                    null,
-                    null,
+                    "project_created",
                     null,
                     null,
                     1),
@@ -517,6 +623,13 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
 
     private static ProjectOperatorFreshnessMetadata Freshness()
         => new("eventually_consistent", DateTimeOffset.UnixEpoch, "watermark-001", false, "trusted");
+
+    public static IEnumerable<object[]> AuditReloadFeedbackCases()
+    {
+        yield return [ProjectConsoleFeedback.Error("validation_error", "corr-validation")];
+        yield return [ProjectConsoleFeedback.FailClosed("safe_denial", "corr-denial")];
+        yield return [ProjectConsoleFeedback.Warning("data_unavailable", "corr-unavailable")];
+    }
 
     private static ProjectResolutionTraceLoadResult SingleCandidateTrace()
         => ProjectResolutionTraceLoadResult.FromTrace(

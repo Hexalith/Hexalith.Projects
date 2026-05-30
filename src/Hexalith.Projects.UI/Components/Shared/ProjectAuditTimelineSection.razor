@@ -1,0 +1,284 @@
+@using System.Globalization
+@using Hexalith.Projects.Contracts.Models
+@using Hexalith.Projects.Contracts.Ui
+@using Hexalith.Projects.UI.Diagnostics
+@using Hexalith.Projects.UI.Rendering
+@inject IProjectAuditTimelineSource AuditTimeline
+@inject IJSRuntime JS
+
+<div class="project-audit-section">
+    <div class="project-audit-section__toolbar" aria-label="Audit timeline controls">
+        <label for="audit-limit">Audit rows</label>
+        <select id="audit-limit"
+                data-testid="audit-timeline-limit"
+                @bind="_selectedLimit">
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+        <button type="button"
+                data-testid="audit-timeline-reload"
+                @onclick="ReloadAsync"
+                disabled="@_loading">
+            @(_loading ? "Loading" : "Reload")
+        </button>
+    </div>
+
+    @if (_feedback is not null)
+    {
+        <div data-testid="audit-timeline-feedback">
+            <ProjectFeedbackView Feedback="@_feedback" />
+        </div>
+    }
+    else if (_rows.Count == 0)
+    {
+        <ProjectEmptyStateView State="@ProjectEmptyState.NoAudit()" ProjectionType="@typeof(ProjectAuditTimelineRowProjection)" />
+    }
+    else
+    {
+        <ol class="project-audit-timeline" data-testid="audit-timeline" aria-label="Project audit timeline">
+            @foreach (ProjectOperatorAuditTimelineItem item in _rows)
+            {
+                <li class="project-audit-timeline__entry" data-testid="audit-timeline-entry" tabindex="0">
+                    <header class="project-audit-timeline__header">
+                        <h3 data-testid="audit-timeline-operation">@DisplayValue(item.OperationType)</h3>
+                        <p>
+                            <span>Occurred</span>
+                            <time datetime="@FormatIso(item.OccurredAt)">@FormatDisplay(item.OccurredAt)</time>
+                            <button type="button"
+                                    data-testid="audit-timeline-copy"
+                                    aria-label="@($"Copy occurred timestamp for audit event {DisplayValue(item.AuditEventId)}")"
+                                    @onclick="() => CopyTextAsync(FormatIso(item.OccurredAt))">
+                                Copy timestamp
+                            </button>
+                        </p>
+                    </header>
+
+                    <dl class="project-audit-timeline__facts">
+                        <div data-testid="audit-timeline-actor">
+                            <dt>Actor/source principal</dt>
+                            <dd><code>@DisplayValue(item.ActorPrincipalId)</code></dd>
+                        </div>
+                        <div data-testid="audit-timeline-state-delta">
+                            <dt>State change</dt>
+                            <dd>
+                                <span>@DisplayValue(item.PreviousState)</span>
+                                <span aria-label="changed to">to</span>
+                                <span>@DisplayValue(item.NewState)</span>
+                            </dd>
+                        </div>
+                        <div data-testid="audit-timeline-reference">
+                            <dt>Affected reference</dt>
+                            <dd>
+                                <span>@DisplayValue(item.ReferenceKind)</span>
+                                <code>@DisplayValue(item.ReferenceId)</code>
+                            </dd>
+                        </div>
+                        <div data-testid="audit-timeline-correlation-id">
+                            <dt>Correlation ID</dt>
+                            <dd>
+                                <code>@DisplayValue(item.CorrelationId)</code>
+                                <button type="button"
+                                        data-testid="audit-timeline-copy"
+                                        aria-label="@($"Copy correlation ID for audit event {DisplayValue(item.AuditEventId)}")"
+                                        @onclick="() => CopyTextAsync(item.CorrelationId)">
+                                    Copy correlation
+                                </button>
+                            </dd>
+                        </div>
+                        <div data-testid="audit-timeline-task-id">
+                            <dt>Task ID</dt>
+                            <dd>
+                                <code>@DisplayValue(item.TaskId)</code>
+                                @if (!string.IsNullOrWhiteSpace(item.TaskId))
+                                {
+                                    <button type="button"
+                                            data-testid="audit-timeline-copy"
+                                            aria-label="@($"Copy task ID for audit event {DisplayValue(item.AuditEventId)}")"
+                                            @onclick="() => CopyTextAsync(item.TaskId)">
+                                        Copy task
+                                    </button>
+                                }
+                            </dd>
+                        </div>
+                        <div data-testid="audit-timeline-event-id">
+                            <dt>Audit event ID</dt>
+                            <dd>
+                                <code>@DisplayValue(item.AuditEventId)</code>
+                                <button type="button"
+                                        data-testid="audit-timeline-copy"
+                                        aria-label="@($"Copy audit event ID {DisplayValue(item.AuditEventId)}")"
+                                        @onclick="() => CopyTextAsync(item.AuditEventId)">
+                                    Copy audit ID
+                                </button>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Reason code</dt>
+                            <dd><code>@DisplayValue(item.ReasonCode)</code></dd>
+                        </div>
+                        <div>
+                            <dt>Resolution context</dt>
+                            <dd>
+                                <span>Conversation <code>@DisplayValue(item.ConversationId)</code></span>
+                                <span>Source Project <code>@DisplayValue(item.SourceProjectId)</code></span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Projection sequence</dt>
+                            <dd><code>@item.ProjectionSequence.ToString(CultureInfo.InvariantCulture)</code></dd>
+                        </div>
+                    </dl>
+                </li>
+            }
+        </ol>
+    }
+
+    <section class="project-safe-export"
+             data-testid="safe-diagnostic-export"
+             aria-labelledby="safe-diagnostic-export-heading">
+        <header>
+            <h3 id="safe-diagnostic-export-heading">Safe Diagnostic Export</h3>
+            <p data-testid="safe-diagnostic-export-guarantee">@ProjectSafeDiagnosticExportProjection.PayloadExclusionGuaranteeText</p>
+        </header>
+        @if (_exportFeedback is not null)
+        {
+            <div data-testid="safe-diagnostic-export-feedback">
+                <ProjectFeedbackView Feedback="@_exportFeedback" />
+            </div>
+        }
+        <pre data-testid="safe-diagnostic-export-preview" tabindex="0"><code>@ExportJson</code></pre>
+        <div class="project-safe-export__actions">
+            <button type="button"
+                    data-testid="safe-diagnostic-export-copy"
+                    aria-label="Copy safe diagnostic export JSON"
+                    @onclick="CopyExportAsync">
+                Copy JSON
+            </button>
+            <a data-testid="safe-diagnostic-export-download"
+               aria-label="Download safe diagnostic export JSON"
+               download="@ExportFileName"
+               href="@ExportDataUri">
+                Download JSON
+            </a>
+        </div>
+    </section>
+</div>
+
+@code {
+    private IReadOnlyList<ProjectOperatorAuditTimelineItem> _rows = [];
+    private ProjectOperatorFreshnessMetadata? _freshness;
+    private ProjectConsoleFeedback? _feedback;
+    private ProjectConsoleFeedback? _exportFeedback;
+    private DateTimeOffset _exportGeneratedAt;
+    private string? _loadedProjectId;
+    private int _selectedLimit = ProjectAuditTimelineSource.DefaultAuditLimit;
+    private bool _loading;
+
+    [Parameter, EditorRequired]
+    public ProjectDetailLoadResult Result { get; set; } = default!;
+
+    protected override void OnParametersSet()
+    {
+        string? projectId = Result.Detail?.ProjectId;
+        if (string.Equals(_loadedProjectId, projectId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _loadedProjectId = projectId;
+        _rows = Result.Detail?.AuditTimeline ?? [];
+        _freshness = Result.Detail?.Freshness;
+        _feedback = Result.DiagnosticFeedback;
+        _exportFeedback = null;
+        _exportGeneratedAt = DateTimeOffset.UtcNow;
+    }
+
+    private string ExportJson
+        => Result.Detail is null
+            ? string.Empty
+            : ProjectSafeDiagnosticExportBuilder.BuildJson(CurrentExportResult(), _exportGeneratedAt);
+
+    private string ExportDataUri
+        => "data:application/json;charset=utf-8," + Uri.EscapeDataString(ExportJson);
+
+    private string ExportFileName
+        => string.IsNullOrWhiteSpace(Result.Detail?.ProjectId)
+            ? "project-safe-diagnostic-export.json"
+            : $"project-{Result.Detail.ProjectId}-safe-diagnostic-export.json";
+
+    private async Task ReloadAsync()
+    {
+        if (Result.Detail is null)
+        {
+            return;
+        }
+
+        _loading = true;
+        _feedback = null;
+        _exportFeedback = null;
+        ProjectAuditTimelineLoadResult reload = await AuditTimeline
+            .GetAuditTimelineAsync(Result.Detail.ProjectId, _selectedLimit, CancellationToken.None)
+            .ConfigureAwait(true);
+        if (reload.Feedback is not null)
+        {
+            _feedback = reload.Feedback;
+            _rows = [];
+        }
+        else
+        {
+            _rows = reload.Rows;
+            _freshness = reload.Freshness ?? _freshness;
+        }
+
+        _exportGeneratedAt = DateTimeOffset.UtcNow;
+        _loading = false;
+    }
+
+    private async Task CopyExportAsync()
+        => await CopyTextAsync(ExportJson).ConfigureAwait(true);
+
+    private async Task CopyTextAsync(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            _exportFeedback = ProjectConsoleFeedback.Warning("copy_value_unavailable");
+            return;
+        }
+
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", value).ConfigureAwait(true);
+            _exportFeedback = ProjectConsoleFeedback.Success("copy_completed");
+        }
+        catch (JSException)
+        {
+            _exportFeedback = ProjectConsoleFeedback.Warning("clipboard_unavailable");
+        }
+        catch (InvalidOperationException)
+        {
+            _exportFeedback = ProjectConsoleFeedback.Warning("clipboard_unavailable");
+        }
+    }
+
+    private ProjectDetailLoadResult CurrentExportResult()
+    {
+        ProjectOperatorDiagnostic detail = Result.Detail!;
+        ProjectOperatorDiagnostic current = detail with
+        {
+            AuditTimeline = _rows,
+            Freshness = _freshness ?? detail.Freshness,
+        };
+
+        return Result with { Detail = current, DiagnosticFeedback = _feedback };
+    }
+
+    private static string FormatIso(DateTimeOffset value)
+        => value.ToString("O", CultureInfo.InvariantCulture);
+
+    private static string FormatDisplay(DateTimeOffset value)
+        => value.ToString("u", CultureInfo.InvariantCulture);
+
+    private static string DisplayValue(string? value)
+        => string.IsNullOrWhiteSpace(value) ? "none" : value;
+}
