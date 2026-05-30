@@ -3,33 +3,39 @@
 ## Generated Tests
 
 ### API Tests
-- [x] `tests/e2e/support/helpers/projects-api-client.ts` - Added typed Playwright API helpers for `POST /api/v1/projects/resolution/new-project-proposal` and `POST /api/v1/projects/proposals/confirm`.
-- [x] `tests/e2e/specs/projects-proposal.spec.ts` - Added proposal preview coverage for NoMatch happy path, read-style rejection of `Idempotency-Key`, strong freshness rejection, duplicate reference validation, unsafe metadata validation, existing-candidate safe conflict, and no-payload-leakage assertions.
-- [x] `tests/e2e/specs/projects-proposal.spec.ts` - Added confirm coverage for explicit command-async creation/linking, same root idempotency key conflict, missing `Idempotency-Key`, mismatched file evidence validation, and no-payload-leakage assertions.
+- [x] Not applicable for Story 5.1: the story intentionally adds an internal audit read-model seam only; public operator/API access belongs to Stories 5.2 and 5.7.
 
 ### E2E Tests
-- [x] `tests/e2e/specs/projects-proposal.spec.ts` - Story 4.5 black-box REST workflow scaffolded in the existing Playwright E2E suite.
-- [x] UI browser workflow not generated because Story 4.5 exposes REST preview/confirm APIs and the current project has no proposal UI surface.
+- [x] Not applicable for Story 5.1: no audit UI or public audit route exists yet. Existing Playwright audit specs remain `test.fixme` until the Story 5.7 surface exists.
+
+### Server/Projection Tests
+- [x] `tests/Hexalith.Projects.Server.Tests/InMemoryProjectAuditTimelineReadModelTests.cs` - Added server-facing audit read-model coverage for tenant/project filtering, limit ordering, dispatch-tenant mismatch dropping, and metadata-only folder audit rows.
+- [x] `tests/Hexalith.Projects.Server.Tests/ServiceDefaultsEndpointTests.cs` - Added runtime DI coverage proving the audit read-model seam is replaced by the Dapr-backed implementation.
+- [x] Existing `tests/Hexalith.Projects.Tests/Projections/ProjectAuditTimelineProjectionTests.cs` - Re-run for all mapped audit event types, deterministic IDs, tenant/project filtering, proposal-chain semantics, and unknown-event failure.
+- [x] Existing `tests/Hexalith.Projects.Tests/Leakage/NoPayloadLeakageTests.cs` - Re-run for `ProjectAuditTimelineItem_SerializesMetadataOnly`.
+- [x] Existing `tests/Hexalith.Projects.Integration.Tests/DaprProjectionStoreTests.cs` - Re-run for durable journal rebuild, duplicate handling, replay conflict, malformed evidence, missing journal, and tenant/project scoping.
 
 ## Coverage
-- Proposal preview operation: 1/1 happy path scaffolded; 5 critical error/safe-conflict paths scaffolded.
-- Proposal confirm operation: 1/1 full-flow happy path scaffolded; 3 critical recovery/validation paths scaffolded.
-- Payload leakage checks: preview, confirm, conflict, validation, and idempotency problem bodies covered.
-- Runtime status: Story-specific E2E specs remain `test.fixme` per the suite convention until seeded conversation/folder/file ACL fixtures and a live AppHost are available.
+- Audit projection event mapping: all current Project success events covered.
+- Read-model seam: in-memory server seam plus Dapr runtime replacement covered.
+- Tenant isolation: authoritative tenant filtering, project filtering, cross-tenant event mismatch, and durable tenant journal scoping covered.
+- Metadata-only boundary: audit row serialization and folder metadata payload exclusion covered.
+- Public API/UI: intentionally not generated for this story because no public audit route or audit UI is part of Story 5.1.
 
 ## Validation
-- [x] `git diff --check -- tests/e2e/support/helpers/projects-api-client.ts tests/e2e/specs/projects-proposal.spec.ts _bmad-output/implementation-artifacts/tests/test-summary.md`
-- [ ] `npm run typecheck` from `tests/e2e`
-  - Blocked in this workspace: `node_modules` is absent and `tsc` is not installed locally (`sh: 1: tsc: not found`).
-- [ ] Playwright runtime execution
-  - Blocked for the same missing local dependencies; generated domain tests are `test.fixme` until AppHost seed fixtures exist.
+- [x] `dotnet build Hexalith.Projects.slnx -m:1 /nr:false -warnaserror`
+- [x] `dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class "Hexalith.Projects.Server.Tests.InMemoryProjectAuditTimelineReadModelTests" -class "Hexalith.Projects.Server.Tests.ServiceDefaultsEndpointTests" -parallel none -noColor`
+- [x] `dotnet tests/Hexalith.Projects.Tests/bin/Debug/net10.0/Hexalith.Projects.Tests.dll -class "Hexalith.Projects.Tests.Projections.ProjectAuditTimelineProjectionTests" -parallel none -noColor`
+- [x] `dotnet tests/Hexalith.Projects.Tests/bin/Debug/net10.0/Hexalith.Projects.Tests.dll -method "Hexalith.Projects.Tests.Leakage.NoPayloadLeakageTests.ProjectAuditTimelineItem_SerializesMetadataOnly" -parallel none -noColor`
+- [x] `dotnet tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll -class "Hexalith.Projects.Integration.Tests.DaprProjectionStoreTests" -parallel none -noColor`
+- [x] `git diff --check`
 
 ## Checklist Notes
-- API tests generated: yes, as Playwright API-route E2E tests.
-- E2E tests generated: yes, in the existing `tests/e2e/specs` suite.
-- Standard framework APIs: yes, Playwright `test`, `expect`, and existing `apiRequest` helper patterns.
-- Happy path coverage: yes, preview and confirm.
-- Critical error coverage: yes, preview validation/freshness/idempotency and confirm validation/idempotency.
-- Semantic UI locators: not applicable; Story 4.5 has no UI surface.
+- API tests generated: not applicable; no public API surface for Story 5.1.
+- E2E tests generated: not applicable; no UI route for Story 5.1.
+- Standard framework APIs: yes, xUnit v3 and Shouldly patterns.
+- Happy path coverage: yes, projection fold, in-memory read model, and durable journal rebuild.
+- Critical error coverage: yes, dispatch-tenant mismatch, replay conflict, malformed evidence, missing journal, and unknown event types.
+- Semantic UI locators: not applicable.
 - No hardcoded waits/sleeps: yes.
-- Independent tests: yes, each case constructs its own request ids and idempotency keys.
+- Independent tests: yes.

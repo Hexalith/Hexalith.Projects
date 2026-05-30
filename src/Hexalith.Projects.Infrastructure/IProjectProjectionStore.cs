@@ -7,6 +7,7 @@ namespace Hexalith.Projects.Infrastructure;
 
 using Hexalith.EventStore.Contracts.Events;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Projections.ProjectAuditTimeline;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Projections.ProjectReferenceIndex;
@@ -33,6 +34,13 @@ public interface IProjectProjectionStore
         string tenantId,
         IReadOnlyCollection<string> folderIds,
         IReadOnlyCollection<string> fileReferenceIds,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Lists tenant-scoped Project audit timeline rows, optionally filtered to one Project.</summary>
+    Task<IReadOnlyList<ProjectAuditTimelineItem>> ListAuditTimelineAsync(
+        string tenantId,
+        string? projectId,
+        int? limit,
         CancellationToken cancellationToken = default);
 
     /// <summary>Gets readiness evidence for a tenant projection journal.</summary>

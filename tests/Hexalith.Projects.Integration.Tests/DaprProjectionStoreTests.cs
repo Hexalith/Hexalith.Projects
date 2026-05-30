@@ -13,6 +13,7 @@ using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Infrastructure;
+using Hexalith.Projects.Projections.ProjectAuditTimeline;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Projections.TenantAccess;
@@ -91,12 +92,15 @@ public sealed class DaprProjectionStoreTests
 
         IReadOnlyList<ProjectListItem> rows = await store.ListAsync("tenant-a", null, cancellationToken);
         ProjectDetailItem? detail = await store.GetDetailAsync("tenant-a", "project-a", cancellationToken);
+        IReadOnlyList<ProjectAuditTimelineItem> auditRows = await store.ListAuditTimelineAsync("tenant-a", "project-a", null, cancellationToken);
 
         rows.ShouldHaveSingleItem().ProjectId.ShouldBe("project-a");
         rows[0].Sequence.ShouldBe(2L);
         detail.ShouldNotBeNull();
         detail.Sequence.ShouldBe(2L);
         detail.Setup.ShouldNotBeNull();
+        auditRows.Select(static row => row.OperationType).ShouldBe(["project.setup_updated", "project.created"]);
+        auditRows.Select(static row => row.AuditEventId).Distinct(StringComparer.Ordinal).Count().ShouldBe(2);
     }
 
     /// <summary>Verifies tenant journals order events by EventStore global position, not aggregate sequence.</summary>
@@ -147,6 +151,7 @@ public sealed class DaprProjectionStoreTests
         (await store.AppendAsync(first, cancellationToken)).Status.ShouldBe(ProjectProjectionAppendStatus.Applied);
         (await store.AppendAsync(conflicting, cancellationToken)).Status.ShouldBe(ProjectProjectionAppendStatus.ReplayConflict);
         (await store.GetReadinessAsync("tenant-a", cancellationToken)).ReplayConflict.ShouldBeTrue();
+        await Should.ThrowAsync<InvalidOperationException>(() => store.ListAuditTimelineAsync("tenant-a", "project-a", null, cancellationToken));
     }
 
     /// <summary>Verifies duplicate message IDs with incompatible metadata fail closed.</summary>
@@ -197,6 +202,7 @@ public sealed class DaprProjectionStoreTests
 
         (await store.GetReadinessAsync("tenant-a", cancellationToken)).MalformedEvidence.ShouldBeTrue();
         await Should.ThrowAsync<InvalidOperationException>(() => store.ListAsync("tenant-a", null, cancellationToken));
+        await Should.ThrowAsync<InvalidOperationException>(() => store.ListAuditTimelineAsync("tenant-a", "project-a", null, cancellationToken));
     }
 
     /// <summary>Verifies runtime reads fail closed until a durable projection journal exists.</summary>
@@ -208,6 +214,51 @@ public sealed class DaprProjectionStoreTests
 
         await Should.ThrowAsync<InvalidOperationException>(() => store.ListAsync("tenant-a", null, cancellationToken));
         await Should.ThrowAsync<InvalidOperationException>(() => store.GetDetailAsync("tenant-a", "project-a", cancellationToken));
+        await Should.ThrowAsync<InvalidOperationException>(() => store.ListAuditTimelineAsync("tenant-a", "project-a", null, cancellationToken));
+    }
+
+    /// <summary>Verifies audit timeline rebuilds from the shared Project journal and remains tenant/project scoped.</summary>
+    [Fact]
+    public async Task ProjectProjectionStoreShouldRebuildAuditTimelineFromSharedJournal()
+    {
+        FakeProjectsStateStore state = new();
+        DaprProjectProjectionStore store = new(state);
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        EventEnvelope created = Envelope(
+            "01J000000000000000000040",
+            1,
+            new ProjectCreated("tenant-a", "project-a", "Project A", null, null, ProjectLifecycle.Active, "user-a", "corr-a", "task-a", "idem-a", "fp-a", Now),
+            globalPosition: 40);
+        EventEnvelope folder = Envelope(
+            "01J000000000000000000041",
+            2,
+            new ProjectFolderSet("tenant-a", "project-a", "folder-a", new ProjectFolderMetadata("Folder A"), "user-a", "corr-folder", "task-folder", "idem-folder", "fp-folder", Now.AddMinutes(1)),
+            globalPosition: 41);
+        EventEnvelope otherProject = Envelope(
+            "01J000000000000000000042",
+            1,
+            new ProjectCreated("tenant-a", "project-b", "Project B", null, null, ProjectLifecycle.Active, "user-b", "corr-b", "task-b", "idem-b", "fp-b", Now.AddMinutes(2)),
+            globalPosition: 42);
+        EventEnvelope otherTenant = Envelope(
+            "01J000000000000000000043",
+            1,
+            new ProjectCreated("tenant-b", "project-c", "Project C", null, null, ProjectLifecycle.Active, "user-c", "corr-c", "task-c", "idem-c", "fp-c", Now.AddMinutes(3)),
+            globalPosition: 43);
+
+        (await store.AppendAsync(created, cancellationToken)).Status.ShouldBe(ProjectProjectionAppendStatus.Applied);
+        (await store.AppendAsync(created, cancellationToken)).Status.ShouldBe(ProjectProjectionAppendStatus.Duplicate);
+        (await store.AppendAsync(folder, cancellationToken)).Status.ShouldBe(ProjectProjectionAppendStatus.Applied);
+        (await store.AppendAsync(otherProject, cancellationToken)).Status.ShouldBe(ProjectProjectionAppendStatus.Applied);
+        (await store.AppendAsync(otherTenant, cancellationToken)).Status.ShouldBe(ProjectProjectionAppendStatus.Applied);
+
+        IReadOnlyList<ProjectAuditTimelineItem> projectRows = await store.ListAuditTimelineAsync("tenant-a", "project-a", null, cancellationToken);
+        IReadOnlyList<ProjectAuditTimelineItem> tenantRows = await store.ListAuditTimelineAsync("tenant-a", projectId: null, limit: 2, cancellationToken);
+
+        projectRows.Select(static row => row.OperationType).ShouldBe(["project.folder_set", "project.created"]);
+        projectRows.Select(static row => row.AuditEventId).Distinct(StringComparer.Ordinal).Count().ShouldBe(2);
+        projectRows.ShouldAllBe(static row => row.TenantId == "tenant-a");
+        projectRows.ShouldAllBe(static row => row.ProjectId == "project-a");
+        tenantRows.Select(static row => row.ProjectId).ShouldBe(["project-b", "project-a"]);
     }
 
     private static EventEnvelope Envelope(

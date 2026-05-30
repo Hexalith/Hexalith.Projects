@@ -15,6 +15,7 @@ using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Projections.ProjectAuditTimeline;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Testing.Leakage;
 
@@ -263,6 +264,41 @@ public sealed class NoPayloadLeakageTests
         serialized.ShouldNotContain("candidate", Case.Insensitive);
         serialized.ShouldNotContain("score", Case.Insensitive);
         serialized.ShouldNotContain("rank", Case.Insensitive);
+    }
+
+    [Fact]
+    public void ProjectAuditTimelineItem_SerializesMetadataOnly()
+    {
+        ProjectAuditTimelineItem item = new(
+            "acme",
+            "project-target-001",
+            "audit_001",
+            "project.resolution_confirmed",
+            DateTimeOffset.UnixEpoch,
+            "actor-001",
+            "corr-001",
+            "task-001",
+            "idem-confirm",
+            "conversation",
+            "conversation-001",
+            null,
+            "Confirmed",
+            "confirmation_accepted",
+            "conversation-001",
+            "project-source-001",
+            42L);
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(item));
+        string serialized = System.Text.Json.JsonSerializer.Serialize(item);
+        serialized.ShouldNotContain("candidate", Case.Insensitive);
+        serialized.ShouldNotContain("score", Case.Insensitive);
+        serialized.ShouldNotContain("rank", Case.Insensitive);
+        serialized.ShouldNotContain("transcript", Case.Insensitive);
+        serialized.ShouldNotContain("prompt", Case.Insensitive);
+        serialized.ShouldNotContain("content", Case.Insensitive);
+        serialized.ShouldNotContain("token", Case.Insensitive);
+        serialized.ShouldNotContain("path", Case.Insensitive);
+        serialized.ShouldNotContain("secret", Case.Insensitive);
     }
 
     [Fact]

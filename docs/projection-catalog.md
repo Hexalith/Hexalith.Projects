@@ -131,6 +131,50 @@ boundaries.
   Reference rows. Story 4.3 attachment resolution also uses the reverse-by-reference read model over
   this projection for `folder` and `file` inputs. The lanes never share a key prefix.
 
+## `ProjectAuditTimelineProjection`
+
+- **Type:** `Hexalith.Projects.Projections.ProjectAuditTimeline.ProjectAuditTimelineProjection`.
+- **Owner:** Hexalith.Projects Workers host appends persisted Project events to the shared durable
+  projection journal through `ProjectEventProjectionProcessor`; runtime Server reads audit rows through
+  `DaprProjectAuditTimelineReadModel` / `IProjectAuditTimelineReadModel`.
+- **Key:** audit rows are keyed by deterministic `AuditEventId`, derived from tenant, project, event
+  type, projection/global-position sequence, idempotency key/fingerprint, operation type, and affected
+  reference identity where applicable. It never uses `Guid.NewGuid()`, wall-clock generation time,
+  random values, or Dapr state as the audit id source.
+- **Source events:** every current Project success event: `ProjectCreated`, `ProjectSetupUpdated`,
+  `ProjectArchived`, `ProjectFolderCreationPending`, `ProjectFolderSet`, `FileReferenceLinked`,
+  `FileReferenceUnlinked`, `MemoryLinked`, `MemoryUnlinked`, and `ProjectResolutionConfirmed`.
+  Unknown future `IProjectEvent` types throw during fold until they are explicitly mapped or
+  intentionally documented.
+- **Stored data:** metadata-only tenant id, project id, audit event id, operation type, event
+  timestamp, actor principal id, correlation id, task id, idempotency key, optional affected reference
+  kind/id, safe lifecycle/reference state deltas, optional reason code, confirmed conversation id, and
+  safe source project id for resolution confirmation.
+- **Tenant scoping:** envelope tenant and event tenant must match before any row is folded. Runtime
+  reads are tenant-scoped and optionally project-scoped through the read-model seam. Caller-layer
+  authorization/filtering composes above this seam in Stories 5.2 and 5.7.
+- **Rebuild behavior:** `Rebuild(envelopes)` delegates to `Empty.Apply(envelopes)`, orders by
+  `(Sequence, IdempotencyKey, IdempotencyFingerprint)`, deduplicates by deterministic audit id, and
+  returns rows newest-first from `List(...)`. Runtime reads rebuild from the same
+  `projects:projection-journal:{tenantId}` document used by list/detail/reference-index projections.
+- **Runtime store:** Dapr `statestore`, key `projects:projection-journal:{tenantId}`. Audit reads use
+  the same `EnsureReadable(...)` fail-closed path for missing journals, replay conflicts, malformed
+  evidence, unsupported persisted event types, duplicate-message evidence, out-of-order messages, and
+  EventStore global-position watermarks.
+- **Freshness semantics:** row timestamps come from the event `OccurredAt`; rows are returned
+  newest-first by EventStore global-position sequence (the authoritative total order, matching the
+  list/detail/reference-index projections), with `OccurredAt` carried as the displayed timestamp. No
+  response wall-clock is used to invent audit evidence.
+- **Leakage boundary:** audit rows never store transcripts, file contents, raw prompts, memory
+  payloads, unrestricted/local paths, raw tokens, full command bodies, candidate scores/ranks, rejected
+  candidate ids, sibling denial details, or raw proposal bodies. `ProjectResolutionConfirmed` remains
+  metadata-only, and `ProjectCreatedFromProposal` remains intentionally absent; proposal confirmation is
+  visible only as the existing explicit command chain (`ProjectCreated` plus assignment/folder/file
+  events and safe correlation/task/idempotency metadata).
+- **Consumer guidance:** Stories 5.2 and 5.7 can render timestamp, actor/source metadata, operation,
+  previous-to-new state where available, affected reference, correlation id, task id, audit event id,
+  and safe reason/state codes from this read model without refolding EventStore payloads.
+
 ## `ConversationStartSetupProjection`
 
 - **Type:** `Hexalith.Projects.Projections.ConversationStartSetup.ConversationStartSetupProjector`.

@@ -12,6 +12,7 @@ using System.Text.Json.Serialization;
 using Hexalith.EventStore.Contracts.Events;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Projections.ProjectAuditTimeline;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Projections.ProjectReferenceIndex;
@@ -152,6 +153,22 @@ public sealed class DaprProjectProjectionStore(
 
         ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(ToEnvelopes(document));
         return projection.ListByReference(tenantId, folderIds, fileReferenceIds);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<ProjectAuditTimelineItem>> ListAuditTimelineAsync(
+        string tenantId,
+        string? projectId,
+        int? limit,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
+
+        ProjectProjectionJournalDocument document = EnsureReadable(
+            await ReadJournalAsync(tenantId, cancellationToken).ConfigureAwait(false));
+
+        ProjectAuditTimelineProjection projection = ProjectAuditTimelineProjection.Rebuild(ToEnvelopes(document));
+        return projection.List(tenantId, projectId, limit);
     }
 
     /// <inheritdoc/>

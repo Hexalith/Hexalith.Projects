@@ -75,6 +75,8 @@ public sealed class ServiceDefaultsEndpointTests
             .ShouldBeOfType<AllowingProjectEventStoreAuthorizationValidator>();
         provider.GetRequiredService<IProjectDaprPolicyEvidenceProvider>()
             .ShouldBeOfType<AllowingProjectDaprPolicyEvidenceProvider>();
+        services.Single(static service => service.ServiceType == typeof(IProjectAuditTimelineReadModel))
+            .ImplementationType.ShouldBe(typeof(DaprProjectAuditTimelineReadModel));
     }
 
     /// <summary>Verifies the ACL directory does not capture transient typed HTTP clients in a singleton.</summary>

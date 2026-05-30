@@ -35,7 +35,7 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `Lifecycle` — shared `ProjectLifecycle` (always `Active` at creation).
   - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
-- **Consumers:** `ProjectListProjection`, `ProjectDetailProjection`.
+- **Consumers:** `ProjectListProjection`, `ProjectDetailProjection`, `ProjectAuditTimelineProjection`.
 
 ### `ProjectSetupUpdated`
 
@@ -49,7 +49,7 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `Setup` — bounded Projects-owned setup preferences: goals, user instructions, preferred/excluded source kinds, and conversation-start defaults. It never contains transcript text, file contents, memory bodies, raw prompts, tokens, secrets, command bodies, or paths.
   - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
-- **Consumers:** `ProjectDetailProjection` stores the latest setup; `ProjectListProjection` updates freshness/sequence only.
+- **Consumers:** `ProjectDetailProjection` stores the latest setup; `ProjectListProjection` updates freshness/sequence only; `ProjectAuditTimelineProjection` records a metadata-only setup-update audit row without copying setup body text.
 
 ### `ProjectArchived`
 
@@ -63,7 +63,7 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `Lifecycle` — shared `ProjectLifecycle` (`Archived`).
   - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
-- **Consumers:** `ProjectListProjection`, `ProjectDetailProjection`.
+- **Consumers:** `ProjectListProjection`, `ProjectDetailProjection`, `ProjectAuditTimelineProjection`.
 
 ### `ProjectFolderCreationPending`
 
@@ -78,7 +78,7 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `Retryable` — whether reconciliation may retry when Folders create becomes available.
   - `ActorPrincipalId`, `CorrelationId`, `TaskId`, derived `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
-- **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection`.
+- **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection`, `ProjectAuditTimelineProjection`.
 
 ### `ProjectFolderSet`
 
@@ -92,7 +92,7 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `FolderMetadata` — safe display metadata only; never folder contents, paths, repository internals, tenant authority, or raw upstream ACL details.
   - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
-- **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection`.
+- **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection`, `ProjectAuditTimelineProjection`.
 
 ### `FileReferenceLinked`
 
@@ -107,7 +107,7 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `FileMetadata` — safe display metadata only; never file contents, byte ranges, raw/workspace paths, diffs, provider payloads, repository internals, tenant authority, or raw upstream ACL details.
   - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
-- **Consumers:** `ProjectDetailProjection`, `ProjectReferenceIndexProjection` (`file`-kind rows).
+- **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection` (`file`-kind rows), `ProjectAuditTimelineProjection`.
 
 ### `FileReferenceUnlinked`
 
@@ -120,7 +120,7 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `FileReferenceId` — Projects-owned opaque file-reference string that was unlinked.
   - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
-- **Consumers:** `ProjectDetailProjection`, `ProjectReferenceIndexProjection` (removes only the targeted `file`-kind row).
+- **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection` (removes only the targeted `file`-kind row), `ProjectAuditTimelineProjection`.
 
 ### `MemoryLinked`
 
@@ -134,7 +134,7 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `MemoryMetadata` — safe display metadata only; never `MemoryUnit.Content`, `ContentBytes`, `ContentHash`, `SourceUri`, `SourceType`, `IngestedBy`, `Metadata`, `EmbeddingProvider`, `EmbeddingModel`, `EmbeddingDimensions`, `Classification`, raw `ErrorResponse.Message`/`Suggestion`, raw `MemoriesRemoteException.Message`, tokens, paths, or Memories-internal tenant identifier as payload.
   - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
-- **Consumers:** `ProjectDetailProjection`, `ProjectReferenceIndexProjection` (`memory`-kind rows on a disjoint lane); Epic 3 Project Context assembly.
+- **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection` (`memory`-kind rows on a disjoint lane), `ProjectAuditTimelineProjection`; Epic 3 Project Context assembly.
 
 ### `MemoryUnlinked`
 
@@ -147,7 +147,7 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `MemoryReferenceId` — opaque Memories case identifier that was unlinked.
   - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
-- **Consumers:** `ProjectDetailProjection`, `ProjectReferenceIndexProjection` (removes only the targeted `memory`-kind row); Epic 3 Project Context assembly.
+- **Consumers:** `ProjectDetailProjection`, `ProjectListProjection` freshness updates, `ProjectReferenceIndexProjection` (removes only the targeted `memory`-kind row), `ProjectAuditTimelineProjection`; Epic 3 Project Context assembly.
 
 ### `ProjectResolutionConfirmed`
 
@@ -162,7 +162,15 @@ type; new fields must be optional and backward-compatibly deserializable (NFR-6,
   - `ActorPrincipalId`, `CorrelationId`, `TaskId`, `IdempotencyKey`, `IdempotencyFingerprint` — envelope/idempotency metadata.
   - `OccurredAt` — wall-clock instant (pipeline `TimeProvider`).
 - **Forbidden payload:** candidate ids, rejected candidates, scores, ranks, raw resolution results, transcripts, file contents, prompts, memory bodies, paths, tokens, and full request bodies.
-- **Consumers:** `ProjectStateApply` records idempotency only; `ProjectListProjection` and `ProjectDetailProjection` update freshness/sequence only; `ProjectReferenceIndexProjection` intentionally ignores it.
+- **Consumers:** `ProjectStateApply` records idempotency only; `ProjectListProjection` and `ProjectDetailProjection` update freshness/sequence only; `ProjectReferenceIndexProjection` intentionally ignores it; `ProjectAuditTimelineProjection` records only confirmed conversation/source project metadata and never candidate scores, ranks, rejected ids, or trace payload.
+
+### Proposal-created Projects and audit
+
+Story 4.5 intentionally emits no `ProjectCreatedFromProposal` event and Projects maintains no
+proposal aggregate, persisted proposal preview, or proposal trace. A Project created from a proposal is
+audited through the same explicit success events as any other command chain: `ProjectCreated`, optional
+conversation assignment effects outside this aggregate, optional `ProjectFolderSet`, and optional
+`FileReferenceLinked`, with only safe correlation/task/idempotency metadata.
 
 ## Rejection events
 
