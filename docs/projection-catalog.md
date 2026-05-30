@@ -341,6 +341,55 @@ boundaries.
   `docs/parity-matrix.md#story-57-audit-timeline--safe-export-contract`; Story 5.7 deliberately stops
   at descriptors, Web copy/download, and handoff documentation.
 
+## `ProjectWarningQueueItemProjection`
+
+- **Type:** `Hexalith.Projects.Contracts.Ui.ProjectWarningQueueItemProjection`.
+- **Owner:** Story 5.8 FrontComposer ActionQueue descriptor/wrapper in Contracts. It is not a
+  persisted warning projection, maintenance state, audit event, or duplicate operator inventory model.
+- **Contract version:** `projects.warning-queue-item.ui.v1`.
+- **Source data:** visible tenant-scoped rows from `ListProjectsAsync(...)`, bounded by the current UI
+  load, enriched per visible row through `GetProjectOperatorDiagnosticsAsync(projectId, auditLimit:
+  25, correlationId, eventually_consistent, cancellationToken)`. Queue rows are derived from
+  existing `ProjectOperatorReferenceSummary` metadata only.
+- **Tenant scoping:** inherited from list/operator diagnostic server authorization. The descriptor
+  carries opaque `projectId`/`referenceId` and a display-only tenant scope label; it never accepts or
+  derives tenant authority from URL, headers, local storage, or client input.
+- **Stored data:** none. The Web queue keeps current rows in component/source result memory only.
+- **Freshness semantics:** `lastObservedAt`, `freshnessTrustState`, and `projectionWatermark` come from
+  the existing list/reference/operator diagnostic freshness evidence. Diagnostic enrichment failures
+  produce explicit safe unavailable queue items and dashboard counts rather than wall-clock guesses.
+- **Leakage boundary:** project id/name, lifecycle, shared `ReferenceState`, optional
+  `ProjectReasonCode`, reference kind/id, owner context, freshness evidence, source section, and
+  read-only safe action labels only. No transcript, raw setup text, prompt, file path/content, byte
+  range, workspace id, memory payload, secret, token, raw ProblemDetails body, command/proposal body,
+  idempotency key, candidate score/rank, rejected candidate id, client-derived tenant authority, or
+  sibling denial detail.
+- **Consumer guidance:** Story 5.10 MCP/CLI parity should expose resource name
+  `projects.warningQueue` with the field names in
+  `docs/parity-matrix.md#story-58-warnings-queue--operational-dashboard-contract`. Story 5.9 owns
+  mutations; this descriptor only supports read-only drill-ins/copy-safe-id actions.
+
+## `ProjectOperationalDashboardProjection`
+
+- **Type:** `Hexalith.Projects.Contracts.Ui.ProjectOperationalDashboardProjection`.
+- **Owner:** Story 5.8 FrontComposer StatusOverview descriptor/wrapper in Contracts. It is not a
+  persisted analytics projection or runtime dashboard aggregate.
+- **Contract version:** `projects.operational-dashboard.ui.v1`.
+- **Source data:** aggregate counts over the same visible project set and
+  `ProjectWarningQueueItemProjection` rows loaded for the Web queue.
+- **Tenant scoping:** inherited from the visible project set. The descriptor contains only a
+  display-only tenant scope label and metadata counts.
+- **Stored data:** none. Counts are recomputed per UI source load.
+- **Freshness semantics:** counts include diagnostic unavailable/freshness evidence counts and the
+  newest observed warning timestamp when available; no wall-clock urgency is invented.
+- **Leakage boundary:** aggregate counts and freshness evidence only. It contains no raw per-project
+  payloads, hidden sibling denial details, candidate scores/ranks, rejected candidate ids, raw
+  ProblemDetails bodies, command/proposal bodies, idempotency keys, paths, prompts, transcripts,
+  memory payloads, tokens, or secrets.
+- **Consumer guidance:** Story 5.10 MCP/CLI parity should expose resource name
+  `projects.operationalDashboard` and keep tile/filter semantics read-only. Story 5.8 deliberately
+  stops at descriptors, Web rendering, tests, and this handoff documentation.
+
 ## `ConversationStartSetupProjection`
 
 - **Type:** `Hexalith.Projects.Projections.ConversationStartSetup.ConversationStartSetupProjector`.

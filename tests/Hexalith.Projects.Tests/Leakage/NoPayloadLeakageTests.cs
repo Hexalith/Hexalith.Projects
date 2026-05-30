@@ -1105,4 +1105,49 @@ public sealed class NoPayloadLeakageTests
             }
         }
     }
+
+    [Fact]
+    public void WarningQueueProjection_SerializesMetadataOnly()
+    {
+        var item = new ProjectWarningQueueItemProjection
+        {
+            Id = "project-001:memory:memory-001",
+            ProjectId = "project-001",
+            ProjectName = "Console Project",
+            Lifecycle = ProjectLifecycle.Active,
+            State = ReferenceState.Stale,
+            ReasonCode = ProjectReasonCode.MemoryMatched,
+            ReferenceKind = "memory",
+            ReferenceId = "memory-001",
+            OwnerContext = "Memories",
+            LastObservedAt = DateTimeOffset.UnixEpoch,
+            FreshnessTrustState = "trusted",
+            ProjectionWatermark = "watermark-001",
+            SourceSection = "operator-diagnostics.references",
+        };
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(item));
+    }
+
+    [Fact]
+    public void OperationalDashboardProjection_SerializesMetadataOnly()
+    {
+        var dashboard = new ProjectOperationalDashboardProjection
+        {
+            TotalVisibleProjects = 3,
+            ActiveProjects = 2,
+            ArchivedProjects = 1,
+            ProjectsWithWarnings = 1,
+            StaleReferences = 1,
+            Conflicts = 1,
+            InvalidReferences = 0,
+            UnauthorizedOrUnavailableReferences = 1,
+            AmbiguousOrFailClosed = 1,
+            DiagnosticUnavailable = 1,
+            FreshnessEvidenceWarnings = 1,
+            LastObservedWarningAt = DateTimeOffset.UnixEpoch,
+        };
+
+        Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(dashboard));
+    }
 }

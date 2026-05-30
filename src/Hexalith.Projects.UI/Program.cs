@@ -17,6 +17,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddFluentUIComponents();
 builder.Services.AddProjectsClient();
 builder.Services.AddScoped<IProjectInventorySource, ProjectInventorySource>();
+builder.Services.AddScoped<IProjectWarningsDashboardSource, ProjectWarningsDashboardSource>();
 builder.Services.AddScoped<IProjectOperatorDiagnosticSource, ProjectOperatorDiagnosticSource>();
 builder.Services.AddScoped<IProjectDetailSource, ProjectDetailSource>();
 builder.Services.AddScoped<IProjectResolutionTraceSource, ProjectResolutionTraceSource>();

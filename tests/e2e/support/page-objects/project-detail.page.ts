@@ -25,6 +25,20 @@ export class ProjectDetailPage {
   readonly inventoryReasonCodeFilter: Locator;
   readonly inventoryReferenceTypeFilter: Locator;
   readonly inventoryEmpty: Locator;
+  readonly warningsDashboard: Locator;
+  readonly dashboardTiles: Locator;
+  readonly warningsQueue: Locator;
+  readonly warningRows: Locator;
+  readonly warningState: Locator;
+  readonly warningReason: Locator;
+  readonly warningReference: Locator;
+  readonly warningFreshness: Locator;
+  readonly warningSafeAction: Locator;
+  readonly warningStateFilter: Locator;
+  readonly warningReasonFilter: Locator;
+  readonly warningReferenceTypeFilter: Locator;
+  readonly warningLifecycleFilter: Locator;
+  readonly warningEmpty: Locator;
   readonly inspector: Locator;
   readonly metadataSection: Locator;
   readonly setupSection: Locator;
@@ -88,10 +102,24 @@ export class ProjectDetailPage {
     this.inventoryRows = page.getByTestId('project-inventory-row');
     this.inventoryLifecycleFilter = page.getByTestId('project-inventory-filter-lifecycle');
     this.inventoryUpdatedFilter = page.getByTestId('project-inventory-filter-updated');
-    this.inventoryWarningFilter = page.getByTestId('project-inventory-filter-warning');
-    this.inventoryReasonCodeFilter = page.getByTestId('project-inventory-filter-reason-code');
-    this.inventoryReferenceTypeFilter = page.getByTestId('project-inventory-filter-reference-type');
+    this.inventoryWarningFilter = page.getByTestId('project-warning-filter-state');
+    this.inventoryReasonCodeFilter = page.getByTestId('project-warning-filter-reason');
+    this.inventoryReferenceTypeFilter = page.getByTestId('project-warning-filter-reference-type');
     this.inventoryEmpty = page.getByTestId('project-inventory-empty');
+    this.warningsDashboard = page.getByTestId('project-warnings-dashboard');
+    this.dashboardTiles = page.getByTestId('project-dashboard-tile');
+    this.warningsQueue = page.getByTestId('project-warnings-queue');
+    this.warningRows = page.getByTestId('project-warning-row');
+    this.warningState = page.getByTestId('project-warning-state');
+    this.warningReason = page.getByTestId('project-warning-reason');
+    this.warningReference = page.getByTestId('project-warning-reference');
+    this.warningFreshness = page.getByTestId('project-warning-freshness');
+    this.warningSafeAction = page.getByTestId('project-warning-safe-action');
+    this.warningStateFilter = page.getByTestId('project-warning-filter-state');
+    this.warningReasonFilter = page.getByTestId('project-warning-filter-reason');
+    this.warningReferenceTypeFilter = page.getByTestId('project-warning-filter-reference-type');
+    this.warningLifecycleFilter = page.getByTestId('project-warning-filter-lifecycle');
+    this.warningEmpty = page.getByTestId('project-warning-empty');
     this.inspector = page.getByTestId('project-detail-inspector');
     this.metadataSection = page.getByTestId('project-detail-section-metadata');
     this.setupSection = page.getByTestId('project-detail-section-setup');
@@ -150,6 +178,11 @@ export class ProjectDetailPage {
 
   async gotoInventory(): Promise<void> {
     await this.page.goto('/projects');
-    await this.inventoryGrid.or(this.inventoryEmpty).or(this.feedbackRegion).waitFor({ state: 'visible' });
+    await this.warningsDashboard.or(this.inventoryGrid).or(this.inventoryEmpty).or(this.feedbackRegion).waitFor({ state: 'visible' });
+  }
+
+  async gotoWarnings(): Promise<void> {
+    await this.page.goto('/projects/warnings');
+    await this.warningsDashboard.or(this.warningEmpty).or(this.feedbackRegion).waitFor({ state: 'visible' });
   }
 }

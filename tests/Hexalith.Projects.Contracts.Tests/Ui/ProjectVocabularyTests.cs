@@ -161,6 +161,54 @@ public sealed class ProjectVocabularyTests
     }
 
     [Fact]
+    public void WarningQueueProjectionCarriesActionQueueMetadataAndSharedVocabularyTypes()
+    {
+        Type type = typeof(ProjectWarningQueueItemProjection);
+        type.GetCustomAttributes(typeof(ProjectionAttribute), inherit: false).ShouldHaveSingleItem();
+        ProjectionRoleAttribute role = type.GetCustomAttributes(typeof(ProjectionRoleAttribute), inherit: false)
+            .ShouldHaveSingleItem()
+            .ShouldBeOfType<ProjectionRoleAttribute>();
+        role.Role.ShouldBe(ProjectionRole.ActionQueue);
+        string whenState = role.WhenState.ShouldNotBeNull();
+        whenState.ShouldContain(nameof(ReferenceState.Stale));
+        whenState.ShouldContain(nameof(ReferenceState.InvalidReference));
+        BoundedContextAttribute context = type.GetCustomAttributes(typeof(BoundedContextAttribute), inherit: false)
+            .ShouldHaveSingleItem()
+            .ShouldBeOfType<BoundedContextAttribute>();
+        context.Name.ShouldBe("Projects");
+
+        typeof(ProjectWarningQueueItemProjection)
+            .GetProperty(nameof(ProjectWarningQueueItemProjection.State))!
+            .PropertyType.ShouldBe(typeof(ReferenceState));
+        typeof(ProjectWarningQueueItemProjection)
+            .GetProperty(nameof(ProjectWarningQueueItemProjection.ReasonCode))!
+            .PropertyType.ShouldBe(typeof(ProjectReasonCode?));
+        typeof(ProjectWarningQueueItemProjection)
+            .GetProperty(nameof(ProjectWarningQueueItemProjection.LastObservedAt))!
+            .GetCustomAttributes(typeof(RelativeTimeAttribute), inherit: false)
+            .ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void OperationalDashboardProjectionCarriesStatusOverviewMetadata()
+    {
+        Type type = typeof(ProjectOperationalDashboardProjection);
+        type.GetCustomAttributes(typeof(ProjectionAttribute), inherit: false).ShouldHaveSingleItem();
+        ProjectionRoleAttribute role = type.GetCustomAttributes(typeof(ProjectionRoleAttribute), inherit: false)
+            .ShouldHaveSingleItem()
+            .ShouldBeOfType<ProjectionRoleAttribute>();
+        role.Role.ShouldBe(ProjectionRole.StatusOverview);
+        typeof(ProjectOperationalDashboardProjection)
+            .GetProperty(nameof(ProjectOperationalDashboardProjection.TotalVisibleProjects))!
+            .GetCustomAttributes(typeof(ColumnPriorityAttribute), inherit: false)
+            .ShouldHaveSingleItem();
+        typeof(ProjectOperationalDashboardProjection)
+            .GetProperty(nameof(ProjectOperationalDashboardProjection.LastObservedWarningAt))!
+            .GetCustomAttributes(typeof(RelativeTimeAttribute), inherit: false)
+            .ShouldHaveSingleItem();
+    }
+
+    [Fact]
     public void ReferenceHealthRowProjectionMapsFromExistingReferenceSummary()
     {
         ProjectReferenceHealthRowProjection row = ProjectReferenceHealthRowProjection.FromReferenceSummary(

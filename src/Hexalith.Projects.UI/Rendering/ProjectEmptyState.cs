@@ -42,6 +42,10 @@ public sealed record ProjectEmptyState(
     public static ProjectEmptyState NoAudit()
         => new(None, "audit events", "No audit events are available for this project.", "No project audit events");
 
+    /// <summary>No warnings empty state.</summary>
+    public static ProjectEmptyState NoWarnings()
+        => new(None, "warnings", "No warnings need intervention for the current tenant scope.", "No project warnings");
+
     /// <summary>Access denied empty state.</summary>
     public static ProjectEmptyState AccessDenied()
         => new(Denied, "authorized rows", "Access denied for this view.", "Access denied");
@@ -54,4 +58,3 @@ public sealed record ProjectEmptyState(
     public static ProjectEmptyState FilterReturnedNoResults()
         => new(Filtered, "filtered results", "The current filter returned no results.", "Filter returned no results");
 }
-

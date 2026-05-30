@@ -116,7 +116,7 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
     expect(JSON.stringify(deniedOrMissing.body)).not.toContain(seededProject.projectId);
   });
 
-  test.fixme('renders inventory filters, disabled unsupported dimensions, and row-to-detail navigation selectors', async ({
+  test.fixme('renders inventory filters, warnings filters, and row-to-detail navigation selectors', async ({
     page,
     seededProject,
   }) => {
@@ -125,9 +125,9 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
 
     await expect(detail.inventoryLifecycleFilter).toBeVisible();
     await expect(detail.inventoryUpdatedFilter).toBeVisible();
-    await expect(detail.inventoryWarningFilter).toBeDisabled();
-    await expect(detail.inventoryReasonCodeFilter).toBeDisabled();
-    await expect(detail.inventoryReferenceTypeFilter).toBeDisabled();
+    await expect(detail.inventoryWarningFilter).toBeVisible();
+    await expect(detail.inventoryReasonCodeFilter).toBeVisible();
+    await expect(detail.inventoryReferenceTypeFilter).toBeVisible();
     await expect(detail.inventoryRows.filter({ hasText: seededProject.projectId })).toBeVisible();
 
     await page.getByTestId('project-inventory-row-link').filter({ hasText: seededProject.projectId }).click();
