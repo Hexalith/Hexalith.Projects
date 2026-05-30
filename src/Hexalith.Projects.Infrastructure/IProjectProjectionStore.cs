@@ -9,6 +9,7 @@ using Hexalith.EventStore.Contracts.Events;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
+using Hexalith.Projects.Projections.ProjectReferenceIndex;
 
 /// <summary>
 /// Durable project projection store shared by Server reads and Workers projection processing.
@@ -26,6 +27,13 @@ public interface IProjectProjectionStore
 
     /// <summary>Gets a tenant-scoped project detail row.</summary>
     Task<ProjectDetailItem?> GetDetailAsync(string tenantId, string projectId, CancellationToken cancellationToken = default);
+
+    /// <summary>Lists tenant-scoped reference-index rows matching presented folder/file identifiers.</summary>
+    Task<IReadOnlyList<ProjectReferenceIndexItem>> ListReferencesByReferenceAsync(
+        string tenantId,
+        IReadOnlyCollection<string> folderIds,
+        IReadOnlyCollection<string> fileReferenceIds,
+        CancellationToken cancellationToken = default);
 
     /// <summary>Gets readiness evidence for a tenant projection journal.</summary>
     Task<ProjectProjectionReadiness> GetReadinessAsync(string tenantId, CancellationToken cancellationToken = default);

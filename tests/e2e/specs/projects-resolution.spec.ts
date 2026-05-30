@@ -1,27 +1,159 @@
 import { test, expect } from '../support/merged-fixtures.js';
 import { queryHeaders, mutationHeaders } from '../support/helpers/correlation.js';
+import { resolveProjectFromAttachments } from '../support/helpers/projects-api-client.js';
 
 /**
  * F5 critical journey — resolution → confirm (FR-12/13/14; E1 / R10).
  *
- * `test.fixme` until the resolution API + CL-2 scoring heuristics are defined (the test
- * design blocks PRECISE candidate assertions on CL-2). What IS assertable today and is
- * scaffolded here: the binary outcomes and the never-silently-attach guarantee (NFR-9).
+ * `test.fixme` until the AppHost exposes seeded resolution fixtures for the real API.
+ * The spine-backed routes and exact wire assertions are scaffolded here: binary outcomes,
+ * reason codes, safe-denial, query validation, and the never-silently-attach guarantee.
  *
- * Endpoint paths are placeholders pending the OpenAPI spine (Story 1.3 / Epic 4).
+ * Story 4.3's attachment-resolution query is now spine-backed; the tests remain
+ * `fixme` until the AppHost exposes seeded folder/file reference fixtures.
  */
 test.describe('Projects resolution', () => {
+  const folderId = 'folder-001';
+  const fileId = 'file-001';
+
+  function assertNoResolutionPayloadLeakage(serialized: string, tenantId: string): void {
+    expect(serialized).not.toContain('tenantId');
+    expect(serialized).not.toContain(tenantId);
+    expect(serialized).not.toContain('workspace');
+    expect(serialized).not.toContain('secret');
+    expect(serialized).not.toContain('docs/contract.pdf');
+  }
+
+  test.fixme('folder attachment resolves to a single candidate without leaking tenant or path data (FR-13 / AC1,7)', async ({
+    apiRequest,
+    authToken,
+    tenantContext,
+    seededProject,
+  }) => {
+    const { status, body } = await resolveProjectFromAttachments(
+      apiRequest,
+      tenantContext.tenantId,
+      { folderIds: [folderId] },
+      { authToken, correlationId: 'corr-resolution-folder' },
+    );
+
+    expect(status).toBe(200);
+    expect(body.result).toBe('SingleCandidate');
+    expect(body.candidates).toContainEqual(
+      expect.objectContaining({
+        projectId: seededProject.projectId,
+        reasonCodes: expect.arrayContaining(['ProjectFolderMatched']),
+      }),
+    );
+    assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
+  });
+
+  test.fixme('file attachment resolves with FileReferenceMatched and does not read raw content (FR-13 / AC1,2)', async ({
+    apiRequest,
+    authToken,
+    tenantContext,
+    seededProject,
+  }) => {
+    const { status, body } = await resolveProjectFromAttachments(
+      apiRequest,
+      tenantContext.tenantId,
+      { fileIds: [fileId] },
+      { authToken, correlationId: 'corr-resolution-file' },
+    );
+
+    expect(status).toBe(200);
+    expect(body.result).toBe('SingleCandidate');
+    expect(body.candidates).toContainEqual(
+      expect.objectContaining({
+        projectId: seededProject.projectId,
+        reasonCodes: expect.arrayContaining(['FileReferenceMatched']),
+      }),
+    );
+    assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
+  });
+
+  test.fixme('folder and file attachments can produce multiple candidates and never auto-attach (FR-13 / NFR-9)', async ({
+    apiRequest,
+    authToken,
+    tenantContext,
+  }) => {
+    const { status, body } = await resolveProjectFromAttachments(
+      apiRequest,
+      tenantContext.tenantId,
+      { folderIds: [folderId], fileIds: [fileId] },
+      { authToken, correlationId: 'corr-resolution-multiple' },
+    );
+
+    expect(status).toBe(200);
+    expect(body.result).toBe('MultipleCandidates');
+    expect(body.candidates.length).toBeGreaterThan(1);
+    expect(JSON.stringify(body)).not.toContain('attached');
+    assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
+  });
+
+  test.fixme('attachment query rejects Idempotency-Key and strong freshness as validation errors (AC5)', async ({
+    apiRequest,
+    authToken,
+    tenantContext,
+  }) => {
+    const idempotencyRejected = await resolveProjectFromAttachments(
+      apiRequest,
+      tenantContext.tenantId,
+      { folderIds: [folderId] },
+      {
+        authToken,
+        correlationId: 'corr-resolution-idempotency',
+        extraHeaders: { 'Idempotency-Key': 'query-idempotency-is-invalid' },
+      },
+    );
+    expect(idempotencyRejected.status).toBe(400);
+
+    const freshnessRejected = await resolveProjectFromAttachments(
+      apiRequest,
+      tenantContext.tenantId,
+      { folderIds: [folderId] },
+      {
+        authToken,
+        correlationId: 'corr-resolution-freshness',
+        freshness: 'strong',
+      },
+    );
+    expect(freshnessRejected.status).toBe(400);
+  });
+
+  test.fixme('missing or malformed attachment identifiers collapse to safe-denial 404 (AC6)', async ({
+    apiRequest,
+    authToken,
+    tenantContext,
+  }) => {
+    const missing = await resolveProjectFromAttachments(
+      apiRequest,
+      tenantContext.tenantId,
+      {},
+      { authToken, correlationId: 'corr-resolution-missing' },
+    );
+    expect(missing.status).toBe(404);
+
+    const malformed = await resolveProjectFromAttachments(
+      apiRequest,
+      tenantContext.tenantId,
+      { fileIds: ['bad/slash'] },
+      { authToken, correlationId: 'corr-resolution-malformed' },
+    );
+    expect(malformed.status).toBe(404);
+  });
+
   test.fixme('ambiguous resolution returns MultipleCandidates and never silently attaches (E1 / R10)', async ({ apiRequest, authToken, tenantContext }) => {
-    const { status, body } = await apiRequest<{ outcome: string; candidates: unknown[]; attached: boolean }>({
-      method: 'POST',
-      path: '/api/v1/resolution/from-conversation',
+    const { status, body } = await apiRequest<{ result: string; candidates: unknown[] }>({
+      method: 'GET',
+      path: '/api/v1/projects/resolution/from-conversation',
+      params: { conversationId: 'conv-ambiguous' },
       headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
-      body: { conversationId: 'conv-ambiguous' },
     });
     expect(status).toBe(200);
-    expect(body.outcome).toBe('MultipleCandidates');
+    expect(body.result).toBe('MultipleCandidates');
     // NFR-9: ambiguity asks for confirmation; nothing is attached automatically.
-    expect(body.attached).toBe(false);
+    expect(JSON.stringify(body)).not.toContain('attached');
     expect(body.candidates.length).toBeGreaterThan(1);
   });
 
@@ -50,10 +182,10 @@ test.describe('Projects resolution', () => {
 
   test.fixme('archived projects are excluded from resolution unless explicitly requested (E1)', async ({ apiRequest, authToken, tenantContext }) => {
     const { body } = await apiRequest<{ candidates: Array<{ lifecycle: string }> }>({
-      method: 'POST',
-      path: '/api/v1/resolution/from-conversation',
+      method: 'GET',
+      path: '/api/v1/projects/resolution/from-conversation',
+      params: { conversationId: 'conv-1', includeArchived: false },
       headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
-      body: { conversationId: 'conv-1', includeArchived: false },
     });
     expect(body.candidates.every((c) => c.lifecycle !== 'archived')).toBe(true);
   });

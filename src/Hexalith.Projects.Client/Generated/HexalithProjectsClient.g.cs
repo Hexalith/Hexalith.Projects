@@ -580,6 +580,37 @@ namespace Hexalith.Projects.Client.Generated
         /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ProjectResolution> ResolveProjectFromConversationAsync(string conversationId, bool? includeArchived, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Resolve candidate Projects from attached Project Folder or File references.
+        /// </summary>
+        /// <remarks>
+        /// Computes candidate Projects for metadata-only attached Project Folder and File Reference identifiers by running the Story 4.1 resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched and FileReferenceMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A well-formed attachment that no authorized Project references is a legitimate NoMatch (200), so no cross-tenant or nonexistent attachment oracle is created.
+        /// </remarks>
+        /// <param name="folderId">Repeated opaque Folders-owned Project Folder identifier. At least one folderId or fileId is required; identifiers are metadata-only and are never tenant authority, paths, or content.</param>
+        /// <param name="fileId">Repeated opaque File Reference identifier as stored in the Projects reference index. At least one folderId or fileId is required; identifiers are metadata-only and are never file content, byte ranges, workspace ids, or paths.</param>
+        /// <param name="includeArchived">When true, archived Projects are eligible resolution candidates. Absent or false excludes archived Projects (the default).</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only Project resolution outcome with ranked candidates, exclusion evidence, and freshness.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectResolution> ResolveProjectFromAttachmentsAsync(System.Collections.Generic.IEnumerable<string> folderId, System.Collections.Generic.IEnumerable<string> fileId, bool? includeArchived, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Resolve candidate Projects from attached Project Folder or File references.
+        /// </summary>
+        /// <remarks>
+        /// Computes candidate Projects for metadata-only attached Project Folder and File Reference identifiers by running the Story 4.1 resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched and FileReferenceMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A well-formed attachment that no authorized Project references is a legitimate NoMatch (200), so no cross-tenant or nonexistent attachment oracle is created.
+        /// </remarks>
+        /// <param name="folderId">Repeated opaque Folders-owned Project Folder identifier. At least one folderId or fileId is required; identifiers are metadata-only and are never tenant authority, paths, or content.</param>
+        /// <param name="fileId">Repeated opaque File Reference identifier as stored in the Projects reference index. At least one folderId or fileId is required; identifiers are metadata-only and are never file content, byte ranges, workspace ids, or paths.</param>
+        /// <param name="includeArchived">When true, archived Projects are eligible resolution candidates. Absent or false excludes archived Projects (the default).</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only Project resolution outcome with ranked candidates, exclusion evidence, and freshness.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ProjectResolution> ResolveProjectFromAttachmentsAsync(System.Collections.Generic.IEnumerable<string> folderId, System.Collections.Generic.IEnumerable<string> fileId, bool? includeArchived, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken);
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -3772,6 +3803,176 @@ namespace Hexalith.Projects.Client.Generated
                     urlBuilder_.Append("api/v1/projects/resolution/from-conversation");
                     urlBuilder_.Append('?');
                     urlBuilder_.Append(System.Uri.EscapeDataString("conversationId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(conversationId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    if (includeArchived != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("includeArchived")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeArchived, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProjectResolution>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Validation failure represented as RFC 9457 Problem Details plus Hexalith canonical fields.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authentication failure (no valid token). Externally indistinguishable across all caller cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Authorization denied for an authenticated caller. Externally indistinguishable across tenant/project cases.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Safe denial for missing-or-unauthorized resources. Externally indistinguishable across absent and cross-tenant cases \u2014 does not reveal protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 503)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new HexalithProjectsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new HexalithProjectsApiException<ProblemDetails>("Read model is temporarily unavailable without leaking protected resource existence.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await ReadAsStringAsync(response_.Content, cancellationToken).ConfigureAwait(false);
+                            throw new HexalithProjectsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Resolve candidate Projects from attached Project Folder or File references.
+        /// </summary>
+        /// <remarks>
+        /// Computes candidate Projects for metadata-only attached Project Folder and File Reference identifiers by running the Story 4.1 resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched and FileReferenceMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A well-formed attachment that no authorized Project references is a legitimate NoMatch (200), so no cross-tenant or nonexistent attachment oracle is created.
+        /// </remarks>
+        /// <param name="folderId">Repeated opaque Folders-owned Project Folder identifier. At least one folderId or fileId is required; identifiers are metadata-only and are never tenant authority, paths, or content.</param>
+        /// <param name="fileId">Repeated opaque File Reference identifier as stored in the Projects reference index. At least one folderId or fileId is required; identifiers are metadata-only and are never file content, byte ranges, workspace ids, or paths.</param>
+        /// <param name="includeArchived">When true, archived Projects are eligible resolution candidates. Absent or false excludes archived Projects (the default).</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only Project resolution outcome with ranked candidates, exclusion evidence, and freshness.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ProjectResolution> ResolveProjectFromAttachmentsAsync(System.Collections.Generic.IEnumerable<string> folderId, System.Collections.Generic.IEnumerable<string> fileId, bool? includeArchived, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness)
+        {
+            return ResolveProjectFromAttachmentsAsync(folderId, fileId, includeArchived, x_Correlation_Id, x_Hexalith_Freshness, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Resolve candidate Projects from attached Project Folder or File references.
+        /// </summary>
+        /// <remarks>
+        /// Computes candidate Projects for metadata-only attached Project Folder and File Reference identifiers by running the Story 4.1 resolution engine over Projects-owned reference-index evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event, projection, state, or resolution trace and returns no 202 — only the later ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate / MultipleCandidates with ProjectFolderMatched and FileReferenceMatched reason codes, and excludes archived Projects unless includeArchived is true. Reads are eventually consistent and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter and is rejected if present after authorization. Unauthorized callers, unverifiable tenant evidence, and missing or malformed attachment identifiers collapse to safe-denial 404 (existence-non-inference). A well-formed attachment that no authorized Project references is a legitimate NoMatch (200), so no cross-tenant or nonexistent attachment oracle is created.
+        /// </remarks>
+        /// <param name="folderId">Repeated opaque Folders-owned Project Folder identifier. At least one folderId or fileId is required; identifiers are metadata-only and are never tenant authority, paths, or content.</param>
+        /// <param name="fileId">Repeated opaque File Reference identifier as stored in the Projects reference index. At least one folderId or fileId is required; identifiers are metadata-only and are never file content, byte ranges, workspace ids, or paths.</param>
+        /// <param name="includeArchived">When true, archived Projects are eligible resolution candidates. Absent or false excludes archived Projects (the default).</param>
+        /// <param name="x_Correlation_Id">Optional caller-provided correlation identifier; adapters may generate one when absent.</param>
+        /// <param name="x_Hexalith_Freshness">Requested read-consistency or projection freshness hint for query families.</param>
+        /// <returns>Metadata-only Project resolution outcome with ranked candidates, exclusion evidence, and freshness.</returns>
+        /// <exception cref="HexalithProjectsApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ProjectResolution> ResolveProjectFromAttachmentsAsync(System.Collections.Generic.IEnumerable<string> folderId, System.Collections.Generic.IEnumerable<string> fileId, bool? includeArchived, string x_Correlation_Id, ReadConsistencyClass? x_Hexalith_Freshness, System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (x_Correlation_Id != null)
+                        request_.Headers.TryAddWithoutValidation("X-Correlation-Id", ConvertToString(x_Correlation_Id, System.Globalization.CultureInfo.InvariantCulture));
+
+                    if (x_Hexalith_Freshness != null)
+                        request_.Headers.TryAddWithoutValidation("X-Hexalith-Freshness", ConvertToString(x_Hexalith_Freshness, System.Globalization.CultureInfo.InvariantCulture));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/v1/projects/resolution/from-attachments"
+                    urlBuilder_.Append("api/v1/projects/resolution/from-attachments");
+                    urlBuilder_.Append('?');
+                    if (folderId != null)
+                    {
+                            foreach (var item_ in folderId) { urlBuilder_.Append(System.Uri.EscapeDataString("folderId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
+                    }
+                    if (fileId != null)
+                    {
+                            foreach (var item_ in fileId) { urlBuilder_.Append(System.Uri.EscapeDataString("fileId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append('&'); }
+                    }
                     if (includeArchived != null)
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("includeArchived")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(includeArchived, System.Globalization.CultureInfo.InvariantCulture))).Append('&');

@@ -107,6 +107,33 @@ public sealed class ProjectProjectionTests
     }
 
     [Fact]
+    public void ListProjection_ToleratesFileAndMemoryReferenceEvents()
+    {
+        // Regression: the durable journal is shared, so ListAsync rebuilds the list projection over
+        // EVERY project event. Before the fix the list projection threw on File/Memory reference events
+        // (it only knew Created/SetupUpdated/Archived/Folder*), so any List read — and the Story 4.3
+        // attachment-resolution reverse read model, which calls ListAsync — failed once a tenant linked a
+        // file or memory. The aggregate (ProjectStateApply) and ProjectDetailProjection already handle
+        // these; the list projection must too. Folds must not throw and the row must stay list-visible.
+        ProjectListProjection projection = ProjectListProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(TenantA, 1, Created(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 2, FolderSet(TenantA)),
+            new ProjectProjectionEnvelope(TenantA, 3, FileLinked(TenantA, "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(TenantA, 4, MemoryLink(TenantA, "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+            new ProjectProjectionEnvelope(TenantA, 5, FileUnlinked(TenantA, "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(TenantA, 6, MemoryUnlink(TenantA, "case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+        ]);
+
+        ProjectListItem item = projection.Get(TenantA, ProjectIdValue)!;
+        item.Name.ShouldBe("Tracer Bullet");
+        item.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+        item.Sequence.ShouldBe(6);
+        item.UpdatedAt.ShouldBe(DateTimeOffset.UnixEpoch.AddMinutes(8));
+        projection.List(TenantA, lifecycleFilter: null).Single().ProjectId.ShouldBe(ProjectIdValue);
+    }
+
+    [Fact]
     public void DetailProjection_AppliesProjectFolderCreationPending()
     {
         ProjectDetailProjection projection = ProjectDetailProjection.Empty.Apply(

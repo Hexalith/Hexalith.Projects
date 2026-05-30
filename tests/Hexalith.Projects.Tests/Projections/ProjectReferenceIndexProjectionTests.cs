@@ -119,6 +119,28 @@ public sealed class ProjectReferenceIndexProjectionTests
     }
 
     [Fact]
+    public void ListByReference_ReturnsOnlyTenantScopedFolderAndFileMatches()
+    {
+        const string otherTenant = "tenant-b";
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
+        [
+            new ProjectProjectionEnvelope(Tenant, 1, Set()),
+            new ProjectProjectionEnvelope(Tenant, 2, Linked("file_01HZ9K8YQ3W6V2N4R7T5P0X1F1")),
+            new ProjectProjectionEnvelope(Tenant, 3, MemLinked("case_01HZ9K8YQ3W6V2N4R7T5P0X1M1")),
+            new ProjectProjectionEnvelope(otherTenant, 4, Set(otherTenant, "01HZ9K8YQ3W6V2N4R7T5P0X1BB")),
+        ]);
+
+        var rows = projection.ListByReference(
+            Tenant,
+            [FolderId],
+            ["file_01HZ9K8YQ3W6V2N4R7T5P0X1F1", "missing-file"]);
+
+        rows.Select(item => item.ReferenceKind).ShouldBe(["file", "folder"]);
+        rows.Select(item => item.ReferenceId).ShouldBe(["file_01HZ9K8YQ3W6V2N4R7T5P0X1F1", FolderId]);
+        rows.ShouldAllBe(item => string.Equals(item.TenantId, Tenant, StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void MemoryLinked_IsIndexedAsIncludedMemoryRowOnDisjointLane()
     {
         ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(
@@ -266,9 +288,9 @@ public sealed class ProjectReferenceIndexProjectionTests
         "sha256:folder-pending",
         DateTimeOffset.UnixEpoch);
 
-    private static ProjectFolderSet Set() => new(
-        Tenant,
-        ProjectId,
+    private static ProjectFolderSet Set(string tenantId = Tenant, string projectId = ProjectId) => new(
+        tenantId,
+        projectId,
         FolderId,
         new ProjectFolderMetadata("Tracer Folder"),
         "actor-001",

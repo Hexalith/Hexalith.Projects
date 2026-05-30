@@ -1376,6 +1376,107 @@ paths:
         - projection_stale
         - projection_unavailable
         - internal_error
+  /api/v1/projects/resolution/from-attachments:
+    get:
+      tags:
+        - projects
+      operationId: ResolveProjectFromAttachments
+      summary: Resolve candidate Projects from attached Project Folder or File references.
+      description: >
+        Computes candidate Projects for metadata-only attached Project Folder and File Reference
+        identifiers by running the Story 4.1 resolution engine over Projects-owned reference-index
+        evidence (FR-13, UJ-2). A synchronous, compute-on-demand read: it writes no event,
+        projection, state, or resolution trace and returns no 202 — only the later
+        ConfirmProjectResolution command persists. Returns NoMatch / SingleCandidate /
+        MultipleCandidates with ProjectFolderMatched and FileReferenceMatched reason codes, and
+        excludes archived Projects unless includeArchived is true. Reads are eventually consistent
+        and carry the X-Hexalith-Freshness response header. Idempotency-Key is not a query parameter
+        and is rejected if present after authorization. Unauthorized callers, unverifiable tenant
+        evidence, and missing or malformed attachment identifiers collapse to safe-denial 404
+        (existence-non-inference). A well-formed attachment that no authorized Project references is
+        a legitimate NoMatch (200), so no cross-tenant or nonexistent attachment oracle is created.
+      parameters:
+        - name: folderId
+          in: query
+          required: false
+          description: >
+            Repeated opaque Folders-owned Project Folder identifier. At least one folderId or fileId
+            is required; identifiers are metadata-only and are never tenant authority, paths, or
+            content.
+          schema:
+            type: array
+            maxItems: 32
+            items:
+              $ref: "#/components/schemas/OpaqueIdentifier"
+          style: form
+          explode: true
+        - name: fileId
+          in: query
+          required: false
+          description: >
+            Repeated opaque File Reference identifier as stored in the Projects reference index. At
+            least one folderId or fileId is required; identifiers are metadata-only and are never
+            file content, byte ranges, workspace ids, or paths.
+          schema:
+            type: array
+            maxItems: 32
+            items:
+              $ref: "#/components/schemas/OpaqueIdentifier"
+          style: form
+          explode: true
+        - name: includeArchived
+          in: query
+          required: false
+          description: When true, archived Projects are eligible resolution candidates. Absent or false excludes archived Projects (the default).
+          schema:
+            type: boolean
+            default: false
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/Freshness"
+      responses:
+        "200":
+          description: Metadata-only Project resolution outcome with ranked candidates, exclusion evidence, and freshness.
+          headers:
+            X-Correlation-Id:
+              $ref: "#/components/headers/CorrelationId"
+            X-Hexalith-Freshness:
+              $ref: "#/components/headers/Freshness"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectResolution"
+        "401":
+          $ref: "#/components/responses/SafeAuthorizationDenial401"
+        "400":
+          $ref: "#/components/responses/ValidationFailure"
+        "403":
+          $ref: "#/components/responses/SafeAuthorizationDenial403"
+        "404":
+          $ref: "#/components/responses/SafeAuthorizationDenial404"
+        "503":
+          $ref: "#/components/responses/ReadModelUnavailable"
+      x-hexalith-read-consistency:
+        class: eventually_consistent
+        freshnessBehavior: returns-projection-watermark-when-available
+      x-hexalith-correlation:
+        correlationHeader: X-Correlation-Id
+        taskHeader: X-Hexalith-Task-Id
+        causation: query-correlation-only
+        adapterBehavior: caller-provided-or-generated-correlation
+      x-hexalith-authorization:
+        requirement: tenant-context-and-project-read-permission
+        tenantAuthority: authentication-context-and-eventstore-envelope
+        safeDenial: externally-indistinguishable
+      x-hexalith-canonical-error-categories:
+        - authentication_failure
+        - tenant_access_denied
+        - cross_tenant_access_denied
+        - validation_error
+        - not_found
+        - read_model_unavailable
+        - projection_stale
+        - projection_unavailable
+        - internal_error
 components:
   securitySchemes:
     oidcBearer:

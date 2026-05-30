@@ -1,97 +1,73 @@
-# Test Automation Summary — Story 4.1 (Resolution engine, compute-on-demand)
+# Test Automation Summary - Story 4.3 Resolve Project From Attachments
 
-> Workflow: `bmad-qa-generate-e2e-tests` · Date: 2026-05-29 · Engineer: QA automation (for Jerome)
-> Story file: `_bmad-output/implementation-artifacts/4-1-resolution-engine-compute-on-demand.md`
-> Test framework detected: **xUnit v3 + Shouldly** (.NET 10, `Hexalith.Projects.Tests`)
+Workflow: `bmad-qa-generate-e2e-tests`
+Date: 2026-05-30
+Engineer: QA automation
+Story file: `_bmad-output/implementation-artifacts/4-3-resolve-project-from-attachments.md`
 
-## Scope note — why no Playwright/HTTP "E2E"
+## Test Framework Detected
 
-Story 4.1 is, by design, a **pure compute-on-demand engine** — it has **no HTTP endpoint, no UI, no command/event/projection, and no I/O** (Dev Notes: "IS NOT any HTTP endpoint… ACL call, read-model query, or persisted trace"). So the workflow's *API tests (if applicable)* and *E2E tests (if UI exists)* steps have no web surface to target. The engine's public method `ProjectResolutionEngine.Resolve(context, candidates)` **is** the end-to-end behavioral boundary; "automated tests" here means Tier-1 behavioral coverage driven through that boundary with realistic, fully-composed evidence — the same boundary the Epic 3 `ProjectContextInclusionPolicy` draws. HTTP/Playwright coverage belongs to Stories 4.2/4.3 (which fetch evidence and call this engine).
+- API / endpoint tests: xUnit v3 + Shouldly in `tests/Hexalith.Projects.Server.Tests` and `tests/Hexalith.Projects.Tests`.
+- E2E tests: Playwright in `tests/e2e`.
 
-## Generated tests
+## Generated Tests
 
-All additions are pure Tier-1, deterministic (fixed `Now`, zero `Thread.Sleep`/`Task.Delay`/`SpinWait`/`Task.Yield`), reuse the existing `ProjectResolutionEvidenceBuilder` + `RecordingLogger`, and introduce no new shared-vocabulary values or magic strings.
+### API Tests
 
-### Gaps discovered and auto-applied (9)
+- [x] `tests/Hexalith.Projects.Server.Tests/Queries/ResolveProjectFromAttachmentsTests.cs` - added `Resolve_TooManyAttachmentIds_ReturnsValidationProblem`, covering the 32-attachment cap and `400 validation_error` with `rejectedField=attachments`.
 
-| # | Gap (untested branch / AC) | Test added | File |
-|---|---|---|---|
-| A | Tenant **mismatch** — both tenant ids set but unequal (`IsTenantAuthorityVerified` false-equality branch). AC4 / doc row / security negative path. Previously only the `null` authority case was pinned. | `Resolve_RequestedTenantMismatch_FailsClosedForEveryCandidate` | `ProjectResolutionEngineTests.cs` |
-| B | `RequestedTenantId == null` + verified authority → candidate **qualifies** (the safe fail-open branch). | `Resolve_NullRequestedTenant_WithVerifiedAuthority_Qualifies` | `ProjectResolutionEngineTests.cs` |
-| C | Candidate enumerated with **zero signals** → `NoMatch`, no exclusion row (silent-contribution edge). | `Resolve_CandidateWithNoSignals_NeitherQualifiesNorSurfacesExclusion` | `ProjectResolutionEngineTests.cs` |
-| J | Archived **opt-in** candidate carrying a non-`Included` signal still **qualifies and surfaces the exclusion** (doc row line 20, AC5). | `Resolve_ArchivedOptInWithNonIncludedSignal_QualifiesAndStillSurfacesExclusion` | `ProjectResolutionEngineTests.cs` |
-| D | Score **dominates** the `ProjectId` Ordinal tiebreak — higher score on a lexically-later id ranks first (AC6/AC9 ranking; prior tiebreak test used equal scores only). | `Resolve_ScoreDominatesProjectIdOrdering` | `ProjectResolutionEngineDeterminismTests.cs` |
-| E | **AC11 trace reconstruction** — all five Resolution Trace states (`Resolved`/`NoMatch`/`MultipleCandidates`/`Excluded`/`FailedClosed`) reconstruct from engine evidence with no persisted trace; plus doc-table completeness. *No dedicated test existed.* | `ProjectResolutionTraceMappingTests` (4 cases) | `ProjectResolutionTraceMappingTests.cs` *(new)* |
-| F | `ProjectFolderMatched` (weight 45) confidence-band cell was missing from the band theory; `MinimumQualifyingScore` had no doc↔code assertion (AC6 completeness). | `ConfidenceBandCells_QualifyWhenSoleCandidate` (+1 case) and `MinimumQualifyingScoreCell_CodeAgreesWithDocument` | `ProjectResolutionScoringMatrixTests.cs` |
-| H | Validation branches with no coverage: negative `Score`, whitespace `ReferenceKind`, and `ResolutionCandidate` reason-code de-duplication. | `ResolutionCandidate_NegativeScore_Throws`, `MatchSignal_NullOrWhitespaceReferenceKind_Throws` (×3), `ResolutionCandidate_DuplicateReasonCodes_AreDeduplicated` | `ProjectResolutionContractValidationTests.cs` |
-| AC9 | Domain-core **assembly** references no sibling-context / web assemblies (`Hexalith.Conversations/Folders/Memories`, `Dapr`, `Microsoft.AspNetCore`) — complements the existing ctor/field reflection proof with an assembly-level purity guarantee. | `ProjectResolutionEngine_Assembly_ReferencesNoSiblingContextOrWebAssemblies` | `ProjectResolutionPersistsNothingTests.cs` |
+Existing Story 4.3 API coverage already present:
 
-**New test cases added: 17** (4 + 1 + 2 + 5 + 1 + 4), raising the Resolution suite from 54 → **71**.
+- [x] Folder attachment happy path returns `SingleCandidate` with `ProjectFolderMatched`.
+- [x] File attachment happy path returns `SingleCandidate` with `FileReferenceMatched`.
+- [x] Folder + file evidence can return `MultipleCandidates`.
+- [x] No referenced project returns `NoMatch`.
+- [x] `Idempotency-Key` is rejected as `idempotency_key`.
+- [x] Invalid freshness is rejected.
+- [x] Missing / malformed attachment identifiers return safe-denial `404`.
+- [x] Read-model outage returns retryable `503 read_model_unavailable`.
+- [x] Archived candidates are excluded by default and included when requested.
+- [x] Cross-tenant references do not leak.
+- [x] Response bodies pass payload-leakage checks across representative outcomes.
 
-### Files
-- [M] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionEngineTests.cs`
-- [M] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionEngineDeterminismTests.cs`
-- [M] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionScoringMatrixTests.cs`
-- [M] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionContractValidationTests.cs`
-- [M] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionPersistsNothingTests.cs`
-- [A] `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionTraceMappingTests.cs`
+### E2E Tests
+
+- [x] `tests/e2e/support/helpers/projects-api-client.ts` - added typed `resolveProjectFromAttachments(...)` helper for the spine-backed GET route with repeated `folderId` / `fileId` query params.
+- [x] `tests/e2e/specs/projects-resolution.spec.ts` - added Story 4.3 Playwright scenarios for folder resolution, file resolution, multiple candidates, query validation, safe-denial, and payload-leakage assertions.
+- [x] Updated existing resolution scaffolds from placeholder conversation routes to the spine-backed `GET /api/v1/projects/resolution/from-conversation` route shape.
+
+The Playwright domain tests remain `test.fixme`, matching the existing E2E workspace convention until the AppHost exposes seeded folder/file reference fixtures.
 
 ## Coverage
 
-| Acceptance criterion | Status after this run |
-|---|---|
-| AC1 pure engine type / optional `ILogger` | covered (pre-existing) |
-| AC2 typed `ResolutionResult` outcome | covered |
-| AC3 per-candidate reason codes (shared vocab) | covered |
-| AC4 fail-closed qualification (incl. tenant **mismatch**) | **gap closed (A, B)** |
-| AC5 archived exclusion + opt-in (incl. non-included signal) | **gap closed (J)** |
-| AC6 documented scoring/threshold cells | **completeness closed (F)** |
-| AC7 persist-nothing positive proof | covered |
-| AC8 metadata-only, no `TenantId` on the wire | covered |
-| AC9 purity & determinism (incl. **assembly** references + score-dominance ranking) | **gap closed (D, AC9)** |
-| AC10 Tier-1 five epic-named cases + guards | covered |
-| AC11 trace-ready output (5 states reconstructable) | **gap closed (E)** |
+- API endpoints: Story 4.3 endpoint covered for happy path, no match, multiple candidates, validation, safe-denial, read-model unavailable, archived filtering, tenant isolation, payload leakage, and max-count validation.
+- UI features: none for Story 4.3.
+- E2E workflows: scaffolded for the attachment-resolution user journey; unblocked when runtime seeded references are available.
 
-- **API endpoints:** N/A — Story 4.1 exposes none (deferred to Stories 4.2/4.3).
-- **UI features:** N/A — Story 4.1 has none (Resolution Trace view is Story 5.6).
-- **Engine behavioral surface (`Resolve`):** all 11 ACs now have at least one pinning Tier-1 test.
+## Validation
 
-## Verification
+- `tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests -class Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests -noLogo -noColor`
+  - Passed: 13, Failed: 0, Skipped: 0.
+  - Note: this uses the existing compiled assembly, so it validates the pre-existing class coverage but does not compile the newly added max-count test.
+- `/home/administrator/.dotnet/dotnet test tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj --filter FullyQualifiedName~ResolveProjectFromAttachmentsTests`
+  - Blocked by restricted network restore to `https://api.nuget.org/v3/index.json` (`NU1301 Permission denied`).
+- `npm run typecheck` from `tests/e2e`
+  - Blocked because `tsc` is not installed in the workspace (`sh: 1: tsc: not found`).
+- `git -c core.whitespace=blank-at-eol,blank-at-eof,space-before-tab,tab-in-indent,cr-at-eol diff --check -- <changed test files>`
+  - Passed. The repository uses CRLF via `.editorconfig`.
 
-```
-dotnet build tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj -warnaserror
-  → 0 Warning(s) / 0 Error(s)
+## Checklist Validation
 
-dotnet test … --filter FullyQualifiedName~Hexalith.Projects.Tests.Resolution --no-build
-  → Passed: 71, Failed: 0, Skipped: 0   (was 54; +17 exactly)
-
-dotnet test tests/Hexalith.Projects.Tests/…csproj --no-build   (full Tier-1 lane)
-  → Passed: 513, Failed: 0, Skipped: 0   (was 496; +17 exactly)
-```
-
-Pinned SDK `/home/administrator/.dotnet` 10.0.300. `git diff --check` clean; no `.g.cs`, OpenAPI spine, `src/`, or submodule-pointer changes — only the six Resolution test files above.
-
-## Gaps intentionally NOT filled
-
-- **`HttpClient`/Dapr in the assembly-reference test.** The new assembly test forbids sibling-context + `Microsoft.AspNetCore` + `Dapr` references; `HttpClient` is screened at the type level by the existing `…HaveNoPersistenceOrNetworkDependencies` reflection proof rather than by assembly name (`System.Net.Http` is a shared framework assembly), to avoid a false positive. The two tests are complementary.
-- **HTTP / Aspire / browser surface.** Out of scope for this pure engine — Stories 4.2/4.3 (resolve endpoints) and 5.6 (Resolution Trace UI) are the right place for API + E2E coverage.
-
-## Validation against `checklist.md`
-
-- [x] API tests generated (if applicable) — N/A by design (no HTTP surface); documented.
-- [x] E2E tests generated (if UI exists) — N/A by design (no UI); engine `Resolve(...)` boundary covered behaviorally.
-- [x] Tests use standard test framework APIs (xUnit v3 + Shouldly).
+- [x] API tests generated where applicable.
+- [x] E2E tests generated where UI/runtime workflow exists.
+- [x] Tests use standard framework APIs (xUnit v3 / Shouldly, Playwright).
 - [x] Tests cover happy path.
-- [x] Tests cover critical error cases (tenant mismatch/missing, unauthorized, archived, null/validation guards).
-- [x] All generated tests run successfully (71/71 Resolution, 513/513 full Tier-1).
-- [x] Proper locators — N/A for non-UI; typed builders + shared-vocabulary enums (no magic strings).
-- [x] Tests have clear, intention-revealing descriptions.
-- [x] No hardcoded waits/sleeps (deterministic, fixed `Now`).
-- [x] Tests are independent (no shared mutable state / order dependency).
+- [x] Tests cover critical error cases.
+- [ ] All generated tests run successfully - blocked for newly edited sources by missing local TypeScript compiler and restricted NuGet restore.
+- [x] Tests use semantic/API-level interaction patterns; no brittle UI selectors added.
+- [x] Tests have clear descriptions.
+- [x] No hardcoded waits or sleeps.
+- [x] Tests are independent.
 - [x] Test summary created.
-- [x] Tests saved to appropriate directory (`tests/Hexalith.Projects.Tests/Resolution/`).
+- [x] Tests saved to appropriate directories.
 - [x] Summary includes coverage metrics.
-
-## Next steps
-- Run on the standard CI Tier-1 lane (no infra dependencies).
-- When Stories 4.2/4.3 land the HTTP resolve surfaces, add API/integration tests there (Testcontainers/Dapr-slim where a real boundary is needed) — the pure-engine cases above remain the contract those endpoints must honor.

@@ -14,6 +14,7 @@ using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
+using Hexalith.Projects.Projections.ProjectReferenceIndex;
 
 /// <summary>
 /// Dapr state-backed project projection journal. Reads rebuild through the shared pure folds.
@@ -133,6 +134,24 @@ public sealed class DaprProjectProjectionStore(
 
         ProjectDetailProjection projection = ProjectDetailProjection.Rebuild(ToEnvelopes(document));
         return projection.Get(tenantId, projectId);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<ProjectReferenceIndexItem>> ListReferencesByReferenceAsync(
+        string tenantId,
+        IReadOnlyCollection<string> folderIds,
+        IReadOnlyCollection<string> fileReferenceIds,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
+        ArgumentNullException.ThrowIfNull(folderIds);
+        ArgumentNullException.ThrowIfNull(fileReferenceIds);
+
+        ProjectProjectionJournalDocument document = EnsureReadable(
+            await ReadJournalAsync(tenantId, cancellationToken).ConfigureAwait(false));
+
+        ProjectReferenceIndexProjection projection = ProjectReferenceIndexProjection.Empty.Apply(ToEnvelopes(document));
+        return projection.ListByReference(tenantId, folderIds, fileReferenceIds);
     }
 
     /// <inheritdoc/>

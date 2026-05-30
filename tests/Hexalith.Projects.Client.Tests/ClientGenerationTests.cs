@@ -181,6 +181,23 @@ public sealed class ClientGenerationTests
     }
 
     [Fact]
+    public void GeneratedClientExposesAttachmentResolutionQueryWithoutIdempotencyParameter()
+    {
+        Assembly clientAssembly = typeof(CreateProjectRequest).Assembly;
+        Type clientInterface = clientAssembly.GetType("Hexalith.Projects.Client.Generated.IClient").ShouldNotBeNull();
+
+        MethodInfo[] methods = clientInterface.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Where(m => m.Name == "ResolveProjectFromAttachmentsAsync")
+            .ToArray();
+
+        methods.ShouldNotBeEmpty();
+        methods.Any(m => m.ReturnType.FullName?.Contains("ProjectResolution", StringComparison.Ordinal) == true).ShouldBeTrue();
+        methods.SelectMany(m => m.GetParameters())
+            .Any(p => p.Name?.Contains("idempotency", StringComparison.OrdinalIgnoreCase) == true)
+            .ShouldBeFalse();
+    }
+
+    [Fact]
     public void GeneratedClientExposesProjectConversationOperationsWithExpectedIdempotencyShape()
     {
         Assembly clientAssembly = typeof(CreateProjectRequest).Assembly;

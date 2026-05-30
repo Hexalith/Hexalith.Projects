@@ -52,6 +52,8 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IProjectDetailReadModel>(sp => sp.GetRequiredService<InMemoryProjectDetailReadModel>());
         services.TryAddSingleton<InMemoryProjectListReadModel>();
         services.TryAddSingleton<IProjectListReadModel>(sp => sp.GetRequiredService<InMemoryProjectListReadModel>());
+        services.TryAddSingleton<InMemoryProjectReferenceIndexReadModel>();
+        services.TryAddSingleton<IProjectReferenceIndexReadModel>(sp => sp.GetRequiredService<InMemoryProjectReferenceIndexReadModel>());
         services.TryAddSingleton<IProjectTenantContextAccessor, HttpContextProjectTenantContextAccessor>();
         services.TryAddSingleton<ProjectAuthorizationGate>();
         services.TryAddSingleton<IActorPartyResolver, DeterministicActorPartyResolver>();
@@ -129,6 +131,9 @@ public static class ProjectsServerServiceCollectionExtensions
         services.RemoveAll<IProjectDetailReadModel>();
         services.RemoveAll<InMemoryProjectDetailReadModel>();
         services.AddSingleton<IProjectDetailReadModel, DaprProjectDetailReadModel>();
+        services.RemoveAll<IProjectReferenceIndexReadModel>();
+        services.RemoveAll<InMemoryProjectReferenceIndexReadModel>();
+        services.AddSingleton<IProjectReferenceIndexReadModel, DaprProjectReferenceIndexReadModel>();
         if (!services.Any(static service => service.ServiceType == typeof(IConversationClient)))
         {
             services.AddHexalithConversationsClient(options => options.Endpoint = new Uri("http://conversations"));

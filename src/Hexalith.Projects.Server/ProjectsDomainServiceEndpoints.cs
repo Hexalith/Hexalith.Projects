@@ -214,6 +214,24 @@ public static partial class ProjectsDomainServiceEndpoints
                 cancellationToken).ConfigureAwait(false))
             .WithName("ResolveProjectFromConversation");
 
+        endpoints.MapGet("/api/v1/projects/resolution/from-attachments", static async (
+            HttpContext httpContext,
+            IProjectTenantContextAccessor tenantContext,
+            ProjectAuthorizationGate authorizationGate,
+            IProjectReferenceIndexReadModel referenceIndexReadModel,
+            Hexalith.Projects.Resolution.ProjectResolutionEngine resolutionEngine,
+            TimeProvider timeProvider,
+            CancellationToken cancellationToken)
+            => await ResolveProjectFromAttachmentsAsync(
+                httpContext,
+                tenantContext,
+                authorizationGate,
+                referenceIndexReadModel,
+                resolutionEngine,
+                timeProvider,
+                cancellationToken).ConfigureAwait(false))
+            .WithName("ResolveProjectFromAttachments");
+
         endpoints.MapPost("/api/v1/projects/{projectId}/conversations/{conversationId}/link", static async (
             string projectId,
             string conversationId,

@@ -158,6 +158,26 @@ public sealed record ProjectListProjection
 
                     break;
 
+                case FileReferenceLinked or FileReferenceUnlinked or MemoryLinked or MemoryUnlinked:
+                    // File/Memory reference events do not change list-visible fields (Name/Lifecycle) but
+                    // must be tolerated here: the durable journal is shared, so ListAsync rebuilds this
+                    // projection over EVERY project event. ProjectStateApply and ProjectDetailProjection
+                    // already handle these; omitting them here desynced the projection from the aggregate
+                    // (the exact failure this projection's throw-on-unknown policy exists to prevent) and
+                    // made any List read throw once a tenant linked a file or memory — the path the
+                    // attachment-resolution reverse read model (Story 4.3) depends on. Touch the row's
+                    // Sequence/UpdatedAt like ProjectFolderSet so the list reflects the latest activity.
+                    if (projects.TryGetValue(key, out ProjectListItem? referenceRow))
+                    {
+                        projects[key] = referenceRow with
+                        {
+                            Sequence = envelope.Sequence,
+                            UpdatedAt = envelope.Event.OccurredAt,
+                        };
+                    }
+
+                    break;
+
                 default:
                     // Diverging from ProjectStateApply (which throws on unknown event types) would let
                     // new event types replay as no-ops in the projection while the aggregate fails

@@ -166,6 +166,49 @@ public sealed record ProjectReferenceIndexProjection
             .ToArray();
     }
 
+    /// <summary>Lists tenant-scoped folder/file reference rows that match the presented attachment identifiers.</summary>
+    /// <param name="tenantId">The managed tenant identifier.</param>
+    /// <param name="folderIds">The presented folder identifiers.</param>
+    /// <param name="fileReferenceIds">The presented file reference identifiers.</param>
+    /// <returns>The matching reference rows ordered by project, reference kind, and reference id.</returns>
+    public IReadOnlyList<ProjectReferenceIndexItem> ListByReference(
+        string tenantId,
+        IEnumerable<string> folderIds,
+        IEnumerable<string> fileReferenceIds)
+    {
+        ArgumentNullException.ThrowIfNull(folderIds);
+        ArgumentNullException.ThrowIfNull(fileReferenceIds);
+
+        if (string.IsNullOrWhiteSpace(tenantId))
+        {
+            return [];
+        }
+
+        HashSet<string> folders = folderIds
+            .Where(static id => !string.IsNullOrWhiteSpace(id))
+            .ToHashSet(StringComparer.Ordinal);
+        HashSet<string> files = fileReferenceIds
+            .Where(static id => !string.IsNullOrWhiteSpace(id))
+            .ToHashSet(StringComparer.Ordinal);
+
+        if (folders.Count == 0 && files.Count == 0)
+        {
+            return [];
+        }
+
+        string tenant = tenantId.Trim();
+        return References.Values
+            .Where(item => string.Equals(item.TenantId, tenant, StringComparison.Ordinal))
+            .Where(item => item.ReferenceId is not null)
+            .Where(item =>
+                (string.Equals(item.ReferenceKind, FolderReferenceKind, StringComparison.Ordinal) && folders.Contains(item.ReferenceId!))
+                || (string.Equals(item.ReferenceKind, FileReferenceKind, StringComparison.Ordinal) && files.Contains(item.ReferenceId!)))
+            .OrderBy(item => item.ProjectId, StringComparer.Ordinal)
+            .ThenBy(item => item.ReferenceKind, StringComparer.Ordinal)
+            .ThenBy(item => item.ReferenceId, StringComparer.Ordinal)
+            .ToArray();
+    }
+
     private static void RemoveReferences(
         Dictionary<string, ProjectReferenceIndexItem> references,
         string tenantId,

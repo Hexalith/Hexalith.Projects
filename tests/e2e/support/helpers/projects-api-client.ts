@@ -33,11 +33,49 @@ export interface ProjectDetail extends ProjectSummary {
   freshness?: string;
 }
 
+export type ResolutionResult = 'NoMatch' | 'SingleCandidate' | 'MultipleCandidates';
+export type ResolutionReasonCode = 'ProjectFolderMatched' | 'FileReferenceMatched';
+
+export interface ResolutionCandidate {
+  projectId: string;
+  displayName?: string;
+  lifecycle: ProjectLifecycle;
+  score: number;
+  rank: number;
+  reasonCodes: ResolutionReasonCode[];
+}
+
+export interface ResolutionExclusion {
+  projectId?: string;
+  referenceKind?: string;
+  referenceId?: string;
+  referenceState?: string;
+  reasonCode?: ResolutionReasonCode;
+  diagnostic?: string;
+}
+
+export interface ProjectResolution {
+  result: ResolutionResult;
+  candidates: ResolutionCandidate[];
+  excluded: ResolutionExclusion[];
+}
+
 export interface AcceptedCommand {
   /** Server-assigned aggregate id for the created/affected project. */
   projectId: string;
   /** Correlation id echoed back for tracing. */
   correlationId?: string;
+}
+
+export interface ResolveProjectFromAttachmentsInput {
+  folderIds?: readonly string[];
+  fileIds?: readonly string[];
+  includeArchived?: boolean;
+}
+
+export interface QueryRequestOptions extends AuthHeaderOptions {
+  freshness?: string;
+  extraHeaders?: Record<string, string>;
 }
 
 /** POST /api/v1/projects → 202 AcceptedCommand (FR-1). */
@@ -85,6 +123,36 @@ export async function listProjects(
     path: '/api/v1/projects',
     params: lifecycle ? { lifecycle } : undefined,
     headers: { ...queryHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
+  });
+  return { status, body };
+}
+
+/** GET /api/v1/projects/resolution/from-attachments (FR-13). */
+export async function resolveProjectFromAttachments(
+  apiRequest: ApiRequest,
+  tenantId: string,
+  input: ResolveProjectFromAttachmentsInput,
+  headerOptions: QueryRequestOptions,
+): Promise<{ status: number; body: ProjectResolution }> {
+  const params = new URLSearchParams();
+  input.folderIds?.forEach((id) => params.append('folderId', id));
+  input.fileIds?.forEach((id) => params.append('fileId', id));
+  if (input.includeArchived !== undefined) {
+    params.set('includeArchived', String(input.includeArchived));
+  }
+
+  const query = params.toString();
+  const headers = {
+    ...queryHeaders(headerOptions),
+    ...(headerOptions.freshness ? { 'X-Hexalith-Freshness': headerOptions.freshness } : {}),
+    ...headerOptions.extraHeaders,
+    'X-Hexalith-Tenant-Id': tenantId,
+  };
+  const { status, body } = await apiRequest<ProjectResolution>({
+    method: 'GET',
+    path: `/api/v1/projects/resolution/from-attachments${query ? `?${query}` : ''}`,
+    headers,
+    retryConfig: { maxRetries: 0 },
   });
   return { status, body };
 }
