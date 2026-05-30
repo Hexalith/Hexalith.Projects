@@ -62,6 +62,10 @@ Notes:
   states, reason/feedback codes, correlation/task/audit ids, timestamps, and UI projection descriptor
   metadata. Idempotency keys remain internal command evidence and are not public audit/operator/UI
   output.
+- Story 5.10 MCP/CLI adapters reuse existing safe categories only. Public adapter output may include
+  structured safe fields plus a short safe explanation, but idempotency keys, raw ProblemDetails,
+  command bodies, exception text, hidden descriptor metadata, client-derived tenant authority, and
+  sibling payload/denial details remain forbidden.
 
 ## Forbidden sibling-owned content (NEVER on the wire)
 

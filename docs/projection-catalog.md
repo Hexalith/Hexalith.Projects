@@ -393,6 +393,33 @@ boundaries.
   `projects.operationalDashboard` and keep tile/filter semantics read-only. Story 5.8 deliberately
   stops at descriptors, Web rendering, tests, and this handoff documentation.
 
+## Story 5.10 MCP / CLI Adapter Surfaces
+
+- **Type:** adapter-local records in `Hexalith.Projects.Mcp` and command output DTO shapes in
+  `Hexalith.Projects.Cli`.
+- **Owner:** Story 5.10 MCP/CLI parity adapters. These are not persisted projections, new REST
+  contracts, domain events, Dapr state, or generated client artifacts.
+- **Resource/tool names:** read resources are `projects.inventory`, `projects.detail`,
+  `projects.operatorDiagnostic`, `projects.referenceHealth`, `projects.resolutionTrace`,
+  `projects.auditTimeline`, `projects.safeDiagnosticExport`, `projects.warningQueue`,
+  `projects.operationalDashboard`, and `projects.maintenanceAction`. Mutating tools are
+  `projects.archive`, `projects.restore`, `projects.relink`, `projects.unlink`, and
+  `projects.reevaluate`.
+- **Source data:** existing generated Projects client methods only; query surfaces use eventual
+  freshness and caller/server correlation identifiers, while mutation surfaces route through the
+  existing generated command methods or read-only refresh for `reevaluate`.
+- **Tenant scoping:** host/client authentication and server-side authorization only. Tenant scope in
+  output is a display label (`server-derived tenant`), not caller-supplied authority.
+- **Freshness semantics:** read resources preserve generated freshness fields and bounded audit limits
+  (default 25, max 100). Warning/dashboard resources use visible inventory rows plus bounded
+  diagnostics.
+- **Leakage boundary:** output may include safe opaque ids, lifecycle/reference/result/reason states,
+  freshness, timestamps, correlation/task/audit ids, safe feedback codes, descriptor metadata, and
+  short safe explanations. Output must not include idempotency keys, command bodies, raw ProblemDetails,
+  exception text, tenant authority from client input, paths, transcripts, prompts, file contents,
+  memory payloads, tokens, secrets, hidden descriptors, sibling denial detail, candidate score/rank
+  outside trace output, or rejected candidate ids.
+
 ## `ConversationStartSetupProjection`
 
 - **Type:** `Hexalith.Projects.Projections.ConversationStartSetup.ConversationStartSetupProjector`.
