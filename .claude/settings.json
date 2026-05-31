@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(git config *)",
-      "Bash(git ls-remote *)"
+      "Bash(git ls-remote *)",
+      "mcp__aspire__list_apphosts",
+      "mcp__aspire__doctor",
+      "Bash(aspire --version)",
+      "Bash(dotnet --version)",
+      "Bash(aspire run *)"
     ],
     "deny": [
       "Read(./Hexalith.*/_bmad/**)",
