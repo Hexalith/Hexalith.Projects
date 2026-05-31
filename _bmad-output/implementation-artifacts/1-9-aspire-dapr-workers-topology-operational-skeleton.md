@@ -19,7 +19,8 @@ This story closes Epic 1 by turning the current compile-time placeholders into a
 1. **Aspire AppHost boots the Projects local topology (AR-22).**
    **Given** `src/Hexalith.Projects.AppHost`
    **When** `dotnet run --project src/Hexalith.Projects.AppHost` is executed in a prepared local environment
-   **Then** the AppHost declares a coherent topology for `eventstore`, `tenants`, `projects`, `projects-workers`, Keycloak, and Redis-backed Dapr components
+   **Then** the AppHost declares a coherent topology for `eventstore`, `tenants`, `projects`, `projects-workers`, Keycloak, and Dapr sidecars/components
+   **And** the Dapr `statestore` and `pubsub` components use the configured local Redis backing endpoint, defaulting to the Dapr-initialized Redis instance rather than creating a second Redis server
    **And** service dependencies use Aspire references and `WaitFor` ordering rather than hard-coded URLs
    **And** the AppHost fails fast with a clear message when required Dapr configuration files are missing
    **And** only root-level sibling project references are used; no recursive submodule setup is introduced.
@@ -75,7 +76,7 @@ This story closes Epic 1 by turning the current compile-time placeholders into a
   - [x] Replace `src/Hexalith.Projects.Aspire/ProjectsAspire.cs` placeholder with an Aspire module similar to `Hexalith.Folders.Aspire/FoldersAspireModule.cs`.
   - [x] Expose constants for app IDs and Dapr component names: `EventStoreAppId`, `TenantsAppId`, `ProjectsAppId`, `ProjectsWorkersAppId`, optional `ProjectsUiAppId`, `StateStoreComponentName`, and `PubSubComponentName`.
   - [x] Add a resource record such as `HexalithProjectsResources` so structural tests can assert that topology resources are not accidentally dropped.
-  - [x] Add shared Dapr components with Redis-backed `state.redis` and `pubsub.redis` semantics through CommunityToolkit Aspire Dapr APIs. Redis must remain a Dapr component backend; do not add direct Redis access from Contracts, Client, domain core, Server business logic, or Workers handlers.
+  - [x] Add shared Dapr components with Redis-backed `state.redis` and `pubsub.redis` semantics through CommunityToolkit Aspire Dapr APIs. Redis must remain a Dapr component backend, default to the Dapr-initialized local endpoint, and not be treated as a required Projects-owned server; do not add direct Redis access from Contracts, Client, domain core, Server business logic, or Workers handlers.
   - [x] Attach Dapr sidecars to `eventstore`, `tenants`, `projects`, and `projects-workers` with the same component references and Dapr config path.
   - [x] Apply `WithReference` and `WaitFor` from `projects`/`projects-workers` to EventStore and Tenants so command/query and tenant-event dependencies start predictably.
   - [x] Add package references without inline versions; put any required new `Aspire.Hosting`, `Aspire.Hosting.Redis`, `Aspire.Hosting.Keycloak`, and `CommunityToolkit.Aspire.Hosting.Dapr` versions in `Directory.Packages.props` with comments. Prefer the current sibling Folders pins unless restore/build proves a narrower version is required.
@@ -109,7 +110,7 @@ This story closes Epic 1 by turning the current compile-time placeholders into a
 - [x] **Task 6 - Add Dapr component/configuration files and operational runbooks** (AC: 2, 5)
   - [x] Add `src/Hexalith.Projects.AppHost/DaprComponents/accesscontrol.yaml` with local-development warnings and explicit Projects policies for internal endpoints.
   - [x] Add `src/Hexalith.Projects.AppHost/DaprComponents/resiliency.yaml`; in self-hosted Dapr the resiliency spec must be named `resiliency.yaml`.
-  - [x] Add or generate Dapr component resources for `statestore` and `pubsub` with Redis-backed metadata. Scope components to the required app IDs.
+  - [x] Add or generate Dapr component resources for `statestore` and `pubsub` with Redis-backed metadata using the configured local Redis endpoint. Scope components to the required app IDs.
   - [x] Configure pub/sub dead-letter behavior for Tenants events and Project event projection dispatch. If using programmatic subscriptions, use Dapr `TopicOptions.DeadLetterTopic`; if using declarative subscriptions, scope them to `projects-workers`.
   - [x] Add `docs/runbooks/projects-topology.md` covering local start/stop, expected resources, health/readiness interpretation, dead-letter inspection, replay, projection rebuild, and safe failure handling.
   - [x] The runbook must not include recursive submodule commands, production secrets, payload examples, or direct Redis inspection as the primary recovery path. Use Dapr/EventStore/Admin-safe paths first.

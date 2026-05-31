@@ -19,10 +19,19 @@ spec:
           - name: /process
             httpVerb: ["POST"]
             action: allow
+          - name: process
+            httpVerb: ["POST"]
+            action: allow
           - name: /api/v1/commands
             httpVerb: ["POST"]
             action: allow
           - name: /api/v1/queries
+            httpVerb: ["POST"]
+            action: allow
+          - name: /admin/operational-index-metadata
+            httpVerb: ["POST"]
+            action: allow
+          - name: admin/operational-index-metadata
             httpVerb: ["POST"]
             action: allow
       - appId: tenants
@@ -31,6 +40,12 @@ spec:
         namespace: "default"
         operations:
           - name: /tenants/events
+            httpVerb: ["POST"]
+            action: allow
+          - name: /admin/operational-index-metadata
+            httpVerb: ["POST"]
+            action: allow
+          - name: admin/operational-index-metadata
             httpVerb: ["POST"]
             action: allow
       - appId: projects

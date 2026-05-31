@@ -9,7 +9,9 @@ Prerequisites:
 
 - .NET SDK `10.0.300`.
 - Docker-compatible container runtime for Aspire-managed infrastructure.
-- Dapr CLI/runtime installed for local sidecars.
+- Dapr CLI/runtime installed and initialized for local sidecars, with the Dapr-initialized Redis
+  backing endpoint reachable from the host. By default the AppHost uses `localhost:6379`; override
+  with `Dapr:RedisHost` when your local Dapr Redis is exposed elsewhere.
 - Root-level sibling repositories already available through the workspace layout.
 
 Start the topology:
@@ -37,13 +39,14 @@ The AppHost resource graph should include:
 - `tenants`
 - `projects`
 - `projects-workers`
-- `redis`
 - Redis-backed Dapr component `statestore`
 - Redis-backed Dapr component `pubsub`
+- A reachable local Redis backing endpoint, normally the Dapr-initialized `dapr_redis` instance
 - Keycloak when `EnableKeycloak` is not set to `false`
 
 The stable Dapr app IDs are `eventstore`, `tenants`, `projects`, and `projects-workers`. The Dapr
-component names are `statestore` and `pubsub`.
+component names are `statestore` and `pubsub`. Redis is a Dapr component backend in this topology;
+Projects code must not access Redis directly.
 
 ## Health and Readiness
 
@@ -116,6 +119,7 @@ Safe rebuild order:
 Fail closed in these cases:
 
 - Dapr sidecar, `statestore`, or `pubsub` is unavailable.
+- The configured Redis backing endpoint for Dapr components is unavailable.
 - Tenant access projection is missing, stale, malformed, or in replay conflict.
 - Project projection journal is missing, malformed, or in replay conflict.
 - Envelope tenant and event tenant disagree.

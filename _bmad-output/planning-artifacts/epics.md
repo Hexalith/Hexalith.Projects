@@ -128,7 +128,7 @@ _Source: Architecture Decision Document (decisions, structure, implementation se
 - **AR-19 (Layered authorization, fail-closed):** API/JWT (OIDC, Keycloak realm `hexalith`) → EventStore claim-transform → `TenantAccessProjection` (exists/active/member/role) → project-level authz (belongs-to-tenant, accessible, active) → referenced-resource authz via owning context → query-side result filtering. Object-level authorization on every endpoint accepting an identifier (OWASP API #1).
 - **AR-20 (Dapr-only infrastructure):** Dapr is the only infrastructure abstraction (state/pub-sub/actors/service-invocation). No direct Redis/Postgres/Cosmos/broker in contracts/client/domain. Dapr access-control allowlists for internal endpoints (`/process`, projection dispatch, subscriptions); mTLS where deployed; dev access-control policy never shipped to prod; resiliency (retry/timeout/circuit-breaker) at service-invocation boundaries, not in domain handlers.
 - **AR-21 (Workers + operations):** `Hexalith.Projects.Workers` host for projection processing + Tenants-event subscription; dead-letter topics + replay/rebuild runbooks; durable projection/dedup stores in production.
-- **AR-22 (Aspire topology):** Aspire AppHost owns local topology (eventstore, tenants, projects, workers, projects-ui, Keycloak, Dapr components + Redis); REST + SignalR (`nudge-only` → re-query) + `MapMcp`.
+- **AR-22 (Aspire topology):** Aspire AppHost owns local topology (eventstore, tenants, projects, workers, projects-ui, Keycloak, Dapr sidecars/components backed by the configured local Redis endpoint); REST + SignalR (`nudge-only` → re-query) + `MapMcp`.
 - **AR-23 (Testing tiers):** xUnit v3 + Shouldly + NSubstitute; reuse EventStore/Tenants Testing fakes/builders; `Verify.XunitV3` for FrontComposer snapshots; bUnit for components; Playwright (Node ≥24) + axe-core for E2E. Tier-1 (pure: aggregate Handle/Apply, projections, resolution, context-assembly, ACL translators, generator parse/transform/emit) has no Dapr/Aspire/network/browser/containers. Mandatory negative-path tests: cross-tenant isolation, `NoPayloadLeakage`, idempotency (duplicate command + duplicate projection delivery), projection rebuild/replay.
 
 **Cross-module upstream dependency gaps (track as ADRs + upstream stories)**
@@ -511,7 +511,8 @@ So that **the module runs end-to-end locally and is operationally sound for late
 
 **Given** the AppHost
 **When** `dotnet run --project src/Hexalith.Projects.AppHost` is executed
-**Then** it boots eventstore, tenants, projects, workers, Keycloak, and Dapr components (Redis-backed) as a coherent local topology
+**Then** it boots eventstore, tenants, projects, workers, Keycloak, and Dapr sidecars/components as a coherent local topology
+**And** the Dapr `statestore` and `pubsub` components use the configured local Redis backing endpoint, defaulting to the Dapr-initialized Redis instance rather than creating a second Redis server
 **And** `Hexalith.Projects.Workers` hosts projection processing + the Tenants-event subscription.
 
 **Given** Dapr as the only infrastructure abstraction (AR-20)

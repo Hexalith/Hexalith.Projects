@@ -1,5 +1,11 @@
 @inherits LayoutComponentBase
 @using Hexalith.FrontComposer.Shell.Components.Layout
 
-<FrontComposerShell>@Body</FrontComposerShell>
-
+<FrontComposerShell>
+    <Navigation>
+        <ProjectNavigation />
+    </Navigation>
+    <ChildContent>
+        @Body
+    </ChildContent>
+</FrontComposerShell>

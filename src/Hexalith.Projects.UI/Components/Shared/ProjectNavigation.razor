@@ -1,0 +1,56 @@
+@using Hexalith.Projects.Contracts.Ui
+@using Hexalith.Projects.UI.Diagnostics
+@inject IProjectInventorySource InventorySource
+
+<nav class="project-navigation" data-testid="project-navigation" aria-label="Projects">
+    <a class="project-navigation__home" data-testid="project-navigation-home" href="/projects">Projects</a>
+
+    @if (_loading)
+    {
+        <span class="project-navigation__status" data-testid="project-navigation-loading">Loading projects</span>
+    }
+    else if (_result?.Feedback is not null)
+    {
+        <span class="project-navigation__status" data-testid="project-navigation-feedback">Project list unavailable</span>
+    }
+    else if ((_result?.Rows.Count ?? 0) == 0)
+    {
+        <span class="project-navigation__status" data-testid="project-navigation-empty">No projects</span>
+    }
+    else
+    {
+        <ul class="project-navigation__list">
+            @foreach (ProjectInventoryRowProjection row in _result!.Rows)
+            {
+                <li>
+                    <a class="project-navigation__project"
+                       data-testid="project-navigation-project"
+                       href="@ProjectLink(row.ProjectId)"
+                       aria-label="@($"Open project {DisplayName(row)}")">
+                        <span>@DisplayName(row)</span>
+                        <code>@row.ProjectId</code>
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+</nav>
+
+@code {
+    private ProjectInventoryLoadResult? _result;
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _result = await InventorySource
+            .ListProjectsAsync(null, CancellationToken.None)
+            .ConfigureAwait(true);
+        _loading = false;
+    }
+
+    private static string DisplayName(ProjectInventoryRowProjection row)
+        => string.IsNullOrWhiteSpace(row.Name) ? row.ProjectId : row.Name;
+
+    private static string ProjectLink(string projectId)
+        => $"/projects/{Uri.EscapeDataString(projectId)}";
+}

@@ -16,8 +16,7 @@ _ = ProjectsAppHost.ResolveDaprConfigPath(
     builder.AppHostDirectory,
     Directory.GetCurrentDirectory(),
     "resiliency.yaml");
-
-IResourceBuilder<RedisResource> redis = builder.AddRedis(ProjectsAspireModule.RedisResourceName);
+string redisHost = builder.Configuration["Dapr:RedisHost"] ?? ProjectsAspireModule.LocalDaprRedisHost;
 
 IResourceBuilder<KeycloakResource>? keycloak = null;
 ReferenceExpression? realmUrl = null;
@@ -34,7 +33,11 @@ if (!string.Equals(builder.Configuration["EnableKeycloak"], "false", StringCompa
 }
 
 IResourceBuilder<ProjectResource> eventStore = builder.AddProject<Projects.Hexalith_EventStore>(ProjectsAspireModule.EventStoreAppId);
+ConfigureProjectsEventStoreDomainRegistrations(eventStore);
 IResourceBuilder<ProjectResource> tenants = builder.AddProject<Projects.Hexalith_Tenants>(ProjectsAspireModule.TenantsAppId);
+_ = eventStore
+    .WithReference(tenants)
+    .WaitFor(tenants);
 IResourceBuilder<ProjectResource> projects = builder.AddProject<Projects.Hexalith_Projects_Server>(ProjectsAspireModule.ProjectsAppId);
 IResourceBuilder<ProjectResource> projectsUi = builder.AddProject<Projects.Hexalith_Projects_UI>(ProjectsAspireModule.ProjectsUiAppId);
 IResourceBuilder<ProjectResource> projectsWorkers = builder.AddProject<Projects.Hexalith_Projects_Workers>(ProjectsAspireModule.ProjectsWorkersAppId);
@@ -44,7 +47,7 @@ _ = builder.AddHexalithProjects(
     tenants,
     projects,
     projectsWorkers,
-    redis.GetEndpoint("tcp"),
+    redisHost,
     accessControlConfigPath,
     daprComponentsPath);
 
@@ -63,6 +66,40 @@ _ = projectsUi
     .WithEnvironment("Projects__BaseAddress", ReferenceExpression.Create($"{projects.GetEndpoint("http")}"));
 
 builder.Build().Run();
+
+static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<ProjectResource> eventStore)
+{
+    string[] sampleRegistrationKeys =
+    [
+        "tenant-a|orders|v1",
+        "tenant-b|inventory|v1",
+        "*|counter|v1",
+        "*|greeting|v1"
+    ];
+
+    foreach (string key in sampleRegistrationKeys)
+    {
+        SuppressEventStoreDomainServiceRegistration(eventStore, key);
+    }
+
+    SuppressEventStoreOperationalIndexMetadataRegistration(eventStore, "system|global-administrators|v1");
+}
+
+static void SuppressEventStoreDomainServiceRegistration(IResourceBuilder<ProjectResource> eventStore, string registrationKey)
+{
+    _ = eventStore
+        .WithEnvironment($"EventStore__DomainServices__Registrations__{registrationKey}__AppId", string.Empty)
+        .WithEnvironment($"EventStore__DomainServices__Registrations__{registrationKey}__Domain", string.Empty);
+}
+
+static void SuppressEventStoreOperationalIndexMetadataRegistration(
+    IResourceBuilder<ProjectResource> eventStore,
+    string registrationKey)
+{
+    _ = eventStore.WithEnvironment(
+        $"EventStore__DomainServices__Registrations__{registrationKey}__Domain",
+        string.Empty);
+}
 
 static void ConfigureJwt(
     IResourceBuilder<ProjectResource> resource,

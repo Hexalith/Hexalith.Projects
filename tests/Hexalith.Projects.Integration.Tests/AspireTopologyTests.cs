@@ -31,7 +31,7 @@ public sealed class AspireTopologyTests
         ProjectsAspireModule.ProjectsAppId.ShouldBe("projects");
         ProjectsAspireModule.ProjectsWorkersAppId.ShouldBe("projects-workers");
         ProjectsAspireModule.ProjectsUiAppId.ShouldBe("projects-ui");
-        ProjectsAspireModule.RedisResourceName.ShouldBe("redis");
+        ProjectsAspireModule.LocalDaprRedisHost.ShouldBe("localhost:6379");
         ProjectsAspireModule.StateStoreComponentName.ShouldBe("statestore");
         ProjectsAspireModule.PubSubComponentName.ShouldBe("pubsub");
     }
@@ -53,6 +53,18 @@ public sealed class AspireTopologyTests
         IResource[] resources = [.. builder.Resources];
         resources.ShouldContain(r => string.Equals(r.Name, ProjectsAspireModule.StateStoreComponentName, StringComparison.Ordinal));
         resources.ShouldContain(r => string.Equals(r.Name, ProjectsAspireModule.PubSubComponentName, StringComparison.Ordinal));
+    }
+
+    /// <summary>Verifies the AppHost defaults to the Dapr-initialized Redis endpoint instead of creating a required Redis resource.</summary>
+    [Fact]
+    public void AppHostShouldUseConfiguredDaprRedisBackingWithoutRequiredRedisResource()
+    {
+        string appHost = File.ReadAllText(Path.Combine(ProjectRoot(), "src", "Hexalith.Projects.AppHost", "Program.cs"));
+
+        appHost.ShouldContain("builder.Configuration[\"Dapr:RedisHost\"]");
+        appHost.ShouldContain("ProjectsAspireModule.LocalDaprRedisHost");
+        appHost.ShouldNotContain("builder.AddRedis(");
+        appHost.ShouldNotContain("redis.GetEndpoint(\"tcp\")");
     }
 
     /// <summary>Verifies the resource record remains a complete topology contract.</summary>
@@ -87,4 +99,7 @@ public sealed class AspireTopologyTests
             Directory.Delete(tempDirectory, recursive: true);
         }
     }
+
+    private static string ProjectRoot()
+        => Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
 }

@@ -292,7 +292,8 @@ Open structural question to resolve in decisions: new root-level submodule vs. i
 ### Infrastructure & Deployment
 
 - **Topology:** Aspire AppHost (REST + SignalR + `MapMcp`); Dapr sidecars (state, pub/sub,
-  actors, service invocation, resiliency, access control); Redis-backed Dapr components locally.
+  actors, service invocation, resiliency, access control); local Dapr components backed by the
+  configured Redis endpoint, defaulting to the Dapr-initialized Redis instance.
 - **Workers:** `Hexalith.Projects.Workers` host for projection processing + Tenants-event
   subscription; durable projection + dedup store in production (not in-memory).
 - **Observability:** OpenTelemetry via ServiceDefaults + Dapr; structured logs with tenant/
@@ -640,7 +641,8 @@ updated → SignalR nudge → query re-read; ProjectContext assembled at query t
 
 ### Development Workflow Integration
 - **Dev:** `dotnet run --project src/Hexalith.Projects.AppHost` (Aspire) boots eventstore,
-  tenants, projects, workers, projects-ui, Keycloak, Dapr sidecars + Redis.
+  tenants, projects, workers, projects-ui, Keycloak, and Dapr sidecars/components backed by the
+  configured local Redis endpoint.
 - **Build:** `dotnet build Hexalith.Projects.slnx`; init root-level submodules only.
 - **Deploy:** Dapr-sidecar services per host; durable projection/dedup stores in prod;
   access-control deny-by-default + mTLS; CI gates (`frontcomposer inspect --fail-on-warning`,

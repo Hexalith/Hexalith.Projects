@@ -30,8 +30,11 @@ public static class ProjectsAspireModule
     /// <summary>The optional app id reserved for a future Projects UI host.</summary>
     public const string ProjectsUiAppId = "projects-ui";
 
-    /// <summary>The Aspire Redis resource name backing local Dapr components.</summary>
+    /// <summary>The optional Aspire Redis resource name for environments that do not use the Dapr-initialized Redis.</summary>
     public const string RedisResourceName = "redis";
+
+    /// <summary>The default Redis host exposed by the Dapr-initialized local Redis container.</summary>
+    public const string LocalDaprRedisHost = "localhost:6379";
 
     /// <summary>The Dapr state store component name.</summary>
     public const string StateStoreComponentName = "statestore";
@@ -44,7 +47,18 @@ public static class ProjectsAspireModule
     /// <returns>The state-store and pub/sub component builders.</returns>
     public static (IResourceBuilder<IDaprComponentResource> StateStore, IResourceBuilder<IDaprComponentResource> PubSub)
         AddProjectsSharedDaprComponents(this IDistributedApplicationBuilder builder)
-        => AddProjectsSharedDaprComponents(builder, "localhost:6379");
+        => AddProjectsSharedDaprComponents(builder, LocalDaprRedisHost);
+
+    /// <summary>Registers Redis-backed Dapr components using the supplied Redis host.</summary>
+    /// <param name="builder">The distributed application builder.</param>
+    /// <param name="redisHost">The Redis host used by Dapr components.</param>
+    /// <returns>The state-store and pub/sub component builders.</returns>
+    public static (IResourceBuilder<IDaprComponentResource> StateStore, IResourceBuilder<IDaprComponentResource> PubSub)
+        AddProjectsSharedDaprComponents(this IDistributedApplicationBuilder builder, string redisHost)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(redisHost);
+        return AddProjectsSharedDaprComponentsCore(builder, component => component.WithMetadata("redisHost", redisHost));
+    }
 
     /// <summary>Registers Redis-backed Dapr components using the supplied Redis endpoint reference.</summary>
     /// <param name="builder">The distributed application builder.</param>
@@ -77,17 +91,78 @@ public static class ProjectsAspireModule
         string daprConfigPath,
         string daprResourcesPath)
     {
+        ArgumentNullException.ThrowIfNull(redisEndpoint);
+
+        (IResourceBuilder<IDaprComponentResource> stateStore, IResourceBuilder<IDaprComponentResource> pubSub) =
+            builder.AddProjectsSharedDaprComponents(redisEndpoint);
+
+        return AddHexalithProjectsCore(
+            builder,
+            eventStore,
+            tenants,
+            projects,
+            projectsWorkers,
+            stateStore,
+            pubSub,
+            daprConfigPath,
+            daprResourcesPath);
+    }
+
+    /// <summary>Registers the Projects topology resources and attaches Dapr sidecars.</summary>
+    /// <param name="builder">The distributed application builder.</param>
+    /// <param name="eventStore">The EventStore project resource.</param>
+    /// <param name="tenants">The Tenants project resource.</param>
+    /// <param name="projects">The Projects API project resource.</param>
+    /// <param name="projectsWorkers">The Projects Workers project resource.</param>
+    /// <param name="redisHost">The Redis host used by Dapr components.</param>
+    /// <param name="daprConfigPath">The Dapr access-control configuration file path.</param>
+    /// <param name="daprResourcesPath">The Dapr resources directory containing resiliency.yaml.</param>
+    /// <returns>The resource record used by structural tests and future topology extensions.</returns>
+    public static HexalithProjectsResources AddHexalithProjects(
+        this IDistributedApplicationBuilder builder,
+        IResourceBuilder<ProjectResource> eventStore,
+        IResourceBuilder<ProjectResource> tenants,
+        IResourceBuilder<ProjectResource> projects,
+        IResourceBuilder<ProjectResource> projectsWorkers,
+        string redisHost,
+        string daprConfigPath,
+        string daprResourcesPath)
+    {
+        (IResourceBuilder<IDaprComponentResource> stateStore, IResourceBuilder<IDaprComponentResource> pubSub) =
+            builder.AddProjectsSharedDaprComponents(redisHost);
+
+        return AddHexalithProjectsCore(
+            builder,
+            eventStore,
+            tenants,
+            projects,
+            projectsWorkers,
+            stateStore,
+            pubSub,
+            daprConfigPath,
+            daprResourcesPath);
+    }
+
+    private static HexalithProjectsResources AddHexalithProjectsCore(
+        IDistributedApplicationBuilder builder,
+        IResourceBuilder<ProjectResource> eventStore,
+        IResourceBuilder<ProjectResource> tenants,
+        IResourceBuilder<ProjectResource> projects,
+        IResourceBuilder<ProjectResource> projectsWorkers,
+        IResourceBuilder<IDaprComponentResource> stateStore,
+        IResourceBuilder<IDaprComponentResource> pubSub,
+        string daprConfigPath,
+        string daprResourcesPath)
+    {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(eventStore);
         ArgumentNullException.ThrowIfNull(tenants);
         ArgumentNullException.ThrowIfNull(projects);
         ArgumentNullException.ThrowIfNull(projectsWorkers);
-        ArgumentNullException.ThrowIfNull(redisEndpoint);
+        ArgumentNullException.ThrowIfNull(stateStore);
+        ArgumentNullException.ThrowIfNull(pubSub);
         ArgumentException.ThrowIfNullOrWhiteSpace(daprConfigPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(daprResourcesPath);
-
-        (IResourceBuilder<IDaprComponentResource> stateStore, IResourceBuilder<IDaprComponentResource> pubSub) =
-            builder.AddProjectsSharedDaprComponents(redisEndpoint);
 
         AttachDaprSidecar(eventStore, EventStoreAppId, daprConfigPath, daprResourcesPath, stateStore, pubSub);
         AttachDaprSidecar(tenants, TenantsAppId, daprConfigPath, daprResourcesPath, stateStore, pubSub);
@@ -107,13 +182,6 @@ public static class ProjectsAspireModule
         AttachDaprSidecar(projectsWorkers, ProjectsWorkersAppId, daprConfigPath, daprResourcesPath, stateStore, pubSub);
 
         return new HexalithProjectsResources(stateStore, pubSub, eventStore, tenants, projects, projectsWorkers);
-    }
-
-    private static (IResourceBuilder<IDaprComponentResource> StateStore, IResourceBuilder<IDaprComponentResource> PubSub)
-        AddProjectsSharedDaprComponents(this IDistributedApplicationBuilder builder, string redisHost)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(redisHost);
-        return AddProjectsSharedDaprComponentsCore(builder, component => component.WithMetadata("redisHost", redisHost));
     }
 
     private static (IResourceBuilder<IDaprComponentResource> StateStore, IResourceBuilder<IDaprComponentResource> PubSub)
