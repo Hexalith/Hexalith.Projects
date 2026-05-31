@@ -13,7 +13,7 @@ public static class HexalithProjectsGeneratedArtifacts
 {
     public const string ContractSpineSha256 = "ebd1028ed5ba826f21ed17b647cb35ee654151fa19c6548ac8c0ad92bbbad500";
     public const string GenerationConfigurationSha256 = "57b05e6bb3aaec137283214dbc5e4b6fd19399a8f9b184745cfb5cbef1753548";
-    public const string GeneratedHelpersSha256 = "40612b15fc64bc209195434c8f95650820cd401b75032d9c6b0a49c3e94cb0f9";
+    public const string GeneratedHelpersSha256 = "45f468ef7ec9cb76341651898b5d58c075b2ff3a2ba50a346c7182d0f1450489";
 
     // HelperSchemaVersion is a deterministic SHA-256 prefix of the canonical helper-signature
     // shape (schema names, parameter names in declared order, idempotency field paths per
@@ -425,3 +425,4 @@ public partial class UpdateProjectSetupRequest
             })
 ;
 }
+
