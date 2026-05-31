@@ -1,6 +1,10 @@
 [features]
 hooks = true
 
+# Policy: only initialize/update root-level submodules for this repository.
+# Never run nested or recursive submodule initialization/update (including
+# `git submodule update --init --recursive`) unless explicitly requested.
+
 [mcp_servers.fluent-ui-blazor]
 command = "fluentui-mcp"
 
