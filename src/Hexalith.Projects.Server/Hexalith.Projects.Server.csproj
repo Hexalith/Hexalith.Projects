@@ -16,8 +16,10 @@
     <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj" />
     <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Client\Hexalith.Folders.Client.csproj" />
     <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Contracts\Hexalith.Folders.Contracts.csproj" />
-    <PackageReference Include="Hexalith.Memories.Client.Rest" />
-    <PackageReference Include="Hexalith.Memories.Contracts" />
+    <ProjectReference Include="$(HexalithMemoriesRoot)\src\Hexalith.Memories.Client.Rest\Hexalith.Memories.Client.Rest.csproj" Condition="'$(HexalithMemoriesRoot)' != ''" />
+    <ProjectReference Include="$(HexalithMemoriesRoot)\src\Hexalith.Memories.Contracts\Hexalith.Memories.Contracts.csproj" Condition="'$(HexalithMemoriesRoot)' != ''" />
+    <PackageReference Include="Hexalith.Memories.Client.Rest" Condition="'$(HexalithMemoriesRoot)' == ''" />
+    <PackageReference Include="Hexalith.Memories.Contracts" Condition="'$(HexalithMemoriesRoot)' == ''" />
     <!-- Story 1.4: the Server takes the EventStore command-pipeline runtime deps (gateway client +
          /process domain-processor contracts). Domain core stays pure. Resolved via the
          $(Hexalith*Root) root-detection ProjectReference pattern (Stories 1.1/1.2). Dapr remains the
