@@ -1,4 +1,5 @@
-import { test as base, test, expect } from '../support/merged-fixtures.js';
+import { test as base } from '@playwright/test';
+import { test, expect } from '../support/merged-fixtures.js';
 import { ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
 
 const FORBIDDEN_MAINTENANCE_MARKERS = [
@@ -249,7 +250,7 @@ function maintenancePanelFixture(options: MaintenancePanelFixtureOptions): strin
       button, input, select { min-height: 36px; }
     </style>
     <script>
-      const context = { lifecycle: '${options.lifecycle}', referenceKind: '${referenceKind}', referenceId: '${referenceId}' };
+      var context = { lifecycle: '${options.lifecycle}', referenceKind: '${referenceKind}', referenceId: '${referenceId}' };
       function text(id, value) {
         document.querySelector('[data-testid="' + id + '"]').textContent = value;
       }

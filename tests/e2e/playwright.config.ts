@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+
 import { defineConfig, devices } from '@playwright/test';
 
 /**
@@ -15,11 +17,46 @@ import { defineConfig, devices } from '@playwright/test';
 // Planned projects-ui dev URL. Override via env once the AppHost assigns a real port.
 const BASE_URL = process.env.BASE_URL ?? 'https://localhost:7280';
 const IS_CI = !!process.env.CI;
-const CHROMIUM_EXECUTABLE_PATH = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
+const CHROMIUM_EXECUTABLE_PATH = resolveExecutable([
+  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
+  !IS_CI ? '/usr/bin/google-chrome' : undefined,
+  !IS_CI ? '/usr/bin/google-chrome-stable' : undefined,
+  !IS_CI ? '/usr/bin/chromium' : undefined,
+  !IS_CI ? '/usr/bin/chromium-browser' : undefined,
+]);
 const VIDEO_MODE = process.env.PLAYWRIGHT_DISABLE_VIDEO === '1' ? 'off' : 'retain-on-failure';
 const CHROMIUM_USE = CHROMIUM_EXECUTABLE_PATH
   ? { ...devices['Desktop Chrome'], launchOptions: { executablePath: CHROMIUM_EXECUTABLE_PATH } }
   : { ...devices['Desktop Chrome'] };
+const MANAGED_BROWSER_PROJECT_REQUESTED = projectRequested(['firefox', 'webkit']);
+const INCLUDE_MANAGED_BROWSER_PROJECTS =
+  IS_CI ||
+  MANAGED_BROWSER_PROJECT_REQUESTED ||
+  process.env.PLAYWRIGHT_INCLUDE_MANAGED_BROWSERS === '1' ||
+  !CHROMIUM_EXECUTABLE_PATH;
+const BROWSER_PROJECTS = [
+  { name: 'chromium', use: CHROMIUM_USE },
+  ...(INCLUDE_MANAGED_BROWSER_PROJECTS
+    ? [
+        { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+        { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+      ]
+    : []),
+];
+
+function resolveExecutable(candidates: Array<string | undefined>): string | undefined {
+  return candidates.find((candidate) => candidate && existsSync(candidate));
+}
+
+function projectRequested(projectNames: string[]): boolean {
+  return process.argv.some((argument, index, args) => {
+    if (argument === '--project') {
+      return projectNames.includes(args[index + 1]);
+    }
+
+    return projectNames.some((projectName) => argument === `--project=${projectName}`);
+  });
+}
 
 // Greenfield guard: the Hexalith.Projects AppHost does not exist yet, so the web
 // server is launched only when explicitly opted in (E2E_WEBSERVER=1). When enabled,
@@ -64,11 +101,10 @@ export default defineConfig({
       reducedMotion: 'reduce',
     },
   },
-  projects: [
-    { name: 'chromium', use: CHROMIUM_USE },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
-  ],
+  // CI keeps the managed multi-browser matrix. Local machines that cannot install
+  // Playwright-managed browsers, such as unsupported preview Linux images, can
+  // still run the greenfield fixture contracts through system Chrome.
+  projects: BROWSER_PROJECTS,
   outputDir: 'test-results',
   // Auth-session storage + token pre-fetch live here (defensive: no-op when Keycloak
   // is unreachable so the framework smoke check still runs).

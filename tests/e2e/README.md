@@ -39,6 +39,10 @@ npm run report               # open the last HTML report
 npm run typecheck            # tsc --noEmit
 ```
 
+On local hosts where Playwright cannot install managed browser binaries, the config falls back to
+system Chrome when available. CI always keeps the managed browser matrix; locally, set
+`PLAYWRIGHT_INCLUDE_MANAGED_BROWSERS=1` to force Firefox/WebKit projects after installing browsers.
+
 ### Bringing up the system under test (once it exists)
 
 The local web server is **off by default** (greenfield guard). Enable it once the AppHost lands:
