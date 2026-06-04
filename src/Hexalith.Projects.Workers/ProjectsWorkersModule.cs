@@ -7,14 +7,13 @@ namespace Hexalith.Projects.Workers;
 
 using Dapr;
 
+using Hexalith.EventStore.Client.Subscriptions;
 using Hexalith.EventStore.Contracts.Events;
 using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Workers.Tenants.TenantEventHandlers;
-using Hexalith.Tenants.Client.Configuration;
 using Hexalith.Tenants.Client.Handlers;
 using Hexalith.Tenants.Client.Registration;
-using Hexalith.Tenants.Client.Subscription;
 using Hexalith.Tenants.Contracts.Events;
 
 using Microsoft.AspNetCore.Builder;
@@ -74,13 +73,14 @@ public static class ProjectsWorkersModule
         services.AddDaprClient();
         services.AddProjectsDaprInfrastructure();
         services.AddProjectsTenantAccess();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<HexalithTenantsOptions>, ProjectsTenantEventSubscriptionOptionsValidator>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<EventStoreDomainEventsOptions>, ProjectsTenantEventSubscriptionOptionsValidator>());
         services.AddHexalithTenants(options =>
         {
             options.PubSubName = TenantEventsPubSubName;
             options.TopicName = TenantEventsTopicName;
+            options.SubscriptionRoute = TenantEventsRoute;
         });
-        services.AddOptions<HexalithTenantsOptions>().ValidateOnStart();
+        services.AddOptions<EventStoreDomainEventsOptions>().ValidateOnStart();
         services.AddProjectsTenantEventProjection();
 
         return services;
@@ -103,18 +103,18 @@ public static class ProjectsWorkersModule
     private static IEndpointRouteBuilder MapProjectsTenantEventSubscription(this IEndpointRouteBuilder endpoints)
     {
         _ = endpoints.MapPost(TenantEventsRoute, async (
-            TenantEventEnvelope envelope,
-            TenantEventProcessor processor,
+            EventStoreDomainEventEnvelope envelope,
+            EventStoreDomainEventProcessor processor,
             CancellationToken cancellationToken) =>
         {
-            TenantEventProcessingResult result = await processor.ProcessAsync(envelope, cancellationToken).ConfigureAwait(false);
+            EventStoreDomainEventProcessingResult result = await processor.ProcessAsync(envelope, cancellationToken).ConfigureAwait(false);
             return result switch
             {
-                TenantEventProcessingResult.Processed
-                    or TenantEventProcessingResult.Duplicate
-                    or TenantEventProcessingResult.SkippedUnknownEventType
-                    or TenantEventProcessingResult.SkippedNoHandlers => Results.Ok(new { status = result.ToString() }),
-                TenantEventProcessingResult.FailedInvalidPayload => Results.Problem(
+                EventStoreDomainEventProcessingResult.Processed
+                    or EventStoreDomainEventProcessingResult.Duplicate
+                    or EventStoreDomainEventProcessingResult.SkippedUnknownEventType
+                    or EventStoreDomainEventProcessingResult.SkippedNoHandlers => Results.Ok(new { status = result.ToString() }),
+                EventStoreDomainEventProcessingResult.FailedInvalidPayload => Results.Problem(
                     title: "Tenant event processing failed.",
                     detail: "The tenant event payload could not be deserialized.",
                     statusCode: StatusCodes.Status500InternalServerError),
@@ -169,21 +169,21 @@ public static class ProjectsWorkersModule
     private static IServiceCollection AddProjectsTenantEventProjection(this IServiceCollection services)
     {
         services.TryAddSingleton<ProjectsTenantEventHandler>();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantEventHandler<TenantCreated>, ProjectsTenantEventHandler>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantEventHandler<TenantUpdated>, ProjectsTenantEventHandler>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantEventHandler<TenantDisabled>, ProjectsTenantEventHandler>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantEventHandler<TenantEnabled>, ProjectsTenantEventHandler>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantEventHandler<UserAddedToTenant>, ProjectsTenantEventHandler>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantEventHandler<UserRemovedFromTenant>, ProjectsTenantEventHandler>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantEventHandler<UserRoleChanged>, ProjectsTenantEventHandler>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantEventHandler<TenantConfigurationSet>, ProjectsTenantEventHandler>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantEventHandler<TenantConfigurationRemoved>, ProjectsTenantEventHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantCreated>, ProjectsTenantEventHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantUpdated>, ProjectsTenantEventHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantDisabled>, ProjectsTenantEventHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantEnabled>, ProjectsTenantEventHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<UserAddedToTenant>, ProjectsTenantEventHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<UserRemovedFromTenant>, ProjectsTenantEventHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<UserRoleChanged>, ProjectsTenantEventHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantConfigurationSet>, ProjectsTenantEventHandler>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreDomainEventHandler<TenantConfigurationRemoved>, ProjectsTenantEventHandler>());
         return services;
     }
 
-    private sealed class ProjectsTenantEventSubscriptionOptionsValidator : IValidateOptions<HexalithTenantsOptions>
+    private sealed class ProjectsTenantEventSubscriptionOptionsValidator : IValidateOptions<EventStoreDomainEventsOptions>
     {
-        public ValidateOptionsResult Validate(string? name, HexalithTenantsOptions options)
+        public ValidateOptionsResult Validate(string? name, EventStoreDomainEventsOptions options)
         {
             ArgumentNullException.ThrowIfNull(options);
 
@@ -195,6 +195,11 @@ public static class ProjectsWorkersModule
             if (!string.Equals(options.TopicName, TenantEventsTopicName, StringComparison.Ordinal))
             {
                 return ValidateOptionsResult.Fail($"Tenants TopicName must be '{TenantEventsTopicName}' for {Name}.");
+            }
+
+            if (!string.Equals(options.SubscriptionRoute, TenantEventsRoute, StringComparison.Ordinal))
+            {
+                return ValidateOptionsResult.Fail($"Tenants SubscriptionRoute must be '{TenantEventsRoute}' for {Name}.");
             }
 
             return ValidateOptionsResult.Success;

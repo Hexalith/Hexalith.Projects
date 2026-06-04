@@ -9,8 +9,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Hexalith.EventStore.Client.Subscriptions;
 using Hexalith.Projects.Projections.TenantAccess;
-using Hexalith.Tenants.Client.Handlers;
 using Hexalith.Tenants.Contracts.Events;
 
 using Microsoft.Extensions.Logging;
@@ -22,18 +22,18 @@ public sealed class ProjectsTenantEventHandler(
     ProjectsTenantAccessEventMapper mapper,
     IOptions<ProjectTenantEventOptions> options,
     ILogger<ProjectsTenantEventHandler>? logger = null) :
-    ITenantEventHandler<TenantCreated>,
-    ITenantEventHandler<TenantUpdated>,
-    ITenantEventHandler<TenantDisabled>,
-    ITenantEventHandler<TenantEnabled>,
-    ITenantEventHandler<UserAddedToTenant>,
-    ITenantEventHandler<UserRemovedFromTenant>,
-    ITenantEventHandler<UserRoleChanged>,
-    ITenantEventHandler<TenantConfigurationSet>,
-    ITenantEventHandler<TenantConfigurationRemoved>
+    IEventStoreDomainEventHandler<TenantCreated>,
+    IEventStoreDomainEventHandler<TenantUpdated>,
+    IEventStoreDomainEventHandler<TenantDisabled>,
+    IEventStoreDomainEventHandler<TenantEnabled>,
+    IEventStoreDomainEventHandler<UserAddedToTenant>,
+    IEventStoreDomainEventHandler<UserRemovedFromTenant>,
+    IEventStoreDomainEventHandler<UserRoleChanged>,
+    IEventStoreDomainEventHandler<TenantConfigurationSet>,
+    IEventStoreDomainEventHandler<TenantConfigurationRemoved>
 {
     /// <inheritdoc/>
-    public Task HandleAsync(TenantCreated @event, TenantEventContext context, CancellationToken cancellationToken = default)
+    public Task HandleAsync(TenantCreated @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(@event);
         ArgumentNullException.ThrowIfNull(context);
@@ -41,7 +41,7 @@ public sealed class ProjectsTenantEventHandler(
     }
 
     /// <inheritdoc/>
-    public Task HandleAsync(TenantUpdated @event, TenantEventContext context, CancellationToken cancellationToken = default)
+    public Task HandleAsync(TenantUpdated @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(@event);
         ArgumentNullException.ThrowIfNull(context);
@@ -49,7 +49,7 @@ public sealed class ProjectsTenantEventHandler(
     }
 
     /// <inheritdoc/>
-    public Task HandleAsync(TenantDisabled @event, TenantEventContext context, CancellationToken cancellationToken = default)
+    public Task HandleAsync(TenantDisabled @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(@event);
         ArgumentNullException.ThrowIfNull(context);
@@ -57,7 +57,7 @@ public sealed class ProjectsTenantEventHandler(
     }
 
     /// <inheritdoc/>
-    public Task HandleAsync(TenantEnabled @event, TenantEventContext context, CancellationToken cancellationToken = default)
+    public Task HandleAsync(TenantEnabled @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(@event);
         ArgumentNullException.ThrowIfNull(context);
@@ -65,7 +65,7 @@ public sealed class ProjectsTenantEventHandler(
     }
 
     /// <inheritdoc/>
-    public Task HandleAsync(UserAddedToTenant @event, TenantEventContext context, CancellationToken cancellationToken = default)
+    public Task HandleAsync(UserAddedToTenant @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(@event);
         ArgumentNullException.ThrowIfNull(context);
@@ -81,7 +81,7 @@ public sealed class ProjectsTenantEventHandler(
     }
 
     /// <inheritdoc/>
-    public Task HandleAsync(UserRemovedFromTenant @event, TenantEventContext context, CancellationToken cancellationToken = default)
+    public Task HandleAsync(UserRemovedFromTenant @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(@event);
         ArgumentNullException.ThrowIfNull(context);
@@ -96,7 +96,7 @@ public sealed class ProjectsTenantEventHandler(
     }
 
     /// <inheritdoc/>
-    public Task HandleAsync(UserRoleChanged @event, TenantEventContext context, CancellationToken cancellationToken = default)
+    public Task HandleAsync(UserRoleChanged @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(@event);
         ArgumentNullException.ThrowIfNull(context);
@@ -113,7 +113,7 @@ public sealed class ProjectsTenantEventHandler(
     }
 
     /// <inheritdoc/>
-    public Task HandleAsync(TenantConfigurationSet @event, TenantEventContext context, CancellationToken cancellationToken = default)
+    public Task HandleAsync(TenantConfigurationSet @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(@event);
         ArgumentNullException.ThrowIfNull(context);
@@ -128,7 +128,7 @@ public sealed class ProjectsTenantEventHandler(
     }
 
     /// <inheritdoc/>
-    public Task HandleAsync(TenantConfigurationRemoved @event, TenantEventContext context, CancellationToken cancellationToken = default)
+    public Task HandleAsync(TenantConfigurationRemoved @event, EventStoreDomainEventContext context, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(@event);
         ArgumentNullException.ThrowIfNull(context);
@@ -158,7 +158,7 @@ public sealed class ProjectsTenantEventHandler(
     private ProjectTenantAccessEvent ToProjectionEvent(
         ProjectTenantAccessEventKind kind,
         string eventTenantId,
-        TenantEventContext context,
+        EventStoreDomainEventContext context,
         string? principalId = null,
         string? role = null,
         string? previousRole = null,

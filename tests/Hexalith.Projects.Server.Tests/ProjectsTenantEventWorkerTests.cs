@@ -8,12 +8,11 @@ namespace Hexalith.Projects.Server.Tests;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Hexalith.EventStore.Client.Subscriptions;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Workers;
 using Hexalith.Projects.Workers.Tenants.TenantEventHandlers;
-using Hexalith.Tenants.Client.Configuration;
-using Hexalith.Tenants.Client.Handlers;
 using Hexalith.Tenants.Contracts.Enums;
 using Hexalith.Tenants.Contracts.Events;
 
@@ -53,18 +52,19 @@ public sealed class ProjectsTenantEventWorkerTests
         provider.GetRequiredService<ProjectTenantAccessHandler>().ShouldNotBeNull();
         provider.GetRequiredService<IProjectTenantAccessProjectionStore>().ShouldNotBeNull();
         provider.GetRequiredService<IOptions<ProjectTenantEventOptions>>().Value.ProjectionWriter.ShouldBe(ProjectTenantEventProjectionWriter.Workers);
-        provider.GetRequiredService<IOptions<HexalithTenantsOptions>>().Value.PubSubName.ShouldBe(ProjectsWorkersModule.TenantEventsPubSubName);
-        provider.GetRequiredService<IOptions<HexalithTenantsOptions>>().Value.TopicName.ShouldBe(ProjectsWorkersModule.TenantEventsTopicName);
+        provider.GetRequiredService<IOptions<EventStoreDomainEventsOptions>>().Value.PubSubName.ShouldBe(ProjectsWorkersModule.TenantEventsPubSubName);
+        provider.GetRequiredService<IOptions<EventStoreDomainEventsOptions>>().Value.TopicName.ShouldBe(ProjectsWorkersModule.TenantEventsTopicName);
+        provider.GetRequiredService<IOptions<EventStoreDomainEventsOptions>>().Value.SubscriptionRoute.ShouldBe(ProjectsWorkersModule.TenantEventsRoute);
 
-        provider.GetServices<ITenantEventHandler<TenantCreated>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
-        provider.GetServices<ITenantEventHandler<TenantUpdated>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
-        provider.GetServices<ITenantEventHandler<TenantDisabled>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
-        provider.GetServices<ITenantEventHandler<TenantEnabled>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
-        provider.GetServices<ITenantEventHandler<UserAddedToTenant>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
-        provider.GetServices<ITenantEventHandler<UserRemovedFromTenant>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
-        provider.GetServices<ITenantEventHandler<UserRoleChanged>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
-        provider.GetServices<ITenantEventHandler<TenantConfigurationSet>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
-        provider.GetServices<ITenantEventHandler<TenantConfigurationRemoved>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
+        provider.GetServices<IEventStoreDomainEventHandler<TenantCreated>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
+        provider.GetServices<IEventStoreDomainEventHandler<TenantUpdated>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
+        provider.GetServices<IEventStoreDomainEventHandler<TenantDisabled>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
+        provider.GetServices<IEventStoreDomainEventHandler<TenantEnabled>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
+        provider.GetServices<IEventStoreDomainEventHandler<UserAddedToTenant>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
+        provider.GetServices<IEventStoreDomainEventHandler<UserRemovedFromTenant>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
+        provider.GetServices<IEventStoreDomainEventHandler<UserRoleChanged>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
+        provider.GetServices<IEventStoreDomainEventHandler<TenantConfigurationSet>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
+        provider.GetServices<IEventStoreDomainEventHandler<TenantConfigurationRemoved>>().OfType<ProjectsTenantEventHandler>().ShouldHaveSingleItem();
     }
 
     [Fact]
@@ -113,8 +113,8 @@ public sealed class ProjectsTenantEventWorkerTests
             new ProjectsTenantAccessEventMapper(),
             Options.Create(new ProjectTenantEventOptions { ProjectionWriter = writer }));
 
-    private static TenantEventContext Context(long sequence, string tenantId = "tenant-a")
-        => new(tenantId, $"01J00000000000000000000{sequence:D3}", sequence, Now, $"corr-{sequence}");
+    private static EventStoreDomainEventContext Context(long sequence, string tenantId = "tenant-a")
+        => new(tenantId, tenantId, $"01J00000000000000000000{sequence:D3}", sequence, Now, $"corr-{sequence}");
 
     private static ServiceCollection CreateServiceCollection()
     {
