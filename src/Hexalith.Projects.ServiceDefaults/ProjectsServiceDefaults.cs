@@ -155,22 +155,25 @@ public static class ProjectsServiceDefaults
     {
         context.Response.ContentType = "application/json; charset=utf-8";
 
-        using Utf8JsonWriter writer = new(context.Response.Body, new JsonWriterOptions { Indented = true });
-        writer.WriteStartObject();
-        writer.WriteString("status", report.Status.ToString());
-        writer.WriteStartObject("results");
-
-        foreach (KeyValuePair<string, HealthReportEntry> entry in report.Entries)
+        Utf8JsonWriter writer = new(context.Response.Body, new JsonWriterOptions { Indented = true });
+        await using (writer.ConfigureAwait(false))
         {
-            writer.WriteStartObject(entry.Key);
-            writer.WriteString("status", entry.Value.Status.ToString());
-            writer.WriteString("description", entry.Value.Description);
-            writer.WriteString("duration", entry.Value.Duration.ToString());
-            writer.WriteEndObject();
-        }
+            writer.WriteStartObject();
+            writer.WriteString("status", report.Status.ToString());
+            writer.WriteStartObject("results");
 
-        writer.WriteEndObject();
-        writer.WriteEndObject();
-        await writer.FlushAsync(context.RequestAborted).ConfigureAwait(false);
+            foreach (KeyValuePair<string, HealthReportEntry> entry in report.Entries)
+            {
+                writer.WriteStartObject(entry.Key);
+                writer.WriteString("status", entry.Value.Status.ToString());
+                writer.WriteString("description", entry.Value.Description);
+                writer.WriteString("duration", entry.Value.Duration.ToString());
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndObject();
+            writer.WriteEndObject();
+            await writer.FlushAsync(context.RequestAborted).ConfigureAwait(false);
+        }
     }
 }

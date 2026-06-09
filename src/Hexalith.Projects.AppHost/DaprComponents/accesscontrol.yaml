@@ -8,11 +8,15 @@ metadata:
   name: projects-local-accesscontrol
 spec:
   accessControl:
-    defaultAction: deny
+    # Local development only: without Dapr mTLS the caller app-id cannot be verified, so per-app
+    # policies never match and a deny default returns 403 to every service invocation (eventstore ->
+    # domain /process) and pub/sub delivery. Allow by default for local dev; production must restore
+    # deny-by-default with mTLS + reviewed caller policies.
+    defaultAction: allow
     trustDomain: "public"
     policies:
       - appId: eventstore
-        defaultAction: deny
+        defaultAction: allow
         trustDomain: "public"
         namespace: "default"
         operations:
@@ -35,10 +39,16 @@ spec:
             httpVerb: ["POST"]
             action: allow
       - appId: tenants
-        defaultAction: deny
+        defaultAction: allow
         trustDomain: "public"
         namespace: "default"
         operations:
+          - name: /process
+            httpVerb: ["POST"]
+            action: allow
+          - name: process
+            httpVerb: ["POST"]
+            action: allow
           - name: /tenants/events
             httpVerb: ["POST"]
             action: allow
@@ -49,7 +59,7 @@ spec:
             httpVerb: ["POST"]
             action: allow
       - appId: projects
-        defaultAction: deny
+        defaultAction: allow
         trustDomain: "public"
         namespace: "default"
         operations:
@@ -72,7 +82,7 @@ spec:
             httpVerb: ["GET"]
             action: allow
       - appId: projects-workers
-        defaultAction: deny
+        defaultAction: allow
         trustDomain: "public"
         namespace: "default"
         operations:

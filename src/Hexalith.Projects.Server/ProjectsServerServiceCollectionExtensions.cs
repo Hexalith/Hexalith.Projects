@@ -156,7 +156,14 @@ public static class ProjectsServerServiceCollectionExtensions
             services.AddMemoriesClient(options => options.Endpoint = new Uri("http://memories"));
         }
 
-        services.AddEventStoreGatewayClient(options => options.BaseAddress = new Uri("http://eventstore"));
+        // Forward the authenticated caller's bearer token onto the EventStore command gateway: the
+        // command API is [Authorize] and reads the command UserId from the JWT 'sub'. Without this the
+        // persist-then-publish hop is rejected (401) and the create collapses to a safe-denial.
+        services.AddHttpContextAccessor();
+        services.TryAddTransient<EventStoreGatewayTokenForwardingHandler>();
+        _ = services
+            .AddEventStoreGatewayClient(options => options.BaseAddress = new Uri("http://eventstore"))
+            .AddHttpMessageHandler<EventStoreGatewayTokenForwardingHandler>();
         services.TryAddSingleton<IProjectCommandSubmitter, EventStoreProjectCommandSubmitter>();
 
         return services;

@@ -82,6 +82,19 @@ static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<Proj
         SuppressEventStoreDomainServiceRegistration(eventStore, key);
     }
 
+    // Register the projects domain so EventStore dispatches CreateProject (and the other project
+    // commands) to the projects app's /process callback. The wildcard tenant ('*') covers every managed
+    // tenant; AppId/Domain 'projects' match the Dapr sidecar app-id and ProjectsServerModule.DomainName.
+    _ = eventStore
+        .WithEnvironment("EventStore__DomainServices__Registrations__*|projects|v1__AppId", "projects")
+        .WithEnvironment("EventStore__DomainServices__Registrations__*|projects|v1__Domain", "projects");
+
+    // Project events are tenant-scoped by convention ('{tenant}.projects.events'), but the
+    // projects-workers projection subscriber listens on the static 'projects.events' topic. Override so
+    // persisted project events land where the worker subscribes (mirrors the Tenants
+    // global-administrators topic-override precedent), otherwise the list projection journal never fills.
+    _ = eventStore.WithEnvironment("EventStore__Publisher__TopicOverrides__projects", "projects.events");
+
     SuppressEventStoreOperationalIndexMetadataRegistration(eventStore, "system|global-administrators|v1");
 }
 

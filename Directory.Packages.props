@@ -21,6 +21,9 @@
     <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.8" />
   </ItemGroup>
+  <ItemGroup Label="Authentication (event-sourced UI auth — JWT bearer on the API, OIDC on the UI)">
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
+  </ItemGroup>
   <ItemGroup Label="Dapr">
     <PackageVersion Include="Dapr.Client" Version="1.17.9" />
     <PackageVersion Include="Dapr.AspNetCore" Version="1.17.9" />
