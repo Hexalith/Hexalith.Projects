@@ -33,7 +33,13 @@ public sealed class ProjectsTenantAccessEventMapper(ILogger<ProjectsTenantAccess
         string?[]? fingerprintParts = null)
     {
         string projectionTenantId = eventTenantId;
-        if (!string.Equals(envelopeTenantId, eventTenantId, StringComparison.Ordinal))
+
+        // The Tenants registry aggregate lives in the reserved 'system' platform tenant, so its
+        // lifecycle/membership events legitimately carry envelope TenantId='system' while the payload
+        // names the managed tenant (e.g. 'tenant-a'). That administering case must NOT be treated as a
+        // cross-tenant mismatch — only a non-system envelope that disagrees with the payload is dropped.
+        if (!string.Equals(envelopeTenantId, eventTenantId, StringComparison.Ordinal)
+            && !string.Equals(envelopeTenantId, "system", StringComparison.Ordinal))
         {
             logger?.LogWarning(
                 "Tenant envelope mismatch: envelope TenantId={EnvelopeTenantId} differs from payload TenantId={PayloadTenantId} for event {EventKind} (MessageId={MessageId}); event will be dropped.",

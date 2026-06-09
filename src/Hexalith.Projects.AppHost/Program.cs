@@ -38,9 +38,22 @@ IResourceBuilder<ProjectResource> tenants = builder.AddProject<Projects.Hexalith
 _ = eventStore
     .WithReference(tenants)
     .WaitFor(tenants);
-IResourceBuilder<ProjectResource> projects = builder.AddProject<Projects.Hexalith_Projects_Server>(ProjectsAspireModule.ProjectsAppId);
+// Local-dev: widen the tenant-access projection freshness budgets. They are measured from the last
+// tenant lifecycle/membership event; with the defaults (mutation 5 min, diagnostic 30 min) the
+// projection goes "stale" once a few minutes pass without new tenant events, so project create/list
+// start failing (safe-denial / read-model-unavailable) even though access is valid. Production keeps
+// the tight defaults; here we set a generous budget so a seeded tenant stays usable.
+IResourceBuilder<ProjectResource> projects = builder.AddProject<Projects.Hexalith_Projects_Server>(ProjectsAspireModule.ProjectsAppId)
+    .WithEnvironment("Projects__TenantAccess__MutationFreshnessBudget", "7.00:00:00")
+    .WithEnvironment("Projects__TenantAccess__DiagnosticStalenessBudget", "7.00:00:00");
 IResourceBuilder<ProjectResource> projectsUi = builder.AddProject<Projects.Hexalith_Projects_UI>(ProjectsAspireModule.ProjectsUiAppId);
-IResourceBuilder<ProjectResource> projectsWorkers = builder.AddProject<Projects.Hexalith_Projects_Workers>(ProjectsAspireModule.ProjectsWorkersAppId);
+// The workers host is a Dapr pub/sub subscriber (tenant + project event projections). It must expose
+// an HTTP endpoint so Aspire assigns it a managed port and wires the Dapr sidecar's --app-port; without
+// a declared endpoint the sidecar runs with app-port 0, never calls /dapr/subscribe, and no events are
+// delivered (the tenant-access + projection-journal read models stay empty). The explicit endpoint also
+// avoids the framework default :5000 (which collided with other locally-running apps).
+IResourceBuilder<ProjectResource> projectsWorkers = builder.AddProject<Projects.Hexalith_Projects_Workers>(ProjectsAspireModule.ProjectsWorkersAppId)
+    .WithHttpEndpoint();
 
 _ = builder.AddHexalithProjects(
     eventStore,
@@ -94,6 +107,12 @@ static void ConfigureProjectsEventStoreDomainRegistrations(IResourceBuilder<Proj
     // persisted project events land where the worker subscribes (mirrors the Tenants
     // global-administrators topic-override precedent), otherwise the list projection journal never fills.
     _ = eventStore.WithEnvironment("EventStore__Publisher__TopicOverrides__projects", "projects.events");
+
+    // Tenant aggregates live in the 'system' tenant, so by convention their events publish to
+    // 'tenants.events'. The projects-workers tenant-access subscriber listens on 'system.tenants.events'
+    // (ProjectsTenantEventSubscription.TopicName). Override so tenant lifecycle/membership events reach
+    // the worker and populate the tenant-access projection the authorization gate reads.
+    _ = eventStore.WithEnvironment("EventStore__Publisher__TopicOverrides__tenants", "system.tenants.events");
 
     SuppressEventStoreOperationalIndexMetadataRegistration(eventStore, "system|global-administrators|v1");
 }
