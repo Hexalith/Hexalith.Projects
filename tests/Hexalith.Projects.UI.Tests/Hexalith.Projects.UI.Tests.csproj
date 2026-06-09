@@ -5,7 +5,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Hexalith.Projects.UI\Hexalith.Projects.UI.csproj" />
     <ProjectReference Include="..\..\src\Hexalith.Projects.Testing\Hexalith.Projects.Testing.csproj" />
-    <ProjectReference Include="..\..\Hexalith.FrontComposer\src\Hexalith.FrontComposer.Testing\Hexalith.FrontComposer.Testing.csproj" />
+    <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Testing\Hexalith.FrontComposer.Testing.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="bunit" />

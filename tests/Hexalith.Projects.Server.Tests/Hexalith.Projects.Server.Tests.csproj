@@ -6,8 +6,8 @@
     <ProjectReference Include="..\..\src\Hexalith.Projects.Server\Hexalith.Projects.Server.csproj" />
     <ProjectReference Include="..\..\src\Hexalith.Projects.Workers\Hexalith.Projects.Workers.csproj" />
     <ProjectReference Include="..\..\src\Hexalith.Projects.Testing\Hexalith.Projects.Testing.csproj" />
-    <ProjectReference Include="..\..\Hexalith.Conversations\src\Hexalith.Conversations.Client\Hexalith.Conversations.Client.csproj" />
-    <ProjectReference Include="..\..\Hexalith.Conversations\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj" />
+    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Client\Hexalith.Conversations.Client.csproj" />
+    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
