@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Shared Hexalith LLM Instructions
+
+Before starting any work in this repository, read and follow
+[`Hexalith.AI.Tools\hexalith-llm-instructions.md`](./Hexalith.AI.Tools/hexalith-llm-instructions.md).
+
 ## Repository Shape
 
 This is an **umbrella repository** composed of 10 root-level Git submodules. There is no root solution and no root build — each submodule is its own .NET repository with its own solution (`*.slnx` / `*.sln`), tests, release tooling, and CI.
