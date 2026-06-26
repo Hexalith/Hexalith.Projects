@@ -2,8 +2,8 @@
 title: 'EventStore Security Service in Projects AppHost'
 type: 'chore'
 created: '2026-06-26'
-status: 'in-progress'
-baseline_commit: '339414ed877ec33e6661f5310767806ada6a301d'
+status: 'done'
+baseline_commit: '1f9c85dd26cbde96ba76704ccaffc514afeb76ce'
 context:
   - '{project-root}/_bmad-output/planning-artifacts/sprint-change-proposal-2026-06-26.md'
   - '{project-root}/_bmad-output/project-context.md'
@@ -47,11 +47,11 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj` -- reference `Hexalith.EventStore.Aspire` as `IsAspireProjectResource="false"` and remove direct `Aspire.Hosting.Keycloak` if no direct symbol remains -- share the security helper implementation.
-- [ ] `src/Hexalith.Projects.AppHost/Program.cs` -- replace direct `AddKeycloak(...)`, `realmUrl`, and `ConfigureJwt(...)` with `AddHexalithEventStoreSecurity()` plus `WithJwtBearerSecurity(...)` / `WithSecurityDependency(...)` calls -- centralize AppHost security wiring.
-- [ ] `tests/Hexalith.Projects.Integration.Tests/AspireTopologyTests.cs` -- add structural assertions for `AddHexalithEventStoreSecurity(`, `WithJwtBearerSecurity(security)`, no direct `AddKeycloak("keycloak"`, and current UI dependency behavior -- prevent regression to hand-rolled wiring.
-- [ ] `docs/runbooks/projects-topology.md` -- update expected resources and start/stop text to refer to the shared security resource backed by Keycloak -- keep operator docs aligned with code.
-- [ ] `_bmad-output/implementation-artifacts/1-9-aspire-dapr-workers-topology-operational-skeleton.md` and `_bmad-output/planning-artifacts/architecture.md` -- update minimal topology wording only -- preserve planning evidence consistency.
+- [x] `src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj` -- reference `Hexalith.EventStore.Aspire` as `IsAspireProjectResource="false"` and remove direct `Aspire.Hosting.Keycloak` if no direct symbol remains -- share the security helper implementation.
+- [x] `src/Hexalith.Projects.AppHost/Program.cs` -- replace direct `AddKeycloak(...)`, `realmUrl`, and `ConfigureJwt(...)` with `AddHexalithEventStoreSecurity()` plus `WithJwtBearerSecurity(...)` / `WithSecurityDependency(...)` calls -- centralize AppHost security wiring.
+- [x] `tests/Hexalith.Projects.Integration.Tests/AspireTopologyTests.cs` -- add structural assertions for `AddHexalithEventStoreSecurity(`, `WithJwtBearerSecurity(security)`, no direct `AddKeycloak("keycloak"`, and current UI dependency behavior -- prevent regression to hand-rolled wiring.
+- [x] `docs/runbooks/projects-topology.md` -- update expected resources and start/stop text to refer to the shared security resource backed by Keycloak -- keep operator docs aligned with code.
+- [x] `_bmad-output/implementation-artifacts/1-9-aspire-dapr-workers-topology-operational-skeleton.md` and `_bmad-output/planning-artifacts/architecture.md` -- update minimal topology wording only -- preserve planning evidence consistency.
 
 **Acceptance Criteria:**
 - Given the Projects AppHost source, when inspected, then it initializes security with `builder.AddHexalithEventStoreSecurity()` and contains no direct `builder.AddKeycloak("keycloak", 8180)` block.
@@ -61,6 +61,8 @@ context:
 
 ## Spec Change Log
 
+- 2026-06-26: Verified current workspace already implements the approved AppHost shared security helper correction; marked execution tasks complete.
+
 ## Design Notes
 
 The shared helper names the Aspire resource `security` by default, while the backing implementation remains Keycloak. Operator-facing text should use the abstraction first and mention Keycloak only as the local backing implementation. `projects-ui` currently does not call FrontComposer authentication setup, so wiring OIDC settings into it would be behaviorally misleading unless the UI startup is changed in an explicit follow-up.
@@ -68,6 +70,42 @@ The shared helper names the Aspire resource `security` by default, while the bac
 ## Verification
 
 **Commands:**
-- `dotnet build Hexalith.Projects.slnx` -- expected: build succeeds with warnings as errors.
-- `dotnet test tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --filter AspireTopologyTests` -- expected: focused topology tests pass.
-- `git diff --check` -- expected: no whitespace errors.
+- `dotnet build Hexalith.Projects.slnx` -- passed on 2026-06-26 with 0 warnings and 0 errors.
+- `dotnet test tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --filter AspireTopologyTests` -- passed on 2026-06-26: 6 passed, 0 failed, 0 skipped.
+- `git diff --check` -- passed on 2026-06-26 with no whitespace errors.
+
+Review note: quick-dev sub-agent review was not run because spawning sub-agents requires explicit authorization in this session.
+
+## Suggested Review Order
+
+**Security Topology**
+
+- Start at the shared helper initialization replacing direct Keycloak wiring.
+  [`Program.cs:21`](../../src/Hexalith.Projects.AppHost/Program.cs#L21)
+
+- Verify JWT-bearing resources use shared helper wiring only.
+  [`Program.cs:55`](../../src/Hexalith.Projects.AppHost/Program.cs#L55)
+
+- Confirm UI and workers receive dependency-only security wiring.
+  [`Program.cs:60`](../../src/Hexalith.Projects.AppHost/Program.cs#L60)
+
+**Project Boundary**
+
+- Confirm EventStore Aspire is a non-resource helper reference.
+  [`Hexalith.Projects.AppHost.csproj:13`](../../src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj#L13)
+
+**Regression Coverage**
+
+- Structural test locks in helper use and rejects direct Keycloak wiring.
+  [`AspireTopologyTests.cs:70`](../../tests/Hexalith.Projects.Integration.Tests/AspireTopologyTests.cs#L70)
+
+**Planning And Ops Evidence**
+
+- Story 1.9 acceptance criteria now name the shared security resource.
+  [`1-9-aspire-dapr-workers-topology-operational-skeleton.md:22`](1-9-aspire-dapr-workers-topology-operational-skeleton.md#L22)
+
+- Architecture records the shared EventStore security helper in topology.
+  [`architecture.md:294`](../planning-artifacts/architecture.md#L294)
+
+- Runbook explains security disablement and expected resource naming.
+  [`projects-topology.md:23`](../../docs/runbooks/projects-topology.md#L23)
