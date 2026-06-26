@@ -67,6 +67,27 @@ public sealed class AspireTopologyTests
         appHost.ShouldNotContain("redis.GetEndpoint(\"tcp\")");
     }
 
+    /// <summary>Verifies the AppHost uses the shared EventStore security helper instead of hand-rolled Keycloak wiring.</summary>
+    [Fact]
+    public void AppHostShouldUseSharedEventStoreSecurityResource()
+    {
+        string root = ProjectRoot();
+        string appHost = File.ReadAllText(Path.Combine(root, "src", "Hexalith.Projects.AppHost", "Program.cs"));
+        string appHostProject = File.ReadAllText(Path.Combine(root, "src", "Hexalith.Projects.AppHost", "Hexalith.Projects.AppHost.csproj"));
+
+        appHost.ShouldContain("AddHexalithEventStoreSecurity(");
+        appHost.ShouldContain("eventStore.WithJwtBearerSecurity(security)");
+        appHost.ShouldContain("tenants.WithJwtBearerSecurity(security)");
+        appHost.ShouldContain("projects.WithJwtBearerSecurity(security)");
+        appHost.ShouldContain("projectsWorkers.WithSecurityDependency(security)");
+        appHost.ShouldContain("projectsUi.WithSecurityDependency(security)");
+        appHost.ShouldNotContain("AddKeycloak(\"keycloak\"");
+        appHost.ShouldNotContain("ConfigureJwt(");
+
+        appHostProject.ShouldContain("Hexalith.EventStore.Aspire.csproj");
+        appHostProject.ShouldNotContain("Aspire.Hosting.Keycloak");
+    }
+
     /// <summary>Verifies the resource record remains a complete topology contract.</summary>
     [Fact]
     public void HexalithProjectsResourcesShouldExposeRequiredProjectAndComponentBuilders()

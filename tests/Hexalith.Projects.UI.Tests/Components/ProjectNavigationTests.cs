@@ -6,6 +6,7 @@
 namespace Hexalith.Projects.UI.Tests.Components;
 
 using Bunit;
+using Bunit.TestDoubles;
 
 using Hexalith.FrontComposer.Testing;
 using Hexalith.Projects.Contracts.Ui;
@@ -29,6 +30,11 @@ using Xunit;
 /// </summary>
 public sealed class ProjectNavigationTests : FrontComposerTestBase
 {
+    public ProjectNavigationTests()
+    {
+        _ = AddAuthorization();
+    }
+
     [Fact]
     public void NavigationRendersProjectNamesInsteadOfProjectionClassNames()
     {

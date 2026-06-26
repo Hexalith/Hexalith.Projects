@@ -291,9 +291,10 @@ Open structural question to resolve in decisions: new root-level submodule vs. i
 
 ### Infrastructure & Deployment
 
-- **Topology:** Aspire AppHost (REST + SignalR + `MapMcp`); Dapr sidecars (state, pub/sub,
-  actors, service invocation, resiliency, access control); local Dapr components backed by the
-  configured Redis endpoint, defaulting to the Dapr-initialized Redis instance.
+- **Topology:** Aspire AppHost (REST + SignalR + `MapMcp`); shared EventStore security resource
+  via `AddHexalithEventStoreSecurity`; Dapr sidecars (state, pub/sub, actors, service invocation,
+  resiliency, access control); local Dapr components backed by the configured Redis endpoint,
+  defaulting to the Dapr-initialized Redis instance.
 - **Workers:** `Hexalith.Projects.Workers` host for projection processing + Tenants-event
   subscription; durable projection + dedup store in production (not in-memory).
 - **Observability:** OpenTelemetry via ServiceDefaults + Dapr; structured logs with tenant/
@@ -556,7 +557,7 @@ Hexalith.Projects/                      # THIS repo = the Projects module repo (
 │   ├── Hexalith.Projects.ServiceDefaults/      # OTel, health, service discovery
 │   ├── Hexalith.Projects.Aspire/              # Aspire module wiring
 │   ├── Hexalith.Projects.AppHost/             # local topology (eventstore, tenants, projects, workers,
-│   │                                           #   projects-ui, Keycloak, Dapr components, Redis)
+│   │                                           #   projects-ui, shared security, Dapr components, Redis)
 │   └── Hexalith.Projects.Testing/             # reusable fakes/builders (ProjectBuilder, fake ACLs)
 ├── tests/
 │   ├── Hexalith.Projects.Contracts.Tests/      # serialization/additive-tolerance, naming
@@ -641,8 +642,8 @@ updated → SignalR nudge → query re-read; ProjectContext assembled at query t
 
 ### Development Workflow Integration
 - **Dev:** `dotnet run --project src/Hexalith.Projects.AppHost` (Aspire) boots eventstore,
-  tenants, projects, workers, projects-ui, Keycloak, and Dapr sidecars/components backed by the
-  configured local Redis endpoint.
+  tenants, projects, workers, projects-ui, shared EventStore security, and Dapr sidecars/components
+  backed by the configured local Redis endpoint.
 - **Build:** `dotnet build Hexalith.Projects.slnx`; init root-level submodules only.
 - **Deploy:** Dapr-sidecar services per host; durable projection/dedup stores in prod;
   access-control deny-by-default + mTLS; CI gates (`frontcomposer inspect --fail-on-warning`,

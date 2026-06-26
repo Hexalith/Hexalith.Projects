@@ -19,7 +19,8 @@ This story closes Epic 1 by turning the current compile-time placeholders into a
 1. **Aspire AppHost boots the Projects local topology (AR-22).**
    **Given** `src/Hexalith.Projects.AppHost`
    **When** `dotnet run --project src/Hexalith.Projects.AppHost` is executed in a prepared local environment
-   **Then** the AppHost declares a coherent topology for `eventstore`, `tenants`, `projects`, `projects-workers`, Keycloak, and Dapr sidecars/components
+   **Then** the AppHost declares a coherent topology for `eventstore`, `tenants`, `projects`, `projects-workers`, the shared EventStore security resource, and Dapr sidecars/components
+   **And** local security is initialized through `builder.AddHexalithEventStoreSecurity()` rather than direct `AddKeycloak(...)` wiring
    **And** the Dapr `statestore` and `pubsub` components use the configured local Redis backing endpoint, defaulting to the Dapr-initialized Redis instance rather than creating a second Redis server
    **And** service dependencies use Aspire references and `WaitFor` ordering rather than hard-coded URLs
    **And** the AppHost fails fast with a clear message when required Dapr configuration files are missing
@@ -68,7 +69,7 @@ This story closes Epic 1 by turning the current compile-time placeholders into a
   - [x] Add `Program.cs` under `src/Hexalith.Projects.AppHost` using `DistributedApplication.CreateBuilder(args)`, `AddProject<Projects.*>()`, `WithReference`, `WaitFor`, and `Build().Run()`.
   - [x] Add root-level project references for sibling `Hexalith.EventStore` and `Hexalith.Tenants` via existing `$(Hexalith*Root)` MSBuild properties only. Do not add nested submodule assumptions.
   - [x] Register resources with stable app IDs: `eventstore`, `tenants`, `projects`, `projects-workers`, and `projects-ui` only if the UI project is made minimally hostable.
-  - [x] Wire Keycloak with realm import if the local realm assets exist; support `EnableKeycloak=false` for dev-mode parity with EventStore/Folders patterns without weakening production guidance.
+  - [x] Initialize the shared EventStore security resource with `builder.AddHexalithEventStoreSecurity()`; use `WithJwtBearerSecurity(...)`, `WithSecurityDependency(...)`, and, where UI OIDC is implemented, `WithOpenIdConnectSecurity(...)`; preserve `EnableKeycloak=false` without weakening production guidance.
   - [x] Resolve Dapr config paths from `AppHostDirectory` first and current directory second; throw a clear `FileNotFoundException` if required config is missing.
   - [x] Keep the existing `ProjectsAppHost.Name` placeholder class only if tests still need a marker; otherwise replace it with the executable entry point and update tests.
 
@@ -286,7 +287,7 @@ GPT-5 Codex
 
 ### Completion Notes List
 
-- Replaced AppHost/Aspire placeholders with an executable Aspire topology for EventStore, Tenants, Projects Server, Projects Workers, Keycloak opt-out, Redis-backed Dapr `statestore`/`pubsub`, Dapr sidecars, config path validation, references, and `WaitFor` ordering.
+- Replaced AppHost/Aspire placeholders with an executable Aspire topology for EventStore, Tenants, Projects Server, Projects Workers, shared EventStore security resource opt-out, Redis-backed Dapr `statestore`/`pubsub`, Dapr sidecars, config path validation, references, and `WaitFor` ordering.
 - Added Projects ServiceDefaults for OpenTelemetry, service discovery, HTTP resilience, `/health`, `/alive`, and `/ready`.
 - Added runtime Dapr infrastructure adapters for tenant access and project projection journals, preserving pure projection folds and fail-closed replay-conflict/malformed behavior.
 - Made Server and Workers executable runtime hosts, with EventStore gateway runtime registration, durable runtime read models, CloudEvents, `MapSubscribeHandler`, and programmatic Dapr subscriptions with dead-letter topics.

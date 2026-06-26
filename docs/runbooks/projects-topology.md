@@ -20,7 +20,7 @@ Start the topology:
 dotnet run --project src\Hexalith.Projects.AppHost
 ```
 
-Start without Keycloak when working on non-auth local plumbing:
+Start without the shared security resource when working on non-auth local plumbing:
 
 ```powershell
 dotnet run --project src\Hexalith.Projects.AppHost -- --EnableKeycloak=false
@@ -42,7 +42,7 @@ The AppHost resource graph should include:
 - Redis-backed Dapr component `statestore`
 - Redis-backed Dapr component `pubsub`
 - A reachable local Redis backing endpoint, normally the Dapr-initialized `dapr_redis` instance
-- Keycloak when `EnableKeycloak` is not set to `false`
+- Shared EventStore security resource, backed by Keycloak when `EnableKeycloak` is not set to `false`
 
 The stable Dapr app IDs are `eventstore`, `tenants`, `projects`, and `projects-workers`. The Dapr
 component names are `statestore` and `pubsub`. Redis is a Dapr component backend in this topology;

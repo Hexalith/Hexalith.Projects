@@ -1,5 +1,6 @@
 using Aspire.Hosting.ApplicationModel;
 
+using Hexalith.EventStore.Aspire;
 using Hexalith.Projects.AppHost;
 using Hexalith.Projects.Aspire;
 
@@ -17,20 +18,7 @@ _ = ProjectsAppHost.ResolveDaprConfigPath(
     Directory.GetCurrentDirectory(),
     "resiliency.yaml");
 string redisHost = builder.Configuration["Dapr:RedisHost"] ?? ProjectsAspireModule.LocalDaprRedisHost;
-
-IResourceBuilder<KeycloakResource>? keycloak = null;
-ReferenceExpression? realmUrl = null;
-if (!string.Equals(builder.Configuration["EnableKeycloak"], "false", StringComparison.OrdinalIgnoreCase))
-{
-    keycloak = builder.AddKeycloak("keycloak", 8180);
-    if (Directory.Exists(Path.Combine(builder.AppHostDirectory, "KeycloakRealms")))
-    {
-        _ = keycloak.WithRealmImport("./KeycloakRealms");
-    }
-
-    EndpointReference keycloakEndpoint = keycloak.GetEndpoint("http");
-    realmUrl = ReferenceExpression.Create($"{keycloakEndpoint}/realms/hexalith");
-}
+HexalithEventStoreSecurityResources? security = builder.AddHexalithEventStoreSecurity();
 
 IResourceBuilder<ProjectResource> eventStore = builder.AddProject<Projects.Hexalith_EventStore>(ProjectsAspireModule.EventStoreAppId);
 ConfigureProjectsEventStoreDomainRegistrations(eventStore);
@@ -64,13 +52,13 @@ _ = builder.AddHexalithProjects(
     accessControlConfigPath,
     daprComponentsPath);
 
-if (keycloak is not null && realmUrl is not null)
+if (security is not null)
 {
-    ConfigureJwt(eventStore, keycloak, realmUrl);
-    ConfigureJwt(tenants, keycloak, realmUrl);
-    ConfigureJwt(projects, keycloak, realmUrl);
-    ConfigureJwt(projectsUi, keycloak, realmUrl);
-    ConfigureJwt(projectsWorkers, keycloak, realmUrl);
+    _ = eventStore.WithJwtBearerSecurity(security);
+    _ = tenants.WithJwtBearerSecurity(security);
+    _ = projects.WithJwtBearerSecurity(security);
+    _ = projectsWorkers.WithSecurityDependency(security);
+    _ = projectsUi.WithSecurityDependency(security);
 }
 
 _ = projectsUi
@@ -131,19 +119,4 @@ static void SuppressEventStoreOperationalIndexMetadataRegistration(
     _ = eventStore.WithEnvironment(
         $"EventStore__DomainServices__Registrations__{registrationKey}__Domain",
         string.Empty);
-}
-
-static void ConfigureJwt(
-    IResourceBuilder<ProjectResource> resource,
-    IResourceBuilder<KeycloakResource> keycloak,
-    ReferenceExpression realmUrl)
-{
-    _ = resource
-        .WithReference(keycloak)
-        .WaitFor(keycloak)
-        .WithEnvironment("Authentication__JwtBearer__Authority", realmUrl)
-        .WithEnvironment("Authentication__JwtBearer__Issuer", realmUrl)
-        .WithEnvironment("Authentication__JwtBearer__Audience", "hexalith-eventstore")
-        .WithEnvironment("Authentication__JwtBearer__RequireHttpsMetadata", "false")
-        .WithEnvironment("Authentication__JwtBearer__SigningKey", string.Empty);
 }
