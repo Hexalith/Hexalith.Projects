@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  project-gates:
+    name: Projects generated-artifact gates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          submodules: true
+
+      - name: Initialize .NET
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@main
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Hexalith.Projects.CI.slnx
+
+      - name: FrontComposer inspect gate
+        shell: pwsh
+        timeout-minutes: 15
+        run: ./tests/tools/run-frontcomposer-inspect-gate.ps1
+
+      - name: OpenAPI fingerprint / compatibility gate
+        shell: pwsh
+        timeout-minutes: 15
+        run: ./tests/tools/run-openapi-fingerprint-gate.ps1
+
+  release:
+    needs: project-gates
+    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-release.yml@main
+    with:
+      solution: Hexalith.Projects.CI.slnx
+      dapr-version: '1.17.0'
+      test-projects: |
+        tests/Hexalith.Projects.Contracts.Tests
+        tests/Hexalith.Projects.Client.Tests
+        tests/Hexalith.Projects.Tests
+        tests/Hexalith.Projects.Server.Tests
+        tests/Hexalith.Projects.UI.Tests
+        tests/Hexalith.Projects.Mcp.Tests
+        tests/Hexalith.Projects.Cli.Tests
+    secrets:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}

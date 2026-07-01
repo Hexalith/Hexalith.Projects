@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - next
+      - alpha
+      - beta
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 2 * * *'
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@main
+    with:
+      solution: Hexalith.Projects.CI.slnx
+      dapr-version: '1.17.0'
+      unit-test-projects: |
+        tests/Hexalith.Projects.Contracts.Tests
+        tests/Hexalith.Projects.Client.Tests
+        tests/Hexalith.Projects.Tests
+        tests/Hexalith.Projects.Server.Tests
+        tests/Hexalith.Projects.UI.Tests
+        tests/Hexalith.Projects.Mcp.Tests
+        tests/Hexalith.Projects.Cli.Tests
+
+  project-gates:
+    name: Projects generated-artifact gates
+    runs-on: ubuntu-latest
+    needs: ci
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          submodules: true
+
+      - name: Initialize .NET
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@main
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Hexalith.Projects.CI.slnx
+
+      - name: FrontComposer inspect gate
+        shell: pwsh
+        timeout-minutes: 15
+        run: ./tests/tools/run-frontcomposer-inspect-gate.ps1
+
+      - name: OpenAPI fingerprint / compatibility gate
+        shell: pwsh
+        timeout-minutes: 15
+        run: ./tests/tools/run-openapi-fingerprint-gate.ps1

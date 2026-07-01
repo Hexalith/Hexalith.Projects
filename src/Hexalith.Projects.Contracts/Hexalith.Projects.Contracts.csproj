@@ -23,9 +23,6 @@
                       SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.SourceTools\bin\$(Configuration)\netstandard2.0\Hexalith.FrontComposer.SourceTools.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Fluxor.Blazor.Web" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />

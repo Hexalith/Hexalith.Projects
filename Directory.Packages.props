@@ -52,12 +52,12 @@
          idempotency hasher's canonicalizer; YamlDotNet is consumed only by the hand-written
          spine -> idempotency-helper generator (Client/Generation, excluded from the Client compile).
          Story 1.3 text named YamlDotNet 18.0.0, but the mandatory invariant is "reuse the exact
-         version sibling Hexalith.Folders pins" — Folders pins 17.1.0, so 17.1.0 is used to keep the
-         generator byte-shape identical to the proven sibling. None of these are protected high-risk
-         pins (Fluent UI / Dapr / Aspire / xUnit / Roslyn / SDK). -->
+         version sibling Hexalith.Folders pins" to keep the generator byte-shape identical to the
+         proven sibling. None of these are protected high-risk pins (Fluent UI / Dapr / Aspire /
+         xUnit / Roslyn / SDK). -->
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="NSwag.MSBuild" Version="14.7.1" />
-    <PackageVersion Include="YamlDotNet" Version="18.0.0" />
+    <PackageVersion Include="YamlDotNet" Version="18.1.0" />
   </ItemGroup>
   <ItemGroup Label="Testing">
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
@@ -71,6 +71,6 @@
   </ItemGroup>
   <ItemGroup Label="FrontComposer UI">
     <PackageVersion Include="Fluxor.Blazor.Web" Version="6.9.0" />
-    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components" Version="5.0.0-rc.3-26138.1" />
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components" Version="5.0.0-rc.4-26180.1" />
   </ItemGroup>
 </Project>
