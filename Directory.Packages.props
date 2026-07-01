@@ -1,76 +1,24 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Define paths of the Hexalith packages props. -->
+    <Hexalith1BuildPackageProps>$(MSBuildThisFileDirectory)Hexalith.Builds/Props/Directory.Packages.props</Hexalith1BuildPackageProps>
+    <Hexalith2BuildPackageProps>$(MSBuildThisFileDirectory)../Hexalith.Builds/Props/Directory.Packages.props</Hexalith2BuildPackageProps>
+    <Hexalith3BuildPackageProps>$(MSBuildThisFileDirectory)../../Hexalith.Builds/Props/Directory.Packages.props</Hexalith3BuildPackageProps>
   </PropertyGroup>
+  <!-- Import the required Hexalith.Packages.props file. -->
+  <Import Project="$(Hexalith1BuildPackageProps)" Condition="Exists('$(Hexalith1BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
+  <Import Project="$(Hexalith2BuildPackageProps)" Condition="Exists('$(Hexalith2BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
+  <Import Project="$(Hexalith3BuildPackageProps)" Condition="'$(HexalithVersionsLoaded)' != 'true'" />
   <!-- Central Package Management for the Hexalith.Projects module scaffold.
-       Versions are reused verbatim from the sibling Hexalith.Folders/Directory.Packages.props
-       (which itself tracks the ecosystem pins). Only packages actually referenced by the current
-       skeleton are listed here; later stories add versions as they introduce dependencies. Never
-       invent versions and never add an inline Version= on a PackageReference. -->
-  <ItemGroup Label="Microsoft.Extensions">
-    <!-- Floor raised from 10.0.0 to 10.0.3 in Story 1.2: the Contracts->FrontComposer.Contracts
-         reference transitively pulls Microsoft.FluentUI.AspNetCore.Components (pinned RC) ->
-         Microsoft.Extensions.Hosting.Abstractions 10.0.3 -> DI.Abstractions (>= 10.0.3). Pinning
-         10.0.3 resolved the original NU1605 downgrade under TreatWarningsAsErrors. Story 1.6 aligns
-         DI.Abstractions with the sibling Folders 10.0.8 Microsoft.Extensions baseline because
-         Logging.Abstractions/Options 10.0.8 require it transitively. These are base
-         Microsoft.Extensions abstractions (not protected high-risk pins) and stay within the
-         ecosystem 10.0.x patch line. -->
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.9" />
-  </ItemGroup>
-  <ItemGroup Label="Authentication (event-sourced UI auth — JWT bearer on the API, OIDC on the UI)">
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
-  </ItemGroup>
-  <ItemGroup Label="Dapr">
-    <PackageVersion Include="Dapr.Client" Version="1.18.4" />
-    <PackageVersion Include="Dapr.AspNetCore" Version="1.18.4" />
-  </ItemGroup>
-  <ItemGroup Label="Aspire (Story 1.9 — local AppHost + Dapr topology)">
-    <!-- Versions mirror the sibling Hexalith.Folders topology pins so Projects uses the same proven
-         Aspire/Dapr integration family. Package references stay versionless in project files. -->
-    <PackageVersion Include="Aspire.Hosting" Version="13.4.6" />
-    <PackageVersion Include="Aspire.Hosting.Keycloak" Version="13.4.6-preview.1.26319.6" />
-    <PackageVersion Include="Aspire.Hosting.Redis" Version="13.4.6" />
-    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.Dapr" Version="13.4.0-preview.1.260602-0230" />
-  </ItemGroup>
-  <ItemGroup Label="Aspire ServiceDefaults (Story 1.9)">
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.7.0" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.7.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.16.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.16.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.16.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
-  </ItemGroup>
+       Shared versions come from Hexalith.Builds. Only module-specific packages are listed here;
+       later stories add versions as they introduce dependencies. Never invent versions and never
+       add an inline Version= on a PackageReference. -->
   <ItemGroup Label="Client generation (Story 1.3 — OpenAPI Contract Spine + NSwag typed client)">
-    <!-- Versions reused verbatim from the sibling Hexalith.Folders/Directory.Packages.props (the
-         parity oracle for the contract-spine slice). NSwag.MSBuild drives the typed-client generation;
-         Newtonsoft.Json is the generated client's serializer (jsonLibrary: NewtonsoftJson) and the
-         idempotency hasher's canonicalizer; YamlDotNet is consumed only by the hand-written
-         spine -> idempotency-helper generator (Client/Generation, excluded from the Client compile).
-         Story 1.3 text named YamlDotNet 18.0.0, but the mandatory invariant is "reuse the exact
-         version sibling Hexalith.Folders pins" to keep the generator byte-shape identical to the
-         proven sibling. None of these are protected high-risk pins (Fluent UI / Dapr / Aspire /
-         xUnit / Roslyn / SDK). -->
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <!-- NSwag.MSBuild drives typed-client generation. -->
     <PackageVersion Include="NSwag.MSBuild" Version="14.7.1" />
-    <PackageVersion Include="YamlDotNet" Version="18.1.0" />
-  </ItemGroup>
-  <ItemGroup Label="Testing">
-    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
-    <PackageVersion Include="xunit.v3" Version="3.2.2" />
-    <PackageVersion Include="xunit.v3.assert" Version="3.2.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="Shouldly" Version="4.3.0" />
-    <PackageVersion Include="NSubstitute" Version="5.3.0" />
-    <PackageVersion Include="bunit" Version="2.8.4-preview" />
   </ItemGroup>
   <ItemGroup Label="FrontComposer UI">
     <PackageVersion Include="Fluxor.Blazor.Web" Version="6.9.0" />
-    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components" Version="5.0.0-rc.4-26180.1" />
   </ItemGroup>
 </Project>
