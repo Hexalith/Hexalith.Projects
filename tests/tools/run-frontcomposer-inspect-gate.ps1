@@ -50,7 +50,7 @@ catch {
     $frontComposerToolAvailable = $false
 }
 
-$cliProject = Join-Path $repositoryRoot 'Hexalith.FrontComposer/src/Hexalith.FrontComposer.Cli/Hexalith.FrontComposer.Cli.csproj'
+$cliProject = Join-Path $repositoryRoot 'references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Cli/Hexalith.FrontComposer.Cli.csproj'
 
 if ($frontComposerToolAvailable) {
     Write-Host 'frontcomposer-inspect-gate: using the installed `frontcomposer` dotnet tool.'

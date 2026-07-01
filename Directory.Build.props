@@ -1,8 +1,8 @@
 <Project>
   <!-- NOTE on the Hexalith.Builds chain wiring:
        The shared Module.Directory.Build.props / Module.Directory.Packages.props (sourced from
-       Hexalith.Builds/Samples) are present at the umbrella root and wired to import the
-       Hexalith.Builds/Hexalith.Build.props chain via the multi-level probe (root, ../, ../../).
+       references/Hexalith.Builds/Samples) are present at the umbrella root and wired to import the
+       references/Hexalith.Builds/Hexalith.Build.props chain via the multi-level probe (root, ../, ../../).
        They are NOT auto-imported into this root build: the Hexalith.Builds chain brings the
        StyleCop/Sonar analyzer + GenerateDocumentationFile policy, which is layered on per the
        module's own release cadence. This self-contained root mirrors the authoritative sibling
@@ -11,24 +11,24 @@
        drop-in rename away (copy Module.Directory.Build.props -> a project/Directory.Build.props). -->
 
   <PropertyGroup>
-    <!-- Detect root-level sibling modules without requiring nested submodule initialization.
-         Each sibling is probed in two locations: directly under this directory (umbrella-root
+    <!-- Detect root-declared sibling modules without requiring nested submodule initialization.
+         Each sibling is probed in two locations: under this directory's references folder (umbrella-root
          layout) and one level up (module-as-submodule layout). Never hard-code relative paths. -->
-    <HexalithEventStoreRoot Condition="'$(HexalithEventStoreRoot)' == '' and Exists('$(MSBuildThisFileDirectory)Hexalith.EventStore\src\Hexalith.EventStore.Contracts')">$(MSBuildThisFileDirectory)Hexalith.EventStore</HexalithEventStoreRoot>
+    <HexalithEventStoreRoot Condition="'$(HexalithEventStoreRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.EventStore\src\Hexalith.EventStore.Contracts')">$(MSBuildThisFileDirectory)references\Hexalith.EventStore</HexalithEventStoreRoot>
     <HexalithEventStoreRoot Condition="'$(HexalithEventStoreRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.EventStore\src\Hexalith.EventStore.Contracts')">$(MSBuildThisFileDirectory)..\Hexalith.EventStore</HexalithEventStoreRoot>
-    <HexalithTenantsRoot Condition="'$(HexalithTenantsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)Hexalith.Tenants\src\Hexalith.Tenants.Contracts')">$(MSBuildThisFileDirectory)Hexalith.Tenants</HexalithTenantsRoot>
+    <HexalithTenantsRoot Condition="'$(HexalithTenantsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.Tenants\src\Hexalith.Tenants.Contracts')">$(MSBuildThisFileDirectory)references\Hexalith.Tenants</HexalithTenantsRoot>
     <HexalithTenantsRoot Condition="'$(HexalithTenantsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.Tenants\src\Hexalith.Tenants.Contracts')">$(MSBuildThisFileDirectory)..\Hexalith.Tenants</HexalithTenantsRoot>
-    <HexalithCommonsRoot Condition="'$(HexalithCommonsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)Hexalith.Commons\src')">$(MSBuildThisFileDirectory)Hexalith.Commons</HexalithCommonsRoot>
+    <HexalithCommonsRoot Condition="'$(HexalithCommonsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.Commons\src')">$(MSBuildThisFileDirectory)references\Hexalith.Commons</HexalithCommonsRoot>
     <HexalithCommonsRoot Condition="'$(HexalithCommonsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.Commons\src')">$(MSBuildThisFileDirectory)..\Hexalith.Commons</HexalithCommonsRoot>
-    <HexalithFoldersRoot Condition="'$(HexalithFoldersRoot)' == '' and Exists('$(MSBuildThisFileDirectory)Hexalith.Folders\src\Hexalith.Folders.Contracts')">$(MSBuildThisFileDirectory)Hexalith.Folders</HexalithFoldersRoot>
+    <HexalithFoldersRoot Condition="'$(HexalithFoldersRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.Folders\src\Hexalith.Folders.Contracts')">$(MSBuildThisFileDirectory)references\Hexalith.Folders</HexalithFoldersRoot>
     <HexalithFoldersRoot Condition="'$(HexalithFoldersRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.Folders\src\Hexalith.Folders.Contracts')">$(MSBuildThisFileDirectory)..\Hexalith.Folders</HexalithFoldersRoot>
-    <HexalithConversationsRoot Condition="'$(HexalithConversationsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)Hexalith.Conversations\src')">$(MSBuildThisFileDirectory)Hexalith.Conversations</HexalithConversationsRoot>
+    <HexalithConversationsRoot Condition="'$(HexalithConversationsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.Conversations\src')">$(MSBuildThisFileDirectory)references\Hexalith.Conversations</HexalithConversationsRoot>
     <HexalithConversationsRoot Condition="'$(HexalithConversationsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.Conversations\src')">$(MSBuildThisFileDirectory)..\Hexalith.Conversations</HexalithConversationsRoot>
-    <HexalithMemoriesRoot Condition="'$(HexalithMemoriesRoot)' == '' and Exists('$(MSBuildThisFileDirectory)Hexalith.Memories\src')">$(MSBuildThisFileDirectory)Hexalith.Memories</HexalithMemoriesRoot>
+    <HexalithMemoriesRoot Condition="'$(HexalithMemoriesRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.Memories\src')">$(MSBuildThisFileDirectory)references\Hexalith.Memories</HexalithMemoriesRoot>
     <HexalithMemoriesRoot Condition="'$(HexalithMemoriesRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.Memories\src')">$(MSBuildThisFileDirectory)..\Hexalith.Memories</HexalithMemoriesRoot>
-    <HexalithFrontComposerRoot Condition="'$(HexalithFrontComposerRoot)' == '' and Exists('$(MSBuildThisFileDirectory)Hexalith.FrontComposer\src')">$(MSBuildThisFileDirectory)Hexalith.FrontComposer</HexalithFrontComposerRoot>
+    <HexalithFrontComposerRoot Condition="'$(HexalithFrontComposerRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.FrontComposer\src')">$(MSBuildThisFileDirectory)references\Hexalith.FrontComposer</HexalithFrontComposerRoot>
     <HexalithFrontComposerRoot Condition="'$(HexalithFrontComposerRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.FrontComposer\src')">$(MSBuildThisFileDirectory)..\Hexalith.FrontComposer</HexalithFrontComposerRoot>
-    <HexalithAiToolsRoot Condition="'$(HexalithAiToolsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)Hexalith.AI.Tools\src')">$(MSBuildThisFileDirectory)Hexalith.AI.Tools</HexalithAiToolsRoot>
+    <HexalithAiToolsRoot Condition="'$(HexalithAiToolsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)references\Hexalith.AI.Tools\src')">$(MSBuildThisFileDirectory)references\Hexalith.AI.Tools</HexalithAiToolsRoot>
     <HexalithAiToolsRoot Condition="'$(HexalithAiToolsRoot)' == '' and Exists('$(MSBuildThisFileDirectory)..\Hexalith.AI.Tools\src')">$(MSBuildThisFileDirectory)..\Hexalith.AI.Tools</HexalithAiToolsRoot>
   </PropertyGroup>
 

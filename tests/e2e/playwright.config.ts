@@ -10,7 +10,7 @@ import { defineConfig, devices } from '@playwright/test';
  * Dapr/Redis. Until Story 1.1 scaffolds that AppHost, `BASE_URL` points at the
  * planned projects-ui port and the local web server is OFF by default (see below).
  *
- * Conventions inherited from `Hexalith.FrontComposer/tests/e2e`: multi-browser
+ * Conventions inherited from `references/Hexalith.FrontComposer/tests/e2e`: multi-browser
  * projects, `data-testid` selectors (UX-DR28), JUnit + HTML reporters, axe-core a11y.
  */
 

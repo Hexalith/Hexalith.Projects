@@ -17,11 +17,11 @@ Folders, where the analogous reference-target question was trivial:
 1. **Experimental write surface.** `MemoriesClient.CreateTenantAsync`, `CreateCaseAsync`,
    `IngestAsync`, and `GetTelemetrySummaryAsync` are annotated `[Experimental("HXL001")]`;
    `ListHandlersAsync` / `GetHandlerMismatchesAsync` are `[Experimental("HXL002")]`. Their
-   signatures may shift in upstream phases (per `Hexalith.Memories/docs/dev/experimental-apis.md`).
+   signatures may shift in upstream phases (per `references/Hexalith.Memories/docs/dev/experimental-apis.md`).
 2. **Asynchronous, eventually-consistent ingestion.** Memories ingestion is `202 Accepted` +
    Dapr Workflow + triple-write to RediSearch + Redis Vector + FalkorDB. There is **no
    read-after-write** guarantee; verify-then-repair is the upstream-documented contract
-   (`Hexalith.Memories/docs/dev/consistency.md`).
+   (`references/Hexalith.Memories/docs/dev/consistency.md`).
 3. **Identity hierarchy.** A `Case` groups many `MemoryUnit`s; per-unit reference cardinality
    is unbounded in practice (`Case.MemoryUnitCount`). A Project Memory link does not have a
    one-to-one mapping by construction.
@@ -325,7 +325,7 @@ perpetuity: `src/Hexalith.Projects.Contracts/**`, `src/Hexalith.Projects.Client/
 `src/Hexalith.Projects/**` (domain core, including aggregate, projections, validators,
 identity helpers), generated `.g.cs` artifacts, the OpenAPI spine and idempotency hasher,
 and every test project. This stays consistent with
-`Hexalith.Memories/docs/dev/experimental-apis.md` (suppression at opt-in call sites only).
+`references/Hexalith.Memories/docs/dev/experimental-apis.md` (suppression at opt-in call sites only).
 
 ## Consequences
 
@@ -390,7 +390,7 @@ Mirrors the Story 2.5 precedent — none of these are produced by Story 2.6:
   diagnostic routes from Projects, ever, including in tests.
 - Implementing semantic / hybrid search, traversal, or any RAG behavior inside Projects.
 - Advancing the `Hexalith.Memories` submodule pointer or editing any file under
-  `Hexalith.Memories/**`. The ADR cites Memories repo paths as evidence only.
+  `references/Hexalith.Memories/**`. The ADR cites Memories repo paths as evidence only.
 - Performing nested recursive submodule initialization / update.
 - Modifying `_bmad-output/planning-artifacts/epics.md` Story 2.6 / 2.7 acceptance criteria
   or any shared-vocabulary enum in `src/Hexalith.Projects.Contracts/Ui/`.
@@ -429,15 +429,15 @@ Mirrors the Story 2.5 precedent — none of these are produced by Story 2.6:
   source of truth; no new enum values are introduced by this story.
 - `src/Hexalith.Projects.Server/Folders/` — analogue pattern Story 2.7 mirrors under
   `src/Hexalith.Projects.Server/Memories/`.
-- `Hexalith.Memories/src/Hexalith.Memories.Client.Rest/MemoriesClient.cs` —
+- `references/Hexalith.Memories/src/Hexalith.Memories.Client.Rest/MemoriesClient.cs` —
   `GetCaseAsync` documented "Stable since Story 10.2"; `CreateTenantAsync`,
   `CreateCaseAsync`, `IngestAsync`, `GetTelemetrySummaryAsync` annotated
   `[Experimental("HXL001")]`; `ListHandlersAsync`, `GetHandlerMismatchesAsync` annotated
   `[Experimental("HXL002")]`.
-- `Hexalith.Memories/src/Hexalith.Memories.Contracts/V1/Case.cs`,
+- `references/Hexalith.Memories/src/Hexalith.Memories.Contracts/V1/Case.cs`,
   `CaseStatus.cs`, `MemoryUnit.cs`, `MemoryUnitStatus.cs`, `ErrorResponse.cs` — Memories
   contract types and error codes the ACL must translate.
-- `Hexalith.Memories/docs/dev/experimental-apis.md` — authoritative `HXL001` / `HXL002`
+- `references/Hexalith.Memories/docs/dev/experimental-apis.md` — authoritative `HXL001` / `HXL002`
   surface and pragma rules.
-- `Hexalith.Memories/docs/dev/consistency.md` — authoritative eventual-consistency contract
+- `references/Hexalith.Memories/docs/dev/consistency.md` — authoritative eventual-consistency contract
   (no read-after-write; triple-write divergence; verify-then-repair).

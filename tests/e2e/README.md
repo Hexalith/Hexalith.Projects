@@ -3,7 +3,7 @@
 Cross-module, platform-level end-to-end tests for the **Hexalith.Projects** workspace module,
 driven against its **Aspire AppHost** topology (AR-22): `eventstore + tenants + projects + workers
 + projects-ui + Keycloak + Dapr/Redis`. This is the umbrella-root E2E suite — it is **separate from**
-`Hexalith.FrontComposer/tests/e2e` (which is FrontComposer's own complete workspace).
+`references/Hexalith.FrontComposer/tests/e2e` (which is FrontComposer's own complete workspace).
 
 > **Greenfield status.** The `Hexalith.Projects` API / web UI / AppHost do not exist yet (they land
 > in Epic 1 / Story 1.x). The framework is fully wired; today only `specs/framework-smoke.spec.ts`

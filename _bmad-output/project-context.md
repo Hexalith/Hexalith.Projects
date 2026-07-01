@@ -17,7 +17,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 ## Technology Stack & Versions
 
-- Root repository: umbrella repo composed of root-level Git submodules: `Hexalith.AI.Tools`, `Hexalith.Conversations`, `Hexalith.EventStore`, `Hexalith.Folders`, `Hexalith.FrontComposer`, `Hexalith.Parties`, and `Hexalith.Tenants`.
+- Root repository: umbrella repo composed of root-declared Git submodules under `references/`: `references/Hexalith.AI.Tools`, `references/Hexalith.Builds`, `references/Hexalith.Commons`, `references/Hexalith.Conversations`, `references/Hexalith.EventStore`, `references/Hexalith.Folders`, `references/Hexalith.FrontComposer`, `references/Hexalith.Memories`, `references/Hexalith.Parties`, and `references/Hexalith.Tenants`.
 - .NET SDK: `10.0.300` via `global.json` with `rollForward: latestPatch`; primary projects target `net10.0`.
 - C#: nullable enabled, implicit usings enabled, warnings treated as errors; several modules set `LangVersion` to `latest`.
 - Package management: central NuGet package management via `Directory.Packages.props`; package versions belong there, not inline in project files.
@@ -108,15 +108,15 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 ### Development Workflow Rules
 
-- This root is an umbrella repository with Git submodules. Initialize/update only root-level submodules unless nested submodules are explicitly requested.
+- This root is an umbrella repository with Git submodules. Initialize/update only root-declared submodules unless nested submodules are explicitly requested.
 - Never run `git submodule update --init --recursive` or equivalent recursive submodule commands without explicit nested-submodule approval.
 - When working inside a submodule, treat that submodule as its own repository for status, tests, commits, and branches.
 - Do not mix unrelated submodule pointer updates with code changes unless the task explicitly requires it.
 - Preserve existing uncommitted user changes across root and submodule repositories.
 - Use module-specific solution files (`*.slnx` or `.sln`) and project-local commands; avoid assuming a single root solution builds every submodule.
 - Prefer `dotnet test` or targeted project tests from the affected module; use Aspire AppHost only when validating topology/runtime behavior.
-- FrontComposer E2E commands live in `Hexalith.FrontComposer/tests/e2e`; install browsers/dependencies there before running Playwright when needed.
-- FrontComposer local dependency resolution must use the authoritative root `Hexalith.EventStore` path from `deps.local.props`; do not reference Tenants' nested EventStore copy.
+- FrontComposer E2E commands live in `references/Hexalith.FrontComposer/tests/e2e`; install browsers/dependencies there before running Playwright when needed.
+- FrontComposer local dependency resolution must use the authoritative root `references/Hexalith.EventStore` path from `deps.local.props`; do not reference Tenants' nested EventStore copy.
 - Module `Directory.Build.props` files can be affected by MSBuild walk-up; preserve existing guards/import switches when changing project structure.
 - Conventional commits are expected by semantic-release/commitlint in modules that include `package.json` and `commitlint.config.mjs`.
 - Parties uses MinVer tag-based versioning; do not assume every module releases through semantic-release.
@@ -125,7 +125,7 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 ### Critical Don't-Miss Rules
 
-- Do not recursively initialize or update nested submodules; root-level submodules only unless explicitly requested.
+- Do not recursively initialize or update nested submodules; root-declared submodules only unless explicitly requested.
 - Do not bypass Dapr for persistence, pub/sub, service invocation, configuration, or actors in domain services.
 - Do not let tenant IDs, aggregate IDs, projection keys, SignalR groups, pub/sub topics, or logs drift from the canonical EventStore identity model.
 - Do not let domain services populate EventStore envelope metadata; EventStore owns envelope fields.

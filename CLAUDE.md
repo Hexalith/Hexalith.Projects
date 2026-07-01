@@ -5,24 +5,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Shared Hexalith LLM Instructions
 
 Before starting any work in this repository, read and follow
-[`Hexalith.AI.Tools\hexalith-llm-instructions.md`](./Hexalith.AI.Tools/hexalith-llm-instructions.md).
+[`Hexalith.AI.Tools\hexalith-llm-instructions.md`](./references/Hexalith.AI.Tools/hexalith-llm-instructions.md).
 
 ## Repository Shape
 
-This is an **umbrella repository** composed of 10 root-level Git submodules. There is no root solution and no root build — each submodule is its own .NET repository with its own solution (`*.slnx` / `*.sln`), tests, release tooling, and CI.
+This is an **umbrella repository** composed of 10 root-declared Git submodules under `references/`. There is no root solution and no root build — each submodule is its own .NET repository with its own solution (`*.slnx` / `*.sln`), tests, release tooling, and CI.
 
-Submodules: `Hexalith.AI.Tools`, `Hexalith.Builds`, `Hexalith.Commons`, `Hexalith.Conversations`, `Hexalith.EventStore`, `Hexalith.Folders`, `Hexalith.FrontComposer`, `Hexalith.Memories`, `Hexalith.Parties`, `Hexalith.Tenants`.
+Submodules: `references/Hexalith.AI.Tools`, `references/Hexalith.Builds`, `references/Hexalith.Commons`, `references/Hexalith.Conversations`, `references/Hexalith.EventStore`, `references/Hexalith.Folders`, `references/Hexalith.FrontComposer`, `references/Hexalith.Memories`, `references/Hexalith.Parties`, `references/Hexalith.Tenants`.
 
 When working inside a submodule, treat that submodule as its own repository for status, tests, commits, and branches. Do not mix submodule pointer updates with code changes unless the task explicitly requires it.
 
 ## Git Submodules
 
-- Initialize only submodules at the root of the repository, never initialize nested submodules.
+- Initialize only submodules declared in the root `.gitmodules`, never initialize nested submodules.
 - Never initialize or update nested submodules recursively unless the user explicitly asks for nested submodules.
-- For repositories with submodules, initialize/update only root-level submodules by default.
+- For repositories with submodules, initialize/update only root-declared submodules by default.
 - Avoid `git submodule update --init --recursive` and similar recursive submodule commands unless nested submodule initialization is explicitly requested.
 - This is a mandatory constraint for Claude Code: never initialize/update nested submodules unless explicitly requested.
-- **Do not read bmad folders inside submodules.** Each root submodule can run its own independent bmad / story-automator orchestration (own marker, sprint-status, settings). Keep bmad reads scoped to the umbrella root's `_bmad/`, `_bmad-output/`, and `.claude`/`.codex` — never read `Hexalith.*/_bmad`, `Hexalith.*/_bmad-output`, or a submodule's `.claude/skills/bmad-*` / `.codex` unless explicitly asked to work inside that submodule's bmad.
+- **Do not read bmad folders inside submodules.** Each root submodule can run its own independent bmad / story-automator orchestration (own marker, sprint-status, settings). Keep bmad reads scoped to the umbrella root's `_bmad/`, `_bmad-output/`, and `.claude`/`.codex` — never read `references/Hexalith.*/_bmad`, `references/Hexalith.*/_bmad-output`, `references/Hexalith.*/.claude/skills/bmad-*`, or `references/Hexalith.*/.codex` unless explicitly asked to work inside that submodule's bmad.
 
 ## Authoritative Rule Set
 
@@ -68,8 +68,8 @@ dotnet test --filter "FullyQualifiedName~SomeClass.SomeTest"
 - Tier 1 tests (aggregate `Handle/Apply`, projection handlers, validators, generator parse/transform/emit) must stay pure — no Dapr, Aspire, network, browser, or containers. Use EventStore/Testing and Tenants/Testing fakes/builders before inventing new doubles.
 - Integration tests use **Testcontainers**, Dapr slim tests, or Aspire topology tests only when a real boundary is needed.
 - EventStore security/runtime proof uses **real Keycloak/OIDC tokens** in E2E; synthetic JWT generators are unit/integration only.
-- **FrontComposer E2E** lives in `Hexalith.FrontComposer/tests/e2e` (Playwright, Node `>=24.0.0`). Install browsers there before running.
-- **FrontComposer local dependency resolution** must use the root `Hexalith.EventStore` path from `deps.local.props` — do not reference Tenants' nested EventStore copy.
+- **FrontComposer E2E** lives in `references/Hexalith.FrontComposer/tests/e2e` (Playwright, Node `>=24.0.0`). Install browsers there before running.
+- **FrontComposer local dependency resolution** must use the root `references/Hexalith.EventStore` path from `deps.local.props` — do not reference Tenants' nested EventStore copy.
 
 ## Release & Versioning
 
