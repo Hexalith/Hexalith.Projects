@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     <!-- Define paths of the Hexalith packages props. -->
     <Hexalith1BuildPackageProps>$(MSBuildThisFileDirectory)references/Hexalith.Builds/Props/Directory.Packages.props</Hexalith1BuildPackageProps>
     <Hexalith2BuildPackageProps>$(MSBuildThisFileDirectory)../Hexalith.Builds/Props/Directory.Packages.props</Hexalith2BuildPackageProps>
@@ -10,15 +11,4 @@
   <Import Project="$(Hexalith1BuildPackageProps)" Condition="Exists('$(Hexalith1BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
   <Import Project="$(Hexalith2BuildPackageProps)" Condition="Exists('$(Hexalith2BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
   <Import Project="$(Hexalith3BuildPackageProps)" Condition="'$(HexalithVersionsLoaded)' != 'true'" />
-  <!-- Central Package Management for the Hexalith.Projects module scaffold.
-       Shared versions come from Hexalith.Builds. Only module-specific packages are listed here;
-       later stories add versions as they introduce dependencies. Never invent versions and never
-       add an inline Version= on a PackageReference. -->
-  <ItemGroup Label="Client generation (Story 1.3 — OpenAPI Contract Spine + NSwag typed client)">
-    <!-- NSwag.MSBuild drives typed-client generation. -->
-    <PackageVersion Update="NSwag.MSBuild" Version="14.7.1" />
-  </ItemGroup>
-  <ItemGroup Label="FrontComposer UI">
-    <PackageVersion Include="Fluxor.Blazor.Web" Version="6.9.0" />
-  </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@
 **Project:** Hexalith.Projects  
 **Requested by:** Jerome  
 **Workflow mode:** Batch  
-**Status:** Draft pending approval
+**Status:** Approved and implemented
 
 ## 1. Issue Summary
 
@@ -14,7 +14,7 @@ Current evidence:
 
 - `Hexalith.Tenants/Directory.Packages.props` imports `references/Hexalith.Builds/Props/Directory.Packages.props` and carries no module-local package pins.
 - `Hexalith.Projects/Directory.Packages.props` imports the same shared Builds file but still defines local package versions for `NSwag.MSBuild` and `Fluxor.Blazor.Web`.
-- `references/Hexalith.Builds/Props/Directory.Packages.props` does not currently define `NSwag.MSBuild` or `Fluxor.Blazor.Web`.
+- `references/Hexalith.Builds/Props/Directory.Packages.props` already defines `NSwag.MSBuild` and did not define `Fluxor.Blazor.Web` at implementation time.
 - Projects uses those packages through versionless `PackageReference` entries in:
   - `src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj`
   - `src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj`
@@ -64,6 +64,8 @@ Expected touched files:
 
 - `references/Hexalith.Builds/Props/Directory.Packages.props`
 - `Directory.Packages.props`
+- `references/Hexalith.FrontComposer/Directory.Packages.props`
+- `references/Hexalith.Conversations/Directory.Packages.props`
 
 Expected untouched files:
 
@@ -72,6 +74,11 @@ Expected untouched files:
 - Sprint status should not change unless approval adds a story or formal action item.
 
 Submodule note: `references/Hexalith.Builds` is a root-declared submodule. Implementation should edit that submodule directly and avoid recursive submodule commands.
+
+Validation note: after centralizing package pins in Builds, restore also required removing duplicate local package-version entries in root-declared submodules that import the same Builds file:
+
+- `references/Hexalith.FrontComposer/Directory.Packages.props` no longer defines `Fluxor.Blazor.Web`.
+- `references/Hexalith.Conversations/Directory.Packages.props` no longer defines `Microsoft.Playwright`, which was already centralized in Builds before this correction.
 
 ## 3. Recommended Approach
 
@@ -102,7 +109,7 @@ Section: shared package versions.
 OLD:
 
 ```xml
-<!-- No PackageVersion entry for NSwag.MSBuild -->
+<PackageVersion Include="NSwag.MSBuild" Version="14.7.1" />
 <!-- No PackageVersion entry for Fluxor.Blazor.Web -->
 ```
 
@@ -113,7 +120,7 @@ NEW:
 <PackageVersion Include="NSwag.MSBuild" Version="14.7.1" />
 ```
 
-Rationale: these are reusable build/surface-generation package pins. Moving them into Builds lets Projects consume them the same way Tenants consumes shared package versions.
+Rationale: these are reusable build/surface-generation package pins. `NSwag.MSBuild` was already centralized at implementation time; adding `Fluxor.Blazor.Web` lets Projects consume both packages the same way Tenants consumes shared package versions.
 
 ### Build Artifact: `Directory.Packages.props`
 
@@ -124,7 +131,7 @@ OLD:
 ```xml
 <ItemGroup Label="Client generation (Story 1.3 — OpenAPI Contract Spine + NSwag typed client)">
   <!-- NSwag.MSBuild drives typed-client generation. -->
-  <PackageVersion Include="NSwag.MSBuild" Version="14.7.1" />
+  <PackageVersion Update="NSwag.MSBuild" Version="14.7.1" />
 </ItemGroup>
 <ItemGroup Label="FrontComposer UI">
   <PackageVersion Include="Fluxor.Blazor.Web" Version="6.9.0" />
@@ -168,7 +175,7 @@ and a targeted check confirming `NSwag.MSBuild` and `Fluxor.Blazor.Web` resolve 
 | --- | --- | --- |
 | 1.1 Triggering story | [N/A] | No active story revealed it; issue is a build-governance correction against completed Story 1.1 / 1.3 work. |
 | 1.2 Core problem | [x] | Technical alignment issue: package pins live in Projects instead of the shared Builds package file. |
-| 1.3 Evidence | [x] | `rg` confirms only Projects pins `NSwag.MSBuild` / `Fluxor.Blazor.Web`; Builds currently lacks them; Tenants uses import-only package versions. |
+| 1.3 Evidence | [x] | `rg` confirms Projects had local `NSwag.MSBuild` / `Fluxor.Blazor.Web` package-version entries; Builds already had `NSwag.MSBuild` and lacked `Fluxor.Blazor.Web`; Tenants uses import-only package versions. |
 | 2.1 Current epic completion | [x] | Epic 1 remains valid. |
 | 2.2 Epic-level changes | [N/A] | No epic scope changes required. |
 | 2.3 Remaining epics | [x] | No downstream epic changes required. |
@@ -201,8 +208,9 @@ Route to: **Developer agent** for direct implementation after approval.
 
 Responsibilities:
 
-- Add the missing shared package pins to `references/Hexalith.Builds/Props/Directory.Packages.props`.
-- Remove the local package pins from Projects `Directory.Packages.props`.
+- Add the missing shared `Fluxor.Blazor.Web` package pin to `references/Hexalith.Builds/Props/Directory.Packages.props`.
+- Remove the local `NSwag.MSBuild` update and `Fluxor.Blazor.Web` package pin from Projects `Directory.Packages.props`.
+- Remove duplicate local package-version entries in FrontComposer and Conversations that conflict with shared Builds pins during root restore.
 - Add Tenants-aligned `CentralPackageTransitivePinningEnabled`.
 - Run restore/build verification.
 - Report whether the Builds submodule has local changes and whether a root submodule pointer update is needed for commit packaging.
@@ -217,4 +225,4 @@ Success criteria:
 
 ## Approval
 
-Do you approve this Sprint Change Proposal for implementation? Reply `yes`, `no`, or `revise`.
+Approved by Jerome on 2026-07-06 and implemented as a minor direct adjustment.
