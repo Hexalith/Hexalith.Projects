@@ -393,7 +393,8 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
         traceSource.LoadTraceAsync(
                 Arg.Is<ProjectResolutionTraceRequest>(request =>
-                    request.Mode == ProjectResolutionTraceRequest.ConversationMode
+                    request != null
+                    && request.Mode == ProjectResolutionTraceRequest.ConversationMode
                     && request.ConversationId == "conversation-001"),
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(SingleCandidateTrace()));
@@ -432,7 +433,8 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         IProjectResolutionTraceSource traceSource = Substitute.For<IProjectResolutionTraceSource>();
         traceSource.LoadTraceAsync(
                 Arg.Is<ProjectResolutionTraceRequest>(request =>
-                    request.Mode == ProjectResolutionTraceRequest.AttachmentsMode
+                    request != null
+                    && request.Mode == ProjectResolutionTraceRequest.AttachmentsMode
                     && request.IncludeArchived),
                 Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(MultipleCandidateTraceWithExclusion()));

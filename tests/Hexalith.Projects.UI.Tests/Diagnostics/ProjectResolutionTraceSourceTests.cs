@@ -92,8 +92,8 @@ public sealed class ProjectResolutionTraceSourceTests
         result.Trace.PresentedFileIds.ShouldBe("file-1, file-2");
         result.Trace.Result.ShouldBe(ContractResolutionResult.MultipleCandidates);
         await client.Received(1).ResolveProjectFromAttachmentsAsync(
-            Arg.Is<IEnumerable<string>>(ids => ids.SequenceEqual(new[] { "folder-a", "folder-b" })),
-            Arg.Is<IEnumerable<string>>(ids => ids.SequenceEqual(new[] { "file-1", "file-2" })),
+            Arg.Is<IEnumerable<string>>(ids => ids != null && ids.SequenceEqual(new[] { "folder-a", "folder-b" })),
+            Arg.Is<IEnumerable<string>>(ids => ids != null && ids.SequenceEqual(new[] { "file-1", "file-2" })),
             false,
             Arg.Is<string>(value => !string.IsNullOrWhiteSpace(value)),
             ReadConsistencyClass.Eventually_consistent,
@@ -330,8 +330,8 @@ public sealed class ProjectResolutionTraceSourceTests
         result.Trace.ShouldNotBeNull();
         result.Trace.PresentedFileIds.ShouldBe("file-1, file-2");
         await client.Received(1).ResolveProjectFromAttachmentsAsync(
-            Arg.Is<IEnumerable<string>>(ids => !ids.Any()),
-            Arg.Is<IEnumerable<string>>(ids => ids.SequenceEqual(new[] { "file-1", "file-2" })),
+            Arg.Is<IEnumerable<string>>(ids => ids != null && !ids.Any()),
+            Arg.Is<IEnumerable<string>>(ids => ids != null && ids.SequenceEqual(new[] { "file-1", "file-2" })),
             false,
             Arg.Is<string>(value => !string.IsNullOrWhiteSpace(value)),
             ReadConsistencyClass.Eventually_consistent,

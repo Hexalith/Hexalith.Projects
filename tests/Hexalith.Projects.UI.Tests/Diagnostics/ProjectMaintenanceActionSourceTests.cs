@@ -33,7 +33,8 @@ public sealed class ProjectMaintenanceActionSourceTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Is<Generated.UnlinkFileReferenceRequest>(body =>
-                    body.ProjectId == "project-001"
+                    body != null
+                    && body.ProjectId == "project-001"
                     && body.FileReferenceId == "file-001"
                     && body.Operation == Generated.UnlinkFileReferenceRequestOperation.Unlink
                     && body.UnlinkIntent == Generated.UnlinkFileReferenceRequestUnlinkIntent.RemoveReference),
@@ -89,7 +90,9 @@ public sealed class ProjectMaintenanceActionSourceTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Is<Generated.LinkMemoryRequest>(body =>
-                    body.ProjectId == "project-001"
+                    body != null
+                    && body.MemoryMetadata != null
+                    && body.ProjectId == "project-001"
                     && body.MemoryReferenceId == "memory-001"
                     && body.Operation == Generated.LinkMemoryRequestOperation.Link
                     && body.MemoryMetadata.DisplayName == "Memory"),
@@ -172,7 +175,9 @@ public sealed class ProjectMaintenanceActionSourceTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Is<Generated.LinkFileReferenceRequest>(body =>
-                    body.ProjectId == "project-001"
+                    body != null
+                    && body.FileMetadata != null
+                    && body.ProjectId == "project-001"
                     && body.FileReferenceId == "file-001"
                     && body.FolderId == "folder-001"
                     && body.WorkspaceId == "workspace-001"
@@ -320,7 +325,8 @@ public sealed class ProjectMaintenanceActionSourceTests
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Is<Generated.UnlinkProjectConversationRequest>(body =>
-                    body.ProjectId == "project-001"
+                    body != null
+                    && body.ProjectId == "project-001"
                     && body.ConversationId == "conversation-001"
                     && body.Operation == Generated.UnlinkProjectConversationRequestOperation.Unlink),
                 Arg.Any<CancellationToken>())

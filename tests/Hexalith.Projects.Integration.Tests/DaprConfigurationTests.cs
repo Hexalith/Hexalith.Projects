@@ -27,7 +27,8 @@ public sealed class DaprConfigurationTests
         string content = ReadRequired("accesscontrol.yaml");
 
         content.ShouldContain("Local development only");
-        content.ShouldContain("defaultAction: deny");
+        content.ShouldContain("Production must use deny-by-default Dapr access control");
+        content.ShouldContain("defaultAction: allow");
         content.ShouldContain($"appId: {ProjectsAspireModule.EventStoreAppId}");
         content.ShouldContain($"appId: {ProjectsAspireModule.TenantsAppId}");
         content.ShouldContain($"appId: {ProjectsAspireModule.ProjectsAppId}");
