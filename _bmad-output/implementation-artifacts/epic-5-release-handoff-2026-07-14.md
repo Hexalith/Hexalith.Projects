@@ -46,3 +46,17 @@ the release gates below pass and both owners record a decision with evidence lin
 ## Handoff Decision
 
 Release handoff must not proceed. Reassess only after the release gates have evidence.
+
+## Approved Course-Correction Route
+
+Jerome approved the Major-scope implementation-readiness correction on 2026-07-14:
+
+- Epic 6 closes supported-platform, contract, identity, authorization, and authenticated-client blockers.
+- Epic 7 closes durable workflow and server-bound confirmation blockers.
+- Epic 8 closes production conformance, evidence, deployment, and acceptance.
+
+Evidence:
+_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md
+
+No production release, consequential autonomous MCP operation, or proposal-confirmation enablement
+is authorized before Story 8.9. Failed or skipped critical verification is not release evidence.

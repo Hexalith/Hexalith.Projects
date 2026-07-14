@@ -1,6 +1,7 @@
 # generated: 2026-05-25
 # last_updated: 2026-07-14
-# 5-13 added to backlog on 2026-07-14 via approved Correct Course proposal (move application-specific FrontComposer projection descriptors from packable Hexalith.Projects.Contracts to non-packable Hexalith.Projects.UI.Contracts; retain shared domain/wire vocabulary in Contracts; require consumer/versioning audit, package-boundary verification, FrontComposer inspect retargeting, and cross-surface parity/leakage evidence before completion).
+# Major Correct Course proposal approved by Jerome on 2026-07-14: Epics 1-5 reconciled as completed implementation history; Story 5.12 recorded done as verification-enablement with failures preserved; Story 5.13 intent routed to Story 6.2; corrective Epics 6-8 added to backlog; production release remains blocked through Story 8.9. Evidence: _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md
+# 5-13 was retired by the approved 2026-07-14 Major Correct Course; its presentation-identity and boundary intent is now routed to Story 6.2.
 # 5-12 set to review on 2026-07-14 via quick-dev (AppHost build and dynamic UI/API/security route provisioned through targeted Aspire lifecycle after aligning AppHost/Hosting/Orchestration at 13.4.6; all 57 former permanent declarations use the explicit live gate; no-AppHost focus 13 passed/13 skipped; focused live 13 passed/13 failed; full live 19 passed/56 failed; failures recorded as missing tenant-a access projection plus operational-console selector/static-asset prerequisites; Story 5.11 and existing release-handoff edits preserved.)
 # 5-11 set to done on 2026-05-31 via story-automator-review (0 CRITICAL remaining after auto-fixes; fixed MCP warningQueue DiagnosticUnavailable parity/test false positive, scoped PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH to Chromium only, and removed mobile table min-widths that forced critical metadata behind horizontal scroll. Parent verification passed solution build -warnaserror 0W/0E, dotnet test MCP 21/21, CLI 13/13, UI 137/137, Contracts 164/164, FrontComposer inspect, E2E typecheck under Node 24, focused no-AppHost Playwright Chromium 13 passed / 13 skipped using system Chrome, and git diff --check. Live AppHost Playwright cases remain fixme until an AppHost route is provisioned.)
 # 5-11 set to review on 2026-05-31 via post-review fixes (Cross-surface parity, responsive design & accessibility hardening now includes final parity matrix contract, responsive/focus/wrapping CSS hardening, MCP parity + all-manifest DTO leakage tests, CLI warnings/dashboard + cross-tenant denial tests, UI static responsive/accessibility tests, Web 401/403/404 safe-denial mapping + cross-tenant denial tests, and no-AppHost Playwright WCAG/responsive/keyboard selector contracts. Gates passed: solution build -warnaserror 0W/0E, MCP 21/21, CLI 13/13, UI 137/137, Contracts 164/164, FrontComposer inspect, E2E typecheck under Node 24, focused Playwright 13 passed / 13 skipped using system Chrome, and git diff --check. Live AppHost Playwright cases remain fixme until an AppHost route is provisioned; no package upgrades, generated-file hand edits, or submodule pointer changes intended)
@@ -148,7 +149,7 @@ story_location: "{project-root}/_bmad-output/implementation-artifacts"
 
 development_status:
   # Epic 1: Project Workspace Foundation
-  epic-1: in-progress
+  epic-1: done
   1-1-module-scaffold-build-ci-wiring: done
   1-2-shared-vocabulary-identifiers-payload-taxonomy: done
   1-3-openapi-contract-spine-generated-typed-client: done
@@ -161,7 +162,7 @@ development_status:
   epic-1-retrospective: done
 
   # Epic 2: Context References
-  epic-2: in-progress
+  epic-2: done
   2-1-conversation-reference-read-acl: done
   2-2-conversation-project-reassignment-upstream-capability: done
   2-3-link-move-conversation-write-side: done
@@ -172,7 +173,7 @@ development_status:
   epic-2-retrospective: done
 
   # Epic 3: Project Context Assembly
-  epic-3: in-progress
+  epic-3: done
   3-1-context-assembly-policy-allowlist: done
   3-2-get-project-context: done
   3-3-explain-context-selection: done
@@ -181,7 +182,7 @@ development_status:
   epic-3-retrospective: done
 
   # Epic 4: Project Resolution
-  epic-4: in-progress
+  epic-4: done
   4-1-resolution-engine-compute-on-demand: done
   4-2-resolve-project-from-conversation: done
   4-3-resolve-project-from-attachments: done
@@ -190,7 +191,7 @@ development_status:
   epic-4-retrospective: done
 
   # Epic 5: Operational Console & Audit (CLI / MCP / Web)
-  epic-5: in-progress
+  epic-5: done
   5-1-audit-timeline-projection-metadata-only-audit-events: done
   5-2-operator-read-access: done
   5-3-frontcomposer-console-shell-shared-rendering: done
@@ -202,9 +203,43 @@ development_status:
   5-9-audit-first-maintenance-actions: done
   5-10-mcp-cli-parity-surfaces: done
   5-11-cross-surface-parity-responsive-design-accessibility-hardening: done
-  5-12-live-apphost-operational-console-verification: review
-  5-13-isolate-frontcomposer-projection-descriptors-from-packable-contracts: backlog
+  5-12-live-apphost-operational-console-verification: done
   epic-5-retrospective: done
+
+  # Epic 6: Supported Platform Boundary and Secure Identity
+  epic-6: backlog
+  6-1-pin-platform-capabilities-and-migration-baseline: backlog
+  6-2-restore-contracts-presentation-identity-and-api-boundaries: backlog
+  6-3-enforce-secure-platform-admission-and-authorization-evidence: backlog
+  6-4-migrate-read-models-and-queries-to-domainservice: backlog
+  6-5-migrate-command-hosting-and-platform-topology: backlog
+  6-6-authenticate-frontcomposer-ui-and-cli-consumers: backlog
+  6-7-execute-compatibility-cutover-and-retire-legacy-runtime: backlog
+  epic-6-retrospective: optional
+
+  # Epic 7: Durable Cross-Context and Agent-Safe Workflows
+  epic-7: backlog
+  7-1-provide-shared-durable-workflow-task-and-confirmation-seams: backlog
+  7-2-bind-server-issued-previews-and-confirmations: backlog
+  7-3-enforce-mandatory-folder-through-durable-project-creation: backlog
+  7-4-make-conversation-assignment-and-moves-durable-and-auditable: backlog
+  7-5-make-proposed-project-confirmation-durable-and-recoverable: backlog
+  7-6-migrate-archive-restore-relink-and-unlink-to-bound-tasks: backlog
+  7-7-reconcile-legacy-pending-folder-and-in-flight-records: backlog
+  epic-7-retrospective: optional
+
+  # Epic 8: Production Conformance and Release Evidence
+  epic-8: backlog
+  8-1-establish-real-persisted-boundary-fixtures-and-ci: backlog
+  8-2-implement-truthful-health-telemetry-and-generated-logging: backlog
+  8-3-conform-mcp-and-cli-machine-contracts: backlog
+  8-4-rebuild-operator-ui-conformance: backlog
+  8-5-align-build-packaging-supply-chain-and-source-structure: backlog
+  8-6-activate-authenticated-critical-e2e-and-tenant-isolation-gates: backlog
+  8-7-prove-restart-retry-concurrency-and-reconciliation: backlog
+  8-8-bound-read-models-and-verify-performance-objectives: backlog
+  8-9-record-deployment-and-stakeholder-acceptance: backlog
+  epic-8-retrospective: optional
 
 action_items:
   - epic: 5
@@ -213,31 +248,42 @@ action_items:
     status: done
     result: "Dynamic AppHost UI/API/security routes were documented and all live Playwright cases executed; focused live result 13 passed/13 failed, full result 19 passed/56 failed. Remaining blockers are missing tenant-a access projection and operational-console UI/static-asset prerequisites."
     evidence: "_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md"
+    routed_to: "Story 8.6"
   - epic: 5
     action: "Record deployment state and stakeholder acceptance for Epic 5 operational surfaces before release handoff."
     owner: "Jerome / John"
     status: done
     result: "Release handoff blocked; production deployment is unverified and stakeholder acceptance is not granted."
     evidence: "_bmad-output/implementation-artifacts/epic-5-release-handoff-2026-07-14.md"
+    routed_to: "Story 8.9"
   - epic: 5
     action: "Resolve or explicitly scope the pre-existing CreateProject metadataClass required-field enforcement gap with OpenAPI/server tests."
     owner: "Amelia"
-    status: open
+    status: routed
+    routed_to: "Story 6.2"
+    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
   - epic: 5
     action: "Add U+2028/U+2029 idempotency canonicalizer parity coverage across server and generated-client fingerprinting."
     owner: "Amelia / Murat"
-    status: open
+    status: routed
+    routed_to: "Story 6.2"
+    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
   - epic: 5
     action: "Decide whether FrontComposer projection descriptors should remain in the packable Contracts assembly or move to a non-packable UI contracts boundary."
     owner: "Winston / Amelia"
     status: done
     result: "Move application-specific projection descriptors to a non-packable Hexalith.Projects.UI.Contracts boundary; retain shared domain/wire vocabulary in the packable Contracts assembly."
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-frontcomposer-contract-boundary.md"
+    routed_to: "Story 6.2"
   - epic: 5
     action: "Canonicalize or explicitly document the mixed FreshnessTrustState vocabulary used by reference-health rows."
     owner: "Paige / Amelia"
-    status: open
+    status: routed
+    routed_to: "Stories 6.2 and 8.3"
+    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
   - epic: 5
     action: "Keep partial-failure and diagnosticUnavailable parity covered for Web, MCP, and CLI warning/dashboard outputs."
     owner: "Murat"
-    status: open
+    status: routed
+    routed_to: "Stories 8.3 and 8.4"
+    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"

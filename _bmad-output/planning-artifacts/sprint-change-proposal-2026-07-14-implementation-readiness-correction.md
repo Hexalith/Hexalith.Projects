@@ -1,7 +1,9 @@
 ---
 title: "Sprint Change Proposal: Implementation Readiness Correction"
-status: proposed
+status: approved
 created: 2026-07-14
+approved: 2026-07-14
+approved_by: Jerome
 project: Hexalith.Projects
 prepared_for: Jerome
 scope: major
@@ -540,7 +542,21 @@ Until the corrective epics complete:
 - [x] Hybrid path selected.
 - [x] Detailed artifact edits reviewed incrementally.
 - [x] Major-scope handoff plan defined.
-- [!] Complete proposal review pending.
-- [!] Explicit implementation approval pending.
-- [!] Sprint-status mutation pending approval and handoff.
+- [x] Complete proposal reviewed.
+- [x] Explicit implementation approval granted by Jerome on 2026-07-14.
+- [x] Sprint-status reconciliation applied.
+- [x] Major-scope PM/Architect handoff recorded.
 
+## 7. Approval and Routing
+
+Jerome approved this Sprint Change Proposal for implementation on 2026-07-14.
+
+Change scope: Major.
+
+Primary route: Product Manager and Solution Architect.
+
+Secondary route: Product Owner, Developer, Test Architect, and release owners Jerome and John.
+
+The approval authorizes planning-artifact correction and the sequenced handoff. It does not
+authorize production release, enable consequential autonomous operations, or bypass the entry,
+verification, and acceptance gates defined by Epics 6–8.
