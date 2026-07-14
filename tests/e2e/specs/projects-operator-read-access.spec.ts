@@ -1,4 +1,4 @@
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { getProjectOperatorDiagnostics } from '../support/helpers/projects-api-client.js';
 import { queryHeaders } from '../support/helpers/correlation.js';
 
@@ -21,13 +21,13 @@ const FORBIDDEN_OPERATOR_MARKERS = [
 /**
  * Story 5.2 critical journey - operator read access.
  *
- * `test.fixme` follows the current domain-spec convention until the AppHost exposes
- * stable real tenant/operator fixtures. These tests bind the Story 5.2 public API
+ * This suite runs only in the explicit live lane with stable real tenant/operator fixtures.
+ * These tests bind the Story 5.2 public API
  * contract: metadata-only project diagnostics, bounded audit rows, query validation
  * after authorization, safe denial, and no payload leakage.
  */
 test.describe('Projects operator read access', () => {
-  test.fixme('returns metadata-only project diagnostics with bounded audit evidence (Story 5.2 AC1,3,5)', async ({
+  liveAppHostTest('returns metadata-only project diagnostics with bounded audit evidence (Story 5.2 AC1,3,5)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -61,7 +61,7 @@ test.describe('Projects operator read access', () => {
     }
   });
 
-  test.fixme('rejects query idempotency and non-eventual freshness after authorization (Story 5.2 AC2,7)', async ({
+  liveAppHostTest('rejects query idempotency and non-eventual freshness after authorization (Story 5.2 AC2,7)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -94,7 +94,7 @@ test.describe('Projects operator read access', () => {
     expect(JSON.stringify(freshnessRejected.body)).not.toContain(seededProject.name);
   });
 
-  test.fixme('collapses malformed or unauthorized project reads to safe denial (Story 5.2 AC2)', async ({
+  liveAppHostTest('collapses malformed or unauthorized project reads to safe denial (Story 5.2 AC2)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -110,7 +110,7 @@ test.describe('Projects operator read access', () => {
     expect(JSON.stringify(body)).not.toContain('not/a/canonical/project-id');
   });
 
-  test.fixme('does not disclose existence to unauthenticated operator probes (Story 5.2 AC1,2)', async ({
+  liveAppHostTest('does not disclose existence to unauthenticated operator probes (Story 5.2 AC1,2)', async ({
     apiRequest,
     tenantContext,
     seededProject,

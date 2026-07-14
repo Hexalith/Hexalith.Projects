@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
 
 const FORBIDDEN_MAINTENANCE_MARKERS = [
@@ -23,13 +23,13 @@ const FORBIDDEN_MAINTENANCE_MARKERS = [
 /**
  * F5 critical journey — audit-first maintenance with dry-run (UX-DR17 / UX-DR21 / UX-DR25).
  *
- * `test.fixme` until the Epic 5 console + maintenance commands exist. Demonstrates the
+ * Live-gated behind `E2E_LIVE_APPHOST=1`. Demonstrates the
  * five-state command lifecycle (Idle → Submitting → Acknowledged(202) → Syncing → Confirmed)
  * and the dry-run-before-execute confirmation contract, driven through the web console with
  * network-first interception and deterministic readiness (no sleeps).
  */
 test.describe('Projects maintenance (Story 5.9)', () => {
-  test.fixme('dry-run an archive shows the expected audit event before execution (UX-DR17/25)', async ({ page, seededProject }) => {
+  liveAppHostTest('dry-run an archive shows the expected audit event before execution (UX-DR17/25)', async ({ page, seededProject }) => {
     await page.goto(`/projects/${seededProject.projectId}`);
 
     const detail = new ProjectDetailPage(page);
@@ -43,7 +43,7 @@ test.describe('Projects maintenance (Story 5.9)', () => {
     await expect(detail.maintenanceSubmit).toBeDisabled();
   });
 
-  test.fixme('confirmed archive flows through the five-state lifecycle to Confirmed (UX-DR21)', async ({ page, interceptNetworkCall, seededProject }) => {
+  liveAppHostTest('confirmed archive flows through the five-state lifecycle to Confirmed (UX-DR21)', async ({ page, interceptNetworkCall, seededProject }) => {
     await page.goto(`/projects/${seededProject.projectId}`);
 
     const detail = new ProjectDetailPage(page);
@@ -62,7 +62,7 @@ test.describe('Projects maintenance (Story 5.9)', () => {
     await expect(page.getByTestId('project-lifecycle-badge')).toHaveText(/archived/i);
   });
 
-  test.fixme('restore preview and confirmation preserve metadata-only lifecycle semantics', async ({ page, seededProject }) => {
+  liveAppHostTest('restore preview and confirmation preserve metadata-only lifecycle semantics', async ({ page, seededProject }) => {
     await page.goto(`/projects/${seededProject.projectId}`);
 
     const detail = new ProjectDetailPage(page);
@@ -76,7 +76,7 @@ test.describe('Projects maintenance (Story 5.9)', () => {
     await expect(detail.maintenanceSubmit).toBeDisabled();
   });
 
-  test.fixme('relink and unlink previews preserve sibling resources and block unsafe file relink inputs', async ({
+  liveAppHostTest('relink and unlink previews preserve sibling resources and block unsafe file relink inputs', async ({
     page,
     seededProject,
   }) => {
@@ -96,7 +96,7 @@ test.describe('Projects maintenance (Story 5.9)', () => {
     await expect(detail.maintenanceSubmit).toBeDisabled();
   });
 
-  test.fixme('re-evaluate reloads diagnostics without persisting traces or candidate scores', async ({ page, seededProject }) => {
+  liveAppHostTest('re-evaluate reloads diagnostics without persisting traces or candidate scores', async ({ page, seededProject }) => {
     await page.goto(`/projects/${seededProject.projectId}`);
 
     const detail = new ProjectDetailPage(page);

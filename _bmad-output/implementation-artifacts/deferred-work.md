@@ -40,3 +40,12 @@
 - source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
   summary: Add a Memories bounded-ledger test that refreshes an old workflow before trimming and then rejects its stale replay.
   evidence: Verification-gap review demonstrated that the remove-and-reinsert watermark behavior can regress without any existing test failing once more than 256 workflow IDs are tracked.
+- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
+  summary: Add a recurring managed live AppHost Playwright lane, including targeted AppHost startup smoke coverage, lifecycle ownership, and zero-live-skip enforcement.
+  evidence: Verification-gap review found the scheduled E2E job exercises only the offline lane and therefore cannot detect AppHost startup, discovery, authentication, or accidental live-test skips.
+- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
+  summary: Implement and verify real browser OIDC authorization for projects-ui.
+  evidence: Review found token state can target the discovered UI origin, but projects-ui has no browser OIDC/session assertion; the current real-Keycloak proof protects the API access boundary only.
+- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
+  summary: Provision deterministic projected-tenant and sibling reference, proposal, and UI-state fixtures with parallel-safe identifiers.
+  evidence: The full AppHost-backed run exposed a missing tenant access projection plus fixed sibling IDs and placeholder states that the current test harness cannot establish independently.

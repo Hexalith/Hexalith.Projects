@@ -8,25 +8,40 @@ operations guide, not production configuration.
 Prerequisites:
 
 - .NET SDK `10.0.300`.
+- Aspire CLI `13.4.6` (matching the AppHost SDK/hosting/orchestration stack).
+- `jq` for JSON endpoint extraction and `curl` for health probes.
 - Docker-compatible container runtime for Aspire-managed infrastructure.
 - Dapr CLI/runtime installed and initialized for local sidecars, with the Dapr-initialized Redis
   backing endpoint reachable from the host. By default the AppHost uses `localhost:6379`; override
   with `Dapr:RedisHost` when your local Dapr Redis is exposed elsewhere.
 - Root-level sibling repositories already available through the workspace layout.
 
-Start the topology:
+From the repository root, start the topology through the Aspire CLI. The explicit Commons root keeps
+nested sibling project resolution on the root-declared checkout:
 
-```powershell
-dotnet run --project src\Hexalith.Projects.AppHost
+```bash
+APPHOST="$PWD/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
+export HexalithCommonsRoot="$PWD/references/Hexalith.Commons"
+aspire start --apphost "$APPHOST" --format Json --non-interactive
+cleanup_apphost() { aspire stop --apphost "$APPHOST" --non-interactive >/dev/null 2>&1 || true; }
+trap cleanup_apphost EXIT
+aspire wait projects-ui --apphost "$APPHOST" --timeout 180 --non-interactive
 ```
 
 Start without the shared security resource when working on non-auth local plumbing:
 
-```powershell
-dotnet run --project src\Hexalith.Projects.AppHost -- --EnableKeycloak=false
+```bash
+EnableKeycloak=false aspire start --apphost "$APPHOST" --format Json --non-interactive
 ```
 
-Stop the topology from the Aspire dashboard or stop the `dotnet run` process with `Ctrl+C`.
+Stop only this topology by selecting its AppHost explicitly:
+
+```bash
+aspire stop --apphost "$APPHOST" --non-interactive
+trap - EXIT
+```
+
+Do not use `aspire stop --all` when other workspaces may have active AppHosts.
 
 Do not run recursive submodule initialization for this topology. If a root-level sibling project is
 missing, fetch only the required root-level submodule or repository according to the workspace setup.
@@ -39,6 +54,7 @@ The AppHost resource graph should include:
 - `tenants`
 - `projects`
 - `projects-workers`
+- `projects-ui`
 - Redis-backed Dapr component `statestore`
 - Redis-backed Dapr component `pubsub`
 - A reachable local Redis backing endpoint, normally the Dapr-initialized `dapr_redis` instance
@@ -50,14 +66,28 @@ Projects code must not access Redis directly.
 
 ## Health and Readiness
 
-Use these endpoints through the service endpoint shown by Aspire:
+Discover endpoints from the live resource graph; do not copy a prior run's assigned ports:
 
-```powershell
-Invoke-WebRequest http://localhost:<projects-port>/alive
-Invoke-WebRequest http://localhost:<projects-port>/ready
-Invoke-WebRequest http://localhost:<projects-workers-port>/alive
-Invoke-WebRequest http://localhost:<projects-workers-port>/ready
+```bash
+TOPOLOGY="$(aspire describe --apphost "$APPHOST" --format Json --non-interactive)"
+PROJECTS_URL="$(jq -r '.resources[] | select(.displayName == "projects") | .urls[] | select(.name == "http") | .url' <<<"$TOPOLOGY")"
+PROJECTS_WORKERS_URL="$(jq -r '.resources[] | select(.displayName == "projects-workers") | .urls[] | select(.name == "http") | .url' <<<"$TOPOLOGY")"
+PROJECTS_UI_URL="$(jq -r '.resources[] | select(.displayName == "projects-ui") | .urls[] | select(.name == "http") | .url' <<<"$TOPOLOGY")"
+SECURITY_URL="$(jq -r '.resources[] | select(.displayName == "security") | .urls[] | select(.name == "http") | .url' <<<"$TOPOLOGY")"
 ```
+
+Use the derived service endpoints:
+
+```bash
+curl --fail "$PROJECTS_URL/alive"
+curl --fail "$PROJECTS_URL/ready"
+curl --fail "$PROJECTS_WORKERS_URL/alive"
+curl --fail "$PROJECTS_WORKERS_URL/ready"
+```
+
+For Epic 5 browser verification, map `PROJECTS_UI_URL` to `BASE_URL`, `PROJECTS_URL` to `API_URL`,
+and `SECURITY_URL` to `KEYCLOAK_URL`, then set `E2E_LIVE_APPHOST=1`. The complete command sequence and
+credential variables are documented in `tests/e2e/README.md`.
 
 Interpretation:
 
@@ -83,9 +113,9 @@ payloads in tickets or logs.
 
 Recommended local triage:
 
-```powershell
+```bash
 dapr list
-Invoke-WebRequest http://localhost:<projects-workers-port>/ready
+curl --fail "$PROJECTS_WORKERS_URL/ready"
 ```
 
 If the worker is not ready, fix the sidecar/component dependency before replay. If it is ready, replay

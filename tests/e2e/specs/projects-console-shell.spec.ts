@@ -1,4 +1,4 @@
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
 
 const FORBIDDEN_SHELL_MARKERS = [
@@ -18,12 +18,12 @@ const FORBIDDEN_SHELL_MARKERS = [
  * (projects-inventory-detail.spec.ts); this file stays scoped to the shared shell, empty-state,
  * and feedback selectors so the two specs do not maintain divergent copies of the same assertions.
  *
- * These remain fixme until the stable AppHost/UI fixture can launch the FrontComposer console
- * with authenticated operator context. Later stories own the reference matrix, trace, audit export,
+ * These run only in the explicit live AppHost lane with authenticated operator context.
+ * Later stories own the reference matrix, trace, audit export,
  * warning dashboard, mutation, and MCP/CLI journeys.
  */
 test.describe('Projects console shell shared rendering', () => {
-  test.fixme('renders the Project Diagnostic Header with lifecycle badge, copyable ids, and shell navigation selectors', async ({
+  liveAppHostTest('renders the Project Diagnostic Header with lifecycle badge, copyable ids, and shell navigation selectors', async ({
     page,
     tenantContext,
     seededProject,
@@ -41,7 +41,7 @@ test.describe('Projects console shell shared rendering', () => {
     await expect(page.getByTestId(/^fc-nav-/)).toBeVisible();
   });
 
-  test.fixme('distinguishes no-data, denied, unavailable, and filtered empty states without blank tables', async ({
+  liveAppHostTest('distinguishes no-data, denied, unavailable, and filtered empty states without blank tables', async ({
     page,
   }) => {
     await page.goto('/projects/project-with-filtered-empty-results');
@@ -52,7 +52,7 @@ test.describe('Projects console shell shared rendering', () => {
     await expect(page.getByTestId('project-empty-none')).toBeVisible();
   });
 
-  test.fixme('renders safe feedback categories without echoing protected payload markers', async ({ page }) => {
+  liveAppHostTest('renders safe feedback categories without echoing protected payload markers', async ({ page }) => {
     await page.goto('/projects/project-with-feedback-examples');
 
     await expect(page.getByTestId('project-feedback-success')).toBeVisible();

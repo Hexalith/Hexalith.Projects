@@ -1,4 +1,4 @@
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { queryHeaders } from '../support/helpers/correlation.js';
 import {
   confirmNewProjectProposal,
@@ -10,7 +10,7 @@ import {
 /**
  * F5 critical journey — NoMatch proposal preview → explicit confirm (FR-15 / Story 4.5).
  *
- * `test.fixme` until the AppHost exposes seeded conversation/folder/file ACL fixtures for
+ * Live-gated until the AppHost exposes seeded conversation/folder/file ACL fixtures for
  * the real cross-module API. These tests lock the Playwright API shape for preview-only
  * inference, explicit command-async confirmation, idempotent recovery, safe-denial, and
  * no-payload-leakage assertions.
@@ -83,7 +83,7 @@ test.describe('Projects new-project proposal', () => {
     expect(serialized).not.toContain(filePath);
   }
 
-  test.fixme('previews a NoMatch proposal without creating or leaking sibling payload data (AC1,3,8)', async ({
+  liveAppHostTest('previews a NoMatch proposal without creating or leaking sibling payload data (AC1,3,8)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -112,7 +112,7 @@ test.describe('Projects new-project proposal', () => {
     assertNoProposalPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
   });
 
-  test.fixme('rejects preview idempotency, strong freshness, duplicate references, and unsafe metadata (AC3,8)', async ({
+  liveAppHostTest('rejects preview idempotency, strong freshness, duplicate references, and unsafe metadata (AC3,8)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -159,7 +159,7 @@ test.describe('Projects new-project proposal', () => {
     assertNoProposalPayloadLeakage(JSON.stringify(unsafeMetadataRejected.body), tenantContext.tenantId);
   });
 
-  test.fixme('returns a safe conflict when an existing Project now qualifies instead of proposing creation (AC1,3)', async ({
+  liveAppHostTest('returns a safe conflict when an existing Project now qualifies instead of proposing creation (AC1,3)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -178,7 +178,7 @@ test.describe('Projects new-project proposal', () => {
     assertNoProposalPayloadLeakage(serialized, tenantContext.tenantId);
   });
 
-  test.fixme('confirms a NoMatch proposal through command-async create, conversation assignment, folder, and file links (AC2,4,5,7)', async ({
+  liveAppHostTest('confirms a NoMatch proposal through command-async create, conversation assignment, folder, and file links (AC2,4,5,7)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -200,7 +200,7 @@ test.describe('Projects new-project proposal', () => {
     assertNoProposalPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
   });
 
-  test.fixme('same root idempotency key with a different confirm body returns conflict without duplicate writes (AC7)', async ({
+  liveAppHostTest('same root idempotency key with a different confirm body returns conflict without duplicate writes (AC7)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -240,7 +240,7 @@ test.describe('Projects new-project proposal', () => {
     assertNoProposalPayloadLeakage(JSON.stringify(conflict.body), tenantContext.tenantId);
   });
 
-  test.fixme('confirm validation fails closed for missing idempotency and mismatched file evidence (AC4,6,8)', async ({
+  liveAppHostTest('confirm validation fails closed for missing idempotency and mismatched file evidence (AC4,6,8)', async ({
     apiRequest,
     authToken,
     tenantContext,

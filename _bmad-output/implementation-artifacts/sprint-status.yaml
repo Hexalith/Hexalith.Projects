@@ -1,5 +1,7 @@
 # generated: 2026-05-25
-# last_updated: 2026-06-26
+# last_updated: 2026-07-14
+# 5-13 added to backlog on 2026-07-14 via approved Correct Course proposal (move application-specific FrontComposer projection descriptors from packable Hexalith.Projects.Contracts to non-packable Hexalith.Projects.UI.Contracts; retain shared domain/wire vocabulary in Contracts; require consumer/versioning audit, package-boundary verification, FrontComposer inspect retargeting, and cross-surface parity/leakage evidence before completion).
+# 5-12 set to review on 2026-07-14 via quick-dev (AppHost build and dynamic UI/API/security route provisioned through targeted Aspire lifecycle after aligning AppHost/Hosting/Orchestration at 13.4.6; all 57 former permanent declarations use the explicit live gate; no-AppHost focus 13 passed/13 skipped; focused live 13 passed/13 failed; full live 19 passed/56 failed; failures recorded as missing tenant-a access projection plus operational-console selector/static-asset prerequisites; Story 5.11 and existing release-handoff edits preserved.)
 # 5-11 set to done on 2026-05-31 via story-automator-review (0 CRITICAL remaining after auto-fixes; fixed MCP warningQueue DiagnosticUnavailable parity/test false positive, scoped PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH to Chromium only, and removed mobile table min-widths that forced critical metadata behind horizontal scroll. Parent verification passed solution build -warnaserror 0W/0E, dotnet test MCP 21/21, CLI 13/13, UI 137/137, Contracts 164/164, FrontComposer inspect, E2E typecheck under Node 24, focused no-AppHost Playwright Chromium 13 passed / 13 skipped using system Chrome, and git diff --check. Live AppHost Playwright cases remain fixme until an AppHost route is provisioned.)
 # 5-11 set to review on 2026-05-31 via post-review fixes (Cross-surface parity, responsive design & accessibility hardening now includes final parity matrix contract, responsive/focus/wrapping CSS hardening, MCP parity + all-manifest DTO leakage tests, CLI warnings/dashboard + cross-tenant denial tests, UI static responsive/accessibility tests, Web 401/403/404 safe-denial mapping + cross-tenant denial tests, and no-AppHost Playwright WCAG/responsive/keyboard selector contracts. Gates passed: solution build -warnaserror 0W/0E, MCP 21/21, CLI 13/13, UI 137/137, Contracts 164/164, FrontComposer inspect, E2E typecheck under Node 24, focused Playwright 13 passed / 13 skipped using system Chrome, and git diff --check. Live AppHost Playwright cases remain fixme until an AppHost route is provisioned; no package upgrades, generated-file hand edits, or submodule pointer changes intended)
 # 5-11 set to ready-for-dev on 2026-05-30 via create-story (Cross-surface parity, responsive design & accessibility hardening - final Epic 5 quality pass over existing Web/MCP/CLI surfaces; verifies equivalent state/reason/timestamp/warning/audit semantics across shared vocabulary, docs/parity-matrix, MCP descriptors, CLI JSON, and Web selectors; hardens responsive behavior for 320-767/768-1023/1024+/1440+ viewports, long identifier access, keyboard/focus, semantic tables/timelines, WCAG 2.2 AA axe/Playwright coverage, reduced-motion safety, no hover-only critical actions, cross-tenant negative paths, and NoPayloadLeakage coverage for new evidence artifacts; preserves Story 5.10 safe MCP/CLI failure mapping and diagnosticUnavailable counts, no parallel enums, no package upgrades, no generated-file hand edits, no submodule changes intended)
@@ -200,17 +202,23 @@ development_status:
   5-9-audit-first-maintenance-actions: done
   5-10-mcp-cli-parity-surfaces: done
   5-11-cross-surface-parity-responsive-design-accessibility-hardening: done
+  5-12-live-apphost-operational-console-verification: review
+  5-13-isolate-frontcomposer-projection-descriptors-from-packable-contracts: backlog
   epic-5-retrospective: done
 
 action_items:
   - epic: 5
     action: "Provision or document the live AppHost browser route for Epic 5 operational console checks and run the remaining AppHost-backed Playwright cases."
     owner: "Murat / Amelia"
-    status: open
+    status: done
+    result: "Dynamic AppHost UI/API/security routes were documented and all live Playwright cases executed; focused live result 13 passed/13 failed, full result 19 passed/56 failed. Remaining blockers are missing tenant-a access projection and operational-console UI/static-asset prerequisites."
+    evidence: "_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md"
   - epic: 5
     action: "Record deployment state and stakeholder acceptance for Epic 5 operational surfaces before release handoff."
     owner: "Jerome / John"
-    status: open
+    status: done
+    result: "Release handoff blocked; production deployment is unverified and stakeholder acceptance is not granted."
+    evidence: "_bmad-output/implementation-artifacts/epic-5-release-handoff-2026-07-14.md"
   - epic: 5
     action: "Resolve or explicitly scope the pre-existing CreateProject metadataClass required-field enforcement gap with OpenAPI/server tests."
     owner: "Amelia"
@@ -222,7 +230,9 @@ action_items:
   - epic: 5
     action: "Decide whether FrontComposer projection descriptors should remain in the packable Contracts assembly or move to a non-packable UI contracts boundary."
     owner: "Winston / Amelia"
-    status: open
+    status: done
+    result: "Move application-specific projection descriptors to a non-packable Hexalith.Projects.UI.Contracts boundary; retain shared domain/wire vocabulary in the packable Contracts assembly."
+    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-frontcomposer-contract-boundary.md"
   - epic: 5
     action: "Canonicalize or explicitly document the mixed FreshnessTrustState vocabulary used by reference-health rows."
     owner: "Paige / Amelia"

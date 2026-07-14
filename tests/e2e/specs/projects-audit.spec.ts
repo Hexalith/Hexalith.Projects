@@ -1,10 +1,10 @@
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { queryHeaders } from '../support/helpers/correlation.js';
 
 /**
  * F5 critical journey — audit timeline (FR-21 / F1) + NoPayloadLeakage (NFR-2 / R2).
  *
- * `test.fixme` until AppHost/browser provisioning is available in CI. Asserts the timeline/export
+ * Live-gated until AppHost/browser provisioning is explicit. Asserts the timeline/export
  * contract is metadata-only over the Story 5.2 operator diagnostic endpoint rather than a duplicate
  * `/audit` route.
  */
@@ -16,7 +16,7 @@ const FORBIDDEN_PAYLOAD_MARKERS = [
 ];
 
 test.describe('Projects audit timeline', () => {
-  test.fixme('operator diagnostics audit timeline is metadata-only with no leaked payloads (FR-21 / NFR-2)', async ({ apiRequest, authToken, tenantContext, seededProject }) => {
+  liveAppHostTest('operator diagnostics audit timeline is metadata-only with no leaked payloads (FR-21 / NFR-2)', async ({ apiRequest, authToken, tenantContext, seededProject }) => {
     const { status, body } = await apiRequest<{ auditTimeline: Array<Record<string, unknown>> }>({
       method: 'GET',
       path: `/api/v1/projects/${seededProject.projectId}/operator-diagnostics?auditLimit=25`,
@@ -38,7 +38,7 @@ test.describe('Projects audit timeline', () => {
     }
   });
 
-  test.fixme('audit timeline renders as a screen-reader-readable list and safe export (UX-DR16/18)', async ({ page, seededProject }) => {
+  liveAppHostTest('audit timeline renders as a screen-reader-readable list and safe export (UX-DR16/18)', async ({ page, seededProject }) => {
     await page.goto(`/projects/${seededProject.projectId}`);
     await page.getByTestId('project-detail-tab-audit').click();
     await expect(page.getByTestId('audit-timeline')).toBeVisible();

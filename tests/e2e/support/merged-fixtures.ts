@@ -10,6 +10,7 @@ import type { AuthFixtures } from '@seontechnologies/playwright-utils/auth-sessi
 import keycloakAuthProvider from './auth/keycloak-auth-provider.js';
 import { createTenantContext } from './factories/tenant-factory.js';
 import { type ProjectFixtures, seedActiveProject } from './fixtures/projects-fixtures.js';
+import type { ApiRequest } from './helpers/projects-api-client.js';
 
 /**
  * Single project test object (the fragment "merged-fixtures" pattern).
@@ -25,7 +26,7 @@ import { type ProjectFixtures, seedActiveProject } from './fixtures/projects-fix
  *  - log                 report-integrated step logging (log)
  *  - interceptNetworkCall  network-first spy/stub (intercept-network-call)
  *  - networkErrorMonitor   automatic 4xx/5xx detection (network-error-monitor)
- *  - tenantContext       fresh isolated tenant (custom)
+ *  - tenantContext       configured projected tenant with per-test metadata (custom)
  *  - seededProject       active project converged in the read model (custom)
  */
 
@@ -51,8 +52,18 @@ const utilsTest = mergeTests(
 );
 
 export const test = utilsTest.extend<ProjectFixtures>({
+  apiRequest: async ({ apiRequest }, use) => {
+    const projectsApiRequest = (<T = unknown>(params: Parameters<ApiRequest>[0]) =>
+      apiRequest<T>({
+        ...params,
+        baseUrl: params.baseUrl?.trim() || requireProjectsApiUrl(),
+      })) as ApiRequest;
+    await use(projectsApiRequest as Parameters<typeof use>[0]);
+  },
+
   tenantContext: async ({}, use) => {
-    await use(createTenantContext());
+    const tenantId = process.env.E2E_LIVE_APPHOST === '1' ? requireLiveFixtureEnv('TEST_TENANT_ID') : undefined;
+    await use(createTenantContext(tenantId ? { tenantId } : undefined));
   },
 
   seededProject: async ({ apiRequest, authToken, recurse, tenantContext }, use) => {
@@ -61,5 +72,26 @@ export const test = utilsTest.extend<ProjectFixtures>({
     await cleanup();
   },
 });
+
+/**
+ * Registers AppHost-backed tests as normal tests only when the live lane is explicit.
+ * Selecting `test.skip` at definition time prevents disabled cases from resolving
+ * real-auth and seeded-project fixtures.
+ */
+export const liveAppHostTest = (
+  process.env.E2E_LIVE_APPHOST === '1' ? test : test.skip
+) as typeof test;
+
+function requireProjectsApiUrl(): string {
+  return requireLiveFixtureEnv('API_URL');
+}
+
+function requireLiveFixtureEnv(name: string): string {
+  const value = process.env[name]?.trim();
+  if (!value) {
+    throw new Error(`[projects-fixtures] ${name} must be set for AppHost-backed tests.`);
+  }
+  return value;
+}
 
 export { expect };

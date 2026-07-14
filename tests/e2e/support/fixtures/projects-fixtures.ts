@@ -35,18 +35,41 @@ export async function seedActiveProject(
   const { apiRequest, authToken, recurse, tenantContext } = deps;
   const payload = input ?? createProjectInput();
 
-  const { body } = await createProject(apiRequest, tenantContext.tenantId, payload, { authToken });
-  const project = await waitForProject(
-    recurse,
-    apiRequest,
-    tenantContext.tenantId,
-    body.projectId,
-    { authToken },
-    { lifecycle: 'active' },
-  );
+  const { status, body } = await createProject(apiRequest, tenantContext.tenantId, payload, { authToken });
+  if (status !== 202 || typeof body?.projectId !== 'string' || !body.projectId.trim()) {
+    throw new Error(
+      `[projects-fixtures] project seed was not accepted (status ${status}); verify TEST_TENANT_ID and its projected tenant access.`,
+    );
+  }
+  let project: ProjectDetail;
+  try {
+    project = await waitForProject(
+      recurse,
+      apiRequest,
+      tenantContext.tenantId,
+      body.projectId,
+      { authToken },
+      { lifecycle: 'active' },
+    );
+  } catch (error) {
+    try {
+      await archiveProject(apiRequest, tenantContext.tenantId, body.projectId, { authToken });
+    } catch {
+      // Preserve the convergence error; cleanup is best effort on this failure path.
+    }
+    throw error;
+  }
 
   const cleanup = async (): Promise<void> => {
-    await archiveProject(apiRequest, tenantContext.tenantId, project.projectId, { authToken });
+    const { status: cleanupStatus } = await archiveProject(
+      apiRequest,
+      tenantContext.tenantId,
+      project.projectId,
+      { authToken },
+    );
+    if (cleanupStatus !== 202) {
+      throw new Error(`[projects-fixtures] project cleanup was not accepted (status ${cleanupStatus}).`);
+    }
   };
 
   return { project, cleanup };

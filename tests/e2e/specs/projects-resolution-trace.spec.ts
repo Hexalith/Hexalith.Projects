@@ -1,4 +1,4 @@
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { expectNoA11yViolations } from '../support/helpers/a11y.js';
 import { ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
 import { test as base } from '@playwright/test';
@@ -21,13 +21,13 @@ const FORBIDDEN_TRACE_MARKERS = [
 /**
  * Story 5.6 critical journeys - Resolution Trace Workbench.
  *
- * These remain `test.fixme` until AppHost fixtures expose deterministic trace data for
- * conversation and attachment resolution. The assertions bind the Web journey contract:
+ * These run only in the explicit live lane; deterministic trace data for conversation and
+ * attachment resolution remains a required fixture prerequisite. The assertions bind the Web journey contract:
  * explicit compute-on-demand inputs, stable selectors, keyboard access, non-color-only
  * result/reason/exclusion states, and metadata-only rendering.
  */
 test.describe('Project resolution trace workbench (Story 5.6)', () => {
-  test.fixme('renders stable selectors and supports the keyboard path', async ({ page, seededProject }) => {
+  liveAppHostTest('renders stable selectors and supports the keyboard path', async ({ page, seededProject }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
     await page.getByTestId('project-detail-tab-resolution').click();
@@ -47,7 +47,7 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
     await expect(detail.resolutionTraceRun).toBeFocused();
   });
 
-  test.fixme('runs conversation and attachment traces without leaking payload data', async ({ page, seededProject }) => {
+  liveAppHostTest('runs conversation and attachment traces without leaking payload data', async ({ page, seededProject }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
     await page.getByTestId('project-detail-tab-resolution').click();
@@ -72,7 +72,7 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
     }
   });
 
-  test.fixme('passes axe accessibility scan after a trace renders', async ({ page, seededProject }, testInfo) => {
+  liveAppHostTest('passes axe accessibility scan after a trace renders', async ({ page, seededProject }, testInfo) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
     await page.getByTestId('project-detail-tab-resolution').click();

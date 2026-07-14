@@ -1,10 +1,10 @@
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { mutationHeaders, queryHeaders } from '../support/helpers/correlation.js';
 
 /**
  * F5 critical journey — optional File Reference link/unlink (Story 2.5; FR-9 / FR-11; AR-11 Folders ACL).
  *
- * `test.fixme` until the Hexalith.Projects API + AppHost expose the file-reference routes through a
+ * Live-gated until the Hexalith.Projects API + AppHost expose the file-reference routes through a
  * running topology (mirrors the lifecycle/resolution specs, which are also scaffolded). The bodies are
  * pattern-complete and document the load-bearing E2E disciplines this slice must honour:
  *   - command-async (202 AcceptedCommand), no read-after-write — converge on the read model (no sleeps);
@@ -48,7 +48,7 @@ const fileReferences = (refs: ReferenceSummary[]) => refs.filter((r) => r.refere
 const folderReferences = (refs: ReferenceSummary[]) => refs.filter((r) => r.referenceKind === 'folder');
 
 test.describe('Projects file references (link / unlink)', () => {
-  test.fixme('links an authorized file reference (202) and surfaces it as referenceKind=file (FR-9 / AC1,2,7)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
+  liveAppHostTest('links an authorized file reference (202) and surfaces it as referenceKind=file (FR-9 / AC1,2,7)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
     const { status } = await apiRequest({
       method: 'POST',
       path: `/api/v1/projects/${seededProject.projectId}/files/${FILE_REFERENCE_ID}/link`,
@@ -70,7 +70,7 @@ test.describe('Projects file references (link / unlink)', () => {
     );
   });
 
-  test.fixme('linking a file never satisfies, replaces, or auto-creates the single Project Folder (AC3)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
+  liveAppHostTest('linking a file never satisfies, replaces, or auto-creates the single Project Folder (AC3)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
     const before = await apiRequest<ProjectReferences>({
       method: 'GET',
       path: `/api/v1/projects/${seededProject.projectId}`,
@@ -106,7 +106,7 @@ test.describe('Projects file references (link / unlink)', () => {
     expect(folderReferences(after.body.references)).toEqual(folderBefore);
   });
 
-  test.fixme('unlinking a file removes only the association, never the Project Folder row (FR-9 / AC4)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
+  liveAppHostTest('unlinking a file removes only the association, never the Project Folder row (FR-9 / AC4)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
     await apiRequest({
       method: 'POST',
       path: `/api/v1/projects/${seededProject.projectId}/files/${FILE_REFERENCE_ID}/link`,
@@ -150,7 +150,7 @@ test.describe('Projects file references (link / unlink)', () => {
     );
   });
 
-  test.fixme('denied/redacted Folders evidence fails closed as safe-denial and never leaks path or content (AC5)', async ({ apiRequest, authToken, tenantContext, seededProject }) => {
+  liveAppHostTest('denied/redacted Folders evidence fails closed as safe-denial and never leaks path or content (AC5)', async ({ apiRequest, authToken, tenantContext, seededProject }) => {
     const { status, body } = await apiRequest<unknown>({
       method: 'POST',
       path: `/api/v1/projects/${seededProject.projectId}/files/file_forbidden0000000000000000/link`,
@@ -166,7 +166,7 @@ test.describe('Projects file references (link / unlink)', () => {
     expect(serialized).not.toContain('redacted');
   });
 
-  test.fixme('equivalent duplicate link with the same Idempotency-Key replays safely (AC8)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
+  liveAppHostTest('equivalent duplicate link with the same Idempotency-Key replays safely (AC8)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
     const idempotencyKey = `idem-file-link-${seededProject.projectId}`;
     const headers = { ...mutationHeaders({ authToken, idempotencyKey }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId };
 

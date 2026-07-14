@@ -1106,3 +1106,34 @@ So that **the three surfaces tell the same truth, work across viewports, are acc
 **Given** the new Web/MCP/CLI rendering surfaces
 **When** the Epic-5 security pass runs
 **Then** cross-tenant negative tests prove no surface renders another tenant's data, and the `NoPayloadLeakage` harness is extended over every new surface/DTO/evidence artifact (no sibling payload rendered "for debugging").
+
+### Story 5.12: Live AppHost operational-console verification
+
+As a **platform test engineer**,
+I want **the AppHost browser endpoint provisioned and the deferred operational-console Playwright cases executable through an explicit live lane**,
+So that **Epic 5 accessibility, responsive, keyboard, security, and cross-surface behavior has recorded live-topology evidence or a reproducible route blocker**.
+
+**Acceptance Criteria:**
+
+**Given** the umbrella workspace with root-declared sibling repositories
+**When** the Projects AppHost starts
+**Then** it uses root-declared submodules only, aligns its AppHost SDK with the shared Aspire hosting version, and never requires nested submodule initialization.
+
+**Given** a running Projects AppHost
+**When** the operator waits for `projects-ui` and inspects the resource graph through Aspire
+**Then** the `projects-ui`, `projects`, and `security` endpoints are discovered dynamically without guessed ports
+**And** the topology is stopped through Aspire after verification.
+
+**Given** the Playwright no-AppHost lane
+**When** `E2E_LIVE_APPHOST` is not enabled
+**Then** selector/accessibility fixture-contract tests remain runnable
+**And** live tests skip before authentication or seeded-project fixtures resolve.
+
+**Given** valid discovered UI/API/security endpoints and local real-Keycloak credentials
+**When** `E2E_LIVE_APPHOST=1` runs the Chromium lane
+**Then** the 13 focused Epic 5 live cases execute first
+**And** every applicable remaining AppHost-backed case across the 13 product specifications executes with recorded pass/fail/skip totals.
+
+**Given** a route, deterministic fixture, or product prerequisite remains unavailable
+**When** verification closes
+**Then** every retained skip has a concrete reason, no unexplained permanent `test.fixme` remains, and the exact metadata-only blocker is recorded without tokens, credentials, payloads, or private paths.

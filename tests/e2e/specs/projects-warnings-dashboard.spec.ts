@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { expectNoA11yViolations } from '../support/helpers/a11y.js';
 import { getProjectOperatorDiagnostics, listProjects } from '../support/helpers/projects-api-client.js';
 import { ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
@@ -21,11 +21,11 @@ const FORBIDDEN_WARNING_MARKERS = [
 /**
  * Story 5.8 critical journeys - warnings queue and operational dashboard.
  *
- * `test.fixme` until authenticated AppHost/browser provisioning is available in CI. These selectors
- * are kept ready for the Story 5.11 responsive/a11y hardening lane.
+ * Live-gated until authenticated AppHost/browser provisioning is explicitly enabled. These
+ * selectors are kept ready for the Story 5.11 responsive/a11y hardening lane.
  */
 test.describe('Projects warnings queue and operational dashboard (Story 5.8)', () => {
-  test.fixme('loads warning dashboard metadata through bounded query enrichment only', async ({
+  liveAppHostTest('loads warning dashboard metadata through bounded query enrichment only', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -72,7 +72,7 @@ test.describe('Projects warnings queue and operational dashboard (Story 5.8)', (
     }
   });
 
-  test.fixme('rejects warning dashboard query misuse without echoing project metadata', async ({
+  liveAppHostTest('rejects warning dashboard query misuse without echoing project metadata', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -102,7 +102,7 @@ test.describe('Projects warnings queue and operational dashboard (Story 5.8)', (
     expect(JSON.stringify(diagnosticsWithIdempotency.body)).not.toContain(seededProject.name);
   });
 
-  test.fixme('renders dashboard tiles, queue rows, filters, and safe read-only drill-ins', async ({ page }) => {
+  liveAppHostTest('renders dashboard tiles, queue rows, filters, and safe read-only drill-ins', async ({ page }) => {
     const warnings = new ProjectDetailPage(page);
     await warnings.gotoWarnings();
 
@@ -123,7 +123,7 @@ test.describe('Projects warnings queue and operational dashboard (Story 5.8)', (
     }
   });
 
-  test.fixme('warnings dashboard markup stays metadata-only and avoids payload leakage', async ({ page }) => {
+  liveAppHostTest('warnings dashboard markup stays metadata-only and avoids payload leakage', async ({ page }) => {
     const warnings = new ProjectDetailPage(page);
     await warnings.gotoWarnings();
 
@@ -133,7 +133,7 @@ test.describe('Projects warnings queue and operational dashboard (Story 5.8)', (
     }
   });
 
-  test.fixme('warnings dashboard passes WCAG 2.2 AA axe scan', async ({ page }, testInfo) => {
+  liveAppHostTest('warnings dashboard passes WCAG 2.2 AA axe scan', async ({ page }, testInfo) => {
     const warnings = new ProjectDetailPage(page);
     await warnings.gotoWarnings();
 

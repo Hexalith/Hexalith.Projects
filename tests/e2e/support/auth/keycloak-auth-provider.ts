@@ -8,9 +8,9 @@ import type { AuthProvider, PlaywrightStorageState, AuthOptions } from '@seontec
  * (realm `hexalith`) — synthetic JWT generators are for unit/integration tiers only.
  * Uses the OAuth2 resource-owner password grant against the realm token endpoint.
  *
- * Tokens are persisted to disk by auth-session (storage-state shape) and reused across
- * runs until expiry; multiple `userIdentifier`s map to distinct credential sets so
- * cross-tenant isolation negatives can authenticate as different tenants/users.
+ * Auth-session owns the persisted storage-state shape. Live global setup clears cached state and
+ * fetches a fresh token; multiple `userIdentifier`s map to distinct credential sets so cross-tenant
+ * isolation negatives can authenticate as different tenants/users.
  */
 
 interface TokenResponse {
@@ -30,7 +30,7 @@ const clientId = () => requireEnv('KEYCLOAK_CLIENT_ID');
 const clientSecret = () => process.env.KEYCLOAK_CLIENT_SECRET;
 
 function requireEnv(name: string): string {
-  const value = process.env[name];
+  const value = process.env[name]?.trim();
   if (!value) {
     throw new Error(`[keycloak-auth-provider] ${name} must be set for E2E auth. See .env.example.`);
   }
@@ -39,18 +39,32 @@ function requireEnv(name: string): string {
 
 /**
  * Resolve credentials for a user identifier. The default user comes from
- * TEST_USER_EMAIL / TEST_USER_PASSWORD; additional users use
- * E2E_USER_<IDENTIFIER>_EMAIL / E2E_USER_<IDENTIFIER>_PASSWORD (uppercased).
+ * TEST_USER_USERNAME / TEST_USER_PASSWORD; additional users use
+ * E2E_USER_<IDENTIFIER>_USERNAME / E2E_USER_<IDENTIFIER>_PASSWORD (uppercased).
+ * The legacy *_EMAIL names remain accepted for existing environments.
  */
 function resolveCredentials(userIdentifier: string): UserCredentials {
   if (userIdentifier === 'default') {
-    return { username: requireEnv('TEST_USER_EMAIL'), password: requireEnv('TEST_USER_PASSWORD') };
+    return {
+      username: requireOneOf('TEST_USER_USERNAME', 'TEST_USER_EMAIL'),
+      password: requireEnv('TEST_USER_PASSWORD'),
+    };
   }
   const key = userIdentifier.toUpperCase().replace(/[^A-Z0-9]+/g, '_');
   return {
-    username: requireEnv(`E2E_USER_${key}_EMAIL`),
+    username: requireOneOf(`E2E_USER_${key}_USERNAME`, `E2E_USER_${key}_EMAIL`),
     password: requireEnv(`E2E_USER_${key}_PASSWORD`),
   };
+}
+
+function requireOneOf(primaryName: string, legacyName: string): string {
+  const value = process.env[primaryName]?.trim() || process.env[legacyName]?.trim();
+  if (!value) {
+    throw new Error(
+      `[keycloak-auth-provider] ${primaryName} must be set for E2E auth (${legacyName} is also accepted). See .env.example.`,
+    );
+  }
+  return value;
 }
 
 const tokenEndpoint = () => `${keycloakUrl()}/realms/${realm()}/protocol/openid-connect/token`;
@@ -77,7 +91,7 @@ export const keycloakAuthProvider: AuthProvider = {
     return state.origins?.[0]?.localStorage?.find((item) => item.name === 'access_token')?.value ?? null;
   },
 
-  // We persist the token in localStorage origins (API-first); no cookies to apply.
+  // We persist the token at the browser origin; API calls use the extracted bearer token.
   extractCookies: () => [],
 
   isTokenExpired: (rawToken: string) => {
@@ -107,8 +121,7 @@ export const keycloakAuthProvider: AuthProvider = {
     });
 
     if (!response.ok()) {
-      const detail = await response.text();
-      throw new Error(`[keycloak-auth-provider] token request failed (${response.status()}) for "${userIdentifier}": ${detail}`);
+      throw new Error(`[keycloak-auth-provider] token request failed (${response.status()}) for "${userIdentifier}".`);
     }
 
     const { access_token } = (await response.json()) as TokenResponse;
@@ -117,7 +130,7 @@ export const keycloakAuthProvider: AuthProvider = {
       cookies: [],
       origins: [
         {
-          origin: process.env.API_URL ?? process.env.BASE_URL ?? keycloakUrl(),
+          origin: new URL(requireEnv('BASE_URL')).origin,
           localStorage: [{ name: 'access_token', value: access_token }],
         },
       ],

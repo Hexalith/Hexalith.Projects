@@ -1,11 +1,11 @@
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { expectNoA11yViolations } from '../support/helpers/a11y.js';
 import { test as base, type Page } from '@playwright/test';
 
 /**
  * F6 — Operational console WCAG 2.2 AA hardening (UX-DR27).
  *
- * `test.fixme` until the Epic 5 console views exist. Scans each generated view with
+ * Live-gated until `E2E_LIVE_APPHOST=1`. Scans each generated view with
  * axe-core (WCAG 2.0/2.1/2.2 A + AA). Status must never be color-only, tables/timelines
  * must be screen-reader-readable, focus must be visible, and contrast must pass.
  */
@@ -40,7 +40,7 @@ const consoleViews: ConsoleView[] = [
 
 test.describe('Operational console — WCAG 2.2 AA', () => {
   for (const view of consoleViews) {
-    test.fixme(`${view.name} has no WCAG 2.2 AA violations`, async ({ page, seededProject }, testInfo) => {
+    liveAppHostTest(`${view.name} has no WCAG 2.2 AA violations`, async ({ page, seededProject }, testInfo) => {
       await page.goto(view.path(seededProject.projectId));
       await view.prepare?.(page);
       // Wait on a deterministic anchor, not a timeout.

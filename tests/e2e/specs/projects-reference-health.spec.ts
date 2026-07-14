@@ -1,4 +1,4 @@
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import {
   getProjectContextExplanation,
   getProjectOperatorDiagnostics,
@@ -37,13 +37,13 @@ function expectNoReferencePayloadLeakage(serialized: string, tenantId: string): 
 /**
  * Story 5.5 critical journeys - Reference Inventory & Health View.
  *
- * These remain `test.fixme` until the authenticated AppHost fixture can seed linked
- * conversation/folder/file/memory references with health outcomes. The assertions bind
+ * These run only in the explicit live lane; linked conversation/folder/file/memory
+ * references with health outcomes remain a required fixture prerequisite. The assertions bind
  * the Story 5.5 contract: metadata-only API inputs, shared context-evaluation sources,
  * explicit matrix columns, visible non-color-only states, and read-only safe actions.
  */
 test.describe('Project reference health matrix (Story 5.5)', () => {
-  test.fixme('loads reference-health source reads with eventual freshness and no payload leakage', async ({
+  liveAppHostTest('loads reference-health source reads with eventual freshness and no payload leakage', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -109,7 +109,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     expectNoReferencePayloadLeakage(JSON.stringify(conversations.body), tenantContext.tenantId);
   });
 
-  test.fixme('rejects reference-health query idempotency and non-eventual freshness safely', async ({
+  liveAppHostTest('rejects reference-health query idempotency and non-eventual freshness safely', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -166,7 +166,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     expect(conversationsWithStrongFreshness.status).toBe(400);
   });
 
-  test.fixme('renders the full Reference Health Matrix with explicit headers and row selectors', async ({
+  liveAppHostTest('renders the full Reference Health Matrix with explicit headers and row selectors', async ({
     page,
     seededProject,
   }) => {
@@ -194,7 +194,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     await expect(detail.referenceLastCheckedCells.first()).toContainText(/\d{4}-\d{2}-\d{2}/);
   });
 
-  test.fixme('surfaces failure states as visible text and keeps safe actions read-only', async ({
+  liveAppHostTest('surfaces failure states as visible text and keeps safe actions read-only', async ({
     page,
     seededProject,
   }) => {

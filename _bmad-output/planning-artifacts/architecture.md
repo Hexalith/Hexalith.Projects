@@ -125,7 +125,7 @@ starter template applies; the "starter" is the established Hexalith module scaff
 All package versions are centrally pinned (`Directory.Packages.props`) and governed by the
 "do not casually upgrade" rule. Volatile dependencies were web-verified in the 2026-05-24
 research: Fluent UI Blazor 5.0.0-rc.2 (RC1 2026-02-18), MCP C# SDK v1.0 (2026-03-05),
-.NET SDK 10.0.300, Dapr 1.17.x, Roslyn 4.12.0, Fluxor 6.9.0, Aspire 13.2.x, xUnit v3.
+.NET SDK 10.0.300, Dapr 1.17.x, Roslyn 4.12.0, Fluxor 6.9.0, Aspire 13.4.6, xUnit v3.
 This step selects a scaffold pattern, not versions.
 
 ### Starter Options Considered
@@ -641,9 +641,11 @@ updated → SignalR nudge → query re-read; ProjectContext assembled at query t
 - **Generated:** `Client/Generated/*.g.cs` + FrontComposer `obj/.../generated/*.g.cs` — read-only.
 
 ### Development Workflow Integration
-- **Dev:** `dotnet run --project src/Hexalith.Projects.AppHost` (Aspire) boots eventstore,
-  tenants, projects, workers, projects-ui, shared EventStore security, and Dapr sidecars/components
-  backed by the configured local Redis endpoint.
+- **Dev:** `aspire start --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj`
+  boots eventstore, tenants, projects, workers, projects-ui, shared EventStore security, and Dapr
+  sidecars/components backed by the configured local Redis endpoint. Use `aspire wait` and
+  `aspire describe --format Json` with the same explicit AppHost path to discover live resource
+  endpoints; stop it with targeted `aspire stop --apphost ...`, never a guessed port or blanket stop.
 - **Build:** `dotnet build Hexalith.Projects.slnx`; init root-level submodules only.
 - **Deploy:** Dapr-sidecar services per host; durable projection/dedup stores in prod;
   access-control deny-by-default + mTLS; CI gates (`frontcomposer inspect --fail-on-warning`,

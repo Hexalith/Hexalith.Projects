@@ -1,4 +1,4 @@
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { queryHeaders, mutationHeaders } from '../support/helpers/correlation.js';
 import { confirmProjectResolution, resolveProjectFromAttachments } from '../support/helpers/projects-api-client.js';
 
@@ -9,8 +9,8 @@ import { confirmProjectResolution, resolveProjectFromAttachments } from '../supp
  * The spine-backed routes and exact wire assertions are scaffolded here: binary outcomes,
  * reason codes, safe-denial, query validation, and the never-silently-attach guarantee.
  *
- * Story 4.3's attachment-resolution query is now spine-backed; the tests remain
- * `fixme` until the AppHost exposes seeded folder/file reference fixtures.
+ * Story 4.3's attachment-resolution query is now spine-backed; the explicit live lane
+ * still requires seeded folder/file reference fixtures.
  */
 test.describe('Projects resolution', () => {
   const folderId = 'folder-001';
@@ -24,7 +24,7 @@ test.describe('Projects resolution', () => {
     expect(serialized).not.toContain('docs/contract.pdf');
   }
 
-  test.fixme('folder attachment resolves to a single candidate without leaking tenant or path data (FR-13 / AC1,7)', async ({
+  liveAppHostTest('folder attachment resolves to a single candidate without leaking tenant or path data (FR-13 / AC1,7)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -48,7 +48,7 @@ test.describe('Projects resolution', () => {
     assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
   });
 
-  test.fixme('file attachment resolves with FileReferenceMatched and does not read raw content (FR-13 / AC1,2)', async ({
+  liveAppHostTest('file attachment resolves with FileReferenceMatched and does not read raw content (FR-13 / AC1,2)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -72,7 +72,7 @@ test.describe('Projects resolution', () => {
     assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
   });
 
-  test.fixme('folder and file attachments can produce multiple candidates and never auto-attach (FR-13 / NFR-9)', async ({
+  liveAppHostTest('folder and file attachments can produce multiple candidates and never auto-attach (FR-13 / NFR-9)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -91,7 +91,7 @@ test.describe('Projects resolution', () => {
     assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
   });
 
-  test.fixme('attachment query rejects Idempotency-Key and strong freshness as validation errors (AC5)', async ({
+  liveAppHostTest('attachment query rejects Idempotency-Key and strong freshness as validation errors (AC5)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -121,7 +121,7 @@ test.describe('Projects resolution', () => {
     expect(freshnessRejected.status).toBe(400);
   });
 
-  test.fixme('missing or malformed attachment identifiers collapse to safe-denial 404 (AC6)', async ({
+  liveAppHostTest('missing or malformed attachment identifiers collapse to safe-denial 404 (AC6)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -143,7 +143,7 @@ test.describe('Projects resolution', () => {
     expect(malformed.status).toBe(404);
   });
 
-  test.fixme('ambiguous resolution returns MultipleCandidates and never silently attaches (E1 / R10)', async ({ apiRequest, authToken, tenantContext }) => {
+  liveAppHostTest('ambiguous resolution returns MultipleCandidates and never silently attaches (E1 / R10)', async ({ apiRequest, authToken, tenantContext }) => {
     const { status, body } = await apiRequest<{ result: string; candidates: unknown[] }>({
       method: 'GET',
       path: '/api/v1/projects/resolution/from-conversation',
@@ -157,7 +157,7 @@ test.describe('Projects resolution', () => {
     expect(body.candidates.length).toBeGreaterThan(1);
   });
 
-  test.fixme('confirming a candidate accepts only explicit MultipleCandidates evidence (FR-14 / AC2,3,4)', async ({
+  liveAppHostTest('confirming a candidate accepts only explicit MultipleCandidates evidence (FR-14 / AC2,3,4)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -186,7 +186,7 @@ test.describe('Projects resolution', () => {
     assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
   });
 
-  test.fixme('confirmation mutation requires Idempotency-Key and rejects non-ambiguous evidence (FR-14 / AC3,7)', async ({
+  liveAppHostTest('confirmation mutation requires Idempotency-Key and rejects non-ambiguous evidence (FR-14 / AC3,7)', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -225,7 +225,7 @@ test.describe('Projects resolution', () => {
     expect(notAmbiguous.status).toBe(400);
   });
 
-  test.fixme('archived projects are excluded from resolution unless explicitly requested (E1)', async ({ apiRequest, authToken, tenantContext }) => {
+  liveAppHostTest('archived projects are excluded from resolution unless explicitly requested (E1)', async ({ apiRequest, authToken, tenantContext }) => {
     const { body } = await apiRequest<{ candidates: Array<{ lifecycle: string }> }>({
       method: 'GET',
       path: '/api/v1/projects/resolution/from-conversation',

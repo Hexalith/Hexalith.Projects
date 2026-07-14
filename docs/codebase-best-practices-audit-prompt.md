@@ -19,12 +19,35 @@ change needed to:
 
 1. comply with the repository's current mandatory architecture and engineering
    rules;
-2. be safe, predictable, efficient, and easy to use from LLM chatbots and
+2. be controlled, predictable, efficient, and easy to use from LLM chatbots and
    autonomous or human-supervised LLM agents;
-3. meet current .NET, C#, Dapr, Aspire, MCP, OpenAPI, security, privacy,
-   reliability, observability, performance, accessibility, testing, packaging,
-   and maintainability best practices; and
+3. meet current .NET, C#, Dapr, Aspire, MCP, OpenAPI, reliability,
+   observability, performance, accessibility, testing, packaging, developer
+   experience, and maintainability best practices; and
 4. preserve the intended Hexalith.Projects bounded context.
+
+Security exclusion:
+
+- Security analysis is explicitly out of scope. Do not investigate, test,
+  score, or report security issues or security improvements.
+- Do not review authentication, authorization, access control, tenant-isolation
+  enforcement, threat models, vulnerabilities, exploitability, cryptography,
+  secrets, security headers, CORS, CSRF, SSRF, path traversal, injection,
+  denial-of-service defenses, dependency or supply-chain security, prompt
+  injection, tool abuse, or data-exfiltration scenarios.
+- Do not run vulnerability scanners, security analyzers, secret scanners,
+  penetration tests, package-vulnerability audits, or security-focused fuzzing.
+- If a potential security concern is noticed incidentally, do not investigate
+  or include it as a finding. State once in the report that security was not
+  assessed and requires a separate review.
+- Functional tenant/project scoping, input validation, cardinality limits,
+  confirmation flows, and payload ownership remain in scope only when assessed
+  for domain correctness, deterministic agent behavior, interoperability,
+  reliability, performance, or bounded-context compliance. Do not make or imply
+  a security claim from those checks.
+- Privacy is in scope only where it affects the documented bounded-context data
+  ownership and LLM context/token economy. Do not perform privacy threat
+  modeling, confidentiality analysis, or regulatory-compliance analysis.
 
 Produce the audit report and a prioritized, implementation-ready change
 backlog. Do not modify application code, generated code, tests, configuration,
@@ -36,7 +59,7 @@ only permitted repository write.
 
 Definition of done:
 
-- Every in-scope project, major workflow, trust boundary, public contract, and
+- Every in-scope project, major workflow, public contract, and
   test lane has been inspected or explicitly recorded as not inspectable.
 - Every finding is supported by repository evidence and, where applicable, an
   authoritative rule or external source.
@@ -79,13 +102,12 @@ Operating rules
 7. When current external guidance is needed, use current primary or
    authoritative sources only: official .NET/C# documentation, Dapr docs,
    Aspire docs, the official MCP and OpenAPI specifications, OpenTelemetry
-   specifications, OWASP publications, NIST publications, and W3C/WAI guidance.
+   specifications, and W3C/WAI guidance.
    Include source links and access dates. Distinguish a mandatory specification
    requirement from advice. Do not propose a dependency upgrade only because a
-   newer version exists; establish compatibility, support, security, and value.
-8. Do not weaken warnings, analyzers, nullable checks, tenant isolation,
-   authorization, persistence rules, tests, or build gates to make a result
-   pass.
+   newer version exists; establish compatibility, support, and value.
+8. Do not weaken warnings, analyzers, nullable checks, persistence rules, tests,
+   or build gates to make a result pass.
 9. Use `.slnx`, never a legacy `.sln`. Restore/build the applicable solution in
    Release when feasible, but execute test projects individually as required by
    repository instructions. Record exact commands, results, and environmental
@@ -110,15 +132,15 @@ Product boundary that recommendations must preserve
   access truth; EventStore supplies domain persistence and domain-service
   plumbing; FrontComposer supplies module UI and MCP composition.
 - Projects must use references and metadata. It must not absorb transcripts,
-  file contents, memory payloads, secrets, raw prompts, unrestricted local
-  paths, model-provider orchestration, generic retrieval, or another bounded
-  context's authorization responsibility.
+  file contents, memory payloads, raw prompts, model-provider orchestration,
+  generic retrieval, or another bounded context's responsibilities.
 - Do not recommend generic project-management features such as tasks, boards,
   schedules, milestones, or resource planning; those are outside the v1
   bounded context.
 - Project resolution and context assembly must remain tenant-scoped,
-  authorization-filtered, deterministic, explainable, conservative, and
-  fail-closed. Ambiguous matches require explicit user confirmation.
+  deterministic, explainable, and conservative; uncertain evidence must not
+  produce an automatic match. Ambiguous matches require explicit user
+  confirmation.
 - Archived projects are retained for history but excluded from automatic active
   context selection unless explicitly requested.
 - The service target documented in the PRD is p95 below 500 ms for listing,
@@ -230,14 +252,13 @@ only a human can interpret.
   post-acceptance status retrieval.
 - Review confirmation for ambiguous or consequential actions. A caller-supplied
   Boolean is not by itself proof of informed user consent. Determine whether
-  previews/dry runs and confirmation artifacts are server-issued, opaque,
-  expiring, single-use when appropriate, and bound to tenant, actor, action,
-  target, normalized payload/hash, and current state. Prevent an agent from
-  confirming a materially different action than the user reviewed.
+  previews/dry runs produce a server-issued confirmation artifact bound to the
+  exact action, target, normalized input, and reviewed state. A changed input or
+  state must require a new preview. Prevent an agent from confirming a
+  materially different action than the user reviewed.
 - Verify idempotency is durable across retries, restarts, instances, timeouts,
   and “accepted but response lost” scenarios. Define behavior for the same key
-  with the same request and the same key with a different request. Do not expose
-  idempotency secrets in results or logs.
+  with the same request and the same key with a different request.
 - Require stable structured success, rejection, error, progress, and eventual-
   consistency states with machine-readable reason codes, correlation/task IDs,
   retryability, retry-after guidance where relevant, and a way to poll or
@@ -248,82 +269,43 @@ only a human can interpret.
 - Evaluate call economy: prevent unnecessary round trips, N+1 metadata calls,
   unbounded result sets, over-fetching, and oversized tool schemas/results.
   Recommend batching, cursor pagination, conditional requests, compact
-  projections, or workflow-shaped operations only when they preserve
-  authorization, atomicity, and bounded-context ownership.
+  projections, or workflow-shaped operations only when they preserve atomicity
+  and bounded-context ownership.
 - Evaluate context economy: explicit budgets and cardinality limits, stable
   ordering and tie-breakers, deduplication, provenance, trust/freshness state,
   inclusion/exclusion reasons, and compact reference metadata. Projects should
   help the chatbot select context but must not fetch or store sibling-owned
   payloads or become a prompt builder.
-- Treat all human-authored names, descriptions, setup guidance, labels, and all
-  sibling-resource metadata as untrusted data. Check length/character bounds,
-  output encoding, log forging, markup injection, control characters, Unicode
-  ambiguity, and downstream contracts that could accidentally elevate data to
-  system/developer instructions. Do not claim that sanitization alone solves
-  prompt injection; preserve provenance and instruction/data separation.
+- Review human-authored names, descriptions, setup guidance, labels, and sibling
+  metadata for explicit length/character bounds, Unicode normalization, stable
+  serialization, and an unambiguous representation as data in downstream LLM
+  contracts. Preserve provenance and instruction/data separation as contract
+  semantics without performing a security or adversarial-input analysis.
 - Review whether the module exposes enough trust metadata for the downstream
   orchestrator to distinguish authoritative policy, user preferences,
-  untrusted referenced content, stale evidence, and unavailable evidence—while
+  external referenced content, stale evidence, and unavailable evidence—while
   keeping model-provider prompt construction outside Projects.
 
-E. Security, privacy, and abuse resistance
-
-- Draw trust boundaries for chatbot/agent, browser/operator, MCP/FrontComposer,
-  CLI, API, workers, Dapr sidecars, EventStore, Tenants, Conversations, Folders,
-  and Memories.
-- Trace identity and tenant scope end to end. Tenant and caller identity must be
-  authenticated and server-derived, propagated safely, and enforced on command,
-  query, projection, cache, state key, pub/sub, SignalR, diagnostic, export, and
-  log paths. Test cross-tenant identifiers, forged claims, mixed-tenant batches,
-  stale membership, and platform-operator access.
-- Check command-side authorization and query/result filtering independently.
-  Review service-to-service authorization and confused-deputy risks when
-  Projects validates references with sibling modules or forwards caller tokens.
-- Validate fail-closed behavior for timeout, dependency outage, unknown ACL,
-  stale ACL, deleted/archive references, partial evidence, and time-of-check to
-  time-of-use races.
-- Review mass assignment, over-posting, identifier injection, path traversal,
-  unrestricted file paths, SSRF-capable configuration/input, header injection,
-  replay, CSRF where browser credentials apply, CORS, request smuggling
-  assumptions, unsafe deserialization, denial of service, rate limiting, quotas,
-  payload size, collection cardinality, and decompression/amplification risks.
-- Validate least privilege and explicit authorization for every MCP tool,
-  endpoint, Dapr component, state store, pub/sub topic, secret, container, and
-  diagnostic/export surface.
-- Enforce data minimization: no transcript, file content, memory content, raw
-  prompt, token, secret, full command payload, unrestricted path, or sensitive
-  user data in Projects state/events/projections/logs/traces/metrics/errors/
-  audit/MCP/CLI/UI/snapshots/test fixtures. Check exception paths and source-
-  generated logging too.
-- Review retention, deletion/archive semantics, audit integrity, redaction,
-  safe diagnostic export, encryption assumptions, secret management, package
-  and CI supply-chain controls, dependency vulnerabilities, and reproducible
-  builds.
-- Threat-model prompt injection and tool abuse only at boundaries Projects owns:
-  malicious setup metadata, poisoned labels, agent-generated identifiers,
-  forged confirmation, tool-result injection, excessive retries, and attempts
-  to use Projects as a payload exfiltration channel.
-
-F. Reliability, concurrency, and distributed-systems behavior
+E. Reliability, concurrency, and distributed-systems behavior
 
 - Analyze cancellation, deadlines, timeout budgets, bounded retries with
-  jitter, circuit breaking, bulkheads, backpressure, rate limits, and propagation
-  of dependency failures. Avoid stacked retry storms between client, API, Dapr,
-  and workers.
+  jitter, circuit breaking, bulkheads, backpressure, bounded throughput, and
+  propagation of dependency failures. Avoid stacked retry storms between
+  client, API, Dapr, and workers.
 - Check eventual-consistency contracts, projection readiness/watermarks,
   read-your-writes expectations, stale results, accepted-command lifecycle,
   recovery after crash, poison events, dead letters, replay, and zero-downtime
   version skew.
 - Exercise duplicate, reordered, concurrent, and partially completed operations,
   including two agents acting on the same project or reference.
-- Validate cache keys include every security and result-shaping dimension;
-  invalidation does not leak stale cross-tenant data; and in-memory fallbacks are
-  not mistaken for production durability.
+- Validate cache keys include every result-shaping dimension, invalidation
+  prevents functionally stale results, and in-memory fallbacks are not mistaken
+  for production durability.
 - Review startup/config validation, health/readiness/liveness semantics,
   graceful shutdown, worker ownership/leases, clock assumptions, and UTC/
   `DateTimeOffset` usage.
 
-G. Performance and resource efficiency
+F. Performance and resource efficiency
 
 - Establish evidence before recommending optimization. Inspect algorithmic
   complexity, allocation hot paths, repeated serialization, reflection, LINQ on
@@ -335,97 +317,96 @@ G. Performance and resource efficiency
   pooled/source-generated serialization where measurements justify them.
 - Verify cancellation tokens and async calls flow end to end. Do not recommend
   `Task.Run`, parallelism, caching, or pooling without checking ordering,
-  tenant-isolation, consistency, and lifecycle implications.
-- Review startup size, package/transitive dependency weight, container behavior,
-  non-root execution, trimming/AOT claims if any, and generated-client overhead.
+  functional scoping, consistency, and lifecycle implications.
+- Review startup size, package/transitive dependency weight, container resource
+  behavior, trimming/AOT claims if any, and generated-client overhead.
 - Locate load tests, benchmarks, p95 measurement, service-level indicators, and
   regression thresholds for the documented 500 ms target. Propose a repeatable
   benchmark/load-test design for gaps; never fabricate performance numbers.
 
-H. API and contract quality
+G. API and contract quality
 
 - Validate HTTP method/status semantics, route consistency, RFC 9457
   ProblemDetails, content types, cancellation, pagination, filtering, sorting,
   conditional requests, rate-limit metadata, and versioning/deprecation.
 - Validate OpenAPI completeness and correctness: operation IDs, schemas,
   required/nullable/default semantics, enums, examples, formats, bounds,
-  ProblemDetails, auth, idempotency/correlation headers, 202 workflows, and all
+  ProblemDetails, idempotency/correlation headers, 202 workflows, and all
   actual response codes.
 - Check contracts for serialization tolerance, deterministic JSON, enum/version
   evolution, unknown fields/values, temporal formats, ULIDs, validation parity,
   and no sibling-owned payload fields.
 - Check generated-client reproducibility, disposal/HttpClientFactory usage,
   timeouts, cancellation, error mapping, idempotency hashing/canonicalization,
-  sensitive-data handling, and compatibility tests.
-- Validate MCP protocol URIs, schemas, manifest versioning, authorization
-  policies, resource pagination/filtering, tool annotations if supported, safe
-  structured content, and protocol-level error behavior against the pinned MCP
+  and compatibility tests.
+- Validate MCP protocol URIs, schemas, manifest versioning, resource
+  pagination/filtering, tool annotations if supported, structured content, and
+  protocol-level error behavior against the pinned MCP
   integration and current official MCP specification.
 
-I. Observability and operations
+H. Observability and operations
 
 - Trace W3C/OpenTelemetry context across HTTP, Dapr, events, workers, sibling
   clients, projections, MCP, and CLI. Check correlation, causation, message/task,
-  project, tenant, and actor metadata without leaking payloads or high-cardinality
-  sensitive values.
+  project, tenant, and actor metadata while controlling payload volume and
+  high-cardinality dimensions.
 - Require source-generated structured logging where mandated, consistent event
-  IDs/levels, safe exceptions, useful metrics, traces around dependency calls,
+  IDs/levels, useful exception context, metrics, traces around dependency calls,
   and actionable but payload-free diagnostics.
 - Check SLIs/SLOs, dashboards, alertable failure modes, projection lag,
-  dead-letter/retry visibility, safe diagnostic export, runbooks, and operator
+  dead-letter/retry visibility, diagnostic export, runbooks, and operator
   remediation paths.
-- Verify health endpoints represent their intended semantics and do not leak
-  topology/configuration details.
+- Verify health endpoints represent their intended semantics.
 
-J. UI, CLI, and operator experience
+I. UI, CLI, and operator experience
 
 - For Blazor UI, apply the repository UX rules: FrontComposer and Fluent UI v5,
   component reuse, current Fluent 2 tokens, accordion rules, responsive behavior,
   localization, keyboard/focus behavior, WCAG 2.2 AA, reduced motion, zoom,
-  screen-reader names, validation, loading/empty/error/stale states, and safe
-  rendering of untrusted metadata.
+  screen-reader names, validation, loading/empty/error/stale states, and correct
+  rendering of project metadata.
 - Review operator confirmation and maintenance previews for clarity, current-
   state binding, reversibility, stale state, and prevention of accidental or
   agent-driven destructive actions.
-- Ensure CLI output and exit codes are deterministic, script-friendly, safely
-  redacted, and semantically aligned with API/MCP/UI behavior. Human prose may
+- Ensure CLI output and exit codes are deterministic, script-friendly, and
+  semantically aligned with API/MCP/UI behavior. Human prose may
   supplement but must not replace structured/machine-detectable states.
 
-K. Tests, CI/CD, packaging, and developer experience
+J. Tests, CI/CD, packaging, and developer experience
 
-- Map every requirement, trust boundary, command, event, projection, endpoint,
-  MCP resource/tool, generated client operation, CLI command, and UI workflow to
+- Map every requirement, command, event, projection, endpoint, MCP resource/tool,
+  generated client operation, CLI command, and UI workflow to
   test evidence. Identify assertion-free, implementation-coupled, duplicate,
   flaky, skipped, quarantined, or obsolete tests.
 - Require focused pure tests for aggregate Handle/Apply, validators, scoring,
   context decisions, mappers, projections, and serialization. Include boundary,
-  property-based/fuzz, malicious-input, concurrency, replay, duplicate,
-  cancellation, and negative authorization tests where valuable.
+  property-based, concurrency, replay, duplicate, cancellation, and malformed-
+  input tests where valuable.
 - Integration tests must validate actual persisted state-store end-state and
   relevant emitted/read-model outcomes, not only status codes, mocks, or method
-  calls. Validate Dapr/EventStore integration, restart durability, and tenant
-  isolation at real boundaries.
+  calls. Validate Dapr/EventStore integration, restart durability, and correct
+  tenant/project routing at real boundaries without assessing access control.
 - Check OpenAPI fingerprints, generated-client drift, contract compatibility,
-  event replay, projection rebuild, MCP schema/authorization, CLI parity,
-  accessibility, E2E, load, resilience, and privacy/no-payload-leakage gates.
+  event replay, projection rebuild, MCP schema, CLI parity, accessibility, E2E,
+  load, resilience, and bounded-context payload-ownership gates.
 - Verify `.slnx` and CI lanes include or intentionally invoke every required test
   project, including integration and E2E lanes. Confirm local and CI dependency
   modes follow current Hexalith instructions.
 - Review analyzers, warning policy, formatting, central package management,
-  deterministic builds, NuGet audit, secret scanning, dependency review, SBOM/
-  provenance where appropriate, container publishing, semantic release,
-  Conventional Commits, package contents, XML docs, README/onboarding, and
-  reproducible generation.
+  deterministic builds, container publishing, semantic release, Conventional
+  Commits, package contents, XML docs, README/onboarding, and reproducible
+  generation. Exclude all security and vulnerability scanning.
 - Run safe applicable gates. If a broad gate is blocked, follow the repository's
   focused validation ladder and report broad blockers separately from focused
   evidence.
 
 Mandatory end-to-end workflow traces
 
-For each workflow below, trace request/tool input -> authentication -> tenant
-derivation -> validation -> authorization/ACL evidence -> application/domain
-handling -> event persistence -> projection/read model -> response/status ->
-logs/traces/tests. Record missing links and unsafe assumptions.
+For each workflow below, trace request/tool input -> tenant/project scope
+derivation -> validation -> application/domain handling -> event persistence ->
+projection/read model -> response/status -> logs/traces/tests. Record missing
+functional links and unverified assumptions. Do not assess authentication,
+authorization, access control, or other security properties.
 
 1. Create a project, including optional project-folder creation.
 2. Open/list a project and retrieve conversation-start setup.
@@ -433,8 +414,8 @@ logs/traces/tests. Record missing links and unsafe assumptions.
 4. Resolve from attachments.
 5. Handle multiple candidates and bind explicit confirmation.
 6. Handle no match, propose a project, and confirm creation.
-7. Get, explain, and refresh project context with authorized, unauthorized,
-   stale, unavailable, archived, deleted, and mixed evidence.
+7. Get, explain, and refresh project context with valid, invalid, stale,
+   unavailable, archived, deleted, and mixed evidence.
 8. Link, replace, move, and unlink conversation/folder/file/memory references.
 9. Archive, restore, relink, unlink, and reevaluate through every exposed API,
    generated client, MCP, CLI, and UI path.
@@ -458,8 +439,8 @@ Phase 2 — Static and contract analysis
 
 - Search the entire in-scope tree for each review lens, then inspect the full
   implementation context and corresponding tests before creating a finding.
-- Build architecture, data-flow, trust-boundary, event/projection, endpoint,
-  MCP, client, and dependency maps.
+- Build architecture, data-flow, event/projection, endpoint, MCP, client, and
+  dependency maps. Do not create a security trust-boundary model.
 - Compare code, contracts, schemas, docs, and tests mechanically where possible.
 
 Phase 3 — Focused dynamic verification
@@ -468,17 +449,18 @@ Phase 3 — Focused dynamic verification
   candidate findings. Use test projects individually.
 - Exercise runtime/Aspire topology only if it can be done safely and adds
   material evidence. Do not mutate external data or use production credentials.
-- Use static-analysis, package-audit, coverage, or benchmark tools only when
-  already available or safely runnable. Record tool/version/config and avoid
+- Use static-analysis, coverage, or benchmark tools only when already available
+  or safely runnable. Record tool/version/config and avoid
   treating heuristic output as a confirmed defect.
 
 Phase 4 — Synthesis and adversarial challenge
 
 - Deduplicate findings by root cause and enumerate all verified occurrences.
 - Challenge each finding: Is the rule current? Is the evidence sufficient? Is
-  the recommendation compatible with EventStore, Dapr, tenant isolation, the
-  product boundary, and existing public contracts? Could it introduce a new
-  security, consistency, compatibility, or latency defect?
+  the recommendation compatible with EventStore, Dapr, functional tenant scope,
+  the product boundary, and existing public contracts? Could it introduce a new
+  consistency, compatibility, or latency defect? Treat tenant scope here only
+  as a functional domain invariant, not as an access-control claim.
 - Perform a final omission pass against every review lens, project, workflow,
   and public surface.
 
@@ -486,20 +468,19 @@ Finding standard
 
 Assign each finding:
 
-- ID: stable category prefix plus number, such as `ARCH-001`, `SEC-004`, or
+- ID: stable category prefix plus number, such as `ARCH-001`, `REL-004`, or
   `AGENT-003`.
 - Priority:
-  - P0: credible cross-tenant exposure, secret/payload disclosure, destructive
-    autonomous action, integrity/data-loss path, or immediately exploitable
-    critical vulnerability.
-  - P1: mandatory architecture/security/privacy/reliability violation, broken
-    public workflow, non-durable correctness, or likely production incident.
+  - P0: credible data-loss/corruption path, irreversible destructive autonomous
+    action, or system-wide production correctness failure.
+  - P1: mandatory architecture/reliability violation, broken public workflow,
+    non-durable correctness, or likely production incident.
   - P2: meaningful performance, operability, compatibility, test, or
     maintainability gap with bounded impact.
   - P3: low-risk optimization, documentation, consistency, or developer-
     experience improvement.
-- Obligation: `Required compliance`, `Required correctness/security`,
-  `Recommended optimization`, or `Optional polish`.
+- Obligation: `Required compliance`, `Required correctness`, `Recommended
+  optimization`, or `Optional polish`.
 - Confidence: High, Medium, or Low, with the reason for anything below High.
 - Effort: XS, S, M, L, or XL, and whether a public-contract/data migration is
   involved.
@@ -520,8 +501,8 @@ Every detailed finding must contain:
 11. priority, obligation, effort, risk, and confidence; and
 12. alternatives considered when the recommendation has a meaningful tradeoff.
 
-Do not write vague findings such as “improve security,” “add validation,”
-“optimize performance,” “increase coverage,” or “refactor architecture.” Name
+Do not write vague findings such as “add validation,” “optimize performance,”
+“increase coverage,” or “refactor architecture.” Name
 the precise boundary, data, operation, limit, ownership move, expected behavior,
 and verification.
 
@@ -535,7 +516,7 @@ Required report structure
 2. Scope, assumptions, source precedence, and evidence limitations.
 3. Repository/system map
    - project and dependency map;
-   - data-flow/trust-boundary diagram;
+   - functional data-flow diagram (not a security trust-boundary diagram);
    - command/event/projection map;
    - HTTP/client/MCP/CLI/UI surface map.
 4. Baseline evidence
@@ -551,20 +532,19 @@ Required report structure
 8. LLM/agent contract scorecard
    - discoverability;
    - deterministic behavior;
-   - confirmation and least agency;
+   - confirmation and bounded agency;
    - idempotency/recovery;
    - structured errors/status;
    - context/token economy;
    - provenance/trust/freshness;
-   - prompt-injection/tool-abuse boundary;
    - HTTP/MCP/client/CLI/UI parity.
-9. Security/privacy threat model and negative-test gaps.
+9. Contract and cross-surface parity assessment.
 10. Performance/reliability/observability assessment, separating measured facts
     from hypotheses needing benchmarks or runtime proof.
 11. Test and CI gap matrix.
 12. Phased implementation roadmap
-    - Phase 0: contain P0 risks;
-    - Phase 1: mandatory architecture/security/correctness compliance;
+    - Phase 0: contain P0 correctness or data-integrity risks;
+    - Phase 1: mandatory architecture/correctness compliance;
     - Phase 2: agent contract, reliability, and test hardening;
     - Phase 3: measured performance and developer-experience improvements;
     - dependencies, safe migration order, parallelizable groups, and exit gates.

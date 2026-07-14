@@ -1,4 +1,4 @@
-import { test, expect } from '../support/merged-fixtures.js';
+import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { getProject, listProjects } from '../support/helpers/projects-api-client.js';
 import { ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
 
@@ -21,12 +21,11 @@ const FORBIDDEN_INVENTORY_MARKERS = [
 /**
  * Story 5.4 critical journeys - project inventory and read-only detail inspector.
  *
- * These remain `test.fixme` while the authenticated Projects AppHost/UI fixture is
- * not runnable by default. The tests are intentionally complete so the AppHost
- * enablement step can unskip them without redesigning the API/UI assertions.
+ * These run only when the authenticated Projects AppHost/UI lane is explicitly enabled.
+ * The default no-AppHost lane never resolves their live fixtures.
  */
 test.describe('Project inventory and detail views (Story 5.4)', () => {
-  test.fixme('lists metadata-only project inventory rows with eventual freshness and no tenantId on the wire', async ({
+  liveAppHostTest('lists metadata-only project inventory rows with eventual freshness and no tenantId on the wire', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -59,7 +58,7 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
     }
   });
 
-  test.fixme('rejects inventory query idempotency and non-eventual freshness without echoing row metadata', async ({
+  liveAppHostTest('rejects inventory query idempotency and non-eventual freshness without echoing row metadata', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -84,7 +83,7 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
     expect(JSON.stringify(freshnessRejected.body)).not.toContain(seededProject.name);
   });
 
-  test.fixme('loads project detail through query semantics and safe failure mapping', async ({
+  liveAppHostTest('loads project detail through query semantics and safe failure mapping', async ({
     apiRequest,
     authToken,
     tenantContext,
@@ -116,7 +115,7 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
     expect(JSON.stringify(deniedOrMissing.body)).not.toContain(seededProject.projectId);
   });
 
-  test.fixme('renders inventory filters, warnings filters, and row-to-detail navigation selectors', async ({
+  liveAppHostTest('renders inventory filters, warnings filters, and row-to-detail navigation selectors', async ({
     page,
     seededProject,
   }) => {
@@ -135,7 +134,7 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
     await expect(detail.metadataSection).toContainText(seededProject.projectId);
   });
 
-  test.fixme('renders read-only detail sections without future-story payload surfaces', async ({
+  liveAppHostTest('renders read-only detail sections without future-story payload surfaces', async ({
     page,
     seededProject,
   }) => {
