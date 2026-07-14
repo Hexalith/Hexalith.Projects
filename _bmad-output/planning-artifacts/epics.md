@@ -16,6 +16,7 @@ inputDocuments:
   - _bmad-output/planning-artifacts/research/technical-hexalith-memories-rag-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-frontcomposer-hexalith-projects-web-ux-research-2026-05-24.md
   - _bmad-output/implementation-artifacts/2-1-conversation-reference-read-acl.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md
 ---
 
 # Hexalith.Projects - Epic Breakdown
@@ -1137,3 +1138,165 @@ So that **Epic 5 accessibility, responsive, keyboard, security, and cross-surfac
 **Given** a route, deterministic fixture, or product prerequisite remains unavailable
 **When** verification closes
 **Then** every retained skip has a concrete reason, no unexplained permanent `test.fixme` remains, and the exact metadata-only blocker is recorded without tokens, credentials, payloads, or private paths.
+
+---
+
+## Approved Corrective Epic Addendum (2026-07-14)
+
+This addendum materializes the corrective epic and story inventory approved by Jerome in
+`sprint-change-proposal-2026-07-14-implementation-readiness-correction.md`. Completed Epics 1–5
+remain implementation history. The required corrective sequence is Epic 6, then Epic 7, then
+Epic 8, followed by release handoff. Production release, consequential autonomous MCP operations,
+and proposal-confirmation enablement remain blocked until Story 8.9 passes.
+
+The approved proposal is the scope authority for these corrective stories. Dedicated story files
+must refine acceptance criteria without weakening its entry, verification, compatibility,
+security, durability, or release gates.
+
+## Epic 6: Supported Platform Boundary and Secure Identity
+
+Migrate Hexalith.Projects onto supported EventStore DomainService and platform-owned hosting seams,
+restore clean contract and presentation boundaries, enforce real caller and service identity, and
+execute a compatibility-controlled cutover that preserves existing event history.
+
+**Completion gate:** Closes ARCH-001, ARCH-002, SEC-001, CLIENT-001, ID-001, and API-001.
+
+### Story 6.1: Pin platform capabilities and migration baseline
+
+Inventory and pin the supported platform seams, versions, routes, public APIs, state keys, events,
+cursors, consumers, and migration constraints before implementation changes begin.
+
+### Story 6.2: Restore Contracts, presentation, identity, and API boundaries
+
+Keep stable domain and wire contracts infrastructure-free, move presentation descriptors to their
+approved adapter boundary, align identifiers with platform ULIDs while retaining legacy reads, and
+mechanically align canonical command/query contracts with OpenAPI and generated consumers.
+
+### Story 6.3: Enforce secure platform admission and authorization evidence
+
+Require complete production JWT and service-identity configuration, derive tenant and actor
+authority server-side, and prevent development authorization stubs from resolving outside explicit
+development or test hosts.
+
+### Story 6.4: Migrate read models and queries to DomainService
+
+Move projections and queries to the supported asynchronous projection handlers, read-model stores,
+query handlers, cursor scopes, and deterministic replay comparison provided by DomainService.
+
+### Story 6.5: Migrate command hosting and platform topology
+
+Move command hosting, persistence, publication, subscriptions, health, telemetry, Dapr components,
+and distributed topology to their approved EventStore and platform owners.
+
+### Story 6.6: Authenticate FrontComposer UI and CLI consumers
+
+Use platform credential providers and authenticated runtime composition for FrontComposer Web and
+CLI consumers so no client supplies authoritative tenant or actor identity.
+
+### Story 6.7: Execute compatibility cutover and retire legacy runtime
+
+Cut reads and commands to the supported platform paths, preserve routing rollback until all gates
+pass, and retire Projects-owned legacy runtime and topology plumbing without rewriting event
+history or unsafe dual writes.
+
+---
+
+## Epic 7: Durable Cross-Context and Agent-Safe Workflows
+
+Replace unsafe multi-step and confirmation behavior with durable, restart-safe workflows and
+server-bound task evidence while preserving bounded-context ownership and metadata-only audit.
+
+**Completion gate:** Closes REL-001 and AGENT-001 and provides restart-safe evidence for FR-1,
+FR-6 through FR-8, FR-14, FR-15, FR-21, and FR-23.
+
+### Story 7.1: Provide shared durable workflow, task, and confirmation seams
+
+Establish the shared platform workflow, task, and confirmation capabilities needed by
+Projects-specific durable transitions.
+
+### Story 7.2: Bind server-issued previews and confirmations
+
+Issue expiring, single-use confirmation artifacts bound to tenant, actor, action, targets, request
+hash, state or version, and preview, invalidating them when state changes.
+
+### Story 7.3: Enforce the mandatory Folder through durable Project creation
+
+Make Project creation a durable task that verifies or creates exactly one authorized Folder before
+the Project can become Active and reconciles partial or lost-response outcomes.
+
+### Story 7.4: Make Conversation assignment and moves durable and auditable
+
+Coordinate Conversations-owned assignment and move operations through a durable Projects workflow
+and emit an idempotent, metadata-only Projects audit receipt after confirmed completion.
+
+### Story 7.5: Make proposed-Project confirmation durable and recoverable
+
+Bind proposed-Project confirmation to server-issued evidence and make confirmation, cancellation,
+retry, stale-state recovery, and task status durable and restart-safe.
+
+### Story 7.6: Migrate archive, restore, relink, and unlink to bound tasks
+
+Execute consequential maintenance operations through previewed, confirmed, durable tasks; keep
+reevaluation read-only as Refresh diagnostics.
+
+### Story 7.7: Reconcile legacy pending-Folder and in-flight records
+
+Detect and reconcile folderless, pending-Folder, and in-flight legacy records through compensating
+workflows without rewriting committed event history.
+
+---
+
+## Epic 8: Production Conformance and Release Evidence
+
+Turn the corrective architecture and workflow work into executable production evidence across
+persisted boundaries, authentication, tenant isolation, resilience, accessibility, performance,
+packaging, deployment, and stakeholder acceptance.
+
+**Completion gate:** Closes TEST-001 and all required P2 compliance and correctness findings, or
+records an authorized disposition. Release handoff can proceed only after Story 8.9.
+
+### Story 8.1: Establish real persisted-boundary fixtures and CI
+
+Replace fake or omitted boundary evidence with repeatable persisted-state fixtures and blocking CI
+lanes covering the real supported platform path.
+
+### Story 8.2: Implement truthful health, telemetry, and generated logging
+
+Ensure health, readiness, telemetry, and generated structured logging report real dependency and
+projection state with bounded, metadata-only signals.
+
+### Story 8.3: Conform MCP and CLI machine contracts
+
+Align MCP and CLI schemas, failure semantics, freshness vocabulary, partial-failure behavior, and
+machine-readable outputs with the canonical domain and wire contracts.
+
+### Story 8.4: Rebuild operator UI conformance
+
+Conform the platform-hosted operator UI to approved FrontComposer and Fluent boundaries,
+accessibility behavior, safe failure states, and cross-surface semantics.
+
+### Story 8.5: Align build, packaging, supply chain, and source structure
+
+Correct build, packaging, dependency, source-layout, signing, and supply-chain evidence so release
+artifacts match the supported ownership and public-surface model.
+
+### Story 8.6: Activate authenticated critical E2E and tenant-isolation gates
+
+Make authenticated live topology, cross-tenant isolation, critical accessibility, and leakage
+cases blocking, with no unexplained permanent skips or failed cases accepted as evidence.
+
+### Story 8.7: Prove restart, retry, concurrency, and reconciliation
+
+Demonstrate durable workflow and projection correctness across restart, retry, duplicate delivery,
+concurrency, partial failure, lost response, and reconciliation scenarios.
+
+### Story 8.8: Bound read models and verify performance objectives
+
+Define supported cardinality bounds and verify read-model, query, export, and operational-surface
+performance at small, median, and maximum supported scales.
+
+### Story 8.9: Record deployment and stakeholder acceptance
+
+Record the deployed version and environment, health and smoke evidence, rollback reference,
+residual-risk dispositions, and explicit dated acceptance from Jerome and John before release
+handoff.
