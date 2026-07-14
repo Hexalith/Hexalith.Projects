@@ -11,14 +11,17 @@
 # fingerprint/compatibility check: if the checked-in generated output ever drifts from the spine
 # inputs, VerifyCurrentDetailed returns false and the test (hence this gate) fails.
 #
-# The input-presence skip branch below is retained for safety (it never triggers once the spine
-# exists) but is NO LONGER a no-op false-green: when the spine is present the gate runs the real
-# verification.
+# The gate builds its compatibility owner in Release before executing the focused
+# assertions, so it never consumes stale Debug output.
 
 $ErrorActionPreference = 'Stop'
 
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$repositoryRoot = Resolve-Path (Join-Path $scriptRoot '..' '..')
+$repositoryRoot = (Resolve-Path (Join-Path $scriptRoot '..' '..')).Path
+$rootCommons = Join-Path $repositoryRoot 'references/Hexalith.Commons'
+if ([string]::IsNullOrWhiteSpace($env:HexalithCommonsRoot)) {
+    $env:HexalithCommonsRoot = $rootCommons
+}
 
 $openApiDir = Join-Path $repositoryRoot 'src/Hexalith.Projects.Contracts/openapi'
 $specs = @()
@@ -43,7 +46,10 @@ if (-not (Test-Path $clientTests)) {
 # assertions (VerifyCurrentDetailed current + IsCurrent drift detection). Running it IS the gate.
 Push-Location $repositoryRoot
 try {
-    dotnet test $clientTests --filter 'FullyQualifiedName~Hexalith.Projects.Client.Tests.ClientGenerationTests'
+    dotnet test $clientTests `
+        --configuration Release `
+        -warnaserror `
+        --filter 'FullyQualifiedName~Hexalith.Projects.Client.Tests.ClientGenerationTests'
     $exitCode = $LASTEXITCODE
 }
 finally {
@@ -51,7 +57,7 @@ finally {
 }
 
 if ($exitCode -ne 0) {
-    Write-Error "openapi-fingerprint-gate: FAILED — generated client/helpers drifted from the Contract Spine inputs (fingerprint mismatch). Regenerate via 'dotnet build src/Hexalith.Projects.Client' and commit the updated Generated/*.g.cs."
+    Write-Error "openapi-fingerprint-gate: FAILED — the Release build failed or generated client/helpers drifted from the Contract Spine inputs. Regenerate via 'dotnet build src/Hexalith.Projects.Client --configuration Release' and commit the updated Generated/*.g.cs."
     exit $exitCode
 }
 

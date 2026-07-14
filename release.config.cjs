@@ -7,7 +7,7 @@ const packageProjects = [
 ];
 
 const packCommands = packageProjects.map((project) =>
-  `dotnet pack ${project} --no-build --configuration Release --output ./nupkgs -p:Version=\${nextRelease.version} /m:1 /nr:false`,
+  `dotnet pack ${project} --no-build --configuration Release --output ./nupkgs -p:HexalithProjectsPackageVersion=\${nextRelease.version} -p:HexalithCommonsRoot="$PWD/references/Hexalith.Commons" /m:1 /nr:false`,
 );
 
 module.exports = {
@@ -18,7 +18,12 @@ module.exports = {
     [
       '@semantic-release/exec',
       {
-        prepareCmd: ['rm -rf ./nupkgs', 'mkdir -p ./nupkgs', ...packCommands].join(' && '),
+        prepareCmd: [
+          'rm -rf ./nupkgs',
+          'mkdir -p ./nupkgs',
+          ...packCommands,
+          'pwsh ./tests/tools/run-package-dependency-gate.ps1 -Version \${nextRelease.version} -PackageDirectory ./nupkgs -SkipPack',
+        ].join(' && '),
         publishCmd: [
           'test "$(find ./nupkgs -maxdepth 1 -name \'*.nupkg\' ! -name \'*.symbols.*\' | wc -l)" -eq 5',
           'dotnet nuget push ./nupkgs/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate',

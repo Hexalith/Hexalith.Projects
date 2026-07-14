@@ -13,13 +13,18 @@
        brings IRejectionEvent / IEventPayload + the canonical AggregateIdentity primitive;
        FrontComposer.Contracts brings [ProjectionBadge] + BadgeSlot. -->
   <ItemGroup>
-    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Contracts\Hexalith.EventStore.Contracts.csproj" />
-    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj" />
-    <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Contracts\Hexalith.FrontComposer.Contracts.csproj" />
-    <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Shell\Hexalith.FrontComposer.Shell.csproj" />
+    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Contracts\Hexalith.EventStore.Contracts.csproj"
+                      GlobalPropertiesToRemove="Version;PackageVersion" />
+    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj"
+                      GlobalPropertiesToRemove="Version;PackageVersion" />
+    <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Contracts\Hexalith.FrontComposer.Contracts.csproj"
+                      GlobalPropertiesToRemove="Version;PackageVersion" />
+    <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Shell\Hexalith.FrontComposer.Shell.csproj"
+                      GlobalPropertiesToRemove="Version;PackageVersion" />
     <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.SourceTools\Hexalith.FrontComposer.SourceTools.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false"
+                      GlobalPropertiesToRemove="Version;PackageVersion"
                       SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
   <ItemGroup>

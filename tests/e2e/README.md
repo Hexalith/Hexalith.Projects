@@ -19,11 +19,15 @@ driven against its **Aspire AppHost** topology (AR-22): `eventstore + tenants + 
 
 ```bash
 cd tests/e2e
-nvm use                      # Node 24
-npm install                  # installs Playwright + @seontechnologies/playwright-utils + axe + faker
-npm run install:browsers     # playwright install --with-deps (chromium/firefox/webkit)
+nvm use                          # Node 24
+CI=1 npm ci --ignore-scripts     # exact lockfile; dependency lifecycle scripts cannot run
+npm run install:browsers         # explicit Playwright browser/dependency installation
 cp .env.example .env         # then fill in Keycloak + test-user values (see below)
 ```
+
+Do not use `npm install` for this workspace setup. A dependency has previously attempted to run a
+recursive repository postinstall. The locked `npm ci --ignore-scripts` command is the supported
+local and CI path; only the reviewed `install:browsers` script is invoked explicitly afterward.
 
 ## Running tests
 
@@ -130,7 +134,8 @@ tests/e2e/
 
 ## Troubleshooting
 
-- **`Cannot find module '@seontechnologies/playwright-utils/...'`** — run `npm install`. The pin is
+- **`Cannot find module '@seontechnologies/playwright-utils/...'`** — run `CI=1 npm ci --ignore-scripts`.
+  The pin is
   `^3.14.0` (the documented TEA API). The package is now on 4.x; if you intentionally upgrade, re-verify
   the fixture subpath imports and `auth-session` function names in `support/`.
 - **Config/TypeScript errors** — ensure `@playwright/test` types are installed; run `npm run typecheck`.

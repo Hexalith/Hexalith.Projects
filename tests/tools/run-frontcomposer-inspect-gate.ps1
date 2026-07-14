@@ -1,22 +1,15 @@
 #!/usr/bin/env pwsh
-# FrontComposer staleness gate (FS-7) for Hexalith.Projects.
-#
-# Behaviour (Story 1.3 onward): INPUT-PRESENCE-GATED REAL gate. The real gate runs
-# `frontcomposer inspect --fail-on-warning` over the module's FrontComposer-annotated contracts
-# ([Projection]/[Command] attributes). Story 1.3 authors the OpenAPI Contract Spine (AR-15), NOT the
-# FrontComposer [Projection]/[Command] annotations (AR-17) — those land with the projection/surface
-# stories (Epic 5 / FrontComposer console). So this gate legitimately stays in skip-clean mode here:
-# the detection below finds no [Projection]/[Command] contracts, which is CORRECT for this story.
-#
-# The decision is documented in Story 1.3 Dev Notes: input-presence-gated, no annotations added here.
-# The false-green `exit 1` placeholder in the "annotations present" branch has been replaced with the
-# REAL `frontcomposer inspect --fail-on-warning` invocation so the gate auto-activates for real the
-# moment a story adds seed [Command]/[Projection] annotations, with no CI edit required.
+# FrontComposer staleness gate (FS-7) for Hexalith.Projects. The gate builds and
+# inspects Release output so it does not depend on Debug artifacts from an earlier step.
 
 $ErrorActionPreference = 'Stop'
 
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$repositoryRoot = Resolve-Path (Join-Path $scriptRoot '..' '..')
+$repositoryRoot = (Resolve-Path (Join-Path $scriptRoot '..' '..')).Path
+$rootCommons = Join-Path $repositoryRoot 'references/Hexalith.Commons'
+if ([string]::IsNullOrWhiteSpace($env:HexalithCommonsRoot)) {
+    $env:HexalithCommonsRoot = $rootCommons
+}
 
 # Detect FrontComposer inputs: any [Projection]/[Command] attributes inside src/Hexalith.Projects.Contracts.
 $contractsRoot = Join-Path $repositoryRoot 'src/Hexalith.Projects.Contracts'
@@ -33,41 +26,25 @@ if (-not $annotatedContracts -or $annotatedContracts.Count -eq 0) {
 
 Write-Host "frontcomposer-inspect-gate: inputs detected ($($annotatedContracts.Count) annotated contract file(s)) — running real gate."
 
-# Real invocation: fail the gate on any FrontComposer regeneration/staleness warning.
 $contractsProject = Join-Path $contractsRoot 'Hexalith.Projects.Contracts.csproj'
-
-# Resolve the FrontComposer CLI. Prefer an installed `frontcomposer` dotnet tool when present;
-# otherwise fall back to the repo-local FrontComposer submodule CLI so the gate is self-contained
-# and does not require a manually installed tool or an ad-hoc PATH shim. The FrontComposer submodule
-# is already required to build the FrontComposer-annotated Contracts project, so its CLI is present
-# whenever this gate runs for real.
-$frontComposerToolAvailable = $false
-try {
-    & dotnet frontcomposer --version *> $null
-    $frontComposerToolAvailable = ($LASTEXITCODE -eq 0)
-}
-catch {
-    $frontComposerToolAvailable = $false
-}
-
 $cliProject = Join-Path $repositoryRoot 'references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Cli/Hexalith.FrontComposer.Cli.csproj'
 
-if ($frontComposerToolAvailable) {
-    Write-Host 'frontcomposer-inspect-gate: using the installed `frontcomposer` dotnet tool.'
-    & dotnet frontcomposer inspect --fail-on-warning --project $contractsProject
-}
-elseif (Test-Path $cliProject) {
-    Write-Host "frontcomposer-inspect-gate: 'frontcomposer' tool not on PATH — using repo-local FrontComposer CLI ($cliProject)."
-    & dotnet run --project $cliProject --verbosity quiet -- inspect --fail-on-warning --project $contractsProject
-}
-else {
-    Write-Error 'frontcomposer-inspect-gate: FAILED — no `frontcomposer` dotnet tool on PATH and the repo-local FrontComposer CLI was not found. Install the FrontComposer CLI tool or check out the Hexalith.FrontComposer submodule.'
+if (-not (Test-Path $cliProject)) {
+    Write-Error "frontcomposer-inspect-gate: FAILED — repo-local FrontComposer CLI not found at $cliProject. Initialize only the root-declared Hexalith.FrontComposer submodule."
     exit 1
 }
 
+Write-Host 'frontcomposer-inspect-gate: building and inspecting deterministic Release output with the repo-local CLI.'
+& dotnet run --project $cliProject --configuration Release -- `
+    inspect `
+    --project $contractsProject `
+    --configuration Release `
+    --build `
+    --fail-on-warning
+
 $exitCode = $LASTEXITCODE
 if ($exitCode -ne 0) {
-    Write-Error "frontcomposer-inspect-gate: FAILED — 'frontcomposer inspect --fail-on-warning' reported regeneration/staleness warnings. Regenerate the FrontComposer surfaces and commit the updated output."
+    Write-Error "frontcomposer-inspect-gate: FAILED — the Release build or 'frontcomposer inspect --fail-on-warning' failed. Regenerate the FrontComposer surfaces and commit the updated output."
     exit $exitCode
 }
 

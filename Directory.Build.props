@@ -33,6 +33,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <!-- Release automation passes a Projects-specific version property instead of the global
+         Version/PackageVersion properties. NuGet pack re-evaluates every ProjectReference from
+         project.assets.json and otherwise propagates a global release version into sibling
+         modules. Translating the scoped property only in this root keeps Projects packages on one
+         release version while external project dependencies retain their own package versions. -->
+    <Version Condition="'$(HexalithProjectsPackageVersion)' != ''">$(HexalithProjectsPackageVersion)</Version>
+    <PackageVersion Condition="'$(HexalithProjectsPackageVersion)' != ''">$(HexalithProjectsPackageVersion)</PackageVersion>
+
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
