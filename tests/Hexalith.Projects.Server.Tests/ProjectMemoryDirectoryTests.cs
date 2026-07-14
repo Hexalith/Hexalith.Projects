@@ -46,7 +46,7 @@ public sealed class ProjectMemoryDirectoryTests
 
         // Only the stable GetCaseAsync route is ever called; never any content-bearing or experimental
         // surface (no /memory-units, /search, /traverse, /export, /handlers, /ingest, /telemetry).
-        handler.RequestPaths.ShouldAllBe(path => path.Contains($"/api/tenants/{TenantId}/cases/", StringComparison.Ordinal));
+        handler.RequestPaths.ShouldAllBe(path => path.Contains($"/api/v1/tenants/{TenantId}/cases/", StringComparison.Ordinal));
         handler.RequestPaths.ShouldNotContain(path => path.Contains("/memory-units", StringComparison.Ordinal));
         handler.RequestPaths.ShouldNotContain(path => path.Contains("/search", StringComparison.Ordinal));
         handler.RequestPaths.ShouldNotContain(path => path.Contains("/traverse", StringComparison.Ordinal));

@@ -43,7 +43,9 @@ public sealed class ProjectsMcpResourceReaderFailureTests
 
         FrontComposerMcpException ex = await Should.ThrowAsync<FrontComposerMcpException>(
             () => reader.QueryAsync<ProjectsMcpInventoryItem>(
-                new QueryRequest(typeof(ProjectsMcpInventoryItem).AssemblyQualifiedName!, "tenant-1"),
+                QueryRequest.Create(
+                    new ProjectionQuery(typeof(ProjectsMcpInventoryItem).AssemblyQualifiedName!),
+                    "tenant-1"),
                 TestContext.Current.CancellationToken));
 
         ex.Category.ShouldBe(expected);
@@ -69,7 +71,9 @@ public sealed class ProjectsMcpResourceReaderFailureTests
 
         FrontComposerMcpException ex = await Should.ThrowAsync<FrontComposerMcpException>(
             () => reader.QueryAsync<ProjectsMcpInventoryItem>(
-                new QueryRequest(typeof(ProjectsMcpInventoryItem).AssemblyQualifiedName!, "tenant-b"),
+                QueryRequest.Create(
+                    new ProjectionQuery(typeof(ProjectsMcpInventoryItem).AssemblyQualifiedName!),
+                    "tenant-b"),
                 TestContext.Current.CancellationToken));
 
         ex.Category.ShouldBe(FrontComposerMcpFailureCategory.UnknownResource);
@@ -92,7 +96,9 @@ public sealed class ProjectsMcpResourceReaderFailureTests
 
         await Should.ThrowAsync<OperationCanceledException>(
             () => reader.QueryAsync<ProjectsMcpInventoryItem>(
-                new QueryRequest(typeof(ProjectsMcpInventoryItem).AssemblyQualifiedName!, "tenant-1"),
+                QueryRequest.Create(
+                    new ProjectionQuery(typeof(ProjectsMcpInventoryItem).AssemblyQualifiedName!),
+                    "tenant-1"),
                 CancellationToken.None));
     }
 

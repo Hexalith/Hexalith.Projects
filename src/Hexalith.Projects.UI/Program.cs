@@ -1,5 +1,6 @@
 using Hexalith.FrontComposer.Contracts;
 using Hexalith.FrontComposer.Shell.Extensions;
+using Hexalith.FrontComposer.Shell.Options;
 using Hexalith.Projects.Client;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.UI.Components;

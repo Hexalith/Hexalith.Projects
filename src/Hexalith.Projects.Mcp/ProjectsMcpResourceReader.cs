@@ -35,13 +35,13 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
         {
             IReadOnlyList<T> items = typeof(T) switch
             {
-                Type t when t == typeof(ProjectsMcpInventoryItem) => Cast<T>(await ReadInventoryAsync(request.Take, cancellationToken).ConfigureAwait(false)),
+                Type t when t == typeof(ProjectsMcpInventoryItem) => Cast<T>(await ReadInventoryAsync(request.Criteria.Take, cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpProjectDetailItem) => Cast<T>(await ReadDetailAsync(null, cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpOperatorDiagnosticItem) => Cast<T>(await ReadOperatorDiagnosticAsync(null, DefaultAuditLimit, cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpReferenceHealthItem) => Cast<T>(await ReadReferenceHealthAsync(null, DefaultAuditLimit, cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpAuditTimelineItem) => Cast<T>(await ReadAuditTimelineAsync(null, DefaultAuditLimit, cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpSafeDiagnosticExportItem) => Cast<T>(await ReadSafeDiagnosticExportAsync(null, DefaultAuditLimit, cancellationToken).ConfigureAwait(false)),
-                Type t when t == typeof(ProjectsMcpWarningQueueItem) => Cast<T>(await ReadWarningQueueAsync(request.Take, cancellationToken).ConfigureAwait(false)),
+                Type t when t == typeof(ProjectsMcpWarningQueueItem) => Cast<T>(await ReadWarningQueueAsync(request.Criteria.Take, cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpOperationalDashboardItem) => Cast<T>(await ReadOperationalDashboardAsync(cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpMaintenanceActionItem) => Cast<T>(ReadMaintenanceActions()),
                 Type t when t == typeof(ProjectsMcpResolutionTraceItem) => Cast<T>(ReadResolutionTraceMetadata()),
@@ -292,7 +292,7 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
                 .OrderBy(static item => item.ProjectId, StringComparer.Ordinal)
                 .ThenBy(static item => item.ReferenceKind, StringComparer.Ordinal)
                 .ThenBy(static item => item.ReferenceId, StringComparer.Ordinal)
-                .Take(MaxRows)
+                .Take(Bound(take, MaxRows))
                 .Select(item => item with { DiagnosticUnavailable = diagnosticUnavailable })
                 .ToArray(),
             diagnosticUnavailable);
