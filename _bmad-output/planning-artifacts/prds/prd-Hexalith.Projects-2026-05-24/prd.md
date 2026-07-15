@@ -1,367 +1,511 @@
 ---
 title: "PRD: Hexalith.Projects"
-status: final
+status: draft
 created: 2026-05-24
-updated: 2026-05-24
+updated: 2026-07-15
 ---
 
 # PRD: Hexalith.Projects
 
 ## 0. Document Purpose
 
-This PRD defines the v1 product requirements for `Hexalith.Projects`, a Hexalith module that gives `Hexalith.Chatbot` a durable AI project workspace. It is written for product, architecture, UX, and implementation workflows. Requirements are grouped by feature, with stable functional requirement IDs and testable consequences.
+This PRD defines the v1 product requirements for `Hexalith.Projects`, the Hexalith module that gives `Hexalith.Chatbot` a durable, tenant-aware AI project workspace. It is the product baseline for UX, architecture, epics, implementation, and release acceptance. Requirements are grouped by feature with stable functional requirement IDs; cross-cutting quality obligations have stable NFR IDs. Technical mechanisms, migration detail, and proposal-specific implementation evidence live in [addendum.md](./addendum.md).
 
 ## 1. Vision
 
-`Hexalith.Projects` enables `Hexalith.Chatbot` to hold rich, continuous conversations with users by grounding each conversation in the correct project context. A project connects the conversations, files, folders, memories, setup, and operational metadata needed for an AI work session to continue safely across time.
+`Hexalith.Projects` enables `Hexalith.Chatbot` to sustain rich conversations by grounding each interaction in the correct Project Context. A Project connects the Conversations, Project Folder, File References, Memories, setup, and operational metadata needed for AI work to continue safely across time.
 
-The module is not a generic project management system. Its purpose is to provide a tenant-aware AI workspace boundary: Chatbot can determine which project a conversation belongs to, retrieve the context needed for the next interaction, and propose project creation when no suitable project exists.
+The module is not a generic project-management system. It provides a durable workspace boundary: Chatbot can determine which Project applies, retrieve authorized context, ask for confirmation when intent is ambiguous, and propose a Project when none fits. Consequential changes are durable, recoverable, and confirmed by server truth rather than inferred from acknowledgement or notification.
 
-v1 is an internal platform and near-term implementation spec for Hexalith.Chatbot, not a public standalone product launch.
+v1 is an internal platform and near-term implementation baseline for Hexalith.Chatbot, not a public standalone product launch.
 
-## 2. Target User
+## 2. Product Contract and Release Scope
 
-### 2.1 Primary Persona
+### 2.1 Accepted Planning Decisions
 
-The primary user is a Hexalith.Chatbot user who works across multiple conversations, files, folders, and memories and expects the assistant to remember the correct project context without re-explaining it each session.
+- v1 is an internal Hexalith.Chatbot platform module, not a standalone or generic project-management product.
+- Project name is the only required user-authored creation field; canonical requests also carry system-supplied Metadata Classification.
+- Project lifecycle remains exactly `Active`/`Archived`; Durable Task statuses are separate.
+- A Conversation belongs to exactly one Project in v1, trading simultaneous cross-Project context for an unambiguous workspace boundary; revisit only if an explicit multi-Project Conversation product need and safe conflict model are approved.
+- No Project is caller-visible or Active before exactly one authorized Project Folder is bound and the read model confirms completion. The single Folder trades multi-root workspaces for a stable authorization anchor; revisit only if one Folder cannot represent an approved workspace use case.
+- Project creation from inference and other consequential actions follow the approved Preview/Confirmation boundary.
+- Role and surface choice never expand authority; service callers act only with delegated actor authority.
+- FR-22 remains operator read access; FR-24 owns Safe Diagnostic Export; mutations remain in their action-specific FRs.
+- Resolution is current recomputation, not persisted inference history; only confirmed outcomes enter audit. This trades retrospective inference replay for current-authorization safety and lower diagnostic retention; revisit only through a separately approved history/retention requirement.
+- Projects stores metadata and references while Conversations, Folders, and Memories remain their systems of record.
+- Audit, diagnostics, errors, telemetry, and exports are metadata-only and Tenant-scoped.
+- The approved performance, availability, durability, retention, back-pressure, security, accessibility, compatibility, and release-evidence envelopes in NFR-1 through NFR-11 are binding MVP acceptance criteria.
+- Historical unversioned name-only creation compatibility trades a smaller v1 contract surface for non-breaking adoption; retirement remains gated by an approved major version, usage evidence, migration notice, compatibility tests, and rollback evidence.
+- Core user value may be sequenced before release-blocking safety/operations, but no approved v1 FR or NFR is deferrable from production release; §2.3 records the release-cut rule.
+- Resolution success includes usefulness to the Project User, not merely production of candidates or proposals.
 
-### 2.2 Jobs To Be Done
+### 2.2 In Scope
 
-- Resume AI work without manually rebuilding the project context.
-- Keep project-related conversations, files, folders, and memories connected.
-- Start a new conversation and have Chatbot infer or request the correct project context.
-- Avoid leaking context across unrelated projects, tenants, or users.
-- Let downstream agents and tools rely on a durable project boundary instead of transient chat UI state.
+- Project identity, setup, `Active`/`Archived` lifecycle, tenant scoping, and exactly-one-Folder invariant.
+- Durable, idempotent, recoverable creation, archive, restore, and cross-context association workflows.
+- Server Preview and Confirmation Artifacts for destructive, inferred, or consequential user-intent changes.
+- Project Resolution, accessible candidate/proposal confirmation, transient current Resolution Traces, and read-only refresh.
+- Project Context retrieval for Chatbot and Conversation-start setup.
+- Role-scoped metadata-only operator access, audit, reconciliation status, and bounded Safe Diagnostic Export.
+- v1 compatibility for historical unversioned name-only creation requests.
+- Authenticated release evidence for persistence, isolation, recovery, accessibility, performance, deployment, smoke, and rollback.
 
-### 2.3 Non-Users (v1)
+### 2.3 Release Classification and Cut Rule
 
-- Users looking for a generic task board, scheduling system, or project management suite.
-- Users expecting Projects to store full conversation transcripts, file contents, or memory payloads directly.
-- External customers consuming Projects as an independent end-user product.
+This classification controls sequencing and release decisions without changing requirement priority or IDs.
 
-### 2.4 Key User Journeys
+| Class | Requirements | Sequencing and release decision |
+| --- | --- | --- |
+| **Core user value** | FR-1 through FR-20 and FR-23 | These requirements deliver the durable workspace, lifecycle, references, resolution, context, and setup outcomes. They may be implemented and verified in coherent value slices after implementation readiness returns `READY`, but a core-only build is internal evidence, not an authorized production release. |
+| **Release-blocking safety and operations** | FR-21, FR-22, FR-24, and NFR-1 through NFR-11 | These requirements make core value supportable and safe in production: metadata-only audit and operator truth, bounded diagnostics instead of ad-hoc payload access, tenant/action isolation, recovery, performance, accessibility, compatibility, and release evidence. Production release remains blocked until this class passes alongside the core class. |
+| **Deferrable or out-of-scope release cuts** | No approved v1 FR or NFR. Only the capabilities in §2.4 are deferrable. | Removing an approved FR/NFR is a product-scope change requiring explicit approval, replacement safety/operability treatment where applicable, and updated acceptance evidence. Temporary disabling of a gated surface does not count as delivering that requirement. |
 
-- **UJ-1. The Hexalith.Chatbot user resumes an existing project conversation.** The user opens Hexalith.Chatbot and selects an existing project. Chatbot requests the project context from Projects, receives linked conversations, folders, files, memories, and setup metadata, then starts the conversation with the correct project boundary. The user sees continuity without manually attaching prior context.
+The accepted v1 trade-off is deliberate: sequencing may expose a core-first implementation path, but there is no smaller safe production release. In particular, FR-22 and FR-24 remain release-blocking because authorized operator truth and bounded Safe Diagnostic Export are the supported alternatives to unbounded troubleshooting access; NFR-11 prevents incomplete evidence from being represented as release acceptance.
 
-- **UJ-2. The Hexalith.Chatbot user starts with files before choosing a project.** The user opens Chatbot, attaches files or selects a folder, and begins asking questions. Projects evaluates the attached folder/file references and conversation metadata, identifies likely matching projects, and either attaches the conversation to the strongest match or asks the user to confirm. If no suitable project exists, Chatbot proposes creating one.
+### 2.4 Product Boundaries and v1 Exclusions
 
-- **UJ-3. The Hexalith.Chatbot user starts a conversation with no explicit project.** The user starts chatting without choosing a project. Chatbot asks Projects to resolve project membership from the conversation, attachments, memories, and available project metadata. If confidence is high, Chatbot uses the likely project after confirmation; if confidence is ambiguous, it presents candidates; if no match exists, it proposes a new project.
+v1 does not serve external customers consuming Projects as an independent product or users seeking the excluded capabilities below.
 
-- **UJ-4. The Hexalith.Chatbot user protects unrelated work from context leakage.** The user works on multiple projects with overlapping terminology or files. Projects only returns context from authorized, linked, or confirmed project references. Chatbot does not include unrelated conversations, files, folders, or memories in the active prompt context.
+**Enduring product boundaries**
 
-## 3. Glossary
+- Projects does not replace Conversations, Folders, or Memories as their systems of record or authorization boundaries.
+- Projects does not store full transcripts, file contents, raw prompts, secrets, Memory payloads, unrestricted paths, or raw upstream problems.
+- Projects does not provide generic task management; Durable Tasks are internal truth for Project operations, not user-managed work items.
+- Projects does not persist candidate-score history, Resolution Traces, or later reconstruct transient inference detail.
+- Projects does not expose a standalone end-user UI outside Chatbot and generated/operational surfaces.
+- Projects does not bypass Dapr, Hexalith.EventStore, tenant isolation, or action-level authorization.
 
-- **Project** — A durable AI workspace boundary managed by Hexalith.Projects. A Project contains project metadata, setup, lifecycle state, and references to related bounded-context resources.
-- **Project Context** — The complete set of project-scoped information Chatbot may use to conduct a conversation, including Project metadata, setup, linked Conversation references, Project Folder reference, optional File References, Memory references, and context-selection policy.
-- **Conversation** — A conversation owned by `Hexalith.Conversations`. Projects references Conversation identifiers and metadata; it does not store full transcript content. In v1, a Conversation belongs to exactly one Project.
-- **Project Folder** — The single canonical folder owned by `Hexalith.Folders` and referenced by a Project in v1. Projects references the Project Folder identifier and metadata; it does not store file contents or bypass folder authorization.
-- **File Reference** — A file resource owned by `Hexalith.Folders` and optionally referenced by Project Context. Projects references File identifiers and metadata; it does not store file contents.
-- **Memory** — A durable memory resource owned by `Hexalith.Memories`. Projects references Memory identifiers and metadata; it does not own memory payload storage.
-- **Project Setup** — Durable settings and instructions needed to initialize or resume a Project in Chatbot, including goals, user-facing instructions, context preferences, allowed source references, and conversation-start defaults.
-- **Project Resolution** — The process of identifying which Project should apply to a Conversation when no explicit Project has been selected.
-- **Candidate Project** — A Project returned by Project Resolution as a possible match for the current Conversation, attachments, or metadata.
-- **Resolution Result** — The outcome of Project Resolution. v1 supports `NoMatch`, `SingleCandidate`, and `MultipleCandidates`.
-- **Resolution Reason Code** — Metadata explaining why a Candidate Project was returned. v1 supports `ConversationLinked`, `ProjectFolderMatched`, `FileReferenceMatched`, `MemoryMatched`, and `MetadataMatched`.
-- **Project Lifecycle State** — The availability state of a Project. v1 supports only `Active` and `Archived`.
-- **Tenant** — The Hexalith isolation boundary that scopes access to Projects, Conversations, Project Folders, File References, and Memories.
+**Out of scope for v1**
 
-## 4. Features
+- Content indexing or semantic retrieval over file contents.
+- Memory payload storage or synthesis.
+- Transcript storage or summarization inside Projects.
+- Historical inference/candidate-score storage or persisted diagnostic exports.
+- Generic project-management workflows.
+- Autonomous MCP confirmation or blanket service-identity mutations.
+- Cross-Tenant Project sharing, customer-managed encryption keys, and cross-region disaster-recovery guarantees.
 
-### 4.1 Project Workspace Management
+### 2.5 Planning Status
 
-**Description:** Projects provides the durable workspace record that Chatbot uses to create, open, update, archive, and list AI projects. A Project captures metadata and setup required for continuity, while related bounded contexts remain the systems of record for their own data.
+No phase-blocking product questions remain for UX, architecture, or epic decomposition. Repository-local dependency/version gates and implementation mechanisms are tracked in the addendum and must be verified before affected stories start.
+
+## 3. Target Users and Journeys
+
+### 3.1 Primary User
+
+The primary user works in Hexalith.Chatbot across multiple Conversations and resources and expects the assistant to resume the correct Project without requiring context to be rebuilt each session.
+
+### 3.2 Runtime Roles and Operations
+
+| Role and surface | Purpose | Authority |
+| --- | --- | --- |
+| **Project User (Chatbot)** | Works with authorized Projects and confirms user-intent decisions. | Own permitted Project/task read and Preview; archive/restore; relink/unlink; confirm resolution or proposed creation; no Safe Diagnostic Export. |
+| **Tenant Operator (Web/CLI/MCP)** | Inspects operational metadata and performs authorized lifecycle operations. | Metadata-only read; archive/restore Preview and confirmation; no relink/unlink or resolution/proposal confirmation; Safe Diagnostic Export only with separate authorization. |
+| **Tenant Project Administrator (Web/CLI/MCP)** | Has Tenant Operator capabilities plus authorized administrative association operations. | Metadata-only read; all permitted administrative Preview; archive/restore; relink/unlink; no resolution/proposal confirmation; Safe Diagnostic Export only with separate authorization. |
+| **Service/Workflow Caller** | Acts for a real actor through an authorized workflow. | Delegated scope only; follows the actor's authority and never gains autonomous confirmation or blanket mutation authority. |
+
+### 3.3 Jobs To Be Done
+
+- Resume AI work without manually rebuilding Project Context.
+- Keep Project-related Conversations, the Project Folder, File References, and Memories connected.
+- Start a Conversation and safely resolve or create the correct Project.
+- Understand and recover consequential work after expiry, dependency failure, timeout, or lost response.
+- Prevent context leakage across Projects, actors, and Tenants.
+- Give downstream agents and operators durable server truth instead of transient UI state.
+
+### 3.4 Key User Journeys
+
+- **UJ-1. Priya resumes an existing Project.** Priya opens Chatbot and selects an authorized Project. Chatbot receives a read-model-confirmed Active Project and its current authorized Project Context. Priya sees continuity without manually reattaching prior work; stale or unavailable references are disclosed safely rather than silently omitted.
+
+- **UJ-2. Jules creates a Project from attached work.** Jules attaches files before choosing a Project. When no suitable Project exists, Chatbot presents a proposal without creating anything silently. Jules confirms a server-issued preview. A Durable Task verifies or creates the Project Folder, binds authorized references, and exposes the Project as Active only after read-model confirmation. Jules can recover the task after a lost response.
+
+- **UJ-3. Sam resolves an ambiguous Conversation.** Sam starts a Conversation that matches several Projects. Chatbot presents accessible, unselected candidates with current reason metadata. Sam confirms one candidate using a single-use Confirmation Artifact. A Durable Task records the association; expired or stale confirmation returns Sam to a fresh preview.
+
+- **UJ-4. Alex protects unrelated work.** Alex works on Projects with overlapping terminology. Project Resolution and Project Context use only current authorized references. Unconfirmed candidates, foreign payloads, transient traces, and unrelated Tenant data never enter the active context.
+
+- **UJ-5. Morgan restores an archived Project.** Morgan, acting with restore authority, previews the current archived Project. Restore verifies actor authority, Project version, and exactly one authorized Project Folder. If Folder evidence is missing, Morgan selects a replacement or confirms same-name creation. The Project becomes Active only after the Durable Task and read model confirm completion.
+
+## 4. Glossary
+
+- **Project** — A durable AI workspace boundary managed by Hexalith.Projects. It contains metadata, Project Setup, lifecycle state, and authorized references to resources owned by other bounded contexts.
+- **Project Context** — The authorized Project metadata, setup, reference metadata, and inclusion/exclusion evidence Chatbot may use for a Conversation. It contains references, not foreign payloads.
+- **Context Response State** — The observable usability state of a Project list, resolution, context, or Conversation-start response: `Complete`, `Partial`, `Unavailable`, or `Denied`. It is response metadata, not Project Lifecycle State or Task Status.
+- **Evidence Freshness State** — The current verification state of an authorized response component: `Current`, `Stale`, `Rebuilding`, or `Unavailable`.
+- **Recovery Action Code** — A safe next action returned with a non-complete response or workflow outcome: `None`, `Retry`, `RefreshContext`, `RequestPreview`, `RenewPreview`, `PollTask`, `ResolveNeedsAttention`, `SelectAlternative`, or `ContactAdministrator`.
+- **Conversation** — A conversation owned by `Hexalith.Conversations`. Projects references its stable identity and metadata. In v1, a Conversation belongs to exactly one Project.
+- **Project Folder** — The single canonical Folder owned by `Hexalith.Folders` and referenced by every Active Project.
+- **File Reference** — An authorized file identity and metadata owned by `Hexalith.Folders` and optionally linked to a Project.
+- **Memory** — A durable resource owned by `Hexalith.Memories`; Projects stores only its authorized identity and metadata.
+- **Project Setup** — Durable goals, user-facing instructions, context preferences, allowed source references, and Conversation-start defaults used to initialize or resume a Project.
+- **Project Lifecycle State** — The availability state of a Project. v1 supports exactly `Active` and `Archived`.
+- **Durable Task** — Recoverable server truth for consequential or cross-context work. Its state is separate from Project Lifecycle State.
+- **Task Status** — One of `Pending`, `Running`, `WaitingForDependency`, `NeedsAttention`, `Succeeded`, `Rejected`, `Failed`, or `Cancelled`. The last four are terminal; `NeedsAttention` is recoverable and nonterminal.
+- **Preview** — Current server-derived metadata describing a consequential action before confirmation.
+- **Confirmation Artifact** — An expiring, single-use, tamper-evident authorization bound to Tenant, actor, action, targets, normalized request, Preview, and current resource version.
+- **Idempotency Key** — A caller-supplied request identity scoped to Tenant, actor, and operation. Equivalent reuse returns the original Durable Task; materially different reuse conflicts.
+- **Project Resolution** — Current recomputation that identifies which Project should apply when no explicit Project is selected.
+- **Candidate Project** — An authorized Project returned by Project Resolution as a possible match.
+- **Resolution Result** — `NoMatch`, `SingleCandidate`, or `MultipleCandidates`.
+- **Resolution Reason Code** — Current metadata explaining a Candidate Project, including `ConversationLinked`, `ProjectFolderMatched`, `FileReferenceMatched`, `MemoryMatched`, and `MetadataMatched`.
+- **Resolution Trace** — Request-scoped, nonpersistent diagnostic evidence for the current Project Resolution computation.
+- **Read-Model-Confirmed Completion** — Completion established by the authoritative read model after durable mutation, not by request acknowledgement or notification.
+- **Safe Diagnostic Export** — A bounded, non-retained, metadata-only operational export produced from an already-authorized diagnostic view.
+- **Metadata Classification** — A system-supplied classification required on canonical creation requests; it is not a user-authored creation field.
+- **Tenant** — The Hexalith isolation boundary for Projects and every referenced resource.
+
+## 5. Observable Context and Recovery Contract
+
+Project list, resolution, context, Conversation-start, and proposal-recovery responses share the following logical fields. Exact wire names, casing, serialization, and transport mappings belong in API/architecture contracts; every supported surface must preserve these semantics.
+
+- `responseState`: one Context Response State.
+- `asOf`: the server timestamp of the authorization and evidence computation.
+- `projectVersion`: the authorized current Project version when a Project may safely be disclosed.
+- `resolutionResult`: `NoMatch`, `SingleCandidate`, or `MultipleCandidates` when resolution ran.
+- `components`: metadata-only entries containing component kind, inclusion status (`Included` or `Excluded`), Evidence Freshness State, safe reason code, and last-verified timestamp when known.
+- `recoveryActions`: zero or more Recovery Action Codes with only the applicable metadata: task identity/status, Preview expiry, and bounded retry-after guidance.
+
+The response states have binding consequences:
+
+- `Complete` means the authorized Project, Project Folder, Project Setup, and other required evidence are `Current`; the response is usable for its requested purpose.
+- `Partial` means the Project, Project Folder, Project Setup, and authorization evidence required for first-response admission are `Current`, while one or more optional references are excluded, stale, rebuilding, or unavailable. The response may be used only with every omission represented in `components`.
+- `Unavailable` means a required component is missing, stale, rebuilding, or unavailable. The response cannot initialize or resume a Conversation and returns `Retry`, `RefreshContext`, `SelectAlternative`, or `ContactAdministrator` as applicable.
+- `Denied` means current actor authorization failed. It discloses no protected Project/component metadata and becomes eligible for another outcome only through a newly authorized request.
+
+Refresh and recovery never rewrite an earlier response silently. A refresh recomputes authorization and evidence and returns a new `asOf`, `projectVersion`, state, and component set. `Partial` or `Unavailable` becomes `Complete` only after fresh recomputation proves all required evidence current. Expired or stale confirmation returns `RenewPreview` and admits no task; a lost admission response returns `PollTask` or an equivalent Idempotency Key retry that resolves to the original task. Dependency delay returns `WaitingForDependency`; human-recoverable work returns `NeedsAttention` plus `ResolveNeedsAttention`; terminal Task Status values remain immutable.
+
+## 6. Functional Requirements
+
+### 6.1 Project Workspace Management
+
+**Description:** Projects provides the durable workspace record and recoverable workflows used to create, open, update, archive, restore, and list AI Projects. Project name remains the only required user-authored creation input.
 
 #### FR-1: Create Project
 
-Chatbot can create a Project with tenant context and Project name as the required inputs. Project name is the only required user-supplied field. Description, initial setup, initial references to Conversations, File References, and Memories are optional. If no Project Folder is supplied, Chatbot can request creation of a Project Folder with the same name. Realizes UJ-2 and UJ-3.
+Chatbot can admit Project creation as an idempotent Durable Task. A Project becomes caller-visible and `Active` only after exactly one authorized Project Folder is verified and bound. Realizes UJ-2.
 
 **Consequences (testable):**
-- Creating a Project records durable Project metadata and sets Project Lifecycle State to `Active`.
-- Creating a Project requires only a Project name from the user.
-- Creating a Project can create or attach a Project Folder with the same name as the Project when no folder is supplied.
-- Creating a Project does not duplicate conversation transcripts, file contents, or memory payloads.
-- Creating a Project fails closed when tenant context is missing or unauthorized.
+
+- The only required user-authored field is Project name; canonical requests also carry a valid system-supplied Metadata Classification.
+- A supplied Project Folder is authorized and verified. When none is supplied, Projects requests same-name Folder creation from `Hexalith.Folders`.
+- Admission returns a pollable Durable Task rather than an immediately Active Project.
+- Dependency denial, timeout, cancellation, duplicate delivery, lost response, or reconciliation never exposes an Active folderless Project.
+- Equivalent Idempotency Key retries return the original task. A materially different request using the same scoped key returns an idempotency conflict.
+- Terminal success exposes the Project identity only after Read-Model-Confirmed Completion.
+- Historical unversioned name-only creation requests remain supported throughout v1; retirement requires an explicitly approved major version.
+- Creation never duplicates transcripts, file contents, prompts, secrets, or Memory payloads.
 
 #### FR-2: Open Project
 
-Chatbot can open a Project and receive the Project metadata, lifecycle state, setup, and authorized references needed to initialize a conversation. Realizes UJ-1.
+Chatbot can open an authorized Project and receive the metadata, lifecycle state, Project Setup, and references needed to initialize a Conversation. Realizes UJ-1.
 
 **Consequences (testable):**
-- Opening a Project returns only references visible to the requesting tenant/user context.
-- Archived or unavailable Projects are clearly identified and cannot silently become active conversation context.
+
+- Opening returns only data visible to the requesting Tenant and actor.
+- Pre-activation creation tasks are not exposed through Project open APIs.
+- Archived or unavailable Projects are identified and cannot silently become active Conversation context.
 
 #### FR-3: Update Project Setup
 
-Chatbot can update Project Setup needed for conversation continuity, including project instructions, context preferences, and configuration metadata. Realizes UJ-1.
+Chatbot can update Project Setup used for Conversation continuity.
 
 **Consequences (testable):**
-- Setup updates are durable and available to later conversations.
-- Setup can include project goals, user-facing instructions, preferred context sources, source inclusion/exclusion preferences, conversation-start defaults, and metadata needed to resume the Project.
-- v1 Project Setup describes conversation behavior and context policy, not model-provider internals.
-- Setup updates preserve additive, serialization-tolerant contract behavior.
-- Setup updates do not allow raw secrets, unrestricted file paths, or payload data that belongs to another bounded context.
+
+- Updates are idempotent, durable, and observable from the authoritative read model.
+- Setup may include goals, user-facing instructions, context preferences, source inclusion/exclusion policy, and Conversation-start defaults.
+- Setup describes Conversation behavior and context policy, not model-provider internals.
+- Updates remain additive and serialization-tolerant and reject secrets, unrestricted paths, and foreign payloads.
 
 #### FR-4: Archive Project
 
-Chatbot or authorized operators can archive a Project so it remains discoverable for history but is no longer selected as active context by default.
+An authorized Project User, Tenant Operator, or Tenant Project Administrator can archive an Active Project through server Preview, single-use confirmation, and an idempotent Durable Task. FR-23 defines the corresponding restore operation.
 
 **Consequences (testable):**
-- v1 Project Lifecycle State is limited to `Active` and `Archived`.
-- Archived Projects are excluded from automatic Project Resolution unless explicitly requested.
+
+- Project Lifecycle State remains limited to `Active` and `Archived`.
+- Confirmation is invalidated when actor authority or Project version changes.
+- Archived Projects are excluded from Project Resolution unless explicitly requested.
+- Completion is not reported until the read model confirms `Archived`.
 - Existing references remain auditable after archival.
 
 #### FR-5: List Projects
 
-Chatbot can list Active and Archived Projects visible to the requesting tenant/user context.
+Authorized callers can list visible Active and Archived Projects.
 
 **Consequences (testable):**
-- List results are tenant-scoped and authorization-filtered.
-- List results include enough metadata for Chatbot to present Project choices without loading full Project Context.
-- List results can filter by Project Lifecycle State.
 
-### 4.2 Context References
+- Results are Tenant-scoped, authorization-filtered, and filterable by Project Lifecycle State.
+- Each result contains authorized Project identity, Project name, lifecycle state, current Project version, Project Folder availability, and the §5 response/freshness/recovery metadata needed for selection without loading full Project Context.
+- Pre-activation tasks never appear as Projects.
+- Cursor pages default to 50 items and cap at 200; cursors remain scoped to the authenticated query.
 
-**Description:** Projects coordinates references to Conversations, the Project Folder, optional File References, and Memories. It owns the association between a Project and these resources, but not the underlying resources or their payloads.
+### 6.2 Context References
+
+**Description:** Projects owns associations to Conversations, the Project Folder, File References, and Memories. The referenced bounded contexts remain authoritative for payloads and authorization. Cross-context work produces durable receipts and remains recoverable after retries, duplicate delivery, concurrency, or lost responses.
 
 #### FR-6: Link Conversation
 
-Chatbot can link an existing Conversation to a Project. Realizes UJ-1 and UJ-3.
+An authorized Project User can link an existing Conversation to a Project. Realizes UJ-1 and UJ-3.
 
 **Consequences (testable):**
-- The link records stable Conversation identity and relevant metadata.
-- A Conversation can be linked to only one Project in v1.
-- Linking a Conversation that already belongs to another Project requires an explicit move operation rather than creating a second membership.
-- The link does not copy transcript content into Projects.
-- The link fails if tenant authorization for the Conversation cannot be established.
+
+- A Conversation belongs to exactly one Project in v1.
+- An explicitly actor-selected additive link uses an idempotent Durable Task without a second confirmation; an inferred link requires Preview and confirmation.
+- Linking a Conversation already assigned elsewhere requires FR-7 rather than a second membership.
+- Authorization failure prevents any protected resource access or durable effect.
+- The link stores stable identity and metadata, never transcript content.
 
 #### FR-7: Move Conversation Between Projects
 
-Chatbot can move a Conversation from one Project to another when the user explicitly confirms the move.
+An authorized Project User or Tenant Project Administrator can move a Conversation through Preview, single-use confirmation, and an idempotent Durable Task.
 
 **Consequences (testable):**
-- Moving a Conversation removes the prior Project membership before creating the new one.
-- Moving a Conversation is auditable as metadata.
-- Moving a Conversation fails closed when authorization to either Project or the Conversation cannot be established.
+
+- Preview binds both Projects, the Conversation, actor, and current resource versions.
+- Completion yields exactly one Project membership and a durable cross-context receipt.
+- Failure, duplicate delivery, or lost response cannot leave two memberships silently valid.
+- The move is metadata-only audited and fails closed when either Project or the Conversation cannot be authorized.
 
 #### FR-8: Set Project Folder
 
-Chatbot can set the single authorized Project Folder for a Project. Realizes UJ-2.
+An authorized Project User can set the single Project Folder; a Project User or Tenant Project Administrator can replace it through Preview and confirmation. Realizes UJ-2.
 
 **Consequences (testable):**
-- A Project has exactly one Project Folder in v1.
-- Setting a Project Folder records stable Folder identity and relevant metadata.
-- Setting a new Project Folder replaces the previous Project Folder only through an explicit update.
-- The Project Folder reference does not store file contents or unrestricted filesystem paths in Projects.
-- Folder authorization remains delegated to `Hexalith.Folders`.
+
+- Every Active Project has exactly one authorized Project Folder.
+- Initial actor-selected binding is idempotent; inferred binding requires confirmation.
+- Replacement binds old and new Folder evidence to the Confirmation Artifact and completes only after authoritative read confirmation.
+- Projects stores Folder identity and metadata, never file contents or unrestricted paths.
+- `Hexalith.Folders` remains the authorization and system-of-record boundary.
 
 #### FR-9: Link File Reference
 
-Chatbot can link authorized File References to a Project when a file should be part of Project Context without changing the Project Folder.
+An authorized Project User can link a File Reference without changing the Project Folder.
 
 **Consequences (testable):**
+
 - File References are optional and do not replace the Project Folder.
-- A File Reference records stable File identity and relevant metadata.
-- File authorization remains delegated to `Hexalith.Folders`.
+- Actor-selected additive linking is idempotent; inferred linking requires confirmation.
+- Projects stores stable File identity and metadata only; authorization remains delegated to `Hexalith.Folders`.
 
 #### FR-10: Link Memory
 
-Chatbot can link authorized Memory references to a Project. Realizes UJ-1 and UJ-3.
+An authorized Project User can link a Memory. Realizes UJ-1 and UJ-3.
 
 **Consequences (testable):**
-- The link records stable Memory identity and relevant metadata.
-- The link does not store Memory payloads in Projects.
-- Memory authorization remains delegated to `Hexalith.Memories`.
+
+- Actor-selected additive linking is idempotent; inferred linking requires confirmation.
+- Projects stores stable Memory identity and metadata only.
+- Authorization remains delegated to `Hexalith.Memories`.
 
 #### FR-11: Unlink Context Reference
 
-Chatbot can remove a Conversation, File Reference, or Memory reference from a Project without deleting the underlying resource. The Project Folder can be replaced but not removed unless the Project is archived. v1 Projects require a Project Folder.
+An authorized Project User or Tenant Project Administrator can unlink a Conversation, File Reference, or Memory through Preview, confirmation, and an idempotent Durable Task. The Project Folder can be replaced but not removed from an Active Project.
 
 **Consequences (testable):**
-- Unlinking removes the association from Project Context.
-- Unlinking does not delete the underlying Conversation, File Reference, or Memory.
-- Unlinking is auditable as metadata.
 
-### 4.3 Project Resolution
+- Unlinking removes only the association and never deletes the underlying resource.
+- Preview identifies the affected reference and current Project version.
+- Completion is durable, metadata-only audited, and read-model-confirmed.
+- The operation fails closed on stale authorization or resource evidence.
 
-**Description:** When Chatbot has a Conversation without an explicit Project, Projects helps determine the likely Project from conversation metadata, attached Project Folder or File References, linked Memories, and existing Project metadata. Best practice is to prefer explicit user confirmation over silent attachment when confidence is ambiguous.
+### 6.3 Project Resolution
+
+**Description:** Projects recomputes Candidate Projects from current authorized metadata. Resolution favors explicit intent over silent attachment and does not retain candidate-score history.
 
 #### FR-12: Resolve Project From Conversation
 
-Chatbot can ask Projects to resolve Candidate Projects for a Conversation that has no explicit Project. Realizes UJ-3.
+Chatbot can request Candidate Projects for a Conversation with no explicit Project. Realizes UJ-3.
 
 **Consequences (testable):**
-- Resolution returns a Resolution Result of `NoMatch`, `SingleCandidate`, or `MultipleCandidates`.
-- Candidate Projects include one or more Resolution Reason Codes.
-- Resolution does not access unauthorized Conversations, Project Folders, File References, Memories, or Projects.
-- Resolution excludes archived Projects unless explicitly requested.
+
+- The result is `NoMatch`, `SingleCandidate`, or `MultipleCandidates` with current Resolution Reason Codes.
+- Only Active, read-model-confirmed Projects are considered by default.
+- Pre-activation tasks and unauthorized or stale resources cannot become candidates.
+- The response follows the §5 contract; `Unavailable` and `Denied` never return a selected candidate.
 
 #### FR-13: Resolve Project From Attachments
 
-Chatbot can ask Projects to resolve Candidate Projects from attached Project Folder or File References. Realizes UJ-2.
+Chatbot can resolve Candidate Projects from an attached Project Folder or File References. Realizes UJ-2.
 
 **Consequences (testable):**
-- Matching considers existing Project Folder references and File References.
-- Matching identifies `ProjectFolderMatched` or `FileReferenceMatched` Resolution Reason Codes when applicable.
-- Matching fails closed when Project Folder or File Reference authorization is missing or stale.
-- Matching never treats raw file contents as Project-owned data.
+
+- Matching uses current authorized Folder/File identity and metadata, not file contents.
+- Applicable candidates include `ProjectFolderMatched` or `FileReferenceMatched` reason codes.
+- Missing, stale, or unavailable authorization evidence fails closed.
 
 #### FR-14: Confirm Ambiguous Project
 
-When Project Resolution returns multiple plausible Candidate Projects, Chatbot can present the candidates and record the user's confirmed choice.
+When resolution returns multiple candidates, Chatbot presents an accessible, unselected comparison and records the Project User's choice through a Confirmation Artifact and Durable Task. Realizes UJ-3.
 
 **Consequences (testable):**
-- Projects does not silently attach a Conversation when the Resolution Result is `MultipleCandidates`.
-- User confirmation creates or updates the Project-to-Conversation association.
-- Rejected candidates are not linked.
+
+- No candidate is silently or visually preselected.
+- The artifact is bound to Tenant, actor, action, Conversation, candidates, normalized request, Preview, and current versions; it expires after 15 minutes and is single-use.
+- Stale, expired, replayed, or tampered confirmation is rejected safely and requires a fresh Preview.
+- Only Read-Model-Confirmed Completion creates or updates the Conversation association and audit history.
+- Chatbot supports confirm, cancel, retry, expiry/staleness, lost-response, and task-status states.
 
 #### FR-15: Propose New Project
 
-When Project Resolution cannot find a suitable Project, Chatbot can propose creating a new Project using the current Conversation, attachments, and setup metadata.
+When no suitable Project exists, Chatbot can present a proposed Project and admit creation only after the Project User confirms a bound Preview. Realizes UJ-2.
 
 **Consequences (testable):**
-- The proposal includes a suggested Project name and initial setup metadata when available.
-- No Project is created from inference until authorized user action confirms creation.
-- The created Project links the initiating Conversation and authorized attachments.
 
-### 4.4 Project Context Assembly
+- The proposal may suggest a Project name and setup metadata but creates nothing before confirmation.
+- The Confirmation Artifact binds the initiating Conversation, authorized attachments, Folder plan, normalized request, and current evidence.
+- Confirmed creation follows FR-1 and exposes no Project before Folder binding and read-model confirmation.
+- Non-success outcomes follow the §5 recovery contract; cancellation returns `Cancelled`, terminal failure returns `Failed`, and expired or stale evidence creates no task.
 
-**Description:** Projects provides the Project Context that Chatbot needs for rich conversation. Context assembly must be scoped, explainable, and conservative so Chatbot gets useful continuity without accidental cross-project contamination.
+### 6.4 Project Context Assembly
+
+**Description:** Projects supplies scoped and explainable Project Context without accidental cross-Project contamination.
 
 #### FR-16: Get Project Context
 
-Chatbot can request the Project Context for a Project and receive the setup plus authorized references to Conversations, the Project Folder, File References, and Memories needed for conversation initialization. Realizes UJ-1 and UJ-4.
+Chatbot can request Project Context for an Active Project. Realizes UJ-1 and UJ-4.
 
 **Consequences (testable):**
-- Project Context is tenant-scoped and authorization-filtered.
-- Project Context contains references and metadata, not full payloads owned by other bounded contexts.
-- Project Context indicates which referenced resources were excluded because of authorization, lifecycle, or availability.
+
+- Context is Tenant-scoped, actor-authorized, and available only for a read-model-confirmed Active Project with exactly one authorized Project Folder.
+- It contains Project Setup and reference metadata, not payloads owned by other bounded contexts.
+- It follows the §5 contract, representing every excluded, stale, rebuilding, or unavailable reference as a metadata-only component; `Denied` discloses no protected detail.
 
 #### FR-17: Explain Context Selection
 
-Chatbot can display or log metadata explaining why a Conversation, Project Folder, File Reference, or Memory reference was included or excluded from Project Context. Realizes UJ-4.
+Authorized callers can obtain current metadata explaining why a reference was included or excluded. Realizes UJ-4.
 
 **Consequences (testable):**
-- Explanation metadata does not include secrets, file contents, transcript payloads, prompts, or memory payloads.
-- Explanation supports troubleshooting incorrect context selection.
+
+- Explanations are current Resolution Traces, not reconstructed history.
+- Traces contain no secrets, payloads, prompts, unrestricted paths, raw upstream problems, or unconfirmed-candidate detail.
+- Traces are request-scoped and not persisted; only confirmed outcomes enter audit history.
 
 #### FR-18: Refresh Project Context
 
-Chatbot can request a refreshed Project Context after links, setup, or resource availability changes.
+Chatbot can request a read-only refresh after links, setup, authorization, or resource availability changes.
 
 **Consequences (testable):**
-- Refresh reflects current Project links and lifecycle state.
-- Refresh preserves tenant authorization checks.
-- Stale or unavailable references are surfaced rather than silently ignored.
 
-### 4.5 Project Setup Quality
+- Refresh recomputes from current authorized Project, Conversation, Folder, File Reference, Memory, and version metadata.
+- Refresh itself never mutates Project or reference state and creates no maintenance audit event.
+- The refreshed response follows §5, including new snapshot metadata, component evidence, recovery actions, and the binding transition rules for `Partial`, `Unavailable`, and `Complete`.
 
-**Description:** Project Setup must be useful enough for Chatbot to resume work without making Projects responsible for prompt construction, model orchestration, or payload storage.
+### 6.5 Project Setup Quality
+
+**Description:** Project Setup is useful for Conversation continuity without making Projects responsible for prompt construction, model orchestration, or payload storage.
 
 #### FR-19: Validate Project Setup
 
-Projects validates Project Setup before accepting create or update operations.
+Projects validates setup and creation admission before accepting durable work.
 
 **Consequences (testable):**
-- Setup validation rejects raw secrets, unrestricted local paths, unsupported reference types, and payload data that belongs to Conversations, Folders, or Memories.
-- Setup validation requires only a Project name as user-supplied creation input.
-- Setup validation defaults Project Lifecycle State to `Active`.
-- Setup validation permits the Project Folder to be supplied explicitly or created with the same name as the Project.
-- Setup validation allows durable conversation guidance such as project goals, preferred tone, domain instructions, and context-source preferences.
-- Validation failures return structured errors that identify the rejected setup field without echoing sensitive values.
+
+- Project name remains the only required user-authored creation field.
+- Canonical creation requests require valid system-supplied Metadata Classification; invalid classification is rejected before command submission.
+- Validation permits a supplied authorized Project Folder or same-name Folder creation, but never defaults a caller-visible Project to Active before Folder completion.
+- Validation rejects secrets, unrestricted paths, unsupported references, control/invisible characters where unsafe, and foreign payloads.
+- Failures identify safe field/reason codes without echoing sensitive values.
 
 #### FR-20: Retrieve Conversation-Start Setup
 
 Chatbot can retrieve the subset of Project Setup needed to start or resume a Conversation.
 
 **Consequences (testable):**
-- Conversation-start setup includes project goals, instructions, context preferences, and default linked-source policy.
-- Conversation-start setup excludes internal audit metadata and unavailable or unauthorized references.
-- Conversation-start setup is stable enough for Chatbot to use without re-querying every bounded context before the first response.
 
-### 4.6 Audit and Operations
+- The result includes goals, user-facing instructions, context preferences, and default source policy.
+- It excludes internal audit metadata and unavailable or unauthorized references.
+- It is bound to one authorized `projectVersion` and `asOf` snapshot and follows §5. Chatbot may admit the first response only for `Complete` or `Partial`; `Unavailable` or `Denied` blocks first-response admission and returns the applicable Recovery Action Codes without re-querying every bounded context.
 
-**Description:** Projects must provide enough audit and operational surface for an internal platform module without becoming a standalone admin product.
+### 6.6 Audit and Operations
+
+**Description:** Projects exposes metadata-only operational truth while keeping authority action-specific. Web, CLI, MCP, or Chatbot surface choice never expands permission.
 
 #### FR-21: Record Project Audit Events
 
-Projects records metadata-only audit events for Project lifecycle and context-reference changes.
+Projects records metadata-only audit events for consequential task admission and outcome, confirmed Project mutations, security-relevant confirmation outcomes, reconciliation, and Safe Diagnostic Export.
 
 **Consequences (testable):**
-- Audit events are recorded for Project creation, setup updates, archival, Conversation linking, Conversation moves, Project Folder changes, File Reference linking/unlinking, Memory linking/unlinking, Project Resolution confirmation, and new Project creation from a proposal.
-- Audit events include tenant, Project identity, operation type, timestamp, actor identity where available, and affected reference identifiers.
-- Audit events do not include transcript payloads, file contents, raw prompts, secrets, or Memory payloads.
+
+- Audit covers task admission and terminal outcome; confirmation use, cancellation, stale/replay/tamper rejection, and authorization denial; creation, archive, restore, move/relink, Folder replacement, unlink, confirmed resolution/proposed creation; manual reconciliation; Safe Diagnostic Export; and stable upstream receipt identifiers.
+- Equivalent idempotent retries do not create duplicate audit events.
+- Intermediate task states, polls, retries, dependency latency, notifications, unused expiry, and read-only Resolution Traces remain operational telemetry rather than durable audit.
+- Audit contains Tenant, actor, Project/action identity, timestamp, safe reason/outcome codes, and affected reference identifiers, never payloads or secrets.
 
 #### FR-22: Support Operator Read Access
 
-Authorized operators can inspect Project metadata, lifecycle state, references, resolution outcomes, and audit metadata for troubleshooting.
+Tenant Operators and Tenant Project Administrators can inspect authorized Project metadata, lifecycle state, references, Durable Task status, confirmed resolution outcomes, and audit metadata.
 
 **Consequences (testable):**
-- Operator read access is authorization-gated and tenant-scoped.
-- Operator read access exposes metadata only.
-- Operator read access does not provide write capabilities beyond archive and troubleshooting workflows explicitly exposed by Chatbot or generated/admin surfaces.
 
-## 5. Non-Goals (Explicit)
+- Access is Tenant-scoped, action-authorized, and metadata-only across Web, CLI, and MCP.
+- Project Users may inspect only their own permitted task status through Chatbot.
+- Pre-activation tasks remain separate from Project list/open APIs; Operators/Admins may inspect their safe status, and Administrators may perform authorized reconciliation.
+- Read permission alone grants neither Safe Diagnostic Export nor a mutation.
 
-- Projects will not replace `Hexalith.Conversations` as the conversation system of record.
-- Projects will not replace `Hexalith.Folders` as the Project Folder/File Reference system of record or authorization boundary.
-- Projects will not replace `Hexalith.Memories` as the memory system of record.
-- Projects will not store full conversation transcripts, file contents, raw prompts, secrets, memory payloads, or unrestricted filesystem paths.
-- Projects will not provide generic project management features such as tasks, milestones, kanban boards, schedules, or resource planning in v1.
-- Projects will not bypass Dapr, Hexalith.EventStore, or tenant isolation patterns.
+#### FR-23: Restore Archived Project
 
-## 6. MVP Scope
+An authorized Project User, Tenant Operator, or Tenant Project Administrator can restore an Archived Project through Preview, confirmation, and an idempotent Durable Task. This is the restore counterpart to FR-4 and realizes UJ-5.
 
-### 6.1 In Scope
+**Consequences (testable):**
 
-- Project identity, metadata, setup, lifecycle, and tenant scoping.
-- References from Projects to Conversations, one Project Folder, optional File References, and Memories.
-- Project Resolution from Conversation metadata and attached Project Folder or File References.
-- Candidate Project confirmation and new Project proposal flows.
-- Project listing and Project Context retrieval for Chatbot.
-- Project Setup validation and conversation-start setup retrieval.
-- Metadata-only audit events and operator read access.
-- Metadata-only diagnostics for context inclusion/exclusion.
-- Archive behavior for Projects.
+- Preview verifies Tenant, actor, authority, current Project version, and exactly one authorized Project Folder.
+- If the prior Folder is invalid or missing, Preview requires an authorized replacement or same-name Folder creation before confirmation.
+- The Project remains Archived until Folder evidence and read-model-confirmed restore completion succeed.
+- If Folder creation succeeds but activation cannot commit, the task enters `NeedsAttention`; Projects never automatically deletes a Folders-owned resource.
+- Stale/unavailable evidence, replay, cancellation, duplicate delivery, concurrency, and lost response cannot expose an invalid Active Project.
+- Completion and reconciliation outcomes are metadata-only audited.
 
-### 6.2 Out of Scope for MVP
+#### FR-24: Create Safe Diagnostic Export
 
-- Full-text indexing or semantic retrieval over file contents.
-- Memory payload storage or synthesis.
-- Transcript storage or summarization inside Projects.
-- Standalone end-user UI outside Chatbot or generated/admin surfaces.
-- Generic project management workflows.
-- Cross-tenant project sharing.
+A separately authorized Tenant Operator or Tenant Project Administrator can create a bounded Safe Diagnostic Export through Web, CLI, or MCP.
 
-## 7. Cross-Cutting NFRs
+**Consequences (testable):**
 
-- **Security and privacy:** Projects must enforce tenant isolation across reads, writes, links, resolution, and context assembly. Logs and diagnostics must remain metadata-only.
-- **Reliability:** Project Context retrieval should fail closed when authorization, lifecycle, or referenced-resource availability cannot be verified.
-- **Observability:** Project Resolution and Project Context assembly must emit structured metadata sufficient to troubleshoot incorrect matches without exposing payloads.
-- **Performance:** Project listing, Project opening, Project Resolution, and Project Context retrieval should target p95 under 500 ms when dependent bounded-context metadata is available. This is an internal service target, not a formal external SLA.
-- **Compatibility:** Public contracts should be additive and serialization-tolerant unless a breaking change is explicitly approved.
+- Export permission is distinct from FR-22 read permission; Chatbot cannot create exports.
+- Every attempt and outcome is metadata-only audited.
+- The complete encoded export, including envelope and truncation metadata, is at most 1 MiB and contains at most 500 reference rows and 100 audit rows.
+- Reference ordering is stable and deterministic; audit rows are newest-first with stable tie-breaking.
+- Truncation reports included/omitted counts and safe reasons without excluded detail; exports have no continuation cursor.
+- Upstream unavailability is represented safely without raw errors or fabricated completeness.
+- Projects never retains generated exports.
+
+## 7. Cross-Cutting Non-Functional Requirements
+
+- **NFR-1 — Security and privacy:** Every read, write, task, confirmation, audit event, and export is Tenant-, actor-, action-, target-, and current-version-scoped. Trust-bearing mutations fail closed when authorization evidence is stale, unknown, rebuilding, or unavailable. Logs, telemetry, errors, and evidence remain metadata-only.
+- **NFR-2 — Encryption and key management:** Production traffic uses platform-approved authenticated encryption in transit. Durable Project, task, idempotency, and audit data uses platform-managed encryption at rest. Projects owns no private keys; approved platform KMS/secret-provider rotation and revocation evidence is release-blocking.
+- **NFR-3 — Availability and recovery:** Authenticated metadata APIs and task admission target 99.9% monthly availability excluding planned maintenance. With required dependencies healthy, service RTO after process/node failure is 15 minutes, and accepted tasks resume or reach truthful `NeedsAttention` within 5 minutes.
+- **NFR-4 — Durability and idempotency:** A Project event acknowledged as committed has RPO 0 within the configured primary-region durability domain. Active Projects are never folderless. Equivalent retries return the same task; changed requests conflict. Accepted tasks are never silently dropped or duplicated.
+- **NFR-5 — Performance and scale:** v1 supports 10,000 Projects per Tenant, 5,000 Context References per Project excluding its Folder, and 100,000 retained audit records per Project. Metadata reads target p95 under 500 ms at 1,000 Projects/500 references and p95 under 1 second at the supported maximum. Durable-task admission targets p95 under 500 ms under authenticated warm steady-state with required dependencies available.
+- **NFR-6 — Pagination and export bounds:** Cursor pages default to 50 and cap at 200. Safe Diagnostic Export obeys FR-24's per-export global size/row bounds and a per-Tenant limit of two concurrent exports.
+- **NFR-7 — Back-pressure and dependency control:** Per Tenant, v1 supports 100 metadata reads/second with burst 200, 20 mutation admissions/second with burst 40, 1,000 nonterminal tasks, and 2 concurrent Safe Diagnostic Exports. Interactive dependency timeout defaults to 2 seconds and durable-step timeout to 10 seconds. Idempotent calls retry at most three times within 30 seconds before truthful waiting or intervention status. Overload returns structured retry guidance.
+- **NFR-8 — Retention and transient data:** Active tasks remain pollable until terminal; terminal results and scoped idempotency records remain available for at least 30 days and never less than the associated result lifetime, so the later expiry controls. Preview/Confirmation Artifacts expire after 15 minutes. Audit metadata is retained at least 365 days and never less than applicable retained event-history obligations. Resolution Traces and generated exports are not persisted.
+- **NFR-9 — Accessibility:** Chatbot candidate, confirmation, cancellation, recovery, and task journeys plus operator read/mutation/export journeys conform to WCAG 2.2 AA. They are keyboard operable, visibly focused, announced without color/timing alone, usable at 200% zoom and 320 CSS-pixel width, and verified by automated plus authenticated manual keyboard/screen-reader evidence.
+- **NFR-10 — Compatibility:** Contracts are additive and serialization-tolerant unless a breaking change is explicitly approved. Historical v1 data and unversioned name-only creation remain readable/accepted throughout v1. Retirement requires a major version, migration notice, usage evidence, compatibility tests, and rollback evidence; event history is not rewritten.
+- **NFR-11 — Release evidence:** Authenticated persisted-boundary, cross-Tenant, restart/concurrency, duplicate-delivery, lost-response, accessibility, privacy, performance, deployment, smoke, rollback, and stakeholder-acceptance evidence must pass. A failed critical case or unexplained critical skip blocks release; unavailable environments remain “not verified,” never “passed.”
 
 ## 8. Success Metrics
 
+**Outcome measurement contract**
+
+- User-outcome metrics use rolling 30-day production windows. Release acceptance must first prove the metadata-only measurement path with deterministic authenticated fixtures; production reporting begins when the capability is enabled.
+- An **eligible resumption** is an authorized Conversation-start request for an existing Conversation already associated with an Active Project and with at least one prior read-model-confirmed Project Context. Synthetic/operational traffic and a user's explicit request for a different or new Project before context retrieval are excluded. Degraded, unavailable, abandoned, and timed-out eligible resumptions remain in the denominator.
+- A **continuity success** is an eligible resumption that returns `Complete` or `Partial`, reaches Chatbot first-response admission, and has no context-correction outcome before the next accepted user turn. A **context correction** is a Project switch, reattachment of a reference that was already linked at resumption start, or a Project Setup change explicitly classified as repair of missing prior context.
+- The source is the aggregate of Projects' metadata-only response/admission facts and Chatbot's metadata-only companion outcomes. Measurement records may contain response/freshness/reason/action codes, Task/Resolution outcome, timestamps, an ephemeral correlation token, and correction category; they contain no Conversation text, Project name, prompt, path, foreign payload, or secret. Exact event transport and aggregation belong in architecture/test strategy.
+
 **Primary**
 
-- **SM-1:** Project Context availability — Chatbot can retrieve usable Project Context for active Projects in normal operation. Validates FR-2, FR-16, FR-18.
-- **SM-2:** Resolution usefulness — conversations without explicit Projects produce either a correct Candidate Project or a useful new Project proposal. Validates FR-12, FR-13, FR-14, FR-15.
-- **SM-3:** Context isolation — Project Context never includes unauthorized or unrelated tenant/project references. Validates FR-6, FR-8, FR-9, FR-10, FR-16, FR-17.
-- **SM-4:** Interactive metadata latency — Project list, open, resolution, and context retrieval meet the p95 target in normal internal operation. Validates FR-5, FR-12, FR-16, FR-18.
+- **SM-1 — Safe context availability:** At least 99.9% monthly availability for authenticated Project metadata/context admission, and context is usable only for read-model-confirmed Active Projects with exactly one authorized Project Folder. Validates FR-1, FR-2, FR-16, NFR-3, and NFR-4.
+- **SM-2 — Recoverable Project decisions:** In release acceptance, 100% of creation, archive, restore, confirmation, and cross-context tasks under restart, duplicate delivery, concurrency, and lost response reach the correct terminal state or truthful `NeedsAttention`; recovered tasks meet the 5-minute target. Validates FR-1, FR-4, FR-7, FR-8, FR-11, FR-14, FR-15, and FR-23.
+- **SM-3 — Context and authority isolation:** Zero unauthorized or cross-Tenant disclosures through Project Context, tasks, Confirmation Artifacts, audit, operator access, or Safe Diagnostic Export. Validates FR-12 through FR-18 and FR-21 through FR-24.
+- **SM-4 — Interactive metadata latency:** List, open, resolution, context, and task admission meet NFR-5 at declared median and maximum data shapes. Validates FR-2, FR-5, FR-12, FR-16, and NFR-5.
+- **SM-5 — Accessible completion:** All in-scope Chatbot and operator journeys pass automated checks and authenticated manual keyboard/screen-reader review with no unresolved critical or serious accessibility violation. Validates FR-14, FR-15, FR-22 through FR-24, and NFR-9.
+- **SM-6 — Release evidence integrity:** Zero failed critical cases and zero unexplained critical skips are represented as passing evidence. Validates NFR-11.
+- **SM-7 — Resolution usefulness:** In each rolling 30-day window, at least 90% of authorized Project Resolution episodes with no explicit Project reach an accepted Candidate Project or accepted new-Project proposal within 15 minutes without an operator metadata repair or a Project correction before the next accepted user turn. Synthetic/operational and unauthorized/invalid requests are excluded; expired, abandoned, degraded, and unavailable eligible episodes remain in the denominator. The source is the metadata-only Resolution/Chatbot outcome feed defined above. Validates FR-12 through FR-15.
+- **SM-8 — Continuity without reconstruction:** In each rolling 30-day window, at least 90% of eligible resumptions are continuity successes as defined above. Report numerator, denominator, excluded-count-by-safe-reason, `Partial` count, `Unavailable` count, and context-correction count; a window with no eligible resumptions is reported as insufficient volume, not 100%. Validates UJ-1, FR-2, FR-16, FR-18, FR-20, NFR-1, and NFR-3.
 
 **Counter-metrics**
 
-- **SM-C1:** Do not optimize for automatic attachment rate at the expense of correctness; ambiguous Project Resolution should ask for confirmation.
-- **SM-C2:** Do not optimize context volume at the expense of relevance, security, or prompt quality.
-
-## 9. Open Questions
-
-- None.
-
-## 10. Accepted Planning Decisions
-
-- §1 Vision — v1 is an internal platform and near-term implementation spec for Hexalith.Chatbot, not a public standalone product launch.
-- FR-3 — v1 Project Setup describes conversation behavior and context policy, not model-provider internals.
-- FR-11 — v1 Projects require a Project Folder, but it can be created automatically from the Project name when the user does not supply one.
-- FR-15 — v1 requires confirmation before creating a Project from inference.
-- §7 Cross-Cutting NFRs — v1 latency target is an internal service target, not a formal external SLA.
+- **SM-C1:** Do not optimize automatic attachment rate at the expense of explicit intent, correctness, or replay safety.
+- **SM-C2:** Do not optimize context or export volume at the expense of relevance, authorization, privacy, or bounded response behavior.
+- **SM-C3:** Do not optimize acknowledgement latency by presenting unconfirmed mutation or notification as completion.
+- **SM-C4:** Context corrections must remain at or below 5% of eligible resumptions in each rolling 30-day window; unknown, abandoned, degraded, or unavailable outcomes are reported separately and never reclassified as successes to meet SM-8.

@@ -2,70 +2,50 @@
 
 ## Overall verdict
 
-The PRD is strong enough to feed architecture, UX scoping, and story creation. Its product thesis is clear: `Hexalith.Projects` is a tenant-aware AI workspace boundary for Hexalith.Chatbot, not a generic project-management product. The prior external handoff blocker has been explicitly waived for this PRD closeout and recorded in the decision log.
+The corrected PRD is a strong, decision-ready product contract for downstream UX, architecture, test strategy, and story work: it connects a clear continuity thesis to explicit release-cut logic, observable response semantics, measurable user outcomes, and sourceable gates. Its remaining risks are acknowledged execution and release-evidence deficits, not unresolved PRD ambiguity; the document correctly prevents those deficits from being mistaken for product or release readiness.
 
 ## Decision-readiness — strong
 
-The PRD makes the important v1 choices explicit. The Vision states that v1 is "an internal platform and near-term implementation spec" (§1, lines 16-20), and the feature requirements consistently preserve that boundary: Projects references Conversations, Folders, Files, and Memories without owning their payloads (FR-6 through FR-11, lines 126-182). The single-project Conversation membership, one canonical Project Folder, two lifecycle states, and conservative Project Resolution model are all stated as decisions rather than hidden implementation preferences.
+The product and release choices are explicit and actionable. The release classification distinguishes core user value from release-blocking safety/operations, states that a core-only build is internal evidence rather than a production cut, and explains why FR-22, FR-24, and NFR-11 cannot be silently deferred (§6.2). Accepted Planning Decisions record the material trade-offs and revisit conditions for single-Project Conversation membership, the single Project Folder, nonpersistent resolution history, and legacy request compatibility (§10).
 
-The document has no open questions (§9, lines 357-359), and accepted planning decisions are listed in §10. The decision log records the external handoff waiver used to complete final closeout.
-
-### Findings
-
-None. The previous external handoff blocker was resolved by explicit waiver for this PRD closeout.
+The PRD also distinguishes product completeness from current delivery authorization. It reports no phase-blocking product question (§9), while the addendum preserves the `NOT_READY`, failed-live-evidence, and blocked-release gates with owners and source artifacts (addendum §8.1 and §9). A decision-maker can therefore authorize downstream planning without accidentally authorizing corrective implementation or release.
 
 ## Substance over theater — strong
 
-The PRD avoids template filler. The persona, journeys, non-goals, NFRs, and success metrics all support the same real concern: durable Chatbot continuity without payload duplication or cross-project/tenant leakage. The Non-Goals section does useful exclusion work by rejecting task boards, scheduling, transcript storage, file-content storage, memory payload ownership, and Dapr/EventStore bypasses (§5, lines 303-310).
-
-### Findings
-
-None.
+Every major section does product-specific work. The five journeys drive confirmation, recovery, isolation, and restore behavior (§2.5); the shared response contract defines concrete context states, evidence freshness, recovery actions, fields, and transitions (§3.1); and NFR-1 through NFR-11 provide explicit security, availability, durability, capacity, latency, back-pressure, retention, accessibility, compatibility, and evidence bounds (§7). The addendum contains earned mechanism, migration, package-boundary, and verification depth rather than template furniture.
 
 ## Strategic coherence — strong
 
-The feature set follows a coherent platform thesis. Workspace management, context references, Project Resolution, context assembly, setup quality, and audit/operations are not a loose backlog; they are the pieces needed for Chatbot to safely recover and apply project context across conversations. The success metrics also validate the thesis directly: context availability, resolution usefulness, context isolation, and metadata latency (§8, lines 343-355).
+The document has one consistent thesis: Chatbot should resume the correct durable Project Context without rebuilding work or weakening authorization (§1 and §2.3). Workspace management, references, resolution, context assembly, setup, and operations form a coherent capability arc around that thesis (§4), and §6.2 explains how core value and production safety relate rather than presenting a flat backlog.
 
-### Findings
-
-None.
+The metric set now validates both technical safety and user value. SM-7 measures useful resolution, SM-8 measures continuity without reconstruction, and their rolling-window denominator, exclusions, metadata-only source, and correction outcome are defined explicitly (§8). SM-C1 through SM-C4 prevent attachment rate, volume, acknowledgement speed, or success relabeling from defeating correctness and continuity.
 
 ## Done-ness clarity — strong
 
-Every FR includes testable consequences, and most consequences are framed in terms that architecture and stories can verify. Authorization filtering, fail-closed behavior, metadata-only boundaries, lifecycle behavior, audit fields, and structured validation errors are all concrete. The cross-cutting NFRs include an internal p95 target for metadata operations (§7, line 340) rather than relying on vague "fast enough" language.
+Every FR has testable consequences, and the formerly qualitative context/recovery paths now resolve through the binding §3.1 contract. FR-5 names selection fields; FR-12 distinguishes `Partial`, `Unavailable`, and `Denied`; FR-15 maps expiry, cancellation, dependency delay, intervention, terminal failure, and lost response to observable outcomes; and FR-16, FR-18, and FR-20 define component reporting, recomputation, freshness transitions, and first-response admission.
 
-### Findings
-
-None.
+Non-functional acceptance is bounded rather than adjectival. NFR-3 through NFR-8 specify availability, RTO/recovery, RPO, cardinality, latency, rates, timeouts, concurrency scope, and retention precedence, while NFR-9 through NFR-11 define accessibility, compatibility, and no-false-pass release evidence. The addendum correctly delegates wire schemas, algorithms, fixtures, and gate commands without weakening the observable product contract.
 
 ## Scope honesty — strong
 
-The PRD is explicit about omissions and bounded-context ownership. It repeatedly states that Projects does not store conversation transcripts, file contents, raw prompts, secrets, memory payloads, or unrestricted filesystem paths (§5, lines 303-310). MVP scope and out-of-scope items are consistent with the feature list (§6, lines 312-333).
+Non-Users, Non-Goals, In Scope, and Out of Scope consistently distinguish this internal context platform from project management, content storage/indexing, standalone end-user UI, autonomous MCP confirmation, cross-Tenant sharing, customer-managed keys, and cross-region DR (§2.4, §5, §6.1, and §6.3). The release-cut rule explicitly states that no approved v1 FR/NFR is deferrable and that removing one requires a product-scope decision plus replacement safety/operability treatment (§6.2).
 
-### Findings
-
-None.
+The addendum is equally candid about brownfield reality: Epics 1–5 are history rather than release authorization, the 23 corrective entries are not schedulable stories, live evidence remains failed, and release remains frozen pending `READY`, Story 8.9 evidence, and dated owner disposition (addendum §7 through §9).
 
 ## Downstream usability — strong
 
-The glossary is strong and uses stable domain nouns consistently (§3, lines 52-66). FR IDs are contiguous from FR-1 through FR-22, user journeys are numbered and actor-labelled, and success metrics cross-reference the relevant FRs. This is usable for downstream architecture and story generation.
+The extraction surface is strong for every named downstream consumer. The Glossary and §3.1 define stable domain and response vocabulary; FR, UJ, NFR, SM, and counter-metric IDs are unique and contiguous; requirements cross-reference journeys and metrics; and the addendum routes architecture, UX, API-contract, test-strategy, and epic/story ownership explicitly (addendum §8).
 
-### Findings
-
-None.
+The Evidence and Gate Index closes the prior provenance gap by giving each load-bearing source a path, revision/date, owner, current status, and gated requirement/decision (addendum §9, E-1 through E-8). Story 5.13 is clearly retained as decision provenance while Story 6.2 is the schedulable delivery owner, preventing downstream agents from following the superseded route (addendum §4.2 and E-4/E-5).
 
 ## Shape fit — strong
 
-The document fits an internal platform module. It includes enough user journey context to explain Chatbot interaction behavior, then keeps the main requirement body capability-focused. That is the right shape for a brownfield Hexalith module that will feed architecture and implementation rather than a public consumer launch.
-
-### Findings
-
-None.
+The shape fits a high-stakes brownfield internal platform PRD that feeds multiple downstream artifacts. Compact named journeys carry the user-intent and recovery context without persona theater; capability-grouped FRs and a role matrix define the product contract; quantitative cross-cutting requirements govern release; and implementation, migration, package, and verification detail is kept in the addendum. The result is appropriately rigorous for a chain-top artifact without turning the PRD itself into an architecture or test plan.
 
 ## Mechanical notes
 
-- `prd.md` frontmatter is `status: final`; the missing external handoff was explicitly waived for this PRD closeout.
-- FR IDs are contiguous from FR-1 through FR-22.
-- Success metric IDs are contiguous from SM-1 through SM-4, with SM-C1 and SM-C2 counter-metrics present.
-- No `[ASSUMPTION]` or `[NOTE FOR PM]` markers remain in `prd.md`.
-- No `addendum.md` is currently present.
+- FR-1 through FR-24, UJ-1 through UJ-5, NFR-1 through NFR-11, SM-1 through SM-8, and SM-C1 through SM-C4 are contiguous and unique.
+- Internal section, FR/UJ/SM, and Evidence Index references checked resolve; all E-1 through E-8 artifact paths exist.
+- Glossary terms, response states, Task Status values, role names, and lifecycle vocabulary are materially consistent across `prd.md` and `addendum.md`.
+- Each UJ has a named protagonist carrying context inline.
+- There are no inline `[ASSUMPTION]` or `[NOTE FOR PM]` markers, so Assumptions Index roundtrip is not applicable.
