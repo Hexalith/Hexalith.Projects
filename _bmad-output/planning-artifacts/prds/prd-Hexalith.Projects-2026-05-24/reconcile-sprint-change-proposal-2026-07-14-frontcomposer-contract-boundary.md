@@ -2,41 +2,44 @@
 
 ## Input
 
-- Approved source: `sprint-change-proposal-2026-07-14-frontcomposer-contract-boundary.md` (2026-07-14).
-- Compared with: `prd.md` and `addendum.md`, revised 2026-07-15.
-- Verdict: **Partially reconciled — product intent is preserved, but the addendum needs correction before this input is fully disposed.**
+- Approved source: `sprint-change-proposal-2026-07-14-frontcomposer-contract-boundary.md` (approved 2026-07-14).
+- Compared with: `prd.md`, `addendum.md`, and `.memlog.md` in the current PRD workspace (audited 2026-07-15).
+- Verdict: **Fully reconciled — no current gap remains.**
 
-## Faithfully captured
+## Extracted requirements and decisions
 
-- The PRD correctly makes no feature, journey, role, FR, MVP-scope, or observable Web/CLI/MCP behavior change; the proposal is a technical package-boundary correction.
-- Addendum §4.2 preserves the essential goals of a UI-free reusable contract kernel, public-API and assembly-identity review, cross-surface consumer audit, and generation without runtime MCP/CLI coupling.
-- PRD NFR-10 supplies the compatibility gate for any approved breaking change, while NFR-11 and addendum §7 retain compatibility, privacy, accessibility, parity, and release evidence obligations.
-- The broader addendum correctly routes package mechanics, migration, and verification detail downstream rather than importing physical assembly layout into the capability-oriented PRD.
+### Product requirement content
 
-## Gaps
+- Preserve the approved v1 scope, users, journeys, roles, functional requirements, UX, accessibility, tenant isolation, and observable Web/CLI/MCP behavior; this correction introduces no product feature or MVP-scope change.
+- Preserve additive, serialization-tolerant compatibility unless a breaking change is explicitly approved, and require release evidence that unexplained critical failures or skips cannot be represented as passing.
+- Preserve equivalent cross-surface semantics and supported-consumer behavior after the boundary correction, including descriptor discovery, routes/navigation, views, state names, reason codes, fields, contract versions, accessibility, tenant isolation, and payload-leakage protection.
 
-1. **Selected boundary and owner are not faithfully named.** The approved decision is a non-packable `Hexalith.Projects.UI.Contracts` descriptor host owned and delivered in the Projects repository by Story 5.13. Addendum §4.2 instead says “Contracts-versus-Contracts.UI” and assigns the exact movable-type inventory and package/version transition to the FrontComposer repository's planning flow.
-2. **The concrete package invariant and release gate are missing.** The addendum does not retain `UI.Contracts` → `Contracts`, the prohibition on Contracts dependencies on FrontComposer Shell, Fluxor, Fluent UI, and `Microsoft.AspNetCore.App`, exclusion of `UI.Contracts` from the package inventory, MCP/CLI independence from that host, or Story 5.13 completion as a Contracts package release-readiness condition.
-3. **Compatibility disposition is lossy.** The proposal requires a supported-consumer audit, preservation of logical namespaces and FrontComposer contract versions by default, and an approved migration/package-versioning decision when impact is found. The addendum omits those preservation defaults and changes the conditional decision into a categorical “explicitly approved breaking release” statement.
-4. **Boundary-specific regression evidence is under-specified.** Generic parity and release testing remain, but the addendum does not bind this split to equivalent descriptor discovery, routes/navigation, views, state names, reason codes, fields, and contract versions; retargeted FrontComposer inspection; descriptor tests in the UI lane; package dependency/non-packability gates; and unchanged tenant-isolation, accessibility, and `NoPayloadLeakage` evidence.
+### Implementation and technical how
 
-## Contradictions
+- Move application-specific FrontComposer projection descriptors to a non-packable `Hexalith.Projects.UI.Contracts` assembly owned by the Projects repository; keep reusable DTOs, semantic enums, constants, lifecycle vocabulary, and lightweight `[ProjectionBadge]` metadata in packable `Hexalith.Projects.Contracts`.
+- Enforce dependency direction `UI.Contracts` → `Contracts`; prohibit `Contracts` from depending on FrontComposer Shell, Fluxor, Fluent UI, or `Microsoft.AspNetCore.App`; exclude `UI.Contracts` from the NuGet package inventory; and keep MCP/CLI independent of the descriptor host.
+- Preserve logical namespaces and FrontComposer contract versions by default. Audit supported consumers and require an explicit migration/package-versioning decision if assembly or public-surface impact is found.
+- Retarget descriptor discovery, FrontComposer inspection, UI-lane descriptor tests, package-dependency/non-packability gates, documentation, and sprint evidence to the corrected owner.
+- Treat the proposal's Story 5.13 route as provenance. The current implementation-readiness rebaseline supersedes its delivery vehicle with Story 6.2 without reversing the approved boundary decision.
 
-- There is **no contradiction with the revised PRD's product requirements**; the proposal explicitly preserves them.
-- Addendum §4.2 contradicts the approved proposal by routing Projects' movable-type inventory and transition to the FrontComposer repository. FrontComposer provides precedent and tooling constraints; Projects owns this consumer-side assembly split.
-- The addendum's unconditional breaking-release wording is stronger than the proposal's audit-driven compatibility path. If the stricter NFR-10 interpretation is intended to supersede the proposal, that supersession should be stated explicitly rather than silently substituted.
+## Current coverage
 
-## Qualitative intent at risk
+- `prd.md` correctly remains capability-oriented and unchanged by this technical correction. NFR-10 retains the compatibility rule; NFR-11 retains the release-evidence gate.
+- Addendum §4.2 names the approved non-packable `Hexalith.Projects.UI.Contracts` boundary, Projects ownership, dependency direction, prohibited Contracts dependencies, package exclusion, MCP/CLI independence, namespace/version preservation default, consumer-audit requirement, and Story 6.2 delivery route.
+- Addendum §7.1 binds release readiness to the supported-consumer audit, equivalent generated and cross-surface behavior, retargeted inspection and UI tests, dependency/non-packability gates, tenant isolation, accessibility, and `NoPayloadLeakage` evidence.
+- Addendum §8 E-5 preserves the approved proposal as decision provenance and explicitly records that E-1/E-4 supersede only the original Story 5.13 delivery route with Story 6.2.
 
-- Keep this a surgical ownership correction, not a FrontComposer redesign or reopening of completed functional stories.
-- Move only application presentation descriptors; keep shared DTOs, semantic enums, constants, lifecycle vocabulary, and lightweight badge metadata defined once in packable Contracts.
-- Preserve logical namespaces and contract versions unless a separate compatibility decision approves cleanup.
-- “No MVP delay” does not mean “release-ready”: the Contracts package boundary remains gated on the corrective story and recorded compatibility disposition.
-- Preserve historical story files as evidence while correcting architecture, projection catalog, durable guidance, sprint tracking, and current implementation artifacts.
+## Gap summary
+
+**None remain.** The current PRD/addendum set preserves all product outcomes and routes the assembly layout, type ownership, dependency graph, package mechanics, migration decision, test gates, and delivery tracking to implementation-facing artifacts at the appropriate level of detail.
+
+## Conflict summary
+
+- **No unresolved conflict with `.memlog.md` decisions.** The memory log preserves the UI.Contracts boundary and Contracts package release-readiness gate while keeping technical detail in the addendum.
+- The memory log's reference to Story 5.13 as evidence is historical provenance, not a conflicting current delivery instruction. Addendum §4.2 and §8 E-5 explicitly record the later Story 6.2 route; the boundary decision itself is unchanged.
+- The proposal's “no PRD edits” decision remains satisfied: PRD NFR-10/NFR-11 already express the relevant product-level compatibility and evidence obligations, while the physical assembly split and gates remain implementation/how in the addendum.
 
 ## Disposition
 
-- Leave `prd.md` unchanged.
-- Revise addendum §4.2 to name `Hexalith.Projects.UI.Contracts`, correct ownership to the Projects repository/Story 5.13, retain the dependency and package gates, and express the audit-driven compatibility decision without losing the namespace/version preservation default.
-- Route exact type inventory, assembly scanning, gate commands, story wording, and artifact edits to architecture, epics, test strategy, and repository-local implementation planning.
-- Reconciliation can be marked complete after those addendum corrections; until then, disposition is **revise, then accept**.
+- Leave `prd.md`, `addendum.md`, and `.memlog.md` unchanged.
+- Mark this input **accepted and fully reconciled**.

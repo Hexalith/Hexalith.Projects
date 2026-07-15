@@ -1,6 +1,6 @@
 ---
 title: "PRD: Hexalith.Projects"
-status: draft
+status: final
 created: 2026-05-24
 updated: 2026-07-15
 ---
@@ -71,7 +71,7 @@ v1 does not serve external customers consuming Projects as an independent produc
 - Projects does not replace Conversations, Folders, or Memories as their systems of record or authorization boundaries.
 - Projects does not store full transcripts, file contents, raw prompts, secrets, Memory payloads, unrestricted paths, or raw upstream problems.
 - Projects does not provide generic task management; Durable Tasks are internal truth for Project operations, not user-managed work items.
-- Projects does not persist candidate-score history, Resolution Traces, or later reconstruct transient inference detail.
+- Projects does not persist candidate-score history or Resolution Traces, nor does it later reconstruct transient inference detail.
 - Projects does not expose a standalone end-user UI outside Chatbot and generated/operational surfaces.
 - Projects does not bypass Dapr, Hexalith.EventStore, tenant isolation, or action-level authorization.
 
@@ -99,7 +99,7 @@ The primary user works in Hexalith.Chatbot across multiple Conversations and res
 
 | Role and surface | Purpose | Authority |
 | --- | --- | --- |
-| **Project User (Chatbot)** | Works with authorized Projects and confirms user-intent decisions. | Own permitted Project/task read and Preview; archive/restore; relink/unlink; confirm resolution or proposed creation; no Safe Diagnostic Export. |
+| **Project User (Chatbot)** | Works with authorized Projects and confirms user-intent decisions. | Read access to their own permitted Projects and tasks; permitted Preview, archive, restore, relink, and unlink operations; confirmation of a resolution or proposed creation; no Safe Diagnostic Export. |
 | **Tenant Operator (Web/CLI/MCP)** | Inspects operational metadata and performs authorized lifecycle operations. | Metadata-only read; archive/restore Preview and confirmation; no relink/unlink or resolution/proposal confirmation; Safe Diagnostic Export only with separate authorization. |
 | **Tenant Project Administrator (Web/CLI/MCP)** | Has Tenant Operator capabilities plus authorized administrative association operations. | Metadata-only read; all permitted administrative Preview; archive/restore; relink/unlink; no resolution/proposal confirmation; Safe Diagnostic Export only with separate authorization. |
 | **Service/Workflow Caller** | Acts for a real actor through an authorized workflow. | Delegated scope only; follows the actor's authority and never gains autonomous confirmation or blanket mutation authority. |
@@ -155,7 +155,7 @@ The primary user works in Hexalith.Chatbot across multiple Conversations and res
 
 ## 5. Observable Context and Recovery Contract
 
-Project list, resolution, context, Conversation-start, and proposal-recovery responses share the following logical fields. Exact wire names, casing, serialization, and transport mappings belong in API/architecture contracts; every supported surface must preserve these semantics.
+Project open, list, resolution, context, Conversation-start, and proposal-recovery responses share the following logical fields. Exact wire names, casing, serialization, and transport mappings belong in API/architecture contracts; every supported surface must preserve these semantics.
 
 - `responseState`: one Context Response State.
 - `asOf`: the server timestamp of the authorization and evidence computation.
@@ -201,6 +201,7 @@ Chatbot can open an authorized Project and receive the metadata, lifecycle state
 **Consequences (testable):**
 
 - Opening returns only data visible to the requesting Tenant and actor.
+- Opening follows the Context Response State, Evidence Freshness State, and Recovery Action Code semantics in section 5.
 - Pre-activation creation tasks are not exposed through Project open APIs.
 - Archived or unavailable Projects are identified and cannot silently become active Conversation context.
 
@@ -263,7 +264,7 @@ An authorized Project User or Tenant Project Administrator can move a Conversati
 - Preview binds both Projects, the Conversation, actor, and current resource versions.
 - Completion yields exactly one Project membership and a durable cross-context receipt.
 - Failure, duplicate delivery, or lost response cannot leave two memberships silently valid.
-- The move is metadata-only audited and fails closed when either Project or the Conversation cannot be authorized.
+- The move is audited using metadata only and fails closed when either Project or the Conversation cannot be authorized.
 
 #### FR-8: Set Project Folder
 
@@ -273,7 +274,7 @@ An authorized Project User can set the single Project Folder; a Project User or 
 
 - Every Active Project has exactly one authorized Project Folder.
 - Initial actor-selected binding is idempotent; inferred binding requires confirmation.
-- Replacement binds old and new Folder evidence to the Confirmation Artifact and completes only after authoritative read confirmation.
+- Replacement binds old and new Folder evidence to the Confirmation Artifact and completes only after the authoritative read model confirms the replacement.
 - Projects stores Folder identity and metadata, never file contents or unrestricted paths.
 - `Hexalith.Folders` remains the authorization and system-of-record boundary.
 
@@ -305,7 +306,7 @@ An authorized Project User or Tenant Project Administrator can unlink a Conversa
 
 - Unlinking removes only the association and never deletes the underlying resource.
 - Preview identifies the affected reference and current Project version.
-- Completion is durable, metadata-only audited, and read-model-confirmed.
+- Completion is durable, audited using metadata only, and confirmed by the read model.
 - The operation fails closed on stale authorization or resource evidence.
 
 ### 6.3 Project Resolution
@@ -343,7 +344,7 @@ When resolution returns multiple candidates, Chatbot presents an accessible, uns
 - The artifact is bound to Tenant, actor, action, Conversation, candidates, normalized request, Preview, and current versions; it expires after 15 minutes and is single-use.
 - Stale, expired, replayed, or tampered confirmation is rejected safely and requires a fresh Preview.
 - Only Read-Model-Confirmed Completion creates or updates the Conversation association and audit history.
-- Chatbot supports confirm, cancel, retry, expiry/staleness, lost-response, and task-status states.
+- Chatbot supports states for confirmation, cancellation, retry, expiry or staleness, lost-response recovery, and task status.
 
 #### FR-15: Propose New Project
 
@@ -426,7 +427,7 @@ Projects records metadata-only audit events for consequential task admission and
 
 **Consequences (testable):**
 
-- Audit covers task admission and terminal outcome; confirmation use, cancellation, stale/replay/tamper rejection, and authorization denial; creation, archive, restore, move/relink, Folder replacement, unlink, confirmed resolution/proposed creation; manual reconciliation; Safe Diagnostic Export; and stable upstream receipt identifiers.
+- Audit covers task admission and terminal outcome; confirmation use and cancellation; rejection of stale, replayed, or tampered confirmations; authorization denial; creation, archive, restore, move, relink, Folder replacement, unlink, confirmed resolution, and confirmed proposed creation; manual reconciliation; and Safe Diagnostic Export creation. Audit also records stable upstream receipt identifiers.
 - Equivalent idempotent retries do not create duplicate audit events.
 - Intermediate task states, polls, retries, dependency latency, notifications, unused expiry, and read-only Resolution Traces remain operational telemetry rather than durable audit.
 - Audit contains Tenant, actor, Project/action identity, timestamp, safe reason/outcome codes, and affected reference identifiers, never payloads or secrets.
@@ -439,7 +440,7 @@ Tenant Operators and Tenant Project Administrators can inspect authorized Projec
 
 - Access is Tenant-scoped, action-authorized, and metadata-only across Web, CLI, and MCP.
 - Project Users may inspect only their own permitted task status through Chatbot.
-- Pre-activation tasks remain separate from Project list/open APIs; Operators/Admins may inspect their safe status, and Administrators may perform authorized reconciliation.
+- Pre-activation tasks remain separate from Project list/open APIs; Tenant Operators and Tenant Project Administrators may inspect their safe status, and Tenant Project Administrators may perform authorized reconciliation.
 - Read permission alone grants neither Safe Diagnostic Export nor a mutation.
 
 #### FR-23: Restore Archived Project
@@ -453,7 +454,7 @@ An authorized Project User, Tenant Operator, or Tenant Project Administrator can
 - The Project remains Archived until Folder evidence and read-model-confirmed restore completion succeed.
 - If Folder creation succeeds but activation cannot commit, the task enters `NeedsAttention`; Projects never automatically deletes a Folders-owned resource.
 - Stale/unavailable evidence, replay, cancellation, duplicate delivery, concurrency, and lost response cannot expose an invalid Active Project.
-- Completion and reconciliation outcomes are metadata-only audited.
+- Completion and reconciliation outcomes are audited using metadata only.
 
 #### FR-24: Create Safe Diagnostic Export
 
@@ -462,7 +463,7 @@ A separately authorized Tenant Operator or Tenant Project Administrator can crea
 **Consequences (testable):**
 
 - Export permission is distinct from FR-22 read permission; Chatbot cannot create exports.
-- Every attempt and outcome is metadata-only audited.
+- Every attempt and outcome is audited using metadata only.
 - The complete encoded export, including envelope and truncation metadata, is at most 1 MiB and contains at most 500 reference rows and 100 audit rows.
 - Reference ordering is stable and deterministic; audit rows are newest-first with stable tie-breaking.
 - Truncation reports included/omitted counts and safe reasons without excluded detail; exports have no continuation cursor.
@@ -471,15 +472,23 @@ A separately authorized Tenant Operator or Tenant Project Administrator can crea
 
 ## 7. Cross-Cutting Non-Functional Requirements
 
+### Security, Privacy, Reliability, and Recovery
+
 - **NFR-1 — Security and privacy:** Every read, write, task, confirmation, audit event, and export is Tenant-, actor-, action-, target-, and current-version-scoped. Trust-bearing mutations fail closed when authorization evidence is stale, unknown, rebuilding, or unavailable. Logs, telemetry, errors, and evidence remain metadata-only.
 - **NFR-2 — Encryption and key management:** Production traffic uses platform-approved authenticated encryption in transit. Durable Project, task, idempotency, and audit data uses platform-managed encryption at rest. Projects owns no private keys; approved platform KMS/secret-provider rotation and revocation evidence is release-blocking.
 - **NFR-3 — Availability and recovery:** Authenticated metadata APIs and task admission target 99.9% monthly availability excluding planned maintenance. With required dependencies healthy, service RTO after process/node failure is 15 minutes, and accepted tasks resume or reach truthful `NeedsAttention` within 5 minutes.
 - **NFR-4 — Durability and idempotency:** A Project event acknowledged as committed has RPO 0 within the configured primary-region durability domain. Active Projects are never folderless. Equivalent retries return the same task; changed requests conflict. Accepted tasks are never silently dropped or duplicated.
-- **NFR-5 — Performance and scale:** v1 supports 10,000 Projects per Tenant, 5,000 Context References per Project excluding its Folder, and 100,000 retained audit records per Project. Metadata reads target p95 under 500 ms at 1,000 Projects/500 references and p95 under 1 second at the supported maximum. Durable-task admission targets p95 under 500 ms under authenticated warm steady-state with required dependencies available.
+
+### Scale and Back-pressure
+
+- **NFR-5 — Performance and scale:** v1 supports 10,000 Projects per Tenant, 5,000 Context References per Project excluding its Folder, and 100,000 retained audit records per Project. Metadata reads target p95 under 500 ms at a data shape of 1,000 Projects and 500 references, and p95 under 1 second at the supported maximum. Durable-task admission targets p95 under 500 ms under authenticated warm steady-state with required dependencies available.
 - **NFR-6 — Pagination and export bounds:** Cursor pages default to 50 and cap at 200. Safe Diagnostic Export obeys FR-24's per-export global size/row bounds and a per-Tenant limit of two concurrent exports.
 - **NFR-7 — Back-pressure and dependency control:** Per Tenant, v1 supports 100 metadata reads/second with burst 200, 20 mutation admissions/second with burst 40, 1,000 nonterminal tasks, and 2 concurrent Safe Diagnostic Exports. Interactive dependency timeout defaults to 2 seconds and durable-step timeout to 10 seconds. Idempotent calls retry at most three times within 30 seconds before truthful waiting or intervention status. Overload returns structured retry guidance.
-- **NFR-8 — Retention and transient data:** Active tasks remain pollable until terminal; terminal results and scoped idempotency records remain available for at least 30 days and never less than the associated result lifetime, so the later expiry controls. Preview/Confirmation Artifacts expire after 15 minutes. Audit metadata is retained at least 365 days and never less than applicable retained event-history obligations. Resolution Traces and generated exports are not persisted.
-- **NFR-9 — Accessibility:** Chatbot candidate, confirmation, cancellation, recovery, and task journeys plus operator read/mutation/export journeys conform to WCAG 2.2 AA. They are keyboard operable, visibly focused, announced without color/timing alone, usable at 200% zoom and 320 CSS-pixel width, and verified by automated plus authenticated manual keyboard/screen-reader evidence.
+
+### Retention, Accessibility, Compatibility, and Release Evidence
+
+- **NFR-8 — Retention and transient data:** Active tasks remain pollable until terminal. A terminal result and its scoped idempotency record remain available for at least 30 days or for the result's lifetime, whichever is longer. Preview/Confirmation Artifacts expire after 15 minutes. Audit metadata is retained at least 365 days and never less than applicable retained event-history obligations. Resolution Traces and generated exports are not persisted.
+- **NFR-9 — Accessibility:** Chatbot candidate, confirmation, cancellation, recovery, and task journeys, plus operator read, mutation, and export journeys, conform to WCAG 2.2 AA. They are keyboard operable, visibly focused, announced to assistive technology, do not rely on color or timing alone, and are usable at 200% zoom and a width of 320 CSS pixels. Verification combines automated evidence with authenticated manual keyboard and screen-reader evidence.
 - **NFR-10 — Compatibility:** Contracts are additive and serialization-tolerant unless a breaking change is explicitly approved. Historical v1 data and unversioned name-only creation remain readable/accepted throughout v1. Retirement requires a major version, migration notice, usage evidence, compatibility tests, and rollback evidence; event history is not rewritten.
 - **NFR-11 — Release evidence:** Authenticated persisted-boundary, cross-Tenant, restart/concurrency, duplicate-delivery, lost-response, accessibility, privacy, performance, deployment, smoke, rollback, and stakeholder-acceptance evidence must pass. A failed critical case or unexplained critical skip blocks release; unavailable environments remain “not verified,” never “passed.”
 
@@ -490,7 +499,7 @@ A separately authorized Tenant Operator or Tenant Project Administrator can crea
 - User-outcome metrics use rolling 30-day production windows. Release acceptance must first prove the metadata-only measurement path with deterministic authenticated fixtures; production reporting begins when the capability is enabled.
 - An **eligible resumption** is an authorized Conversation-start request for an existing Conversation already associated with an Active Project and with at least one prior read-model-confirmed Project Context. Synthetic/operational traffic and a user's explicit request for a different or new Project before context retrieval are excluded. Degraded, unavailable, abandoned, and timed-out eligible resumptions remain in the denominator.
 - A **continuity success** is an eligible resumption that returns `Complete` or `Partial`, reaches Chatbot first-response admission, and has no context-correction outcome before the next accepted user turn. A **context correction** is a Project switch, reattachment of a reference that was already linked at resumption start, or a Project Setup change explicitly classified as repair of missing prior context.
-- The source is the aggregate of Projects' metadata-only response/admission facts and Chatbot's metadata-only companion outcomes. Measurement records may contain response/freshness/reason/action codes, Task/Resolution outcome, timestamps, an ephemeral correlation token, and correction category; they contain no Conversation text, Project name, prompt, path, foreign payload, or secret. Exact event transport and aggregation belong in architecture/test strategy.
+- The data source combines Projects' metadata-only response and admission facts with Chatbot's metadata-only companion outcomes. Measurement records may contain response, freshness, reason, and action codes; a Task or Resolution outcome; timestamps; an ephemeral correlation token; and a correction category. They contain no Conversation text, Project name, prompt, path, foreign payload, or secret. The architecture and test strategy define the exact event transport and aggregation.
 
 **Primary**
 

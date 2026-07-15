@@ -1,45 +1,47 @@
-# Source Reconciliation: U+2028/U+2029 Idempotency Parity
+# Final Reconciliation: U+2028/U+2029 Idempotency Canonicalizer Parity
 
-Source: `_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-u2028-u2029-idempotency-parity.md`
-Targets: `prd.md` and `addendum.md`
+## Input
 
-## Verdict
+- Approved source: `sprint-change-proposal-2026-07-14-u2028-u2029-idempotency-parity.md` (approved 2026-07-14).
+- Compared with: the current `prd.md`, `addendum.md`, and `.memlog.md` in this PRD workspace (audited 2026-07-15).
+- Verdict: **Fully reconciled — no current gap remains.**
 
-**Substantially captured; three downstream gaps remain.** The revised PRD now owns the observable retry/idempotency contract, and the addendum preserves Unicode canonicalization parity. No new feature, journey, UI behavior, or public contract shape is needed.
+## Extracted Requirements and Decisions
 
-## Captured Items
+### Product Requirement Content
 
-- **Equivalent retry semantics:** `prd.md` §3 (`Idempotency Key`), FR-1, FR-21, NFR-4, and NFR-8 require scoped keys, original-task replay for equivalent requests, conflict for changed requests, non-duplication, and retained idempotency evidence.
-- **Idempotent mutation behavior:** FR-1, FR-3, FR-4, FR-6, FR-7, FR-11, and FR-23, plus §6.1, establish durable/idempotent behavior across consequential Project workflows.
-- **Unicode parity:** `addendum.md` §2 explicitly requires Unicode-safe request-equivalence canonicalization, including U+2028/U+2029 parity without broadening equivalence.
-- **Compatibility and release posture:** `prd.md` NFR-10/NFR-11 and `addendum.md` §5/§7 require compatibility, rollback, deployment, persisted-boundary, duplicate-delivery, and no-false-pass evidence.
-- **Technical routing:** `addendum.md` §2 and §8 correctly route exact algorithms, idempotency canonicalization, API detail, tests, migration, and story slicing outside the PRD.
-- **No UX/feature change:** The source's no-UX, no-new-FR, no-OpenAPI-shape conclusion is consistent with the revised artifacts.
+- Equivalent retries must remain equivalent across supported server and generated-client surfaces: reuse of the same scoped Idempotency Key with equivalent accepted input returns the original Durable Task, while materially different reuse conflicts and cannot duplicate effects.
+- Accepted descriptive metadata containing U+2028 or U+2029 must not cause cross-surface fingerprint drift. Identifier and envelope contexts must reject those separators where their line-breaking behavior is unsafe.
+- The correction must preserve compatibility: unaffected canonical hashes remain stable, and a canonical-byte change must not invalidate live persisted legacy fingerprints without an approved bounded compatibility treatment.
+- Release evidence must prove the persisted-boundary, duplicate-delivery, compatibility, deployment, smoke, and rollback obligations. An unavailable deployment environment or unresolved critical case is not passing evidence.
+- This is a retry-safety correction, not a new feature, journey, visual behavior, or public API shape. Historical completion records remain historical evidence rather than being rewritten.
 
-## Remaining Gaps
+### Implementation, Verification, and Delivery How
 
-1. **Identifier policy:** FR-19 generically rejects control/invisible characters “where unsafe,” but neither artifact explicitly requires U+2028/U+2029 rejection in identifier/envelope fields while permitting deterministic escaping in accepted descriptive metadata.
-2. **Parity acceptance evidence:** The addendum does not retain the approved direct real-server/generated-helper proof, byte-level parity, non-collision against LF and literal backslash-u text, stability of unaffected hashes, or the prohibition on hand-editing generated `.g.cs` files.
-3. **Deployment-state compatibility gate:** Neither artifact explicitly requires inspection for live persisted legacy fingerprints before changing canonical bytes, nor the source's escalation to a bounded legacy-hash compatibility strategy if affected entries exist.
+- Escape accepted U+2028/U+2029 values in the server canonicalizer exactly as literal backslash-`u` sequences while keeping the generated-client production implementation unchanged; align identifier validation and do not hand-edit generated `.g.cs` files.
+- Invoke the real server validator and a real generated request helper in direct parity tests. Prove byte-identical canonicalization/fingerprints, non-collision with LF and literal backslash-`u` text, and stability of hashes for unaffected input.
+- Inspect deployed durable idempotency state before changing canonical bytes. If affected legacy fingerprints exist, stop the direct change and define a bounded legacy-hash fallback or equivalent compatibility strategy for the retention window.
+- The proposed Epic 5 Story 5.12 slot, architecture wording, sprint-status edit, code/test targets, estimate, build commands, and action-item lifecycle are delivery mechanics. They belong in repository-local architecture, story, sprint, test, and release artifacts rather than the capability-oriented PRD.
 
-## Contradictions and Stale References
+## Current Coverage
 
-- The proposal says **NFR-7** owns field-scoped idempotency. In the revised PRD, the governing product requirement is **NFR-4 — Durability and idempotency**; NFR-7 now covers back-pressure and dependency control. This is a stale citation, not a product-decision conflict.
-- The proposal's “PRD: no change” conclusion is now functionally true only as **no further PRD change**: the revised PRD has since added the idempotency requirements absent from the earlier draft.
-- The proposal's direct-adjustment classification remains conditional; treating the change as unconditionally Minor would contradict its own unresolved deployment-state gate.
+- `prd.md` FR-1 and the Idempotency Key glossary define equivalent retry/original-task behavior and changed-request conflict; the mutation FRs extend durable/idempotent behavior across consequential workflows.
+- `prd.md` FR-19 requires rejection of control/invisible characters where unsafe and safe field-only diagnostics. NFR-4 owns durability and idempotency; NFR-10 owns compatibility and historical readability; NFR-11 owns persisted-boundary, duplicate-delivery, deployment, smoke, rollback, and no-false-pass evidence.
+- Addendum §2 explicitly requires Unicode-safe request-equivalence canonicalization, including U+2028/U+2029 parity without broadening equivalence, and routes exact wire fields and algorithms to downstream design.
+- Addendum §7.2 explicitly requires rejection in identifier/envelope fields, deterministic escaping in accepted descriptive metadata, real-server/generated-helper byte parity, LF and literal backslash-`u` non-collision, unaffected-hash stability, generated-file integrity, deployed-state inspection, and a bounded legacy-hash strategy when affected persisted fingerprints exist.
 
-## Qualitative Intent to Preserve
+## Gap Summary
 
-- This is a retry-safety and security invariant, not cosmetic Unicode normalization.
-- Server and generated SDK must prove the same logical equivalence directly; isolated green tests are insufficient.
-- Accepted human-authored text should remain accepted where intended, while identifiers remain structurally safe and single-line.
-- The fix must not break unaffected consumers or persisted deduplication history.
-- Historical stories and retrospectives remain honest; corrective ownership is added rather than prior completion rewritten.
-- Generated artifacts remain generated; fixes belong in source canonicalizers and durable parity tests.
+**None remain.** The current PRD/addendum set captures the observable idempotency, validation, compatibility, and release-evidence obligations and preserves the separator algorithm, regression vectors, generated-artifact rule, and deployment-state gate at the correct implementation-facing level.
+
+## Conflict Summary
+
+- **No unresolved conflict with `.memlog.md` decisions.** The reliability and retention/replay decisions require idempotent retries, original-task recovery, changed-payload conflict, non-duplication, and retained scoped idempotency evidence. The later memlog changes explicitly route idempotency mechanisms to the addendum and record Unicode idempotency compatibility as a closed reconciliation gap.
+- The proposal's reference to **NFR-7** as the idempotency owner is stale numbering, not a decision conflict. In the current PRD, **NFR-4** owns durability/idempotency; NFR-7 owns back-pressure and dependency control.
+- The proposal's Epic 5 Story 5.12/direct-implementation route is superseded by the later memlog-recorded readiness freeze and sequencing reflected in the addendum: Epics 1–5 remain implementation history, and corrective development is not authorized until the current readiness and release gates pass. This supersedes the delivery vehicle without weakening the approved Unicode parity invariant.
 
 ## Disposition
 
-- **PRD:** Captured; no new FR or product-scope change. Correct references to NFR-4, with NFR-10/NFR-11 supporting compatibility and release evidence.
-- **Addendum/architecture/test strategy:** Carry the three gaps above into the idempotency mechanism, compatibility gate, and verification design.
-- **Epics/sprint/implementation:** Preserve the approved Story 5.12 ownership, code targets, estimate, test commands, and action-item lifecycle in their repository-local artifacts; these are intentionally outside the PRD.
-- **Overall:** Accept as reconciled with three non-PRD downstream gaps and no unresolved product contradiction.
+- Leave `prd.md`, `addendum.md`, and `.memlog.md` unchanged.
+- Accept this input as fully reconciled.
+- Preserve the Unicode parity correction as a downstream implementation and verification obligation subject to the current readiness and deployment-state gates.

@@ -1,33 +1,45 @@
 # Final Reconciliation: CreateProject `metadataClass` Enforcement
 
-**Input:** `_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14.md`
-**Reconciled against:** `prd.md` and `addendum.md`
+**Input:** `_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14.md`  
+**Reconciled against:** `prd.md`, `addendum.md`, and `.memlog.md`  
+**Input status:** Approved 2026-07-14; implementation was explicitly not complete when the proposal was approved.
 
-## Captured Items
+## Extracted Requirements and Decisions
 
-- FR-1 and FR-19 preserve Project name as the only user-authored creation field while requiring valid system-supplied Metadata Classification on canonical requests.
-- Historical unversioned name-only creation remains accepted throughout v1; NFR-10 and addendum section 4.1 require a major-version decision, migration evidence, compatibility tests, and rollback criteria before retirement.
-- Invalid classification is rejected before command submission, with safe field/reason codes that do not echo sensitive values.
-- The classification remains an integration/API safety contract rather than a new UX field, feature, lifecycle change, or schema-driven product expansion.
-- Addendum section 4.1 correctly routes classification source, compatibility adapter, rejection behavior, and contract evidence to downstream contract planning.
+### Product requirement content
 
-## Gaps
+- Project name remains the only required **user-authored** creation input. Metadata Classification is safety metadata supplied by an authenticated integration, not a new user field or UX requirement.
+- A canonical, versioned Create Project request that contains `projectMetadata` must contain a valid `metadataClass`. The allowed wire values are `public_metadata`, `tenant_sensitive`, `credential_sensitive`, and `secret`.
+- Only the historical unversioned name-only request receives the v1 compatibility treatment. It remains accepted throughout v1 and can be retired only through an explicitly approved major version with migration, usage, compatibility, and rollback evidence.
+- Invalid canonical classification must be rejected before command submission, identify only the rejected field, echo no submitted value, and cause no durable effect. The `secret` token is a sensitivity label and never authorizes storage or disclosure of secret content.
+- The correction does not add a lifecycle, domain, event, projection, persistence, UX, or generated-client capability and does not change the existing OpenAPI schema.
 
-1. **Exact wire vocabulary and invalid-input semantics are absent.** The final artifacts do not retain the four allowed values (`public_metadata`, `tenant_sensitive`, `credential_sensitive`, `secret`) or explicitly cover missing, blank, null, non-string, case/whitespace, duplicate-property, and unknown-value behavior.
-2. **Classification ownership and use remain unresolved.** “System-supplied” does not identify which adapter derives the tier, by what policy, how malformed canonical requests are distinguished from the legacy name-only shape, or whether a valid tier is propagated beyond boundary validation.
-3. **The precise boundary/error contract is deferred.** The proposal's authorization-before-parsing order, `400 ValidationFailure`, exact `details.rejectedField`, no-value echo, and guarantee that no command submitter is invoked are only captured at a higher-level intent.
-4. **Implementation acceptance is not preserved.** The OpenAPI required-field/enum test, four-case endpoint matrix, leakage assertion, fingerprint gate, warning-free Release build, and open-until-green sprint-action state are not recorded in the final workspace.
+### Implementation and verification how
 
-## Contradictions
+- Authorization precedes protected-body parsing; classification validation occurs after parsing and before command construction or submission.
+- The approved implementation factors the existing four-value check into one server-owned `SensitiveMetadataTierValidator`, reused by direct Create Project and proposal confirmation without changing proposal-confirmation behavior.
+- Invalid input returns metadata-only `400 ValidationFailure`, with proposal-approved `details.rejectedField = "projectMetadata.metadataClass"`, and never invokes `IProjectCommandSubmitter`.
+- Verification comprises the OpenAPI required-field/reference/exact-enum assertions; the legacy-valid, canonical-valid, canonical-missing, and canonical-unsupported endpoint matrix; leakage/no-command assertions; the OpenAPI fingerprint gate; focused contract/server tests; and a warning-free Release build.
+- The implementation action remains open until those gates are green and their exact commands/results are recorded; proposal approval alone is not implementation or release evidence.
 
-- There is **no direct product-contract contradiction**: strict canonical classification and deliberate legacy acceptance coexist, and classification is not user-authored.
-- FR-19's statement that validation rejects “secrets” is potentially ambiguous beside the allowed classification token `secret`. The final interpretation must be that secret content/payloads are rejected; the `secret` sensitivity label itself remains valid and authorizes no payload storage or disclosure.
-- Proposal approval does not mean implementation completion. The input explicitly says the correction was not yet implemented; the final PRD's product readiness must not be read as evidence that its server/test gates passed.
+## Coverage in the Current PRD Workspace
 
-## Qualitative Intent at Risk
+- `prd.md` §2.1, FR-1, FR-19, and NFR-10 preserve the user-input boundary, strict canonical classification, deliberate legacy compatibility, pre-submission rejection, safe errors, and major-version retirement gate.
+- `addendum.md` §4.1 preserves the four-value vocabulary, canonical-versus-legacy shape distinction, authenticated integration ownership, malformed-value cases, exact `projectMetadata.metadataClass` rejected-field path, no-value echo, no-command behavior, shared-validator reuse, and compatibility retirement conditions.
+- `addendum.md` §7.1 preserves the OpenAPI/endpoint/leakage/shared-validator/fingerprint/build verification categories and the open-until-green sprint-action rule.
+- `addendum.md` E-9 cites the approved proposal and records its implementation/evidence status without treating planning approval as completion.
+- `.memlog.md` records the canonical-versus-legacy product decision, classifies detailed wire/error/test material as addendum content, and explicitly corrects its earlier overstatement after the three reconciliation fixes.
 
-The critical intent is “strict canonical path, tolerant only on the intentional legacy path.” Classification must remain integration-supplied rather than becoming user burden; direct creation and proposal confirmation must share one vocabulary; invalid input must cause no durable effect and no metadata leakage; and the bounded fix must not trigger schema, generated-client, UX, domain, infrastructure, or MVP churn.
+## Remaining Gaps
+
+None remain. The product contract is captured in `prd.md`; the API-boundary mechanism, exact error contract, compatibility treatment, implementation decision, verification matrix, proposal provenance, and open-until-green status are captured in `addendum.md` without promoting technical how into the PRD.
+
+## Memlog Conflict Audit
+
+- No current conflict remains. The canonical-classification and historical-compatibility decisions agree with the proposal, PRD, and addendum.
+- The latest memlog change explicitly corrects the earlier closure overstatement and matches the repaired rejected-field path, shared-validator decision, and E-9 traceability.
+- No memlog entry says the implementation or verification gates passed. The proposal's “not yet implemented” state remains consistent and cannot be upgraded to completion by inference.
 
 ## Disposition
 
-**Verdict: Substantially captured; four contract/implementation gaps remain.** Keep the PRD product contract unchanged. Preserve the proposal as the canonical technical source and carry gaps 1–4 into the API contract, compatibility adapter, server implementation, and focused test/release evidence. Treat the sprint action as open until those gates are green and recorded.
+**Verdict: Fully reconciled; no gaps or memlog conflicts remain.** Keep the PRD product requirements unchanged and continue to treat implementation completion as contingent on recorded green evidence.

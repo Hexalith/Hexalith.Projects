@@ -1,31 +1,33 @@
 # Final Reconciliation: Sprint Change Proposal 2026-07-06
 
-**Input:** `_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-06.md`
-**Reconciled against:** `prd.md` and `addendum.md`
+**Input:** `_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-06.md`  
+**Reconciled against:** `prd.md`, `addendum.md`, and `.memlog.md`
 
-## Faithfully Captured
+## Extracted Requirements and Decisions
 
-- The proposal does not change product scope, UX, APIs, runtime behavior, epics, or MVP requirements. The PRD correctly contains no package-management requirement, and addendum section 7 explicitly classifies the shared-build proposal as implementation evidence rather than PRD functionality.
-- The proposal's shared blast radius and incomplete proof are preserved in principle: addendum section 7 requires authoritative file-scope plus release/pointer evidence before the correction is treated as complete.
-- The need for repository-local authorization is captured: addendum section 5 states that upstream work in FrontComposer, Conversations, or other sibling repositories requires its own approved story and verification.
+### Product requirement content
 
-## Gaps
+- No product requirement changes are proposed: product scope, UX, APIs, domain behavior, runtime behavior, epics, story acceptance criteria, and MVP scope remain unchanged.
+- The PRD therefore correctly contains no package-management Functional Requirement or Non-Functional Requirement.
 
-1. **The centralization invariant is not stated.** Neither final document says that `Hexalith.Builds` must be the single owner of `NSwag.MSBuild` `14.7.1` and `Fluxor.Blazor.Web` `6.9.0`, while Projects remains import-only with versionless `PackageReference` entries and `CentralPackageTransitivePinningEnabled`.
-2. **The actual repository/file scope is unresolved.** The proposal names Projects, Builds, FrontComposer, and Conversations, but the addendum does not record which edits were approved independently or dispose the adjacent Conversations `Microsoft.Playwright` cleanup.
-3. **Acceptance evidence is unspecified.** The addendum calls for evidence but omits the proposal's restore/Release-build gates, targeted central-resolution check, actual results, and the Builds submodule commit/root-pointer state needed for reproducibility.
-4. **Behavior-preserving version governance is implicit only.** The instruction to copy exact versions without upgrading, preserve generated/client/runtime behavior, and roll back on restore/build failure is not retained in the final artifacts.
+### Implementation and technical-how content
 
-## Contradictions
+- `Hexalith.Builds` is the single version owner for `NSwag.MSBuild` `14.7.1` and `Fluxor.Blazor.Web` `6.9.0`; Projects consumes the central versions through versionless `PackageReference` entries, retains `CentralPackageTransitivePinningEnabled`, and must not reintroduce local pins.
+- Approved implementation scope must be explicit across Projects, Builds, FrontComposer, and Conversations, including the disposition of the adjacent Conversations `Microsoft.Playwright` cleanup and the independently authorized sibling-repository edits.
+- The correction copies exact versions without an opportunistic upgrade, preserves generated-client and runtime behavior, and rolls back on restore or build failure.
+- Acceptance requires restore and warning-free Release-build results, targeted central-resolution proof, exact changed-file scope, repository approvals, resolved package output, the Builds commit, and the root submodule-pointer state.
 
-- There is **no product-contract contradiction** between the proposal and the PRD.
-- The proposal says the change is approved and implemented, while the revised addendum treats it as incomplete until authoritative scope, release, and pointer evidence exists. Reconcile these as: implementation may have occurred, but acceptance remains unverified.
-- The proposal itself is internally inconsistent: its checklist still says approval/implementation are pending, and its “two-file” plan conflicts with the four-file scope. The final PRD/addendum correctly do not inherit those claims.
+These technical decisions are correctly routed to addendum sections 4.3 and 7.1 rather than promoted into the product contract. The sibling-repository authorization boundary is also retained in addendum section 5.
 
-## Qualitative Intent at Risk
+## Current Gaps
 
-The unstated intent is Tenants-style consistency: one authoritative package-version owner, reduced cross-module drift, no opportunistic upgrades, and verification proportional to the shared `Hexalith.Builds` blast radius. Losing that intent could allow local pins or unverified sibling cleanup to return while still appearing compliant with the final PRD.
+**None remain.** The current addendum now captures the central ownership invariant, exact versions, import-only Projects posture, four-repository scope and Conversations-cleanup disposition requirement, no-upgrade/behavior-preservation/rollback constraints, and the complete acceptance-evidence obligation. The source itself supplies no actual restore/build output, resolved-package evidence, Builds commit, or root pointer proof; addendum section 4.3 correctly classifies any implementation claim without that evidence as unverified rather than silently accepting it.
+
+## Conflict Audit
+
+- **Memlog conflicts:** None. The proposal changes implementation governance only and does not contradict any recorded product decision. Memlog entries recording technical-how routing to `addendum.md` and closure of the shared-build reconciliation gaps agree with the current documents.
+- **Source-status inconsistency:** The proposal header and approval section say “Approved and implemented,” while checklist items 6.3 and 6.5 still say approval and implementation are pending. Its “two-file implementation plan” also conflicts with its four-file expected and handoff scope. The current addendum safely resolves these inconsistencies by requiring objective acceptance evidence and treating the implementation claim as unverified until that evidence exists.
 
 ## Disposition
 
-**Verdict: Partially captured; product scope is safely reconciled, but technical governance is incomplete.** Keep `prd.md` unchanged. Preserve the proposal as the canonical technical input, and carry gaps 1-4 into a repository-local build-governance/implementation record or a focused addendum subsection. Do not treat the correction as accepted solely from the proposal's status; require exact changed-file scope, repository approvals, restore/Release-build evidence, resolved package versions, and Builds commit/pointer evidence.
+**Fully captured, with implementation acceptance intentionally unverified.** Keep `prd.md` unchanged. Retain the technical governance in `addendum.md`; do not infer completion or release acceptance from the proposal status alone.
