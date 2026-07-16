@@ -5,7 +5,7 @@ status: blocked
 # BMad Dev Auto Result
 
 Status: blocked
-Blocking condition: corrective implementation frozen by approved rebaseline (sprint-change-proposal-2026-07-15.md)
+Blocking condition: no superseding independent implementation-readiness rerun has returned READY
 
 ## Auto Run Result
 
@@ -41,3 +41,17 @@ replacement reaches `ready-for-dev`.
 
 Note: `epic-6-context.md` was compiled during this run as workflow context; it is a regenerable
 context artifact, not a story spec, and records the containment constraint.
+
+### Revalidation on 2026-07-16
+
+Status: blocked
+Blocking condition: no superseding independent implementation-readiness rerun has returned READY
+
+- The Epic 6 context was regenerated from the current planning artifacts because architecture and
+  readiness inputs had changed after the cached context was created.
+- The latest applicable independent verdict remains
+  `_bmad-output/planning-artifacts/implementation-readiness-report-2026-07-15.md` with
+  `overallReadiness: NOT_READY`.
+- The refreshed Epic 6 context retains the containment rule that corrective implementation is not
+  schedulable until an independent readiness rerun returns exactly `READY`.
+- No Story 6.1 spec or implementation change was created because doing so would violate that gate.
