@@ -292,7 +292,7 @@ Story 3.4 does NOT realize any new Epic 2 retrospective action item. The carry-f
   - [x] Rows 2 / 3 / 7 are mutation-only (route/body identity mismatch, missing Idempotency-Key on mutation, unknown Idempotency-Key retry conflict) — explicitly mark N/A in the Dev Agent Record.
 
 - [x] **Task 10 — Validation. (AC: 17, 18, 19)**
-  - [x] Use the build environment from [[build-environment]]: `DOTNET_ROOT=/home/administrator/.dotnet` (`dotnet --version` 10.0.302). Avoid `/usr/bin/dotnet`.
+  - [x] Use the build environment from [[build-environment]]: `DOTNET_ROOT=/home/administrator/.dotnet` (`dotnet --version` 10.0.300). Avoid `/usr/bin/dotnet`.
   - [x] Run `dotnet build Hexalith.Projects.slnx`. Confirm 0 W / 0 E.
   - [x] Run focused lanes:
     - `dotnet test tests/Hexalith.Projects.Tests` (baseline 427 + ~30 = ~457).

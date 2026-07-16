@@ -163,7 +163,7 @@ The policy is computed at query time from inputs the host assembles outside Stor
   - [x] Determinism: write a test that runs the policy twice with the same inputs and asserts record-equality (every list ordered, every record bytewise stable). Also assert ordering is stable when input lists are permuted.
 
 - [x] **Task 7 — Validation. (AC: 7, 10, 11, 13, 15, 16, 18)**
-  - [x] Use the build environment recorded in [[build-environment]]: `DOTNET_ROOT=/home/administrator/.dotnet` (`dotnet --version` 10.0.302). Avoid `/usr/bin/dotnet` (resolves to 10.0.108 and fails `rollForward: latestPatch`).
+  - [x] Use the build environment recorded in [[build-environment]]: `DOTNET_ROOT=/home/administrator/.dotnet` (`dotnet --version` 10.0.300). Avoid `/usr/bin/dotnet` (resolves to 10.0.108 and fails `rollForward: latestPatch`).
   - [x] Run `dotnet build src/Hexalith.Projects/Hexalith.Projects.slnx`. Confirm 0 warnings / 0 errors.
   - [x] Run focused lanes: `dotnet test tests/Hexalith.Projects.Tests`, `Hexalith.Projects.Server.Tests`, `Hexalith.Projects.Contracts.Tests`, `Hexalith.Projects.Client.Tests`, `Hexalith.Projects.Integration.Tests`. Record per-lane counts. Story 2.7 left lanes at 213/181/128/31/14 — Story 3.1 adds Tier-1 tests to Projects.Tests only; Server/Contracts/Client/Integration are not expected to change (allowed to grow by zero or by a small number for the new Contracts type serialization).
   - [x] Run full-solution `dotnet test Hexalith.Projects.slnx`. Record total. Baseline 567 (post-2.7); Story 3.1 grows it by ~50–80; failed must be 0.

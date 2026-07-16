@@ -362,7 +362,7 @@ Verified against the checked-out root configuration, centralized package catalog
 
 | Name | Version |
 | --- | --- |
-| .NET SDK feature-band policy | 10.0.302 with `rollForward: latestPatch`; reviewed environment resolved 10.0.302 |
+| .NET SDK feature-band policy | Current repository pin `10.0.302` with `rollForward: latestPatch`; the 2026-07-15 reviewed environment resolved `10.0.301` |
 | Target framework | `net10.0` |
 | C# | 14 (`LangVersion=latest`) |
 | Hexalith.EventStore package binding | 3.67.3; API evidence only from published 3.67.3 packages or a clean 3.67.3 build |

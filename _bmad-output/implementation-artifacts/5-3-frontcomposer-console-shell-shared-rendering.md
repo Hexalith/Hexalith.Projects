@@ -143,7 +143,7 @@ so that every view shares one navigation, vocabulary, and interaction model.
 
 ### Latest Technical Context
 
-- Local authoritative package state on 2026-05-30: .NET SDK `10.0.302`, `net10.0`, warnings-as-errors, central package management, Dapr `1.17.9`, Aspire `13.3.5`, Fluxor `6.9.0`, bUnit `2.7.2`, and Fluent UI Blazor `5.0.0-rc.3-26138.1` through the FrontComposer submodule. Use local pins; do not use stale project-context RC2 text as permission to downgrade. [Source: Directory.Packages.props] [Source: Hexalith.FrontComposer/Directory.Packages.props]
+- Local authoritative package state on 2026-05-30: .NET SDK `10.0.300`, `net10.0`, warnings-as-errors, central package management, Dapr `1.17.9`, Aspire `13.3.5`, Fluxor `6.9.0`, bUnit `2.7.2`, and Fluent UI Blazor `5.0.0-rc.3-26138.1` through the FrontComposer submodule. Use local pins; do not use stale project-context RC2 text as permission to downgrade. [Source: Directory.Packages.props] [Source: Hexalith.FrontComposer/Directory.Packages.props]
 - External check on 2026-05-30: NuGet shows `Microsoft.FluentUI.AspNetCore.Components` `5.0.0-rc.3-26138.1` in the prerelease version list and `net10.0` compatibility; the package docs describe `AddFluentUIComponents()` and the component providers required by Fluent UI apps. This confirms the existing pinned posture and does not authorize dependency churn. [Source: https://www.nuget.org/packages/Microsoft.FluentUI.AspNetCore.Components]
 
 ### Hard Stops
@@ -272,7 +272,7 @@ Read every file in the File List and cross-referenced against git reality. Git c
 
 ### Verification (re-run after fixes)
 
-- `dotnet build Hexalith.Projects.slnx -warnaserror` → 0 warnings / 0 errors (SDK 10.0.302).
+- `dotnet build Hexalith.Projects.slnx -warnaserror` → 0 warnings / 0 errors (SDK 10.0.300).
 - `dotnet test` (sandbox disabled, `-m:1`): UI 35/35, ProjectVocabulary 30/30, NoPayloadLeakage 52/52.
 - `pwsh tests/tools/run-frontcomposer-inspect-gate.ps1` → PASSED (repo-local CLI; 7 generated files, no warnings).
 - `git diff --check` clean; no submodule pointer change.

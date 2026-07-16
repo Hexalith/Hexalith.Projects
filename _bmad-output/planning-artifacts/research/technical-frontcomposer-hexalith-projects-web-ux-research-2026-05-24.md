@@ -65,7 +65,7 @@ This section establishes the verified technology landscape that FrontComposer si
 
 ### Core Platform & Language — .NET 10 / C#
 
-- **.NET SDK `10.0.302`** pinned via `global.json` with `rollForward: latestPatch`; primary projects target `net10.0`; Roslyn SourceTools target `netstandard2.0`; Contracts multi-target `net10.0;netstandard2.0`. (Confidence: High — repo source.)
+- **.NET SDK `10.0.300`** pinned via `global.json` with `rollForward: latestPatch`; primary projects target `net10.0`; Roslyn SourceTools target `netstandard2.0`; Contracts multi-target `net10.0;netstandard2.0`. (Confidence: High — repo source.)
 - **C#** with nullable enabled, implicit usings, `TreatWarningsAsErrors=true`, `LangVersion=latest`. File-scoped namespaces, `_camelCase` private fields, `I`-prefixed interfaces, `Async` suffix. (Confidence: High — repo `Directory.Build.props` + `.editorconfig`.)
 - .NET 10 is the current LTS line; Blazor's render-mode and prerender story is materially improved in this release (see UI layer below). (Confidence: High.)
 - _Implication for Projects:_ Contracts that feed the generator must remain `netstandard2.0`-safe; any `net10.0`-only API in a projection contract must be guarded or isolated.
@@ -434,7 +434,7 @@ The resolution trace is the one view whose layout the generated DataGrid/detail 
 
 ### Technology Stack Recommendations
 
-- Keep all pinned versions (Fluent UI `5.0.0-rc.2`, Fluxor `6.9`, Roslyn `4.12`, MCP `1.2`, .NET SDK `10.0.302`). Defer any Fluent UI bump until v5 GA; evaluate MCP `1.2→1.3` separately for breaking changes.
+- Keep all pinned versions (Fluent UI `5.0.0-rc.2`, Fluxor `6.9`, Roslyn `4.12`, MCP `1.2`, .NET SDK `10.0.300`). Defer any Fluent UI bump until v5 GA; evaluate MCP `1.2→1.3` separately for breaking changes.
 - Reuse EventStore/Tenants testing fakes and the Shell's storage/service doubles; do not introduce new assertion/mocking libraries.
 
 ### Skill Development Requirements

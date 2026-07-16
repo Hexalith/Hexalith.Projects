@@ -58,7 +58,7 @@ The full synthesis below converts the research into an implementation strategy: 
 
 ### Programming Languages
 
-Hexalith.Projects should follow the existing Hexalith module baseline: C# on .NET, using SDK-style projects and `net10.0` where the workspace already pins .NET 10. The root project context states the umbrella repo uses `.NET SDK 10.0.302`, nullable reference types, implicit usings, warnings-as-errors, and module-specific solution files. Microsoft's target framework documentation lists `net10.0` as the target framework moniker for .NET 10, which aligns with the current repo configuration.
+Hexalith.Projects should follow the existing Hexalith module baseline: C# on .NET, using SDK-style projects and `net10.0` where the workspace already pins .NET 10. The root project context states the umbrella repo uses `.NET SDK 10.0.300`, nullable reference types, implicit usings, warnings-as-errors, and module-specific solution files. Microsoft's target framework documentation lists `net10.0` as the target framework moniker for .NET 10, which aligns with the current repo configuration.
 
 For tenant integration, C# records remain the right contract shape for commands, events, rejections, and query DTOs. `Hexalith.Tenants.Contracts` already exposes command/event/query contracts such as `CreateTenant`, `AddUserToTenant`, `TenantCreated`, `UserAddedToTenant`, `ListTenantsQuery`, and `GetUserTenantsQuery`. Projects should define its own project-domain contracts rather than reusing tenant event payloads as project state, but it should reference `Hexalith.Tenants.Contracts` for tenant identifiers, roles, statuses, and event handling.
 

@@ -130,7 +130,7 @@ starter template applies; the "starter" is the established Hexalith module scaff
 All package versions are centrally pinned (`Directory.Packages.props`) and governed by the
 "do not casually upgrade" rule. Volatile dependencies were web-verified in the 2026-05-24
 research: Fluent UI Blazor 5.0.0-rc.2 (RC1 2026-02-18), MCP C# SDK v1.0 (2026-03-05),
-.NET SDK 10.0.302, Dapr 1.17.x, Roslyn 4.12.0, Fluxor 6.9.0, Aspire 13.4.6, xUnit v3.
+.NET SDK 10.0.300 at research time (current repository pin: 10.0.302), Dapr 1.17.x, Roslyn 4.12.0, Fluxor 6.9.0, Aspire 13.4.6, xUnit v3.
 This step selects a scaffold pattern, not versions.
 
 ### Starter Options Considered

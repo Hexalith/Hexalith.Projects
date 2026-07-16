@@ -195,7 +195,7 @@ The exact C# member names may vary if the OpenAPI/client generator requires a be
 
 ### Library / Framework Requirements
 
-- Use repository pins: .NET SDK `10.0.302`, target `net10.0` except low-dependency Contracts where already configured, Dapr `1.17.9`, NSwag.MSBuild `14.7.1`, Newtonsoft.Json `13.0.4` for generated client, YamlDotNet `17.1.0`, xUnit v3 `3.2.2`, Shouldly `4.3.0`, NSubstitute `5.3.0`.
+- Use repository pins: .NET SDK `10.0.300`, target `net10.0` except low-dependency Contracts where already configured, Dapr `1.17.9`, NSwag.MSBuild `14.7.1`, Newtonsoft.Json `13.0.4` for generated client, YamlDotNet `17.1.0`, xUnit v3 `3.2.2`, Shouldly `4.3.0`, NSubstitute `5.3.0`.
 - Central Package Management is active. New `PackageReference` entries must not have inline `Version`; add/adjust `<PackageVersion />` only in `Directory.Packages.props` if unavoidable. Microsoft Learn documents this as the CPM model and NU1008 failure mode.
 - Use `System.Text.Json` for hand-written server/domain JSON. `JsonUnmappedMemberHandling.Disallow` is available in modern .NET and throws on unmapped object properties; use it for request DTO strictness where the current endpoint pattern already does.
 - Do not use Newtonsoft.Json in domain/server hand-written code. The generated NSwag client already uses Newtonsoft.Json because `nswag.json` pins that generator setting.

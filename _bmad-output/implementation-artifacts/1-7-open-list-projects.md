@@ -141,7 +141,7 @@ This story completes the Epic 1 read side over the projections established in St
 
 ### Library / Framework Requirements
 
-- Use the repository-pinned stack: .NET SDK `10.0.302`, `net10.0`, nullable, implicit usings, warnings-as-errors, central package management.
+- Use the repository-pinned stack: .NET SDK `10.0.300`, `net10.0`, nullable, implicit usings, warnings-as-errors, central package management.
 - OpenAPI/NSwag are already pinned (`NSwag.MSBuild 14.7.1`, `YamlDotNet 17.1.0` through central package management). Regenerate from the spine; no manual `.g.cs` edits.
 - Tests use xUnit v3 + Shouldly. Keep Tier-1 tests pure: no Dapr, Aspire, network, containers, browser, or wall-clock waits.
 - No external latest-version change is required for this story; local version pins and generated-contract gates are authoritative. Do not upgrade Fluent UI, Dapr, Aspire, Roslyn, Fluxor, xUnit, NSwag, or the SDK.

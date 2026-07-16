@@ -67,7 +67,7 @@ AC1 and AC2 are the authoritative epic ACs (BDD, source: `_bmad-output/planning-
 **AC10 - Tests cover query, mutation, recovery, leakage, and generated artifacts.**
 **Given** this story adds a new read-style preview and a composite mutation
 **When** validation runs
-**Then** Tier-1 pure proposal/mapper tests, Tier-2 endpoint/orchestration tests, contract/client tests, no-payload leakage tests, idempotency/retry tests, and the applicable `docs/checklists/mutation-and-query-negative-tests.md` rows pass under SDK `10.0.302`.
+**Then** Tier-1 pure proposal/mapper tests, Tier-2 endpoint/orchestration tests, contract/client tests, no-payload leakage tests, idempotency/retry tests, and the applicable `docs/checklists/mutation-and-query-negative-tests.md` rows pass under SDK `10.0.300`.
 
 **AC11 - Epic 4 closes cleanly.**
 **Given** Story 4.5 is the last Epic 4 implementation story
@@ -275,7 +275,7 @@ There is no distributed transaction across EventStore and Conversations. The sto
 
 ### Latest Technical Information
 
-- No external package or framework research is required for this story. The project pins SDK `10.0.302`, .NET `net10.0`, Dapr/Aspire versions, xUnit generation, Fluent UI RC, and NSwag generation locally in project files and `_bmad-output/project-context.md`.
+- No external package or framework research is required for this story. The project pins SDK `10.0.300`, .NET `net10.0`, Dapr/Aspire versions, xUnit generation, Fluent UI RC, and NSwag generation locally in project files and `_bmad-output/project-context.md`.
 - Do not upgrade packages, change central package versions, or alter generated-client tooling as part of Story 4.5.
 
 ### References

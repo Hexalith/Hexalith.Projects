@@ -74,7 +74,7 @@ This stack is derived from the module manifest (`Hexalith.Memories/Directory.Pac
 
 ### Programming Languages & Runtime
 
-- **.NET 10 / C# 14**, all projects target `net10.0`; SDK pinned to `10.0.302` (`global.json`). Nullable, implicit usings, and **warnings-as-errors** are on; **central package management** is mandatory (versions in `Directory.Packages.props`, never inline).
+- **.NET 10 / C# 14**, all projects target `net10.0`; SDK pinned to `10.0.300` (`global.json`). Nullable, implicit usings, and **warnings-as-errors** are on; **central package management** is mandatory (versions in `Directory.Packages.props`, never inline).
 - _Consumer impact:_ to reference the **client/contracts library in-process** you must build on `net10.0`. If you integrate purely over **REST**, runtime is irrelevant — any HTTP client works.
 - _Source:_ `Directory.Packages.props`, `global.json`; module `project-context.md`.
 
@@ -109,7 +109,7 @@ This stack is derived from the module manifest (`Hexalith.Memories/Directory.Pac
 
 - **Observability:** OpenTelemetry **1.15.3** core/exporter (+ AspNetCore 1.15.2, Http/Runtime 1.15.1, StackExchange.Redis 1.15.1-beta.1) — OTLP traces/metrics/logs via `MemoriesActivitySource`/`MemoriesMeter` with low-cardinality tags. _Source:_ `Directory.Packages.props` (versions pinned lock-step, Story 8.5/10.1).
 - **Testing:** xUnit **v3** (`3.2.2`), Shouldly `4.3.0`, NSubstitute `5.3.0`, Testcontainers `4.11.0`, bUnit `2.7.2`, `Aspire.Hosting.Testing`, `Microsoft.AspNetCore.Mvc.Testing` (Tier-2 WAF tests, no Docker).
-- **Local platform prerequisites:** Docker Desktop (Redis Stack + FalkorDB containers), .NET SDK 10.0.302+, `git` with submodules. _Source:_ `README.md`.
+- **Local platform prerequisites:** Docker Desktop (Redis Stack + FalkorDB containers), .NET SDK 10.0.300+, `git` with submodules. _Source:_ `README.md`.
 
 ### Technology Adoption / Rationale Notes
 

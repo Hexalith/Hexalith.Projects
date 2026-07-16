@@ -160,7 +160,7 @@ This story closes Epic 1 by turning the current compile-time placeholders into a
 
 ### Version and Library Requirements
 
-- Current root pins include .NET SDK `10.0.302`, Dapr.AspNetCore `1.17.9`, xUnit v3 `3.2.2`, Shouldly `4.3.0`, NSubstitute `5.3.0`, NSwag `14.7.1`, YamlDotNet `17.1.0`, and Microsoft.Extensions abstractions `10.0.8`.
+- Current root pins include .NET SDK `10.0.300`, Dapr.AspNetCore `1.17.9`, xUnit v3 `3.2.2`, Shouldly `4.3.0`, NSubstitute `5.3.0`, NSwag `14.7.1`, YamlDotNet `17.1.0`, and Microsoft.Extensions abstractions `10.0.8`.
 - Projects root `Directory.Packages.props` does not yet pin Aspire/ServiceDefaults packages. Add any required versions centrally. Do not add inline `Version` attributes.
 - Sibling Folders currently pins `Aspire.Hosting`/`Aspire.Hosting.Redis` `13.3.5`, `Aspire.AppHost.Sdk/13.2.2`, `Aspire.Hosting.Keycloak` `13.2.2-preview.1.26207.2`, `CommunityToolkit.Aspire.Hosting.Dapr` `13.0.0`, OpenTelemetry packages in the `1.15.x` family, and `Microsoft.Extensions.Http.Resilience`/`ServiceDiscovery` `10.6.0`. Use these as the local parity oracle unless restore/build incompatibility requires a documented exception.
 - Do not upgrade Dapr, Aspire, Fluent UI, Roslyn, xUnit, or the .NET SDK casually. This is topology work, not a dependency modernization story.
@@ -283,7 +283,7 @@ GPT-5 Codex
 - REVIEW cycle 1: `tests\tools\run-frontcomposer-inspect-gate.ps1` - PASSED skip-clean; no FrontComposer annotations/generated UI expected.
 - REVIEW cycle 1: `git diff --check` - PASSED; only Git LF-to-CRLF normalization warnings, no whitespace errors.
 - REVIEW cycle 1: `git status --short --untracked-files=all` - reviewed; no sibling submodule pointer changes, no recursive submodule churn, `.codex/` local files preserved. Contract-spine and OpenAPI fingerprint gates were not run because no Contracts/OpenAPI/generated-client inputs or outputs changed during review.
-- REVIEW cycle 1: Aspire MCP `doctor` - PASSED with warnings; .NET 10.0.302 and Docker running, no failures; warnings only for multiple/older HTTPS development certificates.
+- REVIEW cycle 1: Aspire MCP `doctor` - PASSED with warnings; .NET 10.0.300 and Docker running, no failures; warnings only for multiple/older HTTPS development certificates.
 
 ### Completion Notes List
 

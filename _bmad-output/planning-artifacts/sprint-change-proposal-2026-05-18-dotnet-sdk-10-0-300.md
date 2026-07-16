@@ -1,22 +1,22 @@
-# Sprint Change Proposal - .NET SDK 10.0.302 Baseline
+# Sprint Change Proposal - .NET SDK 10.0.300 Baseline
 
 ## 1. Issue Summary
 
-**Trigger:** Jerome requested a Correct Course pass to use .NET SDK `10.0.302` across `D:\Hexalith.Projects`.
+**Trigger:** Jerome requested a Correct Course pass to use .NET SDK `10.0.300` across `D:\Hexalith.Projects`.
 
-**Problem Statement:** The umbrella workspace and active Hexalith modules still document and pin the .NET SDK baseline as `10.0.103`, while the local environment now has SDK `10.0.302` installed. The current state creates SDK drift between desired local execution, module `global.json` pins, CI setup, project-context facts, and planning/implementation artifacts.
+**Problem Statement:** The umbrella workspace and active Hexalith modules still document and pin the .NET SDK baseline as `10.0.103`, while the local environment now has SDK `10.0.300` installed. The current state creates SDK drift between desired local execution, module `global.json` pins, CI setup, project-context facts, and planning/implementation artifacts.
 
 **Evidence:**
 
-- `dotnet --list-sdks` reports `10.0.302` installed.
+- `dotnet --list-sdks` reports `10.0.300` installed.
 - The module `global.json` files in `Hexalith.EventStore`, `Hexalith.Folders`, `Hexalith.FrontComposer`, `Hexalith.Parties`, and `Hexalith.Tenants` pin `"version": "10.0.103"` with `"rollForward": "latestPatch"`.
 - Root and module project-context files still instruct agents to use SDK `10.0.103`.
 - `Hexalith.Commons\hexalith-build.yml` still configures `actions/setup-dotnet` with `dotnet-version: 9.0.x`.
-- FrontComposer CI workflows use `dotnet-version: '10.0.x'`, which is compatible with .NET 10 but less deterministic than the requested `10.0.302` baseline.
+- FrontComposer CI workflows use `dotnet-version: '10.0.x'`, which is compatible with .NET 10 but less deterministic than the requested `10.0.300` baseline.
 
 **Mode:** Batch proposal.
 
-**Approval:** Approved by Jerome on 2026-05-18. Implemented as a direct adjustment using exact SDK `10.0.302` for active pins and CI setup.
+**Approval:** Approved by Jerome on 2026-05-18. Implemented as a direct adjustment using exact SDK `10.0.300` for active pins and CI setup.
 
 ## 2. Impact Analysis
 
@@ -36,8 +36,8 @@
 
 | Artifact Type | Conflict | Required Adjustment |
 | --- | --- | --- |
-| Runtime config | Five module `global.json` files pin `10.0.103`. | Update pins to `10.0.302`; preserve `rollForward: latestPatch`. |
-| CI | Commons workflow uses `9.0.x`; FrontComposer workflows use broad `10.0.x`; other workflows rely on `global.json` auto-detection. | Align Commons to .NET 10.0.302 or auto-detected `global.json`; decide whether FrontComposer should remain broad or become exact. |
+| Runtime config | Five module `global.json` files pin `10.0.103`. | Update pins to `10.0.300`; preserve `rollForward: latestPatch`. |
+| CI | Commons workflow uses `9.0.x`; FrontComposer workflows use broad `10.0.x`; other workflows rely on `global.json` auto-detection. | Align Commons to .NET 10.0.300 or auto-detected `global.json`; decide whether FrontComposer should remain broad or become exact. |
 | Project context | Root and module `project-context.md` files mention `10.0.103`. | Update durable agent facts after runtime/config changes are approved. |
 | Planning docs | PRD/epics/architecture/stories contain hard-coded `10.0.103`. | Update current planning docs where they define future work or active acceptance criteria; avoid rewriting historical logs unless they would mislead future implementation. |
 | Test/evidence docs | FrontComposer IDE parity matrix/evidence records contain `10.0.103`; at least one test asserts that value. | Update generated or source-of-truth matrix plus tests/evidence if the baseline is part of current acceptance. |
@@ -65,7 +65,7 @@ Primary risks:
 - Missing one `global.json` or CI lane and leaving a split SDK baseline.
 - Updating historical BMad implementation records too broadly and muddying audit history.
 - Making FrontComposer IDE parity evidence inconsistent with tests.
-- CI runner images may not have SDK `10.0.302` preinstalled unless `setup-dotnet` installs it explicitly or global.json auto-detection is used.
+- CI runner images may not have SDK `10.0.300` preinstalled unless `setup-dotnet` installs it explicitly or global.json auto-detection is used.
 
 ## 4. Detailed Change Proposals
 
@@ -95,13 +95,13 @@ NEW:
 ```json
 {
   "sdk": {
-    "version": "10.0.302",
+    "version": "10.0.300",
     "rollForward": "latestPatch"
   }
 }
 ```
 
-Rationale: Makes SDK `10.0.302` the explicit module build baseline while keeping patch roll-forward behavior.
+Rationale: Makes SDK `10.0.300` the explicit module build baseline while keeping patch roll-forward behavior.
 
 ### CI and Build Workflows
 
@@ -116,7 +116,7 @@ dotnet-version: 9.0.x
 NEW:
 
 ```yaml
-dotnet-version: 10.0.302
+dotnet-version: 10.0.300
 ```
 
 Rationale: Commons projects target `net10.0`; the workflow should install a compatible .NET 10 SDK baseline.
@@ -126,9 +126,9 @@ Files: FrontComposer workflows with `dotnet-version: '10.0.x'`
 Options:
 
 - Keep `10.0.x` if the module `global.json` pin is considered authoritative.
-- Change to `10.0.302` if CI must be exact and reproducible.
+- Change to `10.0.300` if CI must be exact and reproducible.
 
-Recommended: change exact CI setup to `10.0.302` for release and certification lanes; leave exploratory/nightly lanes at `10.0.x` only if intentional drift detection is desired and documented.
+Recommended: change exact CI setup to `10.0.300` for release and certification lanes; leave exploratory/nightly lanes at `10.0.x` only if intentional drift detection is desired and documented.
 
 ### Durable Agent Context
 
@@ -149,7 +149,7 @@ OLD:
 NEW:
 
 ```md
-.NET SDK `10.0.302`
+.NET SDK `10.0.300`
 ```
 
 Rationale: Keeps future agent runs from reintroducing the older SDK baseline.
@@ -173,7 +173,7 @@ SDK 10.0.103
 NEW:
 
 ```md
-SDK 10.0.302
+SDK 10.0.300
 ```
 
 Rationale: Update active source-of-truth planning instructions. Historical changelog lines and completed dev logs should remain unchanged unless they are used as current implementation guidance.
@@ -196,7 +196,7 @@ OLD:
 NEW:
 
 ```json
-"dotnetSdk": "10.0.302"
+"dotnetSdk": "10.0.300"
 ```
 
 Rationale: The test suite asserts the IDE parity SDK value, so the source, test, and evidence need to move together.
@@ -206,7 +206,7 @@ Rationale: The test suite asserts the IDE parity SDK value, so the source, test,
 | Item | Status | Notes |
 | --- | --- | --- |
 | 1.1 Triggering story | [N/A] | Trigger came from explicit user request, not a single discovered implementation story. |
-| 1.2 Core problem | [x] | SDK baseline drift from `10.0.103` to requested `10.0.302`. |
+| 1.2 Core problem | [x] | SDK baseline drift from `10.0.103` to requested `10.0.300`. |
 | 1.3 Evidence | [x] | Local SDKs, `global.json` pins, CI refs, and project-context refs inspected. |
 | 2.1 Current epic impact | [!] | Cross-module; no single current epic identified. Treat as shared platform/configuration change. |
 | 2.2 Epic-level changes | [x] | No new epic required if handled as backlog/configuration story per affected module. |
@@ -243,7 +243,7 @@ Rationale: The test suite asserts the IDE parity SDK value, so the source, test,
 
 **Implementation order:**
 
-1. Update module `global.json` pins to `10.0.302`.
+1. Update module `global.json` pins to `10.0.300`.
 2. Update CI setup to install or auto-detect the new baseline.
 3. Update current architecture/planning/project-context instructions that define the SDK baseline.
 4. Update FrontComposer IDE parity source, tests, and evidence together.
@@ -252,7 +252,7 @@ Rationale: The test suite asserts the IDE parity SDK value, so the source, test,
 
 **Verification criteria:**
 
-- `dotnet --version` from each affected module root resolves to `10.0.302`.
+- `dotnet --version` from each affected module root resolves to `10.0.300`.
 - `dotnet build` or targeted solution build succeeds for each affected module.
 - FrontComposer IDE parity tests pass after matrix updates.
 - CI workflow SDK setup is consistent with the new baseline.
@@ -262,16 +262,16 @@ Rationale: The test suite asserts the IDE parity SDK value, so the source, test,
 
 Implemented changes:
 
-- Updated SDK pins in `Hexalith.EventStore`, `Hexalith.Folders`, `Hexalith.FrontComposer`, `Hexalith.Parties`, and `Hexalith.Tenants` from `10.0.103` to `10.0.302`.
-- Updated Commons and FrontComposer CI SDK setup from `9.0.x` / `10.0.x` to exact `10.0.302`.
-- Initialized only the root-level `Hexalith.Builds` submodule inside `Hexalith.Commons` to satisfy the Commons build prerequisite, then updated its reusable `initialize-dotnet` action to exact `10.0.302`.
+- Updated SDK pins in `Hexalith.EventStore`, `Hexalith.Folders`, `Hexalith.FrontComposer`, `Hexalith.Parties`, and `Hexalith.Tenants` from `10.0.103` to `10.0.300`.
+- Updated Commons and FrontComposer CI SDK setup from `9.0.x` / `10.0.x` to exact `10.0.300`.
+- Initialized only the root-level `Hexalith.Builds` submodule inside `Hexalith.Commons` to satisfy the Commons build prerequisite, then updated its reusable `initialize-dotnet` action to exact `10.0.300`.
 - Updated current project-context, architecture, README/getting-started, troubleshooting, deployment, and FrontComposer IDE parity guidance that defined the active SDK baseline.
-- Updated FrontComposer IDE parity matrix, test assertion, revalidation job minimum, and evidence manifests from `10.0.103` to `10.0.302`.
+- Updated FrontComposer IDE parity matrix, test assertion, revalidation job minimum, and evidence manifests from `10.0.103` to `10.0.300`.
 
 Verification:
 
-- `dotnet --version` resolves to `10.0.302` from each affected module root: EventStore, Folders, FrontComposer, Parties, and Tenants.
-- `dotnet --version` resolves to `10.0.302` from Commons after the SDK update.
+- `dotnet --version` resolves to `10.0.300` from each affected module root: EventStore, Folders, FrontComposer, Parties, and Tenants.
+- `dotnet --version` resolves to `10.0.300` from Commons after the SDK update.
 - `dotnet test tests/Hexalith.FrontComposer.SourceTools.Tests/Hexalith.FrontComposer.SourceTools.Tests.csproj --filter FullyQualifiedName~IdeParity --no-restore --verbosity normal` completed with build success, 0 warnings, 0 errors. The runner did not print a test execution summary for the filter.
 - `dotnet restore Hexalith.Commons.sln` followed by `dotnet build Hexalith.Commons.sln --no-restore --configuration Release --verbosity minimal` succeeded with 0 warnings and 0 errors.
 - `dotnet build Hexalith.EventStore.slnx --no-restore --configuration Release --verbosity minimal` was blocked by missing nested `Hexalith.Tenants` project paths inside the EventStore repo and missing restore assets. Nested submodules were not initialized because the workspace rule forbids nested submodule initialization unless explicitly requested.
