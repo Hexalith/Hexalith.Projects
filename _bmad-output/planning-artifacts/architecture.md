@@ -9,7 +9,10 @@ stepsCompleted:
   - 7
   - 8
 lastStep: 8
-status: 'complete'
+status: 'superseded'
+supersededAt: '2026-07-16'
+supersededBy: '_bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md'
+historicalEvidence: true
 completedAt: '2026-05-24'
 inputDocuments:
   - _bmad-output/planning-artifacts/briefs/brief-Hexalith.Projects-2026-05-24/brief.md
@@ -30,6 +33,8 @@ date: '2026-05-24'
 ---
 
 # Architecture Decision Document
+
+> **Superseded historical evidence.** This May 2026 design is not normative. The sole current architecture is [the July 2026 Architecture Spine](architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md).
 
 _This document builds collaboratively through step-by-step discovery. Sections are appended as we work through each architectural decision together._
 
