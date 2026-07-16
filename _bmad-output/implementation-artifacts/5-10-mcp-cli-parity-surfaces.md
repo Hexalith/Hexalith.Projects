@@ -134,7 +134,7 @@ so that diagnostics and maintenance are scriptable and agent-safe with no extra 
 
 - MCP C# SDK official docs list C# as a Tier 1 SDK and support servers exposing tools, resources, and prompts with local/remote transports. The official C# SDK repository current release checked on 2026-05-30 is v1.3.0, but this repo has no MCP package pin in `Directory.Packages.props`; do not add or upgrade MCP packages unless required and centrally pinned. [Source: https://modelcontextprotocol.io/docs/sdk] [Source: https://github.com/modelcontextprotocol/csharp-sdk]
 - The MCP C# SDK has three package tiers: `ModelContextProtocol.Core`, `ModelContextProtocol`, and `ModelContextProtocol.AspNetCore` for HTTP servers. FrontComposer already references `ModelContextProtocol.AspNetCore` internally; Projects should prefer the existing FrontComposer MCP integration before direct SDK use. [Source: https://github.com/modelcontextprotocol/csharp-sdk] [Source: Hexalith.FrontComposer/src/Hexalith.FrontComposer.Mcp/Extensions/FrontComposerMcpServiceCollectionExtensions.cs]
-- Local authoritative pins on 2026-05-30: .NET SDK `10.0.300`, Dapr `1.17.9`, Aspire `13.3.5`, Fluent UI Blazor `5.0.0-rc.3-26138.1`, Fluxor `6.9.0`, NSwag `14.7.1`, xUnit v3 `3.2.2`, bUnit `2.7.2`. Do not upgrade/downgrade casually. [Source: global.json] [Source: Directory.Packages.props]
+- Local authoritative pins on 2026-05-30: .NET SDK `10.0.302`, Dapr `1.17.9`, Aspire `13.3.5`, Fluent UI Blazor `5.0.0-rc.3-26138.1`, Fluxor `6.9.0`, NSwag `14.7.1`, xUnit v3 `3.2.2`, bUnit `2.7.2`. Do not upgrade/downgrade casually. [Source: global.json] [Source: Directory.Packages.props]
 
 ### Previous Story Intelligence
 

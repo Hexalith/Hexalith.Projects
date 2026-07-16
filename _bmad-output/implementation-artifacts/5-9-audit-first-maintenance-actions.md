@@ -138,7 +138,7 @@ so that state-changing operations are explicit, scoped, confirmed, and auditable
 
 - Architecture maps operational surfaces from shared `[Projection]`/`[Command]` contracts to Web/MCP/CLI. The exact mutating MCP/CLI adapters belong to Story 5.10, but this story should create the metadata contracts/handoff fields that make parity possible. [Source: _bmad-output/planning-artifacts/architecture.md#Frontend-Architecture-operational-surfaces]
 - Reuse `ProjectDiagnosticHeader`, `ProjectStatusBadge`, `ProjectVocabularyDescriptors`, `ProjectConsoleFeedback`, `ProjectEmptyStateView`, `ProjectAuditTimelineSection`, and Story 5.8 dashboard/queue styles where applicable. [Source: src/Hexalith.Projects.UI/Components/Pages/ProjectDiagnostics.razor] [Source: src/Hexalith.Projects.UI/Components/Pages/Home.razor]
-- Local package pins on 2026-05-30 are authoritative: .NET SDK `10.0.300`, Fluent UI Blazor `5.0.0-rc.3-26138.1`, Fluxor `6.9.0`, bUnit `2.7.2`, xUnit v3 `3.2.2`, Dapr `1.17.9`, Aspire `13.3.5`, NSwag `14.7.1`, and Verify.XunitV3 where already used. Do not upgrade/downgrade or inline package versions. [Source: global.json] [Source: Directory.Packages.props]
+- Local package pins on 2026-05-30 are authoritative: .NET SDK `10.0.302`, Fluent UI Blazor `5.0.0-rc.3-26138.1`, Fluxor `6.9.0`, bUnit `2.7.2`, xUnit v3 `3.2.2`, Dapr `1.17.9`, Aspire `13.3.5`, NSwag `14.7.1`, and Verify.XunitV3 where already used. Do not upgrade/downgrade or inline package versions. [Source: global.json] [Source: Directory.Packages.props]
 - Attempted Fluent UI Blazor MCP version check during story creation, but the tool call was cancelled by the environment. Treat pinned package versions and existing local component usage as authoritative.
 
 ### Previous Story Intelligence

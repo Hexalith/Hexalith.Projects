@@ -200,7 +200,7 @@ The green count is useful regression evidence, not production proof. `tests/Hexa
 | One C# type per file | Fail | At least 24 handwritten files with multiple declarations; representative list in CODE-001 | CODE-001 |
 | File-scoped namespaces/nullability/current language | Pass | `net10.0`, C# latest, nullable/warnings-as-errors; inspected source generally file-scoped | — |
 | FrontComposer + Fluent UI v5/current Fluent 2 tokens/accordion rules | Fail | FrontComposer registered, but raw controls/legacy tokens/no accordions | UX-001 |
-| `.slnx`, .NET 10, Dapr 1.18+ | Partial | `.slnx`, SDK 10.0.300, packages 1.18.4; CI runtime pins Dapr 1.17.0 | BUILD-001 |
+| `.slnx`, .NET 10, Dapr 1.18+ | Partial | `.slnx`, SDK 10.0.302, packages 1.18.4; CI runtime pins Dapr 1.17.0 | BUILD-001 |
 | Centralized Hexalith.Builds/package configuration | Fail | `Directory.Build.props:2-11` explicitly avoids Builds props; CI graph uses project references | BUILD-001 |
 | xUnit v3/Shouldly/NSubstitute; individual tests | Pass | Eight individual projects pass | — |
 | Integration asserts actual state-store end state | Fail | Integration uses fake/configuration assertions | TEST-001 |
@@ -637,7 +637,7 @@ These are low-risk slices of existing findings, not substitutes for the owning r
 - **Input safety:** validators apply length/cardinality, normalization, forbidden setup/path/secret patterns, and control-character checks; server JSON disallows unmapped members (`src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs:53-62`).
 - **Safe-denial intent:** unauthorized/nonexistent results are deliberately collapsed without payload echo in inspected mapping. No verified cross-tenant disclosure was found.
 - **Generated artifacts:** FrontComposer inspection and OpenAPI/client fingerprints are reproducible in the recorded fallback gate; fixes belong in schema/generator, not generated files.
-- **Baseline technology:** `.slnx`, .NET SDK 10.0.300, nullable/warnings-as-errors/deterministic flags, xUnit v3, Shouldly, and NSubstitute are present. NuGet audit reported no known vulnerable package in queried projects.
+- **Baseline technology:** `.slnx`, .NET SDK 10.0.302, nullable/warnings-as-errors/deterministic flags, xUnit v3, Shouldly, and NSubstitute are present. NuGet audit reported no known vulnerable package in queried projects.
 
 ### False positives rejected
 

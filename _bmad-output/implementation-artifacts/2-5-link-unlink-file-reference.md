@@ -293,7 +293,7 @@ Consequences for the Projects design:
 - Projects stores only: opaque `fileReferenceId`, owning `folderId`, safe `displayName`, shared `ReferenceState`, optional reason code, and an event-carried `observedAt` — honouring "prefer opaque file reference id plus safe display metadata over path-like fields" and "do not store raw paths".
 
 #### Environment notes
-- The repo SDK (`global.json` 10.0.300) lives at `/home/administrator/.dotnet`; `/usr/bin/dotnet` resolves to 10.0.108 and fails `rollForward: latestPatch`. All builds use `DOTNET_ROOT=/home/administrator/.dotnet` + that `dotnet`.
+- The repo SDK (`global.json` 10.0.302) lives at `/home/administrator/.dotnet`; `/usr/bin/dotnet` resolves to 10.0.108 and fails `rollForward: latestPatch`. All builds use `DOTNET_ROOT=/home/administrator/.dotnet` + that `dotnet`.
 - NSwag client regeneration works and is byte-deterministic. The `GenerateHexalithProjectsIdempotencyHelpers` MSBuild step passes a Windows-style `...Client\nswag.json` path that fails on Linux; the helper generator is therefore run manually with forward-slash paths (no `.g.cs` hand-edits).
 
 ### Completion Notes List

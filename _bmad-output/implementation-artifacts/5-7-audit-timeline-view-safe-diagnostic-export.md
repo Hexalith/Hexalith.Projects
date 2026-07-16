@@ -118,7 +118,7 @@ so that I can review state-change history and hand off diagnostics without leaki
 
 - Architecture maps audit to `ProjectionRole.Timeline` conceptually, while existing local descriptors use the available FrontComposer attributes in `Contracts/Ui`. Add metadata-only descriptors even if the visual body stays in the Story 5.4 Level-4 detail inspector. [Source: _bmad-output/planning-artifacts/architecture.md#Frontend-Architecture-operational-surfaces] [Source: _bmad-output/implementation-artifacts/5-4-project-inventory-detail-views.md#Senior-Developer-Review-AI]
 - Reuse `ProjectStatusBadge`, `ProjectVocabularyDescriptors`, `ProjectConsoleFeedback`, `ProjectEmptyStateView`, and existing operational CSS patterns. Do not introduce a bespoke UI framework, a duplicate status enum, or a custom severity table. [Source: src/Hexalith.Projects.Contracts/Ui/ProjectVocabularyDescriptors.cs] [Source: src/Hexalith.Projects.UI/Rendering/ProjectVocabularyRendering.cs]
-- Local package pins on 2026-05-30 are authoritative: .NET SDK `10.0.300`, Fluent UI Blazor `5.0.0-rc.3-26138.1`, Fluxor `6.9.0`, bUnit `2.7.2`, xUnit v3 `3.2.2`, Dapr `1.17.9`, Aspire `13.3.5`, and Verify.XunitV3 `31.17.0`. Do not upgrade/downgrade or inline package versions. [Source: global.json] [Source: Directory.Packages.props] [Source: Hexalith.FrontComposer/Directory.Packages.props]
+- Local package pins on 2026-05-30 are authoritative: .NET SDK `10.0.302`, Fluent UI Blazor `5.0.0-rc.3-26138.1`, Fluxor `6.9.0`, bUnit `2.7.2`, xUnit v3 `3.2.2`, Dapr `1.17.9`, Aspire `13.3.5`, and Verify.XunitV3 `31.17.0`. Do not upgrade/downgrade or inline package versions. [Source: global.json] [Source: Directory.Packages.props] [Source: Hexalith.FrontComposer/Directory.Packages.props]
 
 ### UX Requirements
 

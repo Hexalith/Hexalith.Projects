@@ -345,7 +345,7 @@ Story 3.5 is the **last story of Epic 3**. After Story 3.5 reaches `done`, `epic
   - [x] Rows 2 / 3 / 7 are mutation-only (route/body identity mismatch, missing Idempotency-Key on mutation, unknown Idempotency-Key retry conflict) — explicitly mark N/A in the Dev Agent Record.
 
 - [x] **Task 11 — Validation. (AC: 17, 18, 19)**
-  - [x] Use the build environment from [[build-environment]]: `DOTNET_ROOT=/home/administrator/.dotnet` (`dotnet --version` 10.0.300). Avoid `/usr/bin/dotnet`.
+  - [x] Use the build environment from [[build-environment]]: `DOTNET_ROOT=/home/administrator/.dotnet` (`dotnet --version` 10.0.302). Avoid `/usr/bin/dotnet`.
   - [x] Run `dotnet build Hexalith.Projects.slnx`. Confirm 0 W / 0 E.
   - [x] Run focused lanes:
     - `dotnet test tests/Hexalith.Projects.Tests` (baseline 457 + ~11 = ~468).
@@ -671,7 +671,7 @@ public static partial class ProjectsDomainServiceEndpoints
 - [Source: `src/Hexalith.Projects.Server/Queries/RefreshProjectContextEndpoint.cs`] — most recent Story 3.4 sibling partial-class precedent.
 - [Source: `_bmad-output/implementation-artifacts/3-4-refresh-project-context.md`] — Story 3.4 baseline (test counts, Dev Agent Record pattern, validation lane structure).
 - [Source: `_bmad-output/implementation-artifacts/sprint-status.yaml`] — Story 3.5 row to update (`3-5-retrieve-conversation-start-setup: backlog` → `ready-for-dev` on this story creation; `epic-3-retrospective: optional` row untouched).
-- [[build-environment]] — `DOTNET_ROOT=/home/administrator/.dotnet` (10.0.300); LF on disk; NSwag idempotency-helper regen workaround.
+- [[build-environment]] — `DOTNET_ROOT=/home/administrator/.dotnet` (10.0.302); LF on disk; NSwag idempotency-helper regen workaround.
 
 ## Dev Agent Record
 

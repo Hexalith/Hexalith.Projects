@@ -145,7 +145,7 @@ so that I can troubleshoot project state without write power or payload exposure
 
 ### Latest Technical Context
 
-- Keep the pinned package/runtime posture. The workspace uses .NET SDK `10.0.300`, `net10.0`, warnings-as-errors, central package management, Dapr `1.17.7`, Aspire `13.2.x`, and Fluent UI Blazor `5.0.0-rc.2-26098.1`. No package upgrades are needed for this story. [Source: _bmad-output/project-context.md#Technology-Stack--Versions]
+- Keep the pinned package/runtime posture. The workspace uses .NET SDK `10.0.302`, `net10.0`, warnings-as-errors, central package management, Dapr `1.17.7`, Aspire `13.2.x`, and Fluent UI Blazor `5.0.0-rc.2-26098.1`. No package upgrades are needed for this story. [Source: _bmad-output/project-context.md#Technology-Stack--Versions]
 - External check on 2026-05-30: Microsoft lists .NET 10 as an LTS release supported until November 2028, and Dapr docs list runtime `1.17.7` as the current supported release. That confirms the existing pinned posture; it does not authorize dependency churn. [Source: https://learn.microsoft.com/en-us/dotnet/core/releases-and-support] [Source: https://docs.dapr.io/operations/support/support-release-policy/]
 
 ### Hard Stops

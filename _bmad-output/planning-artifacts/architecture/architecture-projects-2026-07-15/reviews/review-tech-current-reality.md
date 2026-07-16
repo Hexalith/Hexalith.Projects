@@ -82,7 +82,7 @@ Make G-1/G-4 evidence commands restore the pinned package or clean-build the che
 
 ### Low — The SDK row is a baseline pin, while the effective SDK is the latest patch
 
-`global.json` pins `10.0.300` with `rollForward: latestPatch`, and this environment actually resolves `dotnet --version` to `10.0.301`. That is valid and C# 14 remains the language version. For precision, describe the Stack row as `10.0.300 feature-band baseline; effective latest patch (10.0.301 during review)`. Microsoft's current .NET 10 page lists SDK 10.0.301 as current and .NET 10 as active LTS: [.NET downloads](https://dotnet.microsoft.com/en-us/download), while the 10.0.300 download page confirms C# 14 support: [.NET 10.0 downloads](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
+`global.json` pins `10.0.302` with `rollForward: latestPatch`, and this environment actually resolves `dotnet --version` to `10.0.302`. That is valid and C# 14 remains the language version. For precision, describe the Stack row as `10.0.302 feature-band baseline; effective latest patch (10.0.302 during review)`. Microsoft's current .NET 10 page lists SDK 10.0.302 as current and .NET 10 as active LTS: [.NET downloads](https://dotnet.microsoft.com/en-us/download), while the 10.0.302 download page confirms C# 14 support: [.NET 10.0 downloads](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
 
 ## Assertions verified without a finding
 
@@ -144,6 +144,6 @@ No spine or implementation file was changed by this reviewer.
 - Stack now separates target/compatibility bindings from migration/catalog-only rows: CommunityToolkit and Fluxor are migration inputs, Dapr.Workflow is unselected pending G-1, and `Dapr=1.17.9` is catalog hygiene.
 - G-6 explicitly gates Fluent UI RC4, CommunityToolkit preview, and NSubstitute RC, and requires Fluxor 6.9 upgrade or an intentional Builds-governed hold.
 - EventStore evidence is pinned to published 3.67.3 packages or a clean 3.67.3 build; reinspection confirmed the host extensions, read-model seams, and integration fixtures, while G-1 rejects stale local binaries.
-- The SDK row now states the `10.0.300` feature-band policy with `latestPatch` and the reviewed effective SDK `10.0.301`.
+- The SDK row now states the `10.0.302` feature-band policy with `latestPatch` and the reviewed effective SDK `10.0.302`.
 
 No remaining technology/current-reality blocker was found; the unresolved external capabilities remain correctly represented as fail-closed entry gates rather than implemented features.

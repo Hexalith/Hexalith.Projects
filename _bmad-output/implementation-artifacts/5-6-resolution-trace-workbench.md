@@ -113,7 +113,7 @@ so that I can diagnose why resolution selected, rejected, or could not decide be
 
 - Architecture calls resolution trace "the lone Level-3/4 customization candidate", but the workflow still requires attempting the lowest sufficient gradient. Start with descriptor/wrapper contracts and a Level 2 composition attempt; escalate only when the side-by-side comparison/workbench cannot be expressed safely. [Source: _bmad-output/planning-artifacts/architecture.md#Frontend-Architecture-operational-surfaces]
 - Story 5.4 already recorded a deliberate Level-4 escalation for the broader inventory/detail inspector. Reusing that existing hand-rolled detail page is acceptable, but the trace workbench still needs descriptor metadata so FrontComposer inspect/parity gates have a stable contract. [Source: _bmad-output/implementation-artifacts/5-4-project-inventory-detail-views.md]
-- Local package pins on 2026-05-30 are authoritative: .NET SDK `10.0.300`, Fluent UI Blazor `5.0.0-rc.3-26138.1`, Fluxor `6.9.0`, bUnit `2.7.2`, xUnit v3 `3.2.2`, Dapr `1.17.9`, Aspire `13.3.5`. Do not upgrade/downgrade or inline package versions. [Source: global.json] [Source: Directory.Packages.props] [Source: Hexalith.FrontComposer/Directory.Packages.props]
+- Local package pins on 2026-05-30 are authoritative: .NET SDK `10.0.302`, Fluent UI Blazor `5.0.0-rc.3-26138.1`, Fluxor `6.9.0`, bUnit `2.7.2`, xUnit v3 `3.2.2`, Dapr `1.17.9`, Aspire `13.3.5`. Do not upgrade/downgrade or inline package versions. [Source: global.json] [Source: Directory.Packages.props] [Source: Hexalith.FrontComposer/Directory.Packages.props]
 
 ### UX Requirements
 

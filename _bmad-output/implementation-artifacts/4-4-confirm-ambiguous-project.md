@@ -67,7 +67,7 @@ AC1 and AC2 are the authoritative epic ACs (BDD, verbatim source: `_bmad-output/
 **AC10 - Tests and full lane stay green.**
 **Given** this story modifies contracts, domain processing, server endpoints, generated client artifacts, and tests
 **When** validation runs
-**Then** build is 0 warnings/0 errors with pinned SDK `10.0.300`, full solution tests pass, the mutation negative-test checklist rows are explicitly ticked in the Dev Agent Record, and no submodule pointer or generated artifact is changed outside the story scope.
+**Then** build is 0 warnings/0 errors with pinned SDK `10.0.302`, full solution tests pass, the mutation negative-test checklist rows are explicitly ticked in the Dev Agent Record, and no submodule pointer or generated artifact is changed outside the story scope.
 
 ## Tasks / Subtasks
 
@@ -221,7 +221,7 @@ The generated typed client must expose a confirm method and a confirm idempotenc
 
 ### Latest technical specifics
 
-No external package/API upgrade is required. Use the repo-pinned stack from `_bmad-output/project-context.md`: .NET SDK `10.0.300`, `net10.0`, central package management, Dapr `1.17.7`, Aspire `13.2.x`, xUnit v3/Shouldly. Do not bump packages or add a new mocking library for this story.
+No external package/API upgrade is required. Use the repo-pinned stack from `_bmad-output/project-context.md`: .NET SDK `10.0.302`, `net10.0`, central package management, Dapr `1.17.7`, Aspire `13.2.x`, xUnit v3/Shouldly. Do not bump packages or add a new mocking library for this story.
 
 ### Previous Story Intelligence
 
@@ -394,7 +394,7 @@ None. (Set comparison of the File List against the git change set produced no fa
 
 #### Medium
 
-- **TA-VALIDATION** — Build/test validation gate had not been executed in the audit pass. RESOLVED by running the gate with the sandbox disabled (see Final Validation below): build 0 warnings / 0 errors under SDK 10.0.300; full solution test lanes green.
+- **TA-VALIDATION** — Build/test validation gate had not been executed in the audit pass. RESOLVED by running the gate with the sandbox disabled (see Final Validation below): build 0 warnings / 0 errors under SDK 10.0.302; full solution test lanes green.
 - **GVF-001 / GVF-002** — Two E2E files (`tests/e2e/specs/projects-resolution.spec.ts`, `tests/e2e/support/helpers/projects-api-client.ts`) are modified in git but absent from the story File List, and all Story 4.4 changes remain uncommitted working-tree changes (expected for a story in review). Bookkeeping/traceability only — these are tests, not generated artifacts or submodule pointers, so AC10's no-out-of-scope-artifact rule is not violated. Committing and File-List reconciliation are deferred to a later automation step / the operator; not fixed here per mandate.
 - **CQS-01** — The endpoint's `sourceProjectId == projectId` self-source guard duplicates the canonical check in `ProjectCommandValidator.Validate(ConfirmProjectResolution)`. Re-verified as correct defense-in-depth: `string.Equals(null, x)` is `false` so a null source is allowed, and `IsCanonicalIdentifier` forbids surrounding whitespace, so the theorized whitespace-drift cannot occur. No behavioral defect.
 - **tq-4.4-rejection-event-leakage-gap** — AC9 leakage coverage omitted a serialized-payload assertion for `ProjectResolutionConfirmationRejected` (only the success event was leakage-asserted). FIXED (see auto-fixes).
@@ -412,7 +412,7 @@ None. (Set comparison of the File List against the git change set produced no fa
 
 ### Acceptance Criteria Coverage
 
-All 10 acceptance criteria are satisfied. AC6 (idempotent two-boundary recovery), AC7 (fail-closed authorization for target and optional source), AC8 (OpenAPI spine + regenerated client/idempotency helpers), AC9 (metadata-only leakage for both the success and rejection events plus DTO/ProblemDetails posture), and AC10 (0-warning/0-error serial build under SDK 10.0.300 and a fully green test lane, no out-of-scope generated-artifact or submodule-pointer change) are all met. The negative-test checklist rows that apply (1, 2, 3, 6, 7, 8) are covered; rows 4 and 5 are query-only and N/A for this mutation story.
+All 10 acceptance criteria are satisfied. AC6 (idempotent two-boundary recovery), AC7 (fail-closed authorization for target and optional source), AC8 (OpenAPI spine + regenerated client/idempotency helpers), AC9 (metadata-only leakage for both the success and rejection events plus DTO/ProblemDetails posture), and AC10 (0-warning/0-error serial build under SDK 10.0.302 and a fully green test lane, no out-of-scope generated-artifact or submodule-pointer change) are all met. The negative-test checklist rows that apply (1, 2, 3, 6, 7, 8) are covered; rows 4 and 5 are query-only and N/A for this mutation story.
 
 ### What Was Auto-Fixed
 
@@ -429,7 +429,7 @@ All 10 acceptance criteria are satisfied. AC6 (idempotent two-boundary recovery)
 
 ### Final Validation
 
-- **Build:** `dotnet build Hexalith.Projects.slnx -warnaserror -v:m -m:1` (sandbox disabled, SDK 10.0.300) => Build succeeded, **0 Warnings, 0 Errors**.
+- **Build:** `dotnet build Hexalith.Projects.slnx -warnaserror -v:m -m:1` (sandbox disabled, SDK 10.0.302) => Build succeeded, **0 Warnings, 0 Errors**.
 - **Tests:** `dotnet test Hexalith.Projects.slnx --no-build -v:m -m:1` (sandbox disabled) => **1195 / 1195 passed, 0 failed, 0 skipped** across all lanes.
 - `git diff --check` clean. No package upgrade; no submodule pointer change (only the pre-existing unrelated `Hexalith.Folders` drift remains, left untouched). Working-tree changes remain uncommitted — committing is left to the operator.
 

@@ -99,7 +99,7 @@ Identity rules to respect (from `project-context.md` and code):
 
 ### 1.3 Technology stack (consumer-relevant)
 
-- **.NET 10** (`global.json` SDK `10.0.300`, `rollForward: latestPatch`), nullable + implicit usings + warnings-as-errors.
+- **.NET 10** (`global.json` SDK `10.0.302`, `rollForward: latestPatch`), nullable + implicit usings + warnings-as-errors.
 - **EventStore foundation** for write-side commands/events/projections — do not introduce a parallel write model.
 - **Dapr `1.17.7`** as the only infrastructure abstraction (pub/sub `pubsub`, state `statestore`, service invocation). Stable Dapr app IDs: `eventstore`, `tenants`, `folders`, `folders-workers`, `folders-ui`.
 - **OpenAPI Contract Spine** (OpenAPI 3.1) at `src/Hexalith.Folders.Contracts/openapi/hexalith.folders.v1.yaml` — the single source of truth; the client is **NSwag-generated** from it (`Hexalith.Folders.Client/nswag.json`).

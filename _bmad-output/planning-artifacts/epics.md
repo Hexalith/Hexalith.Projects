@@ -93,7 +93,7 @@ _Source: Architecture Decision Document (decisions, structure, implementation se
 
 **Foundation & build (Architecture "First Implementation Priority")**
 
-- **AR-1 (Starter / scaffold — Epic 1 Story 1):** No `Hexalith.Projects` module code exists. Scaffold the module from the **Hybrid Hexalith module scaffold** (Folders project-set shape + Tenants domain/tenant-isolation patterns + FrontComposer-generated UI): `Contracts`, `Client`, core `Hexalith.Projects`, `Server`, `Workers`, `Mcp`, `Cli`, `UI`, `ServiceDefaults`, `Aspire`, `AppHost`, `Testing`, plus `tests/` (Contracts/Tier-1/Server-Tier-2/Integration-Tier-3/e2e). The module is built **in-place in this umbrella repo**; siblings are root-level submodule dependencies (no `--recursive`). `Hexalith.Projects.slnx`, `global.json` (SDK 10.0.300), central package management, shared `Module.Directory.*.props` from Hexalith.Builds/Samples.
+- **AR-1 (Starter / scaffold — Epic 1 Story 1):** No `Hexalith.Projects` module code exists. Scaffold the module from the **Hybrid Hexalith module scaffold** (Folders project-set shape + Tenants domain/tenant-isolation patterns + FrontComposer-generated UI): `Contracts`, `Client`, core `Hexalith.Projects`, `Server`, `Workers`, `Mcp`, `Cli`, `UI`, `ServiceDefaults`, `Aspire`, `AppHost`, `Testing`, plus `tests/` (Contracts/Tier-1/Server-Tier-2/Integration-Tier-3/e2e). The module is built **in-place in this umbrella repo**; siblings are root-level submodule dependencies (no `--recursive`). `Hexalith.Projects.slnx`, `global.json` (SDK 10.0.302), central package management, shared `Module.Directory.*.props` from Hexalith.Builds/Samples.
 - **AR-2 (Contracts-before-code):** Define identifiers, commands, events, rejection events, query DTOs, and the shared state/reason-code enums + OpenAPI spine **before** any aggregate/projection code.
 
 **Write model (EventStore)**
@@ -312,7 +312,7 @@ So that **every later story has a compiling, test-gated module to build into wit
 **Given** a greenfield module (no `Hexalith.Projects` code exists)
 **When** the module is scaffolded
 **Then** the project set exists per the architecture tree — `Contracts`, `Client`, core `Hexalith.Projects`, `Server`, `Workers`, `Mcp`, `Cli`, `UI`, `ServiceDefaults`, `Aspire`, `AppHost`, `Testing` — plus `tests/` (`Contracts.Tests`, `Tests` Tier-1, `Server.Tests` Tier-2, `Integration.Tests` Tier-3, `e2e`)
-**And** `Hexalith.Projects.slnx`, `global.json` (SDK `10.0.300`, `rollForward: latestPatch`), `Directory.Build.props`, `Directory.Packages.props` (central package management, no inline versions), and shared `Module.Directory.*.props` from Hexalith.Builds/Samples are present.
+**And** `Hexalith.Projects.slnx`, `global.json` (SDK `10.0.302`, `rollForward: latestPatch`), `Directory.Build.props`, `Directory.Packages.props` (central package management, no inline versions), and shared `Module.Directory.*.props` from Hexalith.Builds/Samples are present.
 
 **Given** the umbrella repo with sibling submodule dependencies
 **When** dependencies are initialized

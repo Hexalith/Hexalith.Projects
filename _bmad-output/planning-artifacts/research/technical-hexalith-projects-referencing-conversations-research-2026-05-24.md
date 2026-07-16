@@ -60,7 +60,7 @@ See the **Research Synthesis** section at the end for the executive summary, dec
 
 ### Programming Language & Runtime
 
-- **C# / .NET 10** (`net10.0`); SDK pinned `10.0.300` (`global.json`, `rollForward: latestPatch`). Nullable reference types, implicit usings, and warnings-as-errors are on; Central Package Management via `Directory.Packages.props`.
+- **C# / .NET 10** (`net10.0`); SDK pinned `10.0.302` (`global.json`, `rollForward: latestPatch`). Nullable reference types, implicit usings, and warnings-as-errors are on; Central Package Management via `Directory.Packages.props`.
 - Contracts are **`sealed record`s with `required`/positional members** and eager boundary validation (e.g. `ProjectId` throws on empty `value`). Identifier value objects serialize through custom `System.Text.Json` converters (`ProjectIdJsonConverter`, `IdentifierJsonConverters.cs`).
 - _Confidence: High — `_bmad-output/project-context.md`; `Hexalith.Conversations/.../Identifiers/ProjectId.cs`._
 

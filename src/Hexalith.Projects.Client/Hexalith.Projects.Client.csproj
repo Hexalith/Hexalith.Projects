@@ -32,7 +32,7 @@
              separators on Linux. Build scripts that previously embedded `\` in property values
              failed when MSBuild concatenated them into shell commands on Linux.
          (b) The inner `dotnet run` invocation resolves `dotnet` via the system PATH. On WSL/Linux
-             this can hit `/usr/bin/dotnet` (SDK 10.0.108), which fails the `global.json` 10.0.300
+             this can hit `/usr/bin/dotnet` (SDK 10.0.108), which fails the `global.json` 10.0.302
              pin. Compute the parent dotnet host from `$(MSBuildToolsPath)` instead (which always
              belongs to the SDK currently running the build). -->
     <HexalithProjectsContractSpine>$(MSBuildProjectDirectory)/../Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml</HexalithProjectsContractSpine>

@@ -85,7 +85,7 @@ So that **resolution is deterministic, testable, fail-closed, and never stores s
   - [x] `ProjectResolutionContractValidationTests.cs` — eager-validation + null-argument guards + name-based JSON round-trip + additive-deserialization tolerance.
 
 - [x] **Task 8 — Build & verify (no contract-spine / .g.cs churn)** (AC: #1–#11)
-  - [x] `dotnet build Hexalith.Projects.slnx` → 0 W / 0 E (use `/home/administrator/.dotnet` 10.0.300, not `/usr/bin/dotnet` — see Dev Notes).
+  - [x] `dotnet build Hexalith.Projects.slnx` → 0 W / 0 E (use `/home/administrator/.dotnet` 10.0.302, not `/usr/bin/dotnet` — see Dev Notes).
   - [x] `dotnet test Hexalith.Projects.slnx --no-build` → all green; report per-lane counts.
   - [x] Confirm **no** OpenAPI spine change and **no** `.g.cs` regeneration (Story 4.1 adds no HTTP surface — the fingerprint gate must stay PASSED). Confirm no submodule pointer change and no nested recursive submodule init.
 
@@ -164,7 +164,7 @@ The Resolution Trace view renders outcomes `Resolved / NoMatch / MultipleCandida
 
 ### Build / environment note
 
-Use the SDK at `/home/administrator/.dotnet` (10.0.300), **not** `/usr/bin/dotnet`. Author hand-written `.cs` with CRLF, UTF-8, final newline, no BOM, zero NUL bytes; run `git diff --check` clean before declaring done. No submodule pointer changes; never run recursive submodule init.
+Use the SDK at `/home/administrator/.dotnet` (10.0.302), **not** `/usr/bin/dotnet`. Author hand-written `.cs` with CRLF, UTF-8, final newline, no BOM, zero NUL bytes; run `git diff --check` clean before declaring done. No submodule pointer changes; never run recursive submodule init.
 
 ### Hard HALT conditions (stop and record before coding)
 
@@ -214,11 +214,11 @@ GPT-5 Codex (initial implementation 2026-05-28); Claude Opus 4.8 (validation + c
 ### Debug Log References
 
 - 2026-05-28: Implemented Story 4.1 code/docs/tests, then hit a validation blocker before completion: `/home/administrator/.dotnet/dotnet build Hexalith.Projects.slnx` and targeted Projects builds fail in this Linux workspace before compile/test execution because existing generated NuGet assets/project-reference evaluation contain Windows restore paths / multi-target sibling project evaluation failures. `Hexalith.EventStore.Contracts`, `Hexalith.Conversations.Contracts`, and `Hexalith.FrontComposer.Contracts` individual target builds can be made to pass, but the Projects solution/project build still fails with `Build FAILED. 0 Warning(s) 0 Error(s)` during referenced-project `GetTargetFrameworks` evaluation. Tasks remain unchecked and Status remains `in-progress` until the required build/test gate is green.
-- 2026-05-29: Re-ran the build with the pinned SDK at `/home/administrator/.dotnet` (10.0.300). The build did **not** fail on project-reference evaluation — it surfaced two real compile errors (`CS1739`) in `ProjectResolutionEngine.cs`: the two tenant/archived `CreateExclusion(...)` call sites used a PascalCase named argument `ReasonCode:` that did not match the method parameter `reasonCode`. Fixed both to `reasonCode:`. After the fix: `dotnet build Hexalith.Projects.slnx -warnaserror` → **0 Warning(s) / 0 Error(s)**. The earlier "Windows restore path / GetTargetFrameworks" diagnosis was a misread of the same `Build FAILED` line; the actual blocker was the named-argument mismatch.
+- 2026-05-29: Re-ran the build with the pinned SDK at `/home/administrator/.dotnet` (10.0.302). The build did **not** fail on project-reference evaluation — it surfaced two real compile errors (`CS1739`) in `ProjectResolutionEngine.cs`: the two tenant/archived `CreateExclusion(...)` call sites used a PascalCase named argument `ReasonCode:` that did not match the method parameter `reasonCode`. Fixed both to `reasonCode:`. After the fix: `dotnet build Hexalith.Projects.slnx -warnaserror` → **0 Warning(s) / 0 Error(s)**. The earlier "Windows restore path / GetTargetFrameworks" diagnosis was a misread of the same `Build FAILED` line; the actual blocker was the named-argument mismatch.
 
 ### Completion Notes List
 
-- ✅ Root cause of the prior validation blocker was a 2-site `CS1739` named-argument mismatch (`ReasonCode:` → `reasonCode:`) in `ProjectResolutionEngine.cs`, not an environment/restore issue. Fixed; solution now builds clean (0W/0E) with the pinned 10.0.300 SDK.
+- ✅ Root cause of the prior validation blocker was a 2-site `CS1739` named-argument mismatch (`ReasonCode:` → `reasonCode:`) in `ProjectResolutionEngine.cs`, not an environment/restore issue. Fixed; solution now builds clean (0W/0E) with the pinned 10.0.302 SDK.
 - Implemented the compute-on-demand resolution design: deterministic scoring rules with distinct reason-code weights (single source of truth in `ProjectResolutionScoringRules`), fail-closed exclusion evidence (only `ReferenceState.Included` scores; everything else surfaces as a `ResolutionExclusion`), archived opt-in handling, missing/mismatched tenant authority fails closed, no `TenantId` on the wire, and no persistence/I/O/wall-clock dependency in the engine.
 - NFR-9 ambiguity bias holds: 0 qualifying → `NoMatch`, exactly 1 → `SingleCandidate`, ≥2 → `MultipleCandidates` (never collapses 2+ qualifying candidates into a silent single attach).
 - Tier-1 suite (xUnit v3 + Shouldly) covers the five epic-named cases (no-match / single / multiple / archived-exclusion / unauthorized-resource-exclusion) plus reason-code tagging, deterministic ranking/tiebreak, the scoring/threshold cells (doc↔code completeness), persist-nothing reflection proof, leakage + no-`TenantId`, and null/eager-validation guards.
@@ -261,7 +261,7 @@ Adversarial review of Story 4.1 against the working tree, a clean build, and the
 
 **Verified correct (no action needed):**
 - All 11 Acceptance Criteria implemented and covered by Tier-1 tests (xUnit v3 + Shouldly). The five epic-named cases, reason-code tagging, deterministic ranking/tiebreak, doc↔code scoring completeness, persist-nothing reflection proof (ctor params + private fields + assembly references), no-`TenantId`-on-wire + leakage, null-argument guards, and AC11 trace-state reconstruction are all present and green.
-- Build `Hexalith.Projects.slnx -warnaserror` → **0W/0E** (pinned SDK 10.0.300).
+- Build `Hexalith.Projects.slnx -warnaserror` → **0W/0E** (pinned SDK 10.0.302).
 - Full solution **1049 passed / 0 failed / 0 skipped**.
 - No OpenAPI spine change, no `.g.cs` regeneration, no submodule pointer change; `git diff --check` clean. Engine takes no EventStore/Dapr/command/projection/`HttpClient` dependency and reads no wall-clock — purity holds (AC7/AC9).
 - Every file claimed in the File List exists on disk; no false "files changed" claims.

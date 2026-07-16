@@ -23,7 +23,7 @@ The target direction is sound: the spine correctly moves Dapr, Aspire, persisten
 | Manifest feasibility | Aspire.Hosting 13.4.6 exposes non-generic `AddProject(builder, name, projectPath)` overloads as well as generated-type overloads. | A generic platform runner can load a checked-in manifest without compile-time Projects project types; the direction is feasible on the pinned Aspire line. |
 | Integration fixtures | `DaprDomainServiceTestFixtureBase` exists for a domain host; `AspireTopologyFixtureBase<TAppHost>` exists but requires a compile-time AppHost marker. | The platform must add a manifest-aware runner/fixture entry point or publish a generic runner AppHost type that consumes a manifest path. Current fixtures alone do not preserve the target repository lane. |
 | Dapr pins | Central package catalog: Dapr .NET packages `1.18.4`; CI runtime input `1.18.0`. The unused central catalog entry `Dapr=1.17.9` is not restored by any inspected project and is not the current CI runtime. | The stack row and G-6 currently mislabel `1.17.9` as the runtime/CLI seed and must be corrected. |
-| Other exact pins | Root SDK `10.0.300` with `latestPatch`; EventStore line `3.67.3`; FrontComposer `4.0.0`; Aspire `13.4.6`; Dapr Aspire toolkit preview `13.4.0-preview.1.260602-0230`; Fluent UI `5.0.0-rc.4-26180.1`; xUnit `3.2.2`; Shouldly `4.3.0`; NSubstitute `6.0.0-rc.1`. | The spine's remaining stack rows match the current central catalog. RC/preview lines correctly require compatibility gates rather than casual upgrades. |
+| Other exact pins | Root SDK `10.0.302` with `latestPatch`; EventStore line `3.67.3`; FrontComposer `4.0.0`; Aspire `13.4.6`; Dapr Aspire toolkit preview `13.4.0-preview.1.260602-0230`; Fluent UI `5.0.0-rc.4-26180.1`; xUnit `3.2.2`; Shouldly `4.3.0`; NSubstitute `6.0.0-rc.1`. | The spine's remaining stack rows match the current central catalog. RC/preview lines correctly require compatibility gates rather than casual upgrades. |
 
 ## Findings
 
@@ -144,7 +144,7 @@ The exact marker type may change during BR-2, but assembly-explicit discovery is
 
 ## Exact API and package-fit disposition
 
-- **Ratified:** `.NET 10.0.300`, `net10.0`, C# 14, EventStore `3.67.3`, FrontComposer `4.0.0`, Aspire `13.4.6`, Dapr .NET `1.18.4`, Fluent UI RC4, xUnit 3.2.2, Shouldly 4.3.0, and NSubstitute RC1 match the current root package catalog.
+- **Ratified:** `.NET 10.0.302`, `net10.0`, C# 14, EventStore `3.67.3`, FrontComposer `4.0.0`, Aspire `13.4.6`, Dapr .NET `1.18.4`, Fluent UI RC4, xUnit 3.2.2, Shouldly 4.3.0, and NSubstitute RC1 match the current root package catalog.
 - **Ratified with usage correction:** `IDomainQueryHandler`, `IAsyncDomainProjectionHandler`, `IReadModelStore`, `IReadModelBatchStore`, `ReadModelWritePolicy`, and `IQueryCursorCodec` are present and fit the target read architecture.
 - **Compatibility-only:** `IDomainProjectionHandler` is the full-replay v1 seam and must not be the default implementation for incremental Projects views.
 - **Missing external prerequisites:** generic Durable Task/Confirmation Artifact capability and manifest-driven platform composition runner.

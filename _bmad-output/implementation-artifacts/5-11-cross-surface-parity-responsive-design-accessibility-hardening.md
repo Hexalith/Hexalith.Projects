@@ -114,7 +114,7 @@ so that the three surfaces tell the same truth, work across viewports, are acces
 
 ### Latest Technical Notes
 
-- Local authoritative pins on 2026-05-30: .NET SDK `10.0.300`, Dapr `1.17.9`, Aspire `13.3.5`, Fluent UI Blazor `5.0.0-rc.3-26138.1`, Fluxor `6.9.0`, NSwag `14.7.1`, xUnit v3 `3.2.2`, bUnit `2.7.2`, Playwright `^1.54.1`, and `@axe-core/playwright` resolved to `4.11.3` in the lockfile. Do not upgrade/downgrade casually. [Source: global.json] [Source: Directory.Packages.props] [Source: tests/e2e/package.json] [Source: tests/e2e/package-lock.json]
+- Local authoritative pins on 2026-05-30: .NET SDK `10.0.302`, Dapr `1.17.9`, Aspire `13.3.5`, Fluent UI Blazor `5.0.0-rc.3-26138.1`, Fluxor `6.9.0`, NSwag `14.7.1`, xUnit v3 `3.2.2`, bUnit `2.7.2`, Playwright `^1.54.1`, and `@axe-core/playwright` resolved to `4.11.3` in the lockfile. Do not upgrade/downgrade casually. [Source: global.json] [Source: Directory.Packages.props] [Source: tests/e2e/package.json] [Source: tests/e2e/package-lock.json]
 - NuGet checked on 2026-05-30 shows `Microsoft.FluentUI.AspNetCore.Components` `5.0.0-rc.3-26138.1` exists, while the listed stable package line is still 4.x. Keep the repo-pinned RC unless there is an explicit package-upgrade story. [Source: https://www.nuget.org/packages/Microsoft.FluentUI.AspNetCore.Components/]
 - Official Playwright accessibility guidance uses `@axe-core/playwright` to run axe checks inside Playwright tests. This repo already follows that pattern through `expectNoA11yViolations`; prefer expanding the existing helper over introducing another accessibility framework. [Source: https://playwright.dev/docs/accessibility-testing] [Source: tests/e2e/support/helpers/a11y.ts]
 

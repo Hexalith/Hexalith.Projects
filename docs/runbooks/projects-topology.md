@@ -7,7 +7,7 @@ operations guide, not production configuration.
 
 Prerequisites:
 
-- .NET SDK `10.0.300`.
+- .NET SDK `10.0.302`.
 - Aspire CLI `13.4.6` (matching the AppHost SDK/hosting/orchestration stack).
 - `jq` for JSON endpoint extraction and `curl` for health probes.
 - Docker-compatible container runtime for Aspire-managed infrastructure.

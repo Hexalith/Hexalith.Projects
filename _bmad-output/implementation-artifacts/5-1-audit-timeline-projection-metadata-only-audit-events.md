@@ -122,7 +122,7 @@ No previous Epic 5 story exists. Carry forward these relevant completed-story co
 
 ### Latest Technical Context
 
-- Keep the repo-pinned .NET SDK and package posture. The workspace uses .NET SDK `10.0.300`, `net10.0`, warnings-as-errors, central package management, Dapr `1.17.7`, and Fluent UI Blazor `5.0.0-rc.2-26098.1`; do not bump packages for this story. [Source: _bmad-output/project-context.md#Technology-Stack--Versions]
+- Keep the repo-pinned .NET SDK and package posture. The workspace uses .NET SDK `10.0.302`, `net10.0`, warnings-as-errors, central package management, Dapr `1.17.7`, and Fluent UI Blazor `5.0.0-rc.2-26098.1`; do not bump packages for this story. [Source: _bmad-output/project-context.md#Technology-Stack--Versions]
 - External check on 2026-05-30: Microsoft documents .NET 10 as an LTS release, and Dapr docs list runtime `1.17.7` as the current supported release. That confirms the existing pinned posture; it does not authorize package churn. [Source: https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/overview] [Source: https://docs.dapr.io/operations/support/support-release-policy/]
 
 ### Project Structure Notes
