@@ -1,5 +1,5 @@
 # generated: 2026-07-17T08:14:03+02:00
-# last_updated: 2026-07-17T12:23:05+02:00
+# last_updated: 2026-07-17T16:49:12+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -49,7 +49,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-07-17T12:23:05+02:00
+last_updated: 2026-07-17T16:49:12+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -208,13 +208,16 @@ action_items:
   - epic: 6
     id: "6.1-P0"
     action: "Deliver the supported G-4 persisted runner and machine-checkable evidence tooling required by Story 6.1."
-    repository_authority: "Builds/platform tooling repository selected by the Builds owner"
+    repository_authority: "Hexalith/Hexalith.Builds"
     owner: "Builds Owner / Platform Owner / Test Architect"
     status: open
     target_date: uncommitted
+    authorized: "2026-07-17 by Jerome"
+    owner_baseline: "edbaeaed68bcdb8deffcd98ed5652d237596e1d1"
+    owner_story: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md"
     expected_evidence: "Owner-approved runner revision, reproducible command, persisted fixture, evidence schema/sample, negative control, and rollback procedure"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p0--deliver-the-g-4-persisted-runner-and-evidence-tooling"
-    routed_to: "Product Manager / Solution Architect / Builds and Platform Owners"
+    routed_to: "Hexalith.Builds owner-repository story"
   - epic: 6
     id: "6.1-P1"
     action: "Normalize EventStore source, Architecture Spine pin, central package versions, and the G-4 runner manifest into one owner-approved baseline."

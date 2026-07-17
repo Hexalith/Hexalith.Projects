@@ -4,12 +4,14 @@ story_key: 6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling
 artifact_kind: external-prerequisite-story-handoff
 created: 2026-07-17
 source_action_status: open
-status: blocked
-blocked_by:
-  - Builds-owner repository selection
-  - owner-approved repository-local issue or story
-  - owner-approved baseline revision and rollback pin
-repository_authority: "Builds/platform tooling repository selected by the Builds owner"
+status: handed-off
+authorized: 2026-07-17
+authorized_by: Jerome
+repository_authority: Hexalith/Hexalith.Builds
+owner_repository_baseline: edbaeaed68bcdb8deffcd98ed5652d237596e1d1
+owner_repository_story: references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md
+owner_packages: [Hexalith.Builds.Module.Cli, Hexalith.Builds.Evidence.Cli]
+owner_rollback_pin: none-greenfield; previous released Builds boundary v4.19.2 / 8e0e2da5e1eff07468b41d85d97979c96c2ac975
 owners: [Builds Owner, Platform Owner, Test Architect]
 parallel_with: [6.1-P1]
 unblocks: [6.1-P4]
@@ -31,17 +33,17 @@ target_date: uncommitted
 estimate: L
 risk: high evidence-chain risk
 projects_baseline_commit: ec447e4
-builds_observed_commit: 01e48ee
 ---
 
 # Story 6.1-P0: Deliver the G-4 Persisted Runner and Evidence Tooling
 
-Status: blocked
+Status: handed-off
 
 <!--
-This is a portable handoff for the external 6.1-P0 enablement work package. It is not an
+This is the Projects-side handoff for the external 6.1-P0 enablement work package. It is not an
 additional Hexalith.Projects user-value story and does not change the approved 33-story backlog.
-It must be adopted as an owner-approved repository-local issue or story before implementation.
+Jerome authorized Hexalith.Builds ownership on 2026-07-17; implementation is governed by the
+owner-repository story recorded in frontmatter.
 -->
 
 ## Story
@@ -52,7 +54,7 @@ so that Story 6.1 and later work can prove supported-path behavior without Proje
 
 ## Acceptance Criteria
 
-1. **Owner authority and immutable delivery baseline.** Given this handoff, when 6.1-P0 is accepted for implementation, then the Builds owner records the authoritative repository, the accountable Builds/Platform/Test owners, an owner-approved baseline revision, final package IDs and versions, the manifest and evidence schema versions, the release channel, and the prior known-good rollback pin in a repository-local issue or story. If runner and evidence ownership are split, each repository has a coordinated local work item and their revision relationship is explicit. Until that record exists, this handoff remains `blocked`; neither Projects nor an implementing agent may select the repository or self-approve the gate.
+1. **Owner authority and immutable delivery baseline.** Given Jerome's 2026-07-17 authorization, then `Hexalith/Hexalith.Builds` owns both tools from starting baseline `edbaeaed68bcdb8deffcd98ed5652d237596e1d1`, package IDs `Hexalith.Builds.Module.Cli` and `Hexalith.Builds.Evidence.Cli`, the schemas and release policy frozen by the owner-repository story, and a truthful greenfield rollback record referencing previous released Builds boundary `v4.19.2` / `8e0e2da5e1eff07468b41d85d97979c96c2ac975` with no prior tool package. Normal descendant implementation commits create the delivery revision; package/schema/ownership changes or a non-descendant starting baseline must update both records before qualification. Projects and implementing agents still cannot self-approve P0 acceptance.
 
 2. **Pinned, independently consumable .NET tools.** Given a clean consumer checkout with no authoritative `bin` or `obj` output, when `dotnet tool restore` runs against a checked-in `.config/dotnet-tools.json`, then exact published versions of tools exposing `hexalith-module` and `hexalith-evidence` restore successfully and the documented `dotnet tool run` commands work without source-tree scripts, globally installed tools, or consumer-side platform code. The same public command contract fronts Debug/source qualification and Release/package qualification; neither mode becomes a second supported interface.
 
@@ -68,9 +70,9 @@ so that Story 6.1 and later work can prove supported-path behavior without Proje
 
 8. **Execution failure is distinguishable from evidence failure.** Given a runner, test, parser, or policy failure, when the command terminates, then a documented stable machine contract distinguishes usage/manifest, environment/prerequisite, topology/lifecycle, product/test, persisted-state, and evidence/schema/policy failures. Diagnostics contain a stable category and rule ID, and execution failure is distinct from evidence-validation failure through documented nonzero outcomes. Phase-aware short-circuiting preserves the causal failure; an arbitrary numeric-precedence rule cannot overwrite it. Partial artifacts never claim `passed`.
 
-9. **Fail-closed AD-30 readiness validator.** Given a candidate `hexalith.readiness-evidence.v1` YAML matrix, when `hexalith-evidence validate` runs, then it parses YAML with duplicate-key detection, rejects unsupported schemas before business-rule validation, resolves row defaults to effective rows, and validates the canonical `key` identity. It rejects missing/duplicate keys, unresolved placeholders, missing owner/version/dependencies or gates/command/artifact-path/estimate/status/release disposition, incomplete FR/NFR/P1/P2/release coverage, failed critical evidence, unexplained critical skips, unavailable environments represented as passed, and Markdown/YAML row-identity drift. Pending, blocked, or not-verified rows may reference future artifact paths; actual artifact existence, readability, schema, and hash are mandatory when a row claims executed or passing evidence. Diagnostics are deterministically sorted and expose source file, row key, rule ID, field/location, and actionable hint in human and JSON modes.
+9. **Fail-closed AD-30 readiness validator.** Given a candidate `hexalith.readiness-evidence.v1` YAML matrix, when `hexalith-evidence validate` runs, then it parses YAML with duplicate-key detection, rejects unsupported schemas before business-rule validation, resolves row defaults to effective rows, and validates the canonical `key` identity. It rejects missing/duplicate keys, unresolved placeholders, missing owner/version/dependencies or gates/command/artifact-path/estimate/status/release disposition, incomplete FR/NFR/P1/P2/release coverage, failed critical evidence, unexplained critical skips, unavailable environments represented as passed, and Markdown/YAML row-identity drift. Pending, blocked-external, or not-verified rows may reference future artifact paths; actual artifact existence, readability, schema, and hash are mandatory when a row claims executed or passing evidence. Diagnostics are deterministically sorted and expose source file, row key, rule ID, field/location, and actionable hint in human and JSON modes.
 
-10. **Status vocabulary is reconciled, not invented.** Given the current readiness matrix declares five legend values but uses `blocked` on its terminal release row, when the validator contract is approved, then the Product/Architecture/Test owners either add and define that status for the applicable category or correct the canonical matrix before claiming the first valid sample. The tool cannot silently accept an undeclared value or mutate the input. P0 supplies a separate conforming positive sample; it does not rewrite Projects planning evidence without its own authority.
+10. **Undeclared status is rejected, not invented.** Given the current readiness matrix declares five legend values but uses `blocked` on its terminal release row, when the validator processes it, then it emits a stable undeclared-status diagnostic and nonzero evidence-validation outcome. The tool cannot silently accept the undeclared value or mutate the input. Projects owners must reconcile the canonical matrix under their own authority; P0 supplies a separate conforming positive sample.
 
 11. **Blocking positive and negative controls.** Given the packaged commands and curated fixtures, when CI runs the P0 contract suite, then an approved positive sample passes and negative controls fail predictably with the expected stable category/rule IDs. Controls include unsupported manifest/evidence schema, absolute or escaping paths, duplicate IDs/YAML keys, secret or placeholder content, tampered tool/version pins, absent event or projection, stale prior-run or cross-Tenant state, missing/invalid report, zero/all-skipped tests, missing coverage/owner/version/command/artifact path, a missing or invalid actual artifact for a row claiming execution/pass, a critical failed or unexplained-skipped row, and `passed` on an unavailable environment. The controls invoke the packed tools and are not skipped or quarantined.
 
@@ -78,21 +80,19 @@ so that Story 6.1 and later work can prove supported-path behavior without Proje
 
 13. **Clean-checkout Debug and CI package-mode parity.** Given a clean checkout at the accepted revisions, when the qualification workflow runs, then it builds and tests with the pinned SDK, packs the tools, restores them from a local/CI package source, executes the valid and negative fixtures, and proves the same supported commands in Debug/source and Release/package modes without stale artifacts. The workflow records exact tool/package revisions, supports the repository's approved VSTest/MTP reporting paths, and fails closed under G-6 when any required lane or prerequisite is unavailable.
 
-14. **Rollback and consumer handoff.** Given an unsuccessful rollout or incompatible schema, when rollback is invoked, then the documented procedure runs idempotent `down`, retains failed evidence, restores the prior exact local-tool/package pin, reverts the consumer manifest/schema only through an authorized change, and reruns validation. P0 completes only when Projects can pin and invoke the owner-approved packages and schemas without copying or reimplementing runner, topology, credential, port, lifecycle, or evidence-validator logic.
+14. **Greenfield rollback and consumer handoff.** Given there is no prior tool package, when the first rollout is rolled back, then the procedure runs idempotent `down`, retains failed evidence, removes consumer tool/manifest adoption through an authorized change, records previous released Builds boundary `v4.19.2` / `8e0e2da5e1eff07468b41d85d97979c96c2ac975`, never resets a developer's working source tree, and keeps Story 6.1 blocked. Once a prerelease is published and qualified, that exact version becomes the first legitimate known-good package rollback pin. P0 completes only when Projects can pin and invoke the owner-approved packages and schemas without copying or reimplementing runner, topology, credential, port, lifecycle, or evidence-validator logic.
 
 15. **Gate disposition stays honest.** Given all P0 acceptance evidence passes, when the owners accept the exact repository revision, package/version pins, reproducible command, persisted fixture, schema/sample, negative-control result, and rollback procedure, then the Projects action ledger may record P0 evidence for 6.1-P4. P0 completion alone does not unblock Story 6.1, satisfy P1/P2/P3, create `6.1-entry-gate.yaml`, or authorize Projects implementation; P4 must accept all prerequisite pins and the Story 6.1 spec must independently pass readiness.
 
 ## Tasks / Subtasks
 
-**Non-implementation entry condition.** Do not begin the implementation tasks until AC 1 has an
-owner-approved repository-local record. The paths in the conditional file map are guidance, not a
-repository decision.
+**Routing condition satisfied.** Jerome authorized the Builds-local story on 2026-07-17. Do not
+implement these tasks from Hexalith.Projects; the owner-repository story is the executable source.
+The paths below remain historical handoff guidance where the owner story is more specific.
 
-- [ ] Establish owner-repository authority and freeze the contract (AC: 1, 10, 15)
-  - [ ] Select the runner and validator repository or coordinated repositories; name accountable owners and create the local work item(s).
-  - [ ] Record the baseline revision, package IDs, exact versions, release source, schema versions, accepted status vocabulary, evidence retention policy, and rollback pin.
-  - [ ] Record P1-owned platform/version dependencies without choosing or normalizing them in P0. In particular, disposition any mismatch between the adopted architecture pins and current Builds central properties through 6.1-P1.
-  - [ ] Freeze stable command, diagnostic, exit/failure-category, manifest, evidence, and run-state contracts before implementation.
+- [x] Establish owner-repository authority and route the contract (AC: 1, 10, 15)
+  - [x] Select Hexalith.Builds for both tools, retain the accountable owner roles, and create the local story.
+  - [x] Record baseline revision, package IDs, lockstep semantic-release policy, release sources, schema versions, undeclared-status disposition, and greenfield rollback.
 
 - [ ] Package the supported local tools (AC: 2, 8, 13)
   - [ ] Add packable .NET tool entry points with the approved package IDs and `ToolCommandName` values for `hexalith-module` and `hexalith-evidence`.
@@ -141,7 +141,7 @@ repository decision.
 
 ### Authority, Readiness, and Scope
 
-- This artifact translates the approved `6.1-P0` action into implementation-ready behavior, but it cannot grant repository authority. The Sprint Change Proposal requires a Builds-owner-selected repository and owner-approved local issue/story before external mutation.
+- This artifact translated the approved `6.1-P0` action and now records its authorized route. The Builds-local story grants implementation authority within Hexalith.Builds; this Projects artifact grants no sibling mutation by itself.
 - P0 is an enablement work package, not one of the 33 approved Hexalith.Projects user-value stories. Keep Story 6.1 and its specification `blocked`; keep the Projects P0 action `open` until owner-approved evidence exists.
 - P0 enables FR-2/FR-5 verification and traces to NFR-11, TEST-001, AD-25, and AD-30. It does not implement Projects read behavior, pick the P1 EventStore/platform baseline, implement P2 authorization or P3/G-5 identity, switch routing, remove the legacy AppHost, or self-accept P4.
 - P0 has no UI implementation scope. Authenticated Web/CLI/MCP proof is a runner capability consumed by later story lanes; this work does not add presentation behavior or claim accessibility acceptance.
@@ -285,12 +285,12 @@ GPT-5 Codex
 
 ### Debug Log References
 
-- Story creation and source analysis only; no owner repository was selected and no implementation build or test was run.
+- Handoff creation, owner routing, and source analysis only; no implementation build or test was run.
 
 ### Completion Notes List
 
 - Ultimate context engine analysis completed across the corrective epics, canonical Architecture Spine, readiness matrix/report, Sprint Change Proposal, Epic 6 test design, Story 6.1/spec, current Projects topology/tests/CI, EventStore and Builds reuse candidates, recent Git history, and official .NET/Aspire/test-platform guidance.
-- Classified this artifact as an external prerequisite handoff and preserved its truthful blocked status because repository selection and owner approval are still uncommitted.
+- Classified this artifact as an external prerequisite handoff; Jerome subsequently authorized Hexalith.Builds at `edbaeae`, so the handoff is now `handed-off` while the source action remains open.
 - Added fail-closed persisted controls, deterministic evidence fields, VSTest/MTP compatibility, negative fixtures, clean-checkout source/package parity, security/redaction, rollback, and exact P4 handoff boundaries.
 
 ### File List
