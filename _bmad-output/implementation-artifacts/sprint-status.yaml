@@ -1,5 +1,5 @@
-# generated: 2026-07-14T20:57:51+02:00
-# last_updated: 2026-07-14T22:32:29+02:00
+# generated: 2026-07-17T08:14:03+02:00
+# last_updated: 2026-07-17T08:14:03+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -40,8 +40,8 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
-generated: 2026-07-14T20:57:51+02:00
-last_updated: 2026-07-14T22:32:29+02:00
+generated: 2026-07-17T08:14:03+02:00
+last_updated: 2026-07-17T08:14:03+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -106,39 +106,49 @@ development_status:
   5-12-live-apphost-operational-console-verification: done
   epic-5-retrospective: done
 
-  # Epic 6: Supported Platform Boundary and Secure Identity
+  # Epic 6: Authorized Project Reads on the Supported Platform
   epic-6: backlog
-  6-1-pin-platform-capabilities-and-migration-baseline: backlog
-  6-2-restore-contracts-presentation-identity-and-api-boundaries: backlog
-  6-3-enforce-secure-platform-admission-and-authorization-evidence: backlog
-  6-4-migrate-read-models-and-queries-to-domainservice: backlog
-  6-5-migrate-command-hosting-and-platform-topology: backlog
-  6-6-authenticate-frontcomposer-ui-and-cli-consumers: backlog
-  6-7-execute-compatibility-cutover-and-retire-legacy-runtime: backlog
+  6-1-list-and-open-projects-through-supported-authenticated-paths: backlog
+  6-2-retrieve-conversation-start-setup-with-admission-truth: backlog
+  6-3-retrieve-assembled-project-context-through-supported-read-models: backlog
+  6-4-resolve-projects-with-transient-current-explanations: backlog
+  6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface: backlog
+  6-6-inspect-projects-through-an-authenticated-cli-read-surface: backlog
+  6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback: backlog
   epic-6-retrospective: optional
 
-  # Epic 7: Durable Cross-Context and Agent-Safe Workflows
+  # Epic 7: Durable Project Decisions and Cross-Context Recovery
   epic-7: backlog
-  7-1-provide-shared-durable-workflow-task-and-confirmation-seams: backlog
-  7-2-bind-server-issued-previews-and-confirmations: backlog
-  7-3-enforce-mandatory-folder-through-durable-project-creation: backlog
-  7-4-make-conversation-assignment-and-moves-durable-and-auditable: backlog
-  7-5-make-proposed-project-confirmation-durable-and-recoverable: backlog
-  7-6-migrate-archive-restore-relink-and-unlink-to-bound-tasks: backlog
-  7-7-reconcile-legacy-pending-folder-and-in-flight-records: backlog
+  7-1-create-a-project-with-exactly-one-authorized-folder: backlog
+  7-2-update-project-setup-idempotently: backlog
+  7-3-link-an-unassigned-conversation: backlog
+  7-4-move-a-conversation-between-projects: backlog
+  7-5-unlink-a-conversation: backlog
+  7-6-replace-a-project-folder: backlog
+  7-7-link-an-authorized-file-reference: backlog
+  7-8-unlink-a-file-reference: backlog
+  7-9-link-an-authorized-memory: backlog
+  7-10-unlink-a-memory: backlog
+  7-11-confirm-an-ambiguous-project-choice: backlog
+  7-12-confirm-a-proposed-new-project: backlog
+  7-13-archive-an-active-project: backlog
+  7-14-restore-an-archived-project: backlog
+  7-15-reconcile-legacy-and-interrupted-workflows: backlog
   epic-7-retrospective: optional
 
-  # Epic 8: Production Conformance and Release Evidence
+  # Epic 8: Safe Operations and Release Confidence
   epic-8: backlog
-  8-1-establish-real-persisted-boundary-fixtures-and-ci: backlog
-  8-2-implement-truthful-health-telemetry-and-generated-logging: backlog
-  8-3-conform-mcp-and-cli-machine-contracts: backlog
-  8-4-rebuild-operator-ui-conformance: backlog
-  8-5-align-build-packaging-supply-chain-and-source-structure: backlog
-  8-6-activate-authenticated-critical-e2e-and-tenant-isolation-gates: backlog
-  8-7-prove-restart-retry-concurrency-and-reconciliation: backlog
-  8-8-bound-read-models-and-verify-performance-objectives: backlog
-  8-9-record-deployment-and-stakeholder-acceptance: backlog
+  8-1-inspect-task-audit-and-reconciliation-truth: backlog
+  8-2-create-a-bounded-safe-diagnostic-export: backlog
+  8-3-operate-projects-through-a-conformant-web-console: backlog
+  8-4-operate-projects-through-a-deterministic-cli-contract: backlog
+  8-5-operate-projects-through-agent-safe-mcp-contracts: backlog
+  8-6-observe-truthful-dependency-and-projection-health: backlog
+  8-7-consume-reproducible-packages-and-supply-chain-evidence: backlog
+  8-8-verify-authenticated-parity-isolation-and-accessibility: backlog
+  8-9-meet-bounded-performance-and-back-pressure-objectives: backlog
+  8-10-prove-cross-workflow-resilience: backlog
+  8-11-complete-deployment-rollback-evidence-and-stakeholder-acceptance: backlog
   epic-8-retrospective: optional
 
 action_items:
@@ -159,13 +169,13 @@ action_items:
   - epic: 5
     action: "Resolve or explicitly scope the pre-existing CreateProject metadataClass required-field enforcement gap with OpenAPI/server tests."
     owner: "Amelia"
-    status: routed
+    status: in-progress
     routed_to: "Story 6.2"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
   - epic: 5
     action: "Add U+2028/U+2029 idempotency canonicalizer parity coverage across server and generated-client fingerprinting."
     owner: "Amelia / Murat"
-    status: routed
+    status: in-progress
     routed_to: "Story 6.2"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
   - epic: 5
@@ -178,12 +188,12 @@ action_items:
   - epic: 5
     action: "Canonicalize or explicitly document the mixed FreshnessTrustState vocabulary used by reference-health rows."
     owner: "Paige / Amelia"
-    status: routed
+    status: in-progress
     routed_to: "Stories 6.2 and 8.3"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
   - epic: 5
     action: "Keep partial-failure and diagnosticUnavailable parity covered for Web, MCP, and CLI warning/dashboard outputs."
     owner: "Murat"
-    status: routed
+    status: in-progress
     routed_to: "Stories 8.3 and 8.4"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
