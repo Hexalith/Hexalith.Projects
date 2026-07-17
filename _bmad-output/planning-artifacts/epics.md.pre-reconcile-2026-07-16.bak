@@ -4,22 +4,11 @@ stepsCompleted:
   - 2
   - 3
   - 4
-status: reconciled-2026-07-16
-reconciledAgainst:
-  - 'final PRD FR-1..FR-24 / NFR-1..NFR-11'
-  - 'ARCHITECTURE-SPINE.md AD-1..AD-34'
-productionAuthority: 'Epics 6-8 (33 stories: 7/15/11)'
-awaitingGate: 'independent implementation-readiness rerun == READY, before sprint-status reconciliation and 6.x/7.x/8.x story-file creation'
-releaseBlockedUntil: 'Story 8.11 passes with dated Jerome + John acceptance'
+status: complete
 inputDocuments:
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
-  - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/addendum.md
-  - _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md
+  - _bmad-output/planning-artifacts/architecture.md
   - _bmad-output/planning-artifacts/ux-design-specification.md
-  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-16.md
-  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-16-implementation-readiness-rerun.md
-  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-15.md
-  - _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-16.md
   - _bmad-output/planning-artifacts/research/domain-eventstore-persistence-for-hexalith-projects-module-data-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-folders-integration-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-projects-referencing-conversations-research-2026-05-24.md
@@ -27,10 +16,7 @@ inputDocuments:
   - _bmad-output/planning-artifacts/research/technical-hexalith-memories-rag-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-frontcomposer-hexalith-projects-web-ux-research-2026-05-24.md
   - _bmad-output/implementation-artifacts/2-1-conversation-reference-read-acl.md
-supersededInputs:
-  - '_bmad-output/planning-artifacts/architecture.md (superseded 2026-07-16 by ARCHITECTURE-SPINE.md)'
-  - '_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md (23-placeholder addendum, replaced by the 33-story rebaseline)'
-backup: '_bmad-output/planning-artifacts/epics.md.pre-reconcile-2026-07-16.bak'
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md
 ---
 
 # Hexalith.Projects - Epic Breakdown
@@ -39,22 +25,20 @@ backup: '_bmad-output/planning-artifacts/epics.md.pre-reconcile-2026-07-16.bak'
 
 This document provides the complete epic and story breakdown for Hexalith.Projects, decomposing the requirements from the PRD, the UX Design Specification, and the Architecture Decision Document into implementable stories.
 
-Hexalith.Projects is a **tenant-aware AI workspace boundary module** built as a domain-centric **EventStore DomainService** with platform-owned runtime and presentation adapters (per `architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md`, AD-1…34). It gives Hexalith.Chatbot a durable project context (metadata, setup, lifecycle, and references to Conversations/Folders/Files/Memories) and exposes one operational model through three surfaces (Web via FrontComposer, MCP, CLI). It is a **metadata control plane** — it references but never owns sibling-context payloads. Following the 2026-07-15/16 rebaseline the module is treated as **brownfield**: Epics 1–5 are completed implementation history, and the corrective Epics 6–8 migrate onto the supported platform via shadow-read-first, single-writer, compatibility-controlled cutover with **no event-history rewrite**.
+Hexalith.Projects is a **greenfield, tenant-aware AI workspace boundary module** built on Hexalith.EventStore + Dapr + Aspire. It gives Hexalith.Chatbot a durable project context (metadata, setup, lifecycle, and references to Conversations/Folders/Files/Memories) and exposes one operational model through three generated surfaces (Web via FrontComposer, MCP, CLI). It is a **metadata control plane** — it references but never owns sibling-context payloads.
 
 ## Requirements Inventory
 
 ### Functional Requirements
 
-_Source: final PRD §6–§8 + addendum (FR-1–FR-24). Each FR has testable consequences in the PRD; abbreviated here._
-
-> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and an identically keyed AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). Corrective development, story-file creation, and sprint reconciliation remain frozen until an independent implementation-readiness rerun returns exactly `READY`; production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance.
+_Source: PRD §4 (FR-1–FR-22). Each FR has testable consequences in the PRD; abbreviated here._
 
 **Project Workspace Management**
 
 - **FR-1: Create Project** — Create a Project with tenant context + Project name (only required user input). Description, initial setup, and initial references optional. If no Project Folder supplied, can request creation of a Project Folder with the same name. Sets lifecycle `Active`. Fails closed when tenant context is missing/unauthorized. No payload duplication. (UJ-2, UJ-3)
 - **FR-2: Open Project** — Open a Project and receive metadata, lifecycle state, setup, and authorized references needed to initialize a conversation. Returns only references visible to the requesting tenant/user. Archived/unavailable Projects are clearly identified and cannot silently become active context. (UJ-1)
 - **FR-3: Update Project Setup** — Update durable Project Setup (project goals, instructions, context preferences, source inclusion/exclusion, conversation-start defaults). Updates are durable, additive, serialization-tolerant; reject raw secrets, unrestricted paths, foreign-context payloads. v1 setup describes conversation behavior/context policy, not model-provider internals. (UJ-1)
-- **FR-4: Archive Project** — Archive an Active Project through server **Preview**, single-use **Confirmation Artifact**, and an idempotent **Durable Task** (AD-4/AD-5/AD-13). It stays discoverable for history but is excluded from automatic resolution unless explicitly requested. v1 lifecycle limited to `Active`/`Archived`. Existing references remain auditable after archival. **Restore is the separate FR-23.** _Production owner: Story 7.13._
+- **FR-4: Archive Project** — Archive a Project so it stays discoverable for history but is excluded from automatic resolution unless explicitly requested. v1 lifecycle limited to `Active`/`Archived`. Existing references remain auditable after archival.
 - **FR-5: List Projects** — List Active/Archived Projects visible to the requesting tenant/user. Results are tenant-scoped, authorization-filtered, can filter by lifecycle state, and carry enough metadata to present choices without loading full Project Context.
 
 **Context References**
@@ -81,31 +65,27 @@ _Source: final PRD §6–§8 + addendum (FR-1–FR-24). Each FR has testable con
 
 **Project Setup Quality**
 
-- **FR-19: Validate Project Setup & Classify Metadata** — Validate setup and creation admission before accepting durable work. Reject raw secrets, unrestricted local paths, unsupported reference types, and foreign-context payloads. Require only a Project name on create (the sole v1 name-only compatibility shape); canonical requests also carry a system-supplied **Metadata Classification** — exactly `public_metadata`|`tenant_sensitive`|`credential_sensitive`|`secret` at `projectMetadata.metadataClass`, assigned by authenticated integration policy and never inferred from user text (AD-31/E-9). **Authorization precedes parsing**; one shared `SensitiveMetadataTierValidator` serves both direct create and proposal confirmation; malformed/unknown classification returns `400 ValidationFailure` with `details.rejectedField = projectMetadata.metadataClass` and no echoed value. _Production owner: Story 7.1 (canonical contract cutover supported by Story 6.7)._
+- **FR-19: Validate Project Setup** — Validate setup before create/update. Reject raw secrets, unrestricted local paths, unsupported reference types, and foreign-context payloads. Require only a Project name on create; default lifecycle `Active`; permit Folder supplied or auto-created with the Project name; allow durable conversation guidance. Validation failures return structured errors identifying the rejected field without echoing sensitive values.
 - **FR-20: Retrieve Conversation-Start Setup** — Return the subset of setup needed to start/resume a conversation (goals, instructions, context preferences, default linked-source policy). Excludes internal audit metadata and unavailable/unauthorized references; stable enough to use without re-querying every bounded context first.
 
 **Audit and Operations**
 
 - **FR-21: Record Project Audit Events** — Record metadata-only audit events for creation, setup updates, archival, conversation link/move, Folder changes, File/Memory link/unlink, resolution confirmation, and new-Project-from-proposal. Include tenant, Project identity, operation type, timestamp, actor identity where available, and affected reference IDs. Never include payloads/secrets/prompts.
-- **FR-22: Support Operator Read Access** — Tenant Operators and Tenant Project Administrators can inspect authorized Project metadata, lifecycle state, references, Durable Task status, confirmed resolution outcomes, and audit metadata. Authorization-gated, tenant-scoped, **metadata-only read**. Read permission alone grants **neither** Safe Diagnostic Export (**now FR-24**) **nor** any mutation. _Production owners: Stories 6.5/6.6 (authenticated read surfaces), 8.1/8.3/8.4/8.5 (operational surfaces)._
-- **FR-23: Restore Archived Project** — Restore an Archived Project through Preview, single-use confirmation, and an idempotent Durable Task (the restore counterpart to FR-4; realizes UJ-5). Preview verifies Tenant, actor, authority, current Project version, and **exactly one authorized Project Folder**; if the prior Folder is invalid/missing, Preview requires an authorized replacement or same-name Folder creation before confirmation. The Project stays **Archived until Folder evidence and read-model-confirmed restore completion succeed**; if Folder creation succeeds but activation cannot commit, the task enters `NeedsAttention` and Projects never auto-deletes a Folders-owned resource. Stale/replay/cancel/duplicate/concurrency/lost-response cannot expose an invalid Active Project; outcomes are audited metadata-only. _Production owner: Story 7.14._
-- **FR-24: Create Safe Diagnostic Export** — A separately authorized Tenant Operator or Tenant Project Administrator creates a bounded `projects.safe-diagnostic-export.v1` export through Web, CLI, or MCP (**Chatbot cannot**). Export permission is distinct from FR-22 read. The complete encoded export (incl. envelope + truncation metadata) is **≤ 1 MiB, ≤ 500 reference rows, ≤ 100 audit rows**; reference ordering is stable/deterministic, audit rows newest-first with stable tie-breaking; truncation reports included/omitted counts and safe reasons without excluded detail; **no continuation cursor, no retention**; two concurrent exports per Tenant; every attempt and outcome audited metadata-only; upstream unavailability represented safely without raw errors or fabricated completeness. _Production owner: Story 8.2._
+- **FR-22: Support Operator Read Access** — Authorized operators can inspect Project metadata, lifecycle, references, resolution outcomes, and audit metadata. Authorization-gated, tenant-scoped, metadata-only, no write capabilities beyond archive/troubleshooting workflows explicitly exposed.
 
 ### NonFunctional Requirements
 
-_Source: final PRD §7 (Cross-Cutting NFRs) + addendum + §8 (Success Metrics). **NFR-1…11 is the canonical set** and replaces the prior 9-NFR inventory; the earlier concepts (tenant isolation, metadata-only, fail-closed, parity, resolution-over-automation) are preserved but folded into this numbering. Each NFR-1…11 envelope is a binding MVP acceptance criterion; no approved v1 NFR is deferrable from production release. Primary owning story noted per NFR._
+_Source: PRD §7 (Cross-Cutting NFRs) + §8 (Success Metrics) + Architecture cross-cutting concerns._
 
-- **NFR-1 — Security & privacy:** Every operation is Tenant-/actor-/action-/target-/version-scoped; trust-bearing mutations fail closed on stale or unknown authorization; logs, telemetry, and errors are metadata-only (no transcripts, file contents, memory payloads, prompts, secrets, tokens, full command bodies, or unrestricted paths). Cross-tenant access impossible by construction; verified by adversarial negative tests. _Owner: Story 8.8 (evidence); enforced across all stories._
-- **NFR-2 — Encryption & key management:** Authenticated encryption in transit; platform-managed encryption at rest; Projects owns no private keys; KMS rotation/revocation evidence is release-blocking. _Owner: Story 8.11 (supported by 8.6, 8.7)._
-- **NFR-3 — Availability & recovery:** 99.9% monthly availability (ex-maintenance); RTO 15 min after process/node failure; accepted Durable Tasks resume or reach truthful `NeedsAttention` within 5 min. _Owner: Story 8.10 (supported by 8.6)._
-- **NFR-4 — Durability & idempotency:** RPO 0 for committed events in the primary region; Active Projects are **never folderless**; equivalent retries return the same task, changed requests conflict; no silent drop or duplicate. _Owner: Story 8.10 (durable-workflow correctness across Epic 7)._
-- **NFR-5 — Performance & scale:** 10,000 Projects/Tenant, 5,000 references/Project (ex-Folder), 100,000 audit records/Project; metadata reads p95 < 500 ms (at 1,000 Projects / 500 refs) and < 1 s at max scale; task admission p95 < 500 ms warm. _Owner: Story 8.9._
-- **NFR-6 — Pagination & export bounds:** Cursor pages default 50, cap 200; Safe Diagnostic Export obeys the FR-24 size/row caps and the per-Tenant limit of two concurrent exports. _Owner: Story 8.9 (paging) + 8.2 (export bounds)._
-- **NFR-7 — Back-pressure & dependency control:** Per Tenant 100 reads/s (burst 200), 20 mutation admissions/s (burst 40), 1,000 nonterminal tasks, 2 concurrent exports; interactive timeout 2 s, durable-step 10 s; idempotent retry ≤ 3 in 30 s; overload returns structured retry guidance. _Owner: Story 8.9._
-- **NFR-8 — Retention & transient data:** Terminal result + idempotency record retained ≥ 30 days (or result lifetime); Preview/Confirmation Artifacts expire at 15 min; audit metadata retained ≥ 365 days; Resolution Traces and exports are not persisted. _Owner: Stories 8.1 & 8.2 (with Epic 7 task/confirmation stories)._
-- **NFR-9 — Accessibility:** Chatbot and operator journeys conform to WCAG 2.2 AA (keyboard, focus, AT announcement, no color/timing reliance, 200% zoom, 320 CSS px reflow); automated + authenticated manual keyboard/screen-reader evidence required. _Owner: Story 8.8 (incl. cross-repository Chatbot companion evidence, AD-34/SM-5)._
-- **NFR-10 — Compatibility:** Contracts stay additive/serialization-tolerant unless a breaking change is approved; historical v1 data and unversioned name-only creation remain readable/accepted; retirement requires a major version, migration notice, usage evidence, compatibility tests, and rollback evidence; no event-history rewrite. _Owner: Story 6.7 (read cutover) + 7.15 (legacy reconciliation) + 8.7._
-- **NFR-11 — Release evidence:** Authenticated persisted-boundary, cross-Tenant, restart/concurrency, duplicate-delivery, lost-response, accessibility, privacy, performance, deployment, smoke, rollback, and stakeholder-acceptance evidence must pass; a failed critical case or unexplained critical skip blocks release; unavailable environments record "not verified," never `passed`. _Owner: Story 8.11 (terminal gate, AD-30); every Epic 8 story contributes rows._
+- **NFR-1 — Security & tenant isolation:** Enforce tenant isolation across reads, writes, links, resolution, and context assembly, at every layer (API/auth, aggregate identity, state keys, projection keys, pub/sub topics, queries, SignalR, logs). Cross-tenant access impossible by construction; verified by adversarial negative tests. (Validates SM-3)
+- **NFR-2 — Privacy / metadata-only (`NoPayloadLeakage`):** Events, logs, audit, diagnostics, query DTOs, and all surfaces (CLI/MCP/Web) carry metadata only — never transcripts, file contents, memory payloads, raw prompts, secrets, raw tokens, full command bodies, or unrestricted paths. Enforced by negative tests scanning every output.
+- **NFR-3 — Reliability / fail-closed:** Project Context retrieval and trust-bearing operations fail closed when authorization, lifecycle, or referenced-resource availability/freshness cannot be verified (missing/unknown/disabled/stale/rebuilding/unavailable/forbidden/redacted evidence denies inclusion).
+- **NFR-4 — Observability:** Resolution and context assembly emit structured metadata (reason codes, correlation/causation IDs, freshness, status) sufficient to troubleshoot incorrect matches without exposing payloads; OpenTelemetry via ServiceDefaults + Dapr.
+- **NFR-5 — Performance:** p95 < 500 ms for Project list, open, resolution, and context retrieval when dependent bounded-context metadata is available (internal target, not external SLA). Favors precomputed tenant-scoped projections over request-time fan-out. (Validates SM-4)
+- **NFR-6 — Compatibility / schema evolution:** Public contracts and event payloads are additive and serialization-tolerant; no `V2` event types; backward-compatible deserialization for every event ever produced.
+- **NFR-7 — Idempotency under at-least-once delivery:** Commands and projection/event handlers tolerate duplicate and out-of-order Dapr pub/sub delivery (dedupe by message id; `Idempotency-Key` required on mutations, rejected on queries; field-scoped equivalence hashing).
+- **NFR-8 — Cross-surface semantic parity:** CLI, MCP, and Web expose equivalent operational facts — identical lifecycle/reference states, reason codes, timestamps, warnings, and audit identifiers — even when formatting differs.
+- **NFR-9 — Resolution correctness over automation (counter-metric SM-C1/SM-C2):** Ambiguous resolution asks for confirmation rather than auto-attaching; context optimizes for relevance/security/prompt quality over volume.
 
 ### Additional Requirements
 
@@ -217,54 +197,30 @@ _Source: UX Design Specification + FrontComposer web-UX research. The UX scope i
 
 ### FR Coverage Map
 
-_The current production-authority owner is the AC-bearing story in **Epics 6–8**. The "Historical impl." column is completed Epic 1–5 implementation history/evidence, **not** release authority. Each row also maps to an identically keyed `hexalith.readiness-evidence.v1` matrix row and applicable Architecture Decisions (AD-1…AD-34)._
+- **FR-1 Create Project:** Epic 1 — `CreateProject` on `ProjectAggregate`; optional auto-folder.
+- **FR-2 Open Project:** Epic 1 — `GetProject` query over `ProjectDetailProjection`.
+- **FR-3 Update Project Setup:** Epic 1 — `UpdateProjectSetup`; durable, additive setup.
+- **FR-4 Archive Project:** Epic 1 — `ArchiveProject`; lifecycle `Active`/`Archived`.
+- **FR-5 List Projects:** Epic 1 — `ListProjects` over `ProjectListProjection`, filterable by lifecycle.
+- **FR-6 Link Conversation:** Epic 2 — Conversation read ACL (Story 2.1) + write-side link through AR-G1 Conversations-owned reassignment.
+- **FR-7 Move Conversation:** Epic 2 — explicit move through AR-G1 Conversations-owned reassignment; auditable and fail-closed.
+- **FR-8 Set Project Folder:** Epic 2 — `SetProjectFolder` (single Folder ref) + Folders ACL.
+- **FR-9 Link File Reference:** Epic 2 — `LinkFileReference` + Folders ACL.
+- **FR-10 Link Memory:** Epic 2 — `LinkMemory` + Memories ACL.
+- **FR-11 Unlink Context Reference:** Epic 2 — `UnlinkFileReference`/`UnlinkMemory`/conversation unlink; Folder replace-only.
+- **FR-12 Resolve From Conversation:** Epic 4 — compute-on-demand resolution from conversation metadata.
+- **FR-13 Resolve From Attachments:** Epic 4 — resolution from Folder/File references via reference index + ACLs.
+- **FR-14 Confirm Ambiguous Project:** Epic 4 — `ConfirmProjectResolution` on `MultipleCandidates`.
+- **FR-15 Propose New Project:** Epic 4 — proposal flow; create-on-confirm; links initiating conversation (AR-G1).
+- **FR-16 Get Project Context:** Epic 3 — `GetProjectContext` allowlist assembly (consumes Epic 2 ACLs).
+- **FR-17 Explain Context Selection:** Epic 3 — `ExplainContextSelection` inclusion/exclusion metadata.
+- **FR-18 Refresh Project Context:** Epic 3 — `RefreshProjectContext`; surfaces stale/unavailable refs.
+- **FR-19 Validate Project Setup:** Epic 1 — setup validator in `ProjectAggregate` (rejects secrets/paths/foreign payloads).
+- **FR-20 Retrieve Conversation-Start Setup:** Epic 3 — `GetConversationStartSetup` over `ConversationStartSetupProjection`.
+- **FR-21 Record Project Audit Events:** Epic 5 — `ProjectAuditTimelineProjection`; metadata-only audit.
+- **FR-22 Support Operator Read Access:** Epic 5 — authorization-gated, tenant-scoped operator read queries.
 
-#### Functional Requirements
-
-| FR | Capability | Production owner (Epics 6–8) | Historical impl. | Key ADs |
-| --- | --- | --- | --- | --- |
-| FR-1 | Create Project (Folder-first, idempotent) | **7.1** | 1.4 | AD-3, AD-5, AD-8, AD-12, AD-22 |
-| FR-2 | Open Project | **6.1** | 1.7 | AD-3, AD-14, AD-19, AD-32 |
-| FR-3 | Update Project Setup | **7.2** | 1.8 | AD-5, AD-15, AD-16 |
-| FR-4 | Archive Project | **7.13** | 1.8 | AD-4, AD-5, AD-13 |
-| FR-5 | List Projects | **6.1** | 1.7 | AD-14, AD-19, AD-20, AD-27 |
-| FR-6 | Link Conversation | **7.3** | 2.3 | AD-10, AD-12 |
-| FR-7 | Move Conversation | **7.4** | 2.3 | AD-5, AD-10, AD-12, AD-13 |
-| FR-8 | Set / Replace Project Folder | **7.6** (initial via 7.1) | 2.4 | AD-3, AD-11, AD-12 |
-| FR-9 | Link File Reference | **7.7** | 2.5 | AD-11, AD-15 |
-| FR-10 | Link Memory | **7.9** | 2.7 | AD-11, AD-15 |
-| FR-11 | Unlink Context Reference | **7.5** / **7.8** / **7.10** | 2.3/2.5/2.7 | AD-5, AD-11, AD-13 |
-| FR-12 | Resolve From Conversation | **6.4** | 4.2 | AD-7, AD-10, AD-14, AD-32 |
-| FR-13 | Resolve From Attachments | **6.4** | 4.3 | AD-7, AD-11, AD-14, AD-32 |
-| FR-14 | Confirm Ambiguous Project | **7.11** (candidates read 6.4) | 4.4 | AD-5, AD-13, AD-32 |
-| FR-15 | Propose New Project | **7.12** | 4.5 | AD-5, AD-8, AD-13, AD-31 |
-| FR-16 | Get Project Context | **6.3** | 3.2 | AD-11, AD-14, AD-32 |
-| FR-17 | Explain Context Selection | **6.3** / **6.4** | 3.3 | AD-7, AD-14 |
-| FR-18 | Refresh Project Context (read-only) | **6.3** | 3.4 | AD-7, AD-14, AD-32 |
-| FR-19 | Validate Setup & Metadata Classification | **7.1** (contract cutover 6.7) | 1.4/1.8 | AD-31, AD-16 |
-| FR-20 | Retrieve Conversation-Start Setup | **6.2** | 3.5 | AD-14, AD-32 |
-| FR-21 | Record Project Audit Events | **8.1** | 5.1 | AD-21, AD-26, AD-30 |
-| FR-22 | Support Operator Read Access | **6.5** / **6.6** + 8.1/8.3/8.4/8.5 | 5.2 | AD-2, AD-19, AD-20, AD-29 |
-| FR-23 | Restore Archived Project | **7.14** | — (new) | AD-3, AD-13, AD-23 |
-| FR-24 | Create Safe Diagnostic Export | **8.2** | — (new) | AD-7, AD-19, AD-21, AD-26 |
-
-#### Non-Functional Requirements
-
-| NFR | Concern | Primary owner | Supporting | Key ADs |
-| --- | --- | --- | --- | --- |
-| NFR-1 | Security & privacy | 8.8 | all stories | AD-11, AD-13, AD-20 |
-| NFR-2 | Encryption & KMS | 8.11 | 8.6, 8.7 | AD-28 |
-| NFR-3 | Availability & recovery | 8.10 | 8.6 | AD-4, AD-9, AD-28 |
-| NFR-4 | Durability & idempotency | 8.10 | Epic 7 | AD-4, AD-12 |
-| NFR-5 | Performance & scale | 8.9 | 6.7 | AD-14, AD-15, AD-27 |
-| NFR-6 | Pagination & export bounds | 8.9 | 8.2 | AD-19, AD-21, AD-27 |
-| NFR-7 | Back-pressure & dependency control | 8.9 | — | AD-27 |
-| NFR-8 | Retention & transient data | 8.1, 8.2 | Epic 7 | AD-4, AD-5, AD-21, AD-26 |
-| NFR-9 | Accessibility (incl. Chatbot companion) | 8.8 | 6.5, 8.3 | AD-34, AD-29 |
-| NFR-10 | Compatibility | 6.7 | 7.15, 8.7 | AD-6, AD-16, AD-17, AD-22 |
-| NFR-11 | Release evidence | 8.11 | all Epic 8 | AD-25, AD-28, AD-30 |
-
-_All 24 FRs and 11 NFRs have an AC-bearing production owner in Epics 6–8. The nine P1 and seven P2 audit findings and every critical release-evidence category map to the same stories via the AD-30 evidence matrix (one row per stable ID). Historical Additional Requirements (AR-\*) and UX-DR\* remain distributed across Epics 1–5 as documented; upstream gaps AR-G1–G4 are now subsumed by the pinned sibling-owner entry gates (G-2) in the Epic 6/7 entry gates._
+_All 22 FRs mapped. NFR-1–9 are cross-cutting and verified per epic (foundation-heavy in Epic 1). Additional Requirements (AR-*) and UX Design Requirements (UX-DR*) are distributed as noted per epic below; the upstream gap items AR-G1–G4 are tracked as ADRs + prerequisite stories within their consuming epics._
 
 ## Epic List
 
@@ -312,22 +268,6 @@ Deliver the administrative/operational product the UX spec defines: a FrontCompo
 **Key ARs:** AR-17 (FrontComposer generation), AR-8 (`ProjectAuditTimelineProjection`) · **UX:** UX-DR1–UX-DR4, UX-DR6–UX-DR28 (7 views, 6 custom components, CLI, MCP, interaction/feedback/confirmation patterns, responsive, accessibility, test IDs) · **NFRs:** NFR-2, NFR-4, NFR-8
 **Standalone:** Yes — builds on all prior epics (surfaces the projections/commands they define) and requires none of them to be re-opened beyond additive `[Projection]`/`[Command]` annotations.
 **Notes (surface-delivery decision):** Epics 1–4 stay backend/contract-focused; Level-1 generated views come "for free" from their contracts but are not the deliverable. Epic 5 delivers the **composed** console (Shell/nav), the bespoke resolution-trace view (FrontComposer Level 3/4), the maintenance action flows with the five-state command lifecycle, the audit timeline, safe diagnostic export, and the cross-surface parity + a11y/E2E (axe-core/Playwright) hardening. Maintenance commands `restore`/`relink`/`unlink`/`reevaluate` are introduced here (`archive` already exists from Epic 1).
-
-### Epics 6–8: Corrective Production Authority
-
-The 2026-07-15/16 rebaseline makes **Epics 6–8 the sole future schedulable plan and
-production-release authority**. Epics 1–5 above are completed implementation history — their
-**"Standalone: Yes"** labels mean feature-complete in isolation as evidence, **not**
-production-release authority (production-correct FR-1, FR-4/FR-23, FR-14/FR-15, FR-19, and FR-21
-behavior completes in Epic 7, and all release evidence in Epic 8).
-
-- **Epic 6 — Authorized Project Reads on the Supported Platform** (7 stories, 6.1–6.7): authorization-filtered list/open/context/resolution reads over supported DomainService read models + authenticated Web/CLI read surfaces + shadow-read cutover.
-- **Epic 7 — Durable Project Decisions and Cross-Context Recovery** (15 stories, 7.1–7.15): every consequential write as a durable, restart-safe, confirmation-bound workflow — incl. Folder-first create (7.1), archive (7.13), restore/FR-23 (7.14), and legacy reconciliation (7.15).
-- **Epic 8 — Safe Operations and Release Confidence** (11 stories, 8.1–8.11): operator surfaces, Safe Diagnostic Export/FR-24 (8.2), health/telemetry, packaging/supply chain, authenticated parity/isolation/accessibility incl. the Chatbot companion (8.8), performance/back-pressure, cross-workflow resilience, and the terminal deployment/acceptance gate (8.11).
-
-Full AC-bearing detail is in the **Corrective Production Plan (Epics 6–8)** section below. Corrective
-development, `6.x/7.x/8.x` story-file creation, and sprint reconciliation remain frozen until an
-independent readiness rerun returns exactly `READY`.
 
 ## Cross-Cutting Foundational Slices (Epic 1)
 
@@ -443,8 +383,6 @@ So that **consumers call a stable, version-checked contract and mutations/querie
 **And** no error echoes secrets, payloads, or sensitive values.
 
 ### Story 1.4: Create Project (end-to-end tracer bullet)
-
-> **Superseded for production (2026-07-16).** This tracer-bullet criteria must **not** authorize caller-visible or Active **folderless** creation. Production create authority is **Story 7.1** (Folder-first, idempotent, metadata-classified; no folderless-Active window). Retained as implementation history only.
 
 As **Hexalith.Chatbot**,
 I want **to create a Project with tenant context and a Project name and have it durably recorded as `Active`**,
@@ -670,8 +608,6 @@ So that **a project's conversation membership reflects the user's intent while p
 **Then** the association is removed from Project Context, the underlying conversation is not deleted, and the unlink is auditable.
 
 ### Story 2.4: Set & auto-create Project Folder
-
-> **Superseded for production (2026-07-16).** This must **not** degrade a Folder-creation failure into an Active **folderless** Project. Production Folder authority is **Story 7.1** (initial Folder-first create) and **Story 7.6** (replace); legacy pending-Folder / folderless records are reconciled by **Story 7.15**. Retained as implementation history only.
 
 As **Hexalith.Chatbot**,
 I want **to set the single authorized Project Folder for a Project, and to have one auto-created with the Project name when none is supplied at creation**,
@@ -1174,8 +1110,6 @@ So that **the three surfaces tell the same truth, work across viewports, are acc
 
 ### Story 5.12: Live AppHost operational-console verification
 
-> **Superseded for production (2026-07-16).** Execution counts do **not** establish acceptance when critical cases fail — executed-but-failing evidence is **not** acceptance (NFR-11/AD-30). Authenticated critical E2E is owned by **Story 8.8** and terminal release acceptance by **Story 8.11**. Retained as implementation history only.
-
 As a **platform test engineer**,
 I want **the AppHost browser endpoint provisioned and the deferred operational-console Playwright cases executable through an explicit live lane**,
 So that **Epic 5 accessibility, responsive, keyboard, security, and cross-surface behavior has recorded live-topology evidence or a reproducible route blocker**.
@@ -1207,747 +1141,162 @@ So that **Epic 5 accessibility, responsive, keyboard, security, and cross-surfac
 
 ---
 
-## Corrective Production Plan (Epics 6–8) — rebaselined 2026-07-16
-
-This section is the **sole future schedulable plan** and the production-authority backlog for
-Hexalith.Projects. It **replaces the 23-placeholder corrective addendum (2026-07-14) atomically**
-with the approved **33-story outcome inventory** — 7 in Epic 6, 15 in Epic 7, 11 in Epic 8 — per
-`sprint-change-proposal-2026-07-16.md` and
-`sprint-change-proposal-2026-07-16-implementation-readiness-rerun.md`, reconciled to the final PRD
-(FR-1…24 / NFR-1…11) and `architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md`
-(AD-1…34). The prior placeholder inventory is retained only as findings history in
-`epics.md.pre-reconcile-2026-07-16.bak`.
-
-**Corrective order is Epic 6 → Epic 7 → Epic 8.** Epics 1–5 remain completed implementation history
-and evidence, **not** release authority.
-
-**Containment (binding).** Authoring this planning layer is the authorized step (this is route step 4,
-`bmad-create-epics-and-stories`, of the approved SCP); it does **not** lift the freeze. No corrective
-implementation, no `6.x/7.x/8.x` story-file creation, and no `sprint-status.yaml` reconciliation occur
-until an **independent implementation-readiness rerun returns exactly `READY`**. Production release,
-consequential autonomous MCP mutation, and proposed-Project confirmation remain blocked until
-**Story 8.11** passes with dated terminal acceptance from **Jerome and John**. No
-failed/skipped/blocked/unavailable critical evidence may be represented as passing; no event history
-is rewritten; no unsafe dual writer is introduced; no sibling repository is changed without separate
-repository-local authorization and validation.
-
-**Story completion contract (SCP-07-16-rerun §4.5).** Every story below carries: a named beneficiary +
-observable outcome; FR/NFR/AD/UX-journey/finding/release traceability; repository authority, named
-owner, pinned prerequisite revision, and entry gate; prior-only dependencies; positive +
-denial/cross-Tenant + stale/unavailable + duplicate/replay/restart/concurrency/lost-response +
-compatibility/rollback acceptance criteria where applicable; a deterministic environment/fixture; an
-exact verification command; an expected pass/fail evidence artifact + release disposition; an
-estimate; and a completion boundary. No unresolved `TBD`, placeholder, missing external approval,
-unexplained critical skip, or false `passed` state is admissible. Roles: **Product Owner** authors,
-**Solution Architect** verifies AD/G-gate conformance, **Test Architect** owns evidence rows/fixtures,
-**Chatbot Presentation Owner** owns the NFR-9/SM-5 companion evidence, **Jerome + John** own release.
-Estimates are relative (S/M/L/XL) and are not schedule commitments until readiness passes.
+## Approved Corrective Epic Addendum (2026-07-14)
 
-**External entry gates (G-1…G-6)** are prerequisites, not delivered value: **G-1** platform Durable
-Task/Confirmation engine · **G-2** sibling owner contracts (expected-version, idempotency,
-receipt/status query, batch-read, compensation) · **G-3** FrontComposer adapters (reconcile package
-4.0.0 vs checked-out 4.0.1 + prove descriptor/schema/credential/MCP parity) · **G-4** platform
-composition runner + evidence tool · **G-5** identity/KMS/secrets/telemetry bindings · **G-6**
-runtime/toolchain alignment (Dapr runtime↔SDK tuple, Fluent UI RC, CommunityToolkit preview,
-NSubstitute RC, Fluxor 6.9 governance).
+This addendum materializes the corrective epic and story inventory approved by Jerome in
+`sprint-change-proposal-2026-07-14-implementation-readiness-correction.md`. Completed Epics 1–5
+remain implementation history. The required corrective sequence is Epic 6, then Epic 7, then
+Epic 8, followed by release handoff. Production release, consequential autonomous MCP operations,
+and proposal-confirmation enablement remain blocked until Story 8.9 passes.
 
-**Canonical evidence.** The AD-30 artifact is
-`implementation-readiness-traceability-matrix.yaml` (schema `hexalith.readiness-evidence.v1`) with a
-matching Markdown view, authored/reconciled alongside these stories and gated by
-`dotnet tool run hexalith-evidence validate …` — a **target** gate; rows truthfully record the
-external blocker and may not be marked `passed` until the Builds/platform owner supplies the
-G-4 capability. Required row coverage: FR-1…24, NFR-1…11, all nine P1 and seven P2 audit findings,
-and every critical NFR-11/AD-30 release category.
+The approved proposal is the scope authority for these corrective stories. Dedicated story files
+must refine acceptance criteria without weakening its entry, verification, compatibility,
+security, durability, or release gates.
 
-## Epic 6: Authorized Project Reads on the Supported Platform
+## Epic 6: Supported Platform Boundary and Secure Identity
 
-Deliver authorization-filtered list/open/context/resolution **reads** over named incremental
-EventStore DomainService read models and the rebuildable Reference Trust Index, exposed through
-authenticated FrontComposer and CLI read surfaces, and cut supported reads over shadow-read-first
-with reversible routing. This is the read/query side of the vertical slice; no consequential writes
-(those are Epic 7). It closes the read-side of ARCH-001/ARCH-002/API-001/CLIENT-001/ID-001 and
-establishes the identity, contract, and platform boundary every later epic depends on.
+Migrate Hexalith.Projects onto supported EventStore DomainService and platform-owned hosting seams,
+restore clean contract and presentation boundaries, enforce real caller and service identity, and
+execute a compatibility-controlled cutover that preserves existing event history.
 
-**Epic 6 entry gate (prerequisite, not delivered value).** Pin approved capabilities before any read
-story starts: EventStore `3.67.3` DomainService read seams (`IAsyncDomainProjectionHandler`,
-`IReadModelStore`, `IDomainQueryHandler`, `IQueryCursorCodec`) (G-1 substrate), FrontComposer read
-adapters with G-3 4.0.0/4.0.1 disposition, Hexalith.Builds central versions (NSwag 14.7.1), the G-5
-identity bindings (dual-principal auth, AD-20), the G-4 composition runner + evidence tool, and G-2
-sibling read contracts. The gate produces a pinned baseline (versions, routes, public APIs, state
-keys, event types, cursors, consumers, in-flight work) per AD-17; it is reported, not counted as
-value.
+**Completion gate:** Closes ARCH-001, ARCH-002, SEC-001, CLIENT-001, ID-001, and API-001.
 
-_All Epic 6 stories share: **Repository authority** Hexalith.Projects (`Contracts`, read models,
-query handlers) with platform-generated read adapters; **owner** Product Owner (author) + Solution
-Architect (AD/G conformance) + Test Architect (evidence); **prior-only dependencies** — the entry
-gate only, never Epic 7/8; **compatibility/rollback** — legacy read route retained and reversible
-until Story 6.7 cutover, no event-history rewrite; **fixture** — deterministic authorized-Tenant
-persisted-boundary fixture on the G-4 runner; **release disposition** — read evidence contributes to
-NFR-11 but no story here is a release gate._
+### Story 6.1: Pin platform capabilities and migration baseline
 
-### Story 6.1: List and open Projects through supported authenticated paths
+Inventory and pin the supported platform seams, versions, routes, public APIs, state keys, events,
+cursors, consumers, and migration constraints before implementation changes begin.
 
-As a **Tenant Operator or delegated Chatbot service caller**,
-I want **to list visible Projects and open one Project's authorized metadata, lifecycle, setup summary, and reference summary through the supported DomainService read models**,
-So that **operators and Chatbot get current, authorization-filtered Project truth to initialize a Conversation (FR-2, FR-5) with no legacy runtime**.
+### Story 6.2: Restore Contracts, presentation, identity, and API boundaries
 
-- **Traceability:** FR-2, FR-5; NFR-1, NFR-5, NFR-10; AD-3, AD-14, AD-19, AD-20, AD-32, AD-33; UJ-1; findings ARCH-001/API-001 (read side); evidence rows `fr-2`, `fr-5`.
+Keep stable domain and wire contracts infrastructure-free, move presentation descriptors to their
+approved adapter boundary, align identifiers with platform ULIDs while retaining legacy reads, and
+mechanically align canonical command/query contracts with OpenAPI and generated consumers.
 
-**Acceptance Criteria:**
+### Story 6.3: Enforce secure platform admission and authorization evidence
 
-**Given** an authenticated caller with valid Tenant + actor authority and current read models, **When** `ListProjects`/`GetProject` runs via `IDomainQueryHandler` with an opaque `QueryCursorScope`, **Then** results are Tenant-scoped and authorization-filtered, carry the AD-32 snapshot (`responseState`, `asOf`, `projectVersion`, `components`, `recoveryActions`), page at default 50 / cap 200, and never select a resolution candidate.
+Require complete production JWT and service-identity configuration, derive tenant and actor
+authority server-side, and prevent development authorization stubs from resolving outside explicit
+development or test hosts.
 
-**Given** a denied, cross-Tenant, or nonexistent Project, **When** the read runs, **Then** it fails closed and denial is **indistinguishable from nonexistence** (safe `404`), leaking no existence or protected metadata.
+### Story 6.4: Migrate read models and queries to DomainService
 
-**Given** stale/rebuilding/unavailable read models, **When** the read runs, **Then** it returns `Partial`/`Unavailable` with honest component evidence rather than fabricated completeness, and `Unavailable` blocks context use.
+Move projections and queries to the supported asynchronous projection handlers, read-model stores,
+query handlers, cursor scopes, and deterministic replay comparison provided by DomainService.
 
-**Given** the shadow-read comparison harness, **When** the same query replays against legacy and supported read models, **Then** output, keys, watermarks, cursors, and Tenant isolation are deterministically equivalent before read routing switches.
+### Story 6.5: Migrate command hosting and platform topology
 
-- **Verification:** `dotnet tool run hexalith-module test --profile reads --filter Story=6.1`. **Evidence:** `evidence/epic6/6.1-authorized-reads.{trx,json}` + shadow-read equivalence report. **Estimate:** M. **Completion boundary:** authorized list/open served from supported read models with equivalence evidence; no write behavior.
+Move command hosting, persistence, publication, subscriptions, health, telemetry, Dapr components,
+and distributed topology to their approved EventStore and platform owners.
 
-### Story 6.2: Retrieve Conversation-start setup with admission truth
+### Story 6.6: Authenticate FrontComposer UI and CLI consumers
 
-As a **delegated Chatbot service caller**,
-I want **to retrieve the bounded Conversation-start subset of Project Setup for an Active Project**,
-So that **Chatbot can start or resume a Conversation from durable setup truth (FR-20) without re-querying every bounded context**.
+Use platform credential providers and authenticated runtime composition for FrontComposer Web and
+CLI consumers so no client supplies authoritative tenant or actor identity.
 
-- **Traceability:** FR-20; NFR-1, NFR-5; AD-3, AD-14, AD-19, AD-32; UJ-1; evidence row `fr-20`.
+### Story 6.7: Execute compatibility cutover and retire legacy runtime
 
-**Acceptance Criteria:**
-
-**Given** an authorized Active Project, **When** `GetConversationStartSetup` runs, **Then** it returns only the start subset (goals, instructions, context preferences, default linked-source policy), excludes internal audit metadata and unauthorized/unavailable references, and carries the AD-32 snapshot.
-
-**Given** an Archived or unauthorized Project, **When** the read runs, **Then** it fails closed (safe `404`) and returns no setup.
-
-**Given** stale/unavailable setup projection, **When** the read runs, **Then** `Partial`/`Unavailable` is returned honestly and `Unavailable` blocks first-response admission.
-
-- **Verification:** `dotnet tool run hexalith-module test --profile reads --filter Story=6.2`. **Evidence:** `evidence/epic6/6.2-conversation-start-setup.{trx,json}`. **Estimate:** S. **Completion boundary:** start-setup subset served with admission-state truth; no mutation.
-
-### Story 6.3: Retrieve assembled Project Context through supported read models
-
-As a **delegated Chatbot service caller**,
-I want **to retrieve the allowlist-assembled Project Context (setup + included references with exclusion reasons), a read-only refresh, and a per-reference inclusion/exclusion explanation**,
-So that **Chatbot grounds a Conversation in current, authorized, metadata-only context (FR-16, FR-17, FR-18)**.
-
-- **Traceability:** FR-16, FR-17, FR-18; NFR-1, NFR-5, NFR-8; AD-7, AD-11, AD-14, AD-32; UJ-1, UJ-4; evidence rows `fr-16`, `fr-17`, `fr-18`.
-
-**Acceptance Criteria:**
-
-**Given** an authorized Active Project and the Reference Trust Index, **When** `GetProjectContext`/`RefreshProjectContext` runs, **Then** a reference is included only after Tenant + project + lifecycle + authorization + freshness all pass; exclusions carry a shared-vocabulary state + reason code; the result is metadata-only and carries the AD-32 snapshot; refresh is a **read-only recompute** that never mutates.
-
-**Given** `ExplainContextSelection`, **When** it runs, **Then** it returns current transient inclusion/exclusion evidence with no secrets/payloads and no persisted trace identity.
-
-**Given** an unauthorized/denied reference or stale index, **When** assembly runs, **Then** the reference is excluded fail-closed-clean with a reason code, never silently dropped, and index staleness surfaces as `Partial`.
-
-- **Verification:** `dotnet tool run hexalith-module test --profile reads --filter Story=6.3`. **Evidence:** `evidence/epic6/6.3-project-context.{trx,json}` + `NoPayloadLeakage` scan. **Estimate:** L. **Completion boundary:** assembled context + refresh + explanation served read-only with allowlist + leakage evidence.
-
-### Story 6.4: Resolve Projects with transient current explanations
-
-As a **delegated Chatbot service caller**,
-I want **to resolve Candidate Projects from a Conversation's metadata and from attached Folder/File references, with a request-scoped, current-only explanation**,
-So that **Chatbot can identify the right Project (FR-12, FR-13) without persisted inference history and without silently attaching**.
-
-- **Traceability:** FR-12, FR-13, FR-17 (transient trace); NFR-1, NFR-8; AD-7, AD-10, AD-11, AD-14, AD-32; UJ-3; evidence rows `fr-12`, `fr-13`.
-
-**Acceptance Criteria:**
-
-**Given** a Conversation with no explicit Project, **When** `ResolveProjectFromConversation`/`ResolveProjectFromAttachments` runs, **Then** it returns `NoMatch`/`SingleCandidate`/`MultipleCandidates` with reason codes, excludes Archived unless explicitly requested, never accesses unauthorized resources, and returns a request-scoped Resolution Trace that is **not persisted** (AD-7).
-
-**Given** missing/stale authorization on a candidate or attachment, **When** resolution runs, **Then** it fails closed on that candidate and never treats raw file content as Project data.
-
-**Given** a `MultipleCandidates`/`SingleCandidate` outcome, **When** the response returns, **Then** it **selects nothing** — confirmation is the durable Epic 7 step (7.11/7.12).
-
-- **Verification:** `dotnet tool run hexalith-module test --profile reads --filter Story=6.4`. **Evidence:** `evidence/epic6/6.4-resolution-reads.{trx,json}` (asserts no persisted trace). **Estimate:** L. **Completion boundary:** compute-on-demand resolution + transient explanation; no persistence, no attachment.
-
-### Story 6.5: Inspect Projects through an authenticated FrontComposer read surface
-
-As a **Tenant Operator or Tenant Project Administrator**,
-I want **to inspect Project inventory, detail, reference health, resolution traces, and audit timeline through an authenticated FrontComposer Web read surface**,
-So that **operators get authorized, metadata-only Project truth (FR-22) with WCAG 2.2 AA behavior and no client-supplied identity**.
-
-- **Traceability:** FR-22; NFR-1, NFR-9; AD-2, AD-19, AD-20, AD-29, AD-33, AD-34; UX-DR6–UX-DR16, UX-DR27; evidence row `fr-22-web`.
-
-**Acceptance Criteria:**
-
-**Given** a platform-authenticated operator session (credentials from the platform provider, never client-supplied), **When** the Web read surface renders inventory/detail/health/trace/audit, **Then** every view is Tenant-scoped, authorization-filtered, metadata-only, shows AD-32 response/recovery fields, and enforces role-specific action visibility (reads only here).
-
-**Given** a denied or cross-Tenant target, **When** a view loads, **Then** it fails closed with a safe empty/denied state indistinguishable from absence and renders no sibling payload "for debugging."
-
-**Given** keyboard/screen-reader/200%-zoom/320px navigation, **When** operator read journeys run, **Then** automated axe + authenticated manual evidence records WCAG 2.2 AA conformance (blocking on unresolved critical/serious).
-
-- **Verification:** `dotnet tool run hexalith-module test --profile web-reads --filter Story=6.5` (+ axe/Playwright). **Evidence:** `evidence/epic6/6.5-web-read-surface.{trx,json}` + a11y report. **Estimate:** L. **Completion boundary:** authenticated read-only operator Web surface with a11y evidence; maintenance actions are Epic 8.
-
-### Story 6.6: Inspect Projects through an authenticated CLI read surface
-
-As a **Tenant Operator or automation caller**,
-I want **scriptable, authenticated read-only CLI commands (`list`/`describe`/`inspect`/`trace`/`validate`/`audit`) with deterministic machine output**,
-So that **operators and pipelines get authorized, metadata-only Project truth (FR-22) with stable exit codes and no color-dependent meaning**.
-
-- **Traceability:** FR-22; NFR-1, NFR-8; AD-2, AD-19, AD-20, AD-29, AD-33; UX-DR19; evidence row `fr-22-cli`.
-
-**Acceptance Criteria:**
-
-**Given** an authenticated CLI invocation with platform-provided identity, **When** a read command runs, **Then** output is deterministic machine-readable JSON, Tenant-scoped, authorization-filtered, metadata-only, with stable exit codes and no reliance on color.
-
-**Given** a denied/nonexistent target or stale read model, **When** a read command runs, **Then** it fails closed with a safe reason code and a non-zero stable exit code, indistinguishable denial/absence, no payload echo.
-
-**Given** identical facts, **When** compared to the Web surface (6.5), **Then** lifecycle/reference states, reason codes, timestamps, warnings, and audit identifiers are semantically equivalent (parity).
-
-- **Verification:** `dotnet tool run hexalith-module test --profile cli-reads --filter Story=6.6`. **Evidence:** `evidence/epic6/6.6-cli-read-surface.{trx,json}`. **Estimate:** M. **Completion boundary:** authenticated read-only CLI with parity + stable contract; mutating CLI is Epic 8.
-
-### Story 6.7: Cut over supported reads while preserving compatibility and rollback
-
-As a **Solution Architect / platform operator**,
-I want **to switch read routing from legacy to supported read models after a deterministic equivalence gate, keeping routing reversible and canonical contracts aligned**,
-So that **supported reads become authoritative without event-history rewrite, and the FR-19 canonical contract lands for Epic 7 (NFR-10)**.
-
-- **Traceability:** FR-19 (contract cutover support), FR-2/5/16/20 (routing); NFR-10; **AD-1 (DomainService runtime boundary — legacy runtime read plumbing retired here)**, AD-6, AD-16, AD-17, AD-18, AD-22, AD-24, AD-25, AD-31 (contract shape); findings ARCH-001/CLIENT-001/ID-001/API-001; evidence row `nfr-10-reads`.
-
-**Acceptance Criteria:**
-
-**Given** the shadow-read equivalence gate across all Epic 6 reads, **When** it passes (output/keys/watermarks/cursors/Tenant isolation equivalent) and the ULID identity + OpenAPI/generated-consumer contracts are mechanically aligned, **When** cutover runs, **Then** read routing switches to supported models and remains **reversible** with legacy retained until Epic 8 release acceptance.
-
-**Given** legacy identifiers and historical events (incl. `ProjectFolderCreationPending`), **When** reads run post-cutover, **Then** they remain readable (foreign IDs opaque, no GUID-parse) and no history is rewritten and no unsafe dual writer is introduced.
-
-**Given** an equivalence-gate failure or post-cutover regression, **When** detected, **Then** routing rolls back deterministically and the blocker is recorded honestly.
-
-- **Verification:** `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7` + `hexalith-evidence validate` row `nfr-10-reads`. **Evidence:** `evidence/epic6/6.7-read-cutover.{json}` + rollback drill log. **Estimate:** L. **Completion boundary:** supported reads authoritative and reversible; legacy runtime read plumbing retired only after gates pass; command cutover is Epic 7.
+Cut reads and commands to the supported platform paths, preserve routing rollback until all gates
+pass, and retire Projects-owned legacy runtime and topology plumbing without rewriting event
+history or unsafe dual writes.
 
 ---
 
-## Epic 7: Durable Project Decisions and Cross-Context Recovery
+## Epic 7: Durable Cross-Context and Agent-Safe Workflows
 
-Deliver every consequential Project **write** as a Projects-owned, versioned **workflow definition**
-running on platform **Durable Tasks** — create, setup, association linking/unlinking, Folder
-replacement, ambiguous/proposed confirmation, archive, restore, and legacy reconciliation. Durable
-task state (not acknowledgements or notifications) is the only completion truth. It closes REL-001
-and AGENT-001 and provides restart-safe evidence for FR-1, FR-3, FR-4, FR-6–FR-11, FR-14, FR-15,
-FR-19, FR-21, and FR-23.
+Replace unsafe multi-step and confirmation behavior with durable, restart-safe workflows and
+server-bound task evidence while preserving bounded-context ownership and metadata-only audit.
 
-**Epic 7 entry gate (prerequisite, not delivered value).** Requires **G-1** (approved, pinned
-platform Durable Task engine + Confirmation Artifact record: task IDs, admission, leases,
-checkpoints, receipts, retries, cancellation, recovery, retention — AD-4/AD-9/AD-13) and **G-2**
-(pinned sibling owner contracts for Conversations/Folders/Memories with expected-version,
-idempotency key, receipt/status query, batch-read, and compensation — AD-12). Preserves immutable
-event history and single-writer cutover (Epic 6 read cutover complete; command cutover lands here).
+**Completion gate:** Closes REL-001 and AGENT-001 and provides restart-safe evidence for FR-1,
+FR-6 through FR-8, FR-14, FR-15, FR-21, and FR-23.
 
-**Shared durable-workflow invariants (apply to every Epic 7 story; each story adds its specifics).**
+### Story 7.1: Provide shared durable workflow, task, and confirmation seams
 
-1. **Task truth (AD-4/AD-9):** transitions follow `Pending → Running`, with `WaitingForDependency`
-   and `NeedsAttention` recoverable and `Succeeded`/`Rejected`/`Failed`/`Cancelled` terminal and
-   immutable; one transition authority; cancel only before the irreversible checkpoint; `202` and
-   SignalR are non-completion signals.
-2. **Confirmation-required admission (AD-5/AD-13):** archive, restore, Conversation move, Folder
-   replace, unlink, ambiguous-resolution confirm, and proposed-creation confirm require a **15-minute,
-   opaque, single-use Confirmation Artifact** bound to Tenant/actor/action/targets/request-hash/
-   Preview/current-versions; validation + single-use + task-admission are atomic; any
-   replay/alteration/stale/expiry/mismatch/changed-request fails closed with `409` + `RenewPreview`.
-   Additive links, initial Folder, Setup, and direct create are **task-only** (no confirmation).
-3. **Idempotency (AD-5):** scope `(Tenant, actor, operation, key)`; equivalent retry returns the same
-   task; changed requests conflict; retained ≥ 30 days / result lifetime.
-4. **Forward-recovery saga (AD-12):** deterministic idempotency key + expected owner version; persist
-   the owner receipt **before** advancing; query authoritative owner status before retrying an
-   unknown response; compensate with an explicit idempotent owner command or enter `NeedsAttention`;
-   Projects never auto-deletes an owner (Folders/Conversations/Memories) resource.
-5. **Audit (AD-26) & privacy:** confirmed admissions, mutations, confirmation use/rejection,
-   reconciliation, and terminal outcomes emit a **metadata-only** audit receipt; never a payload.
-6. **Compatibility (AD-22):** additive, serialization-tolerant event evolution; `ProjectCreated`
-   gains an optional Folder binding (mandatory on new writes, nullable on replay); new writes stop
-   emitting `ProjectFolderCreationPending` but keep its deserializer/apply; no `V2`, no history
-   rewrite, no unsafe dual writer.
+Establish the shared platform workflow, task, and confirmation capabilities needed by
+Projects-specific durable transitions.
 
-_Shared attributes for all Epic 7 stories: **repository authority** Hexalith.Projects (workflow
-definitions + aggregate + Contracts) on platform-owned Durable Tasks; **owner** Product Owner +
-Solution Architect (AD/G) + Test Architect (evidence); **prior-only deps** — Epic 7 entry gate + the
-named Epic 6 reads; **fixture** — deterministic persisted-boundary fixture with restart/two-instance
-harness on the G-4 runner; **verification** — `dotnet tool run hexalith-module test --profile durable --filter Story=<id>`;
-**evidence** — `evidence/epic7/<id>-*.{trx,json}` incl. restart/duplicate/lost-response proof;
-**release disposition** — durability evidence contributes to NFR-4/NFR-11; no Epic 7 story is itself
-the terminal release gate._
+### Story 7.2: Bind server-issued previews and confirmations
 
-### Story 7.1: Create a Project with exactly one authorized Folder
+Issue expiring, single-use confirmation artifacts bound to tenant, actor, action, targets, request
+hash, state or version, and preview, invalidating them when state changes.
 
-As a **delegated Chatbot service caller or Tenant Project Administrator**,
-I want **to create a Project as a Folder-first idempotent Durable Task that classifies metadata, reserves the ProjectId, verifies or creates exactly one authorized Folder, then commits creation with the Folder binding**,
-So that **a Project becomes caller-visible/Active only after one authorized Folder is bound and read-model-confirmed (FR-1, FR-19), with no observable folderless-Active interval**.
+### Story 7.3: Enforce the mandatory Folder through durable Project creation
 
-- **Traceability:** FR-1, FR-19 (canonical Metadata Classification / AD-31 / E-9); NFR-1, NFR-4; AD-3, AD-8, AD-12, AD-18, AD-22, AD-31; UJ-2, UJ-3; findings REL-001, E-9; evidence rows `fr-1`, `fr-19`.
+Make Project creation a durable task that verifies or creates exactly one authorized Folder before
+the Project can become Active and reconciles partial or lost-response outcomes.
 
-**Acceptance Criteria** (plus shared invariants 1–6):
+### Story 7.4: Make Conversation assignment and moves durable and auditable
 
-**Given** an authorized create request with a Project name and system-supplied `projectMetadata.metadataClass` in `{public_metadata,tenant_sensitive,credential_sensitive,secret}`, **When** admission runs, **Then** authorization precedes parsing, the shared `SensitiveMetadataTierValidator` validates classification, the task reserves a hidden ProjectId and provisions/validates exactly one authorized Folder keyed to the ProjectId, then submits one creation commit already carrying the Folder binding; the Project is Active only after read-model confirmation.
+Coordinate Conversations-owned assignment and move operations through a durable Projects workflow
+and emit an idempotent, metadata-only Projects audit receipt after confirmed completion.
 
-**Given** a malformed/unknown `metadataClass` (or raw secret / unrestricted path / foreign payload), **When** admission runs, **Then** it returns `400 ValidationFailure` with `details.rejectedField = projectMetadata.metadataClass`, echoes no value, and submits **no** creation command.
+### Story 7.5: Make proposed-Project confirmation durable and recoverable
 
-**Given** the legacy unversioned name-only request (the sole v1 compatibility shape), **When** submitted, **Then** it is accepted and classified per policy without breaking historical readers.
+Bind proposed-Project confirmation to server-issued evidence and make confirmation, cancellation,
+retry, stale-state recovery, and task status durable and restart-safe.
 
-**Given** Folder creation succeeds but the creation commit cannot complete (crash/lost response), **When** the task recovers, **Then** it enters `NeedsAttention`, never auto-deletes the Folder, and an equivalent retry converges to the same task/outcome.
+### Story 7.6: Migrate archive, restore, relink, and unlink to bound tasks
 
-- **Estimate:** XL. **Completion boundary:** Folder-first idempotent create with metadata classification and no folderless-Active window; supersedes Story 1.4's create criteria.
+Execute consequential maintenance operations through previewed, confirmed, durable tasks; keep
+reevaluation read-only as Refresh diagnostics.
 
-### Story 7.2: Update Project Setup idempotently
+### Story 7.7: Reconcile legacy pending-Folder and in-flight records
 
-As a **delegated Chatbot service caller or Tenant Project Administrator**,
-I want **to update durable Project Setup through an idempotent Durable Task**,
-So that **Conversation-continuity setup evolves additively and safely (FR-3) with equivalent-retry safety**.
-
-- **Traceability:** FR-3, FR-19 (validation reuse); NFR-1, NFR-4, NFR-10; AD-5, AD-15, AD-16, AD-31; UJ-1; evidence row `fr-3`.
-
-**Acceptance Criteria** (plus shared invariants 1, 3–6):
-
-**Given** an authorized setup update (task-only, no confirmation), **When** submitted, **Then** the update is durable, additive, serialization-tolerant, re-uses the shared validator (rejecting secrets/paths/foreign payloads/invalid classification), and equivalent retries return the same task while changed requests conflict.
-
-**Given** a denied/cross-Tenant/stale-version request, **When** submitted, **Then** it fails closed with no partial durable effect.
-
-- **Estimate:** M. **Completion boundary:** idempotent additive setup update with validation parity; supersedes Story 1.8 update criteria.
-
-### Story 7.3: Link an unassigned Conversation
-
-As a **delegated Chatbot service caller**,
-I want **to link an unassigned Conversation to a Project through a durable task that records intent while Conversations remains system of record**,
-So that **a Conversation gains exactly one Project membership (FR-6) with a rebuildable reverse index and no local membership storage**.
-
-- **Traceability:** FR-6; NFR-1, NFR-4; AD-10, AD-12, AD-14; UJ-1, UJ-3; evidence row `fr-6`.
-
-**Acceptance Criteria** (plus shared invariants 1, 3–6):
-
-**Given** an authorized unassigned Conversation (task-only link), **When** the durable workflow runs, **Then** it calls the Conversations owner with an idempotency key + expected version, persists the owner receipt before advancing, updates the Tenant-scoped **reverse index** (aggregate stores no membership), and emits a metadata-only receipt.
-
-**Given** a Conversation already in another Project, **When** link is attempted, **Then** it is rejected and an explicit **move** (7.4) is required.
-
-**Given** an unknown owner response or restart, **When** the task recovers, **Then** it queries owner status before retrying and converges without duplicate membership.
-
-- **Estimate:** M. **Completion boundary:** durable single-membership link via Conversations owner + reverse index.
-
-### Story 7.4: Move a Conversation between Projects
-
-As a **Tenant Project Administrator or delegated caller**,
-I want **to move a Conversation between Projects through Preview + single-use confirmation + durable saga**,
-So that **membership changes are consequential, auditable, and recoverable (FR-7) with prior membership removed before the new one is created**.
-
-- **Traceability:** FR-7; NFR-1, NFR-4; AD-5, AD-10, AD-12, AD-13; UJ-3; evidence row `fr-7`.
-
-**Acceptance Criteria** (plus shared invariants 1–6; move is **confirmation-required**):
-
-**Given** a valid bound Confirmation Artifact and authority to both Projects and the Conversation, **When** the move task runs, **Then** the saga removes prior membership before creating the new one via the Conversations owner (idempotency key + expected version + persisted receipts), and emits a metadata-only receipt.
-
-**Given** authority to either Project or the Conversation cannot be established, or the artifact is stale/replayed, **When** the move is attempted, **Then** it fails closed (`409` + `RenewPreview` for stale confirmation; safe denial otherwise) with no partial membership.
-
-**Given** a mid-saga crash after removal but before re-creation, **When** recovered, **Then** it compensates or reaches `NeedsAttention` — never leaving the Conversation orphaned or double-membered.
-
-- **Estimate:** L. **Completion boundary:** durable confirmed move with saga recovery.
-
-### Story 7.5: Unlink a Conversation
-
-As a **Tenant Project Administrator or delegated caller**,
-I want **to unlink a Conversation from a Project through Preview + confirmation + durable task**,
-So that **the association is removed without deleting the Conversation (FR-11) and remains auditable**.
-
-- **Traceability:** FR-11 (Conversation); NFR-1, NFR-4; AD-5, AD-10, AD-12, AD-13; evidence row `fr-11-conversation`.
-
-**Acceptance Criteria** (plus shared invariants 1–6; confirmation-required):
-
-**Given** a valid confirmation and authority, **When** unlink runs, **Then** the reverse index membership is removed via the owner, the underlying Conversation is not deleted, and a metadata-only receipt is emitted.
-
-**Given** a stale/replayed confirmation or denied authority, **When** unlink is attempted, **Then** it fails closed with no durable effect.
-
-- **Estimate:** M. **Completion boundary:** durable confirmed Conversation unlink; resource preserved.
-
-### Story 7.6: Replace a Project Folder
-
-As a **Tenant Project Administrator**,
-I want **to replace a Project's single authorized Folder through Preview + confirmation + durable task**,
-So that **the exactly-one-Folder invariant holds during replacement (FR-8) and the Folder is replaceable but never removed from an Active Project**.
-
-- **Traceability:** FR-8, FR-11 (Folder is replace-only, not removable); NFR-1, NFR-4; AD-3, AD-11, AD-12, AD-13; UJ-2; evidence row `fr-8`.
-
-**Acceptance Criteria** (plus shared invariants 1–6; confirmation-required):
-
-**Given** a valid confirmation, authority, and a new authorized Folder, **When** replace runs, **Then** the new Folder is verified before binding, `ProjectFolderSet` records the new stable Folder identity, the Project retains exactly one Folder throughout, and folder authorization stays delegated to Folders.
-
-**Given** an attempt to **remove** the Folder from an Active Project, **When** submitted, **Then** it is rejected (replace-only while Active).
-
-**Given** new-Folder verification fails or the confirmation is stale, **When** replace is attempted, **Then** it fails closed, retains the prior Folder, and never auto-deletes an owner resource.
-
-- **Estimate:** L. **Completion boundary:** durable confirmed Folder replacement preserving the single-Folder invariant.
-
-### Story 7.7: Link an authorized File Reference
-
-As a **delegated Chatbot service caller or Tenant Project Administrator**,
-I want **to link an authorized File Reference to a Project through an idempotent durable task**,
-So that **a File is referenced by stable identity/metadata (FR-9) without changing the Project Folder or copying content**.
-
-- **Traceability:** FR-9; NFR-1, NFR-4; AD-11, AD-12, AD-15; evidence row `fr-9`.
-
-**Acceptance Criteria** (plus shared invariants 1, 3–6; task-only additive link):
-
-**Given** an authorized File Reference (auth delegated to Folders), **When** link runs, **Then** it records stable File identity + metadata (no contents/paths), does not alter the Project Folder, stays within the 5,000-reference cap, and is idempotent under retry.
-
-**Given** a denied/unauthorized/stale File, **When** link is attempted, **Then** it fails closed with a Projects-safe reason code (never rethrowing raw upstream detail).
-
-- **Estimate:** M. **Completion boundary:** idempotent authorized File Reference link.
-
-### Story 7.8: Unlink a File Reference
-
-As a **Tenant Project Administrator or delegated caller**,
-I want **to unlink a File Reference through Preview + confirmation + durable task**,
-So that **the reference is removed without deleting the File (FR-11) and remains auditable**.
-
-- **Traceability:** FR-11 (File); NFR-1, NFR-4; AD-5, AD-11, AD-12, AD-13; evidence row `fr-11-file`.
-
-**Acceptance Criteria** (plus shared invariants 1–6; confirmation-required):
-
-**Given** a valid confirmation and authority, **When** unlink runs, **Then** the File Reference is removed, the underlying File is not deleted, and a metadata-only receipt is emitted.
-
-**Given** a stale/replayed confirmation or denial, **When** unlink is attempted, **Then** it fails closed with no durable effect.
-
-- **Estimate:** S. **Completion boundary:** durable confirmed File unlink; resource preserved.
-
-### Story 7.9: Link an authorized Memory
-
-As a **delegated Chatbot service caller**,
-I want **to link an authorized Memory to a Project through an idempotent durable task (identity/metadata only)**,
-So that **a Memory is referenced (FR-10) with authorization delegated to Hexalith.Memories and no payload copy**.
-
-- **Traceability:** FR-10; NFR-1, NFR-4; AD-11, AD-12, AD-15; UJ-1, UJ-3; evidence row `fr-10`.
-
-**Acceptance Criteria** (plus shared invariants 1, 3–6; task-only additive link):
-
-**Given** an authorized Memory reference (Memories owns existence/payload/lifecycle/authorization; Case-vs-Unit granularity resolved by the pinned G-2 Memories contract), **When** link runs, **Then** it records stable Memory identity + metadata only, is idempotent, and tolerates Memories' async/eventually-consistent, `[Experimental]` ingestion.
-
-**Given** an unavailable/denied/unauthorized Memory, **When** link is attempted, **Then** it fails closed-clean with a safe reason code and never copies payload.
-
-- **Estimate:** M. **Completion boundary:** idempotent metadata-only Memory link honoring the pinned Memories contract.
-
-### Story 7.10: Unlink a Memory
-
-As a **Tenant Project Administrator or delegated caller**,
-I want **to unlink a Memory through Preview + confirmation + durable task**,
-So that **the reference is removed without deleting the Memory (FR-11) and remains auditable**.
-
-- **Traceability:** FR-11 (Memory); NFR-1, NFR-4; AD-5, AD-11, AD-12, AD-13; evidence row `fr-11-memory`.
-
-**Acceptance Criteria** (plus shared invariants 1–6; confirmation-required):
-
-**Given** a valid confirmation and authority, **When** unlink runs, **Then** the Memory reference is removed, the underlying Memory is not deleted, and a metadata-only receipt is emitted.
-
-**Given** a stale/replayed confirmation or denial, **When** unlink is attempted, **Then** it fails closed with no durable effect.
-
-- **Estimate:** S. **Completion boundary:** durable confirmed Memory unlink; resource preserved.
-
-### Story 7.11: Confirm an ambiguous Project choice
-
-As a **Project User (via Chatbot presentation)**,
-I want **to confirm one accessible candidate from an ambiguous resolution through a bound Confirmation Artifact and durable task**,
-So that **the confirmed Project-to-Conversation association is recorded (FR-14) with no preselection and no silent attachment**.
-
-- **Traceability:** FR-14; NFR-1, NFR-4; AD-5, AD-13, AD-32; UJ-3; UX candidate-comparison journey (AD-34); evidence row `fr-14`.
-
-**Acceptance Criteria** (plus shared invariants 1–6; confirmation-required):
-
-**Given** a `MultipleCandidates` outcome from 6.4 and accessible candidates with no preselection, **When** the user confirms one via its bound artifact, **Then** the durable task records the choice (linking/associating via the Conversations owner), and rejected candidates are not linked.
-
-**Given** a stale/expired/replayed artifact or a candidate that became unauthorized, **When** confirm is attempted, **Then** it fails closed (`409` + `RenewPreview` for stale) with no association.
-
-**Given** lost response after confirmation, **When** recovered, **Then** the equivalent retry converges to the single recorded association.
-
-- **Estimate:** L. **Completion boundary:** durable confirmed ambiguous-resolution choice; MCP cannot self-confirm (AD-29).
-
-### Story 7.12: Confirm a proposed new Project
-
-As a **Project User (via Chatbot presentation)**,
-I want **to confirm creation of a proposed Project bound to a server Preview through a durable Folder-first task**,
-So that **a Project is created from inference only after authorized confirmation (FR-15), linking the initiating Conversation and authorized attachments**.
-
-- **Traceability:** FR-15, FR-1/FR-19 (reuses Folder-first create + classification); NFR-1, NFR-4; AD-5, AD-8, AD-13, AD-31; UJ-3; evidence row `fr-15`.
-
-**Acceptance Criteria** (plus shared invariants 1–6; confirmation-required):
-
-**Given** a proposed Project with suggested name + initial setup and a bound Preview, **When** the user confirms, **Then** creation runs the **same Folder-first idempotent path as 7.1** (metadata classified, exactly-one-Folder), then links the initiating Conversation/attachments via the owner; no Project exists before confirmation.
-
-**Given** a stale/replayed Preview or denied authority, **When** confirm is attempted, **Then** it fails closed with no Project and no Folder side effect.
-
-**Given** Folder created but activation cannot commit, **When** recovered, **Then** `NeedsAttention` with no auto-deletion, converging on retry.
-
-- **Estimate:** L. **Completion boundary:** durable confirmed proposed-creation; consequential autonomous MCP confirmation stays disabled until gates pass.
-
-### Story 7.13: Archive an Active Project
-
-As a **Project User, Tenant Operator, or Tenant Project Administrator**,
-I want **to archive an Active Project through Preview + single-use confirmation + idempotent durable task**,
-So that **archival is consequential, recoverable, and auditable (FR-4) while references remain auditable**.
-
-- **Traceability:** FR-4; NFR-1, NFR-4; AD-4, AD-5, AD-13; UJ-5 (archive side); evidence row `fr-4`.
-
-**Acceptance Criteria** (plus shared invariants 1–6; confirmation-required):
-
-**Given** a valid confirmation and authority over an Active Project, **When** archive runs, **Then** lifecycle becomes `Archived` after read-model confirmation, the Project is excluded from automatic resolution unless explicitly requested, and references remain auditable.
-
-**Given** a stale/replayed confirmation or denied authority, **When** archive is attempted, **Then** it fails closed with no lifecycle change.
-
-**Given** duplicate delivery / lost response, **When** retried, **Then** the equivalent retry converges to the single archived outcome.
-
-- **Estimate:** M. **Completion boundary:** durable confirmed archive; **restore is 7.14**. Supersedes Story 1.8 archive criteria.
-
-### Story 7.14: Restore an Archived Project
-
-As a **Project User, Tenant Operator, or Tenant Project Administrator**,
-I want **to restore an Archived Project through Preview + confirmation + idempotent durable task that establishes Folder validity before activation**,
-So that **restore is the safe counterpart to archive (FR-23, UJ-5) with no invalid Active Project exposed**.
-
-- **Traceability:** FR-23; NFR-1, NFR-4; AD-3, AD-4, AD-5, AD-8, AD-13, AD-23; UJ-5; evidence row `fr-23`. **Primary owner of FR-23 per SCP §4.6.**
-
-**Acceptance Criteria** (plus shared invariants 1–6; confirmation-required):
-
-**Given** a valid confirmation, **When** Preview runs, **Then** it verifies Tenant, actor, authority, current Project version, and **exactly one authorized Folder**; if the prior Folder is invalid/missing it requires an authorized replacement or same-name Folder creation before confirmation.
-
-**Given** restore proceeds, **When** the task runs, **Then** Folder validity is established while still `Archived`; a replacement emits `ProjectFolderSet` **before** `ProjectRestored` in one commit; the Project becomes Active only after read-model confirmation.
-
-**Given** Folder creation succeeds but activation cannot commit, **When** recovered, **Then** the task enters `NeedsAttention`, never auto-deletes the Folders-owned resource, and stale/replay/cancel/duplicate/concurrency/lost-response cannot expose an invalid Active Project.
-
-- **Estimate:** L. **Completion boundary:** durable confirmed restore with Folder-before-activation ordering and full recovery evidence.
-
-### Story 7.15: Reconcile legacy and interrupted workflows
-
-As a **Solution Architect / platform operator**,
-I want **compensating durable tasks that detect and reconcile folderless, pending-Folder, and in-flight legacy records without rewriting committed history**,
-So that **legacy partial records reach a safe terminal disposition before their value slice cuts over (NFR-4, NFR-10)**.
-
-- **Traceability:** NFR-4, NFR-10; FR-1/FR-4/FR-23 (reconciliation evidence); AD-12, AD-17, AD-22; findings REL-001; evidence row `nfr-4-reconcile`.
-
-**Acceptance Criteria** (plus shared invariants 1, 3–6):
-
-**Given** the AD-17 inventory of legacy records (Active-folderless, `ProjectFolderCreationPending`, in-flight), **When** the compensating task runs per record, **Then** it uses durable receipts, status recovery, and a terminal disposition; historical folderless state is excluded from Active reads and routed to compensation; no owner resource is auto-deleted.
-
-**Given** committed history, **When** reconciliation runs, **Then** no event is rewritten and no unsafe dual writer is introduced; new writes stop emitting `ProjectFolderCreationPending` while its deserializer/apply are retained.
-
-**Given** a record that cannot be safely reconciled, **When** processed, **Then** it enters `NeedsAttention` with an honest recorded blocker rather than a false success.
-
-- **Estimate:** L. **Completion boundary:** every legacy/interrupted record reaches a safe terminal or `NeedsAttention` disposition with evidence; single-writer command cutover complete.
+Detect and reconcile folderless, pending-Folder, and in-flight legacy records through compensating
+workflows without rewriting committed event history.
 
 ---
 
-## Epic 8: Safe Operations and Release Confidence
+## Epic 8: Production Conformance and Release Evidence
 
-Turn the corrective read and durable-workflow work into **executable production evidence** across
-operator surfaces, Safe Diagnostic Export, health/telemetry, packaging/supply chain, authenticated
-parity/isolation/accessibility, performance/back-pressure, cross-workflow resilience, and terminal
-deployment/rollback/stakeholder acceptance. The whole epic is fail-closed behind the AD-30
-machine-checkable evidence gate. It closes TEST-001 and every required P1/P2 finding (or records an
-authorized disposition), and maps every critical NFR-11 release category to an owning story.
+Turn the corrective architecture and workflow work into executable production evidence across
+persisted boundaries, authentication, tenant isolation, resilience, accessibility, performance,
+packaging, deployment, and stakeholder acceptance.
 
-**Epic 8 entry gate (prerequisite, not delivered value).** Supplies **deterministic
-persisted-boundary fixtures** (authorized Tenant, seeded Projects/references/audit, required UI/static
-assets) and **blocking CI** lanes over the real supported platform path (G-4 runner + `hexalith-evidence`),
-with G-5 identity/KMS/secret bindings and G-6 toolchain alignment pinned. No failed/skipped/blocked/
-unavailable critical case may be represented as passing.
+**Completion gate:** Closes TEST-001 and all required P2 compliance and correctness findings, or
+records an authorized disposition. Release handoff can proceed only after Story 8.9.
 
-_Shared attributes for all Epic 8 stories: **repository authority** platform adapters + Hexalith.Projects
-evidence (Chatbot companion evidence is separately owned — see 8.8); **owner** Test Architect (evidence
-rows/fixtures) + Product Owner + Solution Architect (AD/G conformance); **prior-only deps** — Epics 6–7
-value slices + the Epic 8 entry gate; **fixture** — the entry-gate persisted-boundary fixtures;
-**verification** — `dotnet tool run hexalith-module test --profile <lane> --filter Story=<id>` +
-`dotnet tool run hexalith-evidence validate …`; **evidence** — `evidence/epic8/<id>-*.{trx,json}` +
-the matching `hexalith.readiness-evidence.v1` rows; **compatibility/rollback** — legacy routing
-retained and reversible until 8.11 acceptance. Every story's completion requires honest pass/fail;
-an unavailable environment records "not verified," never `passed`._
+### Story 8.1: Establish real persisted-boundary fixtures and CI
 
-### Story 8.1: Inspect task, audit, and reconciliation truth
+Replace fake or omitted boundary evidence with repeatable persisted-state fixtures and blocking CI
+lanes covering the real supported platform path.
 
-As a **Tenant Operator or Tenant Project Administrator**,
-I want **to inspect Durable Task status, metadata-only audit timeline, and reconciliation outcomes through authorized read surfaces**,
-So that **operators have truthful operational visibility (FR-21) with correct retention and no payload leakage (NFR-8)**.
+### Story 8.2: Implement truthful health, telemetry, and generated logging
 
-- **Traceability:** FR-21, FR-22 (task/audit read); NFR-1, NFR-8; AD-21, AD-26, AD-30; UX-DR10, UX-DR16; findings (audit) ; evidence rows `fr-21`, `nfr-8`.
+Ensure health, readiness, telemetry, and generated structured logging report real dependency and
+projection state with bounded, metadata-only signals.
 
-**Acceptance Criteria:**
+### Story 8.3: Conform MCP and CLI machine contracts
 
-**Given** an authorized operator, **When** the audit timeline / task-status / reconciliation views load, **Then** they show metadata-only records (admission, terminal outcome, confirmation use/rejection, auth denial, confirmed mutations, reconciliation, receipt IDs), Tenant-scoped, with audit retained ≥ 365 days and task/idempotency records ≥ 30 days / result lifetime; Resolution Traces and exports are absent (not persisted).
+Align MCP and CLI schemas, failure semantics, freshness vocabulary, partial-failure behavior, and
+machine-readable outputs with the canonical domain and wire contracts.
 
-**Given** a denied/cross-Tenant target, **When** a view loads, **Then** it fails closed (safe absence) with no leakage.
+### Story 8.4: Rebuild operator UI conformance
 
-**Given** intermediate states/polls/retries, **When** rendered, **Then** they are telemetry-only and separated from durable audit truth (AD-26).
+Conform the platform-hosted operator UI to approved FrontComposer and Fluent boundaries,
+accessibility behavior, safe failure states, and cross-surface semantics.
 
-- **Estimate:** M. **Completion boundary:** truthful task/audit/reconciliation reads with retention + separation evidence.
+### Story 8.5: Align build, packaging, supply chain, and source structure
 
-### Story 8.2: Create a bounded Safe Diagnostic Export
+Correct build, packaging, dependency, source-layout, signing, and supply-chain evidence so release
+artifacts match the supported ownership and public-surface model.
 
-As a **separately authorized Tenant Operator or Tenant Project Administrator**,
-I want **to create a synchronous, bounded, non-retained `projects.safe-diagnostic-export.v1` export via Web, CLI, or MCP**,
-So that **support gets bounded metadata truth (FR-24) without unbounded troubleshooting access and Chatbot cannot export**.
+### Story 8.6: Activate authenticated critical E2E and tenant-isolation gates
 
-- **Traceability:** FR-24; NFR-1, NFR-6, NFR-8; AD-7, AD-19, AD-21, AD-26, AD-27; UX-DR18; evidence row `fr-24`. **Primary owner of FR-24 per SCP §4.6.**
+Make authenticated live topology, cross-tenant isolation, critical accessibility, and leakage
+cases blocking, with no unexplained permanent skips or failed cases accepted as evidence.
 
-**Acceptance Criteria:**
+### Story 8.7: Prove restart, retry, concurrency, and reconciliation
 
-**Given** a caller with the **separate** export permission (distinct from FR-22 read; Chatbot rejected), **When** export runs, **Then** it produces one synchronous snapshot ≤ 1 MiB encoded, ≤ 500 reference rows, ≤ 100 audit rows, with stable/deterministic reference ordering and newest-first audit rows, truncation metadata reporting included/omitted counts + safe reasons, **no continuation cursor, no retained bytes/tasks**, under a two-lease per-Tenant gate; every attempt and outcome is audited metadata-only.
+Demonstrate durable workflow and projection correctness across restart, retry, duplicate delivery,
+concurrency, partial failure, lost response, and reconciliation scenarios.
 
-**Given** upstream component unavailability, **When** export runs, **Then** unavailable components are marked safely without raw errors or fabricated completeness.
+### Story 8.8: Bound read models and verify performance objectives
 
-**Given** a third concurrent export for the Tenant or a lost/duplicate request, **When** attempted, **Then** it is throttled with structured retry guidance and does not double-produce.
+Define supported cardinality bounds and verify read-model, query, export, and operational-surface
+performance at small, median, and maximum supported scales.
 
-- **Estimate:** L. **Completion boundary:** bounded, non-retained, separately authorized export with equivalent Web/CLI/MCP semantics.
+### Story 8.9: Record deployment and stakeholder acceptance
 
-### Story 8.3: Operate Projects through a conformant Web console
-
-As a **Tenant Operator or Tenant Project Administrator**,
-I want **an authenticated FrontComposer/Fluent V5 operator Web console exposing audit-first maintenance actions (archive/restore/relink/unlink/reevaluate) with Preview/confirmation and response/recovery fields**,
-So that **operators run safe maintenance (FR-22 + Epic 7 actions) with conformant, accessible, safe-failure UX**.
-
-- **Traceability:** FR-22, FR-4/FR-23/FR-11 (operator-initiated via Epic 7 durable tasks); NFR-1, NFR-9; AD-2, AD-19, AD-29, AD-32, AD-33, AD-34; UX-DR7, UX-DR11–UX-DR13, UX-DR17, UX-DR21–UX-DR25; evidence row `fr-22-web-ops`.
-
-**Acceptance Criteria:**
-
-**Given** an authenticated operator with role-specific authority, **When** the console renders maintenance actions, **Then** each mutating action shows Preview (current→proposed state, targets, warnings, expected audit event), requires the bound Confirmation Artifact, maps every phase to Durable Task/read-model truth, exposes `responseState`/`asOf`/`projectVersion`/Recovery Action Codes, and treats reevaluate as read-only Refresh.
-
-**Given** a denied action or stale confirmation, **When** attempted, **Then** the UI fails closed with a safe reason code (`409`/`RenewPreview` for stale) and no client-supplied authority.
-
-**Given** Fluent V5 governance (G-6) and the required `FluentAccordion` section pattern, **When** the console composes sibling sections, **Then** it uses Fluent 2 tokens (not the non-normative HTML prototype).
-
-- **Estimate:** L. **Completion boundary:** conformant authenticated operator Web console driving Epic 7 durable tasks with safe-failure UX.
-
-### Story 8.4: Operate Projects through a deterministic CLI contract
-
-As a **Tenant Operator or automation pipeline**,
-I want **an authenticated CLI with deterministic machine output, stable exit codes, and confirmation semantics for mutating commands**,
-So that **scripted operations get a stable, redaction-safe contract with parity to Web/MCP (FR-22, NFR-8)**.
-
-- **Traceability:** FR-22; NFR-1, NFR-8; AD-2, AD-19, AD-29, AD-33; UX-DR19, UX-DR24; evidence row `cli-contract`.
-
-**Acceptance Criteria:**
-
-**Given** a mutating CLI command (`archive`/`restore`/`relink`/`unlink`/`reevaluate`), **When** invoked, **Then** it requires explicit target IDs + tenant scope + a confirmation/dry-run contract, returns deterministic JSON with stable exit codes, and reevaluate is read-only.
-
-**Given** partial failure / freshness / denial, **When** a command runs, **Then** failure semantics, freshness vocabulary, and partial-failure behavior match the canonical contracts with safe reason codes and no payload echo.
-
-**Given** identical facts, **When** compared to Web (8.3) and MCP (8.5), **Then** semantics are equivalent (parity) without authority expansion.
-
-- **Estimate:** M. **Completion boundary:** deterministic authenticated CLI contract with confirmation semantics + parity.
-
-### Story 8.5: Operate Projects through agent-safe MCP contracts
-
-As an **MCP-assisted agent operating under dual-principal authority**,
-I want **agent-safe MCP resources (reads) and tools (mutations) that cannot expand authority or self-confirm end-user decisions**,
-So that **agents operate Projects safely (FR-22) with consequential mutation contained until gates pass (AD-29)**.
-
-- **Traceability:** FR-22; NFR-1, NFR-8; AD-2, AD-19, AD-20, AD-29, AD-33; UX-DR20; findings AGENT-001 (surface); evidence row `mcp-contract`.
-
-**Acceptance Criteria:**
-
-**Given** MCP read **resources** vs mutating **tools** are separated, **When** a tool is invoked, **Then** it requires explicit action + target IDs + tenant scope + a confirmation contract, carries structured safe metadata **plus** a short safe explanation (never explanation-only), and cannot bypass Preview/Confirmation/admission or expand permissions.
-
-**Given** an end-user resolution/proposal confirmation, **When** MCP attempts it, **Then** it is **refused** (only the end user confirms; AD-29), and consequential autonomous MCP mutation remains **disabled** until readiness/release gates pass — availability/containment state shown explicitly.
-
-**Given** an unknown tool, **When** called, **Then** it is rejected with suggestions.
-
-- **Estimate:** M. **Completion boundary:** agent-safe MCP contracts with explicit containment; autonomous mutation stays disabled.
-
-### Story 8.6: Observe truthful dependency and projection health
-
-As a **platform operator**,
-I want **health, readiness, telemetry, and generated structured logging that report real dependency and projection state with bounded metadata-only signals**,
-So that **availability/recovery (NFR-3) is observable without fabricated health or payload leakage**.
-
-- **Traceability:** NFR-1, NFR-3, NFR-2 (config fail-fast support); AD-20, AD-26, AD-28; findings (health) ; evidence row `nfr-3`.
-
-**Acceptance Criteria:**
-
-**Given** real dependency/projection state (including stale/rebuilding/unavailable), **When** health/readiness/telemetry report, **Then** signals reflect true state (no always-green), are bounded and metadata-only, and structured logs are source-generated (never payloads/names/tokens).
-
-**Given** incomplete identity/audience/signing/key configuration (AD-20/AD-28), **When** the host starts, **Then** it **fails fast** rather than admitting work with partial authority.
-
-**Given** a dependency outage, **When** observed, **Then** readiness degrades truthfully and supports the RTO/recovery evidence in 8.10.
-
-- **Estimate:** M. **Completion boundary:** truthful bounded health/telemetry/logging with fail-fast admission.
-
-### Story 8.7: Consume reproducible packages and supply-chain evidence
-
-As a **downstream consumer / release engineer**,
-I want **the target package graph, versions, signing, and supply-chain evidence to match the supported ownership and public-surface model**,
-So that **release artifacts are reproducible and correctly bounded (NFR-10, NFR-11) with the AD-24 inventory enforced**.
-
-- **Traceability:** NFR-10, NFR-11, NFR-2 (signing/provenance support); AD-16, AD-24, AD-25; findings CLIENT-001/supply-chain; evidence row `supply-chain`.
-
-**Acceptance Criteria:**
-
-**Given** the AD-24 target inventory (packable `Contracts`/`Projects`/`Testing`; non-packable `UI.Contracts`; two-line `Server` host; conditional generated `Client`), **When** the release manifest is validated, **Then** the exact inventory is enforced, `Projects.Client.Generation`/`.Shared` are retired only after the generator reproduces output + compatibility fingerprints, and central package versions (incl. Builds-owned NSwag 14.7.1 / Fluxor 6.9.0) are used with production fail-fast.
-
-**Given** Release-mode CI (package references) vs local Debug (project references), **When** built, **Then** artifacts are reproducible, signed, and provenance-evidenced; each test project runs individually.
-
-**Given** a boundary violation (e.g. `Contracts` depending on Shell/Fluxor/Fluent/ASP.NET/Dapr/Aspire), **When** CI runs, **Then** it fails closed.
-
-- **Estimate:** M. **Completion boundary:** reproducible, correctly bounded package graph + supply-chain evidence matching AD-24.
-
-### Story 8.8: Verify authenticated parity, isolation, and accessibility
-
-As a **Test Architect (with the Chatbot Presentation Owner for companion evidence)**,
-I want **blocking authenticated live E2E for cross-surface parity, cross-Tenant isolation, privacy leakage, and WCAG 2.2 AA accessibility across operator and Chatbot companion journeys**,
-So that **security/isolation/privacy (NFR-1) and accessibility (NFR-9) have authenticated evidence and the 19/56 live failures are superseded**.
-
-- **Traceability:** NFR-1, NFR-9, NFR-11; AD-19, AD-20, AD-29, AD-33, AD-34; UX-DR27; SM-5; findings SEC-001/leakage/E-6; evidence rows `nfr-1`, `nfr-9`, `e2e-live`. **Owns Chatbot NFR-9/SM-5/AD-34 companion evidence per SCP §4.6.**
-
-**Acceptance Criteria:**
-
-**Given** authenticated live topology with real Keycloak/OIDC, **When** the critical E2E lane runs, **Then** cross-surface parity, cross-Tenant isolation, and `NoPayloadLeakage` cases are **blocking** with no unexplained permanent skips and no failed case accepted as evidence (superseding the 19-passed/56-failed run).
-
-**Given** operator journeys, **When** accessibility runs, **Then** automated axe + authenticated manual keyboard/focus/live-region/screen-reader/200%-zoom/320px-reflow evidence records WCAG 2.2 AA at small/median/max shapes; any unresolved critical/serious violation blocks release.
-
-**Given** the **cross-repository Chatbot companion** (candidate/proposal/confirm/cancel/recovery/task/first-response-admission journeys), **When** its evidence is produced, **Then** it is owned by a **separately approved Chatbot owner + pinned revision** with authenticated verification artifacts — without granting Projects authority to mutate Chatbot; absence of this evidence blocks Projects release.
-
-- **Estimate:** XL. **Completion boundary:** blocking authenticated parity/isolation/privacy/a11y evidence incl. Chatbot companion; no false pass.
-
-### Story 8.9: Meet bounded performance and back-pressure objectives
-
-As a **Test Architect / platform operator**,
-I want **verified performance at supported scale and enforced per-Tenant back-pressure, quotas, timeouts, and pagination bounds**,
-So that **scale/performance (NFR-5), pagination/export bounds (NFR-6), and back-pressure (NFR-7) are proven and overload is safe**.
-
-- **Traceability:** NFR-5, NFR-6, NFR-7; AD-14, AD-15, AD-21, AD-27; evidence rows `nfr-5`, `nfr-6`, `nfr-7`.
-
-**Acceptance Criteria:**
-
-**Given** supported scale (10,000 Projects/Tenant, 5,000 refs/Project, 100,000 audit records), **When** the performance lane runs, **Then** metadata reads meet p95 < 500 ms (at 1,000 Projects / 500 refs) and < 1 s at max, and task admission p95 < 500 ms warm, at small/median/max shapes.
-
-**Given** cursor paging, **When** exercised, **Then** default 50 / cap 200 holds with opaque scoped cursors; Safe Diagnostic Export bounds (8.2) are enforced.
-
-**Given** per-Tenant limits (100 reads/s burst 200, 20 mutations/s burst 40, 1,000 nonterminal tasks, 2 export leases, 2 s interactive / 10 s durable timeouts, ≤ 3 retries in 30 s), **When** exceeded, **Then** platform admission rejects **before** partial durable work with structured retry guidance; domain handlers carry no retry/quota logic.
-
-- **Estimate:** L. **Completion boundary:** authenticated performance + back-pressure evidence at supported scale.
-
-### Story 8.10: Prove cross-workflow resilience
-
-As a **Test Architect / platform operator**,
-I want **durable workflow and projection correctness proven across restart, retry, duplicate delivery, concurrency, partial failure, lost response, and reconciliation**,
-So that **availability/recovery (NFR-3) and durability/idempotency (NFR-4) hold under adversarial runtime conditions**.
-
-- **Traceability:** NFR-3, NFR-4; FR-1/FR-4/FR-7/FR-14/FR-15/FR-23 (durable-path resilience); AD-4, AD-9, AD-12, AD-17, AD-28; findings REL-001/TEST-001; evidence rows `nfr-3-resilience`, `nfr-4`.
-
-**Acceptance Criteria:**
-
-**Given** an accepted Durable Task, **When** the worker restarts or a second instance runs, **Then** it resumes or reaches truthful `NeedsAttention` within 5 min (RTO 15 min), with fenced ownership and no duplicate durable effect (RPO 0 for committed events).
-
-**Given** duplicate delivery / lost response / concurrency, **When** retried, **Then** equivalent retries converge to the original durable truth and changed requests conflict; no silent drop or duplicate.
-
-**Given** a mid-saga partial failure, **When** recovered, **Then** compensation or `NeedsAttention` applies and reconciliation (7.15) reaches a terminal disposition.
-
-- **Estimate:** L. **Completion boundary:** adversarial resilience evidence for the durable-workflow platform path.
-
-### Story 8.11: Complete deployment, rollback evidence, and stakeholder acceptance
-
-As a **Release Owner (Jerome and John)**,
-I want **the deployed version/environment, encryption/KMS evidence, health/smoke evidence, rollback drill, residual-risk dispositions, and dated terminal acceptance recorded through the AD-30 evidence gate**,
-So that **production release is authorized only on complete, honest evidence (NFR-2, NFR-11) and never by recording a blocker (this is the terminal gate)**.
-
-- **Traceability:** NFR-2, NFR-11; all FR/NFR release rows; AD-25, AD-28, AD-30; findings (release/E-8); evidence rows `nfr-2`, `nfr-11`, `release-acceptance`. **Terminal release gate per AD-30.**
-
-**Acceptance Criteria:**
-
-**Given** the canonical `implementation-readiness-traceability-matrix.yaml`, **When** `hexalith-evidence validate` runs, **Then** it rejects duplicate/missing keys, placeholders, incomplete ownership/version/command/artifact fields, failed critical evidence, unexplained critical skips, and `passed` for unavailable environments; all FR-1…24 / NFR-1…11 / P1×9 / P2×7 / critical release rows are present and honest.
-
-**Given** deployment, **When** performed, **Then** deployed version/environment, authenticated encryption in transit + platform-managed encryption at rest with KMS rotation/revocation evidence, health/smoke evidence, and a **rollback drill reference** are recorded.
-
-**Given** all critical evidence passes, **When** release is proposed, **Then** **Jerome and John record dated residual-risk dispositions and terminal acceptance**; production, consequential autonomous MCP mutation, and proposed-Project confirmation are enabled **only** after this passes.
-
-**Given** any unavailable environment or unresolved critical case, **When** 8.11 is evaluated, **Then** it **cannot complete** by recording a blocker — completion requires real passing evidence.
-
-- **Estimate:** L. **Completion boundary:** dated terminal release acceptance on complete honest AD-30 evidence; supersedes the prior Story 8.9 gate. Supersedes Story 5.12's "executed = accepted" interpretation.
+Record the deployed version and environment, health and smoke evidence, rollback reference,
+residual-risk dispositions, and explicit dated acceptance from Jerome and John before release
+handoff.
