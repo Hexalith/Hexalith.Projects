@@ -1,0 +1,979 @@
+# Implementation-Readiness Traceability & Release-Evidence Matrix — Hexalith.Projects
+# CANONICAL artifact for AD-30. The Markdown view (implementation-readiness-traceability-matrix.md)
+# is a mechanically reconciled human view over the SAME stable row keys; this YAML wins on conflict.
+schema: hexalith.readiness-evidence.v1
+project: Hexalith.Projects
+generated: 2026-07-16
+generated_by: "bmad-create-epics-and-stories reconcile — Product Owner authoring; Test Architect owns evidence execution"
+source_of_truth: implementation-readiness-traceability-matrix.yaml
+markdown_view: implementation-readiness-traceability-matrix.md
+sources:
+  prd: _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
+  prd_addendum: _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/addendum.md
+  architecture: _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md
+  epics: _bmad-output/planning-artifacts/epics.md
+  audit: _bmad-output/analysis/hexalith-projects-codebase-audit-2026-07-14.md
+  readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-16.md
+
+# ── Validation contract (AD-30) ──────────────────────────────────────────────
+validation:
+  command: "dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml"
+  tool_status: not-available   # TARGET gate; supplied by the Builds/platform owner under G-4/AD-30. Until then rows record the external blocker and MUST NOT be `passed`.
+  rejects:
+    - duplicate-key
+    - missing-required-key
+    - unresolved-placeholder
+    - incomplete-ownership
+    - incomplete-pinned-revision
+    - missing-verification-command
+    - missing-evidence-artifact
+    - failed-critical-evidence
+    - unexplained-critical-skip
+    - passed-on-unavailable-environment
+  required_coverage:
+    fr: FR-1..FR-24
+    nfr: NFR-1..NFR-11
+    finding: "9 P1 + 7 P2 (E-7)"
+    release: "12 NFR-11/AD-30 critical categories"
+
+# ── Status vocabulary (honest, fail-closed) ──────────────────────────────────
+status_legend:
+  pending: "owned + fully specified; not yet executed (awaiting READY + implementation). NOT a pass."
+  blocked-external: "additionally gated on a G-1..G-6 external capability. NOT a pass."
+  not-verified: "environment/tool unavailable. NEVER a pass."
+  failed: "executed and currently failing."
+  passed: "real, honest passing evidence (none yet)."
+
+# ── Containment ──────────────────────────────────────────────────────────────
+containment:
+  overall_readiness: "NOT_READY (2026-07-16 independent rerun; supersedes 2026-07-15)"
+  freeze: "no corrective implementation, no 6.x/7.x/8.x story-file creation, no sprint-status reconciliation until an independent readiness rerun returns exactly READY"
+  release_block: "production + consequential autonomous MCP mutation + proposed-Project confirmation blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance"
+  open_triggers:
+    - "E-2: prior readiness verdict NOT_READY (until a READY rerun supersedes)"
+    - "E-6: live E2E 19 passed / 56 failed (row release-smoke / release-e2e)"
+    - "E-7: 9 P1 + 7 P2 audit findings (finding-* rows)"
+    - "E-8: release handoff BLOCKED (row release-stakeholder-acceptance)"
+    - "E-9: FR-19 metadata classification (row fr-19)"
+
+# ── Defaults — a row inherits any field it does not explicitly set ────────────
+defaults:
+  repository: Hexalith.Projects
+  owner: "Product Owner (author) → Test Architect (evidence execution) → Solution Architect (AD/G conformance)"
+  environment: "deterministic persisted-boundary fixture (authorized Tenant) on the G-4 platform composition runner (dotnet tool run hexalith-module ...)"
+  pinned_revision: "EventStore 3.67.3; FrontComposer 4.0.x (G-3); .NET 10.0.302; Dapr 1.18 (G-6); per-epic entry gate"
+  status: pending
+  release_disposition: "release-blocking (no approved v1 FR/NFR is deferrable)"
+
+rows:
+  # ═══════════════════════ FUNCTIONAL REQUIREMENTS (FR-1..FR-24) ═══════════════════════
+  - key: fr-1
+    category: fr
+    ids: [FR-1]
+    description: "Create Project — Folder-first, idempotent, metadata-classified; Active only after exactly one authorized Folder is bound and read-model-confirmed"
+    architecture_decisions: [AD-3, AD-5, AD-8, AD-12, AD-22, AD-31]
+    user_journeys: [UJ-2, UJ-3]
+    primary_story: "7.1"
+    supporting_stories: ["6.1"]
+    entry_gates: [Epic-7-gate, G-1, G-2]
+    fixture: epic7/7.1-create-folder-first
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.1"
+    evidence_artifact: evidence/epic7/7.1-create.trx
+    estimate: XL
+    status: blocked-external
+    blocker: "G-1 durable-task engine + G-2 Folders owner contract"
+  - key: fr-2
+    category: fr
+    ids: [FR-2]
+    description: "Open Project — authorized metadata/lifecycle/setup/reference summary via supported read models"
+    architecture_decisions: [AD-3, AD-14, AD-19, AD-32]
+    user_journeys: [UJ-1]
+    primary_story: "6.1"
+    supporting_stories: []
+    entry_gates: [Epic-6-gate]
+    fixture: epic6/6.1-authorized-reads
+    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.1"
+    evidence_artifact: evidence/epic6/6.1-authorized-reads.trx
+    estimate: M
+  - key: fr-3
+    category: fr
+    ids: [FR-3]
+    description: "Update Project Setup — durable, additive, idempotent"
+    architecture_decisions: [AD-5, AD-15, AD-16]
+    user_journeys: [UJ-1]
+    primary_story: "7.2"
+    supporting_stories: []
+    entry_gates: [Epic-7-gate, G-1]
+    fixture: epic7/7.2-setup-update
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.2"
+    evidence_artifact: evidence/epic7/7.2-setup-update.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-1 durable-task engine"
+  - key: fr-4
+    category: fr
+    ids: [FR-4]
+    description: "Archive Project — Preview + single-use confirmation + idempotent Durable Task"
+    architecture_decisions: [AD-4, AD-5, AD-13]
+    user_journeys: [UJ-5]
+    primary_story: "7.13"
+    supporting_stories: []
+    entry_gates: [Epic-7-gate, G-1]
+    fixture: epic7/7.13-archive
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.13"
+    evidence_artifact: evidence/epic7/7.13-archive.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-1 durable-task engine + confirmation record"
+  - key: fr-5
+    category: fr
+    ids: [FR-5]
+    description: "List Projects — Tenant-scoped, authorization-filtered, cursor-paged"
+    architecture_decisions: [AD-14, AD-19, AD-20, AD-27]
+    primary_story: "6.1"
+    supporting_stories: []
+    entry_gates: [Epic-6-gate]
+    fixture: epic6/6.1-authorized-reads
+    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.1"
+    evidence_artifact: evidence/epic6/6.1-authorized-reads.trx
+    estimate: M
+  - key: fr-6
+    category: fr
+    ids: [FR-6]
+    description: "Link Conversation — durable single-membership link via Conversations owner + reverse index"
+    architecture_decisions: [AD-10, AD-12, AD-14]
+    user_journeys: [UJ-1, UJ-3]
+    primary_story: "7.3"
+    supporting_stories: []
+    entry_gates: [Epic-7-gate, G-1, G-2]
+    fixture: epic7/7.3-link-conversation
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.3"
+    evidence_artifact: evidence/epic7/7.3-link-conversation.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-2 Conversations owner contract"
+  - key: fr-7
+    category: fr
+    ids: [FR-7]
+    description: "Move Conversation Between Projects — Preview + confirmation + durable saga; prior membership removed before new one"
+    architecture_decisions: [AD-5, AD-10, AD-12, AD-13]
+    user_journeys: [UJ-3]
+    primary_story: "7.4"
+    supporting_stories: []
+    entry_gates: [Epic-7-gate, G-1, G-2]
+    fixture: epic7/7.4-move-conversation
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.4"
+    evidence_artifact: evidence/epic7/7.4-move-conversation.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-1 + G-2 (Conversations owner)"
+  - key: fr-8
+    category: fr
+    ids: [FR-8]
+    description: "Set / Replace Project Folder — single-Folder invariant preserved; replace via Preview + confirmation (initial Folder via 7.1)"
+    architecture_decisions: [AD-3, AD-11, AD-12]
+    user_journeys: [UJ-2]
+    primary_story: "7.6"
+    supporting_stories: ["7.1"]
+    entry_gates: [Epic-7-gate, G-1, G-2]
+    fixture: epic7/7.6-replace-folder
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.6"
+    evidence_artifact: evidence/epic7/7.6-replace-folder.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-2 Folders owner contract"
+  - key: fr-9
+    category: fr
+    ids: [FR-9]
+    description: "Link File Reference — idempotent additive link; no Folder change; no content copy"
+    architecture_decisions: [AD-11, AD-12, AD-15]
+    primary_story: "7.7"
+    supporting_stories: []
+    entry_gates: [Epic-7-gate, G-1, G-2]
+    fixture: epic7/7.7-link-file
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.7"
+    evidence_artifact: evidence/epic7/7.7-link-file.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-2 Folders owner contract"
+  - key: fr-10
+    category: fr
+    ids: [FR-10]
+    description: "Link Memory — idempotent metadata-only link; auth delegated to Memories; Case-vs-Unit per pinned G-2 contract"
+    architecture_decisions: [AD-11, AD-12, AD-15]
+    user_journeys: [UJ-1, UJ-3]
+    primary_story: "7.9"
+    supporting_stories: []
+    entry_gates: [Epic-7-gate, G-1, G-2]
+    fixture: epic7/7.9-link-memory
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.9"
+    evidence_artifact: evidence/epic7/7.9-link-memory.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-2 Memories owner contract (Case/Unit granularity)"
+  - key: fr-11
+    category: fr
+    ids: [FR-11]
+    description: "Unlink Context Reference — Preview + confirmation + durable task for Conversation/File/Memory; Folder replace-only"
+    architecture_decisions: [AD-5, AD-11, AD-13]
+    primary_story: "7.5 / 7.8 / 7.10"
+    supporting_stories: ["7.6"]
+    entry_gates: [Epic-7-gate, G-1, G-2]
+    fixture: epic7/unlink-suite
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.5|7.8|7.10"
+    evidence_artifact: evidence/epic7/unlink-suite.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-1 confirmation record + G-2 owner contracts"
+  - key: fr-12
+    category: fr
+    ids: [FR-12]
+    description: "Resolve Project From Conversation — compute-on-demand; NoMatch/Single/Multiple; transient non-persisted trace"
+    architecture_decisions: [AD-7, AD-10, AD-14, AD-32]
+    user_journeys: [UJ-3]
+    primary_story: "6.4"
+    supporting_stories: []
+    entry_gates: [Epic-6-gate, G-2]
+    fixture: epic6/6.4-resolution-reads
+    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.4"
+    evidence_artifact: evidence/epic6/6.4-resolution-reads.trx
+    estimate: L
+  - key: fr-13
+    category: fr
+    ids: [FR-13]
+    description: "Resolve Project From Attachments — from Folder/File refs; fail-closed on stale auth; no raw file content as data"
+    architecture_decisions: [AD-7, AD-11, AD-14, AD-32]
+    user_journeys: [UJ-2]
+    primary_story: "6.4"
+    supporting_stories: []
+    entry_gates: [Epic-6-gate, G-2]
+    fixture: epic6/6.4-resolution-reads
+    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.4"
+    evidence_artifact: evidence/epic6/6.4-resolution-reads.trx
+    estimate: L
+  - key: fr-14
+    category: fr
+    ids: [FR-14]
+    description: "Confirm Ambiguous Project — bound Confirmation Artifact + durable task; no preselection; rejected candidates not linked"
+    architecture_decisions: [AD-5, AD-13, AD-32]
+    user_journeys: [UJ-3]
+    primary_story: "7.11"
+    supporting_stories: ["6.4"]
+    entry_gates: [Epic-7-gate, G-1, G-2]
+    fixture: epic7/7.11-confirm-ambiguous
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.11"
+    evidence_artifact: evidence/epic7/7.11-confirm-ambiguous.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-1 confirmation record"
+  - key: fr-15
+    category: fr
+    ids: [FR-15]
+    description: "Propose New Project — durable confirmed Folder-first creation from a bound Preview; no Project before confirmation"
+    architecture_decisions: [AD-5, AD-8, AD-13, AD-31]
+    user_journeys: [UJ-3]
+    primary_story: "7.12"
+    supporting_stories: ["7.1", "6.4"]
+    entry_gates: [Epic-7-gate, G-1, G-2]
+    fixture: epic7/7.12-confirm-proposed
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.12"
+    evidence_artifact: evidence/epic7/7.12-confirm-proposed.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-1 confirmation record + G-2 owners"
+  - key: fr-16
+    category: fr
+    ids: [FR-16]
+    description: "Get Project Context — allowlist-assembled setup + included refs with exclusion reasons; metadata-only"
+    architecture_decisions: [AD-11, AD-14, AD-32]
+    user_journeys: [UJ-1, UJ-4]
+    primary_story: "6.3"
+    supporting_stories: []
+    entry_gates: [Epic-6-gate, G-2]
+    fixture: epic6/6.3-project-context
+    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.3"
+    evidence_artifact: evidence/epic6/6.3-project-context.trx
+    estimate: L
+  - key: fr-17
+    category: fr
+    ids: [FR-17]
+    description: "Explain Context Selection — current transient inclusion/exclusion evidence; no secrets/payloads; no persisted trace"
+    architecture_decisions: [AD-7, AD-14]
+    user_journeys: [UJ-4]
+    primary_story: "6.3"
+    supporting_stories: ["6.4"]
+    entry_gates: [Epic-6-gate]
+    fixture: epic6/6.3-project-context
+    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.3"
+    evidence_artifact: evidence/epic6/6.3-project-context.trx
+    estimate: L
+  - key: fr-18
+    category: fr
+    ids: [FR-18]
+    description: "Refresh Project Context — read-only recompute; surfaces stale/unavailable refs; never mutates"
+    architecture_decisions: [AD-7, AD-14, AD-32]
+    primary_story: "6.3"
+    supporting_stories: []
+    entry_gates: [Epic-6-gate]
+    fixture: epic6/6.3-project-context
+    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.3"
+    evidence_artifact: evidence/epic6/6.3-project-context.trx
+    estimate: L
+  - key: fr-19
+    category: fr
+    ids: [FR-19]
+    description: "Validate Setup & Metadata Classification — four-value metadataClass, shared SensitiveMetadataTierValidator, auth-before-parse, 400 rejectedField, name-only compatibility"
+    architecture_decisions: [AD-31, AD-16]
+    linked_findings: [E-9, AD-31]
+    primary_story: "7.1"
+    supporting_stories: ["6.7"]
+    entry_gates: [Epic-7-gate, G-1]
+    fixture: epic7/7.1-metadata-classification
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.1&Trait=metadata-classification"
+    evidence_artifact: evidence/epic7/7.1-metadata-classification.trx
+    estimate: XL
+    status: blocked-external
+    blocker: "G-1; E-9 remediation gate"
+  - key: fr-20
+    category: fr
+    ids: [FR-20]
+    description: "Retrieve Conversation-Start Setup — bounded start subset with admission truth; excludes audit metadata"
+    architecture_decisions: [AD-14, AD-32]
+    user_journeys: [UJ-1]
+    primary_story: "6.2"
+    supporting_stories: []
+    entry_gates: [Epic-6-gate]
+    fixture: epic6/6.2-conversation-start-setup
+    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.2"
+    evidence_artifact: evidence/epic6/6.2-conversation-start-setup.trx
+    estimate: S
+  - key: fr-21
+    category: fr
+    ids: [FR-21]
+    description: "Record Project Audit Events — metadata-only audit of admissions/mutations/confirmations/reconciliation/export; ≥365-day retention"
+    architecture_decisions: [AD-21, AD-26, AD-30]
+    primary_story: "8.1"
+    supporting_stories: []
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.1-task-audit-reconciliation
+    verification_command: "dotnet tool run hexalith-module test --profile ops --filter Story=8.1"
+    evidence_artifact: evidence/epic8/8.1-task-audit.trx
+    estimate: M
+  - key: fr-22
+    category: fr
+    ids: [FR-22]
+    description: "Support Operator Read Access — authorized metadata-only read across Web/CLI/MCP + operational surfaces; read grants neither export nor mutation"
+    architecture_decisions: [AD-2, AD-19, AD-20, AD-29]
+    primary_story: "6.5 / 6.6"
+    supporting_stories: ["8.1", "8.3", "8.4", "8.5"]
+    entry_gates: [Epic-6-gate, G-3, G-5]
+    fixture: epic6/read-surfaces
+    verification_command: "dotnet tool run hexalith-module test --profile web-reads,cli-reads --filter Story=6.5|6.6"
+    evidence_artifact: evidence/epic6/read-surfaces.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-3 FrontComposer adapters + G-5 identity"
+  - key: fr-23
+    category: fr
+    ids: [FR-23]
+    description: "Restore Archived Project — Preview + confirmation + Folder-before-activation ordering; NeedsAttention on partial; no owner-resource deletion"
+    architecture_decisions: [AD-3, AD-13, AD-23]
+    user_journeys: [UJ-5]
+    primary_story: "7.14"
+    supporting_stories: []
+    entry_gates: [Epic-7-gate, G-1, G-2]
+    fixture: epic7/7.14-restore
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.14"
+    evidence_artifact: evidence/epic7/7.14-restore.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-1 + G-2 Folders owner"
+    notes: "NEW FR (2026-07-15 rebaseline). Restore counterpart to FR-4."
+  - key: fr-24
+    category: fr
+    ids: [FR-24]
+    description: "Create Safe Diagnostic Export — projects.safe-diagnostic-export.v1; ≤1 MiB / ≤500 refs / ≤100 audit rows; separate permission; no cursor/retention; Chatbot cannot"
+    architecture_decisions: [AD-7, AD-19, AD-21, AD-26, AD-27]
+    primary_story: "8.2"
+    supporting_stories: []
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.2-safe-export
+    verification_command: "dotnet tool run hexalith-module test --profile ops --filter Story=8.2"
+    evidence_artifact: evidence/epic8/8.2-safe-export.trx
+    estimate: L
+    notes: "NEW FR (2026-07-15/16 rebaseline). Release-blocking."
+
+  # ═══════════════════════ NON-FUNCTIONAL REQUIREMENTS (NFR-1..NFR-11) ═══════════════════════
+  - key: nfr-1
+    category: nfr
+    ids: [NFR-1]
+    description: "Security & privacy — Tenant/actor/action/target/version scoping; fail-closed on stale auth; metadata-only logs/telemetry/errors"
+    architecture_decisions: [AD-11, AD-13, AD-20]
+    primary_story: "8.8"
+    supporting_stories: ["6.1", "6.5", "7.1"]
+    entry_gates: [Epic-8-gate, G-5]
+    fixture: epic8/8.8-parity-isolation-a11y
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Story=8.8&Trait=security"
+    evidence_artifact: evidence/epic8/8.8-security.trx
+    estimate: XL
+    status: blocked-external
+    blocker: "G-5 identity; authenticated live topology"
+  - key: nfr-2
+    category: nfr
+    ids: [NFR-2]
+    description: "Encryption & key management — encryption in transit; platform-managed at rest; KMS rotation/revocation evidence; Projects owns no private keys"
+    architecture_decisions: [AD-28]
+    primary_story: "8.11"
+    supporting_stories: ["8.6", "8.7"]
+    entry_gates: [Epic-8-gate, G-5]
+    fixture: epic8/8.11-deploy-kms
+    verification_command: "dotnet tool run hexalith-module test --profile deploy --filter Story=8.11&Trait=encryption"
+    evidence_artifact: evidence/epic8/8.11-encryption-kms.json
+    estimate: L
+    status: blocked-external
+    blocker: "G-5 KMS/secret bindings; deployment environment"
+    notes: "Previously unmapped (readiness M2). Owner assigned per SCP §4.6."
+  - key: nfr-3
+    category: nfr
+    ids: [NFR-3]
+    description: "Availability & recovery — 99.9% monthly; RTO 15 min; task resume or NeedsAttention within 5 min"
+    architecture_decisions: [AD-4, AD-9, AD-28]
+    primary_story: "8.10"
+    supporting_stories: ["8.6"]
+    entry_gates: [Epic-8-gate, G-1]
+    fixture: epic8/8.10-resilience
+    verification_command: "dotnet tool run hexalith-module test --profile resilience --filter Story=8.10&Trait=availability"
+    evidence_artifact: evidence/epic8/8.10-availability.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-1 durable-task engine"
+  - key: nfr-4
+    category: nfr
+    ids: [NFR-4]
+    description: "Durability & idempotency — RPO 0 committed events; Active never folderless; equivalent-retry-same-task; no silent drop/duplicate"
+    architecture_decisions: [AD-4, AD-12]
+    primary_story: "8.10"
+    supporting_stories: ["7.1", "7.15"]
+    entry_gates: [Epic-8-gate, G-1]
+    fixture: epic8/8.10-resilience
+    verification_command: "dotnet tool run hexalith-module test --profile resilience --filter Story=8.10&Trait=durability"
+    evidence_artifact: evidence/epic8/8.10-durability.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-1 durable-task engine"
+  - key: nfr-5
+    category: nfr
+    ids: [NFR-5]
+    description: "Performance & scale — 10k Projects/Tenant, 5k refs/Project, 100k audit; reads p95 <500ms (<1s max); admission p95 <500ms warm"
+    architecture_decisions: [AD-14, AD-15, AD-27]
+    primary_story: "8.9"
+    supporting_stories: ["6.7"]
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.9-performance
+    verification_command: "dotnet tool run hexalith-module test --profile perf --filter Story=8.9"
+    evidence_artifact: evidence/epic8/8.9-performance.json
+    estimate: L
+  - key: nfr-6
+    category: nfr
+    ids: [NFR-6]
+    description: "Pagination & export bounds — cursor default 50 / cap 200; export caps + 2 concurrent per Tenant"
+    architecture_decisions: [AD-19, AD-21, AD-27]
+    primary_story: "8.9"
+    supporting_stories: ["8.2"]
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.9-performance
+    verification_command: "dotnet tool run hexalith-module test --profile perf --filter Story=8.9&Trait=paging"
+    evidence_artifact: evidence/epic8/8.9-paging.trx
+    estimate: L
+  - key: nfr-7
+    category: nfr
+    ids: [NFR-7]
+    description: "Back-pressure & dependency control — 100 reads/s (burst 200), 20 mutations/s (burst 40), 1000 nonterminal tasks, 2 exports; 2s/10s timeouts; ≤3 retries/30s; structured overload"
+    architecture_decisions: [AD-27]
+    primary_story: "8.9"
+    supporting_stories: []
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.9-backpressure
+    verification_command: "dotnet tool run hexalith-module test --profile perf --filter Story=8.9&Trait=backpressure"
+    evidence_artifact: evidence/epic8/8.9-backpressure.trx
+    estimate: L
+    notes: "Previously unmapped (readiness M2). Owner assigned per SCP §4.6."
+  - key: nfr-8
+    category: nfr
+    ids: [NFR-8]
+    description: "Retention & transient data — terminal/idempotency ≥30 days; Preview/Confirmation 15-min expiry; audit ≥365 days; traces/exports not persisted"
+    architecture_decisions: [AD-4, AD-5, AD-21, AD-26]
+    primary_story: "8.1"
+    supporting_stories: ["8.2", "7.2", "7.4"]
+    entry_gates: [Epic-8-gate, G-1]
+    fixture: epic8/8.1-retention
+    verification_command: "dotnet tool run hexalith-module test --profile ops --filter Story=8.1&Trait=retention"
+    evidence_artifact: evidence/epic8/8.1-retention.trx
+    estimate: M
+    notes: "Previously unmapped (readiness M2). Owner assigned per SCP §4.6."
+  - key: nfr-9
+    category: nfr
+    ids: [NFR-9]
+    description: "Accessibility — WCAG 2.2 AA across operator + Chatbot companion; keyboard/focus/AT/200%/320px; automated + authenticated manual evidence"
+    architecture_decisions: [AD-34, AD-29]
+    linked_findings: [SM-5]
+    primary_story: "8.8"
+    supporting_stories: ["6.5", "8.3"]
+    entry_gates: [Epic-8-gate, G-3]
+    fixture: epic8/8.8-accessibility
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Story=8.8&Trait=accessibility"
+    evidence_artifact: evidence/epic8/8.8-accessibility.json
+    estimate: XL
+    status: blocked-external
+    blocker: "G-3 FrontComposer adapters; SEPARATE cross-repo Chatbot owner + pinned revision (unowned as of 2026-07-16)"
+    notes: "Chatbot companion a11y/integration is cross-repository (Hexalith.Chatbot); requires separately approved owner + pinned revision. Its absence blocks Projects release."
+  - key: nfr-10
+    category: nfr
+    ids: [NFR-10]
+    description: "Compatibility — additive/serialization-tolerant contracts; name-only creation preserved; retirement gated; no event-history rewrite"
+    architecture_decisions: [AD-6, AD-16, AD-17, AD-22]
+    primary_story: "6.7"
+    supporting_stories: ["7.15", "8.7"]
+    entry_gates: [Epic-6-gate]
+    fixture: epic6/6.7-read-cutover
+    verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7"
+    evidence_artifact: evidence/epic6/6.7-read-cutover.json
+    estimate: L
+  - key: nfr-11
+    category: nfr
+    ids: [NFR-11]
+    description: "Release evidence — all critical categories pass; failed/unexplained-skip critical case blocks; unavailable env = not-verified"
+    architecture_decisions: [AD-25, AD-28, AD-30]
+    primary_story: "8.11"
+    supporting_stories: ["8.1", "8.6", "8.7", "8.8", "8.9", "8.10"]
+    entry_gates: [Epic-8-gate, G-4]
+    fixture: epic8/8.11-release-evidence
+    verification_command: "dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml"
+    evidence_artifact: evidence/epic8/8.11-release-evidence.json
+    estimate: L
+    status: blocked-external
+    blocker: "G-4 hexalith-evidence tool (AD-30); terminal gate"
+    notes: "Terminal release gate. Cannot complete by recording a blocker."
+
+  # ═══════════════════════ AUDIT FINDINGS — P1 (9) ═══════════════════════
+  # Finding→story bindings are candidate owners mapped to the REBASELINED story numbers.
+  # binding: explicit (stated in a source) | inferred (from theme). Only ARCH-002 was explicit
+  # in the readiness report, but referenced the OLD Story 6.2 (now "Conversation-start setup");
+  # under the 2026-07-16 rebaseline the contracts/boundary work is Story 6.7 — see notes.
+  - key: finding-arch-001
+    category: finding
+    ids: [ARCH-001]
+    priority: P1
+    description: "Replace Projects-owned technical runtime with EventStore DomainService (platform-owned hosting/persistence/projections/topology)"
+    architecture_decisions: [AD-1, AD-17, AD-24, AD-25]
+    primary_story: "6.7"
+    supporting_stories: ["7.15", "8.7"]
+    binding: inferred
+    entry_gates: [Epic-6-gate, G-4]
+    fixture: epic6/6.7-read-cutover
+    verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7"
+    evidence_artifact: evidence/epic6/6.7-read-cutover.json
+    estimate: L
+    status: blocked-external
+    blocker: "G-4 composition runner; command cutover completes in 7.15/8.7"
+  - key: finding-arch-002
+    category: finding
+    ids: [ARCH-002]
+    priority: P1
+    description: "Restore Contracts/domain dependency direction; UI.Contracts as non-packable descriptor boundary"
+    architecture_decisions: [AD-16, AD-24]
+    primary_story: "6.7"
+    supporting_stories: ["8.7"]
+    binding: explicit-source-old-numbering
+    entry_gates: [Epic-6-gate]
+    fixture: epic6/6.7-contract-cutover
+    verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7&Trait=contracts"
+    evidence_artifact: evidence/epic6/6.7-contracts.trx
+    estimate: M
+    notes: "Readiness addendum §4.2 named OLD 'Story 6.2 (E-4/E-5)' for the Projects.UI.Contracts boundary; under the rebaseline that boundary work is Story 6.7 (contract cutover) + 8.7 (package graph). Confirm at de-placeholdering."
+  - key: finding-sec-001
+    category: finding
+    ids: [SEC-001]
+    priority: P1
+    description: "Remove production allow-all identity/authz stubs; require complete authentication validation (fail-fast on incomplete config)"
+    architecture_decisions: [AD-20, AD-28]
+    primary_story: "8.6"
+    supporting_stories: ["6.5", "6.6", "8.8"]
+    binding: inferred
+    entry_gates: [Epic-8-gate, G-5]
+    fixture: epic8/8.6-health-admission
+    verification_command: "dotnet tool run hexalith-module test --profile ops --filter Story=8.6&Trait=admission"
+    evidence_artifact: evidence/epic8/8.6-admission.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-5 identity bindings"
+  - key: finding-client-001
+    category: finding
+    ids: [CLIENT-001]
+    priority: P1
+    description: "Make shipped UI/CLI authenticate and propagate caller identity; no client supplies authoritative identity"
+    architecture_decisions: [AD-2, AD-20]
+    primary_story: "6.5"
+    supporting_stories: ["6.6"]
+    binding: inferred
+    entry_gates: [Epic-6-gate, G-3, G-5]
+    fixture: epic6/read-surfaces
+    verification_command: "dotnet tool run hexalith-module test --profile web-reads,cli-reads --filter Story=6.5|6.6&Trait=identity"
+    evidence_artifact: evidence/epic6/authenticated-consumers.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-3 + G-5"
+  - key: finding-rel-001
+    category: finding
+    ids: [REL-001]
+    priority: P1
+    description: "Make proposal workflow and idempotency durable and recoverable"
+    architecture_decisions: [AD-4, AD-12]
+    primary_story: "7.12"
+    supporting_stories: ["7.1", "7.15", "8.10"]
+    binding: inferred
+    entry_gates: [Epic-7-gate, G-1]
+    fixture: epic7/7.12-confirm-proposed
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.12"
+    evidence_artifact: evidence/epic7/7.12-confirm-proposed.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-1 durable-task engine"
+  - key: finding-agent-001
+    category: finding
+    ids: [AGENT-001]
+    priority: P1
+    description: "Replace caller assertions with bound server-issued confirmations (Confirmation Artifacts)"
+    architecture_decisions: [AD-5, AD-13, AD-29]
+    primary_story: "7.11"
+    supporting_stories: ["7.12", "8.5"]
+    binding: inferred
+    entry_gates: [Epic-7-gate, G-1]
+    fixture: epic7/7.11-confirm-ambiguous
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.11"
+    evidence_artifact: evidence/epic7/7.11-confirm-ambiguous.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-1 confirmation record"
+  - key: finding-id-001
+    category: finding
+    ids: [ID-001]
+    priority: P1
+    description: "Use canonical ULIDs / framework-owned identifiers everywhere; foreign IDs opaque; legacy IDs readable"
+    architecture_decisions: [AD-18]
+    primary_story: "6.7"
+    supporting_stories: []
+    binding: inferred
+    entry_gates: [Epic-6-gate]
+    fixture: epic6/6.7-contract-cutover
+    verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7&Trait=identity"
+    evidence_artifact: evidence/epic6/6.7-ulid-identity.trx
+    estimate: M
+  - key: finding-api-001
+    category: finding
+    ids: [API-001]
+    priority: P1
+    description: "Reconcile OpenAPI and runtime validation, pagination, and error behavior"
+    architecture_decisions: [AD-16, AD-19]
+    primary_story: "6.7"
+    supporting_stories: ["8.9", "8.3", "8.4", "8.5"]
+    binding: inferred
+    entry_gates: [Epic-6-gate]
+    fixture: epic6/6.7-contract-cutover
+    verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7&Trait=openapi"
+    evidence_artifact: evidence/epic6/6.7-openapi.trx
+    estimate: M
+  - key: finding-test-001
+    category: finding
+    ids: [TEST-001]
+    priority: P1
+    description: "Add real persisted-boundary, restart, and critical E2E CI gates"
+    architecture_decisions: [AD-30]
+    primary_story: "8.1"
+    supporting_stories: ["8.8", "8.10"]
+    binding: inferred-partial
+    entry_gates: [Epic-8-gate, G-4]
+    fixture: epic8/8.1-persisted-boundary
+    verification_command: "dotnet tool run hexalith-module test --profile ci-gates --filter Story=8.1"
+    evidence_artifact: evidence/epic8/8.1-persisted-boundary.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-4 runner + blocking CI"
+
+  # ═══════════════════════ AUDIT FINDINGS — P2 (7) ═══════════════════════
+  - key: finding-perf-001
+    category: finding
+    ids: [PERF-001]
+    priority: P2
+    description: "Replace unbounded tenant journal rebuilds and serial diagnostic enrichment"
+    architecture_decisions: [AD-14, AD-27]
+    primary_story: "8.9"
+    supporting_stories: ["6.3"]
+    binding: inferred
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.9-performance
+    verification_command: "dotnet tool run hexalith-module test --profile perf --filter Finding=PERF-001"
+    evidence_artifact: evidence/epic8/8.9-perf-001.json
+    estimate: M
+    release_disposition: "release-blocking (recommended optimization with correctness impact at scale)"
+  - key: finding-ops-001
+    category: finding
+    ids: [OPS-001]
+    priority: P2
+    description: "Implement truthful health and source-generated observability"
+    architecture_decisions: [AD-26, AD-28]
+    primary_story: "8.6"
+    supporting_stories: []
+    binding: inferred
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.6-health-admission
+    verification_command: "dotnet tool run hexalith-module test --profile ops --filter Story=8.6"
+    evidence_artifact: evidence/epic8/8.6-health.trx
+    estimate: M
+  - key: finding-mcp-001
+    category: finding
+    ids: [MCP-001]
+    priority: P2
+    description: "Publish accurate MCP schemas, annotations, and task semantics"
+    architecture_decisions: [AD-29]
+    primary_story: "8.5"
+    supporting_stories: []
+    binding: inferred
+    entry_gates: [Epic-8-gate, G-3]
+    fixture: epic8/8.5-mcp-contracts
+    verification_command: "dotnet tool run hexalith-module test --profile mcp --filter Story=8.5"
+    evidence_artifact: evidence/epic8/8.5-mcp.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-3 FrontComposer/MCP adapters"
+  - key: finding-build-001
+    category: finding
+    ids: [BUILD-001]
+    priority: P2
+    description: "Align dependency modes, Dapr runtime, central build policy, and immutable Actions (Builds owns NSwag/Fluxor versions)"
+    architecture_decisions: [AD-24, AD-25]
+    primary_story: "8.7"
+    supporting_stories: []
+    binding: unassigned-in-source
+    entry_gates: [Epic-8-gate, G-6]
+    fixture: epic8/8.7-supply-chain
+    verification_command: "dotnet tool run hexalith-module test --profile supply-chain --filter Story=8.7"
+    evidence_artifact: evidence/epic8/8.7-build-001.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-6 toolchain alignment (Dapr runtime↔SDK; Builds central versions)"
+    notes: "No epic/story explicitly assigned in source; mapped to 8.7 per SCP §4.3 shared-build centralization. Confirm at de-placeholdering."
+  - key: finding-ux-001
+    category: finding
+    ids: [UX-001]
+    priority: P2
+    description: "Rebuild operator UI with Fluent V5 components, current tokens, and accessible composition"
+    architecture_decisions: [AD-34]
+    primary_story: "8.3"
+    supporting_stories: ["8.8"]
+    binding: inferred
+    entry_gates: [Epic-8-gate, G-3, G-6]
+    fixture: epic8/8.3-web-console
+    verification_command: "dotnet tool run hexalith-module test --profile web-ops --filter Story=8.3"
+    evidence_artifact: evidence/epic8/8.3-ux-001.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-3 FrontComposer; G-6 Fluent UI RC governance"
+  - key: finding-code-001
+    category: finding
+    ids: [CODE-001]
+    priority: P2
+    description: "Enforce one handwritten C# type per file"
+    architecture_decisions: [AD-16]
+    primary_story: "8.7"
+    supporting_stories: []
+    binding: unassigned-in-source
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.7-source-structure
+    verification_command: "dotnet tool run hexalith-module test --profile supply-chain --filter Finding=CODE-001"
+    evidence_artifact: evidence/epic8/8.7-code-001.trx
+    estimate: S
+    notes: "Audit sequences this in Phase 3 (after package/UI/MCP ownership settles). Mapped to 8.7 (source structure). Confirm at de-placeholdering."
+  - key: finding-cli-001
+    category: finding
+    ids: [CLI-001]
+    priority: P2
+    description: "Reject unknown, duplicate, and unsupported CLI options deterministically"
+    architecture_decisions: [AD-19]
+    primary_story: "8.4"
+    supporting_stories: ["6.6"]
+    binding: inferred
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.4-cli-contract
+    verification_command: "dotnet tool run hexalith-module test --profile cli --filter Story=8.4&Trait=option-validation"
+    evidence_artifact: evidence/epic8/8.4-cli-001.trx
+    estimate: S
+
+  # ═══════════════════════ CRITICAL RELEASE-EVIDENCE CATEGORIES (NFR-11 / AD-30) ═══════════════════════
+  - key: release-authenticated-persisted-boundary
+    category: release
+    ids: [NFR-11.persisted-boundary]
+    description: "Authenticated persisted-boundary evidence over the real supported platform path"
+    architecture_decisions: [AD-30, AD-17]
+    primary_story: "8.1"
+    supporting_stories: ["6.7"]
+    entry_gates: [Epic-8-gate, G-4]
+    fixture: epic8/8.1-persisted-boundary
+    verification_command: "dotnet tool run hexalith-module test --profile ci-gates --filter Category=persisted-boundary"
+    evidence_artifact: evidence/release/persisted-boundary.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-4 runner + blocking CI"
+  - key: release-cross-tenant-isolation
+    category: release
+    ids: [NFR-11.cross-tenant]
+    description: "Cross-Tenant isolation — no surface renders another Tenant's data; denial indistinguishable from absence"
+    architecture_decisions: [AD-30, AD-19, AD-20]
+    primary_story: "8.8"
+    supporting_stories: ["6.1"]
+    entry_gates: [Epic-8-gate, G-5]
+    fixture: epic8/8.8-parity-isolation-a11y
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Category=cross-tenant"
+    evidence_artifact: evidence/release/cross-tenant-isolation.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-5 identity; authenticated live topology"
+  - key: release-restart-concurrency
+    category: release
+    ids: [NFR-11.restart-concurrency]
+    description: "Restart/concurrency — durable convergence across restart, two-instance, concurrency"
+    architecture_decisions: [AD-30, AD-4, AD-9]
+    primary_story: "8.10"
+    supporting_stories: ["7.15"]
+    entry_gates: [Epic-8-gate, G-1]
+    fixture: epic8/8.10-resilience
+    verification_command: "dotnet tool run hexalith-module test --profile resilience --filter Category=restart-concurrency"
+    evidence_artifact: evidence/release/restart-concurrency.trx
+    estimate: L
+    status: blocked-external
+    blocker: "G-1 durable-task engine"
+  - key: release-duplicate-delivery
+    category: release
+    ids: [NFR-11.duplicate-delivery]
+    description: "Duplicate-delivery — at-least-once delivery converges without duplicate durable effect"
+    architecture_decisions: [AD-30, AD-4, AD-12]
+    primary_story: "8.10"
+    supporting_stories: []
+    entry_gates: [Epic-8-gate, G-1]
+    fixture: epic8/8.10-resilience
+    verification_command: "dotnet tool run hexalith-module test --profile resilience --filter Category=duplicate-delivery"
+    evidence_artifact: evidence/release/duplicate-delivery.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-1 durable-task engine"
+  - key: release-lost-response
+    category: release
+    ids: [NFR-11.lost-response]
+    description: "Lost-response — equivalent retry after a lost response converges to the original durable truth"
+    architecture_decisions: [AD-30, AD-4, AD-5]
+    primary_story: "8.10"
+    supporting_stories: []
+    entry_gates: [Epic-8-gate, G-1]
+    fixture: epic8/8.10-resilience
+    verification_command: "dotnet tool run hexalith-module test --profile resilience --filter Category=lost-response"
+    evidence_artifact: evidence/release/lost-response.trx
+    estimate: M
+    status: blocked-external
+    blocker: "G-1 durable-task engine"
+  - key: release-accessibility
+    category: release
+    ids: [NFR-11.accessibility]
+    description: "Accessibility — WCAG 2.2 AA automated + authenticated manual evidence for operator AND Chatbot companion journeys"
+    architecture_decisions: [AD-30, AD-34]
+    primary_story: "8.8"
+    supporting_stories: ["8.3", "6.5"]
+    entry_gates: [Epic-8-gate, G-3]
+    fixture: epic8/8.8-accessibility
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Category=accessibility"
+    evidence_artifact: evidence/release/accessibility.json
+    estimate: L
+    status: blocked-external
+    blocker: "G-3; SEPARATE cross-repo Chatbot owner (unowned as of 2026-07-16)"
+  - key: release-privacy
+    category: release
+    ids: [NFR-11.privacy]
+    description: "Privacy — NoPayloadLeakage across every event/DTO/log/audit/surface/export"
+    architecture_decisions: [AD-30, AD-11, AD-26]
+    primary_story: "8.8"
+    supporting_stories: ["6.3", "8.1", "8.2"]
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.8-parity-isolation-a11y
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Category=privacy-leakage"
+    evidence_artifact: evidence/release/privacy-leakage.trx
+    estimate: M
+    status: blocked-external
+    blocker: "authenticated live topology"
+  - key: release-performance
+    category: release
+    ids: [NFR-11.performance]
+    description: "Performance — authenticated performance at small/median/max supported scale"
+    architecture_decisions: [AD-30, AD-27]
+    primary_story: "8.9"
+    supporting_stories: []
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.9-performance
+    verification_command: "dotnet tool run hexalith-module test --profile perf --filter Category=performance"
+    evidence_artifact: evidence/release/performance.json
+    estimate: L
+  - key: release-deployment
+    category: release
+    ids: [NFR-11.deployment]
+    description: "Deployment — deployed version/environment + encryption/KMS evidence recorded"
+    architecture_decisions: [AD-30, AD-28]
+    primary_story: "8.11"
+    supporting_stories: ["8.7"]
+    entry_gates: [Epic-8-gate, G-5]
+    fixture: epic8/8.11-deploy-kms
+    verification_command: "dotnet tool run hexalith-module test --profile deploy --filter Category=deployment"
+    evidence_artifact: evidence/release/deployment.json
+    estimate: L
+    status: blocked-external
+    blocker: "G-5 bindings; deployment environment"
+  - key: release-smoke
+    category: release
+    ids: [NFR-11.smoke, E-6]
+    description: "Smoke / live E2E — authenticated live-topology smoke; supersede the failing 19-passed/56-failed run"
+    architecture_decisions: [AD-30]
+    primary_story: "8.8"
+    supporting_stories: ["8.11"]
+    entry_gates: [Epic-8-gate, G-4, G-5]
+    fixture: epic8/8.8-live-e2e
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Category=smoke"
+    evidence_artifact: evidence/release/live-e2e.trx
+    estimate: L
+    status: failed
+    blocker: "current live E2E 19 passed / 56 failed (E-6); must be superseded by a passing authenticated run"
+    notes: "HONEST current state is FAILED, not skipped. Do not represent as passing."
+  - key: release-rollback
+    category: release
+    ids: [NFR-11.rollback]
+    description: "Rollback — reversible read/command routing + rollback drill reference"
+    architecture_decisions: [AD-30, AD-17]
+    primary_story: "8.11"
+    supporting_stories: ["6.7", "7.15"]
+    entry_gates: [Epic-8-gate]
+    fixture: epic8/8.11-rollback-drill
+    verification_command: "dotnet tool run hexalith-module test --profile deploy --filter Category=rollback"
+    evidence_artifact: evidence/release/rollback-drill.json
+    estimate: M
+  - key: release-stakeholder-acceptance
+    category: release
+    ids: [NFR-11.stakeholder-acceptance, E-8]
+    description: "Stakeholder acceptance — dated residual-risk disposition + terminal acceptance from Jerome and John; TERMINAL release gate"
+    architecture_decisions: [AD-30]
+    primary_story: "8.11"
+    supporting_stories: []
+    owner: "Release Owners: Jerome and John (with Product Owner + Test Architect evidence)"
+    entry_gates: [Epic-8-gate, G-4]
+    fixture: epic8/8.11-release-acceptance
+    verification_command: "dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml"
+    evidence_artifact: evidence/release/stakeholder-acceptance.md
+    estimate: M
+    status: blocked
+    blocker: "release handoff BLOCKED (E-8); requires all critical evidence to pass first"
+    release_disposition: "TERMINAL gate — production + autonomous MCP mutation + proposed-Project confirmation enabled only after this passes. Cannot complete by recording a blocker."
