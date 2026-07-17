@@ -4,6 +4,8 @@ story_key: 6-1-list-and-open-projects-through-supported-authenticated-paths
 epic: "Epic 6: Authorized Project Reads on the Supported Platform"
 created: 2026-07-17
 source_story_status: backlog
+status: blocked
+blocked_by: [6.1-P0, 6.1-P1, 6.1-P2, 6.1-P3, 6.1-P4]
 baseline_commit: 90e481c
 traceability:
   requirements: [fr-2, fr-5]
@@ -13,16 +15,16 @@ traceability:
   findings: [ARCH-001, API-001]
 repository_authority: "Hexalith.Projects contracts, read models, and query handlers with platform-generated read adapters"
 owners: [Product Owner, Solution Architect, Test Architect]
-entry_gate: "Epic 6 gate must be explicitly satisfied; current package, identity, safe-404, watermark, and G-4 gaps are unresolved"
+entry_gate: "6.1-P4 must be accepted and the Story 6.1 spec must pass ready-for-development before implementation begins"
 release_disposition: "Not a production-release gate; Story 8.11 owns terminal deployment, rollback, and stakeholder acceptance"
 estimate: M
 ---
 
 # Story 6.1: List and Open Projects Through Supported Authenticated Paths
 
-Status: ready-for-dev
+Status: blocked
 
-<!-- The 2026-07-17 implementation-readiness report supersedes the unexecuted 2026-07-16 conformance checklist for story-file creation. The Epic 6 implementation entry gate below still must be satisfied before code changes begin. -->
+<!-- The 2026-07-17 implementation-readiness report authorizes story planning, not Story 6.1 implementation. The approved 2026-07-17 Sprint Change Proposal externalizes platform enablement as 6.1-P0 through 6.1-P4. -->
 
 ## Story
 
@@ -42,15 +44,10 @@ so that operators and Chatbot get current, authorization-filtered Project truth 
 
 ## Tasks / Subtasks
 
-- [ ] Satisfy and record the Epic 6 implementation entry gate before touching runtime code (AC: all)
-  - [ ] Record approved immutable revisions/versions and owners for EventStore, Builds, FrontComposer, G-2 sibling reads, G-4 runner/evidence tooling, and G-5 dual-principal identity. Record the AD-17 baseline inventory: public routes, APIs, event types, read-model stores/keys, watermarks, cursors, consumers, current routing, rollback path, and in-flight work.
-  - [ ] Freeze the complete shadow normalization table in that gate record: source field, target field, transform, reason, owner, approval date, and baseline revision. Hash/reference that table from evidence so comparison code cannot broaden normalization silently.
-  - [ ] Resolve the current EventStore mismatch explicitly. The architecture pins `3.67.3`; the checked-out `references/Hexalith.EventStore` is `11ba1e73` (`v3.69.0-10-g11ba1e73`); current NuGet exposes `3.69.0`; and `references/Hexalith.Builds/Props/Directory.Packages.props` currently sets `HexalithEventStoreVersion` to `1.72.3`, for which the required DomainService package is unavailable. Do not silently choose a version or edit the Builds submodule under this story.
-  - [ ] Confirm the approved seam supplies `IAsyncDomainProjectionHandler`, `IReadModelStore`, `ReadModelWritePolicy`, `IDomainQueryHandler`, `IQueryCursorCodec`, `QueryCursorScope`, rebuild/batch semantics, and the complete G-5 immutable caller context. A local API diff found the 3.67.3-to-3.69.0 changes additive, but that does not replace owner approval.
-  - [ ] Resolve the three known platform gaps rather than working around them: current `QueryEnvelope` cannot represent the complete original-actor/workload/delegation/scopes/audience context; the current EventStore gateway can map forbidden to `403` instead of Projects' indistinguishable safe `404`; and `ProjectionEventDto` lacks the legacy `EventMetadata.GlobalPosition` used for watermark comparison. Obtain additive platform capability or an explicit architecture-approved normalization/disposition.
-  - [ ] Require supported-production authentication to fail startup/admission when the approved dual-principal configuration is absent. Current `Program.cs` adds JWT only when `Authentication:Authority` is configured; optional authentication is not acceptable for this path.
-  - [ ] Confirm the G-4 command and evidence producer actually exist. The planned command is a target contract, not evidence that the local tool is currently implemented.
-  - [ ] **HARD STOP:** do not begin implementation if any pin is unapproved; the query envelope cannot carry the approved Tenant/original-actor/workload/delegation/scopes/audience context; the persisted fixture/runner is unavailable; or satisfying the story would require a nested submodule initialization, sibling-submodule edit, or unapproved public route switch.
+**Non-implementation entry condition.** Story 6.1 does not own platform enablement. Do not mark any
+task below in progress until 6.1-P0 through 6.1-P3 have owner-approved repository-local revisions and
+evidence, 6.1-P4 accepts their exact pins/normalization/rollback record, and the Story 6.1 spec passes
+ready-for-development. The implementing agent cannot satisfy, waive, or self-approve these blockers.
 
 - [ ] Define additive supported read contracts and the AD-32 vocabulary (AC: 1, 3, 5, 6)
   - [ ] Add one public C# type per file under `src/Hexalith.Projects.Contracts/Queries/` for the list/open query contracts, list page and row, open result, response snapshot, component evidence, recovery action, and stable response/component/reason states. Prefer existing shared vocabulary where it already has the exact canonical meaning; do not create parallel Web/CLI-only enums.
@@ -101,18 +98,18 @@ so that operators and Chatbot get current, authorization-filtered Project truth 
 
 ### Authority, Readiness, and Scope
 
-- The current story definition is the corrective production plan in `epics.md`. `_bmad-output/implementation-artifacts/epic-6-context.md` and the old `bmad-dev-auto-result-6-1-pin-platform-capabilities-and-migration-baseline.md` describe the superseded Story 6.1; use them only as historical evidence that capability pinning moved to the Epic 6 entry gate.
+- The current story definition is the corrective production plan in `epics.md`. The old `bmad-dev-auto-result-6-1-pin-platform-capabilities-and-migration-baseline.md` describes the superseded Story 6.1; use it only as historical evidence. The current `epic-6-context.md` and approved Sprint Change Proposal route capability pinning through 6.1-P0 through 6.1-P4.
 - The 2026-07-17 readiness report returns `READY` and authorizes Story 6.x file creation. It supersedes the 2026-07-16 `NOT_READY` decision and the still-unexecuted conformance checklist for that purpose. It does not mark the Epic 6 implementation pins, G-4 runner, G-5 identity, or draft test-design approvals complete.
-- The canonical traceability matrix still records the older `NOT_READY` state. Do not rewrite or silently treat that stale field as an implementation approval in this story; the readiness report is the authority for story creation, while gate owners remain responsible for the planning-artifact reconciliation.
-- Story 6.1 depends only on the Epic 6 entry gate. Story 6.2 owns Conversation-start setup, 6.3 full Project Context/refresh/explanation, 6.4 nonpersistent resolution, 6.5 authenticated Web, 6.6 authenticated CLI, and 6.7 reversible read-routing cutover. Epic 7 durable tasks and Epic 8 release proof are not forward dependencies.
-- `ready-for-dev` means this implementation guide is complete. It does not waive the explicit hard stop in the first task.
+- The canonical traceability matrix records FR-2 and FR-5 as `blocked-external` and binds their implementation readiness to 6.1-P0 through 6.1-P4. Planning-layer `READY` is not implementation approval.
+- Story 6.1 depends on accepted 6.1-P0 through 6.1-P4 only. Story 6.2 owns Conversation-start setup, 6.3 full Project Context/refresh/explanation, 6.4 nonpersistent resolution, 6.5 authenticated Web, 6.6 authenticated CLI, and 6.7 reversible read-routing cutover. Epic 7 durable tasks and Epic 8 release proof are not forward dependencies.
+- `blocked` is non-startable. The story returns to `ready-for-dev` only after P4 acceptance and a passing specification readiness rerun.
 
 ### Story Completion Contract
 
 - Repository authority: Hexalith.Projects contracts, read models, and query handlers, consumed through platform-generated read adapters.
-- Named accountable roles: Product Owner, Solution Architect, and Test Architect. They own the Epic 6 gate and any approved normalization/disposition; the implementing agent cannot self-approve it.
+- Named accountable roles: Product Owner, Solution Architect, and Test Architect own P4; Builds, Platform, EventStore, and Identity/Security owners retain authority for P0-P3. The implementing agent cannot self-approve any prerequisite.
 - Findings/trace: FR-2, FR-5; NFR-1, NFR-5, NFR-10; AD-3, AD-14, AD-19, AD-20, AD-32, AD-33; UJ-1; `ARCH-001` and `API-001` read-side closure; evidence rows `fr-2` and `fr-5`.
-- Dependency: Epic 6 entry gate only. Compatibility: legacy routing remains intact and reversible, no event-history rewrite, and no public cutover in this story.
+- Dependency: accepted 6.1-P0 through 6.1-P4. Compatibility: legacy routing remains intact and reversible, no event-history rewrite, and no public cutover in this story.
 - Fixture/evidence: deterministic authorized-Tenant persisted-boundary fixture on G-4, required reads command, `.trx`/JSON evidence, and exact shadow report.
 - Estimate: M. Release disposition: Story 6.1 is not a production-release gate; Story 8.11 plus dated Jerome/John acceptance remains terminal authority.
 
@@ -200,7 +197,7 @@ so that operators and Chatbot get current, authorization-filtered Project truth 
 
 ### Hard Stops
 
-- Stop if the approved EventStore/Builds/G-5/G-4 gate is absent or contradictory; escalate with exact revision/API evidence.
+- Stop unless 6.1-P4 accepts the exact EventStore/Builds/G-5/G-4 revisions and evidence from P0-P3; escalate with exact revision/API evidence.
 - Stop if original actor and authenticated workload identity cannot both be proven and reauthorized at query time.
 - Stop if the gateway can emit an observably different `403`/tenant rejection before the Projects handler can enforce the safe-404 contract.
 - Stop if exact legacy/supported watermark comparison is required but the approved projection event contract still omits global position and no normalization has been approved.
@@ -219,6 +216,7 @@ so that operators and Chatbot get current, authorization-filtered Project truth 
 - [Source: _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md#Functional-Requirements]
 - [Source: _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md]
 - [Source: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-17.md]
+- [Source: _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md]
 - [Source: _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml]
 - [Source: _bmad-output/planning-artifacts/epics-architecture-conformance-checklist-2026-07-16.md]
 - [Source: _bmad-output/test-artifacts/test-design-epic-6.md]
@@ -270,3 +268,4 @@ GPT-5 Codex
 | Date | Change |
 | --- | --- |
 | 2026-07-17 | Created Story 6.1 comprehensive implementation context and set status to ready-for-dev. |
+| 2026-07-17 | Approved course correction set the story to blocked, externalized platform enablement as 6.1-P0 through 6.1-P4, and removed cross-repository gate resolution from Story 6.1 tasks. |

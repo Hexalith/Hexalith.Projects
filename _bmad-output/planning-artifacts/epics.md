@@ -1268,19 +1268,36 @@ with reversible routing. This is the read/query side of the vertical slice; no c
 (those are Epic 7). It closes the read-side of ARCH-001/ARCH-002/API-001/CLIENT-001/ID-001 and
 establishes the identity, contract, and platform boundary every later epic depends on.
 
-**Epic 6 entry gate (prerequisite, not delivered value).** Pin approved capabilities before any read
-story starts: EventStore `3.67.3` DomainService read seams (`IAsyncDomainProjectionHandler`,
-`IReadModelStore`, `IDomainQueryHandler`, `IQueryCursorCodec`) (G-1 substrate), FrontComposer read
-adapters with G-3 4.0.0/4.0.1 disposition, Hexalith.Builds central versions (NSwag 14.7.1), the G-5
-identity bindings (dual-principal auth, AD-20), the G-4 composition runner + evidence tool, and G-2
-sibling read contracts. The gate produces a pinned baseline (versions, routes, public APIs, state
-keys, event types, cursors, consumers, in-flight work) per AD-17; it is reported, not counted as
-value.
+**Epic 6 entry gate (prerequisite, not delivered value).** Every read story is blocked until its
+applicable external capabilities have an owner-approved repository-local revision, reproducible
+evidence, and rollback pin. The gate is an explicit dependency ledger rather than implementation
+work assigned to the first value story. The following applicability rules preserve every G-1…G-6
+obligation without making unrelated later-surface gates prerequisites for Story 6.1:
+
+- Story 6.1 and later consumers of the shared read baseline require accepted work packages 6.1-P0
+  through 6.1-P4 below.
+- Stories consuming Conversations, Folders, Memories, Parties, or Tenants additionally require the
+  applicable G-2 sibling-owner read contracts.
+- Story 6.5 additionally requires the approved G-3 FrontComposer contract; Story 6.6 requires its
+  approved CLI adapter contract.
+- G-6 applies before any affected build, runner, or evidence lane is claimed passing.
+
+**Story 6.1 prerequisite work packages.** These are enablement packages, not user-value stories and
+not Story 6.1 implementation subtasks. The approved routing and complete acceptance contracts are in
+`sprint-change-proposal-2026-07-17.md`.
+
+| ID | Repository authority | Required outcome | Accountable owners | Initial state |
+|---|---|---|---|---|
+| 6.1-P0 | Builds/platform tooling | Supported G-4 persisted runner and machine-checkable evidence tool | Builds Owner + Platform Owner + Test Architect | open; target uncommitted |
+| 6.1-P1 | EventStore + Builds + architecture record | One owner-approved source/package/architecture/runner baseline and finite normalization record | EventStore Owner + Builds Owner + Solution Architect | open; target uncommitted |
+| 6.1-P2 | EventStore/platform | Supported dual-principal query envelope, indistinguishable safe denial, and authoritative global-position watermark | EventStore Owner + Identity/Security Owner + Solution Architect | open; blocked by P1 |
+| 6.1-P3 | Identity/security platform | Approved mandatory fail-closed production identity/authentication contract and fixtures | Identity/Security Owner + Projects Owner + Solution Architect | open; blocked by P2 |
+| 6.1-P4 | Hexalith.Projects planning/evidence | Owner-approved 6.1 gate record linking P0-P3 pins, commands, evidence, normalization, and rollback | Product Owner + Solution Architect + Test Architect + P0-P3 owners | open; blocked by P0-P3 |
 
 _All Epic 6 stories share: **Repository authority** Hexalith.Projects (`Contracts`, read models,
 query handlers) with platform-generated read adapters; **owner** Product Owner (author) + Solution
-Architect (AD/G conformance) + Test Architect (evidence); **prior-only dependencies** — the entry
-gate only, never Epic 7/8; **compatibility/rollback** — legacy read route retained and reversible
+Architect (AD/G conformance) + Test Architect (evidence); **prior-only dependencies** — each story's
+applicable accepted entry-gate ledger items, never Epic 7/8; **compatibility/rollback** — legacy read route retained and reversible
 until Story 6.7 cutover, no event-history rewrite; **fixture** — deterministic authorized-Tenant
 persisted-boundary fixture on the G-4 runner; **release disposition** — read evidence contributes to
 NFR-11 but no story here is a release gate._
@@ -1292,6 +1309,7 @@ I want **to list visible Projects and open one Project's authorized metadata, li
 So that **operators and Chatbot get current, authorization-filtered Project truth to initialize a Conversation (FR-2, FR-5) with no legacy runtime**.
 
 - **Traceability:** FR-2, FR-5; NFR-1, NFR-5, NFR-10; AD-3, AD-14, AD-19, AD-20, AD-32, AD-33; UJ-1; findings ARCH-001/API-001 (read side); evidence rows `fr-2`, `fr-5`.
+- **Implementation state:** blocked by 6.1-P0, 6.1-P1, 6.1-P2, 6.1-P3, and 6.1-P4. It returns to `ready-for-dev` only after P4 is accepted and the Story 6.1 specification passes the complete ready-for-development standard.
 
 **Acceptance Criteria:**
 
