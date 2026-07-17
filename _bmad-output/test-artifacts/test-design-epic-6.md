@@ -5,6 +5,7 @@ stepsCompleted: ['step-01-detect-mode', 'step-02-load-context', 'step-03-risk-an
 lastStep: 'step-05-generate-output'
 nextStep: ''
 lastSaved: '2026-07-17'
+completedAt: '2026-07-17T08:24:47+02:00'
 ---
 
 # Test Design: Epic 6 — Authorized Project Reads on Supported Platform

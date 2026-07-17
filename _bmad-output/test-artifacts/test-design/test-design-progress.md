@@ -1,10 +1,11 @@
 ---
-workflowStatus: 'in-progress'
+workflowStatus: 'completed'
 totalSteps: 5
-stepsCompleted: ['step-01-detect-mode', 'step-02-load-context', 'step-03-risk-and-testability', 'step-04-coverage-plan']
-lastStep: 'step-04-coverage-plan'
-nextStep: '/home/administrator/projects/hexalith/projects/.agents/skills/bmad-testarch-test-design/steps-c/step-05-generate-output.md'
+stepsCompleted: ['step-01-detect-mode', 'step-02-load-context', 'step-03-risk-and-testability', 'step-04-coverage-plan', 'step-05-generate-output']
+lastStep: 'step-05-generate-output'
+nextStep: ''
 lastSaved: '2026-07-17'
+completedAt: '2026-07-17T08:24:47+02:00'
 mode: 'epic-level'
 detectedStack: 'fullstack'
 browserExploration: 'skipped-no-cli-or-live-target'
@@ -321,3 +322,39 @@ Expected test-engineering timeline: approximately **5–8 weeks for one engineer
 - Final NFR PASS/CONCERNS/FAIL decisions are deferred to `nfr-assess` after implementation evidence exists.
 
 **Step 4 result:** 52 non-redundant scenario groups are planned across the lowest effective test levels, with PR/nightly/weekly execution, evidence artifacts, effort ranges, and release gates defined.
+
+## Step 5 — Final Output and Validation
+
+### Execution Mode
+
+- No explicit execution-mode override was supplied by the user.
+- Configuration requested `auto` with capability probing.
+- Epic-level output is a single artifact and the workflow specifies single-worker execution by default, so generation resolved to **sequential**.
+
+### Generated Artifact
+
+- `_bmad-output/test-artifacts/test-design-epic-6.md`
+- Mode: Epic-Level Create
+- Scope: Epic 6 — Authorized Project Reads on Supported Platform
+- No system-level handoff document was generated because handoff generation applies only to system-level mode.
+
+### Checklist Validation
+
+- Epic/PRD/addendum/architecture/readiness prerequisites and acceptance criteria are present and traceable.
+- All 16 risks have unique IDs, valid categories, 1–3 probability/impact values, correct multiplication, mitigations, role owners, timelines, and residual-risk statements.
+- All in-scope NFR categories have thresholds or explicit UNKNOWNs, risk links, planned validation, and future evidence artifacts; no final NFR status was assigned.
+- The coverage plan contains 52 unique atomic scenario groups: 37 P0, 11 P1, 3 P2, and 1 P3. Every scenario has a level/tool, priority, owner, and requirement/risk trace.
+- Priority is separated from execution timing; execution uses the required PR/nightly/weekly model and calls out Playwright sharding/parallelism.
+- Effort and timeline use ranges and include harness/data/evidence setup without false precision.
+- Quality gates define 100% P0, at least 95% P1, at least 80% new-path line/branch coverage, complete high-risk mitigation, and evidence expectations for every NFR category.
+- Entry/exit criteria, not-in-scope decisions, dependencies, interworking/regression, follow-on workflows, and approval placeholders are present.
+- All related-document links resolve from the output location.
+- No Playwright CLI or browser session was opened, so there is no orphaned session to clean up. No temporary artifact was created outside the configured test-artifact area.
+
+### Open Assumptions and Decisions
+
+- G3/G4/G5/G6, deterministic access seeding, and the real persisted boundary remain entry dependencies, not completed evidence.
+- Concurrency/hardware, SLI/RTO/RPO/staleness, scaling/soak, assistive-technology matrix, and cutover observation/rollback objectives remain UNKNOWN and must be assigned before their release evidence runs.
+- Remote Pact broker evidence is not claimed; local Pact coverage is conditional on confirmation of an independent HTTP consumer/provider boundary.
+
+**Workflow result:** Completed and checklist-validated at `2026-07-17T08:24:47+02:00`.
