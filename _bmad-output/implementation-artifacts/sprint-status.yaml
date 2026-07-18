@@ -1,5 +1,5 @@
 # generated: 2026-07-17T08:14:03+02:00
-# last_updated: 2026-07-17T16:49:12+02:00
+# last_updated: 2026-07-18T09:00:00+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -49,7 +49,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-07-17T16:49:12+02:00
+last_updated: 2026-07-18T09:00:00+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -223,11 +223,13 @@ action_items:
     action: "Normalize EventStore source, Architecture Spine pin, central package versions, and the G-4 runner manifest into one owner-approved baseline."
     repository_authority: "EventStore and Builds repositories; Architecture Spine through architecture-owner approval"
     owner: "EventStore Owner / Builds Owner / Solution Architect"
-    status: open
+    status: done
     target_date: uncommitted
+    authorized: "2026-07-18 by Jerome"
+    result: "Normalized on EventStore v3.70.1 (f13f9925fdca53efa2ab8c90d396ab106f91bb9c): fixed a release-blocking restore bug and two stale baseline-sync tests, cut and published v3.70.1, pinned the EventStore submodule and Builds HexalithEventStoreVersion to it, realigned the Architecture Spine Stack/G-1 text and the traceability matrix, and recorded AD-14 compatibility + rollback (v3.67.3) evidence."
     expected_evidence: "Finite normalization record with repository revision, package versions, API signatures, compatibility results, approvals, and rollback pins"
-    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p1--normalize-eventstore-source-architecture-and-central-package-versions"
-    routed_to: "Product Manager / Solution Architect / EventStore and Builds Owners"
+    evidence: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p1-eventstore-source-architecture-package-normalization-record.md"
+    routed_to: "6.1-P2 and 6.1-P4"
   - epic: 6
     id: "6.1-P2"
     action: "Supply supported dual-principal query identity, indistinguishable safe denial, and authoritative global-position watermark capabilities."
