@@ -62,7 +62,7 @@ defaults:
   repository: Hexalith.Projects
   owner: "Product Owner (author) → Test Architect (evidence execution) → Solution Architect (AD/G conformance)"
   environment: "deterministic persisted-boundary fixture (authorized Tenant) on the G-4 platform composition runner (dotnet tool run hexalith-module ...)"
-  pinned_revision: "per-row/per-epic owner-approved gate; Story 6.1 EventStore/Builds/runner baseline unresolved under 6.1-P1; no floating versions"
+  pinned_revision: "per-row/per-epic owner-approved gate; 6.1-P1 normalized EventStore to 3.70.1 (submodule f13f9925fdca53efa2ab8c90d396ab106f91bb9c, Builds HexalithEventStoreVersion=3.70.1, Architecture Spine Stack table) on 2026-07-18, rollback pin 3.67.3; Story 6.1 G-4 runner/6.1-P0, P2, P3 baselines remain unresolved; no floating versions"
   status: pending
   release_disposition: "release-blocking (no approved v1 FR/NFR is deferrable)"
 
@@ -97,7 +97,7 @@ rows:
     evidence_artifact: evidence/epic6/6.1-authorized-reads.trx
     estimate: M
     status: blocked-external
-    blocker: "6.1-P0..P4: G-4 runner, approved EventStore/Builds baseline, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record"
+    blocker: "6.1-P0, P2..P4 (P1 EventStore/Builds baseline normalized 2026-07-18): G-4 runner, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record"
     notes: "Planning coverage is complete; Story 6.1 implementation remains non-startable."
   - key: fr-3
     category: fr
@@ -142,7 +142,7 @@ rows:
     evidence_artifact: evidence/epic6/6.1-authorized-reads.trx
     estimate: M
     status: blocked-external
-    blocker: "6.1-P0..P4: G-4 runner, approved EventStore/Builds baseline, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record"
+    blocker: "6.1-P0, P2..P4 (P1 EventStore/Builds baseline normalized 2026-07-18): G-4 runner, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record"
     notes: "Planning coverage is complete; Story 6.1 implementation remains non-startable."
   - key: fr-6
     category: fr
@@ -481,7 +481,7 @@ rows:
     evidence_artifact: evidence/epic8/8.9-performance.json
     estimate: L
     status: blocked-external
-    blocker: "Story 6.1 P0/P1/P2/P4 runner, supported baseline, watermark, and accepted persisted-read evidence; final scale gate remains Story 8.9"
+    blocker: "Story 6.1 P0/P2/P4 runner, watermark, and accepted persisted-read evidence (P1 baseline normalized 2026-07-18); final scale gate remains Story 8.9"
   - key: nfr-6
     category: nfr
     ids: [NFR-6]
@@ -549,7 +549,7 @@ rows:
     evidence_artifact: evidence/epic6/6.7-read-cutover.json
     estimate: L
     status: blocked-external
-    blocker: "Story 6.1 P1/P4 version/source normalization and accepted compatibility baseline; final cutover gate remains Story 6.7"
+    blocker: "6.1-P1 version/source normalization complete (EventStore 3.70.1, 2026-07-18); 6.1-P4 entry-gate acceptance still pending; final cutover gate remains Story 6.7"
   - key: nfr-11
     category: nfr
     ids: [NFR-11]

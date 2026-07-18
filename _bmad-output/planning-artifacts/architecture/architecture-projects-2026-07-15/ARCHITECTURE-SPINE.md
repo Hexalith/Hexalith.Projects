@@ -356,7 +356,7 @@ flowchart LR
 
 ## Stack
 
-Verified against the checked-out root configuration, centralized package catalog, checked-out sibling revisions, and published/clean package evidence on 2026-07-16.
+Verified against the checked-out root configuration, centralized package catalog, checked-out sibling revisions, and published/clean package evidence on 2026-07-16. `Hexalith.EventStore package binding` re-verified and normalized under Story 6.1-P1 on 2026-07-18 against published/clean `3.70.1` evidence (Solution-Architect authorization: Jerome).
 
 ### Target and compatibility bindings
 
@@ -365,7 +365,7 @@ Verified against the checked-out root configuration, centralized package catalog
 | .NET SDK feature-band policy | Current repository pin `10.0.302` with `rollForward: latestPatch`; the 2026-07-15 reviewed environment resolved `10.0.301` |
 | Target framework | `net10.0` |
 | C# | 14 (`LangVersion=latest`) |
-| Hexalith.EventStore package binding | 3.67.3; API evidence only from published 3.67.3 packages or a clean 3.67.3 build |
+| Hexalith.EventStore package binding | 3.70.1; API evidence from published 3.70.1 packages or a clean 3.70.1 build (normalized under Story 6.1-P1, 2026-07-18; submodule revision `f13f9925fdca53efa2ab8c90d396ab106f91bb9c`, Builds `HexalithEventStoreVersion=3.70.1`; rollback pin 3.67.3 / EventStore tag `v3.67.3` / Builds commit `12aaed6c`) |
 | Hexalith.FrontComposer package-mode binding | 4.0.0; checked-out source is 4.0.1 and requires G-3 parity disposition |
 | Aspire AppHost SDK / Aspire.Hosting platform binding | 13.4.6 |
 | Dapr runtime current CI/test evidence | 1.18.0; not release-approved with SDK 1.18.4 until G-6 |
@@ -469,7 +469,7 @@ flowchart TB
 
 | Gate | Required capability | Entry condition |
 | --- | --- | --- |
-| G-1 | EventStore/platform Durable Task engine and opaque Confirmation Artifact record | Repository-local approval, package/revision pin, durability and atomic-admission contract, restart/two-instance evidence; absent from current published/clean EventStore 3.67.3 API evidence; stale local binaries are inadmissible |
+| G-1 | EventStore/platform Durable Task engine and opaque Confirmation Artifact record | Repository-local approval, package/revision pin, durability and atomic-admission contract, restart/two-instance evidence; absent from current published/clean EventStore 3.70.1 API evidence (Story 6.1-P1 normalized the version pin only; the Durable Task engine and Confirmation Artifact capability itself remains unselected); stale local binaries are inadmissible |
 | G-2 | Conversations/Folders/Memories owner contracts | Pinned expected-version, deterministic idempotency, durable receipt/status query, safe batch-read, and explicit compensation capabilities required by each workflow |
 | G-3 | FrontComposer runtime adapters | Reconcile root package-mode 4.0.0 with checked-out source 4.0.1 and record the patch disposition; then prove pinned descriptor discovery, generated Web/CLI/MCP schemas, real credential propagation, current MCP annotations/tasks, and authenticated parity |
 | G-4 | Platform development composition runner | Approved manifest schema/version; pinned .NET tool in the repository tool manifest; checked-in valid module manifest; repository-owned run/teardown commands; repository-relative paths; deterministic IDs; runner-owned identity/secrets; thin manifest-aware fixtures; clean-checkout Debug and CI package-mode proof for persisted, restart, two-instance, and authenticated Web/CLI/MCP lanes before removal of Projects AppHost/Aspire/runtime code |
