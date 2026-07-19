@@ -88,6 +88,16 @@ public sealed class AspireTopologyTests
         appHostProject.ShouldNotContain("Aspire.Hosting.Keycloak");
     }
 
+    /// <summary>Verifies anonymous startup is represented only as an explicit Development bypass.</summary>
+    [Fact]
+    public void AppHostShouldScopeAnonymousBypassToDevelopment()
+    {
+        string appHost = File.ReadAllText(Path.Combine(ProjectRoot(), "src", "Hexalith.Projects.AppHost", "Program.cs"));
+
+        appHost.ShouldContain("builder.Environment.IsDevelopment()");
+        appHost.ShouldContain("Authentication__JwtBearer__AllowAnonymousDevelopment");
+    }
+
     /// <summary>Verifies the resource record remains a complete topology contract.</summary>
     [Fact]
     public void HexalithProjectsResourcesShouldExposeRequiredProjectAndComponentBuilders()

@@ -60,4 +60,72 @@ public sealed class ProjectsClaimsTransformationTests
         transformed.FindAll("eventstore:tenant").Select(static claim => claim.Value).ShouldBe(["tenant-a"]);
         transformed.FindAll("eventstore:permission").Select(static claim => claim.Value).ShouldBe([ProjectAuthorizationGate.CreateProjectAction]);
     }
+
+    [Fact]
+    public async Task TransformAsync_ShouldPreserveP2IdentityClaimsWithoutSynthesizingOptionalEvidence()
+    {
+        ClaimsPrincipal principal = new(
+            new ClaimsIdentity(
+                [
+                    new Claim("sub", "actor-a"),
+                    new Claim("azp", "projects-gateway"),
+                    new Claim("act", "{\"sub\":\"delegated-service\"}"),
+                    new Claim("scope", "projects.read"),
+                    new Claim("aud", "hexalith-projects"),
+                    new Claim("tenant_id", "tenant-a"),
+                    new Claim("permissions", "[\"projects:read\"]"),
+                ],
+                authenticationType: "test"));
+
+        ClaimsPrincipal transformed = await new ProjectsClaimsTransformation()
+            .TransformAsync(principal)
+            .ConfigureAwait(true);
+
+        transformed.FindFirstValue("sub").ShouldBe("actor-a");
+        transformed.FindFirstValue("azp").ShouldBe("projects-gateway");
+        transformed.FindFirstValue("act").ShouldBe("{\"sub\":\"delegated-service\"}");
+        transformed.FindFirstValue("scope").ShouldBe("projects.read");
+        transformed.FindFirstValue("aud").ShouldBe("hexalith-projects");
+    }
+
+    [Fact]
+    public async Task TransformAsync_ShouldNotPromoteClaimsFromUnauthenticatedIdentity()
+    {
+        ClaimsPrincipal principal = new(
+            new ClaimsIdentity(
+                [
+                    new Claim("tenant_id", "tenant-a"),
+                    new Claim("sub", "actor-a"),
+                    new Claim("permissions", "[\"projects:read\"]"),
+                ]));
+
+        ClaimsPrincipal transformed = await new ProjectsClaimsTransformation()
+            .TransformAsync(principal)
+            .ConfigureAwait(true);
+
+        transformed.FindFirst("eventstore:tenant").ShouldBeNull();
+        transformed.FindFirst(ClaimTypes.NameIdentifier).ShouldBeNull();
+        transformed.FindFirst("eventstore:permission").ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task TransformAsync_ShouldNotSynthesizeMalformedDelegationEvidence()
+    {
+        ClaimsPrincipal principal = new(
+            new ClaimsIdentity(
+                [
+                    new Claim("sub", "actor-a"),
+                    new Claim("act", "not-json"),
+                    new Claim("tenant_id", "tenant-a"),
+                    new Claim("permissions", "[\"projects:read\"]"),
+                ],
+                authenticationType: "test"));
+
+        ClaimsPrincipal transformed = await new ProjectsClaimsTransformation()
+            .TransformAsync(principal)
+            .ConfigureAwait(true);
+
+        transformed.FindFirst("eventstore:delegation").ShouldBeNull();
+        transformed.FindFirst("delegationId").ShouldBeNull();
+    }
 }

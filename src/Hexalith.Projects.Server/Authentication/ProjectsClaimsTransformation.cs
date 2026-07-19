@@ -31,6 +31,11 @@ public sealed class ProjectsClaimsTransformation : IClaimsTransformation
             return Task.FromResult(principal);
         }
 
+        if (!identity.IsAuthenticated)
+        {
+            return Task.FromResult(principal);
+        }
+
         if (principal.FindFirst(EventStoreTenantClaimType) is null)
         {
             AddTenantClaims(principal, identity);

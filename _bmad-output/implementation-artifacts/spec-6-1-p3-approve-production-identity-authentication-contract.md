@@ -2,7 +2,8 @@
 title: 'Approve the production identity and authentication contract'
 type: 'feature'
 created: '2026-07-19'
-status: 'draft'
+status: 'in-review'
+baseline_commit: 'd4a69ad9a640294e849444a60d7ddfbd0468f91a'
 review_loop_iteration: 0
 context:
   - '{project-root}/_bmad-output/project-context.md'
@@ -67,12 +68,12 @@ query envelope/helper into Projects; do not commit production credentials or swi
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/Hexalith.Projects.Server/Authentication/ProjectsAuthenticationOptions.cs` -- add environment-aware required OIDC settings and startup validation -- prevent implicit anonymous production startup.
-- [ ] `src/Hexalith.Projects.Server/Authentication/ProjectsAuthenticationServiceCollectionExtensions.cs` and `src/Hexalith.Projects.Server/Program.cs` -- register validated bearer authentication/authorization and an explicit Development-only bypass -- preserve the existing endpoint gate and safe denial.
-- [ ] `src/Hexalith.Projects.Server/Authentication/ProjectsClaimsTransformation.cs` -- align normalized claims with the accepted P2 mapping without synthesizing missing actor, workload, delegation, scope, or audience evidence -- keep identity provenance authoritative.
-- [ ] `src/Hexalith.Projects.AppHost/Program.cs` and `src/Hexalith.Projects.AppHost/KeycloakRealms/hexalith-realm.json` -- make local fixture wiring explicit and keep production secret/config ownership external -- prevent dev credentials from becoming deployment defaults.
-- [ ] `tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs` and related existing tests -- cover startup/configuration, valid/invalid token claims, delegated/non-delegated mapping, missing scope, and safe-denial behavior -- create the P3 verification fixture set.
-- [ ] `docs/runbooks/projects-production-identity-contract.md` -- record configuration keys, owner responsibilities, fixture commands, accepted P2 pin, and rollback procedure -- make the approval and deployment boundary reviewable.
+- [x] `src/Hexalith.Projects.Server/Authentication/ProjectsAuthenticationOptions.cs` -- add environment-aware required OIDC settings and startup validation -- prevent implicit anonymous production startup.
+- [x] `src/Hexalith.Projects.Server/Authentication/ProjectsAuthenticationServiceCollectionExtensions.cs` and `src/Hexalith.Projects.Server/Program.cs` -- register validated bearer authentication/authorization and an explicit Development-only bypass -- preserve the existing endpoint gate and safe denial.
+- [x] `src/Hexalith.Projects.Server/Authentication/ProjectsClaimsTransformation.cs` -- align normalized claims with the accepted P2 mapping without synthesizing missing actor, workload, delegation, scope, or audience evidence -- keep identity provenance authoritative.
+- [x] `src/Hexalith.Projects.AppHost/Program.cs` and `src/Hexalith.Projects.AppHost/KeycloakRealms/hexalith-realm.json` -- make local fixture wiring explicit and keep production secret/config ownership external -- prevent dev credentials from becoming deployment defaults.
+- [x] `tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs` and related existing tests -- cover startup/configuration, valid/invalid token claims, delegated/non-delegated mapping, missing scope, and safe-denial behavior -- create the P3 verification fixture set.
+- [x] `docs/runbooks/projects-production-identity-contract.md` -- record configuration keys, owner responsibilities, fixture commands, accepted P2 pin, and rollback procedure -- make the approval and deployment boundary reviewable.
 
 **Acceptance Criteria:**
 - Given a Production host, when required OIDC configuration is absent or insecure, then startup fails before protected endpoints can serve anonymously.

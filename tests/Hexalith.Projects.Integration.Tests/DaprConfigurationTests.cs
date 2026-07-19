@@ -37,6 +37,29 @@ public sealed class DaprConfigurationTests
         content.ShouldContain(ProjectsWorkersModule.ProjectEventsRoute);
     }
 
+    /// <summary>Verifies the imported local identity realm cannot be mistaken for production configuration.</summary>
+    [Fact]
+    public void LocalIdentityFixtureShouldDeclareExternalProductionConfiguration()
+    {
+        string path = Path.Combine(
+            AppContext.BaseDirectory,
+            "..",
+            "..",
+            "..",
+            "..",
+            "..",
+            "src",
+            "Hexalith.Projects.AppHost",
+            "KeycloakRealms",
+            "hexalith-realm.json");
+        string content = File.ReadAllText(Path.GetFullPath(path));
+
+        content.ShouldContain("hexalith.identity.environment");
+        content.ShouldContain("Development");
+        content.ShouldContain("hexalith.identity.productionConfiguration");
+        content.ShouldContain("external");
+    }
+
     /// <summary>Verifies Dapr resiliency config exists and targets app/component boundaries.</summary>
     [Fact]
     public void ResiliencyConfigurationShouldTargetAppsComponentsAndPubSubDeadLetters()
