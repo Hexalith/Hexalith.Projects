@@ -82,6 +82,22 @@ query envelope/helper into Projects; do not commit production credentials or swi
 - Given invalid issuer/audience, expired credentials, absent required scope/permission, or cross-Tenant access, when a protected read is attempted, then no protected metadata is disclosed and the existing safe-denial contract remains intact.
 - Given local and production configuration review, when the owner-approved fixture and rollback checks run, then no production secret is stored in the repository, the local Keycloak fixture is clearly development-only, and the accepted P2 revision/configuration can be reverted deterministically.
 
+### Review Findings
+
+- [ ] [Review][Decision] HIGH — P3 advances while its required P2 dependency remains unaccepted — The P2 spec and sprint ledger still leave G-4 evidence, the acceptance record, release/source/package pins, rollback selection, and the P2 status transition open. P3's Ask First rule requires an accepted P2 mapping and revision before proceeding, so an owner must either pause P3 and restore its blocked state or supply the missing P2 acceptance and exact pins.
+- [ ] [Review][Decision] HIGH — The required-scope authorization policy contradicts the current P2 contract — P3 requires missing scope to fail authorization, but Projects authorizes from `eventstore:permission` only, while the P2 helper explicitly treats scopes as routing metadata rather than authorization input. Identity/Security, Projects, and Solution Architecture owners must select the exact required scope/permission rule and the boundary that enforces it.
+- [ ] [Review][Decision] HIGH — Deterministic rollback inputs and approvals are unavailable — The runbook names no exact owner-approved Projects revision, deployment configuration reference, rollback trigger, or approval record, and its P2 revision is both inaccurate as the root pin and explicitly pending acceptance. Owners must provide the exact Projects revision, accepted P2 source/package pin, configuration/secret ownership reference, rollback trigger, and approval date.
+- [ ] [Review][Patch] HIGH — Default launch profile keeps anonymous bypass active when Aspire injects OIDC [src/Hexalith.Projects.Server/Properties/launchSettings.json:11]
+- [ ] [Review][Patch] MEDIUM — Disabling bundled Keycloak also forces anonymous mode instead of honoring external Development OIDC [src/Hexalith.Projects.AppHost/Program.cs:57]
+- [ ] [Review][Patch] MEDIUM — Options binding and manual configuration parsing can select different authentication modes [src/Hexalith.Projects.Server/Authentication/ProjectsAuthenticationServiceCollectionExtensions.cs:32]
+- [ ] [Review][Patch] MEDIUM — Claim normalization can read authorization evidence from a different identity than the authenticated identity [src/Hexalith.Projects.Server/Authentication/ProjectsClaimsTransformation.cs:29]
+- [ ] [Review][Patch] HIGH — Startup fail-closed verification never starts the host and does not isolate all required-field and HTTPS guards [tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs:31]
+- [ ] [Review][Patch] HIGH — JWT middleware, protected safe-denial scenarios, and reproducible fixture commands are not exercised [tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs:149]
+- [ ] [Review][Patch] HIGH — P2 actor/workload/delegation mapping and token forwarding are not verified at the EventStore envelope boundary [tests/Hexalith.Projects.Server.Tests/ProjectsClaimsTransformationTests.cs:65]
+- [ ] [Review][Patch] MEDIUM — Development OIDC validation accepts unusable authority and metadata combinations [src/Hexalith.Projects.Server/Authentication/ValidateProjectsAuthenticationOptions.cs:40]
+- [ ] [Review][Patch] MEDIUM — Runbook misidentifies the root-pinned EventStore revision [docs/runbooks/projects-production-identity-contract.md:36]
+- [ ] [Review][Patch] MEDIUM — Unrelated FrontComposer submodule pointer bump is included in the P3 change [references/Hexalith.FrontComposer:1]
+
 ## Design Notes
 
 The Projects host owns adoption and fail-closed startup policy; EventStore owns the dual-principal
