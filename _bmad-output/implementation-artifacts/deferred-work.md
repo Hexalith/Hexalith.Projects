@@ -52,3 +52,6 @@
 - source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-prevent-submodule-skill-loading.md
   summary: Reconcile repository-required CRLF files with the default Git whitespace check.
   evidence: Review confirmed that ordinary `git diff --check` flags carriage returns on newly added CRLF lines because no repository attribute or `core.whitespace=cr-at-eol` policy exists, while `.editorconfig` requires CRLF.
+- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-resolve-create-project-metadata-class-enforcement.md
+  summary: Enforce the canonical ProjectMetadata displayName requirement without falling back to a legacy top-level name.
+  evidence: Review confirmed the OpenAPI schema requires projectMetadata.displayName, but the pre-existing direct endpoint accepts a canonical object with missing or blank displayName when a top-level name is supplied; this is outside the bounded metadataClass E-9 correction.

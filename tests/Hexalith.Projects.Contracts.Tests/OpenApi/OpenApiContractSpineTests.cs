@@ -402,6 +402,25 @@ public sealed class OpenApiContractSpineTests
                 "schema"),
             "$ref") ?? string.Empty;
         requestSchemaRef.ShouldBe("#/components/schemas/CreateProjectRequest");
+
+        YamlMappingNode schemas = Schemas();
+        YamlMappingNode createProjectRequest = RequiredMapping(schemas, "CreateProjectRequest");
+        RequiredSequence(createProjectRequest, "required")
+            .OfType<YamlScalarNode>()
+            .Select(static node => node.Value ?? string.Empty)
+            .OrderBy(static name => name, StringComparer.Ordinal)
+            .ShouldBe(["projectMetadata", "requestSchemaVersion"]);
+
+        YamlMappingNode projectMetadata = RequiredMapping(schemas, "ProjectMetadata");
+        RequiredSequence(projectMetadata, "required")
+            .OfType<YamlScalarNode>()
+            .Select(static node => node.Value ?? string.Empty)
+            .OrderBy(static name => name, StringComparer.Ordinal)
+            .ShouldBe(["displayName", "metadataClass"]);
+        GetScalar(RequiredMapping(RequiredMapping(projectMetadata, "properties"), "metadataClass"), "$ref")
+            .ShouldBe("#/components/schemas/SensitiveMetadataTier");
+        RequiredEnumValues(RequiredMapping(schemas, "SensitiveMetadataTier"))
+            .ShouldBe(["public_metadata", "tenant_sensitive", "credential_sensitive", "secret"]);
     }
 
     [Fact]

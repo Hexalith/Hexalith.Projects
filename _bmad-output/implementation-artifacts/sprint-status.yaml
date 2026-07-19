@@ -1,5 +1,5 @@
 # generated: 2026-07-17T08:14:03+02:00
-# last_updated: 2026-07-18T09:00:00+02:00
+# last_updated: 2026-07-19T18:19:47+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -49,7 +49,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-07-18T09:00:00+02:00
+last_updated: 2026-07-19T18:19:47+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -177,9 +177,11 @@ action_items:
   - epic: 5
     action: "Resolve or explicitly scope the pre-existing CreateProject metadataClass required-field enforcement gap with OpenAPI/server tests."
     owner: "Amelia"
-    status: in-progress
+    status: done
+    result: "Implemented one shared metadata-classification validator, enforced the existing canonical CreateProject metadataClass requirement before command submission, and preserved legacy name-only and proposal-confirmation behavior. Contracts OpenAPI: 26 passed; CreateProject server: 81 passed; proposal regression: 32 passed; fingerprint gate: 41 passed; Release solution build: 0 warnings/errors. AppHost resource discovery remained environment-blocked by a separately running Memories AppHost and a later detached backchannel disconnect; the external AppHost was not stopped or altered."
     routed_to: "Story 6.2"
-    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
+    evidence: "_bmad-output/implementation-artifacts/spec-resolve-create-project-metadata-class-enforcement.md"
   - epic: 5
     action: "Add U+2028/U+2029 idempotency canonicalizer parity coverage across server and generated-client fingerprinting."
     owner: "Amelia / Murat"

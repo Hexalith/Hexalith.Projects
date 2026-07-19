@@ -606,7 +606,7 @@ public static partial class ProjectsDomainServiceEndpoints
 
         if (body.ProjectMetadata is null
             || string.IsNullOrWhiteSpace(body.ProjectMetadata.DisplayName)
-            || !IsValidSensitiveMetadataTier(body.ProjectMetadata.MetadataClass)
+            || !SensitiveMetadataTierValidator.IsValid(body.ProjectMetadata.MetadataClass)
             || !ProjectCreationProposalBuilder.IsSafeCreateMetadata(body.ProjectMetadata.DisplayName!, body.Description, body.SetupMetadata))
         {
             rejectedField = "projectMetadata";
@@ -712,12 +712,6 @@ public static partial class ProjectsDomainServiceEndpoints
 
     private static string DeriveChildIdempotencyKey(string root, string child)
         => root + ":" + child;
-
-    // Mirrors the OpenAPI SensitiveMetadataTier enum. metadataClass is required by the ProjectMetadata
-    // contract schema; it is a classification hint that is validated then dropped (never persisted on
-    // the metadata-only CreateProject command).
-    private static bool IsValidSensitiveMetadataTier(string? value)
-        => value is "public_metadata" or "tenant_sensitive" or "credential_sensitive" or "secret";
 
     private static string ComputeConfirmProposalFingerprint(ConfirmNewProjectProposalHttpRequest body)
     {

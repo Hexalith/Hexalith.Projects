@@ -587,6 +587,12 @@ public static partial class ProjectsDomainServiceEndpoints
             return ValidationProblem(correlationId, taskId, "requestSchemaVersion");
         }
 
+        if (body.ProjectMetadata is not null
+            && !SensitiveMetadataTierValidator.IsValid(body.ProjectMetadata.MetadataClass))
+        {
+            return ValidationProblem(correlationId, taskId, "projectMetadata.metadataClass");
+        }
+
         string? projectMetadataName = body.ProjectMetadata?.DisplayName;
         if (!string.IsNullOrWhiteSpace(projectMetadataName)
             && !string.IsNullOrWhiteSpace(body.Name)
