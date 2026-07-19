@@ -287,7 +287,7 @@ public sealed record ProjectResult(
 
         foreach (char c in value)
         {
-            if (c == '\r' || c == '\n' || char.IsControl(c))
+            if (c is '\u2028' or '\u2029' || char.IsControl(c))
             {
                 return null;
             }

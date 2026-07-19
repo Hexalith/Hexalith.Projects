@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 
 using ConversationId = Hexalith.Conversations.Contracts.Identifiers.ConversationId;
 using ConversationTenantId = Hexalith.Conversations.Contracts.Identifiers.TenantId;
+using Generated = Hexalith.Projects.Client.Generated;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Identifiers;
@@ -275,6 +276,250 @@ public sealed class ProposeNewProjectEndpointTests
     }
 
     [Theory]
+    [InlineData("displayName", 0x2028, "leading")]
+    [InlineData("displayName", 0x2028, "embedded")]
+    [InlineData("displayName", 0x2028, "trailing")]
+    [InlineData("displayName", 0x2029, "leading")]
+    [InlineData("displayName", 0x2029, "embedded")]
+    [InlineData("displayName", 0x2029, "trailing")]
+    [InlineData("description", 0x2028, "leading")]
+    [InlineData("description", 0x2028, "embedded")]
+    [InlineData("description", 0x2028, "trailing")]
+    [InlineData("description", 0x2028, "only")]
+    [InlineData("description", 0x2029, "leading")]
+    [InlineData("description", 0x2029, "embedded")]
+    [InlineData("description", 0x2029, "trailing")]
+    [InlineData("description", 0x2029, "only")]
+    [InlineData("setupMetadata", 0x2028, "leading")]
+    [InlineData("setupMetadata", 0x2028, "embedded")]
+    [InlineData("setupMetadata", 0x2028, "trailing")]
+    [InlineData("setupMetadata", 0x2028, "only")]
+    [InlineData("setupMetadata", 0x2029, "leading")]
+    [InlineData("setupMetadata", 0x2029, "embedded")]
+    [InlineData("setupMetadata", 0x2029, "trailing")]
+    [InlineData("setupMetadata", 0x2029, "only")]
+    public async Task Confirm_SeparatorMetadataFingerprintMatchesGeneratedHelper(
+        string field,
+        int separatorCodePoint,
+        string position)
+    {
+        (string DisplayName, string? Description, string? SetupMetadata) metadata = SeparatorProposalMetadata(
+            field,
+            (char)separatorCodePoint,
+            position);
+        CapturingProposalConfirmationIdempotencyLedger ledger = new();
+        using ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: ledger).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(
+            provider,
+            ConfirmBody(metadata.DisplayName, description: metadata.Description, setupMetadata: metadata.SetupMetadata)).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        ledger.Entries.Single().Fingerprint.ShouldBe(GeneratedConfirmRequest(metadata).ComputeIdempotencyHash());
+    }
+
+    [Theory]
+    [InlineData(0x2028, "sha256:0e7b502ece508da2f0f19ae6391ffbed77c796f0e123e1113de78b95a7d224f4")]
+    [InlineData(0x2029, "sha256:4544a4172efc147f5571e70527f8ec9dd55605b9b27ba76e3da64ebe8a60daa2")]
+    public async Task Confirm_SeparatorFingerprintIsPinnedAgainstGeneratedHelper(
+        int separatorCodePoint,
+        string expectedFingerprint)
+    {
+        var metadata = (
+            DisplayName: "Synthetic" + (char)separatorCodePoint + "Project",
+            Description: (string?)"Safe project description",
+            SetupMetadata: (string?)"Safe setup note");
+        CapturingProposalConfirmationIdempotencyLedger ledger = new();
+        using ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: ledger).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(
+            provider,
+            ConfirmBody(metadata.DisplayName, description: metadata.Description, setupMetadata: metadata.SetupMetadata)).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        ledger.Entries.Single().Fingerprint.ShouldBe(expectedFingerprint);
+        GeneratedConfirmRequest(metadata).ComputeIdempotencyHash().ShouldBe(expectedFingerprint);
+    }
+
+    [Theory]
+    [InlineData("displayName", 0x2028)]
+    [InlineData("displayName", 0x2029)]
+    [InlineData("description", 0x2028)]
+    [InlineData("description", 0x2029)]
+    [InlineData("setupMetadata", 0x2028)]
+    [InlineData("setupMetadata", 0x2029)]
+    public async Task Confirm_RawModeRejectsOverlongMetadataBySafeFieldName(
+        string overlongField,
+        int separatorCodePoint)
+    {
+        char separator = (char)separatorCodePoint;
+        string displayName = overlongField == "displayName"
+            ? separator + new string('a', 160)
+            : "Suggested Project";
+        string description = overlongField == "description"
+            ? separator + new string('b', 512)
+            : "Safe description";
+        string setupMetadata = overlongField == "setupMetadata"
+            ? separator + new string('c', 512)
+            : "Safe setup";
+        string overlongValue = overlongField switch
+        {
+            "displayName" => displayName,
+            "description" => description,
+            "setupMetadata" => setupMetadata,
+            _ => throw new ArgumentOutOfRangeException(nameof(overlongField)),
+        };
+
+        CapturingProposalConfirmationIdempotencyLedger ledger = new();
+        using ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: ledger).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(
+            provider,
+            ConfirmBody(displayName, description: description, setupMetadata: setupMetadata)).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        response.Body.ShouldContain("projectMetadata");
+        response.Body.ShouldNotContain(overlongValue);
+        ledger.Entries.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("displayName", 0x2028)]
+    [InlineData("displayName", 0x2029)]
+    [InlineData("description", 0x2028)]
+    [InlineData("description", 0x2029)]
+    [InlineData("setupMetadata", 0x2028)]
+    [InlineData("setupMetadata", 0x2029)]
+    public async Task Confirm_RawModeRejectsOverlongSeparatorFreeSibling(
+        string overlongSibling,
+        int separatorCodePoint)
+    {
+        char separator = (char)separatorCodePoint;
+        string displayName = overlongSibling == "displayName"
+            ? " " + new string('a', 159) + " "
+            : "Suggested Project";
+        string description = overlongSibling == "description"
+            ? " " + new string('b', 512) + " "
+            : separator + "Safe description";
+        string setupMetadata = overlongSibling == "setupMetadata"
+            ? " " + new string('c', 512) + " "
+            : separator + "Safe setup";
+        string overlongValue = overlongSibling switch
+        {
+            "displayName" => displayName,
+            "description" => description,
+            "setupMetadata" => setupMetadata,
+            _ => throw new ArgumentOutOfRangeException(nameof(overlongSibling)),
+        };
+
+        CapturingProposalConfirmationIdempotencyLedger ledger = new();
+        using ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: ledger).ConfigureAwait(true);
+        EndpointResponse response = await SendConfirmAsync(
+            provider,
+            ConfirmBody(displayName, description: description, setupMetadata: setupMetadata)).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        response.Body.ShouldContain("projectMetadata");
+        response.Body.ShouldNotContain(overlongValue);
+        ledger.Entries.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(0x2028)]
+    [InlineData(0x2029)]
+    public async Task Confirm_RawModeAcceptsAllExactMetadataMaxima(int separatorCodePoint)
+    {
+        var metadata = (
+            DisplayName: (char)separatorCodePoint + new string('a', 159),
+            Description: (string?)new string('b', 512),
+            SetupMetadata: (string?)new string('c', 512));
+        CapturingProposalConfirmationIdempotencyLedger ledger = new();
+        using ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: ledger).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(
+            provider,
+            ConfirmBody(metadata.DisplayName, description: metadata.Description, setupMetadata: metadata.SetupMetadata)).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        ledger.Entries.Single().Fingerprint.ShouldBe(GeneratedConfirmRequest(metadata).ComputeIdempotencyHash());
+    }
+
+    [Fact]
+    public async Task Confirm_SeparatorFreeMetadataRetainsTrimAndNullFingerprint()
+    {
+        CapturingProposalConfirmationIdempotencyLedger trimmedLedger = new();
+        using (ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: trimmedLedger).ConfigureAwait(true))
+        {
+            EndpointResponse response = await SendConfirmAsync(
+                provider,
+                ConfirmBody("  Suggested Project  ", description: "  Safe description  ", setupMetadata: "  Safe setup  ")).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            trimmedLedger.Entries.Single().Fingerprint.ShouldBe(GeneratedConfirmRequest(
+                ("Suggested Project", "Safe description", "Safe setup")).ComputeIdempotencyHash());
+        }
+
+        CapturingProposalConfirmationIdempotencyLedger nullLedger = new();
+        using ServiceProvider nullProvider = await BuildProviderAsync(idempotencyLedger: nullLedger).ConfigureAwait(true);
+        EndpointResponse nullResponse = await SendConfirmAsync(
+            nullProvider,
+            ConfirmBody("Suggested Project", description: "   ", setupMetadata: null)).ConfigureAwait(true);
+
+        nullResponse.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        nullLedger.Entries.Single().Fingerprint.ShouldBe(GeneratedConfirmRequest(
+            ("Suggested Project", null, null)).ComputeIdempotencyHash());
+    }
+
+    [Theory]
+    [InlineData("displayName")]
+    [InlineData("description")]
+    [InlineData("setupMetadata")]
+    public async Task Confirm_SeparatorFingerprintsDoNotCollideAndUnsafeVariantsAreRejected(string field)
+    {
+        string[] acceptedValues = ["Synthetic Project", "Synthetic\u2028Project", "Synthetic\u2029Project"];
+        List<string> endpointFingerprints = [];
+        for (int index = 0; index < acceptedValues.Length; index++)
+        {
+            (string DisplayName, string? Description, string? SetupMetadata) metadata = ProposalMetadataVariant(
+                field,
+                acceptedValues[index]);
+            CapturingProposalConfirmationIdempotencyLedger ledger = new();
+            using ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: ledger).ConfigureAwait(true);
+            EndpointResponse response = await SendConfirmAsync(
+                provider,
+                ConfirmBody(metadata.DisplayName, description: metadata.Description, setupMetadata: metadata.SetupMetadata),
+                idempotencyKey: IdempotencyKeyValue + "-" + index).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            endpointFingerprints.Add(ledger.Entries.Single().Fingerprint);
+        }
+
+        string[] rejectedValues = ["Synthetic\nProject", "Synthetic\\u2028Project", "Synthetic\\u2029Project"];
+        foreach (string rejectedValue in rejectedValues)
+        {
+            (string DisplayName, string? Description, string? SetupMetadata) metadata = ProposalMetadataVariant(
+                field,
+                rejectedValue);
+            CapturingProposalConfirmationIdempotencyLedger ledger = new();
+            using ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: ledger).ConfigureAwait(true);
+            EndpointResponse response = await SendConfirmAsync(
+                provider,
+                ConfirmBody(metadata.DisplayName, description: metadata.Description, setupMetadata: metadata.SetupMetadata)).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            response.Body.ShouldContain("projectMetadata");
+            response.Body.ShouldNotContain(rejectedValue);
+            ledger.Entries.ShouldBeEmpty();
+        }
+
+        string[] generatedFingerprints = acceptedValues.Concat(rejectedValues)
+            .Select(value => GeneratedConfirmRequest(ProposalMetadataVariant(field, value)).ComputeIdempotencyHash())
+            .ToArray();
+        generatedFingerprints.Distinct(StringComparer.Ordinal).Count().ShouldBe(generatedFingerprints.Length);
+        endpointFingerprints.ShouldBe(generatedFingerprints.Take(acceptedValues.Length));
+    }
+
+    [Theory]
     [InlineData("\"projectId\": \"bad/slash\"", "identity")]
     [InlineData("\"fileReferenceIds\": [\"file-999\"]", "fileReferenceIds")]
     public async Task Confirm_MalformedBody_ReturnsValidationProblemBeforeWrites(string replacement, string rejectedField)
@@ -486,6 +731,7 @@ public sealed class ProposeNewProjectEndpointTests
         CapturingAssignmentDirectory? assignmentDirectory = null,
         RecordingFolderDirectory? folderDirectory = null,
         RecordingFileReferenceDirectory? fileReferenceDirectory = null,
+        IProjectProposalConfirmationIdempotencyLedger? idempotencyLedger = null,
         string? tenantId = TenantA,
         string? principalId = PrincipalA)
     {
@@ -515,6 +761,11 @@ public sealed class ProposeNewProjectEndpointTests
         services.AddSingleton<IProjectFolderDirectory>(folderDirectory ?? new RecordingFolderDirectory(ProjectFolderValidationOutcome.Accepted));
         services.RemoveAll<IProjectFileReferenceDirectory>();
         services.AddSingleton<IProjectFileReferenceDirectory>(fileReferenceDirectory ?? new RecordingFileReferenceDirectory(ProjectFileReferenceValidationOutcome.Accepted));
+        if (idempotencyLedger is not null)
+        {
+            services.RemoveAll<IProjectProposalConfirmationIdempotencyLedger>();
+            services.AddSingleton(idempotencyLedger);
+        }
 
         ServiceProvider provider = services.BuildServiceProvider();
         if (!string.IsNullOrWhiteSpace(tenantId) && !string.IsNullOrWhiteSpace(principalId))
@@ -561,12 +812,13 @@ public sealed class ProposeNewProjectEndpointTests
     private static Task<EndpointResponse> SendConfirmAsync(
         ServiceProvider provider,
         string body,
-        bool includeIdempotencyKey = true)
+        bool includeIdempotencyKey = true,
+        string idempotencyKey = IdempotencyKeyValue)
     {
         Dictionary<string, string> headers = new(StringComparer.Ordinal);
         if (includeIdempotencyKey)
         {
-            headers["Idempotency-Key"] = IdempotencyKeyValue;
+            headers["Idempotency-Key"] = idempotencyKey;
         }
 
         return InvokeAsync(
@@ -647,11 +899,18 @@ public sealed class ProposeNewProjectEndpointTests
             }
             """;
 
-    private static string ConfirmBody(string displayName = "Suggested Project", string? metadataClass = "tenant_sensitive")
+    private static string ConfirmBody(
+        string displayName = "Suggested Project",
+        string? metadataClass = "tenant_sensitive",
+        string? description = "Safe project description",
+        string? setupMetadata = "Safe setup note")
     {
+        string displayNameJson = JsonSerializer.Serialize(displayName);
+        string descriptionJson = JsonSerializer.Serialize(description);
+        string setupMetadataJson = JsonSerializer.Serialize(setupMetadata);
         string projectMetadata = metadataClass is null
-            ? $$"""{ "displayName": "{{displayName}}" }"""
-            : $$"""{ "displayName": "{{displayName}}", "metadataClass": "{{metadataClass}}" }""";
+            ? $$"""{ "displayName": {{displayNameJson}} }"""
+            : $$"""{ "displayName": {{displayNameJson}}, "metadataClass": "{{metadataClass}}" }""";
         return $$"""
             {
               "requestSchemaVersion": "v1",
@@ -661,8 +920,8 @@ public sealed class ProposeNewProjectEndpointTests
               "projectId": "{{ProjectIdValue}}",
               "conversationId": "{{ConversationIdValue}}",
               "projectMetadata": {{projectMetadata}},
-              "description": "Safe project description",
-              "setupMetadata": "Safe setup note",
+              "description": {{descriptionJson}},
+              "setupMetadata": {{setupMetadataJson}},
               "folder": {
                 "folderId": "{{FolderIdValue}}",
                 "folderMetadata": { "displayName": "Workspace folder" }
@@ -693,6 +952,83 @@ public sealed class ProposeNewProjectEndpointTests
               "projectMetadata": { "displayName": "Suggested Project", "metadataClass": "tenant_sensitive" }
             }
             """;
+
+    private static Generated.ConfirmNewProjectProposalRequest GeneratedConfirmRequest(
+        (string DisplayName, string? Description, string? SetupMetadata) metadata)
+        => new()
+        {
+            RequestSchemaVersion = Generated.ConfirmNewProjectProposalRequestRequestSchemaVersion.V1,
+            Operation = Generated.ConfirmNewProjectProposalRequestOperation.ConfirmNewProjectProposal,
+            ResolutionResult = Generated.ConfirmNewProjectProposalRequestResolutionResult.NoMatch,
+            Confirmed = true,
+            ProjectId = ProjectIdValue,
+            ConversationId = ConversationIdValue,
+            ProjectMetadata = new Generated.ProjectMetadata
+            {
+                DisplayName = metadata.DisplayName,
+                MetadataClass = Generated.SensitiveMetadataTier.Tenant_sensitive,
+            },
+            Description = metadata.Description,
+            SetupMetadata = metadata.SetupMetadata,
+            Folder = new Generated.ConfirmNewProjectProposalFolder
+            {
+                FolderId = FolderIdValue,
+                FolderMetadata = new Generated.ProjectFolderMetadata { DisplayName = "Workspace folder" },
+            },
+            FileReferences =
+            [
+                new Generated.ConfirmNewProjectProposalFileReference
+                {
+                    FileReferenceId = FileIdValue,
+                    FolderId = FolderIdValue,
+                    WorkspaceId = WorkspaceIdValue,
+                    FilePath = "docs/readme.md",
+                    FileMetadata = new Generated.ProjectFileReferenceMetadata { DisplayName = "Design brief" },
+                },
+            ],
+            FileReferenceIds = [FileIdValue],
+        };
+
+    private static (string DisplayName, string? Description, string? SetupMetadata) SeparatorProposalMetadata(
+        string field,
+        char separator,
+        string position)
+    {
+        string displayName = "  Suggested Project  ";
+        string? description = "  Safe project description  ";
+        string? setupMetadata = "  Safe setup note  ";
+        string value = position == "only"
+            ? separator.ToString()
+            : PositionedValue(field == "displayName" ? "Suggested Project" : field, separator, position);
+
+        return field switch
+        {
+            "displayName" => (value, description, setupMetadata),
+            "description" => (displayName, value, setupMetadata),
+            "setupMetadata" => (displayName, description, value),
+            _ => throw new ArgumentOutOfRangeException(nameof(field)),
+        };
+    }
+
+    private static (string DisplayName, string? Description, string? SetupMetadata) ProposalMetadataVariant(
+        string field,
+        string value)
+        => field switch
+        {
+            "displayName" => (value, "Safe project description", "Safe setup note"),
+            "description" => ("Synthetic Project", value, "Safe setup note"),
+            "setupMetadata" => ("Synthetic Project", "Safe project description", value),
+            _ => throw new ArgumentOutOfRangeException(nameof(field)),
+        };
+
+    private static string PositionedValue(string value, char separator, string position)
+        => position switch
+        {
+            "leading" => separator + value,
+            "embedded" => value.Insert(value.Length / 2, separator.ToString()),
+            "trailing" => value + separator,
+            _ => throw new ArgumentOutOfRangeException(nameof(position)),
+        };
 
     private static ProjectListItem ProjectRow(string projectId, string name)
         => new(TenantA, projectId, name, ProjectLifecycle.Active, 1, DateTimeOffset.UnixEpoch, DateTimeOffset.UnixEpoch);
@@ -725,6 +1061,27 @@ public sealed class ProposeNewProjectEndpointTests
     {
         public string? Header(string name)
             => Headers.TryGetValue(name, out string? value) ? value : null;
+    }
+
+    private sealed record ProposalConfirmationLedgerEntry(string IdempotencyKey, string Fingerprint);
+
+    private sealed class CapturingProposalConfirmationIdempotencyLedger : IProjectProposalConfirmationIdempotencyLedger
+    {
+        private readonly Dictionary<string, string> _fingerprints = new(StringComparer.Ordinal);
+
+        public List<ProposalConfirmationLedgerEntry> Entries { get; } = [];
+
+        public bool TryRecord(string idempotencyKey, string fingerprint)
+        {
+            Entries.Add(new ProposalConfirmationLedgerEntry(idempotencyKey, fingerprint));
+            if (_fingerprints.TryGetValue(idempotencyKey, out string? existing))
+            {
+                return string.Equals(existing, fingerprint, StringComparison.Ordinal);
+            }
+
+            _fingerprints[idempotencyKey] = fingerprint;
+            return true;
+        }
     }
 
     private sealed class FixedProjectTenantContext(string? tenantId, string? principalId) : IProjectTenantContextAccessor

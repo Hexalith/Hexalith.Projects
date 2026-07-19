@@ -55,3 +55,9 @@
 - source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-resolve-create-project-metadata-class-enforcement.md
   summary: Enforce the canonical ProjectMetadata displayName requirement without falling back to a legacy top-level name.
   evidence: Review confirmed the OpenAPI schema requires projectMetadata.displayName, but the pre-existing direct endpoint accepts a canonical object with missing or blank displayName when a top-level name is supplied; this is outside the bounded metadataClass E-9 correction.
+- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md
+  summary: Align proposal-confirmation file-reference ID ordering between accepted HTTP requests and generated-client fingerprints.
+  evidence: Review confirmed the pre-existing endpoint accepts unsorted fileReferenceIds after sorting them for validation and server hashing, while the generated helper hashes the caller's original array order.
+- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md
+  summary: Align proposal-confirmation null fileReferenceIds semantics between the server and generated client.
+  evidence: Review confirmed the pre-existing endpoint accepts null fileReferenceIds when no file references exist and hashes an empty array, while the generated helper hashes the null property as null.

@@ -109,6 +109,12 @@ public static class ProjectCommandValidator
             return common;
         }
 
+        bool useRawDisplayName = ContainsFingerprintSeparator(command.Name);
+        if (useRawDisplayName && command.Name.Length > MaxNameLength)
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.Name));
+        }
+
         // The only required user input is the project name.
         if (string.IsNullOrWhiteSpace(command.Name) || command.Name.Trim().Length > MaxNameLength || !IsSafeMetadata(command.Name))
         {
@@ -143,7 +149,7 @@ public static class ProjectCommandValidator
             canonicalName,
             canonicalDescription,
             canonicalSetupMetadata,
-            ComputeIdempotencyFingerprint(canonicalName));
+            ComputeIdempotencyFingerprint(useRawDisplayName ? command.Name : canonicalName));
     }
 
     /// <summary>
@@ -162,16 +168,20 @@ public static class ProjectCommandValidator
             return common;
         }
 
-        ProjectSetup? setup = command.Setup;
-        if (setup is null)
+        ProjectSetup? sourceSetup = command.Setup;
+        if (sourceSetup is null)
         {
             return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, "setup");
         }
 
-        ProjectSetup? canonical = CanonicalizeSetup(setup, out string? rejectedField);
+        ProjectSetup setup = SnapshotSetup(sourceSetup);
+        bool useRawSetup = ContainsFingerprintSeparator(setup);
+        ProjectSetup? canonical = CanonicalizeSetup(setup, useRawSetup, out string? rejectedField);
         return canonical is null
             ? ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, rejectedField)
-            : ProjectCommandValidationResult.AcceptedSetup(canonical, ComputeUpdateProjectSetupFingerprint(canonical));
+            : ProjectCommandValidationResult.AcceptedSetup(
+                canonical,
+                ComputeUpdateProjectSetupFingerprint(useRawSetup ? setup : canonical));
     }
 
     /// <summary>
@@ -232,6 +242,12 @@ public static class ProjectCommandValidator
             return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.FolderMetadata));
         }
 
+        bool useRawDisplayName = ContainsFingerprintSeparator(command.FolderMetadata.DisplayName);
+        if (useRawDisplayName && command.FolderMetadata.DisplayName!.Length > MaxNameLength)
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, "folderMetadata.displayName");
+        }
+
         if (!IsSafeOptionalMetadata(command.FolderMetadata.DisplayName, MaxNameLength))
         {
             return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, "folderMetadata.displayName");
@@ -245,7 +261,7 @@ public static class ProjectCommandValidator
             ComputeSetProjectFolderFingerprint(
                 command.ProjectId.Value,
                 command.FolderId.Trim(),
-                displayName,
+                useRawDisplayName ? command.FolderMetadata.DisplayName : displayName,
                 command.ReplacementConfirmed));
     }
 
@@ -280,6 +296,12 @@ public static class ProjectCommandValidator
             return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.FileMetadata));
         }
 
+        bool useRawDisplayName = ContainsFingerprintSeparator(command.FileMetadata.DisplayName);
+        if (useRawDisplayName && command.FileMetadata.DisplayName!.Length > MaxNameLength)
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, "fileMetadata.displayName");
+        }
+
         if (!IsSafeOptionalMetadata(command.FileMetadata.DisplayName, MaxNameLength))
         {
             return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, "fileMetadata.displayName");
@@ -294,7 +316,7 @@ public static class ProjectCommandValidator
                 command.ProjectId.Value,
                 command.FileReferenceId.Trim(),
                 command.FolderId.Trim(),
-                displayName));
+                useRawDisplayName ? command.FileMetadata.DisplayName : displayName));
     }
 
     /// <summary>
@@ -349,6 +371,12 @@ public static class ProjectCommandValidator
             return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, nameof(command.MemoryMetadata));
         }
 
+        bool useRawDisplayName = ContainsFingerprintSeparator(command.MemoryMetadata.DisplayName);
+        if (useRawDisplayName && command.MemoryMetadata.DisplayName!.Length > MaxNameLength)
+        {
+            return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, "memoryMetadata.displayName");
+        }
+
         if (!IsSafeOptionalMetadata(command.MemoryMetadata.DisplayName, MaxNameLength))
         {
             return ProjectCommandValidationResult.Rejected(ProjectResultCode.ValidationFailed, "memoryMetadata.displayName");
@@ -362,7 +390,7 @@ public static class ProjectCommandValidator
             ComputeLinkMemoryFingerprint(
                 command.ProjectId.Value,
                 command.MemoryReferenceId.Trim(),
-                displayName));
+                useRawDisplayName ? command.MemoryMetadata.DisplayName : displayName));
     }
 
     /// <summary>
@@ -430,11 +458,14 @@ public static class ProjectCommandValidator
     /// Computes the canonical idempotency fingerprint for a <see cref="CreateProject"/> command using
     /// the Story 1.3 canonical hasher semantics over the spine's equivalence field list.
     /// </summary>
-    /// <param name="canonicalDisplayName">The canonical (trimmed) project display name.</param>
+    /// <param name="fingerprintDisplayName">
+    /// The display-name fingerprint input: trimmed for separator-free requests, or the bounded raw
+    /// accepted value when it contains U+2028/U+2029.
+    /// </param>
     /// <returns>A <c>sha256:</c>-prefixed lowercase hex digest.</returns>
-    internal static string ComputeIdempotencyFingerprint(string canonicalDisplayName)
+    internal static string ComputeIdempotencyFingerprint(string fingerprintDisplayName)
     {
-        ArgumentNullException.ThrowIfNull(canonicalDisplayName);
+        ArgumentNullException.ThrowIfNull(fingerprintDisplayName);
 
         // Mirror the spine equivalence list order (ordinal-ascending): project_metadata.display_name,
         // request_schema_version. Lines match the Client hasher's canonical line shape so the two
@@ -442,7 +473,7 @@ public static class ProjectCommandValidator
         string[] lines =
         [
             "operation=CreateProject",
-            "field=project_metadata.display_name;present=true;value=s:" + Escape(canonicalDisplayName),
+            "field=project_metadata.display_name;present=true;value=s:" + Escape(fingerprintDisplayName),
             "field=request_schema_version;present=true;value=s:" + Escape(RequestSchemaVersion),
         ];
 
@@ -452,7 +483,10 @@ public static class ProjectCommandValidator
     }
 
     /// <summary>Computes the canonical setup-update idempotency fingerprint.</summary>
-    /// <param name="setup">The canonical setup.</param>
+    /// <param name="setup">
+    /// The stable setup snapshot used for fingerprinting: canonical for separator-free requests, or
+    /// bounded raw goals and user instructions when either collection contains U+2028/U+2029.
+    /// </param>
     /// <returns>A <c>sha256:</c>-prefixed lowercase hex digest.</returns>
     internal static string ComputeUpdateProjectSetupFingerprint(ProjectSetup setup)
     {
@@ -692,6 +726,8 @@ public static class ProjectCommandValidator
                 '\t' => "\\t",
                 '\r' => "\\r",
                 '\n' => "\\n",
+                '\u2028' => "\\u2028",
+                '\u2029' => "\\u2029",
                 ';' => "\\;",
                 '=' => "\\=",
                 _ when char.IsControl(character) =>
@@ -729,17 +765,28 @@ public static class ProjectCommandValidator
         return ProjectCommandValidationResult.AcceptedArchive("sha256:common-validation");
     }
 
-    private static ProjectSetup? CanonicalizeSetup(ProjectSetup setup, out string? rejectedField)
+    private static ProjectSetup? CanonicalizeSetup(
+        ProjectSetup setup,
+        bool requireRawTextBounds,
+        out string? rejectedField)
     {
         rejectedField = null;
 
-        string[]? goals = CanonicalizeTextList(setup.Goals, "setup.goals", out rejectedField);
+        string[]? goals = CanonicalizeTextList(
+            setup.Goals,
+            "setup.goals",
+            requireRawTextBounds,
+            out rejectedField);
         if (goals is null)
         {
             return null;
         }
 
-        string[]? instructions = CanonicalizeTextList(setup.UserInstructions, "setup.userInstructions", out rejectedField);
+        string[]? instructions = CanonicalizeTextList(
+            setup.UserInstructions,
+            "setup.userInstructions",
+            requireRawTextBounds,
+            out rejectedField);
         if (instructions is null)
         {
             return null;
@@ -778,7 +825,26 @@ public static class ProjectCommandValidator
             setup.ConversationStartDefaults);
     }
 
-    private static string[]? CanonicalizeTextList(IReadOnlyList<string>? values, string field, out string? rejectedField)
+    private static ProjectSetup SnapshotSetup(ProjectSetup setup)
+    {
+        IReadOnlyList<string>? goals = setup.Goals;
+        IReadOnlyList<string>? instructions = setup.UserInstructions;
+        IReadOnlyList<ProjectContextSourceKind>? preferred = setup.PreferredSourceKinds;
+        IReadOnlyList<ProjectContextSourceKind>? excluded = setup.ExcludedSourceKinds;
+
+        return new(
+            goals is null ? null! : goals.ToArray(),
+            instructions is null ? null! : instructions.ToArray(),
+            preferred is null ? null! : preferred.ToArray(),
+            excluded is null ? null! : excluded.ToArray(),
+            setup.ConversationStartDefaults);
+    }
+
+    private static string[]? CanonicalizeTextList(
+        IReadOnlyList<string>? values,
+        string field,
+        bool requireRawTextBounds,
+        out string? rejectedField)
     {
         rejectedField = null;
         if (values is null || values.Count > MaxSetupTextItems)
@@ -791,6 +857,7 @@ public static class ProjectCommandValidator
         foreach (string? value in values)
         {
             if (string.IsNullOrWhiteSpace(value)
+                || (requireRawTextBounds && value.Length > MaxSetupTextLength)
                 || value.Trim().Length > MaxSetupTextLength
                 || !IsSafeMetadata(value))
             {
@@ -827,7 +894,9 @@ public static class ProjectCommandValidator
     }
 
     private static string FormatStringList(IReadOnlyList<string> values)
-        => "j:" + JsonSerializer.Serialize(values, CanonicalJsonOptions);
+        => "j:" + JsonSerializer.Serialize(values, CanonicalJsonOptions)
+            .Replace("\u2028", "\\u2028", StringComparison.Ordinal)
+            .Replace("\u2029", "\\u2029", StringComparison.Ordinal);
 
     private static string FormatEnumList(IReadOnlyList<ProjectContextSourceKind> values)
         => "j:[" + string.Join(",", values.Select(static value => "\"" + Escape(ToWireValue(value)) + "\"")) + "]";
@@ -874,7 +943,7 @@ public static class ProjectCommandValidator
 
         foreach (char c in value)
         {
-            if (c == '\r' || c == '\n' || char.IsControl(c))
+            if (c is '\u2028' or '\u2029' || char.IsControl(c))
             {
                 return false;
             }
@@ -882,6 +951,13 @@ public static class ProjectCommandValidator
 
         return true;
     }
+
+    private static bool ContainsFingerprintSeparator(string? value)
+        => value?.IndexOfAny(['\u2028', '\u2029']) >= 0;
+
+    private static bool ContainsFingerprintSeparator(ProjectSetup setup)
+        => (setup.Goals?.Any(ContainsFingerprintSeparator) ?? false)
+            || (setup.UserInstructions?.Any(ContainsFingerprintSeparator) ?? false);
 
     private static bool IsSafeReferenceIdentifier(string? value)
     {

@@ -15,6 +15,11 @@ using System.Text.Json;
 
 using Hexalith.Projects.Client.Generated;
 using Hexalith.Projects.Client.Idempotency;
+using Hexalith.Projects.Aggregates.Project;
+
+using DomainCommands = Hexalith.Projects.Contracts.Commands;
+using DomainIdentifiers = Hexalith.Projects.Contracts.Identifiers;
+using DomainModels = Hexalith.Projects.Contracts.Models;
 
 using Newtonsoft.Json;
 
@@ -354,6 +359,138 @@ public sealed class ClientGenerationTests
         request.ComputeIdempotencyHash().ShouldBe(ExpectedHash(
             "operation=CreateProject",
             "field=project_metadata.display_name;present=true;value=s:Synthetic Project",
+            "field=request_schema_version;present=true;value=s:v1"));
+    }
+
+    [Theory]
+    [InlineData("CreateProject", 0x2028, "leading")]
+    [InlineData("CreateProject", 0x2028, "embedded")]
+    [InlineData("CreateProject", 0x2028, "trailing")]
+    [InlineData("CreateProject", 0x2029, "leading")]
+    [InlineData("CreateProject", 0x2029, "embedded")]
+    [InlineData("CreateProject", 0x2029, "trailing")]
+    [InlineData("UpdateProjectSetupGoals", 0x2028, "leading")]
+    [InlineData("UpdateProjectSetupGoals", 0x2028, "embedded")]
+    [InlineData("UpdateProjectSetupGoals", 0x2028, "trailing")]
+    [InlineData("UpdateProjectSetupGoals", 0x2029, "leading")]
+    [InlineData("UpdateProjectSetupGoals", 0x2029, "embedded")]
+    [InlineData("UpdateProjectSetupGoals", 0x2029, "trailing")]
+    [InlineData("UpdateProjectSetupInstructions", 0x2028, "leading")]
+    [InlineData("UpdateProjectSetupInstructions", 0x2028, "embedded")]
+    [InlineData("UpdateProjectSetupInstructions", 0x2028, "trailing")]
+    [InlineData("UpdateProjectSetupInstructions", 0x2029, "leading")]
+    [InlineData("UpdateProjectSetupInstructions", 0x2029, "embedded")]
+    [InlineData("UpdateProjectSetupInstructions", 0x2029, "trailing")]
+    [InlineData("SetProjectFolder", 0x2028, "leading")]
+    [InlineData("SetProjectFolder", 0x2028, "embedded")]
+    [InlineData("SetProjectFolder", 0x2028, "trailing")]
+    [InlineData("SetProjectFolder", 0x2029, "leading")]
+    [InlineData("SetProjectFolder", 0x2029, "embedded")]
+    [InlineData("SetProjectFolder", 0x2029, "trailing")]
+    [InlineData("LinkFileReference", 0x2028, "leading")]
+    [InlineData("LinkFileReference", 0x2028, "embedded")]
+    [InlineData("LinkFileReference", 0x2028, "trailing")]
+    [InlineData("LinkFileReference", 0x2029, "leading")]
+    [InlineData("LinkFileReference", 0x2029, "embedded")]
+    [InlineData("LinkFileReference", 0x2029, "trailing")]
+    [InlineData("LinkMemory", 0x2028, "leading")]
+    [InlineData("LinkMemory", 0x2028, "embedded")]
+    [InlineData("LinkMemory", 0x2028, "trailing")]
+    [InlineData("LinkMemory", 0x2029, "leading")]
+    [InlineData("LinkMemory", 0x2029, "embedded")]
+    [InlineData("LinkMemory", 0x2029, "trailing")]
+    public void SeparatorMetadata_MatchesRealDomainValidator(
+        string operation,
+        int separatorCodePoint,
+        string position)
+    {
+        string value = PositionedValue("Synthetic Project", (char)separatorCodePoint, position);
+
+        (ProjectCommandValidationResult Domain, string Generated) fingerprints = MutationFingerprints(operation, value);
+
+        fingerprints.Domain.IsAccepted.ShouldBeTrue();
+        fingerprints.Domain.IdempotencyFingerprint.ShouldBe(fingerprints.Generated);
+    }
+
+    [Theory]
+    [InlineData("SetProjectFolder", 0x2028)]
+    [InlineData("SetProjectFolder", 0x2029)]
+    [InlineData("LinkFileReference", 0x2028)]
+    [InlineData("LinkFileReference", 0x2029)]
+    [InlineData("LinkMemory", 0x2028)]
+    [InlineData("LinkMemory", 0x2029)]
+    public void SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator(
+        string operation,
+        int separatorCodePoint)
+    {
+        (ProjectCommandValidationResult Domain, string Generated) fingerprints = MutationFingerprints(
+            operation,
+            ((char)separatorCodePoint).ToString());
+
+        fingerprints.Domain.IsAccepted.ShouldBeTrue();
+        fingerprints.Domain.IdempotencyFingerprint.ShouldBe(fingerprints.Generated);
+    }
+
+    [Theory]
+    [InlineData("CreateProject", 0x2028)]
+    [InlineData("CreateProject", 0x2029)]
+    [InlineData("UpdateProjectSetupGoals", 0x2028)]
+    [InlineData("UpdateProjectSetupGoals", 0x2029)]
+    [InlineData("UpdateProjectSetupInstructions", 0x2028)]
+    [InlineData("UpdateProjectSetupInstructions", 0x2029)]
+    [InlineData("SetProjectFolder", 0x2028)]
+    [InlineData("SetProjectFolder", 0x2029)]
+    [InlineData("LinkFileReference", 0x2028)]
+    [InlineData("LinkFileReference", 0x2029)]
+    [InlineData("LinkMemory", 0x2028)]
+    [InlineData("LinkMemory", 0x2029)]
+    public void SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(
+        string operation,
+        int separatorCodePoint)
+    {
+        ArgumentNullException.ThrowIfNull(operation);
+        int maximum = operation.StartsWith("UpdateProjectSetup", StringComparison.Ordinal) ? 512 : 160;
+        string value = (char)separatorCodePoint + new string('a', maximum - 1);
+
+        (ProjectCommandValidationResult Domain, string Generated) fingerprints = MutationFingerprints(operation, value);
+
+        fingerprints.Domain.IsAccepted.ShouldBeTrue();
+        fingerprints.Domain.IdempotencyFingerprint.ShouldBe(fingerprints.Generated);
+    }
+
+    [Theory]
+    [InlineData("CreateProject")]
+    [InlineData("UpdateProjectSetupGoals")]
+    [InlineData("UpdateProjectSetupInstructions")]
+    [InlineData("SetProjectFolder")]
+    [InlineData("LinkFileReference")]
+    [InlineData("LinkMemory")]
+    public void MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct(string operation)
+    {
+        string[] hashes =
+        [
+            MutationFingerprints(operation, "Synthetic Project").Generated,
+            GeneratedMutationFingerprint(operation, "Synthetic\nProject"),
+            GeneratedMutationFingerprint(operation, "Synthetic\u2028Project"),
+            GeneratedMutationFingerprint(operation, "Synthetic\u2029Project"),
+            GeneratedMutationFingerprint(operation, "Synthetic\\u2028Project"),
+            GeneratedMutationFingerprint(operation, "Synthetic\\u2029Project"),
+        ];
+
+        hashes.Distinct(StringComparer.Ordinal).Count().ShouldBe(hashes.Length);
+    }
+
+    [Fact]
+    public void CreateProjectSeparatorFingerprints_ArePinnedAndDifferFromLegacyRawSeparators()
+    {
+        ProjectCommandValidationResult line = MutationFingerprints("CreateProject", "Synthetic\u2028Project").Domain;
+        ProjectCommandValidationResult paragraph = MutationFingerprints("CreateProject", "Synthetic\u2029Project").Domain;
+
+        line.IdempotencyFingerprint.ShouldBe("sha256:b8926519ad4db0115ce4d82416caf8ca9fb27fedd087fc90eb0032104f850d78");
+        paragraph.IdempotencyFingerprint.ShouldBe("sha256:358216e481d29223f697a3a0023f5fe41ea8904894bd271c592b2fb7dec272bf");
+        line.IdempotencyFingerprint.ShouldNotBe(ExpectedHash(
+            "operation=CreateProject",
+            "field=project_metadata.display_name;present=true;value=s:Synthetic\u2028Project",
             "field=request_schema_version;present=true;value=s:v1"));
     }
 
@@ -862,6 +999,156 @@ public sealed class ClientGenerationTests
         generated.ShouldNotContain("credential_material", Case.Insensitive);
         generated.ShouldNotContain("-----BEGIN", Case.Insensitive);
     }
+
+    private static (ProjectCommandValidationResult Domain, string Generated) MutationFingerprints(
+        string operation,
+        string value)
+    {
+        const string projectId = "project_01HZY7Z6N7J4Q2X8Y9V0A1B2C3";
+        const string folderId = "folder_01HZY7Z6N7J4Q2X8Y9V0A1B2C7";
+        const string fileId = "file_01HZY7Z6N7J4Q2X8Y9V0A1B2D1";
+        const string memoryId = "case_01HZY7Z6N7J4Q2X8Y9V0A1B2E1";
+
+        return operation switch
+        {
+            "CreateProject" => (
+                ProjectCommandValidator.Validate(new DomainCommands.CreateProject(
+                    "tenant-a",
+                    new DomainIdentifiers.ProjectId(projectId),
+                    value,
+                    null,
+                    null,
+                    "actor-a",
+                    "correlation-a",
+                    "task-a",
+                    "idempotency-a")),
+                new CreateProjectRequest
+                {
+                    RequestSchemaVersion = CreateProjectRequestRequestSchemaVersion.V1,
+                    ProjectMetadata = new ProjectMetadata
+                    {
+                        DisplayName = value,
+                        MetadataClass = SensitiveMetadataTier.Tenant_sensitive,
+                    },
+                }.ComputeIdempotencyHash()),
+            "UpdateProjectSetupGoals" => SetupFingerprints(value, separatorInGoals: true, projectId),
+            "UpdateProjectSetupInstructions" => SetupFingerprints(value, separatorInGoals: false, projectId),
+            "SetProjectFolder" => (
+                ProjectCommandValidator.Validate(new DomainCommands.SetProjectFolder(
+                    "tenant-a",
+                    new DomainIdentifiers.ProjectId(projectId),
+                    folderId,
+                    new DomainModels.ProjectFolderMetadata(value),
+                    ReplacementConfirmed: true,
+                    "actor-a",
+                    "correlation-a",
+                    "task-a",
+                    "idempotency-a")),
+                new SetProjectFolderRequest
+                {
+                    RequestSchemaVersion = SetProjectFolderRequestRequestSchemaVersion.V1,
+                    Operation = SetProjectFolderRequestOperation.Set,
+                    ProjectId = projectId,
+                    FolderId = folderId,
+                    FolderMetadata = new ProjectFolderMetadata { DisplayName = value },
+                    ReplacementConfirmed = true,
+                }.ComputeIdempotencyHash(projectId)),
+            "LinkFileReference" => (
+                ProjectCommandValidator.Validate(new DomainCommands.LinkFileReference(
+                    "tenant-a",
+                    new DomainIdentifiers.ProjectId(projectId),
+                    fileId,
+                    folderId,
+                    new DomainModels.ProjectFileReferenceMetadata(value),
+                    "actor-a",
+                    "correlation-a",
+                    "task-a",
+                    "idempotency-a")),
+                new LinkFileReferenceRequest
+                {
+                    RequestSchemaVersion = LinkFileReferenceRequestRequestSchemaVersion.V1,
+                    Operation = LinkFileReferenceRequestOperation.Link,
+                    ProjectId = projectId,
+                    FileReferenceId = fileId,
+                    FolderId = folderId,
+                    WorkspaceId = "workspace-a",
+                    FilePath = "docs/file.md",
+                    FileMetadata = new ProjectFileReferenceMetadata { DisplayName = value },
+                }.ComputeIdempotencyHash(projectId, fileId)),
+            "LinkMemory" => (
+                ProjectCommandValidator.Validate(new DomainCommands.LinkMemory(
+                    "tenant-a",
+                    new DomainIdentifiers.ProjectId(projectId),
+                    memoryId,
+                    new DomainModels.ProjectMemoryReferenceMetadata(value),
+                    "actor-a",
+                    "correlation-a",
+                    "task-a",
+                    "idempotency-a")),
+                new LinkMemoryRequest
+                {
+                    RequestSchemaVersion = LinkMemoryRequestRequestSchemaVersion.V1,
+                    Operation = LinkMemoryRequestOperation.Link,
+                    ProjectId = projectId,
+                    MemoryReferenceId = memoryId,
+                    MemoryMetadata = new ProjectMemoryReferenceMetadata { DisplayName = value },
+                }.ComputeIdempotencyHash(projectId, memoryId)),
+            _ => throw new ArgumentOutOfRangeException(nameof(operation), operation, "Unknown mutation operation."),
+        };
+    }
+
+    private static (ProjectCommandValidationResult Domain, string Generated) SetupFingerprints(
+        string value,
+        bool separatorInGoals,
+        string projectId)
+    {
+        string[] goals = separatorInGoals ? [value, "  sibling goal  "] : ["  sibling goal  "];
+        string[] instructions = separatorInGoals ? ["  sibling instruction  "] : [value, "  sibling instruction  "];
+        var domainSetup = new DomainModels.ProjectSetup(
+            goals,
+            instructions,
+            [DomainModels.ProjectContextSourceKind.Conversation],
+            [DomainModels.ProjectContextSourceKind.FileReference],
+            new DomainModels.ConversationStartDefaults(DomainModels.LinkedSourcePolicy.AuthorizedReferences));
+        var generatedSetup = new ProjectSetup
+        {
+            Goals = goals,
+            UserInstructions = instructions,
+            PreferredSourceKinds = [ProjectContextSourceKind.Conversation],
+            ExcludedSourceKinds = [ProjectContextSourceKind.FileReference],
+            ConversationStartDefaults = new ConversationStartDefaults
+            {
+                LinkedSourcePolicy = LinkedSourcePolicy.AuthorizedReferences,
+            },
+        };
+
+        return (
+            ProjectCommandValidator.Validate(new DomainCommands.UpdateProjectSetup(
+                "tenant-a",
+                new DomainIdentifiers.ProjectId(projectId),
+                domainSetup,
+                "actor-a",
+                "correlation-a",
+                "task-a",
+                "idempotency-a")),
+            new UpdateProjectSetupRequest
+            {
+                RequestSchemaVersion = UpdateProjectSetupRequestRequestSchemaVersion.V1,
+                ProjectSetup = generatedSetup,
+            }.ComputeIdempotencyHash());
+    }
+
+    private static string GeneratedMutationFingerprint(string operation, string value)
+        => MutationFingerprints(operation, value).Generated;
+
+    private static string PositionedValue(string value, char separator, string position)
+        => position switch
+        {
+            "leading" => separator + value,
+            "embedded" => value.Insert(value.Length / 2, separator.ToString()),
+            "trailing" => value + separator,
+            _ => throw new ArgumentOutOfRangeException(nameof(position), position, "Unknown separator position."),
+        };
 
     private static string ExpectedHash(params string[] lines)
     {

@@ -29,6 +29,10 @@ using Microsoft.AspNetCore.Http;
 /// <summary>Story 4.5 endpoints for NoMatch new-Project proposal preview and confirmation.</summary>
 public static partial class ProjectsDomainServiceEndpoints
 {
+    private const int ProposalDisplayNameMaxLength = 160;
+    private const int ProposalDescriptionMaxLength = 512;
+    private const int ProposalSetupMetadataMaxLength = 512;
+
     private static async Task<IResult> ProposeNewProjectAsync(
         HttpContext httpContext,
         IProjectTenantContextAccessor tenantContext,
@@ -606,8 +610,25 @@ public static partial class ProjectsDomainServiceEndpoints
 
         if (body.ProjectMetadata is null
             || string.IsNullOrWhiteSpace(body.ProjectMetadata.DisplayName)
-            || !SensitiveMetadataTierValidator.IsValid(body.ProjectMetadata.MetadataClass)
-            || !ProjectCreationProposalBuilder.IsSafeCreateMetadata(body.ProjectMetadata.DisplayName!, body.Description, body.SetupMetadata))
+            || !SensitiveMetadataTierValidator.IsValid(body.ProjectMetadata.MetadataClass))
+        {
+            rejectedField = "projectMetadata";
+            return false;
+        }
+
+        if (UsesRawFingerprintMetadata(body)
+            && (body.ProjectMetadata.DisplayName!.Length > ProposalDisplayNameMaxLength
+                || (body.Description?.Length ?? 0) > ProposalDescriptionMaxLength
+                || (body.SetupMetadata?.Length ?? 0) > ProposalSetupMetadataMaxLength))
+        {
+            rejectedField = "projectMetadata";
+            return false;
+        }
+
+        if (!ProjectCreationProposalBuilder.IsSafeCreateMetadata(
+            body.ProjectMetadata.DisplayName!,
+            body.Description,
+            body.SetupMetadata))
         {
             rejectedField = "projectMetadata";
             return false;
@@ -720,8 +741,16 @@ public static partial class ProjectsDomainServiceEndpoints
             .OrderBy(static id => id, StringComparer.Ordinal)
             .ToArray();
         string? folderId = body.Folder?.FolderId;
-        string? description = string.IsNullOrWhiteSpace(body.Description) ? null : body.Description.Trim();
-        string? setupMetadata = string.IsNullOrWhiteSpace(body.SetupMetadata) ? null : body.SetupMetadata.Trim();
+        bool useRawMetadata = UsesRawFingerprintMetadata(body);
+        string displayName = useRawMetadata
+            ? body.ProjectMetadata!.DisplayName!
+            : body.ProjectMetadata!.DisplayName!.Trim();
+        string? description = useRawMetadata
+            ? body.Description
+            : string.IsNullOrWhiteSpace(body.Description) ? null : body.Description.Trim();
+        string? setupMetadata = useRawMetadata
+            ? body.SetupMetadata
+            : string.IsNullOrWhiteSpace(body.SetupMetadata) ? null : body.SetupMetadata.Trim();
 
         string[] lines =
         [
@@ -732,7 +761,7 @@ public static partial class ProjectsDomainServiceEndpoints
             "field=folder.folder_id;present=" + (string.IsNullOrWhiteSpace(folderId) ? "false;value=omitted" : "true;value=s:" + EscapeFingerprint(folderId!)),
             "field=operation;present=true;value=s:confirmNewProjectProposal",
             "field=project_id;present=true;value=s:" + EscapeFingerprint(body.ProjectId!),
-            "field=project_metadata.display_name;present=true;value=s:" + EscapeFingerprint(body.ProjectMetadata!.DisplayName!.Trim()),
+            "field=project_metadata.display_name;present=true;value=s:" + EscapeFingerprint(displayName),
             "field=request_schema_version;present=true;value=s:v1",
             "field=resolution_result;present=true;value=s:NoMatch",
             "field=setup_metadata;present=true;value=" + (setupMetadata is null ? "null" : "s:" + EscapeFingerprint(setupMetadata)),
@@ -753,6 +782,8 @@ public static partial class ProjectsDomainServiceEndpoints
                 '\t' => "\\t",
                 '\r' => "\\r",
                 '\n' => "\\n",
+                '\u2028' => "\\u2028",
+                '\u2029' => "\\u2029",
                 ';' => "\\;",
                 '=' => "\\=",
                 _ when char.IsControl(c) => "\\u" + ((int)c).ToString("x4", System.Globalization.CultureInfo.InvariantCulture),
@@ -762,6 +793,14 @@ public static partial class ProjectsDomainServiceEndpoints
 
         return builder.ToString();
     }
+
+    private static bool UsesRawFingerprintMetadata(ConfirmNewProjectProposalHttpRequest body)
+        => ContainsFingerprintSeparator(body.ProjectMetadata?.DisplayName)
+            || ContainsFingerprintSeparator(body.Description)
+            || ContainsFingerprintSeparator(body.SetupMetadata);
+
+    private static bool ContainsFingerprintSeparator(string? value)
+        => value?.IndexOfAny(['\u2028', '\u2029']) >= 0;
 
     private static string EscapeJson(string value)
         => value.Replace("\\", "\\\\", StringComparison.Ordinal).Replace("\"", "\\\"", StringComparison.Ordinal);
