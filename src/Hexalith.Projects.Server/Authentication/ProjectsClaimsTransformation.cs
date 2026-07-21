@@ -36,30 +36,30 @@ public sealed class ProjectsClaimsTransformation : IClaimsTransformation
             return Task.FromResult(principal);
         }
 
-        if (principal.FindFirst(EventStoreTenantClaimType) is null)
+        if (identity.FindFirst(EventStoreTenantClaimType) is null)
         {
-            AddTenantClaims(principal, identity);
+            AddTenantClaims(identity);
         }
 
-        string? principalId = principal.FindFirstValue(ClaimTypes.NameIdentifier) ?? principal.FindFirstValue("sub");
-        if (!string.IsNullOrWhiteSpace(principalId) && principal.FindFirst(ClaimTypes.NameIdentifier) is null)
+        string? principalId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? identity.FindFirst("sub")?.Value;
+        if (!string.IsNullOrWhiteSpace(principalId) && identity.FindFirst(ClaimTypes.NameIdentifier) is null)
         {
             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, principalId));
         }
 
-        if (principal.FindFirst(EventStorePermissionClaimType) is null)
+        if (identity.FindFirst(EventStorePermissionClaimType) is null)
         {
-            AddClaimsFromJwt(principal, identity, PermissionsClaimType, EventStorePermissionClaimType);
+            AddClaimsFromJwt(identity, PermissionsClaimType, EventStorePermissionClaimType);
         }
 
         return Task.FromResult(principal);
     }
 
-    private static void AddTenantClaims(ClaimsPrincipal principal, ClaimsIdentity identity)
+    private static void AddTenantClaims(ClaimsIdentity identity)
     {
-        string? tenant = principal.FindFirstValue(TenantClaimType)
-            ?? principal.FindFirstValue(TenantIdClaimType)
-            ?? principal.FindFirstValue(TidClaimType);
+        string? tenant = identity.FindFirst(TenantClaimType)?.Value
+            ?? identity.FindFirst(TenantIdClaimType)?.Value
+            ?? identity.FindFirst(TidClaimType)?.Value;
 
         if (!string.IsNullOrWhiteSpace(tenant))
         {
@@ -67,16 +67,15 @@ public sealed class ProjectsClaimsTransformation : IClaimsTransformation
             return;
         }
 
-        AddClaimsFromJwt(principal, identity, TenantsClaimType, EventStoreTenantClaimType);
+        AddClaimsFromJwt(identity, TenantsClaimType, EventStoreTenantClaimType);
     }
 
     private static void AddClaimsFromJwt(
-        ClaimsPrincipal principal,
         ClaimsIdentity identity,
         string sourceClaimType,
         string targetClaimType)
     {
-        foreach (Claim sourceClaim in principal.FindAll(sourceClaimType).ToArray())
+        foreach (Claim sourceClaim in identity.FindAll(sourceClaimType).ToArray())
         {
             foreach (string value in SplitClaimValues(sourceClaim.Value))
             {

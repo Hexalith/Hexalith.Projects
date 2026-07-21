@@ -7,6 +7,8 @@ namespace Hexalith.Projects.Server.Tests;
 
 using System.Security.Claims;
 
+using Hexalith.EventStore.Authorization;
+using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Server;
 
@@ -109,6 +111,86 @@ public sealed class ProjectsClaimsTransformationTests
     }
 
     [Fact]
+    public async Task TransformAsync_ShouldNotReadEvidenceFromAnotherIdentity()
+    {
+        ClaimsIdentity authenticatedIdentity = new(
+            [
+                new Claim("tenant_id", "tenant-a"),
+                new Claim("sub", "actor-a"),
+                new Claim("permissions", "[\"projects:read\"]"),
+            ],
+            authenticationType: "validated-jwt");
+        ClaimsIdentity untrustedIdentity = new(
+            [
+                new Claim("eventstore:tenant", "tenant-b"),
+                new Claim(ClaimTypes.NameIdentifier, "actor-b"),
+                new Claim("eventstore:permission", "projects:create"),
+            ]);
+        ClaimsPrincipal principal = new([authenticatedIdentity, untrustedIdentity]);
+
+        _ = await new ProjectsClaimsTransformation().TransformAsync(principal).ConfigureAwait(true);
+
+        authenticatedIdentity.FindFirst("eventstore:tenant")?.Value.ShouldBe("tenant-a");
+        authenticatedIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value.ShouldBe("actor-a");
+        authenticatedIdentity.FindAll("eventstore:permission").Select(static claim => claim.Value).ShouldBe(["projects:read"]);
+        authenticatedIdentity.HasClaim("eventstore:tenant", "tenant-b").ShouldBeFalse();
+        authenticatedIdentity.HasClaim("eventstore:permission", "projects:create").ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task TransformAndP2Envelope_ShouldPreserveDualPrincipalEvidenceAtEventStoreBoundary(bool delegated)
+    {
+        List<Claim> claims =
+        [
+            new Claim("sub", "actor-a"),
+            new Claim("azp", "projects-gateway"),
+            new Claim("client_id", "projects-gateway"),
+            new Claim("scope", "projects.read projects.list"),
+            new Claim("aud", "hexalith-projects"),
+            new Claim("aud", "hexalith-eventstore"),
+            new Claim("tenant_id", "tenant-a"),
+            new Claim("permissions", "[\"projects:read\"]"),
+        ];
+        if (delegated)
+        {
+            claims.Add(new Claim("act", "{\"sub\":\"delegation-a\"}"));
+        }
+
+        ClaimsPrincipal principal = new(new ClaimsIdentity(claims, authenticationType: "validated-jwt"));
+        ClaimsPrincipal transformed = await new ProjectsClaimsTransformation()
+            .TransformAsync(principal)
+            .ConfigureAwait(true);
+        DualPrincipalIdentity dualPrincipal = DualPrincipalClaimsHelper.Extract(transformed, "actor-a");
+
+        QueryEnvelope envelope = new(
+            tenantId: "tenant-a",
+            domain: "projects",
+            aggregateId: "project-a",
+            queryType: "GetProject",
+            payload: [],
+            correlationId: "correlation-a",
+            userId: "actor-a",
+            entityId: null,
+            isGlobalAdmin: false,
+            paging: null,
+            originalActorId: dualPrincipal.OriginalActorId,
+            authenticatedWorkloadId: dualPrincipal.AuthenticatedWorkloadId,
+            isDelegated: dualPrincipal.IsDelegated,
+            scopes: dualPrincipal.Scopes,
+            audience: dualPrincipal.Audience,
+            delegationId: dualPrincipal.DelegationId);
+
+        envelope.OriginalActorId.ShouldBe("actor-a");
+        envelope.AuthenticatedWorkloadId.ShouldBe("projects-gateway");
+        envelope.IsDelegated.ShouldBe(delegated);
+        envelope.DelegationId.ShouldBe(delegated ? "delegation-a" : null);
+        envelope.Scopes.ShouldBe(["projects.read", "projects.list"]);
+        envelope.Audience.ShouldBe(["hexalith-projects", "hexalith-eventstore"]);
+    }
+
+    [Fact]
     public async Task TransformAsync_ShouldNotSynthesizeMalformedDelegationEvidence()
     {
         ClaimsPrincipal principal = new(
@@ -127,5 +209,6 @@ public sealed class ProjectsClaimsTransformationTests
 
         transformed.FindFirst("eventstore:delegation").ShouldBeNull();
         transformed.FindFirst("delegationId").ShouldBeNull();
+        DualPrincipalClaimsHelper.Extract(transformed, "actor-a").DelegationId.ShouldBeNull();
     }
 }

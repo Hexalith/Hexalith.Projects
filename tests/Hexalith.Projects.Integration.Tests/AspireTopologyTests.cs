@@ -5,6 +5,8 @@
 
 namespace Hexalith.Projects.Integration.Tests;
 
+using System.Text.Json;
+
 using global::Aspire.Hosting;
 using global::Aspire.Hosting.ApplicationModel;
 
@@ -78,7 +80,7 @@ public sealed class AspireTopologyTests
         appHost.ShouldContain("AddHexalithEventStoreSecurity(");
         appHost.ShouldContain("eventStore.WithJwtBearerSecurity(security)");
         appHost.ShouldContain("tenants.WithJwtBearerSecurity(security)");
-        appHost.ShouldContain("projects.WithJwtBearerSecurity(security)");
+        appHost.ShouldContain("_ = projects\n        .WithJwtBearerSecurity(security)");
         appHost.ShouldContain("projectsWorkers.WithSecurityDependency(security)");
         appHost.ShouldContain("projectsUi.WithSecurityDependency(security)");
         appHost.ShouldNotContain("AddKeycloak(\"keycloak\"");
@@ -88,14 +90,41 @@ public sealed class AspireTopologyTests
         appHostProject.ShouldNotContain("Aspire.Hosting.Keycloak");
     }
 
-    /// <summary>Verifies anonymous startup is represented only as an explicit Development bypass.</summary>
+    /// <summary>Verifies AppHost-provided OIDC always disables the diagnostic bypass.</summary>
     [Fact]
-    public void AppHostShouldScopeAnonymousBypassToDevelopment()
+    public void AppHostShouldDisableAnonymousBypassWhenOidcIsWired()
     {
         string appHost = File.ReadAllText(Path.Combine(ProjectRoot(), "src", "Hexalith.Projects.AppHost", "Program.cs"));
 
-        appHost.ShouldContain("builder.Environment.IsDevelopment()");
         appHost.ShouldContain("Authentication__JwtBearer__AllowAnonymousDevelopment");
+        appHost.ShouldContain("\"false\"");
+        appHost.ShouldNotContain("Authentication__JwtBearer__AllowAnonymousDevelopment\", \"true");
+    }
+
+    /// <summary>Verifies only the explicitly named diagnostic profile enables anonymous startup.</summary>
+    [Fact]
+    public void ServerLaunchProfilesShouldKeepDefaultOidcCapableAndNameTheAnonymousDiagnosticProfile()
+    {
+        string launchSettingsPath = Path.Combine(
+            ProjectRoot(),
+            "src",
+            "Hexalith.Projects.Server",
+            "Properties",
+            "launchSettings.json");
+        using JsonDocument launchSettings = JsonDocument.Parse(File.ReadAllText(launchSettingsPath));
+        JsonElement profiles = launchSettings.RootElement.GetProperty("profiles");
+
+        profiles
+            .GetProperty("http")
+            .GetProperty("environmentVariables")
+            .TryGetProperty("Authentication__JwtBearer__AllowAnonymousDevelopment", out _)
+            .ShouldBeFalse();
+        profiles
+            .GetProperty("anonymous-diagnostics")
+            .GetProperty("environmentVariables")
+            .GetProperty("Authentication__JwtBearer__AllowAnonymousDevelopment")
+            .GetString()
+            .ShouldBe("true");
     }
 
     /// <summary>Verifies the resource record remains a complete topology contract.</summary>

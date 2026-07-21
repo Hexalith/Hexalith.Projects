@@ -37,11 +37,10 @@ public sealed class ValidateProjectsAuthenticationOptions(IHostEnvironment envir
                 "Authentication:JwtBearer:Authority must be configured unless an explicit Development bypass is enabled.");
         }
 
-        if (!Uri.TryCreate(options.Authority, UriKind.Absolute, out Uri? authority)
-            || authority is null
-            || string.IsNullOrWhiteSpace(authority.Host))
+        if (!TryCreateOidcUri(options.Authority, out Uri? authority))
         {
-            return ValidateOptionsResult.Fail("Authentication:JwtBearer:Authority must be an absolute URI.");
+            return ValidateOptionsResult.Fail(
+                "Authentication:JwtBearer:Authority must be an absolute HTTP or HTTPS URI without user info, query, or fragment.");
         }
 
         if (string.IsNullOrWhiteSpace(options.Issuer))
@@ -49,19 +48,50 @@ public sealed class ValidateProjectsAuthenticationOptions(IHostEnvironment envir
             return ValidateOptionsResult.Fail("Authentication:JwtBearer:Issuer must be configured.");
         }
 
+        if (!TryCreateOidcUri(options.Issuer, out Uri? issuer))
+        {
+            return ValidateOptionsResult.Fail(
+                "Authentication:JwtBearer:Issuer must be an absolute HTTP or HTTPS URI without user info, query, or fragment.");
+        }
+
         if (string.IsNullOrWhiteSpace(options.Audience))
         {
             return ValidateOptionsResult.Fail("Authentication:JwtBearer:Audience must be configured.");
         }
 
-        if (!isDevelopment
-            && (!options.RequireHttpsMetadata
-                || !string.Equals(authority.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)))
+        if (options.RequireHttpsMetadata
+            && !string.Equals(authority!.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
         {
             return ValidateOptionsResult.Fail(
-                "Production authentication requires an HTTPS OIDC authority and HTTPS metadata discovery.");
+                "HTTPS metadata discovery requires an HTTPS Authentication:JwtBearer:Authority.");
+        }
+
+        if (!isDevelopment
+            && (!options.RequireHttpsMetadata
+                || !string.Equals(authority!.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
+                || !string.Equals(issuer!.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)))
+        {
+            return ValidateOptionsResult.Fail(
+                "Production authentication requires HTTPS OIDC authority, issuer, and metadata discovery.");
         }
 
         return ValidateOptionsResult.Success;
+    }
+
+    private static bool TryCreateOidcUri(string? value, out Uri? uri)
+    {
+        if (!Uri.TryCreate(value, UriKind.Absolute, out uri)
+            || uri is null
+            || string.IsNullOrWhiteSpace(uri.Host)
+            || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)
+            || !string.IsNullOrEmpty(uri.UserInfo)
+            || !string.IsNullOrEmpty(uri.Query)
+            || !string.IsNullOrEmpty(uri.Fragment))
+        {
+            uri = null;
+            return false;
+        }
+
+        return true;
     }
 }

@@ -80,18 +80,11 @@ public static class ProjectsAuthenticationServiceCollectionExtensions
     }
 
     private static ProjectsAuthenticationOptions ReadConfiguration(IConfigurationSection section)
-        => new()
-        {
-            Authority = section[nameof(ProjectsAuthenticationOptions.Authority)],
-            Issuer = section[nameof(ProjectsAuthenticationOptions.Issuer)],
-            Audience = section[nameof(ProjectsAuthenticationOptions.Audience)],
-            RequireHttpsMetadata = !string.Equals(
-                section[nameof(ProjectsAuthenticationOptions.RequireHttpsMetadata)],
-                "false",
-                StringComparison.OrdinalIgnoreCase),
-            AllowAnonymousDevelopment = string.Equals(
-                section[nameof(ProjectsAuthenticationOptions.AllowAnonymousDevelopment)],
-                "true",
-                StringComparison.OrdinalIgnoreCase),
-        };
+    {
+        ArgumentNullException.ThrowIfNull(section);
+
+        // Use the same configuration binder as the registered options pipeline. A hand-written
+        // parser can otherwise activate a different authentication mode than ValidateOnStart sees.
+        return section.Get<ProjectsAuthenticationOptions>() ?? new ProjectsAuthenticationOptions();
+    }
 }

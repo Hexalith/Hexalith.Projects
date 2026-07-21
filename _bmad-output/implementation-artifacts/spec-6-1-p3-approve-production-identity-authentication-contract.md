@@ -2,7 +2,7 @@
 title: 'Approve the production identity and authentication contract'
 type: 'feature'
 created: '2026-07-19'
-status: 'in-review'
+status: 'in-progress'
 baseline_commit: 'd4a69ad9a640294e849444a60d7ddfbd0468f91a'
 review_loop_iteration: 0
 context:
@@ -49,8 +49,8 @@ query envelope/helper into Projects; do not commit production credentials or swi
 |----------|--------------|---------------------------|----------------|
 | Production startup | Missing/blank authority, issuer, audience, or insecure metadata setting | Host fails validation before serving protected endpoints | Deterministic startup/configuration failure; no anonymous fallback |
 | Development bypass | `Development` environment and explicit bypass flag | Host may start without OIDC only for local diagnostics | Same flag in Production is rejected |
-| Valid token | Trusted issuer/audience, lifetime, signature, and required Projects scope/permission | Existing authorization gate receives normalized identity; accepted P2 envelope keeps actor/workload/delegation distinct | Missing required authorization fails closed with safe denial |
-| Invalid identity | Wrong issuer/audience, expired token, malformed delegation, or absent scope | No protected Project data is returned; malformed optional delegation remains unknown | Authentication failure or safe authorization denial; no claim detail disclosure |
+| Valid token | Trusted issuer/audience, lifetime, signature, and required Projects permission | Existing authorization gate receives normalized identity; accepted P2 envelope keeps actor/workload/delegation distinct and preserves scopes as routing metadata | Missing required permission fails closed with safe denial |
+| Invalid identity | Wrong issuer/audience, expired token, malformed delegation, or absent required permission | No protected Project data is returned; malformed optional delegation remains unknown | Authentication failure or safe authorization denial; no claim detail disclosure |
 
 </frozen-after-approval>
 
@@ -72,44 +72,47 @@ query envelope/helper into Projects; do not commit production credentials or swi
 - [x] `src/Hexalith.Projects.Server/Authentication/ProjectsAuthenticationServiceCollectionExtensions.cs` and `src/Hexalith.Projects.Server/Program.cs` -- register validated bearer authentication/authorization and an explicit Development-only bypass -- preserve the existing endpoint gate and safe denial.
 - [x] `src/Hexalith.Projects.Server/Authentication/ProjectsClaimsTransformation.cs` -- align normalized claims with the accepted P2 mapping without synthesizing missing actor, workload, delegation, scope, or audience evidence -- keep identity provenance authoritative.
 - [x] `src/Hexalith.Projects.AppHost/Program.cs` and `src/Hexalith.Projects.AppHost/KeycloakRealms/hexalith-realm.json` -- make local fixture wiring explicit and keep production secret/config ownership external -- prevent dev credentials from becoming deployment defaults.
-- [x] `tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs` and related existing tests -- cover startup/configuration, valid/invalid token claims, delegated/non-delegated mapping, missing scope, and safe-denial behavior -- create the P3 verification fixture set.
+- [x] `tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs` and related existing tests -- cover startup/configuration, valid/invalid token claims, delegated/non-delegated mapping, scope preservation, missing permission, and safe-denial behavior -- create the P3 verification fixture set.
 - [x] `docs/runbooks/projects-production-identity-contract.md` -- record configuration keys, owner responsibilities, fixture commands, accepted P2 pin, and rollback procedure -- make the approval and deployment boundary reviewable.
 
 **Acceptance Criteria:**
 - Given a Production host, when required OIDC configuration is absent or insecure, then startup fails before protected endpoints can serve anonymously.
 - Given an explicit Development bypass, when the environment is not Development, then validation rejects it and no bypass is activated.
 - Given valid non-delegated or delegated token claims, when Projects forwards the authenticated request, then the P2 envelope preserves original actor, workload, delegation, scopes, and audience separately; malformed optional delegation remains unknown.
-- Given invalid issuer/audience, expired credentials, absent required scope/permission, or cross-Tenant access, when a protected read is attempted, then no protected metadata is disclosed and the existing safe-denial contract remains intact.
+- Given invalid issuer/audience, expired credentials, absent required permission, or cross-Tenant access, when a protected read is attempted, then no protected metadata is disclosed and the existing safe-denial contract remains intact.
 - Given local and production configuration review, when the owner-approved fixture and rollback checks run, then no production secret is stored in the repository, the local Keycloak fixture is clearly development-only, and the accepted P2 revision/configuration can be reverted deterministically.
 
 ### Review Findings
 
-- [ ] [Review][Decision] HIGH — P3 advances while its required P2 dependency remains unaccepted — The P2 spec and sprint ledger still leave G-4 evidence, the acceptance record, release/source/package pins, rollback selection, and the P2 status transition open. P3's Ask First rule requires an accepted P2 mapping and revision before proceeding, so an owner must either pause P3 and restore its blocked state or supply the missing P2 acceptance and exact pins.
-- [ ] [Review][Decision] HIGH — The required-scope authorization policy contradicts the current P2 contract — P3 requires missing scope to fail authorization, but Projects authorizes from `eventstore:permission` only, while the P2 helper explicitly treats scopes as routing metadata rather than authorization input. Identity/Security, Projects, and Solution Architecture owners must select the exact required scope/permission rule and the boundary that enforces it.
-- [ ] [Review][Decision] HIGH — Deterministic rollback inputs and approvals are unavailable — The runbook names no exact owner-approved Projects revision, deployment configuration reference, rollback trigger, or approval record, and its P2 revision is both inaccurate as the root pin and explicitly pending acceptance. Owners must provide the exact Projects revision, accepted P2 source/package pin, configuration/secret ownership reference, rollback trigger, and approval date.
-- [ ] [Review][Patch] HIGH — Default launch profile keeps anonymous bypass active when Aspire injects OIDC [src/Hexalith.Projects.Server/Properties/launchSettings.json:11]
-- [ ] [Review][Patch] MEDIUM — Disabling bundled Keycloak also forces anonymous mode instead of honoring external Development OIDC [src/Hexalith.Projects.AppHost/Program.cs:57]
-- [ ] [Review][Patch] MEDIUM — Options binding and manual configuration parsing can select different authentication modes [src/Hexalith.Projects.Server/Authentication/ProjectsAuthenticationServiceCollectionExtensions.cs:32]
-- [ ] [Review][Patch] MEDIUM — Claim normalization can read authorization evidence from a different identity than the authenticated identity [src/Hexalith.Projects.Server/Authentication/ProjectsClaimsTransformation.cs:29]
-- [ ] [Review][Patch] HIGH — Startup fail-closed verification never starts the host and does not isolate all required-field and HTTPS guards [tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs:31]
-- [ ] [Review][Patch] HIGH — JWT middleware, protected safe-denial scenarios, and reproducible fixture commands are not exercised [tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs:149]
-- [ ] [Review][Patch] HIGH — P2 actor/workload/delegation mapping and token forwarding are not verified at the EventStore envelope boundary [tests/Hexalith.Projects.Server.Tests/ProjectsClaimsTransformationTests.cs:65]
-- [ ] [Review][Patch] MEDIUM — Development OIDC validation accepts unusable authority and metadata combinations [src/Hexalith.Projects.Server/Authentication/ValidateProjectsAuthenticationOptions.cs:40]
-- [ ] [Review][Patch] MEDIUM — Runbook misidentifies the root-pinned EventStore revision [docs/runbooks/projects-production-identity-contract.md:36]
-- [ ] [Review][Patch] MEDIUM — Unrelated FrontComposer submodule pointer bump is included in the P3 change [references/Hexalith.FrontComposer:1]
+- [x] [Review][Decision] HIGH — P3 advances while its required P2 dependency remains unaccepted — Resolved 2026-07-20: the EventStore-owned P2 spec is `done`; its implementation commits `58236cf3` and `b904322b` are contained by the current root-pinned EventStore revision `5c123ccb`. The remaining Projects-root P2 evidence bookkeeping is stale cross-repository planning, not an active EventStore dependency or a P3 code-review blocker.
+- [x] [Review][Decision] HIGH — The required-scope authorization policy contradicts the current P2 contract — Resolved 2026-07-20: `eventstore:permission` remains the Projects authorization input. Validated `scope`/`scp` claims are preserved as routing metadata in the accepted P2 envelope, but their absence does not independently authorize or deny a request.
+- [x] [Review][Decision] HIGH — Deterministic rollback inputs and approvals are unavailable — Resolved 2026-07-20: exact deployment release/package/configuration pins, approval evidence, and executable rollback selection belong to P4 release acceptance. P3 documents and verifies the authentication contract and rollback invariants without blocking its code review on artifacts that do not exist until release assembly.
+- [x] [Review][Patch] HIGH — Default launch profile keeps anonymous bypass active when Aspire injects OIDC [src/Hexalith.Projects.Server/Properties/launchSettings.json:11]
+- [x] [Review][Patch] MEDIUM — Disabling bundled Keycloak also forces anonymous mode instead of honoring external Development OIDC [src/Hexalith.Projects.AppHost/Program.cs:57]
+- [x] [Review][Patch] MEDIUM — Options binding and manual configuration parsing can select different authentication modes [src/Hexalith.Projects.Server/Authentication/ProjectsAuthenticationServiceCollectionExtensions.cs:32]
+- [x] [Review][Patch] MEDIUM — Claim normalization can read authorization evidence from a different identity than the authenticated identity [src/Hexalith.Projects.Server/Authentication/ProjectsClaimsTransformation.cs:29]
+- [x] [Review][Patch] HIGH — Startup fail-closed verification never starts the host and does not isolate all required-field and HTTPS guards [tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs:31]
+- [x] [Review][Patch] HIGH — JWT middleware, protected safe-denial scenarios, and reproducible fixture commands are not exercised [tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs:149]
+- [x] [Review][Patch] HIGH — P2 actor/workload/delegation mapping and token forwarding are not verified at the EventStore envelope boundary [tests/Hexalith.Projects.Server.Tests/ProjectsClaimsTransformationTests.cs:65]
+- [x] [Review][Patch] MEDIUM — Development OIDC validation accepts unusable authority and metadata combinations [src/Hexalith.Projects.Server/Authentication/ValidateProjectsAuthenticationOptions.cs:40]
+- [x] [Review][Patch] MEDIUM — Runbook misidentifies the root-pinned EventStore revision [docs/runbooks/projects-production-identity-contract.md:36]
+- [ ] [Review][Patch] MEDIUM — Unrelated FrontComposer submodule pointer bump is included in the P3 change [references/Hexalith.FrontComposer:1] — Not applied: removing it now requires rewriting committed P3 history or moving the user-owned FrontComposer checkout from `6a00bd95` back to `b0254994`; this remediation preserves both states.
 
 ## Design Notes
 
 The Projects host owns adoption and fail-closed startup policy; EventStore owns the dual-principal
 query-envelope implementation. The AppHost may inject authority/issuer/audience and clear any signing-key
 override for local OIDC, but production values must come from deployment-managed configuration or secret
-references. A missing scope is an authorization failure, not a token-parser excuse to expose claim data.
+references. `scope`/`scp` values remain forwarded routing metadata; action-specific
+`eventstore:permission` evidence is the fail-closed Projects authorization input.
 
 ## Verification
 
 **Commands:**
 - `dotnet test tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj --configuration Release` -- expected: authentication and existing server tests pass.
 - `dotnet test tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --configuration Release` -- expected: AppHost/access-control contract tests pass.
+
+**Results (2026-07-20):** 582/582 server tests and 20/20 integration tests passed in Release configuration with `--no-restore`.
 
 **Manual checks (if no CLI):**
 - Inspect the production configuration/secret references and rollback record; they must contain no committed credential and must reject the Development bypass outside Development.

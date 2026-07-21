@@ -4,8 +4,6 @@ using Hexalith.EventStore.Aspire;
 using Hexalith.Projects.AppHost;
 using Hexalith.Projects.Aspire;
 
-using Microsoft.Extensions.Hosting;
-
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
 string daprComponentsPath = ProjectsAppHost.ResolveDaprComponentsPath(
@@ -58,15 +56,12 @@ if (security is not null)
 {
     _ = eventStore.WithJwtBearerSecurity(security);
     _ = tenants.WithJwtBearerSecurity(security);
-    _ = projects.WithJwtBearerSecurity(security);
+    _ = projects
+        .WithJwtBearerSecurity(security)
+        // The project's default launch profile must never override AppHost-provided OIDC.
+        .WithEnvironment("Authentication__JwtBearer__AllowAnonymousDevelopment", "false");
     _ = projectsWorkers.WithSecurityDependency(security);
     _ = projectsUi.WithSecurityDependency(security);
-}
-else if (builder.Environment.IsDevelopment())
-{
-    // Explicit local diagnostic bypass. Production and non-development deployments must provide
-    // deployment-managed OIDC settings instead of inheriting anonymous startup.
-    _ = projects.WithEnvironment("Authentication__JwtBearer__AllowAnonymousDevelopment", "true");
 }
 
 _ = projectsUi
