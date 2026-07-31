@@ -1,5 +1,5 @@
 # generated: 2026-07-17T08:14:03+02:00
-# last_updated: 2026-07-31T09:04:33+02:00
+# last_updated: 2026-07-31T23:45:01+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -49,7 +49,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-07-31T23:10:40+02:00
+last_updated: 2026-07-31T23:45:01+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -208,9 +208,11 @@ action_items:
   - epic: 5
     action: "Keep partial-failure and diagnosticUnavailable parity covered for Web, MCP, and CLI warning/dashboard outputs."
     owner: "Murat"
-    status: in-progress
+    status: done
+    result: "Hardened the canonical mixed-success regression across Web source and rendered output, MCP QueryAsync resource dispatch, and CLI warning/dashboard JSON while preserving existing surface shapes and excluding raw failure detail. Fresh verification on 2026-07-31: restore passed; UI 152/152, MCP 26/26, and CLI 16/16 tests passed with 0 skipped; named matrix tests passed 2/2 Web, 1/1 MCP, and 1/1 CLI; solution build completed with 0 warnings/errors; git diff check passed. AppHost built and reported a dashboard launch, but its detached process exited before runtime readiness inspection."
     routed_to: "Stories 8.3 and 8.4"
-    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
+    evidence: "_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md"
   - epic: 6
     id: "6.1-P0"
     action: "Deliver the supported G-4 persisted runner and machine-checkable evidence tooling required by Story 6.1."

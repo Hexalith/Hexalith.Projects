@@ -57,6 +57,43 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     }
 
     [Fact]
+    public void InventoryRendersHealthyAndUnavailableDiagnosticsWithAccessibleDashboardCounts()
+    {
+        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        source.LoadAsync(null, Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
+                [Row(), Row("project-002", "Unavailable Project")],
+                [
+                    Warning("folder-001", ReferenceState.Conflict, ProjectReasonCode.ProjectFolderMatched, "folder", "Projects"),
+                    DiagnosticUnavailableWarning(),
+                ],
+                MixedFailureDashboard())));
+        Services.AddSingleton(source);
+
+        IRenderedComponent<Home> cut = Render<Home>();
+
+        cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2));
+        var dashboardTiles = cut.FindAll("[data-testid='project-dashboard-tile']");
+        dashboardTiles.ShouldContain(tile => tile.GetAttribute("aria-label") == "Warning projects: 2");
+        dashboardTiles.ShouldContain(tile => tile.GetAttribute("aria-label") == "Conflicts: 1");
+        dashboardTiles.ShouldContain(tile => tile.GetAttribute("aria-label") == "Diagnostic unavailable: 1");
+
+        var healthy = cut.FindAll("[data-testid='project-warning-row']")
+            .Single(row => row.TextContent.Contains("folder-001", StringComparison.Ordinal));
+        healthy.TextContent.ShouldContain("Conflict");
+        healthy.TextContent.ShouldContain("Project folder matched");
+
+        var unavailable = cut.FindAll("[data-testid='project-warning-row']")
+            .Single(row => row.TextContent.Contains("project-002", StringComparison.Ordinal));
+        unavailable.TextContent.ShouldContain("Unavailable");
+        unavailable.TextContent.ShouldContain("project diagnostic");
+        unavailable.TextContent.ShouldContain("diagnostics unavailable");
+        unavailable.QuerySelector("a")!.GetAttribute("aria-label").ShouldBe("Open project Unavailable Project");
+        cut.Markup.ShouldNotContain("secret-problem-detail");
+        cut.Markup.ShouldNotContain("unsafe exception detail");
+    }
+
+    [Fact]
     public void InventoryRendersSafeFeedbackForDeniedLoad()
     {
         IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
@@ -169,12 +206,14 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
         await source.Received(1).LoadAsync(ProjectLifecycle.Archived, Arg.Any<CancellationToken>()).ConfigureAwait(true);
     }
 
-    private static ProjectInventoryRowProjection Row()
+    private static ProjectInventoryRowProjection Row(
+        string projectId = "project-001",
+        string name = "Inventory Project")
         => new()
         {
-            Id = "project-001",
-            ProjectId = "project-001",
-            Name = "Inventory Project",
+            Id = projectId,
+            ProjectId = projectId,
+            Name = name,
             Lifecycle = ProjectLifecycle.Active,
             WarningSummary = ProjectInventoryRowProjection.WarningSummaryUnavailable,
             CreatedAt = DateTimeOffset.UnixEpoch,
@@ -188,7 +227,8 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
         string referenceId = "memory-001",
         ReferenceState state = ReferenceState.Stale,
         ProjectReasonCode? reason = ProjectReasonCode.MemoryMatched,
-        string referenceKind = "memory")
+        string referenceKind = "memory",
+        string ownerContext = "Memories")
         => new()
         {
             Id = $"project-001:{referenceKind}:{referenceId}",
@@ -199,11 +239,30 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
             ReasonCode = reason,
             ReferenceKind = referenceKind,
             ReferenceId = referenceId,
-            OwnerContext = "Memories",
+            OwnerContext = ownerContext,
             LastObservedAt = DateTimeOffset.UnixEpoch.AddMinutes(2),
             FreshnessTrustState = "trusted",
             ProjectionWatermark = "watermark-001",
             SourceSection = "operator-diagnostics.references",
+        };
+
+    private static ProjectWarningQueueItemProjection DiagnosticUnavailableWarning()
+        => new()
+        {
+            Id = "project-002:diagnostic:data_unavailable",
+            ProjectId = "project-002",
+            ProjectName = "Unavailable Project",
+            Lifecycle = ProjectLifecycle.Active,
+            State = ReferenceState.Unavailable,
+            ReferenceKind = string.Empty,
+            ReferenceId = string.Empty,
+            OwnerContext = "Projects",
+            TenantScope = "server-derived tenant",
+            LastObservedAt = DateTimeOffset.UnixEpoch.AddMinutes(2),
+            FreshnessTrustState = "current",
+            ProjectionWatermark = "watermark-002",
+            SourceSection = "operator-diagnostics:data_unavailable",
+            SafeActionAvailabilityLabel = "Open project; diagnostics unavailable; maintenance handled by Story 5.9",
         };
 
     private static ProjectOperationalDashboardProjection Dashboard()
@@ -213,6 +272,19 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
             ActiveProjects = 1,
             ProjectsWithWarnings = 1,
             StaleReferences = 1,
+            TenantScope = "server-derived tenant",
+            LastObservedWarningAt = DateTimeOffset.UnixEpoch.AddMinutes(2),
+        };
+
+    private static ProjectOperationalDashboardProjection MixedFailureDashboard()
+        => new()
+        {
+            TotalVisibleProjects = 2,
+            ActiveProjects = 2,
+            ProjectsWithWarnings = 2,
+            Conflicts = 1,
+            UnauthorizedOrUnavailableReferences = 1,
+            DiagnosticUnavailable = 1,
             TenantScope = "server-derived tenant",
             LastObservedWarningAt = DateTimeOffset.UnixEpoch.AddMinutes(2),
         };

@@ -5,6 +5,8 @@
 
 namespace Hexalith.Projects.UI.Tests.Diagnostics;
 
+using System.Text.Json;
+
 using Hexalith.Projects.Client.Generated;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
@@ -123,15 +125,40 @@ public sealed class ProjectWarningsDashboardSourceTests
             .ConfigureAwait(true);
 
         result.Feedback.ShouldBeNull();
+        result.InventoryRows.Select(item => item.ProjectId).ShouldBe(["project-001", "project-002"]);
         result.QueueItems.Count.ShouldBe(2);
-        result.QueueItems.ShouldContain(item => item.State == ReferenceState.Conflict);
+        ProjectWarningQueueItemProjection healthy = result.QueueItems.Single(item => item.ProjectId == "project-001");
+        healthy.State.ShouldBe(ReferenceState.Conflict);
+        healthy.ReferenceKind.ShouldBe("folder");
+        healthy.ReferenceId.ShouldBe("folder-001");
+        healthy.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
+        healthy.SourceSection.ShouldBe("operator-diagnostics.references");
         ProjectWarningQueueItemProjection unavailable = result.QueueItems.Single(item => item.ProjectId == "project-002");
+        unavailable.Id.ShouldBe("project-002:diagnostic:data_unavailable");
+        unavailable.ProjectName.ShouldBe("Project project-002");
+        unavailable.Lifecycle.ShouldBe(ProjectLifecycle.Active);
         unavailable.State.ShouldBe(ReferenceState.Unavailable);
+        unavailable.ReasonCode.ShouldBeNull();
+        unavailable.ReferenceKind.ShouldBeEmpty();
+        unavailable.ReferenceId.ShouldBeEmpty();
+        unavailable.OwnerContext.ShouldBe("Projects");
+        unavailable.TenantScope.ShouldBe("server-derived tenant");
+        unavailable.LastObservedAt.ShouldBe(DateTimeOffset.UnixEpoch.AddMinutes(1));
         unavailable.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
-        unavailable.SourceSection.ShouldContain("data_unavailable");
-        unavailable.SafeActionAvailabilityLabel.ShouldContain("Story 5.9");
+        unavailable.ProjectionWatermark.ShouldBe("watermark-001");
+        unavailable.SourceSection.ShouldBe("operator-diagnostics:data_unavailable");
+        unavailable.SafeActionAvailabilityLabel.ShouldBe(
+            "Open project; diagnostics unavailable; maintenance handled by Story 5.9");
+        result.Dashboard.TotalVisibleProjects.ShouldBe(2);
+        result.Dashboard.ActiveProjects.ShouldBe(2);
+        result.Dashboard.ProjectsWithWarnings.ShouldBe(2);
         result.Dashboard.DiagnosticUnavailable.ShouldBe(1);
         result.Dashboard.Conflicts.ShouldBe(1);
+        result.Dashboard.UnauthorizedOrUnavailableReferences.ShouldBe(1);
+
+        string serialized = JsonSerializer.Serialize(result);
+        serialized.ShouldNotContain("unsafe response hidden");
+        serialized.ShouldNotContain("secret token transcript body");
     }
 
     [Theory]

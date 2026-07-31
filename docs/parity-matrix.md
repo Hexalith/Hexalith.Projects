@@ -90,6 +90,19 @@ behavior.
 | Vocabulary and unknowns | `ReferenceState`, `ProjectReasonCode`, `ProjectContextInclusionCheck`, `ProjectContextInclusionDiagnostic`, `ProjectVocabularyDescriptors`, and `ProjectDiagnosticRendering` semantics | Queue state/reason rendering uses shared descriptors and visible text. Unknown reference-state strings map to an explicit safe `Unavailable` warning row with `sourceSection` evidence; unknown reason strings do not become adapter-local reason codes. No Web-only enum or severity table is added. | Adapter output must reuse shared vocabulary names. Unknown future values must fail adapter tests/build or surface an explicit unavailable/unknown warning; they must not silently disappear. |
 | Safe actions and payload boundary | Read-only detail routes plus metadata-only operator diagnostic DTOs | Safe actions link to existing project detail/read-only workbenches or copy safe identifiers. Maintenance actions are visibly labeled "Handled by Story 5.9"; no archive, restore, relink, unlink, reevaluate, dry-run, persisted maintenance state, audit event, or Dapr state write occurs. Markup/tests/docs contain no transcript text, prompt/raw setup text, file path/content, byte range, workspace id, memory payload, secret/token, raw ProblemDetails body, command/proposal body, idempotency key, candidate score/rank, rejected candidate id, tenant authority from client input, or sibling denial detail. | Story 5.9 owns mutations. Story 5.10 may expose read-only warnings/dashboard resources using the names above but must not add maintenance commands in this handoff. |
 
+The canonical mixed-success regression uses two visible Projects: one bounded diagnostic contributes a
+healthy warning and the other returns `503` with an unsafe body. Every surface remains successful,
+preserves the healthy warning, reports exactly one unavailable diagnostic, and excludes the exception
+message and raw body. The observable shapes intentionally differ without changing their operational
+truth: Web renders the healthy warning plus a synthetic safe `Unavailable` row and exposes the accessible
+`Diagnostic unavailable: 1` dashboard tile; MCP keeps the healthy `projects.warningQueue` row with
+`DiagnosticUnavailable = 1` and returns the same count from `projects.operationalDashboard`; CLI returns
+`diagnosticUnavailable: 1` at the top level of both `projects warnings` and `projects dashboard` JSON.
+Because the Web synthetic row participates in its existing warning-project aggregation, this fixture has
+two Web warning Projects; MCP and CLI keep their existing aggregate-only unavailable shape and report one
+Project with an actual warning row. Changing that counting or no-row behavior requires a separate contract
+decision.
+
 ## Story 5.9 Maintenance Action Contract
 
 | Surface | Source of truth | Web rendering contract | MCP/CLI parity handoff |

@@ -212,7 +212,7 @@ public sealed class ProjectsCliApplicationTests
                 ReadConsistencyClass.Eventually_consistent,
                 Arg.Any<CancellationToken>())
             .ThrowsAsync(new HexalithProjectsApiException(
-                "unavailable",
+                "unsafe-exception-detail",
                 503,
                 "{\"problem\":\"secret-problem-detail\"}",
                 new Dictionary<string, IEnumerable<string>>(StringComparer.Ordinal),
@@ -228,14 +228,24 @@ public sealed class ProjectsCliApplicationTests
         warningsStderr.ToString().ShouldBeEmpty();
         using JsonDocument warnings = JsonDocument.Parse(warningsStdout.ToString());
         JsonElement warningsRoot = warnings.RootElement;
+        warningsRoot.GetProperty("command").GetString().ShouldBe("projects warnings");
+        warningsRoot.GetProperty("explanation").GetString().ShouldBe(
+            "Warning queue enriches visible project rows with bounded operator diagnostics; unavailable diagnostics are reported as an explicit count.");
         warningsRoot.GetProperty("tenantScope").GetString().ShouldBe("server-derived tenant");
         warningsRoot.GetProperty("payloadExcluded").GetBoolean().ShouldBeTrue();
+        warningsRoot.GetProperty("visibleProjectCount").GetInt32().ShouldBe(2);
         warningsRoot.GetProperty("diagnosticUnavailable").GetInt32().ShouldBe(1);
         JsonElement firstWarning = warningsRoot.GetProperty("items").EnumerateArray().Single();
+        firstWarning.GetProperty("projectId").GetString().ShouldBe("project-1");
+        firstWarning.GetProperty("projectName").GetString().ShouldBe("project-1");
+        firstWarning.GetProperty("lifecycleState").GetString().ShouldBe("active");
         firstWarning.GetProperty("referenceKind").GetString().ShouldBe("memory");
+        firstWarning.GetProperty("referenceId").GetString().ShouldBe("memory-001");
         firstWarning.GetProperty("referenceState").GetString().ShouldBe("stale");
         firstWarning.GetProperty("reasonCode").GetString().ShouldBe("MemoryMatched");
         firstWarning.GetProperty("freshnessTrustState").GetString().ShouldBe(EvidenceFreshnessStateCode.Current);
+        firstWarning.GetProperty("projectionWatermark").GetString().ShouldBe("watermark-001");
+        warningsStdout.ToString().ShouldNotContain("unsafe-exception-detail");
         warningsStdout.ToString().ShouldNotContain("secret-problem-detail");
 
         using var dashboardStdout = new StringWriter();
@@ -248,10 +258,17 @@ public sealed class ProjectsCliApplicationTests
         dashboardStderr.ToString().ShouldBeEmpty();
         using JsonDocument dashboard = JsonDocument.Parse(dashboardStdout.ToString());
         JsonElement dashboardRoot = dashboard.RootElement;
+        dashboardRoot.GetProperty("command").GetString().ShouldBe("projects dashboard");
+        dashboardRoot.GetProperty("explanation").GetString().ShouldBe(
+            "Dashboard counters are derived from visible inventory and bounded diagnostics; unavailable diagnostics are reported as an explicit count.");
+        dashboardRoot.GetProperty("tenantScope").GetString().ShouldBe("server-derived tenant");
         dashboardRoot.GetProperty("totalVisibleProjects").GetInt32().ShouldBe(2);
+        dashboardRoot.GetProperty("activeProjects").GetInt32().ShouldBe(2);
+        dashboardRoot.GetProperty("archivedProjects").GetInt32().ShouldBe(0);
         dashboardRoot.GetProperty("projectsWithWarnings").GetInt32().ShouldBe(1);
         dashboardRoot.GetProperty("diagnosticUnavailable").GetInt32().ShouldBe(1);
         dashboardRoot.GetProperty("payloadExcluded").GetBoolean().ShouldBeTrue();
+        dashboardStdout.ToString().ShouldNotContain("unsafe-exception-detail");
         dashboardStdout.ToString().ShouldNotContain("secret-problem-detail");
     }
 

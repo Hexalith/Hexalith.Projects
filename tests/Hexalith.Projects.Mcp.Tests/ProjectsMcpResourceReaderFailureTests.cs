@@ -5,6 +5,8 @@
 
 namespace Hexalith.Projects.Mcp.Tests;
 
+using System.Text.Json;
+
 using Hexalith.FrontComposer.Contracts.Communication;
 using Hexalith.FrontComposer.Mcp;
 using Hexalith.Projects.Client.Generated;
@@ -105,7 +107,7 @@ public sealed class ProjectsMcpResourceReaderFailureTests
     }
 
     [Fact]
-    public async Task Dashboard_Counts_Unavailable_Diagnostics_And_Preserves_Healthy_Warnings()
+    public async Task Query_Warnings_And_Dashboard_Count_Unavailable_Diagnostics_And_Preserve_Healthy_Warnings()
     {
         IClient client = Substitute.For<IClient>();
         client.ListProjectsAsync(
@@ -123,36 +125,72 @@ public sealed class ProjectsMcpResourceReaderFailureTests
             });
         client.GetProjectOperatorDiagnosticsAsync(
                 "project-1",
-                Arg.Any<int>(),
+                25,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
                 Arg.Any<CancellationToken>())
             .Returns(DiagnosticWithExcludedReference("project-1"));
         client.GetProjectOperatorDiagnosticsAsync(
                 "project-2",
-                Arg.Any<int>(),
+                25,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
                 Arg.Any<CancellationToken>())
             .ThrowsAsync(Api(503));
         var reader = new ProjectsMcpResourceReader(client);
 
-        ProjectsMcpOperationalDashboardItem dashboard =
-            (await reader.ReadOperationalDashboardAsync(TestContext.Current.CancellationToken)).Single();
-        IReadOnlyList<ProjectsMcpWarningQueueItem> warnings =
-            await reader.ReadWarningQueueAsync(25, TestContext.Current.CancellationToken);
+        QueryResult<ProjectsMcpWarningQueueItem> warningResult =
+            await reader.QueryAsync<ProjectsMcpWarningQueueItem>(
+                QueryRequest.Create(
+                    new ProjectionQuery(
+                        typeof(ProjectsMcpWarningQueueItem).AssemblyQualifiedName!,
+                        Take: 25),
+                    "tenant-1"),
+                TestContext.Current.CancellationToken);
+        QueryResult<ProjectsMcpOperationalDashboardItem> dashboardResult =
+            await reader.QueryAsync<ProjectsMcpOperationalDashboardItem>(
+                QueryRequest.Create(
+                    new ProjectionQuery(typeof(ProjectsMcpOperationalDashboardItem).AssemblyQualifiedName!),
+                    "tenant-1"),
+                TestContext.Current.CancellationToken);
 
-        dashboard.TotalVisibleProjects.ShouldBe(2);
-        dashboard.ProjectsWithWarnings.ShouldBe(1);
-        dashboard.DiagnosticUnavailable.ShouldBe(1);
-        ProjectsMcpWarningQueueItem warning = warnings.ShouldHaveSingleItem();
+        warningResult.TotalCount.ShouldBe(1);
+        ProjectsMcpWarningQueueItem warning = warningResult.Items.ShouldHaveSingleItem();
         warning.ProjectId.ShouldBe("project-1");
+        warning.ProjectName.ShouldBe("project-1");
+        warning.LifecycleState.ShouldBe("active");
+        warning.ReferenceKind.ShouldBe("folder");
+        warning.ReferenceId.ShouldBe("ref-1");
+        warning.ReferenceState.ShouldBe("excluded");
+        warning.ReasonCode.ShouldBe("excluded");
         warning.DiagnosticUnavailable.ShouldBe(1);
         warning.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
+        warning.TenantScope.ShouldBe("server-derived tenant");
+        warning.PayloadExcluded.ShouldBeTrue();
+        warning.ShortExplanation.ShouldNotBeNullOrWhiteSpace();
+
+        dashboardResult.TotalCount.ShouldBe(1);
+        ProjectsMcpOperationalDashboardItem dashboard = dashboardResult.Items.ShouldHaveSingleItem();
+        dashboard.TotalVisibleProjects.ShouldBe(2);
+        dashboard.ActiveProjects.ShouldBe(2);
+        dashboard.ArchivedProjects.ShouldBe(0);
+        dashboard.ProjectsWithWarnings.ShouldBe(1);
+        dashboard.DiagnosticUnavailable.ShouldBe(1);
+        dashboard.TenantScope.ShouldBe("server-derived tenant");
+        dashboard.PayloadExcluded.ShouldBeTrue();
+        dashboard.ShortExplanation.ShouldNotBeNullOrWhiteSpace();
+
+        string serialized = JsonSerializer.Serialize(new
+        {
+            Warnings = warningResult.Items,
+            Dashboard = dashboardResult.Items,
+        });
+        serialized.ShouldNotContain("unsafe-exception-detail");
+        serialized.ShouldNotContain("secret-problem-detail");
     }
 
     private static HexalithProjectsApiException Api(int status)
-        => new("blocked", status, "{\"problem\":\"secret-problem-detail\"}", NoHeaders, null!);
+        => new("unsafe-exception-detail", status, "{\"problem\":\"secret-problem-detail\"}", NoHeaders, null!);
 
     private static FreshnessMetadata Fresh()
         => new()
