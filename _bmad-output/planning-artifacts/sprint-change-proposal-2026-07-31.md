@@ -3,8 +3,8 @@
 **Date:** 2026-07-31
 **Project:** Hexalith.Projects
 **Prepared for:** Jerome
-**Status:** Draft — awaiting review and explicit approval
-**Change scope:** Minor closure; no new implementation or backlog change recommended
+**Status:** Approved — duplicate trigger closed and sprint tracker reconciled
+**Change scope:** Minor closure and targeted action-item reconciliation; no new implementation or backlog change
 
 ## 1. Issue Summary
 
@@ -43,7 +43,7 @@ No story should be added, reopened, removed, or renumbered. The completed frozen
 - **PRD/addendum:** No conflict and no edit. FR-1, FR-19, NFR-4, NFR-10, NFR-11, addendum §2, and addendum §7.3 already preserve retry equivalence, Unicode parity, safe rejection, compatibility, and evidence obligations.
 - **Architecture:** No conflict and no edit. The current Architecture Spine consistency convention explicitly requires U+2028/U+2029 rejection in identity/envelope fields, byte-identical server/generated-helper escaping for descriptive metadata, non-collision vectors, stable unaffected hashes, generated-file protection, and the deployed-fingerprint gate.
 - **UX:** No impact. The correction changes neither visual behavior nor interaction flow.
-- **Sprint status:** No edit. There is no new backlog item to track, and existing unrelated user changes in `sprint-status.yaml` must remain untouched.
+- **Sprint status:** Reconcile only the existing matching action item from `in-progress` to `done`, attach its completed implementation evidence, and preserve every unrelated entry. No epic or story change is required.
 - **Implementation spec:** No edit. It is frozen after approval and marked done.
 - **Testing/CI:** No new coverage gap was identified. A fresh execution may be attached later to Story 8.10/8.11 evidence, but that is verification work, not a duplicate implementation change.
 
@@ -135,13 +135,13 @@ No change.
 
 **CURRENT:**
 
-The implementation spec is frozen and done; sprint status contains unrelated in-progress user changes.
+The implementation spec is frozen and done, but the exact matching sprint action item remains `in-progress`.
 
 **PROPOSED:**
 
-Leave both unchanged. Record this proposal only as a duplicate-trigger closure after approval.
+Leave the implementation spec unchanged. Reconcile the existing sprint action item to `done`, add the completed result and evidence, and update the tracker timestamp without changing any epic, story, or unrelated action item.
 
-**Rationale:** This preserves user work, avoids duplicate backlog authority, and respects the frozen implementation intent.
+**Rationale:** This removes the stale tracking contradiction while preserving user work, avoiding duplicate backlog authority, and respecting the frozen implementation intent.
 
 ## 5. Implementation Handoff
 
@@ -158,7 +158,7 @@ Leave both unchanged. Record this proposal only as a duplicate-trigger closure a
 
 ### Success Criteria
 
-1. No duplicate story, epic, PRD, architecture, UX, sprint-status, or implementation-spec edit is created.
+1. No duplicate story or epic, PRD, architecture, UX, or implementation-spec edit is created; the existing sprint action item is reconciled to `done` only.
 2. The completed parity implementation remains the single bounded implementation record.
 3. Any future release claim distinguishes repository test evidence from deployed-state compatibility evidence.
 4. A future correction is opened only if current evidence demonstrates a regression or an uncovered fingerprint surface.
@@ -177,12 +177,27 @@ Leave both unchanged. Record this proposal only as a duplicate-trigger closure a
 - [x] **4.4 Recommended path:** Direct duplicate-trigger closure selected.
 - [x] **5.1–5.5 Proposal components:** Issue, impact, recommendation, MVP effect, and handoff recorded.
 - [x] **6.1–6.2 Review readiness:** Draft is internally consistent and evidence-backed.
-- [!] **6.3 Explicit approval:** Awaiting Jerome's decision.
-- [N/A] **6.4 Sprint-status update:** No epic/story addition, removal, or renumbering.
-- [!] **6.5 Final handoff:** Pending explicit approval.
+- [x] **6.3 Explicit approval:** Jerome approved the proposal on 2026-07-31.
+- [x] **6.4 Sprint-status update:** Existing U+2028/U+2029 action item reconciled from `in-progress` to `done`; no epic/story addition, removal, or renumbering.
+- [x] **6.5 Final handoff:** Administrative closure routed to the Product Owner; no Developer action required.
 
 ## Review Record
 
 - **Mode:** Incremental
 - **Drafted:** 2026-07-31
-- **Approval status:** Awaiting review; this document does not yet authorize or record final closure.
+- **Review signal:** `c`
+- **Approval signal:** `y`
+- **Approved by:** Jerome
+- **Approval date:** 2026-07-31
+- **Approval status:** Approved as a duplicate-trigger closure.
+
+## Approval, Handoff, and Workflow Execution Log
+
+- **Issue addressed:** Add U+2028/U+2029 idempotency canonicalizer parity coverage across server and generated-client fingerprinting.
+- **Disposition:** Already satisfied by the approved 2026-07-14 proposal and completed 2026-07-19 implementation; no duplicate adjustment authorized.
+- **Final classification:** Minor — administrative closure only.
+- **Artifacts modified by this workflow:** This Sprint Change Proposal and the targeted action item in `sprint-status.yaml`.
+- **Artifacts intentionally unchanged:** PRD, addendum, epics, Architecture Spine, UX specification, frozen implementation spec, production code, tests, generated artifacts, and every unrelated sprint-status entry.
+- **Routed to:** Product Owner for closure/no-backlog action; Test Architect may reuse or freshly execute existing lanes for future Story 8.10/8.11 evidence; Developer has no action absent new failing evidence.
+- **Handoff status:** Complete.
+- **Implementation success criteria:** Preserve the completed parity implementation as the single bounded record; create new work only for demonstrated regression or a newly uncovered fingerprint surface; keep deployment compatibility and release acceptance under the existing Epic 8 gates.
