@@ -50,6 +50,9 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
         cut.Find("[data-testid='project-warnings-dashboard']").TextContent.ShouldContain("Warning projects");
         cut.Find("[data-testid='project-warnings-queue']").TextContent.ShouldContain("Warnings queue");
         cut.Find("[data-testid='project-warning-row']").TextContent.ShouldContain("memory-001");
+        cut.Find("[data-testid='project-warning-freshness']").TextContent.ShouldContain("Current");
+        cut.Find("[data-testid='project-warning-freshness']").TextContent.ShouldNotContain("trusted");
+        cut.Find("[data-testid='project-inventory-row']").TextContent.ShouldContain("trusted");
         cut.Find("[data-testid='project-warning-safe-action']").TextContent.ShouldContain("Handled by Story 5.9");
     }
 

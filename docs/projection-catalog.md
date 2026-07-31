@@ -255,8 +255,23 @@ boundaries.
 - **Stored data:** none. It exists to describe the read-only reference health matrix field groups:
   diagnostics, freshness, and safe actions.
 - **Freshness semantics:** carries last-checked timestamps from reference freshness or context
-  evaluation observations, plus trust state/watermark where the existing DTO exposes them. It does not
-  invent wall-clock freshness.
+  evaluation observations, plus a canonical reference-health trust state and watermark where the
+  existing DTO exposes one. `freshnessTrustState` is always one of `current`, `stale`, `rebuilding`,
+  or `unavailable`; it does not invent wall-clock freshness. Producer-local values are normalized at
+  this boundary as follows:
+
+  | Producer input | Reference-health output |
+  | -------------- | ----------------------- |
+  | `trusted`, `fresh`, `current` | `current` |
+  | `stale`, `mixedGeneration` | `stale` |
+  | `rebuilding` | `rebuilding` |
+  | `unavailable`, `unknown`, `forbidden`, `redacted` | `unavailable` |
+  | null, empty, whitespace, or unrecognized | `unavailable` |
+
+  Matching is trimmed and case-insensitive. Authorization, redaction, mixed-generation, inclusion,
+  health, failed-check, reason, and diagnostic meaning remains in the row's dedicated fields. This
+  normalization applies only to reference-health/reference-warning rows; project inventory, detail
+  header, operator diagnostic, and top-level export freshness retain their producer-local contracts.
 - **Leakage boundary:** reference kind, reference id, bounded-context owner, safe display label,
   shared inclusion/health state, optional shared reason code, optional inclusion check, optional
   closed diagnostic code, freshness evidence, and read-only safe action labels only. No transcript,

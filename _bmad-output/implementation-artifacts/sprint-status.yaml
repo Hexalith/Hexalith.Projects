@@ -198,9 +198,11 @@ action_items:
   - epic: 5
     action: "Canonicalize or explicitly document the mixed FreshnessTrustState vocabulary used by reference-health rows."
     owner: "Paige / Amelia"
-    status: in-progress
-    routed_to: "Stories 6.2 and 8.3"
-    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
+    status: done
+    result: "Canonicalized reference-health and reference-warning freshness to current, stale, rebuilding, or unavailable through one Contracts-owned fail-closed normalizer; preserved producer enums, generated/OpenAPI/persisted schemas, top-level freshness, and dedicated authorization/redaction diagnostics. Verification on 2026-07-31: restore passed; Contracts 188/188, UI 151/151, CLI 16/16, and MCP 26/26 tests passed; solution build completed with 0 warnings/errors; git diff check passed."
+    routed_to: "Developer direct correction; Story 8.8 parity verification"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-31-freshness-trust-state-vocabulary.md"
+    evidence: "_bmad-output/implementation-artifacts/spec-canonicalize-reference-health-freshness-vocabulary.md"
   - epic: 5
     action: "Keep partial-failure and diagnosticUnavailable parity covered for Web, MCP, and CLI warning/dashboard outputs."
     owner: "Murat"

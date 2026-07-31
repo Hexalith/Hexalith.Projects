@@ -10,6 +10,8 @@ using System.Text.Json;
 using Hexalith.Projects.Cli;
 using Hexalith.Projects.Client.Generated;
 
+using EvidenceFreshnessStateCode = Hexalith.Projects.Contracts.Models.EvidenceFreshnessStateCode;
+
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
@@ -57,7 +59,39 @@ public sealed class ProjectsCliApplicationTests
         exitCode.ShouldBe(ProjectsCliExitCodes.Success);
         stderr.ToString().ShouldBeEmpty();
         stdout.ToString().ShouldContain("\"projectId\":\"project-1\"");
+        stdout.ToString().ShouldContain("\"freshnessTrustState\":\"trusted\"");
         stdout.ToString().ShouldContain("\"payloadExcluded\":true");
+    }
+
+    [Theory]
+    [InlineData(ProjectionTrustState.Trusted, EvidenceFreshnessStateCode.Current)]
+    [InlineData(ProjectionTrustState.Stale, EvidenceFreshnessStateCode.Stale)]
+    [InlineData(ProjectionTrustState.Unavailable, EvidenceFreshnessStateCode.Unavailable)]
+    public async Task Validate_Normalizes_ReferenceHealth_Freshness(
+        ProjectionTrustState trustState,
+        string expectedFreshness)
+    {
+        IClient client = Substitute.For<IClient>();
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-1",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(DiagnosticWithWarning("project-1", trustState));
+        using var stdout = new StringWriter();
+        using var stderr = new StringWriter();
+        var app = new ProjectsCliApplication(client, stdout, stderr);
+
+        int exitCode = await app.RunAsync(
+            ["projects", "validate", "--project-id", "project-1"],
+            TestContext.Current.CancellationToken);
+
+        exitCode.ShouldBe(ProjectsCliExitCodes.Success);
+        stderr.ToString().ShouldBeEmpty();
+        using JsonDocument output = JsonDocument.Parse(stdout.ToString());
+        JsonElement row = output.RootElement.GetProperty("items").EnumerateArray().Single();
+        row.GetProperty("freshnessTrustState").GetString().ShouldBe(expectedFreshness);
     }
 
     [Fact]
@@ -201,6 +235,7 @@ public sealed class ProjectsCliApplicationTests
         firstWarning.GetProperty("referenceKind").GetString().ShouldBe("memory");
         firstWarning.GetProperty("referenceState").GetString().ShouldBe("stale");
         firstWarning.GetProperty("reasonCode").GetString().ShouldBe("MemoryMatched");
+        firstWarning.GetProperty("freshnessTrustState").GetString().ShouldBe(EvidenceFreshnessStateCode.Current);
         warningsStdout.ToString().ShouldNotContain("secret-problem-detail");
 
         using var dashboardStdout = new StringWriter();
@@ -238,7 +273,9 @@ public sealed class ProjectsCliApplicationTests
         return response;
     }
 
-    private static ProjectOperatorDiagnostic DiagnosticWithWarning(string projectId)
+    private static ProjectOperatorDiagnostic DiagnosticWithWarning(
+        string projectId,
+        ProjectionTrustState trustState = ProjectionTrustState.Trusted)
         => new()
         {
             ProjectId = projectId,
@@ -253,18 +290,18 @@ public sealed class ProjectsCliApplicationTests
                     ReferenceState = ProjectReferenceSummaryReferenceState.Stale,
                     ReferenceId = "memory-001",
                     ReasonCode = "MemoryMatched",
-                    Freshness = Freshness(),
+                    Freshness = Freshness(trustState),
                 },
             },
         };
 
-    private static FreshnessMetadata Freshness()
+    private static FreshnessMetadata Freshness(ProjectionTrustState trustState = ProjectionTrustState.Trusted)
         => new()
         {
             ReadConsistency = ReadConsistencyClass.Eventually_consistent,
             ObservedAt = DateTimeOffset.UnixEpoch,
             ProjectionWatermark = "watermark-001",
             Stale = false,
-            TrustState = ProjectionTrustState.Trusted,
+            TrustState = trustState,
         };
 }

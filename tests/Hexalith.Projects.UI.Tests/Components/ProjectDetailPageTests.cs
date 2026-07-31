@@ -360,6 +360,7 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("Archived");
         cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("Conflict");
         cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("Unavailable");
+        cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("Current");
         cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldContain("Invalid reference");
         cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldNotContain("transcript");
         cut.Find("[data-testid='project-detail-section-references']").TextContent.ShouldNotContain("token");

@@ -61,3 +61,9 @@
 - source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md
   summary: Align proposal-confirmation null fileReferenceIds semantics between the server and generated client.
   evidence: Review confirmed the pre-existing endpoint accepts null fileReferenceIds when no file references exist and hashes an empty array, while the generated helper hashes the null property as null.
+- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-canonicalize-reference-health-freshness-vocabulary.md
+  summary: Restore monotonic sprint tracker chronology after the pre-existing last_updated timestamp regression.
+  evidence: Review confirmed sprint-status.yaml records July 31 action completions while its pre-existing dirty last_updated value moves backward to July 19, which may cause incremental consumers to miss updates.
+- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-canonicalize-reference-health-freshness-vocabulary.md
+  summary: Reconcile the U+2028/U+2029 sprint action promised by its approved July 31 duplicate-trigger closure proposal.
+  evidence: Review confirmed the pre-existing approved proposal states that action was moved to done, while sprint-status.yaml still leaves the matching action in-progress; this correction intentionally changed only the freshness-vocabulary action.

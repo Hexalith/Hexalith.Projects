@@ -10,6 +10,8 @@ using Hexalith.FrontComposer.Mcp;
 using Hexalith.Projects.Client.Generated;
 using Hexalith.Projects.Mcp;
 
+using EvidenceFreshnessStateCode = Hexalith.Projects.Contracts.Models.EvidenceFreshnessStateCode;
+
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
@@ -146,6 +148,7 @@ public sealed class ProjectsMcpResourceReaderFailureTests
         ProjectsMcpWarningQueueItem warning = warnings.ShouldHaveSingleItem();
         warning.ProjectId.ShouldBe("project-1");
         warning.DiagnosticUnavailable.ShouldBe(1);
+        warning.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
     }
 
     private static HexalithProjectsApiException Api(int status)

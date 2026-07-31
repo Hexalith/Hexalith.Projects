@@ -1,6 +1,7 @@
 @page "/"
 @page "/projects"
 @page "/projects/warnings"
+@using Hexalith.Projects.Contracts.Models
 @using Hexalith.Projects.Contracts.Ui
 @using Hexalith.Projects.UI.Diagnostics
 @inject IProjectWarningsDashboardSource WarningsDashboard
@@ -173,7 +174,7 @@
                                     <time datetime="@item.LastObservedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">
                                         @item.LastObservedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)
                                     </time>
-                                    <span>@item.FreshnessTrustState</span>
+                                    <span>@EvidenceFreshnessStateCode.ToLabel(item.FreshnessTrustState)</span>
                                     @if (!string.IsNullOrWhiteSpace(item.ProjectionWatermark))
                                     {
                                         <code>@item.ProjectionWatermark</code>

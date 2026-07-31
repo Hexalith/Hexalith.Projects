@@ -88,7 +88,7 @@ internal static class ProjectReferenceHealthMapper
                 ? evaluation.Diagnostic
                 : null,
             LastCheckedAt = evaluation.ObservedAt,
-            FreshnessTrustState = context.Freshness.ToString().ToLowerInvariant(),
+            FreshnessTrustState = EvidenceFreshnessStateCode.Normalize(context.Freshness.ToString()),
         };
     }
 
@@ -118,7 +118,7 @@ internal static class ProjectReferenceHealthMapper
             InclusionCheck = Check,
             DiagnosticCode = Diagnostic,
             LastCheckedAt = freshness.ObservedAt,
-            FreshnessTrustState = conversation.TrustSignal.ToString().ToLowerInvariant(),
+            FreshnessTrustState = EvidenceFreshnessStateCode.Normalize(conversation.TrustSignal.ToString()),
             ProjectionWatermark = freshness.ProjectionWatermark,
         };
     }
@@ -153,9 +153,10 @@ internal static class ProjectReferenceHealthMapper
             InclusionCheck = incoming.InclusionCheck ?? existing.InclusionCheck,
             DiagnosticCode = incoming.DiagnosticCode ?? existing.DiagnosticCode,
             LastCheckedAt = incoming.LastCheckedAt == default ? existing.LastCheckedAt : incoming.LastCheckedAt,
-            FreshnessTrustState = string.IsNullOrWhiteSpace(incoming.FreshnessTrustState)
-                ? existing.FreshnessTrustState
-                : incoming.FreshnessTrustState,
+            FreshnessTrustState = EvidenceFreshnessStateCode.Normalize(
+                string.IsNullOrWhiteSpace(incoming.FreshnessTrustState)
+                    ? existing.FreshnessTrustState
+                    : incoming.FreshnessTrustState),
             ProjectionWatermark = incoming.ProjectionWatermark ?? existing.ProjectionWatermark,
             SafeActionAvailabilityLabel = string.IsNullOrWhiteSpace(incoming.SafeActionAvailabilityLabel)
                 ? existing.SafeActionAvailabilityLabel

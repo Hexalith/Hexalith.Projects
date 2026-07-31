@@ -146,7 +146,7 @@ else if (_result?.Detail is not null)
                                             <time datetime="@reference.LastCheckedAt.ToString("O", System.Globalization.CultureInfo.InvariantCulture)">@reference.LastCheckedAt.ToString("u", System.Globalization.CultureInfo.InvariantCulture)</time>
                                         </td>
                                         <td>
-                                            <span>@reference.FreshnessTrustState</span>
+                                            <span>@EvidenceFreshnessStateCode.ToLabel(reference.FreshnessTrustState)</span>
                                             @if (!string.IsNullOrWhiteSpace(reference.ProjectionWatermark))
                                             {
                                                 <code>@reference.ProjectionWatermark</code>

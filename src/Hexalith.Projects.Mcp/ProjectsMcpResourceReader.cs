@@ -13,6 +13,8 @@ using Hexalith.FrontComposer.Mcp;
 using Hexalith.Projects.Client.Generated;
 using Hexalith.Projects.Contracts.Ui;
 
+using EvidenceFreshnessStateCode = Hexalith.Projects.Contracts.Models.EvidenceFreshnessStateCode;
+
 /// <summary>
 /// Generated-client backed FrontComposer query service for Projects MCP resources.
 /// </summary>
@@ -161,7 +163,7 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
                 EnumCode(reference.ReferenceState),
                 reference.ReasonCode,
                 reference.Freshness.ObservedAt,
-                EnumCode(reference.Freshness.TrustState),
+                EvidenceFreshnessStateCode.Normalize(EnumCode(reference.Freshness.TrustState)),
                 reference.Freshness.ProjectionWatermark,
                 TenantScope,
                 "Reference health row uses shared lifecycle/reference/reason vocabulary and safe identifiers.",
@@ -279,7 +281,7 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
                     EnumCode(reference.ReferenceState),
                     reference.ReasonCode,
                     reference.Freshness.ObservedAt,
-                    EnumCode(reference.Freshness.TrustState),
+                    EvidenceFreshnessStateCode.Normalize(EnumCode(reference.Freshness.TrustState)),
                     reference.Freshness.ProjectionWatermark,
                     0,
                     TenantScope,

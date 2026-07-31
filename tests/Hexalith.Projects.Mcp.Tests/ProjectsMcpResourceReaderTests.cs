@@ -9,6 +9,8 @@ using Hexalith.FrontComposer.Contracts.Communication;
 using Hexalith.Projects.Client.Generated;
 using Hexalith.Projects.Mcp;
 
+using EvidenceFreshnessStateCode = Hexalith.Projects.Contracts.Models.EvidenceFreshnessStateCode;
+
 using NSubstitute;
 
 using Shouldly;
@@ -52,8 +54,35 @@ public sealed class ProjectsMcpResourceReaderTests
 
         rows.Single().ProjectId.ShouldBe("project-1");
         rows.Single().TenantScope.ShouldBe("server-derived tenant");
+        rows.Single().FreshnessTrustState.ShouldBe("trusted");
         rows.Single().PayloadExcluded.ShouldBeTrue();
         rows.Single().ShortExplanation.ShouldNotBeNullOrWhiteSpace();
+    }
+
+    [Theory]
+    [InlineData(ProjectionTrustState.Trusted, EvidenceFreshnessStateCode.Current)]
+    [InlineData(ProjectionTrustState.Stale, EvidenceFreshnessStateCode.Stale)]
+    [InlineData(ProjectionTrustState.Unavailable, EvidenceFreshnessStateCode.Unavailable)]
+    public async Task ReferenceHealth_Normalizes_Producer_Freshness(
+        ProjectionTrustState trustState,
+        string expectedFreshness)
+    {
+        IClient client = Substitute.For<IClient>();
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-1",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(DiagnosticWithWarnings("project-1", trustState));
+        var reader = new ProjectsMcpResourceReader(client);
+
+        IReadOnlyList<ProjectsMcpReferenceHealthItem> rows = await reader.ReadReferenceHealthAsync(
+            "project-1",
+            25,
+            TestContext.Current.CancellationToken);
+
+        rows.ShouldAllBe(row => row.FreshnessTrustState == expectedFreshness);
     }
 
     [Fact]
@@ -124,9 +153,12 @@ public sealed class ProjectsMcpResourceReaderTests
 
         result.Items.Count.ShouldBe(2);
         result.TotalCount.ShouldBe(2);
+        result.Items.ShouldAllBe(item => item.FreshnessTrustState == EvidenceFreshnessStateCode.Current);
     }
 
-    private static ProjectOperatorDiagnostic DiagnosticWithWarnings(string projectId)
+    private static ProjectOperatorDiagnostic DiagnosticWithWarnings(
+        string projectId,
+        ProjectionTrustState trustState = ProjectionTrustState.Trusted)
         => new()
         {
             ProjectId = projectId,
@@ -135,28 +167,30 @@ public sealed class ProjectsMcpResourceReaderTests
             Freshness = Fresh(),
             References =
             {
-                ExcludedReference("ref-1"),
-                ExcludedReference("ref-2"),
+                ExcludedReference("ref-1", trustState),
+                ExcludedReference("ref-2", trustState),
             },
         };
 
-    private static ProjectReferenceSummary ExcludedReference(string referenceId)
+    private static ProjectReferenceSummary ExcludedReference(
+        string referenceId,
+        ProjectionTrustState trustState = ProjectionTrustState.Trusted)
         => new()
         {
             ReferenceKind = ProjectReferenceSummaryReferenceKind.Folder,
             ReferenceState = ProjectReferenceSummaryReferenceState.Excluded,
             ReferenceId = referenceId,
             ReasonCode = "excluded",
-            Freshness = Fresh(),
+            Freshness = Fresh(trustState),
         };
 
-    private static FreshnessMetadata Fresh()
+    private static FreshnessMetadata Fresh(ProjectionTrustState trustState = ProjectionTrustState.Trusted)
         => new()
         {
             ReadConsistency = ReadConsistencyClass.Eventually_consistent,
             ObservedAt = DateTimeOffset.UnixEpoch,
             ProjectionWatermark = "1",
-            TrustState = ProjectionTrustState.Trusted,
+            TrustState = trustState,
         };
 
     private static ProjectListItem ListItem(string projectId)

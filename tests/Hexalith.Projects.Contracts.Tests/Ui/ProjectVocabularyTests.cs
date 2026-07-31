@@ -256,9 +256,23 @@ public sealed class ProjectVocabularyTests
         row.HealthState.ShouldBe(ReferenceState.Stale);
         row.ReasonCode.ShouldBe(ProjectReasonCode.MemoryMatched);
         row.LastCheckedAt.ShouldBe(DateTimeOffset.UnixEpoch);
-        row.FreshnessTrustState.ShouldBe("trusted");
+        row.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
         row.ProjectionWatermark.ShouldBe("watermark-001");
         row.SafeActionAvailabilityLabel.ShouldContain("Story 5.9");
+    }
+
+    [Fact]
+    public void ReferenceHealthRowProjectionFreshnessDefaultsAndAssignmentsFailClosed()
+    {
+        var row = new ProjectReferenceHealthRowProjection();
+
+        row.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Unavailable);
+
+        row.FreshnessTrustState = "  FrEsH  ";
+        row.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
+
+        row.FreshnessTrustState = "producer-specific-value";
+        row.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Unavailable);
     }
 
     [Fact]

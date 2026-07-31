@@ -10,6 +10,8 @@ using System.Text.Json;
 
 using Hexalith.Projects.Client.Generated;
 
+using EvidenceFreshnessStateCode = Hexalith.Projects.Contracts.Models.EvidenceFreshnessStateCode;
+
 /// <summary>Generated-client backed Projects command application.</summary>
 public sealed class ProjectsCliApplication(IClient client, TextWriter output, TextWriter error)
 {
@@ -176,7 +178,7 @@ public sealed class ProjectsCliApplication(IClient client, TextWriter output, Te
                 referenceId = reference.ReferenceId,
                 referenceState = EnumCode(reference.ReferenceState),
                 reasonCode = reference.ReasonCode,
-                freshnessTrustState = EnumCode(reference.Freshness.TrustState),
+                freshnessTrustState = EvidenceFreshnessStateCode.Normalize(EnumCode(reference.Freshness.TrustState)),
                 projectionWatermark = reference.Freshness.ProjectionWatermark,
             }),
         };
@@ -256,7 +258,7 @@ public sealed class ProjectsCliApplication(IClient client, TextWriter output, Te
                     referenceState = EnumCode(reference.ReferenceState),
                     reasonCode = reference.ReasonCode,
                     lastObservedAt = reference.Freshness.ObservedAt,
-                    freshnessTrustState = EnumCode(reference.Freshness.TrustState),
+                    freshnessTrustState = EvidenceFreshnessStateCode.Normalize(EnumCode(reference.Freshness.TrustState)),
                     projectionWatermark = reference.Freshness.ProjectionWatermark,
                 });
             }

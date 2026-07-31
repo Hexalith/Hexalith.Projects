@@ -52,9 +52,7 @@ public static class ProjectWarningsDashboardMapper
             OwnerContext = "Projects",
             TenantScope = TenantScopeLabel,
             LastObservedAt = project.UpdatedAt,
-            FreshnessTrustState = string.IsNullOrWhiteSpace(project.FreshnessTrustState)
-                ? "unavailable"
-                : project.FreshnessTrustState,
+            FreshnessTrustState = EvidenceFreshnessStateCode.Normalize(project.FreshnessTrustState),
             ProjectionWatermark = project.ProjectionWatermark,
             SourceSection = $"operator-diagnostics:{reason}",
             SafeActionAvailabilityLabel = "Open project; diagnostics unavailable; maintenance handled by Story 5.9",
@@ -125,9 +123,7 @@ public static class ProjectWarningsDashboardMapper
             OwnerContext = ProjectReferenceHealthRowProjection.OwnerContextFor(referenceKind),
             TenantScope = TenantScopeLabel,
             LastObservedAt = reference.Freshness.ObservedAt,
-            FreshnessTrustState = string.IsNullOrWhiteSpace(reference.Freshness.TrustState)
-                ? "unavailable"
-                : reference.Freshness.TrustState,
+            FreshnessTrustState = EvidenceFreshnessStateCode.Normalize(reference.Freshness.TrustState),
             ProjectionWatermark = reference.Freshness.ProjectionWatermark,
             SourceSection = sourceSection,
         };

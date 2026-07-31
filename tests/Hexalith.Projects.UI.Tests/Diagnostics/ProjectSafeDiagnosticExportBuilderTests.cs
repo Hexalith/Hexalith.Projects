@@ -32,8 +32,13 @@ public sealed class ProjectSafeDiagnosticExportBuilderTests
 
         string first = ProjectSafeDiagnosticExportBuilder.BuildJson(result, DateTimeOffset.UnixEpoch);
         string second = ProjectSafeDiagnosticExportBuilder.BuildJson(result, DateTimeOffset.UnixEpoch);
+        ProjectSafeDiagnosticExportDocument document = ProjectSafeDiagnosticExportBuilder.BuildDocument(
+            result,
+            DateTimeOffset.UnixEpoch);
 
         first.ShouldBe(second);
+        document.Freshness.TrustState.ShouldBe("trusted");
+        document.ReferenceHealthRows.ShouldHaveSingleItem().FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
         first.ShouldContain("\"schemaVersion\":\"projects.safe-diagnostic-export.v1\"");
         first.ShouldContain("\"generatedAt\":\"1970-01-01T00:00:00+00:00\"");
         first.ShouldContain("\"projectId\":\"project-001\"");

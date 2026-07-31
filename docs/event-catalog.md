@@ -332,6 +332,24 @@ are not yet emitted anywhere; the linked future story is where the producer land
 | `ProjectUnavailable` | Story 3.1 inclusion policy (safe-denial 404 contract; cross-tenant or null detail). |
 | `Unauthorized`       | Story 3.1 inclusion policy (tenant authority failure / collapse).                   |
 
+### `EvidenceFreshnessState` (`src/Hexalith.Projects.Contracts/Models/EvidenceFreshnessState.cs`)
+
+The Contracts-owned Evidence Freshness vocabulary is the public reference-health/reference-warning
+boundary. Its machine codes are exactly `current`, `stale`, `rebuilding`, and `unavailable`.
+Producer-specific enums below remain valid inside their owning boundaries and are normalized by
+`EvidenceFreshnessStateCode`; adapters must not publish their synonyms as reference-health values.
+
+| Producer input | Canonical code | Preserved dedicated detail |
+| -------------- | -------------- | -------------------------- |
+| `trusted`, `fresh`, `current` | `current` | Inclusion, health, reason, check, and diagnostic fields remain unchanged. |
+| `stale`, `mixedGeneration` | `stale` | Mixed-generation and stale diagnostics remain unchanged. |
+| `rebuilding` | `rebuilding` | Unavailable health/check diagnostics remain unchanged. |
+| `unavailable`, `unknown`, `forbidden`, `redacted` | `unavailable` | Authorization/redaction state, check, and diagnostic fields remain unchanged. |
+| null, empty, whitespace, punctuation variants, or unrecognized | `unavailable` | Invalid evidence fails closed and is never passed through. |
+
+Input comparison is trimmed and case-insensitive. This table does not change events, persisted
+projections, OpenAPI/generated contracts, producer enums, or project-level/top-level freshness.
+
 ### `ProjectContextFreshness` (`src/Hexalith.Projects.Contracts/Ui/ProjectContextFreshness.cs`, Story 3.1)
 
 | Value         | Current producer                                                                        | Notes                                                                |

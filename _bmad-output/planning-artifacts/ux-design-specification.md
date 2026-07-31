@@ -698,11 +698,11 @@ Custom components should be minimized. Where needed, they should be Projects-spe
 
 **Usage:** Project detail and maintenance flows.
 
-**Anatomy:** Reference type, reference ID, bounded-context owner, inclusion state, health state, reason code, last checked timestamp, available safe actions.
+**Anatomy:** Reference type, reference ID, bounded-context owner, inclusion state, health state, reason code, last checked timestamp, canonical freshness label, available safe actions.
 
-**States:** Included, excluded, unauthorized, unavailable, stale, archived, conflict, invalidReference.
+**States:** Included, excluded, unauthorized, unavailable, stale, archived, conflict, invalidReference. Evidence freshness uses exactly `Current`, `Stale`, `Rebuilding`, or `Unavailable` as visible labels over the lower-case machine codes `current`, `stale`, `rebuilding`, and `unavailable`. Producer-local synonyms are normalized at the reference-health boundary; authorization, redaction, and mixed-generation explanations remain visible through their dedicated state, failed-check, reason, and diagnostic fields.
 
-**Accessibility:** Grid headers must be explicit. Status badges must not be color-only. Rows must expose action labels clearly.
+**Accessibility:** Grid headers must be explicit. Status badges and freshness states must include their canonical text labels and must not be color-only. Rows must expose action labels clearly.
 
 #### Resolution Trace
 

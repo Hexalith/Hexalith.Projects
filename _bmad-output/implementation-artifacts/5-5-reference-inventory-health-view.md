@@ -247,6 +247,6 @@ GPT-5 Codex
 
 ### Review Follow-ups (AI)
 
-- [ ] [AI-Review][Low] Canonicalize the `FreshnessTrustState` column vocabulary across reference/evaluation/conversation sources [src/Hexalith.Projects.UI/Diagnostics/ProjectReferenceHealthMapper.cs]
+- [x] [AI-Review][Low] Canonicalize the `FreshnessTrustState` column vocabulary across reference/evaluation/conversation sources [src/Hexalith.Projects.UI/Diagnostics/ProjectReferenceHealthMapper.cs] — Completed 2026-07-31 with the Contracts-owned four-state normalizer, Web/CLI/MCP/warning/export parity coverage, and focused verification: Contracts 188/188, UI 151/151, CLI 16/16, MCP 26/26, solution build 0 warnings/errors.
 - [ ] [AI-Review][Low] Decide whether tablet/mobile should reduce/stack columns instead of horizontal scroll [src/Hexalith.Projects.UI/Components/Pages/ProjectDiagnostics.razor.css]
 - [ ] [AI-Review][Low] Replace `cursor: null!` with an explicit no-cursor value once the generated signature allows it [src/Hexalith.Projects.UI/Diagnostics/ProjectDetailSource.cs:126]

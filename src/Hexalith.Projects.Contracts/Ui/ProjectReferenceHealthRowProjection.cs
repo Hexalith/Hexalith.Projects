@@ -20,6 +20,7 @@ using Hexalith.Projects.Contracts.Models;
 public partial class ProjectReferenceHealthRowProjection
 {
     private string? _diagnosticCode;
+    private string _freshnessTrustState = EvidenceFreshnessStateCode.Unavailable;
 
     /// <summary>Gets the stable matrix row identity.</summary>
     [ColumnPriority(0)]
@@ -99,7 +100,11 @@ public partial class ProjectReferenceHealthRowProjection
     /// <summary>Gets the safe freshness trust state.</summary>
     [ProjectionFieldGroup("Freshness")]
     [Display(Name = "Freshness trust")]
-    public string FreshnessTrustState { get; set; } = string.Empty;
+    public string FreshnessTrustState
+    {
+        get => _freshnessTrustState;
+        set => _freshnessTrustState = EvidenceFreshnessStateCode.Normalize(value);
+    }
 
     /// <summary>Gets the optional projection watermark.</summary>
     [ProjectionFieldGroup("Freshness")]
@@ -138,7 +143,7 @@ public partial class ProjectReferenceHealthRowProjection
             HealthState = state,
             ReasonCode = ParseNullableEnum<ProjectReasonCode>(summary.ReasonCode),
             LastCheckedAt = summary.Freshness.ObservedAt,
-            FreshnessTrustState = summary.Freshness.TrustState,
+            FreshnessTrustState = EvidenceFreshnessStateCode.Normalize(summary.Freshness.TrustState),
             ProjectionWatermark = summary.Freshness.ProjectionWatermark,
         };
     }

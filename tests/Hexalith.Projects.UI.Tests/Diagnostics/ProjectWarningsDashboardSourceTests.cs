@@ -70,6 +70,7 @@ public sealed class ProjectWarningsDashboardSourceTests
         result.QueueItems[0].State.ShouldBe(ReferenceState.Stale);
         result.QueueItems[0].ReasonCode.ShouldBe(ProjectReasonCode.MemoryMatched);
         result.QueueItems[0].ReferenceKind.ShouldBe("memory");
+        result.QueueItems[0].FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
         result.Dashboard.TotalVisibleProjects.ShouldBe(2);
         result.Dashboard.ProjectsWithWarnings.ShouldBe(1);
         result.Dashboard.StaleReferences.ShouldBe(1);
@@ -126,6 +127,7 @@ public sealed class ProjectWarningsDashboardSourceTests
         result.QueueItems.ShouldContain(item => item.State == ReferenceState.Conflict);
         ProjectWarningQueueItemProjection unavailable = result.QueueItems.Single(item => item.ProjectId == "project-002");
         unavailable.State.ShouldBe(ReferenceState.Unavailable);
+        unavailable.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
         unavailable.SourceSection.ShouldContain("data_unavailable");
         unavailable.SafeActionAvailabilityLabel.ShouldContain("Story 5.9");
         result.Dashboard.DiagnosticUnavailable.ShouldBe(1);
@@ -195,6 +197,7 @@ public sealed class ProjectWarningsDashboardSourceTests
         ProjectWarningQueueItemProjection item = items.ShouldHaveSingleItem();
         item.State.ShouldBe(ReferenceState.Unavailable);
         item.ReasonCode.ShouldBeNull();
+        item.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
         item.SourceSection.ShouldContain("unknown-state");
         item.SourceSection.ShouldContain("unknown-reason");
     }

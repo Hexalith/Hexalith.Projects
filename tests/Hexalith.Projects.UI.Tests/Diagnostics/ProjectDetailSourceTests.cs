@@ -15,6 +15,12 @@ using Shouldly;
 
 using Xunit;
 
+using ContractDiagnosticCode = Hexalith.Projects.Contracts.Ui.ProjectContextInclusionDiagnostic;
+using ContractInclusionCheck = Hexalith.Projects.Contracts.Ui.ProjectContextInclusionCheck;
+using ContractReasonCode = Hexalith.Projects.Contracts.Ui.ProjectReasonCode;
+using ContractReferenceHealthRow = Hexalith.Projects.Contracts.Ui.ProjectReferenceHealthRowProjection;
+using ContractReferenceState = Hexalith.Projects.Contracts.Ui.ReferenceState;
+
 /// <summary>
 /// Tests for the generated-client backed detail source.
 /// </summary>
@@ -63,7 +69,8 @@ public sealed class ProjectDetailSourceTests
         result.Detail.ProjectSetup.ShouldNotBeNull();
         result.Detail.References.ShouldHaveSingleItem();
         result.ReferenceHealthRows.Count.ShouldBe(2);
-        result.ReferenceHealthRows.Any(row => row.ReferenceKind == "conversation" && row.ReferenceId == "conversation-001").ShouldBeTrue();
+        result.ReferenceHealthRows.Single(row => row.ReferenceKind == "folder").FreshnessTrustState.ShouldBe("current");
+        result.ReferenceHealthRows.Single(row => row.ReferenceKind == "conversation").FreshnessTrustState.ShouldBe("current");
         result.Detail.AuditTimeline.ShouldHaveSingleItem();
         await client.Received(1).GetProjectAsync(
             "project-001",
@@ -88,6 +95,116 @@ public sealed class ProjectDetailSourceTests
             Arg.Is<string>(s => !string.IsNullOrWhiteSpace(s)),
             ReadConsistencyClass.Eventually_consistent,
             Arg.Any<CancellationToken>()).ConfigureAwait(true);
+    }
+
+    [Theory]
+    [InlineData(ProjectConversationTrustSignal.Current, "current", ContractReferenceState.Included, null, null)]
+    [InlineData(ProjectConversationTrustSignal.Stale, "stale", ContractReferenceState.Stale, ContractInclusionCheck.ReferenceFreshness, ContractDiagnosticCode.ReferenceStale)]
+    [InlineData(ProjectConversationTrustSignal.Rebuilding, "rebuilding", ContractReferenceState.Unavailable, ContractInclusionCheck.ReferenceFreshness, ContractDiagnosticCode.ReferenceUnavailable)]
+    [InlineData(ProjectConversationTrustSignal.Unavailable, "unavailable", ContractReferenceState.Unavailable, ContractInclusionCheck.ReferenceFreshness, ContractDiagnosticCode.ReferenceUnavailable)]
+    [InlineData(ProjectConversationTrustSignal.Forbidden, "unavailable", ContractReferenceState.Unauthorized, ContractInclusionCheck.ReferenceAuthorization, ContractDiagnosticCode.ReferenceUnauthorized)]
+    [InlineData(ProjectConversationTrustSignal.Redacted, "unavailable", ContractReferenceState.Excluded, ContractInclusionCheck.ReferenceFreshness, ContractDiagnosticCode.ReferenceRedacted)]
+    [InlineData(ProjectConversationTrustSignal.MixedGeneration, "stale", ContractReferenceState.Stale, ContractInclusionCheck.ReferenceFreshness, ContractDiagnosticCode.ReferenceStale)]
+    public async Task SourceCanonicalizesConversationFreshnessWithoutLosingDetailedEvidence(
+        ProjectConversationTrustSignal trustSignal,
+        string expectedFreshness,
+        ContractReferenceState expectedState,
+        ContractInclusionCheck? expectedCheck,
+        string? expectedDiagnostic)
+    {
+        IClient client = Substitute.For<IClient>();
+        client.GetProjectAsync(
+                "project-001",
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateProject()));
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-001",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateDiagnostic()));
+        client.GetProjectContextExplanationAsync(
+                "project-001",
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateExplanation()));
+        client.ListProjectConversationsAsync(
+                "project-001",
+                100,
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateConversations(trustSignal)));
+
+        var source = new ProjectDetailSource(client);
+        ProjectDetailLoadResult result = await source
+            .GetProjectDetailAsync("project-001", CancellationToken.None)
+            .ConfigureAwait(true);
+
+        ContractReferenceHealthRow row = result.ReferenceHealthRows
+            .Single(item => item.ReferenceKind == "conversation");
+        row.FreshnessTrustState.ShouldBe(expectedFreshness);
+        row.InclusionState.ShouldBe(expectedState);
+        row.HealthState.ShouldBe(expectedState);
+        row.InclusionCheck.ShouldBe(expectedCheck);
+        row.DiagnosticCode.ShouldBe(expectedDiagnostic);
+        row.ReasonCode.ShouldBe(trustSignal == ProjectConversationTrustSignal.Current
+            ? ContractReasonCode.ConversationLinked
+            : null);
+    }
+
+    [Theory]
+    [InlineData(ProjectContextFreshness.Fresh, "current")]
+    [InlineData(ProjectContextFreshness.Stale, "stale")]
+    [InlineData(ProjectContextFreshness.Unavailable, "unavailable")]
+    [InlineData(ProjectContextFreshness.Unknown, "unavailable")]
+    public async Task SourceCanonicalizesContextEvaluationFreshnessAcrossSummaryMerge(
+        ProjectContextFreshness freshness,
+        string expectedFreshness)
+    {
+        IClient client = Substitute.For<IClient>();
+        client.GetProjectAsync(
+                "project-001",
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateProject()));
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-001",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateDiagnostic()));
+        client.GetProjectContextExplanationAsync(
+                "project-001",
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateExplanation(freshness)));
+        client.ListProjectConversationsAsync(
+                "project-001",
+                100,
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(CreateConversations()));
+
+        var source = new ProjectDetailSource(client);
+        ProjectDetailLoadResult result = await source
+            .GetProjectDetailAsync("project-001", CancellationToken.None)
+            .ConfigureAwait(true);
+
+        ContractReferenceHealthRow row = result.ReferenceHealthRows.Single(item => item.ReferenceKind == "folder");
+        row.FreshnessTrustState.ShouldBe(expectedFreshness);
+        row.InclusionState.ShouldBe(ContractReferenceState.Included);
+        row.ReasonCode.ShouldBe(ContractReasonCode.ProjectFolderMatched);
     }
 
     [Theory]
@@ -367,7 +484,8 @@ public sealed class ProjectDetailSourceTests
             Freshness = Freshness(),
         };
 
-    private static ProjectContextExplanation CreateExplanation()
+    private static ProjectContextExplanation CreateExplanation(
+        ProjectContextFreshness freshness = ProjectContextFreshness.Fresh)
         => new()
         {
             Context = new ProjectContext
@@ -376,7 +494,7 @@ public sealed class ProjectDetailSourceTests
                 Lifecycle = ProjectContextLifecycle.Active,
                 AssemblyOutcome = ProjectContextAssemblyOutcome.Assembled,
                 ObservedAt = DateTimeOffset.UnixEpoch,
-                Freshness = ProjectContextFreshness.Fresh,
+                Freshness = freshness,
             },
             Evaluations =
             [
@@ -392,11 +510,12 @@ public sealed class ProjectDetailSourceTests
             ],
         };
 
-    private static ProjectConversationsPage CreateConversations()
+    private static ProjectConversationsPage CreateConversations(
+        ProjectConversationTrustSignal trustSignal = ProjectConversationTrustSignal.Current)
         => new()
         {
             ProjectId = "project-001",
-            TrustSignal = ProjectConversationTrustSignal.Current,
+            TrustSignal = trustSignal,
             Items =
             [
                 new ProjectConversationItem
@@ -407,7 +526,7 @@ public sealed class ProjectDetailSourceTests
                     LifecycleStatus = "Active",
                     ProjectSafeLabel = "Detail Project",
                     ProjectSafeStatus = "Active",
-                    TrustSignal = ProjectConversationTrustSignal.Current,
+                    TrustSignal = trustSignal,
                 },
             ],
             Page = new ProjectConversationPageMetadata { ReturnedCount = 1 },
