@@ -49,7 +49,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-07-19T18:19:47+02:00
+last_updated: 2026-07-31T23:10:40+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -185,9 +185,11 @@ action_items:
   - epic: 5
     action: "Add U+2028/U+2029 idempotency canonicalizer parity coverage across server and generated-client fingerprinting."
     owner: "Amelia / Murat"
-    status: in-progress
+    status: done
+    result: "Aligned server and generated-client U+2028/U+2029 canonicalization, added direct parity, boundary, non-collision, safe-rejection, stable-hash, and generated-artifact coverage, and preserved separator-free fingerprints. Fresh verification on 2026-07-31: domain 656/656, client 114/114, server 582/582, and OpenAPI fingerprint gate 99/99 passed; generated artifacts remained unchanged and git diff check passed."
     routed_to: "Story 6.2"
-    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-31.md"
+    evidence: "_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md"
   - epic: 5
     action: "Decide whether FrontComposer projection descriptors should remain in the packable Contracts assembly or move to a non-packable UI contracts boundary."
     owner: "Winston / Amelia"
