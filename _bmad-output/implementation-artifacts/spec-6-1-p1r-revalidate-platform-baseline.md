@@ -76,7 +76,8 @@ context:
   acceptance-blocking gate.
 - 2026-08-01: Post-review propagation recorded Builds runner candidate
   `4351d7cba7545a96661ca2ee2ca2629df6d0a118` and qualification revision
-  `d3239aff003c64b40cbc074e68ec7923924cfc96` without claiming acceptance.
+  `699083549932b9509fa36ed853402fe3f8b04fc5`, including the passing refreshed
+  13-row EventStore package audit, without claiming acceptance.
 
 ## Design Notes
 

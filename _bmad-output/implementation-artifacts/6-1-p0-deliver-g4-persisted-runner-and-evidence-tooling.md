@@ -10,7 +10,7 @@ authorized: 2026-07-17
 authorized_by: Jerome
 repository_authority: Hexalith/Hexalith.Builds
 owner_repository_baseline: edbaeaed68bcdb8deffcd98ed5652d237596e1d1
-owner_observed_revision: d3239aff003c64b40cbc074e68ec7923924cfc96
+owner_observed_revision: 699083549932b9509fa36ed853402fe3f8b04fc5
 owner_repository_story: references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md
 owner_packages: [Hexalith.Builds.Module.Cli, Hexalith.Builds.Evidence.Cli]
 owner_rollback_pin: none-greenfield; previous released Builds boundary v4.19.2 / 8e0e2da5e1eff07468b41d85d97979c96c2ac975
@@ -156,7 +156,7 @@ The paths below remain historical handoff guidance where the owner story is more
 
 ### 2026-08-01 Correct Course Rebaseline
 
-- EventStore `v3.88.0` revision `4843b492dff7c16a4bc74db67509263f969c78c6`, the Builds `3.88.0` catalog introduced by `0e51a2115581028c8d9ab9395a93dd186ee51071`, runner candidate `4351d7cba7545a96661ca2ee2ca2629df6d0a118`, and qualification revision `d3239aff003c64b40cbc074e68ec7923924cfc96` are candidate progress, not a supported capability. An accepted Builds revision, remotely restored package pin, and owner acceptance remain unavailable.
+- EventStore `v3.88.0` revision `4843b492dff7c16a4bc74db67509263f969c78c6`, the Builds `3.88.0` catalog introduced by `0e51a2115581028c8d9ab9395a93dd186ee51071`, runner candidate `4351d7cba7545a96661ca2ee2ca2629df6d0a118`, and qualification revision `699083549932b9509fa36ed853402fe3f8b04fc5` are candidate progress, not a supported capability. An accepted Builds revision, remotely restored package pin, and owner acceptance remain unavailable.
 - Preserve the completed 6.1-P1 normalization as historical evidence. 6.1-P1R must qualify the candidate runner/catalog `3.88.0` against the unchanged Architecture Spine `3.70.1` binding before remaining P0 implementation or qualification proceeds. P1R selects the exact accepted baseline; P0 only consumes it.
 - P0 acceptance requires `evidence/g4/6.1-p0-acceptance.json` under schema `hexalith.g4-p0-acceptance.v1`. The packaged `hexalith-evidence` command must fail closed on missing fields, mismatched pins, missing artifacts, hash mismatches, failed required lanes, or absent approvals.
 - Keep the Projects ledger action `open` and readiness tool status `not-available` until the exact packages restore from the declared remote source and the acceptance record validates independently with Builds Owner, Platform Owner, and named Test Architect approvals.
@@ -181,7 +181,7 @@ dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/imple
 
 ### Current Reality and Reuse Boundaries
 
-- Projects has no accepted `.config/dotnet-tools.json`, module manifest, published `hexalith-module` pin, or independently consumable AD-30 validator. Builds contains committed but unaccepted runner candidate `4351d7cba7545a96661ca2ee2ca2629df6d0a118` and qualification revision `d3239aff003c64b40cbc074e68ec7923924cfc96`; the readiness matrix therefore truthfully remains `not-available`.
+- Projects has no accepted `.config/dotnet-tools.json`, module manifest, published `hexalith-module` pin, or independently consumable AD-30 validator. Builds contains committed but unaccepted runner candidate `4351d7cba7545a96661ca2ee2ca2629df6d0a118` and qualification revision `699083549932b9509fa36ed853402fe3f8b04fc5`; the readiness matrix therefore truthfully remains `not-available`.
 - Current Projects AppHost/Aspire code owns hard-coded topology and is the migration baseline. Its static topology tests, fake dictionary-backed projection tests, and manual/offline E2E lane are not persisted G-4 evidence. Do not delete or expand that runtime under P0.
 - EventStore exposes reusable composition and persisted-testing seams under `references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/` and `Hexalith.EventStore.Testing.Integration/`. Its current generic AppHost fixture and skip-on-unavailable behavior do not by themselves satisfy a manifest-driven, fail-closed critical lane.
 - `references/Hexalith.EventStore/scripts/validate-operational-evidence.py` is useful precedent for explicit schemas, stable rule IDs, sorted JSON diagnostics, parse/business-rule separation, redaction, and negative fixtures. It validates a different operational-evidence format and permits scenarios AD-30 must reject; do not rename or claim it as the new validator.
