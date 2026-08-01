@@ -26,6 +26,10 @@ inputDocuments:
   - _bmad-output/planning-artifacts/implementation-readiness-report-2026-05-24.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-05-18-dotnet-sdk-10-0-300.md
   - _bmad-output/project-context.md
+  - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/addendum.md
+  - _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md
+  - _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-01.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md
 ---
 
 # UX Design Specification Hexalith.Projects
@@ -41,7 +45,7 @@ inputDocuments:
 
 ### Project Vision
 
-Hexalith.Projects provides the durable metadata control plane that helps Hexalith.Chatbot use the correct project context for AI conversations. The end-user conversation experience belongs to Hexalith.Chatbot and is outside this module's direct UX scope.
+Hexalith.Projects provides the durable metadata control plane that helps Hexalith.Chatbot use the correct project context for AI conversations. Direct end-user presentation implementation belongs to Hexalith.Chatbot and remains outside this module's implementation authority. The approved, version-pinned Chatbot companion UX specification is nevertheless a mandatory Projects release input because FR-14, FR-15, FR-20, NFR-9, AD-32, AD-34, and SM-5 span the end-to-end user journey.
 
 The UX scope for Hexalith.Projects is administrative and operational. Administrators, operators, developers, and MCP-enabled assistants need CLI, MCP, and Web experiences to inspect project metadata, diagnose project-resolution behavior, maintain project state, and resolve operational issues without exposing conversation transcripts, file contents, prompts, secrets, memory payloads, or unsafe derived summaries.
 
@@ -166,7 +170,7 @@ The UX should avoid making users feel that the system is hiding important state,
 
 - Confidence requires consistent state names, reason codes, and warning semantics across CLI, MCP, and Web.
 - Trust requires visible tenant scope, metadata-only output, and clear redaction behavior.
-- Control requires dry-run or preview behavior for risky maintenance actions.
+- Control requires preview, single-use Confirmation Artifact, and Durable Task behavior for maintenance actions; a dry-run may add evidence but cannot replace those controls.
 - Clarity requires resolution traces, reference health, audit timelines, and explicit included/excluded states.
 - Accountability requires every state-changing action to show impact and produce audit evidence.
 - Safety requires no transcript text, file content, prompt content, memory payload, secret value, embedding vector, or unsafe derived summary in any operational surface.
@@ -410,10 +414,62 @@ The user completes the flow by either:
 - Understanding the state without changing anything.
 - Exporting or copying safe diagnostic metadata for support handoff.
 - Re-running a safe diagnostic or resolution replay.
-- Taking a maintenance action such as archive, restore, relink, unlink, or trigger a safe re-evaluation.
+- Refreshing context through the synchronous, read-only `RefreshContext` action.
+- Admitting and monitoring a durable maintenance action such as archive, restore, relink, or unlink.
 - Confirming that an action created the expected metadata-only audit evidence.
 
 The successful outcome is always explainable, tenant-scoped, and auditable.
+
+### 2.6 Shared Response and Recovery State Model
+
+Applicable Web, CLI, MCP, and Chatbot presentations preserve one versioned response snapshot. They
+may adapt layout and wording for their surface, but they do not create local state or recovery
+synonyms.
+
+Every applicable list, open, resolution, context, Conversation-start, and proposal-recovery result
+preserves these logical fields:
+
+- `responseState`
+- `asOf`
+- authorized `projectVersion` when safely disclosable
+- conditional `resolutionResult`
+- metadata-only `components`
+- `recoveryActions`
+
+The response states have binding UX consequences:
+
+- `Complete` — all evidence required for the requested purpose is `Current`; the result is usable.
+- `Partial` — Project, Project Folder, Project Setup, and first-response authorization evidence are
+  current; every optional omission is represented in `components`; the result is usable only with
+  those omissions visible.
+- `Unavailable` — required evidence is missing or non-current; Project Context and Chatbot
+  first-response admission are blocked.
+- `Denied` — no protected Project or component detail is disclosed; a newly authorized request is
+  required before another outcome is possible.
+
+Components expose inclusion `Included|Excluded`, Evidence Freshness State
+`Current|Stale|Rebuilding|Unavailable`, a safe reason code, and last-verified time when known.
+Resolution uses only `NoMatch|SingleCandidate|MultipleCandidates` and never selects a candidate from
+an `Unavailable` or `Denied` result.
+
+Recovery actions use only this vocabulary:
+
+```text
+None
+Retry
+RefreshContext
+RequestPreview
+RenewPreview
+PollTask
+ResolveNeedsAttention
+SelectAlternative
+ContactAdministrator
+```
+
+Chatbot admits a first response only for `Complete` or `Partial`. `RefreshContext` is a synchronous
+read-only recomputation that returns a new snapshot and creates no Confirmation Artifact, Durable
+Task, lifecycle mutation, or maintenance audit. Any retained `reevaluate` compatibility alias maps
+exactly to `RefreshContext` and cannot change its classification.
 
 ## Visual Design Foundation
 
@@ -518,7 +574,7 @@ FrontComposer Web UX should implement the chosen direction through:
 - Resolution trace view.
 - Audit timeline view.
 - Warning and error panels.
-- Maintenance action panels with dry-run or preview behavior.
+- Maintenance action panels with preview, Confirmation Artifact, Durable Task, and recovery behavior.
 
 CLI should mirror the same model through describe, inspect, trace, validate, dry-run, and maintenance commands.
 
@@ -584,34 +640,39 @@ flowchart TD
     P --> R
 ```
 
-### Journey 3: Perform Safe Maintenance Action
+### Journey 3: Confirm and Recover a Durable Maintenance Action
 
-Administrators need to archive, restore, relink, unlink, or trigger safe re-evaluation while understanding impact and audit consequences.
+Administrators archive, restore, relink, or unlink through a Confirmation Artifact and a pollable
+Durable Task. Admission, progress, recovery, cancellation, and completion are separate states.
 
-```mermaid
-flowchart TD
-    A[Admin selects maintenance action] --> B[System loads current project state]
-    B --> C{Action allowed for tenant and lifecycle?}
-    C -- No --> D[Show denied state and safe reason code]
-    C -- Yes --> E[Show action preview]
-    E --> F[Display tenant scope, target identifiers, current state, proposed state, warnings]
-    F --> G[Show expected audit event and payload exclusion guarantee]
-    G --> H{Dry-run required?}
-    H -- Yes --> I[Run dry-run and show result]
-    H -- No --> J[Allow confirmation]
-    I --> K{Dry-run passed?}
-    K -- No --> L[Show blockers and no state change]
-    K -- Yes --> J
-    J --> M{Admin confirms?}
-    M -- No --> N[Cancel without state change]
-    M -- Yes --> O[Execute maintenance action]
-    O --> P[Record metadata-only audit event]
-    P --> Q[Show action result, audit ID, warnings, and next safe actions]
-    D --> R[End]
-    L --> R
-    N --> R
-    Q --> R
-```
+1. `RequestPreview` returns an opaque, single-use Confirmation Artifact that expires after 15
+   minutes. Its presentation shows tenant, actor, action, target identifiers, current versions,
+   current and proposed state, warnings, expected metadata-only audit evidence, and the payload
+   exclusion guarantee.
+2. The administrator confirms or cancels. An expired, stale, replayed, tampered, actor-mismatched,
+   tenant-mismatched, or target-mismatched artifact admits no task and exposes only a safe error
+   summary plus `RenewPreview`. Focus moves to that summary and then to the renewal control.
+3. Successful confirmation returns a Durable Task identifier. This acknowledges admission, not
+   completion. If the admission response is lost, the surface uses `PollTask` with the idempotency
+   identifier or safely retries the original confirmation; it never assumes failure or repeats the
+   mutation blindly.
+4. A task exposes exactly `Pending`, `Running`, `WaitingForDependency`, `NeedsAttention`,
+   `Succeeded`, `Rejected`, `Failed`, or `Cancelled`. `WaitingForDependency` includes bounded
+   guidance. Only an authorized role can use `ResolveNeedsAttention`. Terminal states are immutable.
+5. Cancellation is offered only before the irreversible checkpoint. After that checkpoint, a
+   cancellation request returns the current task state and a safe conflict explanation.
+6. `Succeeded` is presented only after the read model confirms the expected result. SignalR may
+   announce that state changed, but Web, CLI, MCP, and Chatbot re-query the authoritative task/read
+   model over HTTP or the equivalent structured transport before rendering completion.
+
+All states and controls are keyboard operable. Focus moves predictably on validation, renewal,
+admission, and terminal transitions and restores to the originating safe control after cancellation
+or completion; live regions announce progress without excessive repetition; timeouts are not the
+only means of interaction; and no status relies on color alone.
+
+`RefreshContext` is a separate synchronous read-only journey. It returns a new response snapshot and
+does not issue a Confirmation Artifact, create a Durable Task, cross an irreversible checkpoint, or
+record a maintenance mutation.
 
 ### Journey 4: Use MCP for Agent-Assisted Troubleshooting
 
@@ -623,12 +684,12 @@ flowchart TD
     B -- Read-only --> C[Return structured safe metadata]
     C --> D[Include raw fields: projectId, tenantId, state, references, reasonCodes, warnings, audit IDs]
     D --> E[Include short safe explanation]
-    B -- Mutating tool --> F[Require explicit action, target IDs, tenant scope, and confirmation contract]
-    F --> G[Run validation or dry-run first]
-    G --> H{Safe to execute?}
-    H -- No --> I[Return blockers and no state change]
-    H -- Yes --> J[Execute only after confirmation]
-    J --> K[Return result and audit ID]
+    B -- Mutating tool --> F[Request single-use Confirmation Artifact]
+    F --> G[Return scope, current versions, impact, warnings, expiry, and expected audit]
+    G --> H{Authorized confirmation accepted?}
+    H -- No --> I[Return safe rejection or RenewPreview and admit no task]
+    H -- Yes --> J[Return pollable Durable Task ID]
+    J --> K[Poll authoritative task and read model; return terminal result and audit ID]
     E --> L[End]
     I --> L
     K --> L
@@ -643,7 +704,7 @@ Common patterns across all journeys:
 - Return structured metadata before explanation.
 - Use reason codes for included, excluded, unauthorized, stale, archived, ambiguous, conflict, and invalid states.
 - Separate read-only diagnostics from state-changing maintenance.
-- Preview or dry-run risky actions before execution.
+- Preview every mutation, then admit it only through a valid Confirmation Artifact and expose progress through a Durable Task.
 - End with audit-safe evidence.
 
 ### Flow Optimization Principles
@@ -732,25 +793,27 @@ Custom components should be minimized. Where needed, they should be Projects-spe
 
 **Purpose:** Makes state-changing actions explicit, scoped, previewable, and auditable.
 
-**Usage:** Archive, restore, relink, unlink, or re-run safe evaluation flows.
+**Usage:** Archive, restore, relink, and unlink flows. Context refresh is not a maintenance action.
 
-**Anatomy:** Action name, tenant scope, target identifiers, current state, proposed state, warnings, dry-run result, expected audit event, confirmation control.
+**Anatomy:** Action name, tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, Confirmation Artifact expiry, expected audit event, confirmation/cancel controls, Durable Task ID and status, irreversible-checkpoint state, and applicable canonical recovery actions.
 
-**States:** Preview, dry-run required, dry-run passed, dry-run blocked, confirmation required, executing, succeeded, failed.
+**States:** Preview, ConfirmationRequired, ArtifactExpired, ArtifactRejected, TaskAdmitted, Pending, Running, WaitingForDependency, NeedsAttention, Succeeded, Rejected, Failed, and Cancelled.
 
-**Accessibility:** Destructive or risky actions need clear button labels, focus handling, and confirmation messaging.
+**Accessibility:** Destructive or risky actions have explicit labels and descriptions. Focus moves to safe validation summaries and renewal controls; task changes use restrained live-region announcements; every action is keyboard accessible; and status never depends only on color, position, animation, or elapsed time.
 
 #### Safe Diagnostic Export
 
-**Purpose:** Allows administrators to copy or export structured metadata for support handoff.
+**Purpose:** Allows specifically authorized administrators to obtain one bounded, synchronous, metadata-only support snapshot.
 
-**Usage:** Resolution diagnosis, incident desk, project detail, and failed maintenance flows.
+**Usage:** Resolution diagnosis, incident desk, project detail, and failed maintenance flows in Web, CLI, and MCP. Chatbot never receives or initiates this export.
 
-**Anatomy:** Safe JSON/structured metadata preview, included fields, excluded payload guarantee, copy/export action.
+**Authorization and execution contract:** Export permission is separate from ordinary diagnostic read permission. One request produces one synchronous snapshot; it creates no cursor, Durable Task, or retained export bytes. At most two exports per Tenant may execute concurrently.
 
-**States:** Ready, copied, export failed, redaction applied.
+**Bounded result contract:** The complete encoded response, including its envelope, is at most 1 MiB. It contains at most 500 reference records and 100 audit records in deterministic order. The envelope reports included and omitted counts plus a safe truncation reason when any bound is reached. Each requested component reports `Included` or `Omitted` with a safe reason; an unavailable source is represented by a component marker rather than silently disappearing. Payload-bearing fields, secrets, prompts, transcript text, file or memory content, unsafe derived summaries, and protected existence signals are excluded. Every attempt and outcome is recorded in metadata-only audit evidence.
 
-**Accessibility:** Export content must be keyboard-copyable and screen-reader accessible.
+**States:** NotAuthorized, Ready, Complete, CompleteWithTruncation, CompleteWithUnavailableComponents, ConcurrencyLimited, and FailedSafely.
+
+**Cross-surface and accessibility contract:** Web download/copy, CLI structured output, and MCP response preserve the same authorization result, envelope fields, ordering, limits, component inclusion/omission facts, unavailable markers, and safe failure semantics. Controls and previews are keyboard operable, truncation and unavailable components are announced in text, and copy/download feedback is available to assistive technology.
 
 ### Component Implementation Strategy
 
@@ -805,8 +868,9 @@ Web UX should follow FrontComposer/Fluent UI action hierarchy.
 **CLI and MCP parity:** CLI commands and MCP tools should mirror the same action hierarchy through command naming and tool classification:
 
 - Read-only diagnostics: `describe`, `inspect`, `trace`, `validate`, `list`.
+- Read-only context recomputation: `refresh-context`; any retained `reevaluate` alias maps exactly to this action.
 - Preview actions: `dry-run`, `preview`.
-- Mutating actions: `archive`, `restore`, `relink`, `unlink`, `reevaluate`, requiring explicit target and confirmation semantics.
+- Mutating actions: `archive`, `restore`, `relink`, `unlink`, requiring explicit target, Confirmation Artifact, and Durable Task semantics.
 
 ### Feedback Patterns
 
@@ -828,7 +892,7 @@ Forms are used only for operational filtering, diagnostic input, and safe mainte
 
 **Diagnostic forms** should accept safe identifiers such as tenant ID, project ID, conversation reference, folder reference, file reference, memory reference, resolution case ID, audit event ID, correlation ID, lifecycle state, reason code, and timestamp range.
 
-**Maintenance forms** must show current state, proposed state, affected identifiers, tenant scope, warnings, dry-run result, and expected audit event before execution.
+**Maintenance forms** show tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, optional dry-run evidence, Confirmation Artifact expiry, expected audit event, and canonical recovery actions before confirmation.
 
 **Validation** should happen before state changes and should return field-specific safe errors. Validation messages should identify the invalid field or reference type without echoing unsafe values.
 
@@ -897,15 +961,41 @@ Every state-changing action must end with metadata-only audit evidence including
 
 #### Safe Export Pattern
 
-Diagnostic export should include only safe metadata fields and explicitly indicate that payload data is excluded. Export should be available through Web copy/download, CLI structured output, and MCP resource responses.
+Diagnostic export follows the exact authorization, synchronous snapshot, 1 MiB encoded-response, 500-reference, 100-audit-record, deterministic-ordering, component-marker, concurrency, audit, and no-retention contract defined by Safe Diagnostic Export. It is available through Web copy/download, CLI structured output, and MCP responses, never Chatbot.
 
 #### Confirmation Pattern
 
-Confirmations are required for mutating actions. Confirmation surfaces must show tenant scope, target identifiers, current state, proposed state, warnings, expected audit event, and whether a dry-run passed.
+Confirmations are required for mutating actions and use the single-use 15-minute Confirmation Artifact plus pollable Durable Task contract from Journey 3. Confirmation surfaces show tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, expected audit evidence, artifact expiry, and canonical recovery actions.
 
 #### Cross-Surface Parity Pattern
 
 For the same project or resolution case, CLI, MCP, and Web must expose equivalent operational facts even when formatting differs.
+
+### Chatbot Companion Release Input
+
+Direct Chatbot implementation remains owned outside Hexalith.Projects. Release approval nevertheless
+requires a separately owned and approved companion UX artifact pinned by owner repository, immutable
+revision, contract version, approval date, and approving authority. Projects artifacts reference that
+pin; they do not manufacture or assume authority over the companion artifact.
+
+The companion artifact must specify and verify:
+
+- candidate presentation without preselection, proposal presentation, explicit confirm/cancel, and
+  safe handling of expired, stale, replayed, tampered, actor-, tenant-, and target-mismatched
+  Confirmation Artifacts;
+- lost-response recovery, Durable Task polling, all task states, bounded dependency guidance,
+  authorized `ResolveNeedsAttention`, cancellation before the irreversible checkpoint, immutable
+  terminal states, and authoritative re-query before completion presentation;
+- the shared `Complete|Partial|Unavailable|Denied` response consequences, component inclusion and
+  freshness semantics, canonical recovery actions, and first-response admission only for `Complete`
+  or `Partial`;
+- keyboard, focus, live-region, timing, and non-color accessibility behavior; and
+- reproducible authorization and interaction test commands, fixtures, artifacts, results, and final
+  disposition.
+
+Story package 8.8-P3 accepts and pins this companion evidence before Story 8.8 integrates the
+cross-surface result. A missing, unapproved, mutable, or contract-drifted companion artifact blocks
+Stories 8.8 and 8.11.
 
 ## Responsive Design & Accessibility
 

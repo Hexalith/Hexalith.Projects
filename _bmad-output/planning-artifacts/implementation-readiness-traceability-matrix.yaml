@@ -4,7 +4,7 @@
 schema: hexalith.readiness-evidence.v1
 project: Hexalith.Projects
 generated: 2026-08-01
-generated_by: "bmad-correct-course — approved G-4/P1R prerequisite and capability-truth reconciliation"
+generated_by: "bmad-correct-course — approved 2026-08-01 implementation-readiness correction"
 source_of_truth: implementation-readiness-traceability-matrix.yaml
 markdown_view: implementation-readiness-traceability-matrix.md
 sources:
@@ -13,8 +13,10 @@ sources:
   architecture: _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md
   epics: _bmad-output/planning-artifacts/epics.md
   audit: _bmad-output/analysis/hexalith-projects-codebase-audit-2026-07-14.md
-  readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-17.md
-  course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md
+  readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-01.md
+  historical_planning_readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-17.md
+  historical_p1r_course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md
+  course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md
 
 # ── Validation contract (AD-30) ──────────────────────────────────────────────
 validation:
@@ -47,16 +49,19 @@ status_legend:
 
 # ── Containment ──────────────────────────────────────────────────────────────
 containment:
-  overall_readiness: "READY (2026-07-17 planning-layer rerun; implementation remains controlled by per-story gates)"
-  freeze: "Story 6.1 runtime implementation is blocked until 6.1-P4 accepts P0, P1, P1R, P2, and P3 and the Story 6.1 spec passes ready-for-development; every other story remains controlled by its applicable entry gates"
+  overall_readiness: "NOT READY (2026-08-01 implementation-readiness assessment; 2026-07-17 READY remains historical planning-layer authorization only)"
+  freeze: "The approved epic/UX/evidence corrections are reconciled, but production-authority implementation remains blocked until 6.1-P4 accepts P0, P1R, P2, and P3 with historical P1 as a satisfied input, clean-checkout verification passes, the Story 6.1 spec passes ready-for-development, and an independent implementation-readiness rerun returns READY"
   release_block: "production + consequential autonomous MCP mutation + proposed-Project confirmation blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance"
   open_triggers:
-    - "Story 6.1: blocked by 6.1-P0, P1, P1R, P2, P3, and P4; external owners and target dates remain uncommitted"
+    - "Story 6.1: critical path is P1R → {P0, P2} → P3 → P4 → clean-checkout verification → story ready-for-development → independent READY rerun; external owners and target dates remain uncommitted"
     - "6.1-P1R: EventStore v3.88.0 revision 4843b492dff7c16a4bc74db67509263f969c78c6, the Builds 3.88.0 catalog introduced by 0e51a2115581028c8d9ab9395a93dd186ee51071, runner candidate 4351d7cba7545a96661ca2ee2ca2629df6d0a118, and qualification revision 699083549932b9509fa36ed853402fe3f8b04fc5 form an unaccepted candidate; Architecture remains 3.70.1 and acceptance-grade validation, executable rollback, accepted revision, and approvals are unresolved"
     - "E-6: live E2E 19 passed / 56 failed (row release-smoke / release-e2e)"
     - "E-7: 9 P1 + 7 P2 audit findings (finding-* rows)"
     - "E-8: release handoff BLOCKED (row release-stakeholder-acceptance)"
     - "E-9: FR-19 metadata classification (row fr-19)"
+    - "Story 7.1: blocked by accepted 7.1-P1 contracts/validator evidence and 7.1-P2 task/Folder capability evidence"
+    - "Story 8.8: blocked by accepted 8.8-P1 authenticated parity/isolation/privacy, 8.8-P2 operator accessibility, and 8.8-P3 owner-pinned Chatbot companion evidence"
+    - "Story 8.11: blocked by accepted 8.11-P1 deployment/smoke, 8.11-P2 KMS/encryption, and 8.11-P3 rollback evidence plus every preceding Epic 8 story"
 
 # ── Defaults — a row inherits any field it does not explicitly set ────────────
 defaults:
@@ -77,13 +82,13 @@ rows:
     user_journeys: [UJ-2, UJ-3]
     primary_story: "7.1"
     supporting_stories: ["6.1"]
-    entry_gates: [Epic-7-gate, G-1, G-2]
+    entry_gates: [Epic-7-gate, G-1, G-2, "7.1-P1", "7.1-P2"]
     fixture: epic7/7.1-create-folder-first
     verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.1"
     evidence_artifact: evidence/epic7/7.1-create.trx
-    estimate: XL
+    estimate: L
     status: blocked-external
-    blocker: "G-1 durable-task engine + G-2 Folders owner contract"
+    blocker: "7.1-P1 contract/validator acceptance + 7.1-P2 durable-task and Folders capability acceptance"
   - key: fr-2
     category: fr
     ids: [FR-2]
@@ -335,13 +340,13 @@ rows:
     linked_findings: [E-9, AD-31]
     primary_story: "7.1"
     supporting_stories: ["6.7"]
-    entry_gates: [Epic-7-gate, G-1]
+    entry_gates: [Epic-7-gate, G-1, "7.1-P1", "7.1-P2"]
     fixture: epic7/7.1-metadata-classification
     verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.1&Trait=metadata-classification"
     evidence_artifact: evidence/epic7/7.1-metadata-classification.trx
-    estimate: XL
+    estimate: L
     status: blocked-external
-    blocker: "G-1; E-9 remediation gate"
+    blocker: "7.1-P1 contract/validator acceptance; 7.1-P2 capability acceptance; E-9 remediation gate"
   - key: fr-20
     category: fr
     ids: [FR-20]
@@ -419,13 +424,14 @@ rows:
     architecture_decisions: [AD-11, AD-13, AD-20]
     primary_story: "8.8"
     supporting_stories: ["6.1", "6.5", "7.1"]
-    entry_gates: [Epic-8-gate, G-5, "6.1-P2", "6.1-P3", "6.1-P4"]
-    fixture: epic8/8.8-parity-isolation-a11y
-    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Story=8.8&Trait=security"
-    evidence_artifact: evidence/epic8/8.8-security.trx
-    estimate: XL
+    entry_gates: [Epic-8-gate, G-5, "6.1-P2", "6.1-P3", "6.1-P4", "8.8-P1"]
+    fixture: epic8/8.8-P1-authenticated-security
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1"
+    evidence_artifact: evidence/epic8/8.8-P1-security.trx
+    estimate: S
     status: blocked-external
-    blocker: "G-5 identity; authenticated live topology; Story 6.1 P2/P3/P4 query-safety and production-auth acceptance"
+    blocker: "8.8-P1 acceptance; G-5 identity; authenticated live topology; Story 6.1 P2/P3/P4 query-safety and production-auth acceptance"
+    notes: "Story 8.8 performs only integrated manifest and critical-case validation after the package passes."
   - key: nfr-2
     category: nfr
     ids: [NFR-2]
@@ -433,14 +439,14 @@ rows:
     architecture_decisions: [AD-28]
     primary_story: "8.11"
     supporting_stories: ["8.6", "8.7"]
-    entry_gates: [Epic-8-gate, G-5]
-    fixture: epic8/8.11-deploy-kms
-    verification_command: "dotnet tool run hexalith-module test --profile deploy --filter Story=8.11&Trait=encryption"
-    evidence_artifact: evidence/epic8/8.11-encryption-kms.json
-    estimate: L
+    entry_gates: [Epic-8-gate, G-5, "8.11-P2"]
+    fixture: epic8/8.11-P2-encryption-kms
+    verification_command: "dotnet tool run hexalith-module test --profile deploy --filter Package=8.11-P2"
+    evidence_artifact: evidence/epic8/8.11-P2-encryption-kms.json
+    estimate: S
     status: blocked-external
-    blocker: "G-5 KMS/secret bindings; deployment environment"
-    notes: "Previously unmapped (readiness M2). Owner assigned per SCP §4.6."
+    blocker: "8.11-P2 acceptance; G-5 KMS/secret bindings; deployment environment"
+    notes: "Evidence acquisition belongs to 8.11-P2; Story 8.11 records only the terminal decision."
   - key: nfr-3
     category: nfr
     ids: [NFR-3]
@@ -529,14 +535,14 @@ rows:
     linked_findings: [SM-5]
     primary_story: "8.8"
     supporting_stories: ["6.5", "8.3"]
-    entry_gates: [Epic-8-gate, G-3]
-    fixture: epic8/8.8-accessibility
-    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Story=8.8&Trait=accessibility"
-    evidence_artifact: evidence/epic8/8.8-accessibility.json
-    estimate: XL
+    entry_gates: [Epic-8-gate, G-3, "8.8-P2", "8.8-P3"]
+    fixture: epic8/8.8-P2-P3-accessibility
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P2,8.8-P3"
+    evidence_artifact: evidence/epic8/8.8-accessibility-manifest.json
+    estimate: S
     status: blocked-external
-    blocker: "G-3 FrontComposer adapters; SEPARATE cross-repo Chatbot owner + pinned revision (unowned as of 2026-07-16)"
-    notes: "Chatbot companion a11y/integration is cross-repository (Hexalith.Chatbot); requires separately approved owner + pinned revision. Its absence blocks Projects release."
+    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 separately owned and approved immutable Chatbot companion pin; G-3 FrontComposer adapters"
+    notes: "Story 8.8 integrates accepted package manifests only. A missing, mutable, unapproved, or contract-drifted Chatbot companion artifact blocks Projects release."
   - key: nfr-10
     category: nfr
     ids: [NFR-10]
@@ -558,14 +564,14 @@ rows:
     architecture_decisions: [AD-25, AD-28, AD-30]
     primary_story: "8.11"
     supporting_stories: ["8.1", "8.6", "8.7", "8.8", "8.9", "8.10"]
-    entry_gates: [Epic-8-gate, G-4]
+    entry_gates: [Epic-8-gate, G-4, "8.11-P1", "8.11-P2", "8.11-P3"]
     fixture: epic8/8.11-release-evidence
     verification_command: "dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml"
     evidence_artifact: evidence/epic8/8.11-release-evidence.json
-    estimate: L
+    estimate: S
     status: blocked-external
-    blocker: "G-4 hexalith-evidence tool (AD-30); terminal gate"
-    notes: "Terminal release gate. Cannot complete by recording a blocker."
+    blocker: "8.11-P1/P2/P3 and every preceding Epic 8 story; G-4 hexalith-evidence tool (AD-30); terminal gate"
+    notes: "Acquisition is owned by prerequisite packages. Story 8.11 validates the complete matrix and records the terminal decision; it cannot complete by recording a blocker."
 
   # ═══════════════════════ AUDIT FINDINGS — P1 (9) ═══════════════════════
   # Finding→story bindings are candidate owners mapped to the REBASELINED story numbers.
@@ -843,13 +849,13 @@ rows:
     architecture_decisions: [AD-30, AD-19, AD-20]
     primary_story: "8.8"
     supporting_stories: ["6.1"]
-    entry_gates: [Epic-8-gate, G-5]
-    fixture: epic8/8.8-parity-isolation-a11y
-    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Category=cross-tenant"
-    evidence_artifact: evidence/release/cross-tenant-isolation.trx
-    estimate: L
+    entry_gates: [Epic-8-gate, G-5, "8.8-P1"]
+    fixture: epic8/8.8-P1-authenticated-security
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1&Trait=cross-tenant"
+    evidence_artifact: evidence/epic8/8.8-P1-cross-tenant-isolation.trx
+    estimate: S
     status: blocked-external
-    blocker: "G-5 identity; authenticated live topology"
+    blocker: "8.8-P1 acceptance; G-5 identity; authenticated live topology"
   - key: release-restart-concurrency
     category: release
     ids: [NFR-11.restart-concurrency]
@@ -899,13 +905,13 @@ rows:
     architecture_decisions: [AD-30, AD-34]
     primary_story: "8.8"
     supporting_stories: ["8.3", "6.5"]
-    entry_gates: [Epic-8-gate, G-3]
-    fixture: epic8/8.8-accessibility
-    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Category=accessibility"
-    evidence_artifact: evidence/release/accessibility.json
-    estimate: L
+    entry_gates: [Epic-8-gate, G-3, "8.8-P2", "8.8-P3"]
+    fixture: epic8/8.8-P2-P3-accessibility
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P2,8.8-P3"
+    evidence_artifact: evidence/epic8/8.8-accessibility-manifest.json
+    estimate: S
     status: blocked-external
-    blocker: "G-3; SEPARATE cross-repo Chatbot owner (unowned as of 2026-07-16)"
+    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 separately owned, approved, immutable Chatbot companion pin; G-3"
   - key: release-privacy
     category: release
     ids: [NFR-11.privacy]
@@ -913,13 +919,13 @@ rows:
     architecture_decisions: [AD-30, AD-11, AD-26]
     primary_story: "8.8"
     supporting_stories: ["6.3", "8.1", "8.2"]
-    entry_gates: [Epic-8-gate]
-    fixture: epic8/8.8-parity-isolation-a11y
-    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Category=privacy-leakage"
-    evidence_artifact: evidence/release/privacy-leakage.trx
-    estimate: M
+    entry_gates: [Epic-8-gate, "8.8-P1"]
+    fixture: epic8/8.8-P1-authenticated-security
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1&Trait=privacy-leakage"
+    evidence_artifact: evidence/epic8/8.8-P1-privacy-leakage.trx
+    estimate: S
     status: blocked-external
-    blocker: "authenticated live topology"
+    blocker: "8.8-P1 acceptance; authenticated live topology"
   - key: release-performance
     category: release
     ids: [NFR-11.performance]
@@ -939,27 +945,27 @@ rows:
     architecture_decisions: [AD-30, AD-28]
     primary_story: "8.11"
     supporting_stories: ["8.7"]
-    entry_gates: [Epic-8-gate, G-5]
-    fixture: epic8/8.11-deploy-kms
-    verification_command: "dotnet tool run hexalith-module test --profile deploy --filter Category=deployment"
-    evidence_artifact: evidence/release/deployment.json
-    estimate: L
+    entry_gates: [Epic-8-gate, G-5, "8.11-P1"]
+    fixture: epic8/8.11-P1-deployment-smoke
+    verification_command: "dotnet tool run hexalith-module test --profile deploy --filter Package=8.11-P1&Trait=deployment"
+    evidence_artifact: evidence/epic8/8.11-P1-deployment.json
+    estimate: S
     status: blocked-external
-    blocker: "G-5 bindings; deployment environment"
+    blocker: "8.11-P1 acceptance; G-5 bindings; deployment environment"
   - key: release-smoke
     category: release
     ids: [NFR-11.smoke, E-6]
     description: "Smoke / live E2E — authenticated live-topology smoke; supersede the failing 19-passed/56-failed run"
     architecture_decisions: [AD-30]
-    primary_story: "8.8"
-    supporting_stories: ["8.11"]
-    entry_gates: [Epic-8-gate, G-4, G-5]
-    fixture: epic8/8.8-live-e2e
-    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Category=smoke"
-    evidence_artifact: evidence/release/live-e2e.trx
-    estimate: L
+    primary_story: "8.11"
+    supporting_stories: ["8.8"]
+    entry_gates: [Epic-8-gate, G-4, G-5, "8.11-P1"]
+    fixture: epic8/8.11-P1-deployment-smoke
+    verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.11-P1&Trait=smoke"
+    evidence_artifact: evidence/epic8/8.11-P1-live-e2e.trx
+    estimate: S
     status: failed
-    blocker: "current live E2E 19 passed / 56 failed (E-6); must be superseded by a passing authenticated run"
+    blocker: "8.11-P1 acceptance; current live E2E 19 passed / 56 failed (E-6) must be superseded by a passing authenticated run"
     notes: "HONEST current state is FAILED, not skipped. Do not represent as passing."
   - key: release-rollback
     category: release
@@ -968,11 +974,13 @@ rows:
     architecture_decisions: [AD-30, AD-17]
     primary_story: "8.11"
     supporting_stories: ["6.7", "7.15"]
-    entry_gates: [Epic-8-gate]
-    fixture: epic8/8.11-rollback-drill
-    verification_command: "dotnet tool run hexalith-module test --profile deploy --filter Category=rollback"
-    evidence_artifact: evidence/release/rollback-drill.json
-    estimate: M
+    entry_gates: [Epic-8-gate, "8.11-P3"]
+    fixture: epic8/8.11-P3-rollback-drill
+    verification_command: "dotnet tool run hexalith-module test --profile deploy --filter Package=8.11-P3"
+    evidence_artifact: evidence/epic8/8.11-P3-rollback-drill.json
+    estimate: S
+    status: blocked-external
+    blocker: "8.11-P3 accepted executed rollback drill"
   - key: release-stakeholder-acceptance
     category: release
     ids: [NFR-11.stakeholder-acceptance, E-8]
@@ -981,11 +989,11 @@ rows:
     primary_story: "8.11"
     supporting_stories: []
     owner: "Release Owners: Jerome and John (with Product Owner + Test Architect evidence)"
-    entry_gates: [Epic-8-gate, G-4]
+    entry_gates: [Epic-8-gate, G-4, "8.11-P1", "8.11-P2", "8.11-P3"]
     fixture: epic8/8.11-release-acceptance
     verification_command: "dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml"
     evidence_artifact: evidence/release/stakeholder-acceptance.md
-    estimate: M
+    estimate: S
     status: blocked
-    blocker: "release handoff BLOCKED (E-8); requires all critical evidence to pass first"
+    blocker: "8.11-P1/P2/P3 and every preceding Epic 8 story; release handoff BLOCKED (E-8); requires all critical evidence to pass first"
     release_disposition: "TERMINAL gate — production + autonomous MCP mutation + proposed-Project confirmation enabled only after this passes. Cannot complete by recording a blocker."

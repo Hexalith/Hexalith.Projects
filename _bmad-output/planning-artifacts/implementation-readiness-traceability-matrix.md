@@ -4,8 +4,8 @@
 
 ## Status & containment
 
-- **Overall readiness:** READY (2026-07-17 planning-layer rerun; implementation remains controlled by per-story gates)
-- **Freeze:** Story 6.1 runtime implementation is blocked until 6.1-P4 accepts P0, P1, P1R, P2, and P3 and the Story 6.1 spec passes ready-for-development; every other story remains controlled by its applicable entry gates
+- **Overall readiness:** NOT READY (2026-08-01 implementation-readiness assessment; 2026-07-17 READY remains historical planning-layer authorization only)
+- **Freeze:** The approved epic/UX/evidence corrections are reconciled, but production-authority implementation remains blocked until 6.1-P4 accepts P0, P1R, P2, and P3 with historical P1 as a satisfied input, clean-checkout verification passes, the Story 6.1 spec passes ready-for-development, and an independent implementation-readiness rerun returns READY
 - **Release block:** production + consequential autonomous MCP mutation + proposed-Project confirmation blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance
 - **Validation gate (target):** `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` — tool status **not-available**; Builds runner candidate `4351d7cba7545a96661ca2ee2ca2629df6d0a118` and qualification revision `699083549932b9509fa36ed853402fe3f8b04fc5` remain unaccepted, not an accepted published consumer capability
 - **Rows total:** 63 (FR 24 · NFR 11 · findings 16 · release 12). No row is `passed` pre-READY.
@@ -17,7 +17,7 @@
 
 | Key | IDs | Description | Primary | Supporting | ADs | Status | Blocker |
 |---|---|---|---|---|---|---|---|
-| `fr-1` | FR-1 | Create Project — Folder-first, idempotent, metadata-classified; Active only after exactly one authorized Folder is bound and read-model-confirmed | 7.1 | 6.1 | AD-3, AD-5, AD-8, AD-12, AD-22, AD-31 | 🔒 blocked-external | G-1 durable-task engine + G-2 Folders owner contract |
+| `fr-1` | FR-1 | Create Project — Folder-first, idempotent, metadata-classified; Active only after exactly one authorized Folder is bound and read-model-confirmed | 7.1 | 6.1 | AD-3, AD-5, AD-8, AD-12, AD-22, AD-31 | 🔒 blocked-external | 7.1-P1 contract/validator acceptance + 7.1-P2 durable-task and Folders capability acceptance |
 | `fr-2` | FR-2 | Open Project — authorized metadata/lifecycle/setup/reference summary via supported read models | 6.1 | — | AD-3, AD-14, AD-19, AD-20, AD-32, AD-33 | 🔒 blocked-external | 6.1-P0, P1R, P2..P4 (historical P1 normalized 3.70.1 on 2026-07-18; post-P1 Builds candidate drift is unresolved): G-4 runner and acceptance record, exact revalidated baseline, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record |
 | `fr-3` | FR-3 | Update Project Setup — durable, additive, idempotent | 7.2 | — | AD-5, AD-15, AD-16 | 🔒 blocked-external | G-1 durable-task engine |
 | `fr-4` | FR-4 | Archive Project — Preview + single-use confirmation + idempotent Durable Task | 7.13 | — | AD-4, AD-5, AD-13 | 🔒 blocked-external | G-1 durable-task engine + confirmation record |
@@ -35,7 +35,7 @@
 | `fr-16` | FR-16 | Get Project Context — allowlist-assembled setup + included refs with exclusion reasons; metadata-only | 6.3 | — | AD-11, AD-14, AD-32 | 🟡 pending | — |
 | `fr-17` | FR-17 | Explain Context Selection — current transient inclusion/exclusion evidence; no secrets/payloads; no persisted trace | 6.3 | 6.4 | AD-7, AD-14 | 🟡 pending | — |
 | `fr-18` | FR-18 | Refresh Project Context — read-only recompute; surfaces stale/unavailable refs; never mutates | 6.3 | — | AD-7, AD-14, AD-32 | 🟡 pending | — |
-| `fr-19` | FR-19 | Validate Setup & Metadata Classification — four-value metadataClass, shared SensitiveMetadataTierValidator, auth-before-parse, 400 rejectedField, name-only compatibility | 7.1 | 6.7 | AD-31, AD-16 | 🔒 blocked-external | G-1; E-9 remediation gate |
+| `fr-19` | FR-19 | Validate Setup & Metadata Classification — four-value metadataClass, shared SensitiveMetadataTierValidator, auth-before-parse, 400 rejectedField, name-only compatibility | 7.1 | 6.7 | AD-31, AD-16 | 🔒 blocked-external | 7.1-P1 contract/validator acceptance; 7.1-P2 capability acceptance; E-9 remediation gate |
 | `fr-20` | FR-20 | Retrieve Conversation-Start Setup — bounded start subset with admission truth; excludes audit metadata | 6.2 | — | AD-14, AD-32 | 🟡 pending | — |
 | `fr-21` | FR-21 | Record Project Audit Events — metadata-only audit of admissions/mutations/confirmations/reconciliation/export; ≥365-day retention | 8.1 | — | AD-21, AD-26, AD-30 | 🟡 pending | — |
 | `fr-22` | FR-22 | Support Operator Read Access — authorized metadata-only read across Web/CLI/MCP + operational surfaces; read grants neither export nor mutation | 6.5 / 6.6 | 8.1, 8.3, 8.4, 8.5 | AD-2, AD-19, AD-20, AD-29 | 🔒 blocked-external | G-3 FrontComposer adapters + G-5 identity |
@@ -46,17 +46,17 @@
 
 | Key | IDs | Description | Primary | Supporting | ADs | Status | Blocker |
 |---|---|---|---|---|---|---|---|
-| `nfr-1` | NFR-1 | Security & privacy — Tenant/actor/action/target/version scoping; fail-closed on stale auth; metadata-only logs/telemetry/errors | 8.8 | 6.1, 6.5, 7.1 | AD-11, AD-13, AD-20 | 🔒 blocked-external | G-5 identity; authenticated live topology; Story 6.1 P2/P3/P4 query-safety and production-auth acceptance |
-| `nfr-2` | NFR-2 | Encryption & key management — encryption in transit; platform-managed at rest; KMS rotation/revocation evidence; Projects owns no private keys | 8.11 | 8.6, 8.7 | AD-28 | 🔒 blocked-external | G-5 KMS/secret bindings; deployment environment |
+| `nfr-1` | NFR-1 | Security & privacy — Tenant/actor/action/target/version scoping; fail-closed on stale auth; metadata-only logs/telemetry/errors | 8.8 | 6.1, 6.5, 7.1 | AD-11, AD-13, AD-20 | 🔒 blocked-external | 8.8-P1 acceptance; G-5 identity; authenticated live topology; Story 6.1 P2/P3/P4 query-safety and production-auth acceptance |
+| `nfr-2` | NFR-2 | Encryption & key management — encryption in transit; platform-managed at rest; KMS rotation/revocation evidence; Projects owns no private keys | 8.11 | 8.6, 8.7 | AD-28 | 🔒 blocked-external | 8.11-P2 acceptance; G-5 KMS/secret bindings; deployment environment |
 | `nfr-3` | NFR-3 | Availability & recovery — 99.9% monthly; RTO 15 min; task resume or NeedsAttention within 5 min | 8.10 | 8.6 | AD-4, AD-9, AD-28 | 🔒 blocked-external | G-1 durable-task engine |
 | `nfr-4` | NFR-4 | Durability & idempotency — RPO 0 committed events; Active never folderless; equivalent-retry-same-task; no silent drop/duplicate | 8.10 | 7.1, 7.15 | AD-4, AD-12 | 🔒 blocked-external | G-1 durable-task engine |
 | `nfr-5` | NFR-5 | Performance & scale — 10k Projects/Tenant, 5k refs/Project, 100k audit; reads p95 <500ms (<1s max); admission p95 <500ms warm | 8.9 | 6.1, 6.7 | AD-14, AD-15, AD-27 | 🔒 blocked-external | Story 6.1 P0/P1R/P2/P4 runner, revalidated baseline, watermark, machine-checkable acceptance, and accepted persisted-read evidence (historical P1 normalized 3.70.1 on 2026-07-18); final scale gate remains Story 8.9 |
 | `nfr-6` | NFR-6 | Pagination & export bounds — cursor default 50 / cap 200; export caps + 2 concurrent per Tenant | 8.9 | 8.2 | AD-19, AD-21, AD-27 | 🟡 pending | — |
 | `nfr-7` | NFR-7 | Back-pressure & dependency control — 100 reads/s (burst 200), 20 mutations/s (burst 40), 1000 nonterminal tasks, 2 exports; 2s/10s timeouts; ≤3 retries/30s; structured overload | 8.9 | — | AD-27 | 🟡 pending | — |
 | `nfr-8` | NFR-8 | Retention & transient data — terminal/idempotency ≥30 days; Preview/Confirmation 15-min expiry; audit ≥365 days; traces/exports not persisted | 8.1 | 8.2, 7.2, 7.4 | AD-4, AD-5, AD-21, AD-26 | 🟡 pending | — |
-| `nfr-9` | NFR-9 | Accessibility — WCAG 2.2 AA across operator + Chatbot companion; keyboard/focus/AT/200%/320px; automated + authenticated manual evidence | 8.8 | 6.5, 8.3 | AD-34, AD-29 | 🔒 blocked-external | G-3 FrontComposer adapters; SEPARATE cross-repo Chatbot owner + pinned revision (unowned as of 2026-07-16) |
+| `nfr-9` | NFR-9 | Accessibility — WCAG 2.2 AA across operator + Chatbot companion; keyboard/focus/AT/200%/320px; automated + authenticated manual evidence | 8.8 | 6.5, 8.3 | AD-34, AD-29 | 🔒 blocked-external | 8.8-P2 operator accessibility acceptance; 8.8-P3 separately owned and approved immutable Chatbot companion pin; G-3 FrontComposer adapters |
 | `nfr-10` | NFR-10 | Compatibility — additive/serialization-tolerant contracts; name-only creation preserved; retirement gated; no event-history rewrite | 6.7 | 6.1, 7.15, 8.7 | AD-6, AD-16, AD-17, AD-22 | 🔒 blocked-external | Historical 6.1-P1 version/source normalization completed on EventStore 3.70.1 (2026-07-18); post-P1 P1R revalidation and 6.1-P4 entry-gate acceptance remain pending; final cutover gate remains Story 6.7 |
-| `nfr-11` | NFR-11 | Release evidence — all critical categories pass; failed/unexplained-skip critical case blocks; unavailable env = not-verified | 8.11 | 8.1, 8.6, 8.7, 8.8, 8.9, 8.10 | AD-25, AD-28, AD-30 | 🔒 blocked-external | G-4 hexalith-evidence tool (AD-30); terminal gate |
+| `nfr-11` | NFR-11 | Release evidence — all critical categories pass; failed/unexplained-skip critical case blocks; unavailable env = not-verified | 8.11 | 8.1, 8.6, 8.7, 8.8, 8.9, 8.10 | AD-25, AD-28, AD-30 | 🔒 blocked-external | 8.11-P1/P2/P3 and every preceding Epic 8 story; G-4 hexalith-evidence tool (AD-30); terminal gate |
 
 ## Audit Findings (9 P1 + 7 P2) (16)
 
@@ -84,17 +84,17 @@
 | Key | IDs | Description | Primary | Supporting | ADs | Status | Blocker |
 |---|---|---|---|---|---|---|---|
 | `release-authenticated-persisted-boundary` | NFR-11.persisted-boundary | Authenticated persisted-boundary evidence over the real supported platform path | 8.1 | 6.7 | AD-30, AD-17 | 🔒 blocked-external | G-4 runner + blocking CI |
-| `release-cross-tenant-isolation` | NFR-11.cross-tenant | Cross-Tenant isolation — no surface renders another Tenant's data; denial indistinguishable from absence | 8.8 | 6.1 | AD-30, AD-19, AD-20 | 🔒 blocked-external | G-5 identity; authenticated live topology |
+| `release-cross-tenant-isolation` | NFR-11.cross-tenant | Cross-Tenant isolation — no surface renders another Tenant's data; denial indistinguishable from absence | 8.8 | 6.1 | AD-30, AD-19, AD-20 | 🔒 blocked-external | 8.8-P1 acceptance; G-5 identity; authenticated live topology |
 | `release-restart-concurrency` | NFR-11.restart-concurrency | Restart/concurrency — durable convergence across restart, two-instance, concurrency | 8.10 | 7.15 | AD-30, AD-4, AD-9 | 🔒 blocked-external | G-1 durable-task engine |
 | `release-duplicate-delivery` | NFR-11.duplicate-delivery | Duplicate-delivery — at-least-once delivery converges without duplicate durable effect | 8.10 | — | AD-30, AD-4, AD-12 | 🔒 blocked-external | G-1 durable-task engine |
 | `release-lost-response` | NFR-11.lost-response | Lost-response — equivalent retry after a lost response converges to the original durable truth | 8.10 | — | AD-30, AD-4, AD-5 | 🔒 blocked-external | G-1 durable-task engine |
-| `release-accessibility` | NFR-11.accessibility | Accessibility — WCAG 2.2 AA automated + authenticated manual evidence for operator AND Chatbot companion journeys | 8.8 | 8.3, 6.5 | AD-30, AD-34 | 🔒 blocked-external | G-3; SEPARATE cross-repo Chatbot owner (unowned as of 2026-07-16) |
-| `release-privacy` | NFR-11.privacy | Privacy — NoPayloadLeakage across every event/DTO/log/audit/surface/export | 8.8 | 6.3, 8.1, 8.2 | AD-30, AD-11, AD-26 | 🔒 blocked-external | authenticated live topology |
+| `release-accessibility` | NFR-11.accessibility | Accessibility — WCAG 2.2 AA automated + authenticated manual evidence for operator AND Chatbot companion journeys | 8.8 | 8.3, 6.5 | AD-30, AD-34 | 🔒 blocked-external | 8.8-P2 operator accessibility acceptance; 8.8-P3 separately owned, approved, immutable Chatbot companion pin; G-3 |
+| `release-privacy` | NFR-11.privacy | Privacy — NoPayloadLeakage across every event/DTO/log/audit/surface/export | 8.8 | 6.3, 8.1, 8.2 | AD-30, AD-11, AD-26 | 🔒 blocked-external | 8.8-P1 acceptance; authenticated live topology |
 | `release-performance` | NFR-11.performance | Performance — authenticated performance at small/median/max supported scale | 8.9 | — | AD-30, AD-27 | 🟡 pending | — |
-| `release-deployment` | NFR-11.deployment | Deployment — deployed version/environment + encryption/KMS evidence recorded | 8.11 | 8.7 | AD-30, AD-28 | 🔒 blocked-external | G-5 bindings; deployment environment |
-| `release-smoke` | NFR-11.smoke, E-6 | Smoke / live E2E — authenticated live-topology smoke; supersede the failing 19-passed/56-failed run | 8.8 | 8.11 | AD-30 | ❌ failed | current live E2E 19 passed / 56 failed (E-6); must be superseded by a passing authenticated run |
-| `release-rollback` | NFR-11.rollback | Rollback — reversible read/command routing + rollback drill reference | 8.11 | 6.7, 7.15 | AD-30, AD-17 | 🟡 pending | — |
-| `release-stakeholder-acceptance` | NFR-11.stakeholder-acceptance, E-8 | Stakeholder acceptance — dated residual-risk disposition + terminal acceptance from Jerome and John; TERMINAL release gate | 8.11 | — | AD-30 | ⛔ blocked | release handoff BLOCKED (E-8); requires all critical evidence to pass first |
+| `release-deployment` | NFR-11.deployment | Deployment — deployed version/environment + encryption/KMS evidence recorded | 8.11 | 8.7 | AD-30, AD-28 | 🔒 blocked-external | 8.11-P1 acceptance; G-5 bindings; deployment environment |
+| `release-smoke` | NFR-11.smoke, E-6 | Smoke / live E2E — authenticated live-topology smoke; supersede the failing 19-passed/56-failed run | 8.11 | 8.8 | AD-30 | ❌ failed | 8.11-P1 acceptance; current live E2E 19 passed / 56 failed (E-6) must be superseded by a passing authenticated run |
+| `release-rollback` | NFR-11.rollback | Rollback — reversible read/command routing + rollback drill reference | 8.11 | 6.7, 7.15 | AD-30, AD-17 | 🔒 blocked-external | 8.11-P3 accepted executed rollback drill |
+| `release-stakeholder-acceptance` | NFR-11.stakeholder-acceptance, E-8 | Stakeholder acceptance — dated residual-risk disposition + terminal acceptance from Jerome and John; TERMINAL release gate | 8.11 | — | AD-30 | ⛔ blocked | 8.11-P1/P2/P3 and every preceding Epic 8 story; release handoff BLOCKED (E-8); requires all critical evidence to pass first |
 
 ## Verification commands & evidence artifacts
 
@@ -102,7 +102,7 @@ _Every row's exact verification command and expected evidence artifact (full det
 
 | Key | Verification command | Evidence artifact | Est. |
 |---|---|---|---|
-| `fr-1` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.1` | `evidence/epic7/7.1-create.trx` | XL |
+| `fr-1` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.1` | `evidence/epic7/7.1-create.trx` | L |
 | `fr-2` | `dotnet tool run hexalith-module test --profile reads --filter Story=6.1` | `evidence/epic6/6.1-authorized-reads.trx` | M |
 | `fr-3` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.2` | `evidence/epic7/7.2-setup-update.trx` | M |
 | `fr-4` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.13` | `evidence/epic7/7.13-archive.trx` | M |
@@ -120,23 +120,23 @@ _Every row's exact verification command and expected evidence artifact (full det
 | `fr-16` | `dotnet tool run hexalith-module test --profile reads --filter Story=6.3` | `evidence/epic6/6.3-project-context.trx` | L |
 | `fr-17` | `dotnet tool run hexalith-module test --profile reads --filter Story=6.3` | `evidence/epic6/6.3-project-context.trx` | L |
 | `fr-18` | `dotnet tool run hexalith-module test --profile reads --filter Story=6.3` | `evidence/epic6/6.3-project-context.trx` | L |
-| `fr-19` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.1&Trait=metadata-classification` | `evidence/epic7/7.1-metadata-classification.trx` | XL |
+| `fr-19` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.1&Trait=metadata-classification` | `evidence/epic7/7.1-metadata-classification.trx` | L |
 | `fr-20` | `dotnet tool run hexalith-module test --profile reads --filter Story=6.2` | `evidence/epic6/6.2-conversation-start-setup.trx` | S |
 | `fr-21` | `dotnet tool run hexalith-module test --profile ops --filter Story=8.1` | `evidence/epic8/8.1-task-audit.trx` | M |
 | `fr-22` | `dotnet tool run hexalith-module test --profile web-reads,cli-reads --filter Story=6.5\|6.6` | `evidence/epic6/read-surfaces.trx` | L |
 | `fr-23` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.14` | `evidence/epic7/7.14-restore.trx` | L |
 | `fr-24` | `dotnet tool run hexalith-module test --profile ops --filter Story=8.2` | `evidence/epic8/8.2-safe-export.trx` | L |
-| `nfr-1` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Story=8.8&Trait=security` | `evidence/epic8/8.8-security.trx` | XL |
-| `nfr-2` | `dotnet tool run hexalith-module test --profile deploy --filter Story=8.11&Trait=encryption` | `evidence/epic8/8.11-encryption-kms.json` | L |
+| `nfr-1` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1` | `evidence/epic8/8.8-P1-security.trx` | S |
+| `nfr-2` | `dotnet tool run hexalith-module test --profile deploy --filter Package=8.11-P2` | `evidence/epic8/8.11-P2-encryption-kms.json` | S |
 | `nfr-3` | `dotnet tool run hexalith-module test --profile resilience --filter Story=8.10&Trait=availability` | `evidence/epic8/8.10-availability.trx` | L |
 | `nfr-4` | `dotnet tool run hexalith-module test --profile resilience --filter Story=8.10&Trait=durability` | `evidence/epic8/8.10-durability.trx` | L |
 | `nfr-5` | `dotnet tool run hexalith-module test --profile perf --filter Story=8.9` | `evidence/epic8/8.9-performance.json` | L |
 | `nfr-6` | `dotnet tool run hexalith-module test --profile perf --filter Story=8.9&Trait=paging` | `evidence/epic8/8.9-paging.trx` | L |
 | `nfr-7` | `dotnet tool run hexalith-module test --profile perf --filter Story=8.9&Trait=backpressure` | `evidence/epic8/8.9-backpressure.trx` | L |
 | `nfr-8` | `dotnet tool run hexalith-module test --profile ops --filter Story=8.1&Trait=retention` | `evidence/epic8/8.1-retention.trx` | M |
-| `nfr-9` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Story=8.8&Trait=accessibility` | `evidence/epic8/8.8-accessibility.json` | XL |
+| `nfr-9` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P2,8.8-P3` | `evidence/epic8/8.8-accessibility-manifest.json` | S |
 | `nfr-10` | `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7` | `evidence/epic6/6.7-read-cutover.json` | L |
-| `nfr-11` | `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` | `evidence/epic8/8.11-release-evidence.json` | L |
+| `nfr-11` | `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` | `evidence/epic8/8.11-release-evidence.json` | S |
 | `finding-arch-001` | `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7` | `evidence/epic6/6.7-read-cutover.json` | L |
 | `finding-arch-002` | `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7&Trait=contracts` | `evidence/epic6/6.7-contracts.trx` | M |
 | `finding-sec-001` | `dotnet tool run hexalith-module test --profile ops --filter Story=8.6&Trait=admission` | `evidence/epic8/8.6-admission.trx` | M |
@@ -154,31 +154,31 @@ _Every row's exact verification command and expected evidence artifact (full det
 | `finding-code-001` | `dotnet tool run hexalith-module test --profile supply-chain --filter Finding=CODE-001` | `evidence/epic8/8.7-code-001.trx` | S |
 | `finding-cli-001` | `dotnet tool run hexalith-module test --profile cli --filter Story=8.4&Trait=option-validation` | `evidence/epic8/8.4-cli-001.trx` | S |
 | `release-authenticated-persisted-boundary` | `dotnet tool run hexalith-module test --profile ci-gates --filter Category=persisted-boundary` | `evidence/release/persisted-boundary.trx` | L |
-| `release-cross-tenant-isolation` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Category=cross-tenant` | `evidence/release/cross-tenant-isolation.trx` | L |
+| `release-cross-tenant-isolation` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1&Trait=cross-tenant` | `evidence/epic8/8.8-P1-cross-tenant-isolation.trx` | S |
 | `release-restart-concurrency` | `dotnet tool run hexalith-module test --profile resilience --filter Category=restart-concurrency` | `evidence/release/restart-concurrency.trx` | L |
 | `release-duplicate-delivery` | `dotnet tool run hexalith-module test --profile resilience --filter Category=duplicate-delivery` | `evidence/release/duplicate-delivery.trx` | M |
 | `release-lost-response` | `dotnet tool run hexalith-module test --profile resilience --filter Category=lost-response` | `evidence/release/lost-response.trx` | M |
-| `release-accessibility` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Category=accessibility` | `evidence/release/accessibility.json` | L |
-| `release-privacy` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Category=privacy-leakage` | `evidence/release/privacy-leakage.trx` | M |
+| `release-accessibility` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P2,8.8-P3` | `evidence/epic8/8.8-accessibility-manifest.json` | S |
+| `release-privacy` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1&Trait=privacy-leakage` | `evidence/epic8/8.8-P1-privacy-leakage.trx` | S |
 | `release-performance` | `dotnet tool run hexalith-module test --profile perf --filter Category=performance` | `evidence/release/performance.json` | L |
-| `release-deployment` | `dotnet tool run hexalith-module test --profile deploy --filter Category=deployment` | `evidence/release/deployment.json` | L |
-| `release-smoke` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Category=smoke` | `evidence/release/live-e2e.trx` | L |
-| `release-rollback` | `dotnet tool run hexalith-module test --profile deploy --filter Category=rollback` | `evidence/release/rollback-drill.json` | M |
-| `release-stakeholder-acceptance` | `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` | `evidence/release/stakeholder-acceptance.md` | M |
+| `release-deployment` | `dotnet tool run hexalith-module test --profile deploy --filter Package=8.11-P1&Trait=deployment` | `evidence/epic8/8.11-P1-deployment.json` | S |
+| `release-smoke` | `dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.11-P1&Trait=smoke` | `evidence/epic8/8.11-P1-live-e2e.trx` | S |
+| `release-rollback` | `dotnet tool run hexalith-module test --profile deploy --filter Package=8.11-P3` | `evidence/epic8/8.11-P3-rollback-drill.json` | S |
+| `release-stakeholder-acceptance` | `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` | `evidence/release/stakeholder-acceptance.md` | S |
 
 ## Notes & non-authoritative bindings
 
 - **`fr-23`** — NEW FR (2026-07-15 rebaseline). Restore counterpart to FR-4.
 - **`fr-24`** — NEW FR (2026-07-15/16 rebaseline). Release-blocking.
-- **`nfr-2`** — Previously unmapped (readiness M2). Owner assigned per SCP §4.6.
+- **`nfr-2`** — Evidence acquisition belongs to 8.11-P2; Story 8.11 records only the terminal decision.
 - **`nfr-7`** — Previously unmapped (readiness M2). Owner assigned per SCP §4.6.
 - **`nfr-8`** — Previously unmapped (readiness M2). Owner assigned per SCP §4.6.
-- **`nfr-9`** — Chatbot companion a11y/integration is cross-repository (Hexalith.Chatbot); requires separately approved owner + pinned revision. Its absence blocks Projects release.
-- **`nfr-11`** — Terminal release gate. Cannot complete by recording a blocker.
+- **`nfr-9`** — Story 8.8 integrates accepted 8.8-P2/P3 manifests only. A missing, mutable, unapproved, or contract-drifted Chatbot companion artifact blocks Projects release.
+- **`nfr-11`** — Acquisition belongs to 8.11-P1/P2/P3. Story 8.11 validates the matrix and records the terminal decision; it cannot complete by recording a blocker.
 - **`finding-arch-002`** — Readiness addendum §4.2 named OLD 'Story 6.2 (E-4/E-5)' for the Projects.UI.Contracts boundary; under the rebaseline that boundary work is Story 6.7 (contract cutover) + 8.7 (package graph). Confirm at de-placeholdering.
 - **`finding-build-001`** — No epic/story explicitly assigned in source; mapped to 8.7 per SCP §4.3 shared-build centralization. Confirm at de-placeholdering.
 - **`finding-code-001`** — Audit sequences this in Phase 3 (after package/UI/MCP ownership settles). Mapped to 8.7 (source structure). Confirm at de-placeholdering.
 - **`release-smoke`** — HONEST current state is FAILED, not skipped. Do not represent as passing.
 
 ---
-_Generated from the YAML on 2026-07-16. Do not hand-edit divergently; edit the YAML and regenerate._
+_Reconciled from the canonical YAML on 2026-08-01. Do not hand-edit divergently; edit the YAML and regenerate._

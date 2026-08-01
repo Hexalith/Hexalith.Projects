@@ -2,12 +2,15 @@
 title: "Solution-Architect Conformance Checklist — Corrective Epics 6–8"
 project: Hexalith.Projects
 created: 2026-07-16
-purpose: "Pre-readiness-rerun conformance review of the 33 corrective stories against the Architecture Spine (AD-1..34) and external entry gates (G-1..G-6)."
+purpose: "Conformance review of the 33 corrective stories and explicit prerequisite/evidence work packages against the Architecture Spine (AD-1..34) and external entry gates (G-1..G-6)."
 authority: architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md
 reviews:
   - epics.md (Corrective Production Plan, Epics 6–8)
+  - ux-design-specification.md
   - implementation-readiness-traceability-matrix.yaml
-status: draft-for-review
+  - implementation-readiness-report-2026-08-01.md
+  - sprint-change-proposal-2026-08-01-implementation-readiness-correction.md
+status: correction-applied-pending-independent-rerun
 ---
 
 # Solution-Architect Conformance Checklist — Corrective Epics 6–8
@@ -17,7 +20,7 @@ applicable ADs and G-1…G-6 entry gates, and **prevent** implicit sibling/platf
 rewrite, unsafe dual writes, or false target-dependency claims. This is a **planning conformance
 review** — no implementation is authorized. Historical Epics 1–5 are evidence, not review scope.
 
-**How to use.** Walk Section A once (applies to all 33 stories), confirm Section B gate status, then
+**How to use.** Walk Section A once (applies to all 33 stories), confirm Section B gate and work-package status, then
 tick Section C per story. Section D is the AD-1…34 coverage cross-check. Record the verdict in
 Section E. Any unchecked box in A or a per-story blocker is a conformance finding to resolve before
 the independent readiness rerun.
@@ -56,11 +59,16 @@ blocking finding.
       `Projects.Contracts` (dependency-light; no Shell/Fluxor/Fluent/ASP.NET-App/Dapr/Aspire);
       generated artifacts never hand-edited; ULID identifiers; central package versions
       (Builds-owned NSwag/Fluxor); target package inventory enforced.
-- [ ] **A9 — Response snapshot & lifecycle vocabulary (AD-32).** Reads carry
-      `responseState`/`asOf`/`projectVersion`/`components`/`recoveryActions`; lifecycle is only
-      `Active`/`Archived`; neither `Partial` nor `Unavailable` selects a candidate.
-- [ ] **A10 — Estimates are not commitments.** No story implies a release date; corrective work stays
-      unscheduled until the independent rerun returns `READY`.
+- [ ] **A9 — Response/recovery vocabulary (AD-32).** Reads carry
+      `responseState`/`asOf`/`projectVersion`/`components`/`recoveryActions`; response consequences are
+      exactly `Complete`/`Partial`/`Unavailable`/`Denied`; component inclusion/freshness and canonical
+      recovery actions match the UX contract; lifecycle is only `Active`/`Archived`; `RefreshContext`
+      is read-only and any `reevaluate` alias is identical to it.
+- [ ] **A10 — Current readiness containment.** The 2026-08-01 assessment is `NOT READY`; the
+      2026-07-17 `READY` result remains historical planning authorization only. The approved artifact
+      corrections are reflected here; no production-authority implementation begins before Story 6.1
+      entry acceptance, story-spec readiness, clean-checkout verification, and an independent rerun
+      returning exactly `READY`. Estimates are not commitments and imply no release date.
 
 ---
 
@@ -69,13 +77,13 @@ blocking finding.
 Gates are prerequisites, **not** delivered value. A story cannot pass conformance for execution
 while its gate is unmet; it may still pass *planning* conformance (spec correctness).
 
-| Gate | Unblocks | Blocked stories (primary) | Status (2026-07-16) |
+| Gate | Unblocks | Blocked stories/packages (primary) | Status (2026-08-01) |
 |---|---|---|---|
-| **G-1** platform Durable Task + Confirmation Artifact engine (AD-4/9/13) | all durable writes | 7.1–7.14, 6.7 (command path), 8.10 | ☐ pending platform owner |
-| **G-2** sibling owner contracts (expected-version, idempotency, receipt/status, batch-read, compensation) (AD-12) | cross-context sagas | 7.3–7.10, 7.4, 6.7 | ☐ pending — subsumes AR-G1…G4 |
-| **G-3** FrontComposer adapters + 4.0.0/4.0.1 disposition (descriptor/schema/credential/MCP parity) | Web/MCP surfaces | 6.5, 8.3, 8.5, 8.8 (a11y) | ☐ pending G-3 disposition |
-| **G-4** platform composition runner + `hexalith-evidence` tool (AD-25/AD-30) | fixtures, CI, evidence gate | 8.1, 8.11, all evidence rows | ☐ tool `not-available` |
-| **G-5** identity/KMS/secrets/telemetry bindings (AD-20/AD-28) | auth, encryption, admission | 6.5/6.6, 8.6, 8.11, NFR-2 | ☐ pending G-5 |
+| **G-1** platform Durable Task + Confirmation Artifact engine (AD-4/9/13) | all durable writes | 7.1-P2, 7.1–7.14, 6.7 (command path), 8.10 | ☐ pending platform owner |
+| **G-2** sibling owner contracts (expected-version, idempotency, receipt/status, batch-read, compensation) (AD-12) | cross-context sagas | 7.1-P2, 7.1, 7.3–7.10, 6.7 | ☐ pending — subsumes AR-G1…G4 |
+| **G-3** FrontComposer adapters + 4.0.0/4.0.1 disposition (descriptor/schema/credential/MCP parity) | Web/MCP surfaces | 6.5, 8.3, 8.5, 8.8-P2, 8.8 | ☐ pending G-3 disposition |
+| **G-4** platform composition runner + `hexalith-evidence` tool (AD-25/AD-30) | fixtures, CI, evidence gate | 6.1-P0/P4, 8.1, 8.11, all evidence rows | ☐ tool `not-available`; candidate unaccepted |
+| **G-5** identity/KMS/secrets/telemetry bindings (AD-20/AD-28) | auth, encryption, admission | 6.1-P2/P3, 6.5/6.6, 8.6, 8.8-P1, 8.11-P1/P2, NFR-2 | ☐ pending G-5 |
 | **G-6** runtime/toolchain alignment (Dapr runtime↔SDK, Fluent UI RC, CommunityToolkit, NSubstitute RC, Fluxor governance) | build/UI | 8.3, 8.7, 7.15 | ☐ pending G-6 |
 
 - [ ] **B-check:** every story's declared entry gate matches its actual dependencies (no story claims
@@ -90,10 +98,13 @@ conformance assertions. Tick each assertion; mark the story verdict at the end o
 
 ### Epic 6 — Authorized Project Reads on the Supported Platform (reads only; no writes)
 
-- **6.1 List/open** — ADs 3,14,19,20,32,33 · Epic-6 gate
+- **6.1 List/open** — ADs 3,14,19,20,32,33 · Epic-6 gate · critical path
+  `6.1-P1R → {6.1-P0, 6.1-P2} → 6.1-P3 → 6.1-P4 → clean-checkout verification → story readiness → independent READY rerun`
   - [ ] Reads via `IDomainQueryHandler` + opaque `QueryCursorScope`; default 50 / cap 200; AD-32 snapshot present.
   - [ ] Shadow-read equivalence gate precedes any routing switch (routing reversible).
   - [ ] No write/side effect; candidate never selected.
+  - [ ] P1R records the accepted post-drift source/package/runner/architecture baseline and executable rollback; historical P1 is a satisfied input, not the current-baseline acceptance.
+  - [ ] P4 accepts exact P0/P1R/P2/P3 revisions, artifacts, rollback, and accountable-owner approvals; the documented clean-checkout restore/run/full-test/down/evidence-validation command sequence passes before Story 6.1 can become ready.
 - **6.2 Conversation-start setup** — ADs 3,14,19,32 · Epic-6 gate
   - [ ] Returns only the start subset; excludes audit metadata; `Unavailable` blocks first-response admission.
 - **6.3 Project Context (get/refresh/explain)** — ADs 7,11,14,32 · Epic-6 gate
@@ -112,7 +123,10 @@ conformance assertions. Tick each assertion; mark the story verdict at the end o
 
 _Shared invariants 1–6 (AD-4/5/9/12/13/22/26) apply to every 7.x story — confirm each is honored, not just referenced._
 
-- **7.1 Create (Folder-first)** — ADs 3,8,12,18,22,31 · Epic-7 gate + G-1/G-2
+- **7.1 Activate with exactly one authorized Folder** — ADs 3,8,12,18,22,31 · Epic-7 gate + 7.1-P1/P2
+  - [ ] 7.1-P1 independently accepts canonical/legacy contracts, auth-before-parse, exact classification vocabulary, shared-validator parity, no-command rejection, compatibility fingerprint, and rollback.
+  - [ ] 7.1-P2 independently accepts pinned Durable Task admission and Folder provisioning contracts, deterministic step idempotency, receipt/status lookup, compensation, clean-checkout commands, and rollback.
+  - [ ] The bounded story reserves one hidden Project ID, invokes the accepted Folder capability, persists the owner receipt, commits one `ProjectCreated` event already containing the Folder binding, and exposes only read-model-confirmed Active state.
   - [ ] No observable folderless-Active interval; metadata classified (AD-31) **before** command submit; Folder-created/uncommitted → `NeedsAttention`, never auto-delete Folder; name-only compatibility preserved.
 - **7.2 Update Setup** — ADs 5,15,16,31 · Epic-7 gate + G-1
   - [ ] Task-only (no confirmation); shared validator reused; equivalent-retry-same-task; changed-request conflict.
@@ -150,24 +164,30 @@ _Shared invariants 1–6 (AD-4/5/9/12/13/22/26) apply to every 7.x story — con
   - [ ] Metadata-only; audit ≥365d, task/idempotency ≥30d; traces/exports absent; telemetry separated from audit (AD-26).
 - **8.2 Safe Diagnostic Export** — ADs 7,19,21,26,27 · Epic-8 gate
   - [ ] **Separate** permission (Chatbot rejected); ≤1 MiB/500/100; deterministic order; no cursor/retention; two-lease/Tenant; every attempt audited; unavailable components marked safely.
-- **8.3 Web console** — ADs 2,19,29,32,33,34 · Epic-8 gate + G-6
-  - [ ] Maintenance actions drive **Epic 7 durable tasks** with Preview+confirmation; reevaluate = read-only Refresh; Fluent V5 + `FluentAccordion` (HTML prototype non-normative); no client authority.
+- **8.3 Web presentation adapter** — ADs 2,19,29,32,33,34 · Epic-8 gate + G-6
+  - [ ] Implements the canonical operator action matrix directly: mutations are archive/restore/relink/unlink with stable IDs, Confirmation Artifact, Durable Task, and recovery semantics; `RefreshContext` is synchronous/read-only; any `reevaluate` alias is identical; Fluent V5 + `FluentAccordion` (HTML prototype non-normative); no client authority.
 - **8.4 CLI contract** — ADs 2,19,29,33 · Epic-8 gate
-  - [ ] Explicit target+confirmation/dry-run for mutations; deterministic JSON+exit codes; parity with 8.3/8.5.
+  - [ ] Verifies the CLI directly against the canonical action/response contract with explicit mutation target + Confirmation Artifact + task recovery, deterministic JSON/exit codes, and read-only `RefreshContext`; it has no dependency on 8.5 and makes no cross-surface parity completion claim.
 - **8.5 MCP contracts** — ADs 2,19,20,29,33 · Epic-8 gate
-  - [ ] Resources vs tools separated; structured metadata **plus** short explanation; cannot bypass Preview/admission or expand authority; **cannot self-confirm**; autonomous consequential mutation **disabled** until gates pass.
+  - [ ] Resources vs tools separated; structured metadata **plus** short explanation; cannot bypass Preview/admission or expand authority; **cannot self-confirm**; autonomous consequential mutation **disabled** until gates pass; performs the first complete Web/CLI/MCP semantic parity comparison against the canonical matrix.
 - **8.6 Health/telemetry** — ADs 20,26,28 · Epic-8 gate
   - [ ] Real dependency/projection state (no always-green); source-generated logs (no payloads/names/tokens); **fail-fast** on incomplete identity/key config (AD-20/28).
 - **8.7 Packaging/supply chain** — ADs 16,24,25 · Epic-8 gate + G-6
   - [ ] AD-24 target inventory enforced; `Client.Generation`/`.Shared` retired only after generator reproduces output+fingerprints; central versions; reproducible+signed; boundary violations fail CI.
-- **8.8 Parity/isolation/accessibility** — ADs 19,20,29,33,34 · Epic-8 gate
-  - [ ] Cross-surface parity + cross-Tenant isolation + NoPayloadLeakage **blocking** (supersede 19/56); WCAG 2.2 AA operator evidence; **Chatbot companion evidence has a separately approved owner + pinned revision** (else release blocked).
+- **8.8 Integrate authenticated isolation/privacy/parity/accessibility evidence** — ADs 19,20,29,33,34 · Epic-8 gate + 8.8-P1/P2/P3
+  - [ ] 8.8-P1 independently accepts authenticated Web/CLI/MCP parity, cross-Tenant denial, authorization freshness, and NoPayloadLeakage evidence.
+  - [ ] 8.8-P2 independently accepts operator WCAG 2.2 AA automated and authenticated manual evidence at small, median, and maximum shapes.
+  - [ ] 8.8-P3 independently accepts a separately owned and approved Chatbot companion UX/evidence artifact pinned to owner repository, immutable revision, contract version, and approval date; missing or drifted evidence blocks release.
+  - [ ] The bounded story validates package manifests, stable row identities, semantic parity, Tenant/privacy critical cases, and operator/Chatbot coverage; it rejects missing environments, unexplained skips, failed critical cases, ownerless artifacts, and mutable/unpinned revisions, and performs no new cross-repository implementation.
 - **8.9 Performance/back-pressure** — ADs 14,15,21,27 · Epic-8 gate
   - [ ] Perf at small/median/max (reads p95<500ms/<1s; admission p95<500ms); paging 50/200; per-Tenant limits reject **before** partial durable work; no retry/quota logic in domain handlers.
 - **8.10 Resilience** — ADs 4,9,12,17,28 · Epic-8 gate + G-1
   - [ ] Restart/two-instance resume-or-`NeedsAttention` ≤5min (RTO 15min, RPO 0); duplicate/lost-response/concurrency converge; fenced ownership; reconciliation reaches terminal disposition.
-- **8.11 Deployment/rollback/acceptance** — ADs 25,28,30 · Epic-8 gate + G-4/G-5 · **TERMINAL**
-  - [ ] `hexalith-evidence validate` rejects placeholders/missing-owner/failed-critical/`passed`-on-unavailable; deployment+encryption/KMS+smoke+rollback-drill recorded; **dated Jerome+John acceptance**; **cannot complete by recording a blocker**.
+- **8.11 Record terminal production-release decision** — ADs 25,28,30 · Epic-8 gate + G-4/G-5 + 8.11-P1/P2/P3 · **TERMINAL**
+  - [ ] 8.11-P1 independently accepts pinned deployment/environment/topology, truthful health/readiness, and authenticated smoke evidence.
+  - [ ] 8.11-P2 independently accepts encryption-in-transit, managed encryption-at-rest, KMS rotation/revocation, fail-fast configuration, and recovery evidence.
+  - [ ] 8.11-P3 independently accepts an executed routing/package/deployment rollback drill with commands, timing, health, integrity, and recovery evidence.
+  - [ ] Every preceding Epic 8 story and P1/P2/P3 package is accepted; `hexalith-evidence validate` rejects placeholders/missing-owner/failed-critical/unexplained-skip/`passed`-on-unavailable; Jerome and John record dated residual-risk dispositions and explicit terminal accept/reject decisions; the story **cannot complete by recording a blocker**.
   - _Verdict: ☐ conforms ☐ with-note ☐ blocking_
 
 ---

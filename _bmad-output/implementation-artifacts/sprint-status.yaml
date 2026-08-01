@@ -1,5 +1,5 @@
 # generated: 2026-07-17T08:14:03+02:00
-# last_updated: 2026-08-01T08:07:35+02:00
+# last_updated: 2026-08-01T16:06:37+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -49,7 +49,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-08-01T08:07:35+02:00
+last_updated: 2026-08-01T16:06:37+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -127,7 +127,7 @@ development_status:
 
   # Epic 7: Durable Project Decisions and Cross-Context Recovery
   epic-7: backlog
-  7-1-create-a-project-with-exactly-one-authorized-folder: backlog
+  7-1-activate-a-project-with-exactly-one-authorized-folder: blocked
   7-2-update-project-setup-idempotently: backlog
   7-3-link-an-unassigned-conversation: backlog
   7-4-move-a-conversation-between-projects: backlog
@@ -153,10 +153,10 @@ development_status:
   8-5-operate-projects-through-agent-safe-mcp-contracts: backlog
   8-6-observe-truthful-dependency-and-projection-health: backlog
   8-7-consume-reproducible-packages-and-supply-chain-evidence: backlog
-  8-8-verify-authenticated-parity-isolation-and-accessibility: backlog
+  8-8-integrate-authenticated-isolation-privacy-parity-and-accessibility-evidence: blocked
   8-9-meet-bounded-performance-and-back-pressure-objectives: backlog
   8-10-prove-cross-workflow-resilience: backlog
-  8-11-complete-deployment-rollback-evidence-and-stakeholder-acceptance: backlog
+  8-11-record-the-terminal-production-release-decision: blocked
   epic-8-retrospective: optional
 
 action_items:
@@ -257,7 +257,7 @@ action_items:
     target_date: uncommitted
     authorized: "2026-08-01 by Jerome"
     depends_on: ["6.1-P1"]
-    unblocks: ["6.1-P0", "6.1-P4"]
+    unblocks: ["6.1-P0", "6.1-P2", "6.1-P4"]
     observed_drift:
       eventstore_source:
         version: "3.88.0"
@@ -284,7 +284,7 @@ action_items:
     owner: "EventStore Owner / Identity-Security Owner / Solution Architect"
     status: open
     target_date: uncommitted
-    depends_on: ["6.1-P1"]
+    depends_on: ["6.1-P1R"]
     expected_evidence: "Public-contract, cross-Tenant negative-control, safe-denial equivalence, watermark replay/restart, G-4, pin, and rollback evidence"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p2--supply-the-supported-query-security-and-projection-capabilities"
     routed_to: "Product Manager / Solution Architect / EventStore and Identity-Security Owners"
@@ -301,12 +301,102 @@ action_items:
     routed_to: "Product Manager / Solution Architect / Identity-Security and Projects Owners"
   - epic: 6
     id: "6.1-P4"
-    action: "Accept the Story 6.1 entry gate from the exact P0, P1, P1R, P2, and P3 revisions, evidence, finite normalization, rollback pins, and readiness rerun."
+    action: "Accept the Story 6.1 entry gate from the exact P0, P1R, P2, and P3 revisions and evidence, using historical P1 as a satisfied input."
     repository_authority: "Hexalith.Projects planning and evidence artifacts"
     owner: "Product Owner / Solution Architect / Test Architect / prerequisite owners"
     status: open
     target_date: uncommitted
-    depends_on: ["6.1-P0", "6.1-P1", "6.1-P1R", "6.1-P2", "6.1-P3"]
-    expected_evidence: "evidence/epic6/6.1-entry-gate.yaml plus passing Story 6.1 ready-for-development result"
+    depends_on: ["6.1-P0", "6.1-P1R", "6.1-P2", "6.1-P3"]
+    historical_inputs: ["6.1-P1"]
+    expected_evidence: "evidence/epic6/6.1-entry-gate.yaml; accepted revisions and owner approvals; executable rollback; passing exact clean-checkout commands; passing Story 6.1 ready-for-development result; independent implementation-readiness result READY"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p4--accept-the-story-61-entry-gate"
+    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md"
     routed_to: "Product Manager / Solution Architect / Product Owner / Test Architect"
+  - epic: 7
+    id: "7.1-P1"
+    action: "Accept the canonical/legacy creation contracts, authorization-before-parsing behavior, exact metadata classification vocabulary, shared-validator parity, no-command rejection evidence, compatibility fingerprint, and rollback."
+    repository_authority: "Hexalith.Projects Contracts and Server owners"
+    owner: "Projects Contracts Owner / Projects Server Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["Epic-7-gate"]
+    expected_evidence: "Owner-approved contract pin; canonical and legacy fixtures; auth-before-parse negative controls; metadata classifier parity; no-command rejection; compatibility fingerprint; clean-checkout command and rollback record"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
+    routed_to: "Story 7.1"
+  - epic: 7
+    id: "7.1-P2"
+    action: "Accept the pinned Durable Task admission and Folder provisioning capabilities required by folder-first Project activation."
+    repository_authority: "EventStore/platform and Folders owner repositories"
+    owner: "EventStore-Platform Owner / Folders Owner / Solution Architect / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["Epic-7-gate"]
+    expected_evidence: "Pinned capability versions; deterministic step idempotency; receipt/status lookup; compensation behavior; clean-checkout commands; owner approvals; executable rollback"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
+    routed_to: "Story 7.1"
+  - epic: 8
+    id: "8.8-P1"
+    action: "Acquire authenticated Web/CLI/MCP parity, cross-Tenant denial, authorization freshness, and NoPayloadLeakage evidence."
+    repository_authority: "Hexalith.Projects and supported platform/Identity adapter repositories"
+    owner: "Projects Platform-Adapter Owners / Identity Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["Stories 8.3-8.5", "G-5"]
+    expected_evidence: "Pinned revisions; authenticated commands and fixtures; semantic action/response parity manifest; cross-Tenant negative controls; authorization freshness results; NoPayloadLeakage artifacts; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#45-split-story-88"
+    routed_to: "Story 8.8"
+  - epic: 8
+    id: "8.8-P2"
+    action: "Acquire operator Web WCAG 2.2 AA automated and authenticated manual evidence at small, median, and maximum supported shapes."
+    repository_authority: "Hexalith.FrontComposer/Web owner repository and Hexalith.Projects"
+    owner: "FrontComposer-Web Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["Story 8.3", "G-3"]
+    expected_evidence: "Pinned revisions; automated accessibility results; authenticated keyboard, focus, assistive-technology, 200%, and 320px manual evidence; fixture sizes; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#45-split-story-88"
+    routed_to: "Story 8.8"
+  - epic: 8
+    id: "8.8-P3"
+    action: "Accept an approved, immutable owner-pinned Chatbot companion UX specification and authenticated candidate/proposal/confirmation/recovery/task/first-response evidence."
+    repository_authority: "Separately owned Hexalith.Chatbot presentation repository"
+    owner: "Chatbot Presentation Owner / Test Architect / Product Owner"
+    status: open
+    target_date: uncommitted
+    depends_on: ["Approved Chatbot companion artifact"]
+    expected_evidence: "Owner repository and immutable revision; contract version; approval date/authority; complete journey and WCAG contracts; authenticated commands, fixtures, artifacts, results, and release disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#410-require-the-chatbot-companion-ux-artifact"
+    routed_to: "Story 8.8"
+  - epic: 8
+    id: "8.11-P1"
+    action: "Acquire pinned deployment/topology identity, truthful health/readiness, and authenticated smoke evidence."
+    repository_authority: "Platform deployment and release owner repository/environment"
+    owner: "Platform Deployment-Release Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["All deployable Epic 8 capabilities"]
+    expected_evidence: "Pinned deployed version and environment; topology identity; health/readiness results; authenticated smoke command, fixtures, artifact, result, and owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#46-reduce-story-811-to-the-terminal-decision"
+    routed_to: "Story 8.11"
+  - epic: 8
+    id: "8.11-P2"
+    action: "Acquire encryption-in-transit, managed encryption-at-rest, KMS rotation/revocation, fail-fast configuration, and recovery evidence."
+    repository_authority: "Security/KMS/platform owner repositories and environment"
+    owner: "Security-KMS Owner / Platform Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["8.11-P1"]
+    expected_evidence: "Pinned configuration and revisions; transport/at-rest encryption results; rotation and revocation commands/results; fail-fast negative controls; recovery evidence; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#46-reduce-story-811-to-the-terminal-decision"
+    routed_to: "Story 8.11"
+  - epic: 8
+    id: "8.11-P3"
+    action: "Execute and accept the routing, package, and deployment rollback drill."
+    repository_authority: "Release engineering and supported deployment owner repositories/environment"
+    owner: "Release Engineering Owner / Test Architect / Solution Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["8.11-P1", "8.11-P2"]
+    expected_evidence: "Executed rollback commands; before/after pins; timing; health and integrity checks; recovery proof; artifact hashes; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#46-reduce-story-811-to-the-terminal-decision"
+    routed_to: "Story 8.11"
