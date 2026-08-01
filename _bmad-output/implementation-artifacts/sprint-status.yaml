@@ -223,7 +223,7 @@ action_items:
     target_date: uncommitted
     authorized: "2026-07-17 by Jerome"
     owner_baseline: "edbaeaed68bcdb8deffcd98ed5652d237596e1d1"
-    owner_observed_revision: "b529b66"
+    owner_observed_revision: "d3239aff003c64b40cbc074e68ec7923924cfc96"
     owner_story: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md"
     depends_on: ["6.1-P1R"]
     capability_status:
@@ -234,7 +234,7 @@ action_items:
       owner_acceptance: not-available
     expected_evidence: "Owner-approved runner revision, remotely restored package inventory and hashes, reproducible command, persisted fixture, fail-closed machine-checkable acceptance record, evidence schema/sample, negative controls, and rollback procedure"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p0--deliver-the-g-4-persisted-runner-and-evidence-tooling"
-    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01.md"
+    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md"
     routed_to: "Hexalith.Builds owner-repository story"
   - epic: 6
     id: "6.1-P1"
@@ -259,11 +259,23 @@ action_items:
     depends_on: ["6.1-P1"]
     unblocks: ["6.1-P0", "6.1-P4"]
     observed_drift:
-      builds_eventstore_version: "3.86.0"
-      runner_manifest_version: "3.70.1"
+      eventstore_source:
+        version: "3.88.0"
+        revision: "4843b492dff7c16a4bc74db67509263f969c78c6"
+      builds_catalog:
+        version: "3.88.0"
+        introducing_revision: "0e51a2115581028c8d9ab9395a93dd186ee51071"
+      builds_worktree_base_revision: "4132725d8bda647cc65880199679f047f7366048"
+      runner_candidate_version: "3.88.0"
+      post_alignment_builds_revision: "4351d7cba7545a96661ca2ee2ca2629df6d0a118"
+      qualification_record_revision: "d3239aff003c64b40cbc074e68ec7923924cfc96"
       architecture_version: "3.70.1"
+    candidate_baseline: "3.88.0"
+    decision: "pending clean acceptance-grade validation, executable rollback proof, accepted Builds revision, and four-owner acceptance"
+    rollback_baseline: "3.70.1"
     expected_evidence: "Owner-approved exact source/package/runner/architecture pin, clean restore, required API compatibility, live-runner compatibility, and rollback record"
-    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01.md#change-2--add-dependency-revalidation-action-61-p1r"
+    evidence: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p1r-eventstore-source-architecture-runner-revalidation-record.md"
+    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md"
     routed_to: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
   - epic: 6
     id: "6.1-P2"

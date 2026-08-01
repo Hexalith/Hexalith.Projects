@@ -89,7 +89,7 @@ The legacy route remains authoritative through Story 6.7. Story 6.1 adds a shado
 The approved course corrections are planning and routing authority only. They preserve historical P1 completion but do not approve
 any P0, P1R, P2, or P3 revision, version, capability, evidence artifact, owner acceptance, or target date.
 
-Current planning evidence still triggers the implementation block: historical P1 normalized EventStore, Builds, and Architecture on `3.70.1`, but the observed Builds candidate at `b529b66` selects EventStore `3.86.0` while its runner manifest and the Architecture Spine remain on `3.70.1`; P1R has not accepted an exact replacement baseline. The G-4 persisted runner, remotely restored package pin, machine-checkable owner acceptance record, P2/P3 capabilities, and P4 gate record remain unavailable.
+Current planning evidence still triggers the implementation block: historical P1 normalized EventStore, Builds, and Architecture on `3.70.1`; EventStore `v3.88.0` revision `4843b492dff7c16a4bc74db67509263f969c78c6`, the Builds catalog introduced by `0e51a2115581028c8d9ab9395a93dd186ee51071`, runner candidate `4351d7cba7545a96661ca2ee2ca2629df6d0a118`, and qualification revision `d3239aff003c64b40cbc074e68ec7923924cfc96` now form an unaccepted `3.88.0` candidate, while the Architecture Spine remains on `3.70.1`. P1R still lacks clean acceptance-grade validation, executable rollback proof, an accepted Builds revision, and four-owner acceptance. The G-4 persisted runner, remotely restored package pin, machine-checkable owner acceptance record, P2/P3 capabilities, and P4 gate record remain unavailable.
 
 ## Verification
 
