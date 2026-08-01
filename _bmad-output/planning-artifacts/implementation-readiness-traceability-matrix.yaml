@@ -14,12 +14,12 @@ sources:
   epics: _bmad-output/planning-artifacts/epics.md
   audit: _bmad-output/analysis/hexalith-projects-codebase-audit-2026-07-14.md
   readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-17.md
-  course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01.md
+  course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md
 
 # ── Validation contract (AD-30) ──────────────────────────────────────────────
 validation:
   command: "dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml"
-  tool_status: not-available   # Builds has an unaccepted source candidate at b529b66, but no accepted published consumer pin or supported persisted runner. Until independent P0 acceptance, rows MUST NOT be `passed`.
+  tool_status: not-available   # Builds runner candidate 4351d7cba7545a96661ca2ee2ca2629df6d0a118 and qualification revision 699083549932b9509fa36ed853402fe3f8b04fc5 are committed but unaccepted; no accepted published consumer pin or supported persisted runner exists. Until independent P0 acceptance, rows MUST NOT be `passed`.
   rejects:
     - duplicate-key
     - missing-required-key
@@ -52,7 +52,7 @@ containment:
   release_block: "production + consequential autonomous MCP mutation + proposed-Project confirmation blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance"
   open_triggers:
     - "Story 6.1: blocked by 6.1-P0, P1, P1R, P2, P3, and P4; external owners and target dates remain uncommitted"
-    - "6.1-P1R: observed Builds EventStore 3.86.0 differs from the runner manifest and Architecture Spine 3.70.1 baseline; exact owner-approved replacement pin is unresolved"
+    - "6.1-P1R: EventStore v3.88.0 revision 4843b492dff7c16a4bc74db67509263f969c78c6, the Builds 3.88.0 catalog introduced by 0e51a2115581028c8d9ab9395a93dd186ee51071, runner candidate 4351d7cba7545a96661ca2ee2ca2629df6d0a118, and qualification revision 699083549932b9509fa36ed853402fe3f8b04fc5 form an unaccepted candidate; Architecture remains 3.70.1 and acceptance-grade validation, executable rollback, accepted revision, and approvals are unresolved"
     - "E-6: live E2E 19 passed / 56 failed (row release-smoke / release-e2e)"
     - "E-7: 9 P1 + 7 P2 audit findings (finding-* rows)"
     - "E-8: release handoff BLOCKED (row release-stakeholder-acceptance)"
@@ -63,7 +63,7 @@ defaults:
   repository: Hexalith.Projects
   owner: "Product Owner (author) → Test Architect (evidence execution) → Solution Architect (AD/G conformance)"
   environment: "deterministic persisted-boundary fixture (authorized Tenant) on the G-4 platform composition runner (dotnet tool run hexalith-module ...)"
-  pinned_revision: "per-row/per-epic owner-approved gate; 6.1-P1 historically normalized EventStore to 3.70.1 (submodule f13f9925fdca53efa2ab8c90d396ab106f91bb9c, Builds HexalithEventStoreVersion=3.70.1, Architecture Spine Stack table) on 2026-07-18, rollback pin 3.67.3; post-P1 Builds candidate b529b66 selects 3.86.0 while runner/Architecture remain 3.70.1, so P1R and Story 6.1 G-4 runner/6.1-P0, P2, and P3 baselines remain unresolved; no floating versions"
+  pinned_revision: "per-row/per-epic owner-approved gate; 6.1-P1 historically normalized EventStore to 3.70.1 (submodule f13f9925fdca53efa2ab8c90d396ab106f91bb9c, Builds HexalithEventStoreVersion=3.70.1, Architecture Spine Stack table) on 2026-07-18, rollback pin 3.67.3; P1R candidate EventStore v3.88.0 is 4843b492dff7c16a4bc74db67509263f969c78c6, Builds catalog 3.88.0 was introduced by 0e51a2115581028c8d9ab9395a93dd186ee51071, runner candidate is 4351d7cba7545a96661ca2ee2ca2629df6d0a118, and qualification revision is 699083549932b9509fa36ed853402fe3f8b04fc5 while Architecture remains 3.70.1; acceptance-grade validation, executable rollback, accepted revision, and approvals remain unresolved, as do Story 6.1 G-4 runner/6.1-P0, P2, and P3 baselines; no floating versions"
   status: pending
   release_disposition: "release-blocking (no approved v1 FR/NFR is deferrable)"
 
