@@ -5,16 +5,31 @@ artifact_kind: external-prerequisite-story-handoff
 created: 2026-07-17
 source_action_status: open
 status: handed-off
+owner_execution_status: in-progress
 authorized: 2026-07-17
 authorized_by: Jerome
 repository_authority: Hexalith/Hexalith.Builds
 owner_repository_baseline: edbaeaed68bcdb8deffcd98ed5652d237596e1d1
+owner_observed_revision: b529b66
 owner_repository_story: references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md
 owner_packages: [Hexalith.Builds.Module.Cli, Hexalith.Builds.Evidence.Cli]
 owner_rollback_pin: none-greenfield; previous released Builds boundary v4.19.2 / 8e0e2da5e1eff07468b41d85d97979c96c2ac975
 owners: [Builds Owner, Platform Owner, Test Architect]
-parallel_with: [6.1-P1]
+implementation_dependencies: [6.1-P1R]
+qualification_dependencies: [6.1-P1R, G-6]
 unblocks: [6.1-P4]
+capability_status:
+  manifest_contract: implemented-unaccepted
+  evidence_validator: implemented-unaccepted
+  persisted_runner: not-available
+  published_tools: not-available
+  owner_acceptance: not-available
+blocked_by: [6.1-P1R, G-6, supported-composition, persisted-qualification, owner-acceptance]
+acceptance_record:
+  schema: hexalith.g4-p0-acceptance.v1
+  path: evidence/g4/6.1-p0-acceptance.json
+  status: absent
+  validator: "dotnet tool run hexalith-evidence validate evidence/g4/6.1-p0-acceptance.json"
 traceability:
   requirements: [fr-2, fr-5]
   nfrs: [nfr-11]
@@ -30,8 +45,8 @@ traceability:
     - release-smoke
     - release-rollback
 target_date: uncommitted
-estimate: L
-risk: high evidence-chain risk
+estimate: XL
+risk: high/critical evidence-chain risk
 projects_baseline_commit: ec447e4
 ---
 
@@ -139,11 +154,18 @@ The paths below remain historical handoff guidance where the owner story is more
 
 ## Dev Notes
 
+### 2026-08-01 Correct Course Rebaseline
+
+- The Builds candidate observed at revision `b529b66` is source progress, not a supported capability. Its manifest contract and readiness validator are implemented but unaccepted; the persisted runner, remotely restored package pin, and owner acceptance remain unavailable.
+- Preserve the completed 6.1-P1 normalization as historical evidence. New action 6.1-P1R must reconcile the observed Builds `3.86.0` catalog with the runner manifest and Architecture Spine `3.70.1` binding before remaining P0 implementation or qualification proceeds. P1R selects the exact baseline; P0 consumes it.
+- P0 acceptance requires `evidence/g4/6.1-p0-acceptance.json` under schema `hexalith.g4-p0-acceptance.v1`. The packaged `hexalith-evidence` command must fail closed on missing fields, mismatched pins, missing artifacts, hash mismatches, failed required lanes, or absent approvals.
+- Keep the Projects ledger action `open` and readiness tool status `not-available` until the exact packages restore from the declared remote source and the acceptance record validates independently with Builds Owner, Platform Owner, and named Test Architect approvals.
+
 ### Authority, Readiness, and Scope
 
 - This artifact translated the approved `6.1-P0` action and now records its authorized route. The Builds-local story grants implementation authority within Hexalith.Builds; this Projects artifact grants no sibling mutation by itself.
 - P0 is an enablement work package, not one of the 33 approved Hexalith.Projects user-value stories. Keep Story 6.1 and its specification `blocked`; keep the Projects P0 action `open` until owner-approved evidence exists.
-- P0 enables FR-2/FR-5 verification and traces to NFR-11, TEST-001, AD-25, and AD-30. It does not implement Projects read behavior, pick the P1 EventStore/platform baseline, implement P2 authorization or P3/G-5 identity, switch routing, remove the legacy AppHost, or self-accept P4.
+- P0 enables FR-2/FR-5 verification and traces to NFR-11, TEST-001, AD-25, and AD-30. It does not implement Projects read behavior, pick the P1R EventStore/platform baseline, implement P2 authorization or P3/G-5 identity, switch routing, remove the legacy AppHost, or self-accept P4.
 - P0 has no UI implementation scope. Authenticated Web/CLI/MCP proof is a runner capability consumed by later story lanes; this work does not add presentation behavior or claim accessibility acceptance.
 - The supported consumer commands are fixed by the Architecture Spine:
 
@@ -159,7 +181,7 @@ dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/imple
 
 ### Current Reality and Reuse Boundaries
 
-- No `.config/dotnet-tools.json`, module manifest, packaged `hexalith-module`, or AD-30 `hexalith-evidence` implementation exists in this checkout. The readiness matrix truthfully marks the validator `not-available`.
+- Projects has no accepted `.config/dotnet-tools.json`, module manifest, published `hexalith-module` pin, or independently consumable AD-30 validator. Builds contains an unaccepted source candidate at observed revision `b529b66`; the readiness matrix therefore truthfully remains `not-available`.
 - Current Projects AppHost/Aspire code owns hard-coded topology and is the migration baseline. Its static topology tests, fake dictionary-backed projection tests, and manual/offline E2E lane are not persisted G-4 evidence. Do not delete or expand that runtime under P0.
 - EventStore exposes reusable composition and persisted-testing seams under `references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/` and `Hexalith.EventStore.Testing.Integration/`. Its current generic AppHost fixture and skip-on-unavailable behavior do not by themselves satisfy a manifest-driven, fail-closed critical lane.
 - `references/Hexalith.EventStore/scripts/validate-operational-evidence.py` is useful precedent for explicit schemas, stable rule IDs, sorted JSON diagnostics, parse/business-rule separation, redaction, and negative fixtures. It validates a different operational-evidence format and permits scenarios AD-30 must reject; do not rename or claim it as the new validator.
@@ -185,7 +207,7 @@ dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/imple
 ### Version and Dependency Boundary
 
 - Work at the owner-approved revision with the repository-pinned SDK and central packages. At observation time Builds pins Aspire `13.4.6`, `System.CommandLine` `2.0.10`, YamlDotNet `18.1.0`, xUnit v3 `3.2.2`, Shouldly `4.3.0`, and NSubstitute `6.0.0`; these are inventory, not authority to upgrade or normalize.
-- The current Builds EventStore property and the adopted Architecture Spine baseline differ. Record the discrepancy and route it to 6.1-P1. P0 records and consumes the accepted versions; it does not choose them.
+- The current Builds EventStore property and the adopted Architecture Spine/runner baseline differ after the completed P1 normalization. Record the discrepancy and route it to 6.1-P1R. P0 records and consumes the newly accepted versions; it does not choose them.
 - Use a real YAML parser configuration that rejects duplicate mapping keys before model binding. Do not implement readiness parsing with regular expressions or a lossy deserialize-reserialize pass.
 - Official .NET local-tool manifests support repository-scoped restore and `dotnet tool run`; packaged tools use `PackAsTool` and `ToolCommandName`. System.CommandLine supplies the supported parse/invoke model. Aspire testing APIs can manage distributed-application lifecycle, but the chosen test-host form must support the required builder; do not assume every file-based AppHost is test-builder compatible.
 
@@ -237,6 +259,7 @@ Required P0 handoff evidence:
 - packaged-validator result for the passing sample and every blocking negative control;
 - documented diagnostic/failure-category and metadata/redaction contracts;
 - idempotent cleanup and prior-pin rollback procedure.
+- versioned `hexalith.g4-p0-acceptance.v1` record binding exact pins, package/feed identities and hashes, commands, live-lane outcomes, native report/evidence hashes, cleanup/rollback, and dated Builds Owner, Platform Owner, and named Test Architect approvals.
 
 ### Hard Stops
 
@@ -247,11 +270,12 @@ Required P0 handoff evidence:
 - Stop if secrets, tokens, raw environment values, or protected payloads can reach logs, run-state, telemetry, evidence, or retained command output.
 - Stop if the validator accepts duplicate YAML keys, undeclared statuses, placeholders, missing critical artifacts, incomplete coverage, failed critical evidence, unexplained critical skips, or passed-on-unavailable.
 - Stop if current Projects AppHost/runtime is removed or default routing changes before equivalent G-4 lanes and later cutover/rollback gates pass.
-- Stop if P0 attempts to choose P1 platform versions, satisfy P2/P3, self-approve P4, or mark Story 6.1 ready.
+- Stop if P0 attempts to choose the P1R platform versions, satisfy P2/P3, self-approve P4, or mark Story 6.1 ready.
 
 ### References
 
 - [Source: _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#6.1-P0-Deliver-the-G-4-Persisted-Runner-and-Evidence-Tooling]
+- [Source: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01.md]
 - [Source: _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md#AD-25]
 - [Source: _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md#AD-30]
 - [Source: _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md#Development-Commands]
@@ -292,6 +316,7 @@ GPT-5 Codex
 - Ultimate context engine analysis completed across the corrective epics, canonical Architecture Spine, readiness matrix/report, Sprint Change Proposal, Epic 6 test design, Story 6.1/spec, current Projects topology/tests/CI, EventStore and Builds reuse candidates, recent Git history, and official .NET/Aspire/test-platform guidance.
 - Classified this artifact as an external prerequisite handoff; Jerome subsequently authorized Hexalith.Builds at `edbaeae`, so the handoff is now `handed-off` while the source action remains open.
 - Added fail-closed persisted controls, deterministic evidence fields, VSTest/MTP compatibility, negative fixtures, clean-checkout source/package parity, security/redaction, rollback, and exact P4 handoff boundaries.
+- 2026-08-01 Correct Course rebaseline added 6.1-P1R, recorded the unaccepted Builds candidate, increased the remaining estimate to XL, and made the independently validated P0 acceptance record mandatory.
 
 ### File List
 

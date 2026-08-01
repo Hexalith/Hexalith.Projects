@@ -3,7 +3,7 @@ title: 'Story 6.1: List and open Projects through supported authenticated paths'
 type: 'feature'
 created: '2026-07-17T11:38:50+02:00'
 status: 'blocked'
-blocked_by: ['6.1-P0', '6.1-P1', '6.1-P2', '6.1-P3', '6.1-P4']
+blocked_by: ['6.1-P0', '6.1-P1', '6.1-P1R', '6.1-P2', '6.1-P3', '6.1-P4']
 review_loop_iteration: 0
 followup_review_recommended: false
 context:
@@ -20,13 +20,13 @@ warnings: [oversized]
 
 **Problem:** Tenant Operators and delegated Chatbot callers need authorization-filtered Project list and open reads through the supported EventStore DomainService path. The current Projects server exposes a legacy Dapr-backed REST path and cannot yet prove the required dual-principal identity, non-leaking safe denial, persisted-read watermark parity, or runner-backed evidence on the supported path.
 
-**Approach:** After the owner-approved 6.1-P4 gate record accepts the exact P0-P3 revisions, evidence, normalization, and rollback pins, add additive query contracts, EventStore-backed incremental read models, and `IDomainQueryHandler` list/open handlers while retaining the legacy path as the comparison authority. Prove deterministic, metadata-only, zero-write behavior through the authenticated gateway and persisted boundary before any later cutover.
+**Approach:** After the owner-approved 6.1-P4 gate record accepts the exact P0, P1, P1R, P2, and P3 revisions, evidence, normalization, and rollback pins, add additive query contracts, EventStore-backed incremental read models, and `IDomainQueryHandler` list/open handlers while retaining the legacy path as the comparison authority. Prove deterministic, metadata-only, zero-write behavior through the authenticated gateway and persisted boundary before any later cutover.
 
 ## Boundaries & Constraints
 
 **Always:** Derive Tenant, original actor, workload, delegation, scopes, and audience from immutable authenticated context; reauthorize before protected validation; filter unauthorized rows before paging; use `IReadModelStore`, `ReadModelWritePolicy`, `IQueryCursorCodec`, and `QueryCursorScope`; preserve existing event history and legacy routes; keep one public C# type per file; assert persisted end-state and metadata-only responses.
 
-**Block If:** Stop before runtime edits unless 6.1-P0 through 6.1-P3 have owner-approved repository-local revisions and evidence, 6.1-P4 accepts their exact source/package/API pins and finite normalization/rollback record, and this spec subsequently passes ready-for-development. Story 6.1 cannot create, waive, or self-approve the G-4 runner, version baseline, dual-principal query envelope, safe-denial behavior, global-position watermark, or production identity contract. Stop if implementation would require a sibling-submodule edit or public-route switch not separately authorized.
+**Block If:** Stop before runtime edits unless 6.1-P0, 6.1-P1, 6.1-P1R, 6.1-P2, and 6.1-P3 have owner-approved repository-local revisions and evidence, 6.1-P4 accepts their exact source/package/API pins and finite normalization/rollback record, and this spec subsequently passes ready-for-development. Story 6.1 cannot create, waive, or self-approve the G-4 runner, version baseline, dual-principal query envelope, safe-denial behavior, global-position watermark, or production identity contract. Stop if implementation would require a sibling-submodule edit or public-route switch not separately authorized.
 
 **Never:** Do not hand-roll Dapr persistence, cursors, query routing, authentication context, or projection actors; do not extend the legacy journal as the supported store; do not expose payload-bearing sibling content, resolution candidates, or denial detail; do not write domain state, append events, create tasks, rewrite history, remove legacy routing, or fabricate evidence.
 
@@ -56,9 +56,10 @@ warnings: [oversized]
 **External prerequisites — not Story 6.1 execution tasks:**
 - `6.1-P0` -- Builds/platform supplies the supported G-4 persisted runner and evidence tool.
 - `6.1-P1` -- EventStore, Builds, and Architecture owners approve one source/package/architecture/runner baseline and finite normalization record.
+- `6.1-P1R` -- EventStore, Builds, Architecture, and Test owners revalidate one exact source/package/runner/architecture baseline after post-P1 dependency drift.
 - `6.1-P2` -- EventStore/platform supplies the complete dual-principal query context, indistinguishable safe denial, and authoritative global-position watermark.
 - `6.1-P3` -- Identity/security supplies the mandatory fail-closed production identity/authentication contract and supported fixtures.
-- `6.1-P4` -- Projects planning owners accept the exact P0-P3 revisions, evidence, normalization, rollback pins, and readiness rerun.
+- `6.1-P4` -- Projects planning owners accept the exact P0, P1, P1R, P2, and P3 revisions, evidence, normalization, rollback pins, and readiness rerun.
 
 **Execution — only after 6.1-P4 acceptance and a passing readiness rerun:**
 - `src/Hexalith.Projects.Contracts/Queries/` -- add one-file-per-type `ListProjectsQuery`, `GetProjectQuery`, page/row/open results, and shared AD-32 snapshot/component/recovery vocabulary with additive serialization coverage.
@@ -77,6 +78,7 @@ warnings: [oversized]
 ## Spec Change Log
 
 - 2026-07-17: Approved Sprint Change Proposal externalized platform enablement as 6.1-P0 through 6.1-P4 and retained `blocked` until P4 acceptance plus a passing readiness rerun.
+- 2026-08-01: Approved Correct Course proposal added 6.1-P1R after post-P1 dependency drift; Story 6.1 remains blocked until P0, P1, P1R, P2, P3, and P4 pass.
 
 ## Review Triage Log
 
@@ -84,10 +86,10 @@ warnings: [oversized]
 
 The legacy route remains authoritative through Story 6.7. Story 6.1 adds a shadowable supported read path only; a passing comparator is evidence for later cutover, not permission to switch routes.
 
-The approved 2026-07-17 course correction is planning and routing authority only. It does not approve
-any P0-P3 revision, version, capability, evidence artifact, owner acceptance, or target date.
+The approved course corrections are planning and routing authority only. They preserve historical P1 completion but do not approve
+any P0, P1R, P2, or P3 revision, version, capability, evidence artifact, owner acceptance, or target date.
 
-Current checkout evidence triggers the implementation block: EventStore source is `v3.69.0-12-g20be7872` while architecture pins `3.67.3` and Builds pins packages to `1.72.3`; `QueryEnvelope` omits original-actor/workload/delegation/scopes/audience fields; gateway authorization can emit distinguishable `403`; `ProjectionEventDto` omits the legacy global-position watermark; production JWT registration is conditional; and the readiness matrix records the G-4 tool as `not-available`. No owner-approved entry-gate or normalization artifact resolves these conflicts.
+Current planning evidence still triggers the implementation block: historical P1 normalized EventStore, Builds, and Architecture on `3.70.1`, but the observed Builds candidate at `b529b66` selects EventStore `3.86.0` while its runner manifest and the Architecture Spine remain on `3.70.1`; P1R has not accepted an exact replacement baseline. The G-4 persisted runner, remotely restored package pin, machine-checkable owner acceptance record, P2/P3 capabilities, and P4 gate record remain unavailable.
 
 ## Verification
 
@@ -101,4 +103,4 @@ Current checkout evidence triggers the implementation block: EventStore source i
 Status: blocked
 Blocking condition: spec failed ready-for-development standard
 
-Failing criterion: **Sufficient**. Known dependency and implementation gaps remain unresolved: incompatible/unapproved EventStore source, architecture, and central package versions; incomplete dual-principal query identity; distinguishable gateway `403` behavior that violates safe denial; absent supported global-position watermark; conditional production authentication; missing owner-approved entry-gate and normalization records; and unavailable G-4 persisted runner/evidence tooling. These gaps cannot be repaired within Story 6.1 without separately authorized platform, Builds, or sibling-repository work.
+Failing criterion: **Sufficient**. Known dependency and implementation gaps remain unresolved: P1R baseline drift; incomplete dual-principal query identity; indistinguishable safe-denial and supported global-position-watermark capability; production authentication approval; the supported G-4 persisted runner, published consumer pin, and machine-checkable owner acceptance record; and the P4 entry-gate record. These gaps cannot be repaired within Story 6.1 without separately authorized platform, Builds, or sibling-repository work.

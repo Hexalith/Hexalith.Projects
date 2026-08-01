@@ -1274,8 +1274,8 @@ evidence, and rollback pin. The gate is an explicit dependency ledger rather tha
 work assigned to the first value story. The following applicability rules preserve every G-1…G-6
 obligation without making unrelated later-surface gates prerequisites for Story 6.1:
 
-- Story 6.1 and later consumers of the shared read baseline require accepted work packages 6.1-P0
-  through 6.1-P4 below.
+- Story 6.1 and later consumers of the shared read baseline require accepted work packages 6.1-P0,
+  6.1-P1, 6.1-P1R, 6.1-P2, 6.1-P3, and 6.1-P4 below.
 - Stories consuming Conversations, Folders, Memories, Parties, or Tenants additionally require the
   applicable G-2 sibling-owner read contracts.
 - Story 6.5 additionally requires the approved G-3 FrontComposer contract; Story 6.6 requires its
@@ -1284,15 +1284,16 @@ obligation without making unrelated later-surface gates prerequisites for Story 
 
 **Story 6.1 prerequisite work packages.** These are enablement packages, not user-value stories and
 not Story 6.1 implementation subtasks. The approved routing and complete acceptance contracts are in
-`sprint-change-proposal-2026-07-17.md`.
+`sprint-change-proposal-2026-07-17.md` and the approved 2026-08-01 G-4/P1R correction.
 
 | ID | Repository authority | Required outcome | Accountable owners | Initial state |
 |---|---|---|---|---|
-| 6.1-P0 | Builds/platform tooling | Supported G-4 persisted runner and machine-checkable evidence tool | Builds Owner + Platform Owner + Test Architect | open; target uncommitted |
-| 6.1-P1 | EventStore + Builds + architecture record | One owner-approved source/package/architecture/runner baseline and finite normalization record | EventStore Owner + Builds Owner + Solution Architect | open; target uncommitted |
+| 6.1-P0 | Builds/platform tooling | Supported G-4 persisted runner, remotely restored tool packages, and fail-closed machine-checkable acceptance record | Builds Owner + Platform Owner + Test Architect | open; external implementation in progress; blocked by P1R; target uncommitted |
+| 6.1-P1 | EventStore + Builds + architecture record | Historical owner-approved source/package/architecture/runner baseline and finite normalization record | EventStore Owner + Builds Owner + Solution Architect | done 2026-07-18 on 3.70.1; preserved historical evidence |
+| 6.1-P1R | EventStore + Builds + architecture + qualification record | Revalidated exact source/package/runner/architecture pin after post-P1 dependency drift, including compatibility and rollback proof | EventStore Owner + Builds Owner + Solution Architect + Test Architect | open; blocked by P1; target uncommitted |
 | 6.1-P2 | EventStore/platform | Supported dual-principal query envelope, indistinguishable safe denial, and authoritative global-position watermark | EventStore Owner + Identity/Security Owner + Solution Architect | open; blocked by P1 |
 | 6.1-P3 | Identity/security platform | Approved mandatory fail-closed production identity/authentication contract and fixtures | Identity/Security Owner + Projects Owner + Solution Architect | open; blocked by P2 |
-| 6.1-P4 | Hexalith.Projects planning/evidence | Owner-approved 6.1 gate record linking P0-P3 pins, commands, evidence, normalization, and rollback | Product Owner + Solution Architect + Test Architect + P0-P3 owners | open; blocked by P0-P3 |
+| 6.1-P4 | Hexalith.Projects planning/evidence | Owner-approved 6.1 gate record linking P0, P1, P1R, P2, and P3 pins, commands, evidence, normalization, and rollback | Product Owner + Solution Architect + Test Architect + prerequisite owners | open; blocked by P0, P1, P1R, P2, and P3 |
 
 _All Epic 6 stories share: **Repository authority** Hexalith.Projects (`Contracts`, read models,
 query handlers) with platform-generated read adapters; **owner** Product Owner (author) + Solution
@@ -1309,7 +1310,7 @@ I want **to list visible Projects and open one Project's authorized metadata, li
 So that **operators and Chatbot get current, authorization-filtered Project truth to initialize a Conversation (FR-2, FR-5) with no legacy runtime**.
 
 - **Traceability:** FR-2, FR-5; NFR-1, NFR-5, NFR-10; AD-3, AD-14, AD-19, AD-20, AD-32, AD-33; UJ-1; findings ARCH-001/API-001 (read side); evidence rows `fr-2`, `fr-5`.
-- **Implementation state:** blocked by 6.1-P0, 6.1-P1, 6.1-P2, 6.1-P3, and 6.1-P4. It returns to `ready-for-dev` only after P4 is accepted and the Story 6.1 specification passes the complete ready-for-development standard.
+- **Implementation state:** blocked by 6.1-P0, 6.1-P1, 6.1-P1R, 6.1-P2, 6.1-P3, and 6.1-P4. It returns to `ready-for-dev` only after P4 is accepted and the Story 6.1 specification passes the complete ready-for-development standard.
 
 **Acceptance Criteria:**
 

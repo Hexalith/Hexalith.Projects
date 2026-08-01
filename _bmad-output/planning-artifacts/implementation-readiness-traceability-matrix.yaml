@@ -3,8 +3,8 @@
 # is a mechanically reconciled human view over the SAME stable row keys; this YAML wins on conflict.
 schema: hexalith.readiness-evidence.v1
 project: Hexalith.Projects
-generated: 2026-07-17
-generated_by: "bmad-correct-course — approved Story 6.1 prerequisite and blocker reconciliation"
+generated: 2026-08-01
+generated_by: "bmad-correct-course — approved G-4/P1R prerequisite and capability-truth reconciliation"
 source_of_truth: implementation-readiness-traceability-matrix.yaml
 markdown_view: implementation-readiness-traceability-matrix.md
 sources:
@@ -14,12 +14,12 @@ sources:
   epics: _bmad-output/planning-artifacts/epics.md
   audit: _bmad-output/analysis/hexalith-projects-codebase-audit-2026-07-14.md
   readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-17.md
-  course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md
+  course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01.md
 
 # ── Validation contract (AD-30) ──────────────────────────────────────────────
 validation:
   command: "dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml"
-  tool_status: not-available   # TARGET gate; supplied by the Builds/platform owner under G-4/AD-30. Until then rows record the external blocker and MUST NOT be `passed`.
+  tool_status: not-available   # Builds has an unaccepted source candidate at b529b66, but no accepted published consumer pin or supported persisted runner. Until independent P0 acceptance, rows MUST NOT be `passed`.
   rejects:
     - duplicate-key
     - missing-required-key
@@ -48,10 +48,11 @@ status_legend:
 # ── Containment ──────────────────────────────────────────────────────────────
 containment:
   overall_readiness: "READY (2026-07-17 planning-layer rerun; implementation remains controlled by per-story gates)"
-  freeze: "Story 6.1 runtime implementation is blocked until 6.1-P4 accepts P0-P3 and the Story 6.1 spec passes ready-for-development; every other story remains controlled by its applicable entry gates"
+  freeze: "Story 6.1 runtime implementation is blocked until 6.1-P4 accepts P0, P1, P1R, P2, and P3 and the Story 6.1 spec passes ready-for-development; every other story remains controlled by its applicable entry gates"
   release_block: "production + consequential autonomous MCP mutation + proposed-Project confirmation blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance"
   open_triggers:
-    - "Story 6.1: blocked by 6.1-P0 through 6.1-P4; external owners and target dates remain uncommitted"
+    - "Story 6.1: blocked by 6.1-P0, P1, P1R, P2, P3, and P4; external owners and target dates remain uncommitted"
+    - "6.1-P1R: observed Builds EventStore 3.86.0 differs from the runner manifest and Architecture Spine 3.70.1 baseline; exact owner-approved replacement pin is unresolved"
     - "E-6: live E2E 19 passed / 56 failed (row release-smoke / release-e2e)"
     - "E-7: 9 P1 + 7 P2 audit findings (finding-* rows)"
     - "E-8: release handoff BLOCKED (row release-stakeholder-acceptance)"
@@ -62,7 +63,7 @@ defaults:
   repository: Hexalith.Projects
   owner: "Product Owner (author) → Test Architect (evidence execution) → Solution Architect (AD/G conformance)"
   environment: "deterministic persisted-boundary fixture (authorized Tenant) on the G-4 platform composition runner (dotnet tool run hexalith-module ...)"
-  pinned_revision: "per-row/per-epic owner-approved gate; 6.1-P1 normalized EventStore to 3.70.1 (submodule f13f9925fdca53efa2ab8c90d396ab106f91bb9c, Builds HexalithEventStoreVersion=3.70.1, Architecture Spine Stack table) on 2026-07-18, rollback pin 3.67.3; Story 6.1 G-4 runner/6.1-P0, P2, P3 baselines remain unresolved; no floating versions"
+  pinned_revision: "per-row/per-epic owner-approved gate; 6.1-P1 historically normalized EventStore to 3.70.1 (submodule f13f9925fdca53efa2ab8c90d396ab106f91bb9c, Builds HexalithEventStoreVersion=3.70.1, Architecture Spine Stack table) on 2026-07-18, rollback pin 3.67.3; post-P1 Builds candidate b529b66 selects 3.86.0 while runner/Architecture remain 3.70.1, so P1R and Story 6.1 G-4 runner/6.1-P0, P2, and P3 baselines remain unresolved; no floating versions"
   status: pending
   release_disposition: "release-blocking (no approved v1 FR/NFR is deferrable)"
 
@@ -91,13 +92,13 @@ rows:
     user_journeys: [UJ-1]
     primary_story: "6.1"
     supporting_stories: []
-    entry_gates: ["6.1-P0", "6.1-P1", "6.1-P2", "6.1-P3", "6.1-P4"]
+    entry_gates: ["6.1-P0", "6.1-P1", "6.1-P1R", "6.1-P2", "6.1-P3", "6.1-P4"]
     fixture: epic6/6.1-authorized-reads
     verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.1"
     evidence_artifact: evidence/epic6/6.1-authorized-reads.trx
     estimate: M
     status: blocked-external
-    blocker: "6.1-P0, P2..P4 (P1 EventStore/Builds baseline normalized 2026-07-18): G-4 runner, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record"
+    blocker: "6.1-P0, P1R, P2..P4 (historical P1 normalized 3.70.1 on 2026-07-18; post-P1 Builds candidate drift is unresolved): G-4 runner and acceptance record, exact revalidated baseline, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record"
     notes: "Planning coverage is complete; Story 6.1 implementation remains non-startable."
   - key: fr-3
     category: fr
@@ -136,13 +137,13 @@ rows:
     architecture_decisions: [AD-14, AD-19, AD-20, AD-27]
     primary_story: "6.1"
     supporting_stories: []
-    entry_gates: ["6.1-P0", "6.1-P1", "6.1-P2", "6.1-P3", "6.1-P4"]
+    entry_gates: ["6.1-P0", "6.1-P1", "6.1-P1R", "6.1-P2", "6.1-P3", "6.1-P4"]
     fixture: epic6/6.1-authorized-reads
     verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.1"
     evidence_artifact: evidence/epic6/6.1-authorized-reads.trx
     estimate: M
     status: blocked-external
-    blocker: "6.1-P0, P2..P4 (P1 EventStore/Builds baseline normalized 2026-07-18): G-4 runner, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record"
+    blocker: "6.1-P0, P1R, P2..P4 (historical P1 normalized 3.70.1 on 2026-07-18; post-P1 Builds candidate drift is unresolved): G-4 runner and acceptance record, exact revalidated baseline, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record"
     notes: "Planning coverage is complete; Story 6.1 implementation remains non-startable."
   - key: fr-6
     category: fr
@@ -475,13 +476,13 @@ rows:
     architecture_decisions: [AD-14, AD-15, AD-27]
     primary_story: "8.9"
     supporting_stories: ["6.1", "6.7"]
-    entry_gates: [Epic-8-gate, "6.1-P0", "6.1-P1", "6.1-P2", "6.1-P4"]
+    entry_gates: [Epic-8-gate, "6.1-P0", "6.1-P1", "6.1-P1R", "6.1-P2", "6.1-P4"]
     fixture: epic8/8.9-performance
     verification_command: "dotnet tool run hexalith-module test --profile perf --filter Story=8.9"
     evidence_artifact: evidence/epic8/8.9-performance.json
     estimate: L
     status: blocked-external
-    blocker: "Story 6.1 P0/P2/P4 runner, watermark, and accepted persisted-read evidence (P1 baseline normalized 2026-07-18); final scale gate remains Story 8.9"
+    blocker: "Story 6.1 P0/P1R/P2/P4 runner, revalidated baseline, watermark, machine-checkable acceptance, and accepted persisted-read evidence (historical P1 normalized 3.70.1 on 2026-07-18); final scale gate remains Story 8.9"
   - key: nfr-6
     category: nfr
     ids: [NFR-6]
@@ -543,13 +544,13 @@ rows:
     architecture_decisions: [AD-6, AD-16, AD-17, AD-22]
     primary_story: "6.7"
     supporting_stories: ["6.1", "7.15", "8.7"]
-    entry_gates: [Epic-6-gate, "6.1-P1", "6.1-P4"]
+    entry_gates: [Epic-6-gate, "6.1-P1", "6.1-P1R", "6.1-P4"]
     fixture: epic6/6.7-read-cutover
     verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7"
     evidence_artifact: evidence/epic6/6.7-read-cutover.json
     estimate: L
     status: blocked-external
-    blocker: "6.1-P1 version/source normalization complete (EventStore 3.70.1, 2026-07-18); 6.1-P4 entry-gate acceptance still pending; final cutover gate remains Story 6.7"
+    blocker: "Historical 6.1-P1 version/source normalization completed on EventStore 3.70.1 (2026-07-18); post-P1 P1R revalidation and 6.1-P4 entry-gate acceptance remain pending; final cutover gate remains Story 6.7"
   - key: nfr-11
     category: nfr
     ids: [NFR-11]

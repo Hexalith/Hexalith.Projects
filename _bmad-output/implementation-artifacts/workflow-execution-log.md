@@ -31,3 +31,20 @@
 - Secondary handoff: UX/Chatbot owner, Product Owner, Test Architect, independent readiness assessor, Developer, Jerome, and John
 - Next sequence: PRD update/validation, architecture update, UX/Chatbot handoff update, executable epics/stories, test design, readiness rerun, sprint planning, first ready story
 - Release state: Blocked; no corrective implementation, production release, or consequential autonomous-operation enablement before the prescribed gates pass
+
+## 2026-08-01 — Correct Course: G-4 Persisted Runner and Evidence Delivery Rebaseline
+
+- Workflow: bmad-correct-course
+- User: Jerome
+- Mode: Incremental
+- Trigger: Deliver the supported G-4 persisted runner and machine-checkable evidence tooling required by Story 6.1
+- Approval: Approved by Jerome on 2026-08-01
+- Scope: Moderate
+- Proposal: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01.md
+- Artifacts finalized: Sprint Change Proposal, 6.1-P1R dependency action, Epic 6 prerequisite table, Story 6.1 and specification blockers, Projects P0 handoff, Builds P0 owner story, sprint status, and readiness matrix views
+- Historical artifacts preserved: completed 6.1-P1 normalization, all 15 P0 acceptance criteria, implemented Builds source/contracts, and prior course-correction records
+- Primary handoff: EventStore Owner, Builds Owner, Solution Architect, and Test Architect for 6.1-P1R; then Builds Owner for remaining P0 acceptance stages
+- Secondary handoff: Platform Owner for live qualification and owner acceptance; Projects Product Owner/Developer for P4 and readiness rerun after accepted evidence
+- Next sequence: P1R baseline acceptance, current-head release-finding reconciliation, supported composition, real persisted qualification, packaged evidence capture, exact prerelease publication and remote restore, machine-checkable owner acceptance, P4 readiness rerun
+- Story state: Story 6.1 remains blocked; P0 remains open and the G-4 tool remains `not-available` to Projects until the published capability and acceptance record validate independently
+- Release state: Blocked; no Story 6.1 implementation or downstream release authority is granted by this planning correction

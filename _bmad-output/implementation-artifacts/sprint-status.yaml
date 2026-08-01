@@ -1,5 +1,5 @@
 # generated: 2026-07-17T08:14:03+02:00
-# last_updated: 2026-07-31T23:45:01+02:00
+# last_updated: 2026-08-01T08:07:35+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -49,7 +49,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-07-31T23:45:01+02:00
+last_updated: 2026-08-01T08:07:35+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -219,12 +219,22 @@ action_items:
     repository_authority: "Hexalith/Hexalith.Builds"
     owner: "Builds Owner / Platform Owner / Test Architect"
     status: open
+    execution_status: in-progress-external
     target_date: uncommitted
     authorized: "2026-07-17 by Jerome"
     owner_baseline: "edbaeaed68bcdb8deffcd98ed5652d237596e1d1"
+    owner_observed_revision: "b529b66"
     owner_story: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md"
-    expected_evidence: "Owner-approved runner revision, reproducible command, persisted fixture, evidence schema/sample, negative control, and rollback procedure"
+    depends_on: ["6.1-P1R"]
+    capability_status:
+      manifest_contract: implemented-unaccepted
+      evidence_validator: implemented-unaccepted
+      persisted_runner: not-available
+      published_tools: not-available
+      owner_acceptance: not-available
+    expected_evidence: "Owner-approved runner revision, remotely restored package inventory and hashes, reproducible command, persisted fixture, fail-closed machine-checkable acceptance record, evidence schema/sample, negative controls, and rollback procedure"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p0--deliver-the-g-4-persisted-runner-and-evidence-tooling"
+    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01.md"
     routed_to: "Hexalith.Builds owner-repository story"
   - epic: 6
     id: "6.1-P1"
@@ -237,7 +247,24 @@ action_items:
     result: "Normalized on EventStore v3.70.1 (f13f9925fdca53efa2ab8c90d396ab106f91bb9c): fixed a release-blocking restore bug and two stale baseline-sync tests, cut and published v3.70.1, pinned the EventStore submodule and Builds HexalithEventStoreVersion to it, realigned the Architecture Spine Stack/G-1 text and the traceability matrix, and recorded AD-14 compatibility + rollback (v3.67.3) evidence."
     expected_evidence: "Finite normalization record with repository revision, package versions, API signatures, compatibility results, approvals, and rollback pins"
     evidence: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p1-eventstore-source-architecture-package-normalization-record.md"
-    routed_to: "6.1-P2 and 6.1-P4"
+    routed_to: "6.1-P1R, 6.1-P2, and 6.1-P4"
+  - epic: 6
+    id: "6.1-P1R"
+    action: "Revalidate the EventStore source, Builds catalog, Architecture Spine, and G-4 runner baseline after post-P1 dependency drift."
+    repository_authority: "EventStore and Builds repositories; Architecture Spine through architecture-owner approval"
+    owner: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
+    status: open
+    target_date: uncommitted
+    authorized: "2026-08-01 by Jerome"
+    depends_on: ["6.1-P1"]
+    unblocks: ["6.1-P0", "6.1-P4"]
+    observed_drift:
+      builds_eventstore_version: "3.86.0"
+      runner_manifest_version: "3.70.1"
+      architecture_version: "3.70.1"
+    expected_evidence: "Owner-approved exact source/package/runner/architecture pin, clean restore, required API compatibility, live-runner compatibility, and rollback record"
+    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01.md#change-2--add-dependency-revalidation-action-61-p1r"
+    routed_to: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
   - epic: 6
     id: "6.1-P2"
     action: "Supply supported dual-principal query identity, indistinguishable safe denial, and authoritative global-position watermark capabilities."
@@ -262,12 +289,12 @@ action_items:
     routed_to: "Product Manager / Solution Architect / Identity-Security and Projects Owners"
   - epic: 6
     id: "6.1-P4"
-    action: "Accept the Story 6.1 entry gate from the exact P0-P3 revisions, evidence, finite normalization, rollback pins, and readiness rerun."
+    action: "Accept the Story 6.1 entry gate from the exact P0, P1, P1R, P2, and P3 revisions, evidence, finite normalization, rollback pins, and readiness rerun."
     repository_authority: "Hexalith.Projects planning and evidence artifacts"
-    owner: "Product Owner / Solution Architect / Test Architect / P0-P3 owners"
+    owner: "Product Owner / Solution Architect / Test Architect / prerequisite owners"
     status: open
     target_date: uncommitted
-    depends_on: ["6.1-P0", "6.1-P1", "6.1-P2", "6.1-P3"]
+    depends_on: ["6.1-P0", "6.1-P1", "6.1-P1R", "6.1-P2", "6.1-P3"]
     expected_evidence: "evidence/epic6/6.1-entry-gate.yaml plus passing Story 6.1 ready-for-development result"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p4--accept-the-story-61-entry-gate"
     routed_to: "Product Manager / Solution Architect / Product Owner / Test Architect"

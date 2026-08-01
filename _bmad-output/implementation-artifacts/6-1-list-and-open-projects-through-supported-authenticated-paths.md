@@ -5,7 +5,7 @@ epic: "Epic 6: Authorized Project Reads on the Supported Platform"
 created: 2026-07-17
 source_story_status: backlog
 status: blocked
-blocked_by: [6.1-P0, 6.1-P1, 6.1-P2, 6.1-P3, 6.1-P4]
+blocked_by: [6.1-P0, 6.1-P1, 6.1-P1R, 6.1-P2, 6.1-P3, 6.1-P4]
 baseline_commit: 90e481c
 traceability:
   requirements: [fr-2, fr-5]
@@ -45,7 +45,7 @@ so that operators and Chatbot get current, authorization-filtered Project truth 
 ## Tasks / Subtasks
 
 **Non-implementation entry condition.** Story 6.1 does not own platform enablement. Do not mark any
-task below in progress until 6.1-P0 through 6.1-P3 have owner-approved repository-local revisions and
+task below in progress until 6.1-P0, 6.1-P1, 6.1-P1R, 6.1-P2, and 6.1-P3 have owner-approved repository-local revisions and
 evidence, 6.1-P4 accepts their exact pins/normalization/rollback record, and the Story 6.1 spec passes
 ready-for-development. The implementing agent cannot satisfy, waive, or self-approve these blockers.
 
@@ -98,18 +98,18 @@ ready-for-development. The implementing agent cannot satisfy, waive, or self-app
 
 ### Authority, Readiness, and Scope
 
-- The current story definition is the corrective production plan in `epics.md`. The old `bmad-dev-auto-result-6-1-pin-platform-capabilities-and-migration-baseline.md` describes the superseded Story 6.1; use it only as historical evidence. The current `epic-6-context.md` and approved Sprint Change Proposal route capability pinning through 6.1-P0 through 6.1-P4.
+- The current story definition is the corrective production plan in `epics.md`. The old `bmad-dev-auto-result-6-1-pin-platform-capabilities-and-migration-baseline.md` describes the superseded Story 6.1; use it only as historical evidence. The current `epic-6-context.md` and approved Sprint Change Proposals route capability pinning through 6.1-P0, 6.1-P1, 6.1-P1R, 6.1-P2, 6.1-P3, and 6.1-P4.
 - The 2026-07-17 readiness report returns `READY` and authorizes Story 6.x file creation. It supersedes the 2026-07-16 `NOT_READY` decision and the still-unexecuted conformance checklist for that purpose. It does not mark the Epic 6 implementation pins, G-4 runner, G-5 identity, or draft test-design approvals complete.
-- The canonical traceability matrix records FR-2 and FR-5 as `blocked-external` and binds their implementation readiness to 6.1-P0 through 6.1-P4. Planning-layer `READY` is not implementation approval.
-- Story 6.1 depends on accepted 6.1-P0 through 6.1-P4 only. Story 6.2 owns Conversation-start setup, 6.3 full Project Context/refresh/explanation, 6.4 nonpersistent resolution, 6.5 authenticated Web, 6.6 authenticated CLI, and 6.7 reversible read-routing cutover. Epic 7 durable tasks and Epic 8 release proof are not forward dependencies.
+- The canonical traceability matrix records FR-2 and FR-5 as `blocked-external` and binds their implementation readiness to 6.1-P0, 6.1-P1, 6.1-P1R, 6.1-P2, 6.1-P3, and 6.1-P4. Planning-layer `READY` is not implementation approval.
+- Story 6.1 depends on accepted 6.1-P0, 6.1-P1, 6.1-P1R, 6.1-P2, 6.1-P3, and 6.1-P4 only. Story 6.2 owns Conversation-start setup, 6.3 full Project Context/refresh/explanation, 6.4 nonpersistent resolution, 6.5 authenticated Web, 6.6 authenticated CLI, and 6.7 reversible read-routing cutover. Epic 7 durable tasks and Epic 8 release proof are not forward dependencies.
 - `blocked` is non-startable. The story returns to `ready-for-dev` only after P4 acceptance and a passing specification readiness rerun.
 
 ### Story Completion Contract
 
 - Repository authority: Hexalith.Projects contracts, read models, and query handlers, consumed through platform-generated read adapters.
-- Named accountable roles: Product Owner, Solution Architect, and Test Architect own P4; Builds, Platform, EventStore, and Identity/Security owners retain authority for P0-P3. The implementing agent cannot self-approve any prerequisite.
+- Named accountable roles: Product Owner, Solution Architect, and Test Architect own P4; Builds, Platform, EventStore, Architecture, Test, and Identity/Security owners retain authority for P0, P1, P1R, P2, and P3. The implementing agent cannot self-approve any prerequisite.
 - Findings/trace: FR-2, FR-5; NFR-1, NFR-5, NFR-10; AD-3, AD-14, AD-19, AD-20, AD-32, AD-33; UJ-1; `ARCH-001` and `API-001` read-side closure; evidence rows `fr-2` and `fr-5`.
-- Dependency: accepted 6.1-P0 through 6.1-P4. Compatibility: legacy routing remains intact and reversible, no event-history rewrite, and no public cutover in this story.
+- Dependency: accepted 6.1-P0, 6.1-P1, 6.1-P1R, 6.1-P2, 6.1-P3, and 6.1-P4. Compatibility: legacy routing remains intact and reversible, no event-history rewrite, and no public cutover in this story.
 - Fixture/evidence: deterministic authorized-Tenant persisted-boundary fixture on G-4, required reads command, `.trx`/JSON evidence, and exact shadow report.
 - Estimate: M. Release disposition: Story 6.1 is not a production-release gate; Story 8.11 plus dated Jerome/John acceptance remains terminal authority.
 
@@ -197,7 +197,7 @@ ready-for-development. The implementing agent cannot satisfy, waive, or self-app
 
 ### Hard Stops
 
-- Stop unless 6.1-P4 accepts the exact EventStore/Builds/G-5/G-4 revisions and evidence from P0-P3; escalate with exact revision/API evidence.
+- Stop unless 6.1-P4 accepts the exact EventStore/Builds/G-5/G-4 revisions and evidence from P0, P1, P1R, P2, and P3; escalate with exact revision/API evidence.
 - Stop if original actor and authenticated workload identity cannot both be proven and reauthorized at query time.
 - Stop if the gateway can emit an observably different `403`/tenant rejection before the Projects handler can enforce the safe-404 contract.
 - Stop if exact legacy/supported watermark comparison is required but the approved projection event contract still omits global position and no normalization has been approved.
@@ -269,3 +269,4 @@ GPT-5 Codex
 | --- | --- |
 | 2026-07-17 | Created Story 6.1 comprehensive implementation context and set status to ready-for-dev. |
 | 2026-07-17 | Approved course correction set the story to blocked, externalized platform enablement as 6.1-P0 through 6.1-P4, and removed cross-repository gate resolution from Story 6.1 tasks. |
+| 2026-08-01 | Approved Correct Course proposal inserted 6.1-P1R after post-P1 dependency drift and retained Story 6.1 as blocked through P4 plus a passing readiness rerun. |
