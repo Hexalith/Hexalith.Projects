@@ -18,6 +18,7 @@ sources:
   historical_p1r_course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md
   historical_course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md
   course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md
+  course_correction_8_3_p1: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-8.3-P1.md
 
 # ── Validation contract (AD-30) ──────────────────────────────────────────────
 validation:
@@ -63,7 +64,7 @@ containment:
     - "Story 7.1: blocked by accepted 7.1-P1 contracts/validator evidence and 7.1-P2 task/Folder capability evidence"
     - "Story 8.8: blocked by accepted 8.8-P1 authenticated parity/isolation/privacy, 8.8-P2 operator accessibility, and 8.8-P3 owner-pinned Chatbot companion evidence"
     - "8.8-P3: blocked-external until the Chatbot owner supplies an approved manifest with repository, immutable revision, contract version, approval authority/date, accountable owner, authenticated commands, deterministic fixtures, expected artifacts/hashes/results/disposition, drift containment/rollback, complete journey coverage, and NFR-9 evidence"
-    - "Story 8.3: bounded integration is blocked by accepted immutable Web work packages 8.3-P1 shared presentation foundation, 8.3-P2 lifecycle journeys, and 8.3-P3 association journeys"
+    - "Story 8.3: bounded integration is blocked by accepted immutable Web work packages 8.3-P1 shared presentation foundation, 8.3-P2 lifecycle journeys, and 8.3-P3 association journeys; P1 acceptance requires fixture epic8/8.3-p1-web-foundation and evidence/epic8/8.3-p1-foundation-manifest.json"
     - "Story 8.11: blocked by accepted 8.11-P1 deployment/smoke, 8.11-P2 KMS/encryption, and 8.11-P3 rollback evidence plus every preceding Epic 8 story"
 
 # ── Defaults — a row inherits any field it does not explicitly set ────────────
@@ -801,6 +802,7 @@ rows:
     estimate: L
     status: blocked-external
     blocker: "G-3 FrontComposer; G-6 Fluent UI RC governance; accepted immutable 8.3-P1/P2/P3 Web packages"
+    notes: "8.3-P1 is accepted separately through epic8/8.3-p1-web-foundation and evidence/epic8/8.3-p1-foundation-manifest.json; Story 8.3 consumes the immutable accepted manifest and does not regenerate or reinterpret it. Full authenticated operator accessibility evidence remains owned by 8.8-P2."
   - key: finding-code-001
     category: finding
     ids: [CODE-001]

@@ -1903,6 +1903,141 @@ integration. These are reviewable Web delivery packages, not new production stor
 | 8.3-P2 | Archive and restore Web journeys, including Folder-before-activation restore and role/denial/renewal evidence | Projects Web Owner + Product Owner + Test Architect | open; blocked by 8.3-P1 and the current implementation-readiness freeze |
 | 8.3-P3 | Conversation move, Folder replacement, and Conversation/File/Memory unlink Web journeys with owner-preserving recovery evidence | Projects Web Owner + Product Owner + Test Architect | open; blocked by 8.3-P1 and the current implementation-readiness freeze |
 
+#### 8.3-P1 acceptance contract — shared Web presentation foundation
+
+**Purpose.** Accept a reusable Web presentation foundation over the versioned Projects action and
+UI descriptors plus the canonical Preview, Confirmation Artifact, Durable Task, recovery, and safe-
+failure contracts. This is a prerequisite delivery package, not a production story or independently
+delivered user value.
+
+**Entry gate.** Planning may continue while blocked, but acceptance and downstream consumption
+require all of the following:
+
+1. a superseding independent implementation-readiness result of exactly `READY`;
+2. G-3 accepted at immutable revisions, including one supported FrontComposer dependency mode,
+   descriptor discovery/generation, real credential propagation, and authenticated Web-adapter
+   proof; and
+3. G-6 accepted at immutable revisions, including the approved Fluent UI V5 RC and Fluxor
+   governance used by this package.
+
+A local checkout, floating version, skipped environment, or partially satisfied gate is not an
+accepted input.
+
+**Repository authority.** FrontComposer owns generic Fluent UI V5 primitives, presentation-state
+composition, focus management, restrained live-region behavior, and test helpers. Projects owns
+versioned `Projects.UI.Contracts` descriptors, stable action classification, generated-contract
+mapping, Projects fixtures, and adapter consumption. Platform/Identity supplies authenticated actor
+and Tenant context. Server Preview validation, Confirmation Artifact issuance/consumption, task
+admission/execution, authorization, idempotency, irreversible-checkpoint decisions, and read-model
+truth remain server/platform responsibilities and are never reimplemented in the Web client.
+
+**Canonical inputs.** The package consumes without local synonyms or inferred authority:
+
+- the four-class canonical operator action matrix;
+- the approved Preview and opaque Confirmation Artifact contracts, including server-provided
+  expiry and canonical recovery actions;
+- exactly `Pending`, `Running`, `WaitingForDependency`, `NeedsAttention`, `Succeeded`, `Rejected`,
+  `Failed`, and `Cancelled` for task truth;
+- canonical reason/recovery codes, including `RenewPreview`, `PollTask`, authorized reconciliation,
+  and safe conflict behavior; and
+- authenticated actor/Tenant context and generated contracts from the accepted G-3 runtime path.
+
+**Deterministic fixture.** `epic8/8.3-p1-web-foundation` contains versioned cases for:
+
+1. every canonical admission class, including read-only `RefreshContext` and an identical retained
+   `reevaluate` compatibility alias if that alias remains;
+2. valid confirmation plus expired, stale, replayed, tampered, actor-mismatched, Tenant-mismatched,
+   and target-mismatched artifacts;
+3. all eight task states, allowed transitions, immutable terminal states, bounded dependency
+   guidance, and Administrator-only reconciliation visibility;
+4. lost admission response, idempotent retry/`PollTask`, duplicate notifications, stale SignalR
+   nudges, and authoritative HTTP or equivalent structured re-query;
+5. cancellation before and after the irreversible checkpoint;
+6. authorized, hidden, denied, and stale-authority controls with safe reason codes and no payload
+   echo; and
+7. keyboard operation, deterministic focus transitions/restoration, restrained announcements,
+   non-color status, 200% zoom, and 320 CSS-pixel component presentation.
+
+Fixture rows name their contract version and expected state, controls, focus target, announcement,
+authoritative query, and safe result. P2/P3 provide real archive/restore/association journey data;
+P1 does not fabricate those domain outcomes.
+
+**Acceptance Criteria:**
+
+1. **Admission-class fidelity.** Confirmation-required actions render server Preview and explicit
+   confirm/cancel, consume one bound artifact, and then monitor task truth. Task-only actions admit
+   without a second confirmation. Task controls appear only when authorized against current task
+   truth. Synchronous reads create neither artifact nor task.
+2. **Confirmation safety.** The presentation displays server-provided scope, versions, current and
+   proposed state, warnings, expected metadata-only audit evidence, and expiry. Every invalid or
+   mismatched artifact admits no task, exposes only a safe summary and canonical recovery, and moves
+   focus predictably to the summary and renewal path.
+3. **Task truth.** A `202` or task identifier means admitted, never succeeded. The component renders
+   exactly the eight canonical states. `Succeeded` is rendered only after authoritative task and
+   expected read-model confirmation; SignalR is a re-query nudge, never completion authority.
+4. **Recovery and control.** Lost-response recovery converges through the idempotency identifier and
+   `PollTask` or equivalent safe retry. Cancellation is offered only before the irreversible
+   checkpoint; later requests show current truth and a safe conflict. `NeedsAttention` exposes only
+   authorized reconciliation. Terminal states cannot transition.
+5. **Accessibility.** All states and controls are keyboard operable. Focus moves deterministically
+   after validation, renewal, admission, cancellation, and terminal outcomes, then restores to the
+   originating safe control when appropriate. Live regions announce meaningful changes without
+   repeated polling noise. Meaning never relies only on color, motion, position, or elapsed time,
+   and the fixture passes at 200% zoom and 320 CSS pixels.
+6. **Boundary and privacy.** FrontComposer contains no Projects domain decision; Projects contains
+   no cloned generic lifecycle component or server workflow. The browser receives no secrets,
+   payload-bearing content, or authority claim and logs no artifact/token value.
+7. **Compatibility.** Existing Projects and FrontComposer prototype lifecycles are not canonical.
+   Any temporary adapter maps them explicitly at one boundary, rejects an unrepresentable canonical
+   state safely, and is retained or removed only through an owner-approved compatibility
+   disposition.
+8. **Evidence.** Every required fixture case passes from accepted clean checkouts. Missing
+   environments, unexplained skips, mutable revisions, unresolved critical/serious accessibility
+   findings, and unhashed or ownerless artifacts block acceptance.
+
+**Verification commands.** The accepted revisions make these commands executable from the named
+repository roots and record their exit codes:
+
+```bash
+# Hexalith.FrontComposer
+DiffEngine_Disabled=true dotnet test Hexalith.FrontComposer.slnx \
+  --filter "Category=Story8.3P1" \
+  --logger "trx;LogFileName=8.3-p1-frontcomposer.trx" \
+  --results-directory evidence/epic8
+
+# Hexalith.Projects
+DiffEngine_Disabled=true dotnet test tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj \
+  --filter "Category=Story8.3P1" \
+  --logger "trx;LogFileName=8.3-p1-projects-adapter.trx" \
+  --results-directory evidence/epic8
+
+# Accepted workspace evidence runner supplied by the cleared Epic 8/G-4 gate
+dotnet tool run hexalith-evidence validate \
+  evidence/epic8/8.3-p1-foundation-manifest.json
+```
+
+The categorized tests and evidence runner do not exist as accepted capabilities today; their
+absence remains a blocker and cannot be represented as a skipped or passing lane.
+
+**Evidence manifest.** `evidence/epic8/8.3-p1-foundation-manifest.json` records repository URLs and
+immutable revisions; dependency, contract, fixture, and compatibility fingerprints; accepted
+G-3/G-6/readiness dispositions; exact commands, exit codes, environment, artifact paths, hashes,
+and results; FrontComposer/Projects TRX and component-accessibility results; negative-control,
+privacy/redaction, and boundary results; accountable FrontComposer/Web, Projects Web, Test
+Architect, Solution Architect, and Product Owner dispositions; and containment plus executable
+rollback instructions.
+
+**Compatibility and rollback.** Pin the previous accepted FrontComposer/toolchain tuple and retain
+the last accepted Web route until P2/P3 and Story 8.3 accept the new foundation. On regression,
+withhold or disable the new presentation package/adapter, restore the pinned tuple and route, and
+re-run the prior smoke/evidence lane. Rollback changes no domain event, Confirmation Artifact,
+Durable Task record, server workflow, or sibling-owned resource.
+
+- **Estimate:** L. **Completion boundary:** both repository revisions and the manifest are immutable;
+  every required command passes from accepted clean checkouts; every artifact/hash/result and owner
+  disposition exists; and rollback is executable. P2/P3 domain journeys and the full authenticated
+  NFR-9 release lane remain outside P1.
+
 ### Story 8.3: Integrate conformant Project maintenance in the Web console
 
 As a **Tenant Operator or Tenant Project Administrator**,

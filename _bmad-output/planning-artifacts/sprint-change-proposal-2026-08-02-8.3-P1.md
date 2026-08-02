@@ -1,7 +1,9 @@
 ---
 title: "Sprint Change Proposal: Make 8.3-P1 Independently Executable"
 date: 2026-08-02
-status: proposed
+status: approved
+approved: 2026-08-02
+approved_by: Jerome
 workflow: bmad-correct-course
 review_mode: batch
 target: 8.3-P1
@@ -10,8 +12,11 @@ trigger: "The approved 2026-08-02 correction created 8.3-P1, but its ledger entr
 source_proposal: sprint-change-proposal-2026-08-02.md
 source_report: implementation-readiness-report-2026-08-02.md
 recommended_approach: direct-adjustment
-approval_status: pending
-application_status: not-applied
+overall_approval: approved
+approval_status: approved
+handoff_status: complete
+application_status: applied
+applied: 2026-08-02
 routed_to: "Product Owner and Developer, with FrontComposer/Web Owner, Projects Web Owner, Test Architect, and Solution Architect"
 ---
 
@@ -150,8 +155,8 @@ implementation-readiness freeze are cleared.
 
 ## 4. Detailed Change Proposals
 
-These edits are proposals only. They are not applied to authoritative downstream artifacts until
-explicit approval.
+Jerome approved these edits on 2026-08-02. They are applied to the named authoritative downstream
+artifacts; package status and all external gates remain unchanged.
 
 ### 4.1 Expand `8.3-P1` in `epics.md`
 
@@ -485,12 +490,13 @@ pass.
 - [x] **6.2** Proposal checked against the complete PRD bundle, Architecture Spine, epics, UX,
   conformance checklist, traceability authority, sprint status, current readiness report, existing
   2026-08-02 proposal, and checked-out repository surfaces.
-- [ ] **6.3** Explicit user approval is pending.
+- [x] **6.3** Jerome explicitly approved the proposal on 2026-08-02.
 - [N/A] **6.4** No story status or story ID changes are proposed; the existing action row remains
   `open` until independent acceptance.
-- [ ] **6.5** Moderate-scope handoff begins only after approval and application of the planning edits.
+- [x] **6.5** Moderate-scope handoff is active for the Product Owner/Developer, FrontComposer Web,
+  Projects Web, Test Architect, and Solution Architect responsibilities in Section 5.
 
-## 7. Approval Gate and Success Criteria
+## 7. Approved Disposition and Success Criteria
 
 This proposal does not lift the implementation freeze, satisfy G-3/G-6, accept `8.3-P1`, unblock
 P2/P3, or modify source code. It is successful when:
@@ -505,5 +511,28 @@ P2/P3, or modify source code. It is successful when:
 6. no client presentation, prototype lifecycle, SignalR notification, or local synonym becomes
    domain, authorization, task, or completion authority.
 
-Pending review disposition: **Continue (`c`)** to move to the explicit approval decision, or
-**Edit (`e`)** to revise the proposal first.
+Approved disposition: **Direct Adjustment, moderate scope**. The package remains `open` and its
+delivery date remains `uncommitted`; acceptance still requires every entry gate, command, artifact,
+hash, rollback record, and accountable-owner disposition defined above.
+
+## 8. Application and Validation Record
+
+The approved correction was applied on 2026-08-02 to `epics.md`, `sprint-status.yaml`, the
+Solution-Architect conformance checklist, the canonical traceability YAML, and its human-readable
+Markdown view. The approved proposal itself was finalized without overwriting the earlier approved
+`sprint-change-proposal-2026-08-02.md` record.
+
+Cross-artifact checks confirmed 63 unique traceability rows, preserved the stable
+`finding-ux-001` identity and `blocked-external` status, found the P1 manifest handoff in every
+affected artifact, and confirmed that `8.3-P1` remains `open` behind G-3, G-6, and a superseding
+`READY` result.
+
+The declared AD-30 command was also executed:
+
+```text
+dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml
+```
+
+It exited `1` with `Cannot find a tool in the manifest file that has a command named
+'hexalith-evidence'.` This remains an explicit G-4/external-capability blocker. It is not represented
+as a passing validation result and does not invalidate the internally consistent planning edit.

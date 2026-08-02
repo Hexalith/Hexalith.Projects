@@ -12,6 +12,7 @@ reviews:
   - sprint-change-proposal-2026-08-01-implementation-readiness-correction.md
   - implementation-readiness-report-2026-08-02.md
   - sprint-change-proposal-2026-08-02.md
+  - sprint-change-proposal-2026-08-02-8.3-P1.md
 status: correction-applied-pending-independent-rerun
 ---
 
@@ -83,10 +84,10 @@ while its gate is unmet; it may still pass *planning* conformance (spec correctn
 |---|---|---|---|
 | **G-1** platform Durable Task + Confirmation Artifact engine (AD-4/9/13) | all durable writes | 7.1-P2, 7.1–7.14, 6.7 (command path), 8.10 | ☐ pending platform owner |
 | **G-2** sibling owner contracts (expected-version, idempotency, receipt/status, batch-read, compensation) (AD-12) | cross-context sagas | 7.1-P2, 7.1, 7.3–7.10, 6.7 | ☐ pending — subsumes AR-G1…G4 |
-| **G-3** FrontComposer adapters + 4.0.0/4.0.1 disposition (descriptor/schema/credential/MCP parity) | Web/MCP surfaces | 6.5, 8.3, 8.5, 8.8-P2, 8.8 | ☐ pending G-3 disposition |
+| **G-3** FrontComposer adapters + 4.0.0/4.0.1 disposition (descriptor/schema/credential/MCP parity) | Web/MCP surfaces | 6.5, 8.3-P1, 8.3, 8.5, 8.8-P2, 8.8 | ☐ pending G-3 disposition |
 | **G-4** platform composition runner + `hexalith-evidence` tool (AD-25/AD-30) | fixtures, CI, evidence gate | 6.1-P0/P4, 8.1, 8.11, all evidence rows | ☐ tool `not-available`; candidate unaccepted |
 | **G-5** identity/KMS/secrets/telemetry bindings (AD-20/AD-28) | auth, encryption, admission | 6.1-P2/P3, 6.5/6.6, 8.6, 8.8-P1, 8.11-P1/P2, NFR-2 | ☐ pending G-5 |
-| **G-6** runtime/toolchain alignment (Dapr runtime↔SDK, Fluent UI RC, CommunityToolkit, NSubstitute RC, Fluxor governance) | build/UI | 8.3, 8.7, 7.15 | ☐ pending G-6 |
+| **G-6** runtime/toolchain alignment (Dapr runtime↔SDK, Fluent UI RC, CommunityToolkit, NSubstitute RC, Fluxor governance) | build/UI | 8.3-P1, 8.3, 8.7, 7.15 | ☐ pending G-6 |
 
 - [ ] **B-check:** every story's declared entry gate matches its actual dependencies (no story claims
       readiness ahead of an unmet gate; no story silently depends on an unpinned capability).
@@ -176,7 +177,12 @@ story cannot complete merely by recording a blocker.
   - [ ] **Separate** permission (Chatbot rejected); ≤1 MiB/500/100; deterministic order; no cursor/retention; two-lease/Tenant; every attempt audited; unavailable components marked safely.
   - [ ] A third concurrent request is rejected before producing a partial snapshot; without a separately approved export-idempotency contract, a lost/repeated synchronous request makes no exactly-once or retained-byte claim and may produce a new current snapshot.
 - **8.3 Web presentation adapter** — ADs 2,19,29,32,33,34 · Epic-8 gate + G-6
-  - [ ] 8.3-P1 independently accepts the shared Preview/Confirmation/task/recovery/cancellation/authoritative-re-query/focus/live-region foundation; 8.3-P2 independently accepts archive/restore; 8.3-P3 independently accepts move/Folder-replace/Conversation-File-Memory unlink; all are immutable entry inputs to bounded Story 8.3 integration.
+  - [ ] 8.3-P1 entry evidence pins accepted G-3/G-6 and superseding `READY` dispositions, immutable FrontComposer/Projects revisions, dependency/contract/fixture/compatibility fingerprints, and no floating or skipped substitute.
+  - [ ] 8.3-P1 preserves the authority split: FrontComposer owns generic Fluent V5/state/focus/live-region primitives; Projects owns versioned UI descriptors, canonical action classification, generated-contract mapping, fixtures, and adapter consumption; neither client repository reimplements server workflow or authority.
+  - [ ] 8.3-P1 proves all four admission classes and exactly the eight canonical task states, including invalid-artifact, lost-response/idempotent recovery, cancellation/checkpoint, authorized reconciliation, immutable-terminal, stale-notification, and authoritative-re-query cases; `202` and SignalR never mean success.
+  - [ ] 8.3-P1 proves no client authority or payload/artifact/token leakage plus keyboard, deterministic focus/restoration, restrained live regions, non-color meaning, 200% zoom, and 320 CSS-pixel component presentation; full authenticated small/median/max NFR-9 acceptance remains owned by 8.8-P2.
+  - [ ] 8.3-P1 acceptance requires `epic8/8.3-p1-web-foundation`, passing categorized clean-checkout results, and immutable `evidence/epic8/8.3-p1-foundation-manifest.json` with artifact hashes, accountable-owner dispositions, containment, and executable rollback.
+  - [ ] 8.3-P2 independently accepts archive/restore; 8.3-P3 independently accepts move/Folder-replace/Conversation-File-Memory unlink; P1/P2/P3 are immutable entry inputs to bounded Story 8.3 integration.
   - [ ] Implements the canonical operator action matrix directly: confirmation-required, task-only, task-control, and synchronous-read actions preserve their distinct admission semantics; `RefreshContext` is synchronous/read-only; any `reevaluate` alias is identical; Fluent V5 + `FluentAccordion` (HTML prototype non-normative); no client authority.
 - **8.4 CLI contract** — ADs 2,19,29,33 · Epic-8 gate
   - [ ] Verifies the CLI directly against the canonical action/response contract with explicit targets and the action's exact confirmation-required/task-only/task-control/read admission semantics, deterministic JSON/exit codes, and read-only `RefreshContext`; it has no dependency on 8.5 and makes no cross-surface parity completion claim.

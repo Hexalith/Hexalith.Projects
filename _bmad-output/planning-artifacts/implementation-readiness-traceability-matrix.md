@@ -180,6 +180,7 @@ _Every row’s exact verification command and expected evidence artifact (full d
 - **`nfr-11`** — Acquisition is owned by prerequisite packages. Story 8.11 validates the complete matrix and records the terminal decision; it cannot complete by recording a blocker.
 - **`finding-arch-002`** — Readiness addendum §4.2 named OLD 'Story 6.2 (E-4/E-5)' for the Projects.UI.Contracts boundary; under the rebaseline that boundary work is Story 6.7 (contract cutover) + 8.7 (package graph). Confirm at de-placeholdering.
 - **`finding-build-001`** — No epic/story explicitly assigned in source; mapped to 8.7 per SCP §4.3 shared-build centralization. Confirm at de-placeholdering.
+- **`finding-ux-001`** — `8.3-P1` is accepted separately through `epic8/8.3-p1-web-foundation` and `evidence/epic8/8.3-p1-foundation-manifest.json`; Story 8.3 consumes the immutable accepted manifest and does not regenerate or reinterpret it. Full authenticated operator accessibility evidence remains owned by `8.8-P2`.
 - **`finding-code-001`** — Audit sequences this in Phase 3 (after package/UI/MCP ownership settles). Mapped to 8.7 (source structure). Confirm at de-placeholdering.
 - **`release-smoke`** — HONEST current state is FAILED, not skipped. Do not represent as passing.
 
