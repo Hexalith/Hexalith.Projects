@@ -13,7 +13,9 @@ reviews:
   - implementation-readiness-report-2026-08-02.md
   - sprint-change-proposal-2026-08-02.md
   - sprint-change-proposal-2026-08-02-8.3-P1.md
-status: correction-applied-pending-independent-rerun
+  - implementation-readiness-report-2026-08-02-rerun-3.md
+  - sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md
+status: approved-correction-applied-pending-solution-architect-sign-off
 ---
 
 # Solution-Architect Conformance Checklist — Corrective Epics 6–8
@@ -27,6 +29,25 @@ review** — no implementation is authorized. Historical Epics 1–5 are evidenc
 tick Section C per story. Section D is the AD-1…34 coverage cross-check. Record the verdict in
 Section E. Any unchecked box in A or a per-story blocker is a conformance finding to resolve before
 the independent readiness rerun.
+
+**Execution contract.** The Solution Architect records the exact reviewed baseline below, executes
+every applicable Section A–D check, records open G-gates as notes rather than accepted capability,
+and completes every Epic and overall verdict plus identity/date in Section E. A
+`conforms-with-note` verdict may describe correctly modeled but unaccepted external gates; it does
+not make those gates execution-ready. An AI assessor or Product Owner must not supply the Solution
+Architect signature.
+
+### Exact review baseline — completed by the Solution Architect
+
+| Artifact | Exact revision/hash reviewed | Reviewer note |
+|---|---|---|
+| PRD and addendum | ____________________ | ____________________ |
+| Architecture Spine | ____________________ | ____________________ |
+| UX design specification | ____________________ | ____________________ |
+| `epics.md` | ____________________ | ____________________ |
+| Traceability YAML and generated Markdown | ____________________ | ____________________ |
+| Story 6.1 prerequisite revisions P0/P1R/P2/P3 | ____________________ | Open gates remain notes, not acceptance |
+| Rerun-3 report and approved correction proposal | ____________________ | ____________________ |
 
 **Verdict scale:** `conforms` · `conforms-with-note` · `non-conformant (blocking)`.
 
@@ -70,8 +91,9 @@ blocking finding.
 - [ ] **A10 — Current readiness containment.** The 2026-08-02 assessment is `NOT READY`; the
       2026-07-17 `READY` result remains historical planning authorization only. The approved artifact
       corrections are reflected here; no production-authority implementation begins before Story 6.1
-      entry acceptance, story-spec readiness, clean-checkout verification, and an independent rerun
-      returning exactly `READY`. Estimates are not commitments and imply no release date.
+      prerequisite acceptance, this signed same-baseline conformance review, P4 clean-checkout gate
+      acceptance, story-spec readiness, and an independent rerun returning exactly `READY`.
+      Estimates are not commitments and imply no release date.
 
 ---
 
@@ -84,8 +106,8 @@ while its gate is unmet; it may still pass *planning* conformance (spec correctn
 |---|---|---|---|
 | **G-1** platform Durable Task + Confirmation Artifact engine (AD-4/9/13) | all durable writes | 7.1-P2, 7.1–7.14, 6.7 (command path), 8.10 | ☐ pending platform owner |
 | **G-2** sibling owner contracts (expected-version, idempotency, receipt/status, batch-read, compensation) (AD-12) | cross-context sagas | 7.1-P2, 7.1, 7.3–7.10, 6.7 | ☐ pending — subsumes AR-G1…G4 |
-| **G-3** FrontComposer adapters + 4.0.0/4.0.1 disposition (descriptor/schema/credential/MCP parity) | Web/MCP surfaces | 6.5, 8.3-P1, 8.3, 8.5, 8.8-P2, 8.8 | ☐ pending G-3 disposition |
-| **G-4** platform composition runner + `hexalith-evidence` tool (AD-25/AD-30) | fixtures, CI, evidence gate | 6.1-P0/P4, 8.1, 8.11, all evidence rows | ☐ tool `not-available`; candidate unaccepted |
+| **G-3** FrontComposer adapters + 4.0.0/4.0.1 disposition (descriptor/schema/credential/MCP parity) | Web/MCP surfaces | 6.5, 8.3-P1/P2/P3, 8.3, 8.5, 8.8-P2, 8.8 | ☐ pending G-3 disposition |
+| **G-4** platform composition runner + `hexalith-evidence` tool (AD-25/AD-30) | fixtures, CI, evidence gate | 6.1-P0/P4, 8.3-P2/P3, 8.1, 8.11, all evidence rows | ☐ tool `not-available`; candidate unaccepted |
 | **G-5** identity/KMS/secrets/telemetry bindings (AD-20/AD-28) | auth, encryption, admission | 6.1-P2/P3, 6.5/6.6, 8.6, 8.8-P1, 8.11-P1/P2, NFR-2 | ☐ pending G-5 |
 | **G-6** runtime/toolchain alignment (Dapr runtime↔SDK, Fluent UI RC, CommunityToolkit, NSubstitute RC, Fluxor governance) | build/UI | 8.3-P1, 8.3, 8.7, 7.15 | ☐ pending G-6 |
 
@@ -102,12 +124,13 @@ conformance assertions. Tick each assertion; mark the story verdict at the end o
 ### Epic 6 — Chatbot and Operators Retrieve Authorized Project Truth (reads only; no writes)
 
 - **6.1 List/open** — ADs 3,14,19,20,32,33 · Epic-6 gate · critical path
-  `6.1-P1R → {6.1-P0, 6.1-P2} → 6.1-P3 → 6.1-P4 → clean-checkout verification → story readiness → independent READY rerun`
+  `6.1-P1R → {6.1-P0, 6.1-P2} → 6.1-P3 → Solution Architect conformance sign-off → 6.1-P4 clean-checkout acceptance → story readiness → independent READY rerun`
   - [ ] Reads via `IDomainQueryHandler` + opaque `QueryCursorScope`; default 50 / cap 200; AD-32 snapshot present.
   - [ ] Shadow-read equivalence gate precedes any routing switch (routing reversible).
   - [ ] No write/side effect; candidate never selected.
   - [ ] P1R records the accepted post-drift source/package/runner/architecture baseline and executable rollback; historical P1 is a satisfied input, not the current-baseline acceptance.
-  - [ ] P4 accepts exact P0/P1R/P2/P3 revisions, artifacts, rollback, and accountable-owner approvals; the documented clean-checkout restore/run/full-test/down/evidence-validation command sequence passes before Story 6.1 can become ready.
+  - [ ] The Solution Architect checklist names the exact same-baseline revisions/hashes, completes Sections A–D and all verdicts, records open G-gates only as notes, and includes the reviewer identity/date before P4 acceptance.
+  - [ ] P4 accepts exact P0/P1R/P2/P3 revisions, the signed same-baseline conformance checklist, artifacts, rollback, and accountable-owner approvals; the documented clean-checkout restore/run/full-test/down/evidence-validation command sequence passes before Story 6.1 can become ready.
 - **6.2 Conversation-start setup** — ADs 3,14,19,32 · Epic-6 gate
   - [ ] Returns only the start subset; excludes audit metadata; `Unavailable` blocks first-response admission.
 - **6.3 Project Context (get/refresh/explain)** — ADs 7,11,14,32 · Epic-6 gate
@@ -170,6 +193,11 @@ Stories 8.1–8.6 deliver operator value; Stories 8.7–8.11 qualify packages an
 Release Owners' terminal decision. Evidence acquisition stays in named prerequisite packages and a
 story cannot complete merely by recording a blocker.
 
+- [ ] **Epic 8 cohesion exception reviewed.** Both tracks are prior-only and independently
+      consumable; operator stories do not complete on technical milestones; no Story 8.1–8.6
+      depends on Story 8.7–8.11; Story 8.11 remains the sole terminal decision; and retaining one
+      epic hides no requirement or evidence identity.
+
 - **8.1 Task/audit/reconciliation reads** — ADs 21,26,30 · Epic-8 gate
   - [ ] Metadata-only; audit ≥365d, task/idempotency ≥30d; traces/exports absent; telemetry separated from audit (AD-26).
   - [ ] Story 8.1 owns first production audit truth plus the deferred Web timeline and CLI `audit` adapters; enabling them introduces no backward dependency into Epic 6.
@@ -182,7 +210,13 @@ story cannot complete merely by recording a blocker.
   - [ ] 8.3-P1 proves all four admission classes and exactly the eight canonical task states, including invalid-artifact, lost-response/idempotent recovery, cancellation/checkpoint, authorized reconciliation, immutable-terminal, stale-notification, and authoritative-re-query cases; `202` and SignalR never mean success.
   - [ ] 8.3-P1 proves no client authority or payload/artifact/token leakage plus keyboard, deterministic focus/restoration, restrained live regions, non-color meaning, 200% zoom, and 320 CSS-pixel component presentation; full authenticated small/median/max NFR-9 acceptance remains owned by 8.8-P2.
   - [ ] 8.3-P1 acceptance requires `epic8/8.3-p1-web-foundation`, passing categorized clean-checkout results, and immutable `evidence/epic8/8.3-p1-foundation-manifest.json` with artifact hashes, accountable-owner dispositions, containment, and executable rollback.
-  - [ ] 8.3-P2 independently accepts archive/restore; 8.3-P3 independently accepts move/Folder-replace/Conversation-File-Memory unlink; P1/P2/P3 are immutable entry inputs to bounded Story 8.3 integration.
+  - [ ] 8.3-P2 pins accepted P1/G-3/G-6, Stories 7.13/7.14/8.1, a superseding `READY` disposition, and an authenticated G-4 fixture; absent or mutable inputs remain blocked.
+  - [ ] 8.3-P2 proves canonical archive/restore admission and authoritative lifecycle truth, Folder-before-activation recovery, invalid-artifact/denial/lost-response/cancellation behavior, metadata-only audit/privacy, and component accessibility through `epic8/8.3-p2-lifecycle-journeys`.
+  - [ ] 8.3-P2 acceptance requires every categorized clean-checkout target plus immutable `evidence/epic8/8.3-p2-lifecycle-manifest.json`, owner dispositions, containment, and executable rollback; an absent runner/test/validator is not a pass.
+  - [ ] 8.3-P3 pins accepted P1/G-3/G-6, applicable G-1/G-2 owner contracts, Stories 7.4/7.5/7.6/7.8/7.10/8.1, a superseding `READY` disposition, and an authenticated G-4 fixture.
+  - [ ] 8.3-P3 proves exactly-one Conversation membership, the exactly-one-Folder invariant, association-only unlink preservation, invalid-artifact/denial/lost-response/cancellation truth, metadata-only audit/privacy, and component accessibility through `epic8/8.3-p3-association-journeys`.
+  - [ ] 8.3-P3 acceptance requires every categorized clean-checkout target plus immutable `evidence/epic8/8.3-p3-association-manifest.json`, owner dispositions, containment, and executable rollback; an absent runner/test/validator is not a pass.
+  - [ ] P1/P2/P3 are immutable entry inputs to bounded Story 8.3 integration; component accessibility evidence does not substitute for the full authenticated NFR-9 release lane owned by 8.8-P2/P3.
   - [ ] Implements the canonical operator action matrix directly: confirmation-required, task-only, task-control, and synchronous-read actions preserve their distinct admission semantics; `RefreshContext` is synchronous/read-only; any `reevaluate` alias is identical; Fluent V5 + `FluentAccordion` (HTML prototype non-normative); no client authority.
 - **8.4 CLI contract** — ADs 2,19,29,33 · Epic-8 gate
   - [ ] Verifies the CLI directly against the canonical action/response contract with explicit targets and the action's exact confirmation-required/task-only/task-control/read admission semantics, deterministic JSON/exit codes, and read-only `RefreshContext`; it has no dependency on 8.5 and makes no cross-surface parity completion claim.
@@ -195,7 +229,7 @@ story cannot complete merely by recording a blocker.
 - **8.8 Integrate authenticated isolation/privacy/parity/accessibility evidence** — ADs 19,20,29,33,34 · Epic-8 gate + 8.8-P1/P2/P3
   - [ ] 8.8-P1 independently accepts authenticated Web/CLI/MCP parity, cross-Tenant denial, authorization freshness, and NoPayloadLeakage evidence.
   - [ ] 8.8-P2 independently accepts operator WCAG 2.2 AA automated and authenticated manual evidence at small, median, and maximum shapes.
-  - [ ] 8.8-P3 remains `blocked-external` until it independently accepts a separately owned and approved Chatbot companion manifest containing owner repository, immutable revision, contract version, approval date/authority/accountable owner, authenticated commands, deterministic fixtures, expected artifact paths/hashes/results/disposition, drift containment/rollback, complete candidate/proposal/confirmation/task/recovery/response-admission journeys, and NFR-9 evidence; missing or drifted evidence blocks release.
+  - [ ] 8.8-P3 remains `blocked-external` until the Chatbot Presentation Owner and Chatbot Test Owner independently approve a companion manifest containing owner repository, immutable revision, contract version, approval date/authority/accountable owner, authenticated commands, deterministic fixtures, expected artifact paths/hashes/results/disposition, drift containment/rollback, complete candidate/proposal/confirmation/task/recovery/response-admission journeys, and NFR-9 evidence, after which Projects records only `evidence/epic8/8.8-P3-chatbot-companion-pin.json`; a missing owner manifest, missing Projects pin, or drifted evidence blocks release.
   - [ ] The bounded story validates package manifests, stable row identities, semantic parity, Tenant/privacy critical cases, and operator/Chatbot coverage; it rejects missing environments, unexplained skips, failed critical cases, ownerless artifacts, and mutable/unpinned revisions, and performs no new cross-repository implementation.
 - **8.9 Performance/back-pressure** — ADs 14,15,21,27 · Epic-8 gate
   - [ ] Perf at small/median/max (reads p95<500ms/<1s; admission p95<500ms); paging 50/200; per-Tenant limits reject **before** partial durable work; no retry/quota logic in domain handlers.
@@ -250,6 +284,7 @@ each mapping is *substantive* (the story actually realizes the AD, not just cite
 | Section C per-story (6.x) | ☐ conforms / ☐ notes: ____ |
 | Section C per-story (7.x) | ☐ conforms / ☐ notes: ____ |
 | Section C per-story (8.x) | ☐ conforms / ☐ notes: ____ |
+| Epic 8 cohesion exception | ☐ accepted / ☐ reopen split: ____ |
 | Section D AD coverage substantive | ☐ pass / ☐ findings: ____ |
 | Implicit sibling/platform authority introduced? | ☐ none / ☐ found: ____ |
 | Event-history rewrite / unsafe dual write introduced? | ☐ none / ☐ found: ____ |

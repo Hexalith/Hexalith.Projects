@@ -13,12 +13,13 @@ sources:
   architecture: _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md
   epics: _bmad-output/planning-artifacts/epics.md
   audit: _bmad-output/analysis/hexalith-projects-codebase-audit-2026-07-14.md
-  readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02.md
+  readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02-rerun-3.md
   historical_planning_readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-17.md
   historical_p1r_course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md
   historical_course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md
   course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md
   course_correction_8_3_p1: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-8.3-P1.md
+  course_correction_readiness_rerun_3: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md
 
 # ── Validation contract (AD-30) ──────────────────────────────────────────────
 validation:
@@ -52,10 +53,10 @@ status_legend:
 # ── Containment ──────────────────────────────────────────────────────────────
 containment:
   overall_readiness: "NOT READY (2026-08-02 implementation-readiness assessment; 2026-07-17 READY remains historical planning-layer authorization only)"
-  freeze: "The approved epic/UX/evidence corrections are reconciled, but production-authority implementation remains blocked until 6.1-P4 accepts P0, P1R, P2, and P3 with historical P1 as a satisfied input, clean-checkout verification passes, the Story 6.1 spec passes ready-for-development, and an independent implementation-readiness rerun returns READY"
+  freeze: "The approved epic/UX/evidence corrections are reconciled, but production-authority implementation remains blocked until P1R, P0/P2, and P3 are accepted, the Solution Architect signs conformance against the exact current baseline, 6.1-P4 accepts those inputs with historical P1 satisfied and passes the clean-checkout gate, the Story 6.1 spec passes ready-for-development, and an independent implementation-readiness rerun returns READY"
   release_block: "production + consequential autonomous MCP mutation + proposed-Project confirmation blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance"
   open_triggers:
-    - "Story 6.1: critical path is P1R → {P0, P2} → P3 → P4 → clean-checkout verification → story ready-for-development → independent READY rerun; external owners and target dates remain uncommitted"
+    - "Story 6.1: critical path is P1R → {P0, P2} → P3 → Solution Architect conformance sign-off against the exact current baseline → P4 clean-checkout gate acceptance → story ready-for-development → independent READY rerun; external owners and target dates remain uncommitted"
     - "6.1-P1R: EventStore v3.88.0 revision 4843b492dff7c16a4bc74db67509263f969c78c6, the Builds 3.88.0 catalog introduced by 0e51a2115581028c8d9ab9395a93dd186ee51071, runner candidate 4351d7cba7545a96661ca2ee2ca2629df6d0a118, and qualification revision 699083549932b9509fa36ed853402fe3f8b04fc5 form an unaccepted candidate; Architecture remains 3.70.1 and acceptance-grade validation, executable rollback, accepted revision, and approvals are unresolved"
     - "E-6: live E2E 19 passed / 56 failed (row release-smoke / release-e2e)"
     - "E-7: 9 P1 + 7 P2 audit findings (finding-* rows)"
@@ -63,8 +64,8 @@ containment:
     - "E-9: FR-19 metadata classification (row fr-19)"
     - "Story 7.1: blocked by accepted 7.1-P1 contracts/validator evidence and 7.1-P2 task/Folder capability evidence"
     - "Story 8.8: blocked by accepted 8.8-P1 authenticated parity/isolation/privacy, 8.8-P2 operator accessibility, and 8.8-P3 owner-pinned Chatbot companion evidence"
-    - "8.8-P3: blocked-external until the Chatbot owner supplies an approved manifest with repository, immutable revision, contract version, approval authority/date, accountable owner, authenticated commands, deterministic fixtures, expected artifacts/hashes/results/disposition, drift containment/rollback, complete journey coverage, and NFR-9 evidence"
-    - "Story 8.3: bounded integration is blocked by accepted immutable Web work packages 8.3-P1 shared presentation foundation, 8.3-P2 lifecycle journeys, and 8.3-P3 association journeys; P1 acceptance requires fixture epic8/8.3-p1-web-foundation and evidence/epic8/8.3-p1-foundation-manifest.json"
+    - "8.8-P3: blocked-external until the Chatbot Presentation Owner and Chatbot Test Owner supply and approve the immutable source manifest with repository, revision, contract version, approval authority/date, authenticated commands, deterministic fixtures, expected artifacts/hashes/results/disposition, drift containment/rollback, complete journey coverage, and NFR-9 evidence, and Projects records evidence/epic8/8.8-P3-chatbot-companion-pin.json"
+    - "Story 8.3: bounded integration is blocked by accepted immutable Web work packages 8.3-P1 shared presentation foundation, 8.3-P2 lifecycle journeys, and 8.3-P3 association journeys; acceptance requires epic8/8.3-p1-web-foundation plus evidence/epic8/8.3-p1-foundation-manifest.json, epic8/8.3-p2-lifecycle-journeys plus evidence/epic8/8.3-p2-lifecycle-manifest.json, and epic8/8.3-p3-association-journeys plus evidence/epic8/8.3-p3-association-manifest.json"
     - "Story 8.11: blocked by accepted 8.11-P1 deployment/smoke, 8.11-P2 KMS/encryption, and 8.11-P3 rollback evidence plus every preceding Epic 8 story"
 
 # ── Defaults — a row inherits any field it does not explicitly set ────────────
@@ -389,8 +390,8 @@ rows:
     evidence_artifact: evidence/epic6/read-surfaces.trx
     estimate: L
     status: blocked-external
-    blocker: "G-3 FrontComposer adapters + G-5 identity"
-    notes: "Stories 6.5/6.6 deliver inventory/detail/health/current-trace reads only. Story 8.1 owns first production audit truth and later enables the Web audit timeline and CLI audit command without a backward dependency."
+    blocker: "G-3 FrontComposer adapters + G-5 identity; the Story 8.3 maintenance contribution additionally requires accepted immutable 8.3-P1/P2/P3 packages"
+    notes: "Stories 6.5/6.6 deliver inventory/detail/health/current-trace reads only. Story 8.1 owns first production audit truth and later enables the Web audit timeline and CLI audit command without a backward dependency. Story 8.3 consumes evidence/epic8/8.3-p1-foundation-manifest.json, evidence/epic8/8.3-p2-lifecycle-manifest.json, and evidence/epic8/8.3-p3-association-manifest.json; those component packages do not substitute for full authenticated NFR-9 release evidence."
   - key: fr-23
     category: fr
     ids: [FR-23]
@@ -546,8 +547,8 @@ rows:
     evidence_artifact: evidence/epic8/8.8-accessibility-manifest.json
     estimate: S
     status: blocked-external
-    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 blocked-external pending a separately owned approved immutable Chatbot companion manifest with owner/revision/version/approval/commands/fixtures/artifact hashes/results/disposition/rollback and complete journey evidence; G-3 FrontComposer adapters"
-    notes: "Story 8.8 integrates accepted package manifests only. A missing, mutable, unapproved, incomplete, or contract-drifted Chatbot companion artifact blocks Projects release; unresolved critical or serious accessibility violations also block."
+    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 blocked-external pending the separately owned approved immutable Chatbot companion manifest and Projects pin evidence/epic8/8.8-P3-chatbot-companion-pin.json; G-3 FrontComposer adapters"
+    notes: "Story 8.8 integrates accepted package manifests only. The 8.3-P2/P3 component-accessibility results are inputs to Story 8.3 and do not substitute for full authenticated NFR-9 evidence. A missing, mutable, unapproved, incomplete, or contract-drifted Chatbot companion artifact or Projects pin blocks release; unresolved critical or serious accessibility violations also block."
   - key: nfr-10
     category: nfr
     ids: [NFR-10]
@@ -801,8 +802,8 @@ rows:
     evidence_artifact: evidence/epic8/8.3-ux-001.trx
     estimate: L
     status: blocked-external
-    blocker: "G-3 FrontComposer; G-6 Fluent UI RC governance; accepted immutable 8.3-P1/P2/P3 Web packages"
-    notes: "8.3-P1 is accepted separately through epic8/8.3-p1-web-foundation and evidence/epic8/8.3-p1-foundation-manifest.json; Story 8.3 consumes the immutable accepted manifest and does not regenerate or reinterpret it. Full authenticated operator accessibility evidence remains owned by 8.8-P2."
+    blocker: "G-3 FrontComposer; G-6 Fluent UI RC governance; accepted immutable 8.3-P1/P2/P3 Web packages and their three bound manifests"
+    notes: "Story 8.3 consumes, without regenerating or reinterpreting, the accepted immutable package evidence: epic8/8.3-p1-web-foundation and evidence/epic8/8.3-p1-foundation-manifest.json; epic8/8.3-p2-lifecycle-journeys and evidence/epic8/8.3-p2-lifecycle-manifest.json; epic8/8.3-p3-association-journeys and evidence/epic8/8.3-p3-association-manifest.json. P2 owns archive/restore journeys; P3 owns move/Folder-replace/association-unlink journeys. Full authenticated operator accessibility evidence remains owned by 8.8-P2, and Chatbot companion evidence remains external in 8.8-P3."
   - key: finding-code-001
     category: finding
     ids: [CODE-001]
@@ -917,7 +918,8 @@ rows:
     evidence_artifact: evidence/epic8/8.8-accessibility-manifest.json
     estimate: S
     status: blocked-external
-    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 blocked-external pending a separately owned approved immutable Chatbot manifest with full ownership, revision, approval, command, fixture, artifact/hash/result/disposition, rollback, journey, and NFR-9 evidence; G-3"
+    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 blocked-external pending a separately owned approved immutable Chatbot manifest plus Projects pin evidence/epic8/8.8-P3-chatbot-companion-pin.json; G-3"
+    notes: "8.3-P2/P3 component-accessibility results remain bounded Story 8.3 inputs and do not satisfy this authenticated operator-and-Chatbot release row."
   - key: release-privacy
     category: release
     ids: [NFR-11.privacy]

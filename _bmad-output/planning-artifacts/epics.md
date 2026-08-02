@@ -4,14 +4,14 @@ stepsCompleted:
   - 2
   - 3
   - 4
-status: corrected-pending-independent-readiness-rerun
+status: corrected-pending-external-acceptance-and-independent-readiness-rerun
 reconciledAgainst:
   - 'final PRD FR-1..FR-24 / NFR-1..NFR-11'
   - 'ARCHITECTURE-SPINE.md AD-1..AD-34'
 productionAuthority: 'Epics 6-8 (33 stories: 7/15/11) plus explicit prerequisite/evidence work-package ledgers'
 planningReadinessGate: 'READY on 2026-07-17 for story-file creation and sprint reconciliation; completed'
-implementationReadiness: 'NOT READY on 2026-08-02; production-authority implementation remains blocked'
-implementationBlockedUntil: 'Story 6.1 entry gates are accepted and executable from a clean checkout, its story specification passes readiness, and an independent rerun returns READY'
+implementationReadiness: 'NOT READY on 2026-08-02 rerun 3; production-authority implementation remains blocked'
+implementationBlockedUntil: 'Story 6.1 prerequisites are accepted, Solution Architect conformance is signed against the exact current baseline, P4 passes from a clean checkout, its story specification passes readiness, and an independent rerun returns READY'
 releaseBlockedUntil: 'Story 8.11 passes with dated Jerome + John acceptance'
 inputDocuments:
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
@@ -28,6 +28,9 @@ inputDocuments:
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md
   - _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-8.3-P1.md
+  - _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02-rerun-3.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md
   - _bmad-output/planning-artifacts/research/domain-eventstore-persistence-for-hexalith-projects-module-data-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-folders-integration-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-projects-referencing-conversations-research-2026-05-24.md
@@ -55,7 +58,7 @@ Hexalith.Projects is a **tenant-aware AI workspace boundary module** built as a 
 
 _Source: final PRD §6–§8 + addendum (FR-1–FR-24). Each FR has testable consequences in the PRD; abbreviated here._
 
-> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-02 independent assessment returned `NOT READY`; its approved artifact corrections are applied here, but production-authority implementation remains blocked until Story 6.1's entry gate is accepted and executable from a clean checkout, its story specification passes readiness, and a superseding rerun returns exactly `READY`. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance.
+> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-02 rerun 3 returned `NOT READY`; its approved planning-artifact corrections are applied here, but production-authority implementation remains blocked until Story 6.1's prerequisite chain is accepted, Solution Architect conformance is signed against the exact current baseline, P4 passes from an accepted clean checkout, the Story 6.1 specification passes readiness, and a superseding rerun returns exactly `READY`. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance.
 
 **Project Workspace Management**
 
@@ -1301,7 +1304,8 @@ obligation without making unrelated later-surface gates prerequisites for Story 
 
 **Story 6.1 prerequisite work packages.** These are enablement packages, not user-value stories and
 not Story 6.1 implementation subtasks. The approved routing and complete acceptance contracts are in
-`sprint-change-proposal-2026-07-17.md` and the approved 2026-08-01 G-4/P1R correction.
+`sprint-change-proposal-2026-07-17.md`, the approved 2026-08-01 G-4/P1R correction, and the approved
+2026-08-02 rerun-3 correction for same-baseline architecture sign-off sequencing.
 
 | ID | Repository authority | Required outcome | Accountable owners | Initial state |
 |---|---|---|---|---|
@@ -1310,7 +1314,7 @@ not Story 6.1 implementation subtasks. The approved routing and complete accepta
 | 6.1-P1R | EventStore + Builds + architecture + qualification record | Revalidated exact source/package/runner/architecture pin after post-P1 dependency drift, including compatibility and rollback proof | EventStore Owner + Builds Owner + Solution Architect + Test Architect | open; `3.88.0` source/catalog/runner candidate at Builds `4351d7cba7545a96661ca2ee2ca2629df6d0a118`, qualification record at `699083549932b9509fa36ed853402fe3f8b04fc5`; Architecture remains `3.70.1`; acceptance-grade validation, executable rollback, immutable accepted revisions, and four-owner acceptance pending; target uncommitted |
 | 6.1-P2 | EventStore/platform | Supported dual-principal query envelope, indistinguishable safe denial, and authoritative global-position watermark | EventStore Owner + Identity/Security Owner + Solution Architect | open; blocked by accepted P1R |
 | 6.1-P3 | Identity/security platform | Approved mandatory fail-closed production identity/authentication contract and fixtures | Identity/Security Owner + Projects Owner + Solution Architect | open; blocked by P2 |
-| 6.1-P4 | Hexalith.Projects planning/evidence | Owner-approved 6.1 gate record linking accepted P0, historical P1, current P1R, P2, and P3 pins, commands, evidence, normalization, and rollback | Product Owner + Solution Architect + Test Architect + prerequisite owners | open; blocked by P0, P1R, P2, and P3; historical P1 is a satisfied evidence input |
+| 6.1-P4 | Hexalith.Projects planning/evidence | Owner-approved 6.1 gate record linking accepted P0, historical P1, current P1R, P2, and P3 pins, signed same-baseline architecture conformance, commands, evidence, normalization, and rollback | Product Owner + Solution Architect + Test Architect + prerequisite owners | open; blocked by P0, P1R, P2, P3, and Solution Architect conformance sign-off; historical P1 is a satisfied evidence input |
 
 _All Epic 6 stories share: **Repository authority** Hexalith.Projects (`Contracts`, read models,
 query handlers) with platform-generated read adapters; **owner** Product Owner (author) + Solution
@@ -1323,12 +1327,26 @@ NFR-11 but no story here is a release gate._
 **Story 6.1 executable critical path:**
 
 ```text
-P1R → {P0, P2} → P3 → P4 → independent readiness rerun → Story 6.1
+P1R → {P0, P2} → P3
+    → Solution Architect conformance sign-off against the exact current baseline
+    → P4 clean-checkout gate acceptance
+    → Story 6.1 specification readiness
+    → independent implementation-readiness rerun
+    → Story 6.1 only when the rerun returns READY
 ```
 
+The Solution Architect conformance review is an explicit P4 input. Its checklist must name the
+exact PRD/addendum, Architecture Spine, UX, epics, traceability matrix, and prerequisite
+revision/hash baseline reviewed; execute every applicable Section A–D check; record open G-gates as
+notes rather than accepted capabilities; and record the Epic 6/7/8 verdicts, overall verdict,
+Solution Architect identity, and date. `conforms-with-notes` may describe correctly modeled but
+unaccepted gates, but it cannot make them execution-ready. No AI assessor or Product Owner may
+manufacture the Solution Architect signature.
+
 P4 cannot be accepted from local, stale, or uncommitted binaries. It records accepted immutable
-revisions, expected artifacts, accountable-owner approvals, and an executable rollback, and it must
-record successful execution of these exact commands from an accepted clean checkout:
+P0/P1R/P2/P3 revisions, expected artifacts, accountable-owner approvals, the signed conformance
+checklist against the same baseline, and an executable rollback, and it must record successful
+execution of these exact commands from an accepted clean checkout:
 
 ```text
 dotnet tool restore
@@ -1345,7 +1363,7 @@ I want **to list visible Projects and open one Project's authorized metadata, li
 So that **operators and Chatbot get current, authorization-filtered Project truth to initialize a Conversation (FR-2, FR-5) with no legacy runtime**.
 
 - **Traceability:** FR-2, FR-5; NFR-1, NFR-5, NFR-10; AD-3, AD-14, AD-19, AD-20, AD-32, AD-33; UJ-1; findings ARCH-001/API-001 (read side); evidence rows `fr-2`, `fr-5`.
-- **Implementation state:** `blocked-external`. Historical P1 is satisfied but does not authorize the drifted candidate. The open blockers are 6.1-P1R, 6.1-P0, 6.1-P2, 6.1-P3, and 6.1-P4. Story 6.1 returns to `ready-for-dev` only after P4 acceptance, successful clean-checkout verification, the Story 6.1 specification passes the complete ready-for-development standard, and an independent assessment returns exactly `READY`.
+- **Implementation state:** `blocked-external`. Historical P1 is satisfied but does not authorize the drifted candidate. The open blockers are 6.1-P1R, 6.1-P0, 6.1-P2, 6.1-P3, Solution Architect conformance sign-off, and 6.1-P4. Story 6.1 returns to `ready-for-dev` only after P4 acceptance, successful clean-checkout verification, the Story 6.1 specification passes the complete ready-for-development standard, and an independent assessment returns exactly `READY`.
 
 **Acceptance Criteria:**
 
@@ -1819,6 +1837,34 @@ resilience, and record the terminal release decision. Evidence acquisition remai
 prerequisite packages; no story completes merely by producing a test milestone or recording a
 blocker.
 
+### Epic 8 cohesion exception
+
+Epic 8 deliberately contains two prior-only tracks under one release-blocking outcome:
+
+- **Operator-value track (8.1–8.6):** operators inspect task/audit truth, create bounded exports,
+  perform conformant maintenance, use CLI/MCP, and observe truthful health. Each story has an
+  independently consumable operator outcome and completes without a later release story.
+- **Release-qualification track (8.7–8.11):** downstream consumers and Release Owners qualify the
+  package graph, integrate independently owned evidence, prove performance/resilience, acquire
+  deployment/KMS/rollback evidence, and record the terminal decision.
+
+This exception is justified because the PRD makes FR-21, FR-22, FR-24, and every NFR
+release-blocking. Safe operation is not production-releasable without the qualification track, and
+the qualification track has no value without the accepted operational capabilities. Splitting now
+would migrate stable story/package references, Architecture Spine bindings, and canonical evidence
+relationships while leaving the same order and terminal Story 8.11 gate.
+
+The operator-value track may be demonstrated and consumed as internal pre-release evidence after
+its own story gates pass; it is not a production release. No Story 8.1–8.6 depends on Story
+8.7–8.11 for its own completion. Epic 8 completes only when Story 8.11 records the terminal
+decision. The Product Owner and Solution Architect review this exception during conformance
+sign-off.
+
+Reopen the split decision if a later change introduces unrelated product capability, gives either
+track an independent production/release cadence, creates a forward story dependency, or allows
+release qualification to move to a platform-owned release epic without breaking stable evidence
+identity.
+
 **Epic 8 entry gate (prerequisite, not delivered value).** Supplies **deterministic
 persisted-boundary fixtures** (authorized Tenant, seeded Projects/references/audit, required UI/static
 assets) and **blocking CI** lanes over the real supported platform path (G-4 runner + `hexalith-evidence`),
@@ -1900,8 +1946,8 @@ integration. These are reviewable Web delivery packages, not new production stor
 | ID | Independently demonstrable outcome | Accountable owners | Initial state |
 |---|---|---|---|
 | 8.3-P1 | Shared Web Preview, Confirmation Artifact, Durable Task, recovery, cancellation, authoritative re-query, focus, and live-region presentation foundation over canonical contracts | FrontComposer/Web Owner + Test Architect | open; blocked by G-3, G-6, and the current implementation-readiness freeze |
-| 8.3-P2 | Archive and restore Web journeys, including Folder-before-activation restore and role/denial/renewal evidence | Projects Web Owner + Product Owner + Test Architect | open; blocked by 8.3-P1 and the current implementation-readiness freeze |
-| 8.3-P3 | Conversation move, Folder replacement, and Conversation/File/Memory unlink Web journeys with owner-preserving recovery evidence | Projects Web Owner + Product Owner + Test Architect | open; blocked by 8.3-P1 and the current implementation-readiness freeze |
+| 8.3-P2 | Archive and restore Web journeys, including Folder-before-activation restore and role/denial/renewal evidence | Projects Web Owner + Product Owner + Test Architect + Solution Architect | open; blocked by 8.3-P1, Stories 7.13/7.14, Story 8.1, and the current implementation-readiness freeze |
+| 8.3-P3 | Conversation move, Folder replacement, and Conversation/File/Memory unlink Web journeys with owner-preserving recovery evidence | Projects Web Owner + Product Owner + Test Architect + Solution Architect | open; blocked by 8.3-P1, Stories 7.4/7.5/7.6/7.8/7.10, Story 8.1, and the current implementation-readiness freeze |
 
 #### 8.3-P1 acceptance contract — shared Web presentation foundation
 
@@ -2038,6 +2084,215 @@ Durable Task record, server workflow, or sibling-owned resource.
   disposition exists; and rollback is executable. P2/P3 domain journeys and the full authenticated
   NFR-9 release lane remain outside P1.
 
+#### 8.3-P2 acceptance contract — archive and restore Web journeys
+
+**Purpose.** Accept the Projects Web adapter's archive and restore journeys over the immutable
+8.3-P1 presentation foundation and the accepted Story 7.13/7.14 server contracts. This package is
+an independently reviewable entry input to Story 8.3, not a new production story.
+
+**Entry gate.** Acceptance requires:
+
+1. a superseding implementation-readiness result of exactly `READY`;
+2. immutable acceptance of 8.3-P1 and its G-3/G-6 dependency tuple;
+3. accepted Story 7.13 archive and Story 7.14 restore capabilities at immutable revisions;
+4. accepted Story 8.1 audit truth for expected/resulting metadata-only audit evidence; and
+5. an authenticated G-4 runner fixture using platform-provided actor and Tenant authority.
+
+**Repository authority.** Projects owns lifecycle action descriptors, adapter consumption,
+Projects fixtures, and route composition. FrontComposer owns generic Fluent V5 presentation,
+focus/live-region primitives, and test helpers. EventStore/platform owns Preview, artifact
+consumption, task execution, cancellation checkpoints, and authoritative task/read-model truth.
+Folders owns Folder existence, authorization, provisioning, and recovery. No browser code decides
+authority, task transitions, or Folder validity.
+
+**Deterministic fixture.** `epic8/8.3-p2-lifecycle-journeys` contains versioned cases for:
+
+1. role-visible and role-hidden archive/restore actions for Tenant Operator and Tenant Project
+   Administrator, plus cross-Tenant and stale-authority denial;
+2. Active → archive Preview, explicit confirmation, admission, all applicable task states, and
+   read-model-confirmed `Archived` completion;
+3. Archived → restore with a still-authorized Folder;
+4. restore with a missing, stale, or unauthorized prior Folder, requiring an authorized replacement
+   or same-name Folder plan while the Project remains Archived;
+5. Folder-created/activation-uncommitted recovery to `NeedsAttention` without owner-resource
+   deletion;
+6. expired, stale, replayed, tampered, actor-, Tenant-, target-, and version-mismatched artifacts,
+   each admitting no task and exposing canonical `RenewPreview` or safe denial;
+7. lost admission response, equivalent retry/`PollTask`, duplicate/stale notifications, and
+   authoritative re-query before success;
+8. cancellation before and conflict after the irreversible checkpoint, immutable terminal states,
+   and Administrator-only reconciliation visibility;
+9. metadata-only audit identifiers with no payload, token, artifact, Folder path, or authority-claim
+   leakage; and
+10. keyboard completion, deterministic focus/restoration, restrained announcements, non-color
+    meaning, 200% zoom, and 320 CSS-pixel reflow.
+
+**Acceptance Criteria:**
+
+1. **Canonical admission.** Archive and restore render server Preview and explicit confirm/cancel,
+   consume one bound Confirmation Artifact, and then monitor the canonical Durable Task states.
+2. **Archive truth.** `202`, a task ID, or SignalR never renders archive success. Success appears only
+   after authoritative task and read-model evidence confirms `Archived`; references remain safely
+   auditable.
+3. **Restore truth.** Restore verifies or establishes Folder validity while the Project remains
+   Archived. Replacement/same-name creation is presented from server Preview; the UI never infers a
+   Folder plan. `Active` appears only after the expected read model confirms completion.
+4. **Recovery.** Lost responses converge through the idempotency identifier and `PollTask` or an
+   equivalent safe retry. Partial Folder success renders `NeedsAttention`; no control implies or
+   initiates deletion of the Folders-owned resource.
+5. **Authorization and confirmation safety.** Role/action visibility consumes AD-33. Denied,
+   cross-Tenant, stale, replayed, tampered, and mismatched cases admit no task and reveal no protected
+   existence or payload.
+6. **Cancellation and terminal integrity.** Cancellation appears only before the irreversible
+   checkpoint. Later attempts show current task truth and a safe conflict. Terminal states never
+   transition.
+7. **Accessibility and privacy.** Every state/control satisfies the fixture's keyboard, focus,
+   announcement, zoom, reflow, non-color, and metadata-only requirements with no unresolved critical
+   or serious finding.
+8. **Evidence.** All required clean-checkout commands pass; the immutable manifest contains
+   repository revisions, dependency/contract/fixture hashes, commands, exit codes, artifacts,
+   results, owner approvals, containment, and executable rollback. Missing environments or skips do
+   not pass.
+
+**Verification commands:**
+
+```bash
+DiffEngine_Disabled=true dotnet test tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj \
+  --filter "Category=Story8.3P2" \
+  --logger "trx;LogFileName=8.3-p2-projects-lifecycle.trx" \
+  --results-directory evidence/epic8
+
+dotnet tool run hexalith-module test \
+  --manifest module/hexalith-projects.module.json \
+  --profile web-ops \
+  --filter Package=8.3-P2
+
+dotnet tool run hexalith-evidence validate \
+  evidence/epic8/8.3-p2-lifecycle-manifest.json
+```
+
+These commands are acceptance targets. If their categorized tests, runner, or validator do not
+exist at the accepted revisions, the package remains blocked rather than skipped or passed.
+
+**Evidence manifest.** `evidence/epic8/8.3-p2-lifecycle-manifest.json` records immutable repository
+revisions; accepted P1/G-3/G-6 and Story 7.13/7.14/8.1 pins; fixture/contract hashes; exact commands,
+exit codes, artifacts, and results; role/denial/renewal/recovery, audit, privacy, and component-
+accessibility results; accountable owner dispositions; containment; and rollback.
+
+**Compatibility and rollback.** Retain the last accepted read-only/lifecycle route and dependency
+tuple until Story 8.3 acceptance. On regression, disable the new lifecycle adapter/routes, restore
+the prior tuple/route, and rerun the prior smoke lane. Rollback changes no domain event, task,
+artifact record, Folder resource, or server workflow.
+
+**Estimate:** L.
+
+**Completion boundary:** The archive/restore package is accepted only when every required command
+passes from accepted clean checkouts and the immutable manifest, hashes, results, approvals, and
+rollback exist. Association journeys and full authenticated NFR-9 release evidence remain outside
+P2.
+
+#### 8.3-P3 acceptance contract — association-maintenance Web journeys
+
+**Purpose.** Accept the Projects Web adapter's Conversation move, Folder replacement, and
+Conversation/File/Memory unlink journeys over the immutable 8.3-P1 foundation and accepted Epic 7
+server contracts. This is an independently reviewable Story 8.3 input, not a production story.
+
+**Entry gate.** Acceptance requires:
+
+1. a superseding implementation-readiness result of exactly `READY`;
+2. immutable acceptance of 8.3-P1 and its G-3/G-6 dependency tuple;
+3. accepted Stories 7.4, 7.5, 7.6, 7.8, and 7.10 at immutable revisions with the applicable G-1/G-2
+   owner-contract pins;
+4. accepted Story 8.1 audit truth; and
+5. an authenticated G-4 runner fixture using platform-provided actor and Tenant authority.
+
+**Repository authority.** Projects owns action descriptors, adapter consumption, fixtures, and
+route composition. FrontComposer owns generic presentation behavior. EventStore/platform owns
+Preview, artifacts, tasks, idempotency, checkpoints, and authoritative truth. Conversations,
+Folders, and Memories remain the only resource/membership authorities. The Web adapter never
+deletes, compensates, or mutates an owner resource directly.
+
+**Deterministic fixture.** `epic8/8.3-p3-association-journeys` contains versioned cases for:
+
+1. Conversation move from an expected source Project to one target Project, preserving exactly one
+   membership and presenting owner-confirmed completion;
+2. mid-saga move failure after prior removal, showing compensation or truthful `NeedsAttention`
+   without claiming success or fabricating membership;
+3. Project Folder replacement with old/new Folder evidence, new-Folder verification before bind,
+   and exactly one Folder throughout;
+4. removal of an Active Project's Folder rejected; no delete control or owner-deletion implication;
+5. Conversation, File, and Memory unlink journeys, each preserving the underlying owner resource;
+6. role visibility, cross-Tenant denial, stale owner evidence, and indistinguishable safe absence;
+7. expired, stale, replayed, tampered, actor-, Tenant-, target-, and version-mismatched artifacts;
+8. lost response, equivalent retry/`PollTask`, duplicate notifications, cancellation before/after
+   checkpoint, immutable terminal states, and authorized reconciliation;
+9. owner receipt and metadata-only audit evidence with no transcript, file content/path, Memory
+   payload, token, artifact, raw upstream problem, or authority claim; and
+10. keyboard completion, deterministic focus/restoration, restrained announcements, non-color
+    meaning, 200% zoom, and 320 CSS-pixel reflow for every journey.
+
+**Acceptance Criteria:**
+
+1. **Canonical admission.** Move, Folder replacement, and each unlink action use server Preview,
+   explicit confirm/cancel, one bound artifact, and canonical task monitoring. No local adapter
+   synonym changes the action class.
+2. **Conversation ownership.** Move presents source/target scope and owner evidence, and success only
+   after the Conversations owner and Projects reverse index converge to exactly one membership.
+   Partial work presents compensation or `NeedsAttention` rather than orphaned/double membership.
+3. **Folder invariant.** Replacement verifies the new Folder before binding and never presents an
+   Active folderless state. Removal is unavailable/rejected, and rollback or recovery never deletes
+   a Folders-owned resource.
+4. **Unlink preservation.** Conversation/File/Memory unlink removes only the association. UI copy,
+   controls, recovery, and audit evidence never imply deletion of the underlying resource.
+5. **Authorization and confirmation safety.** AD-33 role visibility and owner reauthorization are
+   contract-driven. Denied, cross-Tenant, stale, replayed, tampered, and mismatched cases admit no
+   task and expose no protected existence or payload.
+6. **Task/recovery truth.** `202` and SignalR are non-completion signals. Lost-response,
+   cancellation/checkpoint, terminal immutability, bounded dependency guidance, and authorized
+   reconciliation follow the accepted P1 foundation and authoritative re-query.
+7. **Accessibility and privacy.** Every journey passes the fixture's keyboard, focus,
+   announcement, zoom, reflow, non-color, metadata-only, and leakage checks with no unresolved
+   critical or serious finding.
+8. **Evidence.** All required clean-checkout commands pass and the immutable manifest records every
+   revision, hash, command, exit code, artifact, result, owner disposition, containment, and
+   executable rollback. Missing environments or skips do not pass.
+
+**Verification commands:**
+
+```bash
+DiffEngine_Disabled=true dotnet test tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj \
+  --filter "Category=Story8.3P3" \
+  --logger "trx;LogFileName=8.3-p3-projects-associations.trx" \
+  --results-directory evidence/epic8
+
+dotnet tool run hexalith-module test \
+  --manifest module/hexalith-projects.module.json \
+  --profile web-ops \
+  --filter Package=8.3-P3
+
+dotnet tool run hexalith-evidence validate \
+  evidence/epic8/8.3-p3-association-manifest.json
+```
+
+These are acceptance targets; unavailable tests or tools keep the package blocked.
+
+**Evidence manifest.** `evidence/epic8/8.3-p3-association-manifest.json` records immutable revisions;
+accepted P1/G-3/G-6, Epic 7 action, G-1/G-2 owner-contract, and Story 8.1 pins; fixture/contract
+hashes; exact commands, exit codes, artifacts, and results; membership/Folder/resource-preservation,
+denial/recovery/audit/privacy/accessibility results; accountable dispositions; containment; and
+rollback.
+
+**Compatibility and rollback.** Retain the last accepted read-only/maintenance route and dependency
+tuple until Story 8.3 acceptance. On regression, disable the new association action adapters,
+restore the prior tuple/route, and rerun the prior smoke lane. Rollback changes no event history,
+task/artifact record, owner resource, or server workflow.
+
+**Estimate:** L.
+
+**Completion boundary:** P3 completes only when every required clean-checkout command passes and the
+immutable manifest, hashes, results, approvals, and rollback exist. Archive/restore and full
+authenticated NFR-9 release evidence remain outside P3.
+
 ### Story 8.3: Integrate conformant Project maintenance in the Web console
 
 As a **Tenant Operator or Tenant Project Administrator**,
@@ -2154,9 +2409,10 @@ owner, authenticated commands and deterministic fixtures, expected artifact path
 results and terminal disposition, and containment/rollback treatment for contract drift. Its
 journey evidence covers candidate/proposal presentation, no preselection, confirm/cancel,
 expiry/staleness/replay/tamper/mismatch, lost response, every task state, cancellation, recovery,
-authoritative completion re-query, response-state admission, and NFR-9 accessibility. Projects
-records only the accepted pin and evidence-row binding; it does not create or approve the
-Chatbot-owned artifact.
+authoritative completion re-query, response-state admission, and NFR-9 accessibility. After
+independent acceptance, Projects records only the immutable pin and evidence-row binding at
+`evidence/epic8/8.8-P3-chatbot-companion-pin.json`; it does not create or approve the Chatbot-owned
+artifact. Absence of either the owner manifest or the Projects pin remains `blocked-external`.
 
 ### Story 8.8: Integrate authenticated isolation, privacy, parity, and accessibility evidence
 

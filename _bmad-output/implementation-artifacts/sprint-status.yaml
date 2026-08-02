@@ -1,5 +1,5 @@
 # generated: 2026-07-17T08:14:03+02:00
-# last_updated: 2026-08-02T10:26:32+02:00
+# last_updated: 2026-08-02T18:59:46+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -50,7 +50,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-08-02T10:26:32+02:00
+last_updated: 2026-08-02T18:59:46+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -302,16 +302,17 @@ action_items:
     routed_to: "Product Manager / Solution Architect / Identity-Security and Projects Owners"
   - epic: 6
     id: "6.1-P4"
-    action: "Accept the Story 6.1 entry gate from the exact P0, P1R, P2, and P3 revisions and evidence, using historical P1 as a satisfied input."
+    action: "Accept the Story 6.1 entry gate from the exact P0, P1R, P2, and P3 revisions and evidence plus signed Solution-Architect conformance against the same baseline, using historical P1 as a satisfied input."
     repository_authority: "Hexalith.Projects planning and evidence artifacts"
     owner: "Product Owner / Solution Architect / Test Architect / prerequisite owners"
     status: open
     target_date: uncommitted
-    depends_on: ["6.1-P0", "6.1-P1R", "6.1-P2", "6.1-P3"]
+    depends_on: ["6.1-P0", "6.1-P1R", "6.1-P2", "6.1-P3", "Solution Architect conformance sign-off against exact current baseline"]
     historical_inputs: ["6.1-P1"]
-    expected_evidence: "evidence/epic6/6.1-entry-gate.yaml; accepted revisions and owner approvals; executable rollback; passing exact clean-checkout commands; passing Story 6.1 ready-for-development result; independent implementation-readiness result READY"
+    expected_evidence: "evidence/epic6/6.1-entry-gate.yaml; accepted P0, P1R, P2, and P3 revisions and owner approvals; signed Solution-Architect conformance checklist against the same baseline; executable rollback; passing exact clean-checkout restore/run/full-test/down/evidence-validation commands"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p4--accept-the-story-61-entry-gate"
     course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md"
+    latest_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md#41-make-architecture-sign-off-an-explicit-story-61-gate-input"
     routed_to: "Product Manager / Solution Architect / Product Owner / Test Architect"
   - epic: 7
     id: "7.1-P1"
@@ -350,23 +351,31 @@ action_items:
     id: "8.3-P2"
     action: "Accept the archive and restore Web journeys, including Folder-before-activation restore and role, denial, renewal, recovery, and accessibility evidence."
     repository_authority: "Hexalith.Projects Web adapter and FrontComposer presentation authority"
-    owner: "Projects Web Owner / Product Owner / Test Architect"
+    owner: "Projects Web Owner / Product Owner / Test Architect / Solution Architect"
     status: open
     target_date: uncommitted
-    depends_on: ["8.3-P1"]
-    expected_evidence: "Immutable accepted revisions; authenticated archive/restore fixtures and results; Folder-before-activation presentation; role/denial/renewal/recovery evidence; owner disposition"
-    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md#47-decompose-story-83-without-renumbering-the-production-plan"
+    depends_on: ["8.3-P1", "Story 7.13", "Story 7.14", "Story 8.1", "Superseding implementation-readiness result READY"]
+    expected_evidence: "Immutable Projects/FrontComposer/platform/Folder dependency revisions; accepted P1/G-3/G-6 and Stories 7.13/7.14/8.1 pins; authenticated G-4 fixture epic8/8.3-p2-lifecycle-journeys; passing Story8.3P2, web-ops Package=8.3-P2, and evidence-validator commands; archive/restore truth, Folder-before-activation recovery, role/denial/renewal/lost-response/cancellation/terminal-state/audit/privacy/accessibility results; hashes and accountable owner dispositions"
+    evidence_manifest: "evidence/epic8/8.3-p2-lifecycle-manifest.json"
+    completion_boundary: "Every required command passes from accepted clean checkouts and the immutable manifest, hashes, results, approvals, containment, and executable rollback exist; missing tools, environments, or skips do not pass."
+    containment: "Keep Story 8.3 blocked and retain the last accepted read-only/lifecycle route and dependency tuple until P2 is independently accepted."
+    rollback: "Disable the lifecycle adapter/routes, restore the prior tuple/route, and rerun the prior smoke lane without changing domain events, task/artifact records, Folder resources, or server workflow."
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md#42-materialize-the-83-p2-archive-and-restore-web-package"
     routed_to: "Story 8.3"
   - epic: 8
     id: "8.3-P3"
     action: "Accept Conversation move, Folder replacement, and Conversation/File/Memory unlink Web journeys with owner-preserving recovery evidence."
     repository_authority: "Hexalith.Projects Web adapter and FrontComposer presentation authority"
-    owner: "Projects Web Owner / Product Owner / Test Architect"
+    owner: "Projects Web Owner / Product Owner / Test Architect / Solution Architect"
     status: open
     target_date: uncommitted
-    depends_on: ["8.3-P1"]
-    expected_evidence: "Immutable accepted revisions; authenticated move/replace/unlink fixtures and results; canonical confirmation admission; owner-preserving recovery; owner disposition"
-    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md#47-decompose-story-83-without-renumbering-the-production-plan"
+    depends_on: ["8.3-P1", "Story 7.4", "Story 7.5", "Story 7.6", "Story 7.8", "Story 7.10", "Story 8.1", "Superseding implementation-readiness result READY"]
+    expected_evidence: "Immutable Projects/FrontComposer/platform/owner dependency revisions; accepted P1/G-3/G-6, G-1/G-2, Stories 7.4/7.5/7.6/7.8/7.10, and Story 8.1 pins; authenticated G-4 fixture epic8/8.3-p3-association-journeys; passing Story8.3P3, web-ops Package=8.3-P3, and evidence-validator commands; exactly-one Conversation membership, Folder invariant, unlink resource preservation, denial/recovery/cancellation/terminal-state/audit/privacy/accessibility results; hashes and accountable owner dispositions"
+    evidence_manifest: "evidence/epic8/8.3-p3-association-manifest.json"
+    completion_boundary: "Every required command passes from accepted clean checkouts and the immutable manifest, hashes, results, approvals, containment, and executable rollback exist; missing tools, environments, or skips do not pass."
+    containment: "Keep Story 8.3 blocked and retain the last accepted read-only/maintenance route and dependency tuple until P3 is independently accepted."
+    rollback: "Disable the association action adapters, restore the prior tuple/route, and rerun the prior smoke lane without changing event history, task/artifact records, owner resources, or server workflow."
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md#43-materialize-the-83-p3-association-maintenance-web-package"
     routed_to: "Story 8.3"
   - epic: 8
     id: "8.8-P1"
@@ -394,12 +403,14 @@ action_items:
     id: "8.8-P3"
     action: "Accept an approved, immutable owner-pinned Chatbot companion UX specification and authenticated candidate/proposal/confirmation/recovery/task/first-response evidence."
     repository_authority: "Separately owned Hexalith.Chatbot presentation repository"
-    owner: "Chatbot Presentation Owner / Test Architect / Product Owner"
+    owner: "Chatbot Presentation Owner / Chatbot Test Owner / Product Owner / Test Architect"
     status: blocked-external
     target_date: uncommitted
     depends_on: ["Approved Chatbot companion artifact"]
     expected_evidence: "Chatbot owner repository and immutable revision; companion contract version; approval date, authority, and accountable owner; authenticated commands and deterministic fixtures; expected artifact paths and hashes; results and terminal disposition; containment/rollback for contract drift; candidate/proposal/no-preselection/confirm-cancel/expiry-staleness-replay-tamper-mismatch/lost-response/all-task-states/cancellation/recovery/authoritative-re-query/response-admission/NFR-9 coverage"
+    projects_evidence_pin: "evidence/epic8/8.8-P3-chatbot-companion-pin.json"
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md#46-require-and-pin-the-external-chatbot-companion-ux-artifact"
+    latest_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md#45-reconcile-package-tracking-and-traceability-without-claiming-acceptance"
     routed_to: "Story 8.8"
   - epic: 8
     id: "8.11-P1"
