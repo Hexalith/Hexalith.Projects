@@ -8,7 +8,7 @@ lastSaved: '2026-05-25'
 workflowType: 'testarch-test-design'
 inputDocuments:
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
-  - _bmad-output/planning-artifacts/architecture.md
+  - _bmad-output/planning-artifacts/archive/architecture-2026-05-24-superseded.md
   - _bmad-output/planning-artifacts/epics.md
   - _bmad-output/planning-artifacts/ux-design-specification.md
   - _bmad-output/project-context.md

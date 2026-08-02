@@ -9,7 +9,7 @@ mode: 'system-level'
 detectedStack: 'fullstack'
 inputDocuments:
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
-  - _bmad-output/planning-artifacts/architecture.md
+  - _bmad-output/planning-artifacts/archive/architecture-2026-05-24-superseded.md
   - _bmad-output/planning-artifacts/epics.md
   - _bmad-output/planning-artifacts/ux-design-specification.md
   - _bmad-output/project-context.md
@@ -30,7 +30,7 @@ inputDocuments:
 
 **Prerequisites (System-Level) — all satisfied:**
 - PRD: `_bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md` (FR-1–22, NFR-1–9)
-- ADR / Architecture: `_bmad-output/planning-artifacts/architecture.md` (AR-1–23, gaps AR-G1–G4)
+- Historical ADR / Architecture: `_bmad-output/planning-artifacts/archive/architecture-2026-05-24-superseded.md` (AR-1–23, gaps AR-G1–G4)
 - Epic breakdown: `_bmad-output/planning-artifacts/epics.md` (Epics 1–5, FS-1–8, PR-1–4)
 - UX spec: `_bmad-output/planning-artifacts/ux-design-specification.md` (UX-DR1–28)
 - Research reports + in-flight story `2-1-conversation-reference-read-acl.md`

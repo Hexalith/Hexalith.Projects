@@ -14,7 +14,9 @@ truth** for what may and may not cross the Projects boundary. Every `NoPayloadLe
 ProjectContext assembly policy (Epic 3), rejection events, and shared models derive their safe-field
 set from here. When the two forms disagree, that is a bug — keep them in sync.
 
-The principle is **metadata-only everywhere** (architecture.md#Anti-patterns, NFR-2): events, logs,
+The principle is **metadata-only everywhere**
+([Architecture Spine AD-7, AD-11, and AD-26](../_bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md),
+NFR-2): events, logs,
 DTOs, and audit records carry safe identifiers and states, never sibling-owned content. Projects holds
 *references* to conversations, folders, files, and memories — it never copies their contents.
 

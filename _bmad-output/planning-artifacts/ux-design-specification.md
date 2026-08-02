@@ -172,7 +172,7 @@ The UX should avoid making users feel that the system is hiding important state,
 - Trust requires visible tenant scope, metadata-only output, and clear redaction behavior.
 - Control requires preview, single-use Confirmation Artifact, and Durable Task behavior for maintenance actions; a dry-run may add evidence but cannot replace those controls.
 - Clarity requires resolution traces, reference health, audit timelines, and explicit included/excluded states.
-- Accountability requires every state-changing action to show impact and produce audit evidence.
+- Accountability requires every state-changing action to show scope, impact, admission class, recovery, and applicable audit evidence.
 - Safety requires no transcript text, file content, prompt content, memory payload, secret value, embedding vector, or unsafe derived summary in any operational surface.
 
 ### Emotional Design Principles
@@ -403,7 +403,7 @@ The user filters, expands, compares, or traces the diagnostic evidence. For ambi
 
 **3. Feedback**
 
-The system gives feedback through consistent state labels, reason codes, warnings, timestamps, audit IDs, and tenant scope. Risky or mutating actions use preview, dry-run, or confirmation behavior.
+The system gives feedback through consistent state labels, reason codes, warnings, timestamps, audit IDs, and tenant scope. Each state-changing action uses its canonical task-only or confirmation-required admission behavior; Preview and confirmation appear only for the latter.
 
 Errors are specific but safe: `tenant_mismatch`, `unauthorized`, `stale`, `unavailable`, `archived`, `conflict`, `invalidReference`, or `ambiguous`, rather than generic failure text.
 
@@ -546,13 +546,13 @@ Six operational design directions were explored in `ux-design-directions.html`:
 - Reference Health Matrix: a dense maintenance view for stale, unauthorized, unavailable, excluded, and invalid references.
 - Incident Desk: a support triage view for active warnings, failed operations, and safe metadata handoff.
 - CLI/MCP Parity Console: a schema-parity direction that makes CLI, MCP, and Web show the same safe operational fields.
-- Audit-First Maintenance: a conservative maintenance direction where every state-changing action starts with tenant scope, impact, and expected audit evidence.
+- Audit-First Maintenance: a conservative maintenance direction where every state-changing action starts with tenant scope, impact, canonical admission class, and applicable audit evidence.
 
 ### Chosen Direction
 
 The chosen direction is Metadata Control Plane as the primary base, with Resolution Trace Workbench and Audit-First Maintenance used as specialized interaction patterns.
 
-This means the default Web UX should be a FrontComposer-generated operational console with project inventory, filters, lifecycle state, warnings, metadata inspection, and safe actions. When users drill into a resolution issue, the experience should shift into a trace-oriented workbench. When users initiate a state-changing operation, the experience should shift into an audit-first confirmation flow.
+This means the default Web UX should be a FrontComposer-generated operational console with project inventory, filters, lifecycle state, warnings, metadata inspection, and safe actions. When users drill into a resolution issue, the experience should shift into a trace-oriented workbench. When users initiate a state-changing operation, the experience should shift into the action's canonical task-only or confirmation-required maintenance flow.
 
 ### Design Rationale
 
@@ -628,13 +628,14 @@ flowchart TD
     G --> J
     H --> J
     I --> J
-    J --> K{Maintenance needed?}
-    K -- No --> L[Export/copy safe diagnostic metadata if needed]
-    K -- Yes --> M[Open safe maintenance preview]
-    M --> N[Show tenant, target IDs, impact, and expected audit event]
+    J --> K{Canonical admission class?}
+    K -- Synchronous read --> L[Export/copy safe diagnostic metadata if needed]
+    K -- Durable Task only --> M[Show tenant, target IDs, impact, task, and recovery]
+    K -- Confirmation + Durable Task --> N[Show server Preview, scope, impact, expiry, and expected audit]
     N --> O{Confirm action?}
     O -- No --> P[Return to read-only diagnostics]
-    O -- Yes --> Q[Execute action and record metadata-only audit event]
+    O -- Yes --> Q[Admit Durable Task and record applicable metadata-only audit]
+    M --> Q
     Q --> R[Show result and audit ID]
     L --> R
     P --> R
@@ -674,21 +675,42 @@ only means of interaction; and no status relies on color alone.
 does not issue a Confirmation Artifact, create a Durable Task, cross an irreversible checkpoint, or
 record a maintenance mutation.
 
+#### Canonical Action-Admission Classification
+
+Every surface classifies actions from the versioned Projects contract. Task-only actions are
+explicit, scoped, idempotent, recoverable, and audited where required, but do not add a second
+confirmation. Confirmation-required actions use server Preview, one single-use Confirmation
+Artifact, and Durable Task admission. Read-only actions create neither Confirmation Artifacts nor
+Durable Tasks.
+
+| Admission class | Stable actions | UX contract |
+| --- | --- | --- |
+| Confirmation + Durable Task | `project.archive`, `project.restore`, `conversation.move`, `project-folder.replace`, `context-reference.unlink`, `resolution.confirm`, `project-proposal.confirm` | Request server Preview, present explicit confirm/cancel, consume one bound artifact, then monitor task truth |
+| Durable Task only | `project.create`, `project-setup.update`, `conversation.link`, `project-folder.set-initial`, `file-reference.link`, `memory.link` | Authorize, validate, and admit idempotently without a second confirmation; present task and recovery states |
+| Durable Task control | `task.cancel`, `task.reconcile` | Authorize against task/current checkpoint; reconciliation remains Administrator-only |
+| Synchronous read | list/open/resolve/context/refresh/validate/Conversation-start/audit/operator-read and `safe-diagnostic-export.create` | No Confirmation Artifact or Durable Task; Safe Diagnostic Export retains separate authorization and bounds |
+
+Inferred Conversation/File/Memory links and inferred initial Folder selection follow the
+confirmation-required policy applicable to that inferred action. Explicitly actor-selected additive
+actions remain task-only.
+
 ### Journey 4: Use MCP for Agent-Assisted Troubleshooting
 
 MCP-enabled assistants need safe project metadata and structured tools to help administrators investigate without receiving payload-bearing data.
 
 ```mermaid
 flowchart TD
-    A[Admin or agent invokes MCP resource/tool] --> B{Read-only resource or mutating tool?}
-    B -- Read-only --> C[Return structured safe metadata]
+    A[Admin or agent invokes MCP resource/tool] --> B{Canonical admission class?}
+    B -- Synchronous read --> C[Return structured safe metadata]
     C --> D[Include raw fields: projectId, tenantId, state, references, reasonCodes, warnings, audit IDs]
     D --> E[Include short safe explanation]
-    B -- Mutating tool --> F[Request single-use Confirmation Artifact]
+    B -- Confirmation + Durable Task --> F[Request single-use Confirmation Artifact]
     F --> G[Return scope, current versions, impact, warnings, expiry, and expected audit]
     G --> H{Authorized confirmation accepted?}
     H -- No --> I[Return safe rejection or RenewPreview and admit no task]
     H -- Yes --> J[Return pollable Durable Task ID]
+    B -- Durable Task only --> J
+    B -- Durable Task control --> J
     J --> K[Poll authoritative task and read model; return terminal result and audit ID]
     E --> L[End]
     I --> L
@@ -704,7 +726,7 @@ Common patterns across all journeys:
 - Return structured metadata before explanation.
 - Use reason codes for included, excluded, unauthorized, stale, archived, ambiguous, conflict, and invalid states.
 - Separate read-only diagnostics from state-changing maintenance.
-- Preview every mutation, then admit it only through a valid Confirmation Artifact and expose progress through a Durable Task.
+- Apply the action's canonical admission class: task-only actions admit without a second confirmation; confirmation-required actions use server Preview and one bound artifact; task controls authorize against current task truth.
 - End with audit-safe evidence.
 
 ### Flow Optimization Principles
@@ -714,7 +736,7 @@ Common patterns across all journeys:
 - Keep terminology identical across CLI, MCP, and Web.
 - Surface ambiguity instead of hiding it.
 - Never collapse tenant, authorization, lifecycle, freshness, and conflict issues into a generic error.
-- Make every state-changing action explicit, scoped, confirmed, and auditable.
+- Make every state-changing action explicit, scoped, correctly classified, recoverable, and auditable where required.
 
 ## Component Strategy
 
@@ -773,7 +795,7 @@ Custom components should be minimized. Where needed, they should be Projects-spe
 
 **Anatomy:** Input summary, candidate list, reason-code badges, inclusion/exclusion evidence, outcome panel, safe next actions.
 
-**States:** Resolved, no match, multiple candidates, excluded, failed closed.
+**States:** `resolutionResult` is exactly `NoMatch`, `SingleCandidate`, or `MultipleCandidates`; `responseState` is exactly `Complete`, `Partial`, `Unavailable`, or `Denied`; component inclusion is `Included` or `Excluded`; freshness is `Current`, `Stale`, `Rebuilding`, or `Unavailable`; and `reason` is a canonical safe reason code. `SingleCandidate` never means the UX selected or durably attached it. Exclusion and fail-closed behavior remain component/response dimensions, not local resolution-result synonyms.
 
 **Accessibility:** Trace order must be readable by screen readers. Candidate comparisons must have semantic headings and labels.
 
@@ -791,13 +813,13 @@ Custom components should be minimized. Where needed, they should be Projects-spe
 
 #### Maintenance Action Panel
 
-**Purpose:** Makes state-changing actions explicit, scoped, previewable, and auditable.
+**Purpose:** Makes state-changing actions explicit, scoped, correctly classified, recoverable, and auditable where required.
 
 **Usage:** Archive, restore, relink, and unlink flows. Context refresh is not a maintenance action.
 
-**Anatomy:** Action name, tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, Confirmation Artifact expiry, expected audit event, confirmation/cancel controls, Durable Task ID and status, irreversible-checkpoint state, and applicable canonical recovery actions.
+**Anatomy:** Action name, `TaskOnly` or `ConfirmationRequired` mode, tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, applicable audit evidence, Durable Task ID and status, irreversible-checkpoint state, and canonical recovery actions. Only `ConfirmationRequired` mode renders server Preview, Confirmation Artifact expiry, and confirm/cancel controls.
 
-**States:** Preview, ConfirmationRequired, ArtifactExpired, ArtifactRejected, TaskAdmitted, Pending, Running, WaitingForDependency, NeedsAttention, Succeeded, Rejected, Failed, and Cancelled.
+**States:** TaskOnly, Preview, ConfirmationRequired, ArtifactExpired, ArtifactRejected, TaskAdmitted, Pending, Running, WaitingForDependency, NeedsAttention, Succeeded, Rejected, Failed, and Cancelled.
 
 **Accessibility:** Destructive or risky actions have explicit labels and descriptions. Focus moves to safe validation summaries and renewal controls; task changes use restrained live-region announcements; every action is keyboard accessible; and status never depends only on color, position, animation, or elapsed time.
 
@@ -863,14 +885,16 @@ Web UX should follow FrontComposer/Fluent UI action hierarchy.
 
 **Secondary actions** support non-destructive alternatives such as cancel, return to diagnostics, copy ID, open related reference, or view audit event.
 
-**Destructive or state-changing actions** must not appear as casual primary actions. They require preview, dry-run where applicable, confirmation, tenant scope, target identifiers, expected impact, and expected audit event.
+**Destructive or state-changing actions** must not appear as casual primary actions. They require tenant scope, target identifiers, expected impact, canonical admission classification, recovery state, and applicable audit evidence. Only confirmation-required actions add Preview and explicit confirmation; task-only actions do not.
 
 **CLI and MCP parity:** CLI commands and MCP tools should mirror the same action hierarchy through command naming and tool classification:
 
 - Read-only diagnostics: `describe`, `inspect`, `trace`, `validate`, `list`.
 - Read-only context recomputation: `refresh-context`; any retained `reevaluate` alias maps exactly to this action.
 - Preview actions: `dry-run`, `preview`.
-- Mutating actions: `archive`, `restore`, `relink`, `unlink`, requiring explicit target, Confirmation Artifact, and Durable Task semantics.
+- Confirmation-required actions: `archive`, `restore`, `move`, `replace-folder`, `unlink`, `confirm-resolution`, and `confirm-proposal`, requiring explicit targets, server Preview, one Confirmation Artifact, and Durable Task semantics.
+- Task-only actions: `create`, `update-setup`, actor-selected additive `link`, and initial-Folder selection, requiring explicit targets and Durable Task semantics without a second confirmation.
+- Task controls: `cancel-task` and Administrator-only `reconcile-task`, authorized against current task/checkpoint truth.
 
 ### Feedback Patterns
 
@@ -892,7 +916,7 @@ Forms are used only for operational filtering, diagnostic input, and safe mainte
 
 **Diagnostic forms** should accept safe identifiers such as tenant ID, project ID, conversation reference, folder reference, file reference, memory reference, resolution case ID, audit event ID, correlation ID, lifecycle state, reason code, and timestamp range.
 
-**Maintenance forms** show tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, optional dry-run evidence, Confirmation Artifact expiry, expected audit event, and canonical recovery actions before confirmation.
+**Maintenance forms** show tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, the canonical admission class, applicable audit evidence, and recovery actions. Confirmation-required forms additionally show server Preview evidence, Confirmation Artifact expiry, and confirm/cancel controls; task-only forms admit without a second confirmation.
 
 **Validation** should happen before state changes and should return field-specific safe errors. Validation messages should identify the invalid field or reference type without echoing unsafe values.
 
@@ -965,7 +989,7 @@ Diagnostic export follows the exact authorization, synchronous snapshot, 1 MiB e
 
 #### Confirmation Pattern
 
-Confirmations are required for mutating actions and use the single-use 15-minute Confirmation Artifact plus pollable Durable Task contract from Journey 3. Confirmation surfaces show tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, expected audit evidence, artifact expiry, and canonical recovery actions.
+Confirmations are required only for actions classified `Confirmation + Durable Task`. They use the single-use 15-minute Confirmation Artifact plus pollable Durable Task contract from Journey 3. Confirmation surfaces show tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, expected audit evidence, artifact expiry, and canonical recovery actions. Actions classified `Durable Task only` must not add this second confirmation.
 
 #### Cross-Surface Parity Pattern
 
@@ -990,8 +1014,9 @@ The companion artifact must specify and verify:
   freshness semantics, canonical recovery actions, and first-response admission only for `Complete`
   or `Partial`;
 - keyboard, focus, live-region, timing, and non-color accessibility behavior; and
-- reproducible authorization and interaction test commands, fixtures, artifacts, results, and final
-  disposition.
+- reproducible authorization and interaction test commands, deterministic fixtures, expected
+  artifact paths and hashes, results, and terminal disposition; and
+- accountable owner, containment, and executable rollback treatment for companion-contract drift.
 
 Story package 8.8-P3 accepts and pins this companion evidence before Story 8.8 integrates the
 cross-surface result. A missing, unapproved, mutable, or contract-drifted companion artifact blocks
@@ -1031,7 +1056,7 @@ Mobile should support urgent inspection and safe metadata lookup, not full dense
 - Prioritize project identity, tenant scope, lifecycle state, warnings, and top reason codes.
 - Collapse tables into stacked rows or summary lists.
 - Hide advanced comparison until explicitly expanded.
-- Keep state-changing actions available only when confirmation content remains fully visible and understandable.
+- Keep state-changing actions available only when their task-only or confirmation-required scope, impact, admission state, and recovery content remain fully visible and understandable.
 - Prefer CLI or desktop Web for complex maintenance when mobile space would hide critical evidence.
 
 CLI and MCP are inherently responsive through structured text/schema output and should not rely on terminal width, color, or prose formatting for meaning.
@@ -1090,15 +1115,19 @@ Responsive testing should cover:
 - Side-by-side candidate comparison collapsing to single-column layouts.
 - High data volume and empty states.
 
-Accessibility testing should include:
+Accessibility testing and operator release evidence must combine automated checks with authenticated
+manual keyboard and screen-reader execution at deterministic small, median, and maximum data
+shapes. It explicitly covers:
 
-- Automated accessibility checks for generated FrontComposer Web views.
-- Keyboard-only navigation.
-- Screen reader spot checks for key views.
-- Focus management in dialogs and action panels.
-- Contrast validation for status badges and warning/error states.
-- Reduced-motion behavior.
-- Verification that status meaning is not color-only.
+- Generated FrontComposer Web views, dialogs, action panels, task-only flows, and confirmation flows.
+- Keyboard-only navigation and screen-reader operation at each required data shape.
+- 200% zoom and 320 CSS-pixel reflow.
+- Focus placement and restoration, including validation, renewal, cancellation, and completion.
+- Live-region behavior and timing-independent completion.
+- Contrast, reduced-motion behavior, and verification that state never relies on color alone.
+
+Any unresolved critical or serious accessibility violation blocks the affected capability and
+release. Unavailable evidence is `not verified`, never passed.
 
 Cross-surface testing should verify:
 

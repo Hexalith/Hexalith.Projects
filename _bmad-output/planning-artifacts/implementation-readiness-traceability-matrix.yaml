@@ -3,8 +3,8 @@
 # is a mechanically reconciled human view over the SAME stable row keys; this YAML wins on conflict.
 schema: hexalith.readiness-evidence.v1
 project: Hexalith.Projects
-generated: 2026-08-01
-generated_by: "bmad-correct-course — approved 2026-08-01 implementation-readiness correction"
+generated: 2026-08-02
+generated_by: "bmad-correct-course — approved by Jerome on 2026-08-02"
 source_of_truth: implementation-readiness-traceability-matrix.yaml
 markdown_view: implementation-readiness-traceability-matrix.md
 sources:
@@ -13,10 +13,11 @@ sources:
   architecture: _bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md
   epics: _bmad-output/planning-artifacts/epics.md
   audit: _bmad-output/analysis/hexalith-projects-codebase-audit-2026-07-14.md
-  readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-01.md
+  readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02.md
   historical_planning_readiness: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-17.md
   historical_p1r_course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md
-  course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md
+  historical_course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md
+  course_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md
 
 # ── Validation contract (AD-30) ──────────────────────────────────────────────
 validation:
@@ -49,7 +50,7 @@ status_legend:
 
 # ── Containment ──────────────────────────────────────────────────────────────
 containment:
-  overall_readiness: "NOT READY (2026-08-01 implementation-readiness assessment; 2026-07-17 READY remains historical planning-layer authorization only)"
+  overall_readiness: "NOT READY (2026-08-02 implementation-readiness assessment; 2026-07-17 READY remains historical planning-layer authorization only)"
   freeze: "The approved epic/UX/evidence corrections are reconciled, but production-authority implementation remains blocked until 6.1-P4 accepts P0, P1R, P2, and P3 with historical P1 as a satisfied input, clean-checkout verification passes, the Story 6.1 spec passes ready-for-development, and an independent implementation-readiness rerun returns READY"
   release_block: "production + consequential autonomous MCP mutation + proposed-Project confirmation blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance"
   open_triggers:
@@ -61,6 +62,8 @@ containment:
     - "E-9: FR-19 metadata classification (row fr-19)"
     - "Story 7.1: blocked by accepted 7.1-P1 contracts/validator evidence and 7.1-P2 task/Folder capability evidence"
     - "Story 8.8: blocked by accepted 8.8-P1 authenticated parity/isolation/privacy, 8.8-P2 operator accessibility, and 8.8-P3 owner-pinned Chatbot companion evidence"
+    - "8.8-P3: blocked-external until the Chatbot owner supplies an approved manifest with repository, immutable revision, contract version, approval authority/date, accountable owner, authenticated commands, deterministic fixtures, expected artifacts/hashes/results/disposition, drift containment/rollback, complete journey coverage, and NFR-9 evidence"
+    - "Story 8.3: bounded integration is blocked by accepted immutable Web work packages 8.3-P1 shared presentation foundation, 8.3-P2 lifecycle journeys, and 8.3-P3 association journeys"
     - "Story 8.11: blocked by accepted 8.11-P1 deployment/smoke, 8.11-P2 KMS/encryption, and 8.11-P3 rollback evidence plus every preceding Epic 8 story"
 
 # ── Defaults — a row inherits any field it does not explicitly set ────────────
@@ -108,7 +111,7 @@ rows:
   - key: fr-3
     category: fr
     ids: [FR-3]
-    description: "Update Project Setup — durable, additive, idempotent"
+    description: "Update Project Setup — durable, additive, idempotent; Succeeded only after authoritative read-model confirmation"
     architecture_decisions: [AD-5, AD-15, AD-16]
     user_journeys: [UJ-1]
     primary_story: "7.2"
@@ -363,10 +366,10 @@ rows:
   - key: fr-21
     category: fr
     ids: [FR-21]
-    description: "Record Project Audit Events — metadata-only audit of admissions/mutations/confirmations/reconciliation/export; ≥365-day retention"
+    description: "Record Project Audit Events — metadata-only audit of admissions/mutations/confirmations/reconciliation/export; ≥365-day retention; owns deferred Web/CLI audit adapters"
     architecture_decisions: [AD-21, AD-26, AD-30]
     primary_story: "8.1"
-    supporting_stories: []
+    supporting_stories: ["6.5", "6.6"]
     entry_gates: [Epic-8-gate]
     fixture: epic8/8.1-task-audit-reconciliation
     verification_command: "dotnet tool run hexalith-module test --profile ops --filter Story=8.1"
@@ -386,10 +389,11 @@ rows:
     estimate: L
     status: blocked-external
     blocker: "G-3 FrontComposer adapters + G-5 identity"
+    notes: "Stories 6.5/6.6 deliver inventory/detail/health/current-trace reads only. Story 8.1 owns first production audit truth and later enables the Web audit timeline and CLI audit command without a backward dependency."
   - key: fr-23
     category: fr
     ids: [FR-23]
-    description: "Restore Archived Project — Preview + confirmation + Folder-before-activation ordering; NeedsAttention on partial; no owner-resource deletion"
+    description: "Restore Archived Project — RequestPreview validates the Archived Project and Folder plan before bound confirmation; Folder-before-activation ordering; NeedsAttention on partial; no owner-resource deletion"
     architecture_decisions: [AD-3, AD-13, AD-23]
     user_journeys: [UJ-5]
     primary_story: "7.14"
@@ -405,7 +409,7 @@ rows:
   - key: fr-24
     category: fr
     ids: [FR-24]
-    description: "Create Safe Diagnostic Export — projects.safe-diagnostic-export.v1; ≤1 MiB / ≤500 refs / ≤100 audit rows; separate permission; no cursor/retention; Chatbot cannot"
+    description: "Create Safe Diagnostic Export — projects.safe-diagnostic-export.v1; ≤1 MiB / ≤500 refs / ≤100 audit rows; separate permission; no cursor/retention; no exactly-once claim without an approved idempotency contract; Chatbot cannot"
     architecture_decisions: [AD-7, AD-19, AD-21, AD-26, AD-27]
     primary_story: "8.2"
     supporting_stories: []
@@ -530,7 +534,7 @@ rows:
   - key: nfr-9
     category: nfr
     ids: [NFR-9]
-    description: "Accessibility — WCAG 2.2 AA across operator + Chatbot companion; keyboard/focus/AT/200%/320px; automated + authenticated manual evidence"
+    description: "Accessibility — WCAG 2.2 AA across operator + Chatbot companion; automated plus authenticated manual keyboard/screen-reader evidence at small/median/max shapes, 200% zoom, and 320 CSS-pixel reflow; critical/serious violations block"
     architecture_decisions: [AD-34, AD-29]
     linked_findings: [SM-5]
     primary_story: "8.8"
@@ -541,8 +545,8 @@ rows:
     evidence_artifact: evidence/epic8/8.8-accessibility-manifest.json
     estimate: S
     status: blocked-external
-    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 separately owned and approved immutable Chatbot companion pin; G-3 FrontComposer adapters"
-    notes: "Story 8.8 integrates accepted package manifests only. A missing, mutable, unapproved, or contract-drifted Chatbot companion artifact blocks Projects release."
+    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 blocked-external pending a separately owned approved immutable Chatbot companion manifest with owner/revision/version/approval/commands/fixtures/artifact hashes/results/disposition/rollback and complete journey evidence; G-3 FrontComposer adapters"
+    notes: "Story 8.8 integrates accepted package manifests only. A missing, mutable, unapproved, incomplete, or contract-drifted Chatbot companion artifact blocks Projects release; unresolved critical or serious accessibility violations also block."
   - key: nfr-10
     category: nfr
     ids: [NFR-10]
@@ -790,13 +794,13 @@ rows:
     primary_story: "8.3"
     supporting_stories: ["8.8"]
     binding: inferred
-    entry_gates: [Epic-8-gate, G-3, G-6]
+    entry_gates: [Epic-8-gate, G-3, G-6, "8.3-P1", "8.3-P2", "8.3-P3"]
     fixture: epic8/8.3-web-console
     verification_command: "dotnet tool run hexalith-module test --profile web-ops --filter Story=8.3"
     evidence_artifact: evidence/epic8/8.3-ux-001.trx
     estimate: L
     status: blocked-external
-    blocker: "G-3 FrontComposer; G-6 Fluent UI RC governance"
+    blocker: "G-3 FrontComposer; G-6 Fluent UI RC governance; accepted immutable 8.3-P1/P2/P3 Web packages"
   - key: finding-code-001
     category: finding
     ids: [CODE-001]
@@ -901,7 +905,7 @@ rows:
   - key: release-accessibility
     category: release
     ids: [NFR-11.accessibility]
-    description: "Accessibility — WCAG 2.2 AA automated + authenticated manual evidence for operator AND Chatbot companion journeys"
+    description: "Accessibility — WCAG 2.2 AA automated + authenticated manual keyboard/screen-reader evidence at small/median/max shapes, 200% zoom, and 320 CSS-pixel reflow for operator AND Chatbot companion journeys; critical/serious violations block"
     architecture_decisions: [AD-30, AD-34]
     primary_story: "8.8"
     supporting_stories: ["8.3", "6.5"]
@@ -911,7 +915,7 @@ rows:
     evidence_artifact: evidence/epic8/8.8-accessibility-manifest.json
     estimate: S
     status: blocked-external
-    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 separately owned, approved, immutable Chatbot companion pin; G-3"
+    blocker: "8.8-P2 operator accessibility acceptance; 8.8-P3 blocked-external pending a separately owned approved immutable Chatbot manifest with full ownership, revision, approval, command, fixture, artifact/hash/result/disposition, rollback, journey, and NFR-9 evidence; G-3"
   - key: release-privacy
     category: release
     ids: [NFR-11.privacy]

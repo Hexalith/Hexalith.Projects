@@ -1,5 +1,5 @@
 # generated: 2026-07-17T08:14:03+02:00
-# last_updated: 2026-08-01T16:06:37+02:00
+# last_updated: 2026-08-02T10:26:32+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,6 +37,7 @@
 # Action Item Status:
 #   - open: Committed during a retrospective, not yet addressed
 #   - in-progress: Actively being worked on
+#   - blocked-external: Requires an independently owned, approved external input
 #   - done: Completed
 #
 # WORKFLOW NOTES:
@@ -49,7 +50,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-08-01T16:06:37+02:00
+last_updated: 2026-08-02T10:26:32+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -114,7 +115,7 @@ development_status:
   5-12-live-apphost-operational-console-verification: done
   epic-5-retrospective: done
 
-  # Epic 6: Authorized Project Reads on the Supported Platform
+  # Epic 6: Chatbot and Operators Retrieve Authorized Project Truth
   epic-6: backlog
   6-1-list-and-open-projects-through-supported-authenticated-paths: blocked
   6-2-retrieve-conversation-start-setup-with-admission-truth: backlog
@@ -125,7 +126,7 @@ development_status:
   6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback: backlog
   epic-6-retrospective: optional
 
-  # Epic 7: Durable Project Decisions and Cross-Context Recovery
+  # Epic 7: Users Complete Durable Project Decisions and Recover Them
   epic-7: backlog
   7-1-activate-a-project-with-exactly-one-authorized-folder: blocked
   7-2-update-project-setup-idempotently: backlog
@@ -144,11 +145,11 @@ development_status:
   7-15-reconcile-legacy-and-interrupted-workflows: backlog
   epic-7-retrospective: optional
 
-  # Epic 8: Safe Operations and Release Confidence
+  # Epic 8: Operators Run Projects Safely and Release Owners Decide from Evidence
   epic-8: backlog
   8-1-inspect-task-audit-and-reconciliation-truth: backlog
   8-2-create-a-bounded-safe-diagnostic-export: backlog
-  8-3-operate-projects-through-a-conformant-web-console: backlog
+  8-3-integrate-conformant-project-maintenance-in-the-web-console: backlog
   8-4-operate-projects-through-a-deterministic-cli-contract: backlog
   8-5-operate-projects-through-agent-safe-mcp-contracts: backlog
   8-6-observe-truthful-dependency-and-projection-health: backlog
@@ -335,6 +336,39 @@ action_items:
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
     routed_to: "Story 7.1"
   - epic: 8
+    id: "8.3-P1"
+    action: "Accept the shared Web Preview, Confirmation Artifact, Durable Task, recovery, cancellation, authoritative re-query, focus, and live-region presentation foundation over canonical contracts."
+    repository_authority: "Hexalith.FrontComposer/Web owner repository and Hexalith.Projects Web adapter"
+    owner: "FrontComposer-Web Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["G-3", "G-6", "Superseding implementation-readiness result READY"]
+    expected_evidence: "Immutable accepted revisions; canonical action-classification fixture; Preview/Confirmation and task-only presentation results; recovery/cancellation/authoritative-re-query behavior; keyboard/focus/live-region evidence; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md#47-decompose-story-83-without-renumbering-the-production-plan"
+    routed_to: "Story 8.3"
+  - epic: 8
+    id: "8.3-P2"
+    action: "Accept the archive and restore Web journeys, including Folder-before-activation restore and role, denial, renewal, recovery, and accessibility evidence."
+    repository_authority: "Hexalith.Projects Web adapter and FrontComposer presentation authority"
+    owner: "Projects Web Owner / Product Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["8.3-P1"]
+    expected_evidence: "Immutable accepted revisions; authenticated archive/restore fixtures and results; Folder-before-activation presentation; role/denial/renewal/recovery evidence; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md#47-decompose-story-83-without-renumbering-the-production-plan"
+    routed_to: "Story 8.3"
+  - epic: 8
+    id: "8.3-P3"
+    action: "Accept Conversation move, Folder replacement, and Conversation/File/Memory unlink Web journeys with owner-preserving recovery evidence."
+    repository_authority: "Hexalith.Projects Web adapter and FrontComposer presentation authority"
+    owner: "Projects Web Owner / Product Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["8.3-P1"]
+    expected_evidence: "Immutable accepted revisions; authenticated move/replace/unlink fixtures and results; canonical confirmation admission; owner-preserving recovery; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md#47-decompose-story-83-without-renumbering-the-production-plan"
+    routed_to: "Story 8.3"
+  - epic: 8
     id: "8.8-P1"
     action: "Acquire authenticated Web/CLI/MCP parity, cross-Tenant denial, authorization freshness, and NoPayloadLeakage evidence."
     repository_authority: "Hexalith.Projects and supported platform/Identity adapter repositories"
@@ -353,7 +387,7 @@ action_items:
     status: open
     target_date: uncommitted
     depends_on: ["Story 8.3", "G-3"]
-    expected_evidence: "Pinned revisions; automated accessibility results; authenticated keyboard, focus, assistive-technology, 200%, and 320px manual evidence; fixture sizes; owner disposition"
+    expected_evidence: "Pinned revisions; automated accessibility results; authenticated manual keyboard and screen-reader execution at small/median/maximum shapes; 200% zoom and 320 CSS-pixel reflow; focus restoration; live-region/timing/non-color results; no unresolved critical or serious violation; owner disposition"
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#45-split-story-88"
     routed_to: "Story 8.8"
   - epic: 8
@@ -361,11 +395,11 @@ action_items:
     action: "Accept an approved, immutable owner-pinned Chatbot companion UX specification and authenticated candidate/proposal/confirmation/recovery/task/first-response evidence."
     repository_authority: "Separately owned Hexalith.Chatbot presentation repository"
     owner: "Chatbot Presentation Owner / Test Architect / Product Owner"
-    status: open
+    status: blocked-external
     target_date: uncommitted
     depends_on: ["Approved Chatbot companion artifact"]
-    expected_evidence: "Owner repository and immutable revision; contract version; approval date/authority; complete journey and WCAG contracts; authenticated commands, fixtures, artifacts, results, and release disposition"
-    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#410-require-the-chatbot-companion-ux-artifact"
+    expected_evidence: "Chatbot owner repository and immutable revision; companion contract version; approval date, authority, and accountable owner; authenticated commands and deterministic fixtures; expected artifact paths and hashes; results and terminal disposition; containment/rollback for contract drift; candidate/proposal/no-preselection/confirm-cancel/expiry-staleness-replay-tamper-mismatch/lost-response/all-task-states/cancellation/recovery/authoritative-re-query/response-admission/NFR-9 coverage"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md#46-require-and-pin-the-external-chatbot-companion-ux-artifact"
     routed_to: "Story 8.8"
   - epic: 8
     id: "8.11-P1"

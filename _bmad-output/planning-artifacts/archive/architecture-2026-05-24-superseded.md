@@ -34,7 +34,7 @@ date: '2026-05-24'
 
 # Architecture Decision Document
 
-> **Superseded historical evidence.** This May 2026 design is not normative. The sole current architecture is [the July 2026 Architecture Spine](architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md).
+> **Superseded historical evidence.** This May 2026 design is not normative. The sole current architecture is [the July 2026 Architecture Spine](../architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md).
 
 _This document builds collaboratively through step-by-step discovery. Sections are appended as we work through each architectural decision together._
 

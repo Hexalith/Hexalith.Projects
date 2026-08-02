@@ -10,7 +10,7 @@ reconciledAgainst:
   - 'ARCHITECTURE-SPINE.md AD-1..AD-34'
 productionAuthority: 'Epics 6-8 (33 stories: 7/15/11) plus explicit prerequisite/evidence work-package ledgers'
 planningReadinessGate: 'READY on 2026-07-17 for story-file creation and sprint reconciliation; completed'
-implementationReadiness: 'NOT READY on 2026-08-01; production-authority implementation remains blocked'
+implementationReadiness: 'NOT READY on 2026-08-02; production-authority implementation remains blocked'
 implementationBlockedUntil: 'Story 6.1 entry gates are accepted and executable from a clean checkout, its story specification passes readiness, and an independent rerun returns READY'
 releaseBlockedUntil: 'Story 8.11 passes with dated Jerome + John acceptance'
 inputDocuments:
@@ -26,6 +26,8 @@ inputDocuments:
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md
   - _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-01.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md
+  - _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md
   - _bmad-output/planning-artifacts/research/domain-eventstore-persistence-for-hexalith-projects-module-data-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-folders-integration-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-projects-referencing-conversations-research-2026-05-24.md
@@ -34,7 +36,7 @@ inputDocuments:
   - _bmad-output/planning-artifacts/research/technical-frontcomposer-hexalith-projects-web-ux-research-2026-05-24.md
   - _bmad-output/implementation-artifacts/2-1-conversation-reference-read-acl.md
 supersededInputs:
-  - '_bmad-output/planning-artifacts/architecture.md (superseded 2026-07-16 by ARCHITECTURE-SPINE.md)'
+  - '_bmad-output/planning-artifacts/archive/architecture-2026-05-24-superseded.md (superseded 2026-07-16 by ARCHITECTURE-SPINE.md)'
   - '_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md (23-placeholder addendum, replaced by the 33-story rebaseline)'
 backup: '_bmad-output/planning-artifacts/epics.md.pre-reconcile-2026-07-16.bak'
 ---
@@ -53,7 +55,7 @@ Hexalith.Projects is a **tenant-aware AI workspace boundary module** built as a 
 
 _Source: final PRD §6–§8 + addendum (FR-1–FR-24). Each FR has testable consequences in the PRD; abbreviated here._
 
-> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-01 independent assessment returned `NOT READY`; its approved artifact corrections are applied here, but production-authority implementation remains blocked until Story 6.1's entry gate is accepted and executable from a clean checkout, its story specification passes readiness, and a superseding rerun returns exactly `READY`. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance.
+> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-02 independent assessment returned `NOT READY`; its approved artifact corrections are applied here, but production-authority implementation remains blocked until Story 6.1's entry gate is accepted and executable from a clean checkout, its story specification passes readiness, and a superseding rerun returns exactly `READY`. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance.
 
 **Project Workspace Management**
 
@@ -327,9 +329,9 @@ production-release authority**. Epics 1–5 above are completed implementation h
 production-release authority (production-correct FR-1, FR-4/FR-23, FR-14/FR-15, FR-19, and FR-21
 behavior completes in Epic 7, and all release evidence in Epic 8).
 
-- **Epic 6 — Authorized Project Reads on the Supported Platform** (7 stories, 6.1–6.7): authorization-filtered list/open/context/resolution reads over supported DomainService read models + authenticated Web/CLI read surfaces + shadow-read cutover.
-- **Epic 7 — Durable Project Decisions and Cross-Context Recovery** (15 stories, 7.1–7.15): every consequential write as a durable, restart-safe, confirmation-bound workflow — incl. Folder-first create (7.1), archive (7.13), restore/FR-23 (7.14), and legacy reconciliation (7.15).
-- **Epic 8 — Safe Operations and Release Confidence** (11 stories, 8.1–8.11): operator surfaces, Safe Diagnostic Export/FR-24 (8.2), health/telemetry, packaging/supply chain, independently owned parity/privacy/accessibility evidence packages integrated by Story 8.8, performance/back-pressure, cross-workflow resilience, environment evidence packages 8.11-P1/P2/P3, and the terminal release decision in Story 8.11.
+- **Epic 6 — Chatbot and Operators Retrieve Authorized Project Truth** (7 stories, 6.1–6.7): authorization-filtered list/open/context/resolution reads over supported DomainService read models + authenticated Web/CLI read surfaces + shadow-read cutover.
+- **Epic 7 — Users Complete Durable Project Decisions and Recover Them** (15 stories, 7.1–7.15): every consequential write as a durable, restart-safe workflow using the action's canonical admission class — incl. Folder-first create (7.1), archive (7.13), restore/FR-23 (7.14), and legacy reconciliation (7.15).
+- **Epic 8 — Operators Run Projects Safely and Release Owners Decide from Evidence** (11 stories, 8.1–8.11): operator surfaces, Safe Diagnostic Export/FR-24 (8.2), health/telemetry, packaging/supply chain, independently owned parity/privacy/accessibility evidence packages integrated by Story 8.8, performance/back-pressure, cross-workflow resilience, environment evidence packages 8.11-P1/P2/P3, and the terminal release decision in Story 8.11.
 
 Full AC-bearing detail is in the **Corrective Production Plan (Epics 6–8)** section below. The
 2026-07-17 `READY` result completed planning-layer authorization for story-file creation and sprint
@@ -1274,7 +1276,7 @@ external blocker and may not be marked `passed` until the Builds/platform owner 
 G-4 capability. Required row coverage: FR-1…24, NFR-1…11, all nine P1 and seven P2 audit findings,
 and every critical NFR-11/AD-30 release category.
 
-## Epic 6: Authorized Project Reads on the Supported Platform
+## Epic 6: Chatbot and Operators Retrieve Authorized Project Truth
 
 Deliver authorization-filtered list/open/context/resolution **reads** over named incremental
 EventStore DomainService read models and the rebuildable Reference Trust Index, exposed through
@@ -1414,14 +1416,16 @@ So that **Chatbot can identify the right Project (FR-12, FR-13) without persiste
 ### Story 6.5: Inspect Projects through an authenticated FrontComposer read surface
 
 As a **Tenant Operator or Tenant Project Administrator**,
-I want **to inspect Project inventory, detail, reference health, resolution traces, and audit timeline through an authenticated FrontComposer Web read surface**,
+I want **to inspect Project inventory, detail, reference health, and current resolution traces through an authenticated FrontComposer Web read surface**,
 So that **operators get authorized, metadata-only Project truth (FR-22) with WCAG 2.2 AA behavior and no client-supplied identity**.
 
 - **Traceability:** FR-22; NFR-1, NFR-9; AD-2, AD-19, AD-20, AD-29, AD-33, AD-34; UX-DR6–UX-DR16, UX-DR27; evidence row `fr-22-web`.
 
 **Acceptance Criteria:**
 
-**Given** a platform-authenticated operator session (credentials from the platform provider, never client-supplied), **When** the Web read surface renders inventory/detail/health/trace/audit, **Then** every view is Tenant-scoped, authorization-filtered, metadata-only, shows AD-32 response/recovery fields, and enforces role-specific action visibility (reads only here).
+**Given** a platform-authenticated operator session (credentials from the platform provider, never client-supplied), **When** the Web read surface renders inventory/detail/health/trace, **Then** every view is Tenant-scoped, authorization-filtered, metadata-only, shows the AD-32 response/recovery fields, and remains read-only.
+
+**Given** Story 8.1 audit capability is not yet accepted, **When** an audit tab is present, **Then** it renders an explicit `not yet available` capability state and neither queries nor implies audit data.
 
 **Given** a denied or cross-Tenant target, **When** a view loads, **Then** it fails closed with a safe empty/denied state indistinguishable from absence and renders no sibling payload "for debugging."
 
@@ -1432,7 +1436,7 @@ So that **operators get authorized, metadata-only Project truth (FR-22) with WCA
 ### Story 6.6: Inspect Projects through an authenticated CLI read surface
 
 As a **Tenant Operator or automation caller**,
-I want **scriptable, authenticated read-only CLI commands (`list`/`describe`/`inspect`/`trace`/`validate`/`audit`) with deterministic machine output**,
+I want **scriptable, authenticated read-only CLI commands (`list`/`describe`/`inspect`/`trace`/`validate`) with deterministic machine output**,
 So that **operators and pipelines get authorized, metadata-only Project truth (FR-22) with stable exit codes and no color-dependent meaning**.
 
 - **Traceability:** FR-22; NFR-1, NFR-8; AD-2, AD-19, AD-20, AD-29, AD-33; UX-DR19; evidence row `fr-22-cli`.
@@ -1443,7 +1447,9 @@ So that **operators and pipelines get authorized, metadata-only Project truth (F
 
 **Given** a denied/nonexistent target or stale read model, **When** a read command runs, **Then** it fails closed with a safe reason code and a non-zero stable exit code, indistinguishable denial/absence, no payload echo.
 
-**Given** identical facts, **When** compared to the Web surface (6.5), **Then** lifecycle/reference states, reason codes, timestamps, warnings, and audit identifiers are semantically equivalent (parity).
+**Given** identical facts, **When** compared to the Web surface (6.5), **Then** lifecycle/reference states, reason codes, timestamps, and warnings are semantically equivalent (parity).
+
+**Given** Story 8.1 audit capability is not yet accepted, **When** an `audit` command is invoked, **Then** the command is absent or returns one stable unsupported-capability result and does not query or imply audit data.
 
 - **Verification:** `dotnet tool run hexalith-module test --profile cli-reads --filter Story=6.6`. **Evidence:** `evidence/epic6/6.6-cli-read-surface.{trx,json}`. **Estimate:** M. **Completion boundary:** authenticated read-only CLI with parity + stable contract; mutating CLI is Epic 8.
 
@@ -1457,7 +1463,7 @@ So that **supported reads become authoritative without event-history rewrite, an
 
 **Acceptance Criteria:**
 
-**Given** the shadow-read equivalence gate across all Epic 6 reads, **When** it passes (output/keys/watermarks/cursors/Tenant isolation equivalent) and the ULID identity + OpenAPI/generated-consumer contracts are mechanically aligned, **When** cutover runs, **Then** read routing switches to supported models and remains **reversible** with legacy retained until Epic 8 release acceptance.
+**Given** the shadow-read equivalence gate has passed across all Epic 6 reads and the ULID identity, OpenAPI, and generated-consumer contracts are mechanically aligned, **When** cutover runs, **Then** read routing switches to supported models and remains **reversible** with legacy retained until Epic 8 release acceptance.
 
 **Given** legacy identifiers and historical events (incl. `ProjectFolderCreationPending`), **When** reads run post-cutover, **Then** they remain readable (foreign IDs opaque, no GUID-parse) and no history is rewritten and no unsafe dual writer is introduced.
 
@@ -1467,7 +1473,7 @@ So that **supported reads become authoritative without event-history rewrite, an
 
 ---
 
-## Epic 7: Durable Project Decisions and Cross-Context Recovery
+## Epic 7: Users Complete Durable Project Decisions and Recover Them
 
 Deliver every consequential Project **write** as a Projects-owned, versioned **workflow definition**
 running on platform **Durable Tasks** — create, setup, association linking/unlinking, Folder
@@ -1564,6 +1570,8 @@ So that **Conversation-continuity setup evolves additively and safely (FR-3) wit
 **Given** an authorized setup update (task-only, no confirmation), **When** submitted, **Then** the update is durable, additive, serialization-tolerant, re-uses the shared validator (rejecting secrets/paths/foreign payloads/invalid classification), and equivalent retries return the same task while changed requests conflict.
 
 **Given** a denied/cross-Tenant/stale-version request, **When** submitted, **Then** it fails closed with no partial durable effect.
+
+**Given** the setup event is committed but the authoritative read model has not yet confirmed the new Project Setup, **When** the task is polled, **Then** it does not report `Succeeded`; `Succeeded` is terminal only after stored Setup and the authorized read model agree on the expected Project version and values.
 
 - **Estimate:** M. **Completion boundary:** idempotent additive setup update with validation parity; supersedes Story 1.8 update criteria.
 
@@ -1765,7 +1773,9 @@ So that **restore is the safe counterpart to archive (FR-23, UJ-5) with no inval
 
 **Acceptance Criteria** (plus shared invariants 1–6; confirmation-required):
 
-**Given** a valid confirmation, **When** Preview runs, **Then** it verifies Tenant, actor, authority, current Project version, and **exactly one authorized Folder**; if the prior Folder is invalid/missing it requires an authorized replacement or same-name Folder creation before confirmation.
+**Given** an authorized Archived Project, **When** `RequestPreview` runs, **Then** it verifies Tenant, actor, authority, current Project version, and **exactly one authorized Folder**; if the prior Folder is invalid or missing, the Preview requires an authorized replacement or same-name Folder plan and issues a bound artifact.
+
+**Given** the resulting unexpired, single-use artifact and unchanged bound evidence, **When** the caller confirms, **Then** the restore Durable Task is admitted atomically.
 
 **Given** restore proceeds, **When** the task runs, **Then** Folder validity is established while still `Archived`; a replacement emits `ProjectFolderSet` **before** `ProjectRestored` in one commit; the Project becomes Active only after read-model confirmation.
 
@@ -1793,7 +1803,7 @@ So that **legacy partial records reach a safe terminal disposition before their 
 
 ---
 
-## Epic 8: Safe Operations and Release Confidence
+## Epic 8: Operators Run Projects Safely and Release Owners Decide from Evidence
 
 Turn the corrective read and durable-workflow work into **executable production evidence** across
 operator surfaces, Safe Diagnostic Export, health/telemetry, packaging/supply chain, authenticated
@@ -1801,6 +1811,13 @@ parity/isolation/accessibility, performance/back-pressure, cross-workflow resili
 deployment/rollback/stakeholder acceptance. The whole epic is fail-closed behind the AD-30
 machine-checkable evidence gate. It closes TEST-001 and every required P1/P2 finding (or records an
 authorized disposition), and maps every critical NFR-11 release category to an owning story.
+
+Stories 8.1–8.6 let operators inspect truth, export bounded diagnostics, perform conformant
+maintenance, and observe real health. Stories 8.7–8.11 let downstream consumers and Release Owners
+qualify reproducible packages, integrate independently owned evidence, prove performance and
+resilience, and record the terminal release decision. Evidence acquisition remains in named
+prerequisite packages; no story completes merely by producing a test milestone or recording a
+blocker.
 
 **Epic 8 entry gate (prerequisite, not delivered value).** Supplies **deterministic
 persisted-boundary fixtures** (authorized Tenant, seeded Projects/references/audit, required UI/static
@@ -1834,6 +1851,8 @@ So that **operators have truthful operational visibility (FR-21) with correct re
 
 **Given** intermediate states/polls/retries, **When** rendered, **Then** they are telemetry-only and separated from durable audit truth (AD-26).
 
+**Given** accepted Story 8.1 task/audit/reconciliation read capability and the earlier authenticated Web/CLI read adapters, **When** the operator audit surfaces are enabled, **Then** the Web audit timeline and CLI audit command consume Story 8.1 truth, preserve Tenant scope, metadata-only output, stable audit identifiers, and cross-surface semantic parity, and introduce no backward dependency into Epic 6.
+
 - **Estimate:** M. **Completion boundary:** truthful task/audit/reconciliation reads with retention + separation evidence.
 
 ### Story 8.2: Create a bounded Safe Diagnostic Export
@@ -1850,7 +1869,9 @@ So that **support gets bounded metadata truth (FR-24) without unbounded troubles
 
 **Given** upstream component unavailability, **When** export runs, **Then** unavailable components are marked safely without raw errors or fabricated completeness.
 
-**Given** a third concurrent export for the Tenant or a lost/duplicate request, **When** attempted, **Then** it is throttled with structured retry guidance and does not double-produce.
+**Given** two exports are executing for a Tenant, **When** a third export is requested, **Then** it is rejected by the two-lease gate with structured retry guidance and no partial snapshot is produced.
+
+**Given** an export response is lost or the caller repeats the request, **When** no separately approved export-idempotency contract exists, **Then** the adapter does not claim exactly-once delivery or return retained bytes; a new authorized request may produce a new current snapshot, and every attempt and outcome is audited metadata-only.
 
 - **Estimate:** L. **Completion boundary:** bounded, non-retained, separately authorized export with equivalent Web/CLI/MCP semantics.
 
@@ -1860,26 +1881,40 @@ Every operator adapter consumes the versioned Projects contract classification b
 retain `reevaluate` only as an explicit compatibility alias for read-only `RefreshContext`; it cannot
 infer or change admission behavior.
 
-| Stable action | Classification | Admission contract |
+| Admission class | Stable actions | UX contract |
 |---|---|---|
-| `project.archive` | mutation | Preview + Confirmation Artifact + Durable Task |
-| `project.restore` | mutation | Preview + Confirmation Artifact + Durable Task |
-| `conversation.move` | mutation | Preview + Confirmation Artifact + Durable Task |
-| `project-folder.replace` | mutation | Preview + Confirmation Artifact + Durable Task |
-| `context-reference.unlink` | mutation | Preview + Confirmation Artifact + Durable Task |
-| `RefreshContext` / `refresh-context` | read-only recomputation | synchronous read; no confirmation, task, or maintenance audit |
+| Confirmation + Durable Task | `project.archive`, `project.restore`, `conversation.move`, `project-folder.replace`, `context-reference.unlink`, `resolution.confirm`, `project-proposal.confirm` | Request server Preview, present explicit confirm/cancel, consume one bound artifact, then monitor task truth |
+| Durable Task only | `project.create`, `project-setup.update`, `conversation.link`, `project-folder.set-initial`, `file-reference.link`, `memory.link` | Authorize, validate, and admit idempotently without a second confirmation; present task and recovery states |
+| Durable Task control | `task.cancel`, `task.reconcile` | Authorize against task/current checkpoint; reconciliation remains Administrator-only |
+| Synchronous read | list/open/resolve/context/refresh/validate/Conversation-start/audit/operator-read and `safe-diagnostic-export.create` | No Confirmation Artifact or Durable Task; Safe Diagnostic Export retains separate authorization and bounds |
 
-### Story 8.3: Operate Projects through a conformant Web console
+Inferred Conversation/File/Memory links and inferred initial Folder selection use the
+confirmation-required policy applicable to the inferred action. Explicitly actor-selected additive
+actions remain task-only.
+
+### Story 8.3 prerequisite Web work packages
+
+Each package is independently accepted at an immutable revision before the bounded Story 8.3
+integration. These are reviewable Web delivery packages, not new production stories.
+
+| ID | Independently demonstrable outcome | Accountable owners | Initial state |
+|---|---|---|---|
+| 8.3-P1 | Shared Web Preview, Confirmation Artifact, Durable Task, recovery, cancellation, authoritative re-query, focus, and live-region presentation foundation over canonical contracts | FrontComposer/Web Owner + Test Architect | open; blocked by G-3, G-6, and the current implementation-readiness freeze |
+| 8.3-P2 | Archive and restore Web journeys, including Folder-before-activation restore and role/denial/renewal evidence | Projects Web Owner + Product Owner + Test Architect | open; blocked by 8.3-P1 and the current implementation-readiness freeze |
+| 8.3-P3 | Conversation move, Folder replacement, and Conversation/File/Memory unlink Web journeys with owner-preserving recovery evidence | Projects Web Owner + Product Owner + Test Architect | open; blocked by 8.3-P1 and the current implementation-readiness freeze |
+
+### Story 8.3: Integrate conformant Project maintenance in the Web console
 
 As a **Tenant Operator or Tenant Project Administrator**,
 I want **an authenticated FrontComposer/Fluent V5 Web presentation adapter over the canonical operator actions and Durable Task truth**,
 So that **operators run authorized maintenance and read-only refresh with conformant, accessible, safe-failure UX (FR-22 + Epic 7 actions)**.
 
 - **Traceability:** FR-22, FR-4/FR-23/FR-11; NFR-1, NFR-9; AD-2, AD-19, AD-29, AD-32, AD-33, AD-34; UX-DR7, UX-DR11–UX-DR13, UX-DR17, UX-DR21–UX-DR25; canonical evidence rows `fr-22`, `finding-ux-001`.
+- **Entry gate:** 8.3-P1, 8.3-P2, and 8.3-P3 accepted at immutable revisions.
 
 **Acceptance Criteria:**
 
-**Given** an authenticated operator and the canonical action matrix, **When** the console renders an action, **Then** an explicit per-action presentation matrix covers role authority, Preview, Confirmation Artifact, task state, denial, stale/expired renewal, lost-response polling, `NeedsAttention`, cancellation before/after the irreversible checkpoint, and immutable terminal behavior without reimplementing Epic 7 server logic.
+**Given** the accepted 8.3-P1/P2/P3 packages and an authenticated operator, **When** the console composes a canonical action, **Then** it applies the action's exact admission class, role visibility, safe denial, and recovery semantics without reimplementing Epic 7 server logic or adding Preview/confirmation to task-only actions.
 
 **Given** `RefreshContext`, **When** the operator invokes it, **Then** it is presented separately as a read-only diagnostic recomputation with a new AD-32 snapshot and no confirmation, task, or maintenance audit.
 
@@ -1887,7 +1922,7 @@ So that **operators run authorized maintenance and read-only refresh with confor
 
 **Given** Fluent V5 governance (G-6) and the required `FluentAccordion` section pattern, **When** the console composes sibling sections, **Then** it uses Fluent 2 tokens and treats the HTML prototype as non-normative.
 
-- **Estimate:** L. **Completion boundary:** conformant authenticated Web presentation over already-delivered Epic 7 actions plus read-only `RefreshContext`; no server workflow implementation.
+- **Estimate:** M. **Completion boundary:** bounded integration of accepted lifecycle and association packages in the authenticated FrontComposer console, with canonical action classification and read-only `RefreshContext`; no server workflow implementation.
 
 ### Story 8.4: Operate Projects through a deterministic CLI contract
 
@@ -1899,7 +1934,7 @@ So that **scripted operations get a stable, independently verifiable, redaction-
 
 **Acceptance Criteria:**
 
-**Given** a mutating CLI action from the canonical matrix, **When** invoked, **Then** it requires the action's explicit target IDs, Tenant scope, Preview, and Confirmation Artifact contract and returns deterministic JSON with stable exit codes.
+**Given** an action from the canonical matrix, **When** invoked, **Then** the CLI requires explicit target IDs and Tenant scope, applies that action's exact confirmation-required, task-only, task-control, or synchronous-read admission contract, and returns deterministic JSON with stable exit codes.
 
 **Given** `refresh-context`, **When** invoked, **Then** it is a read command with no confirmation, task, or maintenance audit; any retained `reevaluate` alias maps byte-for-byte to the same canonical request and semantics.
 
@@ -1919,7 +1954,7 @@ So that **agents operate Projects safely and all three adapters can be compared 
 
 **Acceptance Criteria:**
 
-**Given** MCP read **resources** and mutating **tools**, **When** a tool is invoked, **Then** it consumes the canonical action classification, requires explicit action, target IDs, Tenant scope, and confirmation contract, carries structured safe metadata plus a short safe explanation, and cannot bypass Preview/Confirmation/admission or expand permissions.
+**Given** MCP read **resources** and action **tools**, **When** a tool is invoked, **Then** it consumes the canonical action classification, requires explicit action, target IDs, and Tenant scope, carries structured safe metadata plus a short safe explanation, applies the action's exact admission contract, and cannot bypass required Preview/Confirmation/admission or expand permissions.
 
 **Given** an end-user resolution/proposal confirmation, **When** MCP attempts it, **Then** it is refused, and consequential autonomous MCP mutation remains disabled until readiness and release gates pass with containment state shown explicitly.
 
@@ -1976,7 +2011,17 @@ change the Chatbot repository.
 |---|---|---|---|---|
 | 8.8-P1 | Projects/platform adapters + Identity platform | Authenticated Web/CLI/MCP parity, cross-Tenant denial, authorization freshness, and `NoPayloadLeakage` evidence over the accepted live topology | Test Architect + Platform Adapter Owners + Identity/Security Owner | open; blocked by Stories 8.3–8.5, G-4, G-5, and the current implementation-readiness freeze |
 | 8.8-P2 | FrontComposer/Web presentation | Operator WCAG 2.2 AA automated and authenticated manual keyboard, focus, live-region, screen-reader, 200%-zoom, and 320px evidence at small, median, and maximum shapes | FrontComposer/Web Owner + Test Architect | open; blocked by Story 8.3, G-3, G-6, and the current implementation-readiness freeze |
-| 8.8-P3 | Separately approved Hexalith.Chatbot presentation authority | Version-pinned Chatbot companion UX specification and authenticated candidate, proposal, confirm/cancel, expiry/staleness, lost-response, task-status, recovery, and first-response-admission evidence | Chatbot Presentation Owner + Chatbot Test Owner | open; external owner and approved immutable revision required; absence blocks Story 8.8 and release |
+| 8.8-P3 | Separately approved Hexalith.Chatbot presentation authority | Version-pinned Chatbot companion UX specification and authenticated candidate, proposal, confirm/cancel, expiry/staleness, lost-response, task-status, recovery, and first-response-admission evidence | Chatbot Presentation Owner + Chatbot Test Owner | blocked-external; external owner and approved immutable revision required; absence blocks Story 8.8 and release |
+
+8.8-P3 acceptance requires an owner-supplied manifest containing the Chatbot owner repository and
+immutable revision, companion contract version, approval date, approving authority, accountable
+owner, authenticated commands and deterministic fixtures, expected artifact paths and hashes,
+results and terminal disposition, and containment/rollback treatment for contract drift. Its
+journey evidence covers candidate/proposal presentation, no preselection, confirm/cancel,
+expiry/staleness/replay/tamper/mismatch, lost response, every task state, cancellation, recovery,
+authoritative completion re-query, response-state admission, and NFR-9 accessibility. Projects
+records only the accepted pin and evidence-row binding; it does not create or approve the
+Chatbot-owned artifact.
 
 ### Story 8.8: Integrate authenticated isolation, privacy, parity, and accessibility evidence
 

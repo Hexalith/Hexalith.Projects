@@ -34,8 +34,10 @@ value at both the request enum and the `ProjectReferenceSummary.referenceKind` r
 with those reserved surfaces and with `PR-4` (Memories writes deferred behind this spike).
 
 This ADR is the canonical record of that decision. It is the sole production deliverable of
-Story 2.6 alongside a one-line `AR-G4`-resolution pointer in
-`_bmad-output/planning-artifacts/architecture.md`. Story 2.7 is where every implementation
+Story 2.6 alongside the historical `AR-G4`-resolution pointer now retained in the
+[archived May architecture](../../_bmad-output/planning-artifacts/archive/architecture-2026-05-24-superseded.md).
+The current Architecture Spine preserves the owner-authority and bounded-reference constraints in
+AD-11, AD-14, AD-15, and G-2 while delegating the exact Memories target to this ADR. Story 2.7 is where every implementation
 artifact (`LinkMemory` / `UnlinkMemory` commands and events, `MemoryReference` state,
 `ProjectReferenceIndexProjection` memory rows, `IProjectMemoryDirectory` implementation,
 endpoints, OpenAPI routes, regenerated typed client / idempotency helpers, and
@@ -397,7 +399,11 @@ Mirrors the Story 2.5 precedent — none of these are produced by Story 2.6:
 
 ## References
 
-- `_bmad-output/planning-artifacts/architecture.md` — `AR-G4` (Memories Case-vs-Unit),
+- [Current Architecture Spine](../../_bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md)
+  — AD-11, AD-14, AD-15, and G-2 preserve owner authority, bounded references, query trust,
+  and the external owner-contract gate; this ADR remains authoritative for the Case-level target.
+- [Archived May architecture](../../_bmad-output/planning-artifacts/archive/architecture-2026-05-24-superseded.md)
+  — historical `AR-G4` (Memories Case-vs-Unit),
   `AR-14` (Folders / Memories clients; experimental writes; Tenant → Case → MemoryUnit
   model), `AR-9` (reference index), `AR-11` (ACLs), `AR-18` (shared vocabulary),
   Implementation Sequence step 6.

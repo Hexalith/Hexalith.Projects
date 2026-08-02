@@ -4,14 +4,13 @@
 
 ## Status & containment
 
-- **Overall readiness:** NOT READY (2026-08-01 implementation-readiness assessment; 2026-07-17 READY remains historical planning-layer authorization only)
+- **Overall readiness:** NOT READY (2026-08-02 implementation-readiness assessment; 2026-07-17 READY remains historical planning-layer authorization only)
 - **Freeze:** The approved epic/UX/evidence corrections are reconciled, but production-authority implementation remains blocked until 6.1-P4 accepts P0, P1R, P2, and P3 with historical P1 as a satisfied input, clean-checkout verification passes, the Story 6.1 spec passes ready-for-development, and an independent implementation-readiness rerun returns READY
 - **Release block:** production + consequential autonomous MCP mutation + proposed-Project confirmation blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance
-- **Validation gate (target):** `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` — tool status **not-available**; Builds runner candidate `4351d7cba7545a96661ca2ee2ca2629df6d0a118` and qualification revision `699083549932b9509fa36ed853402fe3f8b04fc5` remain unaccepted, not an accepted published consumer capability
+- **Validation gate (target):** `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` — tool status **not-available**; no row may be represented as passed until the accepted capability and required evidence exist
 - **Rows total:** 63 (FR 24 · NFR 11 · findings 16 · release 12). No row is `passed` pre-READY.
 
-**Status legend:** `pending` = owned + fully specified, not yet executed · `blocked-external` = additionally gated on a G-1…G-6 or explicitly routed external capability · `not-verified` = environment/tool unavailable (never a pass) · `failed` = executed and currently failing · `passed` = real, honest passing evidence (none yet). None of `pending`/`blocked-external`/`not-verified`/`failed` counts as a pass.
-
+**Status legend:** `pending` = owned + fully specified, not yet executed · `blocked-external` = additionally gated on a G-1…G-6 or explicitly routed external capability · `not-verified` = environment/tool unavailable (never a pass) · `failed` = executed and currently failing · `passed` = real, honest passing evidence. None of `pending`/`blocked-external`/`not-verified`/`failed` counts as a pass.
 
 ## Functional Requirements (24)
 
@@ -19,7 +18,7 @@
 |---|---|---|---|---|---|---|---|
 | `fr-1` | FR-1 | Create Project — Folder-first, idempotent, metadata-classified; Active only after exactly one authorized Folder is bound and read-model-confirmed | 7.1 | 6.1 | AD-3, AD-5, AD-8, AD-12, AD-22, AD-31 | 🔒 blocked-external | 7.1-P1 contract/validator acceptance + 7.1-P2 durable-task and Folders capability acceptance |
 | `fr-2` | FR-2 | Open Project — authorized metadata/lifecycle/setup/reference summary via supported read models | 6.1 | — | AD-3, AD-14, AD-19, AD-20, AD-32, AD-33 | 🔒 blocked-external | 6.1-P0, P1R, P2..P4 (historical P1 normalized 3.70.1 on 2026-07-18; post-P1 Builds candidate drift is unresolved): G-4 runner and acceptance record, exact revalidated baseline, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record |
-| `fr-3` | FR-3 | Update Project Setup — durable, additive, idempotent | 7.2 | — | AD-5, AD-15, AD-16 | 🔒 blocked-external | G-1 durable-task engine |
+| `fr-3` | FR-3 | Update Project Setup — durable, additive, idempotent; Succeeded only after authoritative read-model confirmation | 7.2 | — | AD-5, AD-15, AD-16 | 🔒 blocked-external | G-1 durable-task engine |
 | `fr-4` | FR-4 | Archive Project — Preview + single-use confirmation + idempotent Durable Task | 7.13 | — | AD-4, AD-5, AD-13 | 🔒 blocked-external | G-1 durable-task engine + confirmation record |
 | `fr-5` | FR-5 | List Projects — Tenant-scoped, authorization-filtered, cursor-paged | 6.1 | — | AD-14, AD-19, AD-20, AD-27 | 🔒 blocked-external | 6.1-P0, P1R, P2..P4 (historical P1 normalized 3.70.1 on 2026-07-18; post-P1 Builds candidate drift is unresolved): G-4 runner and acceptance record, exact revalidated baseline, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record |
 | `fr-6` | FR-6 | Link Conversation — durable single-membership link via Conversations owner + reverse index | 7.3 | — | AD-10, AD-12, AD-14 | 🔒 blocked-external | G-2 Conversations owner contract |
@@ -37,10 +36,10 @@
 | `fr-18` | FR-18 | Refresh Project Context — read-only recompute; surfaces stale/unavailable refs; never mutates | 6.3 | — | AD-7, AD-14, AD-32 | 🟡 pending | — |
 | `fr-19` | FR-19 | Validate Setup & Metadata Classification — four-value metadataClass, shared SensitiveMetadataTierValidator, auth-before-parse, 400 rejectedField, name-only compatibility | 7.1 | 6.7 | AD-31, AD-16 | 🔒 blocked-external | 7.1-P1 contract/validator acceptance; 7.1-P2 capability acceptance; E-9 remediation gate |
 | `fr-20` | FR-20 | Retrieve Conversation-Start Setup — bounded start subset with admission truth; excludes audit metadata | 6.2 | — | AD-14, AD-32 | 🟡 pending | — |
-| `fr-21` | FR-21 | Record Project Audit Events — metadata-only audit of admissions/mutations/confirmations/reconciliation/export; ≥365-day retention | 8.1 | — | AD-21, AD-26, AD-30 | 🟡 pending | — |
+| `fr-21` | FR-21 | Record Project Audit Events — metadata-only audit of admissions/mutations/confirmations/reconciliation/export; ≥365-day retention; owns deferred Web/CLI audit adapters | 8.1 | 6.5, 6.6 | AD-21, AD-26, AD-30 | 🟡 pending | — |
 | `fr-22` | FR-22 | Support Operator Read Access — authorized metadata-only read across Web/CLI/MCP + operational surfaces; read grants neither export nor mutation | 6.5 / 6.6 | 8.1, 8.3, 8.4, 8.5 | AD-2, AD-19, AD-20, AD-29 | 🔒 blocked-external | G-3 FrontComposer adapters + G-5 identity |
-| `fr-23` | FR-23 | Restore Archived Project — Preview + confirmation + Folder-before-activation ordering; NeedsAttention on partial; no owner-resource deletion | 7.14 | — | AD-3, AD-13, AD-23 | 🔒 blocked-external | G-1 + G-2 Folders owner |
-| `fr-24` | FR-24 | Create Safe Diagnostic Export — projects.safe-diagnostic-export.v1; ≤1 MiB / ≤500 refs / ≤100 audit rows; separate permission; no cursor/retention; Chatbot cannot | 8.2 | — | AD-7, AD-19, AD-21, AD-26, AD-27 | 🟡 pending | — |
+| `fr-23` | FR-23 | Restore Archived Project — RequestPreview validates the Archived Project and Folder plan before bound confirmation; Folder-before-activation ordering; NeedsAttention on partial; no owner-resource deletion | 7.14 | — | AD-3, AD-13, AD-23 | 🔒 blocked-external | G-1 + G-2 Folders owner |
+| `fr-24` | FR-24 | Create Safe Diagnostic Export — projects.safe-diagnostic-export.v1; ≤1 MiB / ≤500 refs / ≤100 audit rows; separate permission; no cursor/retention; no exactly-once claim without an approved idempotency contract; Chatbot cannot | 8.2 | — | AD-7, AD-19, AD-21, AD-26, AD-27 | 🟡 pending | — |
 
 ## Non-Functional Requirements (11)
 
@@ -54,7 +53,7 @@
 | `nfr-6` | NFR-6 | Pagination & export bounds — cursor default 50 / cap 200; export caps + 2 concurrent per Tenant | 8.9 | 8.2 | AD-19, AD-21, AD-27 | 🟡 pending | — |
 | `nfr-7` | NFR-7 | Back-pressure & dependency control — 100 reads/s (burst 200), 20 mutations/s (burst 40), 1000 nonterminal tasks, 2 exports; 2s/10s timeouts; ≤3 retries/30s; structured overload | 8.9 | — | AD-27 | 🟡 pending | — |
 | `nfr-8` | NFR-8 | Retention & transient data — terminal/idempotency ≥30 days; Preview/Confirmation 15-min expiry; audit ≥365 days; traces/exports not persisted | 8.1 | 8.2, 7.2, 7.4 | AD-4, AD-5, AD-21, AD-26 | 🟡 pending | — |
-| `nfr-9` | NFR-9 | Accessibility — WCAG 2.2 AA across operator + Chatbot companion; keyboard/focus/AT/200%/320px; automated + authenticated manual evidence | 8.8 | 6.5, 8.3 | AD-34, AD-29 | 🔒 blocked-external | 8.8-P2 operator accessibility acceptance; 8.8-P3 separately owned and approved immutable Chatbot companion pin; G-3 FrontComposer adapters |
+| `nfr-9` | NFR-9 | Accessibility — WCAG 2.2 AA across operator + Chatbot companion; automated plus authenticated manual keyboard/screen-reader evidence at small/median/max shapes, 200% zoom, and 320 CSS-pixel reflow; critical/serious violations block | 8.8 | 6.5, 8.3 | AD-34, AD-29 | 🔒 blocked-external | 8.8-P2 operator accessibility acceptance; 8.8-P3 blocked-external pending a separately owned approved immutable Chatbot companion manifest with owner/revision/version/approval/commands/fixtures/artifact hashes/results/disposition/rollback and complete journey evidence; G-3 FrontComposer adapters |
 | `nfr-10` | NFR-10 | Compatibility — additive/serialization-tolerant contracts; name-only creation preserved; retirement gated; no event-history rewrite | 6.7 | 6.1, 7.15, 8.7 | AD-6, AD-16, AD-17, AD-22 | 🔒 blocked-external | Historical 6.1-P1 version/source normalization completed on EventStore 3.70.1 (2026-07-18); post-P1 P1R revalidation and 6.1-P4 entry-gate acceptance remain pending; final cutover gate remains Story 6.7 |
 | `nfr-11` | NFR-11 | Release evidence — all critical categories pass; failed/unexplained-skip critical case blocks; unavailable env = not-verified | 8.11 | 8.1, 8.6, 8.7, 8.8, 8.9, 8.10 | AD-25, AD-28, AD-30 | 🔒 blocked-external | 8.11-P1/P2/P3 and every preceding Epic 8 story; G-4 hexalith-evidence tool (AD-30); terminal gate |
 
@@ -75,7 +74,7 @@
 | `finding-ops-001` | OPS-001 | P2 | Implement truthful health and source-generated observability | 8.6 | — | AD-26, AD-28 | inferred | 🟡 pending | — |
 | `finding-mcp-001` | MCP-001 | P2 | Publish accurate MCP schemas, annotations, and task semantics | 8.5 | — | AD-29 | inferred | 🔒 blocked-external | G-3 FrontComposer/MCP adapters |
 | `finding-build-001` | BUILD-001 | P2 | Align dependency modes, Dapr runtime, central build policy, and immutable Actions (Builds owns NSwag/Fluxor versions) | 8.7 | — | AD-24, AD-25 | unassigned-in-source | 🔒 blocked-external | G-6 toolchain alignment (Dapr runtime↔SDK; Builds central versions) |
-| `finding-ux-001` | UX-001 | P2 | Rebuild operator UI with Fluent V5 components, current tokens, and accessible composition | 8.3 | 8.8 | AD-34 | inferred | 🔒 blocked-external | G-3 FrontComposer; G-6 Fluent UI RC governance |
+| `finding-ux-001` | UX-001 | P2 | Rebuild operator UI with Fluent V5 components, current tokens, and accessible composition | 8.3 | 8.8 | AD-34 | inferred | 🔒 blocked-external | G-3 FrontComposer; G-6 Fluent UI RC governance; accepted immutable 8.3-P1/P2/P3 Web packages |
 | `finding-code-001` | CODE-001 | P2 | Enforce one handwritten C# type per file | 8.7 | — | AD-16 | unassigned-in-source | 🟡 pending | — |
 | `finding-cli-001` | CLI-001 | P2 | Reject unknown, duplicate, and unsupported CLI options deterministically | 8.4 | 6.6 | AD-19 | inferred | 🟡 pending | — |
 
@@ -88,7 +87,7 @@
 | `release-restart-concurrency` | NFR-11.restart-concurrency | Restart/concurrency — durable convergence across restart, two-instance, concurrency | 8.10 | 7.15 | AD-30, AD-4, AD-9 | 🔒 blocked-external | G-1 durable-task engine |
 | `release-duplicate-delivery` | NFR-11.duplicate-delivery | Duplicate-delivery — at-least-once delivery converges without duplicate durable effect | 8.10 | — | AD-30, AD-4, AD-12 | 🔒 blocked-external | G-1 durable-task engine |
 | `release-lost-response` | NFR-11.lost-response | Lost-response — equivalent retry after a lost response converges to the original durable truth | 8.10 | — | AD-30, AD-4, AD-5 | 🔒 blocked-external | G-1 durable-task engine |
-| `release-accessibility` | NFR-11.accessibility | Accessibility — WCAG 2.2 AA automated + authenticated manual evidence for operator AND Chatbot companion journeys | 8.8 | 8.3, 6.5 | AD-30, AD-34 | 🔒 blocked-external | 8.8-P2 operator accessibility acceptance; 8.8-P3 separately owned, approved, immutable Chatbot companion pin; G-3 |
+| `release-accessibility` | NFR-11.accessibility | Accessibility — WCAG 2.2 AA automated + authenticated manual keyboard/screen-reader evidence at small/median/max shapes, 200% zoom, and 320 CSS-pixel reflow for operator AND Chatbot companion journeys; critical/serious violations block | 8.8 | 8.3, 6.5 | AD-30, AD-34 | 🔒 blocked-external | 8.8-P2 operator accessibility acceptance; 8.8-P3 blocked-external pending a separately owned approved immutable Chatbot manifest with full ownership, revision, approval, command, fixture, artifact/hash/result/disposition, rollback, journey, and NFR-9 evidence; G-3 |
 | `release-privacy` | NFR-11.privacy | Privacy — NoPayloadLeakage across every event/DTO/log/audit/surface/export | 8.8 | 6.3, 8.1, 8.2 | AD-30, AD-11, AD-26 | 🔒 blocked-external | 8.8-P1 acceptance; authenticated live topology |
 | `release-performance` | NFR-11.performance | Performance — authenticated performance at small/median/max supported scale | 8.9 | — | AD-30, AD-27 | 🟡 pending | — |
 | `release-deployment` | NFR-11.deployment | Deployment — deployed version/environment + encryption/KMS evidence recorded | 8.11 | 8.7 | AD-30, AD-28 | 🔒 blocked-external | 8.11-P1 acceptance; G-5 bindings; deployment environment |
@@ -98,7 +97,7 @@
 
 ## Verification commands & evidence artifacts
 
-_Every row's exact verification command and expected evidence artifact (full detail in the YAML)._
+_Every row’s exact verification command and expected evidence artifact (full detail in the YAML)._
 
 | Key | Verification command | Evidence artifact | Est. |
 |---|---|---|---|
@@ -168,17 +167,21 @@ _Every row's exact verification command and expected evidence artifact (full det
 
 ## Notes & non-authoritative bindings
 
+- **`fr-2`** — Planning coverage is complete; Story 6.1 implementation remains non-startable.
+- **`fr-5`** — Planning coverage is complete; Story 6.1 implementation remains non-startable.
+- **`fr-22`** — Stories 6.5/6.6 deliver inventory/detail/health/current-trace reads only. Story 8.1 owns first production audit truth and later enables the Web audit timeline and CLI audit command without a backward dependency.
 - **`fr-23`** — NEW FR (2026-07-15 rebaseline). Restore counterpart to FR-4.
 - **`fr-24`** — NEW FR (2026-07-15/16 rebaseline). Release-blocking.
+- **`nfr-1`** — Story 8.8 performs only integrated manifest and critical-case validation after the package passes.
 - **`nfr-2`** — Evidence acquisition belongs to 8.11-P2; Story 8.11 records only the terminal decision.
 - **`nfr-7`** — Previously unmapped (readiness M2). Owner assigned per SCP §4.6.
 - **`nfr-8`** — Previously unmapped (readiness M2). Owner assigned per SCP §4.6.
-- **`nfr-9`** — Story 8.8 integrates accepted 8.8-P2/P3 manifests only. A missing, mutable, unapproved, or contract-drifted Chatbot companion artifact blocks Projects release.
-- **`nfr-11`** — Acquisition belongs to 8.11-P1/P2/P3. Story 8.11 validates the matrix and records the terminal decision; it cannot complete by recording a blocker.
+- **`nfr-9`** — Story 8.8 integrates accepted package manifests only. A missing, mutable, unapproved, incomplete, or contract-drifted Chatbot companion artifact blocks Projects release; unresolved critical or serious accessibility violations also block.
+- **`nfr-11`** — Acquisition is owned by prerequisite packages. Story 8.11 validates the complete matrix and records the terminal decision; it cannot complete by recording a blocker.
 - **`finding-arch-002`** — Readiness addendum §4.2 named OLD 'Story 6.2 (E-4/E-5)' for the Projects.UI.Contracts boundary; under the rebaseline that boundary work is Story 6.7 (contract cutover) + 8.7 (package graph). Confirm at de-placeholdering.
 - **`finding-build-001`** — No epic/story explicitly assigned in source; mapped to 8.7 per SCP §4.3 shared-build centralization. Confirm at de-placeholdering.
 - **`finding-code-001`** — Audit sequences this in Phase 3 (after package/UI/MCP ownership settles). Mapped to 8.7 (source structure). Confirm at de-placeholdering.
 - **`release-smoke`** — HONEST current state is FAILED, not skipped. Do not represent as passing.
 
 ---
-_Reconciled from the canonical YAML on 2026-08-01. Do not hand-edit divergently; edit the YAML and regenerate._
+_Reconciled mechanically from the canonical YAML on 2026-08-02. Do not hand-edit divergently; edit the YAML and regenerate._

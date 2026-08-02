@@ -94,6 +94,8 @@ It is a query and applies rows 1, 4, 5, 6, 8. Row 2 is N/A (no body), rows 3 and
 
 - Append a new row only when a load-bearing invariant is shared across two or more surfaces.
 - Never delete a row without a corresponding ADR explaining why the invariant no longer holds.
-- The architecture pointer for this checklist is cross-linked from
-  `_bmad-output/planning-artifacts/architecture.md` near the AR-9 fail-closed posture / Process
-  Patterns section (Story 3.2, Task 12).
+- The current architecture basis is the
+  [Architecture Spine](../../_bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md),
+  especially AD-19, AD-20, AD-27, and AD-32. The original AR-9 cross-link is retained in the
+  [archived May architecture](../../_bmad-output/planning-artifacts/archive/architecture-2026-05-24-superseded.md)
+  as historical Story 3.2 evidence.

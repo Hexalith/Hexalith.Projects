@@ -15,7 +15,7 @@ inputDocuments:
   - '_bmad-output/planning-artifacts/epics.md'
   - '_bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md'
   - '_bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/addendum.md'
-  - '_bmad-output/planning-artifacts/architecture.md'
+  - '_bmad-output/planning-artifacts/archive/architecture-2026-05-24-superseded.md'
   - '_bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md'
   - '_bmad-output/planning-artifacts/implementation-readiness-report-2026-07-17.md'
   - '_bmad-output/test-artifacts/test-design-architecture.md'
@@ -70,7 +70,7 @@ inputDocuments:
 
 - Epic and story requirements are available in `_bmad-output/planning-artifacts/epics.md`.
 - The epic document contains explicit acceptance criteria for its stories.
-- Architecture context is available in `_bmad-output/planning-artifacts/architecture.md` and the reconciled architecture spine beneath `_bmad-output/planning-artifacts/architecture/`.
+- Historical architecture context is available in `_bmad-output/planning-artifacts/archive/architecture-2026-05-24-superseded.md`; the reconciled architecture spine is beneath `_bmad-output/planning-artifacts/architecture/`.
 
 **Result:** Epic-level prerequisites are satisfied. The exact epic scope and authoritative context will be resolved in Step 2.
 
@@ -87,7 +87,7 @@ inputDocuments:
 
 - The current PRD and addendum define 24 functional requirements and 11 NFRs. Epic 6 binds FR2, FR5, FR12, FR13, FR16, FR17, FR18, FR20, and FR22, plus NFR1, NFR5, NFR8, NFR9, and NFR10.
 - Quantified read targets include p95 under 500 ms for the median dataset, a hard maximum under 1 second, default page size 50, maximum page size 200, 99.9% availability, metadata-only output, and WCAG 2.2 AA.
-- `_bmad-output/planning-artifacts/architecture.md` is a superseded pointer. The sole normative architecture is the 2026-07-15 `ARCHITECTURE-SPINE.md`.
+- `_bmad-output/planning-artifacts/archive/architecture-2026-05-24-superseded.md` is archived historical evidence. The sole normative architecture is the 2026-07-15 `ARCHITECTURE-SPINE.md`.
 - The controlling architecture decisions are AD-1, AD-14, AD-17, AD-19, AD-20, AD-25, AD-30, AD-32, and AD-34, with entry gates G3–G6 relevant to this epic.
 - The 2026-07-17 readiness report concludes **READY** for story creation and planning, while preserving per-story entry gates and noting that 37 of 63 evidence rows depend on external tooling or platform readiness.
 
