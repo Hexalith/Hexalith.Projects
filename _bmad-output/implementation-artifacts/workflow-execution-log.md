@@ -66,3 +66,20 @@
 - Next sequence: apply approved internal edits, refresh hashes and conformance, obtain authorized same-baseline sign-off, accept the Story 6.1 prerequisite chain, pass P4 from the exact clean checkout, pass Story 6.1 specification readiness, then obtain an independent result exactly `READY`
 - Story state: Story 6.1, Story 8.8, and Story 8.11 remain blocked; no story status is promoted by approval
 - Release state: Blocked; the 19-passed/56-failed smoke record remains failed and the Chatbot companion package remains absent until independently superseded
+
+## 2026-08-03 — Correct Course: Post-P1R EventStore and G-4 Baseline Revalidation
+
+- Workflow: bmad-correct-course
+- User: Jerome
+- Mode: Batch
+- Trigger: Revalidate the EventStore source, Builds catalog, Architecture Spine, and G-4 runner baseline after post-P1 dependency drift
+- Approval: Approved by Jerome on 2026-08-03
+- Scope: Moderate
+- Proposal: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03.md
+- Artifacts finalized: Approved Sprint Change Proposal, six explicit old-to-new change sets, complete checklist disposition, success criteria, sequencing constraints, and implementation handoff plan
+- Existing artifact state preserved: no EventStore source/tag, Builds catalog/audit/runner, Architecture Spine, G-4 consumer, sprint-status, epic, traceability, dependency, submodule, implementation, publication, or release-state change was executed by workflow completion
+- Primary handoff: Product Owner and Developer/planning maintainer for factual state reconciliation and approved backlog changes
+- Required owner handoff: EventStore Owner for source/package selection; Builds Owner for runner/audit alignment; Solution Architect and Test Architect for exact P1R acceptance; Platform Owner for later P0 acceptance
+- Next sequence: correct current-state planning observations, select exact EventStore source/package coordinates, align and qualify Builds, obtain four-owner P1R acceptance, update Architecture and close only P1R, then publish/consume/qualify G-4 through P0 before continuing the Story 6.1 chain
+- Story state: 6.1-P1R and 6.1-P0 remain open; P2, P3, P4, and Story 6.1 remain blocked; 3.88.0 remains a superseded unaccepted candidate and 3.70.1 remains the last accepted rollback baseline
+- Release state: Blocked; published Builds tools 4.23.0 embed EventStore 3.70.1 and no Projects G-4 consumer or P0 acceptance record exists
