@@ -1,5 +1,5 @@
 # generated: 2026-07-17T08:14:03+02:00
-# last_updated: 2026-08-02T18:59:46+02:00
+# last_updated: 2026-08-03T08:21:35+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -50,11 +50,27 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-08-02T18:59:46+02:00
+last_updated: 2026-08-03T08:21:35+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
 story_location: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts
+production_authority_epics: [6, 7, 8]
+historical_development_status_sha256: ce120516809be4a3814565f67c7a1e648650b3b9f0547ed9a4135a78eba0bbaf
+production_authority_guard:
+  validator: tools/planning/validate_production_authority.py
+  project_instruction: _bmad-output/project-context.md
+  policy_source: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md#510-historical-scheduling--add-a-machine-checkable-production-authority-guard
+  historical_epics: [1, 2, 3, 4, 5]
+  historical_status_policy: immutable-done
+  validation_phase: preflight-and-post-generation-before-atomic-replacement
+  deterministic_test: tests/tools/test_production_authority_guard.py
+readiness_provenance:
+  current_report: _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02-rerun-4.md
+  current_result: NOT_READY
+  approved_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md
+  correction_scope: internal-planning-artifacts-only
+story_6_1_prerequisite_chain: "6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3 -> authorized Solution Architect sign-off on the exact corrected baseline -> 6.1-P4 exact clean-checkout acceptance -> Story 6.1 specification readiness -> independent implementation-readiness result exactly READY -> Story 6.1 may become ready-for-dev"
 
 development_status:
   # Epic 1: Project Workspace Foundation
@@ -312,7 +328,7 @@ action_items:
     expected_evidence: "evidence/epic6/6.1-entry-gate.yaml; accepted P0, P1R, P2, and P3 revisions and owner approvals; signed Solution-Architect conformance checklist against the same baseline; executable rollback; passing exact clean-checkout restore/run/full-test/down/evidence-validation commands"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p4--accept-the-story-61-entry-gate"
     course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md"
-    latest_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md#41-make-architecture-sign-off-an-explicit-story-61-gate-input"
+    latest_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md#54-story-61--preserve-the-literal-prerequisite-chain"
     routed_to: "Product Manager / Solution Architect / Product Owner / Test Architect"
   - epic: 7
     id: "7.1-P1"

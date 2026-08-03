@@ -3,8 +3,8 @@ project_name: 'Hexalith.Projects'
 user_name: 'Jerome'
 sections_completed: ['technology_stack', 'language_rules', 'framework_rules', 'testing_rules', 'quality_rules', 'workflow_rules', 'anti_patterns']
 status: 'complete'
-date: '2026-05-12'
-rule_count: 96
+date: '2026-08-03'
+rule_count: 98
 optimized_for_llm: true
 existing_patterns_found: 12
 ---
@@ -122,6 +122,8 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Parties uses MinVer tag-based versioning; do not assume every module releases through semantic-release.
 - CI/test lanes may separate unit, integration, E2E, benchmark, and quarantined tests; keep category filters and traits intact.
 - Do not casually change Node engine requirements, Playwright workspace layout, or npm script names used by CI.
+- Before creating, reopening, or scheduling any epic story, run `python3 tools/planning/validate_production_authority.py --story-id <epic.story>` and halt on a nonzero result. `_bmad-output/implementation-artifacts/sprint-status.yaml::production_authority_epics` is authoritative and permits only Epics 6–8; Epics 1–5 are immutable completed history.
+- Before sprint planning or reconciliation changes `sprint-status.yaml`, run `python3 tools/planning/validate_production_authority.py --validate-index`. Generate the candidate index separately, run `python3 tools/planning/validate_production_authority.py --validate-index --sprint-status <candidate>` against that exact candidate, and only then replace the active index atomically; re-run the active-index check afterward. Halt on every nonzero result. Do not bypass, weaken, or reinterpret this Projects-owned scheduling guard.
 
 ### Critical Don't-Miss Rules
 
@@ -163,4 +165,4 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - Review periodically for outdated rules.
 - Remove rules that become obvious or stop preventing real mistakes.
 
-Last Updated: 2026-05-12
+Last Updated: 2026-08-03

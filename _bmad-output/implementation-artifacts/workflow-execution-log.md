@@ -48,3 +48,21 @@
 - Next sequence: P1R baseline acceptance, current-head release-finding reconciliation, supported composition, real persisted qualification, packaged evidence capture, exact prerelease publication and remote restore, machine-checkable owner acceptance, P4 readiness rerun
 - Story state: Story 6.1 remains blocked; P0 remains open and the G-4 tool remains `not-available` to Projects until the published capability and acceptance record validate independently
 - Release state: Blocked; no Story 6.1 implementation or downstream release authority is granted by this planning correction
+
+## 2026-08-03 — Correct Course: Implementation-Readiness Rerun 4
+
+- Workflow: bmad-correct-course
+- User: Jerome
+- Mode: Batch
+- Trigger: The 2026-08-02 implementation-readiness rerun 4 returned `NOT READY` with 24/24 Functional Requirements mapped, 11 Non-Functional Requirements assessed, and 11 readiness findings
+- Approval: Approved by Jerome on 2026-08-03
+- Scope: Moderate
+- Proposal: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md
+- Artifacts finalized: Approved Sprint Change Proposal, explicit old-to-new edit set, sequencing constraints, success criteria, and implementation handoff plan
+- Existing artifact state preserved: no proposed addendum, epic, UX, traceability, conformance, sprint-status, external evidence, implementation, or release-state correction was applied by this workflow completion
+- Primary handoff: Product Owner and Developer/planning maintainer for approved planning-artifact correction
+- Required governance: authorized Solution Architect for exact corrected-baseline sign-off and Epic 8 cohesion disposition; Test Architect for P4, story readiness, independent rerun, and superseding release smoke
+- External handoff: EventStore, Builds, Platform, and Identity-Security owners for `6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3`; Chatbot Presentation/Test owners for independently owned `8.8-P3`
+- Next sequence: apply approved internal edits, refresh hashes and conformance, obtain authorized same-baseline sign-off, accept the Story 6.1 prerequisite chain, pass P4 from the exact clean checkout, pass Story 6.1 specification readiness, then obtain an independent result exactly `READY`
+- Story state: Story 6.1, Story 8.8, and Story 8.11 remain blocked; no story status is promoted by approval
+- Release state: Blocked; the 19-passed/56-failed smoke record remains failed and the Chatbot companion package remains absent until independently superseded

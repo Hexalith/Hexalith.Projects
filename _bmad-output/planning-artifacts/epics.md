@@ -9,8 +9,9 @@ reconciledAgainst:
   - 'final PRD FR-1..FR-24 / NFR-1..NFR-11'
   - 'ARCHITECTURE-SPINE.md AD-1..AD-34'
 productionAuthority: 'Epics 6-8 (33 stories: 7/15/11) plus explicit prerequisite/evidence work-package ledgers'
+productionAuthoritySchedulingGuard: '_bmad-output/implementation-artifacts/sprint-status.yaml::production_authority_epics, enforced by tools/planning/validate_production_authority.py'
 planningReadinessGate: 'READY on 2026-07-17 for story-file creation and sprint reconciliation; completed'
-implementationReadiness: 'NOT READY on 2026-08-02 rerun 3; production-authority implementation remains blocked'
+implementationReadiness: 'NOT READY on 2026-08-02 rerun 4; production-authority implementation remains blocked'
 implementationBlockedUntil: 'Story 6.1 prerequisites are accepted, Solution Architect conformance is signed against the exact current baseline, P4 passes from a clean checkout, its story specification passes readiness, and an independent rerun returns READY'
 releaseBlockedUntil: 'Story 8.11 passes with dated Jerome + John acceptance'
 inputDocuments:
@@ -31,6 +32,8 @@ inputDocuments:
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-8.3-P1.md
   - _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02-rerun-3.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md
+  - _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02-rerun-4.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md
   - _bmad-output/planning-artifacts/research/domain-eventstore-persistence-for-hexalith-projects-module-data-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-folders-integration-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-projects-referencing-conversations-research-2026-05-24.md
@@ -58,7 +61,9 @@ Hexalith.Projects is a **tenant-aware AI workspace boundary module** built as a 
 
 _Source: final PRD §6–§8 + addendum (FR-1–FR-24). Each FR has testable consequences in the PRD; abbreviated here._
 
-> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-02 rerun 3 returned `NOT READY`; its approved planning-artifact corrections are applied here, but production-authority implementation remains blocked until Story 6.1's prerequisite chain is accepted, Solution Architect conformance is signed against the exact current baseline, P4 passes from an accepted clean checkout, the Story 6.1 specification passes readiness, and a superseding rerun returns exactly `READY`. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance.
+> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-02 rerun 4 returned `NOT READY`; its approved internal planning-artifact corrections are applied here, but production-authority implementation remains blocked until Story 6.1's prerequisite chain is accepted, Solution Architect conformance is signed against the exact current baseline, P4 passes from an accepted clean checkout, the Story 6.1 specification passes readiness, and a superseding rerun returns exactly `READY`. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance.
+
+> **Machine-checkable scheduling guard:** `_bmad-output/implementation-artifacts/sprint-status.yaml` owns the authoritative `production_authority_epics: [6, 7, 8]` field. Before story creation, reopening, or scheduling, and before sprint reconciliation, `tools/planning/validate_production_authority.py` must pass. The validator permits current production work only for Epics 6–8 and rejects Epic 1–5 requests while preserving their readable `done` records. The required preflight is loaded by both workflows through `_bmad-output/project-context.md`; a nonzero result is a hard stop.
 
 **Project Workspace Management**
 
@@ -338,10 +343,18 @@ behavior completes in Epic 7, and all release evidence in Epic 8).
 
 Full AC-bearing detail is in the **Corrective Production Plan (Epics 6–8)** section below. The
 2026-07-17 `READY` result completed planning-layer authorization for story-file creation and sprint
-reconciliation. The 2026-08-01 assessment returned `NOT READY`; its approved artifact corrections
-are applied here, but production-authority implementation remains blocked until Story 6.1's accepted
-clean-checkout gate is executable, its story specification passes readiness, and a superseding
-independent rerun returns exactly `READY`.
+reconciliation. The 2026-08-02 rerun 4 returned `NOT READY`; its approved internal artifact
+corrections are applied here, but production-authority implementation remains blocked by this exact
+sequence:
+
+```text
+6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3
+          -> authorized Solution Architect sign-off on the exact corrected baseline
+          -> 6.1-P4 exact clean-checkout acceptance
+          -> Story 6.1 specification readiness
+          -> independent implementation-readiness result exactly READY
+          -> Story 6.1 may become ready-for-dev
+```
 
 ## Cross-Cutting Foundational Slices (Epic 1)
 
@@ -1304,8 +1317,9 @@ obligation without making unrelated later-surface gates prerequisites for Story 
 
 **Story 6.1 prerequisite work packages.** These are enablement packages, not user-value stories and
 not Story 6.1 implementation subtasks. The approved routing and complete acceptance contracts are in
-`sprint-change-proposal-2026-07-17.md`, the approved 2026-08-01 G-4/P1R correction, and the approved
-2026-08-02 rerun-3 correction for same-baseline architecture sign-off sequencing.
+`sprint-change-proposal-2026-07-17.md`, the approved 2026-08-01 G-4/P1R correction, the approved
+2026-08-02 rerun-3 correction for same-baseline architecture sign-off sequencing, and the approved
+rerun-4 correction preserving the complete entry chain without accepting any step.
 
 | ID | Repository authority | Required outcome | Accountable owners | Initial state |
 |---|---|---|---|---|
@@ -1327,12 +1341,12 @@ NFR-11 but no story here is a release gate._
 **Story 6.1 executable critical path:**
 
 ```text
-P1R → {P0, P2} → P3
-    → Solution Architect conformance sign-off against the exact current baseline
-    → P4 clean-checkout gate acceptance
-    → Story 6.1 specification readiness
-    → independent implementation-readiness rerun
-    → Story 6.1 only when the rerun returns READY
+6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3
+          -> authorized Solution Architect sign-off on the exact corrected baseline
+          -> 6.1-P4 exact clean-checkout acceptance
+          -> Story 6.1 specification readiness
+          -> independent implementation-readiness result exactly READY
+          -> Story 6.1 may become ready-for-dev
 ```
 
 The Solution Architect conformance review is an explicit P4 input. Its checklist must name the
@@ -1412,6 +1426,7 @@ So that **Chatbot grounds a Conversation in current, authorized, metadata-only c
 **Given** an unauthorized/denied reference or stale index, **When** assembly runs, **Then** the reference is excluded fail-closed-clean with a reason code, never silently dropped, and index staleness surfaces as `Partial`.
 
 - **Verification:** `dotnet tool run hexalith-module test --profile reads --filter Story=6.3`. **Evidence:** `evidence/epic6/6.3-project-context.{trx,json}` + `NoPayloadLeakage` scan. **Estimate:** L. **Completion boundary:** assembled context + refresh + explanation served read-only with allowlist + leakage evidence.
+- **Specification-readiness condition:** Story 6.3 remains one story only if its implementation specification proves one cohesive read-only slice with no forward dependencies, shared implementation fixtures, and separately testable evidence for retrieval, refresh/freshness, explanation, authorization, and payload leakage. If the specification cannot meet that condition, a separate approved correction must split retrieval from refresh/explanation before either slice becomes `ready-for-dev`, while preserving FR/NFR/evidence coverage and prior-only sequencing.
 
 ### Story 6.4: Resolve Projects with transient current explanations
 
@@ -1857,8 +1872,14 @@ relationships while leaving the same order and terminal Story 8.11 gate.
 The operator-value track may be demonstrated and consumed as internal pre-release evidence after
 its own story gates pass; it is not a production release. No Story 8.1–8.6 depends on Story
 8.7–8.11 for its own completion. Epic 8 completes only when Story 8.11 records the terminal
-decision. The Product Owner and Solution Architect review this exception during conformance
-sign-off.
+decision. Stories 8.7–8.11 are explicitly release/quality/governance work whose outcomes are
+accepted evidence and release disposition, not independent end-user features.
+
+Retaining both tracks requires dated Product Owner and authorized Solution Architect acceptance on
+the exact corrected baseline. The existing AI-assisted planning review is not that authorization.
+If either accountable owner rejects the exception, stop and run a separate structural course
+correction to split the epic and reconcile every affected story/matrix reference without an
+unreviewed rename, renumbering, or canonical evidence-key change.
 
 Reopen the split decision if a later change introduces unrelated product capability, gives either
 track an independent production/release cadence, creates a forward story dependency, or allows
@@ -1887,7 +1908,7 @@ As a **Tenant Operator or Tenant Project Administrator**,
 I want **to inspect Durable Task status, metadata-only audit timeline, and reconciliation outcomes through authorized read surfaces**,
 So that **operators have truthful operational visibility (FR-21) with correct retention and no payload leakage (NFR-8)**.
 
-- **Traceability:** FR-21, FR-22 (task/audit read); NFR-1, NFR-8; AD-21, AD-26, AD-30; UX-DR10, UX-DR16; findings (audit) ; evidence rows `fr-21`, `nfr-8`.
+- **Traceability:** FR-21, FR-22 (task/audit read); NFR-1, NFR-8; AD-21, AD-26, AD-30; UX-DR10, UX-DR16; finding TEST-001; canonical evidence rows `finding-test-001`, `fr-21`, `nfr-8`, `release-authenticated-persisted-boundary`.
 
 **Acceptance Criteria:**
 
@@ -2360,7 +2381,7 @@ As a **platform operator**,
 I want **health, readiness, telemetry, and generated structured logging that report real dependency and projection state with bounded metadata-only signals**,
 So that **availability/recovery (NFR-3) is observable without fabricated health or payload leakage**.
 
-- **Traceability:** NFR-1, NFR-3, NFR-2 (config fail-fast support); AD-20, AD-26, AD-28; findings (health) ; evidence row `nfr-3`.
+- **Traceability:** NFR-1, NFR-3, NFR-2 (config fail-fast support); AD-20, AD-26, AD-28; findings SEC-001 and OPS-001; canonical evidence rows `finding-sec-001`, `finding-ops-001`, `nfr-3`.
 
 **Acceptance Criteria:**
 
@@ -2378,7 +2399,7 @@ As a **downstream consumer / release engineer**,
 I want **the target package graph, versions, signing, and supply-chain evidence to match the supported ownership and public-surface model**,
 So that **release artifacts are reproducible and correctly bounded (NFR-10, NFR-11) with the AD-24 inventory enforced**.
 
-- **Traceability:** NFR-10, NFR-11, NFR-2 (signing/provenance support); AD-16, AD-24, AD-25; findings CLIENT-001/supply-chain; evidence row `supply-chain`.
+- **Traceability:** NFR-10, NFR-11, NFR-2 (signing/provenance support); AD-16, AD-24, AD-25; findings BUILD-001 and CODE-001; canonical evidence rows `finding-build-001` and `finding-code-001`.
 
 **Acceptance Criteria:**
 

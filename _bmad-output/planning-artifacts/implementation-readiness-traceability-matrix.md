@@ -4,8 +4,8 @@
 
 ## Status & containment
 
-- **Overall readiness:** NOT READY (2026-08-02 implementation-readiness rerun 3; 2026-07-17 READY remains historical planning-layer authorization only)
-- **Freeze:** The approved epic/UX/evidence corrections are reconciled, but production-authority implementation remains blocked until P1R, P0/P2, and P3 are accepted, the Solution Architect signs conformance against the exact current baseline, 6.1-P4 accepts those inputs with historical P1 satisfied and passes the clean-checkout gate, the Story 6.1 spec passes ready-for-development, and an independent implementation-readiness rerun returns READY
+- **Overall readiness:** NOT READY (2026-08-02 implementation-readiness rerun 4; 2026-07-17 READY remains historical planning-layer authorization only)
+- **Freeze:** The approved internal corrections are reconciled, but production-authority implementation remains blocked by the exact sequence 6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3 -> authorized Solution Architect sign-off on the exact corrected baseline -> 6.1-P4 exact clean-checkout acceptance -> Story 6.1 specification readiness -> independent implementation-readiness result exactly READY -> Story 6.1 may become ready-for-dev; historical 6.1-P1 remains a satisfied input only
 - **Release block:** production + consequential autonomous MCP mutation + proposed-Project confirmation blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance
 - **Validation gate (target):** `dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` — tool status **not-available**; no row may be represented as passed until the accepted capability and required evidence exist
 - **Rows total:** 63 (FR 24 · NFR 11 · findings 16 · release 12). No row is `passed` pre-READY.

@@ -31,6 +31,11 @@ jobs:
           fetch-depth: 1
           submodules: false
 
+      - name: Validate production-authority scheduling guard
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest tests/tools/test_production_authority_guard.py -v
+
       - name: Validate CI/CD invariants
         shell: pwsh
         run: ./tests/tools/run-ci-workflow-gates.ps1

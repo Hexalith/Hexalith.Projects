@@ -68,7 +68,7 @@ The direct UX users for this module are administrators, operators, developers, a
 ### Design Opportunities
 
 - Treat CLI, MCP, and Web as three adapters over one operational diagnostic model.
-- Provide scriptable CLI diagnostics for project lookup, reference health, resolution replay, lifecycle changes, and safe maintenance actions.
+- Provide scriptable CLI diagnostics for project lookup, reference health, current resolution recomputation from authorized inputs, lifecycle changes, and safe maintenance actions.
 - Provide MCP resources and tools for agent-assisted troubleshooting, with read-only resources separated from mutating tools.
 - Provide FrontComposer-generated Web views for project lists, project detail, reference inventory, resolution trace, audit timeline, warnings, and guided maintenance actions.
 - Explain context inclusion and exclusion with safe reason codes that administrators and tools can understand.
@@ -84,7 +84,7 @@ CLI, MCP, and Web UX must expose the same project metadata, lifecycle states, co
 
 The defining experience for Hexalith.Projects is safe operational diagnosis and maintenance of project context. Administrators, operators, developers, and MCP-enabled assistants need to answer: what project state exists, how context resolution behaved, which references were included or excluded, and what safe maintenance action is available.
 
-The core user action is inspecting a project or resolution case and understanding its current state without accessing payload data owned by Chatbot, Conversations, Folders, Files, or Memories.
+The core user action is inspecting a project or current resolution diagnostic identified by authorized inputs or an ephemeral request/correlation identifier from the active response and understanding its current state without accessing payload data owned by Chatbot, Conversations, Folders, Files, or Memories.
 
 ### Platform Strategy
 
@@ -106,7 +106,7 @@ The following interactions should require minimal thought:
 - Inspect project lifecycle state, context references, warnings, and audit history.
 - Understand why Project Resolution selected, rejected, or could not decide between candidate projects.
 - See which references are `included`, `excluded`, `unauthorized`, `unavailable`, `stale`, `archived`, `ambiguous`, `tenant_mismatch`, `conflict`, or `invalidReference`.
-- Re-run or replay safe resolution diagnostics without changing project state.
+- Recompute safe resolution diagnostics from current authorized inputs without changing project state or persisting a resolution trace.
 - Take maintenance actions only when the action, impact, tenant scope, and audit consequence are clear.
 
 ### Critical Success Moments
@@ -223,7 +223,7 @@ Transferable lesson: MCP should expose safe fields plus short explanations, not 
 ### Transferable UX Patterns
 
 - Resource list to detail inspector: start with projects and move into metadata, references, warnings, audit events, and actions.
-- Describe-style CLI inspection: provide a single command that gives a complete safe metadata snapshot of a project or resolution case.
+- Describe-style CLI inspection: provide a single command that gives a complete safe metadata snapshot of a project or current resolution diagnostic identified by authorized inputs or an ephemeral request/correlation identifier.
 - Resolution trace: show evaluated candidates, reason codes, inclusion/exclusion states, and final outcome.
 - Audit timeline: show who or what changed state, when, through which surface, and with what safe result.
 - Status badges with semantic labels: use consistent lifecycle, reference, and warning states across CLI, MCP, and Web.
@@ -321,7 +321,7 @@ All customizations must preserve:
 
 The defining experience is safe project-context diagnosis.
 
-An administrator should be able to start from a project ID, tenant, conversation reference, folder reference, file reference, memory reference, audit event, or resolution case and quickly understand:
+An administrator should be able to start from a project ID, tenant, conversation reference, folder reference, file reference, memory reference, audit event, or current resolution diagnostic identified by authorized inputs or an ephemeral request/correlation identifier and quickly understand:
 
 - What project or candidate projects are involved.
 - What state the project is in.
@@ -350,7 +350,7 @@ They may come from mental models shaped by CLI diagnostics, cloud resource conso
 
 The defining experience succeeds when:
 
-- Users can locate a project or resolution case through any supported reference.
+- Users can locate a project and recompute current resolution diagnostics from authorized Conversation, Folder, File, or Memory inputs; an ephemeral request/correlation identifier from the active response is display/correlation metadata only and is never sufficient for lookup or recomputation.
 - The same diagnostic facts are available through CLI, MCP, and Web.
 - Users can distinguish lifecycle, authorization, reference health, resolution, and audit states without guessing.
 - Ambiguous resolution shows candidates and reasons without selecting silently.
@@ -389,7 +389,7 @@ The user starts with one of:
 - Folder reference.
 - File reference.
 - Memory reference.
-- Resolution case ID.
+- Authorized Conversation, Folder, File, or Memory input. An ephemeral request/correlation identifier from the current diagnostic response may correlate the active response only; it is never a persisted resolution-case identifier or a sufficient recomputation input.
 - Audit event ID.
 - Warning or failed operation.
 
@@ -413,7 +413,7 @@ The user completes the flow by either:
 
 - Understanding the state without changing anything.
 - Exporting or copying safe diagnostic metadata for support handoff.
-- Re-running a safe diagnostic or resolution replay.
+- Recomputing a safe diagnostic from current authorized inputs.
 - Refreshing context through the synchronous, read-only `RefreshContext` action.
 - Admitting and monitoring a durable maintenance action such as archive, restore, relink, or unlink.
 - Confirming that an action created the expected metadata-only audit evidence.
@@ -590,22 +590,22 @@ Administrators need to understand why Projects selected a project, returned mult
 
 ```mermaid
 flowchart TD
-    A[Admin starts with conversation, folder, file, memory, or resolution case] --> B[Select surface: CLI, MCP, or Web]
-    B --> C[Request resolution diagnostics]
-    C --> D{Tenant scope valid?}
-    D -- No --> E[Show tenant_mismatch or unauthorized with safe metadata only]
-    D -- Yes --> F[Load resolution trace metadata]
-    F --> G[Show evaluated inputs and candidate projects]
-    G --> H{Resolution outcome}
-    H -- Resolved --> I[Show selected project and reason codes]
-    H -- Ambiguous --> J[Show candidate comparison and reason codes]
-    H -- NoMatch --> K[Show no-match reasons and safe next steps]
-    H -- Excluded --> L[Show lifecycle, policy, or authorization exclusion reason]
-    I --> M[Offer safe actions: inspect project, export metadata, replay dry-run]
-    J --> M
+    A[Admin starts with authorized conversation, folder, file, memory, or current diagnostic input] --> B[Select CLI, MCP, or Web]
+    B --> C[Request current resolution diagnostics]
+    C --> D{Tenant and caller authority valid?}
+    D -- No --> E[responseState Denied; safe metadata only]
+    D -- Yes --> F[Recompute from current authorized inputs]
+    F --> G{responseState}
+    G -- Unavailable --> H[Show bounded dependency guidance]
+    G -- Complete or Partial --> I{resolutionResult}
+    I -- NoMatch --> J[Show no-match reason codes]
+    I -- SingleCandidate --> K[Show candidate and reason codes; do not select or attach]
+    I -- MultipleCandidates --> L[Show candidate comparison and reason codes]
+    J --> M[Show Included or Excluded component evidence and safe next actions]
     K --> M
     L --> M
-    E --> N[End with audit-safe diagnostic result]
+    E --> N[End with metadata-only diagnostic result]
+    H --> N
     M --> N
 ```
 
@@ -807,7 +807,7 @@ Custom components should be minimized. Where needed, they should be Projects-spe
 
 **Anatomy:** Timestamp, actor/source surface, operation, previous state, new state, affected references, correlation ID, audit event ID.
 
-**States:** Normal event, warning event, failed action, dry-run event.
+**States:** normal event, warning event, and failed action. Preview/dry-run observations are telemetry-only unless the operation is explicitly mapped to an approved FR-21/AD-26 durable audit category; the UX must not invent a generic durable dry-run event.
 
 **Accessibility:** Timeline must remain understandable as a list. Timestamps and event IDs must be copyable.
 
@@ -914,7 +914,7 @@ Feedback must be specific, safe, and consistent across surfaces.
 
 Forms are used only for operational filtering, diagnostic input, and safe maintenance actions.
 
-**Diagnostic forms** should accept safe identifiers such as tenant ID, project ID, conversation reference, folder reference, file reference, memory reference, resolution case ID, audit event ID, correlation ID, lifecycle state, reason code, and timestamp range.
+**Diagnostic forms** should accept safe identifiers such as tenant ID, project ID, conversation reference, folder reference, file reference, memory reference, audit event ID, lifecycle state, reason code, and timestamp range. An ephemeral request/correlation identifier from the active response may be supplied only to correlate that active response; it is output-derived, never sufficient by itself for lookup or recomputation, and never a persisted resolution-case identifier.
 
 **Maintenance forms** show tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, the canonical admission class, applicable audit evidence, and recovery actions. Confirmation-required forms additionally show server Preview evidence, Confirmation Artifact expiry, and confirm/cancel controls; task-only forms admit without a second confirmation.
 
@@ -993,7 +993,7 @@ Confirmations are required only for actions classified `Confirmation + Durable T
 
 #### Cross-Surface Parity Pattern
 
-For the same project or resolution case, CLI, MCP, and Web must expose equivalent operational facts even when formatting differs.
+For the same project or current resolution diagnostic identified by authorized inputs or an ephemeral request/correlation identifier, CLI, MCP, and Web must expose equivalent operational facts even when formatting differs.
 
 ### Chatbot Companion Release Input
 
@@ -1021,6 +1021,13 @@ The companion artifact must specify and verify:
 Story package 8.8-P3 accepts and pins this companion evidence before Story 8.8 integrates the
 cross-surface result. A missing, unapproved, mutable, or contract-drifted companion artifact blocks
 Stories 8.8 and 8.11.
+
+Package 8.8-P3 must record the Chatbot owner repository, immutable revision, companion contract
+version, approval date and authority, accountable owners, authenticated commands and deterministic
+fixtures, artifact paths and hashes, results, terminal disposition, and containment/rollback.
+Hexalith.Projects records only the accepted immutable pin at
+`evidence/epic8/8.8-P3-chatbot-companion-pin.json`; it does not author, infer, or substitute the
+Chatbot-owned package.
 
 ## Responsive Design & Accessibility
 
