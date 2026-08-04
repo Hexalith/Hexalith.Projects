@@ -240,18 +240,27 @@ action_items:
     target_date: uncommitted
     authorized: "2026-07-17 by Jerome"
     owner_baseline: "edbaeaed68bcdb8deffcd98ed5652d237596e1d1"
-    owner_observed_revision: "699083549932b9509fa36ed853402fe3f8b04fc5"
+    owner_observed_revision: "7bdbd293991985d150dfca62f77709e61152de76"
+    owner_observed_on: "2026-08-04"
     owner_story: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md"
     depends_on: ["6.1-P1R"]
+    qualification_dependencies: ["6.1-P1R", "G-6"]
     capability_status:
       manifest_contract: implemented-unaccepted
-      evidence_validator: implemented-unaccepted
-      persisted_runner: not-available
-      published_tools: not-available
-      owner_acceptance: not-available
+      module_run_evidence: implemented-unaccepted
+      readiness_evidence_validator: implemented-unaccepted
+      p0_acceptance_validator: not-implemented
+      supported_composition: not-implemented
+      persisted_qualification: not-run
+      published_tools: published-stale-pin-not-supported
+      published_consumer_pin: absent
+      owner_acceptance: absent
     expected_evidence: "Owner-approved runner revision, remotely restored package inventory and hashes, reproducible command, persisted fixture, fail-closed machine-checkable acceptance record, evidence schema/sample, negative controls, and rollback procedure"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p0--deliver-the-g-4-persisted-runner-and-evidence-tooling"
-    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md"
+    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03-g4-p0.md"
+    course_correction_status: approved
+    course_correction_approved: "2026-08-04 by Jerome"
+    upstream_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03.md"
     routed_to: "Hexalith.Builds owner-repository story"
   - epic: 6
     id: "6.1-P1"
