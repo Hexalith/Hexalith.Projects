@@ -1,0 +1,49 @@
+{
+  "schema": "hexalith.g4-tool-package-inventory.v1",
+  "version": "0.0.0-p1r-revalidate-390.8",
+  "configuration": "Release",
+  "packages": [
+    {
+      "id": "Hexalith.Builds.Module.Cli",
+      "version": "0.0.0-p1r-revalidate-390.8",
+      "nupkg": {
+        "file": "Hexalith.Builds.Module.Cli.0.0.0-p1r-revalidate-390.8.nupkg",
+        "sha256": "CBB23F712D39EE6F4868941C46194EDFF3A390C442A6D56C8E3440AE33D142A0",
+        "sizeBytes": 503045
+      },
+      "snupkg": {
+        "file": "Hexalith.Builds.Module.Cli.0.0.0-p1r-revalidate-390.8.snupkg",
+        "sha256": "E39325C38EE211095EB9C1461EE325BC2C8206B5B2B8ABC70139729523D9ADFF",
+        "sizeBytes": 52590
+      }
+    },
+    {
+      "id": "Hexalith.Builds.Evidence.Cli",
+      "version": "0.0.0-p1r-revalidate-390.8",
+      "nupkg": {
+        "file": "Hexalith.Builds.Evidence.Cli.0.0.0-p1r-revalidate-390.8.nupkg",
+        "sha256": "16AE44C4368B61CB66E7DC7BA01DB6F82A693B8AA8F3BD36B0651918CABDF178",
+        "sizeBytes": 502300
+      },
+      "snupkg": {
+        "file": "Hexalith.Builds.Evidence.Cli.0.0.0-p1r-revalidate-390.8.snupkg",
+        "sha256": "A8BD2E01267AC85BC7910A50C04159DA96B07683F5920770A69C03F5A685ACB6",
+        "sizeBytes": 52335
+      }
+    }
+  ],
+  "qualification": {
+    "controls": "passed",
+    "supportedEventStoreVersion": "3.90.0",
+    "evidence": [
+      {
+        "file": "qualification-evidence/module-run.json",
+        "sha256": "725EF49D0415A7D75B55A80F90E2D895DB0AC57C5D0A4F805C757A07C3263A42"
+      },
+      {
+        "file": "qualification-evidence/unavailable.json",
+        "sha256": "00CDF6BBD400E78C2EDDAC128058AB9FBCF9E329CD3EB2D75111E2DAAAE7FAA1"
+      }
+    ]
+  }
+}

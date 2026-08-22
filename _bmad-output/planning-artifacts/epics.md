@@ -34,6 +34,8 @@ inputDocuments:
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md
   - _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02-rerun-4.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03-g4-p0.md
   - _bmad-output/planning-artifacts/research/domain-eventstore-persistence-for-hexalith-projects-module-data-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-folders-integration-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-projects-referencing-conversations-research-2026-05-24.md
@@ -1317,15 +1319,16 @@ obligation without making unrelated later-surface gates prerequisites for Story 
 
 **Story 6.1 prerequisite work packages.** These are enablement packages, not user-value stories and
 not Story 6.1 implementation subtasks. The approved routing and complete acceptance contracts are in
-`sprint-change-proposal-2026-07-17.md`, the approved 2026-08-01 G-4/P1R correction, the approved
+`sprint-change-proposal-2026-07-17.md`, the historical 2026-08-01 P1R candidate correction, the
+approved 2026-08-03 post-P1R revalidation, the approved 2026-08-03 G-4/P0 refinement, the approved
 2026-08-02 rerun-3 correction for same-baseline architecture sign-off sequencing, and the approved
 rerun-4 correction preserving the complete entry chain without accepting any step.
 
 | ID | Repository authority | Required outcome | Accountable owners | Initial state |
 |---|---|---|---|---|
-| 6.1-P0 | Builds/platform tooling | Supported G-4 persisted runner, remotely restored tool packages, and fail-closed machine-checkable acceptance record | Builds Owner + Platform Owner + Test Architect | open; external implementation in progress; blocked by P1R; target uncommitted |
+| 6.1-P0 | Builds/platform tooling | Supported G-4 persisted runner, remotely restored tool packages, and fail-closed machine-checkable acceptance record | Builds Owner + Platform Owner + Test Architect | open; external implementation in progress at Builds `7bdbd293991985d150dfca62f77709e61152de76`; manifest, module-run-evidence, and readiness-validator foundations are implemented but unaccepted; P0 acceptance validation and supported composition are not implemented; persisted qualification is not run; published `4.23.0` tools embed EventStore `3.70.1` and are not the supported/accepted consumer baseline; Projects consumer pin and owner acceptance are absent; blocked by P1R with G-6 as a qualification dependency; target uncommitted |
 | 6.1-P1 | EventStore + Builds + architecture record | Historical owner-approved source/package/architecture/runner baseline and finite normalization record | EventStore Owner + Builds Owner + Solution Architect | done 2026-07-18 on 3.70.1; accepted historical evidence, satisfied but superseded for current package/runtime selection by P1R |
-| 6.1-P1R | EventStore + Builds + architecture + qualification record | Revalidated exact source/package/runner/architecture pin after post-P1 dependency drift, including compatibility and rollback proof | EventStore Owner + Builds Owner + Solution Architect + Test Architect | open; `3.88.0` source/catalog/runner candidate at Builds `4351d7cba7545a96661ca2ee2ca2629df6d0a118`, qualification record at `699083549932b9509fa36ed853402fe3f8b04fc5`; Architecture remains `3.70.1`; acceptance-grade validation, executable rollback, immutable accepted revisions, and four-owner acceptance pending; target uncommitted |
+| 6.1-P1R | EventStore + Builds + architecture + qualification record | Revalidated exact source/package/runner/architecture pin after post-P1 dependency drift, including compatibility and rollback proof | EventStore Owner + Builds Owner + Solution Architect + Test Architect | open; multi-coordinate `3.89.0` candidate pending acceptance: EventStore source checkout `7854f8e51ce9b852bb6c3cac6012670122e93792` (`v3.89.0-9-g7854f8e5`) is intentionally distinct from package tag/revision `v3.89.0` / `c590590bc581a3f72ef6e67148eda988ba4b8fe6`; Builds catalog is `3.89.0` from `10af541e7b2a5a4664be37c9495930844e0954a8`; current runner source remains the superseded unaccepted `3.88.0` candidate at observed Builds `7bdbd293991985d150dfca62f77709e61152de76`; published G-4 `4.23.0` from `7ac2849d79e603b88c7cb76e178cd2ba106eaf00` embeds `3.70.1`; Architecture and rollback remain `3.70.1`; owner selection, atomic alignment, clean qualification, executable rollback, immutable accepted revisions, and four-owner acceptance pending; target uncommitted |
 | 6.1-P2 | EventStore/platform | Supported dual-principal query envelope, indistinguishable safe denial, and authoritative global-position watermark | EventStore Owner + Identity/Security Owner + Solution Architect | open; blocked by accepted P1R |
 | 6.1-P3 | Identity/security platform | Approved mandatory fail-closed production identity/authentication contract and fixtures | Identity/Security Owner + Projects Owner + Solution Architect | open; blocked by P2 |
 | 6.1-P4 | Hexalith.Projects planning/evidence | Owner-approved 6.1 gate record linking accepted P0, historical P1, current P1R, P2, and P3 pins, signed same-baseline architecture conformance, commands, evidence, normalization, and rollback | Product Owner + Solution Architect + Test Architect + prerequisite owners | open; blocked by P0, P1R, P2, P3, and Solution Architect conformance sign-off; historical P1 is a satisfied evidence input |

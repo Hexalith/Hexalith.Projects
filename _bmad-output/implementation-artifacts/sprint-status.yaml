@@ -255,6 +255,11 @@ action_items:
       published_tools: published-stale-pin-not-supported
       published_consumer_pin: absent
       owner_acceptance: absent
+    published_g4_tools:
+      version: "4.23.0"
+      release_revision: "7ac2849d79e603b88c7cb76e178cd2ba106eaf00"
+      embedded_eventstore_version: "3.70.1"
+      disposition: "remotely available but live-unavailable and not the accepted P1R/P0 consumer baseline"
     expected_evidence: "Owner-approved runner revision, remotely restored package inventory and hashes, reproducible command, persisted fixture, fail-closed machine-checkable acceptance record, evidence schema/sample, negative controls, and rollback procedure"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p0--deliver-the-g-4-persisted-runner-and-evidence-tooling"
     course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03-g4-p0.md"
@@ -284,24 +289,39 @@ action_items:
     authorized: "2026-08-01 by Jerome"
     depends_on: ["6.1-P1"]
     unblocks: ["6.1-P0", "6.1-P2", "6.1-P4"]
+    observed_on: "2026-08-03"
     observed_drift:
-      eventstore_source:
-        version: "3.88.0"
-        revision: "4843b492dff7c16a4bc74db67509263f969c78c6"
+      eventstore_source_checkout:
+        revision: "7854f8e51ce9b852bb6c3cac6012670122e93792"
+        describe: "v3.89.0-9-g7854f8e5"
+        package_equivalent: false
+      eventstore_package_source:
+        version: "3.89.0"
+        tag: "v3.89.0"
+        revision: "c590590bc581a3f72ef6e67148eda988ba4b8fe6"
+        release_manifest_sha256: "6b0b70b856839d4117bcd969f6a2de0093c477c109cb79f3f2882b1f05effcae"
       builds_catalog:
+        version: "3.89.0"
+        introducing_revision: "10af541e7b2a5a4664be37c9495930844e0954a8"
+      builds_runner_source:
         version: "3.88.0"
-        introducing_revision: "0e51a2115581028c8d9ab9395a93dd186ee51071"
-      builds_worktree_base_revision: "4132725d8bda647cc65880199679f047f7366048"
-      runner_candidate_version: "3.88.0"
-      post_alignment_builds_revision: "4351d7cba7545a96661ca2ee2ca2629df6d0a118"
-      qualification_record_revision: "699083549932b9509fa36ed853402fe3f8b04fc5"
+        revision_observed: "7bdbd293991985d150dfca62f77709e61152de76"
+        disposition: "superseded unaccepted candidate"
+      published_g4_tools:
+        version: "4.23.0"
+        release_revision: "7ac2849d79e603b88c7cb76e178cd2ba106eaf00"
+        embedded_eventstore_version: "3.70.1"
+        disposition: "published but not the accepted P1R/P0 consumer baseline"
       architecture_version: "3.70.1"
-    candidate_baseline: "3.88.0"
-    decision: "pending clean acceptance-grade validation, executable rollback proof, accepted Builds revision, and four-owner acceptance"
+    candidate_baseline: "multi-coordinate-3.89.0-pending-acceptance"
+    decision: "pending owner selection, atomic alignment, clean qualification, executable rollback proof, immutable accepted revisions, and four-owner acceptance"
     rollback_baseline: "3.70.1"
     expected_evidence: "Owner-approved exact source/package/runner/architecture pin, clean restore, required API compatibility, live-runner compatibility, and rollback record"
     evidence: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p1r-eventstore-source-architecture-runner-revalidation-record.md"
-    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md"
+    historical_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md"
+    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03.md"
+    course_correction_status: approved
+    course_correction_approved: "2026-08-03 by Jerome"
     routed_to: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
   - epic: 6
     id: "6.1-P2"

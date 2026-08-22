@@ -94,3 +94,9 @@
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md`
   summary: Bind passing readiness rows to normalized filter, fixture, manifest, and hash identities in module-run evidence.
   evidence: Review confirmed the pre-existing `ArtifactBindsToRow` check compares only the module subcommand and profile, so a row declaring a filter and fixture can pass with an artifact that records neither; broadening the evidence contract is outside this pin-revalidation patch.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline-2.md`
+  summary: Propagate the verified EventStore 3.90.0 candidate and exact qualifying Builds revision through the Projects sprint ledger, Epic 6 context, epics, and readiness matrix views.
+  evidence: These root planning edits form a separately reviewable repository change and depend on the exact qualifying Builds revision produced by the narrowed Builds alignment task.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline-2.md`
+  summary: Complete clean EventStore source/package and reciprocal rollback qualification, obtain four-owner P1R acceptance, then rebind Architecture and close only P1R.
+  evidence: Acceptance and Architecture propagation require external owner decisions and complete retained clean-worktree evidence after the narrowed Builds candidate is aligned; they cannot be truthfully completed by the candidate-alignment change alone.

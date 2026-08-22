@@ -1,0 +1,3520 @@
+diff --git a/Tools/G4PackageQualification.functions.ps1 b/Tools/G4PackageQualification.functions.ps1
+new file mode 100644
+index 0000000..61aff9f
+--- /dev/null
++++ b/Tools/G4PackageQualification.functions.ps1
+@@ -0,0 +1,270 @@
++# G-4 tool package qualification/publication helper functions.
++#
++# Dot-sourced by both the official qualification gate
++# (test-g4-tool-package-contracts.ps1) and its isolated regression suite
++# (test-g4-tool-package-artifact-validator.ps1) so the exact same logic that
++# gates a real candidate is what the regression tests exercise -- never a
++# duplicated, driftable copy.
++
++Set-StrictMode -Version Latest
++$ErrorActionPreference = 'Stop'
++
++function Save-QualificationEvidence {
++    # Persists a control's raw output and returns its recorded hash/size. Coverage is
++    # only "satisfied" once Assert-QualificationEvidenceContent has independently
++    # parsed and validated what was written here -- hash, size, and filename alone
++    # never suffice.
++    param(
++        [Parameter(Mandatory = $true)][string] $EvidenceDirectory,
++        [Parameter(Mandatory = $true)][string] $Name,
++        [Parameter(Mandatory = $true)][AllowEmptyString()][string] $Content
++    )
++
++    $fileName = "$Name.json"
++    $filePath = Join-Path $EvidenceDirectory $fileName
++    [System.IO.File]::WriteAllText($filePath, $Content, [Text.UTF8Encoding]::new($false))
++    $bytes = [System.IO.File]::ReadAllBytes($filePath)
++    return [ordered] @{
++        file = "qualification-evidence/$fileName"
++        sha256 = (Get-FileHash -LiteralPath $filePath -Algorithm SHA256).Hash
++        sizeBytes = $bytes.Length
++    }
++}
++
++function Assert-QualificationEvidenceContent {
++    # Parses and validates the CONTENT of a captured qualification-evidence artifact
++    # against the real hexalith.module-run/evidence-cli `--output json` shape
++    # (top-level "status"; the causal rule lives at "outcome.ruleId", not at the
++    # document root, and "diagnostics[]" can be non-empty even on success). A
++    # hash/size/filename triple proves an artifact was retained unmodified; it
++    # proves nothing about whether the artifact actually contains a coherent,
++    # rule-bearing result. This is the content-parsing leg that coverage requires.
++    param(
++        [Parameter(Mandatory = $true)][string] $FilePath,
++        [Parameter(Mandatory = $true)][ValidateSet('Negative', 'Positive', 'ExactNonPassing')][string] $Kind,
++        [string] $ExpectedRuleId = ''
++    )
++
++    $text = [System.IO.File]::ReadAllText($FilePath)
++    if ([string]::IsNullOrWhiteSpace($text)) {
++        throw "Qualification evidence '$FilePath' is empty; content cannot be validated."
++    }
++
++    try {
++        $document = $text | ConvertFrom-Json -ErrorAction Stop
++    }
++    catch {
++        throw "Qualification evidence '$FilePath' is not valid JSON. $($_.Exception.GetBaseException().Message)"
++    }
++
++    if ($document.PSObject.Properties.Name -notcontains 'status' -or [string]::IsNullOrWhiteSpace([string] $document.status)) {
++        throw "Qualification evidence '$FilePath' does not declare a status."
++    }
++
++    if ($document.PSObject.Properties.Name -notcontains 'outcome' -or $null -eq $document.outcome) {
++        throw "Qualification evidence '$FilePath' does not declare an outcome."
++    }
++
++    $status = [string] $document.status
++    $ruleId = [string] $document.outcome.ruleId
++
++    switch ($Kind) {
++        'Negative' {
++            if ($status -cne 'failed') {
++                throw "Qualification evidence '$FilePath' status '$status' does not represent a failed negative control."
++            }
++            if ([string]::IsNullOrWhiteSpace($ruleId)) {
++                throw "Qualification evidence '$FilePath' does not carry a causal outcome.ruleId for a negative control."
++            }
++            if (-not [string]::IsNullOrWhiteSpace($ExpectedRuleId) -and $ruleId -cne $ExpectedRuleId) {
++                throw "Qualification evidence '$FilePath' reports outcome.ruleId '$ruleId'; expected '$ExpectedRuleId'."
++            }
++        }
++        'ExactNonPassing' {
++            if ($status -cin @('passed', 'completed')) {
++                throw "Qualification evidence '$FilePath' status '$status' represents a non-passing control as passing."
++            }
++            if (-not [string]::IsNullOrWhiteSpace($ExpectedRuleId) -and $ruleId -cne $ExpectedRuleId) {
++                throw "Qualification evidence '$FilePath' reports outcome.ruleId '$ruleId'; expected '$ExpectedRuleId'."
++            }
++        }
++        'Positive' {
++            if ($status -ceq 'failed') {
++                throw "Qualification evidence '$FilePath' status 'failed' represents a positive control as failed."
++            }
++        }
++    }
++
++    return $document
++}
++
++function Get-SourceTreeState {
++    # Reports whether the qualified source tree is clean and binds the exact
++    # revision the candidate was qualified against. A dirty tree does not abort the
++    # run -- an external/untracked candidate may still exercise every control -- but
++    # it does mean releaseEligible can never become true for this run, because its
++    # tracked-byte proofs could not be reproduced from a fresh clone at the same
++    # revision. Only a Git environment that cannot answer the question at all (no
++    # work tree, `git status`/`git rev-parse` failing outright) is a hard error.
++    param([Parameter(Mandatory = $true)][string] $RepositoryRoot)
++
++    & git -C $RepositoryRoot rev-parse --is-inside-work-tree *> $null
++    if ($LASTEXITCODE -ne 0) {
++        throw 'Source revision binding requires a Git work tree; none was found.'
++    }
++
++    $status = @(& git -C $RepositoryRoot status --porcelain=v1 2>&1)
++    if ($LASTEXITCODE -ne 0) {
++        throw "git status failed with exit code $LASTEXITCODE."
++    }
++
++    $statusLines = @($status | Where-Object { -not [string]::IsNullOrWhiteSpace([string] $_) })
++
++    $revisionOutput = @(& git -C $RepositoryRoot rev-parse HEAD 2>&1)
++    if ($LASTEXITCODE -ne 0) {
++        throw "git rev-parse HEAD failed with exit code $LASTEXITCODE."
++    }
++
++    return [pscustomobject] @{
++        Clean = $statusLines.Count -eq 0
++        Revision = ([string] $revisionOutput[0]).Trim()
++        Reasons = @($statusLines)
++    }
++}
++
++function Assert-TrackedFixtureBytesMatchHead {
++    # Proves every fixture byte the packaged consumer exercised is identical to what
++    # HEAD tracks, not merely that the path is tracked (Assert-FixturesTracked only
++    # rules out untracked/ignored files, which misses a tracked-but-locally-edited
++    # fixture). Publication fails closed on any drift between tracked bytes and the
++    # bytes actually used to qualify the candidate.
++    param(
++        [Parameter(Mandatory = $true)][string] $RepositoryRoot,
++        [Parameter(Mandatory = $true)][string] $SourceRevision,
++        [Parameter(Mandatory = $true)][string] $FixtureDirectory,
++        [Parameter(Mandatory = $true)][string] $RepositoryRelativeRoot
++    )
++
++    $mismatches = [System.Collections.Generic.List[string]]::new()
++    $files = @(Get-ChildItem -LiteralPath $FixtureDirectory -File -Recurse | Sort-Object -Property FullName)
++    foreach ($file in $files) {
++        $relativePath = ([IO.Path]::GetRelativePath($FixtureDirectory, $file.FullName)).Replace('\', '/')
++        $trackedPath = "$RepositoryRelativeRoot/$relativePath"
++
++        # `git cat-file blob` streams the exact tracked bytes with no text-mode
++        # normalization, unlike capturing `git show` output through PowerShell's
++        # line-oriented pipeline; redirect straight to a file so nothing is decoded
++        # and re-encoded along the way.
++        $catFileOutput = New-TemporaryFile
++        try {
++            & git -C $RepositoryRoot cat-file blob "${SourceRevision}:${trackedPath}" 2>$null 1> $catFileOutput.FullName
++            if ($LASTEXITCODE -ne 0) {
++                $mismatches.Add("'$trackedPath' is not readable at $SourceRevision (not tracked, renamed, or removed).")
++                continue
++            }
++
++            $trackedBytes = [System.IO.File]::ReadAllBytes($catFileOutput.FullName)
++        }
++        finally {
++            Remove-Item -LiteralPath $catFileOutput.FullName -Force -ErrorAction SilentlyContinue
++        }
++
++        $workingBytes = [System.IO.File]::ReadAllBytes($file.FullName)
++        if (-not [System.Linq.Enumerable]::SequenceEqual([byte[]] $trackedBytes, [byte[]] $workingBytes)) {
++            $mismatches.Add("'$trackedPath' working-tree bytes differ from the bytes tracked at $SourceRevision.")
++        }
++    }
++
++    if ($mismatches.Count -gt 0) {
++        throw "Tracked-fixture-vs-HEAD proof failed: $([string]::Join('; ', $mismatches))"
++    }
++
++    return $files.Count
++}
++
++function Get-NuGetPackageRole {
++    # Opens a .nupkg/.snupkg archive and determines its canonical identity and role
++    # entirely from its nuspec content and payload -- never from its file name or
++    # extension -- so a swapped or relabeled artifact cannot pass by sharing a
++    # plausible name.
++    param([Parameter(Mandatory = $true)][string] $ArchivePath)
++
++    Add-Type -AssemblyName System.IO.Compression -ErrorAction SilentlyContinue
++    Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
++    $archive = [System.IO.Compression.ZipFile]::OpenRead($ArchivePath)
++    try {
++        $nuspecEntries = @($archive.Entries | Where-Object { $_.FullName -match '(^|/)[^/]+\.nuspec$' })
++        if ($nuspecEntries.Count -eq 0) {
++            throw "'$ArchivePath' contains no .nuspec entry; a NuGet package must contain exactly one."
++        }
++
++        if ($nuspecEntries.Count -gt 1) {
++            $names = [string]::Join(', ', @($nuspecEntries | ForEach-Object { $_.FullName }))
++            throw "'$ArchivePath' contains $($nuspecEntries.Count) .nuspec entries ($names); exactly one is required."
++        }
++
++        $entryStream = $nuspecEntries[0].Open()
++        try {
++            $reader = New-Object System.IO.StreamReader($entryStream)
++            $nuspecText = $reader.ReadToEnd()
++        }
++        finally {
++            $entryStream.Dispose()
++        }
++
++        try {
++            [xml] $nuspecXml = $nuspecText
++        }
++        catch {
++            throw "'$ArchivePath' nuspec entry is not valid XML. $($_.Exception.GetBaseException().Message)"
++        }
++
++        $metadata = $nuspecXml.package.metadata
++        $id = [string] $metadata.id
++        $version = [string] $metadata.version
++        if ([string]::IsNullOrWhiteSpace($id) -or [string]::IsNullOrWhiteSpace($version)) {
++            throw "'$ArchivePath' nuspec is missing a package id or version."
++        }
++
++        $packageTypeNames = @()
++        if ($null -ne $metadata.packageTypes) {
++            $packageTypeNames = @($metadata.packageTypes.packageType | ForEach-Object { [string] $_.name })
++        }
++
++        return [pscustomobject] @{
++            Id = $id
++            Version = $version
++            IsSymbolsPackage = $packageTypeNames -contains 'SymbolsPackage'
++        }
++    }
++    finally {
++        $archive.Dispose()
++    }
++}
++
++function Assert-CanonicalNuGetArtifact {
++    # Rejects a swapped or canonical-role-invalid artifact: the primary .nupkg must
++    # not be a symbols package and the .snupkg must declare the SymbolsPackage
++    # nuspec type, and both must match the expected package identity exactly.
++    param(
++        [Parameter(Mandatory = $true)][string] $ArchivePath,
++        [Parameter(Mandatory = $true)][ValidateSet('Package', 'Symbols')][string] $ExpectedRole,
++        [Parameter(Mandatory = $true)][string] $ExpectedId,
++        [Parameter(Mandatory = $true)][string] $ExpectedVersion
++    )
++
++    $role = Get-NuGetPackageRole -ArchivePath $ArchivePath
++    if ($role.Id -cne $ExpectedId -or $role.Version -cne $ExpectedVersion) {
++        throw "'$ArchivePath' nuspec identity '$($role.Id) $($role.Version)' does not match expected '$ExpectedId $ExpectedVersion'."
++    }
++
++    if ($ExpectedRole -eq 'Package' -and $role.IsSymbolsPackage) {
++        throw "'$ArchivePath' declares the SymbolsPackage nuspec type; a symbols package was swapped in as the primary artifact."
++    }
++
++    if ($ExpectedRole -eq 'Symbols' -and -not $role.IsSymbolsPackage) {
++        throw "'$ArchivePath' does not declare the SymbolsPackage nuspec type; the primary artifact was swapped in as symbols."
++    }
++
++    return $role
++}
+diff --git a/Tools/package-version-audit.json b/Tools/package-version-audit.json
+index 96e6cf3..6357f8f 100644
+--- a/Tools/package-version-audit.json
++++ b/Tools/package-version-audit.json
+@@ -1,7 +1,7 @@
+ {
+   "schemaVersion": 1,
+-  "auditedAtUtc": "2026-08-01T08:56:31.3453199+00:00",
+-  "generatedFromRevision": "d3239aff003c64b40cbc074e68ec7923924cfc96",
++  "auditedAtUtc": "2026-08-04T21:45:18.5463789+00:00",
++  "generatedFromRevision": "a53166539bf4441d5e33d04281b14c2d59e950c3",
+   "catalogPath": "Props/Directory.Packages.props",
+   "sources": [
+     {
+@@ -37,6 +37,21 @@
+         "Hexalith.EventStore"
+       ]
+     },
++    {
++      "family": "bunit-html",
++      "disposition": "retained",
++      "rollbackGroup": "bunit-html",
++      "packageIds": [
++        "AngleSharp",
++        "bunit"
++      ],
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
++      "representativeConsumers": [
++        "Hexalith.EventStore"
++      ]
++    },
+     {
+       "family": "dapr",
+       "disposition": "retained",
+@@ -124,9 +139,9 @@
+         "Microsoft.FluentUI.AspNetCore.Components",
+         "Microsoft.FluentUI.AspNetCore.Components.Icons"
+       ],
+-      "rationale": "Retain the intentional Fluent UI v5 release-candidate family; the listed stable 4.14.4 line is an older major and is not a valid downgrade.",
+-      "compatibilityEvidence": "Both component packages resolve the same latest listed v5 prerelease, 5.0.0-rc.4-26180.1.",
+-      "removalTrigger": "Move the family together when a newer compatible v5 candidate or stable release passes UI consumer validation.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+@@ -237,9 +252,9 @@
+         "Hexalith.EventStore.Testing",
+         "Hexalith.EventStore.Testing.Integration"
+       ],
+-      "rationale": "Retain the source/catalog 3.88.0 family as the P1R candidate pending complete acceptance-grade package-mode, runner, rollback, and owner evidence.",
+-      "compatibilityEvidence": "NuGet lists all 13 catalog package rows at 3.88.0; source API comparison and focused runner controls pass, while clean package-mode and owner acceptance remain pending.",
+-      "removalTrigger": "Accept the family only after P1R clean validation, executable rollback proof, and EventStore Owner, Builds Owner, Solution Architect, and Test Architect approval.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+@@ -304,9 +319,9 @@
+         "Hexalith.Memories.Client.Rest",
+         "Hexalith.Memories.Contracts"
+       ],
+-      "rationale": "Retain 2.19.4 until the Memories maintainer confirms that the 2.19.8 candidate is complete for every catalog row.",
+-      "compatibilityEvidence": "The live source lists 2.19.8 for the three catalog packages, but cross-repository owner validation remains required.",
+-      "removalTrigger": "Accept the complete family after Memories Release validation and owner approval are recorded.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+@@ -391,16 +406,16 @@
+         "Hexalith.Tenants.Testing",
+         "Hexalith.Tenants.UI"
+       ],
+-      "rationale": "Retain the approved 5.3.0 Tenants family; this story forbids a change without release-owner inventory evidence.",
+-      "compatibilityEvidence": "All six rows remain aligned through HexalithTenantsVersion and no owner-approved replacement inventory was supplied.",
+-      "removalTrigger": "Change the family only after the Tenants release owner approves the common inventory or a documented split.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+     },
+     {
+       "family": "identity-model",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "identity-model",
+       "packageIds": [
+         "Microsoft.Identity.Web",
+@@ -412,9 +427,9 @@
+         "Microsoft.IdentityModel.Tokens",
+         "System.IdentityModel.Tokens.Jwt"
+       ],
+-      "rationale": "Accept Microsoft.Identity.Web 4.14.2 with the complete IdentityModel and JWT family at 8.22.0.",
+-      "compatibilityEvidence": "All eight identity rows select their latest listed stable candidates and are validated together by the Builds and EventStore Release gates.",
+-      "removalTrigger": "Roll back the identity-model group together if authentication or token validation regresses.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+@@ -469,21 +484,6 @@
+         "Hexalith.EventStore"
+       ]
+     },
+-    {
+-      "family": "bunit-html",
+-      "disposition": "accepted",
+-      "rollbackGroup": "bunit-html",
+-      "packageIds": [
+-        "AngleSharp",
+-        "bunit"
+-      ],
+-      "rationale": "Accept AngleSharp 1.6.0 and move bUnit from its superseded preview to stable 2.8.6 as one UI-test rollback group.",
+-      "compatibilityEvidence": "Both candidates are latest listed releases on their established major lines and pass the EventStore Admin UI suite together.",
+-      "removalTrigger": "Roll back AngleSharp and bUnit together if HTML parsing, discovery, rendering, or component tests regress.",
+-      "representativeConsumers": [
+-        "Hexalith.EventStore"
+-      ]
+-    },
+     {
+       "family": "package:aspnet.security.oauth.amazon",
+       "disposition": "retained",
+@@ -729,10 +729,12 @@
+       "packageIds": [
+         "Azure.Monitor.OpenTelemetry.AspNetCore"
+       ],
+-      "rationale": "Retain 1.5.0 because no checked-out source project consumes this catalog row, so the 1.6.0 candidate has no representative compatibility proof.",
+-      "compatibilityEvidence": "The complete workspace source scan found no PackageReference for Azure.Monitor.OpenTelemetry.AspNetCore outside the central catalog.",
+-      "removalTrigger": "Accept a later candidate only after an actual consumer is identified and its telemetry startup and export path pass validation.",
+-      "representativeConsumers": []
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
++      "representativeConsumers": [
++        "Hexalith.EventStore"
++      ]
+     },
+     {
+       "family": "package:azure.resourcemanager",
+@@ -876,14 +878,14 @@
+     },
+     {
+       "family": "package:communitytoolkit.aspire.hosting.dapr",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "package:communitytoolkit.aspire.hosting.dapr",
+       "packageIds": [
+         "CommunityToolkit.Aspire.Hosting.Dapr"
+       ],
+-      "rationale": "Accept the latest listed build on the existing 13.4.1 beta channel.",
+-      "compatibilityEvidence": "The beta.687 candidate preserves the intentional channel and is validated with the pinned Aspire 13.4.6 AppHost build.",
+-      "removalTrigger": "Roll back this package group if AppHost Dapr resource composition regresses.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+@@ -1315,9 +1317,9 @@
+       "packageIds": [
+         "Microsoft.OpenApi"
+       ],
+-      "rationale": "Retain the latest proven 2.x line because ASP.NET Core 10 is compiled against the 2.x API and the listed 3.x family is runtime-incompatible.",
+-      "compatibilityEvidence": "The catalog's documented compatibility exception binds Microsoft.OpenApi 2.11.0 to Microsoft.AspNetCore.OpenApi 10.x.",
+-      "removalTrigger": "Move to 3.x only after ASP.NET Core 10 OpenAPI generation passes explicit runtime compatibility tests.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+@@ -1357,9 +1359,9 @@
+       "packageIds": [
+         "Microsoft.SourceLink.GitHub"
+       ],
+-      "rationale": "Retain 10.0.302 because the configured source reports only older listed candidates; incomplete visibility must never cause a downgrade.",
+-      "compatibilityEvidence": "NuGet registration and flat-container metadata both omit 10.0.302 while reporting 10.0.301 as the latest stable result.",
+-      "removalTrigger": "Re-evaluate when a source lists a version newer than 10.0.302 and the SDK/source-link build remains aligned.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+@@ -1702,14 +1704,14 @@
+     },
+     {
+       "family": "package:scriban",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "package:scriban",
+       "packageIds": [
+         "Scriban"
+       ],
+-      "rationale": "Accept the latest listed stable 7.x patch release.",
+-      "compatibilityEvidence": "The 7.2.6 candidate remains on the established minor line and is validated by generator and solution builds.",
+-      "removalTrigger": "Roll back this package group if template parsing or generated output regresses.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+@@ -1884,14 +1886,14 @@
+     },
+     {
+       "family": "package:sonaranalyzer.csharp",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "package:sonaranalyzer.csharp",
+       "packageIds": [
+         "SonarAnalyzer.CSharp"
+       ],
+-      "rationale": "Accept the latest listed 10.x analyzer release.",
+-      "compatibilityEvidence": "The analyzer-only 10.31.0.145097 candidate is validated by warning-as-error Builds and EventStore Release builds.",
+-      "removalTrigger": "Roll back this package group if the analyzer introduces an unresolvable false-positive build failure.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+@@ -1903,9 +1905,9 @@
+       "packageIds": [
+         "StackExchange.Redis"
+       ],
+-      "rationale": "Retain 3.0.17 because the required two-instance Redis backplane runtime proof did not reach readiness in the current EventStore host topology.",
+-      "compatibilityEvidence": "Restore, build, and SignalR unit tests passed, but the focused Tier-3 proof timed out during pre-readiness hosted-service calls and therefore did not prove cross-instance delivery on 3.1.0.",
+-      "removalTrigger": "Accept 3.1.0 or later only after the focused two-instance Redis backplane runtime proof passes with cross-instance delivery and negative controls.",
++      "rationale": "Retain the audited family until candidate compatibility is accepted as one rollback-safe group.",
++      "compatibilityEvidence": "Live NuGet metadata is recorded per package; no candidate is accepted without repository validation.",
++      "removalTrigger": "Re-run the audit and validate every affected representative consumer before accepting the family.",
+       "representativeConsumers": [
+         "Hexalith.EventStore"
+       ]
+@@ -2150,23 +2152,23 @@
+     },
+     {
+       "id": "AngleSharp",
+-      "auditedVersion": "1.5.2",
++      "auditedVersion": "1.6.0",
+       "selectedVersion": "1.6.0",
+-      "latestStable": "1.6.0",
+-      "latestPrerelease": "1.7.0-beta.583",
++      "latestStable": "1.7.0",
++      "latestPrerelease": "1.8.0-beta.603",
+       "listingState": "listed",
+       "family": "bunit-html",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "bunit-html",
+-      "rationale": "Accept the latest listed stable 1.x release while preserving the existing security floor.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=1.6.0, prerelease=1.7.0-beta.583",
++      "rationale": "Retain 1.6.0 pending compatibility validation of listed stable candidate 1.7.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=1.7.0, prerelease=1.8.0-beta.603",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "1.6.0",
+-          "latestPrerelease": "1.7.0-beta.583",
++          "latestStable": "1.7.0",
++          "latestPrerelease": "1.8.0-beta.603",
+           "diagnostic": "Registration metadata resolved."
+         }
+       ]
+@@ -2871,9 +2873,9 @@
+       "family": "package:azure.monitor.opentelemetry.aspnetcore",
+       "disposition": "retained",
+       "rollbackGroup": "package:azure.monitor.opentelemetry.aspnetcore",
+-      "rationale": "Retain 1.5.0 because no checked-out source project consumes this catalog row, so the 1.6.0 candidate has no representative compatibility proof.",
++      "rationale": "Retain 1.5.0 pending compatibility validation of listed stable candidate 1.6.0.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=1.6.0, prerelease=1.4.0-beta.1",
+-      "removalTrigger": "Accept a later candidate only after an actual consumer is identified and its telemetry startup and export path pass validation.",
++      "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+@@ -3070,22 +3072,22 @@
+     },
+     {
+       "id": "bunit",
+-      "auditedVersion": "2.8.4-preview",
++      "auditedVersion": "2.8.6",
+       "selectedVersion": "2.8.6",
+-      "latestStable": "2.8.6",
++      "latestStable": "2.9.0",
+       "latestPrerelease": "2.8.4-preview",
+       "listingState": "listed",
+       "family": "bunit-html",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "bunit-html",
+-      "rationale": "Accept the latest listed 2.x stable release and leave the superseded preview channel.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.8.6, prerelease=2.8.4-preview",
++      "rationale": "Retain 2.8.6 pending compatibility validation of listed stable candidate 2.9.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.9.0, prerelease=2.8.4-preview",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.8.6",
++          "latestStable": "2.9.0",
+           "latestPrerelease": "2.8.4-preview",
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -3139,23 +3141,23 @@
+     },
+     {
+       "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+-      "auditedVersion": "13.4.1-beta.686",
++      "auditedVersion": "13.4.1-beta.687",
+       "selectedVersion": "13.4.1-beta.687",
+       "latestStable": "13.0.0",
+-      "latestPrerelease": "13.4.1-beta.687",
++      "latestPrerelease": "13.4.1-beta.701",
+       "listingState": "listed",
+       "family": "package:communitytoolkit.aspire.hosting.dapr",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "package:communitytoolkit.aspire.hosting.dapr",
+-      "rationale": "Accept the latest listed build on the existing 13.4.1 beta channel.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=13.0.0, prerelease=13.4.1-beta.687",
++      "rationale": "Retain the intentional prerelease channel until its coupled family passes compatibility review.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=13.0.0, prerelease=13.4.1-beta.701",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+           "latestStable": "13.0.0",
+-          "latestPrerelease": "13.4.1-beta.687",
++          "latestPrerelease": "13.4.1-beta.701",
+           "diagnostic": "Registration metadata resolved."
+         }
+       ]
+@@ -3555,20 +3557,20 @@
+       "id": "Fluxor",
+       "auditedVersion": "6.10.0",
+       "selectedVersion": "6.10.0",
+-      "latestStable": "6.10.0",
++      "latestStable": "6.11.0",
+       "latestPrerelease": "6.8.0-Beta1",
+       "listingState": "listed",
+       "family": "package:fluxor",
+       "disposition": "retained",
+       "rollbackGroup": "package:fluxor",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=6.10.0, prerelease=6.8.0-Beta1",
++      "rationale": "Retain 6.10.0 pending compatibility validation of listed stable candidate 6.11.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=6.11.0, prerelease=6.8.0-Beta1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "6.10.0",
++          "latestStable": "6.11.0",
+           "latestPrerelease": "6.8.0-Beta1",
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -3578,20 +3580,20 @@
+       "id": "Fluxor.Blazor.Web",
+       "auditedVersion": "6.10.0",
+       "selectedVersion": "6.10.0",
+-      "latestStable": "6.10.0",
++      "latestStable": "6.11.0",
+       "latestPrerelease": "6.8.0-Beta1",
+       "listingState": "listed",
+       "family": "package:fluxor.blazor.web",
+       "disposition": "retained",
+       "rollbackGroup": "package:fluxor.blazor.web",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=6.10.0, prerelease=6.8.0-Beta1",
++      "rationale": "Retain 6.10.0 pending compatibility validation of listed stable candidate 6.11.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=6.11.0, prerelease=6.8.0-Beta1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "6.10.0",
++          "latestStable": "6.11.0",
+           "latestPrerelease": "6.8.0-Beta1",
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -3716,20 +3718,20 @@
+       "id": "Grpc.HealthCheck",
+       "auditedVersion": "2.80.0",
+       "selectedVersion": "2.80.0",
+-      "latestStable": "2.80.0",
++      "latestStable": "2.83.0",
+       "latestPrerelease": "2.83.0-pre1",
+       "listingState": "listed",
+       "family": "package:grpc.healthcheck",
+       "disposition": "retained",
+       "rollbackGroup": "package:grpc.healthcheck",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.80.0, prerelease=2.83.0-pre1",
++      "rationale": "Retain 2.80.0 pending compatibility validation of listed stable candidate 2.83.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.83.0, prerelease=2.83.0-pre1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.80.0",
++          "latestStable": "2.83.0",
+           "latestPrerelease": "2.83.0-pre1",
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -3739,20 +3741,20 @@
+       "id": "Grpc.Net.ClientFactory",
+       "auditedVersion": "2.80.0",
+       "selectedVersion": "2.80.0",
+-      "latestStable": "2.80.0",
++      "latestStable": "2.83.0",
+       "latestPrerelease": "2.83.0-pre1",
+       "listingState": "listed",
+       "family": "package:grpc.net.clientfactory",
+       "disposition": "retained",
+       "rollbackGroup": "package:grpc.net.clientfactory",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.80.0, prerelease=2.83.0-pre1",
++      "rationale": "Retain 2.80.0 pending compatibility validation of listed stable candidate 2.83.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.83.0, prerelease=2.83.0-pre1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.80.0",
++          "latestStable": "2.83.0",
+           "latestPrerelease": "2.83.0-pre1",
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -3852,15 +3854,15 @@
+     },
+     {
+       "id": "Hexalith.Chatbot.Contracts",
+-      "auditedVersion": "1.75.0",
+-      "selectedVersion": "1.75.0",
++      "auditedVersion": "1.80.0",
++      "selectedVersion": "1.80.0",
+       "latestStable": null,
+       "latestPrerelease": null,
+       "listingState": "missing",
+       "family": "hexalith-chatbot",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-chatbot",
+-      "rationale": "Retain 1.75.0 because its configured-source state is missing; incomplete source results must not cause a downgrade.",
++      "rationale": "Retain 1.80.0 because its configured-source state is missing; incomplete source results must not cause a downgrade.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=missing, stable=, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -3875,22 +3877,22 @@
+     },
+     {
+       "id": "Hexalith.Commons",
+-      "auditedVersion": "2.29.0",
+-      "selectedVersion": "2.29.0",
+-      "latestStable": "2.29.0",
++      "auditedVersion": "2.30.0",
++      "selectedVersion": "2.30.0",
++      "latestStable": "2.30.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-commons",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-commons",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.29.0, prerelease=",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.30.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.29.0",
++          "latestStable": "2.30.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -3898,22 +3900,22 @@
+     },
+     {
+       "id": "Hexalith.Commons.Aspire",
+-      "auditedVersion": "2.29.0",
+-      "selectedVersion": "2.29.0",
+-      "latestStable": "2.29.0",
++      "auditedVersion": "2.30.0",
++      "selectedVersion": "2.30.0",
++      "latestStable": "2.30.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-commons",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-commons",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.29.0, prerelease=",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.30.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.29.0",
++          "latestStable": "2.30.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -3921,22 +3923,22 @@
+     },
+     {
+       "id": "Hexalith.Commons.Configurations",
+-      "auditedVersion": "2.29.0",
+-      "selectedVersion": "2.29.0",
+-      "latestStable": "2.29.0",
++      "auditedVersion": "2.30.0",
++      "selectedVersion": "2.30.0",
++      "latestStable": "2.30.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-commons",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-commons",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.29.0, prerelease=",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.30.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.29.0",
++          "latestStable": "2.30.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -3944,22 +3946,22 @@
+     },
+     {
+       "id": "Hexalith.Commons.Http",
+-      "auditedVersion": "2.29.0",
+-      "selectedVersion": "2.29.0",
+-      "latestStable": "2.29.0",
++      "auditedVersion": "2.30.0",
++      "selectedVersion": "2.30.0",
++      "latestStable": "2.30.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-commons",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-commons",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.29.0, prerelease=",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.30.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.29.0",
++          "latestStable": "2.30.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -3967,22 +3969,22 @@
+     },
+     {
+       "id": "Hexalith.Commons.Metadatas",
+-      "auditedVersion": "2.29.0",
+-      "selectedVersion": "2.29.0",
+-      "latestStable": "2.29.0",
++      "auditedVersion": "2.30.0",
++      "selectedVersion": "2.30.0",
++      "latestStable": "2.30.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-commons",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-commons",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.29.0, prerelease=",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.30.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.29.0",
++          "latestStable": "2.30.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -3990,22 +3992,22 @@
+     },
+     {
+       "id": "Hexalith.Commons.ServiceDefaults",
+-      "auditedVersion": "2.29.0",
+-      "selectedVersion": "2.29.0",
+-      "latestStable": "2.29.0",
++      "auditedVersion": "2.30.0",
++      "selectedVersion": "2.30.0",
++      "latestStable": "2.30.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-commons",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-commons",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.29.0, prerelease=",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.30.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.29.0",
++          "latestStable": "2.30.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4013,22 +4015,22 @@
+     },
+     {
+       "id": "Hexalith.Commons.StringEncoders",
+-      "auditedVersion": "2.29.0",
+-      "selectedVersion": "2.29.0",
+-      "latestStable": "2.29.0",
++      "auditedVersion": "2.30.0",
++      "selectedVersion": "2.30.0",
++      "latestStable": "2.30.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-commons",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-commons",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.29.0, prerelease=",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.30.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.29.0",
++          "latestStable": "2.30.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4036,22 +4038,22 @@
+     },
+     {
+       "id": "Hexalith.Commons.UniqueIds",
+-      "auditedVersion": "2.29.0",
+-      "selectedVersion": "2.29.0",
+-      "latestStable": "2.29.0",
++      "auditedVersion": "2.30.0",
++      "selectedVersion": "2.30.0",
++      "latestStable": "2.30.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-commons",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-commons",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.29.0, prerelease=",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.30.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.29.0",
++          "latestStable": "2.30.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4266,22 +4268,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.Admin.Abstractions",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4289,22 +4291,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.Admin.Server",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4312,22 +4314,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.Aspire",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4335,22 +4337,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.Client",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4358,22 +4360,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.Contracts",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4381,22 +4383,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.DomainService",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4404,22 +4406,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.Gateway",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4427,22 +4429,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.RestApi.Generators",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4450,22 +4452,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.Server",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4473,22 +4475,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.ServiceDefaults",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4496,22 +4498,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.SignalR",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4519,22 +4521,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.Testing",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4542,22 +4544,22 @@
+     },
+     {
+       "id": "Hexalith.EventStore.Testing.Integration",
+-      "auditedVersion": "3.88.0",
+-      "selectedVersion": "3.88.0",
+-      "latestStable": "3.88.0",
++      "auditedVersion": "3.90.0",
++      "selectedVersion": "3.90.0",
++      "latestStable": "3.91.0",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-eventstore",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-eventstore",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.88.0, prerelease=",
++      "rationale": "Retain 3.90.0 pending compatibility validation of listed stable candidate 3.91.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.91.0, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.88.0",
++          "latestStable": "3.91.0",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4841,22 +4843,22 @@
+     },
+     {
+       "id": "Hexalith.Memories.Aspire",
+-      "auditedVersion": "2.19.4",
+-      "selectedVersion": "2.19.4",
+-      "latestStable": "2.19.8",
++      "auditedVersion": "2.19.9",
++      "selectedVersion": "2.19.9",
++      "latestStable": "2.20.2",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-memories",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-memories",
+-      "rationale": "Retain 2.19.4 pending compatibility validation of listed stable candidate 2.19.8.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.19.8, prerelease=",
++      "rationale": "Retain 2.19.9 pending compatibility validation of listed stable candidate 2.20.2.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.20.2, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.19.8",
++          "latestStable": "2.20.2",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4864,22 +4866,22 @@
+     },
+     {
+       "id": "Hexalith.Memories.Client.Rest",
+-      "auditedVersion": "2.19.4",
+-      "selectedVersion": "2.19.4",
+-      "latestStable": "2.19.8",
++      "auditedVersion": "2.19.9",
++      "selectedVersion": "2.19.9",
++      "latestStable": "2.20.2",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-memories",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-memories",
+-      "rationale": "Retain 2.19.4 pending compatibility validation of listed stable candidate 2.19.8.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.19.8, prerelease=",
++      "rationale": "Retain 2.19.9 pending compatibility validation of listed stable candidate 2.20.2.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.20.2, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.19.8",
++          "latestStable": "2.20.2",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -4887,22 +4889,22 @@
+     },
+     {
+       "id": "Hexalith.Memories.Contracts",
+-      "auditedVersion": "2.19.4",
+-      "selectedVersion": "2.19.4",
+-      "latestStable": "2.19.8",
++      "auditedVersion": "2.19.9",
++      "selectedVersion": "2.19.9",
++      "latestStable": "2.20.2",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-memories",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-memories",
+-      "rationale": "Retain 2.19.4 pending compatibility validation of listed stable candidate 2.19.8.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.19.8, prerelease=",
++      "rationale": "Retain 2.19.9 pending compatibility validation of listed stable candidate 2.20.2.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=2.20.2, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "2.19.8",
++          "latestStable": "2.20.2",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -5163,22 +5165,22 @@
+     },
+     {
+       "id": "Hexalith.PolymorphicSerializations",
+-      "auditedVersion": "1.19.1",
+-      "selectedVersion": "1.19.1",
+-      "latestStable": "1.19.1",
++      "auditedVersion": "1.19.2",
++      "selectedVersion": "1.19.2",
++      "latestStable": "1.19.2",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-polymorphicserializations",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-polymorphicserializations",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=1.19.1, prerelease=",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=1.19.2, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "1.19.1",
++          "latestStable": "1.19.2",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -5186,22 +5188,22 @@
+     },
+     {
+       "id": "Hexalith.PolymorphicSerializations.CodeGenerators",
+-      "auditedVersion": "1.19.1",
+-      "selectedVersion": "1.19.1",
+-      "latestStable": "1.19.1",
++      "auditedVersion": "1.19.2",
++      "selectedVersion": "1.19.2",
++      "latestStable": "1.19.2",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-polymorphicserializations",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-polymorphicserializations",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=1.19.1, prerelease=",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=1.19.2, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "1.19.1",
++          "latestStable": "1.19.2",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -5278,22 +5280,22 @@
+     },
+     {
+       "id": "Hexalith.Tenants.Aspire",
+-      "auditedVersion": "5.3.0",
+-      "selectedVersion": "5.3.0",
+-      "latestStable": "5.3.0",
++      "auditedVersion": "5.4.0",
++      "selectedVersion": "5.4.0",
++      "latestStable": "5.4.1",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-tenants",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-tenants",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=5.3.0, prerelease=",
++      "rationale": "Retain 5.4.0 pending compatibility validation of listed stable candidate 5.4.1.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=5.4.1, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "5.3.0",
++          "latestStable": "5.4.1",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -5301,22 +5303,22 @@
+     },
+     {
+       "id": "Hexalith.Tenants.Client",
+-      "auditedVersion": "5.3.0",
+-      "selectedVersion": "5.3.0",
+-      "latestStable": "5.3.0",
++      "auditedVersion": "5.4.0",
++      "selectedVersion": "5.4.0",
++      "latestStable": "5.4.1",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-tenants",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-tenants",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=5.3.0, prerelease=",
++      "rationale": "Retain 5.4.0 pending compatibility validation of listed stable candidate 5.4.1.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=5.4.1, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "5.3.0",
++          "latestStable": "5.4.1",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -5324,22 +5326,22 @@
+     },
+     {
+       "id": "Hexalith.Tenants.Contracts",
+-      "auditedVersion": "5.3.0",
+-      "selectedVersion": "5.3.0",
+-      "latestStable": "5.3.0",
++      "auditedVersion": "5.4.0",
++      "selectedVersion": "5.4.0",
++      "latestStable": "5.4.1",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-tenants",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-tenants",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=5.3.0, prerelease=",
++      "rationale": "Retain 5.4.0 pending compatibility validation of listed stable candidate 5.4.1.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=5.4.1, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "5.3.0",
++          "latestStable": "5.4.1",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -5347,22 +5349,22 @@
+     },
+     {
+       "id": "Hexalith.Tenants.Server",
+-      "auditedVersion": "5.3.0",
+-      "selectedVersion": "5.3.0",
+-      "latestStable": "5.3.0",
++      "auditedVersion": "5.4.0",
++      "selectedVersion": "5.4.0",
++      "latestStable": "5.4.1",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-tenants",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-tenants",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=5.3.0, prerelease=",
++      "rationale": "Retain 5.4.0 pending compatibility validation of listed stable candidate 5.4.1.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=5.4.1, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "5.3.0",
++          "latestStable": "5.4.1",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -5370,22 +5372,22 @@
+     },
+     {
+       "id": "Hexalith.Tenants.Testing",
+-      "auditedVersion": "5.3.0",
+-      "selectedVersion": "5.3.0",
+-      "latestStable": "5.3.0",
++      "auditedVersion": "5.4.0",
++      "selectedVersion": "5.4.0",
++      "latestStable": "5.4.1",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "hexalith-tenants",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-tenants",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=5.3.0, prerelease=",
++      "rationale": "Retain 5.4.0 pending compatibility validation of listed stable candidate 5.4.1.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=5.4.1, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "5.3.0",
++          "latestStable": "5.4.1",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -5393,15 +5395,15 @@
+     },
+     {
+       "id": "Hexalith.Tenants.UI",
+-      "auditedVersion": "5.3.0",
+-      "selectedVersion": "5.3.0",
++      "auditedVersion": "5.4.0",
++      "selectedVersion": "5.4.0",
+       "latestStable": null,
+       "latestPrerelease": null,
+       "listingState": "missing",
+       "family": "hexalith-tenants",
+       "disposition": "retained",
+       "rollbackGroup": "hexalith-tenants",
+-      "rationale": "Retain 5.3.0 because its configured-source state is missing; incomplete source results must not cause a downgrade.",
++      "rationale": "Retain 5.4.0 because its configured-source state is missing; incomplete source results must not cause a downgrade.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=missing, stable=, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -5419,20 +5421,20 @@
+       "auditedVersion": "16.5.1",
+       "selectedVersion": "16.5.1",
+       "latestStable": "16.5.1",
+-      "latestPrerelease": "16.6.0-p.12",
++      "latestPrerelease": "16.6.0-p.15",
+       "listingState": "listed",
+       "family": "package:hotchocolate",
+       "disposition": "retained",
+       "rollbackGroup": "package:hotchocolate",
+       "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=16.5.1, prerelease=16.6.0-p.12",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=16.5.1, prerelease=16.6.0-p.15",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+           "latestStable": "16.5.1",
+-          "latestPrerelease": "16.6.0-p.12",
++          "latestPrerelease": "16.6.0-p.15",
+           "diagnostic": "Registration metadata resolved."
+         }
+       ]
+@@ -6819,15 +6821,15 @@
+     },
+     {
+       "id": "Microsoft.Identity.Web",
+-      "auditedVersion": "4.13.2",
++      "auditedVersion": "4.14.2",
+       "selectedVersion": "4.14.2",
+       "latestStable": "4.14.2",
+       "latestPrerelease": "4.4.0-preview.1",
+       "listingState": "listed",
+       "family": "identity-model",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "identity-model",
+-      "rationale": "Accept the latest listed stable 4.x Microsoft Identity Web release.",
++      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=4.14.2, prerelease=4.4.0-preview.1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -6842,15 +6844,15 @@
+     },
+     {
+       "id": "Microsoft.IdentityModel.Abstractions",
+-      "auditedVersion": "8.21.0",
++      "auditedVersion": "8.22.0",
+       "selectedVersion": "8.22.0",
+       "latestStable": "8.22.0",
+       "latestPrerelease": "8.0.0-preview1",
+       "listingState": "listed",
+       "family": "identity-model",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "identity-model",
+-      "rationale": "Accept the latest listed 8.x patch as part of the complete identity-model rollback group.",
++      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=8.22.0, prerelease=8.0.0-preview1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -6865,15 +6867,15 @@
+     },
+     {
+       "id": "Microsoft.IdentityModel.JsonWebTokens",
+-      "auditedVersion": "8.21.0",
++      "auditedVersion": "8.22.0",
+       "selectedVersion": "8.22.0",
+       "latestStable": "8.22.0",
+       "latestPrerelease": "8.0.0-preview1",
+       "listingState": "listed",
+       "family": "identity-model",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "identity-model",
+-      "rationale": "Accept the latest listed 8.x patch as part of the complete identity-model rollback group.",
++      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=8.22.0, prerelease=8.0.0-preview1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -6888,15 +6890,15 @@
+     },
+     {
+       "id": "Microsoft.IdentityModel.Logging",
+-      "auditedVersion": "8.21.0",
++      "auditedVersion": "8.22.0",
+       "selectedVersion": "8.22.0",
+       "latestStable": "8.22.0",
+       "latestPrerelease": "8.0.0-preview1",
+       "listingState": "listed",
+       "family": "identity-model",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "identity-model",
+-      "rationale": "Accept the latest listed 8.x patch as part of the complete identity-model rollback group.",
++      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=8.22.0, prerelease=8.0.0-preview1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -6911,15 +6913,15 @@
+     },
+     {
+       "id": "Microsoft.IdentityModel.Protocols",
+-      "auditedVersion": "8.21.0",
++      "auditedVersion": "8.22.0",
+       "selectedVersion": "8.22.0",
+       "latestStable": "8.22.0",
+       "latestPrerelease": "8.0.0-preview1",
+       "listingState": "listed",
+       "family": "identity-model",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "identity-model",
+-      "rationale": "Accept the latest listed 8.x patch as part of the complete identity-model rollback group.",
++      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=8.22.0, prerelease=8.0.0-preview1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -6934,15 +6936,15 @@
+     },
+     {
+       "id": "Microsoft.IdentityModel.Protocols.OpenIdConnect",
+-      "auditedVersion": "8.21.0",
++      "auditedVersion": "8.22.0",
+       "selectedVersion": "8.22.0",
+       "latestStable": "8.22.0",
+       "latestPrerelease": "8.0.0-preview1",
+       "listingState": "listed",
+       "family": "identity-model",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "identity-model",
+-      "rationale": "Accept the latest listed 8.x patch as part of the complete identity-model rollback group.",
++      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=8.22.0, prerelease=8.0.0-preview1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -6957,15 +6959,15 @@
+     },
+     {
+       "id": "Microsoft.IdentityModel.Tokens",
+-      "auditedVersion": "8.21.0",
++      "auditedVersion": "8.22.0",
+       "selectedVersion": "8.22.0",
+       "latestStable": "8.22.0",
+       "latestPrerelease": "8.0.0-preview1",
+       "listingState": "listed",
+       "family": "identity-model",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "identity-model",
+-      "rationale": "Accept the latest listed 8.x patch as part of the complete identity-model rollback group.",
++      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=8.22.0, prerelease=8.0.0-preview1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -7011,9 +7013,9 @@
+       "family": "package:microsoft.openapi",
+       "disposition": "retained",
+       "rollbackGroup": "package:microsoft.openapi",
+-      "rationale": "Retain the latest proven 2.x line because Microsoft.AspNetCore.OpenApi 10.x is not compatible with the listed 3.x runtime API.",
++      "rationale": "Retain 2.11.0 pending compatibility validation of listed stable candidate 3.9.0.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.9.0, prerelease=2.0.0-preview.31",
+-      "removalTrigger": "Move to 3.x only after ASP.NET Core 10 OpenAPI generation passes explicit runtime compatibility tests.",
++      "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+@@ -7080,9 +7082,9 @@
+       "family": "package:microsoft.sourcelink.github",
+       "disposition": "retained",
+       "rollbackGroup": "package:microsoft.sourcelink.github",
+-      "rationale": "Retain 10.0.302 because both configured-source metadata surfaces report only older candidates; never downgrade from an incomplete search result.",
++      "rationale": "Retain 10.0.302 because its configured-source state is missing; incomplete source results must not cause a downgrade.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=missing, stable=10.0.301, prerelease=11.0.100-preview.6.26359.118",
+-      "removalTrigger": "Re-evaluate when a source lists a version newer than 10.0.302 and the SDK/source-link build remains aligned.",
++      "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+@@ -7396,20 +7398,20 @@
+       "id": "NRedisStack",
+       "auditedVersion": "1.6.0",
+       "selectedVersion": "1.6.0",
+-      "latestStable": "1.7.2",
++      "latestStable": "1.7.3",
+       "latestPrerelease": "1.0.0-beta1",
+       "listingState": "listed",
+       "family": "package:nredisstack",
+       "disposition": "retained",
+       "rollbackGroup": "package:nredisstack",
+-      "rationale": "Retain 1.6.0 pending compatibility validation of listed stable candidate 1.7.2.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=1.7.2, prerelease=1.0.0-beta1",
++      "rationale": "Retain 1.6.0 pending compatibility validation of listed stable candidate 1.7.3.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=1.7.3, prerelease=1.0.0-beta1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "1.7.2",
++          "latestStable": "1.7.3",
+           "latestPrerelease": "1.0.0-beta1",
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -7787,20 +7789,20 @@
+       "id": "Radzen.Blazor",
+       "auditedVersion": "11.1.7",
+       "selectedVersion": "11.1.7",
+-      "latestStable": "11.2.0",
++      "latestStable": "11.2.2",
+       "latestPrerelease": null,
+       "listingState": "listed",
+       "family": "package:radzen.blazor",
+       "disposition": "retained",
+       "rollbackGroup": "package:radzen.blazor",
+-      "rationale": "Retain 11.1.7 pending compatibility validation of listed stable candidate 11.2.0.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=11.2.0, prerelease=",
++      "rationale": "Retain 11.1.7 pending compatibility validation of listed stable candidate 11.2.2.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=11.2.2, prerelease=",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "11.2.0",
++          "latestStable": "11.2.2",
+           "latestPrerelease": null,
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -7854,15 +7856,15 @@
+     },
+     {
+       "id": "Scriban",
+-      "auditedVersion": "7.2.5",
++      "auditedVersion": "7.2.6",
+       "selectedVersion": "7.2.6",
+       "latestStable": "7.2.6",
+       "latestPrerelease": "3.0.0-alpha.9",
+       "listingState": "listed",
+       "family": "package:scriban",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "package:scriban",
+-      "rationale": "Accept the latest listed stable 7.x patch release.",
++      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=7.2.6, prerelease=3.0.0-alpha.9",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -8153,15 +8155,15 @@
+     },
+     {
+       "id": "SonarAnalyzer.CSharp",
+-      "auditedVersion": "10.30.0.144632",
++      "auditedVersion": "10.31.0.145097",
+       "selectedVersion": "10.31.0.145097",
+       "latestStable": "10.31.0.145097",
+       "latestPrerelease": "8.2.0-RC1",
+       "listingState": "listed",
+       "family": "package:sonaranalyzer.csharp",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "package:sonaranalyzer.csharp",
+-      "rationale": "Accept the latest listed 10.x analyzer release.",
++      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=10.31.0.145097, prerelease=8.2.0-RC1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -8178,20 +8180,20 @@
+       "id": "StackExchange.Redis",
+       "auditedVersion": "3.0.17",
+       "selectedVersion": "3.0.17",
+-      "latestStable": "3.1.0",
++      "latestStable": "3.1.3",
+       "latestPrerelease": "1.2.0-alpha1",
+       "listingState": "listed",
+       "family": "package:stackexchange.redis",
+       "disposition": "retained",
+       "rollbackGroup": "package:stackexchange.redis",
+-      "rationale": "Retain 3.0.17 because the required two-instance Redis backplane runtime proof did not reach readiness in the current EventStore host topology.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.1.0, prerelease=1.2.0-alpha1",
+-      "removalTrigger": "Accept 3.1.0 or later only after the focused two-instance Redis backplane runtime proof passes with cross-instance delivery and negative controls.",
++      "rationale": "Retain 3.0.17 pending compatibility validation of listed stable candidate 3.1.3.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=3.1.3, prerelease=1.2.0-alpha1",
++      "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "3.1.0",
++          "latestStable": "3.1.3",
+           "latestPrerelease": "1.2.0-alpha1",
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -8337,15 +8339,15 @@
+     },
+     {
+       "id": "System.IdentityModel.Tokens.Jwt",
+-      "auditedVersion": "8.21.0",
++      "auditedVersion": "8.22.0",
+       "selectedVersion": "8.22.0",
+       "latestStable": "8.22.0",
+       "latestPrerelease": "8.0.0-preview1",
+       "listingState": "listed",
+       "family": "identity-model",
+-      "disposition": "accepted",
++      "disposition": "retained",
+       "rollbackGroup": "identity-model",
+-      "rationale": "Accept the latest listed 8.x patch as part of the complete identity-model rollback group.",
++      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+       "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=8.22.0, prerelease=8.0.0-preview1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+@@ -8477,20 +8479,20 @@
+       "id": "Verify",
+       "auditedVersion": "31.27.0",
+       "selectedVersion": "31.27.0",
+-      "latestStable": "31.27.0",
++      "latestStable": "31.28.0",
+       "latestPrerelease": "31.16.0-beta.1",
+       "listingState": "listed",
+       "family": "verify",
+       "disposition": "retained",
+       "rollbackGroup": "verify",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=31.27.0, prerelease=31.16.0-beta.1",
++      "rationale": "Retain 31.27.0 pending compatibility validation of listed stable candidate 31.28.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=31.28.0, prerelease=31.16.0-beta.1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "31.27.0",
++          "latestStable": "31.28.0",
+           "latestPrerelease": "31.16.0-beta.1",
+           "diagnostic": "Registration metadata resolved."
+         }
+@@ -8500,20 +8502,20 @@
+       "id": "Verify.XunitV3",
+       "auditedVersion": "31.27.0",
+       "selectedVersion": "31.27.0",
+-      "latestStable": "31.27.0",
++      "latestStable": "31.28.0",
+       "latestPrerelease": "31.16.0-beta.1",
+       "listingState": "listed",
+       "family": "verify",
+       "disposition": "retained",
+       "rollbackGroup": "verify",
+-      "rationale": "Current pin is the latest listed stable release on the configured sources.",
+-      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=31.27.0, prerelease=31.16.0-beta.1",
++      "rationale": "Retain 31.27.0 pending compatibility validation of listed stable candidate 31.28.0.",
++      "evidence": "https://api.nuget.org/v3/index.json: state=listed, stable=31.28.0, prerelease=31.16.0-beta.1",
+       "removalTrigger": "Re-run the live audit and accept a source-resolved candidate only after the family and representative consumers pass compatibility validation.",
+       "sourceResults": [
+         {
+           "source": "https://api.nuget.org/v3/index.json",
+           "listingState": "listed",
+-          "latestStable": "31.27.0",
++          "latestStable": "31.28.0",
+           "latestPrerelease": "31.16.0-beta.1",
+           "diagnostic": "Registration metadata resolved."
+         }
+diff --git a/Tools/test-g4-tool-package-artifact-validator.ps1 b/Tools/test-g4-tool-package-artifact-validator.ps1
+new file mode 100644
+index 0000000..eba7bae
+--- /dev/null
++++ b/Tools/test-g4-tool-package-artifact-validator.ps1
+@@ -0,0 +1,307 @@
++[CmdletBinding()]
++param()
++
++# Regression suite for the loop-6 publication-hardening functions in
++# G4PackageQualification.functions.ps1: nupkg/snupkg canonical-role validation,
++# qualification-evidence content parsing, source-tree clean/immutable binding, and
++# tracked-fixture-vs-HEAD byte proof. It dot-sources the SAME functions the official
++# gate (test-g4-tool-package-contracts.ps1) uses, so these tests exercise the exact
++# rejection paths a real qualification run relies on, not a driftable copy.
++
++Set-StrictMode -Version Latest
++$ErrorActionPreference = 'Stop'
++
++. (Join-Path $PSScriptRoot 'G4PackageQualification.functions.ps1')
++
++$temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) "g4-artifact-validator-$([Guid]::NewGuid().ToString('N'))"
++$failures = [System.Collections.Generic.List[string]]::new()
++$scenarioCount = 0
++
++function Test-Throws {
++    param(
++        [Parameter(Mandatory = $true)][string] $Name,
++        [Parameter(Mandatory = $true)][scriptblock] $ScriptBlock,
++        [Parameter(Mandatory = $true)][string] $ExpectedMessageFragment
++    )
++
++    $script:scenarioCount++
++    try {
++        & $ScriptBlock
++        $script:failures.Add("$Name expected an exception containing '$ExpectedMessageFragment' but none was thrown.")
++    }
++    catch {
++        $message = $_.Exception.Message
++        if (-not $message.Contains($ExpectedMessageFragment, [System.StringComparison]::Ordinal)) {
++            $script:failures.Add("$Name threw an exception that did not contain '$ExpectedMessageFragment'. Actual: $message")
++        }
++    }
++}
++
++function Test-Succeeds {
++    param(
++        [Parameter(Mandatory = $true)][string] $Name,
++        [Parameter(Mandatory = $true)][scriptblock] $ScriptBlock
++    )
++
++    $script:scenarioCount++
++    try {
++        & $ScriptBlock
++    }
++    catch {
++        $script:failures.Add("$Name was expected to succeed but threw: $($_.Exception.Message)")
++    }
++}
++
++function New-Nuspec {
++    param(
++        [Parameter(Mandatory = $true)][string] $Id,
++        [Parameter(Mandatory = $true)][string] $Version,
++        [switch] $AsSymbolsPackage
++    )
++
++    $packageTypeXml = if ($AsSymbolsPackage) {
++        '<packageTypes><packageType name="SymbolsPackage" /></packageTypes>'
++    }
++    else {
++        '<packageTypes><packageType name="DotnetTool" /></packageTypes>'
++    }
++
++    return @"
++<?xml version="1.0" encoding="utf-8"?>
++<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
++  <metadata>
++    <id>$Id</id>
++    <version>$Version</version>
++    $packageTypeXml
++  </metadata>
++</package>
++"@
++}
++
++function New-ZipArchive {
++    param(
++        [Parameter(Mandatory = $true)][string] $Path,
++        [Parameter(Mandatory = $true)][hashtable] $Entries
++    )
++
++    if (Test-Path -LiteralPath $Path) {
++        Remove-Item -LiteralPath $Path -Force
++    }
++
++    $archive = [System.IO.Compression.ZipFile]::Open($Path, [System.IO.Compression.ZipArchiveMode]::Create)
++    try {
++        foreach ($entryName in $Entries.Keys) {
++            $entry = $archive.CreateEntry($entryName)
++            $writer = New-Object System.IO.StreamWriter($entry.Open())
++            try {
++                $writer.Write([string] $Entries[$entryName])
++            }
++            finally {
++                $writer.Dispose()
++            }
++        }
++    }
++    finally {
++        $archive.Dispose()
++    }
++}
++
++New-Item -ItemType Directory -Path $temporaryRoot -Force | Out-Null
++try {
++    # --- Assert-CanonicalNuGetArtifact / Get-NuGetPackageRole ---
++
++    $validNupkgPath = Join-Path $temporaryRoot 'valid.nupkg'
++    New-ZipArchive -Path $validNupkgPath -Entries @{
++        'Fixture.Tool.nuspec' = New-Nuspec -Id 'Fixture.Tool' -Version '1.2.3'
++        'tools/net10.0/any/Fixture.Tool.dll' = 'binary-stand-in'
++    }
++    Test-Succeeds -Name 'Valid canonical nupkg is accepted' -ScriptBlock {
++        $role = Assert-CanonicalNuGetArtifact -ArchivePath $validNupkgPath -ExpectedRole 'Package' -ExpectedId 'Fixture.Tool' -ExpectedVersion '1.2.3'
++        if ($role.IsSymbolsPackage) { throw 'expected a non-symbols role' }
++    }
++
++    $validSnupkgPath = Join-Path $temporaryRoot 'valid.snupkg'
++    New-ZipArchive -Path $validSnupkgPath -Entries @{
++        'Fixture.Tool.nuspec' = New-Nuspec -Id 'Fixture.Tool' -Version '1.2.3' -AsSymbolsPackage
++        'tools/net10.0/any/Fixture.Tool.pdb' = 'symbols-stand-in'
++    }
++    Test-Succeeds -Name 'Valid canonical snupkg is accepted' -ScriptBlock {
++        $role = Assert-CanonicalNuGetArtifact -ArchivePath $validSnupkgPath -ExpectedRole 'Symbols' -ExpectedId 'Fixture.Tool' -ExpectedVersion '1.2.3'
++        if (-not $role.IsSymbolsPackage) { throw 'expected a symbols role' }
++    }
++
++    $zeroNuspecPath = Join-Path $temporaryRoot 'zero-nuspec.nupkg'
++    New-ZipArchive -Path $zeroNuspecPath -Entries @{
++        'tools/net10.0/any/Fixture.Tool.dll' = 'binary-stand-in'
++    }
++    Test-Throws -Name 'Zero-nuspec archive is rejected' -ExpectedMessageFragment 'contains no .nuspec entry' -ScriptBlock {
++        Assert-CanonicalNuGetArtifact -ArchivePath $zeroNuspecPath -ExpectedRole 'Package' -ExpectedId 'Fixture.Tool' -ExpectedVersion '1.2.3'
++    }
++
++    $multipleNuspecPath = Join-Path $temporaryRoot 'multiple-nuspec.nupkg'
++    New-ZipArchive -Path $multipleNuspecPath -Entries @{
++        'Fixture.Tool.nuspec' = New-Nuspec -Id 'Fixture.Tool' -Version '1.2.3'
++        'nested/Other.Tool.nuspec' = New-Nuspec -Id 'Other.Tool' -Version '9.9.9'
++    }
++    Test-Throws -Name 'Multiple-nuspec archive is rejected' -ExpectedMessageFragment 'exactly one is required' -ScriptBlock {
++        Assert-CanonicalNuGetArtifact -ArchivePath $multipleNuspecPath -ExpectedRole 'Package' -ExpectedId 'Fixture.Tool' -ExpectedVersion '1.2.3'
++    }
++
++    Test-Throws -Name 'Symbols package swapped in as primary artifact is rejected' `
++        -ExpectedMessageFragment 'swapped in as the primary artifact' -ScriptBlock {
++        Assert-CanonicalNuGetArtifact -ArchivePath $validSnupkgPath -ExpectedRole 'Package' -ExpectedId 'Fixture.Tool' -ExpectedVersion '1.2.3'
++    }
++
++    Test-Throws -Name 'Primary artifact swapped in as symbols package is rejected' `
++        -ExpectedMessageFragment 'swapped in as symbols' -ScriptBlock {
++        Assert-CanonicalNuGetArtifact -ArchivePath $validNupkgPath -ExpectedRole 'Symbols' -ExpectedId 'Fixture.Tool' -ExpectedVersion '1.2.3'
++    }
++
++    Test-Throws -Name 'Identity mismatch is rejected' -ExpectedMessageFragment 'does not match expected' -ScriptBlock {
++        Assert-CanonicalNuGetArtifact -ArchivePath $validNupkgPath -ExpectedRole 'Package' -ExpectedId 'Fixture.Tool' -ExpectedVersion '9.9.9'
++    }
++
++    # --- Assert-QualificationEvidenceContent ---
++
++    $negativeEvidencePath = Join-Path $temporaryRoot 'negative.json'
++    Set-Content -LiteralPath $negativeEvidencePath -Encoding utf8 -Value (
++        '{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM016"},"diagnostics":[]}'
++    )
++    Test-Succeeds -Name 'Well-formed negative evidence is accepted' -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $negativeEvidencePath -Kind 'Negative' -ExpectedRuleId 'HXM016'
++    }
++    Test-Throws -Name 'Negative evidence with unexpected ruleId is rejected' -ExpectedMessageFragment "expected 'HXM009'" -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $negativeEvidencePath -Kind 'Negative' -ExpectedRuleId 'HXM009'
++    }
++
++    $falselyPassedPath = Join-Path $temporaryRoot 'falsely-passed.json'
++    Set-Content -LiteralPath $falselyPassedPath -Encoding utf8 -Value (
++        '{"status":"passed","outcome":{"exitCode":"Success","phase":"None","category":"None","ruleId":null},"diagnostics":[]}'
++    )
++    Test-Throws -Name 'Passed status is rejected for a negative control' -ExpectedMessageFragment 'does not represent a failed negative control' -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $falselyPassedPath -Kind 'Negative'
++    }
++    Test-Throws -Name 'Passed status is rejected for an ExactNonPassing control' -ExpectedMessageFragment 'represents a non-passing control as passing' -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $falselyPassedPath -Kind 'ExactNonPassing'
++    }
++
++    $completedPath = Join-Path $temporaryRoot 'completed.json'
++    Set-Content -LiteralPath $completedPath -Encoding utf8 -Value (
++        '{"status":"completed","outcome":{"exitCode":"Success","phase":"None","category":"None","ruleId":null},"diagnostics":[]}'
++    )
++    Test-Throws -Name 'Completed status is rejected for an ExactNonPassing control' -ExpectedMessageFragment 'represents a non-passing control as passing' -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $completedPath -Kind 'ExactNonPassing'
++    }
++    Test-Succeeds -Name 'Completed status is accepted for a Positive control' -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $completedPath -Kind 'Positive'
++    }
++
++    $failedPath = Join-Path $temporaryRoot 'failed-for-positive.json'
++    Set-Content -LiteralPath $failedPath -Encoding utf8 -Value (
++        '{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM016"},"diagnostics":[]}'
++    )
++    Test-Throws -Name 'Failed status is rejected for a Positive control' -ExpectedMessageFragment "represents a positive control as failed" -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $failedPath -Kind 'Positive'
++    }
++
++    $notJsonPath = Join-Path $temporaryRoot 'not-json.json'
++    Set-Content -LiteralPath $notJsonPath -Encoding utf8 -Value 'this is not JSON {{{'
++    Test-Throws -Name 'Non-JSON evidence is rejected' -ExpectedMessageFragment 'is not valid JSON' -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $notJsonPath -Kind 'Positive'
++    }
++
++    $emptyPath = Join-Path $temporaryRoot 'empty.json'
++    Set-Content -LiteralPath $emptyPath -Encoding utf8 -Value ''
++    Test-Throws -Name 'Empty evidence is rejected' -ExpectedMessageFragment 'is empty' -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $emptyPath -Kind 'Positive'
++    }
++
++    $noStatusPath = Join-Path $temporaryRoot 'no-status.json'
++    Set-Content -LiteralPath $noStatusPath -Encoding utf8 -Value '{"outcome":{"exitCode":"Success"}}'
++    Test-Throws -Name 'Evidence missing status is rejected' -ExpectedMessageFragment 'does not declare a status' -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $noStatusPath -Kind 'Positive'
++    }
++
++    $noRuleIdPath = Join-Path $temporaryRoot 'no-rule-id.json'
++    Set-Content -LiteralPath $noRuleIdPath -Encoding utf8 -Value '{"status":"failed","outcome":{"exitCode":"UsageOrManifest","ruleId":null}}'
++    Test-Throws -Name 'Failed evidence without a causal ruleId is rejected' -ExpectedMessageFragment 'does not carry a causal outcome.ruleId' -ScriptBlock {
++        $null = Assert-QualificationEvidenceContent -FilePath $noRuleIdPath -Kind 'Negative'
++    }
++
++    # --- Get-SourceTreeState ---
++
++    $cleanRepoRoot = Join-Path $temporaryRoot 'clean-repo'
++    New-Item -ItemType Directory -Path $cleanRepoRoot -Force | Out-Null
++    & git -C $cleanRepoRoot init --quiet
++    & git -C $cleanRepoRoot config user.email 'fixture@local.invalid'
++    & git -C $cleanRepoRoot config user.name 'Fixture'
++    Set-Content -LiteralPath (Join-Path $cleanRepoRoot 'tracked.txt') -Encoding utf8 -Value 'tracked content'
++    & git -C $cleanRepoRoot add -A
++    & git -C $cleanRepoRoot commit --quiet -m 'fixture commit'
++    Test-Succeeds -Name 'Clean tree reports Clean=true' -ScriptBlock {
++        $state = Get-SourceTreeState -RepositoryRoot $cleanRepoRoot
++        if (-not $state.Clean) { throw 'expected a clean tree' }
++        if ([string]::IsNullOrWhiteSpace($state.Revision)) { throw 'expected a bound revision' }
++    }
++
++    Set-Content -LiteralPath (Join-Path $cleanRepoRoot 'tracked.txt') -Encoding utf8 -Value 'modified content'
++    Test-Succeeds -Name 'Dirty tree reports Clean=false without throwing' -ScriptBlock {
++        $state = Get-SourceTreeState -RepositoryRoot $cleanRepoRoot
++        if ($state.Clean) { throw 'expected a dirty tree' }
++        if (@($state.Reasons).Count -eq 0) { throw 'expected recorded reasons' }
++    }
++    & git -C $cleanRepoRoot checkout --quiet -- tracked.txt
++
++    $nonRepoRoot = Join-Path $temporaryRoot 'non-repo'
++    New-Item -ItemType Directory -Path $nonRepoRoot -Force | Out-Null
++    Test-Throws -Name 'Non-Git directory is rejected' -ExpectedMessageFragment 'requires a Git work tree' -ScriptBlock {
++        Get-SourceTreeState -RepositoryRoot $nonRepoRoot
++    }
++
++    # --- Assert-TrackedFixtureBytesMatchHead ---
++
++    $fixtureSubdirectory = Join-Path $cleanRepoRoot 'test/fixtures/module'
++    New-Item -ItemType Directory -Path $fixtureSubdirectory -Force | Out-Null
++    Set-Content -LiteralPath (Join-Path $fixtureSubdirectory 'sample.json') -Encoding utf8 -Value '{"sample":true}'
++    & git -C $cleanRepoRoot add -A
++    & git -C $cleanRepoRoot commit --quiet -m 'add fixture'
++    $headRevision = (& git -C $cleanRepoRoot rev-parse HEAD).Trim()
++
++    $copiedFixtureDirectory = Join-Path $temporaryRoot 'copied-fixtures'
++    New-Item -ItemType Directory -Path $copiedFixtureDirectory -Force | Out-Null
++    Copy-Item -LiteralPath (Join-Path $fixtureSubdirectory 'sample.json') -Destination $copiedFixtureDirectory
++
++    Test-Succeeds -Name 'Byte-identical copied fixture matches HEAD' -ScriptBlock {
++        $count = Assert-TrackedFixtureBytesMatchHead -RepositoryRoot $cleanRepoRoot -SourceRevision $headRevision `
++            -FixtureDirectory $copiedFixtureDirectory -RepositoryRelativeRoot 'test/fixtures/module'
++        if ($count -ne 1) { throw "expected 1 matched file, got $count" }
++    }
++
++    Set-Content -LiteralPath (Join-Path $copiedFixtureDirectory 'sample.json') -Encoding utf8 -Value '{"sample":false}'
++    Test-Throws -Name 'Edited copied fixture is rejected' -ExpectedMessageFragment 'bytes differ from the bytes tracked at' -ScriptBlock {
++        Assert-TrackedFixtureBytesMatchHead -RepositoryRoot $cleanRepoRoot -SourceRevision $headRevision `
++            -FixtureDirectory $copiedFixtureDirectory -RepositoryRelativeRoot 'test/fixtures/module'
++    }
++
++    $untrackedFixtureDirectory = Join-Path $temporaryRoot 'untracked-fixtures'
++    New-Item -ItemType Directory -Path $untrackedFixtureDirectory -Force | Out-Null
++    Set-Content -LiteralPath (Join-Path $untrackedFixtureDirectory 'never-tracked.json') -Encoding utf8 -Value '{}'
++    Test-Throws -Name 'Fixture absent at the bound revision is rejected' -ExpectedMessageFragment 'is not readable at' -ScriptBlock {
++        Assert-TrackedFixtureBytesMatchHead -RepositoryRoot $cleanRepoRoot -SourceRevision $headRevision `
++            -FixtureDirectory $untrackedFixtureDirectory -RepositoryRelativeRoot 'test/fixtures/module'
++    }
++}
++finally {
++    Remove-Item -LiteralPath $temporaryRoot -Recurse -Force -ErrorAction SilentlyContinue
++}
++
++if ($failures.Count -gt 0) {
++    [Console]::Error.WriteLine("G-4 tool package artifact validator tests failed with $($failures.Count) error(s):")
++    foreach ($failure in $failures) {
++        [Console]::Error.WriteLine("- $failure")
++    }
++
++    exit 1
++}
++
++[Console]::Out.WriteLine("G-4 tool package artifact validator tests passed: $scenarioCount scenarios.")
+diff --git a/Tools/test-g4-tool-package-contracts.ps1 b/Tools/test-g4-tool-package-contracts.ps1
+index 09aa103..6426ac6 100644
+--- a/Tools/test-g4-tool-package-contracts.ps1
++++ b/Tools/test-g4-tool-package-contracts.ps1
+@@ -20,6 +20,8 @@ param(
+ Set-StrictMode -Version Latest
+ $ErrorActionPreference = 'Stop'
+ 
++. (Join-Path $PSScriptRoot 'G4PackageQualification.functions.ps1')
++
+ $repositoryRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+ 
+ if ($Version -notmatch '^\d+\.\d+\.\d+(?:-[0-9A-Za-z][0-9A-Za-z.-]*)?$') {
+@@ -273,7 +275,11 @@ function Assert-ExactNonPassingResult {
+     }
+ }
+ 
++
+ $consumerRoot = $null
++$qualificationEvidenceEntries = [System.Collections.Generic.List[object]]::new()
++$fixtureProof = [ordered] @{}
++$qualificationEvidenceDirectory = $null
+ 
+ try {
+     if (-not $SkipSourceValidation) {
+@@ -294,6 +300,11 @@ try {
+         }
+     }
+ 
++    # Bind the qualified source revision and its clean/dirty state now, before any
++    # package or control output could be attributed to it. A dirty tree does not
++    # abort qualification; it permanently forecloses releaseEligible below.
++    $sourceTreeState = Get-SourceTreeState -RepositoryRoot $repositoryRoot
++
+     $buildScript = Join-Path $PSScriptRoot 'build-g4-tool-packages.ps1'
+     & $buildScript -Version $Version -OutputDirectory $packageDirectoryPath
+     if ($LASTEXITCODE -ne 0) {
+@@ -347,6 +358,11 @@ try {
+     Assert-PositiveResult -Description 'hexalith-evidence validate help' -Result (Invoke-ToolCommand -Command 'hexalith-evidence' -Arguments @('validate', '--help') -WorkingDirectory $consumerRoot)
+ 
+     if ($RequireControls) {
++        $qualificationEvidenceDirectory = Join-Path $packageDirectoryPath 'qualification-evidence'
++        $null = New-Item -ItemType Directory -Path $qualificationEvidenceDirectory -Force
++
++        $fixtureRootRelativePath = ([IO.Path]::GetRelativePath($repositoryRoot, $fixtureRootPath)).Replace('\', '/')
++
+         $consumerFixturesRoot = Join-Path $consumerRoot 'test/fixtures'
+         $null = New-Item -ItemType Directory -Path $consumerFixturesRoot -Force
+         foreach ($fixtureDirectoryName in @('module', 'evidence')) {
+@@ -355,6 +371,19 @@ try {
+             Copy-Item -LiteralPath $sourceFixtureDirectory -Destination $consumerFixturesRoot -Recurse -Force
+         }
+ 
++        # Prove every byte the packaged consumer is about to exercise is identical to
++        # what the bound source revision tracks. Assert-FixturesTracked above only
++        # rules out untracked/ignored files; a tracked-but-locally-edited fixture
++        # would pass that check yet still be irreproducible from a fresh checkout.
++        foreach ($fixtureDirectoryName in @('module', 'evidence')) {
++            $copiedFixtureDirectory = Join-Path $consumerFixturesRoot $fixtureDirectoryName
++            $matchedFileCount = Assert-TrackedFixtureBytesMatchHead -RepositoryRoot $repositoryRoot `
++                -SourceRevision $sourceTreeState.Revision `
++                -FixtureDirectory $copiedFixtureDirectory `
++                -RepositoryRelativeRoot "$fixtureRootRelativePath/$fixtureDirectoryName"
++            $fixtureProof[$fixtureDirectoryName] = $matchedFileCount
++        }
++
+         & git -C $consumerRoot init --quiet
+         if ($LASTEXITCODE -ne 0) {
+             throw "Unable to initialize the isolated package consumer repository (exit code $LASTEXITCODE)."
+@@ -379,6 +408,7 @@ try {
+             'json'
+         ) -WorkingDirectory $consumerRoot
+         Assert-PositiveResult -Description 'Positive module manifest and canonical evidence' -Result $downResult
++        $qualificationEvidenceEntries.Add((Save-QualificationEvidence -EvidenceDirectory $qualificationEvidenceDirectory -Name 'packaged-down-output' -Content $downResult.Output))
+ 
+         $moduleEvidencePath = Join-Path $consumerRoot 'evidence/module-run.json'
+         if (-not (Test-Path -LiteralPath $moduleEvidencePath -PathType Leaf)) {
+@@ -401,6 +431,7 @@ try {
+             $moduleEvidence.invocation.manifestPath -cne $moduleManifestPath) {
+             throw 'Packaged module evidence did not retain the expected canonical schema and consumer-relative manifest identity.'
+         }
++        $qualificationEvidenceEntries.Add((Save-QualificationEvidence -EvidenceDirectory $qualificationEvidenceDirectory -Name 'packaged-down-evidence' -Content $moduleEvidenceText))
+ 
+         $unavailableResult = Invoke-ToolCommand -Command 'hexalith-module' -Arguments @(
+             'run',
+@@ -412,19 +443,171 @@ try {
+             'json'
+         ) -WorkingDirectory $consumerRoot
+         Assert-ExactNonPassingResult -Result $unavailableResult -ExitCode 2 -RuleId 'HXR002' -Description 'Unavailable platform prerequisite control'
++        $qualificationEvidenceEntries.Add((Save-QualificationEvidence -EvidenceDirectory $qualificationEvidenceDirectory -Name 'packaged-unavailable-output' -Content $unavailableResult.Output))
++        $unavailableEvidencePath = Join-Path $consumerRoot 'evidence/unavailable.json'
++        if (Test-Path -LiteralPath $unavailableEvidencePath -PathType Leaf) {
++            $qualificationEvidenceEntries.Add(
++                (Save-QualificationEvidence -EvidenceDirectory $qualificationEvidenceDirectory -Name 'packaged-unavailable-evidence' `
++                        -Content ([System.IO.File]::ReadAllText($unavailableEvidencePath)))
++            )
++        }
+ 
+-        Assert-PositiveResult -Description 'Positive readiness evidence' -Result (Invoke-ToolCommand -Command 'hexalith-evidence' -Arguments @('validate', $readinessEvidencePath, '--output', 'json') -WorkingDirectory $consumerRoot)
++        # Positive packaged `hexalith-module test` path: the fixture's "full" profile
++        # names static, non-executable assets (see PersistedFixtureAssetTests), so this
++        # environment cannot report "passed" for it either -- but it must still resolve
++        # and run through the packaged tool rather than being left entirely untested.
++        $testProfileResult = Invoke-ToolCommand -Command 'hexalith-module' -Arguments @(
++            'test',
++            '--manifest',
++            $moduleManifestPath,
++            '--profile',
++            'full',
++            '--evidence',
++            'evidence/test-profile.json',
++            '--output',
++            'json'
++        ) -WorkingDirectory $consumerRoot
++        if ($testProfileResult.Output.Contains('"status":"passed"', [System.StringComparison]::Ordinal)) {
++            throw 'Packaged module test profile represented a non-executable static profile as passed.'
++        }
++        $qualificationEvidenceEntries.Add((Save-QualificationEvidence -EvidenceDirectory $qualificationEvidenceDirectory -Name 'packaged-test-output' -Content $testProfileResult.Output))
++        $testProfileEvidencePath = Join-Path $consumerRoot 'evidence/test-profile.json'
++        if (Test-Path -LiteralPath $testProfileEvidencePath -PathType Leaf) {
++            $qualificationEvidenceEntries.Add(
++                (Save-QualificationEvidence -EvidenceDirectory $qualificationEvidenceDirectory -Name 'packaged-test-evidence' `
++                        -Content ([System.IO.File]::ReadAllText($testProfileEvidencePath)))
++            )
++        }
++
++        $readinessResult = Invoke-ToolCommand -Command 'hexalith-evidence' -Arguments @('validate', $readinessEvidencePath, '--output', 'json') -WorkingDirectory $consumerRoot
++        Assert-PositiveResult -Description 'Positive readiness evidence' -Result $readinessResult
++        $qualificationEvidenceEntries.Add((Save-QualificationEvidence -EvidenceDirectory $qualificationEvidenceDirectory -Name 'packaged-readiness-output' -Content $readinessResult.Output))
+ 
+         foreach ($fixture in $moduleNegatives) {
+-            Assert-NegativeResult -Fixture $fixture -Result (Invoke-ToolCommand -Command 'hexalith-module' -Arguments @('down', '--manifest', $fixture.FullName, '--output', 'json') -WorkingDirectory $consumerRoot)
++            $negativeResult = Invoke-ToolCommand -Command 'hexalith-module' -Arguments @('down', '--manifest', $fixture.FullName, '--output', 'json') -WorkingDirectory $consumerRoot
++            Assert-NegativeResult -Fixture $fixture -Result $negativeResult
++            $slug = $fixture.BaseName.ToLowerInvariant()
++            $qualificationEvidenceEntries.Add((Save-QualificationEvidence -EvidenceDirectory $qualificationEvidenceDirectory -Name "module-negative-$slug-output" -Content $negativeResult.Output))
+         }
+ 
+         foreach ($fixture in $evidenceNegatives) {
+-            Assert-NegativeResult -Fixture $fixture -Result (Invoke-ToolCommand -Command 'hexalith-evidence' -Arguments @('validate', $fixture.FullName, '--output', 'json') -WorkingDirectory $consumerRoot)
++            $negativeResult = Invoke-ToolCommand -Command 'hexalith-evidence' -Arguments @('validate', $fixture.FullName, '--output', 'json') -WorkingDirectory $consumerRoot
++            Assert-NegativeResult -Fixture $fixture -Result $negativeResult
++            $slug = $fixture.BaseName.ToLowerInvariant()
++            $qualificationEvidenceEntries.Add((Save-QualificationEvidence -EvidenceDirectory $qualificationEvidenceDirectory -Name "evidence-negative-$slug-output" -Content $negativeResult.Output))
+         }
++
++        # Coverage is only satisfied once every retained artifact's CONTENT has been
++        # independently parsed and validated -- not merely hashed, sized, and named.
++        $expectedRuleIdsByName = @{
++            'packaged-unavailable-output' = 'HXR002'
++        }
++        foreach ($fixture in $moduleNegatives) {
++            $expectedRuleIdsByName["module-negative-$($fixture.BaseName.ToLowerInvariant())-output"] =
++            [string] ((Get-Content -LiteralPath (Get-FixtureExpectationPath -Fixture $fixture) -Raw | ConvertFrom-Json).ruleId)
++        }
++        foreach ($fixture in $evidenceNegatives) {
++            $expectedRuleIdsByName["evidence-negative-$($fixture.BaseName.ToLowerInvariant())-output"] =
++            [string] ((Get-Content -LiteralPath (Get-FixtureExpectationPath -Fixture $fixture) -Raw | ConvertFrom-Json).ruleId)
++        }
++
++        foreach ($entry in $qualificationEvidenceEntries) {
++            $entryPath = Join-Path $packageDirectoryPath $entry.file
++            $entryName = [IO.Path]::GetFileNameWithoutExtension($entry.file)
++            if ($entryName -like 'module-negative-*' -or $entryName -like 'evidence-negative-*') {
++                $null = Assert-QualificationEvidenceContent -FilePath $entryPath -Kind 'Negative' -ExpectedRuleId $expectedRuleIdsByName[$entryName]
++            }
++            elseif ($entryName -eq 'packaged-unavailable-output') {
++                $null = Assert-QualificationEvidenceContent -FilePath $entryPath -Kind 'ExactNonPassing' -ExpectedRuleId $expectedRuleIdsByName[$entryName]
++            }
++            elseif ($entryName -eq 'packaged-test-output') {
++                $null = Assert-QualificationEvidenceContent -FilePath $entryPath -Kind 'ExactNonPassing'
++            }
++            elseif ($entryName -in @('packaged-down-output', 'packaged-readiness-output')) {
++                $null = Assert-QualificationEvidenceContent -FilePath $entryPath -Kind 'Positive'
++            }
++        }
++    }
++
++    # Reject swapped or canonical-role-invalid nupkg/snupkg records: open each
++    # retained artifact, require exactly one nuspec, and prove its identity and
++    # role independently of its file name.
++    $packageArtifacts = [System.Collections.Generic.List[object]]::new()
++    foreach ($packageId in @('Hexalith.Builds.Module.Cli', 'Hexalith.Builds.Evidence.Cli')) {
++        $nupkgPath = Join-Path $packageDirectoryPath "$packageId.$Version.nupkg"
++        $snupkgPath = Join-Path $packageDirectoryPath "$packageId.$Version.snupkg"
++        $nupkgRole = Assert-CanonicalNuGetArtifact -ArchivePath $nupkgPath -ExpectedRole 'Package' -ExpectedId $packageId -ExpectedVersion $Version
++        $snupkgRole = Assert-CanonicalNuGetArtifact -ArchivePath $snupkgPath -ExpectedRole 'Symbols' -ExpectedId $packageId -ExpectedVersion $Version
++        $null = $nupkgRole
++        $null = $snupkgRole
++        $packageArtifacts.Add([ordered] @{
++                id = $packageId
++                version = $Version
++                nupkg = [ordered] @{
++                    file = (Split-Path -Leaf $nupkgPath)
++                    sha256 = (Get-FileHash -LiteralPath $nupkgPath -Algorithm SHA256).Hash
++                    sizeBytes = (Get-Item -LiteralPath $nupkgPath).Length
++                }
++                snupkg = [ordered] @{
++                    file = (Split-Path -Leaf $snupkgPath)
++                    sha256 = (Get-FileHash -LiteralPath $snupkgPath -Algorithm SHA256).Hash
++                    sizeBytes = (Get-Item -LiteralPath $snupkgPath).Length
++                }
++            })
++    }
++
++    # releaseEligible binds together every gate above: it can be true only for a
++    # candidate that ran the official source-validating build (never -SkipSourceValidation),
++    # exercised every required control with content-validated evidence, proved its
++    # fixtures byte-identical to a clean HEAD, and whose nupkg/snupkg artifacts are
++    # canonical. Any external/untracked or partial candidate remains non-eligible but
++    # still receives an honest inventory recording exactly why.
++    $ineligibilityReasons = [System.Collections.Generic.List[string]]::new()
++    if ($SkipSourceValidation) {
++        $ineligibilityReasons.Add('source validation was skipped (-SkipSourceValidation).')
++    }
++    if (-not $RequireControls) {
++        $ineligibilityReasons.Add('qualification controls were not required (-RequireControls not set).')
++    }
++    if (-not $sourceTreeState.Clean) {
++        $ineligibilityReasons.Add("source tree at '$repositoryRoot' was not clean: $([string]::Join('; ', $sourceTreeState.Reasons))")
+     }
+ 
++    $inventory = [ordered] @{
++        schema = 'hexalith.g4-tool-package-inventory.v1'
++        version = $Version
++        configuration = 'Release'
++        packages = @($packageArtifacts)
++        qualificationEvidence = @($qualificationEvidenceEntries)
++        qualification = [ordered] @{
++            packageBuild = [ordered] @{ mode = 'official'; result = 'passed' }
++            sourceValidation = [ordered] @{
++                mode = if ($SkipSourceValidation) { 'skipped' } else { 'executed' }
++                result = if ($SkipSourceValidation) { 'skipped' } else { 'passed' }
++            }
++            controls = [ordered] @{
++                mode = if ($RequireControls) { 'executed' } else { 'skipped' }
++                result = if ($RequireControls) { 'passed' } else { 'skipped' }
++            }
++            fixtures = [ordered] @{
++                mode = 'repository-tracked'
++                root = if ($RequireControls) { $fixtureRootRelativePath } else { $null }
++                fileCounts = $fixtureProof
++            }
++            sourceTree = [ordered] @{
++                clean = $sourceTreeState.Clean
++                revision = $sourceTreeState.Revision
++            }
++        }
++        releaseEligible = $ineligibilityReasons.Count -eq 0
++        ineligibilityReasons = @($ineligibilityReasons)
++    }
++
++    $inventoryPath = Join-Path $packageDirectoryPath 'g4-tool-package-inventory.json'
++    $inventory | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $inventoryPath -Encoding utf8
++
+     Write-Host "Packed G-4 tool contract qualification passed for version '$Version'."
++    Write-Host "releaseEligible=$($inventory.releaseEligible.ToString().ToLowerInvariant()) at revision $($sourceTreeState.Revision)."
+ }
+ finally {
+     if ($consumerEnvironmentConfigured) {
+diff --git a/Tools/test-package-version-audit-generator.ps1 b/Tools/test-package-version-audit-generator.ps1
+index 8db2123..8f87d4b 100644
+--- a/Tools/test-package-version-audit-generator.ps1
++++ b/Tools/test-package-version-audit-generator.ps1
+@@ -162,8 +162,12 @@ try {
+         Assert-Equal -Scenario 'Missing current version state' -Expected 'missing' -Actual $missing.listingState
+         Assert-Equal -Scenario 'Per-source result completeness' -Expected 2 -Actual $listed.sourceResults.Count
+ 
++        # Isolate PackageReference rediscovery (task 6) from this repository's own
++        # tracked projects: this scenario's tiny 3-package fixture catalog/audit have
++        # nothing to do with what Hexalith.Builds itself consumes, and $temporaryRoot
++        # contains no .csproj/.props/.targets PackageReference elements of its own.
+         $validatorOutput = @(& $pwshExecutable -NoLogo -NoProfile -File $validatorPath `
+-                -AuditPath $auditPath -CatalogPath $catalogPath 2>&1)
++                -AuditPath $auditPath -CatalogPath $catalogPath -ConsumerScanRoot $temporaryRoot 2>&1)
+         $scenarioCount++
+         if ($LASTEXITCODE -ne 0) {
+             $failures.Add("Generated audit did not pass deterministic validation. $([string]::Join("`n", $validatorOutput))")
+diff --git a/Tools/test-package-version-audit-validator.ps1 b/Tools/test-package-version-audit-validator.ps1
+index 3c9a0a3..1dee4a4 100644
+--- a/Tools/test-package-version-audit-validator.ps1
++++ b/Tools/test-package-version-audit-validator.ps1
+@@ -115,12 +115,17 @@ function Test-Scenario {
+         [Parameter(Mandatory = $true)][string] $Name,
+         [Parameter(Mandatory = $true)][string] $AuditPath,
+         [Parameter(Mandatory = $true)][int] $ExpectedExitCode,
+-        [Parameter(Mandatory = $true)][string] $ExpectedOutput
++        [Parameter(Mandatory = $true)][string] $ExpectedOutput,
++        # Isolated by default so the PackageReference-rediscovery leg (task 6) only
++        # ever sees this script's own fixture project files, never the real
++        # repository tree, unless a scenario explicitly opts in.
++        [string] $ConsumerScanRoot = $emptyConsumerScanRoot
+     )
+ 
+     $script:scenarioCount++
+     $output = @(& $pwshExecutable -NoLogo -NoProfile -File $validatorPath `
+-            -AuditPath $AuditPath -CatalogPath $catalogPath -EvaluatorScriptPath $evaluatorPath 2>&1)
++            -AuditPath $AuditPath -CatalogPath $catalogPath -EvaluatorScriptPath $evaluatorPath `
++            -ConsumerScanRoot $ConsumerScanRoot 2>&1)
+     $result = [string]::Join("`n", @($output | ForEach-Object { [string] $_ }))
+     if ($LASTEXITCODE -ne $ExpectedExitCode) {
+         $script:failures.Add("$Name expected exit code $ExpectedExitCode but received $LASTEXITCODE. Output: $result")
+@@ -143,12 +148,15 @@ $null = $CatalogPath
+ [Console]::Out.WriteLine('{"Items":{"PackageVersion":[{"Identity":"Fixture.One","Version":"1.0.0"},{"Identity":"Fixture.Two","Version":"2.0.0"}]}}')
+ '@
+ 
++    $emptyConsumerScanRoot = Join-Path $temporaryRoot 'empty-consumer-scan-root'
++    New-Item -ItemType Directory -Path $emptyConsumerScanRoot -Force | Out-Null
++
+     $validPath = New-AuditFixture -Name 'valid'
+     Test-Scenario -Name 'Complete audit' -AuditPath $validPath -ExpectedExitCode 0 `
+         -ExpectedOutput 'validation passed for 2 packages, 1 families, and 1 source'
+ 
+     $missingPath = New-AuditFixture -Name 'missing-package'
+-    $missingAudit = Get-Content -LiteralPath $missingPath -Raw | ConvertFrom-Json
++    $missingAudit = Get-Content -LiteralPath $missingPath -Raw | ConvertFrom-Json -DateKind String
+     $missingAudit.packages = @($missingAudit.packages | Where-Object { $_.id -ne 'Fixture.Two' })
+     $missingAudit.familyDecisions[0].packageIds = @('Fixture.One')
+     Save-Audit -Audit $missingAudit -Path $missingPath
+@@ -156,7 +164,7 @@ $null = $CatalogPath
+         -ExpectedOutput "Evaluated catalog package 'Fixture.Two' has no audit evidence"
+ 
+     $unsafePath = New-AuditFixture -Name 'unsafe-unlisted-update'
+-    $unsafeAudit = Get-Content -LiteralPath $unsafePath -Raw | ConvertFrom-Json
++    $unsafeAudit = Get-Content -LiteralPath $unsafePath -Raw | ConvertFrom-Json -DateKind String
+     $unsafeAudit.packages[0].disposition = 'accepted'
+     $unsafeAudit.packages[1].disposition = 'accepted'
+     $unsafeAudit.packages[1].selectedVersion = '2.1.0'
+@@ -166,28 +174,28 @@ $null = $CatalogPath
+         -ExpectedOutput "Package 'Fixture.Two' is unlisted and must retain audited version '2.0.0'"
+ 
+     $splitPath = New-AuditFixture -Name 'split-family'
+-    $splitAudit = Get-Content -LiteralPath $splitPath -Raw | ConvertFrom-Json
++    $splitAudit = Get-Content -LiteralPath $splitPath -Raw | ConvertFrom-Json -DateKind String
+     $splitAudit.packages[0].disposition = 'accepted'
+     Save-Audit -Audit $splitAudit -Path $splitPath
+     Test-Scenario -Name 'Split family disposition' -AuditPath $splitPath -ExpectedExitCode 1 `
+         -ExpectedOutput "Package 'Fixture.One' disposition does not match family 'fixture-family'"
+ 
+     $exceptionPath = New-AuditFixture -Name 'incomplete-exception'
+-    $exceptionAudit = Get-Content -LiteralPath $exceptionPath -Raw | ConvertFrom-Json
++    $exceptionAudit = Get-Content -LiteralPath $exceptionPath -Raw | ConvertFrom-Json -DateKind String
+     $exceptionAudit.packages[1].removalTrigger = ''
+     Save-Audit -Audit $exceptionAudit -Path $exceptionPath
+     Test-Scenario -Name 'Incomplete retained exception' -AuditPath $exceptionPath -ExpectedExitCode 1 `
+         -ExpectedOutput "Package 'Fixture.Two' has a blank or missing 'removalTrigger'"
+ 
+     $retainedUpdatePath = New-AuditFixture -Name 'retained-update'
+-    $retainedUpdateAudit = Get-Content -LiteralPath $retainedUpdatePath -Raw | ConvertFrom-Json
++    $retainedUpdateAudit = Get-Content -LiteralPath $retainedUpdatePath -Raw | ConvertFrom-Json -DateKind String
+     $retainedUpdateAudit.packages[0].auditedVersion = '0.9.0'
+     Save-Audit -Audit $retainedUpdateAudit -Path $retainedUpdatePath
+     Test-Scenario -Name 'Retained package update' -AuditPath $retainedUpdatePath -ExpectedExitCode 1 `
+         -ExpectedOutput "Retained package 'Fixture.One' must select audited version '0.9.0'"
+ 
+     $downgradePath = New-AuditFixture -Name 'accepted-downgrade'
+-    $downgradeAudit = Get-Content -LiteralPath $downgradePath -Raw | ConvertFrom-Json
++    $downgradeAudit = Get-Content -LiteralPath $downgradePath -Raw | ConvertFrom-Json -DateKind String
+     $downgradeAudit.packages[0].auditedVersion = '1.1.0'
+     $downgradeAudit.packages[0].disposition = 'accepted'
+     $downgradeAudit.packages[1].listingState = 'listed'
+@@ -201,7 +209,7 @@ $null = $CatalogPath
+         -ExpectedOutput "Accepted package 'Fixture.One' cannot downgrade audited version '1.1.0' to '1.0.0'"
+ 
+     $prereleasePath = New-AuditFixture -Name 'stable-to-prerelease'
+-    $prereleaseAudit = Get-Content -LiteralPath $prereleasePath -Raw | ConvertFrom-Json
++    $prereleaseAudit = Get-Content -LiteralPath $prereleasePath -Raw | ConvertFrom-Json -DateKind String
+     $prereleaseAudit.packages[0].selectedVersion = '1.1.0-preview.1'
+     $prereleaseAudit.packages[0].latestPrerelease = '1.1.0-preview.1'
+     $prereleaseAudit.packages[0].disposition = 'accepted'
+@@ -216,7 +224,7 @@ $null = $CatalogPath
+         -ExpectedOutput "Accepted stable package 'Fixture.One' cannot move to prerelease version '1.1.0-preview.1'"
+ 
+     $missingSourceResultPath = New-AuditFixture -Name 'missing-source-result'
+-    $missingSourceResultAudit = Get-Content -LiteralPath $missingSourceResultPath -Raw | ConvertFrom-Json
++    $missingSourceResultAudit = Get-Content -LiteralPath $missingSourceResultPath -Raw | ConvertFrom-Json -DateKind String
+     $missingSourceResultAudit.sources += [pscustomobject] @{
+         uri = 'https://packages.example.test/v3/index.json'
+         resolution = 'resolved'
+@@ -227,35 +235,35 @@ $null = $CatalogPath
+         -ExpectedOutput "Package 'Fixture.One' must contain exactly one result for every configured source"
+ 
+     $duplicateSourceResultPath = New-AuditFixture -Name 'duplicate-source-result'
+-    $duplicateSourceResultAudit = Get-Content -LiteralPath $duplicateSourceResultPath -Raw | ConvertFrom-Json
++    $duplicateSourceResultAudit = Get-Content -LiteralPath $duplicateSourceResultPath -Raw | ConvertFrom-Json -DateKind String
+     $duplicateSourceResultAudit.packages[0].sourceResults += $duplicateSourceResultAudit.packages[0].sourceResults[0]
+     Save-Audit -Audit $duplicateSourceResultAudit -Path $duplicateSourceResultPath
+     Test-Scenario -Name 'Duplicate configured source result' -AuditPath $duplicateSourceResultPath -ExpectedExitCode 1 `
+         -ExpectedOutput "Package 'Fixture.One' duplicates source result 'https://api.nuget.org/v3/index.json'"
+ 
+     $undeclaredSourceResultPath = New-AuditFixture -Name 'undeclared-source-result'
+-    $undeclaredSourceResultAudit = Get-Content -LiteralPath $undeclaredSourceResultPath -Raw | ConvertFrom-Json
++    $undeclaredSourceResultAudit = Get-Content -LiteralPath $undeclaredSourceResultPath -Raw | ConvertFrom-Json -DateKind String
+     $undeclaredSourceResultAudit.packages[0].sourceResults[0].source = 'https://packages.example.test/v3/index.json'
+     Save-Audit -Audit $undeclaredSourceResultAudit -Path $undeclaredSourceResultPath
+     Test-Scenario -Name 'Undeclared source result' -AuditPath $undeclaredSourceResultPath -ExpectedExitCode 1 `
+         -ExpectedOutput "Package 'Fixture.One' references undeclared source 'https://packages.example.test/v3/index.json'"
+ 
+     $aggregateMismatchPath = New-AuditFixture -Name 'aggregate-mismatch'
+-    $aggregateMismatchAudit = Get-Content -LiteralPath $aggregateMismatchPath -Raw | ConvertFrom-Json
++    $aggregateMismatchAudit = Get-Content -LiteralPath $aggregateMismatchPath -Raw | ConvertFrom-Json -DateKind String
+     $aggregateMismatchAudit.packages[0].latestStable = '9.9.9'
+     Save-Audit -Audit $aggregateMismatchAudit -Path $aggregateMismatchPath
+     Test-Scenario -Name 'Aggregate candidate mismatch' -AuditPath $aggregateMismatchPath -ExpectedExitCode 1 `
+         -ExpectedOutput "Package 'Fixture.One' latestStable '9.9.9' does not match source aggregate '1.0.0'"
+ 
+     $sourceResolutionPath = New-AuditFixture -Name 'source-resolution-mismatch'
+-    $sourceResolutionAudit = Get-Content -LiteralPath $sourceResolutionPath -Raw | ConvertFrom-Json
++    $sourceResolutionAudit = Get-Content -LiteralPath $sourceResolutionPath -Raw | ConvertFrom-Json -DateKind String
+     $sourceResolutionAudit.sources[0].resolution = 'unresolved'
+     Save-Audit -Audit $sourceResolutionAudit -Path $sourceResolutionPath
+     Test-Scenario -Name 'Source resolution mismatch' -AuditPath $sourceResolutionPath -ExpectedExitCode 1 `
+         -ExpectedOutput "Package 'Fixture.One' source 'https://api.nuget.org/v3/index.json' must be unresolved"
+ 
+     $partialSourcePath = New-AuditFixture -Name 'accepted-partial-source'
+-    $partialSourceAudit = Get-Content -LiteralPath $partialSourcePath -Raw | ConvertFrom-Json
++    $partialSourceAudit = Get-Content -LiteralPath $partialSourcePath -Raw | ConvertFrom-Json -DateKind String
+     $partialSourceAudit.sources += [pscustomobject] @{
+         uri = 'https://packages.example.test/v3/index.json'
+         resolution = 'unresolved'
+@@ -277,7 +285,7 @@ $null = $CatalogPath
+         -ExpectedOutput "Accepted package 'Fixture.One' requires listed evidence from every configured source"
+ 
+     $orphanFamilyPath = New-AuditFixture -Name 'orphan-family'
+-    $orphanFamilyAudit = Get-Content -LiteralPath $orphanFamilyPath -Raw | ConvertFrom-Json
++    $orphanFamilyAudit = Get-Content -LiteralPath $orphanFamilyPath -Raw | ConvertFrom-Json -DateKind String
+     $orphanFamilyAudit.familyDecisions += [pscustomobject] @{
+         family = 'orphan-family'
+         disposition = 'retained'
+@@ -293,12 +301,92 @@ $null = $CatalogPath
+         -ExpectedOutput "Family 'orphan-family' has no package evidence rows"
+ 
+     $nonUtcPath = New-AuditFixture -Name 'non-utc-timestamp'
+-    $nonUtcAudit = Get-Content -LiteralPath $nonUtcPath -Raw | ConvertFrom-Json
++    $nonUtcAudit = Get-Content -LiteralPath $nonUtcPath -Raw | ConvertFrom-Json -DateKind String
+     $nonUtcAudit.auditedAtUtc = '2026-07-31T14:00:00+02:00'
+     Save-Audit -Audit $nonUtcAudit -Path $nonUtcPath
+     Test-Scenario -Name 'Non-UTC timestamp' -AuditPath $nonUtcPath -ExpectedExitCode 1 `
+         -ExpectedOutput 'auditedAtUtc must have a zero UTC offset'
+ 
++    # --- PackageReference rediscovery vs. audit set equality (task 6) ---
++
++    $coveredConsumerRoot = Join-Path $temporaryRoot 'consumer-covered'
++    New-Item -ItemType Directory -Path $coveredConsumerRoot -Force | Out-Null
++    Write-Utf8File -Path (Join-Path $coveredConsumerRoot 'Fixture.Consumer.csproj') -Content @'
++<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><PackageReference Include="Fixture.One" /></ItemGroup></Project>
++'@
++    $coveredPath = New-AuditFixture -Name 'reference-covered'
++    Test-Scenario -Name 'Rediscovered PackageReference with audit evidence' -AuditPath $coveredPath -ExpectedExitCode 0 `
++        -ExpectedOutput 'validation passed for 2 packages, 1 families, and 1 source' -ConsumerScanRoot $coveredConsumerRoot
++
++    $uncoveredConsumerRoot = Join-Path $temporaryRoot 'consumer-uncovered'
++    New-Item -ItemType Directory -Path $uncoveredConsumerRoot -Force | Out-Null
++    Write-Utf8File -Path (Join-Path $uncoveredConsumerRoot 'Fixture.Consumer.csproj') -Content @'
++<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><PackageReference Include="Fixture.Missing" /></ItemGroup></Project>
++'@
++    $uncoveredPath = New-AuditFixture -Name 'reference-uncovered'
++    Test-Scenario -Name 'Rediscovered PackageReference without audit evidence' -AuditPath $uncoveredPath -ExpectedExitCode 1 `
++        -ExpectedOutput "PackageReference 'Fixture.Missing' rediscovered from Fixture.Consumer.csproj has no audit evidence" `
++        -ConsumerScanRoot $uncoveredConsumerRoot
++
++    $globalReferenceConsumerRoot = Join-Path $temporaryRoot 'consumer-global'
++    New-Item -ItemType Directory -Path $globalReferenceConsumerRoot -Force | Out-Null
++    Write-Utf8File -Path (Join-Path $globalReferenceConsumerRoot 'Directory.Build.props') -Content @'
++<Project><ItemGroup><GlobalPackageReference Include="Fixture.GloballyMissing" /></ItemGroup></Project>
++'@
++    $globalReferencePath = New-AuditFixture -Name 'global-reference-uncovered'
++    Test-Scenario -Name 'Rediscovered GlobalPackageReference without audit evidence' -AuditPath $globalReferencePath -ExpectedExitCode 1 `
++        -ExpectedOutput "PackageReference 'Fixture.GloballyMissing' rediscovered from Directory.Build.props has no audit evidence" `
++        -ConsumerScanRoot $globalReferenceConsumerRoot
++
++    # --- Typed round-trip fidelity for collection-valued provenance (task 7) ---
++
++    $multiCardinalityPath = New-AuditFixture -Name 'multi-cardinality-round-trip'
++    $multiCardinalityAudit = Get-Content -LiteralPath $multiCardinalityPath -Raw | ConvertFrom-Json -DateKind String
++    $multiCardinalityAudit.sources += [pscustomobject] @{
++        uri = 'https://packages.example.test/v3/index.json'
++        resolution = 'resolved'
++        diagnostic = 'Fixture second source resolved.'
++    }
++    $multiCardinalityAudit.packages[0].sourceResults += [pscustomobject] @{
++        source = 'https://packages.example.test/v3/index.json'
++        listingState = 'listed'
++        latestStable = '1.0.0'
++        latestPrerelease = $null
++        diagnostic = 'Registration metadata resolved.'
++    }
++    $multiCardinalityAudit.packages[1].sourceResults += [pscustomobject] @{
++        source = 'https://packages.example.test/v3/index.json'
++        listingState = 'unlisted'
++        latestStable = '2.1.0'
++        latestPrerelease = '3.0.0-preview.1'
++        diagnostic = 'Registration metadata resolved.'
++    }
++    $multiCardinalityAudit.familyDecisions[0].representativeConsumers = @('Fixture.Consumer.One', 'Fixture.Consumer.Two')
++    Save-Audit -Audit $multiCardinalityAudit -Path $multiCardinalityPath
++    Test-Scenario -Name 'Multi-element collections round-trip' -AuditPath $multiCardinalityPath -ExpectedExitCode 0 `
++        -ExpectedOutput 'validation passed for 2 packages, 1 families, and 2 source'
++
++    $unknownPackageFieldPath = New-AuditFixture -Name 'unknown-package-field'
++    $unknownPackageFieldAudit = Get-Content -LiteralPath $unknownPackageFieldPath -Raw | ConvertFrom-Json -DateKind String
++    $unknownPackageFieldAudit.packages[0] | Add-Member -NotePropertyName internalReviewer -NotePropertyValue 'unreviewed-owner-note'
++    Save-Audit -Audit $unknownPackageFieldAudit -Path $unknownPackageFieldPath
++    Test-Scenario -Name 'Unknown package field would be silently dropped' -AuditPath $unknownPackageFieldPath -ExpectedExitCode 1 `
++        -ExpectedOutput "Package 'Fixture.One' declares field 'internalReviewer' that the typed round-trip model does not cover"
++
++    $unknownSourceFieldPath = New-AuditFixture -Name 'unknown-source-field'
++    $unknownSourceFieldAudit = Get-Content -LiteralPath $unknownSourceFieldPath -Raw | ConvertFrom-Json -DateKind String
++    $unknownSourceFieldAudit.packages[0].sourceResults[0] | Add-Member -NotePropertyName mirrorOf -NotePropertyValue 'https://mirror.example.test/'
++    Save-Audit -Audit $unknownSourceFieldAudit -Path $unknownSourceFieldPath
++    Test-Scenario -Name 'Unknown source result field would be silently dropped' -AuditPath $unknownSourceFieldPath -ExpectedExitCode 1 `
++        -ExpectedOutput "Package 'Fixture.One' source result declares field 'mirrorOf' that the typed round-trip model does not cover"
++
++    $unknownFamilyFieldPath = New-AuditFixture -Name 'unknown-family-field'
++    $unknownFamilyFieldAudit = Get-Content -LiteralPath $unknownFamilyFieldPath -Raw | ConvertFrom-Json -DateKind String
++    $unknownFamilyFieldAudit.familyDecisions[0] | Add-Member -NotePropertyName ownerSlackThread -NotePropertyValue 'https://example.test/thread/1'
++    Save-Audit -Audit $unknownFamilyFieldAudit -Path $unknownFamilyFieldPath
++    Test-Scenario -Name 'Unknown family field would be silently dropped' -AuditPath $unknownFamilyFieldPath -ExpectedExitCode 1 `
++        -ExpectedOutput "Family 'fixture-family' declares field 'ownerSlackThread' that the typed round-trip model does not cover"
++
+     foreach ($workflowRelativePath in @('../.github/workflows/ci.yml', '../.github/workflows/build-release.yml')) {
+         $script:scenarioCount++
+         $workflowPath = Join-Path $PSScriptRoot $workflowRelativePath
+diff --git a/Tools/validate-package-version-audit.ps1 b/Tools/validate-package-version-audit.ps1
+index f03f31b..b63aed5 100644
+--- a/Tools/validate-package-version-audit.ps1
++++ b/Tools/validate-package-version-audit.ps1
+@@ -2,7 +2,12 @@
+ param(
+     [string] $AuditPath = '',
+     [string] $CatalogPath = '',
+-    [Parameter(DontShow = $true)][string] $EvaluatorScriptPath = ''
++    [Parameter(DontShow = $true)][string] $EvaluatorScriptPath = '',
++    # Root scanned for tracked *.csproj/*.props/*.targets files during independent
++    # PackageReference rediscovery (see Get-TrackedProjectFiles). Defaults to the
++    # repository root. Overridable so tests can point rediscovery at an isolated
++    # fixture tree without touching the real repository.
++    [string] $ConsumerScanRoot = ''
+ )
+ 
+ Set-StrictMode -Version Latest
+@@ -118,6 +123,257 @@ function Select-LatestVersion {
+     return $latest
+ }
+ 
++function Get-TrackedProjectFiles {
++    # Independently rediscovers every *.csproj/*.props/*.targets file the repository
++    # actually tracks, using Git as the source of truth (falling back to a filesystem
++    # walk only when Git is unavailable). This must not reuse the audit's own notion
++    # of "the catalog" or any generator/validator caching: it is the independent
++    # rediscovery leg of the audit-vs-rediscovery set-equality proof.
++    param([Parameter(Mandatory = $true)][string] $Root)
++
++    if ($null -ne (Get-Command git -ErrorAction SilentlyContinue)) {
++        $tracked = @(& git -C $Root ls-files -- '*.csproj' '*.props' '*.targets' 2>$null)
++        if ($LASTEXITCODE -eq 0) {
++            return @(
++                $tracked |
++                    Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
++                    ForEach-Object { Join-Path $Root $_ }
++            )
++        }
++    }
++
++    return @(
++        Get-ChildItem -LiteralPath $Root -Recurse -File |
++            Where-Object {
++                $_.Extension -in @('.csproj', '.props', '.targets') -and
++                $_.FullName -notmatch '[\\/](?:bin|obj|\.git)[\\/]'
++            } |
++            Select-Object -ExpandProperty FullName
++    )
++}
++
++function Get-PackageReferenceConsumers {
++    # Rediscovers the distinct set of package identities every tracked project file
++    # actually consumes through <PackageReference>/<GlobalPackageReference Include="...">,
++    # independently of MSBuild evaluation and independently of the audit itself. Returns
++    # an ordered map of identity -> repository-relative consumer file paths, so a missing
++    # audit row can be reported against every file that references it.
++    param(
++        [Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]] $ProjectFiles,
++        [Parameter(Mandatory = $true)][string] $RepositoryRoot,
++        [Parameter(Mandatory = $true)][string] $ExcludePath
++    )
++
++    $consumers = [ordered] @{}
++    foreach ($projectFile in $ProjectFiles) {
++        $resolvedProjectFile = [IO.Path]::GetFullPath($projectFile)
++        if ([StringComparer]::OrdinalIgnoreCase.Equals($resolvedProjectFile, $ExcludePath)) {
++            # The central catalog declares PackageVersion rows, not PackageReference
++            # consumption; excluding it keeps rediscovery scoped to actual consumers.
++            continue
++        }
++
++        if (-not (Test-Path -LiteralPath $resolvedProjectFile -PathType Leaf)) {
++            continue
++        }
++
++        try {
++            [xml] $xml = Get-Content -LiteralPath $resolvedProjectFile -Raw -ErrorAction Stop
++        }
++        catch {
++            continue
++        }
++
++        $relativePath = [IO.Path]::GetRelativePath($RepositoryRoot, $resolvedProjectFile).Replace('\', '/')
++        foreach ($itemName in @('PackageReference', 'GlobalPackageReference')) {
++            foreach ($item in @($xml.SelectNodes("//*[local-name()='$itemName']"))) {
++                $include = [string] $item.GetAttribute('Include')
++                if ([string]::IsNullOrWhiteSpace($include)) {
++                    continue
++                }
++
++                if (-not $consumers.Contains($include)) {
++                    $consumers[$include] = [System.Collections.Generic.List[string]]::new()
++                }
++
++                if (-not $consumers[$include].Contains($relativePath)) {
++                    $consumers[$include].Add($relativePath)
++                }
++            }
++        }
++    }
++
++    return $consumers
++}
++
++function ConvertTo-OrderedPackageRecord {
++    # Projects a parsed audit package row onto the complete typed field set the
++    # validator understands. Used both to prove a full read/write round trip and to
++    # detect owner-authored fields the typed model does not yet cover (see
++    # Get-UnknownFieldNames), so drift cannot hide behind a structural/shape check.
++    param([Parameter(Mandatory = $true)] $Package)
++
++    return [ordered] @{
++        id = [string] $Package.id
++        auditedVersion = [string] $Package.auditedVersion
++        selectedVersion = [string] $Package.selectedVersion
++        latestStable = if ($null -eq $Package.latestStable) { $null } else { [string] $Package.latestStable }
++        latestPrerelease = if ($null -eq $Package.latestPrerelease) { $null } else { [string] $Package.latestPrerelease }
++        listingState = [string] $Package.listingState
++        family = [string] $Package.family
++        disposition = [string] $Package.disposition
++        rollbackGroup = [string] $Package.rollbackGroup
++        rationale = [string] $Package.rationale
++        evidence = [string] $Package.evidence
++        removalTrigger = [string] $Package.removalTrigger
++        sourceResults = @(
++            foreach ($sourceResult in @(Get-PropertyValue -Object $Package -Name 'sourceResults')) {
++                [ordered] @{
++                    source = [string] $sourceResult.source
++                    listingState = [string] $sourceResult.listingState
++                    latestStable = if ($null -eq $sourceResult.latestStable) { $null } else { [string] $sourceResult.latestStable }
++                    latestPrerelease = if ($null -eq $sourceResult.latestPrerelease) { $null } else { [string] $sourceResult.latestPrerelease }
++                    diagnostic = [string] $sourceResult.diagnostic
++                }
++            }
++        )
++    }
++}
++
++function ConvertTo-OrderedFamilyRecord {
++    # Projects a parsed audit family decision onto the complete typed field set,
++    # mirroring ConvertTo-OrderedPackageRecord for the family-level owner fields,
++    # including its two collection-valued provenance fields.
++    param([Parameter(Mandatory = $true)] $Decision)
++
++    return [ordered] @{
++        family = [string] $Decision.family
++        disposition = [string] $Decision.disposition
++        rollbackGroup = [string] $Decision.rollbackGroup
++        packageIds = @(@(Get-PropertyValue -Object $Decision -Name 'packageIds') | ForEach-Object { [string] $_ })
++        rationale = [string] $Decision.rationale
++        compatibilityEvidence = [string] $Decision.compatibilityEvidence
++        removalTrigger = [string] $Decision.removalTrigger
++        representativeConsumers = @(@(Get-PropertyValue -Object $Decision -Name 'representativeConsumers') | ForEach-Object { [string] $_ })
++    }
++}
++
++function Get-UnknownFieldNames {
++    # Reports any JSON property present on $Object that the typed model in
++    # $KnownFields does not project. An owner field the schema does not yet know
++    # about would otherwise be silently dropped by a "round trip" that only
++    # re-serializes the fields it already recognizes; this makes that omission
++    # loud instead of silent.
++    param(
++        [Parameter(Mandatory = $true)] $Object,
++        [Parameter(Mandatory = $true)][string[]] $KnownFields
++    )
++
++    return @(
++        $Object.PSObject.Properties.Name |
++            Where-Object { $_ -notin $KnownFields -and -not $_.StartsWith('_validated', [System.StringComparison]::Ordinal) }
++    )
++}
++
++function Assert-PackageRoundTrip {
++    # Proves a package record survives a full typed read -> JSON write -> JSON read
++    # cycle byte-for-byte, including every collection-valued field's exact element
++    # count. A structural/shape check (are the required fields present?) cannot
++    # catch a serializer that silently truncates nested depth or collapses a
++    # single-element array to a scalar; this does.
++    param(
++        [Parameter(Mandatory = $true)] $Package,
++        [Parameter(Mandatory = $true)][AllowEmptyCollection()][System.Collections.Generic.List[string]] $Failures
++    )
++
++    $id = [string] (Get-PropertyValue -Object $Package -Name 'id')
++    $unknownFields = @(Get-UnknownFieldNames -Object $Package -KnownFields @(
++            'id', 'auditedVersion', 'selectedVersion', 'latestStable', 'latestPrerelease',
++            'listingState', 'family', 'disposition', 'rollbackGroup', 'rationale',
++            'evidence', 'removalTrigger', 'sourceResults'
++        ))
++    foreach ($unknownField in $unknownFields) {
++        $Failures.Add("Package '$id' declares field '$unknownField' that the typed round-trip model does not cover; it would be silently dropped.")
++    }
++
++    foreach ($sourceResult in @(Get-PropertyValue -Object $Package -Name 'sourceResults')) {
++        $unknownSourceFields = @(Get-UnknownFieldNames -Object $sourceResult -KnownFields @(
++                'source', 'listingState', 'latestStable', 'latestPrerelease', 'diagnostic'
++            ))
++        foreach ($unknownField in $unknownSourceFields) {
++            $Failures.Add("Package '$id' source result declares field '$unknownField' that the typed round-trip model does not cover; it would be silently dropped.")
++        }
++    }
++
++    $originalSourceCount = @(Get-PropertyValue -Object $Package -Name 'sourceResults').Count
++    $canonical = ConvertTo-OrderedPackageRecord -Package $Package
++    if (@($canonical.sourceResults).Count -ne $originalSourceCount) {
++        $Failures.Add("Package '$id' sourceResults changed cardinality from $originalSourceCount to $(@($canonical.sourceResults).Count) while building the typed record.")
++    }
++
++    $firstPassJson = $canonical | ConvertTo-Json -Depth 12
++    try {
++        $reread = $firstPassJson | ConvertFrom-Json -ErrorAction Stop
++    }
++    catch {
++        $Failures.Add("Package '$id' typed record did not survive re-parsing after serialization. $($_.Exception.GetBaseException().Message)")
++        return
++    }
++
++    $secondPassJson = (ConvertTo-OrderedPackageRecord -Package $reread) | ConvertTo-Json -Depth 12
++    if ($firstPassJson -cne $secondPassJson) {
++        $Failures.Add("Package '$id' typed record did not round-trip identically through a second JSON write/read cycle.")
++    }
++
++    if (@($reread.sourceResults).Count -ne $originalSourceCount) {
++        $Failures.Add("Package '$id' sourceResults changed cardinality from $originalSourceCount to $(@($reread.sourceResults).Count) across a JSON round trip.")
++    }
++}
++
++function Assert-FamilyRoundTrip {
++    # Family-level counterpart to Assert-PackageRoundTrip: proves packageIds and
++    # representativeConsumers -- the family's collection-valued provenance -- and
++    # every scalar owner field survive a full read/write cycle unchanged.
++    param(
++        [Parameter(Mandatory = $true)] $Decision,
++        [Parameter(Mandatory = $true)][AllowEmptyCollection()][System.Collections.Generic.List[string]] $Failures
++    )
++
++    $family = [string] (Get-PropertyValue -Object $Decision -Name 'family')
++    $unknownFields = @(Get-UnknownFieldNames -Object $Decision -KnownFields @(
++            'family', 'disposition', 'rollbackGroup', 'packageIds', 'rationale',
++            'compatibilityEvidence', 'removalTrigger', 'representativeConsumers'
++        ))
++    foreach ($unknownField in $unknownFields) {
++        $Failures.Add("Family '$family' declares field '$unknownField' that the typed round-trip model does not cover; it would be silently dropped.")
++    }
++
++    $originalPackageIdCount = @(Get-PropertyValue -Object $Decision -Name 'packageIds').Count
++    $originalConsumerCount = @(Get-PropertyValue -Object $Decision -Name 'representativeConsumers').Count
++    $canonical = ConvertTo-OrderedFamilyRecord -Decision $Decision
++    $firstPassJson = $canonical | ConvertTo-Json -Depth 12
++    try {
++        $reread = $firstPassJson | ConvertFrom-Json -ErrorAction Stop
++    }
++    catch {
++        $Failures.Add("Family '$family' typed record did not survive re-parsing after serialization. $($_.Exception.GetBaseException().Message)")
++        return
++    }
++
++    $secondPassJson = (ConvertTo-OrderedFamilyRecord -Decision $reread) | ConvertTo-Json -Depth 12
++    if ($firstPassJson -cne $secondPassJson) {
++        $Failures.Add("Family '$family' typed record did not round-trip identically through a second JSON write/read cycle.")
++    }
++
++    if (@($reread.packageIds).Count -ne $originalPackageIdCount) {
++        $Failures.Add("Family '$family' packageIds changed cardinality from $originalPackageIdCount to $(@($reread.packageIds).Count) across a JSON round trip.")
++    }
++
++    if (@($reread.representativeConsumers).Count -ne $originalConsumerCount) {
++        $Failures.Add("Family '$family' representativeConsumers changed cardinality from $originalConsumerCount to $(@($reread.representativeConsumers).Count) across a JSON round trip.")
++    }
++}
++
+ function Invoke-CatalogEvaluation {
+     param(
+         [Parameter(Mandatory = $true)][string] $ResolvedCatalogPath,
+@@ -398,6 +654,8 @@ foreach ($package in $packages) {
+     $package | Add-Member -NotePropertyName _validatedFamily -NotePropertyValue $family -Force
+     $package | Add-Member -NotePropertyName _validatedDisposition -NotePropertyValue $disposition -Force
+     $package | Add-Member -NotePropertyName _validatedRollbackGroup -NotePropertyValue $rollbackGroup -Force
++
++    Assert-PackageRoundTrip -Package $package -Failures $failures
+ }
+ 
+ foreach ($catalogEntry in $catalogVersions.GetEnumerator()) {
+@@ -406,6 +664,29 @@ foreach ($catalogEntry in $catalogVersions.GetEnumerator()) {
+     }
+ }
+ 
++# Independent PackageReference rediscovery vs. audit set equality (owned csproj/props/
++# targets only). The audit's 284-row catalog also serves consumer repositories outside
++# this checkout, so rediscovery cannot demand the reverse (every catalog row consumed
++# locally); it demands the direction that actually detects drift: nothing this
++# repository's own tracked project files reference may be missing audit evidence.
++$resolvedConsumerScanRoot = if ([string]::IsNullOrWhiteSpace($ConsumerScanRoot)) {
++    $repositoryRoot
++}
++else {
++    (Resolve-Path -LiteralPath $ConsumerScanRoot -ErrorAction Stop).ProviderPath
++}
++$rediscoveredProjectFiles = @(Get-TrackedProjectFiles -Root $resolvedConsumerScanRoot)
++$rediscoveredReferences = Get-PackageReferenceConsumers `
++    -ProjectFiles $rediscoveredProjectFiles -RepositoryRoot $resolvedConsumerScanRoot -ExcludePath $resolvedCatalogPath
++foreach ($identity in $rediscoveredReferences.Keys) {
++    if (-not $auditPackages.ContainsKey($identity)) {
++        $consumerList = [string]::Join(', ', @($rediscoveredReferences[$identity]))
++        $failures.Add(
++            "PackageReference '$identity' rediscovered from $consumerList has no audit evidence; rediscovery and audit output must not drift."
++        )
++    }
++}
++
+ $familyDecisions = @((Get-PropertyValue -Object $audit -Name 'familyDecisions'))
+ $decisionsByFamily = @{}
+ foreach ($decision in $familyDecisions) {
+@@ -456,6 +737,8 @@ foreach ($decision in $familyDecisions) {
+             $failures.Add("Package '$($familyPackage.id)' rollback group does not match family '$family'.")
+         }
+     }
++
++    Assert-FamilyRoundTrip -Decision $decision -Failures $failures
+ }
+ 
+ foreach ($rollbackGroup in @($familyDecisions | Group-Object rollbackGroup)) {
+diff --git a/schemas/hexalith.module-manifest.v1.json b/schemas/hexalith.module-manifest.v1.json
+index 30d90b9..b54063d 100644
+--- a/schemas/hexalith.module-manifest.v1.json
++++ b/schemas/hexalith.module-manifest.v1.json
+@@ -62,7 +62,7 @@
+       "additionalProperties": false,
+       "required": ["eventStoreVersion", "daprRuntimeVersion", "daprSdkVersion", "frontComposerVersion"],
+       "properties": {
+-        "eventStoreVersion": { "const": "3.88.0" },
++        "eventStoreVersion": { "const": "3.90.0" },
+         "daprRuntimeVersion": { "const": "1.18.0" },
+         "daprSdkVersion": { "const": "1.18.5" },
+         "frontComposerVersion": { "const": "4.0.1" }
+diff --git a/src/libraries/Hexalith.Builds.Tooling/Manifest/SupportedPlatformPins.cs b/src/libraries/Hexalith.Builds.Tooling/Manifest/SupportedPlatformPins.cs
+index 53bb38e..13bee11 100644
+--- a/src/libraries/Hexalith.Builds.Tooling/Manifest/SupportedPlatformPins.cs
++++ b/src/libraries/Hexalith.Builds.Tooling/Manifest/SupportedPlatformPins.cs
+@@ -11,7 +11,7 @@ namespace Hexalith.Builds.Tooling.Manifest;
+ public static class SupportedPlatformPins
+ {
+     /// <summary>Gets the candidate EventStore package pin.</summary>
+-    public const string EventStoreVersion = "3.88.0";
++    public const string EventStoreVersion = "3.90.0";
+ 
+     /// <summary>Gets the observed Dapr runtime pin whose support disposition remains G-6 dependent.</summary>
+     public const string DaprRuntimeVersion = "1.18.0";
+diff --git a/test/Hexalith.Builds.Module.Tests/ManifestValidationTests.cs b/test/Hexalith.Builds.Module.Tests/ManifestValidationTests.cs
+index 6f93cbe..4463bf7 100644
+--- a/test/Hexalith.Builds.Module.Tests/ManifestValidationTests.cs
++++ b/test/Hexalith.Builds.Module.Tests/ManifestValidationTests.cs
+@@ -489,7 +489,7 @@ public sealed class ManifestValidationTests
+                 modules,
+                 platform = new
+                 {
+-                    eventStoreVersion = "3.88.0",
++                    eventStoreVersion = "3.90.0",
+                     daprRuntimeVersion = "1.18.0",
+                     daprSdkVersion = "1.18.5",
+                     frontComposerVersion = "4.0.1",
+@@ -564,7 +564,7 @@ public sealed class ManifestValidationTests
+             }
+           ],
+           "platform": {
+-            "eventStoreVersion": "3.88.0",
++            "eventStoreVersion": "3.90.0",
+             "daprRuntimeVersion": "1.18.0",
+             "daprSdkVersion": "1.18.5",
+             "frontComposerVersion": "4.0.1"
+diff --git a/test/Hexalith.Builds.Module.Tests/ModuleCommandApplicationTests.cs b/test/Hexalith.Builds.Module.Tests/ModuleCommandApplicationTests.cs
+index a68dfcd..f13f1d0 100644
+--- a/test/Hexalith.Builds.Module.Tests/ModuleCommandApplicationTests.cs
++++ b/test/Hexalith.Builds.Module.Tests/ModuleCommandApplicationTests.cs
+@@ -43,7 +43,7 @@ public sealed class ModuleCommandApplicationTests
+             }
+           ],
+           "platform": {
+-            "eventStoreVersion": "3.88.0",
++            "eventStoreVersion": "3.90.0",
+             "daprRuntimeVersion": "1.18.0",
+             "daprSdkVersion": "1.18.5",
+             "frontComposerVersion": "4.0.1"
+diff --git a/test/Hexalith.Builds.Module.Tests/ModuleInvocationStateStoreTests.cs b/test/Hexalith.Builds.Module.Tests/ModuleInvocationStateStoreTests.cs
+index 562467d..e47d501 100644
+--- a/test/Hexalith.Builds.Module.Tests/ModuleInvocationStateStoreTests.cs
++++ b/test/Hexalith.Builds.Module.Tests/ModuleInvocationStateStoreTests.cs
+@@ -159,7 +159,7 @@ public sealed class ModuleInvocationStateStoreTests
+         "hexalith.module-manifest.v1",
+         "state-store-fixture",
+         [new ModuleDescriptor("module-a", "assemblies/module-a.dll", [], "module-a", "module-a", "module-a")],
+-        new PlatformPins("3.88.0", "1.18.0", "1.18.5", "4.0.1"),
++        new PlatformPins("3.90.0", "1.18.0", "1.18.5", "4.0.1"),
+         null,
+         new Dictionary<string, ModuleProfile>(StringComparer.Ordinal));
+ }
+\ No newline at end of file
+diff --git a/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceSerializationTests.cs b/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceSerializationTests.cs
+index 6265c3e..5b3f979 100644
+--- a/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceSerializationTests.cs
++++ b/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceSerializationTests.cs
+@@ -50,7 +50,7 @@ public sealed class ModuleRunEvidenceSerializationTests
+                     new ModuleRunModule("orders", "orders", "orders", "orders", "assemblies/orders.dll"),
+                     new ModuleRunModule("accounts", "accounts", "accounts", "accounts", "assemblies/accounts.dll"),
+                 ],
+-                new PlatformPins("3.88.0", "1.18.0", "1.18.5", "4.0.1")),
++                new PlatformPins("3.90.0", "1.18.0", "1.18.5", "4.0.1")),
+             [new ModuleRunPhaseOutcome(ToolPhase.Cleanup, ToolFailureCategory.None, "HXI001")],
+             new ModuleRunTestCounts(false, 0, 0, 0, 0),
+             new Dictionary<string, string>(StringComparer.Ordinal)
+@@ -140,7 +140,7 @@ public sealed class ModuleRunEvidenceSerializationTests
+                     "resourceId": "module-a"
+                   }],
+                   "platform": {
+-                    "eventStoreVersion": "3.88.0",
++                    "eventStoreVersion": "3.90.0",
+                     "daprRuntimeVersion": "1.18.0",
+                     "daprSdkVersion": "1.18.5",
+                     "frontComposerVersion": "4.0.1"
+diff --git a/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceWriterTests.cs b/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceWriterTests.cs
+index 98f9db7..360de3b 100644
+--- a/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceWriterTests.cs
++++ b/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceWriterTests.cs
+@@ -91,7 +91,7 @@ public sealed class ModuleRunEvidenceWriterTests
+         new ModuleRunInvocation("hexalith-module test --profile full", "manifest.json", "HASH", "full", null, null, null),
+         new ModuleRunTopology(
+             [new ModuleRunModule("orders", "orders", "orders", "orders", "assemblies/orders.dll")],
+-            new PlatformPins("3.88.0", "1.18.0", "1.18.5", "4.0.1")),
++            new PlatformPins("3.90.0", "1.18.0", "1.18.5", "4.0.1")),
+         [new ModuleRunPhaseOutcome(ToolPhase.Test, ToolFailureCategory.None, null)],
+         new ModuleRunTestCounts(true, 1, 1, 0, 0),
+         new Dictionary<string, string>(StringComparer.Ordinal),
+diff --git a/test/Hexalith.Builds.Module.Tests/PersistedFixtureAssetTests.cs b/test/Hexalith.Builds.Module.Tests/PersistedFixtureAssetTests.cs
+index d8f4719..a4dbabf 100644
+--- a/test/Hexalith.Builds.Module.Tests/PersistedFixtureAssetTests.cs
++++ b/test/Hexalith.Builds.Module.Tests/PersistedFixtureAssetTests.cs
+@@ -53,6 +53,7 @@ public sealed class PersistedFixtureAssetTests
+     [InlineData("unsupported-profile-class.json")]
+     [InlineData("missing-required-value.json")]
+     [InlineData("tampered-platform-pin.json")]
++    [InlineData("superseded-platform-pin.json")]
+     public void LoadManifestNegativeControlReturnsStableRule(string fileName)
+     {
+         ManifestLoadResult result = ModuleManifestLoader.Load(FixturePath(Path.Combine("negative", fileName)));
+diff --git a/test/fixtures/module/negative/absolute-path.json b/test/fixtures/module/negative/absolute-path.json
+index e515380..898c309 100644
+--- a/test/fixtures/module/negative/absolute-path.json
++++ b/test/fixtures/module/negative/absolute-path.json
+@@ -12,7 +12,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/duplicate-id.json b/test/fixtures/module/negative/duplicate-id.json
+index 636a446..0bd6a45 100644
+--- a/test/fixtures/module/negative/duplicate-id.json
++++ b/test/fixtures/module/negative/duplicate-id.json
+@@ -20,7 +20,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/duplicate-json-key.json b/test/fixtures/module/negative/duplicate-json-key.json
+index 9caa702..01331a3 100644
+--- a/test/fixtures/module/negative/duplicate-json-key.json
++++ b/test/fixtures/module/negative/duplicate-json-key.json
+@@ -13,7 +13,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/invalid-profile.json b/test/fixtures/module/negative/invalid-profile.json
+index b3971f4..cfeb2f4 100644
+--- a/test/fixtures/module/negative/invalid-profile.json
++++ b/test/fixtures/module/negative/invalid-profile.json
+@@ -12,7 +12,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/malformed-dependency.json b/test/fixtures/module/negative/malformed-dependency.json
+index e676aab..346e07f 100644
+--- a/test/fixtures/module/negative/malformed-dependency.json
++++ b/test/fixtures/module/negative/malformed-dependency.json
+@@ -12,7 +12,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/missing-descriptor.json b/test/fixtures/module/negative/missing-descriptor.json
+index 045893e..d027663 100644
+--- a/test/fixtures/module/negative/missing-descriptor.json
++++ b/test/fixtures/module/negative/missing-descriptor.json
+@@ -12,7 +12,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/missing-required-value.json b/test/fixtures/module/negative/missing-required-value.json
+index df90570..a634607 100644
+--- a/test/fixtures/module/negative/missing-required-value.json
++++ b/test/fixtures/module/negative/missing-required-value.json
+@@ -12,7 +12,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/path-escape.json b/test/fixtures/module/negative/path-escape.json
+index e8aae8f..0abb0ab 100644
+--- a/test/fixtures/module/negative/path-escape.json
++++ b/test/fixtures/module/negative/path-escape.json
+@@ -12,7 +12,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/placeholder.json b/test/fixtures/module/negative/placeholder.json
+index d4d0046..edb5a71 100644
+--- a/test/fixtures/module/negative/placeholder.json
++++ b/test/fixtures/module/negative/placeholder.json
+@@ -12,7 +12,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/secret-bearing.json b/test/fixtures/module/negative/secret-bearing.json
+index 2adaef8..89c87a2 100644
+--- a/test/fixtures/module/negative/secret-bearing.json
++++ b/test/fixtures/module/negative/secret-bearing.json
+@@ -12,7 +12,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/superseded-platform-pin.expected.json b/test/fixtures/module/negative/superseded-platform-pin.expected.json
+new file mode 100644
+index 0000000..3f9f313
+--- /dev/null
++++ b/test/fixtures/module/negative/superseded-platform-pin.expected.json
+@@ -0,0 +1,4 @@
++{
++  "exitCode": 1,
++  "ruleId": "HXM016"
++}
+diff --git a/test/fixtures/module/negative/superseded-platform-pin.json b/test/fixtures/module/negative/superseded-platform-pin.json
+new file mode 100644
+index 0000000..e471fbd
+--- /dev/null
++++ b/test/fixtures/module/negative/superseded-platform-pin.json
+@@ -0,0 +1,26 @@
++{
++  "schema": "hexalith.module-manifest.v1",
++  "id": "p0-two-module-persisted",
++  "modules": [
++    {
++      "id": "p0-fixture-orders",
++      "descriptorAssembly": "test/fixtures/module/descriptors/p0-fixture-orders.descriptor.json",
++      "dependencies": [],
++      "domain": "p0-fixture-orders-domain",
++      "applicationId": "p0-fixture-orders-app",
++      "resourceId": "p0-fixture-orders-resource"
++    }
++  ],
++  "platform": {
++    "eventStoreVersion": "3.88.0",
++    "daprRuntimeVersion": "1.18.0",
++    "daprSdkVersion": "1.18.5",
++    "frontComposerVersion": "4.0.1"
++  },
++  "profiles": {
++    "persisted": {
++      "fixture": "test/fixtures/module/profiles/p0-two-module-persisted.fixture.json",
++      "classes": ["persisted-boundary"]
++    }
++  }
++}
+diff --git a/test/fixtures/module/negative/unknown-field.json b/test/fixtures/module/negative/unknown-field.json
+index 4972773..7cf2028 100644
+--- a/test/fixtures/module/negative/unknown-field.json
++++ b/test/fixtures/module/negative/unknown-field.json
+@@ -13,7 +13,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/unknown-schema.json b/test/fixtures/module/negative/unknown-schema.json
+index 795ddc2..a86a635 100644
+--- a/test/fixtures/module/negative/unknown-schema.json
++++ b/test/fixtures/module/negative/unknown-schema.json
+@@ -12,7 +12,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/negative/unsupported-profile-class.json b/test/fixtures/module/negative/unsupported-profile-class.json
+index a7c6e23..2e34ba4 100644
+--- a/test/fixtures/module/negative/unsupported-profile-class.json
++++ b/test/fixtures/module/negative/unsupported-profile-class.json
+@@ -12,7 +12,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
+diff --git a/test/fixtures/module/positive/hexalith.module-manifest.v1.json b/test/fixtures/module/positive/hexalith.module-manifest.v1.json
+index e83a74d..d5f05fc 100644
+--- a/test/fixtures/module/positive/hexalith.module-manifest.v1.json
++++ b/test/fixtures/module/positive/hexalith.module-manifest.v1.json
+@@ -22,7 +22,7 @@
+     }
+   ],
+   "platform": {
+-    "eventStoreVersion": "3.88.0",
++    "eventStoreVersion": "3.90.0",
+     "daprRuntimeVersion": "1.18.0",
+     "daprSdkVersion": "1.18.5",
+     "frontComposerVersion": "4.0.1"
