@@ -14,6 +14,7 @@ inferred.
 | `6-1-p1r-390-loop5-17/` (`.17`) | 41 | 40 | `70e84d0ab7ad521557324197fbf71d3decc4f88dd3a3c69d2807f63d5895804b` |
 | `6-1-p1r-390-loop5-18/` (`.18`) | 41 | 40 | `6a03cd08baea8fc3fdabde4ba564681de54d45f0aa7cbc7301b8ad1c18b812e4` |
 | `6-1-p1r-390-loop6-20/` (`.20`) | 44 | 38 | `a93010ffeee7404759c8dc8f2f728f110abc73eeb576dbce1b3e1acc94533e4b` |
+| `6-1-p1r-397-20260824/` | 11 | n/a; stopped before G-4 inventory | partial artifact manifest `1c535eac91ae9433a21a20ab1e948e3951a2f62184ac7af137316dfcf0fb0265` |
 
 Every package and qualification-evidence path named by each inventory was
 resolved after relocation, and its current byte size and SHA-256 were matched
@@ -61,3 +62,12 @@ produce it (revision `da6490d9`, based on the still-unchanged tracked
 `a5316653`); `references/Hexalith.Builds` itself was never modified, committed,
 or pushed. See `6-1-p1r-390-loop6-20/README.md` for the full scope-and-honesty
 notes and `source-changes.diff` for the complete reviewable diff.
+
+The `6-1-p1r-397-20260824/` bundle is deliberately incomplete failure
+evidence. Builds alignment produced local candidate commit
+`fb05dd84625abdcd1a62d2664e8557379fd631bb`, but the first EventStore
+coordinate row exited `2` after its command argument was malformed by outer
+shell substitution. The exact failed log SHA-256 is
+`eb0a2e11dc9bbb2bd4e94377b8a8c544c33f9a5dcc588da63e39a3411a8f1a8e`.
+No rerun or later gate occurred; no qualification packet or acceptance is
+claimed.
