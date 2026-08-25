@@ -288,3 +288,4 @@ location: EventStore qualification, P1R acceptance, and Architecture binding
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline-2.md
 reason: Acceptance and Architecture propagation require external owner decisions and complete retained clean-worktree evidence after the narrowed Builds candidate is aligned; they cannot be truthfully completed by the candidate-alignment change alone.
 status: open
+decision: 2026-08-25 External exact worktrees — Authorize a fresh attempt that materializes every recorded dependency gitlink as an isolated exact-revision worktree at the paths required by governance tests without nested submodule initialization or source/gitlink changes; restart at coordinate capture, complete candidate and rollback qualification, and prepare the four-owner acceptance packet.
