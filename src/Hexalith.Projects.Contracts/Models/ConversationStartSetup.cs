@@ -22,7 +22,7 @@ using Hexalith.Projects.Contracts.Ui;
 /// enums, and a typed observation instant. It never carries transcripts, file contents, memory bodies,
 /// prompts, paths, tokens, secrets, tenant authority, audit metadata, or any per-reference inventory.
 /// Consumers that need per-reference inventories or exclusion diagnostics call
-/// <c>GetProjectContext</c> / <c>ExplainContextSelection</c> / <c>RefreshProjectContext</c>.
+/// <c>GetProjectContext</c> / <c>GetProjectContextExplanation</c> / <c>RefreshProjectContext</c>.
 /// </para>
 /// <para>
 /// Field provenance: <see cref="ProjectId"/> echoes the request path parameter;

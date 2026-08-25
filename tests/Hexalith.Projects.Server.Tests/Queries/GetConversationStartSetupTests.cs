@@ -233,10 +233,17 @@ public sealed class GetConversationStartSetupTests
         {
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
             HttpRequestMessage request = StartSetupRequest();
-            request.Headers.Add("Idempotency-Key", "idem-key-leaked-through-rejection?");
+            const string idempotencyKey = "idem-key-leaked-through-rejection?";
+            request.Headers.Add("Idempotency-Key", idempotencyKey);
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
 
             response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+            // The safe denial must not echo the rejected key, nor reveal that it was even inspected.
+            body.ShouldNotContain(idempotencyKey);
+            body.ShouldNotContain("idempotency", Case.Insensitive);
+            NoPayloadLeakageAssertions.AssertNoLeakageInText(body);
         }
         finally
         {
@@ -273,7 +280,7 @@ public sealed class GetConversationStartSetupTests
     [InlineData("..")]
     [InlineData("..%2F..")]
     [InlineData("path/with/slash")]
-    [InlineData("bad‎char")]
+    [InlineData("bad\u200Echar")]
     public async Task GetConversationStartSetup_MalformedProjectId_ReturnsSafeDenial404(string malformedId)
     {
         WebApplication app = await StartAppAsync(tenantId: "tenant-a", principalId: "principal-a", setup: null).ConfigureAwait(true);
@@ -573,6 +580,82 @@ public sealed class GetConversationStartSetupTests
         }
     }
 
+    [Fact]
+    public async Task GetConversationStartSetup_ObservedAt_IsTheInjectedClockInstant()
+    {
+        // observedAt is the one field the injected TimeProvider exists to make deterministic; without
+        // this the handler could pass Now: default and every other test would still pass.
+        DateTimeOffset fixedNow = new(2026, 8, 26, 9, 30, 15, TimeSpan.Zero);
+        WebApplication app = await StartAppAsync(
+            tenantId: "tenant-a",
+            principalId: "principal-a",
+            setup: null,
+            timeProvider: new FixedTimeProvider(fixedNow)).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client.SendAsync(StartSetupRequest(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument document = JsonDocument.Parse(body);
+            document.RootElement.TryGetProperty("observedAt", out JsonElement observedAt).ShouldBeTrue();
+            observedAt.GetDateTimeOffset().ShouldBe(fixedNow);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task GetConversationStartSetup_EventuallyConsistentFreshnessRequested_Returns200()
+    {
+        // Only the rejection branch was covered, so inverting the comparison would break every typed
+        // client call that supplies a freshness hint while the suite stayed green.
+        WebApplication app = await StartAppAsync(tenantId: "tenant-a", principalId: "principal-a", setup: null).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpRequestMessage request = StartSetupRequest();
+            request.Headers.Add("X-Hexalith-Freshness", "eventually_consistent");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task GetConversationStartSetup_WellFormedUnknownProjectId_ReturnsSafeDenial404()
+    {
+        // Malformed ids, cross-tenant and missing authority were covered; the plain "valid id, no such
+        // project" case was not, despite being the most common real-world 404.
+        const string unknownProjectId = "01HZ9K8YQ3W6V2N4R7T5P0X1CD";
+        WebApplication app = await StartAppAsync(tenantId: "tenant-a", principalId: "principal-a", setup: null).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            HttpResponseMessage response = await client
+                .SendAsync(
+                    StartSetupRequest($"/api/v1/projects/{unknownProjectId}/setup/conversation-start"),
+                    TestContext.Current.CancellationToken)
+                .ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            body.ShouldNotContain(unknownProjectId);
+            NoPayloadLeakageAssertions.AssertNoLeakageInText(body);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
     private static HttpRequestMessage StartSetupRequest(string? url = null)
     {
         HttpRequestMessage request = new(HttpMethod.Get, url ?? $"/api/v1/projects/{ProjectIdValue}/setup/conversation-start");
@@ -591,7 +674,8 @@ public sealed class GetConversationStartSetupTests
         IProjectConversationDirectory? conversationDirectoryOverride = null,
         IProjectFolderDirectory? folderDirectoryOverride = null,
         IProjectFileReferenceDirectory? fileReferenceDirectoryOverride = null,
-        IProjectMemoryDirectory? memoryDirectoryOverride = null)
+        IProjectMemoryDirectory? memoryDirectoryOverride = null,
+        TimeProvider? timeProvider = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
@@ -603,6 +687,12 @@ public sealed class GetConversationStartSetupTests
         builder.Services.RemoveAll<IProjectTenantContextAccessor>();
         builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContext(tenantId, principalId));
         builder.Services.AddSingleton<IProjectCommandSubmitter>(new NoopProjectCommandSubmitter());
+        if (timeProvider is not null)
+        {
+            // AddProjectsServer TryAdds TimeProvider.System, so replace it to make observedAt deterministic.
+            builder.Services.RemoveAll<TimeProvider>();
+            builder.Services.AddSingleton(timeProvider);
+        }
 
         // Sibling directories: required by other endpoints registered on the same host (e.g. Get,
         // Refresh, link/unlink). For Story 3.5's endpoint they MUST NEVER be invoked, which is what
@@ -672,6 +762,11 @@ public sealed class GetConversationStartSetupTests
         app.MapProjectsServerEndpoints();
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
         return app;
+    }
+
+    private sealed class FixedTimeProvider(DateTimeOffset now) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow() => now;
     }
 
     private static async Task StopAsync(WebApplication app)

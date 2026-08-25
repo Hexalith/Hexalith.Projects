@@ -221,6 +221,23 @@ public sealed class ConversationStartSetupProjectorTests
         context.Setup.ShouldBeSameAs(setup);
     }
 
+    [Fact]
+    public void Empty_MatchesProjectionOfNullSetup()
+    {
+        // ConversationStartSetup.Empty is a second encoding of the same empty semantic and has no
+        // production caller, so pin the two together to catch drift rather than letting them diverge.
+        ProjectContext context = BuildContext(setup: null, ProjectLifecycle.Active, ProjectContextFreshness.Fresh);
+
+        ConversationStartSetup projected = ConversationStartSetupProjector.Project(context);
+        ConversationStartSetup empty = ConversationStartSetup.Empty(
+            context.ProjectId,
+            context.Lifecycle,
+            context.ObservedAt,
+            context.Freshness);
+
+        projected.ShouldBe(empty);
+    }
+
     private static ProjectContext BuildContext(
         ProjectSetup? setup,
         ProjectLifecycle lifecycle,

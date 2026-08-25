@@ -167,6 +167,10 @@ public sealed class ConversationStartSetupTests
         // Local Tier-0 mirror of NoPayloadLeakageAssertions.AssertNoLeakageInText — Contracts.Tests
         // does NOT reference Hexalith.Projects.Testing (which depends on Hexalith.Projects domain core)
         // so this lane re-uses PayloadClassification.ForbiddenContent directly to keep the boundary tight.
+        // Guard the guard: an empty or renamed-away ForbiddenContent list would make every leakage
+        // assertion below pass vacuously, silently unverifying the FS-2 invariant.
+        PayloadClassification.ForbiddenContent.ShouldNotBeEmpty();
+
         List<string> violations = new();
         string haystack = serialized.ToLowerInvariant();
         foreach (string forbidden in PayloadClassification.ForbiddenContent)
