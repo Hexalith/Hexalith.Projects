@@ -371,3 +371,109 @@ source_spec: `spec-render-skill-fixture-coverage.md`
 severity: low
 reason: `_load_sources` at `_bmad/scripts/render_skill.py:105-106` resolves each candidate source and raises `RenderError(f"render source escapes skill directory: {name}")` when the resolved path is not relative to `skill_dir` (guarding against a symlinked or otherwise escaping source file). `tests/tools/test_render_skill.py` has no fixture that creates such a source and asserts this HALT message, so a regression that weakens or removes the check would pass the current suite silently.
 status: open
+
+### DW-44: Introduce an admission state (responseState, components, recoveryActions) for the Conversation-start read.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: high
+reason: ProjectContextInclusionPolicy.Assemble hardcodes Assembled on the success path and the wire DTO deliberately omits AssemblyOutcome, so a Chatbot receiving 200 has no signal on which to withhold a first response. 200 means "authorized", not "usable".
+status: open
+gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
+
+### DW-45: Bind the Conversation-start snapshot to an authorized projectVersion.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Contracts/Models/ConversationStartSetup.cs
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: high
+reason: ProjectDetailItem carries a Sequence watermark but the DTO explicitly excludes it, enforced by GetConversationStartSetup_BodyDoesNotContainAuditMetadata. Nothing ties the setup a Chatbot admits on to a Project version, so a concurrent archive or setup update is undetectable by the caller.
+status: open
+gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
+
+### DW-46: Evaluate exactly-one-Folder eligibility on the Conversation-start read.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:126
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: high
+reason: The handler constructs ProjectContextReferenceEvidence with ProjectFolder null and empty collections while authorization.ProjectDetail already carries ProjectFolderReference. A Project with no Folder, an archived Folder, or an ambiguous Folder produces the same admissible-looking 200.
+status: open
+gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
+
+### DW-47: Derive dual-principal authority (delegation, workload, scopes, audience) for Conversation-start reads.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs:350
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: high
+reason: HttpContextProjectTenantContextAccessor resolves only a tenant claim and a NameIdentifier/sub principal; no delegation, scope or audience is derived anywhere in Hexalith.Projects.Server. A delegated Chatbot workload is authorized as if it were the original actor, which is the exact distinction first-response admission rests on.
+status: open
+gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
+
+### DW-48: Source freshness from the projection that supplies the Conversation-start data.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:114
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: high
+reason: Freshness is mapped from the tenant-access projection while the payload comes from ProjectDetailItem, whose Sequence watermark is never consulted. A rebuilding or stale ProjectDetail is reported Fresh whenever tenant-access is fresh, so even the advisory label is untrustworthy. Needs the Story 6.2 persisted read model with provenance.
+status: open
+gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
+
+### DW-49: Generate a correlation id when the caller supplies none, or correct the declared adapter behavior.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:141
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: OpenAPI declares caller-provided-or-generated-correlation but nothing in the module generates one; a caller that omits or malforms the header gets no X-Correlation-Id back. Systemic across ResolveProjectFromAttachments, ResolveProjectFromConversation, GetProjectContextExplanation and eight sites in ProjectsDomainServiceEndpoints, so fixing one endpoint alone would be inconsistent.
+status: open
+
+### DW-50: Echo X-Correlation-Id on error responses, not only on 200.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint.cs:141
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: The correlation header assignment sits after every SafeDenial, ReadModelUnavailable and ValidationProblem return, so 400/404/503 carry no correlation id — the exact responses where a caller most needs one. Systemic across the module, and no test asserts headers on any error response.
+status: open
+
+### DW-51: Produce persisted before/after zero-write evidence for the Conversation-start read.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: tests/Hexalith.Projects.Server.Tests/Queries/GetConversationStartSetupTests.cs
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: The strongest existing assertion is sibling-scoped call counts in GetConversationStartSetup_DoesNotCallSiblingAcls. The path does appear write-free, but no state-store end-state assertion exists, so there is no evidence artifact to carry into AC4.
+status: open
+gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
+
+### DW-52: Close or explicitly accept the denial-depth timing channel.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs:350
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: AuthorizeAsync returns at six different depths, each skipping the remaining awaited calls. Status, headers and body are uniform because SafeDenial discards the reason, so timing is the only residual discriminator against AC3's requirement that every caller-visible category including timing be indistinguishable. Currently untested.
+status: open
+gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
+
+### DW-53: Extract the shared query-handler request preamble.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Server/Queries/
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: Correlation and task id reads, the IsCanonicalIdentifier guard, the Idempotency-Key check, the X-Hexalith-Freshness strict-equality check and the TenantAccessResult defensive collapse are duplicated across at least four query handlers, so any fix to them must be applied N times. The Story 3.5 handler documents itself as a port of Story 3.2.
+status: open
+
+### DW-54: Resolve OpenAPI spine inconsistencies surfaced by the Story 3.5 audit.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md, 2026-08-25
+location: src/Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
+severity: medium
+reason: One payload mixes PascalCase (Active, Fresh) with camelCase (authorizedReferences) enum values, a permanent client-side trap; the requested-versus-authoritative tenant guard is tautological on this path because both arguments are the authoritative tenant, leaving one declared defense layer dead; and the new public route landed with no changelog entry and no info.version bump. All are consistent with Stories 3.2-3.4 precedent, so they need a spine-wide fix rather than a per-endpoint one.
+status: open
