@@ -36,6 +36,11 @@ jobs:
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest tests/tools/test_production_authority_guard.py -v
 
+      - name: Validate BMAD Loop hook relay
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest tests/tools/test_bmad_loop_hook.py -v
+
       - name: Validate BMAD merge atomicity
         env:
           PYTHONDONTWRITEBYTECODE: '1'

@@ -71,7 +71,9 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: .codex/hooks.json
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Blind review found the hook commands hard-code the current checkout path, so hooks fail when the repository is cloned or moved.
-status: open
+status: done 2026-08-25
+resolution: resolved by sweep bundle dw-portable-safe-loop-hooks
+resolution-undo: f07edf5b0801aa33fcef57cec31a638619b49084e2868b360043d30665422827 2026-08-25 7374617475733a206f70656e
 
 ### DW-9: Validate BMAD Loop task IDs and event names before using them in event filenames.
 
@@ -79,7 +81,9 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: BMAD Loop hook event filename handling
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Blind review found that separators or traversal segments from environment-derived identifiers can escape the events directory or make lifecycle hooks fail.
-status: open
+status: done 2026-08-25
+resolution: resolved by sweep bundle dw-portable-safe-loop-hooks
+resolution-undo: f07edf5b0801aa33fcef57cec31a638619b49084e2868b360043d30665422827 2026-08-25 7374617475733a206f70656e
 
 ### DW-10: Render Quick Dev output into a validated temporary directory before replacing the previous workflow.
 
@@ -104,7 +108,9 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: BMAD Loop hook CLI test coverage
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Verification-gap review found no test exercises absent or present environment variables, payload key variants, task attribution, or canonical event emission.
-status: open
+status: done 2026-08-25
+resolution: resolved by sweep bundle dw-portable-safe-loop-hooks
+resolution-undo: f07edf5b0801aa33fcef57cec31a638619b49084e2868b360043d30665422827 2026-08-25 7374617475733a206f70656e
 
 ### DW-13: Make BMAD Dev Auto detect external HEAD, status, and path-set drift before reviewing or committing changes.
 
