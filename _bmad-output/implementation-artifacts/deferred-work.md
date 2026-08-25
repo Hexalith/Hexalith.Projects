@@ -15,7 +15,8 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: AGENTS.md, CLAUDE.md, and .github/copilot-instructions.md
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Blind review found the same broken guidance filename in all three agent entrypoints, preventing commit rules from being discovered.
-status: open
+status: done 2026-08-25
+resolution: already resolved: Commit d0889739b33856e37a8cbbedbbb440940a43ab9b removed the absent hexalith-commit-instructions.md reference; references/Hexalith.AI.Tools/hexalith-llm-instructions.md:29-31 now names hexalith-git-instructions.md and all three entrypoints are byte-identical.
 
 ### DW-3: Make the Projects E2E dependency installation path suppress the recursive submodule postinstall command by construction.
 
@@ -23,7 +24,8 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: Projects E2E dependency installation
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Plain npm installation invoked `git submodule update --init --recursive --force`; only the inspected `CI=1` fallback prevented the forbidden mutation while current documentation still recommends an unsafe plain install.
-status: open
+status: done 2026-08-25
+resolution: already resolved: Commit f03a8d6deb28dbc60062e176ab5813114d5a0ca3 resolved the unsafe install path; tests/e2e/README.md:22-29 requires CI=1 npm ci --ignore-scripts and .github/workflows/ci.yml:143-149 uses it.
 
 ### DW-4: Constrain BMAD legacy cleanup targets to direct descendants of the resolved `_bmad` root.
 
@@ -79,7 +81,8 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: Quick Dev workflow renderer
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Blind review found the renderer deletes prior Markdown before reading and writing replacements, so a later failure can leave Quick Dev missing or partially rendered.
-status: open
+status: done 2026-08-25
+resolution: already resolved: Commit a0dea374b3b990a38e23357934817969ba4a03e4 replaced legacy Quick Dev rendering; _bmad/scripts/render_skill.py:295-319 renders to a sibling staging directory, atomically renames it, and cleans staging on every exit.
 
 ### DW-11: Add executable fixture coverage for Quick Dev renderer precedence, review-layer customization, placeholders, cleanup, and failure paths.
 
@@ -119,7 +122,8 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: Hexalith.Memories bounded workflow ledger tests
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Verification-gap review demonstrated that remove-and-reinsert watermark behavior can regress without any existing test failing once more than 256 workflow IDs are tracked.
-status: open
+status: done 2026-08-25
+resolution: already resolved: Commit 9af726a336aa604b051e2203438dc15ee728e9ce added references/Hexalith.Memories/tests/Hexalith.Memories.Server.Tests/Actors/CaseIngestionCounterLogicTests.cs:164-190, which refreshes an old workflow at the 256-entry limit, trims, and rejects its stale replay.
 
 ### DW-16: Add a recurring managed live AppHost Playwright lane, including targeted AppHost startup smoke coverage, lifecycle ownership, and zero-live-skip enforcement.
 
@@ -183,7 +187,8 @@ origin: migrated from legacy ledger ("flat append from spec-canonicalize-referen
 location: _bmad-output/implementation-artifacts/sprint-status.yaml
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-canonicalize-reference-health-freshness-vocabulary.md
 reason: Review confirmed the sprint tracker records July 31 action completions while its pre-existing dirty `last_updated` value moves backward to July 19, which may cause incremental consumers to miss updates.
-status: open
+status: done 2026-08-25
+resolution: already resolved: Commit 729798ab09cbff27223e06c019a1532865713da1 advanced sprint chronology; current _bmad-output/implementation-artifacts/sprint-status.yaml:2 records last_updated 2026-08-03T08:21:35+02:00, later than the July 31 completions.
 
 ### DW-24: Reconcile the U+2028/U+2029 sprint action promised by its approved July 31 duplicate-trigger closure proposal.
 
@@ -191,7 +196,8 @@ origin: migrated from legacy ledger ("flat append from spec-canonicalize-referen
 location: _bmad-output/implementation-artifacts/sprint-status.yaml
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-canonicalize-reference-health-freshness-vocabulary.md
 reason: Review confirmed the pre-existing approved proposal states that the action was moved to done while the sprint tracker still leaves the matching action in-progress; the originating correction intentionally changed only the freshness-vocabulary action.
-status: open
+status: done 2026-08-25
+resolution: already resolved: Commit 729798ab09cbff27223e06c019a1532865713da1 moved the U+2028/U+2029 action to done; current _bmad-output/implementation-artifacts/sprint-status.yaml:203-209 records done with fresh green evidence.
 
 ### DW-25: Preserve caller cancellation through Web warning/dashboard list and diagnostic requests.
 
