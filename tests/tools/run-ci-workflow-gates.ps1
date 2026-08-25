@@ -43,6 +43,7 @@ if (-not (Test-Path $ciPath)) {
 
 $ci = Get-Content -Path $ciPath -Raw
 $solution = Get-Content -Path $solutionPath -Raw
+$packageManifestPath = Join-Path $repositoryRoot 'tools/release-packages.json'
 $releaseConfig = Get-Content -Path $releaseConfigPath -Raw
 $frontComposerGate = Get-Content -Path $frontComposerGatePath -Raw
 $openApiGate = Get-Content -Path $openApiGatePath -Raw
@@ -102,20 +103,68 @@ else {
     }
 }
 
-if (Test-Path $releasePath) {
-    $failures.Add('release.yml must remain retired; release belongs behind the tested SHA in ci.yml.')
+# Release is an operator-dispatched workflow behind a verified green main SHA,
+# matching the Hexalith.EventStore / Hexalith.Tenants module standard.
+if (-not (Test-Path $releasePath)) {
+    $failures.Add('release.yml must exist; release is an operator-dispatched workflow in every Hexalith module.')
+    $release = ''
+}
+else {
+    $release = Get-Content -Path $releasePath -Raw
+}
+
+foreach ($sharedWorkflow in @('codeql.yml', 'commitlint.yml', 'dependency-review.yml')) {
+    if (-not (Test-Path (Join-Path $workflowRoot $sharedWorkflow))) {
+        $failures.Add("$sharedWorkflow must exist; every Hexalith module runs the shared $($sharedWorkflow -replace '\.yml$', '') lane.")
+    }
+}
+
+Require-Match $release '^on:\s*\r?\n\s*workflow_dispatch:\s*$' 'Release must be dispatch-only so publication stays an explicit operator action.'
+Forbid-Match $release '^\s*(push|pull_request|schedule):\s*$' 'Release must never be triggered by push, pull_request, or schedule.'
+Require-Match $release '^\s*verify-source:\s*$' 'Release must run the unprotected exact-source preflight before the protected environment.'
+Require-Match $release 'No successful push CI run exists for the exact current main SHA' 'The preflight must prove a successful push CI run for the exact dispatched SHA.'
+Require-Match $release 'The dispatched source is no longer the live main tip' 'The preflight must prove the dispatch selected the live main tip.'
+Require-Match $release '^\s*needs:\s*verify-source\s*$' 'The release job must depend on the exact-source preflight.'
+Require-Match $release '^\s*environment-name:\s*production\s*$' 'Release must enter the protected production environment.'
+Require-Match $release "dapr-version:\s*'1\.18(?:\.0)?'" 'CI and release must use the supported Dapr 1.18 baseline.'
+Require-Match $release 'HexalithCommonsRoot=\$\{\{ github\.workspace \}\}/references/Hexalith\.Commons' 'Reusable CI and release must receive the root Commons path as a global MSBuild property.'
+Require-Match $release '^\s*cancel-in-progress:\s*false\s*$' 'An in-flight release must never be cancelled by a newer dispatch.'
+
+# GitHub validates the maximum permissions of EVERY job in a called workflow at
+# workflow startup, including the skipped governed-release job. Granting less than
+# that superset fails the whole run with `startup_failure` before a single job runs.
+foreach ($scope in @('actions: read', 'attestations: write', 'contents: write', 'id-token: write', 'issues: write', 'pull-requests: write')) {
+    Require-Match $release ("^\s*" + [regex]::Escape($scope) + "\s*$") "The release job must grant '$scope' to satisfy domain-release.yml startup permission validation."
+}
+
+# The release callee is pinned: an unreviewed drift on Builds@main is exactly what
+# broke workflow startup once already.
+$releaseCallMatch = [regex]::Match($release, 'uses:\s*Hexalith/Hexalith\.Builds/\.github/workflows/domain-release\.yml@([0-9a-f]{40})\s*$', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+if (-not $releaseCallMatch.Success) {
+    $failures.Add('Release must call domain-release.yml pinned to an exact 40-character commit SHA.')
+}
+else {
+    $pinnedSha = $releaseCallMatch.Groups[1].Value
+    Require-Match $release ('^\s*builds-execution-sha:\s*' + $pinnedSha + '\s*$') 'builds-execution-sha must match the pinned domain-release.yml SHA.'
+}
+
+# The declared package count is the fail-closed gate: it must agree with both the
+# manifest it is checked against and the count semantic-release publishes.
+if (-not (Test-Path $packageManifestPath)) {
+    $failures.Add('tools/release-packages.json must exist; the release publication identity is frozen from it.')
+}
+else {
+    $manifestCount = @((Get-Content -Path $packageManifestPath -Raw | ConvertFrom-Json).packages).Count
+    Require-Match $release ('^\s*expected-package-count:\s*' + $manifestCount + '\s*$') "expected-package-count must equal the $manifestCount package(s) declared in tools/release-packages.json."
+    Require-Match $releaseConfig ('-eq ' + $manifestCount + "'") "release.config.cjs must publish exactly $manifestCount package(s)."
 }
 
 Require-Match $ci '^\s*push:\s*$' 'CI must run on pushes.'
 Require-Match $ci '^\s*pull_request:\s*$' 'CI must run on pull requests.'
 Require-Match $ci '^\s*schedule:\s*$' 'CI must include a scheduled lane.'
-Require-Match $ci "dapr-version:\s*'1\.18(?:\.0)?'" 'CI and release must use the supported Dapr 1.18 baseline.'
+Require-Match $ci "dapr-version:\s*'1\.18(?:\.0)?'" 'CI must use the supported Dapr 1.18 baseline.'
 Require-Match $ci 'HexalithCommonsRoot=\$\{\{ github\.workspace \}\}/references/Hexalith\.Commons' 'Reusable CI and release must receive the root Commons path as a global MSBuild property.'
 Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflow must run Integration.Tests separately.'
-Require-Match $ci '^\s*release:\s*$' 'The tested CI workflow must own the release job.'
-Require-Match $ci "github\.event_name == 'push' && github\.ref == 'refs/heads/main'" 'Release must be restricted to the tested main push event.'
-Require-Match $ci '^\s*permissions:\s*$' 'The release job must declare explicit write permissions.'
-Require-Match $ci '^\s*contents:\s*write\s*$' 'Release must scope contents: write at the job level.'
 Require-Match $ci '^\s*cancel-in-progress:\s*\$\{\{ github\.event_name != ''push'' \|\| github\.ref != ''refs/heads/main'' \}\}\s*$' 'Main push/release workflows must never be cancelled by a newer run.'
 Require-Match $ci '^\s*package-gates:\s*$' 'CI must run the package dependency/restore gate.'
 Require-Match $ci '^\s*e2e:\s*$' 'CI must include the scheduled E2E job.'
@@ -148,6 +197,7 @@ Require-Match $openApiGate '--configuration Release' 'OpenAPI gate must build it
 Require-Match $openApiGate '-warnaserror' 'OpenAPI gate must fail on build warnings.'
 Require-Match $releaseConfig 'run-package-dependency-gate\.ps1' 'Semantic release must validate prepared packages before publication.'
 
+Forbid-Match $ci '^\s*release:\s*$' 'CI must not own a release job; release.yml owns publication.'
 Forbid-Match $allWorkflows '^\s*submodules:\s*(true|recursive)\s*$' 'Recursive or implicit recursive submodule checkout is forbidden.'
 Forbid-Match $allWorkflows 'git\s+[^\r\n]*submodule\s+[^\r\n]*--recursive' 'Recursive submodule commands are forbidden.'
 Forbid-Match $allWorkflows 'npm\s+(?:--prefix\s+\S+\s+)?install(?:\s|$)' 'Workflow dependency installation must not use npm install.'

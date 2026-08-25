@@ -189,24 +189,3 @@ jobs:
             tests/e2e/playwright-report
           if-no-files-found: ignore
           retention-days: 7
-
-  release:
-    name: Release tested main SHA
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    needs:
-      - ci
-      - workflow-gates
-      - project-gates
-      - package-gates
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-release.yml@main
-    with:
-      solution: >-
-        Hexalith.Projects.CI.slnx
-        -p:HexalithCommonsRoot=${{ github.workspace }}/references/Hexalith.Commons
-      dapr-version: '1.18.0'
-    secrets:
-      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
