@@ -33,7 +33,9 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: BMAD legacy cleanup classifier in both agent copies
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Adversarial and edge-case reviews found that absolute or parent-traversal module names can escape `_bmad` before `shutil.rmtree` is called in both agent copies.
-status: open
+status: done 2026-08-25
+resolution: resolved by sweep bundle dw-legacy-cleanup-path-safety
+resolution-undo: fbc12d6bdcb9408d53250ac593b2b7c43d82af87fb6abe8e4c7808ddf8728dcb 2026-08-25 7374617475733a206f70656e
 
 ### DW-5: Add isolated destructive-path tests for the BMAD legacy cleanup classifier and replacement-skill guards.
 
@@ -41,7 +43,9 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: BMAD legacy cleanup and replacement-skill test coverage
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Verification-gap review found no tests proving live config directories and sole installed skill copies are protected while only verified duplicates are removed.
-status: open
+status: done 2026-08-25
+resolution: resolved by sweep bundle dw-legacy-cleanup-path-safety
+resolution-undo: fbc12d6bdcb9408d53250ac593b2b7c43d82af87fb6abe8e4c7808ddf8728dcb 2026-08-25 7374617475733a206f70656e
 
 ### DW-6: Validate `merge-help-csv.py` argument relationships before writing the target CSV.
 
@@ -289,3 +293,27 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 reason: Acceptance and Architecture propagation require external owner decisions and complete retained clean-worktree evidence after the narrowed Builds candidate is aligned; they cannot be truthfully completed by the candidate-alignment change alone.
 status: open
 decision: 2026-08-25 External exact worktrees — Authorize a fresh attempt that materializes every recorded dependency gitlink as an isolated exact-revision worktree at the paths required by governance tests without nested submodule initialization or source/gitlink changes; restart at coordinate capture, complete candidate and rollback qualification, and prepare the four-owner acceptance packet.
+
+### DW-36: Sequential shutil.rmtree calls across multiple validated targets are not atomic, so a later target's filesystem failure can leave earlier targets already deleted.
+origin: spec-deferred 8d336adc2d02
+location: .agents/skills/bmad-bmb-setup/scripts/cleanup-legacy.py:cleanup_directories
+source_spec: `spec-legacy-cleanup-path-safety.md`
+severity: medium
+reason: cleanup_directories() in all six cleanup-legacy.py copies loops over validated targets and calls shutil.rmtree per target inside its own try/except; if an OSError/RuntimeError is raised on target N after targets 1..N-1 already succeeded, main() exits via runtime_error (exit 2) but the already-removed directories are not restored. This sequential, non-atomic deletion behavior is unchanged from the pre-diff implementation -- the diff only changed which exception types are caught and how the failure is reported.
+status: open
+
+### DW-37: A symlink cycle nested inside an already-validated cleanup target can make find_skill_dirs and count_files raise an unhandled RecursionError instead of the documented JSON exit-2 contract.
+origin: spec-deferred 6e82e0d0ef7e
+location: .agents/skills/bmad-bmb-setup/scripts/cleanup-legacy.py:find_skill_dirs,count_files
+source_spec: `spec-legacy-cleanup-path-safety.md`
+severity: medium
+reason: Both functions catch only (OSError, RuntimeError) around their Path.rglob() calls. rglob recurses into symlinked subdirectories, so a self-referential symlink inside a target's subtree (not the top-level target itself, which is already rejected by the direct-child symlink guard in resolve_cleanup_targets) can trigger unbounded recursion. This traversal behavior predates this diff -- both functions used the same rglob pattern before this change, with no handling for this case either.
+status: open
+
+### DW-38: Follow-up review still recommended for dw-legacy-cleanup-path-safety after the damping cap was spent
+origin: review-budget-followup
+location: n/a
+source_spec: `spec-legacy-cleanup-path-safety.md`
+severity: low
+reason: The follow-up-review damping cap (limits.max_followup_reviews = 1) was spent with the story finalized (status: done, verify green) while the review pass still recommended an independent follow-up. The work was committed by bmad-loop run 20260825-081747-f4a1; this entry preserves the lingering recommendation for a deliberate later review.
+status: open
