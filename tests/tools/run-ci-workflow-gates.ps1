@@ -127,7 +127,6 @@ Require-Match $release 'The dispatched source is no longer the live main tip' 'T
 Require-Match $release '^\s*needs:\s*verify-source\s*$' 'The release job must depend on the exact-source preflight.'
 Require-Match $release '^\s*environment-name:\s*production\s*$' 'Release must enter the protected production environment.'
 Require-Match $release "dapr-version:\s*'1\.18(?:\.0)?'" 'CI and release must use the supported Dapr 1.18 baseline.'
-Require-Match $release 'HexalithCommonsRoot=\$\{\{ github\.workspace \}\}/references/Hexalith\.Commons' 'Reusable CI and release must receive the root Commons path as a global MSBuild property.'
 Require-Match $release '^\s*cancel-in-progress:\s*false\s*$' 'An in-flight release must never be cancelled by a newer dispatch.'
 
 # GitHub validates the maximum permissions of EVERY job in a called workflow at
@@ -163,8 +162,31 @@ Require-Match $ci '^\s*push:\s*$' 'CI must run on pushes.'
 Require-Match $ci '^\s*pull_request:\s*$' 'CI must run on pull requests.'
 Require-Match $ci '^\s*schedule:\s*$' 'CI must include a scheduled lane.'
 Require-Match $ci "dapr-version:\s*'1\.18(?:\.0)?'" 'CI must use the supported Dapr 1.18 baseline.'
-Require-Match $ci 'HexalithCommonsRoot=\$\{\{ github\.workspace \}\}/references/Hexalith\.Commons' 'Reusable CI and release must receive the root Commons path as a global MSBuild property.'
 Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflow must run Integration.Tests separately.'
+
+# The reusable callees run `dotnet restore "$SOLUTION"`: the input is one quoted
+# argument, so an embedded MSBuild switch becomes part of the project path (MSB1009).
+# `github.workspace` is also empty when a reusable-workflow `with:` block is evaluated,
+# so any path built from it silently resolves to the filesystem root. Commons is
+# auto-detected by Directory.Build.props and needs no override here.
+foreach ($caller in @(@{ Name = 'ci.yml'; Text = $ci }, @{ Name = 'release.yml'; Text = $release })) {
+    $solutionInputs = [regex]::Matches($caller.Text, '(?m)^\s*solution:\s*(.+?)\s*$')
+    foreach ($solutionInput in $solutionInputs) {
+        $value = $solutionInput.Groups[1].Value
+        if ($value -match '^>-|^\|') {
+            $failures.Add("$($caller.Name) passes a multi-line solution input; it must be a bare solution path.")
+        }
+        elseif ($value -notmatch '^Hexalith\.Projects\.CI\.slnx$') {
+            $failures.Add("$($caller.Name) solution input must be the bare 'Hexalith.Projects.CI.slnx', not '$value'.")
+        }
+    }
+    if ($solutionInputs.Count -eq 0) {
+        $failures.Add("$($caller.Name) must pass a solution input to the reusable workflow.")
+    }
+}
+
+Forbid-Match ($ci + "`n" + $release) '^\s*solution:.*-p:' 'A solution input must not embed MSBuild switches; the callee quotes it as a single argument.'
+Forbid-Match ($ci + "`n" + $release) '^\s*(solution|.*-p:.*):.*\$\{\{ github\.workspace \}\}' 'github.workspace is empty when a reusable-workflow `with:` is evaluated; never build a path from it there.'
 Require-Match $ci '^\s*cancel-in-progress:\s*\$\{\{ github\.event_name != ''push'' \|\| github\.ref != ''refs/heads/main'' \}\}\s*$' 'Main push/release workflows must never be cancelled by a newer run.'
 Require-Match $ci '^\s*package-gates:\s*$' 'CI must run the package dependency/restore gate.'
 Require-Match $ci '^\s*e2e:\s*$' 'CI must include the scheduled E2E job.'

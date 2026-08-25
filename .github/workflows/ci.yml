@@ -66,9 +66,11 @@ jobs:
   ci:
     uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@main
     with:
-      solution: >-
-        Hexalith.Projects.CI.slnx
-        -p:HexalithCommonsRoot=${{ github.workspace }}/references/Hexalith.Commons
+      # Bare solution path only. The callee runs `dotnet restore "$SOLUTION"`, so an
+      # embedded `-p:` switch is parsed as part of the project path (MSB1009), and
+      # `github.workspace` is empty when a reusable-workflow `with:` is evaluated.
+      # Directory.Build.props auto-detects HexalithCommonsRoot from references/.
+      solution: Hexalith.Projects.CI.slnx
       dapr-version: '1.18.0'
       unit-test-projects: |
         tests/Hexalith.Projects.Contracts.Tests

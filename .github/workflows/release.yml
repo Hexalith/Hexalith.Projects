@@ -89,9 +89,11 @@ jobs:
       pull-requests: write
     uses: Hexalith/Hexalith.Builds/.github/workflows/domain-release.yml@a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec
     with:
-      solution: >-
-        Hexalith.Projects.CI.slnx
-        -p:HexalithCommonsRoot=${{ github.workspace }}/references/Hexalith.Commons
+      # Bare solution path only. The callee runs `dotnet restore "$SOLUTION"`, so an
+      # embedded `-p:` switch is parsed as part of the project path (MSB1009), and
+      # `github.workspace` is empty when a reusable-workflow `with:` is evaluated.
+      # Directory.Build.props auto-detects HexalithCommonsRoot from references/.
+      solution: Hexalith.Projects.CI.slnx
       dapr-version: '1.18.0'
       timeout-minutes: 60
       environment-name: production
