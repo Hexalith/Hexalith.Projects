@@ -46,6 +46,11 @@ jobs:
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest tests/tools/test_render_skill.py -v
 
+      - name: Validate Build Auto workspace ownership
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 .agents/skills/bmad-build-auto/scripts/tests/test_workspace_ownership.py
+
       - name: Validate BMAD merge atomicity
         env:
           PYTHONDONTWRITEBYTECODE: '1'

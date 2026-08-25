@@ -80,6 +80,26 @@ else {
             $failures.Add('The shared skill renderer must be an exact blocking name/env/run step with bytecode disabled.')
         }
     }
+
+    $ownershipStepMatches = [regex]::Matches(
+        $workflowGates,
+        '(?ms)^      - name: Validate Build Auto workspace ownership\r?\n.*?(?=^      - |\z)'
+    )
+    if ($ownershipStepMatches.Count -ne 1) {
+        $failures.Add('workflow-gates must contain exactly one Build Auto workspace ownership step.')
+    }
+    else {
+        $ownershipStep = ($ownershipStepMatches[0].Value -replace "`r`n", "`n").TrimEnd([char[]] "`r`n")
+        $expectedOwnershipStep = @(
+            '      - name: Validate Build Auto workspace ownership'
+            '        env:'
+            '          PYTHONDONTWRITEBYTECODE: ''1'''
+            '        run: python3 .agents/skills/bmad-build-auto/scripts/tests/test_workspace_ownership.py'
+        ) -join "`n"
+        if ($ownershipStep -cne $expectedOwnershipStep) {
+            $failures.Add('The Build Auto workspace ownership fixture must be an exact blocking name/env/run step with bytecode disabled.')
+        }
+    }
 }
 
 if (Test-Path $releasePath) {
