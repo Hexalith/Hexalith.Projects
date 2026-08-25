@@ -53,7 +53,8 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: merge-help-csv.py
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Two independent reviewers found that `--legacy-dir` without `--module-code` reports an error only after shared configuration has already been mutated.
-status: open
+status: done 2026-08-25
+resolution: already resolved: Commit c2f60e9cf0db942a54cd2c130884aec8459288f2; .agents/skills/bmad-bmb-setup/scripts/merge-help-csv.py:358-366 rejects --legacy-dir without --module-code before publication at line 416.
 
 ### DW-7: Make `merge-config.py` validate both documents before committing coordinated configuration writes.
 
@@ -61,7 +62,8 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: merge-config.py
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Blind review found that shared config is written before user config is loaded and converted, allowing an error to leave a partially applied configuration update.
-status: open
+status: done 2026-08-25
+resolution: already resolved: Commit c2f60e9cf0db942a54cd2c130884aec8459288f2; .agents/skills/bmad-bmb-setup/scripts/merge-config.py:579-630 loads and serializes both prospective documents before the failure-atomic pair publisher runs.
 
 ### DW-8: Remove the workspace-specific absolute path from the checked-in Codex BMAD Loop hook commands.
 
