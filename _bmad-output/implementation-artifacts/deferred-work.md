@@ -100,7 +100,9 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: Quick Dev renderer test coverage
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Verification-gap review found no test or normal gate invokes the new renderer, so syntactically valid but incomplete generated workflows can pass all current product checks.
-status: open
+status: done 2026-08-25
+resolution: resolved by sweep bundle dw-render-skill-fixture-coverage
+resolution-undo: cd59c929b1db90412cd32cc4ca54c10fb3d7346e3c409daf3825a4ff991e43c4 2026-08-25 7374617475733a206f70656e
 
 ### DW-12: Add temporary-directory CLI tests for BMAD Loop hook event normalization and atomic delivery.
 
@@ -324,4 +326,44 @@ location: n/a
 source_spec: `spec-legacy-cleanup-path-safety.md`
 severity: low
 reason: The follow-up-review damping cap (limits.max_followup_reviews = 1) was spent with the story finalized (status: done, verify green) while the review pass still recommended an independent follow-up. The work was committed by bmad-loop run 20260825-081747-f4a1; this entry preserves the lingering recommendation for a deliberate later review.
+status: open
+
+### DW-39: Existing-generation verification follows symlinked output files, so matching external bytes can satisfy an immutable snapshot check.
+origin: spec-deferred bfaafa1248ab
+location: _bmad/scripts/render_skill.py:279
+source_spec: `spec-render-skill-fixture-coverage.md`
+severity: high
+reason: `_verify_existing` builds its file set with `Path.is_file()` and hashes outputs with `Path.read_bytes()`; both follow symlinks. A symlink to external bytes matching the manifest therefore verifies successfully, while the external target can change after verification without changing the generation directory or manifest.
+status: open
+
+### DW-40: The fixture suite's `assert_manifest_integrity` helper re-derives root_hash, generation_hash, and project_slug with its own copy of the renderer's hashing/slugging formulas instead of importing the re
+origin: spec-deferred c023fdd6d1ee
+location: tests/tools/test_render_skill.py:316-358
+source_spec: `spec-render-skill-fixture-coverage.md`
+severity: medium
+reason: `tests/tools/test_render_skill.py` recomputes `_sha256(str(project_root).encode())[:12]` and `_sha256(_canonical_json(inputs))[:20]` inline rather than calling into `render_skill.py` (already loadable via the file's own `_load_renderer_module()` helper). A regression in the real hashing/slugging algorithm would be mirrored by the test's parallel implementation and pass silently.
+status: open
+
+### DW-41: The keyed review layer's `when` clause is only ever asserted absent from rendered output, never asserted present for a layer whose `when` clause survives to the final resolution.
+origin: spec-deferred f63e08052e13
+location: _bmad/scripts/render_skill.py:171-172
+source_spec: `spec-render-skill-fixture-coverage.md`
+severity: low
+reason: `test_layer_precedence_lists_and_keyed_review_replacement` only exercises the negative case (`assertNotIn("Run only when: always", rendered)`) for a layer whose `when` field is dropped by a whole-table override. No fixture keeps a `when` clause on a surviving layer through to final render, so a regression in the `Run only when: {value}` formatting at `render_skill.py:172` would go undetected.
+status: open
+
+### DW-42: The `customization.workflow.open_spec` field's special-cased empty-string allowance has no fixture coverage.
+origin: spec-deferred 8b5c84060986
+location: _bmad/scripts/render_skill.py:180
+source_spec: `spec-render-skill-fixture-coverage.md`
+severity: low
+reason: `_resolve_customization_value` at `render_skill.py:180` hardcodes `label == "customization.workflow.open_spec"` as an exception permitting an empty override even when the default is non-empty. No fixture defines an `open_spec` customization key, so this named carve-out ships with zero coverage.
+status: open
+
+### DW-43: No fixture demonstrates the existing render-source escape guard, so a regression there would ship undetected.
+origin: spec-deferred e5621d164d42
+location: _bmad/scripts/render_skill.py:105-106
+source_spec: `spec-render-skill-fixture-coverage.md`
+severity: low
+reason: `_load_sources` at `_bmad/scripts/render_skill.py:105-106` resolves each candidate source and raises `RenderError(f"render source escapes skill directory: {name}")` when the resolved path is not relative to `skill_dir` (guarding against a symlinked or otherwise escaping source file). `tests/tools/test_render_skill.py` has no fixture that creates such a source and asserts this HALT message, so a regression that weakens or removes the check would pass the current suite silently.
 status: open

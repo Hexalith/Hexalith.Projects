@@ -51,6 +51,36 @@ $workflowFiles = @(
         Where-Object { $_.Extension -in @('.yml', '.yaml') }
 )
 $allWorkflows = ($workflowFiles | ForEach-Object { Get-Content -Path $_.FullName -Raw }) -join "`n"
+$workflowGatesMatch = [regex]::Match(
+    $ci,
+    '(?ms)^  workflow-gates:\r?\n.*?(?=^  [A-Za-z0-9_-]+:\r?$|\z)'
+)
+
+if (-not $workflowGatesMatch.Success) {
+    $failures.Add('CI must define the workflow-gates job.')
+}
+else {
+    $workflowGates = $workflowGatesMatch.Value
+    $rendererStepMatches = [regex]::Matches(
+        $workflowGates,
+        '(?ms)^      - name: Validate shared skill renderer\r?\n.*?(?=^      - |\z)'
+    )
+    if ($rendererStepMatches.Count -ne 1) {
+        $failures.Add('workflow-gates must contain exactly one shared skill renderer step.')
+    }
+    else {
+        $rendererStep = ($rendererStepMatches[0].Value -replace "`r`n", "`n").TrimEnd([char[]] "`r`n")
+        $expectedRendererStep = @(
+            '      - name: Validate shared skill renderer'
+            '        env:'
+            '          PYTHONDONTWRITEBYTECODE: ''1'''
+            '        run: python3 -m unittest tests/tools/test_render_skill.py -v'
+        ) -join "`n"
+        if ($rendererStep -cne $expectedRendererStep) {
+            $failures.Add('The shared skill renderer must be an exact blocking name/env/run step with bytecode disabled.')
+        }
+    }
+}
 
 if (Test-Path $releasePath) {
     $failures.Add('release.yml must remain retired; release belongs behind the tested SHA in ci.yml.')
