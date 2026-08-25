@@ -2,7 +2,7 @@
 title: 'Harden Build Auto workspace ownership'
 type: 'bugfix'
 created: '2026-08-25'
-status: 'done'
+status: 'blocked'
 review_loop_iteration: 0
 followup_review_recommended: true
 baseline_revision: '6f0c0c8125df46cfb4bb62641f5869b4da94b741'
@@ -119,23 +119,15 @@ Runtime ownership state avoids persisting a self-referential hash inside the spe
 
 ## Auto Run Result
 
-Implemented stable Build Auto workspace ownership across all synchronized agent copies. The workflow now captures and gates exact HEAD, index, tracked/untracked/control, and recursive gitlink state; derives review and commit inputs from retained owned deltas; restores only verified owned changes; and persists exact evidence for later follow-up review.
+Status: blocked
+Blocking condition: dirty working tree at run start blocks the required clean-HEAD/index/worktree precondition for a `done`-entry follow-up review (step 04).
 
-**Files changed:**
-- `{.agent,.agents,.claude}/skills/bmad-build-auto/workflow.md` — defines stable checkpoint, drift, owned-delta, staging, and restoration invariants.
-- `{.agent,.agents,.claude}/skills/bmad-build-auto/step-01-clarify-and-route.md` — routes completed specs without an ungated mutation.
-- `{.agent,.agents,.claude}/skills/bmad-build-auto/step-03-implement.md` — captures first-pass ownership, adopts new specs, constrains handoffs, and gates repairs.
-- `{.agent,.agents,.claude}/skills/bmad-build-auto/step-04-review.md` — gates review, triage, reversal, evidence publication, exact staging, and commit, including no-VCS and follow-up paths.
-- `{.agent,.agents,.claude}/skills/bmad-build-auto/scripts/tests/test_workspace_ownership.py` — adds 11 hermetic behavior groups and copy/manifest policy checks.
-- `_bmad/_config/files-manifest.csv` — registers exact hashes for all changed logical skill assets.
-- `.github/workflows/ci.yml` — runs the canonical ownership fixture as a blocking bytecode-free gate.
-- `tests/tools/run-ci-workflow-gates.ps1` — enforces the exact CI step shape.
-- `_bmad-output/implementation-artifacts/spec-build-auto-workspace-ownership.md` — records the frozen intent, plan, review triage, verification, and result.
+At invocation, `git status` showed two pre-existing unstaged modifications versus HEAD (`6b89a3b`, this story's own implementation commit):
 
-**Review findings:** 20 patches applied; 0 items deferred; 2 findings rejected. The rejected findings asked either for an executable production subsystem instead of this repository's normative Markdown skill surface, or for absolute transactional exclusion of uncooperative external processes beyond the intent's revalidation-at-boundaries contract.
+- `_bmad-output/implementation-artifacts/deferred-work.md` — DW-13 and DW-14 flipped from `status: open` to `status: done 2026-08-25` with `resolution: resolved by sweep bundle dw-build-auto-workspace-ownership`. This is orchestrator-owned ledger bookkeeping; this run must never edit, re-open, or rewrite it, so it cannot resolve this drift itself.
+- This spec file — the `## Auto Run Result` section recorded by the prior run (present at HEAD) was absent from the working copy, while frontmatter still read `status: 'done'`.
 
-**Follow-up review recommendation:** `true`. Patched findings were high 13, medium 7, low 0; score `3 × 7 + 0 = 21`, and high-severity patches independently require follow-up.
+Neither condition can be resolved automatically without risking loss of in-progress state: discarding either change could erase real orchestrator or prior-session work, and staging/committing them is outside this run's authority (this run made no code changes and has nothing of its own to combine with them). This needs a human decision — confirm whether the pending `deferred-work.md` and spec edits should be committed, discarded, or investigated — before a follow-up review can safely establish a fresh ownership checkpoint.
 
-**Verification performed:** all three installed fixtures passed 11/11 groups; root tooling tests passed 26/26; the PowerShell CI policy gate passed; the canonical skill passed `quick_validate.py`; synchronized copies and manifest hashes matched; `git diff --check` reported no errors.
+No implementation, review, or repository mutation beyond this status/result write-back was performed.
 
-**Residual risks:** a shared-worktree gate detects drift at stable capture boundaries but cannot prevent an uncooperative process from mutating the same bytes after the final comparison; initial same-path attribution during a shared handoff remains convention-based and is explicitly not claimed as strong ownership. The real lease fixture uses POSIX `fcntl` and skips on platforms where it is unavailable; the Linux CI gate exercises it.

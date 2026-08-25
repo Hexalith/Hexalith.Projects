@@ -120,7 +120,9 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: BMAD Dev Auto workflow
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Blind review found the unattended workflow derives and commits a baseline diff without ownership revalidation; the originating run directly experienced a concurrent root commit and submodule fast-forwards.
-status: open
+status: done 2026-08-25
+resolution: resolved by sweep bundle dw-build-auto-workspace-ownership
+resolution-undo: 30119a05d487fd4a24797da98dce8f3d23409abcd886139546b8eb5d821df7a5 2026-08-25 7374617475733a206f70656e
 
 ### DW-14: Replace BMAD Dev Auto's unscoped revert instructions with isolated-worktree or owned-hunk reversal semantics.
 
@@ -128,7 +130,9 @@ origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failure
 location: BMAD Dev Auto workflow
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
 reason: Blind review found intent-gap and bad-spec loopbacks can erase concurrent edits because `revert code changes` has no path ownership or overlap guard.
-status: open
+status: done 2026-08-25
+resolution: resolved by sweep bundle dw-build-auto-workspace-ownership
+resolution-undo: 30119a05d487fd4a24797da98dce8f3d23409abcd886139546b8eb5d821df7a5 2026-08-25 7374617475733a206f70656e
 
 ### DW-15: Add a Memories bounded-ledger test that refreshes an old workflow before trimming and then rejects its stale replay.
 
