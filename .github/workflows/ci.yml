@@ -36,6 +36,14 @@ jobs:
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest tests/tools/test_production_authority_guard.py -v
 
+      - name: Validate BMAD merge atomicity
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python3 -m venv "${RUNNER_TEMP}/bmad-merge-tests"
+          "${RUNNER_TEMP}/bmad-merge-tests/bin/python" -m pip install --disable-pip-version-check pyyaml==6.0.3
+          "${RUNNER_TEMP}/bmad-merge-tests/bin/python" .agents/skills/bmad-module-builder/scripts/tests/test-merge-atomicity.py
+
       - name: Validate CI/CD invariants
         shell: pwsh
         run: ./tests/tools/run-ci-workflow-gates.ps1
