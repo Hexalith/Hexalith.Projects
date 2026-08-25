@@ -1,105 +1,4 @@
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Correct the Hexalith.AI.Tools agent entrypoints to reference `hexalith-git-instructions.md` instead of the absent `hexalith-commit-instructions.md`.
-  evidence: Blind review found the same broken guidance filename in AGENTS.md, CLAUDE.md, and the Copilot entrypoint, preventing commit rules from being discovered.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Make the Projects E2E dependency installation path suppress the recursive submodule postinstall command by construction.
-  evidence: Plain npm installation actually invoked `git submodule update --init --recursive --force`; only the inspected `CI=1` fallback prevented the forbidden mutation, while current documentation still recommends an unsafe plain install.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Constrain BMAD legacy cleanup targets to direct descendants of the resolved `_bmad` root.
-  evidence: Adversarial and edge-case reviews found that absolute or parent-traversal module names can escape `_bmad` before `shutil.rmtree` is called in both agent copies.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Add isolated destructive-path tests for the BMAD legacy cleanup classifier and replacement-skill guards.
-  evidence: Verification-gap review found no tests proving live config directories and sole installed skill copies are protected while only verified duplicates are removed.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Validate `merge-help-csv.py` argument relationships before writing the target CSV.
-  evidence: Two independent reviewers found that `--legacy-dir` without `--module-code` reports an error only after shared configuration has already been mutated.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Make `merge-config.py` validate both documents before committing coordinated configuration writes.
-  evidence: Blind review found that shared config is written before user config is loaded and converted, allowing an error to leave a partially applied configuration update.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Remove the workspace-specific absolute path from the checked-in Codex BMAD Loop hook commands.
-  evidence: Blind review found `.codex/hooks.json` hard-codes the current checkout path, so hooks fail when the repository is cloned or moved.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Validate BMAD Loop task IDs and event names before using them in event filenames.
-  evidence: Blind review found that separators or traversal segments from environment-derived identifiers can escape the events directory or make lifecycle hooks fail.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Render Quick Dev output into a validated temporary directory before replacing the previous workflow.
-  evidence: Blind review found the renderer deletes prior Markdown before reading and writing replacements, so a later failure can leave Quick Dev missing or partially rendered.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Add executable fixture coverage for Quick Dev renderer precedence, review-layer customization, placeholders, cleanup, and failure paths.
-  evidence: Verification-gap review found no test or normal gate invokes the new renderer, so syntactically valid but incomplete generated workflows can pass all current product checks.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Add temporary-directory CLI tests for BMAD Loop hook event normalization and atomic delivery.
-  evidence: Verification-gap review found no test exercises absent/present environment variables, payload key variants, task attribution, or canonical event emission.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Make BMAD Dev Auto detect external HEAD, status, and path-set drift before reviewing or committing changes.
-  evidence: Blind review found the unattended workflow derives and commits a baseline diff without ownership revalidation; this run directly experienced a concurrent root commit and submodule fast-forwards.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Replace BMAD Dev Auto's unscoped revert instructions with isolated-worktree or owned-hunk reversal semantics.
-  evidence: Blind review found intent-gap and bad-spec loopbacks can erase concurrent edits because `revert code changes` has no path ownership or overlap guard.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
-  summary: Add a Memories bounded-ledger test that refreshes an old workflow before trimming and then rejects its stale replay.
-  evidence: Verification-gap review demonstrated that the remove-and-reinsert watermark behavior can regress without any existing test failing once more than 256 workflow IDs are tracked.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
-  summary: Add a recurring managed live AppHost Playwright lane, including targeted AppHost startup smoke coverage, lifecycle ownership, and zero-live-skip enforcement.
-  evidence: Verification-gap review found the scheduled E2E job exercises only the offline lane and therefore cannot detect AppHost startup, discovery, authentication, or accidental live-test skips.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
-  summary: Implement and verify real browser OIDC authorization for projects-ui.
-  evidence: Review found token state can target the discovered UI origin, but projects-ui has no browser OIDC/session assertion; the current real-Keycloak proof protects the API access boundary only.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
-  summary: Provision deterministic projected-tenant and sibling reference, proposal, and UI-state fixtures with parallel-safe identifiers.
-  evidence: The full AppHost-backed run exposed a missing tenant access projection plus fixed sibling IDs and placeholder states that the current test harness cannot establish independently.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-prevent-submodule-skill-loading.md
-  summary: Reconcile repository-required CRLF files with the default Git whitespace check.
-  evidence: Review confirmed that ordinary `git diff --check` flags carriage returns on newly added CRLF lines because no repository attribute or `core.whitespace=cr-at-eol` policy exists, while `.editorconfig` requires CRLF.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-resolve-create-project-metadata-class-enforcement.md
-  summary: Enforce the canonical ProjectMetadata displayName requirement without falling back to a legacy top-level name.
-  evidence: Review confirmed the OpenAPI schema requires projectMetadata.displayName, but the pre-existing direct endpoint accepts a canonical object with missing or blank displayName when a top-level name is supplied; this is outside the bounded metadataClass E-9 correction.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md
-  summary: Align proposal-confirmation file-reference ID ordering between accepted HTTP requests and generated-client fingerprints.
-  evidence: Review confirmed the pre-existing endpoint accepts unsorted fileReferenceIds after sorting them for validation and server hashing, while the generated helper hashes the caller's original array order.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md
-  summary: Align proposal-confirmation null fileReferenceIds semantics between the server and generated client.
-  evidence: Review confirmed the pre-existing endpoint accepts null fileReferenceIds when no file references exist and hashes an empty array, while the generated helper hashes the null property as null.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-canonicalize-reference-health-freshness-vocabulary.md
-  summary: Restore monotonic sprint tracker chronology after the pre-existing last_updated timestamp regression.
-  evidence: Review confirmed sprint-status.yaml records July 31 action completions while its pre-existing dirty last_updated value moves backward to July 19, which may cause incremental consumers to miss updates.
-- source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-canonicalize-reference-health-freshness-vocabulary.md
-  summary: Reconcile the U+2028/U+2029 sprint action promised by its approved July 31 duplicate-trigger closure proposal.
-  evidence: Review confirmed the pre-existing approved proposal states that action was moved to done, while sprint-status.yaml still leaves the matching action in-progress; this correction intentionally changed only the freshness-vocabulary action.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md`
-  summary: Preserve caller cancellation through Web warning/dashboard list and diagnostic requests.
-  evidence: Review confirmed `ProjectWarningsDashboardSource` catches `OperationCanceledException` through its general exception handlers, returning safe feedback or a synthetic unavailable row instead of propagating requested cancellation; this production behavior predates the coverage-only change.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md`
-  summary: Make the Web diagnostic-unavailable tile drill-in select only rows represented by its count.
-  evidence: Review confirmed the tile count tracks diagnostic failures while its existing state-only filter selects every `ReferenceState.Unavailable` row, including ordinary unavailable references; changing filter semantics is outside this coverage-only task.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md`
-  summary: Define and align warning diagnostic scan cardinality across Web, MCP, and CLI.
-  evidence: Review confirmed Web enriches every returned visible Project while MCP and CLI scan at most 25 Projects, and MCP also uses query `Take` to bound the scanned set; inventories larger than the bound can therefore produce surface-specific unavailable counts.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md`
-  summary: Define MCP warning-queue output when diagnostics fail but no healthy warning row is emitted.
-  evidence: Review confirmed the existing MCP warning resource carries `DiagnosticUnavailable` only on emitted warning rows, so a nonzero count is unobservable from an empty warning queue; the approved spec explicitly reserved no-row semantics for a separate contract decision.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md`
-  summary: Build the MCP operational dashboard from one visible-inventory snapshot.
-  evidence: Review confirmed the existing dashboard reads inventory once for lifecycle totals and again inside warning scanning, so concurrent inventory changes can yield counters derived from different snapshots; production scan restructuring is outside this coverage-only task.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md`
-  summary: Add the mandatory 6.1-P1R prerequisite to the Story 6.4 implementation artifact.
-  evidence: Review confirmed the pre-existing Story 6.4 `blocked_by` metadata and entry-condition prose omit P1R even though the current Epic 6 dependency context requires accepted P1R for later consumers; Story 6.4 was outside this candidate-baseline patch.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md`
-  summary: Replace Story 6.4's stale current EventStore 3.86.0 observations with the truthful unaccepted 3.88.0 candidate state.
-  evidence: Review confirmed the pre-existing Story 6.4 artifact still calls 3.86.0 the current central pin after the source, catalog, and committed runner candidate moved to 3.88.0; Story 6.4 was outside this candidate-baseline patch.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md`
-  summary: Bind canonical readiness artifacts to the actual module-manifest byte hash.
-  evidence: Review confirmed the pre-existing readiness fixture uses a synthetic all-`A` `manifestHash` even though production run evidence computes SHA-256 from the manifest file, allowing the fixture to validate without proving the manifest identity it cites.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md`
-  summary: Bind passing readiness rows to normalized filter, fixture, manifest, and hash identities in module-run evidence.
-  evidence: Review confirmed the pre-existing `ArtifactBindsToRow` check compares only the module subcommand and profile, so a row declaring a filter and fixture can pass with an artifact that records neither; broadening the evidence contract is outside this pin-revalidation patch.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline-2.md`
-  summary: Propagate the verified EventStore 3.90.0 candidate and exact qualifying Builds revision through the Projects sprint ledger, Epic 6 context, epics, and readiness matrix views.
-  evidence: These root planning edits form a separately reviewable repository change and depend on the exact qualifying Builds revision produced by the narrowed Builds alignment task.
-- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline-2.md`
-  summary: Complete clean EventStore source/package and reciprocal rollback qualification, obtain four-owner P1R acceptance, then rebind Architecture and close only P1R.
-  evidence: Acceptance and Architecture propagation require external owner decisions and complete retained clean-worktree evidence after the narrowed Builds candidate is aligned; they cannot be truthfully completed by the candidate-alignment change alone.
+# Deferred Work
 
 ### DW-1: Deliver and accept Story 6.5 supported-read prerequisites
 
@@ -109,3 +8,275 @@ severity: critical
 reason: Story 6.5 must not dispatch until its prerequisite record pins accepted Story 6.1–6.4 supported contracts, read models, projections, handlers, identity inputs, and executable G-4 profiles. Close this entry only after every artifact required by the frozen prerequisite gate exists and is accepted; legacy REST and planning-only artifacts never satisfy the gate.
 status: open
 gate: 6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface
+
+### DW-2: Correct the Hexalith.AI.Tools agent entrypoints to reference `hexalith-git-instructions.md` instead of the absent `hexalith-commit-instructions.md`.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: AGENTS.md, CLAUDE.md, and .github/copilot-instructions.md
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Blind review found the same broken guidance filename in all three agent entrypoints, preventing commit rules from being discovered.
+status: open
+
+### DW-3: Make the Projects E2E dependency installation path suppress the recursive submodule postinstall command by construction.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: Projects E2E dependency installation
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Plain npm installation invoked `git submodule update --init --recursive --force`; only the inspected `CI=1` fallback prevented the forbidden mutation while current documentation still recommends an unsafe plain install.
+status: open
+
+### DW-4: Constrain BMAD legacy cleanup targets to direct descendants of the resolved `_bmad` root.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: BMAD legacy cleanup classifier in both agent copies
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Adversarial and edge-case reviews found that absolute or parent-traversal module names can escape `_bmad` before `shutil.rmtree` is called in both agent copies.
+status: open
+
+### DW-5: Add isolated destructive-path tests for the BMAD legacy cleanup classifier and replacement-skill guards.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: BMAD legacy cleanup and replacement-skill test coverage
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Verification-gap review found no tests proving live config directories and sole installed skill copies are protected while only verified duplicates are removed.
+status: open
+
+### DW-6: Validate `merge-help-csv.py` argument relationships before writing the target CSV.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: merge-help-csv.py
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Two independent reviewers found that `--legacy-dir` without `--module-code` reports an error only after shared configuration has already been mutated.
+status: open
+
+### DW-7: Make `merge-config.py` validate both documents before committing coordinated configuration writes.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: merge-config.py
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Blind review found that shared config is written before user config is loaded and converted, allowing an error to leave a partially applied configuration update.
+status: open
+
+### DW-8: Remove the workspace-specific absolute path from the checked-in Codex BMAD Loop hook commands.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: .codex/hooks.json
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Blind review found the hook commands hard-code the current checkout path, so hooks fail when the repository is cloned or moved.
+status: open
+
+### DW-9: Validate BMAD Loop task IDs and event names before using them in event filenames.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: BMAD Loop hook event filename handling
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Blind review found that separators or traversal segments from environment-derived identifiers can escape the events directory or make lifecycle hooks fail.
+status: open
+
+### DW-10: Render Quick Dev output into a validated temporary directory before replacing the previous workflow.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: Quick Dev workflow renderer
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Blind review found the renderer deletes prior Markdown before reading and writing replacements, so a later failure can leave Quick Dev missing or partially rendered.
+status: open
+
+### DW-11: Add executable fixture coverage for Quick Dev renderer precedence, review-layer customization, placeholders, cleanup, and failure paths.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: Quick Dev renderer test coverage
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Verification-gap review found no test or normal gate invokes the new renderer, so syntactically valid but incomplete generated workflows can pass all current product checks.
+status: open
+
+### DW-12: Add temporary-directory CLI tests for BMAD Loop hook event normalization and atomic delivery.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: BMAD Loop hook CLI test coverage
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Verification-gap review found no test exercises absent or present environment variables, payload key variants, task attribution, or canonical event emission.
+status: open
+
+### DW-13: Make BMAD Dev Auto detect external HEAD, status, and path-set drift before reviewing or committing changes.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: BMAD Dev Auto workflow
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Blind review found the unattended workflow derives and commits a baseline diff without ownership revalidation; the originating run directly experienced a concurrent root commit and submodule fast-forwards.
+status: open
+
+### DW-14: Replace BMAD Dev Auto's unscoped revert instructions with isolated-worktree or owned-hunk reversal semantics.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: BMAD Dev Auto workflow
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Blind review found intent-gap and bad-spec loopbacks can erase concurrent edits because `revert code changes` has no path ownership or overlap guard.
+status: open
+
+### DW-15: Add a Memories bounded-ledger test that refreshes an old workflow before trimming and then rejects its stale replay.
+
+origin: migrated from legacy ledger ("flat append from spec-fix-all-test-failures.md"), 2026-08-25
+location: Hexalith.Memories bounded workflow ledger tests
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-all-test-failures.md
+reason: Verification-gap review demonstrated that remove-and-reinsert watermark behavior can regress without any existing test failing once more than 256 workflow IDs are tracked.
+status: open
+
+### DW-16: Add a recurring managed live AppHost Playwright lane, including targeted AppHost startup smoke coverage, lifecycle ownership, and zero-live-skip enforcement.
+
+origin: migrated from legacy ledger ("flat append from spec-5-12-live-apphost-operational-console-verification.md"), 2026-08-25
+location: scheduled E2E workflow and AppHost Playwright lane
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
+reason: Verification-gap review found the scheduled E2E job exercises only the offline lane and therefore cannot detect AppHost startup, discovery, authentication, or accidental live-test skips.
+status: open
+
+### DW-17: Implement and verify real browser OIDC authorization for projects-ui.
+
+origin: migrated from legacy ledger ("flat append from spec-5-12-live-apphost-operational-console-verification.md"), 2026-08-25
+location: projects-ui browser authentication
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
+reason: Review found token state can target the discovered UI origin, but projects-ui has no browser OIDC or session assertion; the current real-Keycloak proof protects only the API access boundary.
+status: open
+
+### DW-18: Provision deterministic projected-tenant and sibling reference, proposal, and UI-state fixtures with parallel-safe identifiers.
+
+origin: migrated from legacy ledger ("flat append from spec-5-12-live-apphost-operational-console-verification.md"), 2026-08-25
+location: AppHost-backed Projects E2E fixture provisioning
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
+reason: The full AppHost-backed run exposed a missing tenant access projection plus fixed sibling IDs and placeholder states that the current test harness cannot establish independently.
+status: open
+
+### DW-19: Reconcile repository-required CRLF files with the default Git whitespace check.
+
+origin: migrated from legacy ledger ("flat append from spec-prevent-submodule-skill-loading.md"), 2026-08-25
+location: .editorconfig and Git whitespace configuration
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-prevent-submodule-skill-loading.md
+reason: Review confirmed ordinary `git diff --check` flags carriage returns on newly added CRLF lines because no repository attribute or `core.whitespace=cr-at-eol` policy exists while `.editorconfig` requires CRLF.
+status: open
+
+### DW-20: Enforce the canonical ProjectMetadata displayName requirement without falling back to a legacy top-level name.
+
+origin: migrated from legacy ledger ("flat append from spec-resolve-create-project-metadata-class-enforcement.md"), 2026-08-25
+location: Create Project endpoint ProjectMetadata validation
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-resolve-create-project-metadata-class-enforcement.md
+reason: Review confirmed the OpenAPI schema requires `projectMetadata.displayName`, but the pre-existing direct endpoint accepts a canonical object with a missing or blank displayName when a top-level name is supplied; this is outside the bounded metadataClass E-9 correction.
+status: open
+
+### DW-21: Align proposal-confirmation file-reference ID ordering between accepted HTTP requests and generated-client fingerprints.
+
+origin: migrated from legacy ledger ("flat append from spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md"), 2026-08-25
+location: proposal-confirmation endpoint and generated client
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md
+reason: Review confirmed the pre-existing endpoint accepts unsorted `fileReferenceIds` after sorting them for validation and server hashing, while the generated helper hashes the caller's original array order.
+status: open
+
+### DW-22: Align proposal-confirmation null fileReferenceIds semantics between the server and generated client.
+
+origin: migrated from legacy ledger ("flat append from spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md"), 2026-08-25
+location: proposal-confirmation endpoint and generated client
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md
+reason: Review confirmed the pre-existing endpoint accepts null `fileReferenceIds` when no file references exist and hashes an empty array, while the generated helper hashes the null property as null.
+status: open
+
+### DW-23: Restore monotonic sprint tracker chronology after the pre-existing last_updated timestamp regression.
+
+origin: migrated from legacy ledger ("flat append from spec-canonicalize-reference-health-freshness-vocabulary.md"), 2026-08-25
+location: _bmad-output/implementation-artifacts/sprint-status.yaml
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-canonicalize-reference-health-freshness-vocabulary.md
+reason: Review confirmed the sprint tracker records July 31 action completions while its pre-existing dirty `last_updated` value moves backward to July 19, which may cause incremental consumers to miss updates.
+status: open
+
+### DW-24: Reconcile the U+2028/U+2029 sprint action promised by its approved July 31 duplicate-trigger closure proposal.
+
+origin: migrated from legacy ledger ("flat append from spec-canonicalize-reference-health-freshness-vocabulary.md"), 2026-08-25
+location: _bmad-output/implementation-artifacts/sprint-status.yaml
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-canonicalize-reference-health-freshness-vocabulary.md
+reason: Review confirmed the pre-existing approved proposal states that the action was moved to done while the sprint tracker still leaves the matching action in-progress; the originating correction intentionally changed only the freshness-vocabulary action.
+status: open
+
+### DW-25: Preserve caller cancellation through Web warning/dashboard list and diagnostic requests.
+
+origin: migrated from legacy ledger ("flat append from spec-partial-failure-diagnosticunavailable-parity-coverage.md"), 2026-08-25
+location: ProjectWarningsDashboardSource
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md
+reason: Review confirmed `ProjectWarningsDashboardSource` catches `OperationCanceledException` through its general exception handlers, returning safe feedback or a synthetic unavailable row instead of propagating requested cancellation; this production behavior predates the coverage-only change.
+status: open
+
+### DW-26: Make the Web diagnostic-unavailable tile drill-in select only rows represented by its count.
+
+origin: migrated from legacy ledger ("flat append from spec-partial-failure-diagnosticunavailable-parity-coverage.md"), 2026-08-25
+location: Web diagnostic-unavailable tile filter
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md
+reason: Review confirmed the tile count tracks diagnostic failures while its existing state-only filter selects every `ReferenceState.Unavailable` row, including ordinary unavailable references; changing filter semantics was outside the coverage-only task.
+status: open
+
+### DW-27: Define and align warning diagnostic scan cardinality across Web, MCP, and CLI.
+
+origin: migrated from legacy ledger ("flat append from spec-partial-failure-diagnosticunavailable-parity-coverage.md"), 2026-08-25
+location: Web, MCP, and CLI warning scans
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md
+reason: Review confirmed Web enriches every returned visible Project while MCP and CLI scan at most 25 Projects, and MCP also uses query `Take` to bound the scanned set; inventories larger than the bound can therefore produce surface-specific unavailable counts.
+status: open
+
+### DW-28: Define MCP warning-queue output when diagnostics fail but no healthy warning row is emitted.
+
+origin: migrated from legacy ledger ("flat append from spec-partial-failure-diagnosticunavailable-parity-coverage.md"), 2026-08-25
+location: MCP warning resource
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md
+reason: Review confirmed the existing MCP warning resource carries `DiagnosticUnavailable` only on emitted warning rows, so a nonzero count is unobservable from an empty warning queue; the approved spec explicitly reserved no-row semantics for a separate contract decision.
+status: open
+
+### DW-29: Build the MCP operational dashboard from one visible-inventory snapshot.
+
+origin: migrated from legacy ledger ("flat append from spec-partial-failure-diagnosticunavailable-parity-coverage.md"), 2026-08-25
+location: MCP operational dashboard
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md
+reason: Review confirmed the existing dashboard reads inventory once for lifecycle totals and again inside warning scanning, so concurrent inventory changes can yield counters derived from different snapshots; production scan restructuring was outside the coverage-only task.
+status: open
+
+### DW-30: Add the mandatory 6.1-P1R prerequisite to the Story 6.4 implementation artifact.
+
+origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-platform-baseline.md"), 2026-08-25
+location: Story 6.4 implementation artifact
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md
+reason: Review confirmed the pre-existing Story 6.4 `blocked_by` metadata and entry-condition prose omit P1R even though the current Epic 6 dependency context requires accepted P1R for later consumers; Story 6.4 was outside the candidate-baseline patch.
+status: open
+
+### DW-31: Replace Story 6.4's stale current EventStore 3.86.0 observations with the truthful unaccepted 3.88.0 candidate state.
+
+origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-platform-baseline.md"), 2026-08-25
+location: Story 6.4 implementation artifact
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md
+reason: Review confirmed the pre-existing Story 6.4 artifact still calls 3.86.0 the current central pin after the source, catalog, and committed runner candidate moved to 3.88.0; Story 6.4 was outside the candidate-baseline patch.
+status: open
+
+### DW-32: Bind canonical readiness artifacts to the actual module-manifest byte hash.
+
+origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-platform-baseline.md"), 2026-08-25
+location: canonical readiness fixture and module manifest
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md
+reason: Review confirmed the pre-existing readiness fixture uses a synthetic all-`A` `manifestHash` even though production run evidence computes SHA-256 from the manifest file, allowing the fixture to validate without proving the manifest identity it cites.
+status: open
+
+### DW-33: Bind passing readiness rows to normalized filter, fixture, manifest, and hash identities in module-run evidence.
+
+origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-platform-baseline.md"), 2026-08-25
+location: ArtifactBindsToRow readiness evidence validation
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md
+reason: Review confirmed the pre-existing `ArtifactBindsToRow` check compares only the module subcommand and profile, so a row declaring a filter and fixture can pass with an artifact that records neither; broadening the evidence contract was outside the pin-revalidation patch.
+status: open
+
+### DW-34: Propagate the verified EventStore 3.90.0 candidate and exact qualifying Builds revision through the Projects sprint ledger, Epic 6 context, epics, and readiness matrix views.
+
+origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-platform-baseline-2.md"), 2026-08-25
+location: Projects sprint ledger, Epic 6 context, epics, and readiness matrix views
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline-2.md
+reason: These root planning edits form a separately reviewable repository change and depend on the exact qualifying Builds revision produced by the narrowed Builds alignment task.
+status: open
+
+### DW-35: Complete clean EventStore source/package and reciprocal rollback qualification, obtain four-owner P1R acceptance, then rebind Architecture and close only P1R.
+
+origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-platform-baseline-2.md"), 2026-08-25
+location: EventStore qualification, P1R acceptance, and Architecture binding
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline-2.md
+reason: Acceptance and Architecture propagation require external owner decisions and complete retained clean-worktree evidence after the narrowed Builds candidate is aligned; they cannot be truthfully completed by the candidate-alignment change alone.
+status: open
