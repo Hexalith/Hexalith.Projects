@@ -100,3 +100,12 @@
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline-2.md`
   summary: Complete clean EventStore source/package and reciprocal rollback qualification, obtain four-owner P1R acceptance, then rebind Architecture and close only P1R.
   evidence: Acceptance and Architecture propagation require external owner decisions and complete retained clean-worktree evidence after the narrowed Builds candidate is aligned; they cannot be truthfully completed by the candidate-alignment change alone.
+
+### DW-1: Deliver and accept Story 6.5 supported-read prerequisites
+
+origin: bmad-loop-resolve for spec-6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface.md, 2026-08-25
+location: _bmad-output/implementation-artifacts/spec-6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface.md:31
+severity: critical
+reason: Story 6.5 must not dispatch until its prerequisite record pins accepted Story 6.1–6.4 supported contracts, read models, projections, handlers, identity inputs, and executable G-4 profiles. Close this entry only after every artifact required by the frozen prerequisite gate exists and is accepted; legacy REST and planning-only artifacts never satisfy the gate.
+status: open
+gate: 6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface
