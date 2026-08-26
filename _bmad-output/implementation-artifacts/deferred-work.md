@@ -544,7 +544,8 @@ location: src/Hexalith.Projects.Contracts/Models/ConversationStartSetup.cs
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: The spine constrains goals and userInstructions to 16 items with per-item length 1 to 512, and the source-kind arrays to 4 items, but ConversationStartSetup copies whatever the projection holds with no truncation or validation, so the server can emit a body violating its own published schema. Story 3.5 deviation L3 accepted this on the stated grounds that the lengths are bounded upstream in ProjectSetup validation; that premise is false, as no count or length check on Goals or UserInstructions exists anywhere in src/. Deferred to Story 6.7 because enforcement changes legacy response behavior for already-stored oversized setups.
-status: open
+status: done 2026-08-26
+resolution: already resolved: src/Hexalith.Projects/Aggregates/Project/ProjectCommandValidator.cs:41-43 and :850-893 enforce the exact 16-item/512-character and 4-source-kind bounds declared at src/Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml:3917-3946; git blame attributes the checks to pre-origin commits a12ca891 and 88be25e2.
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
 ### DW-62: Add cache directives to the tenant-sensitive conversation-start read.
