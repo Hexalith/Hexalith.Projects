@@ -527,6 +527,7 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 severity: medium
 reason: The operation declares 401 and 403 and the generated client throws distinct typed exceptions for both, but the handler only ever emits 200, 400, 404 and 503 because all denial outcomes collapse to a safe 404. Either the declaration is wrong or the collapse is under-specified, and Story 6.2 AC3 needs an agreed baseline status set to compare against. Deferred to Story 6.7 because editing the spine requires client regeneration and a fingerprint update, and it changes the published contract.
 status: open
+decision: 2026-08-26 Declare safe 404 only — Remove unreachable 401 and 403 responses from this operation, document the safe-denial status set, regenerate clients and fingerprints, and preserve gateway authentication handling separately.
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
 ### DW-60: Widen the retryable collapse so transient authorization failures return 503, not a permanent 404.
