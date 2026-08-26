@@ -477,6 +477,7 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 severity: medium
 reason: One payload mixes PascalCase (Active, Fresh) with camelCase (authorizedReferences) enum values, a permanent client-side trap; the requested-versus-authoritative tenant guard is tautological on this path because both arguments are the authoritative tenant, leaving one declared defense layer dead; and the new public route landed with no changelog entry and no info.version bump. All are consistent with Stories 3.2-3.4 precedent, so they need a spine-wide fix rather than a per-endpoint one.
 status: open
+decision: 2026-08-26 Add versioned normalized contract — Introduce an additive corrected supported contract, use camelCase for its enum wire names, feed real QueryEnvelope authority into its tenant guard, regenerate clients and fingerprints, and record release metadata while preserving v1.
 decision: 2026-08-26 Break v1 in place — Normalize current v1 wire enums and guards, bump contract metadata, regenerate every client, and provide explicit migration evidence for consumers.
 
 ### DW-55: Create the standalone Hexalith.Projects.UI.Contracts split story and land it before Stories 6.6, 8.4 and 8.5.
@@ -487,6 +488,7 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 severity: high
 reason: AC6 was removed from Story 6.2 on 2026-08-26 because it is packaging hygiene with no runtime admission consequence and Story 6.2 already carries multiple-goals and oversized warnings. The coupling is structural rather than file placement: src/Hexalith.Projects.Contracts/Ui/ProjectContextFreshness.cs:10,25,29 decorates a domain/wire enum with [ProjectionBadge] from Hexalith.FrontComposer.Contracts.Attributes, so the split requires stripping UI attributes off domain enums and re-expressing badge mapping in the UI layer. Acceptance gate already exists at tests/tools/run-package-dependency-gate.ps1. Must land before Stories 6.6, 8.4 and 8.5 or the CLI and MCP surfaces inherit Blazor/Fluxor transitively through the supported contracts. Story creation requires tools/planning/validate_production_authority.py --story-id and a sprint-status.yaml entry; neither may be performed by Story 6.2.
 status: open
+decision: 2026-08-26 Create and execute split story — Run the planning authority gate, create and schedule the standalone story, introduce the non-packable UI.Contracts boundary, strip UI attributes from domain and wire enums, re-home descriptor mapping, and update the package dependency gate before Stories 6.6, 8.4, and 8.5.
 decision: 2026-08-26 Create and execute split story — Run the planning authority gate, create and schedule the standalone story, introduce the non-packable UI.Contracts boundary, strip UI attributes from domain and wire enums, re-home descriptor mapping, and update the package dependency gate before Stories 6.6, 8.4, and 8.5.
 
 ### DW-56: Give the supported Conversation-start response structural equality over its bounded collections.
@@ -527,6 +529,7 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 severity: medium
 reason: The operation declares 401 and 403 and the generated client throws distinct typed exceptions for both, but the handler only ever emits 200, 400, 404 and 503 because all denial outcomes collapse to a safe 404. Either the declaration is wrong or the collapse is under-specified, and Story 6.2 AC3 needs an agreed baseline status set to compare against. Deferred to Story 6.7 because editing the spine requires client regeneration and a fingerprint update, and it changes the published contract.
 status: open
+decision: 2026-08-26 Declare safe 404 only — Remove unreachable 401 and 403 responses from this operation, document the safe-denial status set, regenerate clients and fingerprints, and preserve gateway authentication handling separately.
 decision: 2026-08-26 Declare safe 404 only — Remove unreachable 401 and 403 responses from this operation, document the safe-denial status set, regenerate clients and fingerprints, and preserve gateway authentication handling separately.
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
