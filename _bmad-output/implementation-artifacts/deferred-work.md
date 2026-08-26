@@ -477,6 +477,7 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 severity: medium
 reason: One payload mixes PascalCase (Active, Fresh) with camelCase (authorizedReferences) enum values, a permanent client-side trap; the requested-versus-authoritative tenant guard is tautological on this path because both arguments are the authoritative tenant, leaving one declared defense layer dead; and the new public route landed with no changelog entry and no info.version bump. All are consistent with Stories 3.2-3.4 precedent, so they need a spine-wide fix rather than a per-endpoint one.
 status: open
+decision: 2026-08-26 Break v1 in place — Normalize current v1 wire enums and guards, bump contract metadata, regenerate every client, and provide explicit migration evidence for consumers.
 
 ### DW-55: Create the standalone Hexalith.Projects.UI.Contracts split story and land it before Stories 6.6, 8.4 and 8.5.
 
