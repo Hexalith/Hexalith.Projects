@@ -487,6 +487,7 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 severity: high
 reason: AC6 was removed from Story 6.2 on 2026-08-26 because it is packaging hygiene with no runtime admission consequence and Story 6.2 already carries multiple-goals and oversized warnings. The coupling is structural rather than file placement: src/Hexalith.Projects.Contracts/Ui/ProjectContextFreshness.cs:10,25,29 decorates a domain/wire enum with [ProjectionBadge] from Hexalith.FrontComposer.Contracts.Attributes, so the split requires stripping UI attributes off domain enums and re-expressing badge mapping in the UI layer. Acceptance gate already exists at tests/tools/run-package-dependency-gate.ps1. Must land before Stories 6.6, 8.4 and 8.5 or the CLI and MCP surfaces inherit Blazor/Fluxor transitively through the supported contracts. Story creation requires tools/planning/validate_production_authority.py --story-id and a sprint-status.yaml entry; neither may be performed by Story 6.2.
 status: open
+decision: 2026-08-26 Create and execute split story — Run the planning authority gate, create and schedule the standalone story, introduce the non-packable UI.Contracts boundary, strip UI attributes from domain and wire enums, re-home descriptor mapping, and update the package dependency gate before Stories 6.6, 8.4, and 8.5.
 
 ### DW-56: Give the supported Conversation-start response structural equality over its bounded collections.
 
