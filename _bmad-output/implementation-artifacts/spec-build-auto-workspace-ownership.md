@@ -2,7 +2,7 @@
 title: 'Harden Build Auto workspace ownership'
 type: 'bugfix'
 created: '2026-08-25'
-status: 'blocked'
+status: ready-for-dev
 review_loop_iteration: 0
 followup_review_recommended: true
 baseline_revision: '6f0c0c8125df46cfb4bb62641f5869b4da94b741'
@@ -121,16 +121,3 @@ Runtime ownership state avoids persisting a self-referential hash inside the spe
 - `python3 /home/administrator/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/bmad-build-auto` -- expected: the updated skill remains structurally valid.
 - `git diff --check` -- expected: no whitespace errors.
 
-## Auto Run Result
-
-Status: blocked
-Blocking condition: dirty working tree at run start blocks the required clean-HEAD/index/worktree precondition for a `done`-entry follow-up review (step 04).
-
-At invocation, `git status` showed two pre-existing unstaged modifications versus HEAD (`6b89a3b`, this story's own implementation commit):
-
-- `_bmad-output/implementation-artifacts/deferred-work.md` — DW-13 and DW-14 flipped from `status: open` to `status: done 2026-08-25` with `resolution: resolved by sweep bundle dw-build-auto-workspace-ownership`. This is orchestrator-owned ledger bookkeeping; this run must never edit, re-open, or rewrite it, so it cannot resolve this drift itself.
-- This spec file — the `## Auto Run Result` section recorded by the prior run (present at HEAD) was absent from the working copy, while frontmatter still read `status: 'done'`.
-
-Neither condition can be resolved automatically without risking loss of in-progress state: discarding either change could erase real orchestrator or prior-session work, and staging/committing them is outside this run's authority (this run made no code changes and has nothing of its own to combine with them). This needs a human decision — confirm whether the pending `deferred-work.md` and spec edits should be committed, discarded, or investigated — before a follow-up review can safely establish a fresh ownership checkpoint.
-
-No implementation, review, or repository mutation beyond this status/result write-back was performed.
