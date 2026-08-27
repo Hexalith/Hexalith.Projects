@@ -52,6 +52,7 @@ public sealed class ProposeNewProjectEndpointTests
     private const string ExistingProjectId = "project-existing";
     private const string FolderIdValue = "folder-001";
     private const string FileIdValue = "file-001";
+    private const string SecondFileIdValue = "file-002";
     private const string WorkspaceIdValue = "workspace-001";
     private const string CorrelationIdValue = "corr-001";
     private const string TaskIdValue = "task-001";
@@ -339,6 +340,51 @@ public sealed class ProposeNewProjectEndpointTests
         response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
         ledger.Entries.Single().Fingerprint.ShouldBe(expectedFingerprint);
         GeneratedConfirmRequest(metadata).ComputeIdempotencyHash().ShouldBe(expectedFingerprint);
+    }
+
+    [Fact]
+    public async Task Confirm_ReversedFileReferenceIdsFingerprintMatchesGeneratedSortedCanonicalForm()
+    {
+        string[] sortedIds = [FileIdValue, SecondFileIdValue];
+        string[] reversedIds = [SecondFileIdValue, FileIdValue];
+        CapturingProposalConfirmationIdempotencyLedger ledger = new();
+        using ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: ledger).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(
+            provider,
+            ConfirmBody(
+                fileReferencesJson: ConfirmFileReferencesJson(sortedIds),
+                fileReferenceIdsJson: JsonSerializer.Serialize(reversedIds))).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        string serverFingerprint = ledger.Entries.Single().Fingerprint;
+        serverFingerprint.ShouldBe(GeneratedConfirmRequest(DefaultProposalMetadata(), reversedIds).ComputeIdempotencyHash());
+        serverFingerprint.ShouldBe(GeneratedConfirmRequest(DefaultProposalMetadata(), sortedIds).ComputeIdempotencyHash());
+    }
+
+    [Fact]
+    public async Task Confirm_NullAndEmptyFileReferenceIdsShareGeneratedEmptyCanonicalForm()
+    {
+        CapturingProposalConfirmationIdempotencyLedger ledger = new();
+        using ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: ledger).ConfigureAwait(true);
+
+        EndpointResponse nullResponse = await SendConfirmAsync(
+            provider,
+            ConfirmBody(fileReferencesJson: "[]", fileReferenceIdsJson: "null")).ConfigureAwait(true);
+        EndpointResponse emptyResponse = await SendConfirmAsync(
+            provider,
+            ConfirmBody(fileReferencesJson: "[]", fileReferenceIdsJson: "[]")).ConfigureAwait(true);
+
+        nullResponse.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        emptyResponse.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        ledger.Entries.Count.ShouldBe(2);
+        string nullServerFingerprint = ledger.Entries[0].Fingerprint;
+        string emptyServerFingerprint = ledger.Entries[1].Fingerprint;
+        string nullGeneratedFingerprint = GeneratedConfirmRequest(DefaultProposalMetadata(), null).ComputeIdempotencyHash();
+        string emptyGeneratedFingerprint = GeneratedConfirmRequest(DefaultProposalMetadata(), []).ComputeIdempotencyHash();
+        nullServerFingerprint.ShouldBe(emptyServerFingerprint);
+        nullServerFingerprint.ShouldBe(nullGeneratedFingerprint);
+        nullGeneratedFingerprint.ShouldBe(emptyGeneratedFingerprint);
     }
 
     [Theory]
@@ -903,11 +949,25 @@ public sealed class ProposeNewProjectEndpointTests
         string displayName = "Suggested Project",
         string? metadataClass = "tenant_sensitive",
         string? description = "Safe project description",
-        string? setupMetadata = "Safe setup note")
+        string? setupMetadata = "Safe setup note",
+        string? fileReferencesJson = null,
+        string? fileReferenceIdsJson = null)
     {
         string displayNameJson = JsonSerializer.Serialize(displayName);
         string descriptionJson = JsonSerializer.Serialize(description);
         string setupMetadataJson = JsonSerializer.Serialize(setupMetadata);
+        fileReferencesJson ??= $$"""
+            [
+              {
+                "fileReferenceId": "{{FileIdValue}}",
+                "folderId": "{{FolderIdValue}}",
+                "workspaceId": "{{WorkspaceIdValue}}",
+                "filePath": "docs/readme.md",
+                "fileMetadata": { "displayName": "Design brief" }
+              }
+            ]
+            """;
+        fileReferenceIdsJson ??= $$"""["{{FileIdValue}}"]""";
         string projectMetadata = metadataClass is null
             ? $$"""{ "displayName": {{displayNameJson}} }"""
             : $$"""{ "displayName": {{displayNameJson}}, "metadataClass": "{{metadataClass}}" }""";
@@ -926,19 +986,21 @@ public sealed class ProposeNewProjectEndpointTests
                 "folderId": "{{FolderIdValue}}",
                 "folderMetadata": { "displayName": "Workspace folder" }
               },
-              "fileReferences": [
-                {
-                  "fileReferenceId": "{{FileIdValue}}",
-                  "folderId": "{{FolderIdValue}}",
-                  "workspaceId": "{{WorkspaceIdValue}}",
-                  "filePath": "docs/readme.md",
-                  "fileMetadata": { "displayName": "Design brief" }
-                }
-              ],
-              "fileReferenceIds": ["{{FileIdValue}}"]
+              "fileReferences": {{fileReferencesJson}},
+              "fileReferenceIds": {{fileReferenceIdsJson}}
             }
             """;
     }
+
+    private static string ConfirmFileReferencesJson(IEnumerable<string> fileReferenceIds)
+        => JsonSerializer.Serialize(fileReferenceIds.Select(static fileReferenceId => new
+        {
+            fileReferenceId,
+            folderId = FolderIdValue,
+            workspaceId = WorkspaceIdValue,
+            filePath = "docs/" + fileReferenceId + ".md",
+            fileMetadata = new { displayName = fileReferenceId + ".md" },
+        }));
 
     private static string ConfirmBodyMinimal()
         => $$"""
@@ -955,6 +1017,11 @@ public sealed class ProposeNewProjectEndpointTests
 
     private static Generated.ConfirmNewProjectProposalRequest GeneratedConfirmRequest(
         (string DisplayName, string? Description, string? SetupMetadata) metadata)
+        => GeneratedConfirmRequest(metadata, [FileIdValue]);
+
+    private static Generated.ConfirmNewProjectProposalRequest GeneratedConfirmRequest(
+        (string DisplayName, string? Description, string? SetupMetadata) metadata,
+        ICollection<string>? fileReferenceIds)
         => new()
         {
             RequestSchemaVersion = Generated.ConfirmNewProjectProposalRequestRequestSchemaVersion.V1,
@@ -986,8 +1053,11 @@ public sealed class ProposeNewProjectEndpointTests
                     FileMetadata = new Generated.ProjectFileReferenceMetadata { DisplayName = "Design brief" },
                 },
             ],
-            FileReferenceIds = [FileIdValue],
+            FileReferenceIds = fileReferenceIds!,
         };
+
+    private static (string DisplayName, string? Description, string? SetupMetadata) DefaultProposalMetadata()
+        => ("Suggested Project", "Safe project description", "Safe setup note");
 
     private static (string DisplayName, string? Description, string? SetupMetadata) SeparatorProposalMetadata(
         string field,

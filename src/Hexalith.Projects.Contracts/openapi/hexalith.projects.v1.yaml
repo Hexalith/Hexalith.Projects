@@ -4104,6 +4104,7 @@ components:
           maxItems: 32
           uniqueItems: true
           description: Sorted opaque ids used for idempotency equivalence; must match fileReferences[*].fileReferenceId.
+          x-hexalith-idempotency-collection-canonicalization: ordinal-sort-null-to-empty
           items:
             $ref: "#/components/schemas/OpaqueIdentifier"
     ConfirmNewProjectProposalFolder:

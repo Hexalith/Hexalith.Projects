@@ -11,9 +11,9 @@ public sealed record HexalithProjectsGeneratedArtifactsVerification(bool IsCurre
 
 public static class HexalithProjectsGeneratedArtifacts
 {
-    public const string ContractSpineSha256 = "ebd1028ed5ba826f21ed17b647cb35ee654151fa19c6548ac8c0ad92bbbad500";
+    public const string ContractSpineSha256 = "cf83ea0c7c13ca6df1b37ecba796fe124229b438f1200afc3fbeb42cc01b1b2e";
     public const string GenerationConfigurationSha256 = "57b05e6bb3aaec137283214dbc5e4b6fd19399a8f9b184745cfb5cbef1753548";
-    public const string GeneratedHelpersSha256 = "45f468ef7ec9cb76341651898b5d58c075b2ff3a2ba50a346c7182d0f1450489";
+    public const string GeneratedHelpersSha256 = "b66dc66c375b3b6c2a00be551d9607f8a0973dc645b929206845ad0b4f95b821";
 
     // HelperSchemaVersion is a deterministic SHA-256 prefix of the canonical helper-signature
     // shape (schema names, parameter names in declared order, idempotency field paths per
@@ -222,7 +222,7 @@ public partial class ConfirmNewProjectProposalRequest
             {
                 new IdempotencyField("conversation_id", true, ConversationId),
                 new IdempotencyField("description", true, Description),
-                new IdempotencyField("file_reference_ids", true, FileReferenceIds),
+                new IdempotencyField("file_reference_ids", true, FileReferenceIds is null ? Array.Empty<string>() : FileReferenceIds.OrderBy(static item => item, StringComparer.Ordinal).ToArray()),
                 new IdempotencyField("folder.folder_id", Folder is not null, Folder?.FolderId),
                 new IdempotencyField("operation", true, Operation),
                 new IdempotencyField("project_id", true, ProjectId),

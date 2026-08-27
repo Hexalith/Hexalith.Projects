@@ -193,7 +193,7 @@ static FieldModel ResolveField(
     }
 
     string firstJsonName = ToJsonPropertyName(bodyParts[0]);
-    if (!schemaProperties.ContainsKey(firstJsonName))
+    if (!schemaProperties.TryGetValue(firstJsonName, out SchemaPropertyModel? schemaProperty))
     {
         throw new InvalidOperationException($"Operation {operation.OperationId} field '{field}' does not resolve to a request property or operation parameter.");
     }
@@ -201,7 +201,10 @@ static FieldModel ResolveField(
     string expression = string.Join(".", bodyParts.Select(ToPropertyName));
     if (bodyParts.Length == 1)
     {
-        return new FieldModel(field, "true", expression);
+        return new FieldModel(
+            field,
+            "true",
+            ApplyCollectionCanonicalization(operation, field, schemaProperty, expression));
     }
 
     string rootProperty = ToPropertyName(bodyParts[0]);
@@ -210,6 +213,36 @@ static FieldModel ResolveField(
         ? $"{rootProperty} is not null"
         : rootProperty + "?." + string.Join("?.", bodyParts.Skip(1).Take(bodyParts.Length - 2).Select(ToPropertyName)) + " is not null";
     return new FieldModel(field, presentExpression, nullSafeExpression);
+}
+
+static string ApplyCollectionCanonicalization(
+    OperationModel operation,
+    string field,
+    SchemaPropertyModel property,
+    string expression)
+{
+    const string extensionName = "x-hexalith-idempotency-collection-canonicalization";
+    const string supportedPolicy = "ordinal-sort-null-to-empty";
+    if (!property.Schema.Children.TryGetValue(new YamlScalarNode(extensionName), out YamlNode? policyNode))
+    {
+        return expression;
+    }
+
+    string policy = policyNode.ShouldBeScalar(extensionName).Value ?? string.Empty;
+    if (!string.Equals(policy, supportedPolicy, StringComparison.Ordinal))
+    {
+        throw new InvalidOperationException(
+            $"Operation {operation.OperationId} field '{field}' declares unsupported {extensionName} policy '{policy}'. " +
+            $"The only supported policy is '{supportedPolicy}'.");
+    }
+
+    if (!string.Equals(RequiredScalar(property.Schema, "type"), "array", StringComparison.Ordinal))
+    {
+        throw new InvalidOperationException(
+            $"Operation {operation.OperationId} field '{field}' declares {extensionName} but is not an array schema.");
+    }
+
+    return $"{expression} is null ? Array.Empty<string>() : {expression}.OrderBy(static item => item, StringComparer.Ordinal).ToArray()";
 }
 
 static bool SchemaMatchesLogicalPrefix(string schemaName, string prefix)

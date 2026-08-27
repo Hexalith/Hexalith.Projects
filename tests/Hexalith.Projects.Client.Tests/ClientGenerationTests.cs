@@ -726,6 +726,41 @@ public sealed class ClientGenerationTests
     }
 
     [Fact]
+    public void ConfirmNewProjectProposalHelperCanonicalizesFileReferenceIdCollection()
+    {
+        ConfirmNewProjectProposalRequest sorted = ConfirmNewProjectProposalRequestWithFileReferenceIds(
+            ["file-alpha", "file-bravo"]);
+        ConfirmNewProjectProposalRequest reversed = ConfirmNewProjectProposalRequestWithFileReferenceIds(
+            ["file-bravo", "file-alpha"]);
+        ConfirmNewProjectProposalRequest nullIds = ConfirmNewProjectProposalRequestWithFileReferenceIds(null);
+        ConfirmNewProjectProposalRequest emptyIds = ConfirmNewProjectProposalRequestWithFileReferenceIds([]);
+
+        sorted.ComputeIdempotencyHash().ShouldBe(ExpectedHash(
+            "operation=ConfirmNewProjectProposal",
+            "field=conversation_id;present=true;value=s:conversation-alpha",
+            "field=description;present=true;value=null",
+            "field=file_reference_ids;present=true;value=j:[\"file-alpha\",\"file-bravo\"]",
+            "field=folder.folder_id;present=false;value=omitted",
+            "field=operation;present=true;value=s:confirmNewProjectProposal",
+            "field=project_id;present=true;value=s:project-alpha",
+            "field=project_metadata.display_name;present=true;value=s:Synthetic Project",
+            "field=request_schema_version;present=true;value=s:v1",
+            "field=resolution_result;present=true;value=s:NoMatch",
+            "field=setup_metadata;present=true;value=null"));
+        reversed.ComputeIdempotencyHash().ShouldBe(sorted.ComputeIdempotencyHash());
+        nullIds.ComputeIdempotencyHash().ShouldBe(emptyIds.ComputeIdempotencyHash());
+    }
+
+    [Fact]
+    public void UnannotatedArrayEquivalenceFieldPreservesCallerOrder()
+    {
+        UpdateProjectSetupRequest ordered = UpdateProjectSetupRequestWithGoals(["goal-alpha", "goal-bravo"]);
+        UpdateProjectSetupRequest reversed = UpdateProjectSetupRequestWithGoals(["goal-bravo", "goal-alpha"]);
+
+        reversed.ComputeIdempotencyHash().ShouldNotBe(ordered.ComputeIdempotencyHash());
+    }
+
+    [Fact]
     public void SetProjectFolderHelperUsesDeclaredLexicographicFields()
     {
         var request = new SetProjectFolderRequest
@@ -999,6 +1034,42 @@ public sealed class ClientGenerationTests
         generated.ShouldNotContain("credential_material", Case.Insensitive);
         generated.ShouldNotContain("-----BEGIN", Case.Insensitive);
     }
+
+    private static ConfirmNewProjectProposalRequest ConfirmNewProjectProposalRequestWithFileReferenceIds(
+        System.Collections.Generic.ICollection<string>? fileReferenceIds)
+        => new()
+        {
+            RequestSchemaVersion = ConfirmNewProjectProposalRequestRequestSchemaVersion.V1,
+            Operation = ConfirmNewProjectProposalRequestOperation.ConfirmNewProjectProposal,
+            ResolutionResult = ConfirmNewProjectProposalRequestResolutionResult.NoMatch,
+            Confirmed = true,
+            ProjectId = "project-alpha",
+            ConversationId = "conversation-alpha",
+            ProjectMetadata = new ProjectMetadata
+            {
+                DisplayName = "Synthetic Project",
+                MetadataClass = SensitiveMetadataTier.Tenant_sensitive,
+            },
+            FileReferenceIds = fileReferenceIds!,
+        };
+
+    private static UpdateProjectSetupRequest UpdateProjectSetupRequestWithGoals(
+        System.Collections.Generic.ICollection<string> goals)
+        => new()
+        {
+            RequestSchemaVersion = UpdateProjectSetupRequestRequestSchemaVersion.V1,
+            ProjectSetup = new ProjectSetup
+            {
+                Goals = goals,
+                UserInstructions = [],
+                PreferredSourceKinds = [],
+                ExcludedSourceKinds = [],
+                ConversationStartDefaults = new ConversationStartDefaults
+                {
+                    LinkedSourcePolicy = LinkedSourcePolicy.AuthorizedReferences,
+                },
+            },
+        };
 
     private static (ProjectCommandValidationResult Domain, string Generated) MutationFingerprints(
         string operation,

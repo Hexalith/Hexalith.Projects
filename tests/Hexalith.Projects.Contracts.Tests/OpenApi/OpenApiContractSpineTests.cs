@@ -670,8 +670,11 @@ public sealed class OpenApiContractSpineTests
         YamlMappingNode confirm = RequiredMapping(schemas, "ConfirmNewProjectProposalRequest");
         RequiredSequence(confirm, "required").OfType<YamlScalarNode>().Select(n => n.Value ?? string.Empty)
             .ShouldContain("fileReferenceIds");
-        RequiredMapping(RequiredMapping(confirm, "properties"), "fileReferenceIds")
-            .Children.ContainsKey(new YamlScalarNode("uniqueItems")).ShouldBeTrue();
+        YamlMappingNode fileReferenceIds = RequiredMapping(RequiredMapping(confirm, "properties"), "fileReferenceIds");
+        GetScalar(fileReferenceIds, "type").ShouldBe("array");
+        GetScalar(fileReferenceIds, "uniqueItems").ShouldBe("true");
+        GetScalar(fileReferenceIds, "x-hexalith-idempotency-collection-canonicalization")
+            .ShouldBe("ordinal-sort-null-to-empty");
     }
 
     [Fact]
