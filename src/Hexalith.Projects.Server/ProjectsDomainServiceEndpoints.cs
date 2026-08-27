@@ -594,6 +594,12 @@ public static partial class ProjectsDomainServiceEndpoints
         }
 
         string? projectMetadataName = body.ProjectMetadata?.DisplayName;
+        if (body.ProjectMetadata is not null
+            && string.IsNullOrWhiteSpace(projectMetadataName))
+        {
+            return ValidationProblem(correlationId, taskId, "projectMetadata.displayName");
+        }
+
         if (!string.IsNullOrWhiteSpace(projectMetadataName)
             && !string.IsNullOrWhiteSpace(body.Name)
             && !string.Equals(projectMetadataName.Trim(), body.Name.Trim(), StringComparison.Ordinal))
@@ -601,7 +607,7 @@ public static partial class ProjectsDomainServiceEndpoints
             return ValidationProblem(correlationId, taskId, "name");
         }
 
-        string? submittedName = string.IsNullOrWhiteSpace(projectMetadataName) ? body.Name : projectMetadataName;
+        string? submittedName = body.ProjectMetadata is null ? body.Name : projectMetadataName;
         if (string.IsNullOrWhiteSpace(submittedName))
         {
             return ValidationProblem(correlationId, taskId, "name");

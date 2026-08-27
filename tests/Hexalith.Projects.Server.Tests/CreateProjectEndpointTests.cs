@@ -111,6 +111,128 @@ public sealed class CreateProjectEndpointTests
     [InlineData(null, true)]
     [InlineData("", true)]
     [InlineData("   ", true)]
+    public async Task PostProject_InvalidCanonicalDisplayName_ReturnsMetadataOnly400WithoutSubmitting(
+        string? displayName,
+        bool includeDisplayName)
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = GeneratedClientCreateRequest(
+                displayName: displayName,
+                includeDisplayName: includeDisplayName,
+                legacyName: "Legacy Fallback");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.Submitted.ShouldBeEmpty();
+
+            using JsonDocument document = JsonDocument.Parse(body);
+            JsonElement details = document.RootElement.GetProperty("details");
+            details.GetProperty("visibility").GetString().ShouldBe("metadata_only");
+            details.GetProperty("rejectedField").GetString().ShouldBe("projectMetadata.displayName");
+            details.EnumerateObject().Count().ShouldBe(2);
+            body.ShouldNotContain("Legacy Fallback", Case.Sensitive);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProject_ValidCanonicalDisplayName_SubmitsNestedName()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = GeneratedClientCreateRequest(displayName: "Canonical Project");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+            submitter.Submitted.Single().Name.ShouldBe("Canonical Project");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProject_ConflictingCanonicalAndLegacyNames_ReturnsMetadataOnly400WithoutSubmitting()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = GeneratedClientCreateRequest(
+                displayName: "Canonical Project",
+                legacyName: "Legacy Project");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            submitter.Submitted.ShouldBeEmpty();
+
+            using JsonDocument document = JsonDocument.Parse(body);
+            JsonElement details = document.RootElement.GetProperty("details");
+            details.GetProperty("visibility").GetString().ShouldBe("metadata_only");
+            details.GetProperty("rejectedField").GetString().ShouldBe("name");
+            details.EnumerateObject().Count().ShouldBe(2);
+            body.ShouldNotContain("Canonical Project", Case.Sensitive);
+            body.ShouldNotContain("Legacy Project", Case.Sensitive);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Fact]
+    public async Task PostProject_InvalidCanonicalDisplayNameAndUnauthorizedCaller_ReturnsSafeDenialWithoutValidationFeedback()
+    {
+        FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
+        WebApplication app = await StartAppAsync(submitter, tenantId: null, principalId: null).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = GeneratedClientCreateRequest(
+                displayName: null,
+                legacyName: "Legacy Fallback");
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            submitter.Submitted.ShouldBeEmpty();
+
+            using JsonDocument document = JsonDocument.Parse(body);
+            document.RootElement.GetProperty("category").GetString().ShouldBe("tenant_access_denied");
+            JsonElement details = document.RootElement.GetProperty("details");
+            details.GetProperty("visibility").GetString().ShouldBe("redacted");
+            details.TryGetProperty("rejectedField", out _).ShouldBeFalse();
+            body.ShouldNotContain("displayName", Case.Insensitive);
+            body.ShouldNotContain("Legacy Fallback", Case.Sensitive);
+            Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakageInText(body));
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData(null, true)]
+    [InlineData("", true)]
+    [InlineData("   ", true)]
     [InlineData("Tenant_sensitive", true)]
     [InlineData("unsupported_metadata", true)]
     public async Task PostProject_InvalidCanonicalMetadataClass_ReturnsMetadataOnly400WithoutSubmitting(
@@ -2136,24 +2258,35 @@ public sealed class CreateProjectEndpointTests
 
     private static HttpRequestMessage GeneratedClientCreateRequest(
         string? metadataClass = "tenant_sensitive",
-        bool includeMetadataClass = true)
+        bool includeMetadataClass = true,
+        string? displayName = "Tracer Bullet",
+        bool includeDisplayName = true,
+        string? legacyName = null)
     {
-        Dictionary<string, object?> projectMetadata = new()
+        Dictionary<string, object?> projectMetadata = [];
+        if (includeDisplayName)
         {
-            ["displayName"] = "Tracer Bullet",
-        };
+            projectMetadata["displayName"] = displayName;
+        }
+
         if (includeMetadataClass)
         {
             projectMetadata["metadataClass"] = metadataClass;
         }
 
+        Dictionary<string, object?> body = new()
+        {
+            ["requestSchemaVersion"] = "v1",
+            ["projectMetadata"] = projectMetadata,
+        };
+        if (legacyName is not null)
+        {
+            body["name"] = legacyName;
+        }
+
         HttpRequestMessage request = new(HttpMethod.Post, "/api/v1/projects")
         {
-            Content = JsonContent.Create(new
-            {
-                requestSchemaVersion = "v1",
-                projectMetadata,
-            }),
+            Content = JsonContent.Create(body),
         };
         request.Headers.Add("Idempotency-Key", "idem-key-generated");
         request.Headers.Add("X-Correlation-Id", "corr-a");
