@@ -322,7 +322,8 @@ location: .agents/skills/bmad-bmb-setup/scripts/cleanup-legacy.py:find_skill_dir
 source_spec: `spec-legacy-cleanup-path-safety.md`
 severity: medium
 reason: Both functions catch only (OSError, RuntimeError) around their Path.rglob() calls. rglob recurses into symlinked subdirectories, so a self-referential symlink inside a target's subtree (not the top-level target itself, which is already rejected by the direct-child symlink guard in resolve_cleanup_targets) can trigger unbounded recursion. This traversal behavior predates this diff -- both functions used the same rglob pattern before this change, with no handling for this case either.
-status: open
+status: done 2026-08-27
+resolution: already resolved: .agents/skills/bmad-bmb-setup/scripts/cleanup-legacy.py:196 and :422 use Path.rglob, which does not follow symlinked directories under the current Python runtime; a focused nested self-cycle probe returned normally with empty results.
 
 ### DW-38: Follow-up review still recommended for dw-legacy-cleanup-path-safety after the damping cap was spent
 origin: review-budget-followup
