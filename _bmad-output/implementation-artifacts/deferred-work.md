@@ -149,7 +149,8 @@ origin: migrated from legacy ledger ("flat append from spec-5-12-live-apphost-op
 location: scheduled E2E workflow and AppHost Playwright lane
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
 reason: Verification-gap review found the scheduled E2E job exercises only the offline lane and therefore cannot detect AppHost startup, discovery, authentication, or accidental live-test skips.
-status: open
+status: done 2026-08-27
+resolution: already resolved: Commit ae37c2341f026ddca29551156150193aba269a53; .github/workflows/ci.yml:13-14,145-203 defines the scheduled managed lane and teardown, tests/e2e/run-live-apphost.sh:31-63 owns lifecycle, and tests/e2e/reporters/zero-live-skip-reporter.ts:16-20 rejects empty or skipped live runs.
 
 ### DW-17: Implement and verify real browser OIDC authorization for projects-ui.
 
@@ -157,7 +158,8 @@ origin: migrated from legacy ledger ("flat append from spec-5-12-live-apphost-op
 location: projects-ui browser authentication
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
 reason: Review found token state can target the discovered UI origin, but projects-ui has no browser OIDC or session assertion; the current real-Keycloak proof protects only the API access boundary.
-status: open
+status: done 2026-08-27
+resolution: already resolved: Commit ae37c2341f026ddca29551156150193aba269a53; src/Hexalith.Projects.UI/Program.cs:34-47,56-72 composes OIDC, authorization, token relay, and protected routes, while tests/e2e/specs/projects-authentication.spec.ts:5-40 proves the real Keycloak authorization-code challenge and HttpOnly session.
 
 ### DW-18: Provision deterministic projected-tenant and sibling reference, proposal, and UI-state fixtures with parallel-safe identifiers.
 
@@ -165,7 +167,8 @@ origin: migrated from legacy ledger ("flat append from spec-5-12-live-apphost-op
 location: AppHost-backed Projects E2E fixture provisioning
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md
 reason: The full AppHost-backed run exposed a missing tenant access projection plus fixed sibling IDs and placeholder states that the current test harness cannot establish independently.
-status: open
+status: done 2026-08-27
+resolution: already resolved: Commits 87bf82d597235b2663db385bfc8bc9d8b353478e and ae37c2341f026ddca29551156150193aba269a53; tests/e2e/support/factories/live-fixture-identities.ts:36-73 derives parallel-safe identities, tests/e2e/global-setup.ts:19-33 establishes tenant access, and src/Hexalith.Projects.AppHost/ProjectsLiveE2EFixtureProfile.cs:59-85 provisions profile-scoped sibling graphs.
 
 ### DW-19: Reconcile repository-required CRLF files with the default Git whitespace check.
 
