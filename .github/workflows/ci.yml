@@ -46,6 +46,11 @@ jobs:
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest tests/tools/test_render_skill.py -v
 
+      - name: Validate Git whitespace policy
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest tests/tools/test_git_whitespace_policy.py -v
+
       - name: Validate Build Auto workspace ownership
         env:
           PYTHONDONTWRITEBYTECODE: '1'
