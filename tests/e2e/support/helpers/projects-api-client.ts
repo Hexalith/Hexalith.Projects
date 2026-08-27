@@ -1,4 +1,5 @@
 import type { ApiRequestFixtureParams, EnhancedApiPromise } from '@seontechnologies/playwright-utils/api-request';
+import type { APIRequestContext } from '@playwright/test';
 import { mutationHeaders, queryHeaders, type MutationHeaderOptions, type AuthHeaderOptions } from './correlation.js';
 import type { CreateProjectInput } from '../factories/project-factory.js';
 
@@ -210,8 +211,8 @@ export interface ProjectCreationProposal {
 }
 
 export interface AcceptedCommand {
-  /** Server-assigned aggregate id for the created/affected project. */
-  projectId: string;
+  /** Optional compatibility echo; live fixtures use the caller-owned request identity. */
+  projectId?: string;
   /** Correlation id echoed back for tracing. */
   correlationId?: string;
 }
@@ -227,6 +228,28 @@ export interface ConfirmProjectResolutionInput {
   conversationId: string;
   candidateProjectIds: readonly string[];
   sourceProjectId?: string;
+}
+
+export interface SetProjectFolderInput {
+  projectId: string;
+  folderId: string;
+  displayName: string;
+  replacementConfirmed?: boolean;
+}
+
+export interface LinkProjectFileReferenceInput {
+  projectId: string;
+  fileReferenceId: string;
+  folderId: string;
+  workspaceId: string;
+  filePath: string;
+  displayName: string;
+}
+
+export interface LinkProjectMemoryInput {
+  projectId: string;
+  memoryReferenceId: string;
+  displayName: string;
 }
 
 export interface ProjectMetadataInput {
@@ -496,21 +519,95 @@ export async function confirmProjectResolution(
   return { status, body };
 }
 
-/** POST /api/v1/projects/proposals/confirm → 202 AcceptedCommand after explicit NoMatch confirmation. */
-export async function confirmNewProjectProposal(
+/** PUT /api/v1/projects/{projectId}/folder -> 202 AcceptedCommand. */
+export async function setProjectFolder(
   apiRequest: ApiRequest,
   tenantId: string,
-  input: ConfirmNewProjectProposalInput,
+  input: SetProjectFolderInput,
+  headerOptions: MutationHeaderOptions,
+): Promise<{ status: number; body: AcceptedCommand }> {
+  const { status, body } = await apiRequest<AcceptedCommand>({
+    method: 'PUT',
+    path: `/api/v1/projects/${input.projectId}/folder`,
+    headers: { ...mutationHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
+    body: {
+      requestSchemaVersion: 'v1',
+      operation: 'set',
+      projectId: input.projectId,
+      folderId: input.folderId,
+      folderMetadata: { displayName: input.displayName },
+      replacementConfirmed: input.replacementConfirmed ?? false,
+    },
+    retryConfig: { maxRetries: 0 },
+  });
+  return { status, body };
+}
+
+/** POST /api/v1/projects/{projectId}/files/{fileReferenceId}/link -> 202 AcceptedCommand. */
+export async function linkProjectFileReference(
+  apiRequest: ApiRequest,
+  tenantId: string,
+  input: LinkProjectFileReferenceInput,
   headerOptions: MutationHeaderOptions,
 ): Promise<{ status: number; body: AcceptedCommand }> {
   const { status, body } = await apiRequest<AcceptedCommand>({
     method: 'POST',
-    path: '/api/v1/projects/proposals/confirm',
+    path: `/api/v1/projects/${input.projectId}/files/${input.fileReferenceId}/link`,
     headers: { ...mutationHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
-    body: input,
+    body: {
+      requestSchemaVersion: 'v1',
+      operation: 'link',
+      projectId: input.projectId,
+      fileReferenceId: input.fileReferenceId,
+      folderId: input.folderId,
+      workspaceId: input.workspaceId,
+      filePath: input.filePath,
+      fileMetadata: { displayName: input.displayName },
+    },
     retryConfig: { maxRetries: 0 },
   });
   return { status, body };
+}
+
+/** POST /api/v1/projects/{projectId}/memories/{memoryReferenceId}/link -> 202 AcceptedCommand. */
+export async function linkProjectMemory(
+  apiRequest: ApiRequest,
+  tenantId: string,
+  input: LinkProjectMemoryInput,
+  headerOptions: MutationHeaderOptions,
+): Promise<{ status: number; body: AcceptedCommand }> {
+  const { status, body } = await apiRequest<AcceptedCommand>({
+    method: 'POST',
+    path: `/api/v1/projects/${input.projectId}/memories/${input.memoryReferenceId}/link`,
+    headers: { ...mutationHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
+    body: {
+      requestSchemaVersion: 'v1',
+      operation: 'link',
+      projectId: input.projectId,
+      memoryReferenceId: input.memoryReferenceId,
+      memoryMetadata: { displayName: input.displayName },
+    },
+    retryConfig: { maxRetries: 0 },
+  });
+  return { status, body };
+}
+
+/** POST /api/v1/projects/proposals/confirm → 202 AcceptedCommand after explicit NoMatch confirmation. */
+export async function confirmNewProjectProposal(
+  request: APIRequestContext,
+  tenantId: string,
+  input: ConfirmNewProjectProposalInput,
+  headerOptions: MutationHeaderOptions,
+): Promise<{ status: number; body: AcceptedCommand }> {
+  const apiUrl = process.env.API_URL?.trim();
+  if (!apiUrl) throw new Error('[projects-api-client] API_URL is required for proposal confirmation.');
+  const response = await request.post(`${apiUrl.replace(/\/$/, '')}/api/v1/projects/proposals/confirm`, {
+    headers: { ...mutationHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
+    data: input,
+  });
+  const contentType = response.headers()['content-type'] ?? '';
+  const body = contentType.includes('json') ? await response.json() : null;
+  return { status: response.status(), body: body as AcceptedCommand };
 }
 
 /** POST /api/v1/projects/{id}/archive → 202 (FR-4). */
@@ -524,6 +621,10 @@ export async function archiveProject(
     method: 'POST',
     path: `/api/v1/projects/${projectId}/archive`,
     headers: { ...mutationHeaders(headerOptions), 'X-Hexalith-Tenant-Id': tenantId },
+    body: {
+      archiveIntent: 'archive',
+      requestSchemaVersion: 'v1',
+    },
   });
   return { status };
 }

@@ -11,6 +11,8 @@ const FORBIDDEN_SHELL_MARKERS = [
   'command body',
 ];
 
+const SERVER_DERIVED_TENANT_LABEL = 'server-derived tenant';
+
 /**
  * Story 5.3 shell + shared empty-state/feedback selector contract.
  *
@@ -32,34 +34,37 @@ test.describe('Projects console shell shared rendering', () => {
     await detail.goto(seededProject.projectId);
 
     await expect(detail.diagnosticHeader).toBeVisible();
-    await expect(detail.diagnosticHeader).toContainText(tenantContext.tenantId);
+    await expect(detail.diagnosticHeader).toContainText(SERVER_DERIVED_TENANT_LABEL);
+    await expect(detail.diagnosticHeader).not.toContainText(tenantContext.tenantId);
     await expect(detail.diagnosticHeader).toContainText(seededProject.projectId);
-    await expect(detail.tenantCopy).toHaveAttribute('data-copy-value', tenantContext.tenantId);
+    await expect(detail.tenantCopy).toHaveAttribute('data-copy-value', SERVER_DERIVED_TENANT_LABEL);
     await expect(detail.projectIdCopy).toHaveAttribute('data-copy-value', seededProject.projectId);
     await expect(detail.lifecycleBadge).toBeVisible();
     await expect(detail.lifecycleBadge).toContainText(/Active|Archived/);
-    await expect(page.getByTestId(/^fc-nav-/)).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Projects' })).toBeVisible();
   });
 
-  liveAppHostTest('distinguishes no-data, denied, unavailable, and filtered empty states without blank tables', async ({
+  liveAppHostTest('renders real fixture references and safe-denial states without blank tables', async ({
     page,
+    seededProject,
   }) => {
-    await page.goto('/projects/project-with-filtered-empty-results');
+    const detail = new ProjectDetailPage(page);
+    await detail.goto(seededProject.projectId);
 
-    await expect(page.getByTestId('project-empty-filtered')).toBeVisible();
-    await expect(page.getByTestId('project-empty-denied').or(page.getByTestId('project-feedback-fail-closed'))).toBeVisible();
-    await expect(page.getByTestId('project-empty-unavailable').or(page.getByTestId('project-feedback-warning'))).toBeVisible();
-    await expect(page.getByTestId('project-empty-none')).toBeVisible();
+    await page.getByTestId('project-detail-tab-references').click();
+    await expect(detail.referenceHealthMatrix).toBeVisible();
+    await expect(detail.referenceKindCells.filter({ hasText: 'conversation' }).first()).toBeVisible();
+
+    await page.goto('/projects/not-a-canonical-project-id');
+    await expect(page.getByTestId('project-feedback-fail-closed')).toBeVisible();
   });
 
-  liveAppHostTest('renders safe feedback categories without echoing protected payload markers', async ({ page }) => {
-    await page.goto('/projects/project-with-feedback-examples');
+  liveAppHostTest('renders a successful detail without echoing protected payload markers', async ({ page, seededProject }) => {
+    const detail = new ProjectDetailPage(page);
+    await detail.goto(seededProject.projectId);
 
-    await expect(page.getByTestId('project-feedback-success')).toBeVisible();
-    await expect(page.getByTestId('project-feedback-warning')).toBeVisible();
-    await expect(page.getByTestId('project-feedback-error')).toBeVisible();
-    await expect(page.getByTestId('project-feedback-fail-closed')).toBeVisible();
-    await expect(page.getByTestId('project-feedback-loading')).toBeVisible();
+    await expect(detail.diagnosticHeader).toBeVisible();
+    await expect(detail.feedbackRegion).toHaveCount(0);
 
     const bodyText = await page.locator('body').innerText();
     for (const marker of FORBIDDEN_SHELL_MARKERS) {

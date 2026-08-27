@@ -118,6 +118,9 @@
     [Parameter]
     public string TenantScope { get; set; } = "server-derived tenant";
 
+    [Parameter]
+    public EventCallback OnSucceeded { get; set; }
+
     private string _action = ProjectMaintenanceActions.Archive;
     private string _panelState = ProjectMaintenancePanelStates.Preview;
     private string _commandLifecycleState = ProjectMaintenanceCommandLifecycleStates.Idle;
@@ -389,6 +392,10 @@
         _feedbackCode = result.FeedbackCode ?? "confirmed";
         _dryRunStatus = result.AuditEventId is null ? _dryRunStatus : $"confirmed audit {result.AuditEventId}";
         await FocusFeedbackAsync().ConfigureAwait(true);
+        if (result.Succeeded)
+        {
+            await OnSucceeded.InvokeAsync().ConfigureAwait(true);
+        }
     }
 
     private async Task FocusDryRunAsync()

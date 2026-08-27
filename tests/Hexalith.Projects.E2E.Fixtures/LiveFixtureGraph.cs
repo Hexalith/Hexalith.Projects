@@ -28,7 +28,10 @@ public sealed record LiveFixtureGraph(
     string ProposalFileReferenceId,
     string DeniedFileReferenceId,
     string FilePath,
-    string MemoryReferenceId)
+    string MemoryReferenceId,
+    string CorrelationId,
+    string TaskId,
+    string IdempotencyKey)
 {
     /// <summary>Validates the bounded graph envelope at the fixture ingress.</summary>
     /// <exception cref="ArgumentException">Thrown when required metadata is empty or unbounded.</exception>
@@ -73,5 +76,8 @@ public sealed record LiveFixtureGraph(
         yield return DeniedFileReferenceId;
         yield return FilePath;
         yield return MemoryReferenceId;
+        yield return CorrelationId;
+        yield return TaskId;
+        yield return IdempotencyKey;
     }
 }

@@ -19,6 +19,7 @@ using Hexalith.EventStore.Contracts.Results;
 using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Commands;
+using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
 
@@ -40,6 +41,13 @@ public sealed class ProjectsDomainProcessor(
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
     };
+
+    private static readonly JsonSerializerOptions StateJsonOptions = new(JsonSerializerDefaults.Web);
+
+    private static readonly IReadOnlyDictionary<string, Type> ProjectEventTypes = typeof(IProjectEvent).Assembly
+        .GetTypes()
+        .Where(static type => !type.IsAbstract && !type.IsInterface && typeof(IProjectEvent).IsAssignableFrom(type))
+        .ToDictionary(static type => type.FullName!, StringComparer.Ordinal);
 
     private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
     private readonly IProjectEventStoreAuthorizationValidator _authorizationValidator =
@@ -156,7 +164,7 @@ public sealed class ProjectsDomainProcessor(
             ReadTaskId(envelope),
             envelope.MessageId);
 
-        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+        ProjectState state = RehydrateProjectState(envelope, currentState);
 
         ProjectResult result;
         try
@@ -214,7 +222,7 @@ public sealed class ProjectsDomainProcessor(
             ReadTaskId(envelope),
             envelope.MessageId);
 
-        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+        ProjectState state = RehydrateProjectState(envelope, currentState);
 
         ProjectResult result;
         try
@@ -267,7 +275,7 @@ public sealed class ProjectsDomainProcessor(
             ReadTaskId(envelope),
             envelope.MessageId);
 
-        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+        ProjectState state = RehydrateProjectState(envelope, currentState);
 
         ProjectResult result;
         try
@@ -320,7 +328,7 @@ public sealed class ProjectsDomainProcessor(
             ReadTaskId(envelope),
             envelope.MessageId);
 
-        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+        ProjectState state = RehydrateProjectState(envelope, currentState);
 
         ProjectResult result;
         try
@@ -378,7 +386,7 @@ public sealed class ProjectsDomainProcessor(
             ReadTaskId(envelope),
             envelope.MessageId);
 
-        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+        ProjectState state = RehydrateProjectState(envelope, currentState);
 
         ProjectResult result;
         try
@@ -438,7 +446,7 @@ public sealed class ProjectsDomainProcessor(
             ReadTaskId(envelope),
             envelope.MessageId);
 
-        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+        ProjectState state = RehydrateProjectState(envelope, currentState);
 
         ProjectResult result;
         try
@@ -494,7 +502,7 @@ public sealed class ProjectsDomainProcessor(
             ReadTaskId(envelope),
             envelope.MessageId);
 
-        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+        ProjectState state = RehydrateProjectState(envelope, currentState);
 
         ProjectResult result;
         try
@@ -551,7 +559,7 @@ public sealed class ProjectsDomainProcessor(
             ReadTaskId(envelope),
             envelope.MessageId);
 
-        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+        ProjectState state = RehydrateProjectState(envelope, currentState);
 
         ProjectResult result;
         try
@@ -607,7 +615,7 @@ public sealed class ProjectsDomainProcessor(
             ReadTaskId(envelope),
             envelope.MessageId);
 
-        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+        ProjectState state = RehydrateProjectState(envelope, currentState);
 
         ProjectResult result;
         try
@@ -669,7 +677,7 @@ public sealed class ProjectsDomainProcessor(
             ReadTaskId(envelope),
             envelope.MessageId);
 
-        ProjectState state = currentState as ProjectState ?? ProjectState.Empty;
+        ProjectState state = RehydrateProjectState(envelope, currentState);
 
         ProjectResult result;
         try
@@ -690,6 +698,78 @@ public sealed class ProjectsDomainProcessor(
             && !string.IsNullOrWhiteSpace(taskId)
             ? taskId
             : envelope.CorrelationId;
+
+    private static ProjectState RehydrateProjectState(CommandEnvelope command, object? currentState)
+    {
+        DomainServiceCurrentState? snapshotAwareState = currentState switch
+        {
+            null => null,
+            ProjectState => null,
+            DomainServiceCurrentState typed => typed,
+            JsonElement json when IsSnapshotAwareState(json) =>
+                json.Deserialize<DomainServiceCurrentState>(StateJsonOptions)
+                    ?? throw new InvalidOperationException("Unable to deserialize Project aggregate state."),
+            _ => null,
+        };
+
+        if (currentState is ProjectState typedState)
+        {
+            return typedState;
+        }
+
+        if (snapshotAwareState is null)
+        {
+            return currentState switch
+            {
+                null => ProjectState.Empty,
+                JsonElement json when json.ValueKind == JsonValueKind.Null => ProjectState.Empty,
+                JsonElement json => json.Deserialize<ProjectState>(StateJsonOptions)
+                    ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
+                _ => JsonSerializer.SerializeToElement(currentState, currentState.GetType(), StateJsonOptions)
+                    .Deserialize<ProjectState>(StateJsonOptions)
+                    ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
+            };
+        }
+
+        ProjectState state = DeserializeSnapshot(snapshotAwareState.SnapshotState);
+        ProjectIdentity identity = new(command.TenantId, new ProjectId(command.AggregateId));
+
+        foreach (Hexalith.EventStore.Contracts.Events.EventEnvelope eventEnvelope in snapshotAwareState.Events)
+        {
+            Hexalith.EventStore.Contracts.Events.EventMetadata metadata = eventEnvelope.Metadata;
+            if (!string.Equals(metadata.TenantId, command.TenantId, StringComparison.Ordinal)
+                || !string.Equals(metadata.Domain, command.Domain, StringComparison.Ordinal)
+                || !string.Equals(metadata.AggregateId, command.AggregateId, StringComparison.Ordinal)
+                || !ProjectEventTypes.TryGetValue(metadata.EventTypeName, out Type? eventType))
+            {
+                throw new InvalidOperationException("Project aggregate history contains invalid event metadata.");
+            }
+
+            IProjectEvent projectEvent = JsonSerializer.Deserialize(eventEnvelope.Payload, eventType, StateJsonOptions) as IProjectEvent
+                ?? throw new InvalidOperationException("Project aggregate history contains an invalid event payload.");
+            state = ProjectStateApply.Apply(state, projectEvent, identity);
+        }
+
+        return state;
+    }
+
+    private static ProjectState DeserializeSnapshot(object? snapshotState)
+        => snapshotState switch
+        {
+            null => ProjectState.Empty,
+            ProjectState typed => typed,
+            JsonElement json when json.ValueKind == JsonValueKind.Null => ProjectState.Empty,
+            JsonElement json => json.Deserialize<ProjectState>(StateJsonOptions)
+                ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
+            _ => JsonSerializer.SerializeToElement(snapshotState, snapshotState.GetType(), StateJsonOptions)
+                .Deserialize<ProjectState>(StateJsonOptions)
+                ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
+        };
+
+    private static bool IsSnapshotAwareState(JsonElement json)
+        => json.ValueKind == JsonValueKind.Object
+            && json.TryGetProperty("currentSequence", out _)
+            && json.TryGetProperty("events", out _);
 
     private static DomainResult ToDomainResult(ProjectResult result)
         => result.Code switch

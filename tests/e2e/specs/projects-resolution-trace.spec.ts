@@ -47,12 +47,12 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
     await expect(detail.resolutionTraceRun).toBeFocused();
   });
 
-  liveAppHostTest('runs conversation and attachment traces without leaking payload data', async ({ page, seededProject }) => {
+  liveAppHostTest('runs conversation and attachment traces without leaking payload data', async ({ page, resolutionProjects, liveFixtureGraph }) => {
     const detail = new ProjectDetailPage(page);
-    await detail.goto(seededProject.projectId);
+    await detail.goto(resolutionProjects.primary.projectId);
     await page.getByTestId('project-detail-tab-resolution').click();
 
-    await detail.resolutionTraceConversationId.fill('conversation-001');
+    await detail.resolutionTraceConversationId.fill(liveFixtureGraph.existingConversationId);
     await detail.resolutionTraceRun.click();
     await expect(detail.resolutionTraceOutcome).toBeVisible();
     await expect(detail.resolutionTraceInputSummary).toContainText('conversation');
@@ -60,8 +60,8 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
     await expect(detail.resolutionTraceReasons.first()).toBeVisible();
 
     await detail.resolutionTraceMode.selectOption('attachments');
-    await detail.resolutionTraceFolderId.fill('folder-001');
-    await detail.resolutionTraceFileId.fill('file-001');
+    await detail.resolutionTraceFolderId.fill(liveFixtureGraph.folderId);
+    await detail.resolutionTraceFileId.fill(liveFixtureGraph.fileReferenceId);
     await detail.resolutionTraceRun.click();
     await expect(detail.resolutionTraceCandidateComparison).toBeVisible();
     await expect(detail.resolutionTraceOutcome).toContainText(/Resolved|NoMatch|MultipleCandidates|Excluded|FailedClosed/);
@@ -72,11 +72,11 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
     }
   });
 
-  liveAppHostTest('passes axe accessibility scan after a trace renders', async ({ page, seededProject }, testInfo) => {
+  liveAppHostTest('passes axe accessibility scan after a trace renders', async ({ page, seededProject, liveFixtureGraph }, testInfo) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
     await page.getByTestId('project-detail-tab-resolution').click();
-    await detail.resolutionTraceConversationId.fill('conversation-001');
+    await detail.resolutionTraceConversationId.fill(liveFixtureGraph.conversationId);
     await detail.resolutionTraceRun.click();
 
     await expect(detail.resolutionTraceOutcome).toBeVisible();

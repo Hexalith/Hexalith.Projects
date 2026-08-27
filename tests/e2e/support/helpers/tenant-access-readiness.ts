@@ -29,7 +29,7 @@ export function authorityFromAccessToken(accessToken: string, configuredTenant?:
 
 /**
  * Serial readiness gate used once by Playwright global setup. Rejections are tolerated only when
- * the outer Projects list authorization subsequently converges to HTTP 200.
+ * an intentionally invalid Projects create request subsequently reaches HTTP 400 after authorization.
  */
 export async function ensureProjectsTenantAccess(options: {
   eventStore: APIRequestContext;
@@ -41,7 +41,7 @@ export async function ensureProjectsTenantAccess(options: {
 }): Promise<void> {
   const timeoutMs = options.timeoutMs ?? 45_000;
   const initial = await projectsAccessProbe(options.projects, options.authToken, options.authority.tenantId, options.runId);
-  if (initial.status === 200) return;
+  if (initial.status === 400) return;
 
   const results: TerminalCommandResult[] = [];
   for (const [commandType, payload] of [
@@ -51,6 +51,14 @@ export async function ensureProjectsTenantAccess(options: {
         TenantId: options.authority.tenantId,
         Name: `Projects E2E ${options.authority.tenantId}`.slice(0, 128),
         Description: 'Tenant provisioned through the supported live E2E readiness gate.',
+      },
+    ],
+    [
+      'UpdateTenant',
+      {
+        TenantId: options.authority.tenantId,
+        Name: `Projects E2E ${options.authority.tenantId}`.slice(0, 128),
+        Description: 'Tenant refreshed through the supported live E2E readiness gate.',
       },
     ],
     [
@@ -66,8 +74,7 @@ export async function ensureProjectsTenantAccess(options: {
         commandType,
         payload,
         correlationId: `correlation-${stem}`,
-        idempotencyKey: `idempotency-${stem}`,
-      }),
+      }, timeoutMs),
     );
   }
 
@@ -75,13 +82,13 @@ export async function ensureProjectsTenantAccess(options: {
   let last = initial;
   while (Date.now() < deadline) {
     last = await projectsAccessProbe(options.projects, options.authToken, options.authority.tenantId, options.runId);
-    if (last.status === 200) return;
+    if (last.status === 400) return;
     await pollDelay(500);
   }
 
   throw new Error(
     `[tenant-readiness] Projects tenant access did not converge within ${timeoutMs}ms; ` +
-      `commands=${JSON.stringify(results.map((item) => item.status))}; ` +
+      `commands=${JSON.stringify(results.map((item) => ({ status: item.status.status, statusCode: item.status.statusCode })))}; ` +
       `lastProjects=${JSON.stringify(last)}`,
   );
 }
@@ -98,7 +105,7 @@ function decodeJwtClaims(accessToken: string): Record<string, unknown> {
 
 function collectTenantClaims(claims: Record<string, unknown>): string[] {
   const values: string[] = [];
-  for (const name of ['tenantId', 'tenant_id', 'tenant', 'eventstore:tenant', 'tenants']) {
+  for (const name of ['eventstore:current-tenant', 'tenantId', 'tenant_id', 'tenant', 'eventstore:tenant', 'tenants']) {
     const claim = claims[name];
     if (typeof claim === 'string') values.push(claim);
     if (Array.isArray(claim)) {
@@ -119,16 +126,26 @@ async function projectsAccessProbe(
   authToken: string,
   tenantId: string,
   runId: string,
-): Promise<{ status: number; body: string }> {
-  const response = await projects.get('/api/v1/projects', {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-      'X-Hexalith-Tenant-Id': tenantId,
-      'X-Correlation-Id': `tenant-readiness-${stableRequestId(runId, tenantId)}`,
-    },
-    failOnStatusCode: false,
-  });
-  return { status: response.status(), body: (await response.text()).replace(/\s+/g, ' ').slice(0, 800) };
+): Promise<{ status: number }> {
+  const probeId = stableRequestId(runId, tenantId, 'authorization-probe');
+  try {
+    const response = await projects.post('/api/v1/projects', {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'X-Hexalith-Tenant-Id': tenantId,
+        'X-Correlation-Id': `tenant-readiness-${stableRequestId(runId, tenantId)}`,
+        'Idempotency-Key': probeId,
+      },
+      data: {},
+      failOnStatusCode: false,
+      timeout: 5_000,
+    });
+    return { status: response.status() };
+  } catch {
+    // A cold authorization/projection dependency may not answer before the per-attempt bound.
+    // Collapse transport details (which can contain credentials) into a retryable safe status.
+    return { status: 503 };
+  }
 }
 
 function stableRequestId(...parts: string[]): string {

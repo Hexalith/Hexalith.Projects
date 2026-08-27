@@ -13,6 +13,9 @@ using Microsoft.Extensions.Configuration;
 /// <summary>Composes metadata-only sibling compatibility fixtures for an explicit live E2E run.</summary>
 public static class ProjectsLiveE2EFixtureProfile
 {
+    /// <summary>Gets the externally discoverable control resource name.</summary>
+    public const string ControlResourceName = "live-fixtures";
+
     /// <summary>Gets the configuration key that must be explicitly enabled for fixture composition.</summary>
     public const string EnabledConfigurationKey = "Projects:E2E:LiveFixtures";
 
@@ -66,7 +69,7 @@ public static class ProjectsLiveE2EFixtureProfile
             .WaitFor(memories);
 
         return builder
-            .AddProject("live-fixtures", resolvedFixtureProjectPath)
+            .AddProject(ControlResourceName, resolvedFixtureProjectPath)
             .WithEnvironment("FixtureRole", "control")
             .WithEnvironment("FixtureEndpoints__Conversations", conversations.GetEndpoint("http"))
             .WithEnvironment("FixtureEndpoints__Folders", folders.GetEndpoint("http"))

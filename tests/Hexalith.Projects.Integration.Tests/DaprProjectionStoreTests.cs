@@ -131,6 +131,34 @@ public sealed class DaprProjectionStoreTests
         (await store.GetReadinessAsync("tenant-a", cancellationToken)).Watermark.ShouldBe(11L);
     }
 
+    /// <summary>Verifies concurrent pub/sub delivery can arrive below the current tenant watermark.</summary>
+    [Fact]
+    public async Task ProjectProjectionStoreShouldApplyLateArrivalAndRebuildInGlobalPositionOrder()
+    {
+        FakeProjectsStateStore state = new();
+        DaprProjectProjectionStore store = new(state);
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        EventEnvelope laterPosition = Envelope(
+            "01J000000000000000000021",
+            1,
+            new ProjectCreated("tenant-a", "project-b", "Project B", null, null, ProjectLifecycle.Active, "user-a", "corr-b", "task-b", "idem-b", "fp-b", Now.AddMinutes(1)),
+            globalPosition: 21);
+        EventEnvelope lateArrival = Envelope(
+            "01J000000000000000000020",
+            1,
+            new ProjectCreated("tenant-a", "project-a", "Project A", null, null, ProjectLifecycle.Active, "user-a", "corr-a", "task-a", "idem-a", "fp-a", Now),
+            globalPosition: 20);
+
+        (await store.AppendAsync(laterPosition, cancellationToken)).Status.ShouldBe(ProjectProjectionAppendStatus.Applied);
+        (await store.AppendAsync(lateArrival, cancellationToken)).Status.ShouldBe(ProjectProjectionAppendStatus.Applied);
+
+        IReadOnlyList<ProjectListItem> rows = await store.ListAsync("tenant-a", null, cancellationToken);
+
+        rows.Select(static row => row.ProjectId).ShouldBe(["project-a", "project-b"]);
+        rows.Select(static row => row.Sequence).ShouldBe([20L, 21L]);
+        (await store.GetReadinessAsync("tenant-a", cancellationToken)).Watermark.ShouldBe(21L);
+    }
+
     /// <summary>Verifies replay conflicts are recorded and fail closed.</summary>
     [Fact]
     public async Task ProjectProjectionStoreShouldDetectReplayConflictForSameMessageDifferentPayload()

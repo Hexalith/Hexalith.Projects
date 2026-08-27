@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
+using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Server;
 using Hexalith.Projects.Server.Authentication;
 
@@ -387,6 +388,28 @@ public sealed class ProjectsAuthenticationContractTests
         {
             await StopAsync(app).ConfigureAwait(true);
         }
+    }
+
+    [Fact]
+    public void TenantContext_CurrentTenantClaimWinsOverMembershipClaimOrder()
+    {
+        DefaultHttpContext context = new();
+        context.User = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                [
+                    new Claim("sub", "actor-a"),
+                    new Claim("eventstore:current-tenant", "tenant-a"),
+                    new Claim("eventstore:tenant", "tenant-b"),
+                    new Claim("eventstore:tenant", "tenant-a"),
+                    new Claim("eventstore:permission", ProjectAuthorizationGate.ListProjectsAction),
+                ],
+                "validated-jwt"));
+        HttpContextProjectTenantContextAccessor accessor = new(new HttpContextAccessor { HttpContext = context });
+
+        accessor.AuthoritativeTenantId.ShouldBe("tenant-a");
+        EventStoreClaimTransformEvidence evidence = accessor.GetClaimTransformEvidence(ProjectAuthorizationGate.ListProjectsAction);
+        evidence.TenantId.ShouldBe("tenant-a");
+        evidence.HasPermissionFor(ProjectAuthorizationGate.ListProjectsAction).ShouldBeTrue();
     }
 
     [Fact]

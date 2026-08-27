@@ -88,11 +88,6 @@ public sealed class DaprProjectProjectionStore(
         }
 
         long projectionPosition = ProjectionPosition(metadata);
-        if (document.Events.Count > 0 && projectionPosition <= document.Watermark)
-        {
-            return Result(ProjectProjectionAppendStatus.OutOfOrder, metadata, projectionPosition);
-        }
-
         ProjectProjectionJournalDocument updated = document.Append(
             new PersistedProjectProjectionEnvelope(
                 metadata.TenantId,
@@ -344,6 +339,7 @@ public sealed class DaprProjectProjectionStore(
             string fingerprint)
         {
             List<PersistedProjectProjectionEnvelope> events = [.. Events, envelope];
+            events.Sort(static (left, right) => left.Sequence.CompareTo(right.Sequence));
             Dictionary<string, string> processed = new(ProcessedMessages, StringComparer.Ordinal)
             {
                 [messageId] = fingerprint,
@@ -351,7 +347,7 @@ public sealed class DaprProjectProjectionStore(
 
             return this with
             {
-                Watermark = envelope.Sequence,
+                Watermark = Math.Max(Watermark, envelope.Sequence),
                 Events = events,
                 ProcessedMessages = processed,
             };

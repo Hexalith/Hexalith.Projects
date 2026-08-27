@@ -155,7 +155,8 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
     await page.getByTestId('project-detail-tab-audit').click();
     await expect(detail.auditSection).toBeVisible();
     await page.getByTestId('project-detail-tab-actions').click();
-    await expect(detail.actionsSection).toContainText('Read-only inspector');
+    await expect(detail.maintenancePanel).toBeVisible();
+    await expect(detail.maintenancePanel.getByRole('heading', { name: 'Maintenance actions' })).toBeVisible();
 
     const bodyText = await page.locator('body').innerText();
     for (const marker of FORBIDDEN_INVENTORY_MARKERS) {

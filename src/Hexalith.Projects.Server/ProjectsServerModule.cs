@@ -53,6 +53,12 @@ public static class ProjectsServerModule
     /// <summary>The aggregate-callback route the EventStore command pipeline invokes.</summary>
     public const string ProcessRoute = "/process";
 
+    /// <summary>The full-replay projection callback route the EventStore projection pipeline invokes.</summary>
+    public const string ProjectRoute = "/project";
+
+    /// <summary>The stable EventStore projection type for the Project aggregate state.</summary>
+    public const string ProjectionType = "project";
+
     /// <summary>The reserved platform tenant; never a valid project-data tenant context.</summary>
     public const string ReservedSystemTenant = "system";
 

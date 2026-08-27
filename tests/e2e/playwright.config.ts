@@ -4,6 +4,8 @@ import { existsSync } from 'node:fs';
 
 import { defineConfig, devices } from '@playwright/test';
 
+import { browserSessionStoragePath } from './support/auth/browser-session.js';
+
 /**
  * Cross-module E2E config for the Hexalith.Projects platform.
  *
@@ -26,9 +28,11 @@ if (LIVE_APPHOST_ENABLED) {
   process.env.API_URL = API_URL;
   process.env.KEYCLOAK_URL = KEYCLOAK_URL;
   requireLiveText('KEYCLOAK_CLIENT_ID');
+  requireLiveText('EVENTSTORE_API_URL');
+  requireLiveText('FIXTURE_API_URL');
+  requireLiveText('E2E_RUN_ID');
   requireOneOf('TEST_USER_USERNAME', 'TEST_USER_EMAIL');
   requireLiveText('TEST_USER_PASSWORD');
-  requireLiveText('TEST_TENANT_ID');
 }
 const IS_CI = !!process.env.CI;
 const CHROMIUM_EXECUTABLE_PATH = resolveExecutable([
@@ -128,10 +132,10 @@ function requireOneOf(primaryName: string, legacyName: string): string {
 
 export default defineConfig({
   testDir: './specs',
-  fullyParallel: !LIVE_APPHOST_ENABLED,
+  fullyParallel: true,
   forbidOnly: IS_CI,
   retries: IS_CI ? 2 : 0,
-  workers: LIVE_APPHOST_ENABLED ? 1 : IS_CI ? '50%' : undefined,
+  workers: LIVE_APPHOST_ENABLED ? 2 : IS_CI ? '50%' : undefined,
   timeout: 60_000,
   expect: {
     timeout: 10_000,
@@ -140,6 +144,7 @@ export default defineConfig({
     ['list'],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ['junit', { outputFile: 'test-results/junit.xml' }],
+    ...(LIVE_APPHOST_ENABLED ? [['./reporters/zero-live-skip-reporter.ts']] as const : []),
   ],
   use: {
     baseURL: BASE_URL,
@@ -149,6 +154,7 @@ export default defineConfig({
     trace: LIVE_APPHOST_ENABLED ? 'off' : 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: VIDEO_MODE,
+    storageState: LIVE_APPHOST_ENABLED ? browserSessionStoragePath : undefined,
     // Keycloak dev certs are self-signed; the AppHost serves https locally.
     ignoreHTTPSErrors: true,
     // UX-DR28: role/label-based selectors via data-testid.
@@ -163,7 +169,6 @@ export default defineConfig({
   // through system Chrome.
   projects: BROWSER_PROJECTS,
   outputDir: 'test-results',
-  // Auth-session storage + token pre-fetch live here. Live runs always prefetch;
-  // no-AppHost contracts never require Keycloak unless explicitly requested.
+  // Live global setup establishes supported tenant access and a real OIDC cookie session.
   globalSetup: './global-setup.ts',
 });

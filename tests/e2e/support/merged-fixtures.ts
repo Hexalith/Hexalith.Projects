@@ -1,15 +1,24 @@
-import { test as base, mergeTests, expect } from '@playwright/test';
+import { mergeTests, expect } from '@playwright/test';
 import { test as apiRequestFixture } from '@seontechnologies/playwright-utils/api-request/fixtures';
 import { test as recurseFixture } from '@seontechnologies/playwright-utils/recurse/fixtures';
 import { test as logFixture } from '@seontechnologies/playwright-utils/log/fixtures';
 import { test as interceptFixture } from '@seontechnologies/playwright-utils/intercept-network-call/fixtures';
 import { test as networkErrorMonitorFixture } from '@seontechnologies/playwright-utils/network-error-monitor/fixtures';
-import { createAuthFixtures, setAuthProvider } from '@seontechnologies/playwright-utils/auth-session';
-import type { AuthFixtures } from '@seontechnologies/playwright-utils/auth-session';
 
-import keycloakAuthProvider from './auth/keycloak-auth-provider.js';
+import { requestKeycloakAccessToken } from './auth/keycloak-auth-provider.js';
 import { createTenantContext } from './factories/tenant-factory.js';
-import { type ProjectFixtures, seedActiveProject } from './fixtures/projects-fixtures.js';
+import { createProjectInput } from './factories/project-factory.js';
+import {
+  identitiesForTest,
+  provisionLiveFixtureGraph,
+  type LiveFixtureFixtures,
+} from './fixtures/live-fixtures.js';
+import {
+  type ProjectFixtures,
+  seedActiveProject,
+  seedReferencedProject,
+  seedResolutionProjects,
+} from './fixtures/projects-fixtures.js';
 import type { ApiRequest } from './helpers/projects-api-client.js';
 
 /**
@@ -30,28 +39,23 @@ import type { ApiRequest } from './helpers/projects-api-client.js';
  *  - seededProject       active project converged in the read model (custom)
  */
 
-// Register the auth provider at module load (before any fixture resolves a token).
-setAuthProvider(keycloakAuthProvider);
-
-// auth-session ships fixture factories (not a ready test object) — build one from base.
-// playwright-utils returns these as a plain object that isn't expressed in Playwright's
-// `Fixtures<>` types, so strict tsc can't infer the added test args. Pin them explicitly
-// via the library's own `AuthFixtures` type so `authToken` flows through `mergeTests`;
-// the runtime object is exactly what the auth-session fragment documents.
-const authFixture = base.extend<AuthFixtures>(
-  createAuthFixtures() as unknown as Parameters<typeof base.extend<AuthFixtures>>[0],
-);
-
 const utilsTest = mergeTests(
   apiRequestFixture,
-  authFixture,
   recurseFixture,
   logFixture,
   interceptFixture,
   networkErrorMonitorFixture,
 );
 
-export const test = utilsTest.extend<ProjectFixtures>({
+interface DirectAuthFixtures {
+  authToken: string;
+}
+
+export const test = utilsTest.extend<ProjectFixtures & LiveFixtureFixtures & DirectAuthFixtures>({
+  authToken: async ({ request }, use) => {
+    await use(process.env.E2E_LIVE_APPHOST === '1' ? await requestKeycloakAccessToken(request) : 'offline-token');
+  },
+
   apiRequest: async ({ apiRequest }, use) => {
     const projectsApiRequest = (<T = unknown>(params: Parameters<ApiRequest>[0]) =>
       apiRequest<T>({
@@ -66,9 +70,62 @@ export const test = utilsTest.extend<ProjectFixtures>({
     await use(createTenantContext(tenantId ? { tenantId } : undefined));
   },
 
-  seededProject: async ({ apiRequest, authToken, recurse, tenantContext }, use) => {
-    const { project, cleanup } = await seedActiveProject({ apiRequest, authToken, recurse, tenantContext });
+  liveFixtureIdentities: async ({}, use, testInfo) => {
+    await use(identitiesForTest(testInfo));
+  },
+
+  liveFixtureGraph: async ({ liveFixtureIdentities }, use, testInfo) => {
+    const { graph, cleanup } = await provisionLiveFixtureGraph(liveFixtureIdentities);
+    await use(graph);
+    const result = await cleanup();
+    if (!result.succeeded) {
+      await testInfo.attach('live-fixture-cleanup.json', {
+        body: JSON.stringify(result),
+        contentType: 'application/json',
+      });
+      if (testInfo.status === testInfo.expectedStatus) {
+        throw new Error('[live-fixtures] one or more sibling cleanup roles did not succeed.');
+      }
+    }
+  },
+
+  seededProject: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use) => {
+    const requestIdentity = fixtureRequestIdentity(liveFixtureGraph);
+    const { project, cleanup } = await seedActiveProject(
+      { apiRequest, authToken, recurse, tenantContext, requestIdentity },
+      createProjectInput({ projectId: liveFixtureGraph.projectId }),
+    );
     await use(project);
+    await cleanup();
+  },
+
+  referencedProject: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use) => {
+    const { project, cleanup } = await seedReferencedProject(
+      {
+        apiRequest,
+        authToken,
+        recurse,
+        tenantContext,
+        requestIdentity: fixtureRequestIdentity(liveFixtureGraph),
+      },
+      liveFixtureGraph,
+    );
+    await use(project);
+    await cleanup();
+  },
+
+  resolutionProjects: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use) => {
+    const { projects, cleanup } = await seedResolutionProjects(
+      {
+        apiRequest,
+        authToken,
+        recurse,
+        tenantContext,
+        requestIdentity: fixtureRequestIdentity(liveFixtureGraph),
+      },
+      liveFixtureGraph,
+    );
+    await use(projects);
     await cleanup();
   },
 });
@@ -92,6 +149,14 @@ function requireLiveFixtureEnv(name: string): string {
     throw new Error(`[projects-fixtures] ${name} must be set for AppHost-backed tests.`);
   }
   return value;
+}
+
+function fixtureRequestIdentity(graph: LiveFixtureFixtures['liveFixtureGraph']) {
+  return {
+    correlationId: graph.correlationId,
+    taskId: graph.taskId,
+    idempotencyKey: graph.idempotencyKey,
+  };
 }
 
 export { expect };

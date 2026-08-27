@@ -53,6 +53,21 @@
           }
         },
         {
+          "name": "current-tenant-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "current_tenant",
+            "claim.name": "eventstore:current-tenant",
+            "jsonType.label": "String",
+            "multivalued": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
           "name": "domains-mapper",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-usermodel-attribute-mapper",
@@ -102,17 +117,18 @@
       ]
     },
     {
-      "clientId": "hexalith-frontshell",
-      "name": "Hexalith FrontShell",
-      "description": "FrontShell SPA client (Authorization Code + PKCE)",
+      "clientId": "hexalith-projects-ui",
+      "name": "Hexalith Projects UI",
+      "description": "Projects UI confidential authorization-code client for local E2E",
       "enabled": true,
-      "publicClient": true,
+      "publicClient": false,
+      "secret": "projects-ui-local-e2e",
       "directAccessGrantsEnabled": false,
       "standardFlowEnabled": true,
       "serviceAccountsEnabled": false,
       "fullScopeAllowed": true,
-      "redirectUris": ["http://localhost:*"],
-      "webOrigins": ["*"],
+      "redirectUris": ["http://localhost:*", "https://localhost:*"],
+      "webOrigins": ["http://localhost:*", "https://localhost:*"],
       "protocolMappers": [
         {
           "name": "audience-mapper",
@@ -139,6 +155,21 @@
             "access.token.claim": "true",
             "userinfo.token.claim": "true",
             "aggregate.attrs": "true"
+          }
+        },
+        {
+          "name": "current-tenant-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "current_tenant",
+            "claim.name": "eventstore:current-tenant",
+            "jsonType.label": "String",
+            "multivalued": "false",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
           }
         },
         {
@@ -210,8 +241,9 @@
       ],
       "attributes": {
         "tenants": ["tenant-a", "tenant-b", "system"],
+        "current_tenant": ["tenant-a"],
         "domains": ["orders", "inventory", "counter"],
-        "permissions": ["command:submit", "command:replay", "command:query", "projects:list", "projects:read", "projects:create", "projects:update_setup", "projects:archive", "projects:restore"],
+        "permissions": ["command:submit", "command:replay", "command:query", "projects:list", "projects:read", "projects:create", "projects:update_setup", "projects:archive", "projects:restore", "projects:link_conversation", "projects:move_conversation", "projects:unlink_conversation", "projects:confirm_resolution", "projects:set_folder", "projects:link_file_reference", "projects:unlink_file_reference", "projects:link_memory", "projects:unlink_memory"],
         "global_admin": ["true"]
       }
     },
@@ -233,8 +265,9 @@
       ],
       "attributes": {
         "tenants": ["tenant-a"],
+        "current_tenant": ["tenant-a"],
         "domains": ["orders", "projects"],
-        "permissions": ["command:submit", "command:query", "projects:list", "projects:read", "projects:create", "projects:update_setup", "projects:archive", "projects:restore"]
+        "permissions": ["command:submit", "command:query", "projects:list", "projects:read", "projects:create", "projects:update_setup", "projects:archive", "projects:restore", "projects:link_conversation", "projects:move_conversation", "projects:unlink_conversation", "projects:confirm_resolution", "projects:set_folder", "projects:link_file_reference", "projects:unlink_file_reference", "projects:link_memory", "projects:unlink_memory"]
       }
     },
     {
@@ -255,6 +288,7 @@
       ],
       "attributes": {
         "tenants": ["tenant-b"],
+        "current_tenant": ["tenant-b"],
         "domains": ["inventory"],
         "permissions": ["command:submit"]
       }
@@ -277,6 +311,7 @@
       ],
       "attributes": {
         "tenants": ["tenant-a"],
+        "current_tenant": ["tenant-a"],
         "domains": ["orders"],
         "permissions": ["command:query"]
       }

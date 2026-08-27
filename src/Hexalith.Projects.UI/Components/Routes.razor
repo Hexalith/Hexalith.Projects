@@ -1,20 +1,35 @@
 @using System.Reflection
 @using Hexalith.Projects.Contracts.Ui
 
-<Router AppAssembly="@typeof(ProjectsUIModule).Assembly"
-        AdditionalAssemblies="@AdditionalAssemblies">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <LayoutView Layout="@typeof(Layout.MainLayout)">
-            <ProjectEmptyStateView State="@ProjectEmptyState.NoProjects()" ProjectionType="@typeof(ProjectOperatorDiagnosticShellProjection)" />
-        </LayoutView>
-    </NotFound>
-</Router>
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(ProjectsUIModule).Assembly"
+            AdditionalAssemblies="@AdditionalAssemblies">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
+                <NotAuthorized Context="authState">
+                    @if (authState.User.Identity?.IsAuthenticated != true)
+                    {
+                        <RedirectToChallenge />
+                    }
+                    else
+                    {
+                        <FluentText role="alert">You are not authorized to view this area.</FluentText>
+                    }
+                </NotAuthorized>
+                <Authorizing>
+                    <FluentText role="status" aria-live="polite">Authorizing...</FluentText>
+                </Authorizing>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(Layout.MainLayout)">
+                <ProjectEmptyStateView State="@ProjectEmptyState.NoProjects()" ProjectionType="@typeof(ProjectOperatorDiagnosticShellProjection)" />
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
 
 @code {
     private static readonly Assembly[] AdditionalAssemblies = [typeof(ProjectsFrontComposerDomain).Assembly];
 }
-

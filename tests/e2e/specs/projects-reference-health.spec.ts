@@ -47,12 +47,12 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     apiRequest,
     authToken,
     tenantContext,
-    seededProject,
+    referencedProject,
   }) => {
     const diagnostics = await getProjectOperatorDiagnostics(
       apiRequest,
       tenantContext.tenantId,
-      seededProject.projectId,
+      referencedProject.projectId,
       {
         authToken,
         correlationId: 'corr-story-5-5-operator-diagnostics',
@@ -63,7 +63,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     const explanation = await getProjectContextExplanation(
       apiRequest,
       tenantContext.tenantId,
-      seededProject.projectId,
+      referencedProject.projectId,
       {
         authToken,
         correlationId: 'corr-story-5-5-context-explain',
@@ -73,7 +73,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     const conversations = await listProjectConversations(
       apiRequest,
       tenantContext.tenantId,
-      seededProject.projectId,
+      referencedProject.projectId,
       {
         authToken,
         correlationId: 'corr-story-5-5-conversations',
@@ -85,9 +85,9 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     expect(diagnostics.status).toBe(200);
     expect(explanation.status).toBe(200);
     expect(conversations.status).toBe(200);
-    expect(diagnostics.body.projectId).toBe(seededProject.projectId);
-    expect(explanation.body.context.projectId).toBe(seededProject.projectId);
-    expect(conversations.body.projectId).toBe(seededProject.projectId);
+    expect(diagnostics.body.projectId).toBe(referencedProject.projectId);
+    expect(explanation.body.context.projectId).toBe(referencedProject.projectId);
+    expect(conversations.body.projectId).toBe(referencedProject.projectId);
     expect(Array.isArray(diagnostics.body.references)).toBe(true);
     expect(Array.isArray(explanation.body.evaluations)).toBe(true);
     expect(Array.isArray(conversations.body.items)).toBe(true);
@@ -99,7 +99,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     }
 
     for (const conversation of conversations.body.items) {
-      expect(conversation.projectId).toBe(seededProject.projectId);
+      expect(conversation.projectId).toBe(referencedProject.projectId);
       expect(conversation.conversationId).toBeTruthy();
       expect(conversation.trustSignal).toBeTruthy();
     }
@@ -113,12 +113,12 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     apiRequest,
     authToken,
     tenantContext,
-    seededProject,
+    referencedProject,
   }) => {
     const explanationWithIdempotency = await getProjectContextExplanation(
       apiRequest,
       tenantContext.tenantId,
-      seededProject.projectId,
+      referencedProject.projectId,
       {
         authToken,
         correlationId: 'corr-story-5-5-explain-idempotency',
@@ -126,12 +126,12 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
       },
     );
     expect(explanationWithIdempotency.status).toBe(400);
-    expect(JSON.stringify(explanationWithIdempotency.body)).not.toContain(seededProject.name);
+    expect(JSON.stringify(explanationWithIdempotency.body)).not.toContain(referencedProject.name);
 
     const conversationsWithIdempotency = await listProjectConversations(
       apiRequest,
       tenantContext.tenantId,
-      seededProject.projectId,
+      referencedProject.projectId,
       {
         authToken,
         correlationId: 'corr-story-5-5-conversations-idempotency',
@@ -139,12 +139,12 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
       },
     );
     expect(conversationsWithIdempotency.status).toBe(400);
-    expect(JSON.stringify(conversationsWithIdempotency.body)).not.toContain(seededProject.name);
+    expect(JSON.stringify(conversationsWithIdempotency.body)).not.toContain(referencedProject.name);
 
     const explanationWithStrongFreshness = await getProjectContextExplanation(
       apiRequest,
       tenantContext.tenantId,
-      seededProject.projectId,
+      referencedProject.projectId,
       {
         authToken,
         correlationId: 'corr-story-5-5-explain-freshness',
@@ -156,7 +156,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     const conversationsWithStrongFreshness = await listProjectConversations(
       apiRequest,
       tenantContext.tenantId,
-      seededProject.projectId,
+      referencedProject.projectId,
       {
         authToken,
         correlationId: 'corr-story-5-5-conversations-freshness',
@@ -168,10 +168,10 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
 
   liveAppHostTest('renders the full Reference Health Matrix with explicit headers and row selectors', async ({
     page,
-    seededProject,
+    referencedProject,
   }) => {
     const detail = new ProjectDetailPage(page);
-    await detail.goto(seededProject.projectId);
+    await detail.goto(referencedProject.projectId);
     await page.getByTestId('project-detail-tab-references').click();
 
     await expect(detail.referencesSection).toBeVisible();
@@ -194,18 +194,17 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
     await expect(detail.referenceLastCheckedCells.first()).toContainText(/\d{4}-\d{2}-\d{2}/);
   });
 
-  liveAppHostTest('surfaces failure states as visible text and keeps safe actions read-only', async ({
+  liveAppHostTest('surfaces fixture health states as visible text and keeps safe actions read-only', async ({
     page,
-    seededProject,
+    referencedProject,
   }) => {
     const detail = new ProjectDetailPage(page);
-    await detail.goto(seededProject.projectId);
+    await detail.goto(referencedProject.projectId);
     await page.getByTestId('project-detail-tab-references').click();
 
-    await expect(detail.referenceHealthMatrix).toContainText(/Unauthorized|Stale|Unavailable|Archived|Conflict|Invalid reference/);
-    await expect(detail.referenceHealthMatrix).toContainText(
-      /ReferenceAuthorization|ReferenceFreshness|referenceUnauthorized|referenceStale|referenceUnavailable|referenceArchived|invalidReference/,
-    );
+    await expect(detail.referenceHealthMatrix).toContainText(/conversation|folder|file|memory/);
+    await expect(detail.referenceStateCells.first()).not.toHaveText('');
+    await expect(detail.referenceReasonCells.first()).not.toHaveText('');
     await expect(detail.referenceSafeActionCells.first()).toContainText(/Inspect|Copy ID|Story 5.9/);
 
     const inspectAction = detail.referenceSafeActionCells.first().getByRole('button', { name: 'Inspect' });

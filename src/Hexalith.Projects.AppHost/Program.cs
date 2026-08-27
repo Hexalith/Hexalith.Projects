@@ -5,6 +5,8 @@ using Hexalith.Projects.AppHost;
 using Hexalith.Projects.Aspire;
 
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
+const string projectsUiOidcClientId = "hexalith-projects-ui";
+const string projectsUiOidcClientSecret = "projects-ui-local-e2e";
 
 string daprComponentsPath = ProjectsAppHost.ResolveDaprComponentsPath(
     builder.AppHostDirectory,
@@ -18,10 +20,23 @@ _ = ProjectsAppHost.ResolveDaprConfigPath(
     Directory.GetCurrentDirectory(),
     "resiliency.yaml");
 string redisHost = builder.Configuration["Dapr:RedisHost"] ?? ProjectsAspireModule.LocalDaprRedisHost;
+(string? daprPlacementHostAddress, string? daprSchedulerHostAddress) = AspireDaprLocalServiceEndpoints.Resolve(
+    builder.Configuration[AspireDaprLocalServiceEndpoints.PlacementHostAddressKey],
+    builder.Configuration[AspireDaprLocalServiceEndpoints.SchedulerHostAddressKey]);
 HexalithEventStoreSecurityResources? security = builder.AddHexalithEventStoreSecurity();
 
 IResourceBuilder<ProjectResource> eventStore = builder.AddProject<Projects.Hexalith_EventStore>(ProjectsAspireModule.EventStoreAppId);
 ConfigureProjectsEventStoreDomainRegistrations(eventStore);
+if (ProjectsLiveE2EFixtureProfile.IsEnabled(builder.Configuration))
+{
+    // A parallel browser lane must not serialize every accepted command behind EventStore's
+    // tenant-wide projection ETag actor. Use the platform-supported polling mode only for the
+    // explicit fixture profile; /project is still exercised asynchronously at this short cadence.
+    _ = eventStore.WithEnvironment(
+        "EventStore__Projections__Domains__projects__RefreshIntervalMs",
+        "250");
+}
+
 IResourceBuilder<ProjectResource> tenants = builder.AddProject<Projects.Hexalith_Tenants>(ProjectsAspireModule.TenantsAppId);
 _ = eventStore
     .WithReference(tenants)
@@ -43,6 +58,8 @@ IResourceBuilder<ProjectResource> projectsUi = builder.AddProject<Projects.Hexal
 IResourceBuilder<ProjectResource> projectsWorkers = builder.AddProject<Projects.Hexalith_Projects_Workers>(ProjectsAspireModule.ProjectsWorkersAppId)
     .WithHttpEndpoint();
 
+_ = ProjectsLiveE2EFixtureProfile.AddResources(builder, projects);
+
 _ = builder.AddHexalithProjects(
     eventStore,
     tenants,
@@ -50,7 +67,9 @@ _ = builder.AddHexalithProjects(
     projectsWorkers,
     redisHost,
     accessControlConfigPath,
-    daprComponentsPath);
+    daprComponentsPath,
+    daprPlacementHostAddress,
+    daprSchedulerHostAddress);
 
 if (security is not null)
 {
@@ -61,7 +80,10 @@ if (security is not null)
         // The project's default launch profile must never override AppHost-provided OIDC.
         .WithEnvironment("Authentication__JwtBearer__AllowAnonymousDevelopment", "false");
     _ = projectsWorkers.WithSecurityDependency(security);
-    _ = projectsUi.WithSecurityDependency(security);
+    _ = projectsUi.WithOpenIdConnectSecurity(
+        security,
+        projectsUiOidcClientId,
+        projectsUiOidcClientSecret);
 }
 
 _ = projectsUi

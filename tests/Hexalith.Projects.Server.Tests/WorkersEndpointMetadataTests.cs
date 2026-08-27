@@ -5,6 +5,8 @@
 
 namespace Hexalith.Projects.Server.Tests;
 
+using System.Text;
+
 using Hexalith.Projects.Workers;
 
 using Microsoft.AspNetCore.Builder;
@@ -31,6 +33,52 @@ public sealed class WorkersEndpointMetadataTests
         ProjectsWorkersModule.ProjectEventsRoute.ShouldBe("/projects/events");
         ProjectsWorkersModule.ProjectEventsTopicName.ShouldBe("projects.events");
         ProjectsWorkersModule.ProjectEventsDeadLetterTopicName.ShouldBe("deadletter.projects.events");
+    }
+
+    /// <summary>Verifies the flat EventStore publisher payload retains all projection metadata.</summary>
+    [Fact]
+    public void ProjectEventWireEnvelopeShouldConvertToContractsEnvelope()
+    {
+        DateTimeOffset timestamp = DateTimeOffset.Parse("2026-08-27T03:26:11Z", System.Globalization.CultureInfo.InvariantCulture);
+        byte[] payload = Encoding.UTF8.GetBytes("{\"projectId\":\"project-1\"}");
+        var wireEnvelope = new ProjectEventWireEnvelope(
+            "message-1",
+            "project-1",
+            "Project",
+            "tenant-1",
+            "projects",
+            3,
+            42,
+            timestamp,
+            "correlation-1",
+            "causation-1",
+            "user-1",
+            "1.0.0",
+            "Hexalith.Projects.Contracts.Events.ProjectCreated",
+            1,
+            "json",
+            payload,
+            new Dictionary<string, string> { ["trace"] = "value" });
+
+        Hexalith.EventStore.Contracts.Events.EventEnvelope envelope = wireEnvelope.ToEventEnvelope();
+
+        envelope.Metadata.MessageId.ShouldBe("message-1");
+        envelope.Metadata.AggregateId.ShouldBe("project-1");
+        envelope.Metadata.AggregateType.ShouldBe("Project");
+        envelope.Metadata.TenantId.ShouldBe("tenant-1");
+        envelope.Metadata.Domain.ShouldBe("projects");
+        envelope.Metadata.SequenceNumber.ShouldBe(3);
+        envelope.Metadata.GlobalPosition.ShouldBe(42);
+        envelope.Metadata.Timestamp.ShouldBe(timestamp);
+        envelope.Metadata.CorrelationId.ShouldBe("correlation-1");
+        envelope.Metadata.CausationId.ShouldBe("causation-1");
+        envelope.Metadata.UserId.ShouldBe("user-1");
+        envelope.Metadata.DomainServiceVersion.ShouldBe("1.0.0");
+        envelope.Metadata.EventTypeName.ShouldBe("Hexalith.Projects.Contracts.Events.ProjectCreated");
+        envelope.Metadata.MetadataVersion.ShouldBe(1);
+        envelope.Metadata.SerializationFormat.ShouldBe("json");
+        envelope.Payload.ShouldBe(payload);
+        envelope.Extensions.ShouldContainKeyAndValue("trace", "value");
     }
 
     /// <summary>Verifies mapped Dapr topic metadata carries dead-letter topics.</summary>

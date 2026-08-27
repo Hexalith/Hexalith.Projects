@@ -9,33 +9,21 @@ import { faker } from '@faker-js/faker';
  * validation and asserted absent by the NoPayloadLeakage harness (NFR-2 / FS-1 / FS-2).
  */
 
-/** Durable Project Setup subset — conversation behaviour / context policy, not provider internals. */
-export interface ProjectSetupInput {
-  /** Free-text project goals (safe, user-authored guidance). */
-  goals?: string;
-  /** Durable conversation instructions. */
-  instructions?: string;
-  /** Default policy for whether linked sources are included at conversation start. */
-  includeLinkedSourcesByDefault?: boolean;
-}
-
 export interface CreateProjectInput {
+  /** Optional caller-owned deterministic identity for live-fixture isolation. */
+  projectId?: string;
   /** Required: the project name. */
   name: string;
   /** Optional human-readable description. */
   description?: string;
-  /** Optional durable setup. */
-  setup?: ProjectSetupInput;
+  /** Optional durable setup metadata. */
+  setupMetadata?: string;
 }
 
 export const createProjectInput = (overrides: Partial<CreateProjectInput> = {}): CreateProjectInput => ({
   name: `${faker.commerce.productAdjective()} ${faker.commerce.department()} Project ${faker.string.alphanumeric(6)}`,
   description: faker.lorem.sentence(),
-  setup: {
-    goals: faker.company.catchPhrase(),
-    instructions: faker.lorem.sentence(),
-    includeLinkedSourcesByDefault: true,
-  },
+  setupMetadata: `${faker.company.catchPhrase()}. ${faker.lorem.sentence()}`,
   ...overrides,
 });
 
@@ -52,9 +40,7 @@ export const createMinimalProjectInput = (overrides: Partial<CreateProjectInput>
  */
 export const createForbiddenSetupInput = (overrides: Partial<CreateProjectInput> = {}): CreateProjectInput => ({
   name: `Rejected Project ${faker.string.alphanumeric(6)}`,
-  setup: {
-    // Deliberately forbidden content — must be rejected, never persisted or logged.
-    instructions: 'AWS_SECRET_ACCESS_KEY=AKIAFAKEFAKEFAKE12345 and path C:\\Users\\admin\\secrets.txt',
-  },
+  // Deliberately forbidden content — must be rejected, never persisted or logged.
+  setupMetadata: 'AWS_SECRET_ACCESS_KEY=AKIAFAKEFAKEFAKE12345 and path C:\\Users\\admin\\secrets.txt',
   ...overrides,
 });

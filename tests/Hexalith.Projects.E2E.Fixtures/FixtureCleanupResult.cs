@@ -5,9 +5,11 @@
 
 namespace Hexalith.Projects.E2E.Fixtures;
 
-/// <summary>Reports the observable reverse-order cleanup attempts and metadata-only failures.</summary>
-/// <param name="AttemptedRoles">The sibling roles in the exact order cleanup was attempted.</param>
-/// <param name="Failures">Metadata-only role and HTTP status diagnostics.</param>
+/// <summary>Reports the observable reverse-order cleanup attempts.</summary>
+/// <param name="Attempts">Metadata-only role and HTTP status results in attempt order.</param>
 public sealed record FixtureCleanupResult(
-    IReadOnlyList<string> AttemptedRoles,
-    IReadOnlyList<string> Failures);
+    IReadOnlyList<FixtureCleanupAttempt> Attempts)
+{
+    /// <summary>Gets a value indicating whether every role reached an idempotent successful outcome.</summary>
+    public bool Succeeded => Attempts.All(static attempt => attempt.Succeeded);
+}

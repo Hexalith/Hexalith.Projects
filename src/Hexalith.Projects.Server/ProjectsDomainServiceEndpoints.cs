@@ -836,6 +836,12 @@ public static partial class ProjectsDomainServiceEndpoints
             return ValidationProblem(correlationId, null, "idempotency_key");
         }
 
+        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
+        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
+        {
+            return ValidationProblem(correlationId, null, "freshness");
+        }
+
         if (!TryReadPageRequest(httpContext, out PageRequest? page))
         {
             return ValidationProblem(correlationId, null, "page");

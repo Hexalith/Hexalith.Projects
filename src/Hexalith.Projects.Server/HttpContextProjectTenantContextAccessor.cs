@@ -24,6 +24,7 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
 {
     // Canonical tenant claim type carried after claim transformation; matches the Hexalith convention.
     private const string TenantClaimType = "tenantId";
+    private const string EventStoreCurrentTenantClaimType = "eventstore:current-tenant";
     private const string EventStoreTenantClaimType = "eventstore:tenant";
     private const string EventStorePermissionClaimType = "eventstore:permission";
 
@@ -40,7 +41,9 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
                 return null;
             }
 
-            string? tenant = user.FindFirstValue(EventStoreTenantClaimType) ?? user.FindFirstValue(TenantClaimType);
+            string? tenant = user.FindFirstValue(EventStoreCurrentTenantClaimType)
+                ?? user.FindFirstValue(EventStoreTenantClaimType)
+                ?? user.FindFirstValue(TenantClaimType);
             return string.IsNullOrWhiteSpace(tenant) ? null : tenant;
         }
     }
@@ -72,7 +75,9 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
             return EventStoreClaimTransformEvidence.Missing();
         }
 
-        string? tenant = user.FindFirstValue(EventStoreTenantClaimType) ?? user.FindFirstValue(TenantClaimType);
+        string? tenant = user.FindFirstValue(EventStoreCurrentTenantClaimType)
+            ?? user.FindFirstValue(EventStoreTenantClaimType)
+            ?? user.FindFirstValue(TenantClaimType);
         string? principal = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
         if (string.IsNullOrWhiteSpace(tenant) || string.IsNullOrWhiteSpace(principal))
         {

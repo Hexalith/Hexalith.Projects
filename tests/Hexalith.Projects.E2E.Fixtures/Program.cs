@@ -42,14 +42,9 @@ if (role == "control")
         FixtureProxy proxy,
         CancellationToken cancellationToken) =>
     {
-        IReadOnlyList<string> failures = await proxy.RemoveAsync(graphId, cancellationToken).ConfigureAwait(false);
+        FixtureCleanupResult cleanup = await proxy.RemoveAsync(graphId, cancellationToken).ConfigureAwait(false);
         _ = state.Remove(graphId);
-        return failures.Count == 0
-            ? Results.NoContent()
-            : Results.Problem(statusCode: 502, title: "Fixture cleanup was incomplete.", extensions: new Dictionary<string, object?>
-            {
-                ["failures"] = failures,
-            });
+        return Results.Json(cleanup, statusCode: cleanup.Succeeded ? StatusCodes.Status200OK : StatusCodes.Status502BadGateway);
     });
 }
 else if (role == "conversations")
@@ -117,8 +112,8 @@ else if (role == "conversations")
         return Results.Accepted(value: new
         {
             schemaVersion = 1,
-            tenantId = graph.TenantId,
-            conversationId,
+            tenantId = $"tenant:{graph.TenantId}",
+            conversationId = $"conv:{conversationId}",
             commandType = "ReassignConversationProjectCommand",
             correlationId,
             idempotencyKey,
@@ -253,8 +248,8 @@ static object ConversationSummary(LiveFixtureGraph graph, string conversationId,
     return new
     {
         schemaVersion = 1,
-        tenantId = graph.TenantId,
-        conversationId,
+        tenantId = $"tenant:{graph.TenantId}",
+        conversationId = $"conv:{conversationId}",
         freshness = new
         {
             projectionContractSchemaVersion = 1,
@@ -269,8 +264,8 @@ static object ConversationSummary(LiveFixtureGraph graph, string conversationId,
         },
         lifecycleState = "Open",
         label = $"Fixture conversation {graph.Scenario}",
-        projectId,
-        folderId = graph.FolderId,
+        projectId = projectId is null ? null : $"project:{projectId}",
+        folderId = $"folder:{graph.FolderId}",
         participantPartyIds = Array.Empty<string>(),
         messageCount = 0,
         fileReferenceCount = 1,

@@ -13,9 +13,6 @@ import { confirmProjectResolution, resolveProjectFromAttachments } from '../supp
  * still requires seeded folder/file reference fixtures.
  */
 test.describe('Projects resolution', () => {
-  const folderId = 'folder-001';
-  const fileId = 'file-001';
-
   function assertNoResolutionPayloadLeakage(serialized: string, tenantId: string): void {
     expect(serialized).not.toContain('tenantId');
     expect(serialized).not.toContain(tenantId);
@@ -28,12 +25,13 @@ test.describe('Projects resolution', () => {
     apiRequest,
     authToken,
     tenantContext,
-    seededProject,
+    resolutionProjects,
+    liveFixtureGraph,
   }) => {
     const { status, body } = await resolveProjectFromAttachments(
       apiRequest,
       tenantContext.tenantId,
-      { folderIds: [folderId] },
+      { folderIds: [liveFixtureGraph.folderId] },
       { authToken, correlationId: 'corr-resolution-folder' },
     );
 
@@ -41,7 +39,7 @@ test.describe('Projects resolution', () => {
     expect(body.result).toBe('SingleCandidate');
     expect(body.candidates).toContainEqual(
       expect.objectContaining({
-        projectId: seededProject.projectId,
+        projectId: resolutionProjects.primary.projectId,
         reasonCodes: expect.arrayContaining(['ProjectFolderMatched']),
       }),
     );
@@ -52,12 +50,13 @@ test.describe('Projects resolution', () => {
     apiRequest,
     authToken,
     tenantContext,
-    seededProject,
+    resolutionProjects,
+    liveFixtureGraph,
   }) => {
     const { status, body } = await resolveProjectFromAttachments(
       apiRequest,
       tenantContext.tenantId,
-      { fileIds: [fileId] },
+      { fileIds: [liveFixtureGraph.fileReferenceId] },
       { authToken, correlationId: 'corr-resolution-file' },
     );
 
@@ -65,7 +64,7 @@ test.describe('Projects resolution', () => {
     expect(body.result).toBe('SingleCandidate');
     expect(body.candidates).toContainEqual(
       expect.objectContaining({
-        projectId: seededProject.projectId,
+        projectId: resolutionProjects.secondary.projectId,
         reasonCodes: expect.arrayContaining(['FileReferenceMatched']),
       }),
     );
@@ -76,17 +75,21 @@ test.describe('Projects resolution', () => {
     apiRequest,
     authToken,
     tenantContext,
+    liveFixtureGraph,
+    resolutionProjects,
   }) => {
     const { status, body } = await resolveProjectFromAttachments(
       apiRequest,
       tenantContext.tenantId,
-      { folderIds: [folderId], fileIds: [fileId] },
+      { folderIds: [liveFixtureGraph.folderId], fileIds: [liveFixtureGraph.fileReferenceId] },
       { authToken, correlationId: 'corr-resolution-multiple' },
     );
 
     expect(status).toBe(200);
     expect(body.result).toBe('MultipleCandidates');
-    expect(body.candidates.length).toBeGreaterThan(1);
+    expect(body.candidates.map((candidate) => candidate.projectId)).toEqual(
+      expect.arrayContaining([resolutionProjects.primary.projectId, resolutionProjects.secondary.projectId]),
+    );
     expect(JSON.stringify(body)).not.toContain('attached');
     assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
   });
@@ -95,11 +98,12 @@ test.describe('Projects resolution', () => {
     apiRequest,
     authToken,
     tenantContext,
+    liveFixtureGraph,
   }) => {
     const idempotencyRejected = await resolveProjectFromAttachments(
       apiRequest,
       tenantContext.tenantId,
-      { folderIds: [folderId] },
+      { folderIds: [liveFixtureGraph.folderId] },
       {
         authToken,
         correlationId: 'corr-resolution-idempotency',
@@ -111,7 +115,7 @@ test.describe('Projects resolution', () => {
     const freshnessRejected = await resolveProjectFromAttachments(
       apiRequest,
       tenantContext.tenantId,
-      { folderIds: [folderId] },
+      { folderIds: [liveFixtureGraph.folderId] },
       {
         authToken,
         correlationId: 'corr-resolution-freshness',
@@ -143,11 +147,11 @@ test.describe('Projects resolution', () => {
     expect(malformed.status).toBe(404);
   });
 
-  liveAppHostTest('ambiguous resolution returns MultipleCandidates and never silently attaches (E1 / R10)', async ({ apiRequest, authToken, tenantContext }) => {
+  liveAppHostTest('ambiguous resolution returns MultipleCandidates and never silently attaches (E1 / R10)', async ({ apiRequest, authToken, tenantContext, liveFixtureGraph, resolutionProjects }) => {
     const { status, body } = await apiRequest<{ result: string; candidates: unknown[] }>({
       method: 'GET',
       path: '/api/v1/projects/resolution/from-conversation',
-      params: { conversationId: 'conv-ambiguous' },
+      params: { conversationId: liveFixtureGraph.ambiguousConversationId },
       headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
     });
     expect(status).toBe(200);
@@ -155,23 +159,24 @@ test.describe('Projects resolution', () => {
     // NFR-9: ambiguity asks for confirmation; nothing is attached automatically.
     expect(JSON.stringify(body)).not.toContain('attached');
     expect(body.candidates.length).toBeGreaterThan(1);
+    expect(JSON.stringify(body.candidates)).toContain(resolutionProjects.primary.projectId);
+    expect(JSON.stringify(body.candidates)).toContain(resolutionProjects.secondary.projectId);
   });
 
   liveAppHostTest('confirming a candidate accepts only explicit MultipleCandidates evidence (FR-14 / AC2,3,4)', async ({
     apiRequest,
     authToken,
     tenantContext,
-    seededProject,
+    resolutionProjects,
+    liveFixtureGraph,
   }) => {
-    const sourceProjectId = 'project-source-001';
     const { status, body } = await confirmProjectResolution(
       apiRequest,
       tenantContext.tenantId,
       {
-        projectId: seededProject.projectId,
-        conversationId: 'conv-ambiguous',
-        candidateProjectIds: [seededProject.projectId, sourceProjectId],
-        sourceProjectId,
+        projectId: resolutionProjects.primary.projectId,
+        conversationId: liveFixtureGraph.ambiguousConversationId,
+        candidateProjectIds: [resolutionProjects.primary.projectId, resolutionProjects.secondary.projectId],
       },
       {
         authToken,
@@ -190,17 +195,18 @@ test.describe('Projects resolution', () => {
     apiRequest,
     authToken,
     tenantContext,
-    seededProject,
+    resolutionProjects,
+    liveFixtureGraph,
   }) => {
-    const path = `/api/v1/projects/${seededProject.projectId}/conversations/conv-ambiguous/resolution/confirm`;
+    const path = `/api/v1/projects/${resolutionProjects.primary.projectId}/conversations/${liveFixtureGraph.ambiguousConversationId}/resolution/confirm`;
     const body = {
       requestSchemaVersion: 'v1',
       operation: 'confirm',
-      projectId: seededProject.projectId,
-      conversationId: 'conv-ambiguous',
+      projectId: resolutionProjects.primary.projectId,
+      conversationId: liveFixtureGraph.ambiguousConversationId,
       resolutionResult: 'MultipleCandidates',
       confirmed: true,
-      candidateProjectIds: [seededProject.projectId, 'project-source-001'],
+      candidateProjectIds: [resolutionProjects.primary.projectId, resolutionProjects.secondary.projectId],
     };
 
     const missingIdempotency = await apiRequest({
@@ -225,11 +231,11 @@ test.describe('Projects resolution', () => {
     expect(notAmbiguous.status).toBe(400);
   });
 
-  liveAppHostTest('archived projects are excluded from resolution unless explicitly requested (E1)', async ({ apiRequest, authToken, tenantContext }) => {
+  liveAppHostTest('archived projects are excluded from resolution unless explicitly requested (E1)', async ({ apiRequest, authToken, tenantContext, liveFixtureGraph }) => {
     const { body } = await apiRequest<{ candidates: Array<{ lifecycle: string }> }>({
       method: 'GET',
       path: '/api/v1/projects/resolution/from-conversation',
-      params: { conversationId: 'conv-1', includeArchived: false },
+      params: { conversationId: liveFixtureGraph.conversationId, includeArchived: false },
       headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
     });
     expect(body.candidates.every((c) => c.lifecycle !== 'archived')).toBe(true);

@@ -8,6 +8,17 @@ export interface LiveFixtureGraph extends LiveFixtureIdentities {
   filePath: string;
 }
 
+export interface FixtureCleanupAttempt {
+  role: string;
+  statusCode: number | null;
+  succeeded: boolean;
+}
+
+export interface FixtureCleanupResult {
+  attempts: FixtureCleanupAttempt[];
+  succeeded: boolean;
+}
+
 /** Provisions a metadata-only sibling graph through the profile-scoped control resource. */
 export async function createLiveFixtureGraph(
   request: APIRequestContext,
@@ -15,19 +26,19 @@ export async function createLiveFixtureGraph(
 ): Promise<LiveFixtureGraph> {
   const response = await request.post('/api/v1/live-fixtures/graphs', { data: graph });
   if (response.status() !== 201) {
-    throw new Error(`[live-fixtures] graph ${graph.graphId} seed failed (${response.status()}): ${await safeBody(response)}`);
+    throw new Error(`[live-fixtures] graph seed failed (${response.status()}).`);
   }
   return (await response.json()) as LiveFixtureGraph;
 }
 
 /** Deletes one run-scoped graph; the control host performs role cleanup in reverse order. */
-export async function deleteLiveFixtureGraph(request: APIRequestContext, graphId: string): Promise<void> {
+export async function deleteLiveFixtureGraph(
+  request: APIRequestContext,
+  graphId: string,
+): Promise<FixtureCleanupResult> {
   const response = await request.delete(`/api/v1/live-fixtures/graphs/${encodeURIComponent(graphId)}`);
-  if (response.status() !== 204 && response.status() !== 404) {
-    throw new Error(`[live-fixtures] graph ${graphId} cleanup failed (${response.status()}): ${await safeBody(response)}`);
+  if (response.status() !== 200 && response.status() !== 502) {
+    throw new Error(`[live-fixtures] graph cleanup failed (${response.status()}).`);
   }
-}
-
-async function safeBody(response: { text(): Promise<string> }): Promise<string> {
-  return (await response.text()).replace(/\s+/g, ' ').slice(0, 800);
+  return (await response.json()) as FixtureCleanupResult;
 }

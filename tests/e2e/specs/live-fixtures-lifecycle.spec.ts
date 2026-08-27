@@ -40,6 +40,8 @@ test.describe('live fixture lifecycle', () => {
     });
     const graph: LiveFixtureGraph = {
       ...identities,
+      runId: identities.runId.slice(0, 128),
+      scenario: identities.scenario.slice(0, 128),
       tenantId: liveFixtureGraph.tenantId,
       principalId: liveFixtureGraph.principalId,
       filePath: liveFixtureGraph.filePath,
@@ -53,7 +55,9 @@ test.describe('live fixture lifecycle', () => {
     try {
       await createLiveFixtureGraph(control, graph);
       created = true;
-      await deleteLiveFixtureGraph(control, graph.graphId);
+      const cleanup = await deleteLiveFixtureGraph(control, graph.graphId);
+      expect(cleanup.succeeded).toBe(true);
+      expect(cleanup.attempts.map((attempt) => attempt.role)).toEqual(['memories', 'folders', 'conversations']);
       created = false;
       const after = await control.get(`/api/v1/live-fixtures/graphs/${encodeURIComponent(graph.graphId)}`);
       expect(after.status()).toBe(404);
@@ -66,8 +70,8 @@ test.describe('live fixture lifecycle', () => {
           await deleteLiveFixtureGraph(control, graph.graphId);
         } catch (cleanupError) {
           await testInfo.attach('manual-live-fixture-cleanup-error', {
-            body: Buffer.from(String(cleanupError)),
-            contentType: 'text/plain',
+            body: JSON.stringify({ cleanup: 'unavailable' }),
+            contentType: 'application/json',
           });
           if (primaryFailure === undefined) throw cleanupError;
         }

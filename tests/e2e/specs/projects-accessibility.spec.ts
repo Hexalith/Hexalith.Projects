@@ -22,8 +22,9 @@ const consoleViews: ConsoleView[] = [
   {
     name: 'reference health',
     path: (id: string) => `/projects/${id}`,
-    anchorTestId: 'project-reference-health-matrix',
+    anchorTestId: 'project-detail-section-references',
     prepare: async (page: Page) => {
+      await page.getByTestId('project-diagnostic-header').waitFor({ state: 'visible' });
       await page.getByTestId('project-detail-tab-references').click();
     },
   },
@@ -32,10 +33,19 @@ const consoleViews: ConsoleView[] = [
     path: (id: string) => `/projects/${id}`,
     anchorTestId: 'project-resolution-trace-workbench',
     prepare: async (page: Page) => {
+      await page.getByTestId('project-diagnostic-header').waitFor({ state: 'visible' });
       await page.getByTestId('project-detail-tab-resolution').click();
     },
   },
-  { name: 'audit timeline', path: (id: string) => `/projects/${id}/audit`, anchorTestId: 'audit-timeline' },
+  {
+    name: 'audit timeline',
+    path: (id: string) => `/projects/${id}`,
+    anchorTestId: 'audit-timeline',
+    prepare: async (page: Page) => {
+      await page.getByTestId('project-diagnostic-header').waitFor({ state: 'visible' });
+      await page.getByTestId('project-detail-tab-audit').click();
+    },
+  },
 ];
 
 test.describe('Operational console — WCAG 2.2 AA', () => {
@@ -45,7 +55,7 @@ test.describe('Operational console — WCAG 2.2 AA', () => {
       await view.prepare?.(page);
       // Wait on a deterministic anchor, not a timeout.
       await expect(page.getByTestId(view.anchorTestId)).toBeVisible();
-      await expectNoA11yViolations(page, testInfo, { include: 'main' });
+      await expectNoA11yViolations(page, testInfo, { include: '[role="main"]' });
     });
   }
 });

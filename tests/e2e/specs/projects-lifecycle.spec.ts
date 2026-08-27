@@ -1,6 +1,6 @@
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { createMinimalProjectInput, createForbiddenSetupInput } from '../support/factories/project-factory.js';
-import { createProject, getProject, listProjects } from '../support/helpers/projects-api-client.js';
+import { archiveProject, createProject, getProject, listProjects } from '../support/helpers/projects-api-client.js';
 import { waitForProject } from '../support/helpers/readiness.js';
 
 /**
@@ -9,13 +9,13 @@ import { waitForProject } from '../support/helpers/readiness.js';
  * Live-gated behind `E2E_LIVE_APPHOST=1`. The bodies are
  * pattern-complete and document the load-bearing E2E disciplines: command-async (202),
  * no read-after-write (poll the read model — no sleeps), safe-denial (404 for both),
- * and network-first interception for the web console.
+ * and rendered browser assertions over the server-side UI gateway.
  */
 test.describe('Projects lifecycle', () => {
-  liveAppHostTest('creates a project (202) and converges in the read model as Active', async ({ apiRequest, authToken, recurse, tenantContext }) => {
+  liveAppHostTest('creates a project (202) and converges in the read model as Active', async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }) => {
     // Create project with name only (FR-1).
-    const input = createMinimalProjectInput();
-    const { status, body } = await createProject(apiRequest, tenantContext.tenantId, input, { authToken });
+    const input = createMinimalProjectInput({ projectId: liveFixtureGraph.projectId });
+    const { status } = await createProject(apiRequest, tenantContext.tenantId, input, { authToken });
     expect(status).toBe(202); // AcceptedCommand — command-async
 
     // No read-after-write guarantee: poll until the projection converges (TC-3, no sleeps).
@@ -23,15 +23,17 @@ test.describe('Projects lifecycle', () => {
       recurse,
       apiRequest,
       tenantContext.tenantId,
-      body.projectId,
+      liveFixtureGraph.projectId,
       { authToken },
       { lifecycle: 'active' },
     );
     expect(project.name).toBe(input.name);
+    expect((await archiveProject(apiRequest, tenantContext.tenantId, project.projectId, { authToken })).status).toBe(202);
+    await waitForProject(recurse, apiRequest, tenantContext.tenantId, project.projectId, { authToken }, { lifecycle: 'archived' });
   });
 
-  liveAppHostTest('rejects forbidden setup naming the field without echoing the value (FR-19)', async ({ apiRequest, authToken, tenantContext }) => {
-    const input = createForbiddenSetupInput();
+  liveAppHostTest('rejects forbidden setup naming the field without echoing the value (FR-19)', async ({ apiRequest, authToken, tenantContext, liveFixtureGraph }) => {
+    const input = createForbiddenSetupInput({ projectId: liveFixtureGraph.projectId });
     const { status, body } = await createProject(apiRequest, tenantContext.tenantId, input, { authToken });
     // Rejection is a domain outcome (ProblemDetails), not an exception path.
     expect(status).toBeGreaterThanOrEqual(400);
@@ -53,12 +55,8 @@ test.describe('Projects lifecycle', () => {
     expect(JSON.stringify(body.items)).not.toContain('tenantId');
   });
 
-  liveAppHostTest('opens a project in the console and renders metadata via data-testid', async ({ page, interceptNetworkCall, seededProject }) => {
-    // Network-first: intercept BEFORE navigating (race-free).
-    const detailCall = interceptNetworkCall({ url: `**/api/v1/projects/${seededProject.projectId}` });
+  liveAppHostTest('opens a project in the console and renders metadata via data-testid', async ({ page, seededProject }) => {
     await page.goto(`/projects/${seededProject.projectId}`);
-    const { status } = await detailCall;
-    expect(status).toBe(200);
 
     await expect(page.getByTestId('project-detail-name')).toHaveText(seededProject.name);
   });

@@ -89,6 +89,13 @@ For Epic 5 browser verification, map `PROJECTS_UI_URL` to `BASE_URL`, `PROJECTS_
 and `SECURITY_URL` to `KEYCLOAK_URL`, then set `E2E_LIVE_APPHOST=1`. The complete command sequence and
 credential variables are documented in `tests/e2e/README.md`.
 
+For the repeatable live verification path, use `npm --prefix tests/e2e run test:live:managed`.
+The runner enables `Projects__E2E__LiveFixtures=1`, waits for the core and fixture resources,
+captures `aspire describe` exactly once, exports all five dynamically assigned endpoints, runs the
+two-worker Chromium lane with zero skips, and stops only the exact Projects AppHost on every exit.
+The `live-fixtures` control resource and sibling fixture routes do not exist when the profile is
+disabled. Never publish or enable this profile outside the managed local/scheduled test lane.
+
 Interpretation:
 
 - `/alive` proves the process can respond.

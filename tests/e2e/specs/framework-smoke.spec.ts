@@ -33,7 +33,7 @@ test.describe('framework self-check (no app required)', () => {
   test('forbidden-setup factory carries content that must be rejected (FR-19 negatives)', () => {
     const forbidden = createForbiddenSetupInput();
     // Used ONLY to assert rejection — the aggregate must never persist/echo this.
-    expect(forbidden.setup?.instructions ?? '').toContain('SECRET');
+    expect(forbidden.setupMetadata ?? '').toContain('SECRET');
   });
 
   test('axe a11y helper passes on an accessible document (validates WCAG 2.2 AA wiring)', async ({ page }, testInfo) => {

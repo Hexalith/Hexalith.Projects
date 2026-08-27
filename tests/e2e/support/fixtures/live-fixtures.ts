@@ -7,6 +7,7 @@ import {
 import {
   createLiveFixtureGraph,
   deleteLiveFixtureGraph,
+  type FixtureCleanupResult,
   type LiveFixtureGraph,
 } from '../helpers/live-fixtures-api-client.js';
 
@@ -29,7 +30,7 @@ export function identitiesForTest(testInfo: TestInfo): LiveFixtureIdentities {
 /** Seeds the sibling compatibility host using metadata only. */
 export async function provisionLiveFixtureGraph(
   identities: LiveFixtureIdentities,
-): Promise<{ graph: LiveFixtureGraph; cleanup: () => Promise<void> }> {
+): Promise<{ graph: LiveFixtureGraph; cleanup: () => Promise<FixtureCleanupResult> }> {
   const fixtureRequest = await request.newContext({
     baseURL: requireLiveEnv('FIXTURE_API_URL'),
     ignoreHTTPSErrors: true,
@@ -49,7 +50,7 @@ export async function provisionLiveFixtureGraph(
       graph: provisioned,
       cleanup: async () => {
         try {
-          await deleteLiveFixtureGraph(fixtureRequest, provisioned.graphId);
+          return await deleteLiveFixtureGraph(fixtureRequest, provisioned.graphId);
         } finally {
           await fixtureRequest.dispose();
         }

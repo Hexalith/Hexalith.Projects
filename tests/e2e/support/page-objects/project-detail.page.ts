@@ -202,11 +202,11 @@ export class ProjectDetailPage {
 
   async gotoInventory(): Promise<void> {
     await this.page.goto('/projects');
-    await this.warningsDashboard.or(this.inventoryGrid).or(this.inventoryEmpty).or(this.feedbackRegion).waitFor({ state: 'visible' });
+    await this.inventoryGrid.or(this.inventoryEmpty).waitFor({ state: 'visible' });
   }
 
   async gotoWarnings(): Promise<void> {
     await this.page.goto('/projects/warnings');
-    await this.warningsDashboard.or(this.warningEmpty).or(this.feedbackRegion).waitFor({ state: 'visible' });
+    await this.warningsDashboard.waitFor({ state: 'visible' });
   }
 }

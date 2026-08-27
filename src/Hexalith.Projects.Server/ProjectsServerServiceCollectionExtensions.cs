@@ -12,6 +12,9 @@ using Hexalith.Conversations.Client;
 using Hexalith.Folders.Client;
 using Hexalith.EventStore.Client.Handlers;
 using Hexalith.EventStore.Client.Registration;
+using Hexalith.EventStore.Contracts.Commands;
+using Hexalith.EventStore.Contracts.Projections;
+using Hexalith.EventStore.Contracts.Results;
 using Hexalith.Memories.Client.Rest;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Infrastructure;
@@ -22,6 +25,7 @@ using Hexalith.Projects.Server.Memories;
 using Hexalith.Projects.Server.Proposals;
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -176,6 +180,19 @@ public static class ProjectsServerServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
+        _ = endpoints.MapPost(ProjectsServerModule.ProcessRoute, async (
+            DomainServiceRequest request,
+            IDomainProcessor processor) =>
+        {
+            DomainResult result = await processor
+                .ProcessAsync(request.Command, request.CurrentState)
+                .ConfigureAwait(false);
+            return Results.Ok(DomainServiceWireResult.FromDomainResult(result));
+        });
+        _ = endpoints.MapPost(ProjectsServerModule.ProjectRoute, static (ProjectionRequest request) =>
+            string.Equals(request.Domain, ProjectsServerModule.DomainName, StringComparison.Ordinal)
+                ? Results.Ok(ProjectProjectionHandler.Project(request))
+                : Results.NotFound());
         endpoints.MapProjectsDomainServiceEndpoints();
         return endpoints;
     }

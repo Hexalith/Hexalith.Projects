@@ -113,7 +113,9 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
     {
         IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
         source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())));
+            .Returns(
+                Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())),
+                Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail() with { LifecycleState = "archived" })));
         IProjectMaintenanceActionSource maintenance = Substitute.For<IProjectMaintenanceActionSource>();
         maintenance.ExecuteAsync(Arg.Any<ProjectMaintenanceActionExecutionRequest>(), Arg.Any<IProgress<string>?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(ProjectMaintenanceActionExecutionResult.Confirmed("corr-001", "task-001", "audit-archive")));
@@ -142,8 +144,8 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Find("[data-testid='maintenance-action-submit']").HasAttribute("disabled").ShouldBeFalse();
         cut.Find("[data-testid='maintenance-action-submit']").Click();
 
-        cut.WaitForAssertion(() => cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("Succeeded"));
-        cut.Find("[data-testid='maintenance-action-feedback']").TextContent.ShouldContain("confirmed");
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-lifecycle-badge']").TextContent.ShouldContain("Archived"));
+        source.Received(2).GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>());
         cut.Markup.ShouldNotContain("token");
         cut.Markup.ShouldNotContain("ProblemDetails");
     }

@@ -10,11 +10,11 @@ using System.Net.Http.Json;
 /// <summary>Coordinates graph state across the three role-specific sibling fixtures.</summary>
 public sealed class FixtureProxy(HttpClient httpClient, IConfiguration configuration)
 {
-    private static readonly string[] EndpointKeys =
+    private static readonly KeyValuePair<string, string>[] EndpointKeys =
     [
-        "FixtureEndpoints:Conversations",
-        "FixtureEndpoints:Folders",
-        "FixtureEndpoints:Memories",
+        new("conversations", "FixtureEndpoints:Conversations"),
+        new("folders", "FixtureEndpoints:Folders"),
+        new("memories", "FixtureEndpoints:Memories"),
     ];
 
     private readonly IConfiguration _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -24,24 +24,31 @@ public sealed class FixtureProxy(HttpClient httpClient, IConfiguration configura
     public async Task SeedAsync(LiveFixtureGraph graph, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(graph);
-        List<Uri> seeded = [];
+        List<KeyValuePair<string, Uri>> seeded = [];
         try
         {
-            foreach (Uri endpoint in Endpoints())
+            foreach (KeyValuePair<string, Uri> endpoint in Endpoints())
             {
                 using HttpResponseMessage response = await _httpClient
-                    .PostAsJsonAsync(new Uri(endpoint, "/_fixtures/graphs"), graph, cancellationToken)
+                    .PostAsJsonAsync(new Uri(endpoint.Value, "/_fixtures/graphs"), graph, cancellationToken)
                     .ConfigureAwait(false);
-                response.EnsureSuccessStatusCode();
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException(
+                        $"Fixture role '{endpoint.Key}' seed failed with status {(int)response.StatusCode}.",
+                        inner: null,
+                        response.StatusCode);
+                }
+
                 seeded.Add(endpoint);
             }
         }
         catch
         {
-            foreach (Uri endpoint in seeded.AsEnumerable().Reverse())
+            foreach (KeyValuePair<string, Uri> endpoint in seeded.AsEnumerable().Reverse())
             {
                 _ = await _httpClient
-                    .DeleteAsync(new Uri(endpoint, $"/_fixtures/graphs/{Uri.EscapeDataString(graph.GraphId)}"), cancellationToken)
+                    .DeleteAsync(new Uri(endpoint.Value, $"/_fixtures/graphs/{Uri.EscapeDataString(graph.GraphId)}"), cancellationToken)
                     .ConfigureAwait(false);
             }
 
@@ -50,28 +57,32 @@ public sealed class FixtureProxy(HttpClient httpClient, IConfiguration configura
     }
 
     /// <summary>Removes sibling role state in reverse provisioning order.</summary>
-    public async Task<IReadOnlyList<string>> RemoveAsync(string graphId, CancellationToken cancellationToken)
+    public async Task<FixtureCleanupResult> RemoveAsync(string graphId, CancellationToken cancellationToken)
     {
-        List<string> failures = [];
-        foreach (Uri endpoint in Endpoints().Reverse())
+        List<FixtureCleanupAttempt> attempts = [];
+        foreach (KeyValuePair<string, Uri> endpoint in Endpoints().Reverse())
         {
-            using HttpResponseMessage response = await _httpClient
-                .DeleteAsync(new Uri(endpoint, $"/_fixtures/graphs/{Uri.EscapeDataString(graphId)}"), cancellationToken)
-                .ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                failures.Add($"{endpoint.Host}:{(int)response.StatusCode}");
+                using HttpResponseMessage response = await _httpClient
+                    .DeleteAsync(new Uri(endpoint.Value, $"/_fixtures/graphs/{Uri.EscapeDataString(graphId)}"), cancellationToken)
+                    .ConfigureAwait(false);
+                attempts.Add(new FixtureCleanupAttempt(endpoint.Key, (int)response.StatusCode));
+            }
+            catch (HttpRequestException exception)
+            {
+                attempts.Add(new FixtureCleanupAttempt(endpoint.Key, (int?)exception.StatusCode));
             }
         }
 
-        return failures;
+        return new FixtureCleanupResult(attempts);
     }
 
-    private IReadOnlyList<Uri> Endpoints()
-        => EndpointKeys.Select(key =>
+    private IReadOnlyList<KeyValuePair<string, Uri>> Endpoints()
+        => EndpointKeys.Select(item =>
         {
-            string value = _configuration[key]
-                ?? throw new InvalidOperationException($"Required fixture endpoint '{key}' is not configured.");
-            return new Uri(value, UriKind.Absolute);
+            string value = _configuration[item.Value]
+                ?? throw new InvalidOperationException($"Required fixture role '{item.Key}' is not configured.");
+            return new KeyValuePair<string, Uri>(item.Key, new Uri(value, UriKind.Absolute));
         }).ToArray();
 }

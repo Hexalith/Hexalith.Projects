@@ -113,7 +113,11 @@ public static class ProjectsWorkersModule
                 EventStoreDomainEventProcessingResult.Processed
                     or EventStoreDomainEventProcessingResult.Duplicate
                     or EventStoreDomainEventProcessingResult.SkippedUnknownEventType
-                    or EventStoreDomainEventProcessingResult.SkippedNoHandlers => Results.Ok(new { status = result.ToString() }),
+                    or EventStoreDomainEventProcessingResult.SkippedNoHandlers => Results.Ok(new
+                    {
+                        status = "SUCCESS",
+                        processingResult = result.ToString(),
+                    }),
                 EventStoreDomainEventProcessingResult.FailedInvalidPayload => Results.Problem(
                     title: "Tenant event processing failed.",
                     detail: "The tenant event payload could not be deserialized.",
@@ -133,11 +137,13 @@ public static class ProjectsWorkersModule
     private static IEndpointRouteBuilder MapProjectsProjectEventSubscription(this IEndpointRouteBuilder endpoints)
     {
         _ = endpoints.MapPost(ProjectEventsRoute, async (
-            EventEnvelope envelope,
+            ProjectEventWireEnvelope envelope,
             ProjectEventProjectionProcessor processor,
             CancellationToken cancellationToken) =>
         {
-            ProjectProjectionAppendResult result = await processor.ProcessAsync(envelope, cancellationToken).ConfigureAwait(false);
+            ProjectProjectionAppendResult result = await processor
+                .ProcessAsync(envelope.ToEventEnvelope(), cancellationToken)
+                .ConfigureAwait(false);
             return result.Status switch
             {
                 ProjectProjectionAppendStatus.Applied
@@ -146,7 +152,8 @@ public static class ProjectsWorkersModule
                     or ProjectProjectionAppendStatus.SkippedForeignDomain
                     or ProjectProjectionAppendStatus.SkippedUnknownEventType => Results.Ok(new
                     {
-                        status = result.Status.ToString(),
+                        status = "SUCCESS",
+                        processingResult = result.Status.ToString(),
                         tenantId = result.TenantId,
                         messageId = result.MessageId,
                         sequence = result.Sequence,

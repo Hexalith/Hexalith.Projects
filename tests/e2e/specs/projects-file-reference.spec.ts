@@ -1,5 +1,6 @@
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { mutationHeaders, queryHeaders } from '../support/helpers/correlation.js';
+import type { LiveFixtureGraph } from '../support/helpers/live-fixtures-api-client.js';
 
 /**
  * F5 critical journey — optional File Reference link/unlink (Story 2.5; FR-9 / FR-11; AR-11 Folders ACL).
@@ -29,18 +30,14 @@ interface ProjectReferences {
   references: ReferenceSummary[];
 }
 
-const FOLDER_ID = 'folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC';
-const WORKSPACE_ID = 'workspace_01HZ9K8YQ3W6V2N4R7T5P0X1AD';
-const FILE_REFERENCE_ID = 'file_01HZ9K8YQ3W6V2N4R7T5P0X1F1';
-
-const linkBody = (projectId: string, fileReferenceId = FILE_REFERENCE_ID) => ({
+const linkBody = (projectId: string, graph: LiveFixtureGraph, fileReferenceId = graph.fileReferenceId) => ({
   requestSchemaVersion: 'v1',
   operation: 'link',
   projectId,
   fileReferenceId,
-  folderId: FOLDER_ID,
-  workspaceId: WORKSPACE_ID,
-  filePath: 'docs/contract.pdf',
+  folderId: graph.folderId,
+  workspaceId: graph.workspaceId,
+  filePath: graph.filePath,
   fileMetadata: { displayName: 'contract.pdf' },
 });
 
@@ -48,12 +45,12 @@ const fileReferences = (refs: ReferenceSummary[]) => refs.filter((r) => r.refere
 const folderReferences = (refs: ReferenceSummary[]) => refs.filter((r) => r.referenceKind === 'folder');
 
 test.describe('Projects file references (link / unlink)', () => {
-  liveAppHostTest('links an authorized file reference (202) and surfaces it as referenceKind=file (FR-9 / AC1,2,7)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
+  liveAppHostTest('links an authorized file reference (202) and surfaces it as referenceKind=file (FR-9 / AC1,2,7)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject, liveFixtureGraph }) => {
     const { status } = await apiRequest({
       method: 'POST',
-      path: `/api/v1/projects/${seededProject.projectId}/files/${FILE_REFERENCE_ID}/link`,
+      path: `/api/v1/projects/${seededProject.projectId}/files/${liveFixtureGraph.fileReferenceId}/link`,
       headers: { ...mutationHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
-      body: linkBody(seededProject.projectId),
+      body: linkBody(seededProject.projectId, liveFixtureGraph),
     });
     expect(status).toBe(202); // AcceptedCommand — command-async
 
@@ -65,12 +62,12 @@ test.describe('Projects file references (link / unlink)', () => {
           path: `/api/v1/projects/${seededProject.projectId}`,
           headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
         }),
-      (res) => fileReferences(res.body.references).some((r) => r.referenceId === FILE_REFERENCE_ID),
+      (res) => fileReferences(res.body.references).some((r) => r.referenceId === liveFixtureGraph.fileReferenceId),
       { timeout: 30_000, interval: 1_000, log: 'Waiting for the file reference to appear in the read model' },
     );
   });
 
-  liveAppHostTest('linking a file never satisfies, replaces, or auto-creates the single Project Folder (AC3)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
+  liveAppHostTest('linking a file never satisfies, replaces, or auto-creates the single Project Folder (AC3)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject, liveFixtureGraph }) => {
     const before = await apiRequest<ProjectReferences>({
       method: 'GET',
       path: `/api/v1/projects/${seededProject.projectId}`,
@@ -80,9 +77,9 @@ test.describe('Projects file references (link / unlink)', () => {
 
     const { status } = await apiRequest({
       method: 'POST',
-      path: `/api/v1/projects/${seededProject.projectId}/files/${FILE_REFERENCE_ID}/link`,
+      path: `/api/v1/projects/${seededProject.projectId}/files/${liveFixtureGraph.fileReferenceId}/link`,
       headers: { ...mutationHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
-      body: linkBody(seededProject.projectId),
+      body: linkBody(seededProject.projectId, liveFixtureGraph),
     });
     expect(status).toBe(202);
 
@@ -106,12 +103,12 @@ test.describe('Projects file references (link / unlink)', () => {
     expect(folderReferences(after.body.references)).toEqual(folderBefore);
   });
 
-  liveAppHostTest('unlinking a file removes only the association, never the Project Folder row (FR-9 / AC4)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
+  liveAppHostTest('unlinking a file removes only the association, never the Project Folder row (FR-9 / AC4)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject, liveFixtureGraph }) => {
     await apiRequest({
       method: 'POST',
-      path: `/api/v1/projects/${seededProject.projectId}/files/${FILE_REFERENCE_ID}/link`,
+      path: `/api/v1/projects/${seededProject.projectId}/files/${liveFixtureGraph.fileReferenceId}/link`,
       headers: { ...mutationHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
-      body: linkBody(seededProject.projectId),
+      body: linkBody(seededProject.projectId, liveFixtureGraph),
     });
     await recurse(
       () =>
@@ -120,20 +117,20 @@ test.describe('Projects file references (link / unlink)', () => {
           path: `/api/v1/projects/${seededProject.projectId}`,
           headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
         }),
-      (res) => fileReferences(res.body.references).some((r) => r.referenceId === FILE_REFERENCE_ID),
+      (res) => fileReferences(res.body.references).some((r) => r.referenceId === liveFixtureGraph.fileReferenceId),
       { timeout: 30_000, interval: 1_000, log: 'Waiting for the file reference to be linked before unlink' },
     );
 
     const { status } = await apiRequest({
       method: 'DELETE',
-      path: `/api/v1/projects/${seededProject.projectId}/files/${FILE_REFERENCE_ID}`,
+      path: `/api/v1/projects/${seededProject.projectId}/files/${liveFixtureGraph.fileReferenceId}`,
       headers: { ...mutationHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
       body: {
         requestSchemaVersion: 'v1',
         operation: 'unlink',
         unlinkIntent: 'removeReference',
         projectId: seededProject.projectId,
-        fileReferenceId: FILE_REFERENCE_ID,
+        fileReferenceId: liveFixtureGraph.fileReferenceId,
       },
     });
     expect(status).toBe(202);
@@ -145,17 +142,17 @@ test.describe('Projects file references (link / unlink)', () => {
           path: `/api/v1/projects/${seededProject.projectId}`,
           headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
         }),
-      (res) => !fileReferences(res.body.references).some((r) => r.referenceId === FILE_REFERENCE_ID),
+      (res) => !fileReferences(res.body.references).some((r) => r.referenceId === liveFixtureGraph.fileReferenceId),
       { timeout: 30_000, interval: 1_000, log: 'Waiting for the file reference to be removed from the read model' },
     );
   });
 
-  liveAppHostTest('denied/redacted Folders evidence fails closed as safe-denial and never leaks path or content (AC5)', async ({ apiRequest, authToken, tenantContext, seededProject }) => {
+  liveAppHostTest('denied/redacted Folders evidence fails closed as safe-denial and never leaks path or content (AC5)', async ({ apiRequest, authToken, tenantContext, seededProject, liveFixtureGraph }) => {
     const { status, body } = await apiRequest<unknown>({
       method: 'POST',
-      path: `/api/v1/projects/${seededProject.projectId}/files/file_forbidden0000000000000000/link`,
+      path: `/api/v1/projects/${seededProject.projectId}/files/${liveFixtureGraph.deniedFileReferenceId}/link`,
       headers: { ...mutationHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
-      body: { ...linkBody(seededProject.projectId, 'file_forbidden0000000000000000'), filePath: 'secret/redacted-note.md' },
+      body: { ...linkBody(seededProject.projectId, liveFixtureGraph, liveFixtureGraph.deniedFileReferenceId), filePath: 'secret/redacted-note.md' },
       // Safe-denial is an expected domain outcome, not a transport failure — don't retry it.
       retryConfig: { maxRetries: 0 },
     });
@@ -166,21 +163,21 @@ test.describe('Projects file references (link / unlink)', () => {
     expect(serialized).not.toContain('redacted');
   });
 
-  liveAppHostTest('equivalent duplicate link with the same Idempotency-Key replays safely (AC8)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject }) => {
+  liveAppHostTest('equivalent duplicate link with the same Idempotency-Key replays safely (AC8)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject, liveFixtureGraph }) => {
     const idempotencyKey = `idem-file-link-${seededProject.projectId}`;
     const headers = { ...mutationHeaders({ authToken, idempotencyKey }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId };
 
     const first = await apiRequest({
       method: 'POST',
-      path: `/api/v1/projects/${seededProject.projectId}/files/${FILE_REFERENCE_ID}/link`,
+      path: `/api/v1/projects/${seededProject.projectId}/files/${liveFixtureGraph.fileReferenceId}/link`,
       headers,
-      body: linkBody(seededProject.projectId),
+      body: linkBody(seededProject.projectId, liveFixtureGraph),
     });
     const second = await apiRequest({
       method: 'POST',
-      path: `/api/v1/projects/${seededProject.projectId}/files/${FILE_REFERENCE_ID}/link`,
+      path: `/api/v1/projects/${seededProject.projectId}/files/${liveFixtureGraph.fileReferenceId}/link`,
       headers,
-      body: linkBody(seededProject.projectId),
+      body: linkBody(seededProject.projectId, liveFixtureGraph),
     });
     expect(first.status).toBe(202);
     expect(second.status).toBe(202);
@@ -193,7 +190,7 @@ test.describe('Projects file references (link / unlink)', () => {
           path: `/api/v1/projects/${seededProject.projectId}`,
           headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
         }),
-      (res) => fileReferences(res.body.references).filter((r) => r.referenceId === FILE_REFERENCE_ID).length === 1,
+      (res) => fileReferences(res.body.references).filter((r) => r.referenceId === liveFixtureGraph.fileReferenceId).length === 1,
       { timeout: 30_000, interval: 1_000, log: 'Waiting for exactly one file reference after idempotent replay' },
     );
   });

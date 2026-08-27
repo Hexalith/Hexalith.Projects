@@ -1,11 +1,16 @@
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { queryHeaders } from '../support/helpers/correlation.js';
+import type { LiveFixtureGraph } from '../support/helpers/live-fixtures-api-client.js';
 import {
+  archiveProject,
   confirmNewProjectProposal,
   proposeNewProject,
+  type ApiRequest,
   type ConfirmNewProjectProposalInput,
   type ProjectCreationProposalInput,
 } from '../support/helpers/projects-api-client.js';
+import type { Recurse } from '../support/helpers/readiness.js';
+import { waitForProject } from '../support/helpers/readiness.js';
 
 /**
  * F5 critical journey — NoMatch proposal preview → explicit confirm (FR-15 / Story 4.5).
@@ -16,18 +21,36 @@ import {
  * no-payload-leakage assertions.
  */
 test.describe('Projects new-project proposal', () => {
-  const conversationId = 'conversation_proposal_e2e_001';
-  const folderId = 'folder_proposal_e2e_001';
-  const fileReferenceId = 'file_proposal_e2e_001';
-  const workspaceId = 'workspace_proposal_e2e_001';
-  const filePath = 'docs/synthetic-note.md';
+  function safeFailureSummary(body: unknown): string {
+    const problem = body as { category?: unknown; details?: { rejectedField?: unknown } };
+    return `category=${String(problem?.category ?? 'none')}, rejectedField=${String(problem?.details?.rejectedField ?? 'none')}, body=${JSON.stringify(body)}`;
+  }
 
-  function proposalRequest(overrides: Partial<ProjectCreationProposalInput> = {}): ProjectCreationProposalInput {
+  async function cleanupCreatedProposal(
+    apiRequest: ApiRequest,
+    recurse: Recurse,
+    tenantId: string,
+    authToken: string,
+    projectId: string,
+    suffix: string,
+  ): Promise<void> {
+    const { status } = await archiveProject(apiRequest, tenantId, projectId, {
+      authToken,
+      correlationId: `corr-proposal-cleanup-${suffix}`,
+      taskId: `task-proposal-cleanup-${suffix}`,
+      idempotencyKey: `idem-proposal-cleanup-${suffix}`,
+    });
+    if (status === 404) return;
+    expect(status).toBe(202);
+    await waitForProject(recurse, apiRequest, tenantId, projectId, { authToken }, { lifecycle: 'archived' });
+  }
+
+  function proposalRequest(graph: LiveFixtureGraph, overrides: Partial<ProjectCreationProposalInput> = {}): ProjectCreationProposalInput {
     return {
       requestSchemaVersion: 'v1',
-      conversationId,
-      folderId,
-      fileReferenceIds: [fileReferenceId],
+      conversationId: graph.conversationId,
+      folderId: graph.proposalFolderId,
+      fileReferenceIds: [graph.proposalFileReferenceId],
       suggestedName: 'synthetic-project-alpha',
       description: 'synthetic metadata description',
       setupMetadata: 'synthetic-setup-reference',
@@ -35,14 +58,14 @@ test.describe('Projects new-project proposal', () => {
     };
   }
 
-  function confirmRequest(overrides: Partial<ConfirmNewProjectProposalInput> = {}): ConfirmNewProjectProposalInput {
+  function confirmRequest(graph: LiveFixtureGraph, overrides: Partial<ConfirmNewProjectProposalInput> = {}): ConfirmNewProjectProposalInput {
     return {
       requestSchemaVersion: 'v1',
       operation: 'confirmNewProjectProposal',
       resolutionResult: 'NoMatch',
       confirmed: true,
-      projectId: 'project_proposal_e2e_001',
-      conversationId,
+      projectId: graph.proposalProjectId,
+      conversationId: graph.conversationId,
       projectMetadata: {
         displayName: 'synthetic-project-alpha',
         metadataClass: 'tenant_sensitive',
@@ -50,28 +73,28 @@ test.describe('Projects new-project proposal', () => {
       description: 'synthetic metadata description',
       setupMetadata: 'synthetic-setup-reference',
       folder: {
-        folderId,
+        folderId: graph.proposalFolderId,
         folderMetadata: {
           displayName: 'synthetic-project-alpha',
         },
       },
       fileReferences: [
         {
-          fileReferenceId,
-          folderId,
-          workspaceId,
-          filePath,
+          fileReferenceId: graph.proposalFileReferenceId,
+          folderId: graph.proposalFolderId,
+          workspaceId: graph.workspaceId,
+          filePath: graph.filePath,
           fileMetadata: {
             displayName: 'synthetic-note',
           },
         },
       ],
-      fileReferenceIds: [fileReferenceId],
+      fileReferenceIds: [graph.proposalFileReferenceId],
       ...overrides,
     };
   }
 
-  function assertNoProposalPayloadLeakage(serialized: string, tenantId: string): void {
+  function assertNoProposalPayloadLeakage(serialized: string, tenantId: string, graph: LiveFixtureGraph): void {
     expect(serialized).not.toContain('tenantId');
     expect(serialized).not.toContain(tenantId);
     expect(serialized).not.toContain('transcript');
@@ -79,19 +102,20 @@ test.describe('Projects new-project proposal', () => {
     expect(serialized).not.toContain('memory body');
     expect(serialized).not.toContain('secret');
     expect(serialized).not.toContain('raw token');
-    expect(serialized).not.toContain(workspaceId);
-    expect(serialized).not.toContain(filePath);
+    expect(serialized).not.toContain(graph.workspaceId);
+    expect(serialized).not.toContain(graph.filePath);
   }
 
   liveAppHostTest('previews a NoMatch proposal without creating or leaking sibling payload data (AC1,3,8)', async ({
     apiRequest,
     authToken,
     tenantContext,
+    liveFixtureGraph,
   }) => {
     const { status, body } = await proposeNewProject(
       apiRequest,
       tenantContext.tenantId,
-      proposalRequest(),
+      proposalRequest(liveFixtureGraph),
       {
         authToken,
         correlationId: 'corr-proposal-preview',
@@ -103,24 +127,25 @@ test.describe('Projects new-project proposal', () => {
     expect(body).toMatchObject({
       resolutionResult: 'NoMatch',
       suggestedName: 'synthetic-project-alpha',
-      conversationId,
-      folderId,
+      conversationId: liveFixtureGraph.conversationId,
+      folderId: liveFixtureGraph.proposalFolderId,
       freshness: 'eventually_consistent',
     });
-    expect(body.fileReferenceIds).toEqual([fileReferenceId]);
+    expect(body.fileReferenceIds).toEqual([liveFixtureGraph.proposalFileReferenceId]);
     expect(body.warnings).toEqual([]);
-    assertNoProposalPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
+    assertNoProposalPayloadLeakage(JSON.stringify(body), tenantContext.tenantId, liveFixtureGraph);
   });
 
   liveAppHostTest('rejects preview idempotency, strong freshness, duplicate references, and unsafe metadata (AC3,8)', async ({
     apiRequest,
     authToken,
     tenantContext,
+    liveFixtureGraph,
   }) => {
     const idempotencyRejected = await proposeNewProject(
       apiRequest,
       tenantContext.tenantId,
-      proposalRequest(),
+      proposalRequest(liveFixtureGraph),
       {
         authToken,
         correlationId: 'corr-proposal-idempotency',
@@ -132,7 +157,7 @@ test.describe('Projects new-project proposal', () => {
     const freshnessRejected = await proposeNewProject(
       apiRequest,
       tenantContext.tenantId,
-      proposalRequest(),
+      proposalRequest(liveFixtureGraph),
       {
         authToken,
         correlationId: 'corr-proposal-freshness',
@@ -144,7 +169,7 @@ test.describe('Projects new-project proposal', () => {
     const duplicateReferenceRejected = await proposeNewProject(
       apiRequest,
       tenantContext.tenantId,
-      proposalRequest({ fileReferenceIds: [fileReferenceId, fileReferenceId] }),
+      proposalRequest(liveFixtureGraph, { fileReferenceIds: [liveFixtureGraph.proposalFileReferenceId, liveFixtureGraph.proposalFileReferenceId] }),
       { authToken, correlationId: 'corr-proposal-duplicate-reference' },
     );
     expect(duplicateReferenceRejected.status).toBe(400);
@@ -152,11 +177,11 @@ test.describe('Projects new-project proposal', () => {
     const unsafeMetadataRejected = await proposeNewProject(
       apiRequest,
       tenantContext.tenantId,
-      proposalRequest({ setupMetadata: 'secret raw token' }),
+      proposalRequest(liveFixtureGraph, { setupMetadata: 'secret raw token' }),
       { authToken, correlationId: 'corr-proposal-unsafe-metadata' },
     );
     expect(unsafeMetadataRejected.status).toBe(400);
-    assertNoProposalPayloadLeakage(JSON.stringify(unsafeMetadataRejected.body), tenantContext.tenantId);
+    assertNoProposalPayloadLeakage(JSON.stringify(unsafeMetadataRejected.body), tenantContext.tenantId, liveFixtureGraph);
   });
 
   liveAppHostTest('returns a safe conflict when an existing Project now qualifies instead of proposing creation (AC1,3)', async ({
@@ -164,86 +189,117 @@ test.describe('Projects new-project proposal', () => {
     authToken,
     tenantContext,
     seededProject,
+    liveFixtureGraph,
   }) => {
     const { status, body } = await proposeNewProject(
       apiRequest,
       tenantContext.tenantId,
-      proposalRequest({ conversationId: 'conversation_proposal_existing_match_001' }),
+      proposalRequest(liveFixtureGraph, { conversationId: liveFixtureGraph.existingConversationId }),
       { authToken, correlationId: 'corr-proposal-existing-match' },
     );
 
     expect(status).toBe(400);
     const serialized = JSON.stringify(body);
     expect(serialized).not.toContain(seededProject.projectId);
-    assertNoProposalPayloadLeakage(serialized, tenantContext.tenantId);
+    assertNoProposalPayloadLeakage(serialized, tenantContext.tenantId, liveFixtureGraph);
   });
 
   liveAppHostTest('confirms a NoMatch proposal through command-async create, conversation assignment, folder, and file links (AC2,4,5,7)', async ({
     apiRequest,
     authToken,
+    recurse,
+    request,
     tenantContext,
+    liveFixtureGraph,
   }) => {
-    const { status, body } = await confirmNewProjectProposal(
-      apiRequest,
-      tenantContext.tenantId,
-      confirmRequest(),
-      {
-        authToken,
-        correlationId: 'corr-proposal-confirm',
-        taskId: 'task-proposal-confirm',
-        idempotencyKey: 'idem-proposal-confirm',
-      },
-    );
+    try {
+      const { status, body } = await confirmNewProjectProposal(
+        request,
+        tenantContext.tenantId,
+        confirmRequest(liveFixtureGraph),
+        {
+          authToken,
+          correlationId: 'corr-proposal-confirm',
+          taskId: 'task-proposal-confirm',
+          idempotencyKey: 'idem-proposal-confirm',
+        },
+      );
 
-    expect(status).toBe(202);
-    expect(body.correlationId).toBeTruthy();
-    assertNoProposalPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
+      expect(status, safeFailureSummary(body)).toBe(202);
+      expect(body.correlationId).toBeTruthy();
+      assertNoProposalPayloadLeakage(JSON.stringify(body), tenantContext.tenantId, liveFixtureGraph);
+    } finally {
+      await cleanupCreatedProposal(
+        apiRequest,
+        recurse,
+        tenantContext.tenantId,
+        authToken,
+        liveFixtureGraph.proposalProjectId,
+        liveFixtureGraph.graphId,
+      );
+    }
   });
 
   liveAppHostTest('same root idempotency key with a different confirm body returns conflict without duplicate writes (AC7)', async ({
     apiRequest,
     authToken,
+    recurse,
+    request,
     tenantContext,
+    liveFixtureGraph,
   }) => {
-    const first = await confirmNewProjectProposal(
-      apiRequest,
-      tenantContext.tenantId,
-      confirmRequest({ projectId: 'project_proposal_e2e_idem_001' }),
-      {
-        authToken,
-        correlationId: 'corr-proposal-idem-first',
-        taskId: 'task-proposal-idem-first',
-        idempotencyKey: 'idem-proposal-retry',
-      },
-    );
-    expect(first.status).toBe(202);
-
-    const conflict = await confirmNewProjectProposal(
-      apiRequest,
-      tenantContext.tenantId,
-      confirmRequest({
-        projectId: 'project_proposal_e2e_idem_001',
-        projectMetadata: {
-          displayName: 'synthetic-project-beta',
-          metadataClass: 'tenant_sensitive',
+    try {
+      const first = await confirmNewProjectProposal(
+        request,
+        tenantContext.tenantId,
+        confirmRequest(liveFixtureGraph, { projectId: liveFixtureGraph.proposalRetryProjectId }),
+        {
+          authToken,
+          correlationId: 'corr-proposal-idem-first',
+          taskId: 'task-proposal-idem-first',
+          idempotencyKey: 'idem-proposal-retry',
         },
-      }),
-      {
-        authToken,
-        correlationId: 'corr-proposal-idem-conflict',
-        taskId: 'task-proposal-idem-conflict',
-        idempotencyKey: 'idem-proposal-retry',
-      },
-    );
+      );
+      expect(first.status, safeFailureSummary(first.body)).toBe(202);
 
-    expect(conflict.status).toBe(409);
-    assertNoProposalPayloadLeakage(JSON.stringify(conflict.body), tenantContext.tenantId);
+      const conflict = await confirmNewProjectProposal(
+        request,
+        tenantContext.tenantId,
+        confirmRequest(liveFixtureGraph, {
+          projectId: liveFixtureGraph.proposalRetryProjectId,
+          projectMetadata: {
+            displayName: 'synthetic-project-beta',
+            metadataClass: 'tenant_sensitive',
+          },
+        }),
+        {
+          authToken,
+          correlationId: 'corr-proposal-idem-conflict',
+          taskId: 'task-proposal-idem-conflict',
+          idempotencyKey: 'idem-proposal-retry',
+        },
+      );
+
+      expect(conflict.status).toBe(409);
+      assertNoProposalPayloadLeakage(JSON.stringify(conflict.body), tenantContext.tenantId, liveFixtureGraph);
+    } finally {
+      await cleanupCreatedProposal(
+        apiRequest,
+        recurse,
+        tenantContext.tenantId,
+        authToken,
+        liveFixtureGraph.proposalRetryProjectId,
+        `${liveFixtureGraph.graphId}-retry`,
+      );
+    }
   });
 
   liveAppHostTest('confirm validation fails closed for missing idempotency and mismatched file evidence (AC4,6,8)', async ({
     apiRequest,
     authToken,
+    request,
     tenantContext,
+    liveFixtureGraph,
   }) => {
     const missingIdempotency = await apiRequest({
       method: 'POST',
@@ -252,15 +308,15 @@ test.describe('Projects new-project proposal', () => {
         ...queryHeaders({ authToken, correlationId: 'corr-proposal-missing-idem' }),
         'X-Hexalith-Tenant-Id': tenantContext.tenantId,
       },
-      body: confirmRequest(),
+      body: confirmRequest(liveFixtureGraph),
       retryConfig: { maxRetries: 0 },
     });
     expect(missingIdempotency.status).toBe(400);
 
     const mismatchedFileEvidence = await confirmNewProjectProposal(
-      apiRequest,
+      request,
       tenantContext.tenantId,
-      confirmRequest({ fileReferenceIds: ['file_proposal_e2e_999'] }),
+      confirmRequest(liveFixtureGraph, { fileReferenceIds: [liveFixtureGraph.secondaryFileReferenceId] }),
       {
         authToken,
         correlationId: 'corr-proposal-file-evidence',
@@ -269,6 +325,6 @@ test.describe('Projects new-project proposal', () => {
       },
     );
     expect(mismatchedFileEvidence.status).toBe(400);
-    assertNoProposalPayloadLeakage(JSON.stringify(mismatchedFileEvidence.body), tenantContext.tenantId);
+    assertNoProposalPayloadLeakage(JSON.stringify(mismatchedFileEvidence.body), tenantContext.tenantId, liveFixtureGraph);
   });
 });

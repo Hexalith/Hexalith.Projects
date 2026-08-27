@@ -14,6 +14,7 @@ using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.TenantAccess;
@@ -801,6 +802,32 @@ public sealed class ProjectConversationAssignmentEndpointTests
         }
     }
 
+    [Fact]
+    public async Task ListProjectConversations_NonEventualFreshness_Returns400BeforeDirectoryCall()
+    {
+        CapturingAssignmentDirectory assignmentDirectory = new(ProjectConversationAssignmentResult.Accepted("upstream-corr"));
+        CapturingConversationDirectory conversationDirectory = new();
+        WebApplication app = await StartAppAsync(
+            assignmentDirectory,
+            conversationDirectory: conversationDirectory).ConfigureAwait(true);
+        try
+        {
+            app.Services.GetRequiredService<InMemoryProjectDetailReadModel>().Project("tenant-a", Created(TargetProjectId));
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{TargetProjectId}/conversations");
+            request.Headers.Add("X-Hexalith-Freshness", "strong");
+
+            HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            conversationDirectory.CallCount.ShouldBe(0);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
     private static HttpRequestMessage LinkRequest(object? body = null)
     {
         HttpRequestMessage request = new(HttpMethod.Post, $"/api/v1/projects/{TargetProjectId}/conversations/{ConversationIdValue}/link")
@@ -909,7 +936,8 @@ public sealed class ProjectConversationAssignmentEndpointTests
 
     private static async Task<WebApplication> StartAppAsync(
         CapturingAssignmentDirectory directory,
-        IProjectCommandSubmitter? submitter = null)
+        IProjectCommandSubmitter? submitter = null,
+        IProjectConversationDirectory? conversationDirectory = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
         {
@@ -925,6 +953,12 @@ public sealed class ProjectConversationAssignmentEndpointTests
         builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContextAccessor());
         builder.Services.RemoveAll<IProjectConversationAssignmentDirectory>();
         builder.Services.AddSingleton<IProjectConversationAssignmentDirectory>(directory);
+        if (conversationDirectory is not null)
+        {
+            builder.Services.RemoveAll<IProjectConversationDirectory>();
+            builder.Services.AddSingleton(conversationDirectory);
+        }
+
         if (submitter is not null)
         {
             builder.Services.RemoveAll<IProjectCommandSubmitter>();
@@ -973,11 +1007,28 @@ public sealed class ProjectConversationAssignmentEndpointTests
                 "tenant-a",
                 "principal-a",
                     [
+                        ProjectAuthorizationGate.ReadProjectAction,
                         ProjectAuthorizationGate.LinkConversationAction,
                         ProjectAuthorizationGate.MoveConversationAction,
                         ProjectAuthorizationGate.UnlinkConversationAction,
                         ProjectAuthorizationGate.ConfirmProjectResolutionAction,
                     ]);
+    }
+
+    private sealed class CapturingConversationDirectory : IProjectConversationDirectory
+    {
+        public int CallCount { get; private set; }
+
+        public Task<ProjectConversationsPage> ListForProjectAsync(
+            ProjectId projectId,
+            TenantId tenantId,
+            CallerPrincipalId caller,
+            PageRequest page,
+            CancellationToken cancellationToken = default)
+        {
+            CallCount++;
+            return Task.FromResult(ProjectConversationsPage.Empty(projectId, ProjectConversationTrustSignal.Current));
+        }
     }
 
     private sealed class CapturingAssignmentDirectory(ProjectConversationAssignmentResult result) : IProjectConversationAssignmentDirectory

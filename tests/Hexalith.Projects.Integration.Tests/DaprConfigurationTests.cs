@@ -5,6 +5,8 @@
 
 namespace Hexalith.Projects.Integration.Tests;
 
+using System.Text.Json;
+
 using Hexalith.Projects.Aspire;
 using Hexalith.Projects.Workers;
 
@@ -60,6 +62,37 @@ public sealed class DaprConfigurationTests
         content.ShouldContain("external");
     }
 
+    /// <summary>Verifies local identity keeps API password-grant and browser code-flow clients separate.</summary>
+    [Fact]
+    public void LocalIdentityFixtureShouldDeclareProjectsUiConfidentialCodeFlowClient()
+    {
+        using JsonDocument realm = JsonDocument.Parse(File.ReadAllText(RealmPath()));
+        JsonElement[] clients = [.. realm.RootElement.GetProperty("clients").EnumerateArray()];
+        JsonElement apiClient = clients.Single(client => client.GetProperty("clientId").GetString() == "hexalith-eventstore");
+        JsonElement uiClient = clients.Single(client => client.GetProperty("clientId").GetString() == "hexalith-projects-ui");
+
+        apiClient.GetProperty("directAccessGrantsEnabled").GetBoolean().ShouldBeTrue();
+        apiClient.GetProperty("standardFlowEnabled").GetBoolean().ShouldBeFalse();
+        uiClient.GetProperty("publicClient").GetBoolean().ShouldBeFalse();
+        uiClient.GetProperty("directAccessGrantsEnabled").GetBoolean().ShouldBeFalse();
+        uiClient.GetProperty("standardFlowEnabled").GetBoolean().ShouldBeTrue();
+        uiClient.GetProperty("secret").GetString().ShouldNotBeNullOrWhiteSpace();
+        uiClient.GetProperty("redirectUris").EnumerateArray().Select(static item => item.GetString()).ShouldBe(
+        [
+            "http://localhost:*",
+            "https://localhost:*",
+        ]);
+
+        foreach (JsonElement client in new[] { apiClient, uiClient })
+        {
+            JsonElement mapper = client.GetProperty("protocolMappers").EnumerateArray().Single(item =>
+                item.GetProperty("name").GetString() == "current-tenant-mapper");
+            JsonElement config = mapper.GetProperty("config");
+            config.GetProperty("claim.name").GetString().ShouldBe("eventstore:current-tenant");
+            config.GetProperty("multivalued").GetString().ShouldBe("false");
+        }
+    }
+
     /// <summary>Verifies Dapr resiliency config exists and targets app/component boundaries.</summary>
     [Fact]
     public void ResiliencyConfigurationShouldTargetAppsComponentsAndPubSubDeadLetters()
@@ -85,4 +118,17 @@ public sealed class DaprConfigurationTests
         File.Exists(path).ShouldBeTrue($"Expected Dapr config file at {path}.");
         return File.ReadAllText(path);
     }
+
+    private static string RealmPath()
+        => Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..",
+            "..",
+            "..",
+            "..",
+            "..",
+            "src",
+            "Hexalith.Projects.AppHost",
+            "KeycloakRealms",
+            "hexalith-realm.json"));
 }

@@ -11,6 +11,7 @@ $solutionPath = Join-Path $repositoryRoot 'Hexalith.Projects.CI.slnx'
 $releaseConfigPath = Join-Path $repositoryRoot 'release.config.cjs'
 $frontComposerGatePath = Join-Path $scriptRoot 'run-frontcomposer-inspect-gate.ps1'
 $openApiGatePath = Join-Path $scriptRoot 'run-openapi-fingerprint-gate.ps1'
+$managedE2EPath = Join-Path $repositoryRoot 'tests/e2e/run-live-apphost.sh'
 $failures = [System.Collections.Generic.List[string]]::new()
 
 function Require-Match {
@@ -47,6 +48,13 @@ $packageManifestPath = Join-Path $repositoryRoot 'tools/release-packages.json'
 $releaseConfig = Get-Content -Path $releaseConfigPath -Raw
 $frontComposerGate = Get-Content -Path $frontComposerGatePath -Raw
 $openApiGate = Get-Content -Path $openApiGatePath -Raw
+if (-not (Test-Path $managedE2EPath)) {
+    $failures.Add('The managed AppHost E2E runner must exist.')
+    $managedE2E = ''
+}
+else {
+    $managedE2E = Get-Content -Path $managedE2EPath -Raw
+}
 $workflowFiles = @(
     Get-ChildItem -Path $workflowRoot -File |
         Where-Object { $_.Extension -in @('.yml', '.yaml') }
@@ -193,9 +201,24 @@ Require-Match $ci '^\s*e2e:\s*$' 'CI must include the scheduled E2E job.'
 Require-Match $ci "if:\s*\$\{\{ github\.event_name == 'schedule' \}\}" 'E2E must be limited to the scheduled lane.'
 Require-Match $ci 'npm --prefix tests/e2e ci --ignore-scripts' 'E2E must use the lockfile with lifecycle scripts disabled.'
 Require-Match $ci 'npm --prefix tests/e2e run install:browsers' 'E2E browser installation must be explicit.'
-Require-Match $ci 'npm --prefix tests/e2e run typecheck' 'E2E must typecheck before Playwright.'
-Require-Match $ci 'npm --prefix tests/e2e test -- --workers=1' 'E2E must run deterministically with one worker.'
+Require-Match $ci 'uses:\s*\./references/Hexalith\.Builds/Github/dapr-init' 'Scheduled E2E must initialize Dapr through the reviewed root dependency.'
+Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.4\.6' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
+Require-Match $ci 'npm --prefix tests/e2e run test:live:managed' 'Scheduled E2E must use the managed AppHost lifecycle runner.'
+Require-Match $ci '^\s*TEST_USER_PASSWORD:\s*\$\{\{ secrets\.[A-Z0-9_]+ \}\}\s*$' 'Scheduled E2E credentials must come from a GitHub secret.'
+Require-Match $ci '^\s*if:\s*always\(\)\s*$' 'Scheduled E2E must unconditionally run exact-AppHost teardown.'
+Require-Match $ci 'aspire stop --apphost "\$GITHUB_WORKSPACE/src/Hexalith\.Projects\.AppHost/Hexalith\.Projects\.AppHost\.csproj" --non-interactive' 'Scheduled E2E teardown must target the exact Projects AppHost.'
 Require-Match $ci '^\s*if:\s*failure\(\)\s*$' 'E2E failure evidence must be uploaded on failure.'
+
+Require-Match $managedE2E '^trap cleanup EXIT\s*$' 'The managed E2E runner must unconditionally trap exact-AppHost cleanup.'
+Require-Match $managedE2E 'Projects__E2E__LiveFixtures=1' 'The managed E2E runner must explicitly enable the fixture profile.'
+Require-Match $managedE2E 'for resource in security eventstore tenants projects projects-workers projects-ui conversations folders memories live-fixtures' 'The managed E2E runner must wait for every required AppHost resource.'
+$describeMatches = [regex]::Matches($managedE2E, '(?m)^aspire describe --apphost ').Count
+if ($describeMatches -ne 1) {
+    $failures.Add("The managed E2E runner must describe the AppHost exactly once; found $describeMatches calls.")
+}
+Require-Match $managedE2E 'npx playwright test[\s\S]*live-apphost-startup\.spec\.ts[\s\S]*projects-authentication\.spec\.ts[\s\S]*--workers 2' 'The managed E2E runner must run startup/auth smoke with two workers.'
+Require-Match $managedE2E 'npx playwright test\s*\\\s*\r?\n\s*--project chromium\s*\\\s*\r?\n\s*--workers 2' 'The managed E2E runner must run the full Chromium lane with two workers.'
+Forbid-Match $managedE2E 'aspire stop --all' 'The managed E2E runner must never stop unrelated AppHosts.'
 
 $testProjects = @(
     'Hexalith.Projects.Contracts.Tests',

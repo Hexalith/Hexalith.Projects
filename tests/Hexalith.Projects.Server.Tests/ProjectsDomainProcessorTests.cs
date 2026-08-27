@@ -130,6 +130,41 @@ public sealed class ProjectsDomainProcessorTests
     }
 
     [Fact]
+    public async Task ProcessArchive_DaprJsonRoundTripState_RehydratesEventStoreHistory()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        ProjectCreated created = ExistingCreatedEvent();
+        var persisted = new Hexalith.EventStore.Contracts.Events.EventEnvelope(
+            new Hexalith.EventStore.Contracts.Events.EventMetadata(
+                "message-created",
+                ProjectIdValue,
+                "Project",
+                Tenant,
+                ProjectsServerModule.DomainName,
+                1,
+                1,
+                created.OccurredAt,
+                created.CorrelationId,
+                created.IdempotencyKey,
+                created.ActorPrincipalId,
+                "1.0.0",
+                typeof(ProjectCreated).FullName!,
+                1,
+                "json"),
+            JsonSerializer.SerializeToUtf8Bytes(created),
+            null);
+        var currentState = new DomainServiceCurrentState(null, [persisted], 0, 1);
+        JsonElement daprRoundTrip = JsonSerializer.Deserialize<JsonElement>(
+            JsonSerializer.SerializeToUtf8Bytes(currentState, new JsonSerializerOptions(JsonSerializerDefaults.Web)),
+            new JsonSerializerOptions(JsonSerializerDefaults.Web));
+
+        DomainResult result = await processor.ProcessAsync(ArchiveEnvelope(), daprRoundTrip).ConfigureAwait(true);
+
+        result.IsSuccess.ShouldBeTrue();
+        result.Events.Single().ShouldBeOfType<ProjectArchived>().Lifecycle.ShouldBe(Contracts.Ui.ProjectLifecycle.Archived);
+    }
+
+    [Fact]
     public async Task ProcessSetProjectFolder_ExistingState_YieldsProjectFolderSet()
     {
         ProjectsDomainProcessor processor = CreateProcessor();

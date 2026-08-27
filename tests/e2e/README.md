@@ -48,51 +48,33 @@ system Chrome when available. CI always keeps the managed browser matrix; locall
 
 ### Live AppHost route
 
-Run lifecycle commands from the repository root. The `HexalithCommonsRoot` override makes the
-root-level Commons checkout authoritative for nested sibling project references. Always pass the
-exact AppHost path to `wait`, `describe`, and `stop`; this is required when another AppHost is running.
-
-```bash
-APPHOST="$PWD/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
-export HexalithCommonsRoot="$PWD/references/Hexalith.Commons"
-
-aspire start --apphost "$APPHOST" --format Json --non-interactive
-cleanup_apphost() { aspire stop --apphost "$APPHOST" --non-interactive >/dev/null 2>&1 || true; }
-trap cleanup_apphost EXIT
-aspire wait projects-ui --apphost "$APPHOST" --timeout 180 --non-interactive
-
-export BASE_URL="$(aspire describe --apphost "$APPHOST" --format Json --non-interactive \
-  | jq -r '.resources[] | select(.displayName == "projects-ui") | .urls[] | select(.name == "http") | .url')"
-export API_URL="$(aspire describe --apphost "$APPHOST" --format Json --non-interactive \
-  | jq -r '.resources[] | select(.displayName == "projects") | .urls[] | select(.name == "http") | .url')"
-export KEYCLOAK_URL="$(aspire describe --apphost "$APPHOST" --format Json --non-interactive \
-  | jq -r '.resources[] | select(.displayName == "security") | .urls[] | select(.name == "http") | .url')"
-
-test -n "$BASE_URL" && test -n "$API_URL" && test -n "$KEYCLOAK_URL"
-```
-
-Configure the non-URL values from `.env.example` or the shell, then run from `tests/e2e`:
+The managed runner owns the complete lifecycle: it enables the explicit fixture profile, starts the
+Projects AppHost, waits for every required resource, describes the graph exactly once, derives all
+dynamic URLs, runs the startup/auth smoke and full Chromium suite with two workers, and always stops
+that exact AppHost. Configure the non-URL values from `.env.example` or the shell:
 
 ```bash
 cd tests/e2e
-export E2E_LIVE_APPHOST=1
 export KEYCLOAK_REALM=hexalith
 export KEYCLOAK_CLIENT_ID=hexalith-eventstore
 export TEST_USER_USERNAME=<local-realm-username>
 export TEST_USER_PASSWORD=<local-realm-password>
-export TEST_TENANT_ID=<projected-tenant-id>
-
-npm run typecheck
-npm run test:chromium
+npm run test:live:managed
 ```
 
-The UI (`BASE_URL`) and API (`API_URL`) are intentionally different Aspire resources. Stop only this
-AppHost after the run (the absolute `APPHOST` value remains valid after changing directories):
+If you copied `.env.example`, load the completed file into the shell before invoking the runner:
 
 ```bash
-aspire stop --apphost "$APPHOST" --non-interactive
-trap - EXIT
+set -a
+. ./.env
+set +a
+npm run test:live:managed
 ```
+
+Do not preconfigure ports: `BASE_URL`, `API_URL`, `EVENTSTORE_API_URL`, `KEYCLOAK_URL`, and
+`FIXTURE_API_URL` are assigned by Aspire and exported from the single captured graph. The runner
+derives tenant and principal identities from the signed token, then provisions tenant access through
+supported EventStore and Projects APIs. A unique `E2E_RUN_ID` is generated unless explicitly supplied.
 
 ## Authentication (real Keycloak / OIDC)
 
@@ -100,23 +82,22 @@ Per **AR-19** and the test design, E2E proves runtime security with **real Keycl
 (realm `hexalith`) — synthetic JWTs are unit/integration only. Configure in `.env`:
 
 ```
-KEYCLOAK_URL=<discovered-security-url>
 KEYCLOAK_REALM=hexalith
 KEYCLOAK_CLIENT_ID=hexalith-eventstore
-TEST_USER_USERNAME=...        TEST_USER_PASSWORD=...        TEST_TENANT_ID=...
+TEST_USER_USERNAME=...        TEST_USER_PASSWORD=...
 ```
 
-The `keycloakAuthProvider` does an OAuth2 resource-owner password grant, persists the token to disk
-(`.auth/`, gitignored), and renews 30 s before expiry. Additional users for cross-tenant negatives
-use `E2E_USER_<NAME>_USERNAME` / `E2E_USER_<NAME>_PASSWORD` and
-`authOptions.userIdentifier`; legacy `*_EMAIL` names remain accepted.
+API fixtures use an OAuth2 resource-owner password grant only for supported setup calls. Browser
+proof performs a real Keycloak authorization-code login and persists only the server session cookie
+in `.auth/` (gitignored). Access, refresh, and identity tokens must never be readable from browser
+local or session storage.
 
 ## Architecture
 
 ```
 tests/e2e/
 ├── playwright.config.ts        # explicit live-route validation, browsers, data-testid, reduced-motion
-├── global-setup.ts             # auth-session storage + Keycloak provider (live prefetch automatic)
+├── global-setup.ts             # tenant readiness + real browser OIDC session
 ├── specs/
 │   ├── framework-smoke.spec.ts        # runnable self-check (factories + axe)
 │   └── projects-*.spec.ts             # offline contracts + explicitly gated live F5/F6 journeys
@@ -146,9 +127,10 @@ tests/e2e/
   FrontComposer regeneration (UX-DR28). Never CSS/text-coupled selectors.
 - **No sleeps / network-first:** intercept **before** navigate; converge via `recurse`/`expect.poll`,
   never `waitForTimeout`. Command-async means no read-after-write (TC-3, TC-10).
-- **Isolation:** live tests use the configured projected tenant, generate unique project metadata,
-  and run with one worker because several cross-module fixture IDs are shared. Offline contracts stay parallel.
-- **Cleanup:** seeded data is archived on teardown; tokens persist to disk but never to git.
+- **Isolation:** live tests derive their tenant from the token and provision disjoint IDs from run,
+  worker, retry, repeat, and scenario dimensions. The managed lane runs with two workers.
+- **Cleanup:** seeded Projects are archived to convergence and sibling fixture roles are removed in
+  reverse order. Cleanup artifacts contain attempted role and status only.
 - **Determinism:** `reducedMotion: 'reduce'`; deterministic anchors before assertions; flaky
   T3/E2E goes to a **quarantine lane**, never silenced (R8).
 - **Security/privacy:** real Keycloak tokens; assert safe-denial (404 for unauthorized == nonexistent)
@@ -156,9 +138,8 @@ tests/e2e/
 
 ## CI integration
 
-- **Lane:** the current scheduled job runs the offline contract lane. A recurring live AppHost lane
-  still requires managed credentials, deterministic sibling fixtures, and lifecycle ownership; that
-  adoption is tracked as deferred work rather than silently implied here.
+- **Lane:** the scheduled job runs `test:live:managed` with a GitHub-secret test password. The runner
+  owns dynamic endpoint discovery, startup/auth smoke, full Chromium execution, and exact teardown.
 - **Reporters:** JUnit (`test-results/junit.xml`) for CI aggregation + HTML (`playwright-report/`).
 - **Retries:** `2` on CI, `0` locally. Live traces are disabled because requests carry real bearer
   tokens; screenshots/video remain failure diagnostics and must stay metadata-only.
@@ -177,19 +158,18 @@ tests/e2e/
   the fixture subpath imports and `auth-session` function names in `support/`.
 - **Config/TypeScript errors** — ensure `@playwright/test` types are installed; run `npm run typecheck`.
 - **Smoke test can't launch a browser** — run `npm run install:browsers` (`playwright install --with-deps`).
-- **Live journeys show as skipped** — set `E2E_LIVE_APPHOST=1` and all three discovered URLs. The
-  definition-time gate prevents disabled tests from resolving Keycloak or seeded-project fixtures.
+- **Live journeys show as skipped** — use `npm run test:live:managed`; its live-only reporter fails
+  the run if no tests are collected or any live case is skipped.
 - **Live config fails before collection** — intentional when `BASE_URL`, `API_URL`, or `KEYCLOAK_URL`
   is missing/invalid; rerun `aspire describe` for this AppHost and export each resource URL.
-- **Keycloak/user/tenant config errors** — fill every live variable from `.env.example`. Live mode
-  validates them before collection and always prefetches a fresh token for the discovered UI origin.
+- **Keycloak/user config errors** — fill every credential variable from `.env.example`. Tenant and
+  principal values come from the signed token and are made ready through supported APIs.
 - **Hangs waiting on a network call** — you intercepted *after* navigating. Set up
   `interceptNetworkCall(...)` **before** `page.goto(...)`.
 - **`waitForProject` times out** — the read model never converged: check the Workers projection host
   and Dapr pub/sub; never paper over it with a sleep.
-- **Seed returns safe-denial 404** — the Keycloak user exists but `TEST_TENANT_ID` is not present in
-  the Projects tenant-access projection. Provision/replay that tenant before expecting seeded journeys
-  to pass; do not substitute a random tenant ID.
+- **Seed returns safe-denial 404** — confirm the signed token contains a single current-tenant claim;
+  global setup provisions and verifies access through supported APIs before fixtures run.
 - **Self-signed cert errors** — local browser/API contexts and live token prefetch trust Aspire's
   development certificate through Playwright's `ignoreHTTPSErrors` boundary.
 

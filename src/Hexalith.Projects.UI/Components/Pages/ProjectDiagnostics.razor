@@ -181,7 +181,8 @@ else if (_result?.Detail is not null)
                 <section role="tabpanel" data-testid="project-detail-section-actions">
                     <ProjectMaintenanceActionPanel Detail="@_result.Detail"
                                                    ReferenceRows="@_result.ReferenceHealthRows"
-                                                   TenantScope="@_result.TenantScope" />
+                                                   TenantScope="@_result.TenantScope"
+                                                   OnSucceeded="ReloadAsync" />
                 </section>
                 break;
         }
@@ -244,6 +245,16 @@ else if (_result?.Feedback is not null)
             ActionsSection => "Actions",
             _ => section,
         };
+
+    private async Task ReloadAsync()
+    {
+        if (string.IsNullOrWhiteSpace(ProjectId))
+        {
+            return;
+        }
+
+        _result = await Details.GetProjectDetailAsync(ProjectId, CancellationToken.None).ConfigureAwait(true);
+    }
 
     private static string FreshnessText(ProjectOperatorFreshnessMetadata freshness)
         => string.IsNullOrWhiteSpace(freshness.ProjectionWatermark)
