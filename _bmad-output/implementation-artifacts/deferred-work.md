@@ -176,7 +176,8 @@ origin: migrated from legacy ledger ("flat append from spec-prevent-submodule-sk
 location: .editorconfig and Git whitespace configuration
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-prevent-submodule-skill-loading.md
 reason: Review confirmed ordinary `git diff --check` flags carriage returns on newly added CRLF lines because no repository attribute or `core.whitespace=cr-at-eol` policy exists while `.editorconfig` requires CRLF.
-status: open
+status: done 2026-08-27
+resolution: already resolved: Commit fc359e96ba6dd83d8cfe9b2c0775bfcee1044443; .gitattributes:1 declares * whitespace=cr-at-eol, tests/tools/test_git_whitespace_policy.py:53-69 verifies acceptance of CRLF and rejection of real trailing whitespace, and .github/workflows/ci.yml:49-52 runs the gate.
 
 ### DW-20: Enforce the canonical ProjectMetadata displayName requirement without falling back to a legacy top-level name.
 
