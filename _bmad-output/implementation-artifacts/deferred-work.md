@@ -332,6 +332,7 @@ source_spec: `spec-legacy-cleanup-path-safety.md`
 severity: low
 reason: The follow-up-review damping cap (limits.max_followup_reviews = 1) was spent with the story finalized (status: done, verify green) while the review pass still recommended an independent follow-up. The work was committed by bmad-loop run 20260825-081747-f4a1; this entry preserves the lingering recommendation for a deliberate later review.
 status: open
+decision: 2026-08-27 Run bounded follow-up — Run exactly one independent review over the synchronized cleanup scripts and tests, patch only newly substantiated in-scope defects, and preserve DW-36 as separately tracked work.
 
 ### DW-39: Existing-generation verification follows symlinked output files, so matching external bytes can satisfy an immutable snapshot check.
 origin: spec-deferred bfaafa1248ab
