@@ -194,7 +194,8 @@ origin: migrated from legacy ledger ("flat append from spec-u2028-u2029-idempote
 location: proposal-confirmation endpoint and generated client
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md
 reason: Review confirmed the pre-existing endpoint accepts unsorted `fileReferenceIds` after sorting them for validation and server hashing, while the generated helper hashes the caller's original array order.
-status: open
+status: done 2026-08-28
+resolution: already resolved: Commit 005c2d5d8fea513a8c15c0fb95d0da0fd1fcc5e8; src/Hexalith.Projects.Client/Generated/HexalithProjectsIdempotencyHelpers.g.cs:225 ordinally orders FileReferenceIds before hashing, with parity coverage at tests/Hexalith.Projects.Client.Tests/ClientGenerationTests.cs:729-751.
 
 ### DW-22: Align proposal-confirmation null fileReferenceIds semantics between the server and generated client.
 
@@ -202,7 +203,8 @@ origin: migrated from legacy ledger ("flat append from spec-u2028-u2029-idempote
 location: proposal-confirmation endpoint and generated client
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md
 reason: Review confirmed the pre-existing endpoint accepts null `fileReferenceIds` when no file references exist and hashes an empty array, while the generated helper hashes the null property as null.
-status: open
+status: done 2026-08-28
+resolution: already resolved: Commit 005c2d5d8fea513a8c15c0fb95d0da0fd1fcc5e8; src/Hexalith.Projects.Client/Generated/HexalithProjectsIdempotencyHelpers.g.cs:225 maps null FileReferenceIds to Array.Empty<string>(), with null/empty parity coverage at tests/Hexalith.Projects.Server.Tests/Queries/ProposeNewProjectEndpointTests.cs:366-387.
 
 ### DW-23: Restore monotonic sprint tracker chronology after the pre-existing last_updated timestamp regression.
 
