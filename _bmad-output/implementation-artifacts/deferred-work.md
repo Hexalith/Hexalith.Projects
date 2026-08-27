@@ -185,7 +185,8 @@ origin: migrated from legacy ledger ("flat append from spec-resolve-create-proje
 location: Create Project endpoint ProjectMetadata validation
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-resolve-create-project-metadata-class-enforcement.md
 reason: Review confirmed the OpenAPI schema requires `projectMetadata.displayName`, but the pre-existing direct endpoint accepts a canonical object with a missing or blank displayName when a top-level name is supplied; this is outside the bounded metadataClass E-9 correction.
-status: open
+status: done 2026-08-27
+resolution: already resolved: Commit 97b7d2e5a0169d6c21279b5505dc36a717e19237; src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs:596-610 rejects missing or blank canonical projectMetadata.displayName without legacy top-level fallback, with null/omitted/empty/whitespace coverage at tests/Hexalith.Projects.Server.Tests/CreateProjectEndpointTests.cs:109-145.
 
 ### DW-21: Align proposal-confirmation file-reference ID ordering between accepted HTTP requests and generated-client fingerprints.
 
