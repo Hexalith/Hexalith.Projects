@@ -464,6 +464,7 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 severity: medium
 reason: AuthorizeAsync returns at six different depths, each skipping the remaining awaited calls. Status, headers and body are uniform because SafeDenial discards the reason, so timing is the only residual discriminator against AC3's requirement that every caller-visible category including timing be indistinguishable. Currently untested.
 status: open
+decision: 2026-08-27 Mitigate and test — Design a bounded safe-denial indistinguishability strategy, implement it at the shared authorization boundary, and add stable timing-distribution tests without exposing protected outcomes.
 gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
 
 ### DW-53: Extract the shared query-handler request preamble.
