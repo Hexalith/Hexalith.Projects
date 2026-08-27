@@ -24,6 +24,8 @@ deferred: []
 
 **Always:** Use supported authenticated APIs and observable convergence checks; derive the authoritative tenant and principal from the live token; keep the shared tenant repair idempotent and serialized; generate bounded identifiers from run, worker, retry, repeat, and scenario identity; archive created Projects and wait for archived convergence; keep sibling fixtures metadata-only and accessible only in an explicitly enabled AppHost E2E profile.
 
+Treat unavailable host watcher capacity, including Dapr startup `ENOSPC`, as an environmental prerequisite failure that blocks story completion but neither determines product correctness nor provides acceptance evidence. Do not stop unrelated workloads or modify host limits without explicit operator authorization.
+
 **Block If:** The installed Tenants/EventStore contracts cannot safely converge an existing tenant membership, or a required sibling behavior cannot be represented through its public HTTP/client contract without changing a sibling repository or writing a production projection directly.
 
 **Never:** Edit the deferred-work ledger or bundle intent; allow an implementation subagent to edit this spec or another workflow-owned control artifact, including frontmatter status or baseline fields, task checkboxes, change or triage logs, and auto-run results (the subagent reports completion and its exact changed paths in its handoff only); initialize nested submodules; seed Projects/Tenant projections directly; add production backdoors; hard-delete or disable the shared tenant; use fixed live entity IDs, guessed ports, sleeps, or browser interception as API fixture provisioning.
@@ -86,4 +88,6 @@ The test host is a runner-owned compatibility fixture, not a replacement sibling
 - `dotnet test tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --no-build --no-restore` -- expected: fixture-profile and fail-closed coverage passes.
 - `npm --prefix tests/e2e run typecheck` -- expected: strict TypeScript checks pass.
 - `npm --prefix tests/e2e test -- --workers=2` with the documented AppHost fixture profile -- expected: live suite uses disjoint fixtures, converges, and cleans up.
+
+**Live environment prerequisite:** Before live test collection, the explicit fixture profile must reach authenticated outer Projects readiness. If Dapr startup fails because host watcher capacity is unavailable, restore sufficient capacity or use an isolated host, then rerun every live matrix covering test; each must collect and pass, and skipped or uncollected tests remain unsatisfied.
 
