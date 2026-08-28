@@ -284,6 +284,7 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 reason: Review confirmed the pre-existing Story 6.4 artifact still calls 3.86.0 the current central pin after the source, catalog, and committed runner candidate moved to 3.88.0; Story 6.4 was outside the candidate-baseline patch.
 status: open
 decision: 2026-08-28 Modernize current observation — Replace Story 6.4's 3.86.0 claim with the exact unaccepted 3.97.0 catalog and stale 3.90.0 runner split, retain the 3.70.1 rollback baseline, and preserve the story's blocked state.
+decision: 2026-08-28 Modernize current observation — Replace Story 6.4's 3.86.0 claim with the exact unaccepted 3.97.0 catalog and stale 3.90.0 runner split, retain the 3.70.1 rollback baseline, and preserve the story's blocked state.
 
 ### DW-32: Bind canonical readiness artifacts to the actual module-manifest byte hash.
 
