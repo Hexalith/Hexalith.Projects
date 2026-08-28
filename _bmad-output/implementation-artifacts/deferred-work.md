@@ -230,7 +230,8 @@ origin: migrated from legacy ledger ("flat append from spec-partial-failure-diag
 location: ProjectWarningsDashboardSource
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md
 reason: Review confirmed `ProjectWarningsDashboardSource` catches `OperationCanceledException` through its general exception handlers, returning safe feedback or a synthetic unavailable row instead of propagating requested cancellation; this production behavior predates the coverage-only change.
-status: open
+status: done 2026-08-28
+resolution: already resolved: Commit 8b60ab6fcd5d9fd371dd711717f71b1362c720f7; src/Hexalith.Projects.UI/Diagnostics/ProjectWarningsDashboardSource.cs:41-43 and :86-88 propagate requested cancellation, with coverage at tests/Hexalith.Projects.UI.Tests/Diagnostics/ProjectWarningsDashboardSourceTests.cs:164-219.
 
 ### DW-26: Make the Web diagnostic-unavailable tile drill-in select only rows represented by its count.
 
@@ -238,7 +239,8 @@ origin: migrated from legacy ledger ("flat append from spec-partial-failure-diag
 location: Web diagnostic-unavailable tile filter
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md
 reason: Review confirmed the tile count tracks diagnostic failures while its existing state-only filter selects every `ReferenceState.Unavailable` row, including ordinary unavailable references; changing filter semantics was outside the coverage-only task.
-status: open
+status: done 2026-08-28
+resolution: already resolved: Commit 8b60ab6fcd5d9fd371dd711717f71b1362c720f7; src/Hexalith.Projects.UI/Components/Pages/Home.razor:390-393 applies the diagnostic-only drill-in predicate defined at src/Hexalith.Projects.UI/Diagnostics/ProjectWarningsDashboardMapper.cs:63-66, with coverage at tests/Hexalith.Projects.UI.Tests/Components/ProjectInventoryPageTests.cs:189-220.
 
 ### DW-27: Define and align warning diagnostic scan cardinality across Web, MCP, and CLI.
 
