@@ -271,6 +271,7 @@
     private string _updatedWindow = "all";
     private string _selectedWarningState = string.Empty;
     private IReadOnlyCollection<ReferenceState> _warningStateFilter = [];
+    private bool _diagnosticUnavailableOnly;
     private string _selectedReasonCode = string.Empty;
     private string _selectedReferenceKind = string.Empty;
 
@@ -342,6 +343,7 @@
     private void OnWarningStateChanged(ChangeEventArgs args)
     {
         _selectedWarningState = args.Value?.ToString() ?? string.Empty;
+        _diagnosticUnavailableOnly = false;
         _warningStateFilter = Enum.TryParse(_selectedWarningState, ignoreCase: true, out ReferenceState state)
             ? [state]
             : [];
@@ -385,6 +387,11 @@
             filtered = filtered.Where(item => _warningStateFilter.Contains(item.State));
         }
 
+        if (_diagnosticUnavailableOnly)
+        {
+            filtered = filtered.Where(ProjectWarningsDashboardMapper.IsDiagnosticUnavailableItem);
+        }
+
         if (Enum.TryParse(_selectedReasonCode, ignoreCase: true, out ProjectReasonCode reason))
         {
             filtered = filtered.Where(item => item.ReasonCode == reason);
@@ -425,6 +432,8 @@
 
     private async Task ApplyDashboardFilterAsync(DashboardFilter filter)
     {
+        _diagnosticUnavailableOnly = filter == DashboardFilter.DiagnosticUnavailable;
+
         // Lifecycle is a server-side query parameter, so lifecycle tiles must re-query rather than only
         // setting the dropdown value (which would leave the loaded rows unchanged).
         if (filter is DashboardFilter.Active or DashboardFilter.Archived)

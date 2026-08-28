@@ -38,6 +38,10 @@ public sealed class ProjectWarningsDashboardSource(IClient client) : IProjectWar
                 .Select(item => ToProjection(item, response.Freshness))
                 .ToArray();
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (HexalithProjectsApiException ex) when (ex.StatusCode is 401 or 403 or 404)
         {
             return ProjectWarningsDashboardLoadResult.FromFeedback(
@@ -78,6 +82,10 @@ public sealed class ProjectWarningsDashboardSource(IClient client) : IProjectWar
                     cancellationToken).ConfigureAwait(false);
                 ContractDiagnostic diagnostic = ProjectGeneratedContractMapper.ToContract(generatedDiagnostic);
                 queueItems.AddRange(ProjectWarningsDashboardMapper.BuildQueueItems(project, diagnostic));
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
             }
             catch (HexalithProjectsApiException ex)
             {

@@ -187,6 +187,40 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
     }
 
     [Fact]
+    public void DiagnosticDashboardTileDrillInMatchesCountWithoutChangingUnavailableStateFilter()
+    {
+        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        source.LoadAsync(null, Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
+                [Row(), Row("project-002", "Unavailable Project")],
+                [
+                    Warning("file-001", ReferenceState.Unavailable, null, "file"),
+                    DiagnosticUnavailableWarning(),
+                ],
+                DiagnosticDrillInDashboard())));
+        Services.AddSingleton(source);
+
+        IRenderedComponent<Home> cut = Render<Home>();
+
+        cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2));
+        cut.FindAll("[data-testid='project-dashboard-tile']")
+            .Single(tile => tile.TextContent.Contains("Diagnostic unavailable", StringComparison.Ordinal))
+            .Click();
+
+        cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(1);
+        string diagnosticQueue = cut.Find("[data-testid='project-warnings-queue']").TextContent;
+        diagnosticQueue.ShouldContain("project-002");
+        diagnosticQueue.ShouldNotContain("file-001");
+
+        cut.Find("[data-testid='project-warning-filter-state']").Change(ReferenceState.Unavailable.ToString());
+
+        cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2);
+        string unavailableQueue = cut.Find("[data-testid='project-warnings-queue']").TextContent;
+        unavailableQueue.ShouldContain("project-002");
+        unavailableQueue.ShouldContain("file-001");
+    }
+
+    [Fact]
     public async Task LifecycleDashboardTileReloadsWithSelectedLifecycle()
     {
         IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
@@ -284,6 +318,18 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
             ProjectsWithWarnings = 2,
             Conflicts = 1,
             UnauthorizedOrUnavailableReferences = 1,
+            DiagnosticUnavailable = 1,
+            TenantScope = "server-derived tenant",
+            LastObservedWarningAt = DateTimeOffset.UnixEpoch.AddMinutes(2),
+        };
+
+    private static ProjectOperationalDashboardProjection DiagnosticDrillInDashboard()
+        => new()
+        {
+            TotalVisibleProjects = 2,
+            ActiveProjects = 2,
+            ProjectsWithWarnings = 2,
+            UnauthorizedOrUnavailableReferences = 2,
             DiagnosticUnavailable = 1,
             TenantScope = "server-derived tenant",
             LastObservedWarningAt = DateTimeOffset.UnixEpoch.AddMinutes(2),

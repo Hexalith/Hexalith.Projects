@@ -13,6 +13,7 @@ using Hexalith.Projects.Contracts.Ui;
 /// </summary>
 public static class ProjectWarningsDashboardMapper
 {
+    private const string DiagnosticUnavailableSourcePrefix = "operator-diagnostics:";
     private const string TenantScopeLabel = "server-derived tenant";
 
     public static IReadOnlyList<ProjectWarningQueueItemProjection> BuildQueueItems(
@@ -54,10 +55,15 @@ public static class ProjectWarningsDashboardMapper
             LastObservedAt = project.UpdatedAt,
             FreshnessTrustState = EvidenceFreshnessStateCode.Normalize(project.FreshnessTrustState),
             ProjectionWatermark = project.ProjectionWatermark,
-            SourceSection = $"operator-diagnostics:{reason}",
+            SourceSection = $"{DiagnosticUnavailableSourcePrefix}{reason}",
             SafeActionAvailabilityLabel = "Open project; diagnostics unavailable; maintenance handled by Story 5.9",
         };
     }
+
+    public static bool IsDiagnosticUnavailableItem(ProjectWarningQueueItemProjection? item)
+        => item is not null
+            && item.State == ReferenceState.Unavailable
+            && item.SourceSection.StartsWith(DiagnosticUnavailableSourcePrefix, StringComparison.Ordinal);
 
     public static ProjectOperationalDashboardProjection BuildDashboard(
         IReadOnlyList<ProjectInventoryRowProjection> projects,

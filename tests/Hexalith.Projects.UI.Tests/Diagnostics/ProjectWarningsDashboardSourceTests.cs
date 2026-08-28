@@ -161,6 +161,63 @@ public sealed class ProjectWarningsDashboardSourceTests
         serialized.ShouldNotContain("secret token transcript body");
     }
 
+    [Fact]
+    public async Task SourcePropagatesInventoryCancellation()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.ListProjectsAsync(
+                null,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns<Task<ProjectListResponse>>(_ => throw new OperationCanceledException());
+
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+        var source = new ProjectWarningsDashboardSource(client);
+
+        await Should.ThrowAsync<OperationCanceledException>(() => source.LoadAsync(null, cts.Token));
+        await client.DidNotReceiveWithAnyArgs().GetProjectOperatorDiagnosticsAsync(
+            default!,
+            default,
+            default!,
+            default,
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+    }
+
+    [Fact]
+    public async Task SourcePropagatesDiagnosticCancellationWithoutContinuingEnrichment()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.ListProjectsAsync(
+                null,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ListResponse(
+                ListItem("project-001", ProjectLifecycleState.Active),
+                ListItem("project-002", ProjectLifecycleState.Active))));
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-001",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns<Task<GeneratedDiagnostic>>(_ => throw new OperationCanceledException());
+
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+        var source = new ProjectWarningsDashboardSource(client);
+
+        await Should.ThrowAsync<OperationCanceledException>(() => source.LoadAsync(null, cts.Token));
+        await client.DidNotReceive().GetProjectOperatorDiagnosticsAsync(
+            "project-002",
+            25,
+            Arg.Any<string>(),
+            ReadConsistencyClass.Eventually_consistent,
+            Arg.Any<CancellationToken>()).ConfigureAwait(true);
+    }
+
     [Theory]
     [InlineData(400, ProjectConsoleFeedback.ErrorCategory, "validation_error")]
     [InlineData(401, ProjectConsoleFeedback.FailClosedCategory, "safe_denial")]
@@ -227,6 +284,23 @@ public sealed class ProjectWarningsDashboardSourceTests
         item.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
         item.SourceSection.ShouldContain("unknown-state");
         item.SourceSection.ShouldContain("unknown-reason");
+    }
+
+    [Fact]
+    public void MapperDistinguishesSyntheticAndOrdinaryUnavailableRows()
+    {
+        ProjectInventoryRowProjection project = InventoryRow("project-001", ProjectLifecycle.Active);
+        ProjectWarningQueueItemProjection synthetic =
+            ProjectWarningsDashboardMapper.DiagnosticUnavailableItem(project, "data_unavailable");
+        var ordinary = new ProjectWarningQueueItemProjection
+        {
+            State = ReferenceState.Unavailable,
+            SourceSection = "operator-diagnostics.references",
+        };
+
+        ProjectWarningsDashboardMapper.IsDiagnosticUnavailableItem(synthetic).ShouldBeTrue();
+        ProjectWarningsDashboardMapper.IsDiagnosticUnavailableItem(ordinary).ShouldBeFalse();
+        ProjectWarningsDashboardMapper.IsDiagnosticUnavailableItem(null).ShouldBeFalse();
     }
 
     private static ProjectListResponse ListResponse(params ProjectListItem[] items)
