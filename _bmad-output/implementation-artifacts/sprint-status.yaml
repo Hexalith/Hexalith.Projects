@@ -319,6 +319,18 @@ action_items:
     rollback_baseline: "3.70.1"
     expected_evidence: "Owner-approved exact source/package/runner/architecture pin, clean restore, required API compatibility, live-runner compatibility, and rollback record"
     evidence: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p1r-eventstore-source-architecture-runner-revalidation-record.md"
+    # Append-only evidence pointer (2026-09-05, non-status, added per
+    # spec-6-1-p1r-revalidate-baseline-3-102-0.md): see the "3.102.0 candidate
+    # / 3.70.1 rollback revalidation attempt" section appended to the file
+    # named by `evidence` above (Hexalith.Builds commit
+    # fff0af2dc03fd01b667bd0a7d7bf054f52588b5a on local branch
+    # docs/p1r-3102-3701-record, unpushed/unmerged). That attempt is
+    # non-qualifying: EventStore source/package-mode lanes are blocked by a
+    # nested-submodule boundary conflict, and the Builds rollback
+    # package-version-audit fails a two-commit tooling requirement. `status`,
+    # `observed_drift`, `decision`, and `candidate_baseline` above remain the
+    # unedited 2026-08-03 snapshot; this comment adds no parsed field and
+    # changes no status.
     historical_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md"
     course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03.md"
     course_correction_status: approved

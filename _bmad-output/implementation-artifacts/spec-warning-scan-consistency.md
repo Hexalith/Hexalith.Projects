@@ -3,7 +3,7 @@ title: 'Align warning diagnostic scans across Web MCP and CLI'
 type: 'bugfix'
 created: '2026-08-28'
 status: ready-for-dev
-baseline_revision: 5fe125ee62fe5b88e8149e79d7a1c24a4835cefb
+baseline_revision: 393bd990047d9d80160e1aabdcc290c4c67f91ef
 review_loop_iteration: 0
 followup_review_recommended: false
 context:
