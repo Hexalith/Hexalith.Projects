@@ -5,7 +5,7 @@ epic: "Epic 6: Authorized Project Reads on the Supported Platform"
 created: 2026-07-31
 source_story_status: backlog
 status: blocked
-blocked_by: [6.1-P0, 6.1-P1, 6.1-P2, 6.1-P3, 6.1-P4, G-2-Conversations, G-2-Folders, G-6]
+blocked_by: [6.1-P0, 6.1-P1, 6.1-P1R, 6.1-P2, 6.1-P3, 6.1-P4, G-2-Conversations, G-2-Folders, G-6]
 baseline_commit: 8f070243998f535be224b796c747269e4a42ce13
 traceability:
   requirements: [fr-12, fr-13, fr-17]
@@ -43,11 +43,11 @@ so that Chatbot can identify the right Project (FR-12, FR-13) without persisted 
 
 ## Tasks / Subtasks
 
-**Non-implementation entry condition.** Do not start implementation until 6.1-P0 through 6.1-P4 are accepted against the exact current repository/package revisions, the applicable Conversations and Folders G-2 read contracts are pinned with authorization/freshness semantics, the G-4 runner and module manifest can execute the required profile, the affected G-6 runtime/toolchain tuple is approved, and this story passes ready-for-development review. The implementing agent cannot waive or self-approve these conditions. The absence of Story 6.2/6.3 files is not permission to invent their promised shared contracts.
+**Non-implementation entry condition.** Historical 6.1-P1 evidence is already accepted. Do not start implementation until 6.1-P0, current 6.1-P1R, and 6.1-P2 through 6.1-P4 are accepted against the exact current repository/package revisions, the applicable Conversations and Folders G-2 read contracts are pinned with authorization/freshness semantics, the G-4 runner and module manifest can execute the required profile, the affected G-6 runtime/toolchain tuple is approved, and this story passes ready-for-development review. The implementing agent cannot waive or self-approve these conditions. The absence of Story 6.2/6.3 files is not permission to invent their promised shared contracts.
 
 - [ ] Freeze the callable contracts and evidence boundary (AC: 1, 2, 3, 5, 6)
   - [ ] Record the exact EventStore, Builds, Conversations, and Folders revisions; current central package tuple; supported query/store/identity API signatures; owner read batch limits; freshness/watermark meanings; safe-denial behavior; normalization rules; and rollback pins in the accepted Epic 6 gate evidence.
-  - [ ] Reconcile the previously accepted EventStore `3.70.1` planning record with the current checkout's centrally pinned `3.86.0` and exact gitlinks. Do not copy stale Architecture Spine package prose or silently upgrade/downgrade a dependency in this story.
+  - [ ] Reconcile the accepted EventStore `3.70.1` rollback baseline with the current unaccepted `3.102.0` catalog state, stale `3.90.0` runner state, and exact gitlinks. Do not copy stale Architecture Spine package prose or silently upgrade/downgrade a dependency in this story.
   - [ ] Confirm the shared AD-32 response/component/recovery types and current actor-scoped Reference Trust Index seam delivered by the accepted Epic 6 work. Reuse them; do not create parallel vocabulary, a custom owner protocol, or a second trust store.
   - [ ] Freeze finite input bounds and canonicalization for Conversation, Folder, and File identities, including duplicate handling and `includeArchived`. Explicit archive inclusion never bypasses authorization or current read-model confirmation.
 
@@ -133,7 +133,7 @@ so that Chatbot can identify the right Project (FR-12, FR-13) without persisted 
 ### Current Baseline and Technology Notes
 
 - Baseline commit is `8f070243998f535be224b796c747269e4a42ce13`. `global.json` pins SDK `10.0.302` with latest-patch roll-forward; repository builds target `net10.0`, nullable and implicit usings are enabled, warnings are errors, and language version is latest. Do not change these settings for Story 6.4.
-- Current Builds central pins include EventStore `3.86.0`, FrontComposer `4.0.1`, Aspire `13.4.6`, Dapr .NET `1.18.5`, CommunityToolkit Aspire Dapr `13.4.1-beta.686`, OpenTelemetry `1.17.0`, NSwag `14.7.1`, xUnit v3 `3.2.2`, Shouldly `4.3.0`, and NSubstitute `6.0.0`. Central versioning is mandatory; no inline versions.
+- Current Builds central state has the unaccepted EventStore `3.102.0` catalog while the stale runner remains at `3.90.0`; EventStore `3.70.1` remains the accepted rollback baseline. Other central pins include FrontComposer `4.0.1`, Aspire `13.4.6`, Dapr .NET `1.18.5`, CommunityToolkit Aspire Dapr `13.4.1-beta.686`, OpenTelemetry `1.17.0`, NSwag `14.7.1`, xUnit v3 `3.2.2`, Shouldly `4.3.0`, and NSubstitute `6.0.0`. Central versioning is mandatory; no inline versions.
 - Current CI/runtime evidence still names Dapr runtime `1.18.0` while the central .NET SDK package is `1.18.5`; this is an exact-current G-6 reconciliation item. The Architecture Spine's older EventStore/Dapr/NSubstitute values are not permission to downgrade.
 - Official .NET support policy lists .NET 10 as active LTS through November 14, 2028. Official Aspire 13.4 guidance is compatible with the pinned family, but the repository's exact patch remains authoritative. Official Dapr access-control guidance reinforces service-to-service allowlists; it does not replace application-level dual-principal reauthorization.
 

@@ -280,7 +280,9 @@ origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-p
 location: Story 6.4 implementation artifact
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md
 reason: Review confirmed the pre-existing Story 6.4 `blocked_by` metadata and entry-condition prose omit P1R even though the current Epic 6 dependency context requires accepted P1R for later consumers; Story 6.4 was outside the candidate-baseline patch.
-status: open
+status: done 2026-09-05
+resolution: resolved by sweep bundle dw-story-6-4-prerequisite-truth
+resolution-undo: 9de8bb3b016b3f891a16d3ddf291689d8b5209123894ba2af7a022516c412931 2026-09-05 7374617475733a206f70656e
 
 ### DW-31: Replace Story 6.4's stale current EventStore 3.86.0 observations with the truthful unaccepted 3.88.0 candidate state.
 
@@ -288,7 +290,9 @@ origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-p
 location: Story 6.4 implementation artifact
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md
 reason: Review confirmed the pre-existing Story 6.4 artifact still calls 3.86.0 the current central pin after the source, catalog, and committed runner candidate moved to 3.88.0; Story 6.4 was outside the candidate-baseline patch.
-status: open
+status: done 2026-09-05
+resolution: resolved by sweep bundle dw-story-6-4-prerequisite-truth
+resolution-undo: 9de8bb3b016b3f891a16d3ddf291689d8b5209123894ba2af7a022516c412931 2026-09-05 7374617475733a206f70656e
 decision: 2026-08-28 Modernize current observation — Replace Story 6.4's 3.86.0 claim with the exact unaccepted 3.97.0 catalog and stale 3.90.0 runner split, retain the 3.70.1 rollback baseline, and preserve the story's blocked state.
 decision: 2026-08-28 Modernize current observation — Replace Story 6.4's 3.86.0 claim with the exact unaccepted 3.97.0 catalog and stale 3.90.0 runner split, retain the 3.70.1 rollback baseline, and preserve the story's blocked state.
 
