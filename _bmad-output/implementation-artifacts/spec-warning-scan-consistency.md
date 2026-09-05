@@ -23,7 +23,7 @@ deferred: []
 
 ## Boundaries & Constraints
 
-**Always:** Order the diagnostic window by ordinal project id and cap it at 25; keep the project-window limit distinct from the per-diagnostic audit limit of 25; derive lifecycle/inventory totals from every visible row and warning/unavailable totals from the scanned window; preserve cancellation, server-derived tenant scope, metadata-only output, safe failure mapping, warning-row ordering, and existing Web synthetic-unavailable and MCP warning-row shapes.
+**Always:** Order the diagnostic window by ordinal project id and cap it at 25; keep the project-window limit distinct from the per-diagnostic audit limit of 25; for every completed scan, set `ScannedProjectCount` to the number of projects selected for attempted diagnosis, including projects whose diagnostics are unavailable, and treat `DiagnosticUnavailable` as a subset of that count; derive lifecycle/inventory totals from every visible row and warning/unavailable totals from the scanned window; preserve cancellation, server-derived tenant scope, metadata-only output, safe failure mapping, warning-row ordering, and existing Web synthetic-unavailable and MCP warning-row shapes.
 
 **Block If:** A deterministic project identifier is unavailable, the new summary cannot use `projects.warningScanSummary` without conflicting with an existing protocol contract, or implementing the change requires modifying generated client artifacts or public REST/domain contracts.
 
@@ -35,7 +35,7 @@ deferred: []
 |----------|---------------|---------------------------|----------------|
 | Inventory exceeds window | More than 25 visible projects in non-ordinal input order | All surfaces diagnose the ordinal-first 25 only; full inventory/lifecycle totals still cover every visible project | Projects after the window are not queried and do not affect scan-derived counts |
 | Output is smaller than scan | MCP warning query requests fewer rows than the scan produces | MCP diagnoses the fixed 25-project window, sorts all warning rows, then applies query `Take` only to emitted rows | Per-project diagnostic failures still contribute to the full scan summary |
-| No healthy warning row | Scanned diagnostics emit no warning rows and one diagnostic is unavailable | Warning queue remains unchanged/empty and `projects.warningScanSummary` still emits one item with scanned count and `DiagnosticUnavailable = 1` | Unsafe failure detail remains excluded |
+| No healthy warning row | A completed 25-project scan emits no warning rows and one diagnostic is unavailable | Warning queue remains unchanged/empty and `projects.warningScanSummary` still emits one item with `ScannedProjectCount = 25` and `DiagnosticUnavailable = 1` | Unsafe failure detail remains excluded |
 | Dashboard snapshot changes | A client could return different inventories on consecutive reads | One MCP dashboard request reads inventory once and derives full totals and scanned warning counters from that exact snapshot | Cancellation propagates; base-list failures retain safe MCP mapping |
 
 </intent-contract>
@@ -71,11 +71,13 @@ deferred: []
 
 - Given the same visible inventory larger than 25, when Web, MCP, and CLI warning/dashboard surfaces run, then each diagnoses exactly the same ordinal-first 25 project ids while every reported visible/lifecycle inventory total reflects the full inventory.
 - Given an MCP warning query with `Take` below 25, when it is dispatched, then all projects in the fixed scan window are diagnosed before only the requested number of ordered warning rows is emitted.
-- Given a scanned diagnostic failure with no emitted healthy warning row, when MCP warning resources are queried, then the queue remains empty and `projects.warningScanSummary` returns exactly one safe item with the scanned cardinality and unavailable count.
+- Given a completed 25-project scan with one unavailable diagnostic and no emitted healthy warning row, when MCP warning resources are queried, then the queue remains empty and `projects.warningScanSummary` returns exactly one safe item with `ScannedProjectCount = 25` and `DiagnosticUnavailable = 1`.
 - Given an MCP dashboard request, when visible inventory could change between reads, then the client receives exactly one list request and every dashboard counter is derived from that snapshot and its fixed warning scan.
 - Given cancellation or an unsafe diagnostic failure, when any affected surface runs, then cancellation still propagates and successful partial output excludes raw failure or payload detail.
 
 ## Spec Change Log
+
+- 2026-09-05: Clarified that `ScannedProjectCount` counts every project selected for attempted diagnosis, including diagnostics recorded as unavailable.
 
 ## Review Triage Log
 
@@ -93,4 +95,3 @@ The shared selector belongs in `Hexalith.Projects.Client` because all three adap
 - `dotnet build tests/Hexalith.Projects.Cli.Tests/Hexalith.Projects.Cli.Tests.csproj --no-restore` followed by the built xUnit v3 assembly with `-class Hexalith.Projects.Cli.Tests.ProjectsCliApplicationTests` -- expected: all focused CLI tests pass.
 - `dotnet build Hexalith.Projects.slnx --no-restore` -- expected: zero warnings and errors.
 - `git diff --check` -- expected: no whitespace or conflict-marker errors; ledger, bundle intent, decision evidence, and generated workflow snapshots remain unchanged.
-
