@@ -5,9 +5,12 @@
 
 namespace Hexalith.Projects.Contracts.Models;
 
+using System.Text.Json.Serialization;
+
 /// <summary>
 /// Canonical verification state for evidence exposed through reference-health boundaries.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter<EvidenceFreshnessState>))]
 public enum EvidenceFreshnessState
 {
     /// <summary>The evidence is current and may be trusted for its approved purpose.</summary>

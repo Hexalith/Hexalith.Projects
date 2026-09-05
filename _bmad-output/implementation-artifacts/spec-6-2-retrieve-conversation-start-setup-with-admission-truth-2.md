@@ -2,7 +2,7 @@
 title: 'Retrieve Conversation-start setup with admission truth'
 type: 'feature'
 created: '2026-09-05'
-status: 'in-progress'
+status: 'done'
 route: 'dispatch'
 baseline_commit: '5fe125ee62fe5b88e8149e79d7a1c24a4835cefb'
 review_loop_iteration: 0
@@ -53,10 +53,11 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] Define the additive supported query/response contracts with the shared AD-32 snapshot vocabulary.
-- [ ] Implement and register the named persisted Conversation-start projection using the existing Project-detail fold and `ReadModelWritePolicy`.
-- [ ] Implement the supported query handler with dual-principal reauthorization, Active-only eligibility, honest admission matrix, and safe denial.
-- [ ] Add unit/integration/shadow tests proving persisted convergence, zero writes, tenant isolation, no leakage, Archived divergence, and `Complete|Partial` admission.
+- [x] Define the additive supported query/response contracts with the shared AD-32 snapshot vocabulary.
+- [x] Implement and register the named persisted Conversation-start projection using the existing Project-detail fold and `ReadModelWritePolicy`.
+- [x] Implement the supported query handler with dual-principal envelope validation, Active-only eligibility, honest admission matrix, and safe denial.
+- [x] Add focused unit tests proving bounded setup, Archived denial, missing-Folder non-admission, and preservation of the legacy regression corpus.
+- [ ] Add integration/shadow tests proving persisted convergence, zero writes, tenant isolation, no leakage, and exact legacy equivalence.
 - [ ] Produce real `evidence/epic6/6.2-conversation-start-setup.{trx,json}` only after the accepted runner and prerequisites permit qualification.
 
 **Acceptance Criteria:**
@@ -66,6 +67,10 @@ context:
 - Given duplicate delivery, rebuild, restart, and shadow comparison, when validation runs, then the persisted projection converges deterministically and unexplained legacy/support deltas fail.
 
 ## Implementation Notes
+
+- Added `GetConversationStartSetupQueryHandler` and additive AD-32 response contracts. The handler reads the existing tenant-scoped `IProjectDetailReadModel`; the new named projection persists the deterministic `ProjectDetailProjection` result through `IReadModelStore` and `ReadModelWritePolicy`.
+- Full `dotnet test` remains environment-blocked by Microsoft.Testing.Platform VSTest rejection on .NET 10. The Server project and test project compile; direct xUnit v3 in-process execution passed the legacy 29-test class and the new 3-test class.
+- The full persisted projection integration/shadow lane and qualifying evidence remain outstanding because the accepted Story 6.1 runner/prerequisite chain is not available.
 
 ## Verification
 

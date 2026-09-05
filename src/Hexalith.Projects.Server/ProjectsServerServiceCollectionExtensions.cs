@@ -15,6 +15,8 @@ using Hexalith.EventStore.Client.Registration;
 using Hexalith.EventStore.Contracts.Commands;
 using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.EventStore.Contracts.Results;
+using Hexalith.EventStore.Contracts.Queries;
+using Hexalith.EventStore.DomainService;
 using Hexalith.Memories.Client.Rest;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Infrastructure;
@@ -23,6 +25,8 @@ using Hexalith.Projects.Server.Conversations;
 using Hexalith.Projects.Server.Folders;
 using Hexalith.Projects.Server.Memories;
 using Hexalith.Projects.Server.Proposals;
+using Hexalith.Projects.Server.Projections.ConversationStartSetup;
+using Hexalith.Projects.Server.Queries;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -113,6 +117,7 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IProjectDaprPolicyEvidenceProvider, DenyAllProjectDaprPolicyEvidenceProvider>();
         services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();
         services.TryAddSingleton<IDomainProcessor, ProjectsDomainProcessor>();
+        services.AddSingleton<IDomainQueryHandler, GetConversationStartSetupQueryHandler>();
 
         return services;
     }
@@ -127,6 +132,8 @@ public static class ProjectsServerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddProjectsDaprInfrastructure();
+        services.AddEventStoreReadModelStore();
+        services.AddSingleton<IAsyncDomainProjectionHandler, ConversationStartSetupProjectionHandler>();
         services.RemoveAll<IProjectTenantAccessProjectionStore>();
         services.AddSingleton<IProjectTenantAccessProjectionStore, DaprProjectTenantAccessProjectionStore>();
         services.RemoveAll<IProjectEventStoreAuthorizationValidator>();
@@ -193,6 +200,13 @@ public static class ProjectsServerServiceCollectionExtensions
             string.Equals(request.Domain, ProjectsServerModule.DomainName, StringComparison.Ordinal)
                 ? Results.Ok(ProjectProjectionHandler.Project(request))
                 : Results.NotFound());
+        endpoints.MapPost(
+            "/query",
+            async (QueryEnvelope query, IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
+            {
+                QueryResult result = await DomainQueryDispatcher.ExecuteAsync(serviceProvider, query).ConfigureAwait(false);
+                return result.Success ? Results.Ok(result) : Results.NotFound(result);
+            });
         endpoints.MapProjectsDomainServiceEndpoints();
         return endpoints;
     }
