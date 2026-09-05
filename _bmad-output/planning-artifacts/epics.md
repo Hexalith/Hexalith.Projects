@@ -1476,6 +1476,7 @@ I want **scriptable, authenticated read-only CLI commands (`list`/`describe`/`in
 So that **operators and pipelines get authorized, metadata-only Project truth (FR-22) with stable exit codes and no color-dependent meaning**.
 
 - **Traceability:** FR-22; NFR-1, NFR-8; AD-2, AD-19, AD-20, AD-29, AD-33; UX-DR19; evidence row `fr-22-cli`.
+- **Prerequisite:** Story 6.8 (Hexalith.Projects.UI.Contracts split) must land first, or this CLI surface inherits Blazor/Fluxor transitively through `Hexalith.Projects.Contracts`.
 
 **Acceptance Criteria:**
 
@@ -1506,6 +1507,26 @@ So that **supported reads become authoritative without event-history rewrite, an
 **Given** an equivalence-gate failure or post-cutover regression, **When** detected, **Then** routing rolls back deterministically and the blocker is recorded honestly.
 
 - **Verification:** `dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7` + `hexalith-evidence validate` row `nfr-10-reads`. **Evidence:** `evidence/epic6/6.7-read-cutover.{json}` + rollback drill log. **Estimate:** L. **Completion boundary:** supported reads authoritative and reversible; legacy runtime read plumbing retired only after gates pass; command cutover is Epic 7.
+
+### Story 6.8: Split Hexalith.Projects.UI.Contracts from the packable Contracts package
+
+As a **Solution Architect / Projects module owner**,
+I want **FrontComposer presentation descriptors moved out of packable `Hexalith.Projects.Contracts` into a new non-packable `Hexalith.Projects.UI.Contracts` project that depends inward on Contracts and owns presentation metadata only**,
+So that **`Hexalith.Projects.Contracts` stops leaking Blazor/Fluxor/FrontComposer/ASP.NET Core dependencies into every consumer (CLI, MCP, and any future non-Web adapter), matching the adopted AD-16 package boundary before Stories 6.6, 8.4, and 8.5 build on it**.
+
+- **Traceability:** AD-16 (Contracts must not depend on FrontComposer Shell, Fluxor, Fluent UI, `Microsoft.AspNetCore.App`, Dapr, or Aspire; `Projects.UI.Contracts` depends inward on Contracts and owns presentation metadata only), AD-2, AD-24 (target package graph); findings ARCH-002, API-001, MCP-001; identified as an operator action in Story 6.2 (`spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md`, Spec Change Log 2026-08-26) after bmad-code-review found `Hexalith.Projects.Contracts.csproj` (`IsPackable=true`) referencing `Hexalith.FrontComposer.Shell`, `Hexalith.FrontComposer.SourceTools`, an ASP.NET Core `FrameworkReference`, `Fluxor.Blazor.Web`, and `Microsoft.FluentUI.AspNetCore.Components`, with `ConversationStartSetup.cs:11` consuming `Hexalith.Projects.Contracts.Ui.ProjectContextFreshness` decorated with `[ProjectionBadge]` from `Hexalith.FrontComposer.Contracts.Attributes`.
+
+**Acceptance Criteria:**
+
+**Given** the current `src/Hexalith.Projects.Contracts/Ui/` types (including `ProjectContextFreshness` and its `[ProjectionBadge]` decoration) and the `Hexalith.Projects.Contracts.csproj:22-33` FrontComposer/Fluxor/Fluent UI/ASP.NET Core references, **When** the split completes, **Then** those types and references move to a new non-packable `Hexalith.Projects.UI.Contracts` project that depends inward on `Hexalith.Projects.Contracts` only, and `Hexalith.Projects.Contracts.csproj` no longer references FrontComposer Shell, FrontComposer SourceTools, `Microsoft.AspNetCore.App`, Fluxor, or Fluent UI.
+
+**Given** existing consumers of the moved types (Story 3.5/6.5 FrontComposer code, generated descriptors), **When** the split lands, **Then** every reference is repointed to `Hexalith.Projects.UI.Contracts` with no behavior change, no redefinition of operations/vocabulary/security (AD-16), and a green build/test run.
+
+**Given** a CLI- or MCP-only consumer of `Hexalith.Projects.Contracts` (as Stories 6.6/8.4/8.5 will be), **When** it references the package, **Then** it pulls no Blazor/Fluxor/FrontComposer/ASP.NET Core transitive dependency.
+
+**Given** the split is complete, **When** Stories 6.6, 8.4, or 8.5 begin, **Then** this story's completion is a satisfied prior-only dependency for each.
+
+- **Verification:** `dotnet build Hexalith.Projects.slnx --configuration Debug` (zero warnings/errors); `dotnet list src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj package --include-transitive` shows no Blazor/Fluxor/FrontComposer/AspNetCore.App reference; existing Contracts/Projects/Server test suites pass unchanged. **Evidence:** build + dependency-listing output attached to the story; no new `evidence/epic6/` artifact required (packaging-only, no runtime admission behavior). **Estimate:** S. **Completion boundary:** `Hexalith.Projects.Contracts` is dependency-light per AD-16; `Hexalith.Projects.UI.Contracts` exists and is consumed; no runtime/behavior change.
 
 ---
 
@@ -2345,6 +2366,7 @@ I want **an authenticated CLI with deterministic machine output, stable exit cod
 So that **scripted operations get a stable, independently verifiable, redaction-safe contract (FR-22, NFR-8)**.
 
 - **Traceability:** FR-22; NFR-1, NFR-8; AD-2, AD-19, AD-29, AD-33; UX-DR19, UX-DR24; canonical evidence rows `fr-22`, `finding-cli-001`.
+- **Prerequisite:** Story 6.8 (Hexalith.Projects.UI.Contracts split) must land first, or this CLI contract inherits Blazor/Fluxor transitively through `Hexalith.Projects.Contracts`.
 
 **Acceptance Criteria:**
 
@@ -2365,6 +2387,7 @@ I want **agent-safe MCP resources and tools that preserve the canonical action c
 So that **agents operate Projects safely and all three adapters can be compared after they exist (FR-22, AD-29)**.
 
 - **Traceability:** FR-22; NFR-1, NFR-8; AD-2, AD-19, AD-20, AD-29, AD-33; UX-DR20; finding AGENT-001; canonical evidence rows `fr-22`, `finding-mcp-001`.
+- **Prerequisite:** Story 6.8 (Hexalith.Projects.UI.Contracts split) must land first, or this MCP surface inherits Blazor/Fluxor transitively through `Hexalith.Projects.Contracts`.
 
 **Acceptance Criteria:**
 

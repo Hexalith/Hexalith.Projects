@@ -13,7 +13,7 @@ warnings: [multiple-goals, oversized]
 operator_actions:
   - 'Accept and record the exact-current 6.1-P0, 6.1-P1, 6.1-P1R, 6.1-P2, 6.1-P3, and 6.1-P4 prerequisite chain, including G-4 runner evidence, G-5 identity evidence, immutable pins, rollback, and every required owner decision.'
   - 'Land Story 6.1 shared AD-32 contracts, persisted Project detail read models, dual-principal read authorization, supported DomainService query composition, and safe-denial gateway wiring, then publish their exact reusable type and route names.'
-  - 'Create and schedule the standalone Hexalith.Projects.UI.Contracts split story removed from this scope on 2026-08-26 (requires tools/planning/validate_production_authority.py --story-id and a sprint-status entry, neither of which this story may perform).'
+  - 'RESOLVED 2026-09-03 via sprint-change-proposal-2026-09-02.md: standalone story created and scheduled as Story 6.8 in epics.md, with a sprint-status.yaml entry validated through tools/planning/validate_production_authority.py (--validate-index on the candidate and the active file, --story-id "6.8"). Stories 6.6, 8.4, and 8.5 carry an explicit prerequisite note. Original text: Create and schedule the standalone Hexalith.Projects.UI.Contracts split story removed from this scope on 2026-08-26 (requires tools/planning/validate_production_authority.py --story-id and a sprint-status entry, neither of which this story may perform).'
   - 'Provide an independently green readiness rerun and an executable reads profile with a module manifest capable of producing real persisted Story 6.2 evidence.'
 deferred: []
 ---
