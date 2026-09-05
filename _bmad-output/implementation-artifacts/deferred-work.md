@@ -302,7 +302,9 @@ origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-p
 location: canonical readiness fixture and module manifest
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md
 reason: Review confirmed the pre-existing readiness fixture uses a synthetic all-`A` `manifestHash` even though production run evidence computes SHA-256 from the manifest file, allowing the fixture to validate without proving the manifest identity it cites.
-status: open
+status: done 2026-09-05
+resolution: resolved by sweep bundle dw-readiness-evidence-identity
+resolution-undo: 0e50a15ad24c573f405846987442bab6fba21795f2c13dcc294bdc7ab5f71411 2026-09-05 7374617475733a206f70656e
 
 ### DW-33: Bind passing readiness rows to normalized filter, fixture, manifest, and hash identities in module-run evidence.
 
@@ -310,7 +312,9 @@ origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-p
 location: ArtifactBindsToRow readiness evidence validation
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline.md
 reason: Review confirmed the pre-existing `ArtifactBindsToRow` check compares only the module subcommand and profile, so a row declaring a filter and fixture can pass with an artifact that records neither; broadening the evidence contract was outside the pin-revalidation patch.
-status: open
+status: done 2026-09-05
+resolution: resolved by sweep bundle dw-readiness-evidence-identity
+resolution-undo: 0e50a15ad24c573f405846987442bab6fba21795f2c13dcc294bdc7ab5f71411 2026-09-05 7374617475733a206f70656e
 
 ### DW-34: Propagate the verified EventStore 3.90.0 candidate and exact qualifying Builds revision through the Projects sprint ledger, Epic 6 context, epics, and readiness matrix views.
 
@@ -608,4 +612,11 @@ location: Repository change set after baseline 2e096e4cb13fc121c6fb03a4b2e896027
 source_spec: `spec-warning-scan-consistency-2.md`
 severity: medium
 reason: The warning-scan run began from clean baseline 2e096e4cb13fc121c6fb03a4b2e8960270bdc9b2. Commits f4509ef1d0bfe045b0733d8ef2906d3e32eb44eb and 152ca393bb7128d0ff1e5fe54531624af8534506 appeared on main and origin/main during implementation and review; they contain the unrelated Story 6.2 artifact, deferred-work ledger entry, and EventStore/Folders/Parties submodule pointer updates. The warning-scan implementation session did not author those edits, and separating already-published concurrent work requires its owner or orchestrator.
+status: open
+
+### DW-65: Define the accepted serialization grammar for readiness verification commands before broadening identity binding beyond the current canonical token form.
+origin: spec-deferred cf4fbe1482fb
+location: references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Evidence/ReadinessEvidenceValidator.cs:1161
+source_spec: `spec-readiness-evidence-identity.md`
+reason: Review could not establish whether readiness rows are required to use the current space-delimited `--manifest`, `--profile`, and `--filter` form or may use equals forms, quoted/escaped values, shell wrappers, and trailing operators. An authoritative producer/consumer contract plus representative accepted commands would settle the question.
 status: open
