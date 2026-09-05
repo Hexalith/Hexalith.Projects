@@ -132,6 +132,7 @@ public sealed class ProjectsMcpResourceReaderTests
                 {
                     ListItem("project-1"),
                     ListItem("project-2"),
+                    ListItem("project-3"),
                 },
             });
         client.GetProjectOperatorDiagnosticsAsync(
@@ -140,7 +141,9 @@ public sealed class ProjectsMcpResourceReaderTests
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
                 Arg.Any<CancellationToken>())
-            .Returns(call => DiagnosticWithWarnings(call.ArgAt<string>(0)));
+            .Returns(call => call.ArgAt<string>(0) == "project-2"
+                ? throw new InvalidOperationException("unsafe diagnostic failure detail")
+                : DiagnosticWithWarnings(call.ArgAt<string>(0)));
         var reader = new ProjectsMcpResourceReader(client);
 
         QueryResult<ProjectsMcpWarningQueueItem> result = await reader.QueryAsync<ProjectsMcpWarningQueueItem>(
@@ -154,6 +157,7 @@ public sealed class ProjectsMcpResourceReaderTests
         result.Items.Count.ShouldBe(1);
         result.TotalCount.ShouldBe(4);
         result.Items.ShouldAllBe(item => item.FreshnessTrustState == EvidenceFreshnessStateCode.Current);
+        result.Items.ShouldAllBe(item => item.DiagnosticUnavailable == 1);
         await client.Received(1).GetProjectOperatorDiagnosticsAsync(
             "project-1",
             25,
@@ -162,6 +166,12 @@ public sealed class ProjectsMcpResourceReaderTests
             Arg.Any<CancellationToken>());
         await client.Received(1).GetProjectOperatorDiagnosticsAsync(
             "project-2",
+            25,
+            Arg.Any<string>(),
+            ReadConsistencyClass.Eventually_consistent,
+            Arg.Any<CancellationToken>());
+        await client.Received(1).GetProjectOperatorDiagnosticsAsync(
+            "project-3",
             25,
             Arg.Any<string>(),
             ReadConsistencyClass.Eventually_consistent,
