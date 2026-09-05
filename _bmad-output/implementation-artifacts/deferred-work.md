@@ -392,7 +392,8 @@ location: src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: high
 reason: ProjectContextInclusionPolicy.Assemble hardcodes Assembled on the success path and the wire DTO deliberately omits AssemblyOutcome, so a Chatbot receiving 200 has no signal on which to withhold a first response. 200 means "authorized", not "usable".
-status: open
+status: done 2026-09-05
+resolution: already resolved: Commit d3a115df3c7243204ce9fe76757d39937761477f; src/Hexalith.Projects.Contracts/Queries/ConversationStartSetupResponse.cs:14-46 defines ResponseState, Components, and RecoveryActions, and src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:60-65,86-100 computes admission state and omits setup when unavailable.
 gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
 
 ### DW-45: Bind the Conversation-start snapshot to an authorized projectVersion.
@@ -402,7 +403,8 @@ location: src/Hexalith.Projects.Contracts/Models/ConversationStartSetup.cs
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: high
 reason: ProjectDetailItem carries a Sequence watermark but the DTO explicitly excludes it, enforced by GetConversationStartSetup_BodyDoesNotContainAuditMetadata. Nothing ties the setup a Chatbot admits on to a Project version, so a concurrent archive or setup update is undetectable by the caller.
-status: open
+status: done 2026-09-05
+resolution: already resolved: Commit d3a115df3c7243204ce9fe76757d39937761477f; src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:86-90 binds ProjectVersion to detail.Sequence, with version and persisted AsOf assertions at tests/Hexalith.Projects.Server.Tests/Queries/GetConversationStartSetupQueryHandlerTests.cs:46-51.
 gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
 
 ### DW-46: Evaluate exactly-one-Folder eligibility on the Conversation-start read.
@@ -412,7 +414,8 @@ location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: high
 reason: The handler constructs ProjectContextReferenceEvidence with ProjectFolder null and empty collections while authorization.ProjectDetail already carries ProjectFolderReference. A Project with no Folder, an archived Folder, or an ambiguous Folder produces the same admissible-looking 200.
-status: open
+status: done 2026-09-05
+resolution: already resolved: Commit d3a115df3c7243204ce9fe76757d39937761477f; src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:55-65 requires the singular ProjectDetailItem.ProjectFolder to be Included and returns Unavailable without setup otherwise, covered at tests/Hexalith.Projects.Server.Tests/Queries/GetConversationStartSetupQueryHandlerTests.cs:66-76.
 gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
 
 ### DW-47: Derive dual-principal authority (delegation, workload, scopes, audience) for Conversation-start reads.
