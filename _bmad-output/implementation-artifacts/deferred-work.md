@@ -581,3 +581,13 @@ severity: medium
 reason: goals and userInstructions are tagged x-hexalith-sensitive-metadata-tier tenant_sensitive, yet the response is emitted with no Cache-Control no-store and no Vary handling. This is the fast-path endpoint called at every conversation start, so it is the one intermediaries are most likely to cache. Deferred to Story 6.7 because it changes legacy response headers and therefore the shadow baseline.
 status: open
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
+
+### DW-63: Migrate the Projects Server hand-rolled `/process`, `/project`, and `/query` endpoints onto the SDK's `AddEventStoreDomainService()`/`UseEventStoreDomainService()` host.
+
+origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md, 2026-09-05
+location: src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs:212-321
+source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md
+severity: medium
+reason: hexalith-state-instructions.md mandates a two-line host (AddEventStoreDomainService/UseEventStoreDomainService) that already maps /process, /replay-state, /query, /project, and more, with route-validation and duplicate-registration guards Hexalith.Projects.Server does not get by hand-rolling its own MapPost calls. This predates Story 6.2 (/process and /project were already hand-rolled); Story 6.2 added a hand-rolled /query following the same existing local pattern rather than introducing a new deviation. Deferred because migrating requires re-wiring the whole endpoint surface, not a Story-6.2-scoped fix.
+status: open
+gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback

@@ -30,6 +30,7 @@ public static class ProjectsMcpDescriptors
         "projects.auditTimeline",
         "projects.safeDiagnosticExport",
         "projects.warningQueue",
+        "projects.warningScanSummary",
         "projects.operationalDashboard",
         "projects.maintenanceAction",
     ];
@@ -61,6 +62,7 @@ public static class ProjectsMcpDescriptors
             Resource("projects.auditTimeline", typeof(ProjectsMcpAuditTimelineItem), "Audit timeline rows"),
             Resource("projects.safeDiagnosticExport", typeof(ProjectsMcpSafeDiagnosticExportItem), "Safe diagnostic export summary"),
             Resource("projects.warningQueue", typeof(ProjectsMcpWarningQueueItem), "Warning queue rows"),
+            Resource("projects.warningScanSummary", typeof(ProjectsMcpWarningScanSummaryItem), "Warning scan summary"),
             Resource("projects.operationalDashboard", typeof(ProjectsMcpOperationalDashboardItem), "Operational dashboard counters"),
             Resource("projects.maintenanceAction", typeof(ProjectsMcpMaintenanceActionItem), "Maintenance action preview metadata"),
         ]);

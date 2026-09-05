@@ -8,6 +8,7 @@ namespace Hexalith.Projects.Cli;
 using System.Globalization;
 using System.Text.Json;
 
+using Hexalith.Projects.Client.Diagnostics;
 using Hexalith.Projects.Client.Generated;
 
 using EvidenceFreshnessStateCode = Hexalith.Projects.Contracts.Models.EvidenceFreshnessStateCode;
@@ -226,7 +227,7 @@ public sealed class ProjectsCliApplication(IClient client, TextWriter output, Te
         var rows = new List<object>();
         var warnedProjects = new HashSet<string>(StringComparer.Ordinal);
         int diagnosticUnavailable = 0;
-        foreach (ProjectListItem item in list.Items.Take(25))
+        foreach (ProjectListItem item in ProjectWarningScanWindow.Select(list.Items))
         {
             ProjectOperatorDiagnostic diagnostic;
             try

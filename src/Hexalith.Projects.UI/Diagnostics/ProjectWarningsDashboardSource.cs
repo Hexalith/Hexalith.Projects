@@ -5,6 +5,7 @@
 
 namespace Hexalith.Projects.UI.Diagnostics;
 
+using Hexalith.Projects.Client.Diagnostics;
 using Hexalith.Projects.Client.Generated;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.UI.Rendering;
@@ -27,6 +28,7 @@ public sealed class ProjectWarningsDashboardSource(IClient client) : IProjectWar
     {
         string correlationId = Guid.NewGuid().ToString("N");
         ProjectInventoryRowProjection[] projects;
+        ProjectInventoryRowProjection[] scanProjects;
         try
         {
             ProjectListResponse response = await client.ListProjectsAsync(
@@ -34,7 +36,11 @@ public sealed class ProjectWarningsDashboardSource(IClient client) : IProjectWar
                 correlationId,
                 ReadConsistencyClass.Eventually_consistent,
                 cancellationToken).ConfigureAwait(false);
-            projects = response.Items
+            ProjectListItem[] visibleProjects = response.Items.ToArray();
+            projects = visibleProjects
+                .Select(item => ToProjection(item, response.Freshness))
+                .ToArray();
+            scanProjects = ProjectWarningScanWindow.Select(visibleProjects)
                 .Select(item => ToProjection(item, response.Freshness))
                 .ToArray();
         }
@@ -70,7 +76,7 @@ public sealed class ProjectWarningsDashboardSource(IClient client) : IProjectWar
 
         var queueItems = new List<ProjectWarningQueueItemProjection>();
         int diagnosticUnavailableCount = 0;
-        foreach (ProjectInventoryRowProjection project in projects)
+        foreach (ProjectInventoryRowProjection project in scanProjects)
         {
             try
             {

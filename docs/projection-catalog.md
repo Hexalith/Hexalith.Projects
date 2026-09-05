@@ -365,10 +365,12 @@ boundaries.
 - **Owner:** Story 5.8 FrontComposer ActionQueue descriptor/wrapper in Contracts. It is not a
   persisted warning projection, maintenance state, audit event, or duplicate operator inventory model.
 - **Contract version:** `projects.warning-queue-item.ui.v1`.
-- **Source data:** visible tenant-scoped rows from `ListProjectsAsync(...)`, bounded by the current UI
-  load, enriched per visible row through `GetProjectOperatorDiagnosticsAsync(projectId, auditLimit:
-  25, correlationId, eventually_consistent, cancellationToken)`. Queue rows are derived from
-  existing `ProjectOperatorReferenceSummary` metadata only.
+- **Source data:** the ordinal-first 25 project ids from one complete visible tenant-scoped
+  `ListProjectsAsync(...)` snapshot, enriched per selected row through
+  `GetProjectOperatorDiagnosticsAsync(projectId, auditLimit: 25, correlationId,
+  eventually_consistent, cancellationToken)`. The 25-project selection limit is distinct from the
+  per-diagnostic audit limit of 25. Queue rows are derived from existing
+  `ProjectOperatorReferenceSummary` metadata only.
 - **Tenant scoping:** inherited from list/operator diagnostic server authorization. The descriptor
   carries opaque `projectId`/`referenceId` and a display-only tenant scope label; it never accepts or
   derives tenant authority from URL, headers, local storage, or client input.
@@ -393,8 +395,10 @@ boundaries.
 - **Owner:** Story 5.8 FrontComposer StatusOverview descriptor/wrapper in Contracts. It is not a
   persisted analytics projection or runtime dashboard aggregate.
 - **Contract version:** `projects.operational-dashboard.ui.v1`.
-- **Source data:** aggregate counts over the same visible project set and
-  `ProjectWarningQueueItemProjection` rows loaded for the Web queue.
+- **Source data:** aggregate counts over one complete visible project snapshot and
+  `ProjectWarningQueueItemProjection` rows from that snapshot's ordinal-first 25-project diagnostic
+  window. Total-visible, active, and archived counts use every visible row; warning and unavailable
+  counts use only the selected window.
 - **Tenant scoping:** inherited from the visible project set. The descriptor contains only a
   display-only tenant scope label and metadata counts.
 - **Stored data:** none. Counts are recomputed per UI source load.
@@ -417,7 +421,7 @@ boundaries.
 - **Resource/tool names:** read resources are `projects.inventory`, `projects.detail`,
   `projects.operatorDiagnostic`, `projects.referenceHealth`, `projects.resolutionTrace`,
   `projects.auditTimeline`, `projects.safeDiagnosticExport`, `projects.warningQueue`,
-  `projects.operationalDashboard`, and `projects.maintenanceAction`. Mutating tools are
+  `projects.warningScanSummary`, `projects.operationalDashboard`, and `projects.maintenanceAction`. Mutating tools are
   `projects.archive`, `projects.restore`, `projects.relink`, `projects.unlink`, and
   `projects.reevaluate`.
 - **Source data:** existing generated Projects client methods only; query surfaces use eventual
@@ -426,8 +430,10 @@ boundaries.
 - **Tenant scoping:** host/client authentication and server-side authorization only. Tenant scope in
   output is a display label (`server-derived tenant`), not caller-supplied authority.
 - **Freshness semantics:** read resources preserve generated freshness fields and bounded audit limits
-  (default 25, max 100). Warning/dashboard resources use visible inventory rows plus bounded
-  diagnostics.
+  (default 25, max 100). Warning, scan-summary, and dashboard resources diagnose the ordinal-first
+  25 projects from one visible inventory snapshot. Queue `Take` limits emitted ordered rows only;
+  `TotalCount` covers all matching warning rows. The always-emitted summary reports selected-project
+  cardinality and unavailable diagnostics without exposing failure detail.
 - **Leakage boundary:** output may include safe opaque ids, lifecycle/reference/result/reason states,
   freshness, timestamps, correlation/task/audit ids, safe feedback codes, descriptor metadata, and
   short safe explanations. Output must not include idempotency keys, command bodies, raw ProblemDetails,

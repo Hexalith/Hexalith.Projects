@@ -147,13 +147,95 @@ public sealed class ProjectsMcpResourceReaderTests
             QueryRequest.Create(
                 new ProjectionQuery(
                     typeof(ProjectsMcpWarningQueueItem).AssemblyQualifiedName!,
-                    Take: 2),
+                    Take: 1),
                 "tenant-1"),
             TestContext.Current.CancellationToken);
 
-        result.Items.Count.ShouldBe(2);
-        result.TotalCount.ShouldBe(2);
+        result.Items.Count.ShouldBe(1);
+        result.TotalCount.ShouldBe(4);
         result.Items.ShouldAllBe(item => item.FreshnessTrustState == EvidenceFreshnessStateCode.Current);
+        await client.Received(1).GetProjectOperatorDiagnosticsAsync(
+            "project-1",
+            25,
+            Arg.Any<string>(),
+            ReadConsistencyClass.Eventually_consistent,
+            Arg.Any<CancellationToken>());
+        await client.Received(1).GetProjectOperatorDiagnosticsAsync(
+            "project-2",
+            25,
+            Arg.Any<string>(),
+            ReadConsistencyClass.Eventually_consistent,
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task WarningResourcesDiagnoseOrdinalFirstWindowAndDashboardKeepsFullInventoryTotals()
+    {
+        IClient client = Substitute.For<IClient>();
+        ProjectListItem[] visibleProjects = Enumerable.Range(1, 30)
+            .Reverse()
+            .Select(static index => ListItem($"project-{index:000}"))
+            .ToArray();
+        var list = new ProjectListResponse();
+        foreach (ProjectListItem project in visibleProjects)
+        {
+            list.Items.Add(project);
+        }
+
+        client.ListProjectsAsync(
+                Lifecycle.All,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(list);
+        var diagnosedProjectIds = new List<string>();
+        client.GetProjectOperatorDiagnosticsAsync(
+                Arg.Any<string>(),
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                string projectId = call.ArgAt<string>(0);
+                diagnosedProjectIds.Add(projectId);
+                return DiagnosticWithWarnings(projectId);
+            });
+        var reader = new ProjectsMcpResourceReader(client);
+
+        QueryResult<ProjectsMcpWarningScanSummaryItem> result =
+            await reader.QueryAsync<ProjectsMcpWarningScanSummaryItem>(
+                QueryRequest.Create(
+                    new ProjectionQuery(typeof(ProjectsMcpWarningScanSummaryItem).AssemblyQualifiedName!),
+                    "tenant-1"),
+                TestContext.Current.CancellationToken);
+
+        string[] expectedScan = Enumerable.Range(1, 25)
+            .Select(static index => $"project-{index:000}")
+            .ToArray();
+        diagnosedProjectIds.ShouldBe(expectedScan, ignoreOrder: false);
+        result.TotalCount.ShouldBe(1);
+        ProjectsMcpWarningScanSummaryItem summary = result.Items.ShouldHaveSingleItem();
+        summary.ScannedProjectCount.ShouldBe(25);
+        summary.DiagnosticUnavailable.ShouldBe(0);
+        summary.TenantScope.ShouldBe("server-derived tenant");
+        summary.PayloadExcluded.ShouldBeTrue();
+
+        diagnosedProjectIds.Clear();
+        QueryResult<ProjectsMcpOperationalDashboardItem> dashboardResult =
+            await reader.QueryAsync<ProjectsMcpOperationalDashboardItem>(
+                QueryRequest.Create(
+                    new ProjectionQuery(typeof(ProjectsMcpOperationalDashboardItem).AssemblyQualifiedName!),
+                    "tenant-1"),
+                TestContext.Current.CancellationToken);
+
+        diagnosedProjectIds.ShouldBe(expectedScan, ignoreOrder: false);
+        ProjectsMcpOperationalDashboardItem dashboard = dashboardResult.Items.ShouldHaveSingleItem();
+        dashboard.TotalVisibleProjects.ShouldBe(30);
+        dashboard.ActiveProjects.ShouldBe(30);
+        dashboard.ArchivedProjects.ShouldBe(0);
+        dashboard.ProjectsWithWarnings.ShouldBe(25);
+        dashboard.DiagnosticUnavailable.ShouldBe(0);
     }
 
     private static ProjectOperatorDiagnostic DiagnosticWithWarnings(

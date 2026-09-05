@@ -189,6 +189,170 @@ public sealed class ProjectsMcpResourceReaderFailureTests
         serialized.ShouldNotContain("secret-problem-detail");
     }
 
+    [Fact]
+    public async Task Query_EmptyWarningQueue_StillEmitsScanSummaryWithUnavailableCount()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.ListProjectsAsync(
+                Lifecycle.All,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(new ProjectListResponse
+            {
+                Items =
+                {
+                    ListItem("project-1"),
+                    ListItem("project-2"),
+                },
+            });
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-1",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(DiagnosticWithoutWarnings("project-1"));
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-2",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .ThrowsAsync(Api(503));
+        var reader = new ProjectsMcpResourceReader(client);
+
+        QueryResult<ProjectsMcpWarningQueueItem> warningResult =
+            await reader.QueryAsync<ProjectsMcpWarningQueueItem>(
+                QueryRequest.Create(
+                    new ProjectionQuery(typeof(ProjectsMcpWarningQueueItem).AssemblyQualifiedName!),
+                    "tenant-1"),
+                TestContext.Current.CancellationToken);
+        QueryResult<ProjectsMcpWarningScanSummaryItem> summaryResult =
+            await reader.QueryAsync<ProjectsMcpWarningScanSummaryItem>(
+                QueryRequest.Create(
+                    new ProjectionQuery(typeof(ProjectsMcpWarningScanSummaryItem).AssemblyQualifiedName!),
+                    "tenant-1"),
+                TestContext.Current.CancellationToken);
+
+        warningResult.Items.ShouldBeEmpty();
+        warningResult.TotalCount.ShouldBe(0);
+        summaryResult.TotalCount.ShouldBe(1);
+        ProjectsMcpWarningScanSummaryItem summary = summaryResult.Items.ShouldHaveSingleItem();
+        summary.ScannedProjectCount.ShouldBe(2);
+        summary.DiagnosticUnavailable.ShouldBe(1);
+        summary.ShortExplanation.ShouldNotContain("unsafe-exception-detail");
+        summary.ShortExplanation.ShouldNotContain("secret-problem-detail");
+        summary.PayloadExcluded.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Query_DashboardUsesOneInventorySnapshotForAllCountersAndWarningScan()
+    {
+        IClient client = Substitute.For<IClient>();
+        var firstSnapshot = new ProjectListResponse
+        {
+            Items =
+            {
+                ListItem("project-1", ProjectLifecycleState.Active),
+                ListItem("project-2", ProjectLifecycleState.Archived),
+            },
+        };
+        var secondSnapshot = new ProjectListResponse
+        {
+            Items =
+            {
+                ListItem("project-999", ProjectLifecycleState.Active),
+            },
+        };
+        client.ListProjectsAsync(
+                Lifecycle.All,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(firstSnapshot, secondSnapshot);
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-1",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(DiagnosticWithExcludedReference("project-1"));
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-2",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(DiagnosticWithoutWarnings("project-2"));
+        var reader = new ProjectsMcpResourceReader(client);
+
+        QueryResult<ProjectsMcpOperationalDashboardItem> result =
+            await reader.QueryAsync<ProjectsMcpOperationalDashboardItem>(
+                QueryRequest.Create(
+                    new ProjectionQuery(typeof(ProjectsMcpOperationalDashboardItem).AssemblyQualifiedName!),
+                    "tenant-1"),
+                TestContext.Current.CancellationToken);
+
+        ProjectsMcpOperationalDashboardItem dashboard = result.Items.ShouldHaveSingleItem();
+        dashboard.TotalVisibleProjects.ShouldBe(2);
+        dashboard.ActiveProjects.ShouldBe(1);
+        dashboard.ArchivedProjects.ShouldBe(1);
+        dashboard.ProjectsWithWarnings.ShouldBe(1);
+        dashboard.DiagnosticUnavailable.ShouldBe(0);
+        await client.Received(1).ListProjectsAsync(
+            Lifecycle.All,
+            Arg.Any<string>(),
+            ReadConsistencyClass.Eventually_consistent,
+            Arg.Any<CancellationToken>());
+        await client.DidNotReceive().GetProjectOperatorDiagnosticsAsync(
+            "project-999",
+            Arg.Any<int>(),
+            Arg.Any<string>(),
+            ReadConsistencyClass.Eventually_consistent,
+            Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Query_WarningScanRethrowsCancellationWithoutContinuing()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.ListProjectsAsync(
+                Lifecycle.All,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(new ProjectListResponse
+            {
+                Items =
+                {
+                    ListItem("project-1"),
+                    ListItem("project-2"),
+                },
+            });
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-1",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .ThrowsAsync(new OperationCanceledException());
+        var reader = new ProjectsMcpResourceReader(client);
+
+        await Should.ThrowAsync<OperationCanceledException>(
+            () => reader.QueryAsync<ProjectsMcpWarningScanSummaryItem>(
+                QueryRequest.Create(
+                    new ProjectionQuery(typeof(ProjectsMcpWarningScanSummaryItem).AssemblyQualifiedName!),
+                    "tenant-1"),
+                TestContext.Current.CancellationToken));
+        await client.DidNotReceive().GetProjectOperatorDiagnosticsAsync(
+            "project-2",
+            Arg.Any<int>(),
+            Arg.Any<string>(),
+            ReadConsistencyClass.Eventually_consistent,
+            Arg.Any<CancellationToken>());
+    }
+
     private static HexalithProjectsApiException Api(int status)
         => new("unsafe-exception-detail", status, "{\"problem\":\"secret-problem-detail\"}", NoHeaders, null!);
 
@@ -201,12 +365,14 @@ public sealed class ProjectsMcpResourceReaderFailureTests
             TrustState = ProjectionTrustState.Trusted,
         };
 
-    private static ProjectListItem ListItem(string id)
+    private static ProjectListItem ListItem(
+        string id,
+        ProjectLifecycleState lifecycleState = ProjectLifecycleState.Active)
         => new()
         {
             ProjectId = id,
             Name = id,
-            LifecycleState = ProjectLifecycleState.Active,
+            LifecycleState = lifecycleState,
             UpdatedAt = DateTimeOffset.UnixEpoch,
             Freshness = Fresh(),
         };
@@ -229,5 +395,14 @@ public sealed class ProjectsMcpResourceReaderFailureTests
                     Freshness = Fresh(),
                 },
             },
+        };
+
+    private static ProjectOperatorDiagnostic DiagnosticWithoutWarnings(string id)
+        => new()
+        {
+            ProjectId = id,
+            Name = id,
+            LifecycleState = ProjectLifecycleState.Active,
+            Freshness = Fresh(),
         };
 }

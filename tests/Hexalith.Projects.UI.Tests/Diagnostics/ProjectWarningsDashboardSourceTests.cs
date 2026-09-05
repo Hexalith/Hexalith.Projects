@@ -162,6 +162,63 @@ public sealed class ProjectWarningsDashboardSourceTests
     }
 
     [Fact]
+    public async Task SourceDiagnosesOrdinalFirstWindowAndKeepsFullInventoryTotals()
+    {
+        IClient client = Substitute.For<IClient>();
+        ProjectListItem[] visibleProjects = Enumerable.Range(1, 30)
+            .Reverse()
+            .Select(index => ListItem(
+                $"project-{index:000}",
+                index <= 18 ? ProjectLifecycleState.Active : ProjectLifecycleState.Archived))
+            .ToArray();
+        client.ListProjectsAsync(
+                null,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ListResponse(visibleProjects)));
+        var diagnosedProjectIds = new List<string>();
+        client.GetProjectOperatorDiagnosticsAsync(
+                Arg.Any<string>(),
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                string projectId = call.ArgAt<string>(0);
+                diagnosedProjectIds.Add(projectId);
+                return Diagnostic(
+                    projectId,
+                    string.CompareOrdinal(projectId, "project-018") <= 0
+                        ? ProjectLifecycleState.Active
+                        : ProjectLifecycleState.Archived,
+                    Reference(
+                        ProjectReferenceSummaryReferenceKind.Memory,
+                        ProjectReferenceSummaryReferenceState.Stale,
+                        $"memory-{projectId}",
+                        "MemoryMatched"));
+            });
+
+        var source = new ProjectWarningsDashboardSource(client);
+        ProjectWarningsDashboardLoadResult result = await source
+            .LoadAsync(null, TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        string[] expectedScan = Enumerable.Range(1, 25)
+            .Select(static index => $"project-{index:000}")
+            .ToArray();
+        diagnosedProjectIds.ShouldBe(expectedScan, ignoreOrder: false);
+        result.InventoryRows.Count.ShouldBe(30);
+        result.QueueItems.Select(static item => item.ProjectId).ShouldBe(expectedScan, ignoreOrder: false);
+        result.Dashboard.TotalVisibleProjects.ShouldBe(30);
+        result.Dashboard.ActiveProjects.ShouldBe(18);
+        result.Dashboard.ArchivedProjects.ShouldBe(12);
+        result.Dashboard.ProjectsWithWarnings.ShouldBe(25);
+        result.Dashboard.DiagnosticUnavailable.ShouldBe(0);
+    }
+
+    [Fact]
     public async Task SourcePropagatesInventoryCancellation()
     {
         IClient client = Substitute.For<IClient>();

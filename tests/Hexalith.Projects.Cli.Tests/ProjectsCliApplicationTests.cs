@@ -272,6 +272,91 @@ public sealed class ProjectsCliApplicationTests
         dashboardStdout.ToString().ShouldNotContain("secret-problem-detail");
     }
 
+    [Theory]
+    [InlineData("warnings")]
+    [InlineData("dashboard")]
+    public async Task WarningSurfacesDiagnoseOrdinalFirstWindowAndKeepFullInventoryTotals(string command)
+    {
+        IClient client = Substitute.For<IClient>();
+        var inventory = new ProjectListResponse();
+        foreach (int index in Enumerable.Range(1, 30).Reverse())
+        {
+            inventory.Items.Add(new ProjectListItem
+            {
+                ProjectId = $"project-{index:000}",
+                Name = $"Project {index:000}",
+                LifecycleState = index <= 18 ? ProjectLifecycleState.Active : ProjectLifecycleState.Archived,
+                UpdatedAt = DateTimeOffset.UnixEpoch.AddMinutes(index),
+                Freshness = Freshness(),
+            });
+        }
+
+        client.ListProjectsAsync(
+                Lifecycle.All,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(inventory);
+        var diagnosedProjectIds = new List<string>();
+        client.GetProjectOperatorDiagnosticsAsync(
+                Arg.Any<string>(),
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(call =>
+            {
+                string projectId = call.ArgAt<string>(0);
+                diagnosedProjectIds.Add(projectId);
+                if (projectId == "project-005")
+                {
+                    throw new HexalithProjectsApiException(
+                        "unsafe-exception-detail",
+                        503,
+                        "{\"problem\":\"secret-problem-detail\"}",
+                        new Dictionary<string, IEnumerable<string>>(StringComparer.Ordinal),
+                        null!);
+                }
+
+                return DiagnosticWithWarning(projectId);
+            });
+        using var stdout = new StringWriter();
+        using var stderr = new StringWriter();
+        var app = new ProjectsCliApplication(client, stdout, stderr);
+
+        int exitCode = await app.RunAsync(
+            ["projects", command],
+            TestContext.Current.CancellationToken);
+
+        string[] expectedScan = Enumerable.Range(1, 25)
+            .Select(static index => $"project-{index:000}")
+            .ToArray();
+        diagnosedProjectIds.ShouldBe(expectedScan, ignoreOrder: false);
+        exitCode.ShouldBe(ProjectsCliExitCodes.Success);
+        stderr.ToString().ShouldBeEmpty();
+        using JsonDocument output = JsonDocument.Parse(stdout.ToString());
+        JsonElement root = output.RootElement;
+        root.GetProperty("diagnosticUnavailable").GetInt32().ShouldBe(1);
+        if (command == "warnings")
+        {
+            root.GetProperty("visibleProjectCount").GetInt32().ShouldBe(30);
+            root.GetProperty("items")
+                .EnumerateArray()
+                .Select(static item => item.GetProperty("projectId").GetString() ?? string.Empty)
+                .ShouldBe(expectedScan.Where(static id => id != "project-005").ToArray(), ignoreOrder: false);
+        }
+        else
+        {
+            root.GetProperty("totalVisibleProjects").GetInt32().ShouldBe(30);
+            root.GetProperty("activeProjects").GetInt32().ShouldBe(18);
+            root.GetProperty("archivedProjects").GetInt32().ShouldBe(12);
+            root.GetProperty("projectsWithWarnings").GetInt32().ShouldBe(24);
+        }
+
+        stdout.ToString().ShouldNotContain("unsafe-exception-detail");
+        stdout.ToString().ShouldNotContain("secret-problem-detail");
+    }
+
     private static ProjectListResponse ProjectList(params string[] projectIds)
     {
         var response = new ProjectListResponse();

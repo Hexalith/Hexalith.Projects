@@ -25,6 +25,7 @@ public sealed class ProjectsMcpDescriptorTests
             "projects.auditTimeline",
             "projects.safeDiagnosticExport",
             "projects.warningQueue",
+            "projects.warningScanSummary",
             "projects.operationalDashboard",
             "projects.maintenanceAction",
         ], ignoreOrder: false);

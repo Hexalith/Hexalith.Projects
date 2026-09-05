@@ -50,9 +50,12 @@ public sealed class ProjectsMcpStory511ParityTests
     {
         typeof(ProjectsMcpOperationalDashboardItem).GetProperty(nameof(ProjectsMcpOperationalDashboardItem.DiagnosticUnavailable)).ShouldNotBeNull();
         typeof(ProjectsMcpWarningQueueItem).GetProperty(nameof(ProjectsMcpWarningQueueItem.DiagnosticUnavailable)).ShouldNotBeNull();
+        typeof(ProjectsMcpWarningScanSummaryItem).GetProperty(nameof(ProjectsMcpWarningScanSummaryItem.DiagnosticUnavailable)).ShouldNotBeNull();
+        typeof(ProjectsMcpWarningScanSummaryItem).GetProperty(nameof(ProjectsMcpWarningScanSummaryItem.ScannedProjectCount)).ShouldNotBeNull();
 
         string parityMatrix = ReadRepositoryFile("docs/parity-matrix.md");
         parityMatrix.ShouldContain("diagnosticUnavailable");
+        parityMatrix.ShouldContain("projects.warningScanSummary");
         parityMatrix.ShouldContain("PayloadExcluded");
     }
 

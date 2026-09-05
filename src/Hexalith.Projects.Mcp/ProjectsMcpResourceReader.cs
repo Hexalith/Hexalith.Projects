@@ -10,6 +10,7 @@ using System.Globalization;
 using Hexalith.FrontComposer.Contracts.Communication;
 using Hexalith.FrontComposer.Contracts.Lifecycle;
 using Hexalith.FrontComposer.Mcp;
+using Hexalith.Projects.Client.Diagnostics;
 using Hexalith.Projects.Client.Generated;
 using Hexalith.Projects.Contracts.Ui;
 
@@ -35,6 +36,13 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
 
         try
         {
+            if (typeof(T) == typeof(ProjectsMcpWarningQueueItem))
+            {
+                ProjectsMcpWarningScan scan = await BuildWarningScanAsync(cancellationToken).ConfigureAwait(false);
+                IReadOnlyList<T> warningItems = Cast<T>(LimitWarningRows(scan, request.Criteria.Take));
+                return new QueryResult<T>(warningItems, scan.Warnings.Count, ETag: null);
+            }
+
             IReadOnlyList<T> items = typeof(T) switch
             {
                 Type t when t == typeof(ProjectsMcpInventoryItem) => Cast<T>(await ReadInventoryAsync(request.Criteria.Take, cancellationToken).ConfigureAwait(false)),
@@ -43,7 +51,7 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
                 Type t when t == typeof(ProjectsMcpReferenceHealthItem) => Cast<T>(await ReadReferenceHealthAsync(null, DefaultAuditLimit, cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpAuditTimelineItem) => Cast<T>(await ReadAuditTimelineAsync(null, DefaultAuditLimit, cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpSafeDiagnosticExportItem) => Cast<T>(await ReadSafeDiagnosticExportAsync(null, DefaultAuditLimit, cancellationToken).ConfigureAwait(false)),
-                Type t when t == typeof(ProjectsMcpWarningQueueItem) => Cast<T>(await ReadWarningQueueAsync(request.Criteria.Take, cancellationToken).ConfigureAwait(false)),
+                Type t when t == typeof(ProjectsMcpWarningScanSummaryItem) => Cast<T>(await ReadWarningScanSummaryAsync(cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpOperationalDashboardItem) => Cast<T>(await ReadOperationalDashboardAsync(cancellationToken).ConfigureAwait(false)),
                 Type t when t == typeof(ProjectsMcpMaintenanceActionItem) => Cast<T>(ReadMaintenanceActions()),
                 Type t when t == typeof(ProjectsMcpResolutionTraceItem) => Cast<T>(ReadResolutionTraceMetadata()),
@@ -214,7 +222,25 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
 
     /// <summary>Reads the warning queue.</summary>
     public async Task<IReadOnlyList<ProjectsMcpWarningQueueItem>> ReadWarningQueueAsync(int? take, CancellationToken cancellationToken)
-        => (await BuildWarningQueueAsync(take, cancellationToken).ConfigureAwait(false)).Warnings;
+    {
+        ProjectsMcpWarningScan scan = await BuildWarningScanAsync(cancellationToken).ConfigureAwait(false);
+        return LimitWarningRows(scan, take);
+    }
+
+    /// <summary>Reads the always-emitted warning scan summary.</summary>
+    public async Task<IReadOnlyList<ProjectsMcpWarningScanSummaryItem>> ReadWarningScanSummaryAsync(CancellationToken cancellationToken)
+    {
+        ProjectsMcpWarningScan scan = await BuildWarningScanAsync(cancellationToken).ConfigureAwait(false);
+        return
+        [
+            new ProjectsMcpWarningScanSummaryItem(
+                scan.ScannedProjectCount,
+                scan.DiagnosticUnavailable,
+                TenantScope,
+                "Warning scan summary reports the deterministic selected-project cardinality and unavailable diagnostic count.",
+                PayloadExcluded: true),
+        ];
+    }
 
     /// <summary>Reads operational dashboard counters.</summary>
     public async Task<IReadOnlyList<ProjectsMcpOperationalDashboardItem>> ReadOperationalDashboardAsync(CancellationToken cancellationToken)
@@ -224,39 +250,49 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
             NewCorrelationId(),
             ReadConsistencyClass.Eventually_consistent,
             cancellationToken).ConfigureAwait(false);
-        (IReadOnlyList<ProjectsMcpWarningQueueItem> warnings, int diagnosticUnavailable) =
-            await BuildWarningQueueAsync(25, cancellationToken).ConfigureAwait(false);
+        ProjectsMcpWarningScan scan = await ScanWarningsAsync(list.Items, cancellationToken).ConfigureAwait(false);
         return
         [
             new ProjectsMcpOperationalDashboardItem(
                 list.Items.Count,
                 list.Items.Count(static item => item.LifecycleState == ProjectLifecycleState.Active),
                 list.Items.Count(static item => item.LifecycleState == ProjectLifecycleState.Archived),
-                warnings.Select(static item => item.ProjectId).Distinct(StringComparer.Ordinal).Count(),
-                diagnosticUnavailable,
+                scan.Warnings.Select(static item => item.ProjectId).Distinct(StringComparer.Ordinal).Count(),
+                scan.DiagnosticUnavailable,
                 TenantScope,
                 "Operational dashboard counters are derived from visible inventory and bounded diagnostics; unavailable diagnostics are reported as an explicit count.",
                 PayloadExcluded: true),
         ];
     }
 
-    private async Task<(IReadOnlyList<ProjectsMcpWarningQueueItem> Warnings, int DiagnosticUnavailable)> BuildWarningQueueAsync(
-        int? take,
-        CancellationToken cancellationToken)
+    private async Task<ProjectsMcpWarningScan> BuildWarningScanAsync(CancellationToken cancellationToken)
     {
         ProjectListResponse list = await _client.ListProjectsAsync(
             Lifecycle.All,
             NewCorrelationId(),
             ReadConsistencyClass.Eventually_consistent,
             cancellationToken).ConfigureAwait(false);
+        return await ScanWarningsAsync(list.Items, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<ProjectsMcpWarningScan> ScanWarningsAsync(
+        IEnumerable<ProjectListItem> visibleProjects,
+        CancellationToken cancellationToken)
+    {
+        IReadOnlyList<ProjectListItem> selectedProjects = ProjectWarningScanWindow.Select(visibleProjects);
         var warnings = new List<ProjectsMcpWarningQueueItem>();
         int diagnosticUnavailable = 0;
-        foreach (ProjectListItem item in list.Items.Take(Bound(take, 25)))
+        foreach (ProjectListItem item in selectedProjects)
         {
             ProjectOperatorDiagnostic diagnostic;
             try
             {
-                diagnostic = await LoadDiagnosticAsync(item.ProjectId, DefaultAuditLimit, cancellationToken).ConfigureAwait(false);
+                diagnostic = await _client.GetProjectOperatorDiagnosticsAsync(
+                    item.ProjectId ?? string.Empty,
+                    DefaultAuditLimit,
+                    NewCorrelationId(),
+                    ReadConsistencyClass.Eventually_consistent,
+                    cancellationToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -289,16 +325,24 @@ public sealed class ProjectsMcpResourceReader(IClient client) : IQueryService
                     PayloadExcluded: true)));
         }
 
-        return (
-            warnings
-                .OrderBy(static item => item.ProjectId, StringComparer.Ordinal)
-                .ThenBy(static item => item.ReferenceKind, StringComparer.Ordinal)
-                .ThenBy(static item => item.ReferenceId, StringComparer.Ordinal)
-                .Take(Bound(take, MaxRows))
-                .Select(item => item with { DiagnosticUnavailable = diagnosticUnavailable })
-                .ToArray(),
+        IReadOnlyList<ProjectsMcpWarningQueueItem> orderedWarnings = warnings
+            .OrderBy(static item => item.ProjectId, StringComparer.Ordinal)
+            .ThenBy(static item => item.ReferenceKind, StringComparer.Ordinal)
+            .ThenBy(static item => item.ReferenceId, StringComparer.Ordinal)
+            .Select(item => item with { DiagnosticUnavailable = diagnosticUnavailable })
+            .ToArray();
+        return new ProjectsMcpWarningScan(
+            orderedWarnings,
+            selectedProjects.Count,
             diagnosticUnavailable);
     }
+
+    private static IReadOnlyList<ProjectsMcpWarningQueueItem> LimitWarningRows(
+        ProjectsMcpWarningScan scan,
+        int? take)
+        => scan.Warnings
+            .Take(Bound(take, MaxRows))
+            .ToArray();
 
     /// <summary>MCP wire lifecycle states, sourced from the canonical FrontComposer set (AC8 / no drift).</summary>
     private static readonly string McpWireLifecycleStates = string.Join(",", McpLifecycleStateNames.Canonical);
