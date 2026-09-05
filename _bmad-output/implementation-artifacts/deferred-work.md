@@ -248,7 +248,9 @@ origin: migrated from legacy ledger ("flat append from spec-partial-failure-diag
 location: Web, MCP, and CLI warning scans
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md
 reason: Review confirmed Web enriches every returned visible Project while MCP and CLI scan at most 25 Projects, and MCP also uses query `Take` to bound the scanned set; inventories larger than the bound can therefore produce surface-specific unavailable counts.
-status: open
+status: done 2026-09-05
+resolution: resolved by sweep bundle dw-warning-scan-consistency
+resolution-undo: 2b0d6b83ce84e10cffba780e9b5354af635d22acc510feca65e3a0dd91cadb97 2026-09-05 7374617475733a206f70656e
 decision: 2026-08-25 Shared 25-project window — Define one deterministic 25-project diagnostic window shared by Web, MCP, and CLI, keep inventory totals separate from scanned-warning totals, decouple MCP output Take from scan scope, and add inventories-over-25 parity tests.
 
 ### DW-28: Define MCP warning-queue output when diagnostics fail but no healthy warning row is emitted.
@@ -257,7 +259,9 @@ origin: migrated from legacy ledger ("flat append from spec-partial-failure-diag
 location: MCP warning resource
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md
 reason: Review confirmed the existing MCP warning resource carries `DiagnosticUnavailable` only on emitted warning rows, so a nonzero count is unobservable from an empty warning queue; the approved spec explicitly reserved no-row semantics for a separate contract decision.
-status: open
+status: done 2026-09-05
+resolution: resolved by sweep bundle dw-warning-scan-consistency
+resolution-undo: 2b0d6b83ce84e10cffba780e9b5354af635d22acc510feca65e3a0dd91cadb97 2026-09-05 7374617475733a206f70656e
 decision: 2026-08-25 Add summary resource — Add a dedicated MCP warning-scan summary DTO and resource that always emits scan cardinality and DiagnosticUnavailable while leaving warning rows unchanged, then update dispatch, documentation, and contract tests.
 
 ### DW-29: Build the MCP operational dashboard from one visible-inventory snapshot.
@@ -266,7 +270,9 @@ origin: migrated from legacy ledger ("flat append from spec-partial-failure-diag
 location: MCP operational dashboard
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md
 reason: Review confirmed the existing dashboard reads inventory once for lifecycle totals and again inside warning scanning, so concurrent inventory changes can yield counters derived from different snapshots; production scan restructuring was outside the coverage-only task.
-status: open
+status: done 2026-09-05
+resolution: resolved by sweep bundle dw-warning-scan-consistency
+resolution-undo: 2b0d6b83ce84e10cffba780e9b5354af635d22acc510feca65e3a0dd91cadb97 2026-09-05 7374617475733a206f70656e
 
 ### DW-30: Add the mandatory 6.1-P1R prerequisite to the Story 6.4 implementation artifact.
 
@@ -591,3 +597,11 @@ severity: medium
 reason: hexalith-state-instructions.md mandates a two-line host (AddEventStoreDomainService/UseEventStoreDomainService) that already maps /process, /replay-state, /query, /project, and more, with route-validation and duplicate-registration guards Hexalith.Projects.Server does not get by hand-rolling its own MapPost calls. This predates Story 6.2 (/process and /project were already hand-rolled); Story 6.2 added a hand-rolled /query following the same existing local pattern rather than introducing a new deviation. Deferred because migrating requires re-wiring the whole endpoint surface, not a Story-6.2-scoped fix.
 status: open
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
+
+### DW-64: Concurrent Story 6.2 review, deferred-work ledger, and submodule updates were committed while the warning-scan bundle was running.
+origin: spec-deferred 026631391ace
+location: Repository change set after baseline 2e096e4cb13fc121c6fb03a4b2e8960270bdc9b2
+source_spec: `spec-warning-scan-consistency-2.md`
+severity: medium
+reason: The warning-scan run began from clean baseline 2e096e4cb13fc121c6fb03a4b2e8960270bdc9b2. Commits f4509ef1d0bfe045b0733d8ef2906d3e32eb44eb and 152ca393bb7128d0ff1e5fe54531624af8534506 appeared on main and origin/main during implementation and review; they contain the unrelated Story 6.2 artifact, deferred-work ledger entry, and EventStore/Folders/Parties submodule pointer updates. The warning-scan implementation session did not author those edits, and separating already-published concurrent work requires its owner or orchestrator.
+status: open

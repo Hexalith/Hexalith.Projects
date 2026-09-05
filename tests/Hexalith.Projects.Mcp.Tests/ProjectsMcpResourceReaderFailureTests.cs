@@ -241,6 +241,7 @@ public sealed class ProjectsMcpResourceReaderFailureTests
         ProjectsMcpWarningScanSummaryItem summary = summaryResult.Items.ShouldHaveSingleItem();
         summary.ScannedProjectCount.ShouldBe(2);
         summary.DiagnosticUnavailable.ShouldBe(1);
+        summary.ShortExplanation.ShouldNotBeNullOrWhiteSpace();
         summary.ShortExplanation.ShouldNotContain("unsafe-exception-detail");
         summary.ShortExplanation.ShouldNotContain("secret-problem-detail");
         summary.PayloadExcluded.ShouldBeTrue();
