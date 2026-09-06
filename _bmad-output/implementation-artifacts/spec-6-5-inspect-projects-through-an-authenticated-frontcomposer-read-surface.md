@@ -2,8 +2,7 @@
 title: 'Inspect Projects through an authenticated FrontComposer read surface'
 type: 'feature'
 created: '2026-08-25'
-status: in-progress
-baseline_revision: 5a37f9e4ba9cd7f35afae212398db9f945d4d475
+status: ready-for-dev
 blocked_by: ['6.1', '6.2', '6.3', '6.4']
 prerequisite_record: null
 review_loop_iteration: 0

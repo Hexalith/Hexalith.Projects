@@ -47,7 +47,11 @@ public sealed class GetProjectContextQueryHandlerTests
         result.Success.ShouldBeTrue();
         ProjectContextReadResponse response = Deserialize(result);
         response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
-        response.Setup.ShouldBe(ProjectSetup.Empty);
+        response.Setup.ShouldNotBeNull();
+        response.Setup!.Goals.ShouldBeEmpty();
+        response.Setup.UserInstructions.ShouldBeEmpty();
+        response.Setup.PreferredSourceKinds.ShouldBeEmpty();
+        response.Setup.ExcludedSourceKinds.ShouldBeEmpty();
         response.ProjectFolder.ShouldNotBeNull();
         response.Snapshot.AsOf.ShouldBe(ObservedAt);
         response.Snapshot.ProjectVersion.ShouldBe(4);
@@ -72,6 +76,112 @@ public sealed class GetProjectContextQueryHandlerTests
         response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
         response.FileReferences.ShouldBeEmpty();
         response.Excluded.ShouldContain(item => item.ReferenceId == "file-1" && item.ReferenceState == ReferenceState.Unauthorized);
+        response.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ContactAdministrator]);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_PersistedMemory_IsIncluded()
+    {
+        ProjectDetailItem detail = Detail(hasFolder: true) with
+        {
+            MemoryReferences =
+            [
+                new ProjectMemoryReference("memory-1", "Memory", ReferenceState.Included, null, ObservedAt),
+            ],
+        };
+        GetProjectContextQueryHandler handler = await CreateHandlerAsync(detail).ConfigureAwait(true);
+
+        ProjectContextReadResponse response = Deserialize(await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken));
+
+        response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
+        response.MemoryReferences.ShouldContain(item => item.ReferenceId == "memory-1" && item.ReferenceState == ReferenceState.Included);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_ProductionDualPrincipalClaims_ReturnsComplete()
+    {
+        GetProjectContextQueryHandler handler = await CreateHandlerAsync(Detail(hasFolder: true)).ConfigureAwait(true);
+        QueryEnvelope query = Query() with
+        {
+            Scopes = ["projects.read", "projects.list"],
+            Audience = ["hexalith-projects", "hexalith-eventstore"],
+        };
+
+        ProjectContextReadResponse response = Deserialize(await handler.ExecuteAsync(query, TestContext.Current.CancellationToken));
+
+        response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_MismatchedAudience_ReturnsSafeDenial()
+    {
+        GetProjectContextQueryHandler handler = await CreateHandlerAsync(Detail(hasFolder: true)).ConfigureAwait(true);
+        QueryEnvelope query = Query() with { Audience = ["other-audience"] };
+
+        QueryResult result = await handler.ExecuteAsync(query, TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_MalformedPayload_ReturnsSafeDenial()
+    {
+        GetProjectContextQueryHandler handler = await CreateHandlerAsync(Detail(hasFolder: true)).ConfigureAwait(true);
+        QueryEnvelope query = Query() with { Payload = "{not-json"u8.ToArray() };
+
+        QueryResult result = await handler.ExecuteAsync(query, TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_PostReadWatermarkMismatch_ReturnsSafeDenial()
+    {
+        InMemoryReadModelStore store = new();
+        await store.SaveAsync(
+            ConversationStartSetupProjectionHandler.StoreName,
+            ConversationStartSetupProjectionHandler.Key(TenantId, ProjectId),
+            Detail(hasFolder: true),
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        InMemoryProjectTenantAccessProjectionStore tenantStore = await SeedTenantAccessStoreAsync().ConfigureAwait(true);
+        var handler = new GetProjectContextQueryHandler(new ProjectContextQueryExecutor(
+            store,
+            new TenantAccessAuthorizer(
+                new AlternatingWatermarkTenantAccessStore(tenantStore),
+                new FixedUtcClock(ObservedAt.AddMinutes(1)),
+                new TenantAccessOptions()),
+            new ProjectContextInclusionPolicy()));
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_PostReadReauthorizationDenied_ReturnsSafeDenial()
+    {
+        InMemoryReadModelStore store = new();
+        await store.SaveAsync(
+            ConversationStartSetupProjectionHandler.StoreName,
+            ConversationStartSetupProjectionHandler.Key(TenantId, ProjectId),
+            Detail(hasFolder: true),
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        InMemoryProjectTenantAccessProjectionStore tenantStore = await SeedTenantAccessStoreAsync().ConfigureAwait(true);
+        var handler = new GetProjectContextQueryHandler(new ProjectContextQueryExecutor(
+            store,
+            new TenantAccessAuthorizer(
+                new RevokingAfterReadTenantAccessStore(tenantStore),
+                new FixedUtcClock(ObservedAt.AddMinutes(1)),
+                new TenantAccessOptions()),
+            new ProjectContextInclusionPolicy()));
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
     }
 
     [Fact]
@@ -198,6 +308,28 @@ public sealed class GetProjectContextQueryHandlerTests
 
         response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         response.Setup.ShouldBeNull();
+        response.Snapshot.AsOf.ShouldBe(ObservedAt);
+        response.Snapshot.ProjectVersion.ShouldBe(0);
+        response.Snapshot.RecoveryActions.ShouldBe(
+            [AdmissionRecoveryAction.RefreshContext, AdmissionRecoveryAction.ContactAdministrator]);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_StoreFaultAfterReauthorizationDenied_ReturnsSafeDenial()
+    {
+        InMemoryProjectTenantAccessProjectionStore tenantStore = await SeedTenantAccessStoreAsync().ConfigureAwait(true);
+        var handler = new GetProjectContextQueryHandler(new ProjectContextQueryExecutor(
+            new ThrowingReadModelStore(),
+            new TenantAccessAuthorizer(
+                new RevokingAfterReadTenantAccessStore(tenantStore),
+                new FixedUtcClock(ObservedAt.AddMinutes(1)),
+                new TenantAccessOptions()),
+            new ProjectContextInclusionPolicy()));
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
     }
 
     [Fact]
@@ -326,5 +458,52 @@ public sealed class GetProjectContextQueryHandlerTests
         public Task<bool> TrySaveAsync<TValue>(string storeName, string key, TValue value, string etag, CancellationToken cancellationToken = default)
             where TValue : class
             => Task.FromResult(false);
+    }
+
+    private sealed class AlternatingWatermarkTenantAccessStore(InMemoryProjectTenantAccessProjectionStore inner)
+        : IProjectTenantAccessProjectionStore
+    {
+        private int _reads;
+
+        public async Task<ProjectTenantAccessProjection?> GetAsync(string tenantId, CancellationToken cancellationToken = default)
+        {
+            ProjectTenantAccessProjection? projection = await inner.GetAsync(tenantId, cancellationToken).ConfigureAwait(false);
+            if (projection is null)
+            {
+                return null;
+            }
+
+            int read = Interlocked.Increment(ref _reads);
+            projection.ProjectionWatermark = $"{projection.TenantId}:{read}";
+            return projection;
+        }
+
+        public Task SaveAsync(ProjectTenantAccessProjection projection, CancellationToken cancellationToken = default)
+            => inner.SaveAsync(projection, cancellationToken);
+    }
+
+    private sealed class RevokingAfterReadTenantAccessStore(InMemoryProjectTenantAccessProjectionStore inner)
+        : IProjectTenantAccessProjectionStore
+    {
+        private int _reads;
+
+        public async Task<ProjectTenantAccessProjection?> GetAsync(string tenantId, CancellationToken cancellationToken = default)
+        {
+            ProjectTenantAccessProjection? projection = await inner.GetAsync(tenantId, cancellationToken).ConfigureAwait(false);
+            if (projection is null)
+            {
+                return null;
+            }
+
+            if (Interlocked.Increment(ref _reads) > 1)
+            {
+                projection.Principals.Clear();
+            }
+
+            return projection;
+        }
+
+        public Task SaveAsync(ProjectTenantAccessProjection projection, CancellationToken cancellationToken = default)
+            => inner.SaveAsync(projection, cancellationToken);
     }
 }

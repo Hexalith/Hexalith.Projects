@@ -6,6 +6,7 @@
 namespace Hexalith.Projects.Tests.Queries;
 
 using Hexalith.Projects.Context;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Testing.Context;
@@ -56,7 +57,7 @@ public sealed class GetProjectContextQueryTests
             asOf: DefaultNow);
 
         ExplainContextSelectionResponse explanation = admission.ToExplanation();
-        explanation.Evaluations.ShouldContain(item => item.ReferenceKind == "folder" && item.FailedCheck is null);
+        explanation.Evaluations.ShouldContain(item => item.ReferenceKind == "folder" && item.FailedCheck == null);
         explanation.Context.Snapshot.AsOf.ShouldBe(DefaultNow);
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(explanation));
     }
@@ -83,7 +84,7 @@ public sealed class GetProjectContextQueryTests
         ProjectContextShadowComparator.CompareGet(legacy.Context, supported.ToReadResponse())
             .Equivalent.ShouldBeTrue();
         ProjectContextShadowComparator.CompareExplain(
-                new Hexalith.Projects.Contracts.Models.ProjectContextExplanation(legacy.Context, legacy.Evaluations),
+                new ProjectContextExplanation(legacy.Context, legacy.Evaluations),
                 supported.ToExplanation())
             .Equivalent.ShouldBeTrue();
     }
@@ -109,6 +110,32 @@ public sealed class GetProjectContextQueryTests
         legacy.Context.AssemblyOutcome.ShouldBe(ProjectContextAssemblyOutcome.Assembled);
         supported.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         ProjectContextShadowComparator.CompareGet(legacy.Context, supported.ToReadResponse())
+            .Equivalent.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void ShadowCompare_DifferentSetup_Diverges()
+    {
+        ProjectContextInclusionPolicy policy = new();
+        ProjectContextReferenceEvidence references = WithFolder();
+        ProjectContextAssemblyResult legacy = policy.Assemble(
+            Context(),
+            Project(),
+            TenantAccess(),
+            references);
+        ProjectContextAdmission supported = policy.AssembleAdmission(
+            Context(),
+            Project(),
+            TenantAccess(),
+            references,
+            projectVersion: 1,
+            asOf: DefaultNow);
+        ProjectContextReadResponse mutated = supported.ToReadResponse() with
+        {
+            Setup = new ProjectSetup(["goal"], [], [], [], null),
+        };
+
+        ProjectContextShadowComparator.CompareGet(legacy.Context, mutated)
             .Equivalent.ShouldBeFalse();
     }
 }

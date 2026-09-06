@@ -2,7 +2,7 @@
 title: 'Retrieve assembled Project Context through supported read models'
 type: 'feature'
 created: '2026-08-24'
-status: 'in-progress'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 3
 baseline_commit: '5a37f9e4ba9cd7f35afae212398db9f945d4d475'
@@ -71,7 +71,7 @@ context:
 - `references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/IDomainQueryHandler.cs` and `IAsyncDomainProjectionHandler.cs` -- required handler seams.
 - `references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/IReadModelStore.cs`, `IReadModelBatchStore.cs`, `IReadModelBulkStore.cs`, and `ReadModelWritePolicy.cs` -- only permitted persisted read-model path. Batch/bulk stores are unused in Projects `src/` today. Owner G-2 is not `IReadModelBulkStore`.
 - `references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Queries/SafeDenialQueryRouter.cs` -- SDK opt-in denial router. Unused until SDK host; keep 6.2 `"safe-denial"` mapping on `/query`.
-- `src/Hexalith.Projects.Testing/Context/ProjectContextEvidenceBuilder.cs:22` and `tests/Hexalith.Projects.Tests/Context/` -- reuse decision-matrix fixtures; extend rather than fork. No `Testing/Reads/` tree or `ProjectContextShadowComparator` yet.
+- `src/Hexalith.Projects.Testing/Reads/ProjectContextShadowComparator.cs` and `ProjectContextShadowComparison.cs` -- landed Get/Explain shadow comparator; Refresh comparison stays skipped until G-2.
 - `_bmad-output/test-artifacts/test-design-epic-6.md:180` -- required E6.3-U01/U02/U03, A01/A02/A03 and P1 E6.3-A04; plus E6-X01 privacy.
 - `_bmad-output/implementation-artifacts/deferred-work.md` -- DW-63 SDK host migration, DW-66 Partial admission, DW-67 Folder Unauthorized collapse; all open, gated to 6.7. Do not close them here.
 - `module/hexalith-projects.module.json` -- required G-4 manifest; absent. Do not author a substitute.
@@ -79,14 +79,14 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/Hexalith.Projects.Contracts/Queries/` shared AD-32 snapshot types (one type per file) plus `GetProjectContextQuery.cs`, `RefreshProjectContextQuery.cs`, and `ExplainContextSelectionQuery.cs` -- extract the Story 6.2 snapshot vocabulary into shared types without changing Conversation-start JSON, then add additive singleton context queries. Rationale: one snapshot family for Chatbot; keep the legacy `ProjectContext` DTO.
-- [ ] `src/Hexalith.Projects.Server/Queries/GetProjectContextQueryHandler.cs` and `ExplainContextSelectionQueryHandler.cs` -- follow `GetConversationStartSetupQueryHandler`: envelope identity, `TenantAccessAuthorizer` before lookup, exact query-target equality, Active plus one-Folder rule, current-empty Setup, shared inclusion policy, `QueryResult` or `"safe-denial"`. Until RTI exists, treat missing owner-backed trust as explicit `Partial` omissions. Rationale: implement Get and Explain on local seams now.
-- [ ] `src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs` -- adapt assembly to AD-32 usability without duplicating decisions in handlers; keep stale-Tenant allowance from overriding required-evidence `Unavailable`. Rationale: preserve the pure allowlist.
-- [ ] `src/Hexalith.Projects.Server/Queries/RefreshProjectContextQueryHandler.cs` and `ProjectContextOwnerRefreshService.cs` -- Refresh-only counted G-2 owner batches; match by opaque identity; zero persisted writes. Skip until G-2 is approved. Rationale: Refresh must not copy legacy live fan-out.
+- [x] `src/Hexalith.Projects.Contracts/Queries/` shared AD-32 snapshot types (one type per file) plus `GetProjectContextQuery.cs`, `RefreshProjectContextQuery.cs`, and `ExplainContextSelectionQuery.cs` -- extract the Story 6.2 snapshot vocabulary into shared types without changing Conversation-start JSON, then add additive singleton context queries. Rationale: one snapshot family for Chatbot; keep the legacy `ProjectContext` DTO.
+- [x] `src/Hexalith.Projects.Server/Queries/GetProjectContextQueryHandler.cs` and `ExplainContextSelectionQueryHandler.cs` -- follow `GetConversationStartSetupQueryHandler`: envelope identity, `TenantAccessAuthorizer` before lookup, exact query-target equality, Active plus one-Folder rule, current-empty Setup, shared inclusion policy, `QueryResult` or `"safe-denial"`. Until RTI exists, treat missing owner-backed trust as explicit `Partial` omissions. Rationale: implement Get and Explain on local seams now.
+- [x] `src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs` -- adapt assembly to AD-32 usability without duplicating decisions in handlers; keep stale-Tenant allowance from overriding required-evidence `Unavailable`. Rationale: preserve the pure allowlist.
+- [ ] `src/Hexalith.Projects.Server/Queries/RefreshProjectContextQueryHandler.cs` and `ProjectContextOwnerRefreshService.cs` -- Refresh-only counted G-2 owner batches; match by opaque identity; zero persisted writes. Skip until G-2 is approved. Rationale: Refresh must not copy legacy live fan-out. Query type exists; handler is unregistered (`Query_RefreshProjectContext_IsNotRegisteredUntilG2`).
 - [ ] `src/Hexalith.Projects.Server/Projections/` Reference Trust Index handler, item, and backfill types (one type per file) -- implement only the approved Tenant-scoped schema and bounded producer; atomic checkpoint/index writes through `IReadModelBatchStore`; no per-actor fingerprint. Skip until the RTI schema is approved. Rationale: ingestion is the only writer; do not invent a schema.
-- [ ] `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` -- register Get and Explain handlers on the existing fake-then-swap `/query` composition; keep legacy REST routes; register Refresh and RTI only when those tasks un-skip. Rationale: match Story 6.2 without a host migration.
-- [ ] `src/Hexalith.Projects.Testing/Reads/ProjectContextShadowComparator.cs` -- compare legacy and supported Get/Explain on a frozen representable corpus now; add Refresh when that handler exists; do not normalize known legacy deficits. Rationale: E6.3-A04.
-- [ ] `tests/Hexalith.Projects.Contracts.Tests/`, `tests/Hexalith.Projects.Tests/Context/`, `tests/Hexalith.Projects.Tests/Queries/`, `tests/Hexalith.Projects.Server.Tests/Queries/` -- cover the I/O matrix, E6.3-U01/U03, A01/A02/A03, zero-write Get/Explain, leakage, safe-404, and current-empty Setup; add U02/Refresh when un-skipped. Rationale: focused proof before G-4.
+- [x] `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` -- register Get and Explain handlers on the existing fake-then-swap `/query` composition; keep legacy REST routes; register Refresh and RTI only when those tasks un-skip. Rationale: match Story 6.2 without a host migration.
+- [x] `src/Hexalith.Projects.Testing/Reads/ProjectContextShadowComparator.cs` -- compare legacy and supported Get/Explain on a frozen representable corpus now; add Refresh when that handler exists; do not normalize known legacy deficits. Rationale: E6.3-A04.
+- [x] `tests/Hexalith.Projects.Contracts.Tests/`, `tests/Hexalith.Projects.Tests/Context/`, `tests/Hexalith.Projects.Tests/Queries/`, `tests/Hexalith.Projects.Server.Tests/Queries/` -- cover the I/O matrix, E6.3-U01/U03, A01/A02/A03, zero-write Get/Explain, leakage, safe-404, and current-empty Setup; add U02/Refresh when un-skipped. Rationale: focused proof before G-4.
 
 **Acceptance Criteria:**
 - Given current authorized evidence, when Get, Refresh, or Explain runs through the supported `/query` handler, then the result matches the matrix, uses one AD-32 snapshot vocabulary, and exposes metadata only.
@@ -99,6 +99,13 @@ context:
 - Given legacy and supported routes coexist, when the frozen comparable corpus runs, then Get, Refresh, and Explain match after the approved AD-32 normalization, and routing stays legacy until Story 6.7.
 
 ## Implementation Notes
+
+- Shared AD-32 types live in `AdmissionResponseState`, `AdmissionComponent`, `AdmissionSnapshot`, and `AdmissionRecoveryAction`. `ConversationStartSetupResponse` now wraps `AdmissionSnapshot` with the same JSON property names.
+- Get and Explain share `ProjectContextQueryExecutor` over the Conversation-start `IReadModelStore` (`projects-conversation-start-setup`). Conversations are not owner-fetched (empty list). Missing conversation owner trust is an explicit Partial omission when conversation candidates are supplied to assembly.
+- Stale-Tenant on the supported path is `Unavailable`; legacy `Assemble` still allows it. Shadow comparison treats that as a known deficit.
+- Refresh query type is defined; no handler is registered until G-2. RTI types were not added.
+- Direct xUnit v3 execution (Debug): Contracts 192/192, domain 672/672, Server 634/634. `dotnet test` remains MTP/VSTest blocked.
+- Mixed Partial recoveries emit both `RefreshContext` and `ContactAdministrator` when Unauthorized and other optional omissions coexist.
 
 ## Spec Change Log
 
@@ -200,6 +207,87 @@ context:
   - `[medium]` `[patch]` Required one schema-selected canonical opaque identity representation and comparer rather than allowing byte/string implementation choice.
   - `[medium]` `[patch]` Distinguished forbidden selection-trace identities from ordinary operational request/span identifiers.
   - `[medium]` `[patch]` Required the G-4 profile to prove prerequisite tampering fails closed and to enforce pre/post evidence checkout allowlists.
+
+### 2026-09-06 — Review pass 5 (implementation)
+- intent_gap: 0
+- bad_spec: 0
+- patch: 7: (high 1, medium 6, low 0)
+- defer: 0
+- reject: 28: (high 0, medium 8, low 20)
+- findings:
+  - `[false]` Get `Excluded` rows keep `ReasonCode: null` and have no last-verified field. Explain evaluations carry `ObservedAt`; `FailedCheck`/`Diagnostic` are the closed omission reason on the existing `ProjectContextExclusion` DTO. Adding last-verified would be public surface.
+  - `[false]` `asOf` is `detail.UpdatedAt` (persisted evidence cutoff), not request wall-clock. Passing the same instant as assembly `Now` keeps freshness mapping on that cutoff.
+  - `[false]` Live Get supplies `Conversations: []` and reports Complete without conversation rows. Frozen 4A: zero owner calls; missing owner-backed trust is Partial only when conversation candidates are supplied.
+  - `[false]` Unregistered Refresh returns dispatcher 404, not `"safe-denial"`. An unimplemented query type must not impersonate a denied Project. Frozen skip of the Refresh handler.
+  - `[false]` Omitted/empty envelope scopes and audience match on the Story 6.2 `/query` seam, where DualPrincipal fields are not populated. Exact policy matching applies when those collections are presented.
+  - `[medium]` `[patch]` When scopes/audience are presented, ordinal sequence equality against `["projects.read"]` / `["projects"]` denies the documented EventStore DualPrincipal envelope (`projects.read`+`projects.list`, `hexalith-projects` plus extra `aud`).
+  - `[false]` Query `ProjectId` uses the same non-whitespace parse as `Hexalith.Projects.Contracts.Identifiers.ProjectId`. The REST `IsCanonicalIdentifier` regex is a different HTTP path boundary.
+  - `[false]` Store-fault `Unavailable` after allowed reauth uses `LastEventTimestamp` from the tenant projection (null timestamps are not Allowed) and `projectVersion: 0` meaning not disclosable.
+  - `[false]` Conversation-start Complete still emits empty `recoveryActions`. Frozen: keep Conversation-start wire shape.
+  - `[false]` Shared AD-32 CLR types replaced story-local names; JSON property names are unchanged and in-repo callers were updated.
+  - `[medium]` `[patch]` Commit `de17e80` set Story 6.5 spec status to `in-progress` while it remains `blocked_by` 6.1–6.4 and sprint-status `backlog`.
+  - `[false]` E6.3-A04 compares legacy `Assemble` vs supported `AssembleAdmission` on the frozen representable corpus. HTTP still uses legacy REST until Story 6.7; known deficits are not normalized.
+  - `[low]` `ExecuteAsync_UnknownTenant_ReturnsSafeDenialWithoutReadingProjection` does not count `GetAsync`. Auth fails before the read; everyday callers do not hit a wrong read.
+  - `[false]` Zero-write tests count `IReadModelStore` Save/TrySave on the only persisted write seam this path can reach. No command dispatcher exists on Get/Explain.
+  - `[low]` Get and Explain share `ProjectContextQueryExecutor.ExecuteAsync`, so they share `asOf` and components by construction.
+  - `[false]` `IsRequiredEvidenceStale` only maps Stale because Allowed diagnostic reads are Fresh or Stale. Unavailable/Future tenant outcomes never reach assembly as Allowed. Rebuilding/corrupt RTI signals are excluded until RTI exists.
+  - `[medium]` `[patch]` Partial recovery is always `RefreshContext`, including Unauthorized optional files, which need `ContactAdministrator`.
+  - `[low]` Duplicated `TryReadProjectId` is developer-only duplication with no caller divergence on the wire.
+  - `[false]` `CountCandidates` Int32 overflow is unreachable under the 5,000 bound and in-memory collection sizes.
+  - `[low]` `ExcludedSourceKinds` containing `ProjectFolder` is skipped because Folder is required evidence, not an optional kind lane.
+  - `[false]` Unknown `ProjectContextSourceKind` in the map is unreachable; the enum is closed.
+  - `[medium]` `[patch]` `ProjectContextShadowComparator.CompareGet` does not compare Setup, so current-empty vs populated Setup can still report a match.
+  - `[false]` `CompareRefresh` is absent because Refresh is skipped until G-2.
+  - `[low]` Delegated envelope with null `OriginalActorId` falls back to `UserId`. On the current `/query` seam the caller already supplies `UserId`; DualPrincipal always sets `OriginalActorId` from `sub`.
+  - `[medium]` `[patch]` No handler test presents a mismatched or exact production `Audience` collection (verification-gap).
+  - `[medium]` `[patch]` Handler fixtures use empty `MemoryReferences`; dropping memories in the executor would still pass those tests (verification-gap).
+  - `[medium]` `[patch]` Post-read reauthorization deny and watermark mismatch are untested (verification-gap).
+  - `[medium]` `[patch]` Malformed payload never exercises the `JsonException` catch (verification-gap).
+- addressed_findings:
+  - `[high]` `[patch]` Match presented scopes/audience as required policy values (`projects.read`, `hexalith-projects`) contained in the DualPrincipal lists; keep omitted collections compatible with the Story 6.2 `/query` envelope.
+  - `[medium]` `[patch]` Map Partial Unauthorized omissions to `ContactAdministrator`.
+  - `[medium]` `[patch]` Compare Setup in the shadow comparator, treating null and `ProjectSetup.Empty` as current-empty.
+  - `[medium]` `[patch]` Restore the Story 6.5 spec to `ready-for-dev` without a borrowed 6.3 baseline.
+  - `[medium]` `[patch]` Cover production DualPrincipal audience/scopes, persisted memories, reauth watermark mismatch, and malformed JSON payload on Get/Explain handlers.
+
+### 2026-09-06 — Review pass 6
+- intent_gap: 0
+- bad_spec: 0
+- patch: 4: (high 0, medium 4, low 0)
+- defer: 0
+- reject: 27: (high 0, medium 4, low 5)
+- findings:
+  - `[medium]` `[patch]` Story 6.5 spec is still `in-progress` with borrowed `baseline_revision` `5a37f9e4…` after pass 5 claimed to restore `ready-for-dev`.
+  - `[false]` Acceptance/matrix still naming live Refresh is a spec-text mismatch with frozen Decision 4; the fix would edit this spec. Unregistered Refresh remains dispatcher 404 (`Query_RefreshProjectContext_IsNotRegisteredUntilG2`). [carried] Unregistered Refresh returns dispatcher 404, not `"safe-denial"`.
+  - `[medium]` `[patch]` Missing-Folder `Unavailable` passes `setupCurrent: true` while the payload nulls `Setup`, so the Setup component reads current.
+  - `[false]` [carried] Store-fault `Unavailable` after allowed reauth uses tenant `LastEventTimestamp` and `projectVersion: 0` meaning not disclosable. Lifecycle `Active` is the required-evidence placeholder on a path that already passed Tenant allow and never discloses Folder/Setup collections.
+  - `[false]` Serialized-byte overflow waits on G-4 pins; this checkout enforces `ProjectContextReadLimits.MaxReferences` (5,000) only.
+  - `[false]` Singleton `ProjectContextQueryExecutor` capturing transient `ProjectContextInclusionPolicy` does not change include/exclude decisions; the policy is pure except logger.
+  - `[false]` [carried] Live Get supplies `Conversations: []` and reports Complete without conversation rows. Frozen 4A: missing owner-backed trust is Partial only when conversation candidates are supplied. Files/memories come from Project-owned persisted detail.
+  - `[false]` [carried] E6.3-A04 compares legacy `Assemble` vs supported `AssembleAdmission` on the frozen representable corpus. HTTP stays legacy until Story 6.7.
+  - `[false]` [carried] Conversation-start Complete still emits empty `recoveryActions`. Frozen: keep Conversation-start wire shape. Context adds a `References` component on the shared CLR type without changing Conversation-start JSON names.
+  - `[false]` `AdmissionComponent.Reason` is the extracted Conversation-start unconstrained string; closing it would change the preserved wire.
+  - `[false]` `IsDelegated`/`DelegationId`/`AuthenticatedWorkloadId` are unused, matching Story 6.2: Tenant allow uses `OriginalActorId ?? UserId`.
+  - `[false]` Per-request Get has no envelope Version to compare; regressing Project watermarks are an RTI/G-4 concern.
+  - `[false]` Handlers return `"safe-denial"` before `ToReadResponse`/`ToExplanation`; SafeDenial snapshots are not serialized on `/query`.
+  - `[false]` Explain omits Get-covered executor branches (Partial/stale/fault/cancel/scopes) because Get and Explain share `ProjectContextQueryExecutor.ExecuteAsync`.
+  - `[low]` Conversation-start still uses magic recovery strings instead of `AdmissionRecoveryAction` constants. Everyday callers see identical JSON; the fix would retouch the 6.2 handler.
+  - `[false]` Composition tests use `AddProjectsServer` on the fake-then-swap seam, matching Story 6.2; runtime EventStore swap is not this story's host migration (DW-63).
+  - `[false]` [carried] Omitted/empty envelope scopes and audience match on the Story 6.2 `/query` seam. `QueryEnvelope.Scopes`/`Audience` are nullable; DualPrincipal presents non-empty lists.
+  - `[false]` New handlers reuse metadata-only `DisplayName` already covered by legacy leakage tests; no new E6-X01 channel.
+  - `[false]` [carried] `CountCandidates` Int32 overflow is unreachable under the 5,000 bound and in-memory collection sizes.
+  - `[false]` Pending folders are `ReferenceState.Pending` with null `FolderId`. `folderCurrent` requires `Included`, so pending is `Unavailable`, not Complete.
+  - `[false]` `ProjectSetup.ExcludedSourceKinds` is a non-nullable list; current-empty uses `ProjectSetup.Empty`.
+  - `[false]` [carried] `IsRequiredEvidenceStale` only maps Stale because Allowed diagnostic reads are Fresh or Stale.
+  - `[false]` Post-read `AuthorizeDiagnosticReadAsync` throwing is an infrastructure failure; it does not serialize protected context.
+  - `[low]` [carried] Delegated envelope with null `OriginalActorId` falls back to `UserId`. Unlikely on DualPrincipal `/query`.
+  - `[false]` Acceptance requiring Refresh/Explain shadow match is a spec-text mismatch with frozen skip of Refresh; `CompareRefresh` is absent because Refresh is skipped until G-2. [carried]
+  - `[medium]` `[patch]` Store-fault catch that denies on post-fault reauthorization is untested. `ExecuteAsync_StoreFaultAfterAuthority_ReturnsUnavailable` always seeds an allowed tenant store, so deleting the SafeDenial branch would still pass.
+  - `[medium]` `[patch]` Store-fault `Unavailable` test asserts only `ResponseState` and null `Setup`, not `AsOf == ObservedAt`, `ProjectVersion == 0`, or `RefreshContext`/`ContactAdministrator` recovery.
+- addressed_findings:
+  - `[medium]` `[patch]` Restore the Story 6.5 spec to `ready-for-dev` and drop the borrowed 6.3 `baseline_revision`.
+  - `[medium]` `[patch]` Pass `setupCurrent: false` on missing-Folder `Unavailable`.
+  - `[medium]` `[patch]` Add store-fault + denied reauthorization coverage and pin store-fault snapshot provenance.
 
 ## Design Notes
 

@@ -55,6 +55,26 @@ public sealed class ProjectContextAdmissionTests
             item.ReferenceId == "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1"
             && item.ReferenceState == ReferenceState.Unauthorized);
         admission.Excluded.ShouldNotBeEmpty();
+        admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ContactAdministrator]);
+    }
+
+    [Fact]
+    public void AssembleAdmission_UnauthorizedAndStaleFiles_ReturnsBothApplicableRecoveries()
+    {
+        ProjectContextReferenceEvidence references = new(
+            WithFolder().ProjectFolder,
+            [
+                new ProjectFileReference("file-unauth", "folder", "a", ReferenceState.Unauthorized, null, DefaultNow),
+                new ProjectFileReference("file-stale", "folder", "b", ReferenceState.Stale, null, DefaultNow),
+            ],
+            MemoryReferences: [],
+            Conversations: []);
+
+        ProjectContextAdmission admission = Admit(references);
+
+        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
+        admission.Snapshot.RecoveryActions.ShouldBe(
+            [AdmissionRecoveryAction.RefreshContext, AdmissionRecoveryAction.ContactAdministrator]);
     }
 
     [Fact]
@@ -65,6 +85,8 @@ public sealed class ProjectContextAdmissionTests
         admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         admission.Setup.ShouldBeNull();
         admission.ProjectFolder.ShouldBeNull();
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "Setup" && !component.Included && component.Freshness != EvidenceFreshnessState.Current);
         admission.Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.RefreshContext);
     }
 

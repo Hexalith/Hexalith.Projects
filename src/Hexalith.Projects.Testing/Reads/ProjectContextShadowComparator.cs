@@ -46,6 +46,11 @@ public static class ProjectContextShadowComparator
             return ProjectContextShadowComparison.Diverged("identity");
         }
 
+        if (!SameSetup(legacy.Setup, supported.Setup))
+        {
+            return ProjectContextShadowComparison.Diverged("setup");
+        }
+
         if (!SameReference(legacy.ProjectFolder, supported.ProjectFolder)
             || !SameReferences(legacy.Conversations, supported.Conversations)
             || !SameReferences(legacy.FileReferences, supported.FileReferences)
@@ -104,6 +109,17 @@ public static class ProjectContextShadowComparator
         return legacy.Excluded.Count > 0
             ? AdmissionResponseState.Partial
             : AdmissionResponseState.Complete;
+    }
+
+    private static bool SameSetup(ProjectSetup? left, ProjectSetup? right)
+    {
+        ProjectSetup comparableLeft = left ?? ProjectSetup.Empty;
+        ProjectSetup comparableRight = right ?? ProjectSetup.Empty;
+        return comparableLeft.Goals.SequenceEqual(comparableRight.Goals)
+            && comparableLeft.UserInstructions.SequenceEqual(comparableRight.UserInstructions)
+            && comparableLeft.PreferredSourceKinds.SequenceEqual(comparableRight.PreferredSourceKinds)
+            && comparableLeft.ExcludedSourceKinds.SequenceEqual(comparableRight.ExcludedSourceKinds)
+            && Equals(comparableLeft.ConversationStartDefaults, comparableRight.ConversationStartDefaults);
     }
 
     private static bool SameReference(ProjectContextReference? left, ProjectContextReference? right)

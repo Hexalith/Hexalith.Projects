@@ -125,6 +125,36 @@ public sealed class GetProjectContextQueryCompositionTests
         }
     }
 
+    [Fact]
+    public async Task Query_RefreshProjectContext_IsNotRegisteredUntilG2()
+    {
+        WebApplication app = await StartAppAsync(seedDetail: true, seedTenantAccess: true).ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            QueryEnvelope envelope = new(
+                TenantId,
+                ProjectsServerModule.DomainName,
+                ProjectId,
+                ProjectsServerModule.RefreshProjectContextQueryType,
+                JsonSerializer.SerializeToUtf8Bytes(new RefreshProjectContextQuery(ProjectId), JsonOptions),
+                "corr-1",
+                "actor-1");
+            HttpResponseMessage response = await client.PostAsJsonAsync("/query", envelope, JsonOptions, TestContext.Current.CancellationToken).ConfigureAwait(true);
+            string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            using JsonDocument document = JsonDocument.Parse(body);
+            document.RootElement.GetProperty("success").GetBoolean().ShouldBeFalse();
+            document.RootElement.GetProperty("errorMessage").GetString()
+                .ShouldBe($"No query handler is registered for domain '{ProjectsServerModule.DomainName}' query type '{ProjectsServerModule.RefreshProjectContextQueryType}'.");
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
     private static QueryEnvelope GetEnvelope()
         => new(
             TenantId,

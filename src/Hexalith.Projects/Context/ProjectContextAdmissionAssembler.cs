@@ -113,7 +113,7 @@ public static class ProjectContextAdmissionAssembler
                 asOf,
                 projectVersion,
                 folderIncluded: false,
-                setupCurrent: true,
+                setupCurrent: false,
                 authorizationCurrent: true,
                 overflow: false);
         }
@@ -123,7 +123,7 @@ public static class ProjectContextAdmissionAssembler
             ? AdmissionResponseState.Partial
             : AdmissionResponseState.Complete;
         IReadOnlyList<string> recovery = hasOptionalOmission
-            ? [AdmissionRecoveryAction.RefreshContext]
+            ? PartialRecoveryActions(excluded)
             : [AdmissionRecoveryAction.None];
 
         return new ProjectContextAdmission(
@@ -289,7 +289,7 @@ public static class ProjectContextAdmissionAssembler
                 reference,
                 ReferenceState.Excluded,
                 ProjectContextInclusionCheck.ReferenceKindAllowlist,
-                Diagnostic: null,
+                diagnostic: null,
                 excluded,
                 evaluations);
         }
@@ -344,6 +344,32 @@ public static class ProjectContextAdmissionAssembler
             ReasonCode: null,
             diagnostic,
             reference.ObservedAt));
+    }
+
+    private static IReadOnlyList<string> PartialRecoveryActions(List<ProjectContextExclusion> excluded)
+    {
+        bool hasUnauthorized = false;
+        bool hasOther = false;
+        for (int index = 0; index < excluded.Count; index++)
+        {
+            if (excluded[index].ReferenceState == ReferenceState.Unauthorized)
+            {
+                hasUnauthorized = true;
+            }
+            else
+            {
+                hasOther = true;
+            }
+        }
+
+        if (hasUnauthorized && hasOther)
+        {
+            return [AdmissionRecoveryAction.RefreshContext, AdmissionRecoveryAction.ContactAdministrator];
+        }
+
+        return hasUnauthorized
+            ? [AdmissionRecoveryAction.ContactAdministrator]
+            : [AdmissionRecoveryAction.RefreshContext];
     }
 
     private static IReadOnlyList<AdmissionComponent> BuildComponents(

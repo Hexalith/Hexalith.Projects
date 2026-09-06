@@ -15,14 +15,17 @@ internal static class ProjectContextQueryAuthority
     public static IReadOnlyList<string> ExpectedScopes { get; } = ["projects.read"];
 
     /// <summary>Gets the expected audience values when the envelope presents audience.</summary>
-    public static IReadOnlyList<string> ExpectedAudience { get; } = ["projects"];
+    public static IReadOnlyList<string> ExpectedAudience { get; } = ["hexalith-projects"];
 
     /// <summary>
-    /// Returns whether presented envelope collections are absent or exactly equal to the server-owned expectation.
+    /// Returns whether presented envelope collections are omitted or contain every server-owned expectation.
     /// </summary>
-    /// <param name="presented">The immutable presented collection, or null when omitted by a legacy caller.</param>
+    /// <param name="presented">The immutable presented collection, or null when omitted by a Story 6.2 caller.</param>
     /// <param name="expected">The server-owned expected collection.</param>
-    /// <returns><see langword="true"/> when the presented values are omitted or an exact match.</returns>
+    /// <returns>
+    /// <see langword="true"/> when the presented values are omitted, or every expected value appears in
+    /// the presented collection. Extra DualPrincipal entries are allowed.
+    /// </returns>
     public static bool MatchesPresented(IReadOnlyList<string>? presented, IReadOnlyList<string> expected)
     {
         ArgumentNullException.ThrowIfNull(expected);
@@ -31,14 +34,19 @@ internal static class ProjectContextQueryAuthority
             return true;
         }
 
-        if (presented.Count != expected.Count)
+        foreach (string required in expected)
         {
-            return false;
-        }
+            bool found = false;
+            for (int index = 0; index < presented.Count; index++)
+            {
+                if (string.Equals(presented[index], required, StringComparison.Ordinal))
+                {
+                    found = true;
+                    break;
+                }
+            }
 
-        for (int index = 0; index < expected.Count; index++)
-        {
-            if (!string.Equals(presented[index], expected[index], StringComparison.Ordinal))
+            if (!found)
             {
                 return false;
             }
