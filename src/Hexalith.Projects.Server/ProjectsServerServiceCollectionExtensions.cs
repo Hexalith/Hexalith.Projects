@@ -121,6 +121,9 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();
         services.TryAddSingleton<IDomainProcessor, ProjectsDomainProcessor>();
         services.AddSingleton<IDomainQueryHandler, GetConversationStartSetupQueryHandler>();
+        services.AddSingleton<ProjectContextQueryExecutor>();
+        services.AddSingleton<IDomainQueryHandler, GetProjectContextQueryHandler>();
+        services.AddSingleton<IDomainQueryHandler, ExplainContextSelectionQueryHandler>();
 
         return services;
     }

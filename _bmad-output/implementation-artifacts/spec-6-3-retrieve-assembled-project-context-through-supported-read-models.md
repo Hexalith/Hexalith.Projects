@@ -2,9 +2,10 @@
 title: 'Retrieve assembled Project Context through supported read models'
 type: 'feature'
 created: '2026-08-24'
-status: 'draft'
+status: 'in-progress'
 route: 'dispatch'
 review_loop_iteration: 3
+baseline_commit: '5a37f9e4ba9cd7f35afae212398db9f945d4d475'
 context:
   - '{project-root}/_bmad-output/project-context.md'
   - '{project-root}/_bmad-output/implementation-artifacts/epic-6-context.md'
@@ -19,6 +20,14 @@ context:
 
 **Approach:** Add one cohesive, read-only DomainService slice for context retrieval, refresh, and explanation over EventStore-managed persisted Project and Reference Trust Index models. Reuse the supported query and projection pattern already used by Conversation-start, preserve the pure allowlist policy and legacy routes for shadow comparison, and expose no sibling payload or durable diagnostic trace.
 
+**Decision:** Implement on the current local EventStore and `/query` seams now, following Story 6.2. Focused tests may pass; G-4 and Story 6.1-chain evidence stay non-qualifying until those gates exist.
+
+**Decision:** When other required evidence is current and Setup is null, treat Setup as current empty values (Story 6.2 current-empty). `Complete` and `Partial` remain allowed.
+
+**Decision:** Extract shared AD-32 snapshot types from the Story 6.2 Conversation-start records, one type per file, and reuse them for context. Keep the existing Conversation-start wire shape.
+
+**Decision:** Keep Get, Refresh, Explain, and Reference Trust Index in this story. Do not implement Refresh owner batches or RTI ingestion until approved G-2 and RTI artifacts exist. Until then, Get and Explain run on Project-owned persisted detail and the allowlist; missing owner-backed trust outcomes are explicit optional `Partial` omissions, not invented inclusions and not required-evidence `Unavailable`. After RTI is accepted, missing or non-current trust-index evidence is required `Unavailable`.
+
 ## Boundaries & Constraints
 
 **Always:** Derive Tenant, original actor, authenticated workload, delegation, scopes, and audience from the immutable `QueryEnvelope`; resolve expected action, target, and version server-side and require exact matches. Use named `IAsyncDomainProjectionHandler` projections, `IReadModelStore`/`IReadModelBatchStore`, and `ReadModelWritePolicy`. Require an Active Project with exactly one authorized Folder. Include a reference only after Tenant, Project, lifecycle, authorization, and freshness checks pass; make every omission explicit. Use one AD-32 snapshot vocabulary (`responseState`, `asOf`, authorized `projectVersion` when disclosable, metadata-only `components`, closed recovery actions). Preserve deterministic ordinal ordering. Keep Get and Explain zero-write with zero sibling owner calls. Keep Refresh bounded, read-only, and zero-write. Keep explanation current, request-scoped, and nonpersistent. Reauthorize after persisted or owner reads and before returning `Complete`, `Partial`, or `Unavailable`.
@@ -29,9 +38,9 @@ context:
 
 | Scenario | Input / State | Expected Output / Behavior | Error Handling |
 |----------|--------------|---------------------------|----------------|
-| Complete context | Authorized Active Project; current Project, exactly one Folder, Setup, authorization, and all selected reference evidence | Metadata-only setup and ordered included/excluded references with AD-32 `Complete`, `asOf`, authorized version, components, and `None` recovery | No error expected |
-| Partial context | Required evidence current; optional reference denied, stale, rebuilding, unavailable, or excluded | Usable `Partial`; every omission has closed state/reason/last-verified evidence and applicable recovery | No raw owner detail; never silently drop a candidate |
-| Required evidence non-current | Project, Folder, Setup, authorization, or trust-index evidence missing/non-current | `Unavailable`; context use blocked and only applicable recovery actions returned | No fabricated data, timestamp, version, or completeness |
+| Complete context | Authorized Active Project; current Project, exactly one Folder, current-empty or current Setup, authorization, and all selected reference evidence (including accepted trust-index currentness when RTI exists) | Metadata-only setup and ordered included/excluded references with AD-32 `Complete`, `asOf`, authorized version, components, and `None` recovery | No error expected |
+| Partial context | Required evidence current; optional reference denied, stale, rebuilding, unavailable, excluded, or missing owner-backed trust while RTI is unapproved | Usable `Partial`; every omission has closed state/reason/last-verified evidence and applicable recovery | No raw owner detail; never silently drop a candidate |
+| Required evidence non-current | Project, Folder, authorization missing/non-current; or Setup non-current for a reason other than current-empty; or accepted RTI missing/non-current after it exists | `Unavailable`; context use blocked and only applicable recovery actions returned | No fabricated data, timestamp, version, or completeness |
 | Protected target | Archived, absent, denied, cross-Tenant, or unverifiable Project | No protected context or explanation | Observationally identical safe `404` |
 | Refresh | Current owner batch evidence differs from persisted trust evidence | New snapshot reflects current safe metadata and provenance | No command, event, task, audit, repair, or sibling mutation |
 | Explain | Current assembled evidence includes included and excluded candidates | Deterministic per-reference explanation with no persisted identity | No secrets, payloads, raw upstream problems, or durable trace |
@@ -39,48 +48,45 @@ context:
 
 </frozen-after-approval>
 
-## Open Questions
-
-- Implementation start — options: **A. Local seams now** (follow Story 6.2: implement and run focused tests on the current EventStore/`/query` seams; G-4 and Story 6.1-chain evidence stay non-qualifying until those gates exist) / **B. Stay paused** (no source implementation until the Story 6.1 chain through P4, G-2 pins, approved Reference Trust Index schema, performance limits, G-4 manifest, and a hash-verifiable `prerequisite_record` are all accepted). Chatbot and operators notice whether supported context routes exist in this checkout.
-- Null Setup — options: **A. Current-empty** (adopt Story 6.2: when other required evidence is current and Setup is null, treat Setup as current empty values and allow `Complete`/`Partial`) / **B. Required missing** (null Setup makes required evidence `Unavailable`) / **C. Optional omission** (null Setup is an explicit `Partial` Setup omission). Callers notice empty usable context versus blocked context.
-- AD-32 contract home — options: **A. Extract shared snapshot types** from the Story 6.2 Conversation-start records and reuse them for context / **B. Add context-local snapshot types** with the same field names and states, parallel to Conversation-start, without waiting for Story 6.1 / **C. Wait for Story 6.1** to land shared AD-32 contracts before any 6.3 contract types. Consumers notice one snapshot family versus parallel types versus no new contract.
-- Scope while G-2 and the Reference Trust Index remain unapproved — options: **A. Keep full Get+Refresh+Explain+RTI** and pause Refresh/RTI until approved artifacts exist / **B. Ship Get+Explain now** over Project-owned persisted detail and allowlist only; defer Refresh and RTI ingestion / **C. Local Project-link index** from Project events only, still deferring Refresh until G-2 exists. Callers notice whether Refresh and owner-backed trust exist.
-
 ## Code Map
 
-- `src/Hexalith.Projects.Server/Queries/GetProjectContextEndpoint.cs:52` -- legacy Get; authorizes at lines 73-81; Conversation page size 100 at 104-111; no ACL recheck after lookup. Preserve for shadow; do not extend into the supported handler.
-- `src/Hexalith.Projects.Server/Queries/RefreshProjectContextEndpoint.cs` -- legacy Refresh; live Folder/Memory/Conversation fan-out; File evidence stays on the projection. Preserve; do not copy live fan-out into the supported path.
-- `src/Hexalith.Projects.Server/Queries/GetProjectContextExplanationEndpoint.cs` -- legacy Explain; HTTP-bound reassembly. Preserve.
-- `src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs:134` -- legacy route map. Keep until Story 6.7.
-- `src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs:41` -- pure allowlist to reuse. Stale-Tenant allowance at 228-229 must not override AD-32 required-evidence rules. Success still hardcodes `Assembled` at 183.
+- `src/Hexalith.Projects.Server/Queries/GetProjectContextEndpoint.cs:52` -- legacy Get; `ProjectContextConversationsPageSize` 100 at 50; authorizes at 73-81; Conversation first page at 104-110; no ACL recheck after lookup. Preserve for shadow; do not extend into the supported handler.
+- `src/Hexalith.Projects.Server/Queries/RefreshProjectContextEndpoint.cs:65` -- legacy Refresh; live Folder/Memory/Conversation `Task.WhenAll` fan-out at 121-153; File evidence stays on the projection. Preserve; do not copy live fan-out into the supported path.
+- `src/Hexalith.Projects.Server/Queries/GetProjectContextExplanationEndpoint.cs:52` -- legacy Explain; HTTP-bound reassembly. Preserve.
+- `src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs:134` -- legacy REST map for `GET .../context`, `.../context/explain`, `.../context/refresh`. Keep until Story 6.7.
+- `src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs:41` -- pure allowlist to reuse. Success still hardcodes `Assembled` at 183. Stale-Tenant allowance at 228 must not override AD-32 required-evidence rules.
+- `src/Hexalith.Projects/Context/ProjectContextInclusionOrder.cs:34` -- TenantAuthority → ProjectVisibility → ProjectLifecycle → ReferenceAuthorization → ReferenceLifecycle → ReferenceFreshness → ReferenceKindAllowlist. Reuse; do not fork.
 - `src/Hexalith.Projects.Contracts/Models/ProjectContext.cs:47` -- legacy DTO; no AD-32 snapshot fields. Keep additive compatibility; do not treat it as supported truth.
-- `src/Hexalith.Projects.Contracts/Queries/GetConversationStartSetupQuery.cs` and `ConversationStartSetupResponse.cs` -- Story 6.2 query and story-local AD-32 types (`ConversationStartResponseState`, snapshot, components). Reuse the pattern; do not edit unless extracting shared snapshot types.
-- `src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:25` -- supported handler pattern: envelope identity, `TenantAccessAuthorizer.AuthorizeDiagnosticReadAsync` before store read, `IReadModelStore`, `QueryResult.Failure("safe-denial")`. Copy this shape; do not use body/header identity.
-- `src/Hexalith.Projects.Server/Projections/ConversationStartSetup/ConversationStartSetupProjectionHandler.cs` -- `IAsyncDomainProjectionHandler`; store `projects-conversation-start-setup`; key `{tenantId}:projects:{projectId}`; `Seed` plus `Apply`; `ReadModelWritePolicy.UpdateAsync`. Copy this fold; do not `Rebuild` from an event slice.
-- `src/Hexalith.Projects.Server/InMemoryProjectReadModelStore.cs` and `ProjectsServerServiceCollectionExtensions.cs:69` -- fake-then-swap: `AddProjectsServer` registers the in-memory store and `IDomainQueryHandler`; runtime removes it and installs EventStore. Register 6.3 handlers the same way.
-- `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs:209` -- hand-rolled `POST /query` via `DomainQueryDispatcher`. Add 6.3 query types here. Do not migrate `AddEventStoreDomainService` in this story (Story 6.2 DW-63).
+- `src/Hexalith.Projects.Contracts/Queries/GetConversationStartSetupQuery.cs` -- Story 6.2 singleton query (`ProjectId`). Reuse the query shape; do not edit unless extracting shared snapshot types.
+- `src/Hexalith.Projects.Contracts/Queries/ConversationStartSetupResponse.cs:16` -- story-local AD-32 types (`ConversationStartResponseState`, `ConversationStartComponent`, `ConversationStartAdmissionSnapshot`, `ConversationStartSetupResponse`) in one file. Pattern to copy; no shared AD-32 types exist elsewhere.
+- `src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:25` -- supported handler: envelope `TenantId`/`UserId`/`OriginalActorId`/`EntityId??AggregateId` at 45-51; `TenantAccessAuthorizer.AuthorizeDiagnosticReadAsync` before store read at 55-63; Active-only at 69-72; null Setup → `ConversationStartSetup.Empty` at 86-90; `Complete` vs `Unavailable` only (Partial declared, never set); `QueryResult.Failure("safe-denial")`. Copy this shape; do not use body/header identity.
+- `src/Hexalith.Projects.Server/Projections/ConversationStartSetup/ConversationStartSetupProjectionHandler.cs` -- `IAsyncDomainProjectionHandler`; `StoreName` `projects-conversation-start-setup` at 26; key `{tenantId}:projects:{projectId}` at 45; `Seed` plus `Apply` at 88-120; `ReadModelWritePolicy.UpdateAsync`. Copy this fold; do not `Rebuild` from an event slice.
+- `src/Hexalith.Projects.Server/InMemoryProjectReadModelStore.cs` and `ProjectsServerServiceCollectionExtensions.cs:69` -- fake-then-swap: `AddProjectsServer` registers in-memory `IReadModelStore` at 69-70 and `GetConversationStartSetupQueryHandler` at 123; `AddProjectsServerRuntimeInfrastructure` removes it and installs EventStore at 138-141, then registers the projection. Register 6.3 handlers the same way.
+- `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs:208` -- hand-rolled `POST /query` via `DomainQueryDispatcher`; failure → `Results.NotFound`. Add 6.3 query types here. Do not migrate `AddEventStoreDomainService` in this story (DW-63).
 - `src/Hexalith.Projects.Server/Program.cs:15` -- `AddProjectsServer` plus `AddProjectsServerRuntimeInfrastructure`; no SDK host.
 - `src/Hexalith.Projects/Projections/ProjectDetail/ProjectDetailProjection.cs:28` -- deterministic Project fold to reuse. `ProjectDetailProjection.Seed` already exists for incremental apply.
-- `src/Hexalith.Projects/Projections/ProjectReferenceIndex/ProjectReferenceIndexProjection.cs:21` -- Project membership/reverse index only. Not the Reference Trust Index.
+- `src/Hexalith.Projects/Projections/ProjectReferenceIndex/ProjectReferenceIndexProjection.cs:21` -- Project membership/reverse index only. Not the Reference Trust Index. No `ReferenceTrust*` types in `src/`.
 - `src/Hexalith.Projects.Infrastructure/DaprProjectProjectionStore.cs:23` -- forbidden journal/rebuild-on-read store. Preserve for legacy shadow only.
-- `references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/IDomainQueryHandler.cs` and `IAsyncDomainProjectionHandler.cs` -- required handler seams. `QueryEnvelope` carries Tenant, original actor, workload, delegation, scopes, and audience; it has no Action/Target/Version members.
-- `references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/IReadModelStore.cs`, `IReadModelBatchStore.cs`, and `ReadModelWritePolicy.cs` -- only permitted persisted read-model path. Bulk reads use `IReadModelBulkStore`, not owner G-2.
+- `references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Queries/QueryEnvelope.cs` -- TenantId, UserId, OriginalActorId, AuthenticatedWorkloadId, IsDelegated, DelegationId, Scopes, Audience. No Action/Target/Version members.
+- `references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/IDomainQueryHandler.cs` and `IAsyncDomainProjectionHandler.cs` -- required handler seams.
+- `references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/IReadModelStore.cs`, `IReadModelBatchStore.cs`, `IReadModelBulkStore.cs`, and `ReadModelWritePolicy.cs` -- only permitted persisted read-model path. Batch/bulk stores are unused in Projects `src/` today. Owner G-2 is not `IReadModelBulkStore`.
 - `references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Queries/SafeDenialQueryRouter.cs` -- SDK opt-in denial router. Unused until SDK host; keep 6.2 `"safe-denial"` mapping on `/query`.
-- `src/Hexalith.Projects.Testing/Context/ProjectContextEvidenceBuilder.cs:22` and `tests/Hexalith.Projects.Tests/Context/` -- reuse decision-matrix fixtures; extend rather than fork.
+- `src/Hexalith.Projects.Testing/Context/ProjectContextEvidenceBuilder.cs:22` and `tests/Hexalith.Projects.Tests/Context/` -- reuse decision-matrix fixtures; extend rather than fork. No `Testing/Reads/` tree or `ProjectContextShadowComparator` yet.
 - `_bmad-output/test-artifacts/test-design-epic-6.md:180` -- required E6.3-U01/U02/U03, A01/A02/A03 and P1 E6.3-A04; plus E6-X01 privacy.
+- `_bmad-output/implementation-artifacts/deferred-work.md` -- DW-63 SDK host migration, DW-66 Partial admission, DW-67 Folder Unauthorized collapse; all open, gated to 6.7. Do not close them here.
 - `module/hexalith-projects.module.json` -- required G-4 manifest; absent. Do not author a substitute.
 
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/Hexalith.Projects.Contracts/Queries/GetProjectContextQuery.cs`, `RefreshProjectContextQuery.cs`, `ExplainContextSelectionQuery.cs`, and one-type-per-file AD-32 snapshot types -- define additive singleton queries targeting one Project and the snapshot vocabulary chosen in Open Questions. Rationale: Chatbot needs a supported contract without mutating the legacy `ProjectContext` DTO.
-- [ ] `src/Hexalith.Projects.Server/Queries/GetProjectContextQueryHandler.cs`, `RefreshProjectContextQueryHandler.cs`, and `ExplainContextSelectionQueryHandler.cs` -- follow `GetConversationStartSetupQueryHandler`: envelope identity, `TenantAccessAuthorizer` before lookup, exact query-target equality, Active plus one-Folder rule, shared inclusion policy, `QueryResult` or `"safe-denial"`. Rationale: one authority boundary for Get, Refresh, and Explain.
+- [ ] `src/Hexalith.Projects.Contracts/Queries/` shared AD-32 snapshot types (one type per file) plus `GetProjectContextQuery.cs`, `RefreshProjectContextQuery.cs`, and `ExplainContextSelectionQuery.cs` -- extract the Story 6.2 snapshot vocabulary into shared types without changing Conversation-start JSON, then add additive singleton context queries. Rationale: one snapshot family for Chatbot; keep the legacy `ProjectContext` DTO.
+- [ ] `src/Hexalith.Projects.Server/Queries/GetProjectContextQueryHandler.cs` and `ExplainContextSelectionQueryHandler.cs` -- follow `GetConversationStartSetupQueryHandler`: envelope identity, `TenantAccessAuthorizer` before lookup, exact query-target equality, Active plus one-Folder rule, current-empty Setup, shared inclusion policy, `QueryResult` or `"safe-denial"`. Until RTI exists, treat missing owner-backed trust as explicit `Partial` omissions. Rationale: implement Get and Explain on local seams now.
 - [ ] `src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs` -- adapt assembly to AD-32 usability without duplicating decisions in handlers; keep stale-Tenant allowance from overriding required-evidence `Unavailable`. Rationale: preserve the pure allowlist.
-- [ ] `src/Hexalith.Projects.Server/Projections/` Reference Trust Index handler, item, and backfill types (one type per file) -- implement only the approved Tenant-scoped schema and bounded producer; atomic checkpoint/index writes through `IReadModelBatchStore`; no per-actor fingerprint. Skip until Open Questions allow it. Rationale: Get/Explain need current trust evidence; ingestion is the only writer.
-- [ ] `src/Hexalith.Projects.Server/Queries/ProjectContextOwnerRefreshService.cs` -- Refresh-only counted G-2 owner batches; match by opaque identity; zero persisted writes. Skip until G-2 is approved. Rationale: Refresh must not copy legacy live fan-out.
-- [ ] `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` -- register the new handlers and projection on the existing fake-then-swap `/query` composition; keep legacy REST routes. Rationale: match Story 6.2 without a host migration.
-- [ ] `src/Hexalith.Projects.Testing/Reads/ProjectContextShadowComparator.cs` -- compare legacy and supported Get/Refresh/Explain on a frozen representable corpus; do not normalize known legacy deficits. Rationale: E6.3-A04.
-- [ ] `tests/Hexalith.Projects.Contracts.Tests/`, `tests/Hexalith.Projects.Tests/Context/`, `tests/Hexalith.Projects.Tests/Queries/`, `tests/Hexalith.Projects.Server.Tests/Queries/` -- cover the I/O matrix, E6.3-U01/U02/U03, A01/A02/A03, zero-write Get/Refresh/Explain, leakage, and safe-404 equivalence. Rationale: focused proof before G-4.
+- [ ] `src/Hexalith.Projects.Server/Queries/RefreshProjectContextQueryHandler.cs` and `ProjectContextOwnerRefreshService.cs` -- Refresh-only counted G-2 owner batches; match by opaque identity; zero persisted writes. Skip until G-2 is approved. Rationale: Refresh must not copy legacy live fan-out.
+- [ ] `src/Hexalith.Projects.Server/Projections/` Reference Trust Index handler, item, and backfill types (one type per file) -- implement only the approved Tenant-scoped schema and bounded producer; atomic checkpoint/index writes through `IReadModelBatchStore`; no per-actor fingerprint. Skip until the RTI schema is approved. Rationale: ingestion is the only writer; do not invent a schema.
+- [ ] `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` -- register Get and Explain handlers on the existing fake-then-swap `/query` composition; keep legacy REST routes; register Refresh and RTI only when those tasks un-skip. Rationale: match Story 6.2 without a host migration.
+- [ ] `src/Hexalith.Projects.Testing/Reads/ProjectContextShadowComparator.cs` -- compare legacy and supported Get/Explain on a frozen representable corpus now; add Refresh when that handler exists; do not normalize known legacy deficits. Rationale: E6.3-A04.
+- [ ] `tests/Hexalith.Projects.Contracts.Tests/`, `tests/Hexalith.Projects.Tests/Context/`, `tests/Hexalith.Projects.Tests/Queries/`, `tests/Hexalith.Projects.Server.Tests/Queries/` -- cover the I/O matrix, E6.3-U01/U03, A01/A02/A03, zero-write Get/Explain, leakage, safe-404, and current-empty Setup; add U02/Refresh when un-skipped. Rationale: focused proof before G-4.
 
 **Acceptance Criteria:**
 - Given current authorized evidence, when Get, Refresh, or Explain runs through the supported `/query` handler, then the result matches the matrix, uses one AD-32 snapshot vocabulary, and exposes metadata only.
@@ -199,9 +205,9 @@ context:
 
 Get, Refresh, and Explain stay one story: one authority boundary, one allowlist, one snapshot contract, one fixture corpus, and a zero-write query invariant. Get and Explain read persisted current evidence only. Refresh substitutes a bounded owner-batch snapshot without updating the index. Explain returns the same assembly evaluations with no persisted trace identity.
 
-Checkout facts (2026-09-06): Story 6.1 is blocked and did not land shared AD-32, list/open handlers, or SDK composition. Story 6.2 did land a supported `/query` handler, incremental Conversation-start projection, fake-then-swap `IReadModelStore`, and story-local AD-32 types; it treats current-empty Setup as `ConversationStartSetup.Empty` and deferred Partial, Folder Unauthorized collapse, and SDK host migration. No Conversations/Folders/Memories G-2 batch-read contracts, no Reference Trust Index types, and no `module/hexalith-projects.module.json` exist in this checkout. `QueryEnvelope` has no Action/Target/Version members.
+Checkout facts (2026-09-06): Story 6.1 list/open handlers did not land. Story 6.2 did land a supported `/query` handler, incremental Conversation-start projection, fake-then-swap `IReadModelStore`, and story-local AD-32 types in `ConversationStartSetupResponse.cs`; null Setup becomes `ConversationStartSetup.Empty` and still reports Setup current; `Partial` is never produced (DW-66) and Folder Unauthorized collapses to Unavailable (DW-67). No Conversations/Folders/Memories G-2 batch-read contracts, no Reference Trust Index types, no `IReadModelBatchStore` usage, and no `module/hexalith-projects.module.json` exist in this checkout. `QueryEnvelope` has no Action/Target/Version members. SDK host migration remains DW-63.
 
-Agent decisions (not user-visible): follow the Story 6.2 host and DI pattern; use `Seed` plus `Apply` rather than slice `Rebuild`; keep `"safe-denial"` on the hand-rolled `/query` rather than `SafeDenialQueryRouter`; put new handlers next to `GetConversationStartSetupQueryHandler`; one C# type per new file; do not edit `sprint-status.yaml`.
+Agent decisions (not user-visible): follow the Story 6.2 host and DI pattern; use `Seed` plus `Apply` rather than slice `Rebuild`; keep `"safe-denial"` on the hand-rolled `/query` rather than `SafeDenialQueryRouter`; put new handlers next to `GetConversationStartSetupQueryHandler`; one C# type per new file; extract shared snapshot types under `src/Hexalith.Projects.Contracts/` without changing Conversation-start JSON; do not edit `sprint-status.yaml`. Operator accepted the full-spec size (review logs retained).
 
 ### Post-gate implementation decisions
 

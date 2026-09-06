@@ -35,6 +35,15 @@ public static class ProjectsServerModule
     /// <summary>The supported Conversation-start setup query type.</summary>
     public const string GetConversationStartSetupQueryType = "Hexalith.Projects.Queries.GetConversationStartSetup.v1";
 
+    /// <summary>The supported Get Project Context query type.</summary>
+    public const string GetProjectContextQueryType = "Hexalith.Projects.Queries.GetProjectContext.v1";
+
+    /// <summary>The supported Refresh Project Context query type.</summary>
+    public const string RefreshProjectContextQueryType = "Hexalith.Projects.Queries.RefreshProjectContext.v1";
+
+    /// <summary>The supported Explain Context Selection query type.</summary>
+    public const string ExplainContextSelectionQueryType = "Hexalith.Projects.Queries.ExplainContextSelection.v1";
+
     /// <summary>The fully qualified <c>SetProjectFolder</c> command type discriminator on the wire.</summary>
     public const string SetProjectFolderCommandType = "Hexalith.Projects.Commands.SetProjectFolder";
 

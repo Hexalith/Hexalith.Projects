@@ -187,6 +187,60 @@ public sealed class ProjectContextInclusionPolicy
         return new ProjectContextAssemblyResult(assembled, evaluationsOut);
     }
 
+    /// <summary>
+    /// Assembles the shared AD-32 Project Context admission from the same allowlist as
+    /// <see cref="Assemble"/>, without letting the legacy stale-Tenant read allowance override
+    /// required-evidence <see cref="Hexalith.Projects.Contracts.Queries.AdmissionResponseState.Unavailable"/>.
+    /// </summary>
+    /// <param name="context">The request-level inputs (tenant identifiers, operation, correlation, now).</param>
+    /// <param name="project">The project projection evidence.</param>
+    /// <param name="tenantAccess">The tenant-access authorization result.</param>
+    /// <param name="references">The per-kind candidate-reference evidence.</param>
+    /// <param name="projectVersion">The authorized persisted Project version.</param>
+    /// <param name="asOf">The authoritative evidence cutoff.</param>
+    /// <param name="ownerBackedTrustAvailable">Whether an accepted Reference Trust Index is available.</param>
+    /// <returns>The AD-32 admission derived from the allowlist.</returns>
+    public ProjectContextAdmission AssembleAdmission(
+        ProjectContextAssemblyContext context,
+        ProjectContextProjectEvidence project,
+        ProjectContextTenantAccess tenantAccess,
+        ProjectContextReferenceEvidence references,
+        long projectVersion,
+        DateTimeOffset asOf,
+        bool ownerBackedTrustAvailable = false)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(project);
+        ArgumentNullException.ThrowIfNull(tenantAccess);
+        ArgumentNullException.ThrowIfNull(references);
+
+        string projectId = context.ProjectId ?? project.Detail?.ProjectId ?? string.Empty;
+        ProjectLifecycle lifecycle = project.Detail?.Lifecycle ?? ProjectLifecycle.Active;
+        int candidateCount = ProjectContextAdmissionAssembler.CountCandidates(references);
+        if (candidateCount > ProjectContextReadLimits.MaxReferences
+            || ProjectContextAdmissionAssembler.HasDuplicateIdentities(references))
+        {
+            return ProjectContextAdmissionAssembler.Unavailable(
+                projectId,
+                lifecycle,
+                asOf,
+                projectVersion,
+                folderIncluded: false,
+                setupCurrent: false,
+                authorizationCurrent: false,
+                overflow: candidateCount > ProjectContextReadLimits.MaxReferences);
+        }
+
+        ProjectContextAssemblyResult assembled = Assemble(context, project, tenantAccess, references);
+        return ProjectContextAdmissionAssembler.FromAssembled(
+            assembled,
+            tenantAccess,
+            references,
+            projectVersion,
+            asOf,
+            ownerBackedTrustAvailable);
+    }
+
     private static IReadOnlyList<ProjectContextReference> SortRefs(List<ProjectContextReference> refs)
         => refs
             .OrderBy(static r => r.ReferenceKind, StringComparer.Ordinal)

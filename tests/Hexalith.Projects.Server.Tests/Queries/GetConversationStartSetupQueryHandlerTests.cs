@@ -51,7 +51,7 @@ public sealed class GetConversationStartSetupQueryHandlerTests
         result.Success.ShouldBeTrue();
         ConversationStartSetupResponse response = JsonSerializer.Deserialize<ConversationStartSetupResponse>(result.PayloadBytes!, JsonOptions)!;
         response.Setup!.Goals.ShouldBe(["goal"]);
-        response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
+        response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
         response.Snapshot.ProjectVersion.ShouldBe(4);
         response.Snapshot.AsOf.ShouldBe(ObservedAt);
     }
@@ -79,7 +79,7 @@ public sealed class GetConversationStartSetupQueryHandlerTests
 
         ConversationStartSetupResponse response = JsonSerializer.Deserialize<ConversationStartSetupResponse>(result.PayloadBytes!, JsonOptions)!;
         response.Setup.ShouldBeNull();
-        response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Unavailable);
+        response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         response.Snapshot.RecoveryActions.ShouldContain("RefreshContext");
     }
 

@@ -76,9 +76,9 @@ public sealed class GetConversationStartSetupQueryHandler(
         EvidenceFreshnessState evidenceFreshness = hasFolder
             ? EvidenceFreshnessState.Current
             : EvidenceFreshnessState.Unavailable;
-        ConversationStartResponseState responseState = hasFolder
-            ? ConversationStartResponseState.Complete
-            : ConversationStartResponseState.Unavailable;
+        AdmissionResponseState responseState = hasFolder
+            ? AdmissionResponseState.Complete
+            : AdmissionResponseState.Unavailable;
         IReadOnlyList<string> recoveryActions = hasFolder
             ? Array.Empty<string>()
             : new[] { "RefreshContext", "ContactAdministrator" };
@@ -102,20 +102,20 @@ public sealed class GetConversationStartSetupQueryHandler(
                 hasFolder ? ProjectContextFreshness.Fresh : ProjectContextFreshness.Unavailable);
         }
 
-        var snapshot = new ConversationStartAdmissionSnapshot(
+        var snapshot = new AdmissionSnapshot(
             responseState,
             asOf,
             detail.Sequence,
             new[]
             {
-                new ConversationStartComponent("Project", true, EvidenceFreshnessState.Current, "current"),
-                new ConversationStartComponent("Folder", hasFolder, evidenceFreshness, hasFolder ? "current" : "missing"),
-                new ConversationStartComponent("Setup", true, EvidenceFreshnessState.Current, "current"),
-                new ConversationStartComponent("FirstResponseAuthorization", true, EvidenceFreshnessState.Current, "envelope-authorized"),
+                new AdmissionComponent("Project", true, EvidenceFreshnessState.Current, "current"),
+                new AdmissionComponent("Folder", hasFolder, evidenceFreshness, hasFolder ? "current" : "missing"),
+                new AdmissionComponent("Setup", true, EvidenceFreshnessState.Current, "current"),
+                new AdmissionComponent("FirstResponseAuthorization", true, EvidenceFreshnessState.Current, "envelope-authorized"),
             },
             recoveryActions);
         var response = new ConversationStartSetupResponse(
-            responseState == ConversationStartResponseState.Unavailable ? null : setup,
+            responseState == AdmissionResponseState.Unavailable ? null : setup,
             snapshot);
 
         return QueryResult.FromPayload(JsonSerializer.SerializeToElement(response, JsonOptions), QueryType);

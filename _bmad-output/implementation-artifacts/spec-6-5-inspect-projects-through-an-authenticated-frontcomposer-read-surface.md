@@ -2,7 +2,8 @@
 title: 'Inspect Projects through an authenticated FrontComposer read surface'
 type: 'feature'
 created: '2026-08-25'
-status: ready-for-dev
+status: in-progress
+baseline_revision: 5a37f9e4ba9cd7f35afae212398db9f945d4d475
 blocked_by: ['6.1', '6.2', '6.3', '6.4']
 prerequisite_record: null
 review_loop_iteration: 0
@@ -98,4 +99,3 @@ FrontComposer owns the session credential and relay; Projects owns authorization
 - `npm --prefix tests/e2e test -- --project=chromium` -- expected: browser-to-supported-handler, isolation, zero-write, and accessibility journeys pass.
 - `dotnet tool run hexalith-module test --profile reads --filter Story=6.5` -- expected: the approved G-4 profile emits real persisted evidence for the browser-to-handler path.
 - `git diff --check` -- expected: no whitespace errors.
-
