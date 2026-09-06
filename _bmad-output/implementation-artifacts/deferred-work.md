@@ -619,4 +619,5 @@ origin: spec-deferred cf4fbe1482fb
 location: references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Evidence/ReadinessEvidenceValidator.cs:1161
 source_spec: `spec-readiness-evidence-identity.md`
 reason: Review could not establish whether readiness rows are required to use the current space-delimited `--manifest`, `--profile`, and `--filter` form or may use equals forms, quoted/escaped values, shell wrappers, and trailing operators. An authoritative producer/consumer contract plus representative accepted commands would settle the question.
-status: open
+status: done 2026-09-06
+resolution: already resolved: Commit d0049833f2ac0416075eed37f173712f3ac90e56; references/Hexalith.Builds/README.md:288-298 defines the accepted canonical space-delimited readiness command grammar, references/Hexalith.Builds/test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs:158-202 rejects noncanonical identity forms, and references/Hexalith.Builds/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceSerializationTests.cs:205-247 pins producer serialization.
