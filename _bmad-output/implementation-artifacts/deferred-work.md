@@ -623,3 +623,15 @@ source_spec: `spec-readiness-evidence-identity.md`
 reason: Review could not establish whether readiness rows are required to use the current space-delimited `--manifest`, `--profile`, and `--filter` form or may use equals forms, quoted/escaped values, shell wrappers, and trailing operators. An authoritative producer/consumer contract plus representative accepted commands would settle the question.
 status: done 2026-09-06
 resolution: already resolved: Commit d0049833f2ac0416075eed37f173712f3ac90e56; references/Hexalith.Builds/README.md:288-298 defines the accepted canonical space-delimited readiness command grammar, references/Hexalith.Builds/test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs:158-202 rejects noncanonical identity forms, and references/Hexalith.Builds/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceSerializationTests.cs:205-247 pins producer serialization.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-g-6-runtime-toolchain-baseline.md`
+  summary: Remove the duplicate DW-56 decision line introduced by concurrent ledger work.
+  evidence: The same dated decision appears twice consecutively; this is unrelated to G-6 and should be corrected by the ledger-owning work.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-g-6-runtime-toolchain-baseline.md`
+  summary: Constrain legacy cleanup targets to safe descendants of the selected `_bmad` directory.
+  evidence: Absolute and parent-traversal directory names are joined without containment validation, so concurrent cleanup code can relocate and delete paths outside `_bmad`.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-g-6-runtime-toolchain-baseline.md`
+  summary: Make legacy cleanup recovery durable across abrupt process termination and partial final deletion.
+  evidence: Staging has no persistent original-to-staged journal, and a partially failed `rmtree` reports remaining paths without proving byte-complete recovery.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-g-6-runtime-toolchain-baseline.md`
+  summary: Run the failure-atomic legacy cleanup suite in a blocking root CI job.
+  evidence: The seven cleanup tests pass locally but no workflow invokes them, so rollback regressions can merge unnoticed.

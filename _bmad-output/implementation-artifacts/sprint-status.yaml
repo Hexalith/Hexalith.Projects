@@ -1,5 +1,5 @@
 # generated: 2026-07-17T08:14:03+02:00
-# last_updated: 2026-09-05T13:46:20+02:00
+# last_updated: 2026-09-06T10:43:08+02:00
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -50,7 +50,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 2026-07-17T08:14:03+02:00
-last_updated: 2026-08-03T08:21:35+02:00
+last_updated: 2026-09-06T10:43:08+02:00
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -176,6 +176,16 @@ development_status:
   8-10-prove-cross-workflow-resilience: backlog
   8-11-record-the-terminal-production-release-decision: blocked
   epic-8-retrospective: optional
+
+qualification_gates:
+  G-6:
+    status: accepted
+    accepted_on: 2026-09-06
+    approved_by: "Jérôme Piquot"
+    owner_roles: ["Builds", "Platform", "FrontComposer/Web"]
+    disposition: "Explicit Dapr runtime 1.18.2 / .NET packages 1.18.5 exception; not support-table-listed"
+    evidence: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json"
+    containment: "G-4, G-5, deployment, and release remain unapproved"
 
 action_items:
   - epic: 5

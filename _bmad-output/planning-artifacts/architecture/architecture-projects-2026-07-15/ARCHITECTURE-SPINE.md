@@ -362,29 +362,29 @@ Verified against the checked-out root configuration, centralized package catalog
 
 | Name | Version |
 | --- | --- |
-| .NET SDK feature-band policy | Current repository pin `10.0.302` with `rollForward: latestPatch`; the 2026-07-15 reviewed environment resolved `10.0.301` |
+| .NET SDK feature-band policy | `10.0.400` with `rollForward: latestPatch`; G-6 validated on 2026-09-06 |
 | Target framework | `net10.0` |
 | C# | 14 (`LangVersion=latest`) |
 | Hexalith.EventStore package binding | 3.70.1; API evidence from published 3.70.1 packages or a clean 3.70.1 build (normalized under Story 6.1-P1, 2026-07-18; submodule revision `f13f9925fdca53efa2ab8c90d396ab106f91bb9c`, Builds `HexalithEventStoreVersion=3.70.1`; rollback pin 3.67.3 / EventStore tag `v3.67.3` / Builds commit `12aaed6c`) |
 | Hexalith.FrontComposer package-mode binding | 4.0.0; checked-out source is 4.0.1 and requires G-3 parity disposition |
-| Aspire AppHost SDK / Aspire.Hosting platform binding | 13.4.6 |
-| Dapr runtime current CI/test evidence | 1.18.0; not release-approved with SDK 1.18.4 until G-6 |
-| Dapr .NET Client / ASP.NET Core current platform packages | 1.18.4; not release-approved with runtime 1.18.0 until G-6 |
-| Microsoft Fluent UI Blazor presentation binding | 5.0.0-rc.4-26180.1; prerelease gate G-6 |
+| Aspire AppHost SDK / Aspire.Hosting platform binding | 13.5.3; Aspire CLI 13.5.3 |
+| Dapr runtime current CI/test evidence | 1.18.2 with CLI 1.18.0; owner-approved explicit exception to the packaged table's runtime 1.18.0 / .NET SDK 1.18.1 pair; not support-table-listed |
+| Dapr .NET Client / ASP.NET Core current platform packages | 1.18.5; validated with runtime 1.18.2 under the G-6 exception |
+| Microsoft Fluent UI Blazor presentation binding | 5.0.0-rc.5-26219.1; owner-approved G-6 release-candidate exception |
 | ByteAether.Ulid | 1.3.8 |
 | NSwag.MSBuild | 14.7.1 |
 | xUnit v3 | 3.2.2 |
 | Shouldly | 4.3.0 |
-| NSubstitute test binding | 6.0.0-rc.1; prerelease gate G-6 |
+| NSubstitute test binding | 6.2.0 stable |
 
 ### Migration and catalog-only inventory
 
 | Name | Version |
 | --- | --- |
-| CommunityToolkit.Aspire.Hosting.Dapr migration adapter | 13.4.0-preview.1.260602-0230 |
-| Fluxor.Blazor.Web legacy UI migration input | 6.9.0 |
-| Dapr.Workflow catalog entry, unselected pending G-1 | 1.18.4 |
-| Unused `Dapr` central catalog entry | 1.17.9 |
+| CommunityToolkit.Aspire.Hosting.Dapr migration adapter | 13.5.0-preview.1.260825-0345; owner-approved G-6 prerelease exception |
+| Fluxor.Blazor.Web legacy UI migration input | 6.11.0 stable |
+| Dapr.Workflow catalog entry, unselected pending G-1 | 1.18.5 |
+| `Dapr` package | Catalog-only classification; absent from the selected central catalog and not activated |
 
 ## Structural Seed
 
@@ -474,7 +474,7 @@ flowchart TB
 | G-3 | FrontComposer runtime adapters | Reconcile root package-mode 4.0.0 with checked-out source 4.0.1 and record the patch disposition; then prove pinned descriptor discovery, generated Web/CLI/MCP schemas, real credential propagation, current MCP annotations/tasks, and authenticated parity |
 | G-4 | Platform development composition runner | Approved manifest schema/version; pinned .NET tool in the repository tool manifest; checked-in valid module manifest; repository-owned run/teardown commands; repository-relative paths; deterministic IDs; runner-owned identity/secrets; thin manifest-aware fixtures; clean-checkout Debug and CI package-mode proof for persisted, restart, two-instance, and authenticated Web/CLI/MCP lanes before removal of Projects AppHost/Aspire/runtime code |
 | G-5 | Platform identity, KMS, secrets, telemetry, and environment bindings | Fail-fast dual-principal admission, key rotation/revocation, encryption, health, deployment, and recovery evidence |
-| G-6 | Runtime/toolchain alignment | Before release, align Dapr runtime and .NET SDK to an authoritative support-matrix-listed tuple or record a platform-owner-approved support exception, then prove it under live restart/two-instance fixtures. Treat `Dapr=1.17.9` as catalog hygiene and Dapr.Workflow 1.18.4 as unselected pending G-1. Fluent UI RC4, CommunityToolkit preview, and NSubstitute RC require explicit Builds/platform approval plus compatibility evidence; Fluxor 6.9 must be upgraded or intentionally held through Builds governance. No prerelease or stale migration pin silently becomes a target dependency. |
+| G-6 | Runtime/toolchain alignment | **Accepted 2026-09-06** for the exact tuple retained in `_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json`: .NET 10.0.400, Aspire SDK/CLI 13.5.3, Toolkit Dapr preview, Dapr CLI 1.18.0/runtime 1.18.2/.NET packages 1.18.5, Fluent UI RC5, NSubstitute 6.2.0, and Fluxor 6.11.0. Jérôme Piquot approved the explicitly non-support-table-listed Dapr exception as Builds, Platform, and FrontComposer/Web owner. This acceptance does not approve G-4, G-5, deployment, or release; Dapr remains catalog-only/not activated and Dapr.Workflow remains unselected pending G-1. |
 
 ## Capability → Architecture Map
 

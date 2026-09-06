@@ -1,0 +1,95 @@
+{
+  "schema": "hexalith.runtime-toolchain-command-record.v1",
+  "commands": [
+    {
+      "purpose": "install exact Dapr runtime tuple",
+      "command": "dapr uninstall --all && DAPR_DEFAULT_IMAGE_REGISTRY=ghcr dapr init --runtime-version 1.18.2 && dapr --version",
+      "exitCode": 0,
+      "outcome": "CLI 1.18.0; runtime 1.18.2"
+    },
+    {
+      "purpose": "observe exact tool versions",
+      "command": "dotnet --version && aspire --version && dapr --version",
+      "exitCode": 0,
+      "outcome": ".NET SDK 10.0.400; Aspire CLI 13.5.3; Dapr CLI 1.18.0; runtime 1.18.2"
+    },
+    {
+      "purpose": "Builds focused module and evidence tests",
+      "command": "dotnet test test/Hexalith.Builds.Module.Tests/Hexalith.Builds.Module.Tests.csproj --configuration Release --no-restore",
+      "exitCode": 0,
+      "outcome": "117 passed; 0 failed; 0 skipped"
+    },
+    {
+      "purpose": "G-6 mutation controls",
+      "command": "python3 references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py",
+      "exitCode": 0,
+      "outcome": "22 scenarios passed"
+    },
+    {
+      "purpose": "real PostgreSQL two-sidecar stop/restart qualifier",
+      "command": "dotnet tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Release/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll -method Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants -noColor -result-ctrf oq8-results.json",
+      "exitCode": 0,
+      "outcome": "1 passed; 0 failed; 0 skipped"
+    },
+    {
+      "purpose": "21 exact deterministic support selectors",
+      "command": "dotnet tests/Hexalith.EventStore.Server.Tests/bin/Release/net10.0/Hexalith.EventStore.Server.Tests.dll with the 21 selectors retained in eventstore/deterministic-support.json",
+      "exitCode": 0,
+      "outcome": "21 selectors; 33 passed cases; 0 failed; 0 skipped"
+    },
+    {
+      "purpose": "strict EventStore capture validation",
+      "command": "python3 tools/validate-oq8-platform-evidence.py --capture-directory <retained-eventstore-directory> --ctrf <qualification-ctrf> --support-ctrf <support-ctrf> --expected-runtime-version 1.18.2",
+      "exitCode": 0,
+      "outcome": "OQ8 capture validation passed"
+    },
+    {
+      "purpose": "root workflow pin contract",
+      "command": "pwsh -NoProfile -File ./tests/tools/run-ci-workflow-gates.ps1",
+      "exitCode": 0,
+      "outcome": "passed"
+    },
+    {
+      "purpose": "Projects restore and release build",
+      "command": "dotnet restore Hexalith.Projects.CI.slnx && dotnet build Hexalith.Projects.CI.slnx --configuration Release --no-restore -warnaserror",
+      "exitCode": 0,
+      "outcome": "build succeeded with 0 warnings and 0 errors after enabling the Aspire 13.5.3 CLI bundle"
+    },
+    {
+      "purpose": "Projects Integration tests",
+      "command": "dotnet tests/Hexalith.Projects.Integration.Tests/bin/Release/net10.0/Hexalith.Projects.Integration.Tests.dll -noColor",
+      "exitCode": 0,
+      "outcome": "27 passed; 0 failed; 0 skipped"
+    },
+    {
+      "purpose": "managed restart smoke credential preflight",
+      "command": "KEYCLOAK_CLIENT_ID=hexalith-eventstore TEST_USER_USERNAME=g6-qualification-user ./tests/e2e/run-live-apphost.sh",
+      "exitCode": 1,
+      "outcome": "blocked before AppHost start because TEST_USER_PASSWORD was absent; no false pass"
+    },
+    {
+      "purpose": "changed owner AppHost consumption",
+      "command": "dotnet build each Conversations, Memories, Parties, and Tenants AppHost project --configuration Release -warnaserror",
+      "exitCode": 0,
+      "outcome": "all four builds succeeded with 0 warnings and 0 errors"
+    },
+    {
+      "purpose": "changed owner pin assertions",
+      "command": "run Conversations GlobalJsonShouldPinRequestedSdkVersion and FrontComposer ToolchainPins_MatchApprovedDotnetAndAspireVersions",
+      "exitCode": 0,
+      "outcome": "both selectors passed; 0 failed; 0 skipped"
+    },
+    {
+      "purpose": "shared workflow test-platform contracts",
+      "command": "pwsh -NoProfile -File ./Tools/test-domain-workflow-test-platforms.ps1",
+      "exitCode": 0,
+      "outcome": "27 assertions passed"
+    },
+    {
+      "purpose": "broad package-exception inventory outside G-6 affected set",
+      "command": "pwsh -NoProfile -File ./Tools/validate-package-version-exceptions.ps1 with the umbrella workspace",
+      "exitCode": 1,
+      "outcome": "pre-existing drift: EventStore admin CLI allowlist 3.48.0 versus observed 3.82.0; absent ChatBot and Timesheets repositories"
+    }
+  ]
+}

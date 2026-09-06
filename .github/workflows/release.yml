@@ -93,6 +93,8 @@ jobs:
       # embedded `-p:` switch is parsed as part of the project path (MSB1009), and
       # `github.workspace` is empty when a reusable-workflow `with:` is evaluated.
       # Directory.Build.props auto-detects HexalithCommonsRoot from references/.
+      # This immutable callee predates the separate runtime input. Its release
+      # path is explicitly outside G-6 acceptance and remains fail-closed there.
       solution: Hexalith.Projects.CI.slnx
       dapr-version: '1.18.0'
       timeout-minutes: 60

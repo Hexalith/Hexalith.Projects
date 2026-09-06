@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "captureKind": "release-entry-binaries-test-seams-sidecar-postgresql",
+  "capturedOn": "2026-09-06",
+  "topology": {
+    "eventStoreProcessCount": 2,
+    "eventStoreSidecarCount": 2,
+    "sampleProcessCount": 1,
+    "sampleSidecarCount": 1,
+    "independentProcessIdentities": true
+  },
+  "profile": {
+    "name": "oq8-postgresql-v1",
+    "stateStoreType": "state.postgresql",
+    "stateComponentSha256": "e8024498786765a32b0ea299778248ade35c855f77ede16ee4775162a971d0eb",
+    "resiliencySha256": "115bdb0d3d330c69920692a80654066937e6b2dd3bd18806c0b276e1de011645"
+  },
+  "runtime": {
+    "dotnet": "10.0.11",
+    "dapr": "1.18.2",
+    "postgresImage": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636",
+    "postgresImageIdentity": "sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636"
+  },
+  "executionConfiguration": {
+    "shippedReleaseEntryAssemblies": true,
+    "shadowCopiedBeforeLaunch": true,
+    "environmentName": "Testing",
+    "testOnlyHostingStartup": true,
+    "productionConfigurationUntouched": false,
+    "seams": [
+      "deterministic-time",
+      "idempotency-intent-adapter",
+      "boundary-counter"
+    ]
+  },
+  "artifacts": {
+    "eventStoreSha256": "067f5076e6e953843acf0c9291aac1370ba05406fbc31f51ca44b5754ebb9d56",
+    "sampleSha256": "639c926af6e9629f93cefea4ec71cd1951a8e9e11b34279dda72d56f9d47ffed",
+    "eventStoreRuntimeSetSha256": "6055dda8b49f74c86c7bc65a0b7c83a78cddb4035c81c7cbae29a6373a2076e7",
+    "sampleRuntimeSetSha256": "62030147afcc053cb13554fd2939e411b21bada35b661f205e795290b8255110",
+    "hostingStartupSha256": "f0bba6305d1054be64c74f8520a305de2982addbd5c601c6656959f8e150fb31",
+    "additionalDepsSha256": "f1195b7e32e45293a89a4ab0f89e88b608384f0d25a5dfa3576cdb7d752fd56c"
+  },
+  "diagnostics": {
+    "streamsScanned": 12,
+    "boundedCharacterLimitPerStream": 32768,
+    "forbiddenTermClassesScanned": [
+      "protected-input",
+      "protected-result",
+      "request-identifier",
+      "test-key-material",
+      "bearer-token",
+      "database-credential",
+      "private-path"
+    ],
+    "postRedactionProtectedMatches": 0,
+    "rawDiagnosticsCommitted": false,
+    "sanitizedProjectionSha256": "76d2066d474acda6d6bb8a6bcc5bf01df1b20b842ad2a1eba3e109c5cfd652ed"
+  },
+  "observations": {
+    "writers_failover": {
+      "concurrentRequests": 12,
+      "canonicalExecutionIdentities": 1,
+      "durableFencePositive": true,
+      "sampleExecutions": 1,
+      "ownerStoppedAtTerminalBoundary": true,
+      "failoverAttempts": 1,
+      "failoverReplayExact": true,
+      "restartedNodeReplayExact": true,
+      "conflictStatus": 409,
+      "crossTargetConflictStatus": 409,
+      "nonExecuteAdditionalWork": 0
+    },
+    "expiry_compaction": {
+      "oneTickBefore": 202,
+      "oneTickBeforeReplayExact": true,
+      "inclusiveBoundary": 409,
+      "oneTickAfter": 409,
+      "terminalBecameMinimalTombstone": true,
+      "equivalentAndDifferentReuseShareOutcome": true,
+      "nonExecuteAdditionalWork": 0
+    },
+    "authority_change": {
+      "rotationReplayExact": true,
+      "canonicalAuthorityCount": 1,
+      "retiredReaderReplayExact": true,
+      "legalHoldState": "LegalHold",
+      "releasedState": "Retaining",
+      "failClosedStatuses": [
+        503,
+        503
+      ],
+      "sampleExecutions": 2,
+      "nonExecuteAdditionalWork": 0,
+      "deterministicSupportOracles": [
+        "Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_PendingEquivalent_ReturnsFirstWriterTaskEvidenceWithoutDownstreamWork",
+        "Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_Conflict_DeniesBeforeAggregateAndAdvisoryStores",
+        "Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_AdmissionStoreUnavailableFailsClosedBeforeRoute",
+        "Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_UnverifiableAdmission_ReturnsStableFailClosedOutcome",
+        "Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_UnknownOutcome_ReconcilesReadOnlyAndFinalizesExactAggregateResult",
+        "Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_UnknownOutcomeWithoutAuthoritativeResult_RemainsFailClosed",
+        "Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.Coordinator_UnsafeLegacyInventoryDoesNoLifecycleAdmissionDirectoryOrMigrationWork",
+        "Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.AdmitAsync_StateStoreUnavailableFailsClosedWithoutReservation",
+        "Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.AdmitAsync_UnknownSchema_FailsClosedAsCorrupt",
+        "Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.AdmitAsync_VerificationTagMismatchFailsClosedAsCollision",
+        "Hexalith.EventStore.Server.Tests.Actors.IdempotencyTenantLifecycleActorTests.MigrateLegacyAsync_RestartFromEveryDurablePhaseFinishesPinnedTarget",
+        "Hexalith.EventStore.Server.Tests.Actors.IdempotencyTenantLifecycleActorTests.MigrateLegacyAsync_UnsafeSourceEvidenceNeverPreparesTarget",
+        "Hexalith.EventStore.Server.Tests.Actors.PublicationRecoveryActivationTests.OnActivate_MissingCheckpointPruned_ReleasesTheRecoverableIdempotencyRecord",
+        "Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_RouteFailure_MarksUnknownOutcomeUnderSameFence",
+        "Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_WriteAheadFailureAfterFenceMarksUnknownOutcome",
+        "Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionExpiryTests.ValidateAuthorityAsync_PendingAcceptsOnlyExactExecuteAuthorityWithoutMutation",
+        "Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionExpiryTests.ValidateAuthorityAsync_UnknownOutcomeAcceptsOnlyExactReconciliationAuthorityWithoutMutation",
+        "Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_TamperedCapabilityLeavesAdmissionUnchangedBeforeBegin",
+        "Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_ContextThatLostDurableAuthorityPerformsZeroDownstreamWork",
+        "Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionDirectoryActorTests.AdvanceAsync_PromotionOrder_KeepsSourceCanonicalUntilDirectoryFlip",
+        "Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.Coordinator_OrdinaryActivationResponseLossReprovesExactTargetBeforeAdvance"
+      ]
+    },
+    "capture": {
+      "before": {
+        "stage": "before",
+        "totalRows": 0,
+        "admissionRows": 0,
+        "terminalRows": 0,
+        "tombstoneRows": 0,
+        "minimalTombstoneRows": 0,
+        "directoryRows": 0,
+        "lifecycleRows": 0,
+        "aggregateMetadataRows": 0,
+        "aggregateEventRows": 0,
+        "aggregateSequenceTotal": 0,
+        "protectedSentinelMatches": 0,
+        "schemaSha256": "fd93353245400e7e480fd2de88548e441dded16454bc80015d56fb4e1233f015",
+        "projectionSha256": "6dd7b0611f0e91519b8fe527f17a7984cc80d018d2c859ab1510acad0dcfff20"
+      },
+      "after": {
+        "stage": "after",
+        "totalRows": 83,
+        "admissionRows": 4,
+        "terminalRows": 4,
+        "tombstoneRows": 1,
+        "minimalTombstoneRows": 1,
+        "directoryRows": 5,
+        "lifecycleRows": 2,
+        "aggregateMetadataRows": 4,
+        "aggregateEventRows": 4,
+        "aggregateSequenceTotal": 4,
+        "protectedSentinelMatches": 0,
+        "schemaSha256": "fd93353245400e7e480fd2de88548e441dded16454bc80015d56fb4e1233f015",
+        "projectionSha256": "5749218a1957131589f36f76e3dafbc1f61815522e54ab42e33dd27428bf8b5d"
+      },
+      "protectedSentinelMatches": 0,
+      "committedProjectionContainsIdentifiers": false,
+      "closureClaimed": false
+    }
+  }
+}

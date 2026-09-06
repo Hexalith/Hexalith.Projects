@@ -1,0 +1,36 @@
+{
+  "schema": "hexalith.runtime-toolchain-dispositions.v1",
+  "daprSupportDisposition": "approved-explicit-exception-not-support-table-listed",
+  "communityToolkitAspireDapr": "approved-prerelease-exception",
+  "fluentUi": "approved-release-candidate-exception",
+  "nSubstitute": "stable",
+  "fluxor": "stable",
+  "Dapr": "catalog-only-not-activated",
+  "Dapr.Workflow": "catalog-only-unselected",
+  "attempts": [
+    {
+      "attempt": 1,
+      "accepted": false,
+      "result": "failed",
+      "reason": "Sample boundary count timed out at expected support-safe count 4",
+      "disposition": "retained as non-passing diagnostic; excluded from acceptance"
+    },
+    {
+      "attempt": 2,
+      "accepted": true,
+      "result": "passed",
+      "reason": "fresh clean-topology run proved the required stop/survivor/restart matrix",
+      "disposition": "selected for the validated packet"
+    }
+  ],
+  "containment": {
+    "g4Approved": false,
+    "g5Approved": false,
+    "deploymentApproved": false,
+    "releaseApproved": false
+  },
+  "rollback": {
+    "requiresDomainDataMutation": false,
+    "action": "restore prior repository pins and rerun restore/build/qualification without rewriting retained PostgreSQL domain data"
+  }
+}

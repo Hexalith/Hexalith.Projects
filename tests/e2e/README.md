@@ -12,7 +12,7 @@ the running Aspire resource graph plus a real local Keycloak user and projected 
 ## Prerequisites
 
 - **Node.js ≥ 24** (`.nvmrc` → `nvm use`). The Playwright/utils stack requires it.
-- Aspire CLI `13.4.6`, .NET SDK `10.0.302`, `jq`, Dapr, and a Docker-compatible runtime for the live lane.
+- Aspire CLI `13.5.3`, .NET SDK `10.0.400`, `jq`, Dapr CLI `1.18.0`, Dapr runtime `1.18.2`, and a Docker-compatible runtime for the live lane.
 
 ## Setup
 

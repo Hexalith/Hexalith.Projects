@@ -135,6 +135,8 @@ Require-Match $release 'The dispatched source is no longer the live main tip' 'T
 Require-Match $release '^\s*needs:\s*verify-source\s*$' 'The release job must depend on the exact-source preflight.'
 Require-Match $release '^\s*environment-name:\s*production\s*$' 'Release must enter the protected production environment.'
 Require-Match $release "dapr-version:\s*'1\.18(?:\.0)?'" 'CI and release must use the supported Dapr 1.18 baseline.'
+Forbid-Match $release '^\s*dapr-runtime-version:' 'The immutable release callee does not support dapr-runtime-version; release remains outside G-6 acceptance.'
+Require-Match $release 'explicitly outside G-6 acceptance' 'Release must state that the immutable callee is outside G-6 acceptance.'
 Require-Match $release '^\s*cancel-in-progress:\s*false\s*$' 'An in-flight release must never be cancelled by a newer dispatch.'
 
 # GitHub validates the maximum permissions of EVERY job in a called workflow at
@@ -170,7 +172,10 @@ Require-Match $ci '^\s*push:\s*$' 'CI must run on pushes.'
 Require-Match $ci '^\s*pull_request:\s*$' 'CI must run on pull requests.'
 Require-Match $ci '^\s*schedule:\s*$' 'CI must include a scheduled lane.'
 Require-Match $ci "dapr-version:\s*'1\.18(?:\.0)?'" 'CI must use the supported Dapr 1.18 baseline.'
+Require-Match $ci "dapr-runtime-version:\s*'1\.18\.2'" 'CI must use the approved Dapr 1.18.2 runtime exception.'
 Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflow must run Integration.Tests separately.'
+Require-Match $ci '^\s*- name:\s*Validate accepted G-6 runtime/toolchain packet\s*$' 'CI must run the accepted G-6 packet validator after root submodules initialize.'
+Require-Match $ci 'validate-runtime-toolchain-evidence\.py\s*\r?\n\s*--workspace \.\s*\r?\n\s*--baseline references/Hexalith\.Builds/Tools/runtime-toolchain-baseline\.json\s*\r?\n\s*--packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet\.json' 'CI must validate the real bound G-6 packet.'
 
 # The reusable callees run `dotnet restore "$SOLUTION"`: the input is one quoted
 # argument, so an embedded MSBuild switch becomes part of the project path (MSB1009).
@@ -202,7 +207,8 @@ Require-Match $ci "if:\s*\$\{\{ github\.event_name == 'schedule' \}\}" 'E2E must
 Require-Match $ci 'npm --prefix tests/e2e ci --ignore-scripts' 'E2E must use the lockfile with lifecycle scripts disabled.'
 Require-Match $ci 'npm --prefix tests/e2e run install:browsers' 'E2E browser installation must be explicit.'
 Require-Match $ci 'uses:\s*\./references/Hexalith\.Builds/Github/dapr-init' 'Scheduled E2E must initialize Dapr through the reviewed root dependency.'
-Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.4\.6' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
+Require-Match $ci "runtime-version:\s*'1\.18\.2'" 'Scheduled E2E must initialize the approved Dapr 1.18.2 runtime.'
+Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.5\.3' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
 Require-Match $ci 'npm --prefix tests/e2e run test:live:managed' 'Scheduled E2E must use the managed AppHost lifecycle runner.'
 Require-Match $ci '^\s*TEST_USER_PASSWORD:\s*\$\{\{ secrets\.[A-Z0-9_]+ \}\}\s*$' 'Scheduled E2E credentials must come from a GitHub secret.'
 Require-Match $ci '^\s*if:\s*always\(\)\s*$' 'Scheduled E2E must unconditionally run exact-AppHost teardown.'

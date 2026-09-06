@@ -2,7 +2,7 @@
 title: 'Make BMAD multi-target legacy cleanup failure-atomic'
 type: 'bugfix'
 created: '2026-09-06'
-status: 'done'
+status: 'blocked'
 baseline_revision: 'd5c6396823d56f227c7ade6a8eef34a091c6a4b3'
 review_loop_iteration: 0
 followup_review_recommended: true
@@ -242,3 +242,16 @@ moves is not durably journaled. Pre-existing escaping/overlapping-target and
 root-resolution JSON gaps remain deferred and unchanged. Concurrent G-6 work
 and its orchestrator-owned ledger edit remain outside this bundle and were not
 modified by this run.
+
+### Terminal Status
+
+Status: blocked
+
+Blocking condition: finalization left repository dirty
+
+The reviewed bundle is committed at
+`9efd440f01df905cd8ae9b28f6791e3f913f0eac`. Every bundle-owned code, test,
+manifest, and CI hunk is clean against that commit. The remaining working-tree
+changes belong to the separate concurrent G-6 runtime-toolchain workflow,
+including its edit to the orchestrator-owned deferred-work ledger; this run did
+not stage, commit, revert, or otherwise modify those changes.
