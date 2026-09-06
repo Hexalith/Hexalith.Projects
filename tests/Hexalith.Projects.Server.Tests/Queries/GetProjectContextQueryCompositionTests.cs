@@ -149,7 +149,7 @@ public sealed class GetProjectContextQueryCompositionTests
                 Enabled = true,
                 Watermark = 1,
                 ProjectionWatermark = $"{TenantId}:1",
-                LastEventTimestamp = ObservedAt,
+                LastEventTimestamp = DateTimeOffset.UtcNow,
             };
             projection.Principals["actor-1"] = new ProjectTenantPrincipalEvidence("actor-1", "TenantOwner");
             await app.Services.GetRequiredService<Hexalith.Projects.Projections.TenantAccess.IProjectTenantAccessProjectionStore>()
