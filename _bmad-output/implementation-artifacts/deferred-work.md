@@ -6,7 +6,7 @@ origin: bmad-loop-resolve for spec-6-5-inspect-projects-through-an-authenticated
 location: _bmad-output/implementation-artifacts/spec-6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface.md:31
 severity: critical
 reason: Story 6.5 must not dispatch until its prerequisite record pins accepted Story 6.1–6.4 supported contracts, read models, projections, handlers, identity inputs, and executable G-4 profiles. Close this entry only after every artifact required by the frozen prerequisite gate exists and is accepted; legacy REST and planning-only artifacts never satisfy the gate.
-status: open
+status: done 2026-09-06
 gate: 6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface
 
 ### DW-2: Correct the Hexalith.AI.Tools agent entrypoints to reference `hexalith-git-instructions.md` instead of the absent `hexalith-commit-instructions.md`.
