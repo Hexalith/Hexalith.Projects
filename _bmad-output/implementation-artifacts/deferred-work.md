@@ -636,7 +636,7 @@ resolution: already resolved: Commit d0049833f2ac0416075eed37f173712f3ac90e56; r
   summary: Run the failure-atomic legacy cleanup suite in a blocking root CI job.
   evidence: The seven cleanup tests pass locally but no workflow invokes them, so rollback regressions can merge unnoticed.
 
-### DW-64: Implement the `Partial` branch of the AD-32 admission matrix for Conversation-start setup.
+### DW-66: Implement the `Partial` branch of the AD-32 admission matrix for Conversation-start setup.
 
 origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md, 2026-09-05
 location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:389-391
@@ -646,12 +646,12 @@ reason: ConversationStartResponseState.Partial is declared and is a required sce
 status: open
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
-### DW-65: Distinguish Folder `ReferenceState` outcomes instead of collapsing them to one generic "Unavailable".
+### DW-67: Distinguish Folder `ReferenceState` outcomes instead of collapsing them to one generic "Unavailable".
 
 origin: bmad-code-review of spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md, 2026-09-05
 location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:385
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md
 severity: medium
-reason: hasFolder = detail.ProjectFolder?.ReferenceState == ReferenceState.Included treats Pending, Excluded, Unauthorized, Unavailable, Stale, Archived, Ambiguous, TenantMismatch, Conflict, and InvalidReference identically. An authorization-denied folder reference (Unauthorized, fail-closed) receives the same RefreshContext/ContactAdministrator recovery guidance as a folder simply never linked, masking a genuine access denial as a transient/recoverable condition. Deferred: same admission-matrix design work as DW-64 (Partial); resolve together in Story 6.7.
+reason: hasFolder = detail.ProjectFolder?.ReferenceState == ReferenceState.Included treats Pending, Excluded, Unauthorized, Unavailable, Stale, Archived, Ambiguous, TenantMismatch, Conflict, and InvalidReference identically. An authorization-denied folder reference (Unauthorized, fail-closed) receives the same RefreshContext/ContactAdministrator recovery guidance as a folder simply never linked, masking a genuine access denial as a transient/recoverable condition. Deferred: same admission-matrix design work as DW-66 (Partial); resolve together in Story 6.7.
 status: open
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
