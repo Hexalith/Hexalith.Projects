@@ -6,17 +6,20 @@
 namespace Hexalith.Projects.Server.Tests.Queries;
 
 using System;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Hexalith.EventStore.Contracts.Queries;
+using Hexalith.EventStore.Testing.Fakes;
+using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
+using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server;
+using Hexalith.Projects.Server.Projections.ConversationStartSetup;
 using Hexalith.Projects.Server.Queries;
 
 using Shouldly;
@@ -26,6 +29,7 @@ using Xunit;
 /// <summary>Tests the supported Conversation-start DomainService query handler.</summary>
 public sealed class GetConversationStartSetupQueryHandlerTests
 {
+    private const string TenantId = "tenant-a";
     private const string ProjectId = "01HZ9K8YQ3W6V2N4R7T5P0X1AB";
     private static readonly DateTimeOffset ObservedAt = new(2026, 9, 5, 8, 0, 0, TimeSpan.Zero);
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
@@ -39,9 +43,10 @@ public sealed class GetConversationStartSetupQueryHandlerTests
             [ProjectContextSourceKind.Conversation],
             [ProjectContextSourceKind.FileReference],
             new ConversationStartDefaults(LinkedSourcePolicy.AuthorizedReferences));
-        var handler = new GetConversationStartSetupQueryHandler(new StubReadModel(Detail(ProjectLifecycle.Active, setup, hasFolder: true)));
+        GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(
+            Detail(ProjectLifecycle.Active, setup, hasFolder: true)).ConfigureAwait(true);
 
-        QueryResult result = await handler.ExecuteAsync(Query(), CancellationToken.None);
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeTrue();
         ConversationStartSetupResponse response = JsonSerializer.Deserialize<ConversationStartSetupResponse>(result.PayloadBytes!, JsonOptions)!;
@@ -54,9 +59,10 @@ public sealed class GetConversationStartSetupQueryHandlerTests
     [Fact]
     public async Task ExecuteAsync_ArchivedProject_ReturnsSafeDenial()
     {
-        var handler = new GetConversationStartSetupQueryHandler(new StubReadModel(Detail(ProjectLifecycle.Archived, ProjectSetup.Empty, hasFolder: true)));
+        GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(
+            Detail(ProjectLifecycle.Archived, ProjectSetup.Empty, hasFolder: true)).ConfigureAwait(true);
 
-        QueryResult result = await handler.ExecuteAsync(Query(), CancellationToken.None);
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("safe-denial");
@@ -66,9 +72,10 @@ public sealed class GetConversationStartSetupQueryHandlerTests
     [Fact]
     public async Task ExecuteAsync_MissingFolder_ReturnsUnavailableWithoutSetup()
     {
-        var handler = new GetConversationStartSetupQueryHandler(new StubReadModel(Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: false)));
+        GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(
+            Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: false)).ConfigureAwait(true);
 
-        QueryResult result = await handler.ExecuteAsync(Query(), CancellationToken.None);
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
         ConversationStartSetupResponse response = JsonSerializer.Deserialize<ConversationStartSetupResponse>(result.PayloadBytes!, JsonOptions)!;
         response.Setup.ShouldBeNull();
@@ -76,12 +83,64 @@ public sealed class GetConversationStartSetupQueryHandlerTests
         response.Snapshot.RecoveryActions.ShouldContain("RefreshContext");
     }
 
+    [Fact]
+    public async Task ExecuteAsync_UnknownTenant_ReturnsSafeDenialWithoutReadingProjection()
+    {
+        InMemoryReadModelStore store = new();
+        await store.SaveAsync(
+            ConversationStartSetupProjectionHandler.StoreName,
+            ConversationStartSetupProjectionHandler.Key(TenantId, ProjectId),
+            Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true),
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        TenantAccessAuthorizer tenantAccess = new(
+            new InMemoryProjectTenantAccessProjectionStore(),
+            new FixedUtcClock(ObservedAt.AddMinutes(1)),
+            new TenantAccessOptions());
+        var handler = new GetConversationStartSetupQueryHandler(store, tenantAccess);
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+    }
+
+    private static async Task<GetConversationStartSetupQueryHandler> CreateHandlerAsync(ProjectDetailItem detail)
+    {
+        InMemoryReadModelStore store = new();
+        await store.SaveAsync(
+            ConversationStartSetupProjectionHandler.StoreName,
+            ConversationStartSetupProjectionHandler.Key(TenantId, ProjectId),
+            detail,
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        TenantAccessAuthorizer tenantAccess = new(
+            await SeedTenantAccessStoreAsync().ConfigureAwait(true),
+            new FixedUtcClock(ObservedAt.AddMinutes(1)),
+            new TenantAccessOptions());
+        return new GetConversationStartSetupQueryHandler(store, tenantAccess);
+    }
+
+    private static async Task<IProjectTenantAccessProjectionStore> SeedTenantAccessStoreAsync()
+    {
+        InMemoryProjectTenantAccessProjectionStore store = new();
+        ProjectTenantAccessProjection projection = new()
+        {
+            TenantId = TenantId,
+            Enabled = true,
+            Watermark = 1,
+            ProjectionWatermark = $"{TenantId}:1",
+            LastEventTimestamp = ObservedAt,
+        };
+        projection.Principals["actor-1"] = new ProjectTenantPrincipalEvidence("actor-1", "TenantOwner");
+        await store.SaveAsync(projection, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        return store;
+    }
+
     private static QueryEnvelope Query()
-        => new("tenant-a", ProjectsServerModule.DomainName, ProjectId, ProjectsServerModule.GetConversationStartSetupQueryType, [], "corr-1", "actor-1");
+        => new(TenantId, ProjectsServerModule.DomainName, ProjectId, ProjectsServerModule.GetConversationStartSetupQueryType, [], "corr-1", "actor-1");
 
     private static ProjectDetailItem Detail(ProjectLifecycle lifecycle, ProjectSetup setup, bool hasFolder)
         => new(
-            "tenant-a",
+            TenantId,
             ProjectId,
             "Project",
             null,
@@ -94,14 +153,4 @@ public sealed class GetConversationStartSetupQueryHandlerTests
             ObservedAt,
             ObservedAt,
             4);
-
-    private sealed class StubReadModel(ProjectDetailItem? detail) : IProjectDetailReadModel
-    {
-        public Task<ProjectDetailItem?> GetAsync(string authoritativeTenantId, string projectId, CancellationToken cancellationToken = default)
-            => Task.FromResult(detail is not null
-                && detail.TenantId == authoritativeTenantId
-                && detail.ProjectId == projectId
-                ? detail
-                : null);
-    }
 }

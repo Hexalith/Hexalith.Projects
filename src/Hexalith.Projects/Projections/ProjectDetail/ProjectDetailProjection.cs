@@ -59,6 +59,21 @@ public sealed record ProjectDetailProjection
         => Empty.Apply(envelopes);
 
     /// <summary>
+    /// Seeds a projection from one previously-persisted item, so an incremental event slice can be
+    /// folded via <see cref="Apply"/> onto already-known state instead of a full-stream <see cref="Rebuild"/>.
+    /// </summary>
+    /// <param name="item">The previously-persisted detail item.</param>
+    /// <returns>A projection containing only <paramref name="item"/>, or <see cref="Empty"/> when its identity is malformed.</returns>
+    public static ProjectDetailProjection Seed(ProjectDetailItem item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        string? key = TryKey(item.TenantId, item.ProjectId);
+        return key is null
+            ? Empty
+            : new ProjectDetailProjection(new Dictionary<string, ProjectDetailItem>(StringComparer.Ordinal) { [key] = item }.ToFrozenDictionary(StringComparer.Ordinal));
+    }
+
+    /// <summary>
     /// Folds a batch of projection envelopes into a new projection. Pure and deterministic.
     /// </summary>
     /// <param name="envelopes">The envelopes to apply.</param>

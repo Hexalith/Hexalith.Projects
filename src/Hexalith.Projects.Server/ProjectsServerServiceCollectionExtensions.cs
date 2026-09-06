@@ -11,6 +11,7 @@ using System.Linq;
 using Hexalith.Conversations.Client;
 using Hexalith.Folders.Client;
 using Hexalith.EventStore.Client.Handlers;
+using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Client.Registration;
 using Hexalith.EventStore.Contracts.Commands;
 using Hexalith.EventStore.Contracts.Projections;
@@ -65,6 +66,8 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IProjectReferenceIndexReadModel>(sp => sp.GetRequiredService<InMemoryProjectReferenceIndexReadModel>());
         services.TryAddSingleton<InMemoryProjectAuditTimelineReadModel>();
         services.TryAddSingleton<IProjectAuditTimelineReadModel>(sp => sp.GetRequiredService<InMemoryProjectAuditTimelineReadModel>());
+        services.TryAddSingleton<InMemoryProjectReadModelStore>();
+        services.TryAddSingleton<IReadModelStore>(sp => sp.GetRequiredService<InMemoryProjectReadModelStore>());
         services.TryAddSingleton<IProjectTenantContextAccessor, HttpContextProjectTenantContextAccessor>();
         services.TryAddSingleton<ProjectAuthorizationGate>();
         services.TryAddSingleton<IProjectProposalConfirmationIdempotencyLedger, InMemoryProjectProposalConfirmationIdempotencyLedger>();
@@ -132,6 +135,8 @@ public static class ProjectsServerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddProjectsDaprInfrastructure();
+        services.RemoveAll<IReadModelStore>();
+        services.RemoveAll<InMemoryProjectReadModelStore>();
         services.AddEventStoreReadModelStore();
         services.AddSingleton<IAsyncDomainProjectionHandler, ConversationStartSetupProjectionHandler>();
         services.RemoveAll<IProjectTenantAccessProjectionStore>();
@@ -204,7 +209,7 @@ public static class ProjectsServerServiceCollectionExtensions
             "/query",
             async (QueryEnvelope query, IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
             {
-                QueryResult result = await DomainQueryDispatcher.ExecuteAsync(serviceProvider, query).ConfigureAwait(false);
+                QueryResult result = await DomainQueryDispatcher.ExecuteAsync(serviceProvider, query, cancellationToken).ConfigureAwait(false);
                 return result.Success ? Results.Ok(result) : Results.NotFound(result);
             });
         endpoints.MapProjectsDomainServiceEndpoints();

@@ -22,7 +22,8 @@ using Hexalith.Projects.Projections.ProjectList;
 /// <summary>Projects the bounded Conversation-start source from the durable Project event stream.</summary>
 public sealed class ConversationStartSetupProjectionHandler(IReadModelStore readModelStore) : IAsyncDomainProjectionHandler
 {
-    private const string StoreName = "projects-conversation-start-setup";
+    /// <summary>The named persisted read-model store backing this projection.</summary>
+    internal const string StoreName = "projects-conversation-start-setup";
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private static readonly IReadOnlyDictionary<string, Type> EventTypes = typeof(IProjectEvent).Assembly
         .GetTypes()
@@ -36,6 +37,12 @@ public sealed class ConversationStartSetupProjectionHandler(IReadModelStore read
 
     /// <inheritdoc/>
     public string ProjectionType => "conversation-start-setup";
+
+    /// <summary>Derives the persisted read-model key for a tenant-scoped project.</summary>
+    /// <param name="tenantId">The managed tenant identifier.</param>
+    /// <param name="projectId">The project identifier.</param>
+    /// <returns>The store key.</returns>
+    internal static string Key(string tenantId, string projectId) => $"{tenantId}:projects:{projectId}";
 
     /// <inheritdoc/>
     public async Task<DomainProjectionHandlerResult> ProjectAsync(
@@ -60,12 +67,36 @@ public sealed class ConversationStartSetupProjectionHandler(IReadModelStore read
                 return DomainProjectionHandlerResult.Failed("unsupported-event");
             }
 
-            IProjectEvent projectEvent = JsonSerializer.Deserialize(eventDto.Payload, eventType, JsonOptions) as IProjectEvent
-                ?? throw new InvalidOperationException("Projection event payload is invalid.");
+            IProjectEvent? projectEvent;
+            try
+            {
+                projectEvent = JsonSerializer.Deserialize(eventDto.Payload, eventType, JsonOptions) as IProjectEvent;
+            }
+            catch (JsonException)
+            {
+                return DomainProjectionHandlerResult.Failed("invalid-event-payload");
+            }
+
+            if (projectEvent is null)
+            {
+                return DomainProjectionHandlerResult.Failed("invalid-event-payload");
+            }
+
             envelopes.Add(new ProjectProjectionEnvelope(request.TenantId, eventDto.SequenceNumber, projectEvent));
         }
 
-        ProjectDetailItem? detail = ProjectDetailProjection.Rebuild(envelopes).Get(request.TenantId, request.AggregateId);
+        string key = Key(request.TenantId, request.AggregateId);
+
+        // Fold this slice onto whatever is already persisted (Seed), not from Empty (Rebuild) --
+        // request.Events is an incremental slice, and folding from Empty would discard every field
+        // established by earlier events that this slice does not repeat.
+        ReadModelEntry<ProjectDetailItem> existing = await _readModelStore
+            .GetAsync<ProjectDetailItem>(StoreName, key, cancellationToken)
+            .ConfigureAwait(false);
+        ProjectDetailProjection seeded = existing.Value is null
+            ? ProjectDetailProjection.Empty
+            : ProjectDetailProjection.Seed(existing.Value);
+        ProjectDetailItem? detail = seeded.Apply(envelopes).Get(request.TenantId, request.AggregateId);
         if (detail is null)
         {
             return DomainProjectionHandlerResult.Completed();
@@ -74,8 +105,17 @@ public sealed class ConversationStartSetupProjectionHandler(IReadModelStore read
         await ReadModelWritePolicy.UpdateAsync<ProjectDetailItem>(
             _readModelStore,
             StoreName,
-            $"{request.TenantId}:projects:{request.AggregateId}",
-            current => current is not null && current.Sequence >= detail.Sequence ? current : detail,
+            key,
+            current =>
+            {
+                if (current is null)
+                {
+                    return detail;
+                }
+
+                ProjectDetailItem? refolded = ProjectDetailProjection.Seed(current).Apply(envelopes).Get(request.TenantId, request.AggregateId);
+                return refolded is null || current.Sequence >= refolded.Sequence ? current : refolded;
+            },
             new ReadModelWriteContext("projection", ProjectionType, dispatchId),
             cancellationToken: cancellationToken).ConfigureAwait(false);
 

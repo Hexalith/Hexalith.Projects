@@ -11,19 +11,25 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.DomainService;
+using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
+using Hexalith.Projects.Server.Projections.ConversationStartSetup;
 
-/// <summary>Handles the supported Conversation-start setup query over the tenant-scoped detail model.</summary>
-public sealed class GetConversationStartSetupQueryHandler(IProjectDetailReadModel detailReadModel) : IDomainQueryHandler
+/// <summary>Handles the supported Conversation-start setup query over the persisted Conversation-start projection.</summary>
+public sealed class GetConversationStartSetupQueryHandler(
+    IReadModelStore readModelStore,
+    TenantAccessAuthorizer tenantAccessAuthorizer) : IDomainQueryHandler
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
-    private readonly IProjectDetailReadModel _detailReadModel = detailReadModel ?? throw new ArgumentNullException(nameof(detailReadModel));
+    private readonly IReadModelStore _readModelStore = readModelStore ?? throw new ArgumentNullException(nameof(readModelStore));
+    private readonly TenantAccessAuthorizer _tenantAccessAuthorizer = tenantAccessAuthorizer ?? throw new ArgumentNullException(nameof(tenantAccessAuthorizer));
 
     /// <inheritdoc/>
     public string Domain => ProjectsServerModule.DomainName;
@@ -44,9 +50,22 @@ public sealed class GetConversationStartSetupQueryHandler(IProjectDetailReadMode
             return QueryResult.Failure("safe-denial");
         }
 
-        ProjectDetailItem? detail = await _detailReadModel
-            .GetAsync(query.TenantId, projectId, cancellationToken)
+        // Reauthorize the envelope's Tenant/original-actor pairing against the local tenant-access
+        // projection before any protected lookup -- never trust TenantId/UserId at face value.
+        TenantAccessAuthorizationResult tenantAccess = await _tenantAccessAuthorizer
+            .AuthorizeDiagnosticReadAsync(
+                new TenantAccessAuthorizationContext(query.TenantId, query.OriginalActorId ?? query.UserId, query.TenantId),
+                cancellationToken)
             .ConfigureAwait(false);
+        if (!tenantAccess.IsAllowed)
+        {
+            return QueryResult.Failure("safe-denial");
+        }
+
+        ReadModelEntry<ProjectDetailItem> entry = await _readModelStore
+            .GetAsync<ProjectDetailItem>(ConversationStartSetupProjectionHandler.StoreName, ConversationStartSetupProjectionHandler.Key(query.TenantId, projectId), cancellationToken)
+            .ConfigureAwait(false);
+        ProjectDetailItem? detail = entry.Value;
         if (detail is null || detail.Lifecycle != ProjectLifecycle.Active)
         {
             return QueryResult.Failure("safe-denial");
