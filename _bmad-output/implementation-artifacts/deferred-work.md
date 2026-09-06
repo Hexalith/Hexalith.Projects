@@ -531,6 +531,7 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 severity: medium
 reason: ConversationStartSetup.FromContext aliases the caller-owned collections held by ProjectContext.Setup rather than copying them, so the bounded subset is a live view of caller state when the source is a mutable list. The obvious fix was attempted during the 2026-08-26 review and reverted: ConversationStartSetup is a record in a packable assembly and record equality compares IReadOnlyList<T> members by reference, so defensive copying makes two projections of the same context unequal and breaks Project_IsPureFunction_SameInputProducesSameOutput. Copying therefore changes public DTO equality semantics for every consumer and must not be done to the legacy type in isolation. Resolve it on the Story 6.2 supported response wrapper by using a collection type with structural equality (for example ImmutableArray<T> with an explicit equality contract) from the start, then align the legacy type at the Story 6.7 cutover.
 status: open
+decision: 2026-09-06 Dedicated supported value — Keep the legacy DTO unchanged and introduce a supported setup value that defensively copies bounded collections and explicitly implements structural equality and hashing, then update the supported response, serialization, and contract tests.
 gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
 
 ### DW-57: Make the conversation-start freshness response header reflect actual freshness.
