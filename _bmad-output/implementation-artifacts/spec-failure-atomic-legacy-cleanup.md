@@ -2,8 +2,8 @@
 title: 'Make BMAD multi-target legacy cleanup failure-atomic'
 type: 'bugfix'
 created: '2026-09-06'
-status: 'blocked'
-baseline_revision: 'd5c6396823d56f227c7ade6a8eef34a091c6a4b3'
+status: ready-for-dev
+baseline_revision: 558e022cda122d097b47024aaca4fd8dd56392d1
 review_loop_iteration: 0
 followup_review_recommended: true
 context:
@@ -91,6 +91,8 @@ deferred:
 
 **Never:** Edit the deferred-work ledger; delete an original target before a reversible staging location exists; use a cross-device copy fallback; remove a staging directory that still contains recovery data; claim rollback or final deletion succeeded when filesystem operations failed; broaden this bundle into unrelated legacy path-validation or skill-replacement behavior.
 
+**Finalization:** Evaluate cleanliness only for changes owned by this story relative to its implementation commit, including at hunk level when a file also contains unrelated work. When all story-owned hunks are committed and clean, preserved pre-existing or concurrent changes -- including unrelated hunks in shared files -- do not block completion; report them as external residual state without staging, reverting, cleaning, adopting, or committing them.
+
 ## I/O & Edge-Case Matrix
 
 | Scenario | Input / State | Expected Output / Behavior | Error Handling |
@@ -100,6 +102,7 @@ deferred:
 | Incomplete rollback | A staging failure is followed by a restore failure for one staged target | Restoration continues for all other staged targets and recoverable data is retained | Exit 2 JSON includes the recovery directory and original/staged mapping for each unrestored target |
 | Final cleanup failure | All target moves commit, then recursive deletion of the staging tree fails | Original paths stay logically removed and surviving staged contents remain available for recovery | Exit 2 JSON names the final-cleanup phase and recovery directory |
 | Empty batch | No requested entry is an existing directory | Preserve current not-found results without creating staging state | Exit 0 |
+| Concurrent external work | All story-owned hunks are committed and clean while unrelated changes remain elsewhere or in a shared file | Finalization succeeds and reports the unrelated changes as external residual state | Preserve every unrelated hunk; do not stage, revert, clean, adopt, or commit it |
 
 </intent-contract>
 
@@ -125,6 +128,7 @@ deferred:
 - Given one restore operation also fails after a pre-commit staging error, when rollback runs, then every other staged target is restored and JSON identifies the surviving recovery directory and exact unrestored mapping.
 - Given all targets have been staged, when final physical deletion raises a filesystem error before removing the injected fixtures, then the CLI exits 2, original target paths remain absent, and JSON points to byte-identical recoverable staged contents.
 - Given the synchronized test is run from each agent entry point, when it inspects installed/template scripts, peer tests, and manifest entries, then all six scripts are byte-identical, all three tests are byte-identical, hashes match the manifest, and every destructive scenario stays inside its temporary directory.
+- Given preserved pre-existing or concurrent changes remain in the shared working tree, including unrelated hunks in a file also changed by this story, when every story-owned hunk is committed and clean relative to its implementation commit, then finalization succeeds and reports the unrelated changes as external residual state without modifying them.
 
 ## Spec Change Log
 
@@ -171,87 +175,3 @@ The staging directory is created beneath `_bmad`, guaranteeing the same filesyst
 - `PYTHONDONTWRITEBYTECODE=1 python3 .agent/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py && PYTHONDONTWRITEBYTECODE=1 python3 .claude/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py` -- expected: peer entry-point suites pass byte-identically.
 - `PYTHONDONTWRITEBYTECODE=1 python3 .agents/skills/bmad-module-builder/scripts/tests/test-scaffold-setup-skill.py` -- expected: setup-skill scaffolding remains green.
 - `git diff --check` -- expected: no whitespace errors.
-
-## Auto Run Result
-
-### Summary
-
-Implemented failure-atomic multi-target legacy cleanup. The CLI now preflights
-the complete batch, stages targets with same-filesystem renames, restores every
-staged target after pre-commit failure, commits only after all moves succeed,
-and retains actionable recovery state when final physical cleanup fails.
-
-### Files Changed
-
-- All six `cleanup-legacy.py` installed/template copies under `.agent`,
-  `.agents`, and `.claude` -- synchronized transactional staging, rollback,
-  finalization recovery reporting, and best-effort verbose diagnostics.
-- All three `bmad-module-builder/scripts/tests/test-cleanup-legacy.py` copies --
-  synchronized hermetic success and injected-failure coverage, byte-identity
-  checks, manifest verification, and CI-wiring assertion.
-- `.github/workflows/ci.yml` -- blocking canonical legacy-cleanup atomicity step
-  in `workflow-gates`; concurrent G-6 hunks in this file were preserved and are
-  not part of this bundle.
-- `_bmad/_config/files-manifest.csv` -- refreshed both canonical cleanup-script
-  hashes and added the canonical cleanup-test hash.
-- This specification -- plan, full review triage, deferrals, verification, and
-  completion evidence.
-
-### Review Findings Breakdown
-
-- Patched entries: 4 medium. Added CI execution (BH-11/VG-01), partial-final
-  deletion coverage (BH-15/VG-03), conservative recovery-probe handling
-  (EC-03), and transaction-independent verbose diagnostics (EC-06).
-- Deferred entries: 6 groups covering concurrent G-6 commit/evidence/live-gate
-  work plus pre-existing cleanup target-validation and root-resolution gaps.
-  The machine-readable frontmatter records their evidence and ownership.
-- Rejected findings: BH-02 was already refuted by the current immutable-release
-  input guard; BH-06 requested unrequired signature infrastructure; BH-09 was
-  refuted by the current twelve mutation controls; BH-13 proposed durable
-  process-kill journaling outside the caught-failure contract; IA-01 contradicted
-  the intent's explicit pre-commit versus final-cleanup boundary; IA-02 attributed
-  independently arriving concurrent G-6 files to this bundle despite the clean
-  activation baseline.
-
-### Follow-up Review Recommendation
-
-`true`. This first pass patched four medium-severity entries. The specific
-unverified risk is that the post-review changes to conservative recovery-probe
-reporting and best-effort diagnostics have comprehensive injected tests but have
-not received a fresh independent review pass.
-
-### Verification Performed
-
-- Canonical `.agents` cleanup suite: 11 passed, 0 failed.
-- `.agent` cleanup suite: 11 passed, 0 failed.
-- `.claude` cleanup suite: 11 passed, 0 failed.
-- Setup-skill scaffold regression suite: 7 passed, 0 failed.
-- Matrix audit: all five I/O rows have registered tests that ran and passed.
-- All six scripts share SHA-256
-  `72432178aad6d55067e8c4f9592aa469ea9bf2c4463bf39561fd1262e3657c53`.
-- All three tests share SHA-256
-  `319256991fdb191b923f472d0b730c36adee8d3984b60d8ca3d3a452d1ce617b`.
-- `git diff --check`: passed.
-
-### Residual Risks
-
-A recursive final deletion can remove some staged targets before failing; the
-CLI now reports only surviving byte-valid recovery targets and cannot recreate
-already physically deleted data. Abrupt process termination between staging
-moves is not durably journaled. Pre-existing escaping/overlapping-target and
-root-resolution JSON gaps remain deferred and unchanged. Concurrent G-6 work
-and its orchestrator-owned ledger edit remain outside this bundle and were not
-modified by this run.
-
-### Terminal Status
-
-Status: blocked
-
-Blocking condition: finalization left repository dirty
-
-The reviewed bundle is committed at
-`9efd440f01df905cd8ae9b28f6791e3f913f0eac`. Every bundle-owned code, test,
-manifest, and CI hunk is clean against that commit. The remaining working-tree
-changes belong to the separate concurrent G-6 runtime-toolchain workflow,
-including its edit to the orchestrator-owned deferred-work ledger; this run did
-not stage, commit, revert, or otherwise modify those changes.

@@ -2,10 +2,11 @@
 title: 'Harden Build Auto workspace ownership'
 type: 'bugfix'
 created: '2026-08-25'
-status: ready-for-dev
+status: in-progress
 review_loop_iteration: 0
 followup_review_recommended: true
 baseline_revision: '6f0c0c8125df46cfb4bb62641f5869b4da94b741'
+baseline_commit: '157e7a4b1da9a42bdcac2ad5c3c57663bdaf2159'
 context:
   - '{project-root}/AGENTS.md'
   - '{project-root}/_bmad-output/project-context.md'
