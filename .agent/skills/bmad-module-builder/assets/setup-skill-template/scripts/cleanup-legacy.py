@@ -22,6 +22,7 @@ import argparse
 import json
 import shutil
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -146,53 +147,197 @@ def count_files(path: Path) -> int:
     return count
 
 
+def print_verbose(verbose: bool, message: str) -> None:
+    """Write a best-effort diagnostic that cannot affect cleanup state."""
+    if not verbose:
+        return
+    try:
+        print(message, file=sys.stderr)
+    except Exception:
+        pass
+
+
 def cleanup_directories(
     bmad_dir: str, dirs_to_remove: list, verbose: bool = False
 ) -> tuple:
-    """Remove specified directories under bmad_dir.
+    """Remove specified directories under bmad_dir as one logical batch.
 
     Returns:
         (removed, not_found, total_files_removed) tuple
     """
-    removed = []
     not_found = []
+    removable = []
     total_files = 0
+    bmad_root = Path(bmad_dir).resolve()
 
     for dirname in dirs_to_remove:
-        target = Path(bmad_dir) / dirname
-        if not target.exists():
-            not_found.append(dirname)
-            if verbose:
-                print(f"Not found (skipping): {target}", file=sys.stderr)
-            continue
-
-        if not target.is_dir():
-            if verbose:
-                print(f"Not a directory (skipping): {target}", file=sys.stderr)
-            not_found.append(dirname)
-            continue
-
-        file_count = count_files(target)
-        if verbose:
-            print(
-                f"Removing {target} ({file_count} files)",
-                file=sys.stderr,
-            )
-
         try:
-            shutil.rmtree(target)
-        except OSError as e:
+            target = bmad_root / dirname
+            if not target.exists():
+                not_found.append(dirname)
+                print_verbose(verbose, f"Not found (skipping): {target}")
+                continue
+
+            if not target.is_dir():
+                print_verbose(verbose, f"Not a directory (skipping): {target}")
+                not_found.append(dirname)
+                continue
+
+            file_count = count_files(target)
+        except (OSError, RuntimeError) as e:
             error_result = {
                 "status": "error",
-                "error": f"Failed to remove {target}: {e}",
-                "directories_removed": removed,
+                "error": f"Failed to preflight {target}: {e}",
+                "phase": "preflight",
+                "directories_removed": [],
                 "directories_failed": dirname,
+                "directories_restored": [],
+                "recovery_directory": None,
+                "recovery_targets": [],
             }
             print(json.dumps(error_result, indent=2))
             sys.exit(2)
 
-        removed.append(dirname)
+        removable.append((dirname, target, file_count))
         total_files += file_count
+
+    if not removable:
+        return [], not_found, 0
+
+    try:
+        transaction_dir = Path(
+            tempfile.mkdtemp(prefix=".legacy-cleanup-", dir=bmad_root)
+        )
+    except (OSError, RuntimeError) as e:
+        failed_dirname, failed_target, _ = removable[0]
+        error_result = {
+            "status": "error",
+            "error": f"Failed to create cleanup staging directory: {e}",
+            "phase": "staging",
+            "directories_removed": [],
+            "directories_failed": failed_dirname,
+            "failed_target": str(failed_target),
+            "directories_restored": [],
+            "recovery_directory": None,
+            "recovery_targets": [],
+        }
+        print(json.dumps(error_result, indent=2))
+        sys.exit(2)
+
+    staged = []
+    for index, (dirname, target, file_count) in enumerate(removable):
+        staged_path = transaction_dir / f"{index:04d}"
+        print_verbose(
+            verbose,
+            f"Staging {target} ({file_count} files) at {staged_path}",
+        )
+
+        try:
+            target.rename(staged_path)
+        except (OSError, RuntimeError) as e:
+            restored = []
+            rollback_errors = []
+            recovery_targets = []
+
+            for (
+                staged_dirname,
+                original_path,
+                prior_staged_path,
+                _,
+            ) in reversed(staged):
+                try:
+                    prior_staged_path.rename(original_path)
+                    restored.append(staged_dirname)
+                    print_verbose(
+                        verbose,
+                        f"Restored {original_path} from {prior_staged_path}",
+                    )
+                except (OSError, RuntimeError) as rollback_error:
+                    rollback_errors.append(
+                        {
+                            "directory": staged_dirname,
+                            "error": str(rollback_error),
+                        }
+                    )
+                    recovery_targets.append(
+                        {
+                            "directory": staged_dirname,
+                            "original_path": str(original_path),
+                            "staged_path": str(prior_staged_path),
+                        }
+                    )
+
+            staging_cleanup_error = None
+            recovery_directory = None
+            if not recovery_targets:
+                try:
+                    transaction_dir.rmdir()
+                except (OSError, RuntimeError) as cleanup_error:
+                    staging_cleanup_error = str(cleanup_error)
+                    recovery_directory = str(transaction_dir)
+            else:
+                recovery_directory = str(transaction_dir)
+            error_result = {
+                "status": "error",
+                "error": f"Failed to stage {target}: {e}",
+                "phase": "staging",
+                "directories_removed": [],
+                "directories_failed": dirname,
+                "failed_target": str(target),
+                "directories_restored": restored,
+                "rollback_complete": not recovery_targets,
+                "rollback_errors": rollback_errors,
+                "recovery_directory": recovery_directory,
+                "recovery_targets": recovery_targets,
+            }
+            if staging_cleanup_error is not None:
+                error_result["staging_cleanup_error"] = staging_cleanup_error
+            print(json.dumps(error_result, indent=2))
+            sys.exit(2)
+
+        staged.append((dirname, target, staged_path, file_count))
+
+    removed = [dirname for dirname, _, _, _ in staged]
+    print_verbose(verbose, f"Finalizing removal from {transaction_dir}")
+
+    try:
+        shutil.rmtree(transaction_dir)
+    except (OSError, RuntimeError) as e:
+        recovery_targets = []
+        recovery_probe_errors = []
+        for dirname, original_path, staged_path, _ in staged:
+            mapping = {
+                "directory": dirname,
+                "original_path": str(original_path),
+                "staged_path": str(staged_path),
+            }
+            try:
+                staged_path_exists = staged_path.exists()
+            except (OSError, RuntimeError) as probe_error:
+                staged_path_exists = True
+                recovery_probe_errors.append(
+                    {
+                        "directory": dirname,
+                        "staged_path": str(staged_path),
+                        "error": str(probe_error),
+                    }
+                )
+            if staged_path_exists:
+                recovery_targets.append(mapping)
+
+        error_result = {
+            "status": "error",
+            "error": f"Failed to finalize cleanup at {transaction_dir}: {e}",
+            "phase": "final-cleanup",
+            "directories_removed": removed,
+            "directories_failed": None,
+            "directories_restored": [],
+            "recovery_directory": str(transaction_dir),
+            "recovery_targets": recovery_targets,
+            "recovery_probe_errors": recovery_probe_errors,
+        }
+        print(json.dumps(error_result, indent=2))
+        sys.exit(2)
 
     return removed, not_found, total_files
 
