@@ -2,7 +2,7 @@
 title: 'Retrieve assembled Project Context through supported read models'
 type: 'feature'
 created: '2026-08-24'
-status: 'done'
+status: 'in-progress'
 route: 'dispatch'
 review_loop_iteration: 3
 baseline_commit: '5a37f9e4ba9cd7f35afae212398db9f945d4d475'
@@ -97,6 +97,36 @@ context:
 - Given current required evidence and an authoritative empty trust index, when assembly runs, then it returns `Complete` with empty collections and does not invent a candidate.
 - Given current required evidence and an intentional optional allowlist exclusion, when assembly runs, then the result is `Partial`.
 - Given legacy and supported routes coexist, when the frozen comparable corpus runs, then Get, Refresh, and Explain match after the approved AD-32 normalization, and routing stays legacy until Story 6.7.
+
+### Review Findings
+
+- [ ] [Review][Patch] Require authentication on `/query` and bind envelope identity to the authenticated principal or workload [`src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs:211`]
+- [ ] [Review][Patch] Restore the legacy Story 6.2 public CLR types and `ConversationStartSetupResponse.Snapshot` signature, adapting internally to the shared AD-32 model [`src/Hexalith.Projects.Contracts/Queries/ConversationStartSetupResponse.cs:13`]
+- [ ] [Review][Patch] Return `Unavailable` for denied or unconfirmed candidate evidence until the approved RTI/ordinal schema can represent disclosure-safe exclusions [`src/Hexalith.Projects/Context/ProjectContextAdmissionAssembler.cs:317`]
+- [ ] [Review][Patch] Return canonical safe denial when Project detail cannot be read before protected-target authority is established [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:79`]
+- [ ] [Review][Patch] Reject `Included` Folder evidence whose `FolderId` is null or blank instead of emitting the synthetic `pending` identifier [`src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs:303`]
+- [ ] [Review][Patch] Validate persisted Project/reference/setup structure, sequence, timestamps, and evidence-cutoff coherence before assembly [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:120`]
+- [ ] [Review][Patch] Reject allowed authorization evidence with an empty projection watermark before comparing reauthorization versions [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:156`]
+- [ ] [Review][Patch] Make admission component flags describe the evidence actually established and returned on overflow, corruption, and `Partial` results [`src/Hexalith.Projects/Context/ProjectContextAdmissionAssembler.cs:56`]
+- [ ] [Review][Patch] Map recovery actions by omission cause instead of returning `RefreshContext` for every non-authorization omission, including intentional policy exclusions [`src/Hexalith.Projects/Context/ProjectContextAdmissionAssembler.cs:349`]
+- [ ] [Review][Patch] Compare actual legacy/supported route outputs and every common caller-visible field in the shadow gate [`src/Hexalith.Projects.Testing/Reads/ProjectContextShadowComparator.cs:26`]
+- [ ] [Review][Patch] Verify populated persisted Setup survives Get and Explain handler serialization [`tests/Hexalith.Projects.Server.Tests/Queries/GetProjectContextQueryHandlerTests.cs:41`]
+- [ ] [Review][Patch] Pin contradictory aggregate/entity targets and exact scope/audience casing in handler tests [`tests/Hexalith.Projects.Server.Tests/Queries/GetProjectContextQueryHandlerTests.cs:100`]
+- [ ] [Review][Patch] Test the exact 5,000-candidate boundary and duplicate persisted-memory identities [`tests/Hexalith.Projects.Tests/Context/ProjectContextAdmissionTests.cs:156`]
+- [ ] [Review][Patch] Remove or separately justify and validate the unrelated EventStore, Folders, and Tenants submodule pointer advances [`references/Hexalith.EventStore`]
+
+#### Rejected
+
+- [false] The sprint-status transition is not an implementation write: the sprint workflow owns the required `in-progress` to `review` transition and review timestamp.
+- [false] The unchecked Refresh/RTI tasks are explicit frozen G-2/RTI deferrals; changing their acceptance wording would require editing the reviewed spec.
+- [false] The absent Refresh handler is intentional until G-2, and legacy refresh routing remains available until Story 6.7.
+- [false] Supplying no Conversation candidates is the approved pre-RTI behavior; the frozen implementation notes explicitly keep Get/Explain at zero sibling calls.
+- [false] Files and memories deliberately use Project-owned persisted detail until the RTI exists; only supplied Conversation candidates are relocated for missing owner-backed trust.
+- [false] An undefined `ExcludedSourceKinds` enum value is ignored by `MapSourceKind`; it does not trigger the claimed serialization exception.
+- [false] A protected target cannot reach the duplicate/overflow precheck through the supported handler because tenant, lifecycle, tenant ID, and Project ID guards run first in `ProjectContextQueryExecutor`.
+- [false] A context/detail Project-ID mismatch cannot reach assembly through the supported handler because the executor validates both persisted IDs before calling the policy.
+- [false] Policy-produced legacy `Assembled` results cannot carry `Unavailable` or `Unknown` freshness through the actual authorizer path, so the claimed shadow normalization outcome is unreachable.
+- [false] The duplicate sprint-status finding is rejected for the same workflow-owned status-transition reason above.
 
 ## Implementation Notes
 

@@ -104,5 +104,6 @@ FrontComposer owns the session credential and relay; Projects owns authorization
 
 Status: blocked
 Blocking condition: Story 6.5 prerequisite gate unsatisfied because `prerequisite_record` is null.
+Dispatch condition: blocked spec supplied.
 
 The `DW-1` done row is orchestrator bookkeeping and was not treated as proof. The spec requires a committed, repository-relative, hash-matching evidence record covering the accepted Story 6.1–6.4 capabilities, the approved FrontComposer/OIDC identity contract, and executable G-4 `reads` and `web-reads` profiles before a development session may start. No implementation or verification commands ran.
