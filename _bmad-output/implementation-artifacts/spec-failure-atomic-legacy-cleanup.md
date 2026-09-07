@@ -2,7 +2,8 @@
 title: 'Make BMAD multi-target legacy cleanup failure-atomic'
 type: 'bugfix'
 created: '2026-09-06'
-status: ready-for-dev
+status: done
+baseline_commit: 25059b8a82f707c57ac665c1d773cec7138b0474
 baseline_revision: 558e022cda122d097b47024aaca4fd8dd56392d1
 review_loop_iteration: 0
 followup_review_recommended: true
@@ -119,9 +120,9 @@ deferred:
 ## Tasks & Acceptance
 
 **Execution:**
-- `.agents/skills/bmad-bmb-setup/scripts/cleanup-legacy.py`, `.agents/skills/bmad-module-builder/assets/setup-skill-template/scripts/cleanup-legacy.py`, `.agent/skills/bmad-bmb-setup/scripts/cleanup-legacy.py`, `.agent/skills/bmad-module-builder/assets/setup-skill-template/scripts/cleanup-legacy.py`, `.claude/skills/bmad-bmb-setup/scripts/cleanup-legacy.py`, `.claude/skills/bmad-module-builder/assets/setup-skill-template/scripts/cleanup-legacy.py` -- replace sequential deletion with preflight, reversible staging, all-target rollback, and recoverable finalization while retaining the CLI contract.
-- `.agents/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py`, `.agent/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py`, `.claude/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py` -- add hermetic success, multi-target staging-failure, incomplete-rollback, final-cleanup-failure, byte-identity, and manifest-hash coverage for installed and template scripts.
-- `_bmad/_config/files-manifest.csv` -- record SHA-256 for both changed canonical scripts and the new canonical test file.
+- [x] `.agents/skills/bmad-bmb-setup/scripts/cleanup-legacy.py`, `.agents/skills/bmad-module-builder/assets/setup-skill-template/scripts/cleanup-legacy.py`, `.agent/skills/bmad-bmb-setup/scripts/cleanup-legacy.py`, `.agent/skills/bmad-module-builder/assets/setup-skill-template/scripts/cleanup-legacy.py`, `.claude/skills/bmad-bmb-setup/scripts/cleanup-legacy.py`, `.claude/skills/bmad-module-builder/assets/setup-skill-template/scripts/cleanup-legacy.py` -- replace sequential deletion with preflight, reversible staging, all-target rollback, and recoverable finalization while retaining the CLI contract.
+- [x] `.agents/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py`, `.agent/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py`, `.claude/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py` -- add hermetic success, multi-target staging-failure, incomplete-rollback, final-cleanup-failure, byte-identity, and manifest-hash coverage for installed and template scripts.
+- [x] `_bmad/_config/files-manifest.csv` -- record SHA-256 for both changed canonical scripts and the new canonical test file.
 
 **Acceptance Criteria:**
 - Given at least three targets with distinct byte sentinels, when staging target N raises a filesystem error, then the CLI exits 2 and every target is present at its original path with byte-identical contents.
@@ -163,6 +164,26 @@ deferred:
   - `[medium]` `[patch]` VG-03: the final-cleanup test could not detect stale mappings after partial deletion — pre-verified; partial physical deletion now runs and checks surviving mappings and bytes.
   - `[false]` `[reject]` IA-01: the change must restore every target after a partially completed final deletion — the verbatim intent explicitly separates all-target pre-commit rollback from post-commit preservation/reporting of recoverable state; the patched test now exercises real partial progress.
   - `[false]` `[reject]` IA-02: unrelated G-6 files show this implementation diverged in scope — the initial clean-tree evidence and live status show those files arrived from a separate concurrent workflow; this run neither authored nor adopted them.
+
+### 2026-09-07 — Review pass
+- verdicts: 16 findings — high 0, medium 0, low 0, false 16, maybe-false 0
+- findings:
+  - `[false]` `[reject]` BH-16: the review packet omits the product change because `baseline_commit` is HEAD — `abcc588` is already an ancestor of `25059b8`; the owned delta is spec bookkeeping, not a missing implementation.
+  - `[false]` `[reject]` BH-17: Execution tasks are marked `[x]` without hunks in this delta — the six scripts, three tests, and manifest hashes are already in HEAD and the listed suites passed on this pass.
+  - `[false]` `[reject]` BH-18: this packet mutates Story 6.5 — this run did not edit that file; it was already dirty at session start and remains concurrent residual state.
+  - `[false]` `[reject]` BH-19: the `MM` index/worktree split on Story 6.5 hides a staged re-arm — this run issued no `git add`; the staged `ready-for-dev` hunk is concurrent index state, and the worktree status is still `blocked`.
+  - `[false]` `[reject]` BH-20: status jumps `ready-for-dev` → `in-review` with no `in-progress` capture — `in-progress` was written before implementation and then overwritten by `in-review`; the unified diff versus HEAD is the net uncommitted spec edit.
+  - `[false]` `[reject]` BH-21: Code Map still describes sequential `rmtree` and a missing test file — that section is planning context, not runtime behavior; the fix would be a spec edit, which this triage rejects.
+  - `[false]` `[reject]` BH-22: `in-review` lacks Implementation Notes or recorded verification output — verification ran in this session (11/11 on all three entry points plus scaffold); omitting a spec appendix is not a product defect.
+  - `[false]` `[reject]` BH-23: `baseline_commit` and `baseline_revision` disagree and `558e022c` is not an ancestor of `abcc588` — `baseline_commit` correctly pins this run's HEAD; `baseline_revision` is an unchanged pre-existing planning field.
+  - `[false]` `[reject]` BH-24: `sprint-status.yaml` is absent from the diff — this is a freeform bugfix with no epic `story_key`, so sprint-status was never in scope.
+  - `[false]` `[reject]` BH-25: `review_loop_iteration` remains 0 and Spec Change Log is empty — iteration increments only on intent_gap/bad_spec loopback; the 2026-09-06 triage log is already retained.
+  - `[false]` `[reject]` BH-26: `followup_review_recommended: true` is left set — that flag was already true before this run and does not omit `abcc588` from the tree.
+  - `[false]` `[reject]` BH-27: the test task does not name the concurrent-external-work matrix row — that row is a finalization rule (leave residual hunks untouched), not a CLI scenario, and this run did not modify those hunks.
+  - `[false]` `[reject]` BH-28: the Execution list omits `.github/workflows/ci.yml` — the blocking workflow-gates step and placement assertion already landed with the 2026-09-06 BH-11/VG-01 patch.
+  - `[false]` `[reject]` BH-29: removing Story 6.5 `Dispatch condition: blocked spec supplied.` is this change — HEAD still has that line; the worktree omission is concurrent residual state this run did not author.
+  - `[false]` `[reject]` EC-07: blocked spec-6-5 no longer has an explicit dispatch lock — worktree status remains `blocked` with the blocking condition; the missing dispatch sentence is concurrent residual, not this story.
+  - `[false]` `[reject]` EC-08: finalization rewrites spec-6-5 `baseline_revision` and deletes its dispatch line — this run did not stage, revert, clean, adopt, or commit that file; the combined review diff includes it only because the working tree was already dirty.
 
 ## Design Notes
 
