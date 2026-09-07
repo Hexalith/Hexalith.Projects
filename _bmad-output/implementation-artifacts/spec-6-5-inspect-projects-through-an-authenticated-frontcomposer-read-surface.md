@@ -2,8 +2,8 @@
 title: 'Inspect Projects through an authenticated FrontComposer read surface'
 type: 'feature'
 created: '2026-08-25'
-status: ready-for-dev
-baseline_revision: 6c15efd0a5e24bf1956dd5484cd34d27e95c0396
+status: blocked
+baseline_revision: dffdd677e0058240d5951f507cbd2b159b9643a5
 blocked_by: ['6.1', '6.2', '6.3', '6.4']
 prerequisite_record: null
 review_loop_iteration: 0
@@ -100,3 +100,9 @@ FrontComposer owns the session credential and relay; Projects owns authorization
 - `dotnet tool run hexalith-module test --profile reads --filter Story=6.5` -- expected: the approved G-4 profile emits real persisted evidence for the browser-to-handler path.
 - `git diff --check` -- expected: no whitespace errors.
 
+## Auto Run Result
+
+Status: blocked
+Blocking condition: prerequisite gate unsatisfied: `prerequisite_record` is null and `DW-1` has no immutable resolution record.
+
+No implementation session started, no production or test files changed, and no implementation verification commands ran because the prerequisite-readiness matrix requires this exact state to remain parked.
