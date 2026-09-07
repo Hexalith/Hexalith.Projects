@@ -15,6 +15,9 @@ inferred.
 | `6-1-p1r-390-loop5-18/` (`.18`) | 41 | 40 | `6a03cd08baea8fc3fdabde4ba564681de54d45f0aa7cbc7301b8ad1c18b812e4` |
 | `6-1-p1r-390-loop6-20/` (`.20`) | 44 | 38 | `a93010ffeee7404759c8dc8f2f728f110abc73eeb576dbce1b3e1acc94533e4b` |
 | `6-1-p1r-397-20260824/` | 11 | n/a; stopped before G-4 inventory | partial artifact manifest `1c535eac91ae9433a21a20ab1e948e3951a2f62184ac7af137316dfcf0fb0265` |
+| `6-1-p1r-397-20260824-attempt2/` | 19 | n/a; stopped before G-4 inventory | artifact manifest `fbe5596f7dc1dd5d3a3bbc3b3ba02f9ff8b7e9da284b9b890fe5baccfe9f25d4` |
+| `6-1-p1r-397-20260824-attempt3/` | 28 | n/a; stopped before G-4 inventory | artifact manifest `efe58b140a3a981d4035c1cd0e88b249e7ebf2463f1c57a946adf9d71070425b` |
+| `6-1-p1r-3102-20260905/` | 217 | n/a; relocated evidence, not a G-4 inventory verification | artifact manifest `de3b59d4f4d84b2e568f56a9f1aa0f41119bfaa09beedb7412e1e8b7c89cf423` |
 
 Every package and qualification-evidence path named by each inventory was
 resolved after relocation, and its current byte size and SHA-256 were matched
@@ -71,3 +74,26 @@ shell substitution. The exact failed log SHA-256 is
 `eb0a2e11dc9bbb2bd4e94377b8a8c544c33f9a5dcc588da63e39a3411a8f1a8e`.
 No rerun or later gate occurred; no qualification packet or acceptance is
 claimed.
+
+The `6-1-p1r-397-20260824-attempt2/` and `6-1-p1r-397-20260824-attempt3/`
+bundles are the second and third stopped `3.97.0` attempts. Attempt 3 is the
+one that proved repository-supported sibling materialization: the mandated Debug
+source-mode restore and serialized build both passed through a sibling catalog
+with no nested submodule initialized, and the lane then stopped at
+`es-source-003-contracts-test` with 29 failures whose earliest causes are absent
+nested dependency bytes. Their `logs/` directories are present on disk but
+untracked, because the umbrella `.gitignore` rules apply to them; the
+deferred-work ledger carries an entry on retrofitting all three
+`6-1-p1r-397-*` bundles.
+
+The `6-1-p1r-3102-20260905/` bundle relocates the 2026-09-05 `3.102.0`
+candidate / `3.70.1` rollback attempt out of an ephemeral session scratch
+directory, closing the retention gap that attempt's own record recorded. It is
+the first bundle whose `logs/` and retained `.nupkg`/`.snupkg` files are
+actually tracked: it carries a bundle-local `.gitignore` re-including the 127
+files the umbrella rules would otherwise hide, and a bundle-local
+`.gitattributes` pinning `-text` so a clone with `core.autocrlf=true` cannot
+rewrite line endings out from under the manifest. It is retained failure
+evidence only; all four P1R owner decisions remain pending. See its own
+`README.md` for the contents table, the deliberate exclusions, and the
+verification results.

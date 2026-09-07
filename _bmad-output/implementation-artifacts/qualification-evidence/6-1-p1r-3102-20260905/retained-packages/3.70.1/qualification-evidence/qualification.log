@@ -1,0 +1,250 @@
+$ dotnet restore /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/Hexalith.Builds.slnx
+  Determining projects to restore...
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Tooling/Hexalith.Builds.Tooling.csproj (in 278 ms).
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj (in 278 ms).
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Evidence.Cli/Hexalith.Builds.Evidence.Cli.csproj (in 278 ms).
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Module.Tests/Hexalith.Builds.Module.Tests.csproj (in 277 ms).
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Evidence.Tests/Hexalith.Builds.Evidence.Tests.csproj (in 277 ms).
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Tooling.IntegrationTests/Hexalith.Builds.Tooling.IntegrationTests.csproj (in 278 ms).
+$ dotnet build /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/Hexalith.Builds.slnx --configuration Release --no-restore -p:GeneratePackageOnBuild=false
+  Hexalith.Builds.Tooling -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Tooling/bin/Release/net10.0/Hexalith.Builds.Tooling.dll
+  Hexalith.Builds.Module.Cli -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Module.Cli/bin/Release/net10.0/Hexalith.Builds.Module.Cli.dll
+  Hexalith.Builds.Module.Tests -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Module.Tests/bin/Release/net10.0/Hexalith.Builds.Module.Tests.dll
+  Hexalith.Builds.Evidence.Cli -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Evidence.Cli/bin/Release/net10.0/Hexalith.Builds.Evidence.Cli.dll
+  Hexalith.Builds.Tooling.IntegrationTests -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Tooling.IntegrationTests/bin/Release/net10.0/Hexalith.Builds.Tooling.IntegrationTests.dll
+  Hexalith.Builds.Evidence.Tests -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Evidence.Tests/bin/Release/net10.0/Hexalith.Builds.Evidence.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.73
+$ dotnet test /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Evidence.Tests/Hexalith.Builds.Evidence.Tests.csproj --configuration Release --no-restore
+Running tests from /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Evidence.Tests/bin/Release/net10.0/Hexalith.Builds.Evidence.Tests.dll (net10.0|x64)
+/tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Evidence.Tests/bin/Release/net10.0/Hexalith.Builds.Evidence.Tests.dll (net10.0|x64) passed (793ms)
+
+Test run summary: Passed!
+  total: 31
+  failed: 0
+  succeeded: 31
+  skipped: 0
+  duration: 1s 024ms
+$ dotnet test /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Module.Tests/Hexalith.Builds.Module.Tests.csproj --configuration Release --no-restore
+Running tests from /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Module.Tests/bin/Release/net10.0/Hexalith.Builds.Module.Tests.dll (net10.0|x64)
+/tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Module.Tests/bin/Release/net10.0/Hexalith.Builds.Module.Tests.dll (net10.0|x64) passed (1s 267ms)
+
+Test run summary: Passed!
+  total: 114
+  failed: 0
+  succeeded: 114
+  skipped: 0
+  duration: 1s 417ms
+$ dotnet test /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Tooling.IntegrationTests/Hexalith.Builds.Tooling.IntegrationTests.csproj --configuration Release --no-restore
+Running tests from /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Tooling.IntegrationTests/bin/Release/net10.0/Hexalith.Builds.Tooling.IntegrationTests.dll (net10.0|x64)
+/tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Tooling.IntegrationTests/bin/Release/net10.0/Hexalith.Builds.Tooling.IntegrationTests.dll (net10.0|x64) passed (529ms)
+
+Test run summary: Passed!
+  total: 1
+  failed: 0
+  succeeded: 1
+  skipped: 0
+  duration: 697ms
+$ /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/Tools/build-g4-tool-packages.ps1 -Version 0.0.0-p1r3701.1 -OutputDirectory /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-packages-a57f1c82d11347be908cf517c6ad8515 -DeferInventory
+  Determining projects to restore...
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Evidence.Tests/Hexalith.Builds.Evidence.Tests.csproj (in 480 ms).
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Tooling.IntegrationTests/Hexalith.Builds.Tooling.IntegrationTests.csproj (in 481 ms).
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Tooling/Hexalith.Builds.Tooling.csproj (in 477 ms).
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/test/Hexalith.Builds.Module.Tests/Hexalith.Builds.Module.Tests.csproj (in 480 ms).
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Evidence.Cli/Hexalith.Builds.Evidence.Cli.csproj (in 480 ms).
+  Restored /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj (in 484 ms).
+  Hexalith.Builds.Tooling -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Tooling/bin/Release/net10.0/Hexalith.Builds.Tooling.dll
+  Hexalith.Builds.Module.Cli -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Module.Cli/bin/Release/net10.0/Hexalith.Builds.Module.Cli.dll
+  Hexalith.Builds.Module.Cli -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Module.Cli/bin/Release/net10.0/Hexalith.Builds.Module.Cli.dll
+  Hexalith.Builds.Module.Cli -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Module.Cli/bin/Release/net10.0/publish/
+  Successfully created package '/tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-packages-a57f1c82d11347be908cf517c6ad8515/Hexalith.Builds.Module.Cli.0.0.0-p1r3701.1.nupkg'.
+  Successfully created package '/tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-packages-a57f1c82d11347be908cf517c6ad8515/Hexalith.Builds.Module.Cli.0.0.0-p1r3701.1.snupkg'.
+  Hexalith.Builds.Tooling -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Tooling/bin/Release/net10.0/Hexalith.Builds.Tooling.dll
+  Hexalith.Builds.Evidence.Cli -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Evidence.Cli/bin/Release/net10.0/Hexalith.Builds.Evidence.Cli.dll
+  Hexalith.Builds.Evidence.Cli -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Evidence.Cli/bin/Release/net10.0/Hexalith.Builds.Evidence.Cli.dll
+  Hexalith.Builds.Evidence.Cli -> /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701/src/libraries/Hexalith.Builds.Evidence.Cli/bin/Release/net10.0/publish/
+  Successfully created package '/tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-packages-a57f1c82d11347be908cf517c6ad8515/Hexalith.Builds.Evidence.Cli.0.0.0-p1r3701.1.nupkg'.
+  Successfully created package '/tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-packages-a57f1c82d11347be908cf517c6ad8515/Hexalith.Builds.Evidence.Cli.0.0.0-p1r3701.1.snupkg'.
+$ dotnet tool restore --configfile /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/NuGet.Config --no-http-cache
+
+Welcome to .NET 10.0!
+---------------------
+SDK Version: 10.0.400
+
+Telemetry
+---------
+The .NET tools collect usage data in order to help us improve your experience. It is collected by Microsoft and shared with the community. You can opt-out of telemetry by setting the DOTNET_CLI_TELEMETRY_OPTOUT environment variable to '1' or 'true' using your favorite shell.
+
+Read more about .NET CLI Tools telemetry: https://aka.ms/dotnet-cli-telemetry
+
+----------------
+Installed an ASP.NET Core HTTPS development certificate.
+To trust the certificate, run 'dotnet dev-certs https --trust'
+Learn about HTTPS: https://aka.ms/dotnet-https
+
+----------------
+Write your first app: https://aka.ms/dotnet-hello-world
+Find out what's new: https://aka.ms/dotnet-whats-new
+Explore documentation: https://aka.ms/dotnet-docs
+Report issues and find source on GitHub: https://github.com/dotnet/core
+Use 'dotnet --help' to see available commands or visit: https://aka.ms/dotnet-cli
+--------------------------------------------------------------------------------------
+Tool 'hexalith.builds.module.cli' (version '0.0.0-p1r3701.1') was restored. Available commands: hexalith-module
+Tool 'hexalith.builds.evidence.cli' (version '0.0.0-p1r3701.1') was restored. Available commands: hexalith-evidence
+
+Restore was successful.
+$ dotnet tool run hexalith-module -- --help
+Description:
+  Runs supported Hexalith module qualifications.
+
+Usage:
+  Hexalith.Builds.Module.Cli [command] [options]
+
+Options:
+  -?, -h, --help  Show help and usage information
+  --version       Show version information
+
+Commands:
+  run   Starts a supported module runtime.
+  down  Tears down runner-owned module resources.
+  test  Runs a named module qualification profile.
+
+$ dotnet tool run hexalith-module -- run --help
+Description:
+  Starts a supported module runtime.
+
+Usage:
+  Hexalith.Builds.Module.Cli run [options]
+
+Options:
+  --manifest <manifest> (REQUIRED)
+  --profile <profile>
+  --filter <filter>
+  --evidence <evidence>
+  --output <human|json>             [default: human]
+  -?, -h, --help                    Show help and usage information
+
+$ dotnet tool run hexalith-module -- down --help
+Description:
+  Tears down runner-owned module resources.
+
+Usage:
+  Hexalith.Builds.Module.Cli down [options]
+
+Options:
+  --manifest <manifest> (REQUIRED)
+  --profile <profile>
+  --filter <filter>
+  --evidence <evidence>
+  --output <human|json>             [default: human]
+  -?, -h, --help                    Show help and usage information
+
+$ dotnet tool run hexalith-module -- test --help
+Description:
+  Runs a named module qualification profile.
+
+Usage:
+  Hexalith.Builds.Module.Cli test [options]
+
+Options:
+  --manifest <manifest> (REQUIRED)
+  --profile <profile> (REQUIRED)
+  --filter <filter>
+  --evidence <evidence>
+  --output <human|json>             [default: human]
+  -?, -h, --help                    Show help and usage information
+
+$ dotnet tool run hexalith-evidence -- --help
+Description:
+  Validates deterministic Hexalith readiness evidence.
+
+Usage:
+  Hexalith.Builds.Evidence.Cli [command] [options]
+
+Options:
+  -?, -h, --help  Show help and usage information
+  --version       Show version information
+
+Commands:
+  validate <evidence-path>  Validates a hexalith.readiness-evidence.v1 YAML matrix.
+
+$ dotnet tool run hexalith-evidence -- validate --help
+Description:
+  Validates a hexalith.readiness-evidence.v1 YAML matrix.
+
+Usage:
+  Hexalith.Builds.Evidence.Cli validate <evidence-path> [options]
+
+Arguments:
+  <evidence-path>
+
+Options:
+  --output <human|json>  [default: human]
+  -?, -h, --help         Show help and usage information
+
+$ dotnet tool run hexalith-module -- down --manifest test/fixtures/module/positive/hexalith.module-manifest.v1.json --filter <redacted> --evidence evidence/module-run.json --output json
+{"status":"completed","outcome":{"exitCode":"Success","phase":"None","category":"None","ruleId":null},"diagnostics":[{"ruleId":"HXI001","phase":"Cleanup","category":"None","message":"Runner-owned invocation cleanup completed.","field":"down","hint":null,"source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- test --manifest test/fixtures/module/positive/hexalith.module-manifest.v1.json --profile full --evidence evidence/test-unavailable.json --output json
+{"status":"unavailable","outcome":{"exitCode":"PrerequisiteUnavailable","phase":"Prerequisite","category":"PrerequisiteUnavailable","ruleId":"HXR002"},"diagnostics":[{"ruleId":"HXR002","phase":"Prerequisite","category":"PrerequisiteUnavailable","message":"The Dapr runtime-to-SDK compatibility disposition required by G-6 is not approved.","field":"platform.daprRuntimeVersion","hint":"Record the G-6 disposition before running a live persisted platform lane.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- run --manifest test/fixtures/module/positive/hexalith.module-manifest.v1.json --evidence evidence/unavailable.json --output json
+{"status":"unavailable","outcome":{"exitCode":"PrerequisiteUnavailable","phase":"Prerequisite","category":"PrerequisiteUnavailable","ruleId":"HXR002"},"diagnostics":[{"ruleId":"HXR002","phase":"Prerequisite","category":"PrerequisiteUnavailable","message":"The Dapr runtime-to-SDK compatibility disposition required by G-6 is not approved.","field":"platform.daprRuntimeVersion","hint":"Record the G-6 disposition before running a live persisted platform lane.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-evidence -- validate test/fixtures/evidence/positive/readiness.yaml --output json
+{"status":"passed","outcome":{"exitCode":"Success","phase":"None","category":"None","ruleId":null},"diagnostics":[]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/absolute-path.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM004"},"diagnostics":[{"ruleId":"HXM004","phase":"Manifest","category":"Manifest","message":"A manifest path is not canonical and repository-relative.","field":"modules[0].descriptorAssembly","hint":"Use a forward-slash repository-relative path without path traversal.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/duplicate-id.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM003"},"diagnostics":[{"ruleId":"HXM003","phase":"Manifest","category":"Manifest","message":"The manifest contains a duplicate deterministic identifier.","field":"modules.id","hint":"Use unique deterministic identifiers.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/duplicate-json-key.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM012"},"diagnostics":[{"ruleId":"HXM012","phase":"Manifest","category":"Manifest","message":"The manifest JSON contains a duplicate property.","field":"json","hint":"Remove duplicate JSON object properties.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/invalid-profile.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM009"},"diagnostics":[{"ruleId":"HXM009","phase":"Manifest","category":"Manifest","message":"The manifest contains an invalid qualification profile.","field":"profiles[0].classes","hint":"Declare one or more supported profile classes.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/malformed-dependency.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM008"},"diagnostics":[{"ruleId":"HXM008","phase":"Manifest","category":"Manifest","message":"The manifest contains malformed module dependencies.","field":"modules[0].dependencies","hint":"Declare unique dependencies on other listed modules.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/missing-descriptor.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM005"},"diagnostics":[{"ruleId":"HXM005","phase":"Manifest","category":"Manifest","message":"A manifest path does not resolve to a readable repository file.","field":"modules[0].descriptorAssembly","hint":"Supply an existing file beneath the repository root.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/missing-required-value.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM015"},"diagnostics":[{"ruleId":"HXM015","phase":"Manifest","category":"Manifest","message":"A required manifest value is missing.","field":"modules[0].domain","hint":"Supply a required deterministic identifier.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/path-escape.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM004"},"diagnostics":[{"ruleId":"HXM004","phase":"Manifest","category":"Manifest","message":"A manifest path is not canonical and repository-relative.","field":"modules[0].descriptorAssembly","hint":"Use a forward-slash repository-relative path without path traversal.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/placeholder.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM006"},"diagnostics":[{"ruleId":"HXM006","phase":"Manifest","category":"Manifest","message":"The manifest contains an unresolved placeholder.","field":"id","hint":"Resolve placeholders before invoking the runner.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/secret-bearing.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM007"},"diagnostics":[{"ruleId":"HXM007","phase":"Manifest","category":"Manifest","message":"The manifest contains a prohibited secret-bearing value.","field":"modules[0].domain","hint":"Remove secret-bearing values from the manifest.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/superseded-platform-pin.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM016"},"diagnostics":[{"ruleId":"HXM016","phase":"Manifest","category":"Manifest","message":"The manifest platform pins are not supported by this runner.","field":"platform.eventStoreVersion","hint":"Use the supported package and runtime pins for this runner release.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/tampered-platform-pin.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM016"},"diagnostics":[{"ruleId":"HXM016","phase":"Manifest","category":"Manifest","message":"The manifest platform pins are not supported by this runner.","field":"platform.eventStoreVersion","hint":"Use the supported package and runtime pins for this runner release.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/unknown-field.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM002"},"diagnostics":[{"ruleId":"HXM002","phase":"Manifest","category":"Manifest","message":"The manifest contains an unknown or invalid field.","field":"schema","hint":"Remove unknown or invalid manifest fields.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/unknown-schema.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM001"},"diagnostics":[{"ruleId":"HXM001","phase":"Manifest","category":"Manifest","message":"The manifest schema is unsupported.","field":"schema","hint":"Use hexalith.module-manifest.v1.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-module -- down --manifest /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/module/negative/unsupported-profile-class.json --output json
+{"status":"failed","outcome":{"exitCode":"UsageOrManifest","phase":"Manifest","category":"Manifest","ruleId":"HXM014"},"diagnostics":[{"ruleId":"HXM014","phase":"Manifest","category":"Manifest","message":"The manifest contains an unsupported profile class.","field":"profiles[0].classes","hint":"Use a supported AD-25 profile class.","source":null,"location":null,"row":null}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/artifact-hash-mismatch.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidencePolicy","ruleId":"HXE147"},"diagnostics":[{"ruleId":"HXE147","phase":"Evidence","category":"EvidencePolicy","message":"The evidence artifact SHA-256 does not match its declared value.","field":"artifact_sha256","hint":"Regenerate the artifact hash after producing the evidence.","source":"test/fixtures/evidence/negative/artifact-hash-mismatch.yaml","location":"58:6","row":"release-hash"}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/binding-mismatch.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidencePolicy","ruleId":"HXE152"},"diagnostics":[{"ruleId":"HXE152","phase":"Evidence","category":"EvidencePolicy","message":"Passed readiness must cite an artifact matching the row\u0027s verification command.","field":"evidence_artifact","hint":"Cite the test-command run-evidence artifact produced for this row.","source":"test/fixtures/evidence/negative/binding-mismatch.yaml","location":"58:6","row":"release-binding"}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/coverage-shortfall.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidencePolicy","ruleId":"HXE130"},"diagnostics":[{"ruleId":"HXE130","phase":"Evidence","category":"EvidencePolicy","message":"Required readiness coverage is incomplete.","field":"validation.required_coverage.fr","hint":"Add rows covering every required requirement and critical category.","source":"test/fixtures/evidence/negative/coverage-shortfall.yaml","location":"6:6","row":null}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/duplicate-key.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidenceSchema","ruleId":"HXE001"},"diagnostics":[{"ruleId":"HXE001","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document contains a duplicate mapping key.","field":"yaml","hint":"Remove duplicate YAML mapping keys before validation.","source":"test/fixtures/evidence/negative/duplicate-key.yaml","location":"2:2","row":null}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/invalid-artifact.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidencePolicy","ruleId":"HXE148"},"diagnostics":[{"ruleId":"HXE148","phase":"Evidence","category":"EvidencePolicy","message":"The evidence artifact schema does not match its declared value.","field":"artifact_schema","hint":"Use an artifact whose schema matches the declared evidence schema.","source":"test/fixtures/evidence/negative/invalid-artifact.yaml","location":"59:6","row":"release-invalid-artifact"}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/missing-artifact-metadata.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidencePolicy","ruleId":"HXE146"},"diagnostics":[{"ruleId":"HXE146","phase":"Evidence","category":"EvidencePolicy","message":"Executed evidence is missing its schema or SHA-256 metadata.","field":"artifact_schema","hint":"Record the artifact schema and SHA-256 for executed evidence.","source":"test/fixtures/evidence/negative/missing-artifact-metadata.yaml","location":"58:6","row":"release-missing-meta"}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/no-executed-tests.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidencePolicy","ruleId":"HXE153"},"diagnostics":[{"ruleId":"HXE153","phase":"Evidence","category":"EvidencePolicy","message":"Passed readiness must cite an artifact with executed passing tests.","field":"evidence_artifact","hint":"Reference a run-evidence artifact reporting executed passing tests and no failures.","source":"test/fixtures/evidence/negative/no-executed-tests.yaml","location":"58:6","row":"release-no-tests"}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/outcome-mismatch.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidencePolicy","ruleId":"HXE143"},"diagnostics":[{"ruleId":"HXE143","phase":"Evidence","category":"EvidencePolicy","message":"Passing evidence must report a passing outcome.","field":"outcome","hint":"Record a passed outcome only for successful execution.","source":"test/fixtures/evidence/negative/outcome-mismatch.yaml","location":"58:6","row":"release-outcome"}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/policy-controls.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidencePolicy","ruleId":"HXE141"},"diagnostics":[{"ruleId":"HXE141","phase":"Evidence","category":"EvidencePolicy","message":"Critical evidence reports a failed outcome.","field":"status","hint":"Resolve failed critical evidence before release qualification.","source":"test/fixtures/evidence/negative/policy-controls.yaml","location":"86:6","row":"release-failed"},{"ruleId":"HXE151","phase":"Evidence","category":"EvidencePolicy","message":"The Markdown view row identities drift from the YAML source of truth.","field":"markdown_view","hint":"Regenerate the Markdown view from the YAML row identities.","source":"test/fixtures/evidence/negative/policy-controls.yaml","location":"2:2","row":"release-failed"},{"ruleId":"HXE145","phase":"Evidence","category":"EvidencePolicy","message":"Executed evidence does not resolve to a readable artifact.","field":"evidence_artifact","hint":"Retain an actual readable artifact for executed evidence.","source":"test/fixtures/evidence/negative/policy-controls.yaml","location":"113:6","row":"release-missing-artifact"},{"ruleId":"HXE151","phase":"Evidence","category":"EvidencePolicy","message":"The Markdown view row identities drift from the YAML source of truth.","field":"markdown_view","hint":"Regenerate the Markdown view from the YAML row identities.","source":"test/fixtures/evidence/negative/policy-controls.yaml","location":"2:2","row":"release-missing-artifact"},{"ruleId":"HXE142","phase":"Evidence","category":"EvidencePolicy","message":"Critical skipped evidence requires an explanation.","field":"skip_reason","hint":"Provide a specific critical skip explanation or execute the evidence.","source":"test/fixtures/evidence/negative/policy-controls.yaml","location":"101:6","row":"release-skipped"},{"ruleId":"HXE151","phase":"Evidence","category":"EvidencePolicy","message":"The Markdown view row identities drift from the YAML source of truth.","field":"markdown_view","hint":"Regenerate the Markdown view from the YAML row identities.","source":"test/fixtures/evidence/negative/policy-controls.yaml","location":"2:2","row":"release-skipped"},{"ruleId":"HXE124","phase":"Evidence","category":"EvidencePolicy","message":"A row status is not declared by the status legend.","field":"status","hint":"Declare the row status in status_legend before using it.","source":"test/fixtures/evidence/negative/policy-controls.yaml","location":"59:6","row":"release-smoke"},{"ruleId":"HXE140","phase":"Evidence","category":"EvidencePolicy","message":"Passing evidence cannot report an unavailable outcome.","field":"outcome","hint":"Record unavailable work as not-verified, never passed.","source":"test/fixtures/evidence/negative/policy-controls.yaml","location":"71:6","row":"release-unavailable"},{"ruleId":"HXE151","phase":"Evidence","category":"EvidencePolicy","message":"The Markdown view row identities drift from the YAML source of truth.","field":"markdown_view","hint":"Regenerate the Markdown view from the YAML row identities.","source":"test/fixtures/evidence/negative/policy-controls.yaml","location":"2:2","row":"release-unavailable"}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/secret-metadata.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidencePolicy","ruleId":"HXE148"},"diagnostics":[{"ruleId":"HXE148","phase":"Evidence","category":"EvidencePolicy","message":"The evidence artifact schema does not match its declared value.","field":"artifact_schema","hint":"Use an artifact whose schema matches the declared evidence schema.","source":"test/fixtures/evidence/negative/secret-metadata.yaml","location":"58:6","row":"release-secret"}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/unknown-field.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidenceSchema","ruleId":"HXE003"},"diagnostics":[{"ruleId":"HXE003","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document contains an unknown field.","field":"root","hint":"Remove fields not declared by hexalith.readiness-evidence.v1.","source":"test/fixtures/evidence/negative/unknown-field.yaml","location":"4:2","row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"defaults","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unknown-field.yaml","location":null,"row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"rows","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unknown-field.yaml","location":null,"row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"status_legend","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unknown-field.yaml","location":null,"row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"validation","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unknown-field.yaml","location":null,"row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"validation.required_coverage","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unknown-field.yaml","location":null,"row":null}]}
+$ dotnet tool run hexalith-evidence -- validate /tmp/claude-1000/-home-administrator-projects-hexalith-projects/db9a45af-df47-47c7-b1c2-39d9e83626f8/scratchpad/wt-builds-3701-env/tmp/hexalith-builds-g4-consumer-de8d4a68a12a4255919c1b211f7c62d7/test/fixtures/evidence/negative/unsupported-schema.yaml --output json
+{"status":"failed","outcome":{"exitCode":"EvidenceSchemaOrPolicy","phase":"Evidence","category":"EvidenceSchema","ruleId":"HXE004"},"diagnostics":[{"ruleId":"HXE004","phase":"Evidence","category":"EvidenceSchema","message":"The readiness-evidence schema is unsupported.","field":"schema","hint":"Use hexalith.readiness-evidence.v1.","source":"test/fixtures/evidence/negative/unsupported-schema.yaml","location":"2:2","row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"defaults","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unsupported-schema.yaml","location":null,"row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"project","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unsupported-schema.yaml","location":"2:2","row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"rows","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unsupported-schema.yaml","location":null,"row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"status_legend","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unsupported-schema.yaml","location":null,"row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"validation","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unsupported-schema.yaml","location":null,"row":null},{"ruleId":"HXE005","phase":"Evidence","category":"EvidenceSchema","message":"The YAML document is missing a required schema field.","field":"validation.required_coverage","hint":"Supply every required schema field.","source":"test/fixtures/evidence/negative/unsupported-schema.yaml","location":null,"row":null}]}

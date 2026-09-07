@@ -1,0 +1,32 @@
+# Manifest re-hash verification
+# Bundle: _bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-3102-20260905
+# Run date (UTC): 2026-09-07
+# Command: sha256sum -c artifact-manifest.sha256   (cwd = this bundle)
+#
+# This file records the outcome only. It deliberately does not restate the
+# manifest's own SHA-256: this file is itself hashed in README.md, and a
+# manifest that covered README.md while README.md quoted the manifest hash
+# would be an unsatisfiable self-reference. README.md attests this file;
+# the manifest hash is attested outside the bundle, in the canonical P1R
+# record and the sprint-status evidence pointer.
+
+entries_in_manifest: 215
+entries_OK:          215
+entries_FAILED:      0
+result:              PASS
+
+# Bundle file census: 217 total = 211 relocated byte-for-byte
+# + 1 derived (remote-consumer-3102/packages-cache-inventory.txt)
+# + 5 authored here (README.md, .gitignore, .gitattributes,
+# artifact-manifest.sha256, manifest-verification.txt). The manifest covers
+# all but the last two; README.md records this file's SHA-256.
+#
+# Copy-fidelity check against the 2026-09-05 scratch source: 211/211 files
+# byte-identical; 'diff -rq' clean for logs/{eventstore-3102,eventstore-3701,
+# builds-3102,builds-3701} and for retained-packages/{3.102.0,3.70.1}. No
+# artifact was absent, reconstructed, or re-derived.
+#
+# Prior stopped bundles re-verified unchanged on the same date:
+#   6-1-p1r-397-20260824              sha256sum -c -> all OK
+#   6-1-p1r-397-20260824-attempt2     sha256sum -c -> all OK
+#   6-1-p1r-397-20260824-attempt3     sha256sum -c -> all OK

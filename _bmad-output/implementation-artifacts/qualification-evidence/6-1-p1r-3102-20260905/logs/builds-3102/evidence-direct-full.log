@@ -1,0 +1,192 @@
+xUnit.net v3 In-Process Runner v4.0.0+8bf043c053 (64-bit .NET 10.0.11)
+  Discovering: Hexalith.Builds.Evidence.Tests
+  Discovered:  Hexalith.Builds.Evidence.Tests
+  Starting:    Hexalith.Builds.Evidence.Tests
+    Hexalith.Builds.Evidence.Tests.EvidenceCommandApplicationTests.ValidatePositiveFixtureWritesPassedJsonAsync [FAIL]
+      Shouldly.ShouldAssertException : exitCode
+          should be
+      0
+          but was
+      6
+      Stack Trace:
+        test/Hexalith.Builds.Evidence.Tests/EvidenceCommandApplicationTests.cs(39,0): at Hexalith.Builds.Evidence.Tests.EvidenceCommandApplicationTests.ValidatePositiveFixtureWritesPassedJsonAsync()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        test/Hexalith.Builds.Evidence.Tests/EvidenceCommandApplicationTests.cs(41,0): at Hexalith.Builds.Evidence.Tests.EvidenceCommandApplicationTests.ValidatePositiveFixtureWritesPassedJsonAsync()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        test/Hexalith.Builds.Evidence.Tests/EvidenceCommandApplicationTests.cs(43,0): at Hexalith.Builds.Evidence.Tests.EvidenceCommandApplicationTests.ValidatePositiveFixtureWritesPassedJsonAsync()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+    Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(fixture: "negative/binding-mismatch.yaml", expectedSnapshot: "negative/binding-mismatch.expected.json") [FAIL]
+      Shouldly.ShouldAssertException : result.Outcome.RuleId
+          should be
+      "HXE152"
+          but was
+      "HXE147"
+          difference
+      Difference     |                      |    |   
+                     |                     \|/  \|/  
+      Index          | 0    1    2    3    4    5    
+      Expected Value | H    X    E    1    5    2    
+      Actual Value   | H    X    E    1    4    7    
+      Expected Code  | 72   88   69   49   53   50   
+      Actual Code    | 72   88   69   49   52   55   
+      Stack Trace:
+        test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs(251,0): at Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(String fixture, String expectedSnapshot)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+    Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(fixture: "negative/coverage-shortfall.yaml", expectedSnapshot: "negative/coverage-shortfall.expected.json") [FAIL]
+      Shouldly.ShouldAssertException : result.Diagnostics.Select(diagnostic => diagnostic.RuleId)
+          should be
+      ["HXE130"]
+          but was (case sensitive comparison)
+      ["HXE130", "HXE147"]
+          difference
+      ["HXE130", *"HXE147"*]
+      Stack Trace:
+        test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs(255,0): at Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(String fixture, String expectedSnapshot)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+    Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(fixture: "negative/no-executed-tests.yaml", expectedSnapshot: "negative/no-executed-tests.expected.json") [FAIL]
+      Shouldly.ShouldAssertException : result.Outcome.RuleId
+          should be
+      "HXE153"
+          but was
+      "HXE147"
+          difference
+      Difference     |                      |    |   
+                     |                     \|/  \|/  
+      Index          | 0    1    2    3    4    5    
+      Expected Value | H    X    E    1    5    3    
+      Actual Value   | H    X    E    1    4    7    
+      Expected Code  | 72   88   69   49   53   51   
+      Actual Code    | 72   88   69   49   52   55   
+      Stack Trace:
+        test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs(251,0): at Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(String fixture, String expectedSnapshot)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+    Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(fixture: "negative/outcome-mismatch.yaml", expectedSnapshot: "negative/outcome-mismatch.expected.json") [FAIL]
+      Shouldly.ShouldAssertException : result.Diagnostics.Select(diagnostic => diagnostic.RuleId)
+          should be
+      ["HXE143"]
+          but was (case sensitive comparison)
+      ["HXE143", "HXE147"]
+          difference
+      ["HXE143", *"HXE147"*]
+      Stack Trace:
+        test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs(255,0): at Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(String fixture, String expectedSnapshot)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+    Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(fixture: "negative/policy-controls.yaml", expectedSnapshot: "negative/policy-controls.yaml.expected.json") [FAIL]
+      Shouldly.ShouldAssertException : result.Diagnostics.Select(diagnostic => diagnostic.RuleId)
+          should be
+      ["HXE141", "HXE151", "HXE145", "HXE151", "HXE142", "HXE151", "HXE124", "HXE140", "HXE151"]
+          but was (case sensitive comparison)
+      ["HXE141", "HXE147", "HXE151", "HXE145", "HXE151", "HXE142", "HXE151", "HXE124", "HXE140", "HXE147", "HXE151"]
+          difference
+      ["HXE141", *"HXE147"*, *"HXE151"*, *"HXE145"*, *"HXE151"*, *"HXE142"*, *"HXE151"*, *"HXE124"*, *"HXE140"*, *"HXE147"*, *"HXE151"*]
+      Stack Trace:
+        test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs(255,0): at Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(String fixture, String expectedSnapshot)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+    Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(fixture: "negative/secret-metadata.yaml", expectedSnapshot: "negative/secret-metadata.expected.json") [FAIL]
+      Shouldly.ShouldAssertException : result.Outcome.RuleId
+          should be
+      "HXE148"
+          but was
+      "HXE147"
+          difference
+      Difference     |                           |   
+                     |                          \|/  
+      Index          | 0    1    2    3    4    5    
+      Expected Value | H    X    E    1    4    8    
+      Actual Value   | H    X    E    1    4    7    
+      Expected Code  | 72   88   69   49   52   56   
+      Actual Code    | 72   88   69   49   52   55   
+      Stack Trace:
+        test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs(251,0): at Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(String fixture, String expectedSnapshot)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+    Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(fixture: "positive/readiness.yaml", expectedSnapshot: "positive/readiness.yaml.expected.json") [FAIL]
+      Shouldly.ShouldAssertException : result.Status
+          should be
+      "passed"
+          but was
+      "failed"
+          difference
+      Difference     |  |         |    |             
+                     | \|/       \|/  \|/            
+      Index          | 0    1    2    3    4    5    
+      Expected Value | p    a    s    s    e    d    
+      Actual Value   | f    a    i    l    e    d    
+      Expected Code  | 112  97   115  115  101  100  
+      Actual Code    | 102  97   105  108  101  100  
+      Stack Trace:
+        test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs(238,0): at Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.ValidatorMatchesExpectedSnapshotAsync(String fixture, String expectedSnapshot)
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+    Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.PositiveFixturePassesAsync [FAIL]
+      Shouldly.ShouldAssertException : result.Status
+          should be
+      "passed"
+          but was
+      "failed"
+          difference
+      Difference     |  |         |    |             
+                     | \|/       \|/  \|/            
+      Index          | 0    1    2    3    4    5    
+      Expected Value | p    a    s    s    e    d    
+      Actual Value   | f    a    i    l    e    d    
+      Expected Code  | 112  97   115  115  101  100  
+      Actual Code    | 102  97   105  108  101  100  
+      Stack Trace:
+        test/Hexalith.Builds.Evidence.Tests/ReadinessEvidenceValidatorTests.cs(34,0): at Hexalith.Builds.Evidence.Tests.ReadinessEvidenceValidatorTests.PositiveFixturePassesAsync()
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+        --- End of stack trace from previous location ---
+           at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+           at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+           at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+  Finished:    Hexalith.Builds.Evidence.Tests (ID = 'a8250276dd0c936f64809a3ff58535c5ad909d43e0fd5ec1e380e73e4777005b')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Builds.Evidence.Tests  Total: 31, Errors: 0, Failed: 9, Skipped: 0, Not Run: 0, Time: 0.448s

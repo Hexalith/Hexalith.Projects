@@ -1,0 +1,12 @@
+fix(runner): align EventStore pin to 3.102.0
+
+Update SupportedPlatformPins, the module-manifest schema, positive
+and negative fixtures, serialized evidence, test expectations, and
+G-4 packaging tooling from the stale 3.90.0 EventStore pin to the
+catalog-selected 3.102.0, leaving the intentional 3.88.0 and 3.70.1
+negative-control pins untouched.
+
+Recompute the coupled artifact_sha256 values in the readiness-evidence
+YAML fixtures that assert the byte-exact hash of the four edited
+module-run-evidence JSON fixtures, so HXE147 hash-mismatch checks
+keep passing against the new fixture bytes.

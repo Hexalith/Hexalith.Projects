@@ -1,0 +1,28 @@
+# Byte preservation for relocated qualification evidence.
+#
+# Every entry in artifact-manifest.sha256 is a SHA-256 over exact bytes. The
+# umbrella .gitattributes sets only `* whitespace=cr-at-eol`; it pins no text or
+# eol handling, so on a clone with core.autocrlf=true (the Windows default) Git
+# would rewrite these files' line endings on checkout and every text entry would
+# stop matching its manifest hash. `-text` disables that conversion in both
+# directions.
+#
+# `-whitespace` additionally stops `git diff --check` and whitespace-fixing
+# hooks reporting the trailing whitespace and blank-at-EOF that five relocated
+# evidence files genuinely contain (logs/builds-3102/evidence-direct-full.log,
+# logs/builds-3102/diag-module/*.diag, logs/builds-3701/03e-module-tests-diag.log,
+# logs/eventstore-3102/remote-01-restore.log, p1r-diff.txt). Those bytes are the
+# evidence; they must never be "fixed".
+#
+# The four files authored for this bundle (README.md, .gitignore, .gitattributes,
+# manifest-verification.txt) deliberately keep whitespace checking.
+* -text
+logs/** -whitespace
+results/** -whitespace
+retained-packages/** -whitespace
+remote-consumer-3102/** -whitespace
+p1r-diff.txt -whitespace
+release-packages-3.102.0.json -whitespace
+release-packages-3.70.1.json -whitespace
+*.nupkg binary
+*.snupkg binary

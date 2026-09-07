@@ -1,0 +1,8 @@
+fix(runner): bind EventStore pin to 3.70.1 rollback
+
+Rebind the catalog default, platform pins, manifest schema, positive
+fixtures, serialized evidence, and coupled hashes from the stale
+3.90.0 runner corpus to the accepted rollback version 3.70.1.
+Repoint the tampered-platform-pin fixture to the selected candidate
+3.102.0 so it proves the rollback worktree rejects that pin with
+HXM016, and leave the superseded 3.88.0 fixture untouched.

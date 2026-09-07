@@ -1,0 +1,32 @@
+# Bundle-local re-inclusion rules.
+#
+# The umbrella .gitignore carries generic build-output rules that are correct
+# for build output and wrong for retained qualification evidence. Without the
+# negations below, 127 of this bundle's 217 files would sit in the working tree
+# untracked -- as perishable as the ephemeral scratch directory this bundle
+# exists to replace. The umbrella rules that actually match here are:
+#
+#   .gitignore:30  [Bb]in/     .gitignore:31  [Oo]bj/
+#   .gitignore:32  [Ll]og/     .gitignore:33  [Ll]ogs/   -> 117 files under logs/
+#   .gitignore:76  *.meta      .gitignore:92  *.log      -> 2 retained qualification.log
+#   .gitignore:196 *.nupkg     .gitignore:198 *.snupkg   -> 8 retained G-4 packages
+#
+# `[Ll]ogs/` excludes the directory itself, so `!logs/` must precede `!logs/**`;
+# a deeper .gitignore wins over a shallower one. `*.meta` is negated explicitly
+# rather than left to survive incidentally through `!logs/**`, and `bin/`/`obj/`
+# are negated so a future relocated lane artifact under such a path is kept.
+# There is no umbrella `*.diag` rule today; `!*.diag` guards against one.
+#
+# Scope is this bundle only. No file outside it, and no earlier bundle, is
+# affected.
+!logs/
+!logs/**
+!*.log
+!*.meta
+!*.diag
+!*.nupkg
+!*.snupkg
+!bin/
+!bin/**
+!obj/
+!obj/**

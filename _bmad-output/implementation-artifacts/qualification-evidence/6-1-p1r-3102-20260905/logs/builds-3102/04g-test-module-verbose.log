@@ -1,0 +1,237 @@
+The '-verbose' switch has been deprecated in favor of '-reporter verbose' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.0+8bf043c053 (64-bit .NET 10.0.11)
+  Discovering: Hexalith.Builds.Module.Tests
+  Discovered:  Hexalith.Builds.Module.Tests
+  Starting:    Hexalith.Builds.Module.Tests
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "unknown-schema.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters total=\"0\" passed=\"0\" failed=\"0\" notExecu"···, ruleId: "HXT003") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleInvocationStateStoreTests.DownAsyncThrowsWhenManifestIsUnreadableAndStateDirectoryExistsAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.CreateEvidenceCapturesSourceControlAndSdkMetadata [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithUnreadableDescriptorReturnsStableRule [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ToolProjectSpineTests.RepositorySpineDefinesAuthorizedToolContracts [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.RunWithUnavailablePrerequisiteAndInvalidEvidenceRetainsPrerequisiteExitCodeAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ToolOutcomeTests.FailRetainsFirstCausalOutcome [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncWritesCanonicalArtifactAtomicallyAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ToolProjectSpineTests.RepositorySpineDefinesAuthorizedToolContracts [FINISHED] Time: 0.053s
+    Hexalith.Builds.ModuleTool.Tests.ToolOutcomeTests.FailRetainsFirstCausalOutcome [FINISHED] Time: 0.052s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters total=\"0\" passed=\"0\" failed=\"0\" notExecu"···, ruleId: "HXT003") [FINISHED] Time: 0.051s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters total=\"2\" passed=\"0\" failed=\"0\" notExecu"···, ruleId: "HXT004") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters total=\"2\" passed=\"0\" failed=\"0\" notExecu"···, ruleId: "HXT004") [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters total=\"2\" passed=\"1\" failed=\"1\" notExecu"···, ruleId: "HXT005") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters total=\"2\" passed=\"1\" failed=\"1\" notExecu"···, ruleId: "HXT005") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters total=\"1\" passed=\"2\" failed=\"0\" notExecu"···, ruleId: "HXT002") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters total=\"1\" passed=\"2\" failed=\"0\" notExecu"···, ruleId: "HXT002") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters total=\"2\" passed=\"1\" failed=\"0\" notExecu"···, ruleId: "HXT002") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters total=\"2\" passed=\"1\" failed=\"0\" notExecu"···, ruleId: "HXT002") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters passed=\"1\" failed=\"0\" notExecuted=\"0\" />", ruleId: "HXT002") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.InvalidOrNonPassingTrxReturnsStableRuleAsync(counters: "<Counters passed=\"1\" failed=\"0\" notExecuted=\"0\" />", ruleId: "HXT002") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncWritesCanonicalArtifactAtomicallyAsync [FINISHED] Time: 0.092s
+    Hexalith.Builds.ModuleTool.Tests.ToolOutcomeTests.ExitCodesMatchAuthorizedContract [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ToolOutcomeTests.ExitCodesMatchAuthorizedContract [FINISHED] Time: 0.005s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.VstestTrxWithPassingCountersLoadsAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncRejectsNonCanonicalPathsAsync(evidencePath: "/rooted/evidence.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncRejectsNonCanonicalPathsAsync(evidencePath: "/rooted/evidence.json") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncRejectsNonCanonicalPathsAsync(evidencePath: "../escape/evidence.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncRejectsNonCanonicalPathsAsync(evidencePath: "../escape/evidence.json") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncRejectsNonCanonicalPathsAsync(evidencePath: "evidence\\windows.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncRejectsNonCanonicalPathsAsync(evidencePath: "evidence\\windows.json") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncRejectsNonCanonicalPathsAsync(evidencePath: "evidence/output.txt") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncRejectsNonCanonicalPathsAsync(evidencePath: "evidence/output.txt") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncRejectsNonCanonicalPathsAsync(evidencePath: "evidence/${SECRET}.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceWriterTests.WriteAsyncRejectsNonCanonicalPathsAsync(evidencePath: "evidence/${SECRET}.json") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.VstestTrxWithPassingCountersLoadsAsync [FINISHED] Time: 0.021s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.MicrosoftTestingPlatformTrxWithPassingCountersLoadsAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.MicrosoftTestingPlatformTrxWithPassingCountersLoadsAsync [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.UnstructuredCountersAreRejectedAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.UnstructuredCountersAreRejectedAsync [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.MissingReportFailsClosedAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.MissingReportFailsClosedAsync [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.StructurallyInvalidReportFailsClosedAsync(reportContent: "<TestRun><ResultSummary><Counters total=\"1\" passed"···) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.StructurallyInvalidReportFailsClosedAsync(reportContent: "<TestRun><ResultSummary><Counters total=\"1\" passed"···) [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.StructurallyInvalidReportFailsClosedAsync(reportContent: "<TestRun></TestRun>") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.StructurallyInvalidReportFailsClosedAsync(reportContent: "<TestRun></TestRun>") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.StructurallyInvalidReportFailsClosedAsync(reportContent: "<TestRun><ResultSummary><Counters total=\"1\" passed"···) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.StructurallyInvalidReportFailsClosedAsync(reportContent: "<TestRun><ResultSummary><Counters total=\"1\" passed"···) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.StructurallyInvalidReportFailsClosedAsync(reportContent: "<TestRun><ResultSummary></ResultSummary></TestRun>") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.StructurallyInvalidReportFailsClosedAsync(reportContent: "<TestRun><ResultSummary></ResultSummary></TestRun>") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.NonCompletedRunOutcomeFailsClosedAsync(outcome: "Aborted") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.NonCompletedRunOutcomeFailsClosedAsync(outcome: "Aborted") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.NonCompletedRunOutcomeFailsClosedAsync(outcome: "Failed") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleInvocationStateStoreTests.DownAsyncThrowsWhenManifestIsUnreadableAndStateDirectoryExistsAsync [FINISHED] Time: 0.142s
+    Hexalith.Builds.ModuleTool.Tests.ModuleInvocationStateStoreTests.DownAsyncToleratesUnrelatedFileInStateDirectoryAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.NonCompletedRunOutcomeFailsClosedAsync(outcome: "Failed") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.NonCompletedRunOutcomeFailsClosedAsync(outcome: "Timeout") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.NonCompletedRunOutcomeFailsClosedAsync(outcome: "Timeout") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.NonCompletedRunOutcomeFailsClosedAsync(outcome: "InProgress") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.NonCompletedRunOutcomeFailsClosedAsync(outcome: "InProgress") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.NegativeCounterComponentFailsClosedAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithUnreadableDescriptorReturnsStableRule [FINISHED] Time: 0.145s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretBearingIdentifierIsNotRetainedInDiagnostics [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.NativeTestReportLoaderTests.NegativeCounterComponentFailsClosedAsync [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.ModuleInvocationStateStoreTests.DownAsyncToleratesUnrelatedFileInStateDirectoryAsync [FINISHED] Time: 0.019s
+    Hexalith.Builds.ModuleTool.Tests.ModuleInvocationStateStoreTests.DownAsyncRemovesOnlyMatchingManifestStateAndIsIdempotentAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretBearingIdentifierIsNotRetainedInDiagnostics [FINISHED] Time: 0.021s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlaceholderDetectionUsesPreciseSupportedForms(value: "coverage-100%.json", expected: False) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "unknown-schema.json") [FINISHED] Time: 0.169s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "unknown-field.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlaceholderDetectionUsesPreciseSupportedForms(value: "coverage-100%.json", expected: False) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlaceholderDetectionUsesPreciseSupportedForms(value: "fixtures/%PROFILE%/data.json", expected: True) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleInvocationStateStoreTests.DownAsyncRemovesOnlyMatchingManifestStateAndIsIdempotentAsync [FINISHED] Time: 0.005s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlaceholderDetectionUsesPreciseSupportedForms(value: "fixtures/%PROFILE%/data.json", expected: True) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlaceholderDetectionUsesPreciseSupportedForms(value: "fixtures/$PROFILE/data.json", expected: True) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlaceholderDetectionUsesPreciseSupportedForms(value: "fixtures/$PROFILE/data.json", expected: True) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlaceholderDetectionUsesPreciseSupportedForms(value: "fixtures/${PROFILE}/data.json", expected: True) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlaceholderDetectionUsesPreciseSupportedForms(value: "fixtures/${PROFILE}/data.json", expected: True) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlaceholderDetectionUsesPreciseSupportedForms(value: "fixtures/{{PROFILE}}/data.json", expected: True) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlaceholderDetectionUsesPreciseSupportedForms(value: "fixtures/{{PROFILE}}/data.json", expected: True) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadOversizedManifestReturnsStableLimitRule [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "unknown-field.json") [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "duplicate-id.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadOversizedManifestReturnsStableLimitRule [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithNestedDuplicateJsonKeyReturnsStableRule(original: "\"domain\": \"module-a\"", replacement: "\"domain\": \"module-a\", \"domain\": \"module-a\"") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithNestedDuplicateJsonKeyReturnsStableRule(original: "\"domain\": \"module-a\"", replacement: "\"domain\": \"module-a\", \"domain\": \"module-a\"") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithNestedDuplicateJsonKeyReturnsStableRule(original: "\"fixture\": \"fixtures/full.json\"", replacement: "\"fixture\": \"fixtures/full.json\", \"fixture\": \"fixtu"···) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithNestedDuplicateJsonKeyReturnsStableRule(original: "\"fixture\": \"fixtures/full.json\"", replacement: "\"fixture\": \"fixtures/full.json\", \"fixture\": \"fixtu"···) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.IdentifierSchemaAndRuntimeValidationRemainInParity [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "duplicate-id.json") [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "absolute-path.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "absolute-path.json") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "path-escape.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "path-escape.json") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "missing-descriptor.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "missing-descriptor.json") [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "placeholder.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "placeholder.json") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "secret-bearing.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "secret-bearing.json") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "malformed-dependency.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "malformed-dependency.json") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "invalid-profile.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "invalid-profile.json") [FINISHED] Time: 0.006s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "duplicate-json-key.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "duplicate-json-key.json") [FINISHED] Time: 0.003s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "unsupported-profile-class.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "unsupported-profile-class.json") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "missing-required-value.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "missing-required-value.json") [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "tampered-platform-pin.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.IdentifierSchemaAndRuntimeValidationRemainInParity [FINISHED] Time: 0.032s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "tampered-platform-pin.json") [FINISHED] Time: 0.004s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "superseded-platform-pin.json") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithDuplicateJsonKeyReturnsStableRule [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithDuplicateJsonKeyReturnsStableRule [FINISHED] Time: 0.003s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadManifestNegativeControlReturnsStableRule(fileName: "superseded-platform-pin.json") [FINISHED] Time: 0.004s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.PersistedFixtureDeclaresNonPassingLiveControls [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionAllowsOrdinaryMetadata(value: "honeyjar") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionAllowsOrdinaryMetadata(value: "honeyjar") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionAllowsOrdinaryMetadata(value: "api-key-management") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionAllowsOrdinaryMetadata(value: "api-key-management") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionAllowsOrdinaryMetadata(value: "assemblies/monkeyjungle.dll") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.PersistedFixtureDeclaresNonPassingLiveControls [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionAllowsOrdinaryMetadata(value: "assemblies/monkeyjungle.dll") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadP0TwoModuleManifestReturnsValidContract [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "\"hexalith.module-manifest.v1\"", replacement: "\"hexalith.module-manifest.v2\"", ruleId: "HXM001") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "\"hexalith.module-manifest.v1\"", replacement: "\"hexalith.module-manifest.v2\"", ruleId: "HXM001") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "\"id\": \"p0-two-module\"", replacement: "\"id\": \"p0-two-module\", \"unknown\": true", ruleId: "HXM002") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.PersistedFixtureAssetTests.LoadP0TwoModuleManifestReturnsValidContract [FINISHED] Time: 0.003s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "\"id\": \"p0-two-module\"", replacement: "\"id\": \"p0-two-module\", \"unknown\": true", ruleId: "HXM002") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "\"id\": \"module-b\"", replacement: "\"id\": \"module-a\"", ruleId: "HXM003") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "\"id\": \"module-b\"", replacement: "\"id\": \"module-a\"", ruleId: "HXM003") [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "assemblies/module-a.dll", replacement: "../module-a.dll", ruleId: "HXM004") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "assemblies/module-a.dll", replacement: "../module-a.dll", ruleId: "HXM004") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "assemblies/module-a.dll", replacement: "assemblies/missing.dll", ruleId: "HXM005") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "assemblies/module-a.dll", replacement: "assemblies/missing.dll", ruleId: "HXM005") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "assemblies/module-a.dll", replacement: "assemblies/bearer token=SUPERSECRET_8472.dll", ruleId: "HXM007") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "assemblies/module-a.dll", replacement: "assemblies/bearer token=SUPERSECRET_8472.dll", ruleId: "HXM007") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "module-a", replacement: "${MODULE_ID}", ruleId: "HXM006") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "module-a", replacement: "${MODULE_ID}", ruleId: "HXM006") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "\"domain\": \"module-a\"", replacement: "\"domain\": \"module-a\", \"token\": \"SUPERSECRET_8472\"", ruleId: "HXM002") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "\"domain\": \"module-a\"", replacement: "\"domain\": \"module-a\", \"token\": \"SUPERSECRET_8472\"", ruleId: "HXM002") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "\"domain\": \"module-a\"", replacement: "\"domain\": \"bearer SUPERSECRET_8472\"", ruleId: "HXM007") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadInvalidManifestReturnsStableRule(original: "\"domain\": \"module-a\"", replacement: "\"domain\": \"bearer SUPERSECRET_8472\"", ruleId: "HXM007") [FINISHED] Time: 0.003s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.RepositoryPathSchemaAndRuntimeValidationRemainInParity [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.RepositoryPathSchemaAndRuntimeValidationRemainInParity [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "bearer abcdefghijklmnop") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "bearer abcdefghijklmnop") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "Authorization=Basic dXNlcjpwYXNz") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "Authorization=Basic dXNlcjpwYXNz") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "fixtures/data.json?sig=abcdef0123456789") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "fixtures/data.json?sig=abcdef0123456789") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "AccountKey=abcdef0123456789") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "AccountKey=abcdef0123456789") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "aws_access_key_id=AKIAIOSFODNN7EXAMPLE") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "aws_access_key_id=AKIAIOSFODNN7EXAMPLE") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "AKIAIOSFODNN7EXAMPLE") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "AKIAIOSFODNN7EXAMPLE") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "ghp_abcdefghijklmnopqrstuvwxyz012345") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "ghp_abcdefghijklmnopqrstuvwxyz012345") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "-----BEGIN PRIVATE KEY-----") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "-----BEGIN PRIVATE KEY-----") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.s"···) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SecretDetectionRejectsCredentialShapes(value: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.s"···) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithEscapingDescriptorSymlinkFailsClosed [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithEscapingDescriptorSymlinkFailsClosed [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadValidTwoModuleManifestReturnsManifest [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadValidTwoModuleManifestReturnsManifest [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SupportedProfileClassesAreImmutable [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.SupportedProfileClassesAreImmutable [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithMultipleErrorsReturnsDeterministicDiagnosticOrder [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithMultipleErrorsReturnsDeterministicDiagnosticOrder [FINISHED] Time: 0.004s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadLongAcyclicDependencyChainReturnsValidManifest [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.RunWithUnavailablePrerequisiteAndInvalidEvidenceRetainsPrerequisiteExitCodeAsync [FINISHED] Time: 0.283s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.CancellationRegistrationPropagatesAndUnregistersAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.CancellationRegistrationPropagatesAndUnregistersAsync [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.DownWithInvalidEvidenceReturnsEvidenceExitCodeAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.CreateEvidenceCapturesSourceControlAndSdkMetadata [FINISHED] Time: 0.289s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.SerializeCanonicalOrdersArtifactHashesAndTerminatesWithNewline [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.SerializeCanonicalOrdersArtifactHashesAndTerminatesWithNewline [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "10.0.400", expected: True) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "10.0.400", expected: True) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "10.0.401", expected: True) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "10.0.401", expected: True) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "10.0.499", expected: True) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "10.0.499", expected: True) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "10.0.399", expected: False) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "10.0.399", expected: False) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "10.0.500", expected: False) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "10.0.500", expected: False) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "11.0.400", expected: False) [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.LatestPatchRollForwardAcceptsOnlyNewerPatchesInThePinnedFeatureBand(sdkVersion: "11.0.400", expected: False) [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.CreateEvidenceRejectsFixtureSymlinkRetargetedAfterValidation [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleRunEvidenceSerializationTests.CreateEvidenceRejectsFixtureSymlinkRetargetedAfterValidation [FINISHED] Time: 0.093s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.DownWithInvalidEvidenceReturnsEvidenceExitCodeAsync [FINISHED] Time: 0.103s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.CancelledDownWritesCancelledEvidenceAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadLongAcyclicDependencyChainReturnsValidManifest [FINISHED] Time: 0.147s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithInvalidDependencyGraphReturnsStableRule(original: "\"dependencies\": []", replacement: "\"dependencies\": [\"module-a\"]") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithInvalidDependencyGraphReturnsStableRule(original: "\"dependencies\": []", replacement: "\"dependencies\": [\"module-a\"]") [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithInvalidDependencyGraphReturnsStableRule(original: "\"dependencies\": [\"module-a\"]", replacement: "\"dependencies\": [\"module-a\", \"module-a\"]") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithInvalidDependencyGraphReturnsStableRule(original: "\"dependencies\": [\"module-a\"]", replacement: "\"dependencies\": [\"module-a\", \"module-a\"]") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithInvalidDependencyGraphReturnsStableRule(original: "\"dependencies\": []", replacement: "\"dependencies\": [\"module-b\"]") [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.LoadManifestWithInvalidDependencyGraphReturnsStableRule(original: "\"dependencies\": []", replacement: "\"dependencies\": [\"module-b\"]") [FINISHED] Time: 0s
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlatformPinSchemaAndRuntimeValidationRemainInParity [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ManifestValidationTests.PlatformPinSchemaAndRuntimeValidationRemainInParity [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.CancelledDownWritesCancelledEvidenceAsync [FINISHED] Time: 0.091s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.RunWithMissingManifestReturnsUsageExitCodeAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.RunWithMissingManifestReturnsUsageExitCodeAsync [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.MissingRequiredOptionWritesStableJsonUsageDiagnosticAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.MissingRequiredOptionWritesStableJsonUsageDiagnosticAsync [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.HumanDiagnosticRenderingIncludesMetadataAndEscapesControlsAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.HumanDiagnosticRenderingIncludesMetadataAndEscapesControlsAsync [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.DownWithValidManifestReturnsSuccessAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.DownWithValidManifestReturnsSuccessAsync [FINISHED] Time: 0.105s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.DownWithEscapingEvidenceSymlinkReturnsEvidenceFailureAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.DownWithEscapingEvidenceSymlinkReturnsEvidenceFailureAsync [FINISHED] Time: 0.105s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.TestWithUnknownProfileReturnsUsageExitCodeAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.TestWithUnknownProfileReturnsUsageExitCodeAsync [FINISHED] Time: 0.001s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.BlankManifestValueWritesStableJsonUsageDiagnosticAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.BlankManifestValueWritesStableJsonUsageDiagnosticAsync [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.RunWithValidManifestReturnsExplicitPrerequisiteUnavailableAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.RunWithValidManifestReturnsExplicitPrerequisiteUnavailableAsync [FINISHED] Time: 0.002s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.MultipleManifestErrorsExposeTheFirstDeterministicRuleAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.MultipleManifestErrorsExposeTheFirstDeterministicRuleAsync [FINISHED] Time: 0.005s
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.SecretBearingProfileIsRedactedFromEvidenceAsync [STARTING]
+    Hexalith.Builds.ModuleTool.Tests.ModuleCommandApplicationTests.SecretBearingProfileIsRedactedFromEvidenceAsync [FINISHED] Time: 0.098s
+  Finished:    Hexalith.Builds.Module.Tests (ID = 'fbfc774424caee2e2cb7cfa89c84df28e1ecbab58d0c3483154da3b4d3aaff31')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Builds.Module.Tests  Total: 114, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 0.943s
