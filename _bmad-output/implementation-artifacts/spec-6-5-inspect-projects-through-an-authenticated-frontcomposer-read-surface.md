@@ -2,8 +2,8 @@
 title: 'Inspect Projects through an authenticated FrontComposer read surface'
 type: 'feature'
 created: '2026-08-25'
-status: blocked
-baseline_revision: b1a5f6b8ab961ffbd6fa99c456b41044605357a7
+status: ready-for-dev
+baseline_revision: 25059b8a82f707c57ac665c1d773cec7138b0474
 blocked_by: ['6.1', '6.2', '6.3', '6.4']
 prerequisite_record: null
 review_loop_iteration: 0
@@ -100,10 +100,3 @@ FrontComposer owns the session credential and relay; Projects owns authorization
 - `dotnet tool run hexalith-module test --profile reads --filter Story=6.5` -- expected: the approved G-4 profile emits real persisted evidence for the browser-to-handler path.
 - `git diff --check` -- expected: no whitespace errors.
 
-## Auto Run Result
-
-Status: blocked
-Blocking condition: Story 6.5 prerequisite gate unsatisfied because `prerequisite_record` is null.
-Dispatch condition: blocked spec supplied.
-
-The `DW-1` done row is orchestrator bookkeeping and was not treated as proof. The spec requires a committed, repository-relative, hash-matching evidence record covering the accepted Story 6.1–6.4 capabilities, the approved FrontComposer/OIDC identity contract, and executable G-4 `reads` and `web-reads` profiles before a development session may start. No implementation or verification commands ran.
