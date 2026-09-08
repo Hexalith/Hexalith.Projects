@@ -10,15 +10,21 @@
     --border: #e7e5e4;
     --text: #1c1917;
     --muted: #78716c;
+
     --verdict-strong: #16a34a;
     --verdict-adequate: #65a30d;
     --verdict-thin: #d97706;
     --verdict-broken: #dc2626;
+
     --sev-low: #64748b;
     --sev-medium: #ca8a04;
     --sev-high: #ea580c;
     --sev-critical: #dc2626;
+
     --grade-exc: #16a34a;
+    --grade-good: #65a30d;
+    --grade-fair: #d97706;
+    --grade-poor: #dc2626;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -30,6 +36,7 @@
     font-size: 15px;
   }
   .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+
   header.report-header {
     display: flex;
     align-items: flex-start;
@@ -39,10 +46,21 @@
     border-bottom: 1px solid var(--border);
     margin-bottom: 24px;
   }
-  .title h1 { margin: 0; font-size: 22px; font-weight: 600; }
+  .title h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
   .title .subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
-  .grade { padding: 10px 18px; border-radius: 8px; font-weight: 600; color: white; font-size: 15px; white-space: nowrap; }
+  .grade {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: white;
+    font-size: 15px;
+    white-space: nowrap;
+  }
   .grade-excellent { background: var(--grade-exc); }
+  .grade-good { background: var(--grade-good); }
+  .grade-fair { background: var(--grade-fair); }
+  .grade-poor { background: var(--grade-poor); }
+
   .synthesis {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -52,13 +70,26 @@
     margin-bottom: 24px;
     font-size: 15.5px;
   }
-  .synthesis p { margin: 0; }
-  .dimension-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 24px; }
-  .dim-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  .synthesis p { margin: 0 0 10px; }
+  .synthesis p:last-child { margin-bottom: 0; }
+
+  .dimension-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .dim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
   .dim-card .dim-name { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
-  .dim-card .dim-verdict { font-size: 14px; font-weight: 600; color: var(--verdict-strong); }
-  section.dimension { margin-bottom: 14px; }
-  section.dimension details {
+  .dim-card .dim-verdict { font-size: 14px; font-weight: 600; }
+
+  section.dimension, section.reviewer-section { margin-bottom: 14px; }
+  section.dimension details, section.reviewer-section details {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -74,9 +105,21 @@
     gap: 12px;
   }
   section summary::-webkit-details-marker { display: none; }
-  section summary::before { content: "▸"; display: inline-block; color: var(--muted); transition: transform 0.15s ease; }
+  section summary::before {
+    content: "▸";
+    display: inline-block;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
   section details[open] summary::before { transform: rotate(90deg); }
-  section summary h2 { display: inline; margin: 0; font-size: 16px; font-weight: 600; flex: 1; }
+  section summary h2 {
+    display: inline;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    flex: 1;
+  }
   .verdict-pill {
     font-size: 11px;
     padding: 3px 10px;
@@ -85,90 +128,602 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: white;
-    background: var(--verdict-strong);
   }
+  .verdict-strong { background: var(--verdict-strong); }
+  .verdict-adequate { background: var(--verdict-adequate); }
+  .verdict-thin { background: var(--verdict-thin); }
+  .verdict-broken { background: var(--verdict-broken); }
+
   .dim-body { padding: 4px 20px 18px; }
   .dim-judgment { color: var(--text); font-size: 14.5px; }
   .dim-judgment p { margin: 0 0 10px; }
+
   .findings-list { padding: 0 20px 4px; }
-  article.finding { padding: 14px 0; border-top: 1px solid var(--border); }
-  article.finding header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
-  .badge { font-size: 10.5px; padding: 3px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.4; }
+  article.finding {
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+  }
+  article.finding:first-child { border-top: none; }
+  article.finding header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .badge {
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
   .badge-sev-low { background: rgba(100, 116, 139, 0.12); color: var(--sev-low); }
+  .badge-sev-medium { background: rgba(202, 138, 4, 0.14); color: var(--sev-medium); }
+  .badge-sev-high { background: rgba(234, 88, 12, 0.14); color: var(--sev-high); }
+  .badge-sev-critical { background: rgba(220, 38, 38, 0.14); color: var(--sev-critical); }
   .finding-title { margin: 0; font-size: 15px; font-weight: 500; flex: 1; min-width: 200px; }
   .finding-location { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; color: var(--muted); }
   .finding-note, .finding-fix { margin-top: 6px; font-size: 14px; }
-  .mechanical { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-top: 24px; font-size: 14px; }
+  .finding-fix strong { color: var(--muted); font-weight: 500; }
+
+  .reviewer-source {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .mechanical {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-size: 14px;
+  }
   .mechanical h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
   .mechanical ul { margin: 0; padding-left: 20px; }
-  footer.report-footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .mechanical li { margin-bottom: 4px; color: var(--text); }
+
+  footer.report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
   footer .meta { display: flex; gap: 24px; flex-wrap: wrap; }
 </style>
 </head>
 <body>
   <div class="container">
+
     <header class="report-header">
       <div class="title">
         <h1>Hexalith.Projects — Validation Report</h1>
         <div class="subtitle">_bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md</div>
       </div>
-      <div class="grade grade-excellent">Excellent</div>
+      <div class="grade grade-poor">Poor</div>
     </header>
 
     <div class="synthesis">
-      <p>The PRD is strong enough to feed architecture, UX scoping, and story creation. Its product thesis is clear: <code>Hexalith.Projects</code> is a tenant-aware AI workspace boundary for Hexalith.Chatbot, not a generic project-management product. The prior external handoff blocker has been explicitly waived for this PRD closeout and recorded in the decision log.</p>
+      <p>This PRD holds up as a chain-top product contract: §2.1 names real trade-offs, §2.4 makes omissions explicit, and most FRs carry testable consequences under a shared §5 recovery contract. What is at risk is silent product invention — UX, architecture, and stories must still decide what makes a match exclusive enough to skip confirmation, which evidence is required for <code>Complete</code> versus <code>Partial</code>, and how to treat brownfield folderless Projects that the addendum admits and the PRD's present-tense invariant denies. <code>status: final</code> is earned for direction; it is not earned as a claim that no product questions remain for downstream work.</p>
+      <p>The isolation review materially shifts the gate: the confirmation boundary and Conversation membership can be satisfied on paper while still silently attaching work or moving membership without a move. Planning-drift does not remumber FRs, but the folder is stale as a current baseline — §2.5 still reads phase-unblocked while addendum E-17 is <code>NOT READY</code> and later approved SCPs were never reconciled here.</p>
     </div>
 
     <div class="dimension-summary">
-      <div class="dim-card"><div class="dim-name">Decision-readiness</div><div class="dim-verdict">strong</div></div>
-      <div class="dim-card"><div class="dim-name">Substance over theater</div><div class="dim-verdict">strong</div></div>
-      <div class="dim-card"><div class="dim-name">Strategic coherence</div><div class="dim-verdict">strong</div></div>
-      <div class="dim-card"><div class="dim-name">Done-ness clarity</div><div class="dim-verdict">strong</div></div>
-      <div class="dim-card"><div class="dim-name">Scope honesty</div><div class="dim-verdict">strong</div></div>
-      <div class="dim-card"><div class="dim-name">Downstream usability</div><div class="dim-verdict">strong</div></div>
-      <div class="dim-card"><div class="dim-name">Shape fit</div><div class="dim-verdict">strong</div></div>
+      <div class="dim-card">
+        <div class="dim-name">Decision-readiness</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">strong</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Substance over theater</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">strong</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Strategic coherence</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">strong</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Done-ness clarity</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Scope honesty</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Downstream usability</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Shape fit</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">strong</div>
+      </div>
     </div>
 
     <section class="dimension">
       <details>
-        <summary><h2>Decision-readiness</h2><span class="verdict-pill">strong</span></summary>
+        <summary>
+          <h2>Decision-readiness</h2>
+          <span class="verdict-pill verdict-strong">strong</span>
+        </summary>
         <div class="dim-body">
           <div class="dim-judgment">
-            <p>The PRD makes the important v1 choices explicit. The Vision states that v1 is an internal platform and near-term implementation spec, and the feature requirements consistently preserve that boundary: Projects references Conversations, Folders, Files, and Memories without owning their payloads. The single-project Conversation membership, one canonical Project Folder, two lifecycle states, and conservative Project Resolution model are all stated as decisions rather than hidden implementation preferences.</p>
-            <p>The document has no open questions, and accepted planning decisions are listed in §10. The decision log records the external handoff waiver used to complete final closeout.</p>
+            <p>A decision-maker can act on this document. §2.1 states choices as choices and names what was given up: one Conversation per Project, one Folder as authorization anchor, current recomputation over persisted inference history. §2.3 is blunt: a core-only build is internal evidence, not an authorized production release.</p>
+            <p>The remaining weakness is over-clearance, not missing trade-offs. §2.5 asserts that no phase-blocking product questions remain while several product rules those workflows must source are still implicit.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Substance over theater</h2>
+          <span class="verdict-pill verdict-strong">strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>The furniture test mostly fails to find furniture. Five named journeys earn distinct confirmation, recovery, isolation, and restore behavior. NFRs are product-specific envelopes, not “must be scalable / secure / reliable.” The one theatrical patch is success metrics that restate NFRs.</p>
           </div>
         </div>
         <div class="findings-list">
           <article class="finding">
-            <header><h3 class="finding-title">No active findings.</h3></header>
-            <div class="finding-note">The previous external handoff blocker was resolved by explicit waiver for this PRD closeout.</div>
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Success metrics that only echo NFRs</h3>
+              <span class="finding-location">§8 SM-1, SM-4, SM-5, SM-6</span>
+            </header>
+            <div class="finding-note">SM-1, SM-4, SM-5, and SM-6 restate NFR-3, NFR-5, NFR-9, and NFR-11. Four of eight primaries add no thesis signal beyond the NFR section.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Keep SM-2, SM-3, SM-7, and SM-8 as primaries; treat the NFR restatements as release-acceptance checks under NFR-11.</div>
           </article>
         </div>
       </details>
     </section>
 
-    <section class="dimension"><details><summary><h2>Substance over theater</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>The PRD avoids template filler. The persona, journeys, non-goals, NFRs, and success metrics all support the same real concern: durable Chatbot continuity without payload duplication or cross-project/tenant leakage.</p></div></div></details></section>
-    <section class="dimension"><details><summary><h2>Strategic coherence</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>The feature set follows a coherent platform thesis. Workspace management, context references, Project Resolution, context assembly, setup quality, and audit/operations are the pieces needed for Chatbot to safely recover and apply project context across conversations.</p></div></div></details></section>
-    <section class="dimension"><details><summary><h2>Done-ness clarity</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>Every FR includes testable consequences, and most consequences are framed in terms that architecture and stories can verify. Authorization filtering, fail-closed behavior, metadata-only boundaries, lifecycle behavior, audit fields, and structured validation errors are all concrete.</p></div></div></details></section>
-    <section class="dimension"><details><summary><h2>Scope honesty</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>The PRD is explicit about omissions and bounded-context ownership. It repeatedly states that Projects does not store conversation transcripts, file contents, raw prompts, secrets, memory payloads, or unrestricted filesystem paths.</p></div></div></details></section>
-    <section class="dimension"><details><summary><h2>Downstream usability</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>The glossary is strong and uses stable domain nouns consistently. FR IDs are contiguous from FR-1 through FR-22, user journeys are numbered and actor-labelled, and success metrics cross-reference the relevant FRs.</p></div></div></details></section>
-    <section class="dimension"><details><summary><h2>Shape fit</h2><span class="verdict-pill">strong</span></summary><div class="dim-body"><div class="dim-judgment"><p>The document fits an internal platform module. It includes enough user journey context to explain Chatbot interaction behavior, then keeps the main requirement body capability-focused.</p></div></div></details></section>
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Strategic coherence</h2>
+          <span class="verdict-pill verdict-strong">strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>The thesis is stable from Vision through metrics: Chatbot should resume the correct Tenant-scoped Project Context without reconstruction, silent attachment, or inferred completion. §2.3’s scope kind is platform. SM-C1 through SM-C4 name the Goodhart failures.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Done-ness clarity</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Most FRs would let an engineer write an acceptance test. The dimension is not strong because the shared contracts that every story will hang on still contain product-shaped blanks: required evidence, what counts as a match, and mutation FRs that omit the Durable Task / recovery pattern.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">Required versus optional evidence for Complete / Partial is not enumerable</h3>
+              <span class="finding-location">§5; FR-2, FR-16, FR-20</span>
+            </header>
+            <div class="finding-note"><code>Complete</code> requires “other required evidence.” The PRD never lists the required set versus optional set, nor whether that set changes by purpose.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Per response purpose, name the required components and state that File References and Memories are optional unless Project Setup marks them required.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">SingleCandidate exclusivity is unspecified</h3>
+              <span class="finding-location">§1; FR-12, FR-13, FR-14; SM-C1</span>
+            </header>
+            <div class="finding-note">FR-14 applies only when resolution returns multiple candidates. A sole <code>MetadataMatched</code> hit can skip Preview. That is the common path, not an edge.</div>
+            <div class="finding-fix"><strong>Fix:</strong> State the exclusivity rule in §2.1 / FR-12, or require FR-14 confirmation for any sole metadata/file/memory hit.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">File and Memory link FRs omit the recovery contract</h3>
+              <span class="finding-location">FR-9, FR-10 vs FR-6, FR-8, FR-11</span>
+            </header>
+            <div class="finding-note">FR-9 and FR-10 require actor-selected versus inferred confirmation but do not require a Durable Task, read-model confirmation, or fail-closed stale evidence.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Give FR-9 and FR-10 the same task, idempotency, completion, and recovery consequences as FR-6.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Relink and manual reconciliation have no mutation FR</h3>
+              <span class="finding-location">§3.2; FR-21, FR-22</span>
+            </header>
+            <div class="finding-note">The role table grants relink and reconciliation. No FR specifies preview, confirmation, targets, or completion for those words.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Define FR-level relink and reconciliation, or delete those words and map the permission onto existing FRs.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">SM-7’s unit of measure is not defined</h3>
+              <span class="finding-location">§8 SM-7</span>
+            </header>
+            <div class="finding-note">SM-7 measures “authorized Project Resolution episodes” without saying what starts or ends an episode, or what a “Project correction” is.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Define an episode and reuse SM-8’s context-correction definition or define Project correction explicitly.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Residual adjectives on otherwise testable FRs</h3>
+              <span class="finding-location">FR-15, FR-19</span>
+            </header>
+            <div class="finding-note">“May suggest” and “where unsafe” are the hedges the rubric flags.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Require a suggested name when metadata can supply one; point “unsafe” characters at the addendum rule.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Scope honesty</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>§2.4 does real work. Honesty fails where the PRD states an invariant as already true while the addendum treats the opposite as a v1 migration obligation, and where load-bearing cross-system inferences carry no assumption tag on a <code>status: final</code> chain-top PRD.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Present-tense folderless invariant contradicts acknowledged brownfield</h3>
+              <span class="finding-location">NFR-4; FR-1; addendum §5</span>
+            </header>
+            <div class="finding-note">NFR-4 says Active Projects are never folderless. Addendum §5 requires inventory of legacy Active folderless Projects. A PRD-only reader will skip migration stories.</div>
+            <div class="finding-fix"><strong>Fix:</strong> State that legacy Active folderless Projects may exist and must be reconciled before list/resolution/context admission.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Zero tagged assumptions on a green-light chain-top PRD</h3>
+              <span class="finding-location">§2.5; §8; FR-1</span>
+            </header>
+            <div class="finding-note">There are no <code>[ASSUMPTION]</code>, <code>[NOTE FOR PM]</code>, or Open Questions, yet the PRD depends on Chatbot companion outcomes and Folders same-name create.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Tag those dependencies as assumptions with owners, and downgrade §2.5.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Downstream usability</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>The extractable spine is good: glossary, contiguous IDs, named protagonists. Extractability breaks where the same noun means two things, or where a count noun used in an NFR is not a glossary term.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Domain nouns do not round-trip through the glossary</h3>
+              <span class="finding-location">§4; §6.2; FR-17; NFR-5; §8</span>
+            </header>
+            <div class="finding-note">FR-17 uses “Resolution Traces” for context-reference inclusion. Context Reference is not a glossary term. SM-7’s “Project correction” is not SM-8’s “context correction.”</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add Context Reference to §4; rename FR-17’s artifact or widen Resolution Trace; use one correction term.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">SM-7’s source pointer does not resolve</h3>
+              <span class="finding-location">§8 SM-7</span>
+            </header>
+            <div class="finding-note">“Defined above” never names the Outcome measurement contract block.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Cite “§8 Outcome measurement contract.”</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Shape fit</h2>
+          <span class="verdict-pill verdict-strong">strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>The hybrid is the right shape: capability-grouped FRs plus five compact journeys for an internal Chatbot platform module with meaningful confirmation UX. Product contract stays in <code>prd.md</code>; mechanism stays in the addendum.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="reviewer-section">
+      <details>
+        <summary>
+          <h2>Adversarial isolation / authority</h2>
+          <span class="reviewer-source">review-adversarial-isolation.md</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>This PRD talks like a fail-closed isolation contract and then leaves the enforcement hinges as client honor system. Tenant-scoped metadata-only language is real; it is not a substitute for same-Tenant reference invariants, an exclusive Folder anchor, or a field allow-list that keeps Setup and titles out of operator/export channels.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <h3 class="finding-title">Actor-selected vs inferred is not a server fact; SingleCandidate can durable-attach without FR-14</h3>
+              <span class="finding-location">§1, FR-6, FR-9, FR-10, FR-12, FR-14, SM-C1</span>
+            </header>
+            <div class="finding-note">Nothing defines how the server distinguishes actor-selected from inferred. A Chatbot or delegated caller that receives <code>SingleCandidate</code> can call link as actor-selected and skip confirmation.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Treat any association whose Project id originated in Resolution, proposal, or attachment match as inferred. Require FR-14-class confirmation including for <code>SingleCandidate</code>.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <h3 class="finding-title">Conversation unlink plus actor-selected link bypasses FR-7</h3>
+              <span class="finding-location">FR-6, FR-7, FR-11, §2.1, §4</span>
+            </header>
+            <div class="finding-note">FR-11 allows a legal zero-Project Conversation. The next actor-selected FR-6 link then skips FR-7’s dual-Project Preview and audit.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Forbid Conversation unlink, or classify any link to a previously membered Conversation as a move with the same dual-target Confirmation Artifact.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">Same-Tenant is not an invariant on links, moves, or resolution inputs</h3>
+              <span class="finding-location">NFR-1, FR-6, FR-7, FR-9, FR-10, FR-13</span>
+            </header>
+            <div class="finding-note">Authorization on both ends can still link Tenant A’s Conversation or Folder into Tenant B’s Project.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add a fail-closed same-Tenant predicate on every reference. Authorization on both ends is necessary and not sufficient.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">Permitted Projects has no grant, share, or deny model</h3>
+              <span class="finding-location">§3.2, FR-2, FR-5, FR-16, NFR-1, SM-3</span>
+            </header>
+            <div class="finding-note">No FR creates, lists, or revokes actor permission. Implementers will default to Tenant-wide Project User access.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Specify the v1 actor-authorization model and grant/revoke operations, or declare Tenant-wide access and drop the actor-leakage claim.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">Same-name Folder creation can attach a foreign workspace</h3>
+              <span class="finding-location">FR-1, FR-19, FR-23, addendum §5</span>
+            </header>
+            <div class="finding-note">Neither create nor restore says create-only, nor forbids binding an already-existing same-name Folder or another Project’s anchor.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Same-name means a create that fails closed on name collision. Binding an existing Folder requires an actor-selected Folder id plus confirmation.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">The Folder is a cardinality rule, not an exclusive authorization anchor</h3>
+              <span class="finding-location">§2.1, FR-8, FR-16, UJ-4</span>
+            </header>
+            <div class="finding-note">Nothing says a Folder is bound to at most one Active Project. Two Active Projects can share the same Folders ACL.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Require exclusive Folder binding for Active Projects, or declare shared-Folder as an explicit multi-Project workspace.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">Delegated callers can confirm if they hold actor credentials plus the artifact</h3>
+              <span class="finding-location">§2.1, §3.2, FR-14, addendum §1.1</span>
+            </header>
+            <div class="finding-note">A workflow that requests Preview as the actor can consume the artifact in the same hop — autonomous confirmation with extra ceremony.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Bind every action decision to the original actor. Do not return a consumable confirmation token to Service/Workflow Callers.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">Tenant Project Administrator reconciliation is an unbound authority expansion</h3>
+              <span class="finding-location">FR-22, FR-1, FR-7, FR-14, FR-15, FR-23</span>
+            </header>
+            <div class="finding-note">No FR lists what reconciliation may change. An Administrator can finish membership without the original Confirmation Artifact bindings.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Reconciliation may only retry or compensate an already-admitted task against its original bound targets. New intent requires a new Preview.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">Metadata-only still ships Setup, names, and titles through operator channels</h3>
+              <span class="finding-location">FR-3, FR-17, FR-21, FR-22, FR-24, §2.4, NFR-1</span>
+            </header>
+            <div class="finding-note">FR-24 has size/row caps but no field allow-list. Operators get prompt-adjacent Setup and human-readable titles.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Publish an allow-list of identifiers, lifecycle, versions, and safe codes. Exclude Setup bodies, names, titles, and paths unless a separate content-inspection permission exists.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">FR-6 does not inherit FR-7’s dual-membership fail-closed</h3>
+              <span class="finding-location">FR-6, FR-7, NFR-4</span>
+            </header>
+            <div class="finding-note">Two concurrent actor-selected links, or a link racing a move, can leave two memberships or a Conversations/Projects split brain.</div>
+            <div class="finding-fix"><strong>Fix:</strong> State the same atomic invariant on every membership mutation.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">FR-3 silently changes the context-assembly policy</h3>
+              <span class="finding-location">FR-3, FR-16, §2.1</span>
+            </header>
+            <div class="finding-note">Setup updates source inclusion/exclusion with no Preview, so a silent write can admit previously excluded references.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Classify inclusion/exclusion policy as confirmation-required, or snapshot it into Conversation-start confirmation.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Relink is in the role matrix and audit list but is not an operation</h3>
+              <span class="finding-location">§3.2, FR-7, FR-8, FR-11, FR-21</span>
+            </header>
+            <div class="finding-note">Implementers will invent a silent relink as unlink+link, granting Administrators a confirmation-free retarget.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Strike “relink” or define it as FR-7/FR-8-class Preview for every reference kind.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">FR-24 permission is not a disclosure control</h3>
+              <span class="finding-location">§2.3, FR-5, FR-22, FR-24, NFR-5, NFR-6</span>
+            </header>
+            <div class="finding-note">FR-22 is pageable with no iteration cap. FR-24’s caps bound a package format, not access. A CLI/MCP Operator can reconstruct the same metadata without FR-24.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Cap or purpose-limit FR-22, or retract the “alternatives to unbounded troubleshooting” claim.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Pre-activation safe status can leak reserved workspace intent</h3>
+              <span class="finding-location">FR-1, FR-2, FR-5, FR-22</span>
+            </header>
+            <div class="finding-note">“Safe” is undefined. A status payload that includes proposed name, reserved Project id, or initiating Conversation id is a diagnostic channel around folder-gated activation.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Define the pre-activation allow-list: task id, Task Status, safe reason/recovery codes, expiry.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Denied vs NoMatch can distinguish a foreign Conversation</h3>
+              <span class="finding-location">§5, FR-12, NFR-1</span>
+            </header>
+            <div class="finding-note">An actor who guesses a Conversation id learns whether the resource exists and is unauthorized versus exists and has no Project.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Collapse Denied, NoMatch, and nonexistence for unauthorized or cross-Tenant Conversation inputs.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">File/Memory links escape the Folder authorization anchor</h3>
+              <span class="finding-location">FR-8, FR-9, FR-10, FR-16</span>
+            </header>
+            <div class="finding-note">A Project User can assemble context from files and Memories that never sat in the Project Folder, including resources authorized in another Project’s Folder.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Require File References to be descendants of the bound Project Folder, or require confirmation that names the foreign Folder/Project.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">FR-19 rejects secrets has no detection rule</h3>
+              <span class="finding-location">FR-3, FR-19, NFR-1</span>
+            </header>
+            <div class="finding-note">There is no definition of a secret, so users will paste tokens into user-facing instructions.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Define rejectable classes and treat residual Setup as sensitive.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Idempotency scope can cross Projects for the same actor</h3>
+              <span class="finding-location">glossary, NFR-4, FR-1</span>
+            </header>
+            <div class="finding-note">An Idempotency Key is scoped to Tenant, actor, and operation, not Project or target. Reuse on a different Project returns another Project’s task.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Include action targets in the idempotency scope, or treat target mismatch as a conflict.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <section class="reviewer-section">
+      <details>
+        <summary>
+          <h2>Planning-drift</h2>
+          <span class="reviewer-source">review-planning-drift.md</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p><code>prd.md</code> still holds the approved v1 product contract. Later approved SCPs claimed “no PRD change” and did not remumber FRs. The folder is nonetheless stale as a current planning baseline: memlog last reconciles 2026-07-17, and §2.5 still reads as if UX, architecture, and epic decomposition have no phase-blocking questions.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">§2.5 readiness wording conflicts with addendum current disposition</h3>
+              <span class="finding-location">prd.md §2.5; addendum E-17</span>
+            </header>
+            <div class="finding-note">§2.5 says no phase-blocking product questions remain. Addendum E-17 is <code>NOT READY</code> with live Playwright 19/56 and a production freeze. A reader of <code>prd.md</code> alone would start those phases as unblocked.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Keep FR/NFR text; revise §2.5 so planning-status language matches E-17 / Story 8.11 and later unreconciled SCPs.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">Later approved SCPs were never reconciled into this PRD folder</h3>
+              <span class="finding-location">.memlog.md; addendum §8</span>
+            </header>
+            <div class="finding-note">Memlog last reconciles 2026-07-17. Addendum index stops at E-18 and omits 2026-07-31 through 2026-09-02 proposals that still bind planning (Story 6.8, freshness map, export retry, AD-33).</div>
+            <div class="finding-fix"><strong>Fix:</strong> Run an addendum-only reconcile pass and update <code>.memlog.md</code>. Do not edit FR/NFR bodies unless a later reconcile proves a contract delta.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">2026-08-02 bound export retry semantics while claiming no PRD change</h3>
+              <span class="finding-location">sprint-change-proposal-2026-08-02.md; FR-24, NFR-4, NFR-6</span>
+            </header>
+            <div class="finding-note">Export was classified as a synchronous read; a repeated or lost request may produce a new current snapshot. That observable decision is not in FR-24.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Add one FR-24/NFR-6 consequence, or record that implication in the addendum.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Addendum still routes UI.Contracts through Story 6.2 after Story 6.8 exists</h3>
+              <span class="finding-location">addendum §4.2, E-3; sprint-change-proposal-2026-09-02.md</span>
+            </header>
+            <div class="finding-note">2026-09-02 added Story 6.8 as the UI.Contracts split. Addendum §4.2 still routes through Story 6.2 and “33 stories.”</div>
+            <div class="finding-fix"><strong>Fix:</strong> Update addendum §4.2, E-3, and the evidence index to Story 6.8 and the post-09-02 story count.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">AD-33 matrix can be read as widening confirmation surfaces</h3>
+              <span class="finding-location">prd.md §3.2; 2026-08-01 readiness corrections</span>
+            </header>
+            <div class="finding-note">Confirmation sits on a collapsed “Chatbot/Web/CLI/MCP, where exposed” row. TPA is explicitly Denied for additive link while §3.2’s “administrative association operations” can be read as including those actions.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Tighten §3.2 one sentence each, or put that gloss in the addendum and cite AD-33 as non-widening.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">2026-07-31 freshness canonicalization is not indexed</h3>
+              <span class="finding-location">sprint-change-proposal-2026-07-31-freshness-trust-state-vocabulary.md</span>
+            </header>
+            <div class="finding-note">The producer-to-canonical map is now the practical product rule and is not in <code>prd.md</code> or the addendum evidence index.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Index the freshness SCP in the addendum; optionally add the producer-normalization table there or in architecture.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Folder-internal provenance disagrees with itself</h3>
+              <span class="finding-location">.memlog.md vs addendum E-17/E-18</span>
+            </header>
+            <div class="finding-note">Memlog still presents 2026-07-17 as the last reconciled SCP, while the addendum already records E-15–E-18 as current implementation provenance.</div>
+            <div class="finding-fix"><strong>Fix:</strong> Append memlog events for the E-17/E-18 addendum patch and for this drift review; do not back-date <code>prd.md</code> <code>updated</code>.</div>
+          </article>
+        </div>
+      </details>
+    </section>
 
     <div class="mechanical">
       <h3>Mechanical notes</h3>
       <ul>
-        <li><code>prd.md</code> frontmatter is <code>status: final</code>; the missing external handoff was explicitly waived for this PRD closeout.</li>
-        <li>FR IDs are contiguous from FR-1 through FR-22.</li>
-        <li>Success metric IDs are contiguous from SM-1 through SM-4, with SM-C1 and SM-C2 counter-metrics present.</li>
-        <li>No <code>[ASSUMPTION]</code> or <code>[NOTE FOR PM]</code> markers remain in <code>prd.md</code>.</li>
-        <li>No <code>addendum.md</code> is currently present.</li>
+        <li>Frontmatter is <code>status: final</code> with <code>updated: 2026-07-15</code>. The addendum’s controlling readiness row is E-17 / E-18 (2026-08-02 / 2026-08-03).</li>
+        <li>FR-1–FR-24, NFR-1–NFR-11, UJ-1–UJ-5, SM-1–SM-8, and SM-C1–SM-C4 are contiguous and unique.</li>
+        <li>Cross-references that do not resolve: SM-7 “defined above”; “relink” in §3.2/FR-21 (no FR); “Context Reference” (no glossary entry).</li>
+        <li>No inline <code>[ASSUMPTION]</code> or <code>[NOTE FOR PM]</code> markers — a scope-honesty gap, not a clean bill of health.</li>
+        <li>Every UJ has a named protagonist. Recovery Action Code <code>RequestPreview</code> is defined and never assigned a binding trigger.</li>
+        <li>Glossary drift to watch: “read-model-confirmed” variants; “relink” vs “link” vs “move.”</li>
       </ul>
     </div>
 
     <footer class="report-footer">
       <div class="meta">
         <span>Rubric: .agents/skills/bmad-prd/assets/prd-validation-checklist.md</span>
-        <span>Run: 2026-05-24T16:52:00+02:00</span>
+        <span>Generated: 2026-09-08T11:29:00+02:00</span>
       </div>
     </footer>
   </div>
