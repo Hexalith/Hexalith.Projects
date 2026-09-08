@@ -681,3 +681,12 @@ decision: 2026-09-07 Owner decisions, three parts. (1) Coordinate - move to Even
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md`
   summary: Set a retention or LFS policy for binary packages in `qualification-evidence/` bundles.
   evidence: Eight `.nupkg`/`.snupkg` files are retained; the bundle `.gitattributes` marks them `binary` but nothing LFS-tracks them; this is the fourth retained bundle and no bundle or index states any pruning policy, so growth is unbounded by design.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
+  summary: Allowlist live `answers.core` keys the same way legacy import allowlists `_CORE_KEYS`.
+  evidence: `merge_config` still writes every non-user core answer onto the shared root, so a crafted answers file can overwrite another module section. This is preserved vendor success behavior, not an atomicity regression.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
+  summary: Reconcile help-CSV `HEADER` (`after`/`before`) with production `preceded-by`/`followed-by` columns.
+  evidence: `render_csv` keeps the target header and appends source rows, so a real asset merge can produce mixed column shapes. The vendor document shape was preserved by this story.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
+  summary: Copy root `user_name` / `communication_language` into `config.user.yaml` when they are stripped from `config.yaml`.
+  evidence: `extract_user_settings` only reads answers, so an existing shared file can lose those values on a successful pair publish. Same vendor behavior as before this story.

@@ -56,6 +56,11 @@ jobs:
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 .agents/skills/bmad-build-auto/scripts/tests/test_workspace_ownership.py
 
+      - name: Validate BMAD legacy cleanup atomicity
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 .agents/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py
+
       - name: Validate BMAD merge atomicity
         env:
           PYTHONDONTWRITEBYTECODE: '1'
@@ -63,11 +68,6 @@ jobs:
           python3 -m venv "${RUNNER_TEMP}/bmad-merge-tests"
           "${RUNNER_TEMP}/bmad-merge-tests/bin/python" -m pip install --disable-pip-version-check pyyaml==6.0.3
           "${RUNNER_TEMP}/bmad-merge-tests/bin/python" .agents/skills/bmad-module-builder/scripts/tests/test-merge-atomicity.py
-
-      - name: Validate BMAD legacy cleanup atomicity
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-        run: python3 .agents/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py
 
       - name: Validate CI/CD invariants
         shell: pwsh
