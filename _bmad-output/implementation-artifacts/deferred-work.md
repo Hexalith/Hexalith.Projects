@@ -690,3 +690,6 @@ decision: 2026-09-07 Owner decisions, three parts. (1) Coordinate - move to Even
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Copy root `user_name` / `communication_language` into `config.user.yaml` when they are stripped from `config.yaml`.
   evidence: `extract_user_settings` only reads answers, so an existing shared file can lose those values on a successful pair publish. Same vendor behavior as before this story.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-ci-cd-2.md`
+  summary: Harden manual release publication and exact GitHub/NuGet post-publication verification.
+  evidence: Split at human request because release planning, frozen/no-op routing, duplicate preflight, strict publication, and public verification are independently shippable after package-only CI and candidate validation; exact-green-source gating keeps release blocked meanwhile.
