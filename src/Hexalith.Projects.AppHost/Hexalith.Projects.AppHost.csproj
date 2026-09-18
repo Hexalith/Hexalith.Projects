@@ -12,11 +12,13 @@
     <ProjectReference Include="..\Hexalith.Projects.UI\Hexalith.Projects.UI.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.Workers\Hexalith.Projects.Workers.csproj" />
     <ProjectReference Include="..\..\tests\Hexalith.Projects.E2E.Fixtures\Hexalith.Projects.E2E.Fixtures.csproj" IsAspireProjectResource="false" />
-    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Aspire\Hexalith.EventStore.Aspire.csproj" IsAspireProjectResource="false" />
+    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Aspire\Hexalith.EventStore.Aspire.csproj" IsAspireProjectResource="false" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
+    <!-- The two executable references below remain Aspire resources in every mode. -->
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore\Hexalith.EventStore.csproj" />
     <ProjectReference Include="$(HexalithTenantsRoot)\src\Hexalith.Tenants\Hexalith.Tenants.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />
+    <PackageReference Include="Hexalith.EventStore.Aspire" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
   </ItemGroup>
 </Project>

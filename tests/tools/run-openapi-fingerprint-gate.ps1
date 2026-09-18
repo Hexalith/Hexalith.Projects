@@ -43,14 +43,23 @@ if (-not (Test-Path $clientTests)) {
 }
 
 # The ClientGenerationTests class carries the spine-driven generation, provenance, and drift-detection
-# assertions (VerifyCurrentDetailed current + IsCurrent drift detection). Running it IS the gate.
+# assertions (VerifyCurrentDetailed current + IsCurrent drift detection). Build first, then invoke the
+# xUnit v3 Microsoft.Testing.Platform assembly directly: project-level VSTest --filter syntax is not
+# supported when global.json selects Microsoft.Testing.Platform.
 Push-Location $repositoryRoot
 try {
-    dotnet test $clientTests `
-        --configuration Release `
-        -warnaserror `
-        --filter 'FullyQualifiedName~Hexalith.Projects.Client.Tests.ClientGenerationTests'
+    dotnet build $clientTests --configuration Release -warnaserror
     $exitCode = $LASTEXITCODE
+    if ($exitCode -eq 0) {
+        $testAssembly = Join-Path $repositoryRoot 'tests/Hexalith.Projects.Client.Tests/bin/Release/net10.0/Hexalith.Projects.Client.Tests.dll'
+        $testOutput = @(& dotnet $testAssembly -class 'Hexalith.Projects.Client.Tests.ClientGenerationTests' 2>&1)
+        $exitCode = $LASTEXITCODE
+        $testOutput | ForEach-Object { Write-Host $_ }
+        if ($exitCode -eq 0 -and ($testOutput -join "`n") -notmatch 'Total:\s*[1-9][0-9]*\b') {
+            Write-Host 'openapi-fingerprint-gate: FAILED — the ClientGenerationTests selector executed zero tests.' -ForegroundColor Red
+            $exitCode = 1
+        }
+    }
 }
 finally {
     Pop-Location

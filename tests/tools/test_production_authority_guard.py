@@ -176,8 +176,8 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
     def test_bmad_workflows_and_ci_consume_the_guard(self) -> None:
         persistent_fact = '"file:{project-root}/**/project-context.md"'
         for path in (
-            PROJECT_ROOT / ".agents" / "skills" / "bmad-create-story" / "customize.toml",
-            PROJECT_ROOT / ".agents" / "skills" / "bmad-sprint-planning" / "customize.toml",
+            PROJECT_ROOT / "_bmad" / "custom" / "bmad-spec.toml",
+            PROJECT_ROOT / "_bmad" / "custom" / "bmad-sprint-planning.toml",
         ):
             self.assertIn(persistent_fact, path.read_text(encoding="utf-8"), str(path))
 

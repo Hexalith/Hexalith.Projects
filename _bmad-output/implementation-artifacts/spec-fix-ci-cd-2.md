@@ -2,7 +2,7 @@
 title: 'Repair package-only Projects CI and package-candidate validation'
 type: 'bugfix'
 created: '2026-09-18'
-status: 'ready-for-dev'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 1
 baseline_commit: '1b154fde25a33b7af6dfcac75b26f1694d9bd3fb'
@@ -50,11 +50,11 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `Directory.Build.props`, `Directory.Packages.props`, `src/**/*.csproj`, `tests/**/*.csproj` -- enforce Debug-source/Release-package sibling libraries and exact four-package pins.
-- [ ] `src/Hexalith.Projects.Server/Folders/FoldersProjectFileReferenceDirectory.cs`, `tests/Hexalith.Projects.Server.Tests/ProjectFileReferenceDirectoryTests.cs`, `_bmad/custom/*.toml`, `tests/tools/test_production_authority_guard.py`, `global.json`, `tests/tools/run-openapi-fingerprint-gate.ps1` -- repair canonical wire, override, and MTP failures.
-- [ ] `tools/release-packages.json`, `scripts/pack-release-packages.py`, `scripts/validate-nuget-packages.py`, `scripts/validate-consumer-package-references.py` -- enforce inventory, dependencies, provenance, safe archives, compile assets, and real API probes.
-- [ ] `.github/workflows/ci.yml`, `tests/tools/run-ci-workflow-gates.ps1`, `tests/tools/run-package-dependency-gate.ps1` -- pin Builds, run shared package-only validation, retain SourceTools checks, and run fixtures before restore.
-- [ ] `tests/tools/test_release_package_tools.py` -- exercise every package-candidate matrix failure and the external-version-equals-candidate case.
+- [x] `Directory.Build.props`, `Directory.Packages.props`, `src/**/*.csproj`, `tests/**/*.csproj` -- enforce Debug-source/Release-package sibling libraries and exact four-package pins.
+- [x] `src/Hexalith.Projects.Server/Folders/FoldersProjectFileReferenceDirectory.cs`, `tests/Hexalith.Projects.Server.Tests/ProjectFileReferenceDirectoryTests.cs`, `_bmad/custom/*.toml`, `tests/tools/test_production_authority_guard.py`, `global.json`, `tests/tools/run-openapi-fingerprint-gate.ps1` -- repair canonical wire, override, and MTP failures.
+- [x] `tools/release-packages.json`, `scripts/pack-release-packages.py`, `scripts/validate-nuget-packages.py`, `scripts/validate-consumer-package-references.py` -- enforce inventory, dependencies, provenance, safe archives, compile assets, and real API probes.
+- [x] `.github/workflows/ci.yml`, `tests/tools/run-ci-workflow-gates.ps1`, `tests/tools/run-package-dependency-gate.ps1` -- pin Builds, run shared package-only validation, retain SourceTools checks, and run fixtures before restore.
+- [x] `tests/tools/test_release_package_tools.py` -- exercise every package-candidate matrix failure and the external-version-equals-candidate case.
 
 **Acceptance Criteria:**
 - Given current public upstream state, when CI runs, then package-only restore fails with the exact missing Conversations/Folders IDs while root-owned workflow and release-tool fixture tests still report independently.
@@ -110,6 +110,30 @@ context:
 | EC-13 | medium | bad_spec | This independently confirms BH-12: unexpected external dependencies are not compared with a complete allowed graph, despite the spec's exact-dependency claim. |
 | EC-14 | medium | patch | This independently confirms BH-17: the analyzer/private-assets invariant was removed and is not replaced by nuspec-only checks. |
 | EC-15 | low | patch | The success line reports only aggregate count/version/SHA, while the acceptance criterion asks each package ID to be reported with its exact version/source result. Emitting one verified line per manifest ID is a direct correction. |
+| R2-VG-1 | medium | patch | The fixtures can delete the consumer `dotnet build` call without failing because the only `run_consumer` test exits during restore. Add success-path command assertions and build-failure propagation coverage. |
+| R2-VG-2 | medium | patch | The semantic-release `-SkipPack` wrapper path and its normalization flag have no executable orchestration test. A hermetic command-sequence/failure-propagation fixture is a bounded correction. |
+| R2-EC-1 | medium | patch | `CI=true` still accepts an explicit `UseHexalithProjectReferences=true`, as direct MSBuild evaluation returned `true`. Add a build target that rejects source mode in CI or any non-Debug configuration. |
+| R2-EC-2 | false | reject | Approved CI and release callers build the exact checked-out source immediately before `--no-build` packing, and the packer owns/cleans the candidate directory. The hypothesized substituted binary is not reachable through an approved caller. |
+| R2-EC-3 | medium | patch | Archive safety validates paths and sizes but permits active payload roots such as `tools/`, `buildTransitive/`, or `runtimes/`. Reject those roots and cover the rejection hermetically. |
+| R2-EC-4 | medium | patch | Dependency elements accept attributes beyond `id`, `version`, and `exclude`, so restore semantics can differ while the exact-graph check passes. Reject all unexpected attributes and add a fixture. |
+| R2-EC-5 | low | patch | An explicitly supplied empty expected SHA silently falls back to `HEAD`. Distinguishing `None` from an empty string is a direct correction and preserves the intended omitted-argument behavior. |
+| R2-EC-6 | false | reject | carried from EC-9/BH-16: approved callers supply normal semantic-release or fixed CI versions, and `dotnet pack` rejects invalid NuGet versions before candidate validation. |
+| R2-EC-7 | low | reject | Normalization can leave an earlier archive rewritten when a later archive is malformed, but every caller stops before validation/publication and rerunning is idempotent. Transactional multi-archive replacement is disproportionate. |
+| R2-EC-8 | medium | patch | The non-`SkipPack` package gate regressed from a self-contained restore/build/pack gate to calling a `--no-build` packer, so clean-checkout use fails or consumes stale outputs. Restore the Release restore/build precondition in that mode. |
+| R2-EC-9 | low | reject | Current sibling references all use the `$(Hexalith*Root)` convention, and no relative-path bypass exists in the tree. General path-resolution logic for a hypothetical future convention is disproportionate. |
+| R2-EC-10 | medium | patch | The claimed negative matrix lacks active-payload, dependency-attribute, empty-pin, successful-build, and wrapper-orchestration fixtures. The surviving production patches require matching executable coverage. |
+| R2-BH-1 | false | reject | The gitlink differences are committed changes between the preserved baseline and current `HEAD`; `git status`, submodule status, and the protected-path diff prove this working tree did not modify `references/*`. |
+| R2-BH-2 | medium | defer | The `**/project-context.md` glob matches eight sibling contexts in addition to the Projects context and can inject contradictory planning facts. Its fix changes agent-context configuration, so it must be deferred by review policy. |
+| R2-BH-3 | medium | patch | This independently confirms R2-EC-1: text-based defaults do not enforce the frozen CI/Release package-only invariant against an explicit global property. |
+| R2-BH-4 | medium | patch | `global.json` selects MTP while `run-contract-spine-gates.ps1` still uses VSTest `--filter`; the local gate no longer proves its two intended classes ran. Convert it to direct xUnit v3 assembly selectors with nonzero-count checks. |
+| R2-BH-5 | medium | patch | The xUnit v3 runner exits zero for a missing `-class` selection (`Total: 0` was reproduced), so the OpenAPI gate can pass vacuously. Require a nonzero executed-test summary. |
+| R2-BH-6 | false | reject | carried from BH-13: candidate versions are fresh and exact, each consumer has an isolated global package folder, and NuGet source-mapping specificity selects `Hexalith.Projects*` over the public `*` fallback. |
+| R2-BH-7 | false | reject | Both pinned reusable CI/release workflows restore and build the exact checkout immediately before packing; after R2-EC-8 the local wrapper does too. No approved pack entry point stamps unrelated stale output. |
+| R2-BH-8 | false | reject | carried from BH-16/EC-9: invalid prerelease text is absent from approved callers and is rejected loudly by downstream NuGet tooling rather than published. |
+| R2-BH-9 | medium | patch | This independently confirms R2-EC-3: valid-path active payloads can pass the archive validator despite the safe-candidate claim. |
+| R2-BH-10 | medium | patch | This independently confirms R2-EC-4: unrecognized dependency attributes bypass the exact dependency contract. |
+| R2-BH-11 | medium | patch | The probe fixture accepts a package-name string literal and does not prove the build command remains. Lock each probe to its intended public symbol and cover consumer build success/failure. |
+| R2-BH-12 | low | reject | The standalone metadata validator accepts an `MZ`-prefixed fixture, but every publish path subsequently compiles the public API consumer and rejects a corrupt assembly. Full PE/CLI parsing is disproportionate duplicate validation. |
 
 ## Verification
 

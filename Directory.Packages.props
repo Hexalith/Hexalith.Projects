@@ -11,4 +11,17 @@
   <Import Project="$(Hexalith1BuildPackageProps)" Condition="Exists('$(Hexalith1BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
   <Import Project="$(Hexalith2BuildPackageProps)" Condition="Exists('$(Hexalith2BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
   <Import Project="$(Hexalith3BuildPackageProps)" Condition="'$(HexalithVersionsLoaded)' != 'true'" />
+  <ItemGroup>
+    <!-- The pinned shared catalog does not yet contain the complete Conversations/Folders
+         surface consumed by Projects. Keep these root-owned pins explicit until the shared
+         catalog can own all four as one published version set. -->
+    <PackageVersion Remove="Hexalith.Conversations.Client" />
+    <PackageVersion Remove="Hexalith.Conversations.Contracts" />
+    <PackageVersion Remove="Hexalith.Folders.Client" />
+    <PackageVersion Remove="Hexalith.Folders.Contracts" />
+    <PackageVersion Include="Hexalith.Conversations.Client" Version="1.0.0" />
+    <PackageVersion Include="Hexalith.Conversations.Contracts" Version="1.0.0" />
+    <PackageVersion Include="Hexalith.Folders.Client" Version="1.0.0" />
+    <PackageVersion Include="Hexalith.Folders.Contracts" Version="1.0.0" />
+  </ItemGroup>
 </Project>

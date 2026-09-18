@@ -693,3 +693,6 @@ decision: 2026-09-07 Owner decisions, three parts. (1) Coordinate - move to Even
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-ci-cd-2.md`
   summary: Harden manual release publication and exact GitHub/NuGet post-publication verification.
   evidence: Split at human request because release planning, frozen/no-op routing, duplicate preflight, strict publication, and public verification are independently shippable after package-only CI and candidate validation; exact-green-source gating keeps release blocked meanwhile.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-ci-cd-2.md`
+  summary: Narrow the BMad spec and sprint-planning persistent-context overrides to the Projects root context file.
+  evidence: The current `**/project-context.md` glob also matches eight sibling contexts under `references/`, which can inject contradictory planning facts; review policy defers fixes to agent-context configuration.

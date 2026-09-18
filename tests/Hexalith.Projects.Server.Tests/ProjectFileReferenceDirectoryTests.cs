@@ -8,6 +8,7 @@ namespace Hexalith.Projects.Server.Tests;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 
 using FoldersGeneratedClient = Hexalith.Folders.Client.Generated.Client;
@@ -38,28 +39,32 @@ public sealed class ProjectFileReferenceDirectoryTests
         // Only the metadata-only route is ever called; the content-bearing range-read route is never used.
         handler.RequestPaths.ShouldContain(path => path.Contains("/context/metadata", System.StringComparison.Ordinal));
         handler.RequestPaths.ShouldNotContain(path => path.Contains("/context/range-read", System.StringComparison.Ordinal));
+        using JsonDocument request = JsonDocument.Parse(handler.RequestBodies.ShouldHaveSingleItem());
+        JsonElement path = request.RootElement.GetProperty("paths")[0];
+        path.GetProperty("pathPolicyClass").GetString().ShouldBe("metadata_only");
+        path.GetProperty("unicodeNormalization").GetString().ShouldBe("NFC");
     }
 
     [Fact]
-    public async Task ValidateLink_RedactedFile_FailsClosed()
+    public async Task ValidateLink_ExcludedDirectTarget_UsesCanonicalNotFoundAndFailsClosedAsDenied()
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
-            new RecordingHandler(JsonResponse(HttpStatusCode.OK, MetadataJson("file", "redacted", stale: false))));
+            new RecordingHandler(JsonResponse(HttpStatusCode.NotFound, ProblemJson())));
 
         ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
 
-        result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Redacted);
+        result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Denied);
     }
 
     [Fact]
-    public async Task ValidateLink_ExcludedFile_FailsClosed()
+    public async Task ValidateLink_RestrictedDirectTarget_UsesCanonicalNotFoundAndFailsClosedAsDenied()
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
-            new RecordingHandler(JsonResponse(HttpStatusCode.OK, MetadataJson("file", "excluded", stale: false))));
+            new RecordingHandler(JsonResponse(HttpStatusCode.NotFound, ProblemJson())));
 
         ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
 
-        result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Redacted);
+        result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Denied);
     }
 
     [Fact]
@@ -88,7 +93,7 @@ public sealed class ProjectFileReferenceDirectoryTests
     public async Task ValidateLink_MissingFile_FailsClosedAsDenied()
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
-            new RecordingHandler(JsonResponse(HttpStatusCode.OK, EmptyMetadataJson())));
+            new RecordingHandler(JsonResponse(HttpStatusCode.NotFound, ProblemJson())));
 
         ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
 
@@ -96,7 +101,7 @@ public sealed class ProjectFileReferenceDirectoryTests
     }
 
     [Fact]
-    public async Task ValidateLink_FoldersSafeDenial_FailsClosedAsDenied()
+    public async Task ValidateLink_UnauthorizedDirectTarget_UsesCanonicalNotFoundAndFailsClosedAsDenied()
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
             new RecordingHandler(JsonResponse(HttpStatusCode.NotFound, ProblemJson())));
@@ -204,7 +209,7 @@ public sealed class ProjectFileReferenceDirectoryTests
               "path": {
                 "normalizedPath": "{{FilePath}}",
                 "displayName": "synthetic-note.md",
-                "pathPolicyClass": "tenant_sensitive_document",
+                "pathPolicyClass": "metadata_only",
                 "unicodeNormalization": "NFC"
               },
               "kind": "{{kind}}",
@@ -218,19 +223,6 @@ public sealed class ProjectFileReferenceDirectoryTests
             "observedAt": "2026-05-12T12:34:56Z",
             "projectionWatermark": "watermark_00000001",
             "stale": {{stale.ToString().ToLowerInvariant()}}
-          }
-        }
-        """;
-
-    private static string EmptyMetadataJson()
-        => """
-        {
-          "items": [],
-          "freshness": {
-            "readConsistency": "eventually_consistent",
-            "observedAt": "2026-05-12T12:34:56Z",
-            "projectionWatermark": "watermark_00000001",
-            "stale": false
           }
         }
         """;
@@ -255,10 +247,17 @@ public sealed class ProjectFileReferenceDirectoryTests
     {
         public List<string> RequestPaths { get; } = [];
 
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        public List<string> RequestBodies { get; } = [];
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             RequestPaths.Add(request.RequestUri?.AbsolutePath ?? string.Empty);
-            return Task.FromResult(response);
+            if (request.Content is not null)
+            {
+                RequestBodies.Add(await request.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false));
+            }
+
+            return response;
         }
     }
 

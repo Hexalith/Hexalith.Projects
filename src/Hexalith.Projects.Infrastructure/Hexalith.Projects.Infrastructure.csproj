@@ -8,11 +8,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Hexalith.Projects\Hexalith.Projects.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />
-    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Contracts\Hexalith.EventStore.Contracts.csproj" />
+    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Contracts\Hexalith.EventStore.Contracts.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Dapr.Client" />
     <PackageReference Include="Dapr.AspNetCore" />
+    <PackageReference Include="Hexalith.EventStore.Contracts" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

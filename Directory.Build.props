@@ -33,9 +33,16 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == '' and '$(CI)' == 'true'">false</UseHexalithProjectReferences>
     <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == '' and '$(Configuration)' == 'Debug'">true</UseHexalithProjectReferences>
     <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == ''">false</UseHexalithProjectReferences>
   </PropertyGroup>
+
+  <Target Name="RejectUnsafeHexalithProjectReferenceMode"
+          BeforeTargets="Restore;PrepareForBuild"
+          Condition="'$(UseHexalithProjectReferences)' == 'true' and ('$(CI)' == 'true' or '$(Configuration)' != 'Debug')">
+    <Error Text="Sibling project references are allowed only for local Debug builds; CI and non-Debug builds must use packages." />
+  </Target>
 
   <PropertyGroup>
     <!-- Release automation passes a Projects-specific version property instead of the global
@@ -66,6 +73,8 @@
     <PackageProjectUrl>https://github.com/Hexalith/Hexalith.Projects</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Hexalith/Hexalith.Projects</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Description>Tenant-scoped project workspace and context-resolution module for .NET built on Hexalith.EventStore.</Description>
     <PackageTags>projects;dapr;eventsourcing;dotnet;hexalith</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>

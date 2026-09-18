@@ -23,8 +23,6 @@ using Hexalith.Projects.Contracts.Identifiers;
 /// </summary>
 public sealed class FoldersProjectFileReferenceDirectory(FoldersClient foldersClient) : IProjectFileReferenceDirectory
 {
-    private const string DefaultPathPolicyClass = "tenant_sensitive_document";
-
     private readonly FoldersClient _foldersClient = foldersClient ?? throw new ArgumentNullException(nameof(foldersClient));
 
     /// <inheritdoc />
@@ -60,7 +58,7 @@ public sealed class FoldersProjectFileReferenceDirectory(FoldersClient foldersCl
                     {
                         NormalizedPath = normalizedPath,
                         DisplayName = DeriveDisplayName(normalizedPath),
-                        PathPolicyClass = DefaultPathPolicyClass,
+                        PathPolicyClass = PathMetadataPathPolicyClass.Metadata_only,
                         UnicodeNormalization = PathMetadataUnicodeNormalization.NFC,
                     },
                 ],

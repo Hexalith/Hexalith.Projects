@@ -9,10 +9,13 @@ $ciPath = Join-Path $workflowRoot 'ci.yml'
 $releasePath = Join-Path $workflowRoot 'release.yml'
 $solutionPath = Join-Path $repositoryRoot 'Hexalith.Projects.CI.slnx'
 $releaseConfigPath = Join-Path $repositoryRoot 'release.config.cjs'
+$directoryBuildPropsPath = Join-Path $repositoryRoot 'Directory.Build.props'
+$directoryPackagesPath = Join-Path $repositoryRoot 'Directory.Packages.props'
 $frontComposerGatePath = Join-Path $scriptRoot 'run-frontcomposer-inspect-gate.ps1'
 $openApiGatePath = Join-Path $scriptRoot 'run-openapi-fingerprint-gate.ps1'
 $managedE2EPath = Join-Path $repositoryRoot 'tests/e2e/run-live-apphost.sh'
 $failures = [System.Collections.Generic.List[string]]::new()
+$buildsExecutionSha = 'cb91511794c8898b738d85dc6c751f82b832cbc9'
 
 function Require-Match {
     param(
@@ -46,6 +49,9 @@ $ci = Get-Content -Path $ciPath -Raw
 $solution = Get-Content -Path $solutionPath -Raw
 $packageManifestPath = Join-Path $repositoryRoot 'tools/release-packages.json'
 $releaseConfig = Get-Content -Path $releaseConfigPath -Raw
+$directoryBuildProps = Get-Content -Path $directoryBuildPropsPath -Raw
+$directoryPackages = Get-Content -Path $directoryPackagesPath -Raw
+[xml] $directoryBuildPropsXml = $directoryBuildProps
 $frontComposerGate = Get-Content -Path $frontComposerGatePath -Raw
 $openApiGate = Get-Content -Path $openApiGatePath -Raw
 if (-not (Test-Path $managedE2EPath)) {
@@ -107,6 +113,31 @@ else {
         ) -join "`n"
         if ($ownershipStep -cne $expectedOwnershipStep) {
             $failures.Add('The Build Auto workspace ownership fixture must be an exact blocking name/env/run step with bytecode disabled.')
+        }
+    }
+
+    $packageFixtureStepMatches = [regex]::Matches(
+        $workflowGates,
+        '(?ms)^      - name: Validate release package tool fixtures\r?\n.*?(?=^      - |\z)'
+    )
+    if ($packageFixtureStepMatches.Count -ne 1) {
+        $failures.Add('workflow-gates must run exactly one release package tool fixture step before restore-capable jobs.')
+    }
+    else {
+        $packageFixtureStep = ($packageFixtureStepMatches[0].Value -replace "`r`n", "`n").TrimEnd([char[]] "`r`n")
+        $expectedPackageFixtureStep = @(
+            '      - name: Validate release package tool fixtures'
+            '        env:'
+            '          PYTHONDONTWRITEBYTECODE: ''1'''
+            '        run: python3 -m unittest tests/tools/test_release_package_tools.py -v'
+        ) -join "`n"
+        if ($packageFixtureStep -cne $expectedPackageFixtureStep) {
+            $failures.Add('The release package fixture must be an exact blocking name/env/run step with bytecode disabled.')
+        }
+
+        $ciInvariantIndex = $workflowGates.IndexOf('      - name: Validate CI/CD invariants', [System.StringComparison]::Ordinal)
+        if ($packageFixtureStepMatches[0].Index -ge $ciInvariantIndex -or $ciInvariantIndex -lt 0) {
+            $failures.Add('The hermetic package fixtures must run before CI/CD invariant validation.')
         }
     }
 }
@@ -176,6 +207,17 @@ Require-Match $ci "dapr-runtime-version:\s*'1\.18\.2'" 'CI must use the approved
 Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflow must run Integration.Tests separately.'
 Require-Match $ci '^\s*- name:\s*Validate accepted G-6 runtime/toolchain packet\s*$' 'CI must run the accepted G-6 packet validator after root submodules initialize.'
 Require-Match $ci 'validate-runtime-toolchain-evidence\.py\s*\r?\n\s*--workspace \.\s*\r?\n\s*--baseline references/Hexalith\.Builds/Tools/runtime-toolchain-baseline\.json\s*\r?\n\s*--packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet\.json' 'CI must validate the real bound G-6 packet.'
+Require-Match $ci ('uses:\s*Hexalith/Hexalith\.Builds/\.github/workflows/domain-ci\.yml@' + $buildsExecutionSha) 'CI must call the accepted package-aware domain-ci workflow SHA.'
+Require-Match $ci '(?ms)^  ci:\r?\n\s+needs:\s*workflow-gates\r?\n\s+uses:' 'The reusable restore/build job must wait for independent workflow and package fixtures.'
+Forbid-Match $ci 'uses:\s*Hexalith/Hexalith\.Builds/.+@main' 'CI must not execute mutable Hexalith.Builds actions or workflows.'
+foreach ($buildsCall in [regex]::Matches($ci, 'uses:\s*Hexalith/Hexalith\.Builds/[^\s]+@([^\s#]+)')) {
+    if ($buildsCall.Groups[1].Value -cne $buildsExecutionSha) {
+        $failures.Add("CI executes Hexalith.Builds at '$($buildsCall.Groups[1].Value)' instead of '$buildsExecutionSha'.")
+    }
+}
+Require-Match $ci '^\s*test-platform:\s*microsoft-testing-platform\s*$' 'CI must explicitly select Microsoft.Testing.Platform.'
+Require-Match $ci '^\s*run-consumer-validation:\s*true\s*$' 'CI must enable shared package and real-consumer validation.'
+Require-Match $ci '^\s*build-timeout-minutes:\s*30\s*$' 'CI must preserve the accepted 30-minute shared build timeout.'
 
 # The reusable callees run `dotnet restore "$SOLUTION"`: the input is one quoted
 # argument, so an embedded MSBuild switch becomes part of the project path (MSB1009).
@@ -201,7 +243,7 @@ foreach ($caller in @(@{ Name = 'ci.yml'; Text = $ci }, @{ Name = 'release.yml';
 Forbid-Match ($ci + "`n" + $release) '^\s*solution:.*-p:' 'A solution input must not embed MSBuild switches; the callee quotes it as a single argument.'
 Forbid-Match ($ci + "`n" + $release) '^\s*(solution|.*-p:.*):.*\$\{\{ github\.workspace \}\}' 'github.workspace is empty when a reusable-workflow `with:` is evaluated; never build a path from it there.'
 Require-Match $ci '^\s*cancel-in-progress:\s*\$\{\{ github\.event_name != ''push'' \|\| github\.ref != ''refs/heads/main'' \}\}\s*$' 'Main push/release workflows must never be cancelled by a newer run.'
-Require-Match $ci '^\s*package-gates:\s*$' 'CI must run the package dependency/restore gate.'
+Forbid-Match $ci '^\s*package-gates:\s*$' 'CI package creation and validation must stay in the accepted reusable workflow.'
 Require-Match $ci '^\s*e2e:\s*$' 'CI must include the scheduled E2E job.'
 Require-Match $ci "if:\s*\$\{\{ github\.event_name == 'schedule' \}\}" 'E2E must be limited to the scheduled lane.'
 Require-Match $ci 'npm --prefix tests/e2e ci --ignore-scripts' 'E2E must use the lockfile with lifecycle scripts disabled.'
@@ -247,6 +289,58 @@ Require-Match $frontComposerGate '--build' 'FrontComposer gate must build its ow
 Require-Match $openApiGate '--configuration Release' 'OpenAPI gate must build its compatibility owner in Release.'
 Require-Match $openApiGate '-warnaserror' 'OpenAPI gate must fail on build warnings.'
 Require-Match $releaseConfig 'run-package-dependency-gate\.ps1' 'Semantic release must validate prepared packages before publication.'
+
+# Release and CI always consume sibling libraries as packages. Only local Debug
+# builds may default back to source projects; AppHost executable resources are
+# intentionally outside this library policy.
+Require-Match $directoryBuildProps ([regex]::Escape("'`$(CI)' == 'true'") + '">false<') 'CI must force UseHexalithProjectReferences=false.'
+Require-Match $directoryBuildProps ([regex]::Escape("'`$(Configuration)' == 'Debug'") + '">true<') 'Only local Debug builds may default to sibling project references.'
+$referenceModeTargets = @($directoryBuildPropsXml.Project.Target | Where-Object { $_.Name -eq 'RejectUnsafeHexalithProjectReferenceMode' })
+$expectedReferenceModeCondition = "'`$(UseHexalithProjectReferences)' == 'true' and ('`$(CI)' == 'true' or '`$(Configuration)' != 'Debug')"
+if ($referenceModeTargets.Count -ne 1 -or
+    $referenceModeTargets[0].BeforeTargets -ne 'Restore;PrepareForBuild' -or
+    $referenceModeTargets[0].Condition -ne $expectedReferenceModeCondition -or
+    $null -eq $referenceModeTargets[0].Error) {
+    $failures.Add('Directory.Build.props must reject explicit source mode in CI and every non-Debug configuration before restore/build.')
+}
+foreach ($packageId in @('Hexalith.Conversations.Client', 'Hexalith.Conversations.Contracts', 'Hexalith.Folders.Client', 'Hexalith.Folders.Contracts')) {
+    Require-Match $directoryPackages ('<PackageVersion Include="' + [regex]::Escape($packageId) + '" Version="1\.0\.0"\s*/>') "$packageId must remain pinned to the unpublished 1.0.0 blocker version."
+}
+
+$projectFiles = Get-ChildItem -Path $repositoryRoot -Recurse -Filter '*.csproj' -File |
+    Where-Object { $_.FullName -notmatch '[\\/]references[\\/]' }
+foreach ($projectFile in $projectFiles) {
+    [xml] $projectXml = Get-Content -Path $projectFile.FullName -Raw
+    foreach ($reference in @($projectXml.Project.ItemGroup.ProjectReference)) {
+        if ($null -eq $reference -or $reference.Include -notlike '$(Hexalith*.csproj') {
+            continue
+        }
+
+        $normalizedInclude = $reference.Include -replace '\\', '/'
+        $isAppHostExecutable = $projectFile.Name -eq 'Hexalith.Projects.AppHost.csproj' -and
+            $normalizedInclude -in @('$(HexalithEventStoreRoot)/src/Hexalith.EventStore/Hexalith.EventStore.csproj', '$(HexalithTenantsRoot)/src/Hexalith.Tenants/Hexalith.Tenants.csproj')
+        $condition = if (-not [string]::IsNullOrWhiteSpace($reference.Condition)) { $reference.Condition } else { $reference.ParentNode.Condition }
+        if (-not $isAppHostExecutable -and $condition -ne "'`$(UseHexalithProjectReferences)' == 'true'") {
+            $failures.Add("$($projectFile.FullName.Substring($repositoryRoot.Length + 1)) has an unconditional sibling library ProjectReference: $($reference.Include)")
+        }
+
+        if (-not $isAppHostExecutable) {
+            $packageId = [System.IO.Path]::GetFileNameWithoutExtension($normalizedInclude)
+            $matchingPackageReferences = @($projectXml.Project.ItemGroup.PackageReference | Where-Object { $_.Include -eq $packageId })
+            $hasPackageModeReference = $false
+            foreach ($packageReference in $matchingPackageReferences) {
+                $packageCondition = if (-not [string]::IsNullOrWhiteSpace($packageReference.Condition)) { $packageReference.Condition } else { $packageReference.ParentNode.Condition }
+                if ($packageCondition -eq "'`$(UseHexalithProjectReferences)' != 'true'") {
+                    $hasPackageModeReference = $true
+                }
+            }
+
+            if (-not $hasPackageModeReference) {
+                $failures.Add("$($projectFile.FullName.Substring($repositoryRoot.Length + 1)) has no package-mode $packageId reference for sibling project $($reference.Include)")
+            }
+        }
+    }
+}
 
 Forbid-Match $ci '^\s*release:\s*$' 'CI must not own a release job; release.yml owns publication.'
 Forbid-Match $allWorkflows '^\s*submodules:\s*(true|recursive)\s*$' 'Recursive or implicit recursive submodule checkout is forbidden.'
