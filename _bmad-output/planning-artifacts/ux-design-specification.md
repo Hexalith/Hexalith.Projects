@@ -293,7 +293,7 @@ Web UX should be specified as FrontComposer-generated operational views:
 - Reference inventory view for linked conversations, folders, file references, and memories.
 - Resolution trace view showing candidate projects, reason codes, inclusion/exclusion states, and final outcome.
 - Audit timeline view showing metadata-only state changes and maintenance actions.
-- Maintenance action panels for safe operations such as archive, restore, relink, unlink, or re-run diagnostics.
+- Maintenance action panels for safe operations such as archive, restore, move, replace-folder, unlink, or re-run diagnostics.
 - Warning and error panels for fail-closed states such as `tenant_mismatch`, `unauthorized`, `stale`, `unavailable`, `conflict`, and `invalidReference`.
 
 CLI UX should use stable command structures and machine-readable output while preserving the same state and reason-code vocabulary.
@@ -415,7 +415,7 @@ The user completes the flow by either:
 - Exporting or copying safe diagnostic metadata for support handoff.
 - Recomputing a safe diagnostic from current authorized inputs.
 - Refreshing context through the synchronous, read-only `RefreshContext` action.
-- Admitting and monitoring a durable maintenance action such as archive, restore, relink, or unlink.
+- Admitting and monitoring a durable maintenance action such as archive, restore, move, replace-folder, or unlink.
 - Confirming that an action created the expected metadata-only audit evidence.
 
 The successful outcome is always explainable, tenant-scoped, and auditable.
@@ -599,7 +599,7 @@ flowchart TD
     G -- Unavailable --> H[Show bounded dependency guidance]
     G -- Complete or Partial --> I{resolutionResult}
     I -- NoMatch --> J[Show no-match reason codes]
-    I -- SingleCandidate --> K[Show candidate and reason codes; do not select or attach]
+    I -- SingleCandidate --> K[Show candidate and reason codes; do not treat as a selection; sole candidate shows accept/decline unless ConversationLinked resumption]
     I -- MultipleCandidates --> L[Show candidate comparison and reason codes]
     J --> M[Show Included or Excluded component evidence and safe next actions]
     K --> M
@@ -643,7 +643,7 @@ flowchart TD
 
 ### Journey 3: Confirm and Recover a Durable Maintenance Action
 
-Administrators archive, restore, relink, or unlink through a Confirmation Artifact and a pollable
+Administrators archive, restore, move, replace-folder, or unlink through a Confirmation Artifact and a pollable
 Durable Task. Admission, progress, recovery, cancellation, and completion are separate states.
 
 1. `RequestPreview` returns an opaque, single-use Confirmation Artifact that expires after 15
@@ -651,8 +651,12 @@ Durable Task. Admission, progress, recovery, cancellation, and completion are se
    current and proposed state, warnings, expected metadata-only audit evidence, and the payload
    exclusion guarantee.
 2. The administrator confirms or cancels. An expired, stale, replayed, tampered, actor-mismatched,
-   tenant-mismatched, or target-mismatched artifact admits no task and exposes only a safe error
+   tenant-mismatched, target-mismatched, session-mismatched, surface-mismatched, or
+   non-interactive-credential artifact admits no task and exposes only a safe error
    summary plus `RenewPreview`. Focus moves to that summary and then to the renewal control.
+   FR-8 Preview discloses counts for a Project User and `NoLoss`/`Loss` for an Administrator.
+   Quarantine inventory is a distinct empty/maintenance state. Reconciliation uses `TaskControl`
+   (no Preview, no artifact).
 3. Successful confirmation returns a Durable Task identifier. This acknowledges admission, not
    completion. If the admission response is lost, the surface uses `PollTask` with the idempotency
    identifier or safely retries the original confirmation; it never assumes failure or repeats the
@@ -685,14 +689,19 @@ Durable Tasks.
 
 | Admission class | Stable actions | UX contract |
 | --- | --- | --- |
-| Confirmation + Durable Task | `project.archive`, `project.restore`, `conversation.move`, `project-folder.replace`, `context-reference.unlink`, `resolution.confirm`, `project-proposal.confirm` | Request server Preview, present explicit confirm/cancel, consume one bound artifact, then monitor task truth |
-| Durable Task only | `project.create`, `project-setup.update`, `conversation.link`, `project-folder.set-initial`, `file-reference.link`, `memory.link` | Authorize, validate, and admit idempotently without a second confirmation; present task and recovery states |
-| Durable Task control | `task.cancel`, `task.reconcile` | Authorize against task/current checkpoint; reconciliation remains Administrator-only |
+| Confirmation + Durable Task | `project.archive`, `project.restore`, `conversation.move`, `project-folder.replace`, `context-reference.unlink`, `resolution.confirm`, `project-proposal.confirm` | Request server Preview, present explicit confirm/cancel, consume one bound artifact, then monitor task truth; artifact also binds session, surface, and authorization-evidence version |
+| Durable Task only | `project.create`, `project-setup.update`, `conversation.link`, `project-folder.set-initial`, `file-reference.link`, `memory.link` | Carrying valid Selection Evidence (FR-25); otherwise inferred and confirmation-required. `file-reference.link` to a foreign Folder is confirmation-required |
+| Durable Task control | `task.cancel`, `task.reconcile` | No artifact, no new task, original bindings only, audited; reconciliation Administrator-only (`TaskControl`) |
 | Synchronous read | list/open/resolve/context/refresh/validate/Conversation-start/audit/operator-read and `safe-diagnostic-export.create` | No Confirmation Artifact or Durable Task; Safe Diagnostic Export retains separate authorization and bounds |
+| Selection mint | `selection.mint` | Synchronous, session-bound, mints Selection Evidence, no Durable Task, no Confirmation Artifact |
+
+**Selection step.** The Projects-owned component on Chatbot enumerates permitted targets and mints
+Selection Evidence from the actor’s pick. List, open, and resolution never preselect a target.
+Missing, expired, consumed, or mismatched evidence yields `RequestPreview`.
 
 Inferred Conversation/File/Memory links and inferred initial Folder selection follow the
-confirmation-required policy applicable to that inferred action. Explicitly actor-selected additive
-actions remain task-only.
+confirmation-required policy applicable to that inferred action. Additive links and initial Folder
+set are task-only only when they carry valid Selection Evidence.
 
 ### Journey 4: Use MCP for Agent-Assisted Troubleshooting
 
@@ -704,16 +713,20 @@ flowchart TD
     B -- Synchronous read --> C[Return structured safe metadata]
     C --> D[Include raw fields: projectId, tenantId, state, references, reasonCodes, warnings, audit IDs]
     D --> E[Include short safe explanation]
-    B -- Confirmation + Durable Task --> F[Request single-use Confirmation Artifact]
+    B -- Confirmation + Durable Task --> GATE{A-7 and Story 8.11 gate open?}
+    GATE -- No --> CLOSED[Safe denial naming Web; show containment state]
+    GATE -- Yes --> F[Request single-use Confirmation Artifact]
     F --> G[Return scope, current versions, impact, warnings, expiry, and expected audit]
     G --> H{Authorized confirmation accepted?}
     H -- No --> I[Return safe rejection or RenewPreview and admit no task]
     H -- Yes --> J[Return pollable Durable Task ID]
     B -- Durable Task only --> J
     B -- Durable Task control --> J
+    B -- Selection mint --> CLOSED
     J --> K[Poll authoritative task and read model; return terminal result and audit ID]
     E --> L[End]
     I --> L
+    CLOSED --> L
     K --> L
 ```
 
@@ -769,7 +782,7 @@ Custom components should be minimized. Where needed, they should be Projects-spe
 
 **Usage:** Top of project detail, resolution trace, and maintenance views.
 
-**Anatomy:** Tenant label, project ID/name, lifecycle badge, warning count, last updated timestamp, mode indicator such as `read-only`, `dry-run`, or `maintenance`.
+**Anatomy:** Tenant label; opaque project ID always; Project name only for Project Users or Tenant-role callers holding descriptive-metadata inspection authorization; lifecycle badge; warning count; last updated timestamp; mode indicator such as `read-only`, `dry-run`, or `maintenance`.
 
 **States:** Active, archived, unavailable, unauthorized, stale warning, conflict warning.
 
@@ -781,7 +794,7 @@ Custom components should be minimized. Where needed, they should be Projects-spe
 
 **Usage:** Project detail and maintenance flows.
 
-**Anatomy:** Reference type, reference ID, bounded-context owner, inclusion state, health state, reason code, last checked timestamp, canonical freshness label, available safe actions.
+**Anatomy:** Reference type, opaque reference ID, bounded-context owner, inclusion state, health state, reason code, last checked timestamp, canonical freshness label, available safe actions. Titles and names appear only when owner-system read is current; otherwise opaque id plus a safe code.
 
 **States:** Included, excluded, unauthorized, unavailable, stale, archived, conflict, invalidReference. Evidence freshness uses exactly `Current`, `Stale`, `Rebuilding`, or `Unavailable` as visible labels over the lower-case machine codes `current`, `stale`, `rebuilding`, and `unavailable`. Producer-local synonyms are normalized at the reference-health boundary; authorization, redaction, and mixed-generation explanations remain visible through their dedicated state, failed-check, reason, and diagnostic fields.
 
@@ -805,7 +818,7 @@ Custom components should be minimized. Where needed, they should be Projects-spe
 
 **Usage:** Project detail, maintenance confirmation, and support handoff.
 
-**Anatomy:** Timestamp, actor/source surface, operation, previous state, new state, affected references, correlation ID, audit event ID.
+**Anatomy:** Timestamp, actor/source surface as opaque or Tenant-salted surrogate, operation, previous state, new state, affected references as opaque surrogates, correlation ID, audit event ID. Default operator views are Safe Metadata only.
 
 **States:** normal event, warning event, and failed action. Preview/dry-run observations are telemetry-only unless the operation is explicitly mapped to an approved FR-21/AD-26 durable audit category; the UX must not invent a generic durable dry-run event.
 
@@ -815,11 +828,11 @@ Custom components should be minimized. Where needed, they should be Projects-spe
 
 **Purpose:** Makes state-changing actions explicit, scoped, correctly classified, recoverable, and auditable where required.
 
-**Usage:** Archive, restore, relink, and unlink flows. Context refresh is not a maintenance action.
+**Usage:** Archive, restore, move, replace-folder, and unlink flows. Context refresh is not a maintenance action. Reconciliation uses `TaskControl` (no Preview, no artifact).
 
-**Anatomy:** Action name, `TaskOnly` or `ConfirmationRequired` mode, tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, applicable audit evidence, Durable Task ID and status, irreversible-checkpoint state, and canonical recovery actions. Only `ConfirmationRequired` mode renders server Preview, Confirmation Artifact expiry, and confirm/cancel controls.
+**Anatomy:** Action name, `TaskOnly`, `ConfirmationRequired`, or `TaskControl` mode, tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, applicable audit evidence, Durable Task ID and status, irreversible-checkpoint state, and canonical recovery actions. Only `ConfirmationRequired` mode renders server Preview, Confirmation Artifact expiry, and confirm/cancel controls. FR-8 Preview shows counts for a Project User and `NoLoss`/`Loss` for an Administrator.
 
-**States:** TaskOnly, Preview, ConfirmationRequired, ArtifactExpired, ArtifactRejected, TaskAdmitted, Pending, Running, WaitingForDependency, NeedsAttention, Succeeded, Rejected, Failed, and Cancelled.
+**States:** TaskOnly, TaskControl, Preview, ConfirmationRequired, ArtifactExpired, ArtifactRejected, TaskAdmitted, Pending, Running, WaitingForDependency, NeedsAttention, Succeeded, Rejected, Failed, and Cancelled.
 
 **Accessibility:** Destructive or risky actions have explicit labels and descriptions. Focus moves to safe validation summaries and renewal controls; task changes use restrained live-region announcements; every action is keyboard accessible; and status never depends only on color, position, animation, or elapsed time.
 
@@ -940,7 +953,7 @@ CLI navigation is command-based and should preserve predictable command grouping
 - `projects validate-references`
 - `projects audit`
 - `projects dry-run`
-- `projects archive|restore|relink|unlink`
+- `projects archive|restore|move|replace-folder|unlink`
 
 MCP navigation is resource/tool-based and should separate read-only resources from mutating tools.
 
@@ -985,11 +998,11 @@ Every state-changing action must end with metadata-only audit evidence including
 
 #### Safe Export Pattern
 
-Diagnostic export follows the exact authorization, synchronous snapshot, 1 MiB encoded-response, 500-reference, 100-audit-record, deterministic-ordering, component-marker, concurrency, audit, and no-retention contract defined by Safe Diagnostic Export. It is available through Web copy/download, CLI structured output, and MCP responses, never Chatbot.
+Diagnostic export follows the exact authorization, synchronous snapshot, 1 MiB encoded-response, 500-reference, 100-audit-record, deterministic-ordering, component-marker, concurrency, audit, and no-retention contract defined by Safe Diagnostic Export. Default fields are Safe Metadata, surrogates, Tenant-salted export actors, and enumerated reasons only. It is available through Web copy/download, CLI structured output, and MCP responses, never Chatbot.
 
 #### Confirmation Pattern
 
-Confirmations are required only for actions classified `Confirmation + Durable Task`. They use the single-use 15-minute Confirmation Artifact plus pollable Durable Task contract from Journey 3. Confirmation surfaces show tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, expected audit evidence, artifact expiry, and canonical recovery actions. Actions classified `Durable Task only` must not add this second confirmation.
+Confirmations are required only for actions classified `Confirmation + Durable Task`. They use the single-use 15-minute Confirmation Artifact plus pollable Durable Task contract from Journey 3. Confirmation surfaces show tenant and actor scope, target identifiers, current versions, current and proposed state, warnings, expected audit evidence, artifact expiry, and canonical recovery actions. Rejection includes expired, stale, replayed, tampered, actor-, tenant-, target-, session-, or surface-mismatched artifacts and a non-interactive credential. Sole-candidate confirmation shows accept and decline; `ReadOnlyCandidate` has no accept. Actions classified `Durable Task only` must not add this second confirmation. Selection mint is a separate Projects-owned Chatbot step.
 
 #### Cross-Surface Parity Pattern
 
@@ -1004,9 +1017,11 @@ pin; they do not manufacture or assume authority over the companion artifact.
 
 The companion artifact must specify and verify:
 
-- candidate presentation without preselection, proposal presentation, explicit confirm/cancel, and
-  safe handling of expired, stale, replayed, tampered, actor-, tenant-, and target-mismatched
-  Confirmation Artifacts;
+- candidate presentation without preselection, proposal presentation, the FR-25 selection step,
+  sole-candidate accept/decline, `ConversationLinked` exemption, `ReadOnlyCandidate`, Folder-read
+  versus Folder-manage capability states, explicit confirm/cancel, and safe handling of expired,
+  stale, replayed, tampered, actor-, tenant-, target-, session-, and surface-mismatched
+  Confirmation Artifacts and a non-interactive credential;
 - lost-response recovery, Durable Task polling, all task states, bounded dependency guidance,
   authorized `ResolveNeedsAttention`, cancellation before the irreversible checkpoint, immutable
   terminal states, and authoritative re-query before completion presentation;

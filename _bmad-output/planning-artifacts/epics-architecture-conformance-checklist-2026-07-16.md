@@ -2,7 +2,7 @@
 title: "Solution-Architect Conformance Checklist — Corrective Epics 6–8"
 project: Hexalith.Projects
 created: 2026-07-16
-purpose: "Conformance review of the 33 corrective stories and explicit prerequisite/evidence work packages against the Architecture Spine (AD-1..34) and external entry gates (G-1..G-6)."
+purpose: "Conformance review of the 35 corrective stories and explicit prerequisite/evidence work packages against the Architecture Spine (AD-1..34) and external entry gates (G-1..G-6)."
 authority: architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md
 reviews:
   - prds/prd-Hexalith.Projects-2026-05-24/prd.md
@@ -14,6 +14,7 @@ reviews:
   - implementation-readiness-traceability-matrix.md
   - implementation-readiness-report-2026-08-02-rerun-4.md
   - sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md
+  - sprint-change-proposal-2026-09-08.md
   - ../implementation-artifacts/sprint-status.yaml
 status: review-executed-conforms-with-notes-signature-pending
 ---
@@ -25,7 +26,7 @@ applicable ADs and G-1…G-6 entry gates, and **prevent** implicit sibling/platf
 rewrite, unsafe dual writes, or false target-dependency claims. This is a **planning conformance
 review** — no implementation is authorized. Historical Epics 1–5 are evidence, not review scope.
 
-**How to use.** Walk Section A once (applies to all 33 stories), confirm Section B gate and work-package status, then
+**How to use.** Walk Section A once (applies to all 35 stories), confirm Section B gate and work-package status, then
 tick Section C per story. Section D is the AD-1…34 coverage cross-check. Record the verdict in
 Section E. In this executed review, `[x]` means the **planning contract** was found conformant in the
 reviewed baseline. It does not mean a story, external gate, prerequisite package, or evidence row was
@@ -48,18 +49,29 @@ The review preserved those changes and used the SHA-256 values below, rather tha
 alone, to identify the exact corrected bytes. The checklist is the review output and is therefore
 not part of its own evidence baseline.
 
+### E-31 apply re-baseline (2026-09-08)
+
+After approved `_bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md` was applied,
+this checklist records SHA-256 of the **applied** bound artifacts. This is a planning-hash
+re-baseline only. It is not a new Solution Architect signature, not gate acceptance, and not
+`READY`. `prd.md` remains `c4aed9204d7585cd886ffdab37fc73f4dbd9d061286a922e6f550303c888430b`.
+Coverage is 25 FRs, 35 stories (8/16/11), and 64 matrix rows. The Spine indexes commit `2d9c75a`
+(G-6 toolchain only). An independent implementation-readiness rerun is required before any
+Epic 6–8 story is scheduled. The Section G packet below remains historical against the rerun-4
+bytes until an authorized Solution Architect signs the applied baseline.
+
 | Exact artifact path | SHA-256 / exact revision reviewed | Reviewer note |
 |---|---|---|
-| `_bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md` | `37a3306525f3efc241d84b0db0854c682d4278963750be28b4db92c6800c234d` | Final product contract; byte-unchanged by the rerun-4 correction |
-| `_bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/addendum.md` | `176b461b92915cff8b7a8c1128dd2b3fc5969faeb0e7fc82785c2418e28c909d` | E-17 is current `NOT READY`; E-18 records the approved internal correction without accepting a gate |
-| `_bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md` | `ce9fde5d3a600ecfb8ed1efb0abad1eb9e855b15bad4df77a4cfb38ead6cfa4f` | AD-1…AD-34 authority; byte-unchanged and no semantic edit required |
-| `_bmad-output/planning-artifacts/ux-design-specification.md` | `cc957fa8a9b82602d70aea56b32c63b7d9b5a3da9970dcd621c3913f1c2cbca6` | Current-only resolution recomputation, canonical state dimensions, telemetry-only generic Preview/dry-run observations, and external Chatbot boundary are corrected |
-| `_bmad-output/planning-artifacts/epics.md` | `6802a8e1464aa603816cfbdbfd9988833fd87cf9493fde106e1d679321a66298` | Rerun-4 provenance, literal Story 6.1 chain, stable finding IDs, Story 6.3 boundary, scheduling guard, and Epic 8 disposition contract are present |
-| `_bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` | `43c4717dff092eb074df62eec6094d04f6eb2488af9ba97b296ef0aaab514905` | Canonical 63-row AD-30 source; validator `not-available`; 19 pending, 42 blocked-external, 1 failed, 1 blocked, and 0 passed |
-| `_bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.md` | `dcc5ec5ced261a6a15f5b27ad36127d9f6a552b92f134928f80002bcf053b723` | Human view contains the same 63 unique stable row keys and rerun-4 containment |
-| `_bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02-rerun-4.md` | `2a05391d38845fc4bdcf1c4395a8974adf9322b0bd6a0dcc95cb6e823983d347` | Trigger evidence; verdict `NOT READY`, 24/24 FRs, 11 NFRs, and 11 findings |
-| `_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md` | `c6fea78b115f57b49e4f095a41f05870b1f23e6b72a70b9d90b54b70fda53416` | Approved 2026-08-03 and applied; authorizes internal correction only |
-| `_bmad-output/implementation-artifacts/sprint-status.yaml` | `8b5f929b1c2a7a7da3bb052d0e2b02a753d6da68a7249f9689d120df78604a63` | `production_authority_epics: [6, 7, 8]`; production stories and prerequisite packages remain blocked/open |
+| `_bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md` | `c4aed9204d7585cd886ffdab37fc73f4dbd9d061286a922e6f550303c888430b` | Final product contract; body unchanged by E-31 (`updated: 2026-09-08`, 25 FRs) |
+| `_bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/addendum.md` | `29f99a35dd7b133f4aa19c98e15b57f43c2c72291d6447e9c131f03d7f10a532` | E-17 remains `NOT READY`; E-31 is approved and `application_status: applied`; this row is the only addendum edit |
+| `_bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md` | `0d5f7c83f26cd5eb226f03c396bb64d30185029754c6ec5c97edb1625acc9905` | AD-1…AD-34 authority; FR-1 through FR-25; `selection.mint`; `updated: 2026-09-08`; `2d9c75a` indexed |
+| `_bmad-output/planning-artifacts/ux-design-specification.md` | `4d92afc29fd1314623ee9816c5bef4f29452a4f571ec8414ee7e253b75041ccb` | Five-class admission table; Selection step; Journey 4 closed-gate branch; Safe vs Descriptive split; no production `relink` |
+| `_bmad-output/planning-artifacts/epics.md` | `baea396b0436bbc7301891b03f6e6c5396205744a09d7c050458fea15dbb8c8b` | FR-1…25; 35 stories 8/16/11; Story 7.16 present; Story 8.11 AC 1 says `FR-1…25` |
+| `_bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml` | `e344c585dcf2162f26ad37b76e94723bbdfcf9c80eac4778d5634bb686b12425` | Canonical 64-row AD-30 source (`FR-1..FR-25`); row `fr-25` present; 0 passed |
+| `_bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.md` | `b31cf29c9200418e21bb49c8c5d65da5d0c004e32cd4ec7642b3cc76690d0067` | Human view contains the same 64 unique stable row keys |
+| `_bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02-rerun-4.md` | `2a05391d38845fc4bdcf1c4395a8974adf9322b0bd6a0dcc95cb6e823983d347` | Historical trigger evidence; verdict `NOT READY`; superseded for product rules by the 2026-09-08 PRD |
+| `_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md` | `c6fea78b115f57b49e4f095a41f05870b1f23e6b72a70b9d90b54b70fda53416` | Historical approved internal correction; E-31 is the current product-rule landing |
+| `_bmad-output/implementation-artifacts/sprint-status.yaml` | `78879cfa6147c54fcbe0f9d9019be859af145b012b90d6ea5e626a89231a6563` | `production_authority_epics: [6, 7, 8]`; Story 7.16 `backlog`; no new Epic 6–8 scheduling |
 | `_bmad-output/project-context.md` | `0a56aca34ae3be397e6d8499c0ba82c7b1c8562ba3c7e30011af4dcfc9c83156` | Story-creation and sprint-reconciliation guard instructions are active |
 | `tools/planning/validate_production_authority.py` | `ba0d421178aac1c971468a9323f93a230373ba5de98f17ce5849b22e77454163` | Fail-closed scheduling validator |
 | `tests/tools/test_production_authority_guard.py` | `4045405d9032a75d3e22b6094467ccd2336dfbc3b6624be5c89bf26d896e7d37` | Deterministic positive, negative, mutation, CLI, workflow-consumption, and CI tests |
@@ -76,7 +88,7 @@ not part of its own evidence baseline.
 
 ## Section A — Cross-cutting conformance gate (applies to EVERY corrective story)
 
-These invariants bind all 33 stories regardless of their own AD list. A single failure here is a
+These invariants bind all 35 stories regardless of their own AD list. A single failure here is a
 blocking finding.
 
 - [x] **A1 — No platform-runtime reimplementation (AD-1).** Each story consumes hosting, persistence,
@@ -143,12 +155,12 @@ while its gate is unmet; it may still pass *planning* conformance (spec correctn
 
 | Gate | Unblocks | Blocked stories/packages (primary) | Accountable owner route | Reviewed status (2026-08-03) |
 |---|---|---|---|---|
-| **G-1** platform Durable Task + Confirmation Artifact engine (AD-4/9/13) | all durable writes | 7.1-P2, 7.1–7.15, 6.7 command path, 8.10 | EventStore Owner + Platform Owner | **OPEN / BLOCKING** — no accepted capability record |
-| **G-2** sibling owner contracts (expected-version, idempotency, receipt/status, batch-read, compensation) (AD-12) | cross-context sagas | 7.1-P2, 7.1, 7.3–7.12, 7.14–7.15, 6.7; applicable P3 journeys | Conversations, Folders, and Memories Owners + Solution Architect | **OPEN / BLOCKING** — AR-G1…G4 are subsumed, not accepted |
+| **G-1** platform Durable Task + Confirmation Artifact engine (AD-4/9/13) | all durable writes | 7.1-P2, 7.1–7.16, 6.7 command path, 8.10 | EventStore Owner + Platform Owner | **OPEN / BLOCKING** — no accepted capability record |
+| **G-2** sibling owner contracts (expected-version, idempotency, receipt/status, batch-read, compensation) (AD-12) | cross-context sagas | 7.1-P2, 7.1, 7.3–7.12, 7.14–7.16, 6.7; applicable P3 journeys | Conversations, Folders, and Memories Owners + Solution Architect | **OPEN / BLOCKING** — AR-G1…G4 are subsumed, not accepted |
 | **G-3** FrontComposer adapters + 4.0.0/4.0.1 disposition (descriptor/schema/credential/MCP parity) | generated Web/CLI/MCP surfaces | 6.5/6.6, 8.3-P1/P2/P3, 8.3–8.5, 8.8-P2, 8.8 | FrontComposer/Web Owner + Platform Adapter Owners | **OPEN / BLOCKING** — no accepted G-3 disposition |
 | **G-4** platform composition runner + `hexalith-evidence` tool (AD-25/AD-30) | fixtures, CI, package manifests, evidence gate | 6.1-P0/P4, 8.3-P1/P2/P3, 8.1, 8.11, all evidence rows | Builds Owner + Platform Owner + Test Architect | **OPEN / BLOCKING** — tool `not-available`; recorded candidates are unaccepted |
 | **G-5** identity/KMS/secrets/telemetry bindings (AD-20/AD-28) | auth, encryption, admission | 6.1-P2/P3, 6.5/6.6, 8.6, 8.8-P1, 8.11-P1/P2, NFR-2 | Identity/Security Owner + Security/KMS Owner + Platform Owner | **OPEN / BLOCKING** — no accepted G-5 evidence |
-| **G-6** runtime/toolchain alignment (Dapr runtime↔SDK, Fluent UI RC, CommunityToolkit, NSubstitute RC, Fluxor governance) | affected build/UI/evidence lanes | 8.3-P1, 8.3, 8.7, 7.15 and any affected runner lane | Builds Owner + Platform Owner + FrontComposer/Web Owner | **OPEN / BLOCKING** — no accepted G-6 disposition |
+| **G-6** runtime/toolchain alignment (Dapr runtime↔SDK, Fluent UI RC, CommunityToolkit, NSubstitute RC, Fluxor governance) | affected build/UI/evidence lanes | 8.3-P1, 8.3, 8.7, 7.15 and any affected runner lane | Builds Owner + Platform Owner + FrontComposer/Web Owner | **INDEXED / TOOLCHAIN ONLY** — Spine and E-31 index commit `2d9c75a` (2026-09-06 packet); this is not acceptance of G-4, G-5, deployment, or release |
 
 - [x] **B-check:** every story's declared entry gate matches its actual dependencies (no story claims
       readiness ahead of an unmet gate; no story silently depends on an unpinned capability).
@@ -232,13 +244,15 @@ _Shared invariants 1–6 (AD-4/5/9/12/13/22/26) apply to every 7.x story — con
   - [x] `RequestPreview` validates the authorized Archived Project, authority, version, and exactly-one-Folder/replacement plan before issuing a bound artifact; only a later valid confirm atomically admits the task.
   - [x] Folder validity established **while Archived**; `ProjectFolderSet` before `ProjectRestored` in one commit; Folder-created/failed-activation → `NeedsAttention`, no auto-delete; no invalid Active exposed on stale/replay/cancel/duplicate/lost-response.
 - **7.15 Reconcile legacy/interrupted** — ADs 12,17,22,30 · Epic-7 gate + G-4/G-5/G-6
-  - [x] Compensating task per legacy record; no history rewrite/dual writer; unreconcilable → `NeedsAttention` (honest blocker, not false success); single-writer command cutover completes.
+  - [x] Compensating task per legacy record; no history rewrite/dual writer; unreconcilable → `NeedsAttention` (honest blocker, not false success); single-writer command cutover completes. Active-folderless records are quarantined, never auto-bound.
+- **7.16 Select an association target** — ADs 2,5,13,20,33 · Epic-7 gate + G-2/G-3/G-5 · **selection mint**
+  - [x] Chatbot Projects-owned component mints session-bound Selection Evidence; no mint/confirm API; 5-minute expiry; never on open/list/resolution/proposal; CLI/MCP-before-gate remain Inferred Associations.
   - _Verdict: ☐ conforms ☒ with-note ☐ blocking_
 
-**Epic 7 review note:** The 15 operation slices conform to AD-3…AD-23 as applicable and preserve
-the six shared durable-workflow invariants. Execution remains blocked by G-1/G-2, accepted Epic 6
+**Epic 7 review note:** The 16 operation slices conform to AD-3…AD-23 as applicable and preserve
+the eight shared durable-workflow invariants. Execution remains blocked by G-1/G-2, accepted Epic 6
 cutover inputs, and the open 7.1-P1/P2 packages. No prerequisite package is treated as delivered
-FR-1 value.
+FR-1 value. Story 7.16 planning text is present; it is not implemented or accepted.
 
 ### Epic 8 — Operators Run Projects Safely and Release Owners Decide from Evidence
 
@@ -319,7 +333,7 @@ each mapping is *substantive* (the story actually realizes the AD, not just cite
 | AD-2 | 6.5, 6.6, 8.3, 8.4, 8.5 | AD-19 | 6.1, 6.2, 6.5, 6.6, 8.2–8.5, 8.8 |
 | AD-3 | 6.1, 6.2, 7.1, 7.6, 7.14 | AD-20 | 6.1, 6.5, 6.6, 8.5, 8.6, 8.8 |
 | AD-4 | 7.13, 7.14, 8.10 | AD-21 | 8.1, 8.2, 8.9 |
-| AD-5 | 7.2, 7.4, 7.5, 7.8, 7.10–7.14 | AD-22 | 6.7, 7.1, 7.15 |
+| AD-5 | 7.2, 7.4, 7.5, 7.8, 7.10–7.14, 7.16 | AD-22 | 6.7, 7.1, 7.15 |
 | AD-6 | 6.7 | AD-23 | 7.14 |
 | AD-7 | 6.3, 6.4, 8.2 | AD-24 | 6.7, 8.7 |
 | AD-8 | 7.1, 7.12, 7.14 | AD-25 | 6.7, 8.7, 8.11 |
@@ -340,7 +354,7 @@ each mapping is *substantive* (the story actually realizes the AD, not just cite
 **Section D evidence record:** Each AD has at least one realizing acceptance criterion in the
 reviewed story text. In particular, AD-1 is substantive in Story 6.7's equivalence-gated retirement
 of legacy Projects runtime read plumbing; command-side retirement and package enforcement continue
-through Stories 7.15 and 8.7. AD-30 is substantive in Stories 8.1/8.11 and the 63-row canonical
+through Stories 7.15 and 8.7. AD-30 is substantive in Stories 8.1/8.11 and the 64-row canonical
 matrix. Coverage is a planning result only; the matrix validator remains unavailable and no evidence
 row is passed.
 
@@ -420,7 +434,12 @@ AI-assisted review.
 
 ## Section G — Human signoff packet
 
-**Packet status:** `review-executed-conforms-with-notes-signature-pending`
+**Packet status:** `e31-hashes-rebaselined-signature-pending`
+
+The 2026-08-03 Section G checks below remain the last executed SA-packet results against the
+rerun-4 bytes. They are **not** re-signed against the E-31 applied hashes. An authorized
+Solution Architect must sign the applied baseline separately. Implementation readiness remains
+`NOT READY`.
 
 **Decision presented for authorized human signoff:**
 
@@ -441,7 +460,7 @@ against those exact bytes:
 | Proposal Sections 5.1–5.13 applied | **PASS** — PRD/Spine preserved; E-17/E-18 provenance, rerun-4 epic authority, literal entry chain, UX current-only semantics, canonical state dimensions, audit/telemetry classification, Chatbot boundary, stable story traceability, scheduling guard, Story 6.3 boundary, Epic 8 disposition contract, and failed/missing evidence containment are present |
 | Architecture A1–A10 and per-story conformance | **PASS WITH NOTES** — no implicit sibling/platform authority, event rewrite, unsafe dual writer, forward dependency, vocabulary drift, or Spine semantic failure found; external execution inputs remain open |
 | AD-1…AD-34 substantive coverage | **PASS** — each decision retains at least one realizing AC; AD-1 remains substantive in 6.7 with command/package continuation through 7.15/8.7 |
-| Traceability identity and status integrity | **PASS** — 63 YAML keys, 63 unique Markdown keys, no duplicate key, exact key-set parity, 19 pending, 42 blocked-external, 1 failed, 1 blocked, and 0 passed |
+| Traceability identity and status integrity | **RE-BASELINED 2026-09-08** — 64 YAML keys, 64 unique Markdown keys, no duplicate key, exact key-set parity including `fr-25`, and 0 passed; counts are identity integrity only, not execution evidence |
 | Production-authority unit suite | **PASS** — `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests/tools/test_production_authority_guard.py -v`: 7/7 passed |
 | Active scheduling index | **PASS** — `python3 tools/planning/validate_production_authority.py --validate-index` returned `[6, 7, 8]` |
 | Positive story admission checks | **PASS** — Stories 6.1, 7.15, and 8.11 were accepted by the guard |

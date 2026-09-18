@@ -4,12 +4,12 @@ type: architecture-spine
 purpose: build-substrate
 altitude: initiative
 paradigm: Domain-centric EventStore DomainService with platform-owned runtime and presentation adapters
-scope: Hexalith.Projects v1 — FR-1 through FR-24 and NFR-1 through NFR-11
+scope: Hexalith.Projects v1 — FR-1 through FR-25 and NFR-1 through NFR-11
 status: final
 created: 2026-07-15
-updated: 2026-07-16
+updated: 2026-09-08
 binds:
-  - FR-1 through FR-24
+  - FR-1 through FR-25
   - NFR-1 through NFR-11
   - Epic-6
   - Epic-7
@@ -17,6 +17,7 @@ binds:
 sources:
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/addendum.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-16.md
   - _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-15.md
   - _bmad-output/analysis/hexalith-projects-codebase-audit-2026-07-14.md
@@ -91,7 +92,7 @@ Solid arrows are compile-time/package dependencies; dashed arrows are authentica
 
 ### AD-2 — [ADOPTED] Authority is assigned by bounded context and adapter role
 
-- **Binds:** FR-1 through FR-24; ARCH-002; CLIENT-001; MCP-001
+- **Binds:** FR-1 through FR-25; ARCH-002; CLIENT-001; MCP-001
 - **Prevents:** duplicated domain authority and authority expansion through a UI, CLI, MCP, Chatbot, or service caller.
 - **Rule:** Projects owns Project policy and stable Project contracts; EventStore/platform owns generic runtime and durable workflow; `Projects.UI.Contracts` owns descriptors; FrontComposer/platform hosts own runtime surfaces and credentials; Chatbot owns candidate/proposal presentation; Conversations, Folders, and Memories retain authority over their resources.
 
@@ -99,13 +100,13 @@ Solid arrows are compile-time/package dependencies; dashed arrows are authentica
 
 - **Binds:** FR-1, FR-2, FR-5, FR-8, FR-12, FR-16, FR-20, FR-23; NFR-4
 - **Prevents:** a folderless Project appearing Active or usable as context while preserving recovery access to archived history.
-- **Rule:** Project lifecycle is exactly `Active` or `Archived`; no Project appears Active, becomes a candidate, or is usable as context until exactly one authorized Folder is bound and the required read model confirms completion. Pre-activation progress exists only as Durable Task state. An authorized Archived legacy record lacking valid Folder evidence may appear only in safe recovery/list/operator views as `Unavailable`, without references or context, so FR-23 can repair it.
+- **Rule:** Project lifecycle is exactly `Active` or `Archived`; no Project appears Active, becomes a candidate, or is usable as context until exactly one authorized Folder is bound and the required read model confirms completion. Pre-activation progress exists only as Durable Task state. An authorized Archived legacy record lacking valid Folder evidence may appear only in safe recovery/list/operator views as `Unavailable`, without references or context, so FR-23 can repair it. Permitted Projects are Folder-derived. Projects issues no Project-level grant and its workload identity holds no Folder authorization. A Folder is the Project Folder of at most one Active Project. Legacy Active folderless Projects are quarantined until a Tenant Project Administrator binds a Folder through FR-8 (Story 7.6); they are not auto-bound and are not FR-22 reconciliation.
 
 ### AD-4 — [ADOPTED] Durable Task state is the truth for consequential work
 
 - **Binds:** FR-1, FR-3, FR-4, FR-6 through FR-15, FR-21 through FR-23; NFR-3, NFR-4, NFR-8
 - **Prevents:** acknowledgement, notification, worker memory, or mutable terminal outcomes from being treated as durable completion.
-- **Rule:** Platform task records durably hold checkpoints, fenced worker ownership, leases, receipts, retries, the recorded irreversible checkpoint, compensation/reconciliation state, and terminal outcome. One durable transition authority rejects every transition absent from the state graph; restart, lease expiry, two-instance execution, and duplicate delivery converge from the last checkpoint. Active tasks remain pollable until terminal. `Succeeded`, `Rejected`, `Failed`, and `Cancelled` are immutable; `Rejected` is a known domain/owner denial, `Failed` is a known non-retryable technical failure, and an unknown partial outcome becomes recoverable `NeedsAttention`. Cancellation is allowed only before the irreversible checkpoint; afterward it returns conflict plus safe current status. HTTP `202` and SignalR never prove completion.
+- **Rule:** Platform task records durably hold checkpoints, fenced worker ownership, leases, receipts, retries, the recorded irreversible checkpoint, compensation/reconciliation state, and terminal outcome. One durable transition authority rejects every transition absent from the state graph; restart, lease expiry, two-instance execution, and duplicate delivery converge from the last checkpoint. Active tasks remain pollable until terminal. `Succeeded`, `Rejected`, `Failed`, and `Cancelled` are immutable; `Rejected` is a known domain/owner denial, `Failed` is a known non-retryable technical failure, and an unknown partial outcome becomes recoverable `NeedsAttention`. Cancellation is allowed only before the irreversible checkpoint; afterward it returns conflict plus safe current status. HTTP `202` and SignalR never prove completion. `task.reconcile` resumes, retries, or compensates from the recorded checkpoint against the original bindings and re-evaluates the original actor’s current authorization at commit, failing closed to `Rejected`. It creates no Confirmation Artifact and no new task and cannot admit new intent.
 
 ```mermaid
 stateDiagram-v2
@@ -131,9 +132,9 @@ stateDiagram-v2
 
 ### AD-5 — [ADOPTED] Confirmation-required admission uses bound artifacts and scoped idempotency
 
-- **Binds:** FR-4, FR-7, FR-8, FR-11, FR-14, FR-15, FR-23; NFR-1, NFR-4, NFR-8
+- **Binds:** FR-4, FR-6 through FR-11, FR-14, FR-15, FR-23, FR-25; NFR-1, NFR-4, NFR-8
 - **Prevents:** Boolean confirmation, replay, target substitution, changed-request reuse, duplicate work after a lost response, and unnecessary confirmation of actor-selected additive work.
-- **Rule:** The canonical action classification identifies confirmation-required actions: archive, restore, Conversation move, Folder replacement, unlink, ambiguous-resolution confirmation, and proposed-creation confirmation. They require a server-issued 15-minute Confirmation Artifact bound to Tenant, actor, action, targets, normalized request hash, Preview, and current versions. Actor-selected additive Conversation/File/Memory links, initial Folder setting, Setup update, and direct creation are task-only and require no second confirmation. Idempotency scope is `(Tenant, actor, operation, key)`; equivalent reuse returns the original task, changed-request reuse conflicts, and the terminal task result plus idempotency record remain together for at least 30 days or the longer result lifetime.
+- **Rule:** The canonical action classification identifies confirmation-required actions: archive, restore, Conversation move, Folder replacement, unlink, ambiguous-resolution confirmation, and proposed-creation confirmation. They require a server-issued 15-minute Confirmation Artifact bound to Tenant, actor, interactive session, surface, authorization-evidence version, action, targets, normalized request hash, Preview, and current versions. Additive Conversation/File/Memory links and initial Folder setting that carry valid Selection Evidence (FR-25) are task-only. Selection Evidence is minted only by the actor’s pick inside the Projects-owned component (Chatbot in v1), bound to Tenant, actor, interactive session, action, subject, target, and versions, single-use, 5-minute lifetime, never attached to open/list/resolution/proposal responses; there is no mint API. An association without that evidence is an Inferred Association and requires Preview and confirmation (`RequestPreview`). A `SingleCandidate` whose reasons include `ConversationLinked` is an existing membership, not an association to bind. Setup update and no-Folder creation remain task-only. Idempotency scope is `(Tenant, actor, operation, key)`; equivalent reuse returns the original task, changed-request reuse conflicts, and the terminal task result plus idempotency record remain together for at least 30 days or the longer result lifetime.
 
 ### AD-6 — [ADOPTED] Migration preserves history and repository authority
 
@@ -163,25 +164,25 @@ stateDiagram-v2
 
 - **Binds:** FR-6, FR-7, FR-11, FR-12, FR-14; NFR-1, NFR-4
 - **Prevents:** two writable membership representations and ambiguous Conversation ownership.
-- **Rule:** `Hexalith.Conversations` is the sole system of record for membership. Projects owns intent, actor/Project policy, orchestration, metadata-only audit, and a rebuildable Tenant-scoped reverse index; the Project aggregate stores no Conversation membership. Success requires authoritative Conversations state and Projects read-model convergence.
+- **Rule:** `Hexalith.Conversations` is the sole system of record for membership. Projects owns intent, actor/Project policy, orchestration, metadata-only audit, and a rebuildable Tenant-scoped reverse index; the Project aggregate stores no Conversation membership. Success requires authoritative Conversations state and Projects read-model convergence. After unlink, Conversations retains a prior-membership record for the Conversation lifetime. The record is an opaque receipt: it discloses the prior Project only to an actor permitted for that Project and otherwise appears as `PriorMembershipRecorded`. Any later link is an FR-7 move. Projects’ reverse index is rebuildable and Tenant-scoped and must be able to reconstruct that receipt.
 
 ### AD-11 — [ADOPTED] Projects owns references, not foreign resources or authority
 
 - **Binds:** FR-8 through FR-13, FR-16 through FR-18; NFR-1, NFR-5
 - **Prevents:** copied Folder/File/Memory payloads, duplicated resource lifecycle, and cached authorization granting writes.
-- **Rule:** The Project aggregate owns one Folder binding and File/Memory stable-reference membership. Folders and Memories own existence, payload, lifecycle, and authorization. Context contains only current authorized metadata; stale, rebuilding, unavailable, or excluded evidence is represented explicitly and foreign payloads are never copied.
+- **Rule:** The Project aggregate owns one Folder binding and File/Memory stable-reference membership. Folders and Memories own existence, payload, lifecycle, and authorization. Context contains only current authorized metadata; stale, rebuilding, unavailable, or excluded evidence is represented explicitly and foreign payloads are never copied. The same-Tenant predicate is evaluated before authorization for every reference, the acting session, resolution input, context component, audit row, and export row. Authorization on both ends never substitutes for it.
 
 ### AD-12 — [ADOPTED] Cross-context mutation uses an orchestrated forward-recovery saga
 
 - **Binds:** FR-1, FR-6 through FR-11, FR-14, FR-15, FR-23; NFR-3, NFR-4
 - **Prevents:** distributed-transaction assumptions, blind retries after lost responses, and destructive rollback of foreign resources.
-- **Rule:** Each owner call carries a deterministic task/step idempotency key and expected owner version. The task persists the owner's durable receipt before advancing and queries authoritative status before retrying an unknown response. Compensation uses only an explicit idempotent owner command; irreducible partial work becomes `NeedsAttention`. `Succeeded` requires authoritative end state and relevant read-model confirmation.
+- **Rule:** Each owner call carries a deterministic task/step idempotency key and expected owner version. The task persists the owner's durable receipt before advancing and queries authoritative status before retrying an unknown response. Compensation uses only an explicit idempotent owner command; irreducible partial work becomes `NeedsAttention`. `Succeeded` requires authoritative end state and relevant read-model confirmation. `task.reconcile` uses the same bound as AD-4: original bindings only, original-actor re-authorization at commit, no Confirmation Artifact, no new task, no new intent.
 
 ### AD-13 — [ADOPTED] Confirmation Artifacts are opaque durable platform records
 
-- **Binds:** FR-4, FR-7, FR-8, FR-11, FR-14, FR-15, FR-23; AGENT-001
+- **Binds:** FR-4, FR-7, FR-8, FR-11, FR-14, FR-15, FR-23, FR-25; AGENT-001
 - **Prevents:** token disclosure, stateless replay, actor/target substitution, and confirmation/task admission races.
-- **Rule:** The caller receives a high-entropy opaque token. Platform storage retains only its protected hash with Tenant, actor/delegation, action, targets, normalized request hash, Preview digest, owner versions, schema version, issue/expiry time, consumption state, idempotency scope, and admitted task ID. Validation, single-use consumption, and task admission are atomic. After consumption, an exactly equivalent retry with the same scoped idempotency key returns the retained admitted task; any unmatched token replay, altered request, stale version, expiry, or binding mismatch fails closed with `409` and admits no task.
+- **Rule:** The caller receives a high-entropy opaque token. Platform storage retains only its protected hash with Tenant, actor/delegation, action, targets, normalized request hash, Preview digest, owner versions, interactive session identifier, surface, authorization-evidence version, schema version, issue/expiry time, consumption state, idempotency scope, and admitted task ID. Issuance and consumption fail closed on a delegated-service or non-interactive claim. Consumption occurs only inside the Projects-owned confirmation component (no confirm API). Selection Evidence is the same opaque platform record class with a 5-minute lifetime and pick-time bindings (FR-25). Validation, single-use consumption, and task admission are atomic. After consumption, an exactly equivalent retry with the same scoped idempotency key returns the retained admitted task; any unmatched token replay, altered request, stale version, expiry, or binding mismatch fails closed with `409` and admits no task.
 
 ### AD-14 — [ADOPTED] Query trust is incremental and rebuildable
 
@@ -197,7 +198,7 @@ stateDiagram-v2
 
 ### AD-16 — [ADOPTED] Versioned .NET contracts are the sole editable contract authority
 
-- **Binds:** FR-1 through FR-24; NFR-10; ARCH-002; API-001; MCP-001
+- **Binds:** FR-1 through FR-25; NFR-10; ARCH-002; API-001; MCP-001
 - **Prevents:** editable C#, OpenAPI, JSON Schema, client, MCP, CLI, and runtime vocabularies from drifting.
 - **Rule:** Dependency-light `Hexalith.Projects.Contracts` owns commands, events, identifiers, DTOs, enums, action-admission classification, compatibility metadata, and all operation schemas, security semantics, and domain/wire vocabulary. It must not depend on FrontComposer Shell, Fluxor, Fluent UI, `Microsoft.AspNetCore.App`, Dapr, or Aspire. Platform generators derive and live-host-verify OpenAPI, clients, JSON schemas, MCP/CLI schemas, and runtime descriptors. Legacy shapes use explicit adapters. `Projects.UI.Contracts` depends inward on Contracts and contains presentation metadata only; it cannot redefine operations, vocabulary, or security. `Hexalith.Builds` is the sole version owner for NSwag and Fluxor.
 
@@ -224,13 +225,13 @@ flowchart LR
 
 ### AD-18 — [ADOPTED] Platform-generated ULIDs identify governed work
 
-- **Binds:** FR-1 through FR-24; ID-001
+- **Binds:** FR-1 through FR-25; ID-001
 - **Prevents:** GUID-shaped identifiers, caller-selected aggregate identity, and cross-surface identity drift.
-- **Rule:** The platform generates ULIDs for Project, task, message, correlation, causation, event, and receipt identities. ProjectId is reserved at task admission, stable across equivalent retries, and hidden until activation. Tenant and actor come from authenticated server context; aggregate identity is `Tenant/projects/ProjectId`. Owner-defined foreign identifiers remain opaque and are never GUID-parsed. Persisted legacy IDs remain readable.
+- **Rule:** The platform generates ULIDs for Project, task, message, correlation, causation, event, and receipt identities. ProjectId is reserved at task admission, stable across equivalent retries, and hidden until activation. Tenant and actor come from authenticated server context; aggregate identity is `Tenant/projects/ProjectId`. Owner-defined foreign identifiers remain opaque and are never GUID-parsed. Persisted legacy IDs remain readable. Safe-channel identifiers are opaque and non-derivable from path-shaped or slug-bearing upstream identities. Projects owns a rebuildable Tenant-scoped surrogate mapping. Safe Diagnostic Export actor identifiers are pseudonymous and Tenant-salted. Reason codes are enumerated and never embed names.
 
 ### AD-19 — [ADOPTED] One observable transport mapping binds every surface
 
-- **Binds:** FR-1 through FR-24; API-001; MCP-001; CLI-001
+- **Binds:** FR-1 through FR-25; API-001; MCP-001; CLI-001
 - **Prevents:** acknowledgement-as-success, unsafe disclosure, and surface-specific meanings for task or recovery state.
 - **Rule:** Authorized read computations return `200` with `Complete`, `Partial`, or `Unavailable`; denied and nonexistent collapse to safe `404` whose body exposes no protected logical `Denied` detail. New admission and an exactly equivalent retry bound to the retained original task return `202` with that task location; task polls return `200` for every status. Invalid input is `400`; stale/expired confirmation, unmatched consumed-artifact replay, post-irreversible cancellation, and changed-request idempotency are `409`, with `RenewPreview` for expired/stale confirmation; admission overload is `429`; failure to persist admission is `503` and creates no task. SignalR only sends a versioned re-query notification. `Rejected`, `Failed`, `NeedsAttention`, and `Cancelled` follow AD-4 semantics.
 
@@ -238,13 +239,13 @@ flowchart LR
 
 - **Binds:** all FRs; NFR-1, NFR-2; SEC-001; CLIENT-001
 - **Prevents:** service-only authority, raw-token forwarding, confused-deputy behavior, and production allow-all composition.
-- **Rule:** An immutable context carries server-derived Tenant, original actor, authenticated caller/workload service, delegation identifier/scopes/audience, and correlation/task IDs. Platform admission validates both credentials and fails startup on incomplete authority, audience, signing, or key configuration. Projects evaluates actor/action/Project policy; each owner reauthorizes its resource; queries filter again. Allow-all implementations exist only in explicit test composition.
+- **Rule:** An immutable context carries server-derived Tenant, original actor, authenticated caller/workload service, delegation identifier/scopes/audience, and correlation/task IDs. Platform admission validates both credentials and fails startup on incomplete authority, audience, signing, or key configuration. Projects evaluates actor/action/Project policy; each owner reauthorizes its resource; queries filter again. Allow-all implementations exist only in explicit test composition. The immutable context includes the interactive-session claim (A-7), Folders read/manage evidence with freshness no older than the interactive dependency timeout, and the per-Tenant descriptive-metadata inspection permission when present. Dual-principal adapters (Chatbot, Web, CLI) carry the actor’s session and cannot originate or self-confirm. A Service/Workflow Caller is any caller without that session and never receives Confirmation Artifacts or Selection Evidence.
 
 ### AD-21 — [ADOPTED] Safe Diagnostic Export is synchronous and non-retained
 
 - **Binds:** FR-21, FR-22, FR-24; NFR-1, NFR-6, NFR-7, NFR-8
 - **Prevents:** retained diagnostic payloads, unrecoverable asynchronous results, cursored extraction, and unbounded export load.
-- **Rule:** `projects.safe-diagnostic-export.v1` is a separately authorized synchronous read-only query exposed with equivalent semantics through Web, CLI, and MCP, never Chatbot. FR-22 read permission does not imply export permission. It uses one diagnostic snapshot and a platform-owned two-lease per-Tenant gate. A named stable reference sort and newest-first audit sort with stable tie-breaking produce one complete encoded response, including envelope and truncation metadata, no larger than 1 MiB, 500 reference rows, and 100 audit rows. The response reports included/omitted counts and safe truncation reason codes without excluded detail; unavailable components use safe markers. Every attempt/outcome is metadata-audited; bytes, cursors, and tasks are never stored or created.
+- **Rule:** `projects.safe-diagnostic-export.v1` is a separately authorized synchronous read-only query exposed with equivalent semantics through Web, CLI, and MCP, never Chatbot. FR-22 read permission does not imply export permission. It uses one diagnostic snapshot and a platform-owned two-lease per-Tenant gate. A named stable reference sort and newest-first audit sort with stable tie-breaking produce one complete encoded response, including envelope and truncation metadata, no larger than 1 MiB, 500 reference rows, and 100 audit rows. The response reports included/omitted counts and safe truncation reason codes without excluded detail; unavailable components use safe markers. Every attempt/outcome is metadata-audited; bytes, cursors, and tasks are never stored or created. The export schema uses surrogates and Tenant-salted actor identifiers and enumerated reasons only.
 
 ### AD-22 — [ADOPTED] Project creation events evolve additively
 
@@ -256,7 +257,7 @@ flowchart LR
 
 - **Binds:** FR-23; NFR-4
 - **Prevents:** an Archived Project becoming Active with missing or unauthorized Folder evidence.
-- **Rule:** Restore validates or establishes an authorized Folder while the Project remains Archived. A replacement emits `ProjectFolderSet` before `ProjectRestored` in one EventStore command commit. Task success waits for the Active read model; created-Folder/failed-activation work follows AD-8 recovery.
+- **Rule:** Restore validates or establishes an authorized Folder while the Project remains Archived. A replacement emits `ProjectFolderSet` before `ProjectRestored` in one EventStore command commit. Task success waits for the Active read model; created-Folder/failed-activation work follows AD-8 recovery. Replacement or same-name restore is a Tenant Project Administrator operation when the prior Folder is missing; a Project User may restore only by rebinding a prior Folder they manage; Tenant Operator rebinds the prior Folder only.
 
 ### AD-24 — [ADOPTED] The target Projects package graph is domain-only
 
@@ -274,7 +275,7 @@ flowchart LR
 
 - **Binds:** FR-21, FR-22, FR-24; NFR-1, NFR-8; SM-7, SM-8, SM-C4
 - **Prevents:** analytics availability or 30-day retention from controlling domain/audit truth.
-- **Rule:** Metadata-only audit truth retained at least 365 days includes task admission and terminal outcome; confirmation use/cancellation and stale/replay/tamper rejection; authorization denial; confirmed Project mutations/outcomes; manual reconciliation; export attempt/outcome; and stable upstream receipt IDs. Stable audit identities deduplicate equivalent idempotent retries. Intermediate task states, polls, retries, dependency latency, notifications, unused expiry, and read-only Resolution Traces are operational telemetry only. Separate versioned Projects/Chatbot outcome signals flow through a platform analytics bus to rolling 30-day aggregates and contain only state/reason/action codes, timestamps, ephemeral correlation, and correction category. Analytics is not domain history and never authorizes behavior.
+- **Rule:** Metadata-only audit truth retained at least 365 days includes task admission and terminal outcome; confirmation use/cancellation and stale/replay/tamper rejection; authorization denial; confirmed Project mutations/outcomes; manual reconciliation; export attempt/outcome; and stable upstream receipt IDs. Stable audit identities deduplicate equivalent idempotent retries. Intermediate task states, polls, retries, dependency latency, notifications, unused expiry, and read-only Resolution Traces are operational telemetry only. Separate versioned Projects/Chatbot outcome signals flow through a platform analytics bus to rolling 30-day aggregates and contain only state/reason/action codes, timestamps, ephemeral correlation, and correction category. Analytics is not domain history and never authorizes behavior. Descriptive-metadata inspection events are durable audit; traces and audit carry surrogates only.
 
 ### AD-27 — [ADOPTED] Platform admission owns back-pressure and dependency policy
 
@@ -292,13 +293,13 @@ flowchart LR
 
 - **Binds:** FR-21, FR-22, FR-24; NFR-1, NFR-9; MCP-001
 - **Prevents:** agent surfaces from bypassing actor authority, confirmation, admission, or release containment.
-- **Rule:** FrontComposer/platform composes MCP over the same versioned contracts and dual-principal authorization. MCP cannot confirm end-user resolution or proposal choices, bypass Preview/Confirmation/Task admission, or expand permissions. Consequential MCP mutation remains disabled until readiness and release gates pass. Exact tool inventory and interaction presentation belong to UX/API work under these limits.
+- **Rule:** FrontComposer/platform composes MCP over the same versioned contracts and dual-principal authorization. MCP cannot confirm end-user resolution or proposal choices, bypass Preview/Confirmation/Task admission, or expand permissions. MCP may read and control tasks until the consequential-MCP gate (Story 8.11 terminal acceptance + A-7). The gate never admits autonomous confirmation. Resolution and proposal confirmation remain Chatbot-only. Exact tool inventory and interaction presentation belong to UX/API work under these limits.
 
 ### AD-30 — [ADOPTED] Release acceptance is machine-checkable and fail-closed
 
 - **Binds:** NFR-9 through NFR-11; Epic-6 through Epic-8; all audit P1/P2 findings
 - **Prevents:** implementation from starting on unresolved external gates and failed, skipped, or unavailable evidence from being represented as passing.
-- **Rule:** The canonical evidence source is `_bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml`, schema `hexalith.readiness-evidence.v1`; the required Markdown matrix is a human view over the same row identities. `Hexalith.Builds` owns the `hexalith-evidence validate` capability. Each stable row key maps requirement/finding, AD, UX journey, story, repository and named owner, pinned revision/dependencies/gates, environment/fixture, exact command, evidence artifact, estimate, status, and release disposition. Validation rejects duplicate/missing keys, unresolved placeholder values, absent owner/version/command/artifact, incomplete FR/NFR/P1/P2/release categories, failed critical evidence, unexplained critical skips, and `passed` for unavailable environments. Placeholder reconciliation is atomic and grants no implementation authority; no replacement story is created for execution or becomes `ready-for-dev`, and sprint reconciliation does not occur, until an independent superseding assessment returns exactly `READY`. Production, consequential autonomous MCP mutation, and proposed-Project confirmation remain blocked until Story 8.11 deployment/rollback evidence passes and Jerome and John record dated terminal acceptance; a blocker or unavailable environment cannot complete Story 8.11 or a critical release case.
+- **Rule:** The canonical evidence source is `_bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml`, schema `hexalith.readiness-evidence.v1`; the required Markdown matrix is a human view over the same row identities. `Hexalith.Builds` owns the `hexalith-evidence validate` capability. Each stable row key maps requirement/finding, AD, UX journey, story, repository and named owner, pinned revision/dependencies/gates, environment/fixture, exact command, evidence artifact, estimate, status, and release disposition. Validation rejects duplicate/missing keys, unresolved placeholder values, absent owner/version/command/artifact, incomplete FR/NFR/P1/P2/release categories, failed critical evidence, unexplained critical skips, and `passed` for unavailable environments. Placeholder reconciliation is atomic and grants no implementation authority; no replacement story is created for execution or becomes `ready-for-dev`, and sprint reconciliation does not occur, until an independent superseding assessment returns exactly `READY`. Production, consequential MCP confirmation by a human actor, MCP Selection Evidence, and proposed-Project confirmation on MCP remain blocked until Story 8.11 deployment/rollback evidence passes together with §9 A-7 and Jerome and John record dated terminal acceptance. Autonomous MCP confirmation and blanket service-identity mutation stay out of scope and are never enabled by that record; a blocker or unavailable environment cannot complete Story 8.11 or a critical release case.
 
 ### AD-31 — [ADOPTED] Canonical creation classifies metadata before admission
 
@@ -314,19 +315,28 @@ flowchart LR
 
 ### AD-33 — [ADOPTED] Action authorization is role-specific and surface-invariant
 
-- **Binds:** FR-1 through FR-24; NFR-1; SEC-001; CLIENT-001; MCP-001
+- **Binds:** FR-1 through FR-25; NFR-1; SEC-001; CLIENT-001; MCP-001
 - **Prevents:** Web, CLI, MCP, Chatbot, or delegated callers independently expanding an actor's authority.
 - **Rule:** Every adapter enforces the same action matrix after AD-20 authentication; action-specific policy and owner reauthorization may narrow it, never widen it. Delegated service/workflow callers inherit the original actor's authority and never gain end-user confirmation authority.
 
-| Action | Project User | Tenant Operator | Tenant Project Administrator |
-| --- | --- | --- | --- |
-| Confirm ambiguous resolution or proposed creation | Allowed | Denied | Denied |
-| Archive or restore | Allowed when action-authorized | Allowed when action-authorized | Allowed when action-authorized |
-| Add Conversation/File/Memory link or initially set Folder | Allowed | Denied | Denied |
-| Move/unlink or replace Folder | Allowed | Denied | Allowed |
-| Inspect pre-activation safe task status | Own permitted tasks through Chatbot | Allowed | Allowed |
-| Reconcile `NeedsAttention` | Denied | Denied | Allowed |
-| Safe Diagnostic Export through Web/CLI/MCP | Denied | Separately authorized | Separately authorized |
+| Action | Project User (Folder read) | Project User (Folder manage) | Tenant Operator | Tenant Project Administrator |
+| --- | --- | --- | --- | --- |
+| Open / list / resolve / context / explain / refresh / Conversation-start | Allowed (Chatbot; Folder-derived) | Allowed | Allowed (Web/CLI/MCP; Safe Metadata default) | Allowed (Web/CLI/MCP; Safe Metadata default) |
+| Inspect Descriptive Metadata | Allowed for permitted Projects | Allowed for permitted Projects | Separately authorized, audited | Separately authorized, audited |
+| Confirm ambiguous resolution or proposed creation | Denied | Allowed (Chatbot only) | Denied | Denied |
+| Select association target (`selection.mint`) | Denied | Allowed (Chatbot in v1) | Denied | Denied |
+| Create Project (`project.create`) | Allowed (no prior Project authority; created Folder names actor sole manager) | Allowed | Denied | Denied |
+| Update Setup (`project-setup.update`) | Denied | Allowed | Denied | Denied |
+| Archive or restore (rebind prior Folder) | Denied | Allowed | Allowed (Web; CLI after A-7; MCP after A-7 + gate) | Allowed (same surfaces) |
+| Restore with replacement or same-name Folder | Denied | Denied when Folder missing | Denied | Allowed under FR-8 |
+| Add Conversation/File/Memory link or initially set Folder | Denied | Allowed (Selection Evidence or confirmed inference) | Denied | Denied |
+| Move / unlink | Denied | Allowed | Denied | Allowed |
+| Replace Folder / bind quarantined legacy Folder | Denied | Allowed (manage on both; no reader loss) | Denied | Allowed (may reduce only if current Folder invalid/missing; `NoLoss`/`Loss`; rejected if Administrator is in the target reader set; designated-manager on create) |
+| Inspect pre-activation safe task status | Own permitted tasks through Chatbot | Own permitted tasks through Chatbot | Allowed (allow-list only) | Allowed (allow-list only) |
+| Reconcile `NeedsAttention` | Denied | Denied | Denied | Allowed (task-control; original bindings only) |
+| Safe Diagnostic Export | Denied | Denied | Separately authorized | Separately authorized |
+
+MCP follows AD-29: read and task control until the consequential-MCP gate; the gate never admits autonomous confirmation.
 
 ### AD-34 — [ADOPTED] Accessible completion is a release invariant
 
@@ -356,7 +366,7 @@ flowchart LR
 
 ## Stack
 
-Verified against the checked-out root configuration, centralized package catalog, checked-out sibling revisions, and published/clean package evidence on 2026-07-16. `Hexalith.EventStore package binding` re-verified and normalized under Story 6.1-P1 on 2026-07-18 against published/clean `3.70.1` evidence (Solution-Architect authorization: Jerome).
+Verified against the checked-out root configuration, centralized package catalog, checked-out sibling revisions, and published/clean package evidence on 2026-07-16. Toolchain pin indexed at commit `2d9c75a` (2026-09-06): G-6 accepted for the tuple in `_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json` only; this index is not a product-rule change. `Hexalith.EventStore package binding` re-verified and normalized under Story 6.1-P1 on 2026-07-18 against published/clean `3.70.1` evidence (Solution-Architect authorization: Jerome).
 
 ### Target and compatibility bindings
 
@@ -415,10 +425,11 @@ app.UseEventStoreDomainService();
 
 | Admission class | Stable action IDs | Contract |
 | --- | --- | --- |
-| Confirmation plus Durable Task | `project.archive`, `project.restore`, `conversation.move`, `project-folder.replace`, `context-reference.unlink`, `resolution.confirm`, `project-proposal.confirm` | AD-5 Preview and Confirmation Artifact, then idempotent task admission |
-| Durable Task only | `project.create`, `project-setup.update`, `conversation.link`, `project-folder.set-initial`, `file-reference.link`, `memory.link` | Actor-selected action; authorize, validate, and admit idempotently without a second confirmation |
-| Durable Task control | `task.cancel`, `task.reconcile` | Authorize against task/current checkpoint; AD-4 transition rules apply; reconciliation is Administrator-only |
+| Confirmation plus Durable Task | `project.archive`, `project.restore`, `conversation.move`, `project-folder.replace`, `context-reference.unlink`, `resolution.confirm`, `project-proposal.confirm` | AD-5 Preview and Confirmation Artifact (including session/surface/authorization-evidence binding), then idempotent task admission |
+| Durable Task only | `project.create`, `project-setup.update`, `conversation.link`, `project-folder.set-initial`, `file-reference.link`, `memory.link` | Carrying valid Selection Evidence (FR-25); otherwise inferred and confirmation-required. `file-reference.link` to a foreign Folder is confirmation-required |
+| Durable Task control | `task.cancel`, `task.reconcile` | No artifact, no new task, original bindings only; AD-4 transition rules apply; reconciliation is Administrator-only |
 | Synchronous read | list/open/resolve/context/refresh/validate/Conversation-start/audit/operator-read and `safe-diagnostic-export.create` | No task or Confirmation Artifact; export retains separate action authorization and AD-21 bounds |
+| Selection mint | `selection.mint` | Synchronous, session-bound, mints Selection Evidence; no Durable Task; no Confirmation Artifact |
 
 ### Repository-owned runner contract
 
@@ -470,10 +481,10 @@ flowchart TB
 | Gate | Required capability | Entry condition |
 | --- | --- | --- |
 | G-1 | EventStore/platform Durable Task engine and opaque Confirmation Artifact record | Repository-local approval, package/revision pin, durability and atomic-admission contract, restart/two-instance evidence; absent from current published/clean EventStore 3.70.1 API evidence (Story 6.1-P1 normalized the version pin only; the Durable Task engine and Confirmation Artifact capability itself remains unselected); stale local binaries are inadmissible |
-| G-2 | Conversations/Folders/Memories owner contracts | Pinned expected-version, deterministic idempotency, durable receipt/status query, safe batch-read, and explicit compensation capabilities required by each workflow |
+| G-2 | Conversations/Folders/Memories owner contracts | Pinned expected-version, deterministic idempotency, durable receipt/status query, safe batch-read, and explicit compensation capabilities required by each workflow. Folders: distinct read/manage levels; current-authorization query; reader-set coverage/delta query with versioned digest; create-only creation that names a sole manager or a designated manager (or no Tenant-default read). Conversations: Tenant-role recognition for move and prior-membership receipt. No degraded fallback (A-3). Identifier shape of Folders/Conversations/Memories identities for the Safe-channel surrogate map (AD-18) |
 | G-3 | FrontComposer runtime adapters | Reconcile root package-mode 4.0.0 with checked-out source 4.0.1 and record the patch disposition; then prove pinned descriptor discovery, generated Web/CLI/MCP schemas, real credential propagation, current MCP annotations/tasks, and authenticated parity |
 | G-4 | Platform development composition runner | Approved manifest schema/version; pinned .NET tool in the repository tool manifest; checked-in valid module manifest; repository-owned run/teardown commands; repository-relative paths; deterministic IDs; runner-owned identity/secrets; thin manifest-aware fixtures; clean-checkout Debug and CI package-mode proof for persisted, restart, two-instance, and authenticated Web/CLI/MCP lanes before removal of Projects AppHost/Aspire/runtime code |
-| G-5 | Platform identity, KMS, secrets, telemetry, and environment bindings | Fail-fast dual-principal admission, key rotation/revocation, encryption, health, deployment, and recovery evidence |
+| G-5 | Platform identity, KMS, secrets, telemetry, and environment bindings | Fail-fast dual-principal admission, key rotation/revocation, encryption, health, deployment, and recovery evidence; interactive-session claim (A-7); per-Tenant descriptive-metadata inspection permission (A-5) |
 | G-6 | Runtime/toolchain alignment | **Accepted 2026-09-06** for the exact tuple retained in `_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json`: .NET 10.0.400, Aspire SDK/CLI 13.5.3, Toolkit Dapr preview, Dapr CLI 1.18.0/runtime 1.18.2/.NET packages 1.18.5, Fluent UI RC5, NSubstitute 6.2.0, and Fluxor 6.11.0. Jérôme Piquot approved the explicitly non-support-table-listed Dapr exception as Builds, Platform, and FrontComposer/Web owner. This acceptance does not approve G-4, G-5, deployment, or release; Dapr remains catalog-only/not activated and Dapr.Workflow remains unselected pending G-1. |
 
 ## Capability → Architecture Map
@@ -491,6 +502,7 @@ flowchart TB
 | FR-21 Audit | Project/event and platform security-event projections | AD-21, AD-26, AD-30 |
 | FR-22 Operator read | FrontComposer/platform adapters over Projects contracts and read models | AD-2, AD-14, AD-19, AD-20, AD-29 |
 | FR-24 Safe Diagnostic Export | Synchronous Projects query plus platform lease and audit | AD-7, AD-19, AD-21, AD-26, AD-27 |
+| FR-25 Select Association Target | Projects-owned Chatbot selection component; Selection Evidence | AD-2, AD-5, AD-13, AD-20, AD-33 |
 | NFR-1 and NFR-2 Security/privacy/encryption | Platform identity/KMS/admission plus owner reauthorization | AD-11, AD-13, AD-20, AD-28 |
 | NFR-3 and NFR-4 Availability/durability | EventStore runtime, Durable Tasks, Project aggregate | AD-3, AD-4, AD-9, AD-12, AD-28 |
 | NFR-5 through NFR-7 Scale/bounds/back-pressure | Incremental read models, gateway/task admission, Projects contract bounds | AD-14, AD-15, AD-21, AD-27 |
