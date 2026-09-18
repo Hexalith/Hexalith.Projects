@@ -5,14 +5,28 @@
 - **Language** — Speak in `{{.communication_language}}`, tailored to `{{.user_skill_level}}`. Write files in `{{.document_output_language}}`.
 - No human interaction: do not ask questions or wait for approval in this step.
 - All review subagents must run at the same model capability as the current session.
+- Shared-worktree review never stages or commits except the private-index finalization below. Do not run `git add -A`, `git add --all`, broad `git reset`, `git checkout`, `git restore`, `git clean`, or `revert code changes`.
 
 ## INSTRUCTIONS
 
-Change `{spec_file}` status to `in-review` in the frontmatter before continuing.
+### Ownership gate
 
-### Stage the Diff
+Revalidate exact HEAD, index, worktree, untracked, gitlink/submodule, control-path, path-set, and owned-hunk state before changing review status or constructing the review diff. On drift, HALT with status `blocked` and blocking condition `workspace ownership drift: <differing class>`. Do not construct a review diff, reverse, repair, write status/results/triage, stage, commit, or overwrite an overlapping result path.
 
-Read `{baseline_revision}` from `{spec_file}` frontmatter. If `{baseline_revision}` is missing or `NO_VCS`, use best effort to determine what changed. Otherwise use the repository's version-control tooling to rewrite `{diff_file}` — the temp file staged in step-03, or a uniquely-named file in the system temp directory when this run has none — with a unified diff of all changes since `{baseline_revision}`, untracked files included. The review layers read that file; the diff text is never pasted into their prompts.
+- **No version control:** skip the ownership snapshot and continue at Mark in-review, then Stage the owned diff using best effort from the handoff report. Finalize without staging or commit.
+- **Interrupted resume:** if `{spec_file}` is `in-progress` or `in-review` and this invocation has no live_ownership_session, HALT with status `blocked` and blocking condition `workspace ownership drift: missing live ownership session`. Perform no repository mutation.
+- **Dirty follow-up entry:** if `{followup_pass}` is `true` or `{spec_file}` is `done`, and any pre-existing index or worktree change exists — including orchestrator-owned ledger or control-file bookkeeping — HALT with status `blocked` and blocking condition `workspace ownership drift: dirty follow-up entry`. Do not adopt, discard, stage, commit, or normalize those bytes, and do not capture a fresh checkpoint.
+- **Orchestrator re-drive:** any staged or unstaged spec, status, result-section, ledger, or other control-plane bookkeeping HALTs with status `blocked` and blocking condition `workspace ownership drift: orchestrator re-drive handoff`. Asserted orchestrator provenance does not bypass clean entry.
+- **Done follow-up review:** on a clean current HEAD, capture a fresh expected-workspace HEAD while retaining the historical `baseline_revision`. Load the persisted hashed `owned_delta` sidecar; verify its patch digest and restore modes, rename pairs, and path/type/preimage evidence. Do not reconstruct from an ambiguous file list or from `baseline_revision..HEAD` after later unowned commits. Then reset `review_loop_iteration` to `0` as a declared_mutation.
+- **Live session:** revalidate `expected_workspace` against the current tree. Use the captured `owned_delta` as the only review and commit input.
+
+### Mark in-review
+
+Change `{spec_file}` status to `in-review` only as a declared_mutation after the ownership gate. Revalidate `expected_workspace` immediately before the write, then replace the checkpoint.
+
+### Stage the owned diff
+
+Rewrite `{diff_file}` — the temp file staged in step-03, or a uniquely-named file in the system temp directory when this run has none — from the persisted hashed binary/full-index `owned_delta` only. Include path/type evidence. Never write a broad `{baseline_revision}..working-tree` diff. The review layers read that file; the diff text is never pasted into their prompts.
 
 Set `{claims_file}` = `{spec_file}`. The spec is the change's own account of itself, and it goes to the edge-case layer alone — as a path, so that layer reads it only after its own tracing and the other layers never see it at all.
 
@@ -59,44 +73,52 @@ Announce skipped layers first, then launch every active layer before handling an
    - **patch** — caused by the change; its smallest fix is trivial, adds no public surface, and guards no state you did not demonstrate. Just part of the diff. A finding whose smallest fix fails any of those conditions routes to intent_gap when the spec does not settle that fix, otherwise to bad_spec.
    - **defer** — pre-existing issue not caused by this story; or an entry whose members are all `maybe-false` and the claim, if true, would be `medium` or `high` — record that severity marked unverified, plus what would settle it (if it would only be `low`, reject it with the same note); or any entry whose fix edits agent-context files (CLAUDE.md, AGENTS.md, rules, etc).
 
-4. Append a new entry to the `## Review Triage Log` section in `{spec_file}`, in this format:
-   ```markdown
-   ### {date} — Review pass
-   - verdicts: <total> findings — high <N>, medium <N>, low <N>, false <N>, maybe-false <N>
-   - findings:
-     - `[verdict]` `[intent_gap|bad_spec|patch|defer|reject]` <finding summary> — <evidence: the refutation for false, what would settle it for maybe-false, the action taken for patches, why a rejected low was not worth fixing>
-   ```
-   Where `{date}` is the current system date. One row per finding from every layer, in the order the layers reported them; `<total>` must equal the number of findings the layers reported — a finding missing from the log is a triage failure. Members of a grouped entry keep their own rows and share the route.
-5. Process entries in cascading order. If intent_gap exists, lower entries are moot; follow the intent_gap branch below. If bad_spec exists, lower entries are moot since code will be re-derived. If neither exists, process patch and defer normally. Before each bad_spec loopback, read `{spec_file}` frontmatter `review_loop_iteration` (missing means `0`), increment it by 1, and write it back. If it exceeds 5, append the triage-log entry for this pass, then HALT with status `blocked` and blocking condition `review repair loop exceeded 5 iterations (non-convergence)`.
-   - **intent_gap** — Root cause is inside `<intent-contract>`. Save the attempted change as a patch file in `{{.implementation_artifacts}}` and reference it from the triage-log entry, then revert code changes. Append the triage-log entry for this pass, then HALT with status `blocked`, blocking condition `intent gap`, and include the unresolved questions and the saved patch path.
-   - **bad_spec** — Root cause is outside `<intent-contract>`. Do not modify content inside `<intent-contract>`. Before reverting code: extract KEEP instructions for positive preservation (what worked well and must survive re-derivation). Revert code changes. Read the `## Spec Change Log` in `{spec_file}` and strictly respect all logged constraints when amending the sections outside `<intent-contract>` that contain the root cause. Append a new change-log entry recording: the triggering finding, what was amended, the known-bad state avoided, and the KEEP instructions. Append the triage-log entry for this pass, recording in each bad_spec row the amendment it triggered. Read fully and follow `[[bmad-snapshot:step-03-implement.md]]` to re-derive the code, then this step will run again.
-   - **patch** — Auto-fix. These are the only findings that survive loopbacks. Re-engage the step-03 implementation subagent — the same one, addressed by the name or id its launch returned; a fresh launch is not re-engagement. Send it one message, exactly this, with the findings filled in:
+### Restore or repair
 
-     ```text
-     Review of your implementation found problems. Fix each one below with the smallest change that does the job.
+Process entries in cascading order after classification, and defer the triage-log write until the branch outcome is known. Append exactly one `## Review Triage Log` entry for this pass, after restoration, repair, deferral, or the non-convergence halt. Never write the log before that outcome.
 
-     Run only the tests that cover the files you edit — nothing wider. Full verification runs on my side after you return. Reply with what you changed.
+If intent_gap exists, lower entries are moot; follow the intent_gap branch below. If bad_spec exists, lower entries are moot since code will be re-derived. If neither exists, process patch and defer normally.
 
-     - <file> — <what is wrong> — <what the smallest fix must do>
-     ```
+Before each bad_spec loopback, increment `review_loop_iteration` as a declared_mutation: revalidate `expected_workspace`, read the field (missing means `0`), increment it by 1, write only that field, recapture, and replace the checkpoint. If it exceeds 5, append the triage-log entry for this pass, then HALT with status `blocked` and blocking condition `review repair loop exceeded 5 iterations (non-convergence)`.
 
-     If it cannot be continued, apply the patches yourself. Then re-run the commands in `{spec_file}`'s `## Verification` section (or perform its manual checks); if verification fails and the failure cannot be fixed, HALT with status `blocked` and blocking condition `patch verification failed`. Rewrite `{diff_file}` so it reflects the patched tree. Append the triage-log entry for this pass, recording in each patched row the fix applied.
-   - **defer** — Update the single `deferred` list in `{spec_file}` frontmatter. If the field is absent (including on specs created before this field existed), add it once as an empty list. If it is `deferred: []`, replace that empty value when adding the first item; otherwise append to the existing list. Preserve every existing item, do not look for duplicates, and never add a second `deferred:` key. Serialize free-form values as YAML block scalars so characters such as `:`, `#`, quotes, and line breaks remain data. Each item uses this shape:
-     ```yaml
-     deferred:
-       - summary: >-
-           <one sentence>
-         evidence: |-
-           <why this is real; for a maybe-false finding, what evidence would settle it>
-         location: >- # optional — file:line or component
-           src/foo.py:42
-         severity: medium # optional — high | medium | low; for a maybe-false entry, its if-true grade plus " (unverified)"
-     ```
-     After all appends, parse the complete frontmatter as YAML and verify that `deferred` is one list containing every prior item plus the new items with their intended text. Repair serialization errors before continuing.
+Revalidate `expected_workspace` before every repair or re-engagement loop.
 
-## Finalize
+- **intent_gap** — Root cause is inside `<intent-contract>`. Save the attempted change as a control-plane patch file in `{{.implementation_artifacts}}` and reference it from the triage-log entry. Then restore owned implementation hunks using the restoration rules below. Append the triage-log entry for this pass, then HALT with status `blocked`, blocking condition `intent gap`, and include the unresolved questions and the saved patch path.
+- **bad_spec** — Root cause is outside `<intent-contract>`. Do not modify content inside `<intent-contract>`. Before restoration: extract KEEP instructions for positive preservation (what worked well and must survive re-derivation). Restore owned implementation hunks using the restoration rules below. Preserve the original `baseline_revision`. Read the `## Spec Change Log` in `{spec_file}` and strictly respect all logged constraints when amending the sections outside `<intent-contract>` that contain the root cause as a declared_mutation. Append a new change-log entry recording: the triggering finding, what was amended, the known-bad state avoided, and the KEEP instructions. Append the triage-log entry for this pass, recording in each bad_spec row the amendment it triggered. Read fully and follow `[[bmad-snapshot:step-03-implement.md]]` to re-derive the code, then this step will run again.
+- **patch** — Auto-fix. These are the only findings that survive loopbacks. Revalidate the owned preimage first. If the preimage is stale or the repair target is missing, HALT with status `blocked` and blocking condition `workspace ownership drift: stale repair preimage` with no write and no checkpoint refresh. Re-engage the step-03 implementation subagent — the same one, addressed by the name or id its launch returned; a fresh launch is not re-engagement. Send it one message, exactly this, with the findings filled in:
 
-Write the following details to `{spec_file}` under `## Auto Run Result`:
+  ```text
+  Review of your implementation found problems. Fix each one below with the smallest change that does the job.
+
+  Run only the tests that cover the files you edit — nothing wider. Full verification runs on my side after you return. Reply with what you changed.
+
+  - <file> — <what is wrong> — <what the smallest fix must do>
+  ```
+
+  If it cannot be continued, apply the patches yourself against the owned preimage only. Then re-run the commands in `{spec_file}`'s `## Verification` section (or perform its manual checks); if verification fails and the failure cannot be fixed, HALT with status `blocked` and blocking condition `patch verification failed`. Refresh `expected_workspace` and rewrite the persisted `owned_delta` sidecar only after the declared repair. Rewrite `{diff_file}` from that owned delta. Append the triage-log entry for this pass, recording in each patched row the fix applied.
+- **defer** — Update the single `deferred` list in `{spec_file}` frontmatter as a declared_mutation. If the field is absent (including on specs created before this field existed), add it once as an empty list. If it is `deferred: []`, replace that empty value when adding the first item; otherwise append to the existing list. Preserve every existing item, do not look for duplicates, and never add a second `deferred:` key. Serialize free-form values as YAML block scalars so characters such as `:`, `#`, quotes, and line breaks remain data. Each item uses this shape:
+  ```yaml
+  deferred:
+    - summary: >-
+        <one sentence>
+      evidence: |-
+        <why this is real; for a maybe-false finding, what evidence would settle it>
+      location: >- # optional — file:line or component
+        src/foo.py:42
+      severity: medium # optional — high | medium | low; for a maybe-false entry, its if-true grade plus " (unverified)"
+  ```
+  After all appends, parse the complete frontmatter as YAML and verify that `deferred` is one list containing every prior item plus the new items with their intended text. Repair serialization errors before continuing. Append the triage-log entry for this pass.
+
+**Restoration rules:**
+
+1. Reverse-check first. On overlap, a failed reverse-patch preflight, or a path whose current type/content no longer matches the captured identity, HALT with status `blocked` and blocking condition `workspace ownership drift: reverse preflight` and leave the workspace unchanged.
+2. **Shared worktree:** reverse only implementation-owned hunks, creates, and deletes from the persisted `owned_delta`. Preserve control artifacts, the spec, the sidecar, triage, ledger, result, and unrelated bytes. Do not delete or overwrite an owned untracked path unless its exact captured type and content still match.
+3. **Exclusive isolated worktree:** restore that worktree to the captured baseline only when this run continuously holds an OS lease that flocks a lock file whose path names that worktree as sole owner. `git worktree list` is never enough. Snapshot index and worktree bytes before any isolated restore mutation. Preserve evidence outside the worktree. A failed isolated restore must restore that snapshot so index and worktree bytes are unchanged. HALT when exclusivity or exact restoration cannot be proven, including a `BlockingIOError` on the lease.
+4. Never use `revert code changes` or a broad reset, checkout, restore, or clean in a shared worktree.
+
+### Finalize
+
+Write the following details to `{spec_file}` under `## Auto Run Result` as a declared_mutation after a final ownership revalidation:
 - Summary of implemented change
 - Files changed with one-line descriptions
 - Review findings breakdown: patches applied, items deferred, and every rejected finding with its recorded reason
@@ -106,11 +128,12 @@ Write the following details to `{spec_file}` under `## Auto Run Result`:
 
 Set `{spec_file}` frontmatter `followup_review_recommended` from the computation above.
 
-If version control is unavailable, set `{spec_file}` frontmatter `status: done`, then proceed to HALT.
+If version control is unavailable, set `{spec_file}` frontmatter `status: done`, then proceed to HALT. Do not stage or commit.
 
-If version control is available, write `status: done` into `{spec_file}` frontmatter, then:
+If version control is available, revalidate `expected_workspace` immediately before staging or commit. Write `status: done` into `{spec_file}` frontmatter as a declared_mutation, then:
 
-1. Commit any reviewed-diff files that remain uncommitted, including `{spec_file}` when it is tracked in that working copy. Keep commits already created during this run. Verify every reviewed-diff file appears in the change set after `{baseline_revision}` and none remains uncommitted. Do not push.
-2. Verify the version-controlled working copy is clean. Otherwise HALT with status `blocked` and blocking condition `finalization left repository dirty`.
+1. Stage exactly the reviewed owned hunks plus the control-owned spec body and the `{spec_file}.owned-delta` sidecar through a private index. Use each owned path's captured mode and type. Remove deleted owned paths from the restored shared index. Do not use `git add -A`, `git add --all`, or whole-path staging that can include unowned hunks. Unrelated staged index entries and unrelated worktree bytes must survive. Include the same-run newly planned spec so finalization cannot omit its pre-checkpoint body.
+2. Commit once from that private index. Keep commits already created during this run. Verify every owned reviewed path and the sidecar appear in the commit and none remains uncommitted. Do not push.
+3. Verify the version-controlled working copy is clean of owned paths. Otherwise HALT with status `blocked` and blocking condition `finalization left repository dirty`.
 
 HALT with status `done`.

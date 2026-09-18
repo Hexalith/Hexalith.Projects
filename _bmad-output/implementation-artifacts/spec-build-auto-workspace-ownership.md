@@ -2,8 +2,8 @@
 title: 'Harden Build Auto workspace ownership'
 type: 'bugfix'
 created: '2026-08-25'
-status: in-progress
-review_loop_iteration: 0
+status: done
+review_loop_iteration: 1
 followup_review_recommended: true
 baseline_revision: '6f0c0c8125df46cfb4bb62641f5869b4da94b741'
 baseline_commit: '157e7a4b1da9a42bdcac2ad5c3c57663bdaf2159'
@@ -61,12 +61,12 @@ deferred: []
 ## Tasks & Acceptance
 
 **Execution:**
-- `{.agent,.agents,.claude}/skills/bmad-build-auto/workflow.md` -- define exact ownership checkpoint/drift semantics and an ownership-drift HALT path that never overwrites a changed control file.
-- `{.agent,.agents,.claude}/skills/bmad-build-auto/step-03-implement.md` -- capture the first-pass baseline and post-handoff owned delta, forbid shared-worktree staging/commits, preserve the baseline on loopback, and fail closed on unsupported resume.
-- `{.agent,.agents,.claude}/skills/bmad-build-auto/step-04-review.md` -- gate review/status mutation, repairs, reversal, staging, and commit; review only captured owned changes; implement exact isolated/owned-hunk restoration and fresh done-review checkpoints.
-- `{.agent,.agents,.claude}/skills/bmad-build-auto/scripts/tests/test_workspace_ownership.py` -- add table-driven temporary-Git fixtures for every matrix row plus instruction ordering, forbidden broad operations, copy identity, and manifest integrity.
-- `_bmad/_config/files-manifest.csv` -- refresh the three changed logical asset hashes and register the fixture exactly once.
-- `.github/workflows/ci.yml` and `tests/tools/run-ci-workflow-gates.ps1` -- run and enforce the canonical fixture as a blocking, bytecode-free workflow gate.
+- [x] `{.agent,.agents,.claude}/skills/bmad-build-auto/workflow.md` -- define exact ownership checkpoint/drift semantics and an ownership-drift HALT path that never overwrites a changed control file.
+- [x] `{.agent,.agents,.claude}/skills/bmad-build-auto/step-03-implement.md` -- capture the first-pass baseline and post-handoff owned delta, forbid shared-worktree staging/commits, preserve the baseline on loopback, and fail closed on unsupported resume.
+- [x] `{.agent,.agents,.claude}/skills/bmad-build-auto/step-04-review.md` -- gate review/status mutation, repairs, reversal, staging, and commit; review only captured owned changes; implement exact isolated/owned-hunk restoration and fresh done-review checkpoints.
+- [x] `{.agent,.agents,.claude}/skills/bmad-build-auto/scripts/tests/test_workspace_ownership.py` -- add table-driven temporary-Git fixtures for every matrix row plus instruction ordering, forbidden broad operations, copy identity, and manifest integrity.
+- [x] `_bmad/_config/files-manifest.csv` -- refresh the three changed logical asset hashes and register the fixture exactly once.
+- [x] `.github/workflows/ci.yml` and `tests/tools/run-ci-workflow-gates.ps1` -- run and enforce the canonical fixture as a blocking, bytecode-free workflow gate.
 
 **Acceptance Criteria:**
 - Given any captured Build Auto run, when review diff construction, a repair loopback, or final commit begins, then an exact ownership gate runs first and any HEAD/index/worktree/untracked/submodule/path/hunk drift halts without diffing, reversal, staging, or commit.
@@ -75,6 +75,12 @@ deferred: []
 - Given the three installed agent trees and installer manifest, when the focused fixture and CI-policy gate run, then all workflow/test copies are byte-identical, hashes/rows are exact and unique, every matrix scenario passes, and no ledger, bundle intent, or rendered snapshot is changed.
 
 ## Spec Change Log
+
+### 2026-09-08 — Review loopback (bad_spec)
+- Triggering findings: `{spec_file}.owned-delta` had no committed lifecycle; initialized submodule observation omitted nested worktree path identities; exclusive isolated restore used an unbound lock file and mutated the index before a successful preflight.
+- Amended Design Notes (and the execution list above by resetting task checkboxes) so re-derivation must treat the sidecar as control-owned committed evidence, walk nested submodule worktree identities, and bind an OS lease to the named worktree with atomic isolated restore.
+- Known-bad state avoided: an untracked sidecar that makes a clean `done` follow-up impossible; a submodule dirty file that does not halt; `read-tree`/`checkout-index` that can leave a partial index; a flock on an arbitrary path that does not identify the worktree.
+- KEEP: three-copy byte identity and unique manifest rows; workflow vocabulary (`expected_workspace`, `owned_delta`, `live_ownership_session`, `declared_mutation`) and the ownership-drift no-mutation HALT path; step-03/04 heading order and gate-before-mutate sequencing; step-01 must not reset `review_loop_iteration`; private-index finalize that preserves unrelated staged/index and worktree bytes; hermetic matrix coverage for every I/O row plus the 2026-08-25 accepted findings; exact CI blocking bytecode-free fixture step; never edit the deferred-work ledger, bundle intent, or `_bmad/render/**`.
 
 ### 2026-08-26 — Escalation resolution
 - Accepted the owner-committed ledger/control state from `007d74b` and clarified that any future dirty `done` follow-up entry must be resolved outside Build Auto before its fresh ownership checkpoint.
@@ -110,9 +116,93 @@ deferred: []
   - `[medium]` `[patch]` Sanitized repository-routing Git environment variables in the hermetic fixture.
   - `[medium]` `[patch]` Added stable no-follow file and symlink reads that reject raced type/content observations.
 
+### 2026-09-08 — Review pass
+- intent_gap: 0
+- bad_spec: 3: (high 3, medium 0, low 0)
+- patch: 10: (high 4, medium 6, low 0) — moot under loopback
+- defer: 11: (medium 10, unverified 1)
+- reject: 16: (false 14, low 2)
+- findings:
+  - `[high]` `[bad_spec]` Sidecar left untracked after persist. `persist_owned_delta` writes `{spec}.owned-delta` but finalize never stages it, so a clean follow-up cannot load evidence.
+  - `[high]` `[bad_spec]` Sidecar drops `modes`/`rename_pairs` and `load_owned_delta` sets `modes={}` without verifying `patch_digest`. Restarted review accepts a tampered or mode-stripped patch.
+  - `[high]` `[bad_spec]` `apply_repair` refreshes in-memory delta only and never rewrites the sidecar, so a later load still sees the pre-repair patch.
+  - `[high]` `[bad_spec]` `observe_gitlinks` stores nested HEAD/index/gitlinks only. An unstaged file in an initialized submodule does not differ the checkpoint.
+  - `[high]` `[bad_spec]` `WorktreeLease` flocks an unbound path; `worktree_list_exclusive` is dead. The lease does not name the worktree as sole owner.
+  - `[high]` `[bad_spec]` Isolated restore runs `read-tree` then `checkout-index -a -f` with no prior snapshot. A failed checkout leaves a mutated index.
+  - `[high]` `[patch]` `enter_workflow`/`first_pass_session` snapshot a dirty first-pass tree even though workflow first-pass requires a clean aligned HEAD/index/worktree.
+  - `[high]` `[patch]` `commit_owned` hardcodes `100644` for implementation and control blobs, so executable/symlink modes cannot be committed as captured.
+  - `[high]` `[patch]` After `update-ref`, a deleted owned path hits `cat-file -e` failure and `continue`, leaving the restored shared index tracking the delete.
+  - `[medium]` `[patch]` `build_owned_delta` skips `pre == post`, dropping mode-only owned changes from the patch.
+  - `[medium]` `[patch]` Private-index apply fallback restages every path as `100644`.
+  - `[medium]` `[patch]` `data.index(b"\0")` on a 0xFFF name and unbounded extension sizes raise or misread instead of `OwnershipHalt`.
+  - `[medium]` `[patch]` `apply_repair` uses `postimages[name]` and raises `KeyError` for a missing/deleted repair target.
+  - `[medium]` `[patch]` `dest.exists()` follows a symlink gitlink and can treat a replaced gitlink as initialized.
+  - `[medium]` `[patch]` `fcntl.flock` without `BlockingIOError` handling raises instead of `exclusive isolated ownership unproven`.
+  - `[medium]` `[patch]` `MANIFEST_PATHS` omits `step-01-clarify-and-route.md` even though that file and its hash changed.
+  - `[medium]` `[patch]` `test_matrix_exclusive_isolated_reversal` never dirties an unowned tracked path, so deleting `read-tree`/`checkout-index` still passes.
+  - `[false]` No skill-local ownership library. Spec surface is instruction text plus hermetic fixtures; `enter_workflow` is the helper.
+  - `[false]` Unused `porcelain_v2` comparison. `walk_raw` and index digest already detect path/byte drift.
+  - `[false]` `step-02-plan.md` is ungated. Ownership starts at implementation capture.
+  - `[false]` CI runs only the `.agents` fixture. That copy already asserts three-copy identity.
+  - `[false]` Scanner omits `git checkout`/`git restore`. Isolated baseline restore is an allowed exception.
+  - `[false]` Engine copied three times. The AC requires byte-identical installed trees.
+  - `[false]` Review diff includes unrelated `baseline_commit..` history. That is this parent workflow's staging rule.
+  - `[false]` New-file finalize raises after `update-ref`. `cat-file -e` failure `continue`s.
+  - `[false]` Isolated restore leaves HEAD ahead. Isolated mode restores worktree-to-baseline, not HEAD.
+  - `[false]` Isolated restore reverts unowned tracked files. That is the specified exclusive baseline restore.
+  - `[false]` `..` allowlist escape. No demonstrated owned path contained parent segments.
+  - `[false]` Directory allowlist `EISDIR`. No demonstrated allowlist entry was a directory.
+  - `[false]` `O_NOFOLLOW=0` fallback. Linux CI defines `O_NOFOLLOW`.
+  - `[low]` `[reject]` Spec without `review_loop_iteration` and `---` is left unchanged. Everyday specs have frontmatter; extra guards add branches.
+  - `[low]` `[reject]` No-VCS done follow-up never resets `review_loop_iteration`. Unlikely path; reset is extra control flow.
+  - `[defer]` `ProjectContextReadResponse` still imports UI contracts. Pre-existing Epic 6 work, not this story.
+  - `[defer]` `InMemoryProjectReadModelStore` ships a domain-server store. Pre-existing, not this story.
+  - `[defer]` `RefreshProjectContextQuery` has no handler. Pre-existing, not this story.
+  - `[defer]` Conversation-start still folds to Complete/Unavailable and never Partial. Pre-existing, not this story.
+  - `[defer]` Conversation-start does not map stale required tenant evidence to Unavailable. Pre-existing verification gap, not this story.
+  - `[defer]` `/query` cancellation forwarding is untested at the route. Pre-existing, not this story.
+  - `[defer]` `GetConversationStartSetupQueryHandler` does not reauthorize after store read. Pre-existing, not this story.
+  - `[defer]` Envelope `EntityId`/`AggregateId` mismatch is unchecked. Pre-existing, not this story.
+  - `[defer]` `ProjectContextQueryExecutor` can assemble stale detail after reauth. Pre-existing, not this story.
+  - `[defer]` merge-config legacy unlink and umask sampling races. Pre-existing, not this story.
+  - `[maybe-false]` `[defer]` Index v4 compression / SHA-256 / trailer checksum (unverified medium-if-true). Needs a non-default index fixture.
+
+### 2026-09-08 — Review pass 2
+- intent_gap: 0
+- bad_spec: 0
+- patch: 7: (high 2, medium 5, low 0)
+- defer: 5: (carried pre-existing)
+- reject: 12: (false 10, carried false 2)
+- findings:
+  - `[high]` `[patch]` Shared `reverse_owned` now calls `restore_snapshot` before `reverse preflight` when apply mutates or preimages mismatch.
+  - `[high]` `[patch]` `make_path_patch` now rewrites only `diff --git`/`---`/`+++` headers; shared reverse restores a mode-only chmod to the captured pre-mode.
+  - `[medium]` `[patch]` `load_owned_delta` maps truncated/non-JSON/missing-key sidecars to `incomplete owned_delta evidence`.
+  - `[medium]` `[patch]` Step-03 now replaces `expected_workspace` after the sidecar is persisted.
+  - `[medium]` `[patch]` Symlink gitlink fixture now points at `.` and asserts uninitialized with no nested walk.
+  - `[medium]` `[patch]` Done follow-up test writes and asserts `review_loop_iteration: 0`.
+  - `[medium]` `[patch]` `increment_review_loop` halts as `incomplete ownership snapshot` when the spec write is a no-op.
+  - `[false]` Post-handoff revalidate before `owned_delta` exists would halt every handoff. Step-03 already limits that check to the non-allowlisted path set.
+  - `[false]` Isolated `checkout-index -a` reverts unowned tracked files. Exclusive isolated mode restores the leased worktree to the captured baseline.
+  - `[false]` Step-04 triage-log schema change. This parent workflow owns the log shape.
+  - `[false]` First-pass porcelain omits ignored files. Git-clean first pass does not include ignored paths; control identities are still captured when named.
+  - `[false]` `enter_workflow(..., orchestrator_bookkeeping=True)` is a fixture flag. Live steps inspect the tree.
+  - `[false]` Verification section has no Auto Run Result yet. That section is written at finalize.
+  - `[false]` Packet edits `deferred-work.md`. That path is unchanged in this story's worktree; the baseline-wide diff is unrelated history.
+  - `[false]` `[carried]` Unused `porcelain_v2` comparison. `walk_raw` plus index digest remain the stronger check.
+  - `[false]` `[carried]` Forbidden-imperative scanner omits `git checkout`/`git restore`. Isolated baseline restore remains the allowed exception.
+  - `[defer]` `[carried]` Conversation-start stale/`Partial`, `/query` cancellation, in-memory store races, and merge-config unlink/umask remain pre-existing and not caused by this story.
+
 ## Design Notes
 
 Runtime ownership state avoids persisting a self-referential hash inside the spec. The historical `baseline_revision` remains review provenance; a separate expected-workspace snapshot governs mutation safety. In a shared worktree, the initial before/after handoff delta is attributable only by workflow convention—strong attribution requires a positively identified exclusive worktree—so the skill must state that limit and detect all drift occurring after capture.
+
+The `{spec_file}.owned-delta` sidecar is control-owned evidence, not a reversible implementation hunk. Persist modes, rename pairs, path/type/preimage bytes, and the patch digest; verify the digest on load. Include the sidecar in private-index finalization with the control-owned spec so a later clean `done` follow-up can load it without a dirty tree. Rewrite the sidecar after every authorized repair. A first pass captures `expected_workspace` only from a clean aligned HEAD/index/worktree.
+
+Initialized gitlink observation must include nested HEAD, nested index bytes, nested gitlinks, and nested worktree path identities (type, mode, content) so an unstaged submodule file change is `workspace ownership drift`. Treat a gitlink path that is a symlink or non-directory as uninitialized and do not follow it.
+
+An exclusive OS lease must flock a lock file whose path names that worktree (not an unbound temp path). Isolated restore may reset only that leased worktree to the captured baseline, but only after a no-mutation preflight/snapshot; a failed isolated restore must leave index and worktree bytes unchanged. `git worktree list` remains insufficient. Shared-worktree reversal still reverses only the owned implementation patch.
+
+Private-index staging must use each owned path's captured mode and type. Deleted owned paths must be removed from the restored shared index. Mode-only owned changes belong in the patch. Parser and repair failures become `workspace ownership drift`, not raw `ValueError`/`KeyError`/`BlockingIOError`. Step-01 remains in the three-copy and manifest identity set.
 
 ## Verification
 

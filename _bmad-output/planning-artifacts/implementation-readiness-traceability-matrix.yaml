@@ -3,8 +3,8 @@
 # is a mechanically reconciled human view over the SAME stable row keys; this YAML wins on conflict.
 schema: hexalith.readiness-evidence.v1
 project: Hexalith.Projects
-generated: 2026-08-04
-generated_by: "bmad-correct-course — P1R approved by Jerome on 2026-08-03; G4-P0 approved by Jerome on 2026-08-04"
+generated: 2026-09-08
+generated_by: "bmad-correct-course — E-31 approved by Jerome on 2026-09-08; prior P1R 2026-08-03 and G4-P0 2026-08-04 remain historical"
 source_of_truth: implementation-readiness-traceability-matrix.yaml
 markdown_view: implementation-readiness-traceability-matrix.md
 sources:
@@ -22,6 +22,7 @@ sources:
   course_correction_readiness_rerun_3: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md
   course_correction_post_p1r: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03.md
   course_correction_g4_p0: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03-g4-p0.md
+  course_correction_e31: _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md
 
 # ── Validation contract (AD-30) ──────────────────────────────────────────────
 validation:
@@ -39,7 +40,7 @@ validation:
     - unexplained-critical-skip
     - passed-on-unavailable-environment
   required_coverage:
-    fr: FR-1..FR-24
+    fr: FR-1..FR-25
     nfr: NFR-1..NFR-11
     finding: "9 P1 + 7 P2 (E-7)"
     release: "12 NFR-11/AD-30 critical categories"
@@ -56,7 +57,7 @@ status_legend:
 containment:
   overall_readiness: "NOT READY (2026-08-02 implementation-readiness rerun 4; 2026-07-17 READY remains historical planning-layer authorization only)"
   freeze: "The approved internal corrections are reconciled, but production-authority implementation remains blocked by the exact sequence 6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3 -> authorized Solution Architect sign-off on the exact corrected baseline -> 6.1-P4 exact clean-checkout acceptance -> Story 6.1 specification readiness -> independent implementation-readiness result exactly READY -> Story 6.1 may become ready-for-dev; historical 6.1-P1 remains a satisfied input only"
-  release_block: "production + consequential autonomous MCP mutation + proposed-Project confirmation blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance"
+  release_block: "production + consequential MCP confirmation by a human actor + MCP Selection Evidence + proposed-Project confirmation on MCP blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance together with §9 A-7; autonomous MCP confirmation stays excluded"
   open_triggers:
     - "Story 6.1: 6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3 -> authorized Solution Architect sign-off on the exact corrected baseline -> 6.1-P4 exact clean-checkout acceptance -> Story 6.1 specification readiness -> independent implementation-readiness result exactly READY -> Story 6.1 may become ready-for-dev; external owners and target dates remain uncommitted"
     - "6.1-P1R: the pending multi-coordinate candidate separates EventStore source checkout 7854f8e51ce9b852bb6c3cac6012670122e93792 (v3.89.0-9-g7854f8e5) from package tag/revision v3.89.0/c590590bc581a3f72ef6e67148eda988ba4b8fe6; the Builds catalog selects 3.89.0 from 10af541e7b2a5a4664be37c9495930844e0954a8, current runner source remains the superseded unaccepted 3.88.0 candidate at observed Builds 7bdbd293991985d150dfca62f77709e61152de76, published G-4 4.23.0 from 7ac2849d79e603b88c7cb76e178cd2ba106eaf00 embeds 3.70.1, and Architecture/rollback remain 3.70.1; owner selection, atomic alignment, clean qualification, executable rollback, immutable accepted revisions, and four-owner acceptance are unresolved"
@@ -81,15 +82,15 @@ defaults:
   release_disposition: "release-blocking (no approved v1 FR/NFR is deferrable)"
 
 rows:
-  # ═══════════════════════ FUNCTIONAL REQUIREMENTS (FR-1..FR-24) ═══════════════════════
+  # ═══════════════════════ FUNCTIONAL REQUIREMENTS (FR-1..FR-25) ═══════════════════════
   - key: fr-1
     category: fr
     ids: [FR-1]
-    description: "Create Project — Folder-first, idempotent, metadata-classified; Active only after exactly one authorized Folder is bound and read-model-confirmed"
+    description: "Create Project — Folder-first, idempotent, metadata-classified; sole-manager / no implicit existing-Folder bind (A-2/A-3); Active only after exactly one authorized Folder is bound and read-model-confirmed"
     architecture_decisions: [AD-3, AD-5, AD-8, AD-12, AD-22, AD-31]
     user_journeys: [UJ-2, UJ-3]
     primary_story: "7.1"
-    supporting_stories: ["6.1"]
+    supporting_stories: ["6.1", "7.16"]
     entry_gates: [Epic-7-gate, G-1, G-2, "7.1-P1", "7.1-P2"]
     fixture: epic7/7.1-create-folder-first
     verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.1"
@@ -100,7 +101,7 @@ rows:
   - key: fr-2
     category: fr
     ids: [FR-2]
-    description: "Open Project — authorized metadata/lifecycle/setup/reference summary via supported read models"
+    description: "Open Project — Folder-derived Chatbot list/open; inspection-gated name for Tenant-role callers; authorized metadata/lifecycle/setup/reference summary via supported read models"
     architecture_decisions: [AD-3, AD-14, AD-19, AD-20, AD-32, AD-33]
     user_journeys: [UJ-1]
     primary_story: "6.1"
@@ -116,7 +117,7 @@ rows:
   - key: fr-3
     category: fr
     ids: [FR-3]
-    description: "Update Project Setup — durable, additive, idempotent; Succeeded only after authoritative read-model confirmation"
+    description: "Update Project Setup — Folder manage required; new projectVersion; no already-admitted snapshot is widened; Succeeded only after authoritative read-model confirmation"
     architecture_decisions: [AD-5, AD-15, AD-16]
     user_journeys: [UJ-1]
     primary_story: "7.2"
@@ -146,7 +147,7 @@ rows:
   - key: fr-5
     category: fr
     ids: [FR-5]
-    description: "List Projects — Tenant-scoped, authorization-filtered, cursor-paged"
+    description: "List Projects — Folder-derived Chatbot list; inspection-gated name; Tenant-scoped, authorization-filtered, cursor-paged"
     architecture_decisions: [AD-14, AD-19, AD-20, AD-27]
     primary_story: "6.1"
     supporting_stories: []
@@ -161,11 +162,11 @@ rows:
   - key: fr-6
     category: fr
     ids: [FR-6]
-    description: "Link Conversation — durable single-membership link via Conversations owner + reverse index"
+    description: "Link Conversation — Selection Evidence or confirmed inference; prior membership is an FR-7 move; durable single-membership link via Conversations owner + reverse index"
     architecture_decisions: [AD-10, AD-12, AD-14]
     user_journeys: [UJ-1, UJ-3]
     primary_story: "7.3"
-    supporting_stories: []
+    supporting_stories: ["7.16"]
     entry_gates: [Epic-7-gate, G-1, G-2]
     fixture: epic7/7.3-link-conversation
     verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.3"
@@ -176,7 +177,7 @@ rows:
   - key: fr-7
     category: fr
     ids: [FR-7]
-    description: "Move Conversation Between Projects — Preview + confirmation + durable saga; prior membership removed before new one"
+    description: "Move Conversation Between Projects — Preview + confirmation + durable saga; prior-membership receipt retained; PriorMembershipRecorded when undisclosed"
     architecture_decisions: [AD-5, AD-10, AD-12, AD-13]
     user_journeys: [UJ-3]
     primary_story: "7.4"
@@ -191,8 +192,8 @@ rows:
   - key: fr-8
     category: fr
     ids: [FR-8]
-    description: "Set / Replace Project Folder — single-Folder invariant preserved; replace via Preview + confirmation (initial Folder via 7.1)"
-    architecture_decisions: [AD-3, AD-11, AD-12]
+    description: "Set / Replace Project Folder — exclusive Folder; coverage / rejection / designated-manager; replace via Preview + confirmation (initial Folder via 7.1)"
+    architecture_decisions: [AD-3, AD-11, AD-12, AD-13]
     user_journeys: [UJ-2]
     primary_story: "7.6"
     supporting_stories: ["7.1"]
@@ -206,8 +207,8 @@ rows:
   - key: fr-9
     category: fr
     ids: [FR-9]
-    description: "Link File Reference — idempotent additive link; no Folder change; no content copy"
-    architecture_decisions: [AD-11, AD-12, AD-15]
+    description: "Link File Reference — durable task; Selection Evidence or confirmation; foreign-Folder Preview; no Folder change; no content copy"
+    architecture_decisions: [AD-5, AD-11, AD-12, AD-15]
     primary_story: "7.7"
     supporting_stories: []
     entry_gates: [Epic-7-gate, G-1, G-2]
@@ -220,8 +221,8 @@ rows:
   - key: fr-10
     category: fr
     ids: [FR-10]
-    description: "Link Memory — idempotent metadata-only link; auth delegated to Memories; Case-vs-Unit per pinned G-2 contract"
-    architecture_decisions: [AD-11, AD-12, AD-15]
+    description: "Link Memory — durable task; Selection Evidence or confirmation; metadata-only; auth delegated to Memories; Case-vs-Unit per pinned G-2 contract"
+    architecture_decisions: [AD-5, AD-11, AD-12, AD-15]
     user_journeys: [UJ-1, UJ-3]
     primary_story: "7.9"
     supporting_stories: []
@@ -235,7 +236,7 @@ rows:
   - key: fr-11
     category: fr
     ids: [FR-11]
-    description: "Unlink Context Reference — Preview + confirmation + durable task for Conversation/File/Memory; Folder replace-only"
+    description: "Unlink Context Reference — Preview + confirmation + durable task; prior-membership record retained; Folder replace-only"
     architecture_decisions: [AD-5, AD-11, AD-13]
     primary_story: "7.5 / 7.8 / 7.10"
     supporting_stories: ["7.6"]
@@ -249,7 +250,7 @@ rows:
   - key: fr-12
     category: fr
     ids: [FR-12]
-    description: "Resolve Project From Conversation — compute-on-demand; NoMatch/Single/Multiple; transient non-persisted trace"
+    description: "Resolve Project From Conversation — Inferred Association; ConversationLinked exemption; ReadOnlyCandidate; Denied vs NoMatch; transient non-persisted trace"
     architecture_decisions: [AD-7, AD-10, AD-14, AD-32]
     user_journeys: [UJ-3]
     primary_story: "6.4"
@@ -262,7 +263,7 @@ rows:
   - key: fr-13
     category: fr
     ids: [FR-13]
-    description: "Resolve Project From Attachments — from Folder/File refs; fail-closed on stale auth; no raw file content as data"
+    description: "Resolve Project From Attachments — foreign/unauthorized/unknown attachment indistinguishable from authorized no-match; fail-closed on stale auth; no raw file content as data"
     architecture_decisions: [AD-7, AD-11, AD-14, AD-32]
     user_journeys: [UJ-2]
     primary_story: "6.4"
@@ -275,7 +276,7 @@ rows:
   - key: fr-14
     category: fr
     ids: [FR-14]
-    description: "Confirm Ambiguous Project — bound Confirmation Artifact + durable task; no preselection; rejected candidates not linked"
+    description: "Confirm Ambiguous Project — MultipleCandidates and Inferred SingleCandidate; ReadOnlyCandidate has no accept; no preselection; rejected candidates not linked"
     architecture_decisions: [AD-5, AD-13, AD-32]
     user_journeys: [UJ-3]
     primary_story: "7.11"
@@ -305,7 +306,7 @@ rows:
   - key: fr-16
     category: fr
     ids: [FR-16]
-    description: "Get Project Context — allowlist-assembled setup + included refs with exclusion reasons; metadata-only"
+    description: "Get Project Context — request names the Conversation; allowlist-assembled setup + included refs with exclusion reasons; metadata-only"
     architecture_decisions: [AD-11, AD-14, AD-32]
     user_journeys: [UJ-1, UJ-4]
     primary_story: "6.3"
@@ -358,7 +359,7 @@ rows:
   - key: fr-20
     category: fr
     ids: [FR-20]
-    description: "Retrieve Conversation-Start Setup — bounded start subset with admission truth; excludes audit metadata"
+    description: "Retrieve Conversation-Start Setup — request names the Conversation; bounded start subset with admission truth; excludes audit metadata"
     architecture_decisions: [AD-14, AD-32]
     user_journeys: [UJ-1]
     primary_story: "6.2"
@@ -371,7 +372,7 @@ rows:
   - key: fr-21
     category: fr
     ids: [FR-21]
-    description: "Record Project Audit Events — metadata-only audit of admissions/mutations/confirmations/reconciliation/export; ≥365-day retention; owns deferred Web/CLI audit adapters"
+    description: "Record Project Audit Events — inclusion matrix adds Folder re-anchoring class, per-request inspection events, Setup credential kind; ≥365-day retention"
     architecture_decisions: [AD-21, AD-26, AD-30]
     primary_story: "8.1"
     supporting_stories: ["6.5", "6.6"]
@@ -383,7 +384,7 @@ rows:
   - key: fr-22
     category: fr
     ids: [FR-22]
-    description: "Support Operator Read Access — authorized metadata-only read across Web/CLI/MCP + operational surfaces; read grants neither export nor mutation"
+    description: "Support Operator Read Access and Task Reconciliation — authorized Safe Metadata read; quarantine inventory; task.reconcile bound; read grants neither export nor mutation"
     architecture_decisions: [AD-2, AD-19, AD-20, AD-29]
     primary_story: "6.5 / 6.6"
     supporting_stories: ["8.1", "8.3", "8.4", "8.5"]
@@ -398,7 +399,7 @@ rows:
   - key: fr-23
     category: fr
     ids: [FR-23]
-    description: "Restore Archived Project — RequestPreview validates the Archived Project and Folder plan before bound confirmation; Folder-before-activation ordering; NeedsAttention on partial; no owner-resource deletion"
+    description: "Restore Archived Project — per-role restore (User prior Folder they manage; Operator prior Folder only; Administrator replacement under FR-8); Folder-before-activation ordering"
     architecture_decisions: [AD-3, AD-13, AD-23]
     user_journeys: [UJ-5]
     primary_story: "7.14"
@@ -424,12 +425,27 @@ rows:
     evidence_artifact: evidence/epic8/8.2-safe-export.trx
     estimate: L
     notes: "NEW FR (2026-07-15/16 rebaseline). Release-blocking."
+  - key: fr-25
+    category: fr
+    ids: [FR-25]
+    description: "Select Association Target — Projects-owned Chatbot component mints session-bound Selection Evidence; no mint/confirm API; 5-minute expiry; never on open/list/resolution/proposal"
+    architecture_decisions: [AD-2, AD-5, AD-13, AD-20, AD-33]
+    user_journeys: [UJ-1, UJ-2]
+    primary_story: "7.16"
+    supporting_stories: ["7.1", "7.3", "7.7", "7.9", "7.14"]
+    entry_gates: [Epic-7-gate, G-2, G-3, G-5]
+    fixture: epic7/7.16-selection
+    verification_command: "dotnet tool run hexalith-module test --profile durable --filter Story=7.16"
+    evidence_artifact: evidence/epic7/7.16-selection.trx
+    estimate: L
+    status: blocked-external
+    blocker: "Epic 7 gate + G-2 Folders manage check + 8.8-P3 Chatbot companion pin; Web/MCP hosting out of v1"
 
   # ═══════════════════════ NON-FUNCTIONAL REQUIREMENTS (NFR-1..NFR-11) ═══════════════════════
   - key: nfr-1
     category: nfr
     ids: [NFR-1]
-    description: "Security & privacy — Tenant/actor/action/target/version scoping; fail-closed on stale auth; metadata-only logs/telemetry/errors"
+    description: "Security & privacy — Tenant/actor/action/target/version scoping including the acting session; fail-closed on stale auth; metadata-only logs/telemetry/errors"
     architecture_decisions: [AD-11, AD-13, AD-20]
     primary_story: "8.8"
     supporting_stories: ["6.1", "6.5", "7.1"]
@@ -526,7 +542,7 @@ rows:
   - key: nfr-8
     category: nfr
     ids: [NFR-8]
-    description: "Retention & transient data — terminal/idempotency ≥30 days; Preview/Confirmation 15-min expiry; audit ≥365 days; traces/exports not persisted"
+    description: "Retention & transient data — terminal/idempotency ≥30 days; Preview/Confirmation 15-min expiry; Selection Evidence 5-minute expiry; audit ≥365 days; traces/exports not persisted"
     architecture_decisions: [AD-4, AD-5, AD-21, AD-26]
     primary_story: "8.1"
     supporting_stories: ["8.2", "7.2", "7.4"]
@@ -569,7 +585,7 @@ rows:
   - key: nfr-11
     category: nfr
     ids: [NFR-11]
-    description: "Release evidence — all critical categories pass; failed/unexplained-skip critical case blocks; unavailable env = not-verified"
+    description: "Release evidence — all critical categories pass; A-1 companion; SM-2/SM-3 are release-acceptance checks; failed/unexplained-skip critical case blocks; unavailable env = not-verified"
     architecture_decisions: [AD-25, AD-28, AD-30]
     primary_story: "8.11"
     supporting_stories: ["8.1", "8.6", "8.7", "8.8", "8.9", "8.10"]
