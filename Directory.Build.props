@@ -33,6 +33,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == '' and '$(Configuration)' == 'Debug'">true</UseHexalithProjectReferences>
+    <UseHexalithProjectReferences Condition="'$(UseHexalithProjectReferences)' == ''">false</UseHexalithProjectReferences>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <!-- Release automation passes a Projects-specific version property instead of the global
          Version/PackageVersion properties. NuGet pack re-evaluates every ProjectReference from
          project.assets.json and otherwise propagates a global release version into sibling

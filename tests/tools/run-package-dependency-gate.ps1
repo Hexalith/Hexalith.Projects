@@ -39,12 +39,12 @@ $expectedInternalDependencies = @{
     'Hexalith.Projects.Client' = @('Hexalith.Projects.Contracts')
     'Hexalith.Projects.Testing' = @('Hexalith.Projects', 'Hexalith.Projects.Contracts')
 }
-$expectedExternalContractDependencies = @(
-    'Hexalith.EventStore.Contracts',
-    'Hexalith.Conversations.Contracts',
-    'Hexalith.FrontComposer.Contracts',
-    'Hexalith.FrontComposer.Shell'
-)
+$expectedExternalContractDependencies = [ordered]@{
+    'Hexalith.EventStore.Contracts' = '3.100.1'
+    'Hexalith.Conversations.Contracts' = '1.0.0'
+    'Hexalith.FrontComposer.Contracts' = '4.2.0'
+    'Hexalith.FrontComposer.Shell' = '4.2.0'
+}
 
 function Invoke-Dotnet {
     param([string[]] $Arguments)
@@ -86,6 +86,32 @@ function Uses-SimulatedVersion {
     return $trimmed -eq $Version -or
         $trimmed -eq "[$Version]" -or
         $trimmed -match "^\[$([regex]::Escape($Version)),\s*\)$"
+}
+
+function Uses-CatalogVersion {
+    param(
+        [string] $Range,
+        [string] $ExpectedVersion
+    )
+
+    $trimmed = $Range.Trim()
+    return $trimmed -eq $ExpectedVersion -or
+        $trimmed -eq "[$ExpectedVersion]" -or
+        $trimmed -match "^\[$([regex]::Escape($ExpectedVersion)),\s*\)$"
+}
+
+$contractsProjectPath = Join-Path $repositoryRoot 'src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj'
+[xml] $contractsProject = Get-Content -Path $contractsProjectPath -Raw
+$sourceToolsReferences = @($contractsProject.Project.ItemGroup.PackageReference | Where-Object { $_.Include -eq 'Hexalith.FrontComposer.SourceTools' })
+if ($sourceToolsReferences.Count -ne 1) {
+    throw "Projects.Contracts must declare exactly one package-mode Hexalith.FrontComposer.SourceTools analyzer reference."
+}
+
+$sourceToolsReference = $sourceToolsReferences[0]
+if ($sourceToolsReference.ParentNode.Condition -ne "'`$(UseHexalithProjectReferences)' != 'true'" -or
+    $sourceToolsReference.PrivateAssets -ne 'all' -or
+    'analyzers' -notin @($sourceToolsReference.IncludeAssets -split ';' | ForEach-Object { $_.Trim() })) {
+    throw "Hexalith.FrontComposer.SourceTools must remain package-mode-only, private, and analyzer-enabled."
 }
 
 if (-not $SkipPack) {
@@ -166,10 +192,20 @@ foreach ($packageId in $expectedInternalDependencies.Keys) {
     }
 }
 
-foreach ($dependencyId in $expectedExternalContractDependencies) {
+foreach ($expectedDependency in $expectedExternalContractDependencies.GetEnumerator()) {
+    $dependencyId = $expectedDependency.Key
     if (-not $dependenciesByPackage['Hexalith.Projects.Contracts'].ContainsKey($dependencyId)) {
         throw "Contracts package does not declare required external dependency $dependencyId."
     }
+
+    $actualVersion = $dependenciesByPackage['Hexalith.Projects.Contracts'][$dependencyId]
+    if (-not (Uses-CatalogVersion $actualVersion $expectedDependency.Value)) {
+        throw "Contracts package dependency $dependencyId has '$actualVersion' instead of catalog version '$($expectedDependency.Value)'."
+    }
+}
+
+if ($dependenciesByPackage['Hexalith.Projects.Contracts'].ContainsKey('Hexalith.FrontComposer.SourceTools')) {
+    throw "The private SourceTools analyzer must not leak into the Projects.Contracts package dependency graph."
 }
 
 $consumerRoot = Join-Path ([System.IO.Path]::GetTempPath()) "hexalith-projects-package-gate-$([guid]::NewGuid().ToString('N'))"
