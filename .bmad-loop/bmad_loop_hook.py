@@ -50,12 +50,29 @@ _LINK_REPARSE_TAGS = tuple(
     if tag is not None
 )
 
+_TASK_ID_MAX_LENGTH = 160
+_EVENT_NAME_MAX_LENGTH = 64
+_FILENAME_COMPONENT_PUNCTUATION = frozenset("._-")
+
 
 def _first_workspace(payload):
     paths = payload.get("workspacePaths")
     if isinstance(paths, list) and paths and isinstance(paths[0], str):
         return paths[0]
     return None
+
+
+def _is_safe_filename_component(value, max_length):
+    """Return whether `value` is a bounded portable filename component."""
+    if not value or len(value) > max_length:
+        return False
+    if not value[0].isascii() or not value[0].isalnum() or value.endswith("."):
+        return False
+    return all(
+        character.isascii()
+        and (character.isalnum() or character in _FILENAME_COMPONENT_PUNCTUATION)
+        for character in value
+    )
 
 
 def _is_link_like(path):
@@ -184,6 +201,10 @@ def main() -> int:
     if not run_dir or not task_id:
         return 0
     event_name = sys.argv[1] if len(sys.argv) > 1 else "Unknown"
+    if not _is_safe_filename_component(task_id, _TASK_ID_MAX_LENGTH):
+        return 0
+    if not _is_safe_filename_component(event_name, _EVENT_NAME_MAX_LENGTH):
+        return 0
     try:
         payload = json.load(sys.stdin)
     except (json.JSONDecodeError, ValueError):
