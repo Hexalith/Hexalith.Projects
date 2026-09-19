@@ -6,6 +6,7 @@
 namespace Hexalith.Projects.Server.Folders;
 
 using System;
+using System.Globalization;
 using System.Linq;
 
 using FoldersClient = Hexalith.Folders.Client.Generated.IClient;
@@ -122,7 +123,8 @@ public sealed class FoldersProjectFileReferenceDirectory(FoldersClient foldersCl
         }
 
         // Redacted / excluded / binary-disallowed metadata fails closed without leaking why.
-        if (item.Redaction != FileMetadataItemRedaction.Not_redacted)
+        string redaction = Convert.ToString(item.Redaction, CultureInfo.InvariantCulture) ?? string.Empty;
+        if (!string.Equals(redaction, "not_redacted", StringComparison.OrdinalIgnoreCase))
         {
             return new(ProjectFileReferenceValidationOutcome.Redacted, correlationId);
         }

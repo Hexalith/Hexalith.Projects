@@ -1,0 +1,43 @@
+diff --git a/src/Hexalith.FrontComposer.AppHost/HexalithTenantsSample.cs b/src/Hexalith.FrontComposer.AppHost/HexalithTenantsSample.cs
+index 1ed4f562..f3781f10 100644
+--- a/src/Hexalith.FrontComposer.AppHost/HexalithTenantsSample.cs
++++ b/src/Hexalith.FrontComposer.AppHost/HexalithTenantsSample.cs
+@@ -12,4 +12,6 @@ public class HexalithTenantsSample : IProjectMetadata {
+         "samples",
+         "Hexalith.Tenants.Sample",
+         "Hexalith.Tenants.Sample.csproj");
++
++    public bool SuppressBuild => true;
+ }
+diff --git a/tests/eng/test_pact_provider_apphost_smoke.py b/tests/eng/test_pact_provider_apphost_smoke.py
+index 5d3a8e82..7366309b 100644
+--- a/tests/eng/test_pact_provider_apphost_smoke.py
++++ b/tests/eng/test_pact_provider_apphost_smoke.py
+@@ -318,6 +318,27 @@ class FakeRuntime(smoke.SmokeRuntime):
+ 
+ 
+ class PactProviderAppHostSmokeTests(unittest.TestCase):
++    def test_path_only_apphost_resources_suppress_runtime_rebuilds(self) -> None:
++        metadata_types = (
++            "HexalithEventStore",
++            "HexalithEventStoreAdminServerHost",
++            "HexalithEventStoreAdminUI",
++            "HexalithParties",
++            "HexalithTenants",
++            "HexalithTenantsSample",
++            "HexalithTenantsUI",
++        )
++
++        for metadata_type in metadata_types:
++            with self.subTest(metadata_type=metadata_type):
++                source = (
++                    smoke.ROOT
++                    / "src"
++                    / "Hexalith.FrontComposer.AppHost"
++                    / f"{metadata_type}.cs"
++                ).read_text(encoding="utf-8")
++                self.assertIn("public bool SuppressBuild => true;", source)
++
+     def setUp(self) -> None:
+         self.temporary = tempfile.TemporaryDirectory()
+         self.addCleanup(self.temporary.cleanup)
