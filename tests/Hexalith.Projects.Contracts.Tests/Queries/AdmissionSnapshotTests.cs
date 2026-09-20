@@ -6,6 +6,7 @@
 namespace Hexalith.Projects.Contracts.Tests.Queries;
 
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 
 using Hexalith.Projects.Contracts.Models;
@@ -53,9 +54,45 @@ public sealed class AdmissionSnapshotTests
                 EvidenceFreshnessState.Current,
                 "current"),
         ]);
+        roundTripped.Snapshot.RecoveryActions.ShouldBeEmpty();
         roundTripped.Setup.ShouldNotBeNull();
         typeof(ConversationStartSetupResponse).GetConstructor(
             [typeof(ConversationStartSetup), typeof(ConversationStartAdmissionSnapshot)]).ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ConversationStartCompatibilityProjection_PreservesFrozenStory62Snapshot()
+    {
+        AdmissionSnapshot snapshot = new(
+            AdmissionResponseState.Partial,
+            new DateTimeOffset(2026, 9, 6, 8, 0, 0, TimeSpan.Zero),
+            4,
+            [
+                new AdmissionComponent("Project", true, EvidenceFreshnessState.Current, "current"),
+                new AdmissionComponent("Folder", true, EvidenceFreshnessState.Current, "current"),
+                new AdmissionComponent("Setup", true, EvidenceFreshnessState.Current, "current"),
+                new AdmissionComponent("FirstResponseAuthorization", true, EvidenceFreshnessState.Current, "envelope-authorized"),
+                new AdmissionComponent("References", true, EvidenceFreshnessState.Current, "optional-omission"),
+                new AdmissionComponent("FutureEvidence", true, EvidenceFreshnessState.Current, "future"),
+            ],
+            [AdmissionRecoveryAction.SelectAlternative]);
+
+        ConversationStartAdmissionSnapshot projected = ConversationStartAdmissionSnapshot.FromShared(snapshot);
+
+        projected.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
+        projected.Components.Select(static component => component.Name).ShouldBe(
+            ["Project", "Folder", "Setup", "FirstResponseAuthorization"]);
+        projected.RecoveryActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void AdmissionRecoveryAction_ValuesCannotBeMutated()
+    {
+        IList<string> values = (IList<string>)AdmissionRecoveryAction.Values;
+
+        _ = Should.Throw<NotSupportedException>(() => values[0] = "Changed");
+
+        AdmissionRecoveryAction.Values[0].ShouldBe(AdmissionRecoveryAction.None);
     }
 
     [Fact]

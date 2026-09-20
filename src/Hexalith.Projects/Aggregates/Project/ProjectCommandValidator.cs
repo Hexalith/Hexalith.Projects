@@ -42,6 +42,7 @@ public static class ProjectCommandValidator
     internal const int MaxSetupTextItems = 16;
     internal const int MaxSetupSourceKinds = 4;
     internal const int MaxReferenceIdentifierLength = 128;
+    internal const int MaxAggregateIdentifierLength = 256;
 
     // The request schema version the spine's CreateProjectRequest pins. Part of the idempotency
     // equivalence list, so it is canonicalized into the fingerprint.
@@ -783,9 +784,12 @@ public static class ProjectCommandValidator
 
     /// <summary>Validates a persisted Project-owned envelope identifier.</summary>
     /// <param name="value">The persisted identifier.</param>
-    /// <returns><see langword="true"/> when the identifier is present and free of control separators.</returns>
+    /// <returns><see langword="true"/> when the identifier is present, canonical, bounded, and free of control separators.</returns>
     internal static bool IsSafePersistedEnvelopeIdentifier(string? value)
-        => IsSafeEnvelopeIdentifier(value);
+        => value is not null
+            && value.Length <= MaxAggregateIdentifierLength
+            && string.Equals(value, value.Trim(), StringComparison.Ordinal)
+            && IsSafeEnvelopeIdentifier(value);
 
     private static ProjectCommandValidationResult ValidateCommon(IProjectCommand command)
     {

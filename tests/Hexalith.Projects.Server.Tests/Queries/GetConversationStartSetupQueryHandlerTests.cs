@@ -54,6 +54,38 @@ public sealed class GetConversationStartSetupQueryHandlerTests
         response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
         response.Snapshot.ProjectVersion.ShouldBe(4);
         response.Snapshot.AsOf.ShouldBe(ObservedAt);
+        response.Snapshot.Components.Select(static component => component.Name).ShouldBe(
+            ["Project", "Folder", "Setup", "FirstResponseAuthorization"]);
+        response.Snapshot.RecoveryActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_OptionalContextOmission_PreservesCompleteStory62Snapshot()
+    {
+        ProjectSetup setup = new(
+            [],
+            [],
+            [],
+            [ProjectContextSourceKind.Memory],
+            null);
+        ProjectDetailItem detail = Detail(ProjectLifecycle.Active, setup, hasFolder: true) with
+        {
+            MemoryReferences =
+            [
+                new ProjectMemoryReference("memory-1", "Memory", ReferenceState.Included, null, ObservedAt),
+            ],
+        };
+        GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(detail).ConfigureAwait(true);
+
+        ConversationStartSetupResponse response = JsonSerializer.Deserialize<ConversationStartSetupResponse>(
+            (await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken)).PayloadBytes!,
+            JsonOptions)!;
+
+        response.Setup.ShouldNotBeNull();
+        response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
+        response.Snapshot.Components.Select(static component => component.Name).ShouldBe(
+            ["Project", "Folder", "Setup", "FirstResponseAuthorization"]);
+        response.Snapshot.RecoveryActions.ShouldBeEmpty();
     }
 
     [Fact]

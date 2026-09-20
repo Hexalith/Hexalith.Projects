@@ -5,6 +5,7 @@
 
 namespace Hexalith.Projects.Contracts.Queries;
 
+using System;
 using System.Collections.Generic;
 
 /// <summary>Closed recovery-action vocabulary for AD-32 snapshots.</summary>
@@ -38,8 +39,8 @@ public static class AdmissionRecoveryAction
     public const string ContactAdministrator = "ContactAdministrator";
 
     /// <summary>Gets the complete closed vocabulary in declaration order.</summary>
-    public static IReadOnlyList<string> Values { get; } =
-    [
+    public static IReadOnlyList<string> Values { get; } = Array.AsReadOnly(new[]
+    {
         None,
         Retry,
         RefreshContext,
@@ -49,5 +50,5 @@ public static class AdmissionRecoveryAction
         ResolveNeedsAttention,
         SelectAlternative,
         ContactAdministrator,
-    ];
+    });
 }

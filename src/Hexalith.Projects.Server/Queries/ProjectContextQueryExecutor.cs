@@ -100,10 +100,7 @@ public sealed class ProjectContextQueryExecutor(
         if (finalTenantAccess is not { IsAllowed: true }
             || string.IsNullOrWhiteSpace(finalTenantAccess.ProjectionWatermark)
             || !string.Equals(finalTenantAccess.TenantId, query.TenantId, StringComparison.Ordinal)
-            || !string.Equals(
-                finalTenantAccess.ProjectionWatermark,
-                initialTenantAccess.ProjectionWatermark,
-                StringComparison.Ordinal))
+            || !HasStableTenantAuthorizationEvidence(initialTenantAccess, finalTenantAccess))
         {
             return ProjectContextAdmission.SafeDenial(projectId);
         }
@@ -112,8 +109,8 @@ public sealed class ProjectContextQueryExecutor(
         {
             return ProjectContextAdmissionAssembler.Unavailable(
                 projectId,
-                Enum.IsDefined(detail.Lifecycle) ? detail.Lifecycle : ProjectLifecycle.Active,
-                finalTenantAccess?.LastEventTimestamp ?? initialTenantAccess.LastEventTimestamp ?? default,
+                ProjectLifecycle.Active,
+                finalTenantAccess.LastEventTimestamp ?? initialTenantAccess.LastEventTimestamp ?? default,
                 projectVersion: 0,
                 projectCurrent: false,
                 folderIncluded: false,
@@ -124,7 +121,29 @@ public sealed class ProjectContextQueryExecutor(
 
         if (!finalAuthorization.IsAllowed
             || finalDetail is null
-            || !HasStableProjectAuthorityMetadata(detail, finalDetail))
+            || !HasStableEventStoreAuthorizationEvidence(
+                initialAuthorization.EventStoreValidationResult,
+                finalAuthorization.EventStoreValidationResult))
+        {
+            return ProjectContextAdmission.SafeDenial(projectId);
+        }
+
+        if (!ProjectPersistedDetailValidator.IsHeaderValid(detail)
+            || !ProjectPersistedDetailValidator.IsHeaderValid(finalDetail))
+        {
+            return ProjectContextAdmissionAssembler.Unavailable(
+                projectId,
+                ProjectLifecycle.Active,
+                finalTenantAccess.LastEventTimestamp ?? initialTenantAccess.LastEventTimestamp ?? default,
+                projectVersion: 0,
+                projectCurrent: false,
+                folderIncluded: false,
+                setupCurrent: false,
+                authorizationCurrent: true,
+                ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
+        }
+
+        if (!HasStableProjectAuthorityMetadata(detail, finalDetail))
         {
             return ProjectContextAdmission.SafeDenial(projectId);
         }
@@ -133,7 +152,7 @@ public sealed class ProjectContextQueryExecutor(
         {
             return ProjectContextAdmissionAssembler.Unavailable(
                 projectId,
-                Enum.IsDefined(detail.Lifecycle) ? detail.Lifecycle : ProjectLifecycle.Active,
+                detail.Lifecycle,
                 detail.UpdatedAt,
                 projectVersion: 0,
                 projectCurrent: true,
@@ -153,8 +172,8 @@ public sealed class ProjectContextQueryExecutor(
         {
             return ProjectContextAdmissionAssembler.Unavailable(
                 projectId,
-                Enum.IsDefined(detail.Lifecycle) ? detail.Lifecycle : ProjectLifecycle.Active,
-                finalTenantAccess.LastEventTimestamp ?? initialTenantAccess.LastEventTimestamp ?? default,
+                detail.Lifecycle,
+                detail.UpdatedAt,
                 projectVersion: 0,
                 projectCurrent: false,
                 folderIncluded: false,
@@ -221,6 +240,34 @@ public sealed class ProjectContextQueryExecutor(
             && initial.Sequence == final.Sequence
             && initial.CreatedAt == final.CreatedAt
             && initial.UpdatedAt == final.UpdatedAt;
+
+    private static bool HasStableTenantAuthorizationEvidence(
+        TenantAccessAuthorizationResult initial,
+        TenantAccessAuthorizationResult final)
+        => initial.Outcome == final.Outcome
+            && string.Equals(initial.Code, final.Code, StringComparison.Ordinal)
+            && string.Equals(initial.TenantId, final.TenantId, StringComparison.Ordinal)
+            && string.Equals(initial.ProjectionWatermark, final.ProjectionWatermark, StringComparison.Ordinal)
+            && initial.LastEventTimestamp == final.LastEventTimestamp
+            && HasNonRegressingProjectionAge(initial.ProjectionAge, final.ProjectionAge)
+            && initial.FreshnessStatus == final.FreshnessStatus
+            && string.Equals(initial.Source, final.Source, StringComparison.Ordinal);
+
+    private static bool HasNonRegressingProjectionAge(TimeSpan? initial, TimeSpan? final)
+        => (initial, final) switch
+        {
+            (null, null) => true,
+            ({ } initialAge, { } finalAge) => finalAge >= initialAge,
+            _ => false,
+        };
+
+    private static bool HasStableEventStoreAuthorizationEvidence(
+        EventStoreAuthorizationValidationResult? initial,
+        EventStoreAuthorizationValidationResult? final)
+        => initial is { Status: EventStoreAuthorizationValidationStatus.Allowed }
+            && final is { Status: EventStoreAuthorizationValidationStatus.Allowed }
+            && string.Equals(initial.FreshnessWatermark, final.FreshnessWatermark, StringComparison.Ordinal)
+            && string.Equals(initial.FreshnessClass, final.FreshnessClass, StringComparison.Ordinal);
 
     private static bool HasStableProjectAuthorityReferences(ProjectDetailItem initial, ProjectDetailItem final)
         => SequencesEqual(initial.FileReferences, final.FileReferences)

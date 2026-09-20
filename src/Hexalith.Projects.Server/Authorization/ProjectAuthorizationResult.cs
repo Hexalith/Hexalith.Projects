@@ -29,6 +29,9 @@ public sealed record ProjectAuthorizationResult(
     ProjectDetailItem? ProjectDetail,
     TenantAccessAuthorizationResult? TenantAccessResult = null)
 {
+    /// <summary>Gets the host-internal EventStore validator evidence retained for cross-pass comparison.</summary>
+    internal EventStoreAuthorizationValidationResult? EventStoreValidationResult { get; init; }
+
     /// <summary>Creates an allowed result.</summary>
     public static ProjectAuthorizationResult Allowed(
         IReadOnlyList<AuthorizationLayer> evaluatedLayers,

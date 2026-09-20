@@ -538,7 +538,10 @@ public sealed class ProjectAuthorizationGate(
                 tenantAccess);
         }
 
-        return ProjectAuthorizationResult.Allowed(evaluatedLayers.ToArray(), detail, tenantAccess);
+        return ProjectAuthorizationResult.Allowed(evaluatedLayers.ToArray(), detail, tenantAccess) with
+        {
+            EventStoreValidationResult = validatorResult,
+        };
     }
 
     private static ProjectAuthorizationResult Deny(

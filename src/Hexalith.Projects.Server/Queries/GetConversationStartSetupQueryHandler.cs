@@ -42,7 +42,7 @@ public sealed class GetConversationStartSetupQueryHandler(ProjectContextQueryExe
         }
 
         ProjectContextAdmission admission = await _executor
-            .ExecuteAsync(query, projectId, ProjectContextOperationKind.Get, cancellationToken)
+            .ExecuteAsync(query, projectId, ProjectContextOperationKind.GetConversationStartSetup, cancellationToken)
             .ConfigureAwait(false);
         if (admission.IsSafeDenial)
         {

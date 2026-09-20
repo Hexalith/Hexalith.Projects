@@ -19,25 +19,7 @@ public static class ProjectPersistedDetailValidator
     {
         ArgumentNullException.ThrowIfNull(detail);
 
-        if (!ProjectCommandValidator.IsSafePersistedEnvelopeIdentifier(detail.TenantId)
-            || !ProjectCommandValidator.IsSafePersistedEnvelopeIdentifier(detail.ProjectId)
-            || string.IsNullOrWhiteSpace(detail.Name)
-            || detail.Name.Length > ProjectCommandValidator.MaxNameLength
-            || !ProjectCommandValidator.IsSafePersistedMetadata(detail.Name, ProjectCommandValidator.MaxNameLength)
-            || !ProjectCommandValidator.IsSafePersistedMetadata(detail.Description, ProjectCommandValidator.MaxDescriptionLength)
-            || !ProjectCommandValidator.IsSafePersistedMetadata(detail.SetupMetadata, ProjectCommandValidator.MaxSetupMetadataLength)
-            || detail.Sequence <= 0
-            || !Enum.IsDefined(detail.Lifecycle)
-            || detail.CreatedAt == default
-            || detail.UpdatedAt < detail.CreatedAt
-            || detail.FileReferences is null
-            || detail.MemoryReferences is null
-            || (detail.Setup is not null && !ProjectCommandValidator.IsValidPersistedSetup(detail.Setup)))
-        {
-            return false;
-        }
-
-        if (detail.ProjectFolder is not null && !IsValidFolder(detail.ProjectFolder, detail.CreatedAt, detail.UpdatedAt))
+        if (!IsHeaderValid(detail))
         {
             return false;
         }
@@ -72,6 +54,33 @@ public static class ProjectPersistedDetailValidator
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Returns whether bounded Project, Folder, and Setup header evidence is coherent without walking
+    /// the reference collections.
+    /// </summary>
+    /// <param name="detail">The persisted Project detail.</param>
+    /// <returns><see langword="true"/> when the bounded header satisfies the supported read rules.</returns>
+    public static bool IsHeaderValid(ProjectDetailItem detail)
+    {
+        ArgumentNullException.ThrowIfNull(detail);
+
+        return ProjectCommandValidator.IsSafePersistedEnvelopeIdentifier(detail.TenantId)
+            && ProjectCommandValidator.IsSafePersistedEnvelopeIdentifier(detail.ProjectId)
+            && !string.IsNullOrWhiteSpace(detail.Name)
+            && detail.Name.Length <= ProjectCommandValidator.MaxNameLength
+            && ProjectCommandValidator.IsSafePersistedMetadata(detail.Name, ProjectCommandValidator.MaxNameLength)
+            && ProjectCommandValidator.IsSafePersistedMetadata(detail.Description, ProjectCommandValidator.MaxDescriptionLength)
+            && ProjectCommandValidator.IsSafePersistedMetadata(detail.SetupMetadata, ProjectCommandValidator.MaxSetupMetadataLength)
+            && detail.Sequence > 0
+            && Enum.IsDefined(detail.Lifecycle)
+            && detail.CreatedAt != default
+            && detail.UpdatedAt >= detail.CreatedAt
+            && detail.FileReferences is not null
+            && detail.MemoryReferences is not null
+            && (detail.Setup is null || ProjectCommandValidator.IsValidPersistedSetup(detail.Setup))
+            && (detail.ProjectFolder is null || IsValidFolder(detail.ProjectFolder, detail.CreatedAt, detail.UpdatedAt));
     }
 
     private static bool IsValidFolder(

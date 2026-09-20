@@ -75,6 +75,31 @@ public sealed class ExplainContextSelectionQueryHandlerTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_DisclosureSafeOptionalOmission_ReturnsPartialExplanation()
+    {
+        ProjectDetailItem detail = Detail(hasFolder: true) with
+        {
+            Setup = new ProjectSetup([], [], [], [ProjectContextSourceKind.Memory], null),
+            MemoryReferences =
+            [
+                new ProjectMemoryReference("memory-1", "Memory", ReferenceState.Included, null, ObservedAt),
+            ],
+        };
+        ExplainContextSelectionQueryHandler handler = await CreateHandlerAsync(detail).ConfigureAwait(true);
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeTrue();
+        ExplainContextSelectionResponse response = JsonSerializer.Deserialize<ExplainContextSelectionResponse>(result.PayloadBytes!, JsonOptions)!;
+        response.Context.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
+        response.Context.MemoryReferences.ShouldBeEmpty();
+        response.Evaluations.ShouldContain(item =>
+            item.ReferenceKind == "memory"
+            && item.ReferenceId == "memory-1"
+            && item.ResultState == ReferenceState.Excluded);
+    }
+
+    [Fact]
     public async Task ExecuteAsync_DeniedTarget_ReturnsSafeDenial()
     {
         ExplainContextSelectionQueryHandler handler = await CreateHandlerAsync(Detail(hasFolder: true)).ConfigureAwait(true);

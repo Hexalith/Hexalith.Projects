@@ -67,7 +67,7 @@ public sealed class FoldersProjectFolderDirectory(FoldersClient foldersClient) :
                     folderId,
                     correlationId,
                     ReadConsistencyClass.Eventually_consistent,
-                    null!,
+                    correlationId,
                     cancellationToken)
                 .ConfigureAwait(false);
 

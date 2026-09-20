@@ -29,7 +29,7 @@ public sealed record ConversationStartAdmissionSnapshot(
             snapshot.ResponseState switch
             {
                 AdmissionResponseState.Complete => ConversationStartResponseState.Complete,
-                AdmissionResponseState.Partial => ConversationStartResponseState.Partial,
+                AdmissionResponseState.Partial => ConversationStartResponseState.Complete,
                 AdmissionResponseState.Unavailable => ConversationStartResponseState.Unavailable,
                 AdmissionResponseState.Denied => ConversationStartResponseState.Denied,
                 _ => throw new ArgumentOutOfRangeException(nameof(snapshot)),
@@ -37,12 +37,16 @@ public sealed record ConversationStartAdmissionSnapshot(
             snapshot.AsOf,
             snapshot.ProjectVersion,
             snapshot.Components
+                .Where(static component => component.Name is
+                    "Project" or "Folder" or "Setup" or "FirstResponseAuthorization")
                 .Select(static component => new ConversationStartComponent(
                     component.Name,
                     component.Included,
                     component.Freshness,
                     component.Reason))
                 .ToArray(),
-            snapshot.RecoveryActions.ToArray());
+            snapshot.ResponseState is AdmissionResponseState.Complete or AdmissionResponseState.Partial
+                ? []
+                : snapshot.RecoveryActions.ToArray());
     }
 }
