@@ -141,4 +141,129 @@ public sealed class GetProjectContextQueryTests
         ProjectContextShadowComparator.CompareGet(legacy.Context, mutated)
             .Equivalent.ShouldBeFalse();
     }
+
+    [Fact]
+    public void ShadowCompare_DifferentReferenceMetadataOrCutoff_Diverges()
+    {
+        ProjectContextInclusionPolicy policy = new();
+        ProjectContextReferenceEvidence references = WithAllKinds();
+        ProjectContextAssemblyResult legacy = policy.Assemble(Context(), Project(), TenantAccess(), references);
+        ProjectContextReadResponse supported = policy.AssembleAdmission(
+                Context(),
+                Project(),
+                TenantAccess(),
+                references,
+                projectVersion: 1,
+                asOf: DefaultNow,
+                ownerBackedTrustAvailable: true)
+            .ToReadResponse();
+        ProjectContextReference original = supported.FileReferences.Single();
+
+        ProjectContextReadResponse differentLabel = supported with
+        {
+            FileReferences =
+            [
+                new ProjectContextReference(
+                    original.ReferenceKind,
+                    original.ReferenceId,
+                    "different label",
+                    original.ReferenceState,
+                    original.ReasonCode,
+                    original.ObservedAt),
+            ],
+        };
+        ProjectContextReadResponse differentReason = supported with
+        {
+            FileReferences =
+            [
+                new ProjectContextReference(
+                    original.ReferenceKind,
+                    original.ReferenceId,
+                    original.DisplayName,
+                    original.ReferenceState,
+                    ProjectReasonCode.MetadataMatched,
+                    original.ObservedAt),
+            ],
+        };
+        ProjectContextReadResponse differentObservation = supported with
+        {
+            FileReferences =
+            [
+                new ProjectContextReference(
+                    original.ReferenceKind,
+                    original.ReferenceId,
+                    original.DisplayName,
+                    original.ReferenceState,
+                    original.ReasonCode,
+                    original.ObservedAt.AddTicks(1)),
+            ],
+        };
+        ProjectContextReadResponse differentCutoff = supported with
+        {
+            Snapshot = supported.Snapshot with { AsOf = supported.Snapshot.AsOf.AddTicks(1) },
+        };
+
+        ProjectContextShadowComparator.CompareGet(legacy.Context, differentLabel).Equivalent.ShouldBeFalse();
+        ProjectContextShadowComparator.CompareGet(legacy.Context, differentReason).Equivalent.ShouldBeFalse();
+        ProjectContextShadowComparator.CompareGet(legacy.Context, differentObservation).Equivalent.ShouldBeFalse();
+        ProjectContextShadowComparator.CompareGet(legacy.Context, differentCutoff).Equivalent.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void ShadowCompare_DifferentExclusionOrEvaluationMetadata_Diverges()
+    {
+        ProjectContextInclusionPolicy policy = new();
+        ProjectContextReferenceEvidence references = new(
+            WithFolder().ProjectFolder,
+            FileReferences: [],
+            MemoryReferences: WithMemory(ReferenceState.Stale).MemoryReferences,
+            Conversations: []);
+        ProjectContextAssemblyResult legacy = policy.Assemble(Context(), Project(), TenantAccess(), references);
+        ProjectContextAdmission admission = policy.AssembleAdmission(
+            Context(),
+            Project(),
+            TenantAccess(),
+            references,
+            projectVersion: 1,
+            asOf: DefaultNow);
+        ProjectContextReadResponse supported = admission.ToReadResponse();
+        ExplainContextSelectionResponse explanation = admission.ToExplanation();
+        ProjectContextExclusion exclusion = supported.Excluded.Single();
+        ProjectContextEvaluation evaluation = explanation.Evaluations.Single(item => item.ReferenceKind == "memory");
+
+        ProjectContextReadResponse differentExclusion = supported with
+        {
+            Excluded =
+            [
+                new ProjectContextExclusion(
+                    exclusion.ReferenceKind,
+                    exclusion.ReferenceId,
+                    exclusion.ReferenceState,
+                    ProjectReasonCode.MetadataMatched,
+                    exclusion.FailedCheck,
+                    ProjectContextInclusionDiagnostic.ReferenceUnavailable),
+            ],
+        };
+        ExplainContextSelectionResponse differentEvaluation = explanation with
+        {
+            Evaluations = explanation.Evaluations
+                .Select(item => item.ReferenceKind == "memory"
+                    ? new ProjectContextEvaluation(
+                        evaluation.ReferenceKind,
+                        evaluation.ReferenceId,
+                        evaluation.ResultState,
+                        evaluation.FailedCheck,
+                        ProjectReasonCode.MetadataMatched,
+                        ProjectContextInclusionDiagnostic.ReferenceUnavailable,
+                        evaluation.ObservedAt.AddTicks(1))
+                    : item)
+                .ToArray(),
+        };
+
+        ProjectContextShadowComparator.CompareGet(legacy.Context, differentExclusion).Equivalent.ShouldBeFalse();
+        ProjectContextShadowComparator.CompareExplain(
+                new ProjectContextExplanation(legacy.Context, legacy.Evaluations),
+                differentEvaluation)
+            .Equivalent.ShouldBeFalse();
+    }
 }

@@ -171,7 +171,7 @@ public static class ProjectContextAdmissionAssembler
                     setupCurrent: true,
                     authorizationCurrent: true,
                     referencesUsable: true,
-                    referencesComplete: !hasOptionalOmission),
+                    referencesReason: hasOptionalOmission ? "optional-omission" : "current"),
                 recovery));
     }
 
@@ -249,7 +249,7 @@ public static class ProjectContextAdmissionAssembler
                     setupCurrent,
                     authorizationCurrent,
                     referencesUsable: false,
-                    referencesComplete: false),
+                    referencesReason: ReferencesReason(cause)),
                 UnavailableRecoveryActions(cause)));
 
     /// <summary>Counts folder, file, memory, and conversation candidates.</summary>
@@ -436,7 +436,7 @@ public static class ProjectContextAdmissionAssembler
         bool setupCurrent,
         bool authorizationCurrent,
         bool referencesUsable,
-        bool referencesComplete)
+        string referencesReason)
         =>
         [
             new AdmissionComponent(
@@ -463,8 +463,18 @@ public static class ProjectContextAdmissionAssembler
                 "References",
                 referencesUsable,
                 referencesUsable ? EvidenceFreshnessState.Current : EvidenceFreshnessState.Unavailable,
-                referencesComplete ? "current" : "optional-omission"),
+                referencesReason),
         ];
+
+    private static string ReferencesReason(ProjectContextUnavailableCause cause)
+        => cause switch
+        {
+            ProjectContextUnavailableCause.StoreFault => "store-fault",
+            ProjectContextUnavailableCause.MissingOrStaleRequiredContext => "required-evidence-unavailable",
+            ProjectContextUnavailableCause.MaterializationInProgress => "materialization-in-progress",
+            ProjectContextUnavailableCause.AlternativeRequired => "alternative-required",
+            _ => "corruption-or-authorization-uncertain",
+        };
 
     private static List<ProjectContextReference> SortRefs(List<ProjectContextReference> refs)
         => [.. refs

@@ -64,6 +64,7 @@ public sealed class ProjectQueryEnvelopePrincipalBinding(
         if (string.IsNullOrWhiteSpace(query.OriginalActorId)
             || !string.Equals(subject, query.OriginalActorId, StringComparison.Ordinal)
             || !string.Equals(subject, query.UserId, StringComparison.Ordinal)
+            || !string.Equals(_tenantContextAccessor.PrincipalId, subject, StringComparison.Ordinal)
             || !string.Equals(_tenantContextAccessor.AuthoritativeTenantId, query.TenantId, StringComparison.Ordinal))
         {
             return false;

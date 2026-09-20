@@ -55,6 +55,15 @@ public sealed class ProjectQueryEnvelopePrincipalBindingTests
     }
 
     [Fact]
+    public void TryBind_ConflictingNameIdentifierAndSubject_FailsClosed()
+    {
+        ClaimsPrincipal principal = Principal();
+        ((ClaimsIdentity)principal.Identity!).AddClaim(new Claim(ClaimTypes.NameIdentifier, "other-actor"));
+
+        CreateProductionBinding(principal).TryBind(Query(), out _).ShouldBeFalse();
+    }
+
+    [Fact]
     public void TryBind_ProducerBoundedScopeAndAudienceNormalization_MatchesEnvelope()
     {
         List<Claim> claims =

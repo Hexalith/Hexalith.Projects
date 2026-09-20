@@ -41,7 +41,8 @@ public static class ProjectContextShadowComparator
         }
 
         if (!string.Equals(legacy.ProjectId, supported.ProjectId, StringComparison.Ordinal)
-            || legacy.Lifecycle != supported.Lifecycle)
+            || legacy.Lifecycle != supported.Lifecycle
+            || legacy.ObservedAt != supported.Snapshot.AsOf)
         {
             return ProjectContextShadowComparison.Diverged("identity");
         }
@@ -131,7 +132,10 @@ public static class ProjectContextShadowComparator
 
         return string.Equals(left.ReferenceKind, right.ReferenceKind, StringComparison.Ordinal)
             && string.Equals(left.ReferenceId, right.ReferenceId, StringComparison.Ordinal)
-            && left.ReferenceState == right.ReferenceState;
+            && left.ReferenceState == right.ReferenceState
+            && string.Equals(left.DisplayName, right.DisplayName, StringComparison.Ordinal)
+            && left.ReasonCode == right.ReasonCode
+            && left.ObservedAt == right.ObservedAt;
     }
 
     private static bool SameReferences(
@@ -148,7 +152,9 @@ public static class ProjectContextShadowComparator
                     string.Equals(legacy.ReferenceKind, supported.ReferenceKind, StringComparison.Ordinal)
                     && string.Equals(legacy.ReferenceId, supported.ReferenceId, StringComparison.Ordinal)
                     && legacy.ReferenceState == supported.ReferenceState
-                    && legacy.FailedCheck == supported.FailedCheck)
+                    && legacy.ReasonCode == supported.ReasonCode
+                    && legacy.FailedCheck == supported.FailedCheck
+                    && string.Equals(legacy.Diagnostic, supported.Diagnostic, StringComparison.Ordinal))
                 .All(static equal => equal);
 
     private static bool SameEvaluations(
@@ -159,6 +165,9 @@ public static class ProjectContextShadowComparator
                     string.Equals(legacy.ReferenceKind, supported.ReferenceKind, StringComparison.Ordinal)
                     && string.Equals(legacy.ReferenceId, supported.ReferenceId, StringComparison.Ordinal)
                     && legacy.ResultState == supported.ResultState
-                    && legacy.FailedCheck == supported.FailedCheck)
+                    && legacy.FailedCheck == supported.FailedCheck
+                    && legacy.ReasonCode == supported.ReasonCode
+                    && string.Equals(legacy.Diagnostic, supported.Diagnostic, StringComparison.Ordinal)
+                    && legacy.ObservedAt == supported.ObservedAt)
                 .All(static equal => equal);
 }

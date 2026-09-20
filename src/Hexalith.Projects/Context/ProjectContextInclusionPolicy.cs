@@ -225,10 +225,11 @@ public sealed class ProjectContextInclusionPolicy
                 lifecycle,
                 asOf,
                 projectVersion,
+                projectCurrent: project.Detail is not null,
                 folderIncluded: false,
                 setupCurrent: false,
-                authorizationCurrent: false,
-                overflow: candidateCount > ProjectContextReadLimits.MaxReferences);
+                authorizationCurrent: tenantAccess.Result.IsAllowed,
+                ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
         }
 
         ProjectContextAssemblyResult assembled = Assemble(context, project, tenantAccess, references);

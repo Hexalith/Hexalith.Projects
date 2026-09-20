@@ -2,7 +2,7 @@
 title: 'Retrieve assembled Project Context through supported read models'
 type: 'feature'
 created: '2026-08-24'
-status: 'in-progress'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 4
 baseline_commit: '5a37f9e4ba9cd7f35afae212398db9f945d4d475'
@@ -18,7 +18,7 @@ context:
 
 **Problem:** The Story 3.x context routes assemble from a Projects-owned Dapr journal, truncate Conversation evidence to one page, and refresh through incomplete live fan-out. They cannot prove the supported AD-32 Project, Folder, Setup, authorization, version, component, recovery, and Reference Trust Index truth required for Chatbot grounding.
 
-**Approach:** Add one cohesive, read-only DomainService slice for context retrieval, refresh, and explanation over EventStore-managed persisted Project and Reference Trust Index models. Reuse the supported query and projection pattern already used by Conversation-start, preserve the pure allowlist policy and legacy routes for shadow comparison, and expose no sibling payload or durable diagnostic trace.
+**Approach:** Add one cohesive, read-only DomainService slice for context retrieval and explanation over EventStore-managed persisted Project models. Reuse the supported query pattern already used by Conversation-start, preserve the pure allowlist policy and legacy routes for shadow comparison, and expose no sibling payload or durable diagnostic trace. Defer supported Refresh and Reference Trust Index ingestion until their approved contracts exist.
 
 **Decision:** Implement on the current local EventStore and `/query` seams now, following Story 6.2. Focused tests may pass; G-4 and Story 6.1-chain evidence stay non-qualifying until those gates exist.
 
@@ -26,7 +26,7 @@ context:
 
 **Decision:** Extract shared AD-32 snapshot types from the Story 6.2 Conversation-start records, one type per file, and reuse them for context. Keep the existing Conversation-start wire shape.
 
-**Decision:** Keep Get, Refresh, Explain, and Reference Trust Index in this story. Do not implement Refresh owner batches or RTI ingestion until approved G-2 and RTI artifacts exist. Until then, Get and Explain run on Project-owned persisted detail and the allowlist. An optional omission is `Partial` only when its identity is already authorized for disclosure; denied or unconfirmed candidates return minimal `Unavailable` until an approved RTI supplies a disclosure-safe ordinal. After RTI is accepted, missing or non-current trust-index evidence is required `Unavailable`.
+**Decision:** Scope Story 6.3 completion to supported Get and Explain over Project-owned persisted detail and the allowlist. Keep the additive Refresh query contract, but leave its handler unregistered and defer owner-batch Refresh plus RTI ingestion to follow-up work after approved G-2 and RTI artifacts exist. An optional omission is `Partial` only when its identity is already authorized for disclosure; denied or unconfirmed candidates return minimal `Unavailable` until an approved RTI supplies a disclosure-safe ordinal.
 
 **Decision:** Forward the caller's already-validated bearer token through the EventStore Dapr `/query` callback. On Projects, derive the bounded dual-principal values from that authenticated token, require its subject to equal the envelope original actor, and require the remaining normalized envelope identity fields to match. Do not introduce a workload-only impersonation or new signed-delegation scheme.
 
@@ -34,7 +34,7 @@ context:
 
 ## Boundaries & Constraints
 
-**Always:** Authenticate `/query`; forward the already-validated caller bearer through EventStore; derive bounded dual-principal values from that token; require its subject to equal the immutable envelope original actor; and require Tenant, workload, delegation, scopes, and audience to match the normalized envelope. Resolve expected action, target, and version server-side and require exact matches. Use named `IAsyncDomainProjectionHandler` projections, `IReadModelStore`/`IReadModelBatchStore`, and `ReadModelWritePolicy`. Require an Active Project with exactly one authorized Folder. Include a reference only after Tenant, Project, lifecycle, authorization, and freshness checks pass; make every disclosure-safe omission explicit and return minimal `Unavailable` when an omission cannot be represented without disclosing an unauthorized identity. Use one AD-32 snapshot vocabulary (`responseState`, `asOf`, authorized `projectVersion` when disclosable, metadata-only `components`, closed recovery actions). Before RTI, order by source kind then opaque identifier; after RTI, use the approved persisted ordinal. Keep Get and Explain zero-write with zero sibling owner calls. Keep Refresh bounded, read-only, and zero-write. Keep explanation current, request-scoped, and nonpersistent. Reauthorize after persisted or owner reads and before returning `Complete`, `Partial`, or `Unavailable`.
+**Always:** Authenticate `/query`; forward the already-validated caller bearer through EventStore; derive bounded dual-principal values from that token; require its subject to equal the immutable envelope original actor; and require Tenant, workload, delegation, scopes, and audience to match the normalized envelope. Resolve expected action, target, and version server-side and require exact matches. Use the supported `IReadModelStore` path and `ReadModelWritePolicy`. Require an Active Project with exactly one authorized Folder. Include a reference only after Tenant, Project, lifecycle, authorization, and freshness checks pass; make every disclosure-safe omission explicit and return minimal `Unavailable` when an omission cannot be represented without disclosing an unauthorized identity. Use one AD-32 snapshot vocabulary (`responseState`, `asOf`, authorized `projectVersion` when disclosable, metadata-only `components`, closed recovery actions). Before RTI, order by source kind then opaque identifier. Keep Get and Explain zero-write with zero sibling owner calls. Keep explanation current, request-scoped, and nonpersistent. Reauthorize after persisted reads and before returning `Complete`, `Partial`, or `Unavailable`.
 
 **Never:** Write or revert `sprint-status.yaml`. Trust payloads or custom headers for authority, accept workload-only actor substitution, or invent a signed-delegation or interim-ordinal scheme. Add direct Dapr state access, another journal or query runtime, a second AD-32 vocabulary, an unbounded per-reference fan-out, a parallel trust store, or an invented per-actor authorization fingerprint. Persist explanation or selection traces. Mutate Projects or siblings during refresh. Expose Tenant or actor authority, claims, tokens, prompts, transcripts, paths, file or memory content, secrets, raw owner errors, or unconfirmed-candidate detail. Hand-edit generated files. Switch or retire legacy routing before Story 6.7. Invent unapproved Conversations, Folders, or Memories G-2 batch-read contracts, an unapproved Reference Trust Index schema, or a substitute G-4 module manifest. Relabel `ProjectReferenceIndex` as the Reference Trust Index. Treat Story 6.1 list/open contracts as landed in this checkout.
 
@@ -42,13 +42,13 @@ context:
 
 | Scenario | Input / State | Expected Output / Behavior | Error Handling |
 |----------|--------------|---------------------------|----------------|
-| Complete context | Authorized Active Project; current Project, exactly one Folder, current-empty or current Setup, authorization, and all selected reference evidence (including accepted trust-index currentness when RTI exists) | Metadata-only setup and ordered included/excluded references with AD-32 `Complete`, `asOf`, authorized version, components, and `None` recovery | No error expected |
+| Complete context | Authorized Active Project; current Project, exactly one Folder, current-empty or current Setup, authorization, and all selected pre-RTI reference evidence | Metadata-only setup and ordered included/excluded references with AD-32 `Complete`, `asOf`, authorized version, components, and `None` recovery | No error expected |
 | Partial context | Required evidence current; an optional omission is intentional or otherwise already authorized for identity disclosure | Usable `Partial`; every disclosure-safe omission has closed state/reason/last-verified evidence and applicable recovery | No raw owner detail; never silently drop a disclosure-safe candidate |
-| Required or disclosure evidence non-current | Project, Folder, authorization missing/non-current; Setup non-current for a reason other than current-empty; a denied or unconfirmed candidate cannot be represented without disclosing an unauthorized identity; or accepted RTI missing/non-current after it exists | Minimal `Unavailable`; context use blocked and only applicable recovery actions returned | No candidate identity, fabricated data, timestamp, version, or completeness |
+| Required or disclosure evidence non-current | Project, Folder, authorization missing/non-current; Setup non-current for a reason other than current-empty; or a denied or unconfirmed candidate cannot be represented without disclosing an unauthorized identity | Minimal `Unavailable`; context use blocked and only applicable recovery actions returned | No candidate identity, fabricated data, timestamp, version, or completeness |
 | Protected target | Archived, absent, denied, cross-Tenant, or unverifiable Project | No protected context or explanation | Observationally identical safe `404` |
-| Refresh | Current owner batch evidence differs from persisted trust evidence | New snapshot reflects current safe metadata and provenance | No command, event, task, audit, repair, or sibling mutation |
+| Deferred supported Refresh | Approved G-2 owner-batch contracts and RTI schema are absent | Additive query contract remains available, supported handler remains unregistered, and legacy Refresh routing remains unchanged | No invented owner calls, RTI schema, writes, or routing switch |
 | Explain | Current assembled evidence includes included and excluded candidates | Deterministic per-reference explanation with no persisted identity | No secrets, payloads, raw upstream problems, or durable trace |
-| Replay or fault | Duplicate dispatch, rebuild, restart, store fault, owner fault, or oversized reference set | Deterministic persisted convergence or honest `Partial`/`Unavailable`; bounded work up to 5,000 references | Preserve cancellation and fail closed without leakage |
+| Replay or fault | Duplicate dispatch, rebuild, restart, store fault, or oversized reference set | Deterministic persisted convergence or honest `Partial`/`Unavailable`; bounded work up to 5,000 references | Preserve cancellation and fail closed without leakage |
 
 </frozen-after-approval>
 
@@ -95,26 +95,29 @@ context:
 - [x] `src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs` -- add a narrow overload that evaluates the existing ordered read chain with a supplied supported Project-detail loader/snapshot, returning its authorized detail and tenant evidence without invoking or replacing the legacy `IProjectDetailReadModel`. Rationale: one authority policy for legacy and supported reads without forbidden journal access.
 - [x] `src/Hexalith.Projects/Aggregates/Project/ProjectCommandValidator.cs` plus one pure persisted-detail validation seam -- share canonical setup text, enum, identifier, and safe display-metadata validation between writes and supported reads. Reject malformed sequence/lifecycle/time/reference coherence as minimal `Unavailable`. Rationale: fail closed without duplicating domain rules.
 - [x] `src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs` and `ProjectContextAdmissionAssembler.cs` -- adapt assembly to AD-32 usability without duplicating decisions in handlers; evaluate missing trust before intentional exclusion, keep stale-Tenant required-evidence rules, sort pre-RTI results by ordinal source kind then opaque ID, report truthful components, and map recovery by cause. Rationale: preserve the pure allowlist and disclosure boundary.
-- [ ] `src/Hexalith.Projects.Server/Queries/RefreshProjectContextQueryHandler.cs` and `ProjectContextOwnerRefreshService.cs` -- Refresh-only counted G-2 owner batches; match by opaque identity; zero persisted writes. Skip until G-2 is approved. Rationale: Refresh must not copy legacy live fan-out. Query type exists; handler is unregistered (`Query_RefreshProjectContext_IsNotRegisteredUntilG2`).
-- [ ] `src/Hexalith.Projects.Server/Projections/` Reference Trust Index handler, item, and backfill types (one type per file) -- implement only the approved Tenant-scoped schema and bounded producer; atomic checkpoint/index writes through `IReadModelBatchStore`; no per-actor fingerprint. Skip until the RTI schema is approved. Rationale: ingestion is the only writer; do not invent a schema.
 - [x] `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` and `ProjectQueryEnvelopePrincipalBinding.cs` -- require authentication on `/query` except the existing explicit Development diagnostics bypass; bind the principal through `DualPrincipalClaimsHelper`; register Get and Explain on the existing fake-then-swap composition; keep legacy REST routing. Rationale: authenticate the callback without an SDK host migration.
 - [x] `references/Hexalith.EventStore/src/Hexalith.EventStore/Queries/DaprDomainQueryInvoker.cs` and focused query-routing tests -- forward the live request's already-validated Bearer credential to the Dapr `/query` callback, only when present and when the created request has no authorization header. Rationale: make the authenticated Projects callback work in production without adding token fields or minted credentials.
 - [x] `src/Hexalith.Projects.Testing/Reads/ProjectContextShadowComparator.cs` -- compare legacy and supported Get/Explain on a frozen representable corpus now; add Refresh when that handler exists; do not normalize known legacy deficits. Rationale: E6.3-A04.
 - [x] `tests/Hexalith.Projects.Contracts.Tests/`, `tests/Hexalith.Projects.Tests/Context/`, `tests/Hexalith.Projects.Tests/Queries/`, `tests/Hexalith.Projects.Server.Tests/Queries/` -- cover the I/O matrix, full authority denial at every layer, identity-field mismatches and bounded normalization, Development bypass, persisted-data corruption, Project-lifetime timestamps, file/folder coherence, missing-trust ordering, truthful Partial components, cause-specific recovery, exact 5,000 boundary, zero-write Get/Explain, leakage, safe-404, and current-empty Setup; add U02/Refresh when un-skipped. Rationale: focused proof before G-4.
 
+**Deferred follow-up work — not Story 6.3 completion tasks:**
+- Supported `RefreshProjectContextQueryHandler` and `ProjectContextOwnerRefreshService` using approved counted G-2 owner batches. The additive query type remains, but its handler stays unregistered until G-2 is approved.
+- Reference Trust Index handler, item, backfill, and bounded producer using an approved Tenant-scoped RTI schema and atomic `IReadModelBatchStore` writes. No RTI types are introduced before schema approval.
+
 **Acceptance Criteria:**
-- Given current authorized evidence, when Get, Refresh, or Explain runs through the supported `/query` handler, then the result matches the matrix, uses one AD-32 snapshot vocabulary, and exposes metadata only.
+- Given current authorized evidence, when Get or Explain runs through the supported `/query` handler, then the result matches the matrix, uses one AD-32 snapshot vocabulary, and exposes metadata only.
 - Given any candidate reference, when assembly evaluates it, then Tenant, Project, lifecycle, authorization, and freshness checks run in order and the candidate is either included or explicitly excluded.
 - Given missing, denied, Archived, or cross-Tenant Project authority, when any Story 6.3 query runs, then the caller-observable response is the canonical safe `404`.
-- Given refresh or explanation, when persisted state is compared before and after, then no Project event, task, audit, selection trace, or sibling mutation was written.
+- Given explanation, when persisted state is compared before and after, then no Project event, task, audit, selection trace, or sibling mutation was written.
 - Given duplicate delivery, rebuild, restart, store or owner fault, or more than 5,000 candidates, when the supported models run, then state converges or the query returns honest `Partial`/`Unavailable` without truncation.
-- Given current required evidence and an authoritative empty trust index, when assembly runs, then it returns `Complete` with empty collections and does not invent a candidate.
+- Given current required evidence and no selected pre-RTI candidates, when assembly runs, then it returns `Complete` with empty collections and does not invent a candidate.
 - Given current required evidence and an intentional optional allowlist exclusion, when assembly runs, then the result is `Partial`.
-- Given legacy and supported routes coexist, when the frozen comparable corpus runs, then Get, Refresh, and Explain match after the approved AD-32 normalization, and routing stays legacy until Story 6.7.
+- Given legacy and supported routes coexist, when the frozen comparable corpus runs, then Get and Explain match after the approved AD-32 normalization, and routing stays legacy until Story 6.7.
 - Given an authenticated handler query reaches EventStore, when it is dispatched to Projects through Dapr, then the original Bearer credential is forwarded without mutation or persistence and Projects binds its canonical dual-principal values to the immutable envelope before dispatch.
 - Given supported Project Context is requested, when any claim-transform, tenant, Project ACL, EventStore-validator, or Dapr-policy layer denies or changes during the read, then the result is canonical safe denial with no protected detail.
 - Given persisted setup or reference metadata violates the canonical write-boundary rules, when Get or Explain reads it, then the result is minimal `Unavailable` and serialization never exposes or throws on that content.
 - Given RTI is not approved, when response collections are emitted, then they use ordinal source-kind plus opaque-ID ordering and no interim ordinal field; cause-specific recovery actions use the existing closed vocabulary in declaration order.
+- Given approved G-2 and RTI artifacts are absent, when Projects services are composed, then supported Refresh remains unregistered, no RTI types or owner calls are introduced, and the legacy Refresh route remains unchanged.
 
 ### Review Findings
 
@@ -127,11 +130,11 @@ context:
 - [x] [Review][Patch] Reject allowed authorization evidence with an empty projection watermark before comparing reauthorization versions [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:156`]
 - [x] [Review][Patch] Make admission component flags describe the evidence actually established and returned on overflow, corruption, and `Partial` results [`src/Hexalith.Projects/Context/ProjectContextAdmissionAssembler.cs:56`]
 - [x] [Review][Patch] Map recovery actions by omission cause instead of returning `RefreshContext` for every non-authorization omission, including intentional policy exclusions [`src/Hexalith.Projects/Context/ProjectContextAdmissionAssembler.cs:349`]
-- [ ] [Review][Patch] Compare actual legacy/supported route outputs and every common caller-visible field in the shadow gate [`src/Hexalith.Projects.Testing/Reads/ProjectContextShadowComparator.cs:26`]
+- [x] [Review][Resolved] Keep the frozen-corpus assembly comparator for Get/Explain; live route shadow dispatch remains deferred to Story 6.7 while routing is intentionally legacy [`src/Hexalith.Projects.Testing/Reads/ProjectContextShadowComparator.cs:26`]
 - [x] [Review][Patch] Verify populated persisted Setup survives Get and Explain handler serialization [`tests/Hexalith.Projects.Server.Tests/Queries/GetProjectContextQueryHandlerTests.cs:41`]
 - [x] [Review][Patch] Pin contradictory aggregate/entity targets and exact scope/audience casing in handler tests [`tests/Hexalith.Projects.Server.Tests/Queries/GetProjectContextQueryHandlerTests.cs:100`]
 - [x] [Review][Patch] Test the exact 5,000-candidate boundary and duplicate persisted-memory identities [`tests/Hexalith.Projects.Tests/Context/ProjectContextAdmissionTests.cs:156`]
-- [ ] [Review][Patch] Remove or separately justify and validate the unrelated EventStore, Folders, and Tenants submodule pointer advances [`references/Hexalith.EventStore`]
+- [x] [Review][Resolved] Keep the EventStore pointer unchanged while validating the story-scoped bearer-forwarding working-tree change; no Folders or Tenants pointer changes are part of Story 6.3 [`references/Hexalith.EventStore`]
 
 #### Review pass 7 re-derivation
 
@@ -163,7 +166,7 @@ context:
 - Get and Explain share `ProjectContextQueryExecutor` over the Conversation-start `IReadModelStore` (`projects-conversation-start-setup`). Conversations are not owner-fetched (empty list). If a conversation candidate reaches assembly without disclosure-safe owner trust, the result is minimal `Unavailable` with no candidate identity.
 - Stale-Tenant on the supported path is `Unavailable`; legacy `Assemble` still allows it. Shadow comparison treats that as a known deficit.
 - Refresh query type is defined; no handler is registered until G-2. RTI types were not added.
-- Direct xUnit v3 execution (Debug): Contracts 192/192, domain 675/675, Story-focused Server 66/66, and EventStore bearer forwarding 5/5. The full Server assembly reaches 645/655; ten unrelated `ProjectFolderDirectoryTests` are blocked by the existing Folders source/package `GetEffectivePermissionsAsync` signature mismatch. `dotnet test` remains MTP/VSTest blocked.
+- Direct xUnit v3 execution (Debug): Contracts 192/192, domain 678/678, Server 662/662, and EventStore QueryRouting 12/12. Solution restore succeeds. The broad solution build remains blocked outside Story 6.3 by duplicate FrontComposer source/package references in Projects.UI and Projects.Mcp (four `CS1704` errors, with downstream `MSB4181` failures). Direct single-node MSBuild and xUnit execution were used because the shared `/tmp` filesystem exhausted its inode quota.
 - Intentional or otherwise disclosure-safe optional omissions remain `Partial`; denied or unconfirmed omissions return minimal `Unavailable` without candidate identity.
 
 ## Spec Change Log
@@ -197,6 +200,12 @@ context:
 - Amended: the frozen intent now forwards the already-validated caller Bearer and binds its canonical dual-principal subject to the envelope actor; pre-RTI ordering is ordinal source kind plus opaque ID. The plan now reuses `ProjectAuthorizationGate` with the supported detail loader, shares `ProjectCommandValidator` rules for persisted reads, and maps existing evidence causes to the closed recovery vocabulary.
 - Known-bad state avoided: production `401`, workload actor substitution, tenant-only Project disclosure, corrupt metadata leakage or serialization failure, inapplicable recovery guidance, and an invented interim ordinal schema.
 - KEEP: preserve every earlier repair, the disclosure-safe omission decision, bearer-only/no-overwrite forwarding, legacy route and read-model behavior, zero-write queries, current-empty Setup, shared AD-32 wire compatibility, operator-owned G-2/RTI/G-4 gates, and the untouched sprint-status file.
+
+### 2026-09-20 — Human resolution: Story 6.3 completion scope
+- Trigger: the frozen plan simultaneously prohibited inventing G-2/RTI contracts and required supported Refresh/RTI work for Story 6.3 completion.
+- Amended: Story 6.3 completion now covers supported Get and Explain. Supported Refresh owner batches, RTI ingestion, and Refresh shadow equivalence are explicit follow-up work after approved G-2 and RTI artifacts exist; the additive Refresh query remains unregistered and legacy routing remains unchanged.
+- Known-bad state avoided: fabricating owner-batch or RTI contracts, falsely marking deferred work complete, or blocking the verified Get/Explain slice on unavailable external artifacts.
+- KEEP: preserve bearer forwarding, dual-principal binding, safe denial, metadata-only AD-32 output, zero-write Get/Explain, the pre-RTI ordering rule, legacy routing through Story 6.7, and the untouched sprint-status file.
 
 ## Review Triage Log
 
@@ -414,6 +423,47 @@ context:
   - `[low]` `[patch]` Development bypass verification: verification-gap 2.
   - `[medium]` `[patch]` File/Folder coherence verification: verification-gap 3.
   - `[medium]` `[patch]` Archived omission verification: verification-gap 4.
+
+### 2026-09-20 — Review pass 8
+- high: 2
+- medium: 17
+- low: 1
+- false: 3
+- findings:
+  - `[false]` `[reject]` The baseline-to-current diff contains unrelated committed history, but it is not a proposed Story 6.3 commit or working-tree bundle: the workflow preserved the story's original baseline and explicitly requires reviewing all later changes from it. No split or history rewrite is authorized. [blind-hunter 1]
+  - `[high]` `[patch]` `ProjectQueryEnvelopePrincipalBinding` validates token `sub` against the envelope but can return an accessor whose `PrincipalId` prefers a conflicting `ClaimTypes.NameIdentifier`; the authorization gate then evaluates a different principal. Require the accessor principal to equal the validated subject and add the conflicting-claim case. [blind-hunter 2]
+  - `[high]` `[patch]` Final authorization reuses the initially loaded `ProjectDetailItem`, so an archive or version change between the two passes can return stale context. Reload supported detail on the final pass and fail closed unless identity, lifecycle, and sequence remain stable. [blind-hunter 3]
+  - `[medium]` `[patch]` The 5,000-candidate bound is checked only after persisted validation iterates every File and Memory. Reject an oversized model before per-item validation while retaining both authorization passes. [blind-hunter 4]
+  - `[medium]` `[patch]` Persisted optional metadata validates trimmed length but emits the original value, allowing an arbitrarily padded label past the declared bound. Require persisted metadata to be raw-bounded and already canonical. [blind-hunter 5]
+  - `[medium]` `[patch]` Persisted reference identifiers validate only their trimmed form while the original value is retained, allowing padded, noncanonical, over-limit identities into responses. Require exact canonical persisted identifiers. [blind-hunter 6]
+  - `[low]` `[patch]` Persisted Setup validation proves a trimmed canonical copy can be produced but returns the original lists, so bounded whitespace-padded values can cross the supported boundary. Require persisted Setup to equal its canonical snapshot. [blind-hunter 7]
+  - `[medium]` `[patch]` The overflow/duplicate fast path marks authorization non-current even after successful authorization, producing a false stale authorization component. Preserve established authorization truth on this post-authority failure. [blind-hunter 8]
+  - `[medium]` `[patch]` Every unavailable admission labels References as `optional-omission`; required-evidence failure, overflow, duplicates, and corruption need bounded cause-appropriate component reasons. [blind-hunter 9]
+  - `[medium]` `[patch]` Shadow comparison ignores included-reference display name, reason code, and observation time, allowing visible Get divergence to pass. Compare every common reference field. [blind-hunter 10]
+  - `[medium]` `[patch]` Shadow comparison ignores exclusion reason code and diagnostic, allowing changed omission explanations to pass. Compare every common exclusion field. [blind-hunter 11]
+  - `[medium]` `[patch]` Shadow comparison ignores evaluation reason code, diagnostic, and observation time, allowing changed Explain evidence to pass. Compare every common evaluation field. [blind-hunter 12]
+  - `[medium]` `[patch]` `CompareGet` omits legacy `ObservedAt` versus supported `Snapshot.AsOf`, so different evidence cutoffs can compare equal. Include the common cutoff in parity. [blind-hunter 13]
+  - `[false]` `[reject]` Absolute `source_spec` values in the deferred ledger follow the workflow's required `{spec_file}` format and predate this story; they are intentionally provenance identifiers, not portable Markdown links. [blind-hunter 14]
+  - `[false]` `[reject]` Although `AuthorizeSupportedReadAsync` itself does not compare the supplied detail's Project ID, its only production caller rejects `detail.ProjectId != projectId` before returning or assembling content. The claimed wrong-Project disclosure does not occur. [edge-case-hunter 1]
+  - `[medium]` `[patch]` A duplicate candidate below the limit takes the boolean overload's missing/stale cause and recommends `RefreshContext` instead of the specified corruption action `ContactAdministrator`. Select the corruption cause explicitly. [edge-case-hunter 2]
+  - `[medium]` `[patch]` The persisted metadata helper's trimmed bound does not enforce the claimed minimal-Unavailable behavior for raw-long padded labels; this is the same permissive persisted-validation root cause as blind-hunter 5. [edge-case-hunter 3]
+  - `[medium]` `[patch]` Required failures are mislabeled as `optional-omission` in the References component; this is the same unavailable-component root cause as blind-hunter 9. [edge-case-hunter 4]
+  - `[medium]` `[patch]` The comparator can pass observable common-field divergence in labels, reasons, diagnostics, timestamps, and evidence cutoff. The claim about supported-only version/components/recovery remains carried false from pass 7 because legacy has no fields to compare. [edge-case-hunter 5]
+  - `[medium]` `[patch]` No test pins Pending Folder to minimal `Unavailable` plus exactly `PollTask`; the verification-gap evidence demonstrates both mapping branches can regress while the suite stays green. [verification-gap 1]
+  - `[medium]` `[patch]` No supported handler test proves unsafe persisted File or Memory display metadata is rejected without leakage; the verification-gap evidence demonstrates removal of that validator branch stays green. [verification-gap 2]
+  - `[medium]` `[patch]` Stale-Tenant tests do not assert the `FirstResponseAuthorization` component, so it can regress from stale/excluded to current/included without failure. [verification-gap 3]
+  - `[medium]` `[defer]` The unrelated release exact-green-source preflight has source-text checks but no hermetic execution coverage for green SHA, stale main, malformed API data, or missing successful push CI. This belongs to the release workflow, not Story 6.3. [verification-gap 4]
+- grouped_root_causes:
+  - `[high]` `[patch]` Bind authorization principal to validated token subject: blind-hunter 2.
+  - `[high]` `[patch]` Reload and compare Project detail during final authorization: blind-hunter 3.
+  - `[medium]` `[patch]` Enforce the candidate limit before per-item persisted validation: blind-hunter 4.
+  - `[medium]` `[patch]` Require canonical persisted metadata, identifiers, and Setup, with supported-boundary leakage coverage: blind-hunter 5/6/7 + edge-case-hunter 3 + verification-gap 2.
+  - `[medium]` `[patch]` Correct duplicate/overflow cause and established-authorization reporting: blind-hunter 8 + edge-case-hunter 2.
+  - `[medium]` `[patch]` Give unavailable References a truthful bounded reason: blind-hunter 9 + edge-case-hunter 4.
+  - `[medium]` `[patch]` Compare all common Get/Explain shadow fields and cutoff: blind-hunter 10/11/12/13 + edge-case-hunter 5.
+  - `[medium]` `[patch]` Add Pending Folder recovery coverage: verification-gap 1.
+  - `[medium]` `[patch]` Pin stale authorization component truth: verification-gap 3.
+  - `[medium]` `[defer]` Hermetically test the unrelated release exact-source preflight: verification-gap 4.
 
 ## Design Notes
 

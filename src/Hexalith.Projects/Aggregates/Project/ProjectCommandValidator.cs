@@ -746,20 +746,40 @@ public static class ProjectCommandValidator
     /// <param name="setup">The persisted Setup to validate.</param>
     /// <returns><see langword="true"/> when every bounded text and enum value is valid.</returns>
     internal static bool IsValidPersistedSetup(ProjectSetup setup)
-        => setup is not null && CanonicalizeSetup(setup, requireRawTextBounds: true, out _) is not null;
+    {
+        if (setup is null)
+        {
+            return false;
+        }
+
+        ProjectSetup? canonical = CanonicalizeSetup(setup, requireRawTextBounds: true, out _);
+        return canonical is not null
+            && setup.Goals.SequenceEqual(canonical.Goals, StringComparer.Ordinal)
+            && setup.UserInstructions.SequenceEqual(canonical.UserInstructions, StringComparer.Ordinal)
+            && setup.PreferredSourceKinds.SequenceEqual(canonical.PreferredSourceKinds)
+            && setup.ExcludedSourceKinds.SequenceEqual(canonical.ExcludedSourceKinds)
+            && Equals(setup.ConversationStartDefaults, canonical.ConversationStartDefaults);
+    }
 
     /// <summary>Validates persisted safe display metadata with the canonical command-boundary rules.</summary>
     /// <param name="value">The optional metadata value.</param>
     /// <param name="maxLength">The canonical maximum length.</param>
     /// <returns><see langword="true"/> when the value is absent or safe and bounded.</returns>
     internal static bool IsSafePersistedMetadata(string? value, int maxLength)
-        => IsSafeOptionalMetadata(value, maxLength);
+        => value is null
+            || (!string.IsNullOrWhiteSpace(value)
+                && value.Length <= maxLength
+                && string.Equals(value, value.Trim(), StringComparison.Ordinal)
+                && IsSafeMetadata(value));
 
     /// <summary>Validates a persisted foreign reference identifier with the canonical command-boundary rules.</summary>
     /// <param name="value">The persisted reference identifier.</param>
     /// <returns><see langword="true"/> when the identifier is safe and bounded.</returns>
     internal static bool IsSafePersistedReferenceIdentifier(string? value)
-        => IsSafeReferenceIdentifier(value);
+        => value is not null
+            && value.Length <= MaxReferenceIdentifierLength
+            && string.Equals(value, value.Trim(), StringComparison.Ordinal)
+            && IsSafeReferenceIdentifier(value);
 
     /// <summary>Validates a persisted Project-owned envelope identifier.</summary>
     /// <param name="value">The persisted identifier.</param>

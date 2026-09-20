@@ -90,6 +90,19 @@ public sealed class ProjectContextAdmissionTests
     }
 
     [Fact]
+    public void AssembleAdmission_PendingFolder_IsUnavailableWithPollTask()
+    {
+        ProjectContextAdmission admission = Admit(WithFolder(ReferenceState.Pending, folderId: null));
+
+        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.PollTask]);
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "References"
+            && !component.Included
+            && component.Reason == "materialization-in-progress");
+    }
+
+    [Fact]
     public void AssembleAdmission_StaleTenant_DoesNotOverrideRequiredUnavailable()
     {
         ProjectContextInclusionPolicy policy = new();
@@ -104,6 +117,11 @@ public sealed class ProjectContextAdmissionTests
 
         admission.IsSafeDenial.ShouldBeFalse();
         admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "FirstResponseAuthorization"
+            && !component.Included
+            && component.Freshness == EvidenceFreshnessState.Stale
+            && component.Reason == "stale");
     }
 
     [Fact]
@@ -179,6 +197,14 @@ public sealed class ProjectContextAdmissionTests
         admission.FileReferences.ShouldBeEmpty();
         admission.Excluded.ShouldBeEmpty();
         admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ContactAdministrator]);
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "FirstResponseAuthorization"
+            && component.Included
+            && component.Freshness == EvidenceFreshnessState.Current);
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "References"
+            && !component.Included
+            && component.Reason == "corruption-or-authorization-uncertain");
     }
 
     [Fact]
@@ -197,6 +223,15 @@ public sealed class ProjectContextAdmissionTests
 
         admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         admission.FileReferences.ShouldBeEmpty();
+        admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ContactAdministrator]);
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "FirstResponseAuthorization"
+            && component.Included
+            && component.Freshness == EvidenceFreshnessState.Current);
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "References"
+            && !component.Included
+            && component.Reason == "corruption-or-authorization-uncertain");
     }
 
     [Fact]

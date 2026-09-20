@@ -84,7 +84,6 @@ public sealed class ProjectContextQueryExecutor(
             return ProjectContextAdmission.SafeDenial(projectId);
         }
 
-        bool persistedDetailIsValid = ProjectPersistedDetailValidator.IsValid(detail);
         ProjectAuthorizationResult finalAuthorization = await _authorizationGate
             .AuthorizeSupportedReadAsync(
                 projectId,
@@ -92,24 +91,41 @@ public sealed class ProjectContextQueryExecutor(
                 httpContext,
                 query.CorrelationId,
                 taskId: null,
-                (_, _, _) => Task.FromResult<ProjectDetailItem?>(detail),
+                LoadDetailAsync,
                 cancellationToken)
             .ConfigureAwait(false);
+        ProjectDetailItem? finalDetail = finalAuthorization.ProjectDetail;
         TenantAccessAuthorizationResult? finalTenantAccess = finalAuthorization.TenantAccessResult;
         if (!finalAuthorization.IsAllowed
-            || finalAuthorization.ProjectDetail is null
+            || finalDetail is null
             || finalTenantAccess is not { IsAllowed: true }
             || string.IsNullOrWhiteSpace(finalTenantAccess.ProjectionWatermark)
             || !string.Equals(finalTenantAccess.TenantId, query.TenantId, StringComparison.Ordinal)
             || !string.Equals(
                 finalTenantAccess.ProjectionWatermark,
                 initialTenantAccess.ProjectionWatermark,
-                StringComparison.Ordinal))
+                StringComparison.Ordinal)
+            || !HasStableProjectAuthority(detail, finalDetail))
         {
             return ProjectContextAdmission.SafeDenial(projectId);
         }
 
-        if (!persistedDetailIsValid)
+        detail = finalDetail;
+        if (HasTooManyCandidates(detail))
+        {
+            return ProjectContextAdmissionAssembler.Unavailable(
+                projectId,
+                detail.Lifecycle,
+                detail.UpdatedAt,
+                detail.Sequence,
+                projectCurrent: true,
+                folderIncluded: false,
+                setupCurrent: false,
+                authorizationCurrent: true,
+                ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
+        }
+
+        if (!ProjectPersistedDetailValidator.IsValid(detail))
         {
             return ProjectContextAdmissionAssembler.Unavailable(
                 projectId,
@@ -168,4 +184,18 @@ public sealed class ProjectContextQueryExecutor(
         string envelopeTarget = query.EntityId ?? query.AggregateId;
         return string.Equals(envelopeTarget, projectId, StringComparison.Ordinal);
     }
+
+    private static bool HasStableProjectAuthority(ProjectDetailItem initial, ProjectDetailItem final)
+        => string.Equals(initial.TenantId, final.TenantId, StringComparison.Ordinal)
+            && string.Equals(initial.ProjectId, final.ProjectId, StringComparison.Ordinal)
+            && initial.Lifecycle == final.Lifecycle
+            && initial.Sequence == final.Sequence
+            && initial.CreatedAt == final.CreatedAt
+            && initial.UpdatedAt == final.UpdatedAt;
+
+    private static bool HasTooManyCandidates(ProjectDetailItem detail)
+        => (long)(detail.ProjectFolder is null ? 0 : 1)
+            + (detail.FileReferences?.Count ?? 0)
+            + (detail.MemoryReferences?.Count ?? 0)
+            > ProjectContextReadLimits.MaxReferences;
 }

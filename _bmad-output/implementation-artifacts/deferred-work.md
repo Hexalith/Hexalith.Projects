@@ -702,3 +702,6 @@ decision: 2026-09-07 Owner decisions, three parts. (1) Coordinate - move to Even
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-migrate-nuget-trusted-publishing.md`
   summary: Audit the pre-existing EventStore, Folders, and FrontComposer gitlink update and repair the Folders source-reference Debug compile break.
   evidence: Baseline commit `ffa922d0f7a278da3bb02ee09769564df02d5f01` advanced all three gitlinks before this implementation began; the current Folders client exposes a four-argument cancellation overload while `FoldersProjectFolderDirectory` still calls it with five arguments, producing CS1501 in source-reference Debug builds.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md`
+  summary: Hermetically execute the release exact-green-source preflight across its accepted and rejected source states.
+  evidence: The release workflow has source-text checks but no execution coverage for a green SHA, stale main, malformed API data, or missing successful push CI; this is a real release-verification gap unrelated to Story 6.3.
