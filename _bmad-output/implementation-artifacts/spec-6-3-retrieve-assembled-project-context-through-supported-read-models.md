@@ -2,7 +2,7 @@
 title: 'Retrieve assembled Project Context through supported read models'
 type: 'feature'
 created: '2026-08-24'
-status: 'done'
+status: 'in-progress'
 route: 'dispatch'
 review_loop_iteration: 4
 baseline_commit: '5a37f9e4ba9cd7f35afae212398db9f945d4d475'
@@ -159,6 +159,39 @@ context:
 - [false] A context/detail Project-ID mismatch cannot reach assembly through the supported handler because the executor validates both persisted IDs before calling the policy.
 - [false] Policy-produced legacy `Assembled` results cannot carry `Unavailable` or `Unknown` freshness through the actual authorizer path, so the claimed shadow normalization outcome is unreachable.
 - [false] The duplicate sprint-status finding is rejected for the same workflow-owned status-transition reason above.
+
+#### Review pass 9 (chunk 1a — production source)
+
+- [ ] [Review][Patch] Map a post-authority supported-detail store fault to identity-free `Unavailable` plus `Retry`, not canonical safe `404` [`src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs:470`]
+- [ ] [Review][Patch] Bind Conversation-start `/query` to the callback principal with the same DualPrincipal envelope match used by Get/Explain [`src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:55`]
+- [ ] [Review][Patch] On stripped `Unavailable` admissions, set Folder/Setup component flags from returned evidence, not from pre-strip assembly inputs [`src/Hexalith.Projects/Context/ProjectContextAdmissionAssembler.cs:73`]
+- [ ] [Review][Patch] Sanitize overflow `Unavailable` snapshots the same way as persisted-validation failures (`Enum.IsDefined` lifecycle, `projectVersion: 0`) [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:114`]
+- [ ] [Review][Patch] Fail closed on final reauthorization when Folder/Setup/reference payload changed at the same sequence and timestamps [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:188`]
+- [ ] [Review][Patch] Assert authorized Get/Explain with blank `ProjectionWatermark` is `"safe-denial"` [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:78`]
+- [ ] [Review][Patch] Assert Included Folder with blank `FolderId` is invalid and never emits synthetic `"pending"` [`src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs:304`]
+- [ ] [Review][Patch] Assert `ConversationStartAdmissionSnapshot.FromShared` preserves mapped component Name/Included/Freshness/Reason [`src/Hexalith.Projects.Contracts/Queries/ConversationStartAdmissionSnapshot.cs:39`]
+
+#### Rejected (review pass 9)
+
+- [false] Empty persisted optional metadata is not a write/read mismatch: Create/Update canonicalizes whitespace to null, and a stored empty string is a write-boundary violation that must be minimal `Unavailable`.
+- [false] `MatchesPresented` treating empty scopes/audience as omitted is the frozen Story 6.2 compatibility rule; production Get/Explain still exact-match DualPrincipal lists in `TryBind`.
+- [false] Conversation-start Complete emitting empty `recoveryActions` is the frozen Story 6.2 wire; Project Context `None` is the new snapshot contract.
+- [false] Unbounded `AdmissionComponent.Reason` is the extracted Conversation-start string; closing it would change preserved JSON.
+- [false] Handlers return `"safe-denial"` before `ToReadResponse`/`ToExplanation`; SafeDenial snapshots are not serialized on `/query`.
+- [false] Shadow comparison omits `ProjectVersion`, components, and recovery because legacy bodies have no common fields for them.
+- [false] Executor `HasTooManyCandidates` omitting conversations cannot disagree with assembly on the supported path, which always supplies `Conversations: []`.
+- [false] Null `ReasonCode` on intentional `Excluded` rows is the existing DTO; `FailedCheck`/`Diagnostic` remain the closed omission reason.
+- [false] Unregistered Refresh remains the frozen G-2 deferral; dispatcher failure for `RefreshProjectContext.v1` must not impersonate a denied Project.
+- [false] `FromShared` null-collection NREs are unreachable: the only caller constructs non-null component and recovery arrays.
+- [false] `CountCandidates` Int32 overflow remains unreachable under the 5,000 bound and in-memory collection sizes.
+- [false] Null File/Memory elements do not reach assembly on the supported path: `ProjectPersistedDetailValidator` rejects them, and overflow returns before enumeration.
+- [false] `ProjectSetup.ExcludedSourceKinds` is a non-nullable list; `CanonicalizeSetup` fails closed on null, and current-empty uses `ProjectSetup.Empty`.
+- [false] Development bypass skipping DualPrincipal workload/delegation/scopes/audience is the specified diagnostics exception, not a production bind hole.
+- [false] `ApplyExcludedSourceKinds` relocating allowlisted refs is the specified Partial optional-omission path, not a missed include/exclude guard.
+- [false] Omitted DualPrincipal collections on Get/Explain correctly fail `TryBind` when the token presents scopes/audience; Story 6.2 omitted-collection compatibility stays on the Conversation-start handler.
+- [low] Duplicated `TryReadProjectId` is developer-only duplication with identical Get/Explain parse rules; extracting a shared parser is not a direct correction users would meet.
+- [low] The unused `Unavailable(..., bool overflow)` overload is leftover surface after the cause enum split; deleting it would change a public assembler API for no caller.
+- [low] Shadow-comparator null-collection NREs require adding guards for inputs current callers never construct.
 
 ## Implementation Notes
 
