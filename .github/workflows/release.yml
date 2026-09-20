@@ -70,49 +70,156 @@ jobs:
           fi
 
   release:
+    name: Release packages
     needs: verify-source
-    # GitHub validates the maximum permissions of every job in a called workflow,
-    # including the skipped governed-release job, so attestations/id-token must be
-    # granted here even though `governed-release: false` keeps Projects on the
-    # legacy job. The legacy job declares no permissions of its own and therefore
-    # INHERITS this set: it runs holding both write scopes without using them.
-    # Nothing is signed or attested, but this is a real widening of the production
-    # job's token, not a paper one. Narrowing it belongs to Hexalith.Builds -- see
-    # deferred-work.md, "Split the governed release path into its own reusable workflow file".
-    # Do not add attestation or signing steps here.
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: production
     permissions:
       actions: read
-      attestations: write
       contents: write
       id-token: write
       issues: write
       pull-requests: write
-    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-release.yml@a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec
-    with:
-      # Bare solution path only. The callee runs `dotnet restore "$SOLUTION"`, so an
-      # embedded `-p:` switch is parsed as part of the project path (MSB1009), and
-      # `github.workspace` is empty when a reusable-workflow `with:` is evaluated.
-      # Directory.Build.props auto-detects HexalithCommonsRoot from references/.
-      # This immutable callee predates the separate runtime input. Its release
-      # path is explicitly outside G-6 acceptance and remains fail-closed there.
-      solution: Hexalith.Projects.CI.slnx
-      dapr-version: '1.18.0'
-      timeout-minutes: 60
-      environment-name: production
-      governed-release: false
-      publish-containers: false
-      builds-execution-sha: a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec
-      source-branch: main
-      source-ci-workflow: ci.yml
-      package-manifest: tools/release-packages.json
-      # Caller-declared so an accidental change to the manifest fails closed
-      # instead of redefining the gate it is checked against.
-      expected-package-count: 5
-      # Publication is gated by the protected `production` environment approval on the
-      # release job. The dispatch-reserved version and one-use GitHub issue-comment
-      # authority are a corrective-release gate, not a release precondition; declaring
-      # the opt-out here keeps that machinery available and unused. Turning it back on
-      # means setting this true and supplying all three reservation inputs.
-      require-publication-authority: false
-    secrets:
-      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+    steps:
+      - name: Checkout release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          submodules: false
+          persist-credentials: false
+      - name: Checkout approved Builds actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: Hexalith/Hexalith.Builds
+          ref: a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec
+          path: .hexalith/builds-execution
+          persist-credentials: false
+      - name: Validate approved Builds actions identity
+        shell: bash
+        env:
+          BUILDS_EXECUTION_SHA: a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec
+        run: |
+          set -euo pipefail
+          checked_out_builds_sha="$(git -C .hexalith/builds-execution rev-parse HEAD)"
+          if [ "$checked_out_builds_sha" != "$BUILDS_EXECUTION_SHA" ]; then
+            echo "Checked-out Hexalith.Builds actions do not match the approved execution SHA." >&2
+            exit 1
+          fi
+      - name: Initialize root-declared submodules
+        uses: ./.hexalith/builds-execution/Github/initialize-build
+      - name: Initialize .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Initialize Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: Cache NuGet packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ hashFiles('Directory.Packages.props', 'global.json', 'references/Hexalith.Builds/Props/Directory.Packages.props') }}
+          restore-keys: nuget-
+      - name: Install npm dependencies
+        run: npm ci --ignore-scripts
+      - name: Verify npm dependency provenance and signatures
+        run: npm audit signatures
+      - name: Restore release solution
+        run: dotnet restore Hexalith.Projects.CI.slnx
+      - name: Build release solution
+        run: dotnet build Hexalith.Projects.CI.slnx --no-restore --configuration Release -warnaserror
+      - name: Validate five-package manifest
+        shell: bash
+        env:
+          EXPECTED_PACKAGE_COUNT: '5'
+          PACKAGE_MANIFEST: tools/release-packages.json
+        run: |
+          set -euo pipefail
+          if ! jq -e --argjson expected "$EXPECTED_PACKAGE_COUNT" '
+            .schemaVersion == 1 and
+            (.packages | type == "array") and
+            (.packages | length == $expected) and
+            ([.packages[].id] | all(type == "string" and length > 0)) and
+            ([.packages[].id] | unique | length == $expected)
+          ' "$PACKAGE_MANIFEST" >/dev/null; then
+            echo "The release manifest must declare exactly five unique package IDs." >&2
+            exit 1
+          fi
+      - name: Resolve release publication freeze
+        id: publish-gate
+        shell: bash
+        env:
+          HEXALITH_RELEASE_PUBLISH_ENABLED: ${{ vars.HEXALITH_RELEASE_PUBLISH_ENABLED }}
+        run: |
+          set -euo pipefail
+          # GitHub expression equality is case-insensitive, so preserve the effective
+          # variable value and perform the exact, untrimmed comparison in the shell.
+          if [ "${HEXALITH_RELEASE_PUBLISH_ENABLED-}" = "true" ]; then
+            echo "publish-enabled=true" >> "$GITHUB_OUTPUT"
+            echo "Release publication is enabled by the exact repository-level override."
+            exit 0
+          fi
+          echo "publish-enabled=false" >> "$GITHUB_OUTPUT"
+          echo "::notice title=Release publication frozen::The effective variable HEXALITH_RELEASE_PUBLISH_ENABLED is not exactly the string 'true', so NuGet login and Semantic Release are skipped and this run concludes successfully."
+      - name: Revalidate current source before NuGet login
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          DISPATCH_SHA: ${{ github.sha }}
+          SOURCE_BRANCH: main
+          PUBLISH_ENABLED: ${{ steps.publish-gate.outputs.publish-enabled }}
+        run: |
+          set -euo pipefail
+          # Only an explicit frozen verdict skips this gate; an unset or empty value keeps the
+          # guard running so a broken gate cannot quietly disable the staleness proof.
+          publish_enabled="${PUBLISH_ENABLED-true}"
+          if [ -z "$publish_enabled" ]; then
+            publish_enabled="true"
+          fi
+          if [ "$publish_enabled" != "true" ]; then
+            echo "::notice title=Source revalidation skipped::Release publication is frozen, so no credential or publication boundary is reached."
+            exit 0
+          fi
+          if [[ ! "$DISPATCH_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "The dispatched release source must be an exact lowercase commit SHA." >&2
+            exit 1
+          fi
+          if [ "$SOURCE_BRANCH" != "main" ]; then
+            echo "The release source branch must be exactly main." >&2
+            exit 1
+          fi
+
+          checked_out_sha="$(git rev-parse HEAD)"
+          if [[ ! "$checked_out_sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "The checked-out release source could not be resolved as an exact lowercase commit SHA." >&2
+            exit 1
+          fi
+          if [ "$checked_out_sha" != "$DISPATCH_SHA" ]; then
+            echo "The checked-out release source does not match the dispatched commit SHA." >&2
+            exit 1
+          fi
+
+          live_source_sha="$(gh api "repos/${REPOSITORY}/git/ref/heads/${SOURCE_BRANCH}" --jq '.object.sha')"
+          if [[ ! "$live_source_sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "The live ${SOURCE_BRANCH} SHA could not be resolved as an exact lowercase commit SHA." >&2
+            exit 1
+          fi
+          if [ "$checked_out_sha" != "$live_source_sha" ]; then
+            echo "The release source became stale during setup. Redispatch Release from the new ${SOURCE_BRANCH} tip after exact-source CI succeeds." >&2
+            exit 1
+          fi
+      - name: Exchange GitHub OIDC token for temporary NuGet API key
+        id: nuget-login
+        if: ${{ steps.publish-gate.outputs.publish-enabled == 'true' }}
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ vars.NUGET_USER }}
+      - name: Semantic Release
+        if: ${{ steps.publish-gate.outputs.publish-enabled == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: npm exec --no -- semantic-release

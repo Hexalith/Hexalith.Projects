@@ -74,6 +74,11 @@ jobs:
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest tests/tools/test_release_package_tools.py -v
 
+      - name: Validate release workflow shell behavior
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest tests/tools/test_release_workflow.py -v
+
       - name: Validate CI/CD invariants
         shell: pwsh
         run: ./tests/tools/run-ci-workflow-gates.ps1
