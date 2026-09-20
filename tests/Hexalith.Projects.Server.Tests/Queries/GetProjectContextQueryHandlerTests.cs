@@ -106,6 +106,7 @@ public sealed class GetProjectContextQueryHandlerTests
     }
 
     [Theory]
+    [InlineData("folder")]
     [InlineData("file")]
     [InlineData("memory")]
     public async Task ExecuteAsync_UnsafePersistedReferenceLabel_ReturnsMinimalUnavailable(string referenceKind)
@@ -114,6 +115,10 @@ public sealed class GetProjectContextQueryHandlerTests
         ProjectDetailItem valid = Detail(hasFolder: true);
         ProjectDetailItem detail = referenceKind switch
         {
+            "folder" => valid with
+            {
+                ProjectFolder = valid.ProjectFolder! with { DisplayName = UnsafeLabel },
+            },
             "file" => valid with
             {
                 FileReferences =
@@ -147,6 +152,7 @@ public sealed class GetProjectContextQueryHandlerTests
             await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken));
 
         response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        response.ProjectFolder.ShouldBeNull();
         response.FileReferences.ShouldBeEmpty();
         response.MemoryReferences.ShouldBeEmpty();
         response.Excluded.ShouldBeEmpty();
@@ -165,14 +171,19 @@ public sealed class GetProjectContextQueryHandlerTests
                 null,
                 ObservedAt))
             .ToArray();
-        ProjectDetailItem detail = Detail(hasFolder: true) with { FileReferences = files };
+        ProjectDetailItem detail = Detail(hasFolder: true) with
+        {
+            FileReferences = files,
+            Lifecycle = (ProjectLifecycle)999,
+        };
         GetProjectContextQueryHandler handler = await CreateHandlerAsync(detail, serializeDetail: false).ConfigureAwait(true);
 
         ProjectContextReadResponse response = Deserialize(
             await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken));
 
         response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
-        response.Snapshot.ProjectVersion.ShouldBe(detail.Sequence);
+        response.Lifecycle.ShouldBe(ProjectLifecycle.Active);
+        response.Snapshot.ProjectVersion.ShouldBe(0);
         response.FileReferences.ShouldBeEmpty();
         response.Snapshot.Components.ShouldContain(component =>
             component.Name == "FirstResponseAuthorization" && component.Included);
@@ -405,9 +416,37 @@ public sealed class GetProjectContextQueryHandlerTests
         result.ErrorMessage.ShouldBe("safe-denial");
     }
 
+    [Fact]
+    public async Task ExecuteAsync_PostAuthorityStoreFault_ReturnsIdentityFreeUnavailableWithRetry()
+    {
+        ProjectDetailItem detail = Detail(hasFolder: true);
+        var handler = new GetProjectContextQueryHandler(ProjectContextQueryTestFactory.Create(
+            new DetailThenThrowingReadModelStore(detail),
+            new TenantAccessAuthorizer(
+                await SeedTenantAccessStoreAsync().ConfigureAwait(true),
+                new FixedUtcClock(ObservedAt.AddMinutes(1)),
+                new TenantAccessOptions())));
+
+        ProjectContextReadResponse response = Deserialize(
+            await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken));
+
+        response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        response.Snapshot.ProjectVersion.ShouldBe(0);
+        response.Setup.ShouldBeNull();
+        response.ProjectFolder.ShouldBeNull();
+        response.FileReferences.ShouldBeEmpty();
+        response.MemoryReferences.ShouldBeEmpty();
+        response.Excluded.ShouldBeEmpty();
+        response.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.Retry]);
+    }
+
     [Theory]
     [InlineData("sequence")]
     [InlineData("lifecycle")]
+    [InlineData("folder-payload")]
+    [InlineData("setup-payload")]
+    [InlineData("file-reference-payload")]
+    [InlineData("reference-payload")]
     public async Task ExecuteAsync_ProjectAuthorityChangesDuringRead_ReturnsSafeDenial(string change)
     {
         ProjectDetailItem initial = Detail(hasFolder: true);
@@ -415,6 +454,39 @@ public sealed class GetProjectContextQueryHandlerTests
         {
             "sequence" => initial with { Sequence = initial.Sequence + 1 },
             "lifecycle" => initial with { Lifecycle = ProjectLifecycle.Archived },
+            "folder-payload" => initial with
+            {
+                ProjectFolder = initial.ProjectFolder! with { DisplayName = "Changed folder" },
+            },
+            "setup-payload" => initial with
+            {
+                Setup = new ProjectSetup(["Changed goal"], [], [], [], null),
+            },
+            "file-reference-payload" => initial with
+            {
+                FileReferences =
+                [
+                    new ProjectFileReference(
+                        "file-1",
+                        "folder-1",
+                        "File",
+                        ReferenceState.Included,
+                        null,
+                        ObservedAt),
+                ],
+            },
+            "reference-payload" => initial with
+            {
+                MemoryReferences =
+                [
+                    new ProjectMemoryReference(
+                        "memory-1",
+                        "Memory",
+                        ReferenceState.Included,
+                        null,
+                        ObservedAt),
+                ],
+            },
             _ => throw new ArgumentOutOfRangeException(nameof(change)),
         };
         var handler = new GetProjectContextQueryHandler(ProjectContextQueryTestFactory.Create(
@@ -527,6 +599,36 @@ public sealed class GetProjectContextQueryHandlerTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_BlankAuthorizedProjectionWatermark_ReturnsSafeDenial()
+    {
+        InMemoryReadModelStore store = new();
+        await store.SaveAsync(
+            ConversationStartSetupProjectionHandler.StoreName,
+            ConversationStartSetupProjectionHandler.Key(TenantId, ProjectId),
+            Detail(hasFolder: true),
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        InMemoryProjectTenantAccessProjectionStore tenantStore = await SeedTenantAccessStoreAsync().ConfigureAwait(true);
+        ProjectTenantAccessProjection projection = await tenantStore
+            .GetAsync(TenantId, TestContext.Current.CancellationToken)
+            .ConfigureAwait(true)
+            ?? throw new InvalidOperationException("tenant access");
+        projection.ProjectionWatermark = " ";
+        await tenantStore.SaveAsync(projection, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        var handler = new GetProjectContextQueryHandler(ProjectContextQueryTestFactory.Create(
+            store,
+            new TenantAccessAuthorizer(
+                tenantStore,
+                new FixedUtcClock(ObservedAt.AddMinutes(1)),
+                new TenantAccessOptions())));
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+        result.PayloadBytes.ShouldBeNull();
+    }
+
+    [Fact]
     public async Task ExecuteAsync_ZeroWrite_DoesNotSaveReadModel()
     {
         InMemoryReadModelStore inner = new();
@@ -581,6 +683,24 @@ public sealed class GetProjectContextQueryHandlerTests
 
         result.Success.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("safe-denial");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_PostAuthorityStoreFaultAfterTenantWatermarkChanges_ReturnsSafeDenial()
+    {
+        InMemoryProjectTenantAccessProjectionStore tenantStore = await SeedTenantAccessStoreAsync().ConfigureAwait(true);
+        var handler = new GetProjectContextQueryHandler(ProjectContextQueryTestFactory.Create(
+            new DetailThenThrowingReadModelStore(Detail(hasFolder: true)),
+            new TenantAccessAuthorizer(
+                new AlternatingWatermarkTenantAccessStore(tenantStore),
+                new FixedUtcClock(ObservedAt.AddMinutes(1)),
+                new TenantAccessOptions())));
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+        result.PayloadBytes.ShouldBeNull();
     }
 
     [Fact]
@@ -754,6 +874,37 @@ public sealed class GetProjectContextQueryHandlerTests
             CancellationToken cancellationToken = default)
             where TValue : class
             => Task.FromResult(new ReadModelEntry<TValue>(detail as TValue, "direct"));
+
+        public Task SaveAsync<TValue>(
+            string storeName,
+            string key,
+            TValue value,
+            CancellationToken cancellationToken = default)
+            where TValue : class
+            => throw new InvalidOperationException("read-only test store");
+
+        public Task<bool> TrySaveAsync<TValue>(
+            string storeName,
+            string key,
+            TValue value,
+            string etag,
+            CancellationToken cancellationToken = default)
+            where TValue : class
+            => throw new InvalidOperationException("read-only test store");
+    }
+
+    private sealed class DetailThenThrowingReadModelStore(ProjectDetailItem detail) : IReadModelStore
+    {
+        private int _reads;
+
+        public Task<ReadModelEntry<TValue>> GetAsync<TValue>(
+            string storeName,
+            string key,
+            CancellationToken cancellationToken = default)
+            where TValue : class
+            => Interlocked.Increment(ref _reads) == 1
+                ? Task.FromResult(new ReadModelEntry<TValue>(detail as TValue, "initial"))
+                : Task.FromException<ReadModelEntry<TValue>>(new InvalidOperationException("store-fault"));
 
         public Task SaveAsync<TValue>(
             string storeName,

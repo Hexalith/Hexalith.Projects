@@ -45,6 +45,14 @@ public sealed class AdmissionSnapshotTests
         json.ShouldNotContain("tenantId");
         roundTripped.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
         roundTripped.Snapshot.ProjectVersion.ShouldBe(4);
+        roundTripped.Snapshot.Components.ShouldBe(
+        [
+            new ConversationStartComponent(
+                "Project",
+                Included: true,
+                EvidenceFreshnessState.Current,
+                "current"),
+        ]);
         roundTripped.Setup.ShouldNotBeNull();
         typeof(ConversationStartSetupResponse).GetConstructor(
             [typeof(ConversationStartSetup), typeof(ConversationStartAdmissionSnapshot)]).ShouldNotBeNull();

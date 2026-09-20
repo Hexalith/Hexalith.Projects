@@ -2,7 +2,7 @@
 title: 'Retrieve assembled Project Context through supported read models'
 type: 'feature'
 created: '2026-08-24'
-status: 'in-progress'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 4
 baseline_commit: '5a37f9e4ba9cd7f35afae212398db9f945d4d475'
@@ -162,14 +162,14 @@ context:
 
 #### Review pass 9 (chunk 1a — production source)
 
-- [ ] [Review][Patch] Map a post-authority supported-detail store fault to identity-free `Unavailable` plus `Retry`, not canonical safe `404` [`src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs:470`]
-- [ ] [Review][Patch] Bind Conversation-start `/query` to the callback principal with the same DualPrincipal envelope match used by Get/Explain [`src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:55`]
-- [ ] [Review][Patch] On stripped `Unavailable` admissions, set Folder/Setup component flags from returned evidence, not from pre-strip assembly inputs [`src/Hexalith.Projects/Context/ProjectContextAdmissionAssembler.cs:73`]
-- [ ] [Review][Patch] Sanitize overflow `Unavailable` snapshots the same way as persisted-validation failures (`Enum.IsDefined` lifecycle, `projectVersion: 0`) [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:114`]
-- [ ] [Review][Patch] Fail closed on final reauthorization when Folder/Setup/reference payload changed at the same sequence and timestamps [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:188`]
-- [ ] [Review][Patch] Assert authorized Get/Explain with blank `ProjectionWatermark` is `"safe-denial"` [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:78`]
-- [ ] [Review][Patch] Assert Included Folder with blank `FolderId` is invalid and never emits synthetic `"pending"` [`src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs:304`]
-- [ ] [Review][Patch] Assert `ConversationStartAdmissionSnapshot.FromShared` preserves mapped component Name/Included/Freshness/Reason [`src/Hexalith.Projects.Contracts/Queries/ConversationStartAdmissionSnapshot.cs:39`]
+- [x] [Review][Patch] Map a post-authority supported-detail store fault to identity-free `Unavailable` plus `Retry`, not canonical safe `404` [`src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs:470`]
+- [x] [Review][Patch] Bind Conversation-start `/query` to the callback principal with the same DualPrincipal envelope match used by Get/Explain [`src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:55`]
+- [x] [Review][Patch] On stripped `Unavailable` admissions, set Folder/Setup component flags from returned evidence, not from pre-strip assembly inputs [`src/Hexalith.Projects/Context/ProjectContextAdmissionAssembler.cs:73`]
+- [x] [Review][Patch] Sanitize overflow `Unavailable` snapshots the same way as persisted-validation failures (`Enum.IsDefined` lifecycle, `projectVersion: 0`) [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:114`]
+- [x] [Review][Patch] Fail closed on final reauthorization when Folder/Setup/reference payload changed at the same sequence and timestamps [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:188`]
+- [x] [Review][Patch] Assert authorized Get/Explain with blank `ProjectionWatermark` is `"safe-denial"` [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:78`]
+- [x] [Review][Patch] Assert Included Folder with blank `FolderId` is invalid and never emits synthetic `"pending"` [`src/Hexalith.Projects/Context/ProjectContextInclusionPolicy.cs:304`]
+- [x] [Review][Patch] Assert `ConversationStartAdmissionSnapshot.FromShared` preserves mapped component Name/Included/Freshness/Reason [`src/Hexalith.Projects.Contracts/Queries/ConversationStartAdmissionSnapshot.cs:39`]
 
 #### Rejected (review pass 9)
 
@@ -193,13 +193,20 @@ context:
 - [low] The unused `Unavailable(..., bool overflow)` overload is leftover surface after the cause enum split; deleting it would change a public assembler API for no caller.
 - [low] Shadow-comparator null-collection NREs require adding guards for inputs current callers never construct.
 
+#### Review pass 10
+
+- [x] [Review][Patch] Route Conversation-start setup through the shared layered, two-pass Project Context executor so target, Project ACL, validator, Dapr policy, identity, persisted-detail, and reauthorization checks cannot diverge [`src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHandler.cs:24`]
+- [x] [Review][Patch] Validate final Tenant watermark stability before classifying a final supported-detail store fault, and enforce the reference bound before structural list comparison [`src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs:100`]
+- [x] [Review][Patch] Classify a Project-detail loader `OperationCanceledException` as retryable unavailability when the request token itself was not cancelled [`src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs:470`]
+- [x] [Review][Patch] Pin unsafe Folder metadata, File-reference reauthorization change, archived/ambiguous required-Folder recovery, and ambiguous inbound Authorization forwarding [`tests/Hexalith.Projects.Server.Tests/Queries/GetProjectContextQueryHandlerTests.cs:108`]
+
 ## Implementation Notes
 
 - Shared AD-32 types live in `AdmissionResponseState`, `AdmissionComponent`, `AdmissionSnapshot`, and `AdmissionRecoveryAction`. `ConversationStartSetupResponse` retains the Story 6.2 `ConversationStartAdmissionSnapshot` CLR signature and receives an internal compatibility projection from the shared snapshot without changing JSON property names.
 - Get and Explain share `ProjectContextQueryExecutor` over the Conversation-start `IReadModelStore` (`projects-conversation-start-setup`). Conversations are not owner-fetched (empty list). If a conversation candidate reaches assembly without disclosure-safe owner trust, the result is minimal `Unavailable` with no candidate identity.
 - Stale-Tenant on the supported path is `Unavailable`; legacy `Assemble` still allows it. Shadow comparison treats that as a known deficit.
 - Refresh query type is defined; no handler is registered until G-2. RTI types were not added.
-- Direct xUnit v3 execution (Debug): Contracts 192/192, domain 678/678, Server 662/662, and EventStore QueryRouting 12/12. Solution restore succeeds. The broad solution build remains blocked outside Story 6.3 by duplicate FrontComposer source/package references in Projects.UI and Projects.Mcp (four `CS1704` errors, with downstream `MSB4181` failures). Direct single-node MSBuild and xUnit execution were used because the shared `/tmp` filesystem exhausted its inode quota.
+- Direct xUnit v3 execution (Debug), including review-pass-10 repairs: Contracts 192/192, domain 681/681, Server 676/676, and EventStore QueryRouting 13/13. Focused security/admission runs also pass (Server 77/77, domain 36/36, EventStore forwarding 6/6). The single-node no-restore solution build succeeds with zero warnings and errors. Both the exact solution restore and the serialized/no-audit fallback produced no output and did not terminate, so only those launched restore processes were stopped; existing restored assets supported every build and test. The standalone EventStore QueryRouting build succeeds with ten pre-existing `MSB3277` package-version conflict warnings.
 - Intentional or otherwise disclosure-safe optional omissions remain `Partial`; denied or unconfirmed omissions return minimal `Unavailable` without candidate identity.
 
 ## Spec Change Log
@@ -497,6 +504,46 @@ context:
   - `[medium]` `[patch]` Add Pending Folder recovery coverage: verification-gap 1.
   - `[medium]` `[patch]` Pin stale authorization component truth: verification-gap 3.
   - `[medium]` `[defer]` Hermetically test the unrelated release exact-source preflight: verification-gap 4.
+
+### 2026-09-20 — Review pass 10
+- high: 4
+- medium: 9
+- low: 0
+- false: 12
+- findings:
+  - `[false]` `[reject]` `[carried]` The build-auto step-02/step-03 clean-worktree contradiction is in unrelated committed workflow history included by the preserved baseline; review pass 8 already rejected treating that history as the Story 6.3 change bundle. [blind-hunter 1]
+  - `[false]` `[reject]` `[carried]` The build-auto first-pass fixture commits its generated spec and belongs to the same unrelated committed workflow history rejected in review pass 8. [blind-hunter 2]
+  - `[false]` `[reject]` `[carried]` The build-auto ownership sidecar integrity claim belongs to the same unrelated committed workflow history rejected in review pass 8. [blind-hunter 3]
+  - `[false]` `[reject]` `[carried]` The build-auto follow-up same-path overwrite claim belongs to the same unrelated committed workflow history rejected in review pass 8. [blind-hunter 4]
+  - `[false]` `[reject]` `[carried]` The missing build-auto same-path overwrite regression belongs to the same unrelated committed workflow history rejected in review pass 8. [blind-hunter 5]
+  - `[false]` `[reject]` `[carried]` The build-auto HEAD/index publication-order claim belongs to the same unrelated committed workflow history rejected in review pass 8. [blind-hunter 6]
+  - `[false]` `[reject]` `[carried]` The build-auto hostile-filename patch-construction claim belongs to the same unrelated committed workflow history rejected in review pass 8. [blind-hunter 7]
+  - `[high]` `[patch]` Conversation-start setup performed Tenant-only authorization and could bypass the Project ACL, EventStore validator, and Dapr policy. Delegate to the shared Project Context executor. [blind-hunter 8]
+  - `[medium]` `[patch]` Conversation-start setup did not reject contradictory aggregate/entity targets. Delegating to the shared executor enforces `TargetsMatch`. [blind-hunter 9]
+  - `[high]` `[patch]` Conversation-start setup lacked final authorization and Project-detail revalidation. Delegating to the shared executor supplies the same two-pass stable-evidence check as Get/Explain. [blind-hunter 10]
+  - `[high]` `[patch]` Conversation-start setup did not validate persisted Tenant/Project identity. Delegating to the shared executor fails closed before response mapping. [blind-hunter 11]
+  - `[medium]` `[patch]` Conversation-start setup did not apply `ProjectPersistedDetailValidator`. Delegating to the shared executor returns minimal `Unavailable` for malformed detail. [blind-hunter 12]
+  - `[false]` `[reject]` `[carried]` Serialized-byte overflow remains explicitly gated on absent G-4 pins; this is the same claim rejected in review passes 6 and 7, and the prerequisite remains absent. [blind-hunter 13]
+  - `[false]` `[reject]` `[carried]` The build-auto help-CSV merge claim belongs to unrelated committed workflow history covered by the review-pass-8 baseline-diff rejection. [blind-hunter 14]
+  - `[false]` `[reject]` `[carried]` The release package source-SHA claim belongs to unrelated committed release history covered by the review-pass-8 baseline-diff rejection. [blind-hunter 15]
+  - `[false]` `[reject]` `[carried]` The NuGet prerelease parser claim belongs to unrelated committed release history covered by the review-pass-8 baseline-diff rejection. [blind-hunter 16]
+  - `[false]` `[reject]` `[carried]` The in-place package-normalization claim belongs to unrelated committed release history covered by the review-pass-8 baseline-diff rejection. [blind-hunter 17]
+  - `[medium]` `[patch]` Unsafe persisted Folder display metadata was not pinned at the supported boundary. Extend the File/Memory theory with the Folder case. [verification-gap 1]
+  - `[medium]` `[patch]` File-reference payload changes between authorization passes were not pinned. Extend the authority-change theory. [verification-gap 2]
+  - `[medium]` `[patch]` Archived and ambiguous required Folders lacked exact `SelectAlternative` admission coverage. Add the two-state theory. [verification-gap 3]
+  - `[medium]` `[patch]` Ambiguous multiple inbound Authorization values lacked an EventStore forwarding test. Pin fail-closed behavior. [verification-gap 4]
+  - `[medium]` `[defer]` `[carried]` The unrelated release exact-green-source preflight still lacks hermetic execution coverage; review pass 8 already deferred this exact location and claim, so it is not appended to the deferred ledger again. [verification-gap 5]
+  - `[high]` `[patch]` A final Project-detail store fault was classified before checking whether Tenant authority changed between reads. Compare final Tenant evidence first so changed authority is canonical safe denial. [edge-case-hunter 1]
+  - `[medium]` `[patch]` Reference lists above the 5,000 bound were structurally compared before the bound was enforced. Split bounded metadata comparison from reference comparison and reject overflow first. [edge-case-hunter 2]
+  - `[medium]` `[patch]` A Project-detail loader timeout represented by `OperationCanceledException` escaped when the request token remained active. Map that backend timeout to retryable Project-ACL unavailability while preserving caller cancellation. [edge-case-hunter 3]
+- grouped_root_causes:
+  - `[high]` `[patch]` Eliminate the weaker parallel Conversation-start authorization/read path by projecting its preserved wire contract from the shared executor: blind-hunter 8/9/10/11/12.
+  - `[high]` `[patch]` Establish final Tenant stability before supported-detail fault classification: edge-case-hunter 1.
+  - `[medium]` `[patch]` Enforce the candidate bound before reference-list comparison: edge-case-hunter 2.
+  - `[medium]` `[patch]` Distinguish backend timeout cancellation from caller cancellation: edge-case-hunter 3.
+  - `[medium]` `[patch]` Close the four demonstrated verification gaps: verification-gap 1/2/3/4.
+  - `[medium]` `[defer]` `[carried]` Keep the existing release-workflow hermetic-test deferral without duplicating the ledger entry: verification-gap 5.
+  - `[false]` `[reject]` `[carried]` Preserve the review-pass-8 disposition for unrelated committed baseline history and the previously rejected serialized-byte claim: blind-hunter 1/2/3/4/5/6/7/13/14/15/16/17.
 
 ## Design Notes
 

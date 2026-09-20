@@ -59,6 +59,26 @@ public sealed class ProjectContextInclusionPolicyTests
     }
 
     [Fact]
+    public void Assemble_IncludedFolderWithoutIdentifier_IsInvalidAndNeverUsesPendingIdentity()
+    {
+        ProjectContextInclusionPolicy policy = new();
+
+        ProjectContextAssemblyResult result = policy.Assemble(
+            Context(),
+            Project(),
+            TenantAccess(),
+            WithFolder(ReferenceState.Included, folderId: null));
+
+        result.Context.ProjectFolder.ShouldBeNull();
+        result.Context.Excluded.ShouldContain(item =>
+            item.ReferenceKind == "folder"
+            && item.ReferenceId == "unknown"
+            && item.ReferenceState == ReferenceState.InvalidReference);
+        result.Context.Excluded.ShouldNotContain(item => item.ReferenceId == "pending");
+        result.Evaluations.ShouldNotContain(item => item.ReferenceId == "pending");
+    }
+
+    [Fact]
     public void Assemble_FileReferenceIncluded_HappyPath()
     {
         ProjectContextInclusionPolicy policy = new();

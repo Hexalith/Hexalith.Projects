@@ -228,7 +228,13 @@ public static class ProjectContextAdmissionAssembler
         bool setupCurrent,
         bool authorizationCurrent,
         ProjectContextUnavailableCause cause)
-        => new(
+    {
+        // Unavailable admissions intentionally strip Folder and Setup payloads. Their component
+        // flags must describe the returned evidence rather than evidence observed before stripping.
+        _ = folderIncluded;
+        _ = setupCurrent;
+
+        return new(
             false,
             projectId,
             lifecycle,
@@ -245,12 +251,13 @@ public static class ProjectContextAdmissionAssembler
                 projectVersion,
                 BuildComponents(
                     projectCurrent,
-                    folderIncluded,
-                    setupCurrent,
+                    folderIncluded: false,
+                    setupCurrent: false,
                     authorizationCurrent,
                     referencesUsable: false,
                     referencesReason: ReferencesReason(cause)),
                 UnavailableRecoveryActions(cause)));
+    }
 
     /// <summary>Counts folder, file, memory, and conversation candidates.</summary>
     /// <param name="references">The candidate evidence.</param>

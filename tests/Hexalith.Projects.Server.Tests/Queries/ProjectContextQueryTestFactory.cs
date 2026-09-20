@@ -25,6 +25,23 @@ internal static class ProjectContextQueryTestFactory
         IReadModelStore readModelStore,
         TenantAccessAuthorizer tenantAccessAuthorizer)
     {
+        ProjectQueryEnvelopePrincipalBinding principalBinding = CreatePrincipalBinding();
+        ProjectAuthorizationGate authorizationGate = new(
+            tenantAccessAuthorizer,
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new InMemoryProjectDetailReadModel());
+
+        return new ProjectContextQueryExecutor(
+            readModelStore,
+            authorizationGate,
+            principalBinding,
+            new ProjectContextInclusionPolicy());
+    }
+
+    /// <summary>Creates a production-shaped callback principal binding for query-handler tests.</summary>
+    public static ProjectQueryEnvelopePrincipalBinding CreatePrincipalBinding()
+    {
         DefaultHttpContext httpContext = new()
         {
             User = new ClaimsPrincipal(new ClaimsIdentity(
@@ -46,21 +63,10 @@ internal static class ProjectContextQueryTestFactory
         IHostEnvironment environment = WebApplication.CreateSlimBuilder(
             new WebApplicationOptions { EnvironmentName = Environments.Production }).Environment;
         HttpContextProjectTenantContextAccessor tenantContextAccessor = new(httpContextAccessor);
-        ProjectAuthorizationGate authorizationGate = new(
-            tenantAccessAuthorizer,
-            new AllowingProjectEventStoreAuthorizationValidator(),
-            new AllowingProjectDaprPolicyEvidenceProvider(),
-            new InMemoryProjectDetailReadModel());
-        ProjectQueryEnvelopePrincipalBinding principalBinding = new(
+        return new ProjectQueryEnvelopePrincipalBinding(
             httpContextAccessor,
             tenantContextAccessor,
             configuration,
             environment);
-
-        return new ProjectContextQueryExecutor(
-            readModelStore,
-            authorizationGate,
-            principalBinding,
-            new ProjectContextInclusionPolicy());
     }
 }

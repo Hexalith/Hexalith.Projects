@@ -136,6 +136,40 @@ public sealed class ExplainContextSelectionQueryHandlerTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_BlankAuthorizedProjectionWatermark_ReturnsSafeDenial()
+    {
+        InMemoryReadModelStore store = new();
+        await store.SaveAsync(
+            ConversationStartSetupProjectionHandler.StoreName,
+            ConversationStartSetupProjectionHandler.Key(TenantId, ProjectId),
+            Detail(hasFolder: true),
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        InMemoryProjectTenantAccessProjectionStore tenantStore = new();
+        ProjectTenantAccessProjection projection = new()
+        {
+            TenantId = TenantId,
+            Enabled = true,
+            Watermark = 1,
+            ProjectionWatermark = " ",
+            LastEventTimestamp = ObservedAt,
+        };
+        projection.Principals["actor-1"] = new ProjectTenantPrincipalEvidence("actor-1", "TenantOwner");
+        await tenantStore.SaveAsync(projection, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        var handler = new ExplainContextSelectionQueryHandler(ProjectContextQueryTestFactory.Create(
+            store,
+            new TenantAccessAuthorizer(
+                tenantStore,
+                new FixedUtcClock(ObservedAt.AddMinutes(1)),
+                new TenantAccessOptions())));
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+        result.PayloadBytes.ShouldBeNull();
+    }
+
+    [Fact]
     public async Task ExecuteAsync_ZeroWrite_DoesNotSaveReadModel()
     {
         InMemoryReadModelStore inner = new();

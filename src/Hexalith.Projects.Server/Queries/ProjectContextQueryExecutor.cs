@@ -6,6 +6,7 @@
 namespace Hexalith.Projects.Server.Queries;
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -96,28 +97,45 @@ public sealed class ProjectContextQueryExecutor(
             .ConfigureAwait(false);
         ProjectDetailItem? finalDetail = finalAuthorization.ProjectDetail;
         TenantAccessAuthorizationResult? finalTenantAccess = finalAuthorization.TenantAccessResult;
-        if (!finalAuthorization.IsAllowed
-            || finalDetail is null
-            || finalTenantAccess is not { IsAllowed: true }
+        if (finalTenantAccess is not { IsAllowed: true }
             || string.IsNullOrWhiteSpace(finalTenantAccess.ProjectionWatermark)
             || !string.Equals(finalTenantAccess.TenantId, query.TenantId, StringComparison.Ordinal)
             || !string.Equals(
                 finalTenantAccess.ProjectionWatermark,
                 initialTenantAccess.ProjectionWatermark,
-                StringComparison.Ordinal)
-            || !HasStableProjectAuthority(detail, finalDetail))
+                StringComparison.Ordinal))
         {
             return ProjectContextAdmission.SafeDenial(projectId);
         }
 
-        detail = finalDetail;
-        if (HasTooManyCandidates(detail))
+        if (IsSupportedDetailStoreFault(finalAuthorization))
         {
             return ProjectContextAdmissionAssembler.Unavailable(
                 projectId,
-                detail.Lifecycle,
+                Enum.IsDefined(detail.Lifecycle) ? detail.Lifecycle : ProjectLifecycle.Active,
+                finalTenantAccess?.LastEventTimestamp ?? initialTenantAccess.LastEventTimestamp ?? default,
+                projectVersion: 0,
+                projectCurrent: false,
+                folderIncluded: false,
+                setupCurrent: false,
+                authorizationCurrent: false,
+                ProjectContextUnavailableCause.StoreFault);
+        }
+
+        if (!finalAuthorization.IsAllowed
+            || finalDetail is null
+            || !HasStableProjectAuthorityMetadata(detail, finalDetail))
+        {
+            return ProjectContextAdmission.SafeDenial(projectId);
+        }
+
+        if (HasTooManyCandidates(detail) || HasTooManyCandidates(finalDetail))
+        {
+            return ProjectContextAdmissionAssembler.Unavailable(
+                projectId,
+                Enum.IsDefined(detail.Lifecycle) ? detail.Lifecycle : ProjectLifecycle.Active,
                 detail.UpdatedAt,
-                detail.Sequence,
+                projectVersion: 0,
                 projectCurrent: true,
                 folderIncluded: false,
                 setupCurrent: false,
@@ -125,6 +143,12 @@ public sealed class ProjectContextQueryExecutor(
                 ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
         }
 
+        if (!HasStableProjectAuthorityReferences(detail, finalDetail))
+        {
+            return ProjectContextAdmission.SafeDenial(projectId);
+        }
+
+        detail = finalDetail;
         if (!ProjectPersistedDetailValidator.IsValid(detail))
         {
             return ProjectContextAdmissionAssembler.Unavailable(
@@ -185,13 +209,70 @@ public sealed class ProjectContextQueryExecutor(
         return string.Equals(envelopeTarget, projectId, StringComparison.Ordinal);
     }
 
-    private static bool HasStableProjectAuthority(ProjectDetailItem initial, ProjectDetailItem final)
+    private static bool HasStableProjectAuthorityMetadata(ProjectDetailItem initial, ProjectDetailItem final)
         => string.Equals(initial.TenantId, final.TenantId, StringComparison.Ordinal)
             && string.Equals(initial.ProjectId, final.ProjectId, StringComparison.Ordinal)
+            && string.Equals(initial.Name, final.Name, StringComparison.Ordinal)
+            && string.Equals(initial.Description, final.Description, StringComparison.Ordinal)
+            && string.Equals(initial.SetupMetadata, final.SetupMetadata, StringComparison.Ordinal)
+            && SetupsEqual(initial.Setup, final.Setup)
+            && EqualityComparer<ProjectFolderReference?>.Default.Equals(initial.ProjectFolder, final.ProjectFolder)
             && initial.Lifecycle == final.Lifecycle
             && initial.Sequence == final.Sequence
             && initial.CreatedAt == final.CreatedAt
             && initial.UpdatedAt == final.UpdatedAt;
+
+    private static bool HasStableProjectAuthorityReferences(ProjectDetailItem initial, ProjectDetailItem final)
+        => SequencesEqual(initial.FileReferences, final.FileReferences)
+            && SequencesEqual(initial.MemoryReferences, final.MemoryReferences);
+
+    private static bool IsSupportedDetailStoreFault(ProjectAuthorizationResult authorization)
+        => !authorization.IsAllowed
+            && authorization.TerminalLayer == AuthorizationLayer.ProjectAcl
+            && authorization.Reason == ReferenceState.Unavailable
+            && authorization.Retryable;
+
+    private static bool SetupsEqual(ProjectSetup? initial, ProjectSetup? final)
+    {
+        if (ReferenceEquals(initial, final))
+        {
+            return true;
+        }
+
+        return initial is not null
+            && final is not null
+            && SequencesEqual(initial.Goals, final.Goals)
+            && SequencesEqual(initial.UserInstructions, final.UserInstructions)
+            && SequencesEqual(initial.PreferredSourceKinds, final.PreferredSourceKinds)
+            && SequencesEqual(initial.ExcludedSourceKinds, final.ExcludedSourceKinds)
+            && EqualityComparer<ConversationStartDefaults?>.Default.Equals(
+                initial.ConversationStartDefaults,
+                final.ConversationStartDefaults);
+    }
+
+    private static bool SequencesEqual<T>(IReadOnlyList<T>? initial, IReadOnlyList<T>? final)
+    {
+        if (ReferenceEquals(initial, final))
+        {
+            return true;
+        }
+
+        if (initial is null || final is null || initial.Count != final.Count)
+        {
+            return false;
+        }
+
+        EqualityComparer<T> comparer = EqualityComparer<T>.Default;
+        for (int index = 0; index < initial.Count; index++)
+        {
+            if (!comparer.Equals(initial[index], final[index]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     private static bool HasTooManyCandidates(ProjectDetailItem detail)
         => (long)(detail.ProjectFolder is null ? 0 : 1)
