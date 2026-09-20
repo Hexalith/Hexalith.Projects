@@ -15,7 +15,7 @@ internal static class ProjectContextQueryAuthority
     public static IReadOnlyList<string> ExpectedScopes { get; } = ["projects.read"];
 
     /// <summary>Gets the expected audience values when the envelope presents audience.</summary>
-    public static IReadOnlyList<string> ExpectedAudience { get; } = ["hexalith-projects"];
+    public static IReadOnlyList<string> ExpectedAudience { get; } = ["hexalith-eventstore"];
 
     /// <summary>
     /// Returns whether presented envelope collections are omitted or contain every server-owned expectation.

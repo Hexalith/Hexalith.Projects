@@ -112,6 +112,17 @@ public sealed class ProjectFileReferenceDirectoryTests
     }
 
     [Fact]
+    public async Task ValidateLink_SuccessResponseOmittingRequestedPath_FailsClosedAsDenied()
+    {
+        FoldersProjectFileReferenceDirectory directory = Directory(
+            new RecordingHandler(JsonResponse(HttpStatusCode.OK, EmptyMetadataJson())));
+
+        ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Denied);
+    }
+
+    [Fact]
     public async Task ValidateLink_UnauthorizedDirectTarget_UsesCanonicalNotFoundAndFailsClosedAsDenied()
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
@@ -234,6 +245,19 @@ public sealed class ProjectFileReferenceDirectoryTests
             "observedAt": "2026-05-12T12:34:56Z",
             "projectionWatermark": "watermark_00000001",
             "stale": {{stale.ToString().ToLowerInvariant()}}
+          }
+        }
+        """;
+
+    private static string EmptyMetadataJson()
+        => """
+        {
+          "items": [],
+          "freshness": {
+            "readConsistency": "eventually_consistent",
+            "observedAt": "2026-05-12T12:34:56Z",
+            "projectionWatermark": "watermark_00000001",
+            "stale": false
           }
         }
         """;

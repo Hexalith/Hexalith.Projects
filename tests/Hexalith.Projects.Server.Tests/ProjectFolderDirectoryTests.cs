@@ -37,6 +37,24 @@ public sealed class ProjectFolderDirectoryTests
     }
 
     [Fact]
+    public async Task ValidateSetProjectFolder_EffectivePermissions_UsesCorrelationAsTaskId()
+    {
+        QueueHandler handler = new(
+        [
+            JsonResponse(HttpStatusCode.OK, LifecycleJson(archived: false, stale: false)),
+            JsonResponse(HttpStatusCode.OK, PermissionsJson("allowed", "read", stale: false)),
+        ]);
+        FoldersProjectFolderDirectory directory = Directory(handler);
+
+        ProjectFolderValidationResult result = await directory
+            .ValidateSetProjectFolderAsync(ProjectId(), FolderId, "corr-a", TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectFolderValidationOutcome.Accepted);
+        handler.TaskIds.ShouldBe([null, "corr-a"]);
+    }
+
+    [Fact]
     public async Task ValidateSetProjectFolder_StaleLifecycleEvidence_FailsClosed()
     {
         FoldersProjectFolderDirectory directory = Directory(
@@ -156,8 +174,11 @@ public sealed class ProjectFolderDirectoryTests
     }
 
     private static FoldersProjectFolderDirectory Directory(params HttpResponseMessage[] responses)
+        => Directory(new QueueHandler(responses));
+
+    private static FoldersProjectFolderDirectory Directory(HttpMessageHandler handler)
     {
-        HttpClient httpClient = new(new QueueHandler(responses))
+        HttpClient httpClient = new(handler)
         {
             BaseAddress = new Uri("http://folders.test/"),
         };
@@ -239,7 +260,14 @@ public sealed class ProjectFolderDirectoryTests
     {
         private readonly Queue<HttpResponseMessage> _responses = new(responses);
 
+        public List<string?> TaskIds { get; } = [];
+
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-            => Task.FromResult(_responses.Dequeue());
+        {
+            TaskIds.Add(request.Headers.TryGetValues("X-Hexalith-Task-Id", out IEnumerable<string>? values)
+                ? values.FirstOrDefault()
+                : null);
+            return Task.FromResult(_responses.Dequeue());
+        }
     }
 }

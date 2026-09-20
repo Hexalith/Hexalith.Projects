@@ -75,6 +75,31 @@ public sealed class ExplainContextSelectionQueryHandlerTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_DisclosureSafeOptionalOmission_ReturnsPartialExplanation()
+    {
+        ProjectDetailItem detail = Detail(hasFolder: true) with
+        {
+            Setup = new ProjectSetup([], [], [], [ProjectContextSourceKind.Memory], null),
+            MemoryReferences =
+            [
+                new ProjectMemoryReference("memory-1", "Memory", ReferenceState.Included, null, ObservedAt),
+            ],
+        };
+        ExplainContextSelectionQueryHandler handler = await CreateHandlerAsync(detail).ConfigureAwait(true);
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeTrue();
+        ExplainContextSelectionResponse response = JsonSerializer.Deserialize<ExplainContextSelectionResponse>(result.PayloadBytes!, JsonOptions)!;
+        response.Context.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
+        response.Context.MemoryReferences.ShouldBeEmpty();
+        response.Evaluations.ShouldContain(item =>
+            item.ReferenceKind == "memory"
+            && item.ReferenceId == "memory-1"
+            && item.ResultState == ReferenceState.Excluded);
+    }
+
+    [Fact]
     public async Task ExecuteAsync_DeniedTarget_ReturnsSafeDenial()
     {
         ExplainContextSelectionQueryHandler handler = await CreateHandlerAsync(Detail(hasFolder: true)).ConfigureAwait(true);
@@ -133,6 +158,40 @@ public sealed class ExplainContextSelectionQueryHandlerTests
 
         result.Success.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("safe-denial");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_BlankAuthorizedProjectionWatermark_ReturnsSafeDenial()
+    {
+        InMemoryReadModelStore store = new();
+        await store.SaveAsync(
+            ConversationStartSetupProjectionHandler.StoreName,
+            ConversationStartSetupProjectionHandler.Key(TenantId, ProjectId),
+            Detail(hasFolder: true),
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        InMemoryProjectTenantAccessProjectionStore tenantStore = new();
+        ProjectTenantAccessProjection projection = new()
+        {
+            TenantId = TenantId,
+            Enabled = true,
+            Watermark = 1,
+            ProjectionWatermark = " ",
+            LastEventTimestamp = ObservedAt,
+        };
+        projection.Principals["actor-1"] = new ProjectTenantPrincipalEvidence("actor-1", "TenantOwner");
+        await tenantStore.SaveAsync(projection, TestContext.Current.CancellationToken).ConfigureAwait(true);
+        var handler = new ExplainContextSelectionQueryHandler(ProjectContextQueryTestFactory.Create(
+            store,
+            new TenantAccessAuthorizer(
+                tenantStore,
+                new FixedUtcClock(ObservedAt.AddMinutes(1)),
+                new TenantAccessOptions())));
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+        result.PayloadBytes.ShouldBeNull();
     }
 
     [Fact]

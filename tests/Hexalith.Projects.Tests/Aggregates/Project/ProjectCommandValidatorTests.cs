@@ -519,6 +519,16 @@ public sealed class ProjectCommandValidatorTests
     }
 
     [Theory]
+    [InlineData(256, true)]
+    [InlineData(257, false)]
+    public void PersistedEnvelopeIdentifier_UsesEventStoreAggregateBoundary(int length, bool expected)
+    {
+        bool result = ProjectCommandValidator.IsSafePersistedEnvelopeIdentifier(new string('a', length));
+
+        result.ShouldBe(expected);
+    }
+
+    [Theory]
     [InlineData("secret: hunter2")]
     [InlineData("token=abc")]
     [InlineData("C:\\Users\\me\\secret.txt")]

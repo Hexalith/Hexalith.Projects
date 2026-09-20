@@ -467,6 +467,10 @@ public sealed class ProjectAuthorizationGate(
                     ? await projectDetailReadModel.GetAsync(authoritativeTenantId, projectId ?? string.Empty, cancellationToken).ConfigureAwait(false)
                     : await supportedDetailLoader(authoritativeTenantId, projectId ?? string.Empty, cancellationToken).ConfigureAwait(false);
             }
+            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+            {
+                return Deny(AuthorizationLayer.ProjectAcl, ReferenceState.Unavailable, "projection_unavailable", retryable: true, evaluatedLayers, tenantAccess);
+            }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 return Deny(AuthorizationLayer.ProjectAcl, ReferenceState.Unavailable, "projection_unavailable", retryable: true, evaluatedLayers, tenantAccess);
@@ -534,7 +538,10 @@ public sealed class ProjectAuthorizationGate(
                 tenantAccess);
         }
 
-        return ProjectAuthorizationResult.Allowed(evaluatedLayers.ToArray(), detail, tenantAccess);
+        return ProjectAuthorizationResult.Allowed(evaluatedLayers.ToArray(), detail, tenantAccess) with
+        {
+            EventStoreValidationResult = validatorResult,
+        };
     }
 
     private static ProjectAuthorizationResult Deny(

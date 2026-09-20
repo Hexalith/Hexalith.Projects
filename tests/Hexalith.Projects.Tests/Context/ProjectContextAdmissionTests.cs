@@ -54,6 +54,14 @@ public sealed class ProjectContextAdmissionTests
         admission.Excluded.ShouldBeEmpty();
         admission.Evaluations.ShouldBeEmpty();
         admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ContactAdministrator]);
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "Folder"
+            && !component.Included
+            && component.Freshness == EvidenceFreshnessState.Unavailable);
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "Setup"
+            && !component.Included
+            && component.Freshness == EvidenceFreshnessState.Unavailable);
     }
 
     [Fact]
@@ -99,7 +107,26 @@ public sealed class ProjectContextAdmissionTests
         admission.Snapshot.Components.ShouldContain(component =>
             component.Name == "References"
             && !component.Included
-            && component.Reason == "materialization-in-progress");
+                && component.Reason == "materialization-in-progress");
+    }
+
+    [Theory]
+    [InlineData(ReferenceState.Archived)]
+    [InlineData(ReferenceState.Ambiguous)]
+    public void AssembleAdmission_FolderNeedsAlternative_IsUnavailableWithSelectAlternative(ReferenceState state)
+    {
+        ProjectContextAdmission admission = Admit(WithFolder(state));
+
+        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        admission.Setup.ShouldBeNull();
+        admission.ProjectFolder.ShouldBeNull();
+        admission.Excluded.ShouldBeEmpty();
+        admission.Evaluations.ShouldBeEmpty();
+        admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.SelectAlternative]);
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "References"
+            && !component.Included
+            && component.Reason == "alternative-required");
     }
 
     [Fact]

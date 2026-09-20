@@ -342,6 +342,34 @@ public sealed class ProjectAuthorizationGateTests
     }
 
     [Fact]
+    public async Task AuthorizeSupportedRead_WhenLoaderTimesOut_ReturnsRetryableUnavailable()
+    {
+        IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
+        ProjectAuthorizationGate gate = new(
+            new TenantAccessAuthorizer(store, new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions()),
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new EmptyReadModel());
+
+        ProjectAuthorizationResult result = await gate.AuthorizeSupportedReadAsync(
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            new FixedProjectTenantContextAccessor(
+                "tenant-a",
+                "principal-a",
+                [ProjectAuthorizationGate.ReadProjectAction]),
+            new DefaultHttpContext(),
+            "corr-a",
+            "task-a",
+            (_, _, _) => throw new OperationCanceledException("projection timeout"),
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        result.IsAllowed.ShouldBeFalse();
+        result.TerminalLayer.ShouldBe(AuthorizationLayer.ProjectAcl);
+        result.Reason.ShouldBe(ReferenceState.Unavailable);
+        result.Retryable.ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task AuthorizeRead_WhenReadPermissionMissing_DeniesAtClaimTransformLayer()
     {
         IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);

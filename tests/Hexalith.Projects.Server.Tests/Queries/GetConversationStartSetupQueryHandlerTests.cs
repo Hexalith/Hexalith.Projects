@@ -54,6 +54,38 @@ public sealed class GetConversationStartSetupQueryHandlerTests
         response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
         response.Snapshot.ProjectVersion.ShouldBe(4);
         response.Snapshot.AsOf.ShouldBe(ObservedAt);
+        response.Snapshot.Components.Select(static component => component.Name).ShouldBe(
+            ["Project", "Folder", "Setup", "FirstResponseAuthorization"]);
+        response.Snapshot.RecoveryActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_OptionalContextOmission_PreservesCompleteStory62Snapshot()
+    {
+        ProjectSetup setup = new(
+            [],
+            [],
+            [],
+            [ProjectContextSourceKind.Memory],
+            null);
+        ProjectDetailItem detail = Detail(ProjectLifecycle.Active, setup, hasFolder: true) with
+        {
+            MemoryReferences =
+            [
+                new ProjectMemoryReference("memory-1", "Memory", ReferenceState.Included, null, ObservedAt),
+            ],
+        };
+        GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(detail).ConfigureAwait(true);
+
+        ConversationStartSetupResponse response = JsonSerializer.Deserialize<ConversationStartSetupResponse>(
+            (await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken)).PayloadBytes!,
+            JsonOptions)!;
+
+        response.Setup.ShouldNotBeNull();
+        response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
+        response.Snapshot.Components.Select(static component => component.Name).ShouldBe(
+            ["Project", "Folder", "Setup", "FirstResponseAuthorization"]);
+        response.Snapshot.RecoveryActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -96,12 +128,71 @@ public sealed class GetConversationStartSetupQueryHandlerTests
             new InMemoryProjectTenantAccessProjectionStore(),
             new FixedUtcClock(ObservedAt.AddMinutes(1)),
             new TenantAccessOptions());
-        var handler = new GetConversationStartSetupQueryHandler(store, tenantAccess);
+        var handler = new GetConversationStartSetupQueryHandler(
+            ProjectContextQueryTestFactory.Create(store, tenantAccess));
 
         QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
         result.Success.ShouldBeFalse();
         result.ErrorMessage.ShouldBe("safe-denial");
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_MismatchedCallbackPrincipal_ReturnsSafeDenial()
+    {
+        GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(
+            Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true)).ConfigureAwait(true);
+
+        QueryResult result = await handler.ExecuteAsync(
+            Query() with { OriginalActorId = "other-actor" },
+            TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+        result.PayloadBytes.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_ContradictoryAggregateAndEntityTargets_ReturnsSafeDenial()
+    {
+        GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(
+            Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true)).ConfigureAwait(true);
+
+        QueryResult result = await handler.ExecuteAsync(
+            Query() with { EntityId = "other-project" },
+            TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+        result.PayloadBytes.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_MismatchedPersistedIdentity_ReturnsSafeDenial()
+    {
+        GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(
+            Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true) with { ProjectId = "other-project" }).ConfigureAwait(true);
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeFalse();
+        result.ErrorMessage.ShouldBe("safe-denial");
+        result.PayloadBytes.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_InvalidPersistedDetail_ReturnsMinimalUnavailable()
+    {
+        GetConversationStartSetupQueryHandler handler = await CreateHandlerAsync(
+            Detail(ProjectLifecycle.Active, ProjectSetup.Empty, hasFolder: true) with { Sequence = 0 }).ConfigureAwait(true);
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeTrue();
+        ConversationStartSetupResponse response = JsonSerializer.Deserialize<ConversationStartSetupResponse>(result.PayloadBytes!, JsonOptions)!;
+        response.Setup.ShouldBeNull();
+        response.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Unavailable);
+        response.Snapshot.ProjectVersion.ShouldBe(0);
     }
 
     private static async Task<GetConversationStartSetupQueryHandler> CreateHandlerAsync(ProjectDetailItem detail)
@@ -116,7 +207,8 @@ public sealed class GetConversationStartSetupQueryHandlerTests
             await SeedTenantAccessStoreAsync().ConfigureAwait(true),
             new FixedUtcClock(ObservedAt.AddMinutes(1)),
             new TenantAccessOptions());
-        return new GetConversationStartSetupQueryHandler(store, tenantAccess);
+        return new GetConversationStartSetupQueryHandler(
+            ProjectContextQueryTestFactory.Create(store, tenantAccess));
     }
 
     private static async Task<IProjectTenantAccessProjectionStore> SeedTenantAccessStoreAsync()
@@ -136,7 +228,15 @@ public sealed class GetConversationStartSetupQueryHandlerTests
     }
 
     private static QueryEnvelope Query()
-        => new(TenantId, ProjectsServerModule.DomainName, ProjectId, ProjectsServerModule.GetConversationStartSetupQueryType, [], "corr-1", "actor-1");
+        => new(TenantId, ProjectsServerModule.DomainName, ProjectId, ProjectsServerModule.GetConversationStartSetupQueryType, [], "corr-1", "actor-1")
+        {
+            OriginalActorId = "actor-1",
+            AuthenticatedWorkloadId = "projects-callback",
+            IsDelegated = true,
+            DelegationId = "delegation-1",
+            Scopes = ["projects.read", "projects.list"],
+            Audience = ["hexalith-projects", "hexalith-eventstore"],
+        };
 
     private static ProjectDetailItem Detail(ProjectLifecycle lifecycle, ProjectSetup setup, bool hasFolder)
         => new(

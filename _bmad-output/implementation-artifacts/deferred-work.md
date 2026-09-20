@@ -705,3 +705,10 @@ decision: 2026-09-07 Owner decisions, three parts. (1) Coordinate - move to Even
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md`
   summary: Hermetically execute the release exact-green-source preflight across its accepted and rejected source states.
   evidence: The release workflow has source-text checks but no execution coverage for a green SHA, stale main, malformed API data, or missing successful push CI; this is a real release-verification gap unrelated to Story 6.3.
+
+## Deferred from: code review of spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md (2026-09-20)
+
+- Folders file-reference linking now sends `PathPolicyClass.Metadata_only` instead of `tenant_sensitive_document`. This is maybe-false: production harm exists only if Folders treats `Metadata_only` as a weaker ACL class than the previous value. Settle it against the Folders path-policy contract before keeping or reverting `src/Hexalith.Projects.Server/Folders/FoldersProjectFileReferenceDirectory.cs:62`.
+- source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md`
+  summary: Require an all-absent package inventory before unrelated NuGet `--skip-duplicate` release publication.
+  evidence: The release workflow can invoke Semantic Release while its NuGet command tolerates duplicate packages, so a partially occupied version can yield a mixed or incomplete public release; this release-hardening defect predates Story 6.3.
