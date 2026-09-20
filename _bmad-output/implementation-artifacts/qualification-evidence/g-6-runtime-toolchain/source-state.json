@@ -4,12 +4,12 @@
     {
       "name": "Hexalith.Projects",
       "path": ".",
-      "revision": "d5c6396823d56f227c7ade6a8eef34a091c6a4b3",
-      "diffSha256": "d13a099ca42fb4cd6d10d21f1b3f5cf5e6f3c4f31255a9c9d7bb1963d50d5db2",
+      "revision": "eb60bb4c0031e25483ee92a4b166effc5387620f",
+      "diffSha256": "67b5fc00d7be4dd2e2c7a991cb04877e8f53d13d7e0115cbc4d64bc495c58b96",
       "files": [
         {
           "path": ".github/workflows/ci.yml",
-          "sha256": "2b337bf827e6d8325426a5f0dab1f7706575b3ef3e6c17c53cafed215c05a2d6"
+          "sha256": "72028b1330f9874ac95d18b75f538f8b759db69eade3baa53a9e1132e52f74fc"
         },
         {
           "path": ".github/workflows/release.yml",
@@ -17,39 +17,43 @@
         },
         {
           "path": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
-          "sha256": "abca6a85509b18d420ca7a5a82516f44fcc53015ca2e61cf9546e6f4e7328c1c"
+          "sha256": "433a5ea5c1bf4c151bb04cffcddd56f485814927f2453bc05951d209665f4c73"
         },
         {
           "path": "src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj",
-          "sha256": "b51e54a743cbfa813a98916cfc10b744abccb3cf89a352f5db893f71af367a70"
+          "sha256": "31c181a6f0d0122e427ed116b4f8beb90987545cbd12af71ed6323aa80a842c0"
         },
         {
           "path": "tests/e2e/README.md",
-          "sha256": "fc468f8b46b725c66c120b985f5bde3fa9c0738aeedffb9a51bbd9390720658c"
+          "sha256": "d479ac21a91b23b8f4146c11349142ffd5b99600ed5179c0aad6ffd7feaf3ae1"
         },
         {
           "path": "tests/tools/run-ci-workflow-gates.ps1",
-          "sha256": "9fad8d3c5377df7912382c0b51e5c2f4c512573460a2ab0641408ae8995956b5"
+          "sha256": "e0309154ea00d9e640f9a7877cbf0d3893d16817b0fc7e146ed925a610fd2070"
         },
         {
           "path": "docs/runbooks/projects-topology.md",
           "sha256": "4a0370589e322fce4b05e2573bcc6bcfdc702eec4c0eb79226f51c69164e9dac"
+        },
+        {
+          "path": "global.json",
+          "sha256": "7e4c820f5d664523cbd36a384cbf90787d7911679098fde25bc5d7117c153db1"
         }
       ]
     },
     {
       "name": "Hexalith.Builds",
       "path": "references/Hexalith.Builds",
-      "revision": "d0049833f2ac0416075eed37f173712f3ac90e56",
-      "diffSha256": "8d5814341bb6ec4cbe678ef247aeb7a9bd44c63580dafd59abb6abafa8695e15",
+      "revision": "addb03375ff00b6923b9afd937147cac08d299f8",
+      "diffSha256": "70a49082c539ece6ea9b4af46f5014f4b730077388461c4e0becc85ac5681199",
       "files": [
         {
           "path": "references/Hexalith.Builds/.github/workflows/domain-ci.md",
-          "sha256": "1bd366b496f1ef1b73d85acf9bea6bfa334518f43265f9f5222a145dc7225197"
+          "sha256": "7e8fcfda8e8b139f06a4eaf868ece294a1bdea11b23d8708bc02d1aa4b975866"
         },
         {
           "path": "references/Hexalith.Builds/.github/workflows/domain-ci.yml",
-          "sha256": "074b53c750971aef7e6ea9bd2fc3915f50f61a3e6f918e130937e851aa54de18"
+          "sha256": "f9f42ab443a033d10917656a5e61c473f9f963287d5f584aeb0616bcbcac9622"
         },
         {
           "path": "references/Hexalith.Builds/.github/workflows/domain-release.md",
@@ -57,55 +61,55 @@
         },
         {
           "path": "references/Hexalith.Builds/.github/workflows/domain-release.yml",
-          "sha256": "270d5f0f89367a7fe4a312e8ed4467fffc8cf2d20f0e9b1442820af7c7d1a44c"
+          "sha256": "ef165465294b7f8ac9e82c60c51d1bb96b94bc9262a7aaffe3dcbd4fed981168"
         },
         {
           "path": "references/Hexalith.Builds/README.md",
-          "sha256": "33b3987ea564e1220c674f10c11da185da457dac3a61a1c7004349b9b900deda"
+          "sha256": "51dd834d209731f51f635f63613affad62eb9872f35c5acac78006afc6583c4e"
         },
         {
           "path": "references/Hexalith.Builds/Tools/runtime-toolchain-baseline.json",
-          "sha256": "5e50c4e1dfdfc4048b6551801c90e606f6ff9c522aae22e9a5b4a7fad9d8a8e4"
+          "sha256": "d8f0c3c4411da004e6e2f9c4ec9102dbdb95a6211590fbf67cf512bdc9fae89b"
         },
         {
           "path": "references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py",
-          "sha256": "af14d9384ea6df00d9181f6d3e9650a5189159fa299713d6aaa326d7f586ac1c"
+          "sha256": "de03f591a5472e8ad069e771ac0ec106e72c74e7844bf355d2b94080c23a8ffc"
         },
         {
           "path": "references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py",
-          "sha256": "3234c43129e3945a545a65413a2b86931fe87fad2bf7f308ed7073581b97448c"
+          "sha256": "0cd05478279d130b3c61a8cee3332975e88604ca7287cad7b24e8f5f1fbb6c04"
         },
         {
           "path": "references/Hexalith.Builds/schemas/hexalith.module-manifest.v1.json",
-          "sha256": "3e47317bd0af2440c40bd9ec776fa3f7ee74ee55c04a5ca73b472bb78359d3fd"
+          "sha256": "4a8a262e9a70106c3d6f82b6261c4eef73ba096efa07f34745023f3cb0800f60"
         },
         {
           "path": "references/Hexalith.Builds/schemas/hexalith.runtime-toolchain-evidence.v1.json",
-          "sha256": "4475843bf9d9ca5afa72fad038497f5d52cb8e1856a2fce8be8a3c8e4ecbe069"
+          "sha256": "690c0f64a573dda3007d4095ec4a31daac8068102d399d89d5d042ac5cb282f8"
         },
         {
           "path": "references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Manifest/SupportedPlatformPins.cs",
-          "sha256": "7adc3867d522fbdb43ac72f0f8d6f6bbc06153a0dd881349581de8c2ae8b54a9"
+          "sha256": "03a23850c8949f45e114099adc5bb3d03331d0efa9fd8f17cca3e6eeb736ac62"
         },
         {
           "path": "references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Runtime/RuntimePrerequisiteGate.cs",
-          "sha256": "38cdfac4056d5be0d30bb2547669d9738a049c14bf2358affdb6ddf79eba0010"
+          "sha256": "6ff28ae468143da458bda81f896941b2d5af8a964ce5bc49244dedd59f4c7a01"
         },
         {
           "path": "references/Hexalith.Builds/test/Hexalith.Builds.Module.Tests/ManifestValidationTests.cs",
-          "sha256": "cc5e6a8ebad02a013bcc319c35d2cc6264edb99f18bb92c006631b79232ae2f8"
+          "sha256": "63a5fcfa6aa644d64474cce0af92fd1ef57f85f79b8a592586e56f007b350565"
         },
         {
           "path": "references/Hexalith.Builds/test/Hexalith.Builds.Module.Tests/ModuleCommandApplicationTests.cs",
-          "sha256": "f786ffe42470ae52f8102a3306bd8268f88c38aea51548843793ae68dde0383b"
+          "sha256": "0d7d40bec2ff5c5d663e4280ba0672b19b702e394217fb2f60330c42f97db5c8"
         },
         {
           "path": "references/Hexalith.Builds/test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceSerializationTests.cs",
-          "sha256": "fc21913c32a021f9f1f2eaacdaac4907d3cc3461026f99ad3676b95050f38f09"
+          "sha256": "1376e5bf2719a206ffcb93453a3263d5593627270dc522c5406455b0f0e93bd3"
         },
         {
           "path": "references/Hexalith.Builds/test/Hexalith.Builds.Module.Tests/RuntimePrerequisiteGateTests.cs",
-          "sha256": "373c699df6fe1bd28285800d1c1efd377f434e4bf96726f96795c7a76795c696"
+          "sha256": "aab4857ef86f0a7494d1fca5a4f870a9e86df1a3d358b79f484ad773fc0b75a3"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/README.md",
@@ -113,99 +117,111 @@
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/absolute-path.json",
-          "sha256": "c95355f85fcccc81f217a43b7d9dc12b04d0bf2f9ed175b33c02fb2bb302545d"
+          "sha256": "a6038bf7e7e43b20deafd191dff4a59764ab23d2596b339ee584ee3fa2d91472"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/duplicate-id.json",
-          "sha256": "d200f72911dae94094302a99dbaf95225b8d50f4c6ff3e4d55eda5937d88da97"
+          "sha256": "6de160555263be54eb8b7b14c94968bbce04735727202c3314a25ab5cfe7e398"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/duplicate-json-key.json",
-          "sha256": "3d0e203cb59a43629929bd2ae63f3ddd3976d222e63cfe2f5169eae0703f681c"
+          "sha256": "08330ab58564370ebb49f4faae8bbe836002a8e88c198487d3cbf0c260b18742"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/invalid-profile.json",
-          "sha256": "61069aedee03672cd0cb253585502f6ebb1df46de52c35cf57474714bcfa3290"
+          "sha256": "25d41b8e623e1739f16c120f1ac22ef669f19ffc962db74d93a804b11e012355"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/malformed-dependency.json",
-          "sha256": "6e75f3294eead50935919cfc7408f65c754fbb8e1c5b62708df1603d8e18290f"
+          "sha256": "1b63f485b1839b75e4ab1f8b9dcaf5926a3228dbf55f87a233f1f23bfe0e1be0"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/missing-descriptor.json",
-          "sha256": "8408b9097fdee98e65fae21a3f852ce3ffb90ce588cba72c8cf96c387f9b6bc0"
+          "sha256": "75ce1048b9e99cb59233ba06d7f3240349cea016149cf725d8f398e6b696ba0b"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/missing-required-value.json",
-          "sha256": "fd87a2c23876b42680f14ea09f4df07465796425d72bdbc012b82dd6eb6ce8d5"
+          "sha256": "76cd265de3ff88751da1178afaaa7b4d2284cce74e3c02cdf37f341b681cadfd"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/path-escape.json",
-          "sha256": "cda691cbb7d884e6379f5d5cf400ecb16cf58a92ac8f0e439061e38a1f3bbc14"
+          "sha256": "6fa0a8cb930951f5868bd72ed67c54e931e8768eeca9efd9229864e7bfaf46eb"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/placeholder.json",
-          "sha256": "4f57352b7320b36dc5c276c277366128ece31a2996e8341abdd15782813b035b"
+          "sha256": "77e53830adf9502cb7af67746506e1c2a54f927812ede0ed4f08a1a7e4b12e92"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/secret-bearing.json",
-          "sha256": "e600df3a8a4d12c5f191b7945c5cc8ea5cb2760531df31cb8654d36db273a76c"
+          "sha256": "d8c57a9165dc0c3a0c83ac57652700638c0b3388e92658b4dafb6f754e78cd63"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/superseded-platform-pin.json",
-          "sha256": "14641f35341c704758e995ff1da7137ac1da246d05503b44a36c428dd17c5fd3"
+          "sha256": "fcb9544fd425aa2f8d50d9bff304ec6bb8c55559f3eea4f9bb55550cd60aba20"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/tampered-platform-pin.json",
-          "sha256": "4b4c0589092107171598333c5696d7b53e36f96fd159bf0caec94eb5ac48df16"
+          "sha256": "3bf9ae50d09217c68a97e3238418f431ea1a4d0bd20373b015bf1b795324d81d"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/unknown-field.json",
-          "sha256": "9f02e0b9caeec8ca49470165213796a9af91ad37c80905b4c309339c81adac5a"
+          "sha256": "acc0918a1a8ed2f0535c95d9d806875c05f81d72495fa8779d686444002fdb6a"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/unknown-schema.json",
-          "sha256": "1fdc538b45267387a13d18f0489b705754dd38501d908157bbac454c3165cb1a"
+          "sha256": "e301eb9b1b5ca770f96764b986637a79b6240431dfcff541ba19b066eb7dc482"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/negative/unsupported-profile-class.json",
-          "sha256": "a0bbc02ff1f756d4b4eb953df402058e5255467a758a337e0da6f40135258f0a"
+          "sha256": "ab7f075994fbffaecdb319d03fd716209870a0f8a7f83f4a888fb3ae858cf4c6"
         },
         {
           "path": "references/Hexalith.Builds/test/fixtures/module/positive/hexalith.module-manifest.v1.json",
-          "sha256": "4a24d5eabd7ebe35b9ef15b8052c04199867d97ac4d6f50e8c9f9cf0559552a9"
+          "sha256": "1896b51e7c432fbbcb233a8e1dfce4f9bb7bc766cdd11c66b8358d816496ef6e"
         },
         {
           "path": "references/Hexalith.Builds/.github/workflows/ci.yml",
           "sha256": "45385b7bcffc6d5ee3fed82abc9b3268134e8172de7fdfcf80672b75313ad78a"
+        },
+        {
+          "path": "references/Hexalith.Builds/global.json",
+          "sha256": "25b36d45123efa1d03786506dadad7546069f8563cddd4b509849b5c3631e9f5"
+        },
+        {
+          "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+          "sha256": "e0768641184c05cc2b6158497691fd6b32f8a9c02bdd9d68a00fabac8bcd4104"
         }
       ]
     },
     {
       "name": "Hexalith.Conversations",
       "path": "references/Hexalith.Conversations",
-      "revision": "881b52d978ab021a5b9dd560d7a3906c92f74011",
-      "diffSha256": "6a5ebb948a2266c7fd26323971f095e41551d945042a3158c3e3f6e00b2aedf8",
+      "revision": "c610fbb8c5491fb0d7987c2f8294199887f4a44c",
+      "diffSha256": "1e9abf481ec13e88d9b001f5d6411f1b74cea7d24ec9fb422726dbc4bfdfe102",
       "files": [
         {
           "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
-          "sha256": "7fc6e2cd5bc8c374f5310ba0ba1899249a170dacd9314482a5c767822aac85f3"
+          "sha256": "faed60efce6408f86057973094315998528632a4801f8a8341178b481a7db9b3"
         },
         {
           "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.IntegrationTests/ScaffoldSmokeTest.cs",
-          "sha256": "b9b9ba23c42c8349a6ba0fb883dd0e864bff8699292736915f497f30999016bc"
+          "sha256": "15014e0d1226a100f853ca62a1ab89cf03c1ac7ea9f8faad4d8f5441aa3fdef2"
+        },
+        {
+          "path": "references/Hexalith.Conversations/global.json",
+          "sha256": "25b36d45123efa1d03786506dadad7546069f8563cddd4b509849b5c3631e9f5"
         }
       ]
     },
     {
       "name": "Hexalith.EventStore",
       "path": "references/Hexalith.EventStore",
-      "revision": "acf5c4e403699d4f9290fd6636e4d6b1872a3bd6",
-      "diffSha256": "6e8bdfead802e4241be0cbb396b71d10e3d4d01d718b063192d9ef0fc660b84e",
+      "revision": "ba7ac196e60db8820525961791eccfacec24633f",
+      "diffSha256": "2b49f69abee9e2b0d023fc94efb4b18b3ba09f6075b302188fccf320a6d96c31",
       "files": [
         {
           "path": "references/Hexalith.EventStore/.github/workflows/integration.yml",
-          "sha256": "4bed16f86037c7eb8f5bcbfc370b5b3ae60fec3d40880605660eba6722974ca1"
+          "sha256": "e50df54fb058ca5c52e0282836ebf6f04cb6fce915a1a1178bf19fad4411da21"
         },
         {
           "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Actors/IdempotencyAdmissionOq8PostgresqlTests.cs",
@@ -213,55 +229,75 @@
         },
         {
           "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs",
-          "sha256": "d5ac6c48917787c9249fe4257a639bf7077b09b88b19d2f327dbf8093e45f936"
+          "sha256": "8bf77620e33501409bc890d5983e57914087bbc469a8be05208a37f5ddd59948"
         },
         {
           "path": "references/Hexalith.EventStore/tools/validate-oq8-platform-evidence.py",
-          "sha256": "2764e05752c17ac11fcfcc9096407377bc39050bef6c6b303d44089c05d15393"
+          "sha256": "5ae0515be54e0143907d83729b9405b69b059b004f705bbd6f0ba7bdb720acd9"
+        },
+        {
+          "path": "references/Hexalith.EventStore/global.json",
+          "sha256": "75eb0b352fe66139782d7d635e60a74b66a51ea2cd2a483e93f0e0d35f6da654"
+        },
+        {
+          "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+          "sha256": "1fdad34f701ee4b64738c011c46fefbe72d73a9028d96c6281c33dcb1371af46"
         }
       ]
     },
     {
       "name": "Hexalith.Folders",
       "path": "references/Hexalith.Folders",
-      "revision": "25800374551dc4f330c27f954d53fde0dbcba403",
-      "diffSha256": "a5191660dccd7820a89fe9eeddaacbfe83d0fea5a0d63f7a512dd45f5144fda9",
+      "revision": "823dce16bca7d1eb9c10c4d871bf581fc9dc61ef",
+      "diffSha256": "62a50121547ec4ef58e7295767f086847705a41ff4336d6c14f66bfb430a4ed8",
       "files": [
         {
           "path": "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
-          "sha256": "50702fc132c7db3f4d146b0ad18d1d82c8bef1c9a75e1016772db898ef5b2bfc"
+          "sha256": "cf8a47cc6381cd8293148bc589af495ce8e4ca2c52694815ebc55d8e419914f8"
+        },
+        {
+          "path": "references/Hexalith.Folders/global.json",
+          "sha256": "f8ecaa8e7896cc5eb32422d63d3765f08d0f560218bdbbfb114d9fcd0d0b0d53"
         }
       ]
     },
     {
       "name": "Hexalith.FrontComposer",
       "path": "references/Hexalith.FrontComposer",
-      "revision": "5cbc5583142a6774ff7813698ad98ec267b336f0",
-      "diffSha256": "d02d3e988beeca3e1894527506247b8b13fe6ac56463d69a7e186398e3f68a06",
+      "revision": "b2bac5f193130ea08abc22fd78d6a936c2f419f4",
+      "diffSha256": "2bafb78ba33f19d2622ab893f6f06aef1bd1c02719c95d8f45208a4b513382cd",
       "files": [
         {
           "path": "references/Hexalith.FrontComposer/.github/workflows/quality.yml",
-          "sha256": "398cf1f29f9b0851ac0d82a560f8f70cd58b063b8ddc672c3ec2f1fb9571d5c9"
+          "sha256": "d892aac1cd1b936af35427814d64d6c34f27a1b4ea5fe721cb14b09f624013e2"
         },
         {
           "path": "references/Hexalith.FrontComposer/tests/Hexalith.FrontComposer.Shell.Tests/Governance/CiGovernanceTests.cs",
-          "sha256": "66f1d1058e879b28be7fab84e52efd74bf642ef72a0b75360fb7ebee7fd18a0e"
+          "sha256": "a5d5b1c23a3944d9d55df7fdf05a0b4ce3663b649e25ddae67e297f8788c7c46"
+        },
+        {
+          "path": "references/Hexalith.FrontComposer/global.json",
+          "sha256": "75eb0b352fe66139782d7d635e60a74b66a51ea2cd2a483e93f0e0d35f6da654"
+        },
+        {
+          "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+          "sha256": "a5deccf81749af0f9b13f42d800dc954cbce083fbcb4252ce06ffca282737329"
         }
       ]
     },
     {
       "name": "Hexalith.Memories",
       "path": "references/Hexalith.Memories",
-      "revision": "3a7a70259d0ff185947fcc2e4216f7a275651d68",
-      "diffSha256": "9b999261d71892ac44a4df9fe2641bde1a5601e3a2c55e9a87a7fa4a0106e98a",
+      "revision": "8884933571e2738c406feea37e57f7124378b3e3",
+      "diffSha256": "3347a0acf29d20aa0f10eae9b68b43826f23c88bfce7c845b837a2f8d9c50289",
       "files": [
         {
           "path": "references/Hexalith.Memories/.github/workflows/ci.yml",
-          "sha256": "f9c764503e3ec7eafb31ed0b257a750032366eeba339af345a7002bdfcbe004e"
+          "sha256": "0d0e80960e46b538fbebd95f7b5fb5cd66e41c1b22d9fb441ea05eaa7daa07da"
         },
         {
           "path": "references/Hexalith.Memories/.github/workflows/nightly.yml",
-          "sha256": "8d0345c4505067f3f3043c6a12c5b0e2db5846dcbab00916d8fdaaad978ddf02"
+          "sha256": "8c695aa282ee66a749e726261deb146f530efc1b72d8059e77c9f4153b054f76"
         },
         {
           "path": "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
@@ -270,34 +306,46 @@
         {
           "path": "references/Hexalith.Memories/tools/verify-production-deployment.ps1",
           "sha256": "f37cd457ff550c5c2f4492f1e348a5346dc059f26e12df145b0c00c67066b5b4"
+        },
+        {
+          "path": "references/Hexalith.Memories/global.json",
+          "sha256": "2db08b866a7980b4ac1eb5d9a84ff42ae85f72f6ef0edd7beb0e4285eb2bc1f0"
         }
       ]
     },
     {
       "name": "Hexalith.Parties",
       "path": "references/Hexalith.Parties",
-      "revision": "8a8032c235f81b5b59b8a9a62497f8bcf61fd2d4",
-      "diffSha256": "b2ecec4f107afbd2f47432f4fb2cc3a072771f3692dbb3f19f67ca2af78876fa",
+      "revision": "14d249fde316b0002aec84351d7a7cdf953d1d30",
+      "diffSha256": "ba19562853581390b1c3b6f1ffa77456a9912f74b7a492b105a621a1360af780",
       "files": [
         {
           "path": "references/Hexalith.Parties/.github/workflows/ci.yml",
-          "sha256": "3783ed1ceda80f7d20348564640cf0290d1e219b11590059e4bdf89364b15356"
+          "sha256": "2f725cfc04cc7c42e0c681966d8210d6632b4d5f07d59adf125130ac7b022c7c"
         },
         {
           "path": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
           "sha256": "9a5496366a09690a9d8a459a2c892c040f58005886d3b4dbe9b5cfa0efd7d066"
+        },
+        {
+          "path": "references/Hexalith.Parties/global.json",
+          "sha256": "25b36d45123efa1d03786506dadad7546069f8563cddd4b509849b5c3631e9f5"
         }
       ]
     },
     {
       "name": "Hexalith.Tenants",
       "path": "references/Hexalith.Tenants",
-      "revision": "d914b13bd9b2354dbb6b556c9887664f68672069",
-      "diffSha256": "63509f705153e7819d5f272ce05a6cb7cad3d5238d973c1d033c8047ef13382b",
+      "revision": "dfd84f4b9c93779f253672096fec5d717d6afc91",
+      "diffSha256": "8b0cba064dc57c260cf91bb0b905bcd3f736cdedbfadf03629bfd8ba2ab7dc97",
       "files": [
         {
           "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
           "sha256": "8946272a9f55f438c2ad636318742a222b20770a1c6ce20986fde0c4ab0b281d"
+        },
+        {
+          "path": "references/Hexalith.Tenants/global.json",
+          "sha256": "25b36d45123efa1d03786506dadad7546069f8563cddd4b509849b5c3631e9f5"
         }
       ]
     }

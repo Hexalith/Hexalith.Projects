@@ -250,7 +250,7 @@ Require-Match $ci 'npm --prefix tests/e2e ci --ignore-scripts' 'E2E must use the
 Require-Match $ci 'npm --prefix tests/e2e run install:browsers' 'E2E browser installation must be explicit.'
 Require-Match $ci 'uses:\s*\./references/Hexalith\.Builds/Github/dapr-init' 'Scheduled E2E must initialize Dapr through the reviewed root dependency.'
 Require-Match $ci "runtime-version:\s*'1\.18\.2'" 'Scheduled E2E must initialize the approved Dapr 1.18.2 runtime.'
-Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.5\.3' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
+Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.5\.4' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
 Require-Match $ci 'npm --prefix tests/e2e run test:live:managed' 'Scheduled E2E must use the managed AppHost lifecycle runner.'
 Require-Match $ci '^\s*TEST_USER_PASSWORD:\s*\$\{\{ secrets\.[A-Z0-9_]+ \}\}\s*$' 'Scheduled E2E credentials must come from a GitHub secret.'
 Require-Match $ci '^\s*if:\s*always\(\)\s*$' 'Scheduled E2E must unconditionally run exact-AppHost teardown.'
