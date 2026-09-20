@@ -742,6 +742,31 @@ public static class ProjectCommandValidator
     private static bool IsSafeOptionalMetadata(string? value, int maxLength)
         => string.IsNullOrWhiteSpace(value) || (value.Trim().Length <= maxLength && IsSafeMetadata(value));
 
+    /// <summary>Validates persisted Setup with the canonical command-boundary rules.</summary>
+    /// <param name="setup">The persisted Setup to validate.</param>
+    /// <returns><see langword="true"/> when every bounded text and enum value is valid.</returns>
+    internal static bool IsValidPersistedSetup(ProjectSetup setup)
+        => setup is not null && CanonicalizeSetup(setup, requireRawTextBounds: true, out _) is not null;
+
+    /// <summary>Validates persisted safe display metadata with the canonical command-boundary rules.</summary>
+    /// <param name="value">The optional metadata value.</param>
+    /// <param name="maxLength">The canonical maximum length.</param>
+    /// <returns><see langword="true"/> when the value is absent or safe and bounded.</returns>
+    internal static bool IsSafePersistedMetadata(string? value, int maxLength)
+        => IsSafeOptionalMetadata(value, maxLength);
+
+    /// <summary>Validates a persisted foreign reference identifier with the canonical command-boundary rules.</summary>
+    /// <param name="value">The persisted reference identifier.</param>
+    /// <returns><see langword="true"/> when the identifier is safe and bounded.</returns>
+    internal static bool IsSafePersistedReferenceIdentifier(string? value)
+        => IsSafeReferenceIdentifier(value);
+
+    /// <summary>Validates a persisted Project-owned envelope identifier.</summary>
+    /// <param name="value">The persisted identifier.</param>
+    /// <returns><see langword="true"/> when the identifier is present and free of control separators.</returns>
+    internal static bool IsSafePersistedEnvelopeIdentifier(string? value)
+        => IsSafeEnvelopeIdentifier(value);
+
     private static ProjectCommandValidationResult ValidateCommon(IProjectCommand command)
     {
         if (string.IsNullOrWhiteSpace(command.TenantId))

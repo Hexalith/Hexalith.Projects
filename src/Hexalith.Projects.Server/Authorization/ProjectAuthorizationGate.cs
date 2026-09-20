@@ -101,6 +101,38 @@ public sealed class ProjectAuthorizationGate(
             requireProjectDetail: true,
             cancellationToken).ConfigureAwait(false);
 
+    /// <summary>Authorizes a supported Project read with a caller-supplied persisted-detail loader.</summary>
+    /// <param name="projectId">The target Project identifier.</param>
+    /// <param name="tenantContext">The authenticated tenant and principal context.</param>
+    /// <param name="httpContext">The authenticated callback HTTP context.</param>
+    /// <param name="correlationId">The request correlation identifier.</param>
+    /// <param name="taskId">The optional task identifier.</param>
+    /// <param name="detailLoader">The supported EventStore read-model loader.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The complete ordered authorization result and authorized detail.</returns>
+    public async Task<ProjectAuthorizationResult> AuthorizeSupportedReadAsync(
+        string projectId,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string? correlationId,
+        string? taskId,
+        Func<string, string, CancellationToken, Task<ProjectDetailItem?>> detailLoader,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(detailLoader);
+        return await AuthorizeAsync(
+            tenantContext,
+            httpContext,
+            ReadProjectAction,
+            projectId,
+            correlationId,
+            taskId,
+            allowBoundedStaleTenantProjection: true,
+            requireProjectDetail: true,
+            cancellationToken,
+            detailLoader).ConfigureAwait(false);
+    }
+
     /// <summary>Authorizes a project list read.</summary>
     public async Task<ProjectAuthorizationResult> AuthorizeListAsync(
         IProjectTenantContextAccessor tenantContext,
@@ -356,7 +388,8 @@ public sealed class ProjectAuthorizationGate(
         string? taskId,
         bool allowBoundedStaleTenantProjection,
         bool requireProjectDetail,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        Func<string, string, CancellationToken, Task<ProjectDetailItem?>>? supportedDetailLoader = null)
     {
         ArgumentNullException.ThrowIfNull(tenantContext);
         ArgumentNullException.ThrowIfNull(httpContext);
@@ -430,7 +463,9 @@ public sealed class ProjectAuthorizationGate(
         {
             try
             {
-                detail = await projectDetailReadModel.GetAsync(authoritativeTenantId, projectId ?? string.Empty, cancellationToken).ConfigureAwait(false);
+                detail = supportedDetailLoader is null
+                    ? await projectDetailReadModel.GetAsync(authoritativeTenantId, projectId ?? string.Empty, cancellationToken).ConfigureAwait(false)
+                    : await supportedDetailLoader(authoritativeTenantId, projectId ?? string.Empty, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {

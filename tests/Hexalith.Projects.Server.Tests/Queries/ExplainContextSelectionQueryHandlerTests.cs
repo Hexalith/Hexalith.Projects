@@ -51,6 +51,30 @@ public sealed class ExplainContextSelectionQueryHandlerTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_PopulatedPersistedSetup_SurvivesExplanationSerialization()
+    {
+        ProjectSetup setup = new(
+            ["Deliver the release"],
+            ["Prefer concise summaries"],
+            [ProjectContextSourceKind.Memory],
+            [],
+            new ConversationStartDefaults(LinkedSourcePolicy.ProjectsOwnedMetadataOnly));
+        ExplainContextSelectionQueryHandler handler = await CreateHandlerAsync(
+            Detail(hasFolder: true) with { Setup = setup }).ConfigureAwait(true);
+
+        QueryResult result = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
+
+        result.Success.ShouldBeTrue();
+        ExplainContextSelectionResponse response = JsonSerializer.Deserialize<ExplainContextSelectionResponse>(result.PayloadBytes!, JsonOptions)!;
+        response.Context.Setup.ShouldNotBeNull();
+        response.Context.Setup!.Goals.ShouldBe(setup.Goals);
+        response.Context.Setup.UserInstructions.ShouldBe(setup.UserInstructions);
+        response.Context.Setup.PreferredSourceKinds.ShouldBe(setup.PreferredSourceKinds);
+        response.Context.Setup.ExcludedSourceKinds.ShouldBe(setup.ExcludedSourceKinds);
+        response.Context.Setup.ConversationStartDefaults.ShouldBe(setup.ConversationStartDefaults);
+    }
+
+    [Fact]
     public async Task ExecuteAsync_DeniedTarget_ReturnsSafeDenial()
     {
         ExplainContextSelectionQueryHandler handler = await CreateHandlerAsync(Detail(hasFolder: true)).ConfigureAwait(true);
@@ -132,10 +156,9 @@ public sealed class ExplainContextSelectionQueryHandlerTests
         };
         projection.Principals["actor-1"] = new ProjectTenantPrincipalEvidence("actor-1", "TenantOwner");
         await tenantStore.SaveAsync(projection, TestContext.Current.CancellationToken).ConfigureAwait(true);
-        var handler = new ExplainContextSelectionQueryHandler(new ProjectContextQueryExecutor(
+        var handler = new ExplainContextSelectionQueryHandler(ProjectContextQueryTestFactory.Create(
             store,
-            new TenantAccessAuthorizer(tenantStore, new FixedUtcClock(ObservedAt.AddMinutes(1)), new TenantAccessOptions()),
-            new ProjectContextInclusionPolicy()));
+            new TenantAccessAuthorizer(tenantStore, new FixedUtcClock(ObservedAt.AddMinutes(1)), new TenantAccessOptions())));
 
         _ = await handler.ExecuteAsync(Query(), TestContext.Current.CancellationToken);
 
@@ -162,10 +185,9 @@ public sealed class ExplainContextSelectionQueryHandlerTests
         };
         projection.Principals["actor-1"] = new ProjectTenantPrincipalEvidence("actor-1", "TenantOwner");
         await tenantStore.SaveAsync(projection, TestContext.Current.CancellationToken).ConfigureAwait(true);
-        return new ExplainContextSelectionQueryHandler(new ProjectContextQueryExecutor(
+        return new ExplainContextSelectionQueryHandler(ProjectContextQueryTestFactory.Create(
             store,
-            new TenantAccessAuthorizer(tenantStore, new FixedUtcClock(ObservedAt.AddMinutes(1)), new TenantAccessOptions()),
-            new ProjectContextInclusionPolicy()));
+            new TenantAccessAuthorizer(tenantStore, new FixedUtcClock(ObservedAt.AddMinutes(1)), new TenantAccessOptions())));
     }
 
     private static QueryEnvelope Query()
@@ -176,7 +198,15 @@ public sealed class ExplainContextSelectionQueryHandlerTests
             ProjectsServerModule.ExplainContextSelectionQueryType,
             JsonSerializer.SerializeToUtf8Bytes(new ExplainContextSelectionQuery(ProjectId), JsonOptions),
             "corr-1",
-            "actor-1");
+            "actor-1")
+        {
+            OriginalActorId = "actor-1",
+            AuthenticatedWorkloadId = "projects-callback",
+            IsDelegated = true,
+            DelegationId = "delegation-1",
+            Scopes = ["projects.read", "projects.list"],
+            Audience = ["hexalith-projects", "hexalith-eventstore"],
+        };
 
     private static ProjectDetailItem Detail(bool hasFolder)
         => new(

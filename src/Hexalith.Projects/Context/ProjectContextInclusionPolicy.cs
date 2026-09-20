@@ -300,6 +300,13 @@ public sealed class ProjectContextInclusionPolicy
         List<ProjectContextReference> includedFolder)
     {
         const string Kind = "folder";
+        if (candidate.ReferenceState == ReferenceState.Included
+            && string.IsNullOrWhiteSpace(candidate.FolderId))
+        {
+            RecordInvalidIdentifier(Kind, "unknown", now, evaluations, excluded);
+            return;
+        }
+
         string referenceId = string.IsNullOrWhiteSpace(candidate.FolderId)
             ? "pending"
             : candidate.FolderId!;

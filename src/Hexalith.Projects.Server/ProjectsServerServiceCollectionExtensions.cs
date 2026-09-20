@@ -28,12 +28,16 @@ using Hexalith.Projects.Server.Memories;
 using Hexalith.Projects.Server.Proposals;
 using Hexalith.Projects.Server.Projections.ConversationStartSetup;
 using Hexalith.Projects.Server.Queries;
+using Hexalith.Projects.Server.Authentication;
 
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 using FoldersClient = Hexalith.Folders.Client.Generated.IClient;
 
@@ -121,6 +125,7 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();
         services.TryAddSingleton<IDomainProcessor, ProjectsDomainProcessor>();
         services.AddSingleton<IDomainQueryHandler, GetConversationStartSetupQueryHandler>();
+        services.AddSingleton<ProjectQueryEnvelopePrincipalBinding>();
         services.AddSingleton<ProjectContextQueryExecutor>();
         services.AddSingleton<IDomainQueryHandler, GetProjectContextQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, ExplainContextSelectionQueryHandler>();
@@ -208,13 +213,20 @@ public static class ProjectsServerServiceCollectionExtensions
             string.Equals(request.Domain, ProjectsServerModule.DomainName, StringComparison.Ordinal)
                 ? Results.Ok(ProjectProjectionHandler.Project(request))
                 : Results.NotFound());
-        endpoints.MapPost(
+        RouteHandlerBuilder queryEndpoint = endpoints.MapPost(
             "/query",
             async (QueryEnvelope query, IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
             {
                 QueryResult result = await DomainQueryDispatcher.ExecuteAsync(serviceProvider, query, cancellationToken).ConfigureAwait(false);
                 return result.Success ? Results.Ok(result) : Results.NotFound(result);
             });
+        IConfiguration configuration = endpoints.ServiceProvider.GetRequiredService<IConfiguration>();
+        IHostEnvironment environment = endpoints.ServiceProvider.GetRequiredService<IHostEnvironment>();
+        if (!ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(configuration, environment))
+        {
+            _ = queryEndpoint.RequireAuthorization();
+        }
+
         endpoints.MapProjectsDomainServiceEndpoints();
         return endpoints;
     }

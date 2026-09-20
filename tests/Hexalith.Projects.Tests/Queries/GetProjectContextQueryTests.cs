@@ -23,7 +23,7 @@ using static Hexalith.Projects.Testing.Context.ProjectContextEvidenceBuilder;
 public sealed class GetProjectContextQueryTests
 {
     [Fact]
-    public void GetAdmission_MetadataOnly_ContainsAllowlistedReferencesOnly()
+    public void GetAdmission_UnconfirmedConversation_IsMinimalUnavailableWithoutIdentity()
     {
         ProjectContextInclusionPolicy policy = new();
         ProjectContextAdmission admission = policy.AssembleAdmission(
@@ -36,11 +36,14 @@ public sealed class GetProjectContextQueryTests
             ownerBackedTrustAvailable: false);
 
         ProjectContextReadResponse response = admission.ToReadResponse();
-        response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
+        response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        response.Setup.ShouldBeNull();
+        response.ProjectFolder.ShouldBeNull();
         response.Conversations.ShouldBeEmpty();
-        response.FileReferences.ShouldContain(item => item.ReferenceKind == "file");
-        response.MemoryReferences.ShouldContain(item => item.ReferenceKind == "memory");
-        response.Excluded.ShouldContain(item => item.ReferenceKind == "conversation");
+        response.FileReferences.ShouldBeEmpty();
+        response.MemoryReferences.ShouldBeEmpty();
+        response.Excluded.ShouldBeEmpty();
+        response.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ContactAdministrator]);
         Should.NotThrow(() => NoPayloadLeakageAssertions.AssertNoLeakage(response));
     }
 

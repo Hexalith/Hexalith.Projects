@@ -116,7 +116,7 @@ public sealed class GetConversationStartSetupQueryHandler(
             recoveryActions);
         var response = new ConversationStartSetupResponse(
             responseState == AdmissionResponseState.Unavailable ? null : setup,
-            snapshot);
+            ConversationStartAdmissionSnapshot.FromShared(snapshot));
 
         return QueryResult.FromPayload(JsonSerializer.SerializeToElement(response, JsonOptions), QueryType);
     }

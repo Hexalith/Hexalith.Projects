@@ -32,7 +32,7 @@ public sealed class AdmissionSnapshotTests
             [AdmissionRecoveryAction.None]);
         ConversationStartSetupResponse conversationStart = new(
             ConversationStartSetup.Empty("project-1", ProjectLifecycle.Active, snapshot.AsOf, ProjectContextFreshness.Fresh),
-            snapshot);
+            ConversationStartAdmissionSnapshot.FromShared(snapshot));
 
         string json = JsonSerializer.Serialize(conversationStart, WebOptions);
         ConversationStartSetupResponse roundTripped = JsonSerializer.Deserialize<ConversationStartSetupResponse>(json, WebOptions)!;
@@ -43,9 +43,11 @@ public sealed class AdmissionSnapshotTests
         json.ShouldContain("\"components\"");
         json.ShouldContain("\"recoveryActions\"");
         json.ShouldNotContain("tenantId");
-        roundTripped.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
+        roundTripped.Snapshot.ResponseState.ShouldBe(ConversationStartResponseState.Complete);
         roundTripped.Snapshot.ProjectVersion.ShouldBe(4);
         roundTripped.Setup.ShouldNotBeNull();
+        typeof(ConversationStartSetupResponse).GetConstructor(
+            [typeof(ConversationStartSetup), typeof(ConversationStartAdmissionSnapshot)]).ShouldNotBeNull();
     }
 
     [Fact]

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Contracts.Queries;
+using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Context;
 using Hexalith.Projects.Contracts.Models;
@@ -23,11 +24,13 @@ using Hexalith.Projects.Server.Projections.ConversationStartSetup;
 /// </summary>
 public sealed class ProjectContextQueryExecutor(
     IReadModelStore readModelStore,
-    TenantAccessAuthorizer tenantAccessAuthorizer,
+    ProjectAuthorizationGate authorizationGate,
+    ProjectQueryEnvelopePrincipalBinding principalBinding,
     ProjectContextInclusionPolicy inclusionPolicy)
 {
     private readonly IReadModelStore _readModelStore = readModelStore ?? throw new ArgumentNullException(nameof(readModelStore));
-    private readonly TenantAccessAuthorizer _tenantAccessAuthorizer = tenantAccessAuthorizer ?? throw new ArgumentNullException(nameof(tenantAccessAuthorizer));
+    private readonly ProjectAuthorizationGate _authorizationGate = authorizationGate ?? throw new ArgumentNullException(nameof(authorizationGate));
+    private readonly ProjectQueryEnvelopePrincipalBinding _principalBinding = principalBinding ?? throw new ArgumentNullException(nameof(principalBinding));
     private readonly ProjectContextInclusionPolicy _inclusionPolicy = inclusionPolicy ?? throw new ArgumentNullException(nameof(inclusionPolicy));
 
     /// <summary>Assembles supported Project Context from envelope identity and persisted detail.</summary>
@@ -50,71 +53,74 @@ public sealed class ProjectContextQueryExecutor(
             || string.IsNullOrWhiteSpace(projectId)
             || !TargetsMatch(query, projectId)
             || !ProjectContextQueryAuthority.MatchesPresented(query.Scopes, ProjectContextQueryAuthority.ExpectedScopes)
-            || !ProjectContextQueryAuthority.MatchesPresented(query.Audience, ProjectContextQueryAuthority.ExpectedAudience))
+            || !ProjectContextQueryAuthority.MatchesPresented(query.Audience, ProjectContextQueryAuthority.ExpectedAudience)
+            || !_principalBinding.TryBind(query, out IProjectTenantContextAccessor tenantContext)
+            || _principalBinding.HttpContext is not { } httpContext)
         {
             return ProjectContextAdmission.SafeDenial(projectId);
         }
 
-        string actorId = query.OriginalActorId ?? query.UserId;
-        TenantAccessAuthorizationContext authorizationContext = new(query.TenantId, actorId, query.TenantId);
-        TenantAccessAuthorizationResult tenantAccess = await _tenantAccessAuthorizer
-            .AuthorizeDiagnosticReadAsync(authorizationContext, cancellationToken)
-            .ConfigureAwait(false);
-        if (!tenantAccess.IsAllowed)
-        {
-            return ProjectContextAdmission.SafeDenial(projectId);
-        }
-
-        ProjectDetailItem? detail;
-        try
-        {
-            ReadModelEntry<ProjectDetailItem> entry = await _readModelStore
-                .GetAsync<ProjectDetailItem>(
-                    ConversationStartSetupProjectionHandler.StoreName,
-                    ConversationStartSetupProjectionHandler.Key(query.TenantId, projectId),
-                    cancellationToken)
-                .ConfigureAwait(false);
-            detail = entry.Value;
-        }
-        catch (Exception exception) when (exception is not OperationCanceledException)
-        {
-            TenantAccessAuthorizationResult faultReauthorization = await ReauthorizeAsync(
-                    authorizationContext,
-                    tenantAccess,
-                    cancellationToken)
-                .ConfigureAwait(false);
-            if (!faultReauthorization.IsAllowed)
-            {
-                return ProjectContextAdmission.SafeDenial(projectId);
-            }
-
-            return ProjectContextAdmissionAssembler.Unavailable(
+        ProjectAuthorizationResult initialAuthorization = await _authorizationGate
+            .AuthorizeSupportedReadAsync(
                 projectId,
-                ProjectLifecycle.Active,
-                faultReauthorization.LastEventTimestamp ?? default,
-                0,
-                folderIncluded: false,
-                setupCurrent: false,
-                authorizationCurrent: true,
-                overflow: false);
-        }
-
-        TenantAccessAuthorizationResult reauthorized = await ReauthorizeAsync(
-                authorizationContext,
-                tenantAccess,
+                tenantContext,
+                httpContext,
+                query.CorrelationId,
+                taskId: null,
+                LoadDetailAsync,
                 cancellationToken)
             .ConfigureAwait(false);
-        if (!reauthorized.IsAllowed)
-        {
-            return ProjectContextAdmission.SafeDenial(projectId);
-        }
-
-        if (detail is null
-            || detail.Lifecycle != ProjectLifecycle.Active
+        ProjectDetailItem? detail = initialAuthorization.ProjectDetail;
+        TenantAccessAuthorizationResult? initialTenantAccess = initialAuthorization.TenantAccessResult;
+        if (!initialAuthorization.IsAllowed
+            || detail is null
+            || initialTenantAccess is not { IsAllowed: true }
+            || string.IsNullOrWhiteSpace(initialTenantAccess.ProjectionWatermark)
+            || !string.Equals(initialTenantAccess.TenantId, query.TenantId, StringComparison.Ordinal)
+            || detail.Lifecycle == ProjectLifecycle.Archived
             || !string.Equals(detail.TenantId, query.TenantId, StringComparison.Ordinal)
             || !string.Equals(detail.ProjectId, projectId, StringComparison.Ordinal))
         {
             return ProjectContextAdmission.SafeDenial(projectId);
+        }
+
+        bool persistedDetailIsValid = ProjectPersistedDetailValidator.IsValid(detail);
+        ProjectAuthorizationResult finalAuthorization = await _authorizationGate
+            .AuthorizeSupportedReadAsync(
+                projectId,
+                tenantContext,
+                httpContext,
+                query.CorrelationId,
+                taskId: null,
+                (_, _, _) => Task.FromResult<ProjectDetailItem?>(detail),
+                cancellationToken)
+            .ConfigureAwait(false);
+        TenantAccessAuthorizationResult? finalTenantAccess = finalAuthorization.TenantAccessResult;
+        if (!finalAuthorization.IsAllowed
+            || finalAuthorization.ProjectDetail is null
+            || finalTenantAccess is not { IsAllowed: true }
+            || string.IsNullOrWhiteSpace(finalTenantAccess.ProjectionWatermark)
+            || !string.Equals(finalTenantAccess.TenantId, query.TenantId, StringComparison.Ordinal)
+            || !string.Equals(
+                finalTenantAccess.ProjectionWatermark,
+                initialTenantAccess.ProjectionWatermark,
+                StringComparison.Ordinal))
+        {
+            return ProjectContextAdmission.SafeDenial(projectId);
+        }
+
+        if (!persistedDetailIsValid)
+        {
+            return ProjectContextAdmissionAssembler.Unavailable(
+                projectId,
+                Enum.IsDefined(detail.Lifecycle) ? detail.Lifecycle : ProjectLifecycle.Active,
+                finalTenantAccess.LastEventTimestamp ?? initialTenantAccess.LastEventTimestamp ?? default,
+                projectVersion: 0,
+                projectCurrent: false,
+                folderIncluded: false,
+                setupCurrent: false,
+                authorizationCurrent: true,
+                ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
         }
 
         DateTimeOffset asOf = detail.UpdatedAt;
@@ -133,41 +139,23 @@ public sealed class ProjectContextQueryExecutor(
                 TaskId: null,
                 asOf),
             new ProjectContextProjectEvidence(detail),
-            new ProjectContextTenantAccess(reauthorized),
+            new ProjectContextTenantAccess(finalTenantAccess),
             references,
             detail.Sequence,
             asOf,
             ownerBackedTrustAvailable: false);
     }
 
-    private async Task<TenantAccessAuthorizationResult> ReauthorizeAsync(
-        TenantAccessAuthorizationContext authorizationContext,
-        TenantAccessAuthorizationResult prior,
+    private async Task<ProjectDetailItem?> LoadDetailAsync(
+        string tenantId,
+        string projectId,
         CancellationToken cancellationToken)
-    {
-        TenantAccessAuthorizationResult current = await _tenantAccessAuthorizer
-            .AuthorizeDiagnosticReadAsync(authorizationContext, cancellationToken)
-            .ConfigureAwait(false);
-        if (!current.IsAllowed)
-        {
-            return current;
-        }
-
-        if (!string.Equals(current.ProjectionWatermark, prior.ProjectionWatermark, StringComparison.Ordinal))
-        {
-            return new TenantAccessAuthorizationResult(
-                TenantAccessOutcome.Denied,
-                "authority-version-mismatch",
-                current.TenantId,
-                current.ProjectionWatermark,
-                current.LastEventTimestamp,
-                current.ProjectionAge,
-                current.FreshnessStatus,
-                current.Source);
-        }
-
-        return current;
-    }
+        => (await _readModelStore
+            .GetAsync<ProjectDetailItem>(
+                ConversationStartSetupProjectionHandler.StoreName,
+                ConversationStartSetupProjectionHandler.Key(tenantId, projectId),
+                cancellationToken)
+            .ConfigureAwait(false)).Value;
 
     private static bool TargetsMatch(QueryEnvelope query, string projectId)
     {

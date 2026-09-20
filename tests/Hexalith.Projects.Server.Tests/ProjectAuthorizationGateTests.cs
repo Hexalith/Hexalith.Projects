@@ -292,6 +292,56 @@ public sealed class ProjectAuthorizationGateTests
     }
 
     [Fact]
+    public async Task AuthorizeSupportedRead_UsesSuppliedLoaderAndCompleteLayerOrder()
+    {
+        IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);
+        ProjectDetailItem detail = new(
+            "tenant-a",
+            "01HZ9K8YQ3W6V2N4R7T5P0X1AB",
+            "Project",
+            null,
+            null,
+            null,
+            null,
+            [],
+            [],
+            ProjectLifecycle.Active,
+            Now,
+            Now,
+            1);
+        ProjectAuthorizationGate gate = new(
+            new TenantAccessAuthorizer(store, new FixedUtcClock(Now.AddMinutes(1)), new TenantAccessOptions()),
+            new AllowingProjectEventStoreAuthorizationValidator(),
+            new AllowingProjectDaprPolicyEvidenceProvider(),
+            new EmptyReadModel());
+        int supportedLoaderCalls = 0;
+
+        ProjectAuthorizationResult result = await gate.AuthorizeSupportedReadAsync(
+            detail.ProjectId,
+            new FixedProjectTenantContextAccessor(
+                "tenant-a",
+                "principal-a",
+                [ProjectAuthorizationGate.ReadProjectAction]),
+            new DefaultHttpContext(),
+            "corr-a",
+            "task-a",
+            (tenantId, projectId, _) =>
+            {
+                supportedLoaderCalls++;
+                tenantId.ShouldBe(detail.TenantId);
+                projectId.ShouldBe(detail.ProjectId);
+                return Task.FromResult<ProjectDetailItem?>(detail);
+            },
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+        result.IsAllowed.ShouldBeTrue();
+        result.ProjectDetail.ShouldBe(detail);
+        result.TenantAccessResult.ShouldNotBeNull();
+        result.EvaluatedLayers.ShouldBe(AuthorizationOrder.LayeredProjectAuthorization);
+        supportedLoaderCalls.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task AuthorizeRead_WhenReadPermissionMissing_DeniesAtClaimTransformLayer()
     {
         IProjectTenantAccessProjectionStore store = await SeedStoreAsync("tenant-a", "principal-a").ConfigureAwait(true);

@@ -39,7 +39,7 @@ public sealed class ProjectContextAdmissionTests
     }
 
     [Fact]
-    public void AssembleAdmission_UnauthorizedFile_IsPartialWithExplicitOmission()
+    public void AssembleAdmission_UnauthorizedFile_IsMinimalUnavailable()
     {
         ProjectContextReferenceEvidence references = new(
             WithFolder().ProjectFolder,
@@ -49,17 +49,15 @@ public sealed class ProjectContextAdmissionTests
 
         ProjectContextAdmission admission = Admit(references);
 
-        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
+        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         admission.FileReferences.ShouldBeEmpty();
-        admission.Excluded.ShouldContain(item =>
-            item.ReferenceId == "file_01HZ9K8YQ3W6V2N4R7T5P0X1F1"
-            && item.ReferenceState == ReferenceState.Unauthorized);
-        admission.Excluded.ShouldNotBeEmpty();
+        admission.Excluded.ShouldBeEmpty();
+        admission.Evaluations.ShouldBeEmpty();
         admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ContactAdministrator]);
     }
 
     [Fact]
-    public void AssembleAdmission_UnauthorizedAndStaleFiles_ReturnsBothApplicableRecoveries()
+    public void AssembleAdmission_UnauthorizedAndStaleFiles_DoesNotDiscloseEitherIdentity()
     {
         ProjectContextReferenceEvidence references = new(
             WithFolder().ProjectFolder,
@@ -72,9 +70,10 @@ public sealed class ProjectContextAdmissionTests
 
         ProjectContextAdmission admission = Admit(references);
 
-        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
-        admission.Snapshot.RecoveryActions.ShouldBe(
-            [AdmissionRecoveryAction.RefreshContext, AdmissionRecoveryAction.ContactAdministrator]);
+        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        admission.Excluded.ShouldBeEmpty();
+        admission.Evaluations.ShouldBeEmpty();
+        admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ContactAdministrator]);
     }
 
     [Fact]
@@ -131,10 +130,16 @@ public sealed class ProjectContextAdmissionTests
         admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
         admission.FileReferences.ShouldBeEmpty();
         admission.Excluded.ShouldContain(item => item.ReferenceKind == "file");
+        admission.Snapshot.Components.ShouldContain(component =>
+            component.Name == "References"
+            && component.Included
+            && component.Freshness == EvidenceFreshnessState.Current
+            && component.Reason == "optional-omission");
+        admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.None]);
     }
 
     [Fact]
-    public void AssembleAdmission_ConversationWithoutOwnerTrust_IsPartialOmission()
+    public void AssembleAdmission_ConversationWithoutOwnerTrust_IsMinimalUnavailable()
     {
         ProjectContextAdmission admission = Admit(
             new ProjectContextReferenceEvidence(
@@ -144,12 +149,11 @@ public sealed class ProjectContextAdmissionTests
                 Conversations: WithConversation().Conversations),
             ownerBackedTrustAvailable: false);
 
-        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
+        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         admission.Conversations.ShouldBeEmpty();
-        admission.Excluded.ShouldContain(item =>
-            item.ReferenceKind == "conversation"
-            && item.ReferenceState == ReferenceState.Unavailable);
-        admission.Evaluations.ShouldContain(item => item.ReferenceKind == "conversation" && item.FailedCheck == ProjectContextInclusionCheck.ReferenceFreshness);
+        admission.Excluded.ShouldBeEmpty();
+        admission.Evaluations.ShouldBeEmpty();
+        admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ContactAdministrator]);
     }
 
     [Fact]
@@ -174,7 +178,7 @@ public sealed class ProjectContextAdmissionTests
         admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         admission.FileReferences.ShouldBeEmpty();
         admission.Excluded.ShouldBeEmpty();
-        admission.Snapshot.RecoveryActions.ShouldContain(AdmissionRecoveryAction.Retry);
+        admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.ContactAdministrator]);
     }
 
     [Fact]
@@ -193,6 +197,69 @@ public sealed class ProjectContextAdmissionTests
 
         admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         admission.FileReferences.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void AssembleAdmission_ExactCandidateLimit_IsAcceptedWithoutTruncation()
+    {
+        ProjectFileReference[] files = Enumerable.Range(0, ProjectContextReadLimits.MaxReferences - 1)
+            .Select(index => new ProjectFileReference(
+                $"file_{index:D4}",
+                "folder_01HZ9K8YQ3W6V2N4R7T5P0X1AC",
+                "name",
+                ReferenceState.Included,
+                null,
+                DefaultNow))
+            .ToArray();
+
+        ProjectContextAdmission admission = Admit(new ProjectContextReferenceEvidence(
+            WithFolder().ProjectFolder,
+            files,
+            MemoryReferences: [],
+            Conversations: []));
+
+        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Complete);
+        admission.FileReferences.Count.ShouldBe(ProjectContextReadLimits.MaxReferences - 1);
+    }
+
+    [Fact]
+    public void AssembleAdmission_DuplicateMemoryIdentity_IsUnavailable()
+    {
+        ProjectContextReferenceEvidence references = new(
+            WithFolder().ProjectFolder,
+            FileReferences: [],
+            MemoryReferences:
+            [
+                new ProjectMemoryReference("memory-dup", "a", ReferenceState.Included, null, DefaultNow),
+                new ProjectMemoryReference("memory-dup", "b", ReferenceState.Included, null, DefaultNow),
+            ],
+            Conversations: []);
+
+        ProjectContextAdmission admission = Admit(references);
+
+        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
+        admission.MemoryReferences.ShouldBeEmpty();
+        admission.Excluded.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void AssembleAdmission_AuthorizedArchivedMemory_IsPartialWithSelectAlternative()
+    {
+        ProjectContextReferenceEvidence references = new(
+            WithFolder().ProjectFolder,
+            FileReferences: [],
+            MemoryReferences:
+            [
+                new ProjectMemoryReference("memory-archived", "Archived", ReferenceState.Archived, null, DefaultNow),
+            ],
+            Conversations: []);
+
+        ProjectContextAdmission admission = Admit(references);
+
+        admission.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Partial);
+        admission.Excluded.ShouldContain(item =>
+            item.ReferenceId == "memory-archived" && item.ReferenceState == ReferenceState.Archived);
+        admission.Snapshot.RecoveryActions.ShouldBe([AdmissionRecoveryAction.SelectAlternative]);
     }
 
     [Fact]

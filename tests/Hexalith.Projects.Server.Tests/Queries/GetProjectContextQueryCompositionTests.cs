@@ -15,17 +15,20 @@ using System.Threading.Tasks;
 
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Contracts.Queries;
+using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server;
+using Hexalith.Projects.Server.Authentication;
 using Hexalith.Projects.Server.Projections.ConversationStartSetup;
 using Hexalith.Projects.Testing.Leakage;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 using Shouldly;
@@ -155,6 +158,28 @@ public sealed class GetProjectContextQueryCompositionTests
         }
     }
 
+    [Fact]
+    public async Task Query_ProductionWithoutBearer_IsRejectedBeforeDispatch()
+    {
+        WebApplication app = await StartProductionAppAsync().ConfigureAwait(true);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(
+                "/query",
+                GetEnvelope(),
+                JsonOptions,
+                TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
     private static QueryEnvelope GetEnvelope()
         => new(
             TenantId,
@@ -169,7 +194,13 @@ public sealed class GetProjectContextQueryCompositionTests
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
+        builder.Configuration[$"{ProjectsAuthenticationOptions.SectionName}:AllowAnonymousDevelopment"] = "true";
         builder.Services.AddProjectsServer();
+        _ = builder.Services.AddProjectsAuthentication(builder.Configuration, builder.Environment);
+        builder.Services.RemoveAll<IProjectEventStoreAuthorizationValidator>();
+        builder.Services.AddSingleton<IProjectEventStoreAuthorizationValidator, AllowingProjectEventStoreAuthorizationValidator>();
+        builder.Services.RemoveAll<IProjectDaprPolicyEvidenceProvider>();
+        builder.Services.AddSingleton<IProjectDaprPolicyEvidenceProvider, AllowingProjectDaprPolicyEvidenceProvider>();
         WebApplication app = builder.Build();
         if (seedTenantAccess)
         {
@@ -212,6 +243,24 @@ public sealed class GetProjectContextQueryCompositionTests
                 .ConfigureAwait(true);
         }
 
+        app.MapProjectsServerEndpoints();
+        await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+        return app;
+    }
+
+    private static async Task<WebApplication> StartProductionAppAsync()
+    {
+        WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(
+            new WebApplicationOptions { EnvironmentName = Environments.Production });
+        builder.Configuration["urls"] = "http://127.0.0.1:0";
+        builder.Configuration[$"{ProjectsAuthenticationOptions.SectionName}:Authority"] = "https://identity.example";
+        builder.Configuration[$"{ProjectsAuthenticationOptions.SectionName}:Issuer"] = "https://identity.example";
+        builder.Configuration[$"{ProjectsAuthenticationOptions.SectionName}:Audience"] = "hexalith-projects";
+        builder.Services.AddProjectsServer();
+        _ = builder.Services.AddProjectsAuthentication(builder.Configuration, builder.Environment);
+        WebApplication app = builder.Build();
+        _ = app.UseAuthentication();
+        _ = app.UseAuthorization();
         app.MapProjectsServerEndpoints();
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
         return app;

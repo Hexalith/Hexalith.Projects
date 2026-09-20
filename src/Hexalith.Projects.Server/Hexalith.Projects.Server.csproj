@@ -28,6 +28,7 @@
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Client\Hexalith.EventStore.Client.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Contracts\Hexalith.EventStore.Contracts.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.DomainService\Hexalith.EventStore.DomainService.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
+    <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Gateway\Hexalith.EventStore.Gateway.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
     <PackageReference Include="Hexalith.Conversations.Client" />
@@ -35,6 +36,7 @@
     <PackageReference Include="Hexalith.EventStore.Client" />
     <PackageReference Include="Hexalith.EventStore.Contracts" />
     <PackageReference Include="Hexalith.EventStore.DomainService" />
+    <PackageReference Include="Hexalith.EventStore.Gateway" />
     <PackageReference Include="Hexalith.Folders.Client" />
     <PackageReference Include="Hexalith.Folders.Contracts" />
     <PackageReference Include="Hexalith.Memories.Client.Rest" />

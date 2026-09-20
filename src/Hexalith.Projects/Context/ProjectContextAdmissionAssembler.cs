@@ -63,10 +63,11 @@ public static class ProjectContextAdmissionAssembler
                 context.Lifecycle,
                 asOf,
                 projectVersion,
-                folderIncluded: false,
-                setupCurrent: false,
-                authorizationCurrent: false,
-                overflow: candidateCount > ProjectContextReadLimits.MaxReferences);
+                projectCurrent: true,
+                folderIncluded: context.ProjectFolder is { ReferenceState: ReferenceState.Included },
+                setupCurrent: true,
+                authorizationCurrent: true,
+                ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
         }
 
         if (IsRequiredEvidenceStale(tenantAccess, context.Freshness))
@@ -76,10 +77,39 @@ public static class ProjectContextAdmissionAssembler
                 context.Lifecycle,
                 asOf,
                 projectVersion,
+                projectCurrent: true,
                 folderIncluded: context.ProjectFolder is not null,
                 setupCurrent: true,
                 authorizationCurrent: false,
-                overflow: false);
+                ProjectContextUnavailableCause.MissingOrStaleRequiredContext);
+        }
+
+        if (HasDisclosureUnsafeDenial(assembled.Evaluations))
+        {
+            return Unavailable(
+                context.ProjectId,
+                context.Lifecycle,
+                asOf,
+                projectVersion,
+                projectCurrent: true,
+                folderIncluded: context.ProjectFolder is { ReferenceState: ReferenceState.Included },
+                setupCurrent: true,
+                authorizationCurrent: true,
+                ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
+        }
+
+        if (!ownerBackedTrustAvailable && references.Conversations.Count > 0)
+        {
+            return Unavailable(
+                context.ProjectId,
+                context.Lifecycle,
+                asOf,
+                projectVersion,
+                projectCurrent: true,
+                folderIncluded: context.ProjectFolder is { ReferenceState: ReferenceState.Included },
+                setupCurrent: true,
+                authorizationCurrent: true,
+                ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty);
         }
 
         List<ProjectContextReference> files = [.. context.FileReferences];
@@ -90,13 +120,6 @@ public static class ProjectContextAdmissionAssembler
 
         ProjectSetup setup = context.Setup ?? ProjectSetup.Empty;
         ApplyExcludedSourceKinds(setup, files, memories, conversations, excluded, evaluations);
-        ApplyMissingOwnerBackedTrust(
-            ownerBackedTrustAvailable,
-            files,
-            memories,
-            conversations,
-            excluded,
-            evaluations);
 
         files = SortRefs(files);
         memories = SortRefs(memories);
@@ -112,10 +135,11 @@ public static class ProjectContextAdmissionAssembler
                 context.Lifecycle,
                 asOf,
                 projectVersion,
+                projectCurrent: true,
                 folderIncluded: false,
                 setupCurrent: false,
                 authorizationCurrent: true,
-                overflow: false);
+                RequiredReferenceCause(assembled.Evaluations));
         }
 
         bool hasOptionalOmission = excluded.Count > 0;
@@ -142,9 +166,11 @@ public static class ProjectContextAdmissionAssembler
                 asOf,
                 projectVersion,
                 BuildComponents(
+                    projectCurrent: true,
                     folderIncluded: true,
                     setupCurrent: true,
                     authorizationCurrent: true,
+                    referencesUsable: true,
                     referencesComplete: !hasOptionalOmission),
                 recovery));
     }
@@ -168,6 +194,40 @@ public static class ProjectContextAdmissionAssembler
         bool setupCurrent,
         bool authorizationCurrent,
         bool overflow)
+        => Unavailable(
+            projectId,
+            lifecycle,
+            asOf,
+            projectVersion,
+            projectCurrent: true,
+            folderIncluded,
+            setupCurrent,
+            authorizationCurrent,
+            overflow
+                ? ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty
+                : ProjectContextUnavailableCause.MissingOrStaleRequiredContext);
+
+    /// <summary>Builds a cause-specific minimal unavailable admission.</summary>
+    /// <param name="projectId">The opaque Project identifier.</param>
+    /// <param name="lifecycle">The owning Project lifecycle.</param>
+    /// <param name="asOf">The authoritative evidence cutoff.</param>
+    /// <param name="projectVersion">The authorized persisted Project version.</param>
+    /// <param name="projectCurrent">Whether current Project evidence was established.</param>
+    /// <param name="folderIncluded">Whether a current authorized Folder was confirmed.</param>
+    /// <param name="setupCurrent">Whether Setup evidence is current.</param>
+    /// <param name="authorizationCurrent">Whether authorization evidence is current.</param>
+    /// <param name="cause">The closed recovery cause.</param>
+    /// <returns>An unavailable admission that discloses no candidate identity.</returns>
+    public static ProjectContextAdmission Unavailable(
+        string projectId,
+        ProjectLifecycle lifecycle,
+        DateTimeOffset asOf,
+        long projectVersion,
+        bool projectCurrent,
+        bool folderIncluded,
+        bool setupCurrent,
+        bool authorizationCurrent,
+        ProjectContextUnavailableCause cause)
         => new(
             false,
             projectId,
@@ -183,10 +243,14 @@ public static class ProjectContextAdmissionAssembler
                 AdmissionResponseState.Unavailable,
                 asOf,
                 projectVersion,
-                BuildComponents(folderIncluded, setupCurrent, authorizationCurrent, referencesComplete: false),
-                overflow
-                    ? [AdmissionRecoveryAction.Retry, AdmissionRecoveryAction.ContactAdministrator]
-                    : [AdmissionRecoveryAction.RefreshContext, AdmissionRecoveryAction.ContactAdministrator]));
+                BuildComponents(
+                    projectCurrent,
+                    folderIncluded,
+                    setupCurrent,
+                    authorizationCurrent,
+                    referencesUsable: false,
+                    referencesComplete: false),
+                UnavailableRecoveryActions(cause)));
 
     /// <summary>Counts folder, file, memory, and conversation candidates.</summary>
     /// <param name="references">The candidate evidence.</param>
@@ -218,6 +282,10 @@ public static class ProjectContextAdmissionAssembler
                 evaluation.Diagnostic,
                 ProjectContextInclusionDiagnostic.ReferenceKindNotAllowlisted,
                 StringComparison.Ordinal));
+
+    private static bool HasDisclosureUnsafeDenial(IReadOnlyList<ProjectContextEvaluation> evaluations)
+        => evaluations.Any(static evaluation => evaluation.ResultState is
+            ReferenceState.Unauthorized or ReferenceState.TenantMismatch);
 
     private static bool IsRequiredEvidenceStale(
         ProjectContextTenantAccess tenantAccess,
@@ -254,22 +322,6 @@ public static class ProjectContextAdmissionAssembler
         RelocateByKind(ConversationKind, excludedKinds, conversations, excluded, evaluations);
     }
 
-    private static void ApplyMissingOwnerBackedTrust(
-        bool ownerBackedTrustAvailable,
-        List<ProjectContextReference> files,
-        List<ProjectContextReference> memories,
-        List<ProjectContextReference> conversations,
-        List<ProjectContextExclusion> excluded,
-        List<ProjectContextEvaluation> evaluations)
-    {
-        if (ownerBackedTrustAvailable)
-        {
-            return;
-        }
-
-        RelocateMissingTrust(ConversationKind, conversations, excluded, evaluations);
-    }
-
     private static void RelocateByKind(
         string kind,
         HashSet<string> excludedKinds,
@@ -290,25 +342,6 @@ public static class ProjectContextAdmissionAssembler
                 ReferenceState.Excluded,
                 ProjectContextInclusionCheck.ReferenceKindAllowlist,
                 diagnostic: null,
-                excluded,
-                evaluations);
-        }
-    }
-
-    private static void RelocateMissingTrust(
-        string kind,
-        List<ProjectContextReference> included,
-        List<ProjectContextExclusion> excluded,
-        List<ProjectContextEvaluation> evaluations)
-    {
-        foreach (ProjectContextReference reference in included.Where(item => string.Equals(item.ReferenceKind, kind, StringComparison.Ordinal)).ToArray())
-        {
-            included.Remove(reference);
-            Exclude(
-                reference,
-                ReferenceState.Unavailable,
-                ProjectContextInclusionCheck.ReferenceFreshness,
-                ProjectContextInclusionDiagnostic.ReferenceUnavailable,
                 excluded,
                 evaluations);
         }
@@ -348,38 +381,69 @@ public static class ProjectContextAdmissionAssembler
 
     private static IReadOnlyList<string> PartialRecoveryActions(List<ProjectContextExclusion> excluded)
     {
-        bool hasUnauthorized = false;
-        bool hasOther = false;
+        HashSet<string> selected = new(StringComparer.Ordinal);
         for (int index = 0; index < excluded.Count; index++)
         {
-            if (excluded[index].ReferenceState == ReferenceState.Unauthorized)
+            string? action = excluded[index].ReferenceState switch
             {
-                hasUnauthorized = true;
-            }
-            else
+                ReferenceState.Pending => AdmissionRecoveryAction.PollTask,
+                ReferenceState.Stale or ReferenceState.Unavailable => AdmissionRecoveryAction.RefreshContext,
+                ReferenceState.Archived or ReferenceState.Ambiguous => AdmissionRecoveryAction.SelectAlternative,
+                ReferenceState.Conflict or ReferenceState.InvalidReference => AdmissionRecoveryAction.ResolveNeedsAttention,
+                ReferenceState.Unauthorized or ReferenceState.TenantMismatch => AdmissionRecoveryAction.ContactAdministrator,
+                _ => null,
+            };
+            if (action is not null)
             {
-                hasOther = true;
+                selected.Add(action);
             }
         }
 
-        if (hasUnauthorized && hasOther)
+        string[] ordered = AdmissionRecoveryAction.Values
+            .Where(action => selected.Contains(action))
+            .ToArray();
+        return ordered.Length == 0 ? [AdmissionRecoveryAction.None] : ordered;
+    }
+
+    private static IReadOnlyList<string> UnavailableRecoveryActions(ProjectContextUnavailableCause cause)
+        => cause switch
         {
-            return [AdmissionRecoveryAction.RefreshContext, AdmissionRecoveryAction.ContactAdministrator];
-        }
+            ProjectContextUnavailableCause.StoreFault => [AdmissionRecoveryAction.Retry],
+            ProjectContextUnavailableCause.MissingOrStaleRequiredContext => [AdmissionRecoveryAction.RefreshContext],
+            ProjectContextUnavailableCause.MaterializationInProgress => [AdmissionRecoveryAction.PollTask],
+            ProjectContextUnavailableCause.AlternativeRequired => [AdmissionRecoveryAction.SelectAlternative],
+            _ => [AdmissionRecoveryAction.ContactAdministrator],
+        };
 
-        return hasUnauthorized
-            ? [AdmissionRecoveryAction.ContactAdministrator]
-            : [AdmissionRecoveryAction.RefreshContext];
+    private static ProjectContextUnavailableCause RequiredReferenceCause(
+        IReadOnlyList<ProjectContextEvaluation> evaluations)
+    {
+        ProjectContextEvaluation? folder = evaluations.FirstOrDefault(static item =>
+            string.Equals(item.ReferenceKind, FolderKind, StringComparison.Ordinal));
+        return folder?.ResultState switch
+        {
+            null => ProjectContextUnavailableCause.MissingOrStaleRequiredContext,
+            ReferenceState.Pending => ProjectContextUnavailableCause.MaterializationInProgress,
+            ReferenceState.Stale or ReferenceState.Unavailable => ProjectContextUnavailableCause.MissingOrStaleRequiredContext,
+            ReferenceState.Archived or ReferenceState.Ambiguous => ProjectContextUnavailableCause.AlternativeRequired,
+            _ => ProjectContextUnavailableCause.CorruptionOrAuthorizationUncertainty,
+        };
     }
 
     private static IReadOnlyList<AdmissionComponent> BuildComponents(
+        bool projectCurrent,
         bool folderIncluded,
         bool setupCurrent,
         bool authorizationCurrent,
+        bool referencesUsable,
         bool referencesComplete)
         =>
         [
-            new AdmissionComponent("Project", true, EvidenceFreshnessState.Current, "current"),
+            new AdmissionComponent(
+                "Project",
+                projectCurrent,
+                projectCurrent ? EvidenceFreshnessState.Current : EvidenceFreshnessState.Unavailable,
+                projectCurrent ? "current" : "unavailable"),
             new AdmissionComponent(
                 "Folder",
                 folderIncluded,
@@ -397,8 +461,8 @@ public static class ProjectContextAdmissionAssembler
                 authorizationCurrent ? "envelope-authorized" : "stale"),
             new AdmissionComponent(
                 "References",
-                referencesComplete,
-                referencesComplete ? EvidenceFreshnessState.Current : EvidenceFreshnessState.Unavailable,
+                referencesUsable,
+                referencesUsable ? EvidenceFreshnessState.Current : EvidenceFreshnessState.Unavailable,
                 referencesComplete ? "current" : "optional-omission"),
         ];
 
