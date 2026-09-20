@@ -696,3 +696,6 @@ decision: 2026-09-07 Owner decisions, three parts. (1) Coordinate - move to Even
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-ci-cd-2.md`
   summary: Narrow the BMad spec and sprint-planning persistent-context overrides to the Projects root context file.
   evidence: The current `**/project-context.md` glob also matches eight sibling contexts under `references/`, which can inject contradictory planning facts; review policy defers fixes to agent-context configuration.
+- source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-cd-run-release-verify-nuget-publication.md`
+  summary: Make the Folders generated redaction contract distinguish an omitted member from the explicit `Not_redacted` value in source-reference builds.
+  evidence: Both the current source client and official `Hexalith.Folders.Client` `1.0.0` package generate a non-nullable enum whose zero value is `Not_redacted`, so omitted JSON defaults to an accepted value and presence cannot be recovered after deserialization. An explicit `redacted` wire value fails generated-client deserialization and the Projects adapter denies it; the remaining omission ambiguity requires an owning Folders contract change.
