@@ -46,6 +46,17 @@ public sealed class ProjectFileReferenceDirectoryTests
     }
 
     [Fact]
+    public async Task ValidateLink_RedactedMetadata_FailsClosedAsRedacted()
+    {
+        FoldersProjectFileReferenceDirectory directory = Directory(
+            new RecordingHandler(JsonResponse(HttpStatusCode.OK, MetadataJson("file", "redacted", stale: false))));
+
+        ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Redacted);
+    }
+
+    [Fact]
     public async Task ValidateLink_ExcludedDirectTarget_UsesCanonicalNotFoundAndFailsClosedAsDenied()
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
