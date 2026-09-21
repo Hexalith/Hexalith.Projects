@@ -58,9 +58,9 @@ If the selected source and package revisions differ, the EventStore Owner and So
 | 0. Preserve history | Approved proposal available | Original `3.88.0` commands and results retained byte-for-byte; dated supersession section or sibling record opened | Historical evidence is traceable and not current authority |
 | 1. Select coordinates | Fresh repository/package capture complete | Required coordinate record plus EventStore Owner disposition | Exact source/package choice is immutable and divergence is resolved |
 | 2. Align Builds | Phase 1 passes and owning-repository implementation is authorized | Catalog, full audit, runner, schema, positive fixtures, serialized evidence, and hashes use the selected package version at one Builds revision | Full audit and static parity checks pass |
-| 3. Qualify EventStore | Clean source and package-source worktrees exist | Seven-API comparison, source-mode behavior results, package-mode behavior results, and remote package restore evidence | Every EventStore lane passes independently |
-| 4. Qualify runner | Phase 2 passes in a clean Builds worktree | Serialized Module/Evidence/catalog/audit/package/control results with retained packages and hashes | Every runner and packaged-command lane passes |
-| 5. Qualify rollback | Clean rollback EventStore and Builds worktrees exist | Executed `3.70.1` restore/build/control evidence and reciprocal rejection of the selected candidate | Rollback is independently executable |
+| 3. Qualify EventStore | Verified clean source and package-source worktree bindings exist | Seven-API comparison, source-mode behavior results, package-mode behavior results, and remote package restore evidence | Every EventStore lane passes independently |
+| 4. Qualify runner | Phase 2 passes in a verified clean Builds worktree binding | Serialized Module/Evidence/catalog/audit/package/control results with retained packages and hashes | Every runner and packaged-command lane passes |
+| 5. Qualify rollback | Verified clean rollback EventStore and Builds worktree bindings exist | Executed `3.70.1` restore/build/control evidence and reciprocal rejection of the selected candidate | Rollback is independently executable |
 | 6. Accept record | Phases 1–5 pass and evidence is complete | Four named, dated owner decisions on the same coordinates and evidence | Every decision is `accept`; no placeholder or exception remains |
 | 7. Propagate | Phase 6 passes | Architecture and planning updates tied to the accepted record | Only P1R closes; all downstream gates retain their own blockers |
 
@@ -68,11 +68,14 @@ Do not start a later phase from a failed, pending, inconclusive, cancelled, or n
 
 ## Clean execution protocol
 
-- Use a separate clean worktree at each recorded EventStore and Builds revision; do not qualify from a dirty checkout or move an existing user worktree.
+- Set `QUALIFICATION_ROOT` to an explicit disk-backed directory and verify its filesystem type and free space before materialization. Refuse `/tmp`, any `tmpfs`, and any root nested inside another attempt.
+- Use one Git worktree per distinct repository revision and share the repository object database. Reuse that worktree across retries after verifying its revision and clean status; create an additional worktree only when a different revision or contending generated output requires it. Never move an existing user worktree.
 - Capture `git status --porcelain=v1`, `git rev-parse HEAD`, and `git describe --tags --always --dirty` before the first command and after the last command in each worktree.
-- Serialize build and test lanes that share generated output. Use unique qualification-scoped NuGet, CLI-home, temporary, and package-output directories.
-- Run solution restore/build only through `.slnx`; run test projects individually.
-- Retain every first result. A passing rerun may supersede a contention result only when both remain in the ledger and the rerun uses a clean serialized context.
+- Use the normal shared NuGet global-packages folder and a shared, version-keyed Playwright browser store for ordinary restore/build/test lanes. These caches are inputs, not evidence: do not copy, hash, or retain them in an attempt bundle. Only the official-remote proof uses an empty qualification-scoped package cache.
+- Before creating disposable state, register cleanup for normal exit, failure, interruption, and termination. Cleanup removes disposable worktrees, remote-proof caches, temporary output, and generated browser installs after the required logs and hashes are captured.
+- Serialize build and test lanes that share generated output. Run solution restore/build only through `.slnx`; run test projects individually.
+- Bind each row to a digest of the repository revision, expanded command, contract bytes, toolchain, environment overrides, dependency revisions, and relevant configuration. A retry may reuse a prior `PASS` row only when that binding is unchanged; otherwise resume at the earliest invalidated row instead of restarting from coordinate capture.
+- Retain every first result as a ledger row and relevant log, not as a repository, cache, package extraction tree, or complete attempt workspace. Store durable artifacts once by content hash and reference them from later rows.
 - Record UTC start/end, working directory, exact command, environment overrides, exit, stdout/stderr log path and SHA-256, produced artifact path and SHA-256, and `PASS|FAIL|INCONCLUSIVE` disposition for every row.
 - Any missing log, unresolved placeholder, cancellation, stall, exit `143`, or unexpected diagnostic is non-qualifying.
 
@@ -118,12 +121,12 @@ Selected source/package APIs must be identical or carry an explicit compatible o
 From the selected source revision, expand and retain this serialized lane:
 
 ```text
-dotnet restore Hexalith.EventStore.slnx -p:UseHexalithProjectReferences=true --force --no-cache --disable-parallel --verbosity minimal
+dotnet restore Hexalith.EventStore.slnx -p:UseHexalithProjectReferences=true --disable-parallel --verbosity minimal
 dotnet build Hexalith.EventStore.slnx --configuration Debug --no-restore -p:UseHexalithProjectReferences=true -m:1
-dotnet test tests/Hexalith.EventStore.Contracts.Tests/Hexalith.EventStore.Contracts.Tests.csproj --configuration Debug --no-restore -p:UseHexalithProjectReferences=true -m:1
-dotnet test tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj --configuration Debug --no-restore -p:UseHexalithProjectReferences=true -m:1
-dotnet test tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj --configuration Debug --no-restore -p:UseHexalithProjectReferences=true -m:1
-dotnet test tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj --configuration Debug --no-restore -p:UseHexalithProjectReferences=true -m:1
+dotnet test tests/Hexalith.EventStore.Contracts.Tests/Hexalith.EventStore.Contracts.Tests.csproj --configuration Debug --no-build --no-restore -p:UseHexalithProjectReferences=true --max-parallel-test-modules 1
+dotnet test tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj --configuration Debug --no-build --no-restore -p:UseHexalithProjectReferences=true --max-parallel-test-modules 1
+dotnet test tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj --configuration Debug --no-build --no-restore -p:UseHexalithProjectReferences=true --max-parallel-test-modules 1
+dotnet test tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj --configuration Debug --no-build --no-restore -p:UseHexalithProjectReferences=true --max-parallel-test-modules 1
 ```
 
 Repository-required environment-only pins may be added when recorded; they may not weaken warnings, tests, exact pins, or audit behavior.
@@ -133,21 +136,21 @@ Repository-required environment-only pins may be added when recorded; they may n
 From the selected package-source revision, expand and retain this serialized lane:
 
 ```text
-dotnet restore Hexalith.EventStore.slnx -p:UseHexalithProjectReferences=false --force --no-cache --disable-parallel --verbosity minimal
+dotnet restore Hexalith.EventStore.slnx -p:UseHexalithProjectReferences=false --disable-parallel --verbosity minimal
 dotnet build Hexalith.EventStore.slnx --configuration Release --no-restore -p:UseHexalithProjectReferences=false -m:1
-dotnet test tests/Hexalith.EventStore.Contracts.Tests/Hexalith.EventStore.Contracts.Tests.csproj --configuration Release --no-restore -p:UseHexalithProjectReferences=false -m:1
-dotnet test tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj --configuration Release --no-restore -p:UseHexalithProjectReferences=false -m:1
-dotnet test tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj --configuration Release --no-restore -p:UseHexalithProjectReferences=false -m:1
-dotnet test tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj --configuration Release --no-restore -p:UseHexalithProjectReferences=false -m:1
+dotnet test tests/Hexalith.EventStore.Contracts.Tests/Hexalith.EventStore.Contracts.Tests.csproj --configuration Release --no-build --no-restore -p:UseHexalithProjectReferences=false --max-parallel-test-modules 1
+dotnet test tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj --configuration Release --no-build --no-restore -p:UseHexalithProjectReferences=false --max-parallel-test-modules 1
+dotnet test tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj --configuration Release --no-build --no-restore -p:UseHexalithProjectReferences=false --max-parallel-test-modules 1
+dotnet test tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj --configuration Release --no-build --no-restore -p:UseHexalithProjectReferences=false --max-parallel-test-modules 1
 ```
 
-Separately, use a disposable clean consumer with a NuGet configuration that contains only the official remote V3 source, an empty qualification-scoped package cache, and exact references to all 14 release-manifest package IDs. Retain the consumer project and NuGet configuration bytes and hashes, then run:
+Separately, use a disposable clean consumer with a NuGet configuration that contains only the official remote V3 source, an empty package cache under `QUALIFICATION_ROOT`, and exact references to all 14 release-manifest package IDs. Retain the consumer project and NuGet configuration bytes and hashes, then run:
 
 ```text
 dotnet restore <REMOTE_CONSUMER_PROJECT> --configfile <REMOTE_NUGET_CONFIG> --force --no-cache --disable-parallel --verbosity minimal -p:RestorePackagesPath=<EMPTY_PACKAGE_CACHE>
 ```
 
-The restore must resolve every package at the selected version; local feeds, fallback folders, floating versions, and pre-populated caches are forbidden.
+The restore must resolve every package at the selected version; local feeds, fallback folders, floating versions, and pre-populated caches are forbidden. Retain the resolved inventory and hashes, not the cache or extracted package trees, and delete the empty-cache workspace on exit.
 
 The record must distinguish source-at-package-tag behavior from actual remote package consumption. A successful tag build cannot substitute for remote restore, and a remote listing cannot substitute for consumption.
 
@@ -170,14 +173,14 @@ From the clean qualifying Builds revision, run and retain:
 ```text
 dotnet restore Hexalith.Builds.slnx --disable-parallel --verbosity minimal
 dotnet build Hexalith.Builds.slnx --configuration Release --no-restore -p:GeneratePackageOnBuild=false -m:1
-dotnet test test/Hexalith.Builds.Module.Tests/Hexalith.Builds.Module.Tests.csproj --configuration Release --no-restore -m:1
-dotnet test test/Hexalith.Builds.Evidence.Tests/Hexalith.Builds.Evidence.Tests.csproj --configuration Release --no-restore -m:1
+dotnet test test/Hexalith.Builds.Module.Tests/Hexalith.Builds.Module.Tests.csproj --configuration Release --no-build --no-restore --max-parallel-test-modules 1
+dotnet test test/Hexalith.Builds.Evidence.Tests/Hexalith.Builds.Evidence.Tests.csproj --configuration Release --no-build --no-restore --max-parallel-test-modules 1
 pwsh -NoProfile -File ./Tools/test-authoritative-package-catalog.ps1
 pwsh -NoProfile -File ./Tools/validate-package-version-audit.ps1
 pwsh -NoProfile -File ./Tools/test-g4-tool-package-contracts.ps1 -Version <QUALIFICATION_VERSION> -RequireControls -RetainPackageDirectory
 ```
 
-`<QUALIFICATION_VERSION>` is a unique disposable SemVer recorded in the ledger. The official packaged-tool gate must finish without `-SkipSourceValidation`; a manual consumer run may add diagnostic detail but cannot replace it. Retain both CLI packages, symbol packages when produced, consumer evidence, and SHA-256 values.
+`<QUALIFICATION_VERSION>` is a unique disposable SemVer recorded in the ledger. The official packaged-tool gate must finish without `-SkipSourceValidation`; a manual consumer run may add diagnostic detail but cannot replace it. Retain both CLI packages, symbol packages when produced, consumer evidence, and SHA-256 values once per content hash; later rows reference those retained objects rather than copying them.
 
 The authoritative catalog test proves structure only. The audit validator must separately pass the complete catalog at the same revision with zero stale catalog/audit mismatches, including the 20 non-EventStore mismatches observed on 2026-08-03.
 
@@ -203,7 +206,7 @@ The superseding record contains these sections with no unresolved value:
 5. timestamped EventStore source/package behavior ledger;
 6. timestamped Builds alignment/runner/package ledger;
 7. reciprocal rollback ledger;
-8. retained log, evidence, package, and manifest hashes;
+8. content-addressed references for retained logs, evidence, qualified packages, and manifests, with no copied caches or extracted dependency trees;
 9. downstream non-closure assertions; and
 10. four-owner acceptance table.
 

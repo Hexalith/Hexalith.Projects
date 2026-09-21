@@ -1,0 +1,1 @@
+env NUGET_PACKAGES=/tmp/hexalith-p1r-3106-attempt10.1ai9Yh/caches/es-source-nuget DOTNET_CLI_HOME=/tmp/hexalith-p1r-3106-attempt10.1ai9Yh/caches/es-source-home TMPDIR=/tmp/hexalith-p1r-3106-attempt10.1ai9Yh/caches/es-source-tmp MSBUILDDISABLENODEREUSE=1 dotnet build Hexalith.EventStore.slnx --configuration Debug --no-restore -p:UseHexalithProjectReferences=true -m:1

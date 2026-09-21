@@ -1,0 +1,1 @@
+env DOTNET_CLI_HOME=/tmp/hexalith-p1r-3106-20260921.dyeEOy/attempt6/caches/remote-home TMPDIR=/tmp/hexalith-p1r-3106-20260921.dyeEOy/attempt6/caches/remote-tmp dotnet restore RemoteConsumer.csproj --configfile NuGet.config --force --no-cache --disable-parallel --verbosity minimal -p:RestorePackagesPath=/tmp/hexalith-p1r-3106-20260921.dyeEOy/attempt6/caches/remote-packages

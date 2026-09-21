@@ -1,0 +1,18 @@
+⧗   --- input ---
+build(deps): record EventStore rollback audit
+
+Refresh only the Hexalith EventStore family against the committed
+3.70.1 rollback catalog.
+
+Retain every unrelated family decision and bind the audit provenance
+to the rollback tree.
+✔   found 0 problems, 0 warnings
+⧗   --- input ---
+fix(runner): bind EventStore rollback pin
+
+Rebind the catalog, runner, schema, fixtures, evidence, controls,
+and coupled hashes to the executable EventStore 3.70.1 rollback.
+
+Preserve the 3.88.0 superseded control and use 3.106.0 as the
+reciprocal HXM016 negative.
+✔   found 0 problems, 0 warnings

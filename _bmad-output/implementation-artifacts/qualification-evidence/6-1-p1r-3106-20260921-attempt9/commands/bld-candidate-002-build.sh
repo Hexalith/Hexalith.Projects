@@ -1,0 +1,1 @@
+env NUGET_PACKAGES=/tmp/hexalith-p1r-3106-attempt9.xF8z3V/caches/builds-candidate-nuget DOTNET_CLI_HOME=/tmp/hexalith-p1r-3106-attempt9.xF8z3V/caches/builds-candidate-home TMPDIR=/tmp/hexalith-p1r-3106-attempt9.xF8z3V/caches/builds-candidate-tmp MSBUILDDISABLENODEREUSE=1 dotnet build Hexalith.Builds.slnx --configuration Release --no-restore -p:GeneratePackageOnBuild=false -m:1

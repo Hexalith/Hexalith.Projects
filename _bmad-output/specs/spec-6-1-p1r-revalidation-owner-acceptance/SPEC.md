@@ -29,7 +29,7 @@ Post-P1 dependency drift split EventStore source, published packages, the Builds
   - **success:** Independent clean source-mode and package-mode lanes pass, and retained evidence records the focused blob and behavioral comparisons.
 - **CAP-4**
   - **intent:** Qualifiers can establish that the aligned Builds runner and packaged-command contract enforce the selected baseline and fail-closed evidence rules.
-  - **success:** In isolated serialized execution, Module, Evidence, catalog, audit, package build/restore, positive, unrelated-negative, and evidence-hash controls produce their required retained results.
+  - **success:** In clean serialized execution, Module, Evidence, catalog, audit, package build/restore, positive, unrelated-negative, and evidence-hash controls produce their required retained results without duplicating dependency caches or disposable workspaces.
 - **CAP-5**
   - **intent:** Qualifiers can prove reciprocal candidate and rollback exact-pin behavior.
   - **success:** The active runner accepts only the selected pin while rejecting `3.88.0` and `3.70.1`, and a clean rollback worktree accepts `3.70.1` while rejecting the selected candidate.
@@ -46,7 +46,8 @@ Post-P1 dependency drift split EventStore source, published packages, the Builds
 - Source checkout identity and package-source identity remain separate unless both resolve to the same immutable revision; no checkout may be relabeled as package source.
 - EventStore `3.88.0` is a superseded unaccepted candidate and cannot become an accepted or rollback baseline. EventStore `3.70.1` remains the last accepted rollback baseline until a later accepted record explicitly changes it.
 - The original `3.88.0` commands and results remain immutable historical candidate evidence. Revalidation appends a dated supersession section or creates a dated sibling record.
-- Every acceptance lane runs from clean exact revisions, serialized where outputs can contend, and retains UTC start/end times, commands, exits, logs, and hashes. Cancellation, exit `143`, stalls, partial runs, and exploratory passes never qualify.
+- Every acceptance lane runs from clean exact revisions, serialized where outputs can contend, and retains UTC start/end times, commands, exits, logs, and hashes. Clean exact-revision worktrees may be reused when their binding inputs are unchanged; ordinary NuGet and browser caches are shared inputs, not evidence. Cancellation, exit `143`, stalls, partial runs, and exploratory passes never qualify.
+- Qualification uses an explicit disk-backed workspace outside `/tmp`, cleans disposable state on every exit, and retains evidence by content hash rather than copying repositories, dependency caches, browser binaries, or build output.
 - The package-version audit covers the complete catalog and passes at the accepted Builds revision; an EventStore-only pass cannot conceal unrelated mismatches.
 - The active and rollback worktrees preserve reciprocal exact-pin negatives, unrelated fixtures keep their single-purpose diagnostics, and deliberate evidence-hash mismatch controls remain fail-closed.
 - Architecture remains bound to `3.70.1` until all required lanes pass and the EventStore Owner, Builds Owner, Solution Architect, and Test Architect accept the same record.
