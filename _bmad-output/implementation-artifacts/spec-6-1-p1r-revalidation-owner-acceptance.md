@@ -2,7 +2,9 @@
 title: '6.1-P1R Revalidate EventStore and Builds Baseline'
 type: 'bugfix'
 created: '2026-08-24'
-status: 'in-progress'
+status: 'done'
+disposition: 'superseded'
+superseded_by: 'spec-6-1-p1r-minimal-acceptance-gate.md'
 review_loop_iteration: 0
 baseline_commit: 'be91dd091136d8d26fa6132b3c465113e09ddc3d'
 context:

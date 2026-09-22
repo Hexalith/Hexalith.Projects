@@ -1,5 +1,5 @@
 # generated: 09-20-2026 22:44
-# last_updated: 2026-09-08
+# last_updated: 2026-09-22
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -50,12 +50,24 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 2026-09-20
+last_updated: 2026-09-22
 project: projects
 project_key: NOKEY
 tracking_system: file-system
 story_location: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts
 production_authority_epics: [6, 7, 8]
+p1r_acceptance_gate:
+  record_path: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
+  selected:
+    eventstore_version: 3.106.0
+    eventstore_tag: v3.106.0
+    eventstore_revision: 76051c70cbf868c40edc00ca0344fa5bd8879b69
+    builds_revision: ad52f350a2f0bc47849179ae17b4594dafff5363
+  rollback:
+    eventstore_version: 3.70.1
+    eventstore_tag: v3.70.1
+    eventstore_revision: f13f9925fdca53efa2ab8c90d396ab106f91bb9c
+    builds_revision: 7af20f8bafbfe561df6f7705913a0800603090b5
 historical_development_status_sha256: ce120516809be4a3814565f67c7a1e648650b3b9f0547ed9a4135a78eba0bbaf
 production_authority_guard:
   validator: tools/planning/validate_production_authority.py
@@ -249,35 +261,13 @@ action_items:
     owner: "Builds Owner / Platform Owner / Test Architect"
     status: open
     execution_status: in-progress-external
-    target_date: uncommitted
-    authorized: "2026-07-17 by Jerome"
-    owner_baseline: "edbaeaed68bcdb8deffcd98ed5652d237596e1d1"
-    owner_observed_revision: "7bdbd293991985d150dfca62f77709e61152de76"
-    owner_observed_on: "2026-08-04"
-    owner_story: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md"
     depends_on: ["6.1-P1R"]
     qualification_dependencies: ["6.1-P1R", "G-6"]
-    capability_status:
-      manifest_contract: implemented-unaccepted
-      module_run_evidence: implemented-unaccepted
-      readiness_evidence_validator: implemented-unaccepted
-      p0_acceptance_validator: not-implemented
-      supported_composition: not-implemented
-      persisted_qualification: not-run
-      published_tools: published-stale-pin-not-supported
-      published_consumer_pin: absent
-      owner_acceptance: absent
-    published_g4_tools:
-      version: "4.23.0"
-      release_revision: "7ac2849d79e603b88c7cb76e178cd2ba106eaf00"
-      embedded_eventstore_version: "3.70.1"
-      disposition: "remotely available but live-unavailable and not the accepted P1R/P0 consumer baseline"
-    expected_evidence: "Owner-approved runner revision, remotely restored package inventory and hashes, reproducible command, persisted fixture, fail-closed machine-checkable acceptance record, evidence schema/sample, negative controls, and rollback procedure"
-    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p0--deliver-the-g-4-persisted-runner-and-evidence-tooling"
-    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03-g4-p0.md"
-    course_correction_status: approved
-    course_correction_approved: "2026-08-04 by Jerome"
-    upstream_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03.md"
+    stage_status:
+      stage_1_p1r_baseline: open
+      stages_2_through_7: open
+    expected_evidence: "Owner-approved supported composition, publication, consumer pin, persisted qualification, P0 acceptance record, and owner acceptance."
+    evidence: "_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md"
     routed_to: "Hexalith.Builds owner-repository story"
   - epic: 6
     id: "6.1-P1"
@@ -293,90 +283,13 @@ action_items:
     routed_to: "6.1-P1R, 6.1-P2, and 6.1-P4"
   - epic: 6
     id: "6.1-P1R"
-    action: "Revalidate the EventStore source, Builds catalog, Architecture Spine, and G-4 runner baseline after post-P1 dependency drift."
-    repository_authority: "EventStore and Builds repositories; Architecture Spine through architecture-owner approval"
+    action: "Accept the selected EventStore and Builds baseline through the fixed minimal JSON record."
+    repository_authority: "EventStore and Builds owners; Solution and Test Architects"
     owner: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
     status: open
-    target_date: uncommitted
-    authorized: "2026-08-01 by Jerome"
     depends_on: ["6.1-P1"]
     unblocks: ["6.1-P0", "6.1-P2", "6.1-P4"]
-    observed_on: "2026-08-03"
-    observed_drift:
-      eventstore_source_checkout:
-        revision: "7854f8e51ce9b852bb6c3cac6012670122e93792"
-        describe: "v3.89.0-9-g7854f8e5"
-        package_equivalent: false
-      eventstore_package_source:
-        version: "3.89.0"
-        tag: "v3.89.0"
-        revision: "c590590bc581a3f72ef6e67148eda988ba4b8fe6"
-        release_manifest_sha256: "6b0b70b856839d4117bcd969f6a2de0093c477c109cb79f3f2882b1f05effcae"
-      builds_catalog:
-        version: "3.89.0"
-        introducing_revision: "10af541e7b2a5a4664be37c9495930844e0954a8"
-      builds_runner_source:
-        version: "3.88.0"
-        revision_observed: "7bdbd293991985d150dfca62f77709e61152de76"
-        disposition: "superseded unaccepted candidate"
-      published_g4_tools:
-        version: "4.23.0"
-        release_revision: "7ac2849d79e603b88c7cb76e178cd2ba106eaf00"
-        embedded_eventstore_version: "3.70.1"
-        disposition: "published but not the accepted P1R/P0 consumer baseline"
-      architecture_version: "3.70.1"
-    candidate_baseline: "multi-coordinate-3.89.0-pending-acceptance"
-    decision: "pending owner selection, atomic alignment, clean qualification, executable rollback proof, immutable accepted revisions, and four-owner acceptance"
-    rollback_baseline: "3.70.1"
-    expected_evidence: "Owner-approved exact source/package/runner/architecture pin, clean restore, required API compatibility, live-runner compatibility, and rollback record"
-    evidence: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p1r-eventstore-source-architecture-runner-revalidation-record.md"
-    # Append-only evidence pointer (2026-09-05, non-status, added per
-    # spec-6-1-p1r-revalidate-baseline-3-102-0.md): see the "3.102.0 candidate
-    # / 3.70.1 rollback revalidation attempt" section appended to the file
-    # named by `evidence` above (Hexalith.Builds commit
-    # fff0af2dc03fd01b667bd0a7d7bf054f52588b5a on local branch
-    # docs/p1r-3102-3701-record, unpushed/unmerged). That attempt is
-    # non-qualifying: EventStore source/package-mode lanes are blocked by a
-    # nested-submodule boundary conflict, and the Builds rollback
-    # package-version-audit fails a two-commit tooling requirement. `status`,
-    # `observed_drift`, `decision`, and `candidate_baseline` above remain the
-    # unedited 2026-08-03 snapshot; this comment adds no parsed field and
-    # changes no status.
-    # Append-only evidence pointer (2026-09-07, non-status, added per
-    # spec-6-1-p1r-requalify-with-sibling-materialization.md): the 2026-09-05
-    # attempt's command logs, hashes, retained G-4 packages, and result
-    # narratives are now relocated byte-for-byte out of an ephemeral scratch
-    # directory into the tracked bundle
-    # _bmad-output/implementation-artifacts/qualification-evidence/6-1-p1r-3102-20260905/
-    # (artifact-manifest.sha256, 215 entries, manifest SHA-256
-    # de3b59d4f4d84b2e568f56a9f1aa0f41119bfaa09beedb7412e1e8b7c89cf423;
-    # re-hash verification 215/215 OK; manifest-verification.txt SHA-256
-    # 497bcaf44db6a39b6f198bf1fc6939affa172080497698526167b3b92ca2a9f7,
-    # recorded in the bundle README so no bundle file is unattested). That
-    # closes the retention gap the 2026-09-05 record recorded in its section 8.
-    # Two dated sections, "Correction and evidence relocation - 2026-09-07" and
-    # "Correction addendum - 2026-09-07", are appended to the file named by
-    # `evidence` above (Hexalith.Builds commits
-    # 18b1bdac3fe96f07ea4cb65dc045e51578d086cb and
-    # 5d4414a on local branch docs/p1r-3102-correction-20260907, unpushed and
-    # unmerged; the references/Hexalith.Builds checkout is back on main at
-    # 071ef99733ba398362ae838e4696b4b1641ed07a, so those sections are NOT in the
-    # working checkout until that branch is merged; additions only, all prior
-    # record text byte-identical). They supersede the 2026-09-05 comment
-    # above on one point only: the EventStore lanes are NOT blocked by a
-    # nested-submodule boundary conflict. The catalog import resolves through a
-    # repository-supported sibling fallback with no nested submodule, proven by
-    # execution on 2026-08-24 and re-verified on 2026-09-07; the 2026-09-05
-    # worktrees were simply placed flat. The real open blocker is narrower:
-    # EventStore repository-governance tests read dependency bytes and Git
-    # objects at <eventstore-root>/references/<Name>. No lane was run, no
-    # coordinate qualified, no gitlink moved, no submodule initialized. `status`
-    # stays open; this comment adds no parsed field and changes no status. P1R
-    # closes only on four-owner acceptance.
-    historical_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-p1r-baseline-revalidation.md"
-    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03.md"
-    course_correction_status: approved
-    course_correction_approved: "2026-08-03 by Jerome"
+    acceptance_record: "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
     routed_to: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
   - epic: 6
     id: "6.1-P2"

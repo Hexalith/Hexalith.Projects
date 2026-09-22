@@ -324,14 +324,16 @@ source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/impleme
 reason: These root planning edits form a separately reviewable repository change and depend on the exact qualifying Builds revision produced by the narrowed Builds alignment task.
 status: open
 
-### DW-35: Complete clean EventStore source/package and reciprocal rollback qualification, obtain four-owner P1R acceptance, then rebind Architecture and close only P1R.
+### DW-35: Accept the selected P1R baseline through the minimal gate.
 
-origin: migrated from legacy ledger ("flat append from spec-6-1-p1r-revalidate-platform-baseline-2.md"), 2026-08-25
-location: EventStore qualification, P1R acceptance, and Architecture binding
-source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-revalidate-platform-baseline-2.md
-reason: Acceptance and Architecture propagation require external owner decisions and complete retained clean-worktree evidence after the narrowed Builds candidate is aligned; they cannot be truthfully completed by the candidate-alignment change alone.
+origin: Epic 6 production-readiness correction
+location: Projects sprint ledger and fixed P1R acceptance record
+source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-minimal-acceptance-gate.md
+reason: The selected EventStore and Builds coordinates still require four explicit role decisions in the fixed JSON record.
 status: open
-decision: 2026-08-25 External exact worktrees — Authorize a fresh attempt that materializes every recorded dependency gitlink as an isolated exact-revision worktree at the paths required by governance tests without nested submodule initialization or source/gitlink changes; restart at coordinate capture, complete candidate and rollback qualification, and prepare the four-owner acceptance packet.
+acceptance_record: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
+selected: EventStore 3.106.0 / v3.106.0 / 76051c70cbf868c40edc00ca0344fa5bd8879b69; Builds ad52f350a2f0bc47849179ae17b4594dafff5363
+rollback: EventStore 3.70.1 / v3.70.1 / f13f9925fdca53efa2ab8c90d396ab106f91bb9c; Builds 7af20f8bafbfe561df6f7705913a0800603090b5
 
 ### DW-36: Sequential shutil.rmtree calls across multiple validated targets are not atomic, so a later target's filesystem failure can leave earlier targets already deleted.
 origin: spec-deferred 8d336adc2d02
@@ -656,31 +658,57 @@ reason: hasFolder = detail.ProjectFolder?.ReferenceState == ReferenceState.Inclu
 status: open
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
-### DW-68: Run 6.1-P1R contract phases 1-5 against EventStore `v3.103.0` using the sibling-materialization harness. Extends DW-35.
+### DW-68: Keep the P1R coordinate qualification open until the minimal record is accepted.
 
-origin: bmad-build step-02 scope split of spec-6-1-p1r-requalify-with-sibling-materialization.md, 2026-09-07
-location: EventStore qualification lanes and Builds candidate alignment for the `v3.103.0` coordinate
-source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
-severity: high
-reason: Extends still-open DW-35 rather than replacing it; DW-35 remains the entry that owns clean qualification, four-owner acceptance, and Architecture rebinding. This entry narrows DW-35 to the concrete 2026-09-07 coordinate and harness so the lanes can be dispatched. Split from the evidence-relocation and record-correction goal so the ungated half could ship immediately; the qualification lanes are a separate, independently reviewable deliverable and require fresh Builds alignment. No `gate:` is recorded because 6.1-P1R is a planning gate, not a story key, and gate-keyed sweeps resolve story-key slugs only; DW-35 carries no `gate:` for the same reason.
+origin: Epic 6 P1R coordinate qualification
+location: Projects sprint ledger and fixed P1R acceptance record
+source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-minimal-acceptance-gate.md
+reason: No valid four-role acceptance record exists for the selected tuple.
 status: open
-decision: 2026-09-07 Owner decisions, three parts. (1) Coordinate - move to EventStore `v3.103.0` (`059f6a8917bfab26b85775be464840a1610dfdeb`, tagged 2026-09-07), superseding the aligned `3.102.0` candidate `3d16d3e090ae822bc9cdc64c4156d31c9acf1146`; the Builds catalog reads `3.103.0` on `origin/main` (`7b0b1837ce368e314b5e11b011b73603637a17e1`) but `SupportedPlatformPins.EventStoreVersion` is still `3.102.0`, so runner, schema, fixtures, evidence, and coupled hashes need fresh alignment and a new candidate commit. (2) Dependency bytes - read-only materialization of EventStore's declared dependency bytes at its own exact gitlink SHAs inside disposable qualification worktrees only; no `git submodule update --init`, no gitlink movement, no change to the umbrella or the live EventStore checkout; recorded as an explicit judgement call against the umbrella nested-submodule rule. This restates DW-35's 2026-08-25 decision ("External exact worktrees") in the same terms and adds no new authority; it names the 2026-09-07 coordinate the route applies to. (3) Rollback audit - authorize a second, dependent audit-refresh child commit on the rollback branch, matching the base repository's historical two-commit pattern (`308e392` then `e81e627`); do not modify `validate-package-version-audit.ps1`. (4) Harness layout - settled; two placements both resolve the MSBuild catalog import with no nested submodule, through different import candidates in `Hexalith.EventStore/Directory.Packages.props`, and an executor must not "fix" either into the other. (a) EventStore worktree at `<lane>/references/Hexalith.EventStore` with dependency worktrees at `<lane>/references/<Name>` resolves through candidate 3 (`../../references/Hexalith.Builds`); candidate 2 misses. (b) EventStore worktree at `<lane>/EventStore` with the Builds worktree at `<lane>/references/Hexalith.Builds` - the 2026-08-24 attempt-3 placement - resolves through candidate 2 (`../references/Hexalith.Builds`). Both were verified on 2026-09-07 by evaluation-only MSBuild probes. Repository-governance tests additionally need bytes and real Git objects at `<eventstore-root>/references/<Name>`, which is what decision part 2 covers.
+acceptance_record: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
+selected: EventStore 3.106.0 / v3.106.0 / 76051c70cbf868c40edc00ca0344fa5bd8879b69; Builds ad52f350a2f0bc47849179ae17b4594dafff5363
+rollback: EventStore 3.70.1 / v3.70.1 / f13f9925fdca53efa2ab8c90d396ab106f91bb9c; Builds 7af20f8bafbfe561df6f7705913a0800603090b5
 
-- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md`
-  summary: Reconcile story 6.5's spec status (`blocked`) with `sprint-status.yaml:140` (`backlog`).
-  evidence: The two records disagree, so a queue reading sprint-status could dispatch a story the spec declares parked. The edit is pre-existing uncommitted user work fenced out of this spec's scope.
-- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md`
-  summary: Retrofit the three `6-1-p1r-397-*` bundles so their `logs/` directories are tracked rather than ignored.
-  evidence: `git ls-files` returns zero tracked files under each bundle's `logs/` while 23 log files exist on disk; they stay one `git clean` from the loss this change prevents for the new bundle. This spec forbids touching prior bundles.
-- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md`
-  summary: Add an executable check that re-hashes every `qualification-evidence/*/artifact-manifest.sha256` entry and asserts each is tracked.
-  evidence: No script under `tests/tools/` or `.github/workflows/` reads a bundle manifest, so a bundle that stops matching its manifest looks identical to one that matches. Building a repo-wide harness exceeds this spec's intent.
-- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md`
-  summary: Decide whether relocated evidence bundles require a machine-readable command ledger like attempt-3's `command-ledger.jsonl`.
-  evidence: The 2026-09-05 attempt never produced one, so no log can be tied programmatically to its command, exit, and timestamps. Fabricating one now would violate the no-reconstruction rule; this is a policy question for the Test Architect.
-- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md`
-  summary: Set a retention or LFS policy for binary packages in `qualification-evidence/` bundles.
-  evidence: Eight `.nupkg`/`.snupkg` files are retained; the bundle `.gitattributes` marks them `binary` but nothing LFS-tracks them; this is the fourth retained bundle and no bundle or index states any pruning policy, so growth is unbounded by design.
+### DW-69: Reconcile Story 6.5 status across its spec and sprint tracker.
+
+origin: restored independent obligation from the pre-minimal P1R ledger
+location: Story 6.5 specification and sprint-status.yaml
+source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
+reason: The Story 6.5 spec records `blocked` while the sprint tracker records `backlog`, so queue consumers do not receive one authoritative state.
+status: open
+
+### DW-70: Make retained EventStore 3.97 qualification logs durable.
+
+origin: restored independent obligation from the pre-minimal P1R ledger
+location: qualification-evidence/6-1-p1r-397-20260824*/logs
+source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
+reason: The three preserved 3.97 evidence roots contain untracked log files that remain vulnerable to workspace cleaning; this obligation concerns only preserved historical evidence and does not authorize another 3.106 attempt.
+status: open
+
+### DW-71: Verify retained qualification manifests against tracked artifacts.
+
+origin: restored independent obligation from the pre-minimal P1R ledger
+location: qualification-evidence manifest validation
+source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
+reason: No executable repository check re-hashes each retained `artifact-manifest.sha256` entry and confirms that every referenced artifact is tracked.
+status: open
+
+### DW-72: Define the command-ledger policy for retained qualification evidence.
+
+origin: restored independent obligation from the pre-minimal P1R ledger
+location: qualification-evidence governance
+source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
+reason: The Test Architect still must decide when retained evidence requires a machine-readable mapping from commands to exits, timestamps, and logs; no historical ledger should be reconstructed or used to revive the removed 3.106 attempt flow.
+status: open
+
+### DW-73: Define package retention and LFS policy for qualification evidence.
+
+origin: restored independent obligation from the pre-minimal P1R ledger
+location: qualification-evidence binary packages
+source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
+reason: Preserved `.nupkg` and `.snupkg` artifacts have no bounded retention, pruning, or Git LFS policy, so historical evidence growth remains unbounded.
+status: open
+
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Allowlist live `answers.core` keys the same way legacy import allowlists `_CORE_KEYS`.
   evidence: `merge_config` still writes every non-user core answer onto the shared root, so a crafted answers file can overwrite another module section. This is preserved vendor success behavior, not an atomicity regression.
@@ -712,3 +740,6 @@ decision: 2026-09-07 Owner decisions, three parts. (1) Coordinate - move to Even
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md`
   summary: Require an all-absent package inventory before unrelated NuGet `--skip-duplicate` release publication.
   evidence: The release workflow can invoke Semantic Release while its NuGet command tolerates duplicate packages, so a partially occupied version can yield a mixed or incomplete public release; this release-hardening defect predates Story 6.3.
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-minimal-acceptance-gate.md`
+  summary: Document all companion-path and workspace-root arguments required to validate an atomic P1R candidate set in the repository agent context.
+  evidence: The current `_bmad-output/project-context.md` candidate command names only `--sprint-status`, while accepted closure spans sprint status, deferred work, the P0 artifact, and the acceptance record under a candidate workspace root; review policy defers agent-context edits.

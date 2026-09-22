@@ -1,1 +1,0 @@
-env NUGET_PACKAGES=/tmp/hexalith-p1r-3106-attempt11.LhzYSJ/caches/builds-rollback-nuget DOTNET_CLI_HOME=/tmp/hexalith-p1r-3106-attempt11.LhzYSJ/caches/builds-rollback-home TMPDIR=/tmp/hexalith-p1r-3106-attempt11.LhzYSJ/caches/builds-rollback-tmp MSBUILDDISABLENODEREUSE=1 pwsh -NoProfile -File ./Tools/test-authoritative-package-catalog.ps1

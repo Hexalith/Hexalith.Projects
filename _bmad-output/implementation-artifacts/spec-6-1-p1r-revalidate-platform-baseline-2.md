@@ -2,7 +2,9 @@
 title: '6.1-P1R Align the Builds Runner with EventStore 3.90.0'
 type: 'bugfix'
 created: '2026-08-04'
-status: 'in-review'
+status: 'done'
+disposition: 'superseded'
+superseded_by: 'spec-6-1-p1r-minimal-acceptance-gate.md'
 review_loop_iteration: 7
 baseline_commit: 'a0dea374b3b990a38e23357934817969ba4a03e4'
 context:
