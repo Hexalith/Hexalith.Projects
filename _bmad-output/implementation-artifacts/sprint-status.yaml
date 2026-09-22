@@ -264,7 +264,7 @@ action_items:
     depends_on: ["6.1-P1R"]
     qualification_dependencies: ["6.1-P1R", "G-6"]
     stage_status:
-      stage_1_p1r_baseline: open
+      stage_1_p1r_baseline: done
       stages_2_through_7: open
     expected_evidence: "Owner-approved supported composition, publication, consumer pin, persisted qualification, P0 acceptance record, and owner acceptance."
     evidence: "_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md"
@@ -286,7 +286,7 @@ action_items:
     action: "Accept the selected EventStore and Builds baseline through the fixed minimal JSON record."
     repository_authority: "EventStore and Builds owners; Solution and Test Architects"
     owner: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
-    status: open
+    status: done
     depends_on: ["6.1-P1"]
     unblocks: ["6.1-P0", "6.1-P2", "6.1-P4"]
     acceptance_record: "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"

@@ -19,7 +19,7 @@ implementation_dependencies: [6.1-P1R]
 qualification_dependencies: [6.1-P1R, G-6]
 unblocks: [6.1-P4]
 p1r_stage_1:
-  status: open
+  status: done
   acceptance_record: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
 capability_status:
   manifest_contract: implemented-unaccepted

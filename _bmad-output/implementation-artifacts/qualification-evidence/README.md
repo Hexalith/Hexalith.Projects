@@ -19,8 +19,7 @@ The rollback coordinates are:
   `f13f9925fdca53efa2ab8c90d396ab106f91bb9c`.
 - Builds revision `7af20f8bafbfe561df6f7705913a0800603090b5`.
 
-P1R is open. No current acceptance record exists. The only accepted closure
-mechanism is the optional fixed record at
+P1R is accepted through the fixed record at
 `_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json` under schema
 `hexalith.projects.p1r-acceptance.v1`.
 
@@ -36,6 +35,5 @@ Run the gate with:
 python3 tools/planning/validate_production_authority.py --validate-index
 ```
 
-When the record is absent, the open planning state is valid. When a valid record
-exists, only P1R, P0 Stage 1, DW-35, and DW-68 may transition to `done`; all
-later production-readiness and Epic 7/8 work remains open or blocked.
+The accepted record closes only P1R, P0 Stage 1, DW-35, and DW-68. All later
+production-readiness and Epic 7/8 work remains open or blocked.

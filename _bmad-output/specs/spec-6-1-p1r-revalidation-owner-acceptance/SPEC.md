@@ -27,10 +27,10 @@ command ledgers, and evidence bundles are not part of this gate.
 
 ## Acceptance Boundary
 
-The record is absent, so P1R remains open. A valid record must contain
-`accept` decisions for the EventStore Owner, Builds Owner, Solution Architect,
-and Test Architect. Each role names an approver, the exact record path, and the
-record's `selected` tuple.
+The fixed acceptance record is present and valid, so P1R is accepted. It
+contains `accept` decisions for the EventStore Owner, Builds Owner, Solution
+Architect, and Test Architect. Each role names Jérôme Piquot as approver, the
+exact record path, and the record's `selected` tuple.
 
 A valid record permits only these transitions:
 

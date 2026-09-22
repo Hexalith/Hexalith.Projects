@@ -330,7 +330,8 @@ origin: Epic 6 production-readiness correction
 location: Projects sprint ledger and fixed P1R acceptance record
 source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-minimal-acceptance-gate.md
 reason: The selected EventStore and Builds coordinates still require four explicit role decisions in the fixed JSON record.
-status: open
+status: done
+resolution: 2026-09-22 Satisfied by the fixed four-role acceptance record at _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json for the selected tuple.
 acceptance_record: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
 selected: EventStore 3.106.0 / v3.106.0 / 76051c70cbf868c40edc00ca0344fa5bd8879b69; Builds ad52f350a2f0bc47849179ae17b4594dafff5363
 rollback: EventStore 3.70.1 / v3.70.1 / f13f9925fdca53efa2ab8c90d396ab106f91bb9c; Builds 7af20f8bafbfe561df6f7705913a0800603090b5
@@ -664,7 +665,8 @@ origin: Epic 6 P1R coordinate qualification
 location: Projects sprint ledger and fixed P1R acceptance record
 source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-minimal-acceptance-gate.md
 reason: No valid four-role acceptance record exists for the selected tuple.
-status: open
+status: done
+resolution: 2026-09-22 Satisfied by the fixed four-role acceptance record at _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json for the selected tuple.
 acceptance_record: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
 selected: EventStore 3.106.0 / v3.106.0 / 76051c70cbf868c40edc00ca0344fa5bd8879b69; Builds ad52f350a2f0bc47849179ae17b4594dafff5363
 rollback: EventStore 3.70.1 / v3.70.1 / f13f9925fdca53efa2ab8c90d396ab106f91bb9c; Builds 7af20f8bafbfe561df6f7705913a0800603090b5

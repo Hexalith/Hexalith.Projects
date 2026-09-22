@@ -27,9 +27,88 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.sprint = GUARD.DEFAULT_SPRINT_STATUS.read_text(encoding="utf-8")
-        cls.deferred = GUARD.DEFAULT_DEFERRED_WORK.read_text(encoding="utf-8")
-        cls.p0 = GUARD.DEFAULT_P0_ARTIFACT.read_text(encoding="utf-8")
+        def seed_open_field(
+            text: str,
+            section_start: str,
+            section_end_prefix: str,
+            field: str,
+        ) -> str:
+            lines = text.splitlines(keepends=True)
+            section_starts = [
+                index
+                for index, line in enumerate(lines)
+                if line.rstrip("\r\n") == section_start
+            ]
+            if len(section_starts) != 1:
+                raise AssertionError(
+                    f"expected one fixture section marker: {section_start}"
+                )
+            start = section_starts[0] + 1
+            section_ends = [
+                index
+                for index in range(start, len(lines))
+                if lines[index].rstrip("\r\n").startswith(section_end_prefix)
+            ]
+            if not section_ends:
+                raise AssertionError(
+                    f"missing fixture section boundary: {section_end_prefix}"
+                )
+            end = section_ends[0]
+            open_value = f"{field}: open"
+            accepted_value = f"{field}: done"
+            matches = [
+                index
+                for index in range(start, end)
+                if lines[index].rstrip("\r\n") in (open_value, accepted_value)
+            ]
+            if len(matches) != 1:
+                raise AssertionError(
+                    f"expected one complete fixture field line: {field}"
+                )
+            field_index = matches[0]
+            current_value = lines[field_index].rstrip("\r\n")
+            if current_value == open_value:
+                return text
+            line_ending = lines[field_index][len(current_value) :]
+            lines[field_index] = open_value + line_ending
+            return "".join(lines)
+
+        sprint = GUARD.DEFAULT_SPRINT_STATUS.read_text(encoding="utf-8")
+        sprint = seed_open_field(
+            sprint,
+            '    id: "6.1-P1R"',
+            "  - epic:",
+            "    status",
+        )
+        cls.sprint = seed_open_field(
+            sprint,
+            '    id: "6.1-P0"',
+            "  - epic:",
+            "      stage_1_p1r_baseline",
+        )
+
+        deferred = GUARD.DEFAULT_DEFERRED_WORK.read_text(encoding="utf-8")
+        deferred_sections = (
+            "### DW-35: Accept the selected P1R baseline through the minimal gate.",
+            "### DW-68: Keep the P1R coordinate qualification open until "
+            "the minimal record is accepted.",
+        )
+        for section_start in deferred_sections:
+            deferred = seed_open_field(
+                deferred,
+                section_start,
+                "### DW-",
+                "status",
+            )
+        cls.deferred = deferred
+
+        p0 = GUARD.DEFAULT_P0_ARTIFACT.read_text(encoding="utf-8")
+        cls.p0 = seed_open_field(
+            p0,
+            "p1r_stage_1:",
+            "capability_status:",
+            "  status",
+        )
 
     def replace_once(self, text: str, old: str, new: str) -> str:
         self.assertEqual(1, text.count(old), old)
