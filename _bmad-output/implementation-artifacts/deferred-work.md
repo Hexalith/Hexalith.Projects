@@ -745,3 +745,18 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-minimal-acceptance-gate.md`
   summary: Document all companion-path and workspace-root arguments required to validate an atomic P1R candidate set in the repository agent context.
   evidence: The current `_bmad-output/project-context.md` candidate command names only `--sprint-status`, while accepted closure spans sprint status, deferred work, the P0 artifact, and the acceptance record under a candidate workspace root; review policy defers agent-context edits.
+- source_spec: `references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md`
+  summary: Add a CI job that runs the G-4 live composition lane (HEXALITH_G4_LIVE=1) with Docker and a verified Dapr 1.18.0/1.18.2 home.
+  evidence: No workflow sets HEXALITH_G4_LIVE or HEXALITH_DAPR_HOME; ci.yml runs the IntegrationTests project where every live test reports skipped (Stage 3 review R15).
+- source_spec: `references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md`
+  summary: Make runner cleanup proof cross-platform (process enumeration beyond /proc, graceful AppHost stop on Windows).
+  evidence: CompositionRunResourceScanner.FindProcesses returns [] off Linux and DownAsync sends no graceful stop on Windows (Stage 3 review R16).
+- source_spec: `references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md`
+  summary: Surface AppHost-side failures (cutover fault, blocked stdin listener, unbounded readiness probes) as fast, specific diagnostics instead of a generic HXR021 timeout.
+  evidence: AppHostRunner/StopSignal/RunReadiness/WriterProtocolCutover loop or block without per-probe bounds; outcome stays fail-closed (Stage 3 review R17).
+- source_spec: `references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md`
+  summary: Verify RunTopology endpoint handling for consumer module projects whose launch profiles expose only https (unverified, would be medium).
+  evidence: Settle by composing a module whose launchSettings declares only an https endpoint and checking RunEndpoints.TryGet (Stage 3 review R18).
+- source_spec: `references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md`
+  summary: Replace the stale "candidate" XML doc wording on SupportedPlatformPins.EventStoreVersion at the next G-6 re-seal.
+  evidence: The file is G-6-bound source state; editing it now would invalidate the accepted packet (Stage 3 review R19).

@@ -1,0 +1,24 @@
+{
+  "schema": "hexalith.runtime-toolchain-owner-acceptance.v1",
+  "decision": "accept",
+  "approver": "Jérôme Piquot",
+  "capacity": [
+    "G-6 Owner",
+    "Builds Owner",
+    "Platform Owner",
+    "FrontComposer/Web Owner"
+  ],
+  "acceptedAtUtc": "2026-09-22T22:44:16Z",
+  "approvalSource": "User selection 'Accept both' to the named G-6 owner decision request in the active bmad-build session",
+  "packetPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json",
+  "packetSha256": "cb6b36ae7bc995c96eea5c327caacccd64f4296328d4202c4dddfb4be61d279b",
+  "packetCapturedUtc": "2026-09-22T22:43:18Z",
+  "baselinePath": "references/Hexalith.Builds/Tools/runtime-toolchain-baseline.json",
+  "baselineSha256": "525615c65ada8cabf5a6911a374bb22b62f6a3c1bfa6c91f7245312da9720265",
+  "baselineChange": "Removed the obsolete Projects .github/workflows/release.yml literal pin dapr-version: '1.18.0'; the Projects release workflow is an exact-source gated callee that no longer installs Dapr. The 2026-09-06 tuple and dispositions are unchanged.",
+  "supersedes": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/history/2026-09-20/packet.json",
+  "supersededPacketSha256": "7bcf461e7ff35e08c96c609bb12017dbfb1812967a16b0e8a8c5e51d20c49b20",
+  "validator": "python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py --workspace . --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline.json --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json",
+  "validatorResult": "G6-EVIDENCE-VALID",
+  "scope": "Accepts the refreshed G-6 runtime/toolchain packet and baseline edit as the current G-6 qualification. Containment is unchanged: no G-4, G-5, deployment, or release approval; not a 6.1-P0 Stage 3, P0, or live-lane acceptance."
+}
