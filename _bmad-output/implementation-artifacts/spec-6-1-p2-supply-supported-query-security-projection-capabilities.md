@@ -64,6 +64,10 @@ context:
 - Given the published candidate and G-4 fixture, when identity, denial, persistence, and restart lanes run, then machine evidence names the exact revision/package and passes cross-Tenant negative controls.
 - Given owner acceptance and a rollback trigger, when the documented rollback is applied, then prior data remains readable, watermark-bound cursors fail closed, and P2/P3/P4/Story 6.1 return to blocked.
 
+## Implementation Notes
+
+- 2026-09-24: Added persisted-watermark cursor coverage and a live-sidecar test that rebuilds from Dapr/Redis-persisted events in a second operating-system process. Both focused tests passed. A separate test-fixture correction made the full Server suite green (3,370 total, 0 failed, 25 skipped); the current-HEAD Release solution build passed with zero warnings/errors. The draft EventStore handoff records source coordinates and exact commands. P2 remains open because the G-4 runner, authenticated persisted cross-Tenant fixture, accepted package/pin/rollback decisions, and a green full Contracts gate are absent.
+
 ## Spec Change Log
 
 - 2026-07-19: Implemented and locally verified the additive EventStore capability surface. Preserved the released 3.77.2 constructor/deconstruction entry points and frozen v1 delivery fingerprints. The test task remains open because an actual process-restart/G-4 lane is unavailable; publication, accepted pins, rollback selection, the owner record, and root P2 acceptance also remain open.
@@ -92,5 +96,6 @@ context:
 - `git diff --check` -- passed.
 
 **Open gates:**
-- The Builds-owned 6.1-P0/G-4 runner remains `in-progress` and unavailable from this workspace, so an honest OS-process restart, persisted cross-Tenant fixture, and exact-candidate evidence cannot run yet. The required command exited 1 with `Cannot find a tool in the manifest file that has a command named 'hexalith-module'.`
+- The Builds-owned 6.1-P0/G-4 runner remains unavailable from this workspace. The new live-sidecar test proves an operating-system restart over persisted state, but does not provide the required G-4 authenticated cross-Tenant fixture or exact-candidate evidence. The required command exited 1 with `Cannot find a tool in the manifest file that has a command named 'hexalith-module'.`
+- The latest full Contracts assembly run completed with 97 failures, all in `Packaging.*` governance/evidence tests; focused P2 contract classes passed. The draft EventStore handoff records the current results.
 - No release, package/source pin update, rollback selection, acceptance record, or P2 sprint-status transition has been authorized or performed.
