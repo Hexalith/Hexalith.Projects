@@ -39,10 +39,11 @@ context:
 
 ## Code Map
 
-- `src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs` and `Authorization/ProjectAuthorizationGate.cs` -- preserve legacy list/open DTOs, routes, and authorization order as shadow authority; domain handlers cannot depend on `HttpContext`.
-- `src/Hexalith.Projects/Projections/ProjectList/ProjectListProjection.cs` and `ProjectDetail/ProjectDetailProjection.cs` -- reuse deterministic folds in separate persisted envelopes/handlers.
-- `src/Hexalith.Projects/Queries/` and `Projections/ConversationStart/ConversationStartSetupProjectionHandler.cs` -- reuse dual-principal authorization, safe-denial, and persisted-handler patterns.
-- `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` -- current authenticated `/query`; canonical mapping collides on `/process` and `/query`.
+- `src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs` and `Authorization/ProjectAuthorizationGate.cs` -- preserve legacy routes; authorize each list row before paging. Domain handlers cannot use `HttpContext`.
+- `src/Hexalith.Projects/Projections/ProjectList/ProjectListProjection.cs` and `ProjectDetail/ProjectDetailProjection.cs` -- reuse pure folds in persisted handlers; do not reuse journal-replay adapters.
+- `src/Hexalith.Projects.Server/Projections/ConversationStartSetup/ConversationStartSetupProjectionHandler.cs` and `Queries/GetProjectContextQueryHandler.cs` -- reuse persisted-query patterns; keep Archived metadata readable.
+- `src/Hexalith.Projects.Server/Queries/ProjectQueryEnvelopePrincipalBinding.cs` and `ProjectsServerServiceCollectionExtensions.cs` -- reuse dual-principal binding; resolve `/query` route collision through the approved platform path.
+- `src/Hexalith.Projects.Contracts/` -- reuse AD-32 snapshot contracts; preserve general `PageRequest` defaults.
 - `references/Hexalith.EventStore/src/` -- required APIs/fakes exist, but safe denial is not opted in and cursor v1 has no wall-clock expiry.
 
 ## Tasks & Acceptance
@@ -67,7 +68,9 @@ context:
 
 ## Design Notes
 
-P2 remains unaccepted. Safe denial needs explicit route opt-in, cursor v1 has no wall-clock expiry, and the canonical two-line host conflicts with existing mapped routes. These need prerequisite/architecture disposition; Story 6.1 must not invent local substitutes.
+P1R is accepted; P0 stages 2-7, P2, P3, same-baseline architect sign-off, P4, and independent `READY` remain open. Current readiness is `NOT_READY`.
+
+Safe denial requires route opt-in, cursor v1 lacks wall-clock expiry, and the canonical host conflicts with mapped routes. Existing reads allow bounded-stale Tenant evidence and use detail update time for `asOf`; Story 6.1 requires current authorization evidence and computation-time `asOf`. Resolve these in prerequisites, not locally.
 
 ## Verification
 
