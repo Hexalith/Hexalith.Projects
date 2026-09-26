@@ -52,7 +52,7 @@ public sealed class FoldersProjectFileReferenceDirectory(FoldersClient foldersCl
         {
             FileMetadataRequest request = new()
             {
-                RequestSchemaVersion = "v1",
+                RequestSchemaVersion = "v2",
                 Paths =
                 [
                     new PathMetadata
@@ -179,6 +179,8 @@ public sealed class FoldersProjectFileReferenceDirectory(FoldersClient foldersCl
             409 => ProjectFileReferenceValidationOutcome.Archived,
             408 or 503 => ProjectFileReferenceValidationOutcome.Unavailable,
             >= 500 and < 600 => ProjectFileReferenceValidationOutcome.Unavailable,
-            _ => ProjectFileReferenceValidationOutcome.Denied,
+            // A successful status wrapped as an API exception indicates an invalid response.
+            // Report unavailable rather than presenting a deserialization failure as denial.
+            _ => ProjectFileReferenceValidationOutcome.Unavailable,
         };
 }

@@ -149,6 +149,35 @@ public sealed class ProjectFolderDirectoryTests
         result.Outcome.ShouldBe(ProjectFolderValidationOutcome.Denied);
     }
 
+    [Theory]
+    [InlineData(HttpStatusCode.Unauthorized, ProjectFolderValidationOutcome.Denied)]
+    [InlineData(HttpStatusCode.NotFound, ProjectFolderValidationOutcome.Denied)]
+    [InlineData(HttpStatusCode.ServiceUnavailable, ProjectFolderValidationOutcome.Unavailable)]
+    public async Task ValidateSetProjectFolder_CanonicalStatus_MapsTypedOutcome(
+        HttpStatusCode statusCode,
+        ProjectFolderValidationOutcome expectedOutcome)
+    {
+        FoldersProjectFolderDirectory directory = Directory(JsonResponse(statusCode, ProblemJson()));
+
+        ProjectFolderValidationResult result = await directory
+            .ValidateSetProjectFolderAsync(ProjectId(), FolderId, "corr-a", TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(expectedOutcome);
+    }
+
+    [Fact]
+    public async Task ValidateSetProjectFolder_MalformedSuccess_IsUnavailable()
+    {
+        FoldersProjectFolderDirectory directory = Directory(JsonResponse(HttpStatusCode.OK, "{}"));
+
+        ProjectFolderValidationResult result = await directory
+            .ValidateSetProjectFolderAsync(ProjectId(), FolderId, "corr-a", TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectFolderValidationOutcome.Unavailable);
+    }
+
     [Fact]
     public async Task ValidateSetProjectFolder_FoldersServerError_FailsClosedAsUnavailable()
     {

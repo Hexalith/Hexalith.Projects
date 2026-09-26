@@ -37,19 +37,21 @@ public sealed class ProjectFileReferenceDirectoryTests
         result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Accepted);
 
         // Only the metadata-only route is ever called; the content-bearing range-read route is never used.
-        handler.RequestPaths.ShouldContain(path => path.Contains("/context/metadata", System.StringComparison.Ordinal));
+        handler.RequestPaths.ShouldContain(path => path.Contains("/api/v2/", System.StringComparison.Ordinal)
+            && path.Contains("/context/metadata", System.StringComparison.Ordinal));
         handler.RequestPaths.ShouldNotContain(path => path.Contains("/context/range-read", System.StringComparison.Ordinal));
         using JsonDocument request = JsonDocument.Parse(handler.RequestBodies.ShouldHaveSingleItem());
+        request.RootElement.GetProperty("requestSchemaVersion").GetString().ShouldBe("v2");
         JsonElement path = request.RootElement.GetProperty("paths")[0];
         path.GetProperty("pathPolicyClass").GetString().ShouldBe("metadata_only");
         path.GetProperty("unicodeNormalization").GetString().ShouldBe("NFC");
     }
 
     [Fact]
-    public async Task ValidateLink_RedactedMetadata_FailsClosedAsDenied()
+    public async Task ValidateLink_RedactedDirectTarget_UsesCanonicalNotFoundAndFailsClosedAsDenied()
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
-            new RecordingHandler(JsonResponse(HttpStatusCode.OK, MetadataJson("file", "redacted", stale: false))));
+            new RecordingHandler(JsonResponse(HttpStatusCode.NotFound, ProblemJson())));
 
         ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
 
@@ -203,6 +205,33 @@ public sealed class ProjectFileReferenceDirectoryTests
             .ConfigureAwait(true)).ConfigureAwait(true);
     }
 
+    [Theory]
+    [InlineData(HttpStatusCode.Unauthorized, ProjectFileReferenceValidationOutcome.Denied)]
+    [InlineData(HttpStatusCode.NotFound, ProjectFileReferenceValidationOutcome.Denied)]
+    [InlineData(HttpStatusCode.ServiceUnavailable, ProjectFileReferenceValidationOutcome.Unavailable)]
+    public async Task ValidateLink_CanonicalStatus_MapsTypedOutcome(
+        HttpStatusCode statusCode,
+        ProjectFileReferenceValidationOutcome expectedOutcome)
+    {
+        FoldersProjectFileReferenceDirectory directory = Directory(
+            new RecordingHandler(JsonResponse(statusCode, ProblemJson())));
+
+        ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(expectedOutcome);
+    }
+
+    [Fact]
+    public async Task ValidateLink_MalformedSuccess_IsUnavailable()
+    {
+        FoldersProjectFileReferenceDirectory directory = Directory(
+            new RecordingHandler(JsonResponse(HttpStatusCode.OK, "{}")));
+
+        ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Unavailable);
+    }
+
     private static Task<ProjectFileReferenceValidationResult> ValidateAsync(FoldersProjectFileReferenceDirectory directory)
         => directory.ValidateLinkFileReferenceAsync(ProjectId(), FolderId, WorkspaceId, FilePath, "corr-a", "task-a", TestContext.Current.CancellationToken);
 
@@ -240,6 +269,14 @@ public sealed class ProjectFileReferenceDirectoryTests
               "redaction": "{{redaction}}"
             }
           ],
+          "limits": {
+            "queryFamily": "metadata",
+            "configuredLimit": 100,
+            "actualCount": 1,
+            "actualBytes": 256,
+            "elapsedMilliseconds": 9,
+            "isTruncated": false
+          },
           "freshness": {
             "readConsistency": "eventually_consistent",
             "observedAt": "2026-05-12T12:34:56Z",
@@ -253,6 +290,14 @@ public sealed class ProjectFileReferenceDirectoryTests
         => """
         {
           "items": [],
+          "limits": {
+            "queryFamily": "metadata",
+            "configuredLimit": 100,
+            "actualCount": 0,
+            "actualBytes": 0,
+            "elapsedMilliseconds": 9,
+            "isTruncated": false
+          },
           "freshness": {
             "readConsistency": "eventually_consistent",
             "observedAt": "2026-05-12T12:34:56Z",
