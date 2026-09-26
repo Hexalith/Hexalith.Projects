@@ -50,7 +50,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 2026-09-22
+last_updated: 2026-09-26
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -68,6 +68,20 @@ p1r_acceptance_gate:
     eventstore_tag: v3.70.1
     eventstore_revision: f13f9925fdca53efa2ab8c90d396ab106f91bb9c
     builds_revision: 7af20f8bafbfe561df6f7705913a0800603090b5
+p1r_current_revalidation:
+  status: pending-owner-decisions
+  usable_as_prerequisite: false
+  owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3108-exact-baseline-candidate.md
+  candidate:
+    eventstore_version: 3.108.1
+    eventstore_tag: v3.108.1
+    eventstore_revision: b15ad59abca82d5980ef92a510c2379e05f4d46f
+    builds_revision: 2326f983bad14d5398ee55bf2bdf6c86b63c39ea
+  eventstore_checkout_observed: 8ac62359c1ffdd520488ecd03bd9689c217e3788
+  g6_current_validation: invalid-central-package-pin-drift
+  g6_current_qualification: unaccepted
+  owner_decisions: pending
+  containment: "Keep the accepted 3.106.0 tuple and 3.70.1 rollback; P0 Stage 6 and Story 6.1 remain blocked."
 historical_development_status_sha256: ce120516809be4a3814565f67c7a1e648650b3b9f0547ed9a4135a78eba0bbaf
 production_authority_guard:
   validator: tools/planning/validate_production_authority.py
@@ -193,6 +207,8 @@ development_status:
 qualification_gates:
   G-6:
     status: accepted
+    accepted_scope: "Historical 2026-09-06 packet only; excludes the EventStore 3.108.1 / Builds 2326f983bad14d5398ee55bf2bdf6c86b63c39ea candidate."
+    current_candidate_usable: false
     accepted_on: 2026-09-06
     approved_by: "Jérôme Piquot"
     owner_roles: ["Builds", "Platform", "FrontComposer/Web"]
@@ -287,8 +303,11 @@ action_items:
     repository_authority: "EventStore and Builds owners; Solution and Test Architects"
     owner: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
     status: done
+    accepted_scope: "Historical EventStore 3.106.0 / Builds ad52f350a2f0bc47849179ae17b4594dafff5363 tuple only."
+    current_candidate_usable: false
     depends_on: ["6.1-P1"]
     unblocks: ["6.1-P0", "6.1-P2", "6.1-P4"]
+    unblocks_scope: "Historical accepted tuple only; the 3.108.1 candidate cannot unblock current work before exact four-role acceptance and fresh G-6 qualification."
     acceptance_record: "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
     routed_to: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
   - epic: 6

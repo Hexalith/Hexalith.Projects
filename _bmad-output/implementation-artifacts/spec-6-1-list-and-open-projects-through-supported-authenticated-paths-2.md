@@ -39,12 +39,12 @@ context:
 
 ## Code Map
 
-- `src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs` and `Authorization/ProjectAuthorizationGate.cs` -- preserve legacy routes; authorize each list row before paging. Domain handlers cannot use `HttpContext`.
-- `src/Hexalith.Projects/Projections/ProjectList/ProjectListProjection.cs` and `ProjectDetail/ProjectDetailProjection.cs` -- reuse pure folds in persisted handlers; do not reuse journal-replay adapters.
-- `src/Hexalith.Projects.Server/Projections/ConversationStartSetup/ConversationStartSetupProjectionHandler.cs` and `Queries/GetProjectContextQueryHandler.cs` -- reuse persisted-query patterns; keep Archived metadata readable.
-- `src/Hexalith.Projects.Server/Queries/ProjectQueryEnvelopePrincipalBinding.cs` and `ProjectsServerServiceCollectionExtensions.cs` -- reuse dual-principal binding; resolve `/query` route collision through the approved platform path.
-- `src/Hexalith.Projects.Contracts/` -- reuse AD-32 snapshot contracts; preserve general `PageRequest` defaults.
-- `references/Hexalith.EventStore/src/` -- required APIs/fakes exist, but safe denial is not opted in and cursor v1 has no wall-clock expiry.
+- `src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs` and `Authorization/ProjectAuthorizationGate.cs` -- preserve legacy routes, safe denial, and filtering; handlers cannot use `HttpContext`.
+- `src/Hexalith.Projects/Projections/ProjectList/ProjectListProjection.cs`, `ProjectDetail/ProjectDetailProjection.cs`, and `src/Hexalith.Projects.Infrastructure/DaprProjectProjectionStore.cs` -- reuse pure folds; retain journal/replay as shadow input.
+- `src/Hexalith.Projects.Server/Projections/ConversationStartSetup/ConversationStartSetupProjectionHandler.cs` and `Queries/ProjectContextQueryExecutor.cs` -- reuse incremental persisted reads and authorization.
+- `src/Hexalith.Projects.Server/Queries/ProjectQueryEnvelopePrincipalBinding.cs` and `ProjectsServerServiceCollectionExtensions.cs` -- reuse dual-principal binding; resolve custom `/query` against the approved SDK host.
+- `src/Hexalith.Projects.Contracts/Queries/` and `src/Hexalith.Projects.Testing/Reads/` -- reuse AD-32 and `PageRequest`; keep comparator code in Testing.
+- `references/Hexalith.EventStore/` and `references/Hexalith.Builds/` -- consume exact accepted P2/P0 capabilities and pins.
 
 ## Tasks & Acceptance
 
@@ -62,21 +62,23 @@ context:
 
 ## Implementation Notes
 
+2026-09-26: The user approved this spec and asked to continue. Implementation stopped at the entry gate before recording a baseline commit or changing status to `in-progress`: `sprint-status.yaml` still marks Story 6.1 `blocked`, P0/P2/P3/P4 remain open, and the latest independent readiness result is `NOT_READY`. The P4 entry-gate record is absent. Resume implementation only after the complete prerequisite chain is accepted on the exact current baseline.
+
 ## Spec Change Log
 
 ## Review Triage Log
 
 ## Design Notes
 
-P1R is accepted; P0 stages 2-7, P2, P3, same-baseline architect sign-off, P4, and independent `READY` remain open. Current readiness is `NOT_READY`.
+P1R accepted EventStore 3.106.0; current Builds work uses 3.108.1 and calls for revalidation. P0, P2, P3, architect sign-off, P4, and independent `READY` remain open. The P4 entry gate is absent; the tracker is `blocked` and latest readiness is `NOT_READY`.
 
-Safe denial requires route opt-in, cursor v1 lacks wall-clock expiry, and the canonical host conflicts with mapped routes. Existing reads allow bounded-stale Tenant evidence and use detail update time for `asOf`; Story 6.1 requires current authorization evidence and computation-time `asOf`. Resolve these in prerequisites, not locally.
+The frozen P1R retarget applied to a prior run. Safe denial, cursor expiry, and host routing await accepted P2/P3/P4 contracts. Legacy reads permit stale Tenant evidence and use detail update time for `asOf`; Story 6.1 requires current authorization evidence and computation-time `asOf`.
 
 ## Verification
 
 **Commands:**
 - `python3 tools/planning/validate_production_authority.py --story-id 6.1` -- expected: production-authority scope passes without changing the blocked gate state.
-- `dotnet restore Hexalith.Projects.slnx && dotnet build Hexalith.Projects.slnx --configuration Debug` -- expected: clean warnings-as-errors build on SDK 10.0.401.
+- `dotnet restore Hexalith.Projects.slnx && dotnet build Hexalith.Projects.slnx --configuration Debug` -- expected: clean warnings-as-errors build on the SDK pinned by `global.json` (currently 10.0.401).
 - Run each affected test project individually -- expected: focused and persisted tests pass.
 - `dotnet tool run hexalith-module test --profile reads --filter Story=6.1` -- expected: approved G-4 runner emits actual TRX, JSON, and passing shadow-equivalence evidence.
 - `git diff --check` -- expected: no whitespace errors.
