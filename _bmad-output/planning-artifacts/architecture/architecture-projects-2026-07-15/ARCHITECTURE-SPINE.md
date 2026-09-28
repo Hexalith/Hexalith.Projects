@@ -27,6 +27,9 @@ companions: []
 
 # Architecture Spine — Hexalith.Projects
 
+**Approved McpCli course correction (2026-09-27):** `Hexalith.McpCli` is the target for Hexalith-owned CLI/MCP access to eligible Projects operations. Projects owns the domain contracts and behavior; its FrontComposer-hosted MCP plug-in and module CLI are obsolete migration sources. UI-only and human-confirmation actions remain on confidential interactive UI under Platform AD-14; McpCli must refuse them. Existing machine-adapter descriptions below are compatibility and historical requirements until owner-approved inventory and parity gates pass.
+
+
 ## Design Paradigm
 
 Hexalith.Projects is a domain-centric, CQRS/event-sourced vertical slice hosted by `Hexalith.EventStore.DomainService`. One Project aggregate owns Project invariants; incremental read models own query shape; platform Durable Tasks orchestrate cross-context work as forward-recovery sagas. Runtime, topology, identity, persistence, telemetry, and presentation adapters remain outside the domain module.
@@ -44,7 +47,7 @@ flowchart LR
     subgraph Platform["Technical-module ownership"]
         EventStore["Hexalith.EventStore<br/>persistence, read models, cursors,<br/>Durable Tasks, confirmation records"]
         WorkflowTransport["Platform workflow transport<br/>owner-neutral authenticated invocation"]
-        FrontComposer["Hexalith.FrontComposer<br/>Web, CLI, MCP composition"]
+        FrontComposer["Hexalith.FrontComposer<br/>Web UI; Hexalith.McpCli CLI/MCP"]
         AppHost["Platform AppHost<br/>topology, identity, Dapr, telemetry"]
     end
 
@@ -293,7 +296,7 @@ flowchart LR
 
 - **Binds:** FR-21, FR-22, FR-24; NFR-1, NFR-9; MCP-001
 - **Prevents:** agent surfaces from bypassing actor authority, confirmation, admission, or release containment.
-- **Rule:** FrontComposer/platform composes MCP over the same versioned contracts and dual-principal authorization. MCP cannot confirm end-user resolution or proposal choices, bypass Preview/Confirmation/Task admission, or expand permissions. MCP may read and control tasks until the consequential-MCP gate (Story 8.11 terminal acceptance + A-7). The gate never admits autonomous confirmation. Resolution and proposal confirmation remain Chatbot-only. Exact tool inventory and interaction presentation belong to UX/API work under these limits.
+- **Rule:** `Hexalith.McpCli` composes CLI/MCP access to eligible Projects operations over versioned contracts and authenticated actor/surface authorization. Its public agent-capable heads cannot confirm end-user resolution or proposal choices, mint Selection Evidence, bypass Preview/Confirmation/Task admission, or expand permissions. Eligible reads and task control require the owning inventory and gateway authorization; Story 8.11 and A-7 cannot promote the McpCli surface into a confidential interactive client. Resolution and proposal confirmation remain on the confidential Chatbot UI. Exact tool inventory and interaction presentation belong to UX/API work under these limits.
 
 ### AD-30 — [ADOPTED] Release acceptance is machine-checkable and fail-closed
 
@@ -461,7 +464,7 @@ flowchart TB
     AppHost --> Dapr["Dapr components and sidecars"]
     AppHost --> EventStore["EventStore and Durable Task services"]
     AppHost --> ProjectsHost["Projects two-line DomainService host"]
-    AppHost --> FrontComposer["FrontComposer Web / CLI / MCP hosts"]
+    AppHost --> FrontComposer["FrontComposer Web UI / Hexalith.McpCli CLI and MCP"]
     AppHost --> Siblings["Conversations / Folders / Memories"]
 
     Repo --> Pure["Pure domain tests"]

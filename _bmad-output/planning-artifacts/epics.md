@@ -53,6 +53,9 @@ backup: '_bmad-output/planning-artifacts/epics.md.pre-reconcile-2026-07-16.bak'
 
 # Hexalith.Projects - Epic Breakdown
 
+**Approved McpCli course correction (2026-09-27).** Stories 5.10, 6.6, 8.4, and 8.5 are reconciled to `Hexalith.McpCli` as the shared CLI/MCP target. Only agent-eligible Projects operations enter the shared heads; they deny Selection Evidence and human-confirmation actions under Platform AD-14. Completed proprietary adapter evidence remains historical; McpCli Epic 5 owns inventory, conformance, and retirement.
+
+
 ## Overview
 
 This document provides the complete epic and story breakdown for Hexalith.Projects, decomposing the requirements from the PRD, the UX Design Specification, and the Architecture Decision Document into implementable stories.
