@@ -12,6 +12,7 @@ import json
 import os
 import re
 import subprocess
+import time
 import unittest
 import urllib.request
 from pathlib import Path
@@ -40,6 +41,16 @@ def github_api(path: str) -> dict:
 
 def github_run(path: str) -> dict:
     return github_api(f"actions/runs/{path}")
+
+
+def github_run_search(path: str, attempts: int = 3) -> dict:
+    """Filtered run searches intermittently return an empty page; retry before trusting emptiness."""
+    for attempt in range(attempts):
+        page = github_api(path)
+        if page["workflow_runs"] or attempt == attempts - 1:
+            return page
+        time.sleep(2 * (attempt + 1))
+    raise AssertionError("unreachable")
 
 
 def eventstore_git(*arguments: str) -> str:
@@ -71,7 +82,7 @@ class ReleaseValidationBypassTests(unittest.TestCase):
 
     def test_no_successful_push_ci_exists_for_the_tag(self) -> None:
         tag_ci = RECORD["tag_ci_run"]
-        page = github_api(f"actions/workflows/ci.yml/runs?head_sha={RECORD['tag_commit']}&event=push&per_page=100")
+        page = github_run_search(f"actions/workflows/ci.yml/runs?head_sha={RECORD['tag_commit']}&event=push&per_page=100")
         runs = page["workflow_runs"]
         self.assertEqual(page["total_count"], len(runs))
         self.assertIn(tag_ci["id"], {run["id"] for run in runs})
