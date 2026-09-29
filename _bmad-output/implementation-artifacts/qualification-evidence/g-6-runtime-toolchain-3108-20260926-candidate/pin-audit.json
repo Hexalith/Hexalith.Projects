@@ -1,0 +1,328 @@
+{
+  "schema": "hexalith.projects.g6-pin-audit-candidate.v1",
+  "capturedUtc": "2026-09-26T21:49:34Z",
+  "baselinePath": "references/Hexalith.Builds/Tools/runtime-toolchain-baseline.json",
+  "baselineSha256": "525615c65ada8cabf5a6911a374bb22b62f6a3c1bfa6c91f7245312da9720265",
+  "validatorSha256": "c57e53cf623181aa3b20376f52df60c01a208ed54ad166c9e72c9373eaf062f9",
+  "checks": [
+    {
+      "kind": "globalJson",
+      "path": "global.json",
+      "expected": "10.0.401",
+      "observed": "10.0.401",
+      "matches": true
+    },
+    {
+      "kind": "globalJson",
+      "path": "references/Hexalith.Builds/global.json",
+      "expected": "10.0.401",
+      "observed": "10.0.401",
+      "matches": true
+    },
+    {
+      "kind": "globalJson",
+      "path": "references/Hexalith.Conversations/global.json",
+      "expected": "10.0.401",
+      "observed": "10.0.401",
+      "matches": true
+    },
+    {
+      "kind": "globalJson",
+      "path": "references/Hexalith.EventStore/global.json",
+      "expected": "10.0.401",
+      "observed": "10.0.401",
+      "matches": true
+    },
+    {
+      "kind": "globalJson",
+      "path": "references/Hexalith.Folders/global.json",
+      "expected": "10.0.401",
+      "observed": "10.0.401",
+      "matches": true
+    },
+    {
+      "kind": "globalJson",
+      "path": "references/Hexalith.FrontComposer/global.json",
+      "expected": "10.0.401",
+      "observed": "10.0.401",
+      "matches": true
+    },
+    {
+      "kind": "globalJson",
+      "path": "references/Hexalith.Memories/global.json",
+      "expected": "10.0.401",
+      "observed": "10.0.401",
+      "matches": true
+    },
+    {
+      "kind": "globalJson",
+      "path": "references/Hexalith.Parties/global.json",
+      "expected": "10.0.401",
+      "observed": "10.0.401",
+      "matches": true
+    },
+    {
+      "kind": "globalJson",
+      "path": "references/Hexalith.Tenants/global.json",
+      "expected": "10.0.401",
+      "observed": "10.0.401",
+      "matches": true
+    },
+    {
+      "kind": "appHostProject",
+      "path": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "expected": "13.5.4",
+      "observed": "13.5.4",
+      "matches": true
+    },
+    {
+      "kind": "appHostProject",
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
+      "expected": "13.5.3",
+      "observed": "13.5.3",
+      "matches": true
+    },
+    {
+      "kind": "appHostProject",
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+      "expected": "13.5.3",
+      "observed": "13.5.3",
+      "matches": true
+    },
+    {
+      "kind": "appHostProject",
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
+      "expected": "13.5.4",
+      "observed": "13.5.4",
+      "matches": true
+    },
+    {
+      "kind": "appHostProject",
+      "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+      "expected": "13.5.4",
+      "observed": "13.5.4",
+      "matches": true
+    },
+    {
+      "kind": "appHostProject",
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+      "expected": "13.5.3",
+      "observed": "13.5.3",
+      "matches": true
+    },
+    {
+      "kind": "appHostProject",
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+      "expected": "13.5.3",
+      "observed": "13.5.3",
+      "matches": true
+    },
+    {
+      "kind": "appHostProject",
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
+      "expected": "13.5.3",
+      "observed": "13.5.3",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": ".github/workflows/ci.yml",
+      "expected": "dapr-version: '1.18.0'",
+      "observed": "dapr-version: '1.18.0'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": ".github/workflows/ci.yml",
+      "expected": "dapr-runtime-version: '1.18.2'",
+      "observed": "dapr-runtime-version: '1.18.2'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": ".github/workflows/ci.yml",
+      "expected": "version: '1.18.0'",
+      "observed": "version: '1.18.0'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": ".github/workflows/ci.yml",
+      "expected": "runtime-version: '1.18.2'",
+      "observed": "runtime-version: '1.18.2'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": ".github/workflows/ci.yml",
+      "expected": "run: dotnet tool install --global Aspire.Cli --version 13.5.4",
+      "observed": "run: dotnet tool install --global Aspire.Cli --version 13.5.4",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Builds/.github/workflows/domain-ci.yml",
+      "expected": "default: '1.18.0'",
+      "observed": "default: '1.18.0'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Builds/.github/workflows/domain-ci.yml",
+      "expected": "default: '1.18.2'",
+      "observed": "default: '1.18.2'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Builds/.github/workflows/domain-release.yml",
+      "expected": "default: '1.18.0'",
+      "observed": "default: '1.18.0'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Builds/.github/workflows/domain-release.yml",
+      "expected": "default: '1.18.2'",
+      "observed": "default: '1.18.2'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.EventStore/.github/workflows/integration.yml",
+      "expected": "DAPR_CLI_VERSION: '1.18.0'",
+      "observed": "DAPR_CLI_VERSION: '1.18.0'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.EventStore/.github/workflows/integration.yml",
+      "expected": "DAPR_RUNTIME_VERSION: '1.18.2'",
+      "observed": "DAPR_RUNTIME_VERSION: '1.18.2'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.FrontComposer/.github/workflows/quality.yml",
+      "expected": "ASPIRE_CLI_INSTALL: dotnet tool install --global Aspire.Cli --version 13.5.4",
+      "observed": "ASPIRE_CLI_INSTALL: dotnet tool install --global Aspire.Cli --version 13.5.4",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.FrontComposer/.github/workflows/quality.yml",
+      "expected": "version: '1.18.0'",
+      "observed": "version: '1.18.0'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.FrontComposer/.github/workflows/quality.yml",
+      "expected": "dapr init --runtime-version 1.18.2",
+      "observed": "dapr init --runtime-version 1.18.2",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Memories/.github/workflows/ci.yml",
+      "expected": "DAPR_CLI_VERSION: '1.18.0'",
+      "observed": "DAPR_CLI_VERSION: '1.18.0'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Memories/.github/workflows/ci.yml",
+      "expected": "DAPR_RUNTIME_VERSION: '1.18.2'",
+      "observed": "DAPR_RUNTIME_VERSION: '1.18.2'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Memories/.github/workflows/nightly.yml",
+      "expected": "DAPR_CLI_VERSION: '1.18.0'",
+      "observed": "DAPR_CLI_VERSION: '1.18.0'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Memories/.github/workflows/nightly.yml",
+      "expected": "DAPR_RUNTIME_VERSION: '1.18.2'",
+      "observed": "DAPR_RUNTIME_VERSION: '1.18.2'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Memories/tools/verify-production-deployment.ps1",
+      "expected": "[string]$DaprRuntimeVersion = \"1.18.2\",",
+      "observed": "[string]$DaprRuntimeVersion = \"1.18.2\",",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Parties/.github/workflows/ci.yml",
+      "expected": "dapr-version: '1.18.0'",
+      "observed": "dapr-version: '1.18.0'",
+      "matches": true
+    },
+    {
+      "kind": "literalPin",
+      "path": "references/Hexalith.Parties/.github/workflows/ci.yml",
+      "expected": "dapr-runtime-version: '1.18.2'",
+      "observed": "dapr-runtime-version: '1.18.2'",
+      "matches": true
+    },
+    {
+      "kind": "centralPackage",
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+      "expected": "13.5.1-beta.757",
+      "observed": "13.5.1-beta.767",
+      "matches": false
+    },
+    {
+      "kind": "centralPackage",
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "package": "Dapr.Client",
+      "expected": "1.18.8",
+      "observed": "1.18.8",
+      "matches": true
+    },
+    {
+      "kind": "centralPackage",
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "package": "Dapr.Workflow",
+      "expected": "1.18.8",
+      "observed": "1.18.8",
+      "matches": true
+    },
+    {
+      "kind": "centralPackage",
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "package": "Microsoft.FluentUI.AspNetCore.Components",
+      "expected": "5.0.0-rc.5-26219.1",
+      "observed": "5.0.0-rc.5-26219.1",
+      "matches": true
+    },
+    {
+      "kind": "centralPackage",
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "package": "NSubstitute",
+      "expected": "6.2.0",
+      "observed": "6.2.0",
+      "matches": true
+    },
+    {
+      "kind": "centralPackage",
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "package": "Fluxor",
+      "expected": "6.11.0",
+      "observed": "6.11.0",
+      "matches": true
+    }
+  ],
+  "summary": {
+    "total": 44,
+    "matched": 43,
+    "mismatched": 1
+  }
+}

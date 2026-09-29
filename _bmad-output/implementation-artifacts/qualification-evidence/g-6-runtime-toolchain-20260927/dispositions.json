@@ -1,0 +1,29 @@
+{
+  "schema": "hexalith.runtime-toolchain-dispositions.v1",
+  "daprSupportDisposition": "approved-explicit-exception-not-support-table-listed",
+  "communityToolkitAspireDapr": "approved-prerelease-exception",
+  "fluentUi": "approved-release-candidate-exception",
+  "nSubstitute": "stable",
+  "fluxor": "stable",
+  "Dapr": "catalog-only-not-activated",
+  "Dapr.Workflow": "catalog-only-unselected",
+  "attempts": [
+    {
+      "attempt": 1,
+      "accepted": true,
+      "result": "passed",
+      "reason": "2026-09-27 isolated Dapr CLI/runtime/control-plane 1.18.0/1.18.2 two-sidecar PostgreSQL qualifier passed 1/1, support passed 33/33, and current EventStore strict capture validation passed; selected as technical candidate, pending exact-packet owner acceptance",
+      "disposition": "selected for technical candidate only; no final G-6 packet owner acceptance is inferred"
+    }
+  ],
+  "containment": {
+    "g4Approved": false,
+    "g5Approved": false,
+    "deploymentApproved": false,
+    "releaseApproved": false
+  },
+  "rollback": {
+    "requiresDomainDataMutation": false,
+    "action": "restore the prior repository pins and rerun restore/build/qualification; retained PostgreSQL data is not rewritten"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "hexalith.projects.g6-control-plane-restoration.v1",
+  "checkedUtc": "2026-09-26T22:38:38Z",
+  "originalContainers": [
+    {
+      "name": "dapr_placement",
+      "originalId": "9d57dbed126bc65317a061dfdd63278e3d2103386b081cedd298bf12fc92b523",
+      "restoredId": "9d57dbed126bc65317a061dfdd63278e3d2103386b081cedd298bf12fc92b523",
+      "originalRestored": true,
+      "image": "docker.io/daprio/dapr:1.18.4",
+      "running": true
+    },
+    {
+      "name": "dapr_scheduler",
+      "originalId": "baede0aec9163cf5980047628c359728a2e8ed3afb74bb35eff7d504439ae077",
+      "restoredId": "baede0aec9163cf5980047628c359728a2e8ed3afb74bb35eff7d504439ae077",
+      "originalRestored": true,
+      "image": "docker.io/daprio/dapr:1.18.4",
+      "running": true
+    }
+  ],
+  "activeContainers": [
+    "dapr_placement daprio/dapr:1.18.4",
+    "dapr_scheduler daprio/dapr:1.18.4",
+    "dapr_redis redis:6",
+    "dapr_zipkin openzipkin/zipkin"
+  ],
+  "isolatedPlacementContainerPresent": false,
+  "isolatedSchedulerContainerPresent": false,
+  "testDaprdProcessCount": 0,
+  "testDaprdProcesses": [],
+  "result": "restored",
+  "rawCtrfRemoved": true,
+  "rawTemporaryLogsRemoved": 45,
+  "cleanupCheckedUtc": "2026-09-26T22:51:58Z"
+}

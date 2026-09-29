@@ -7,7 +7,7 @@ paradigm: Domain-centric EventStore DomainService with platform-owned runtime an
 scope: Hexalith.Projects v1 — FR-1 through FR-25 and NFR-1 through NFR-11
 status: final
 created: 2026-07-15
-updated: 2026-09-08
+updated: 2026-09-27
 binds:
   - FR-1 through FR-25
   - NFR-1 through NFR-11
@@ -370,6 +370,8 @@ MCP follows AD-29: read and task control until the consequential-MCP gate; the g
 ## Stack
 
 Verified against the checked-out root configuration, centralized package catalog, checked-out sibling revisions, and published/clean package evidence on 2026-07-16. Toolchain pin indexed at commit `2d9c75a` (2026-09-06): G-6 accepted for the tuple in `_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json` only; this index is not a product-rule change. `Hexalith.EventStore package binding` re-verified and normalized under Story 6.1-P1 on 2026-07-18 against published/clean `3.70.1` evidence (Solution-Architect authorization: Jerome).
+
+**Pending 6.1-P1R revalidation (2026-09-27):** The owner-directed candidate is the published EventStore `3.108.1` family from tag `v3.108.1` at `b15ad59abca82d5980ef92a510c2379e05f4d46f`, paired with Builds `2326f983bad14d5398ee55bf2bdf6c86b63c39ea`. Jérôme Piquot approved that direction and the Toolkit `.767` / isolated Dapr `1.18.2` qualification work on 2026-09-27. The current EventStore checkout `1cc6b44b4a71950fbd8f92469bebad3b0c9c05c5` is later source; the candidate packet binds its separate compatibility assessment. The Stack table below still binds `3.70.1`, and the accepted P1R record still selects `3.106.0`; neither is superseded by this candidate. A disposable published-package rollback smoke and backup/restore rehearsal pass for selected stored records, while actor/domain replay and API downgrade remain unproven. The Solution Architect must record a named conformance and rebind decision for the exact candidate and its bounded rollback using `_bmad-output/implementation-artifacts/6-1-p1r-3108-exact-baseline-candidate.md`. The table's toolchain rows predate the changed catalog and mixed AppHost SDK declarations. The fresh source-bound G-6 packet at `_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json` passes candidate validation but remains pending exact owner acceptance and source closure; the accepted-only CI gate stays closed.
 
 ### Target and compatibility bindings
 

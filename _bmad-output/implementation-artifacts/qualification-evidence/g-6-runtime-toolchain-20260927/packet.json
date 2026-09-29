@@ -1,0 +1,207 @@
+{
+  "schema": "hexalith.runtime-toolchain-evidence.v1",
+  "baseline": {
+    "path": "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-27.json",
+    "sha256": "b9aa6791effe78cbb9bf405cd8384b81a6d750f996fabf8f79b7cd1c3bedad01"
+  },
+  "capturedUtc": "2026-09-26T22:48:57Z",
+  "repositories": [
+    {
+      "name": "Hexalith.Projects",
+      "path": ".",
+      "revision": "2e0c0b55a732a474f3a70cbfcda279da392d17b5",
+      "diffSha256": "0a039ec56e3739e880b047b75cb164b2ffd04bd500be33c5b8298a76b3421831"
+    },
+    {
+      "name": "Hexalith.Builds",
+      "path": "references/Hexalith.Builds",
+      "revision": "2326f983bad14d5398ee55bf2bdf6c86b63c39ea",
+      "diffSha256": "942307d6d55b16163f33512ff23af0b5aed3b1870cece1d48522281bd25cc3fa"
+    },
+    {
+      "name": "Hexalith.Conversations",
+      "path": "references/Hexalith.Conversations",
+      "revision": "819e45b2f8a493baf1fc92b62e59bdb8dd8696d6",
+      "diffSha256": "0f0f2f4fd3388d46f4c962d806a5267bf98054dc1ec7275c970a054ed754cd87"
+    },
+    {
+      "name": "Hexalith.EventStore",
+      "path": "references/Hexalith.EventStore",
+      "revision": "1cc6b44b4a71950fbd8f92469bebad3b0c9c05c5",
+      "diffSha256": "1f6e33d1697aac061b884608e374a6753af97c76caf89ba16d450ac435705a42"
+    },
+    {
+      "name": "Hexalith.Folders",
+      "path": "references/Hexalith.Folders",
+      "revision": "840e31d0e6f015b2b0ab90a7a21942205aeac176",
+      "diffSha256": "62a50121547ec4ef58e7295767f086847705a41ff4336d6c14f66bfb430a4ed8"
+    },
+    {
+      "name": "Hexalith.FrontComposer",
+      "path": "references/Hexalith.FrontComposer",
+      "revision": "05d122005d328ec8f15ecd276058be29730288c2",
+      "diffSha256": "5bd7da41211dbeee2f2fe0970ff2048fef5b68543800075ab88852e976408a74"
+    },
+    {
+      "name": "Hexalith.Memories",
+      "path": "references/Hexalith.Memories",
+      "revision": "8884933571e2738c406feea37e57f7124378b3e3",
+      "diffSha256": "aacb123231e73344cdc71eef15573b92d946bb1809b5d6bbb4de15ab40825b21"
+    },
+    {
+      "name": "Hexalith.Parties",
+      "path": "references/Hexalith.Parties",
+      "revision": "14d249fde316b0002aec84351d7a7cdf953d1d30",
+      "diffSha256": "ba19562853581390b1c3b6f1ffa77456a9912f74b7a492b105a621a1360af780"
+    },
+    {
+      "name": "Hexalith.Tenants",
+      "path": "references/Hexalith.Tenants",
+      "revision": "8431d9926ed655d32396f1f68973e0573ccc38e2",
+      "diffSha256": "61d09f9aa3cafefba85ed7cd97e4c6f9698ef9540ab9a4dbc90d4f58429151b4"
+    }
+  ],
+  "artifacts": [
+    {
+      "kind": "source-state",
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/source-state.json",
+      "sha256": "876afafc266aec88c551990e4d49845ec075d27323082caf6f829fb3b602f29b"
+    },
+    {
+      "kind": "baseline-governance",
+      "path": "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-27.json",
+      "sha256": "b9aa6791effe78cbb9bf405cd8384b81a6d750f996fabf8f79b7cd1c3bedad01"
+    },
+    {
+      "kind": "evidence-schema",
+      "path": "references/Hexalith.Builds/schemas/hexalith.runtime-toolchain-evidence.v1.json",
+      "sha256": "858046d5191e8cb9063a012fa06b929e7b937c8bdb57787ad3d485287d33dbee"
+    },
+    {
+      "kind": "evidence-validator",
+      "path": "references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py",
+      "sha256": "8e77ab0b8f4bff0d999d1996ce2550029c8870cc0b0d298bb3cd527fb97553f7"
+    },
+    {
+      "kind": "mutation-tests",
+      "path": "references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py",
+      "sha256": "0e5a8b7de6f567c43fd65e03072be1f71799d83c30c31c1fe533193264824970"
+    },
+    {
+      "kind": "central-catalog",
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "sha256": "17a628282799194e1ce2da8a273d515a68612cea2c229db1895cd1e0641ffb80"
+    },
+    {
+      "kind": "observed-versions",
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/versions.json",
+      "sha256": "d5c3114883501eee704d8f0d4b1e6bdb43a7667026e9d1584d2285123b669124"
+    },
+    {
+      "kind": "command-record",
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/commands.json",
+      "sha256": "5a47e5287754d71394a155fa8c8144adecc399d418f12446306d264f91a81e04"
+    },
+    {
+      "kind": "dispositions",
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/dispositions.json",
+      "sha256": "39cd73df182607fe711bb99269368fe5502ea7c003811cd8351953dbb2922ccb"
+    },
+    {
+      "kind": "eventstore-observations",
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/eventstore/observations.json",
+      "sha256": "e8447e18f69ee10177311d9afdb26e583c54fc90790d3033be3bf12be40800bb"
+    },
+    {
+      "kind": "eventstore-qualification-results",
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/eventstore/test-results.json",
+      "sha256": "c43d9a396bbcee4bbb72289f9ba15c78c675141d4fb887e5b67f420c14d21cf7"
+    },
+    {
+      "kind": "eventstore-support-results",
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/eventstore/deterministic-support.json",
+      "sha256": "2e4e950b9efc4301dd023d1d9b338086aa1756b8b7223c6413586094865b2e78"
+    },
+    {
+      "kind": "eventstore-capture-validation",
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/eventstore/capture-validation.json",
+      "sha256": "7c4b2b1c458cae2d328e014507aaa78750d3eec52d21adba936c4f7e2e7e70dc"
+    },
+    {
+      "kind": "failed-attempt-diagnostic",
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/no-failed-attempt.json",
+      "sha256": "b548b9b29393a075bdf746ee17b8d6ff3aff0d936ce31c733922e27b6c647dc5"
+    }
+  ],
+  "observedVersions": {
+    "dotnetSdk": "10.0.401",
+    "aspireSdk": "13.5.4",
+    "aspireCli": "13.5.4",
+    "communityToolkitAspireDapr": "13.5.1-beta.767",
+    "daprCli": "1.18.0",
+    "daprRuntime": "1.18.2",
+    "daprDotnetPackages": "1.18.8",
+    "fluentUi": "5.0.0-rc.5-26219.1",
+    "nSubstitute": "6.2.0",
+    "fluxor": "6.11.0"
+  },
+  "testCounts": {
+    "qualification": {
+      "selectors": 1,
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "support": {
+      "selectors": 21,
+      "total": 33,
+      "passed": 33,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "topology": {
+    "eventStoreProcesses": 2,
+    "eventStoreSidecars": 2,
+    "independentProcessIdentities": true,
+    "sharedStateStore": "state.postgresql"
+  },
+  "lifecycle": {
+    "singleExecution": true,
+    "duplicateWork": 0,
+    "ownerStopped": true,
+    "survivorReplayExact": true,
+    "ownerRestarted": true,
+    "restartedReplayExact": true,
+    "authorityUnchanged": true,
+    "persistedStateExact": true
+  },
+  "approval": {
+    "approvedBy": "Jérôme Piquot",
+    "approvedOn": "2026-09-27",
+    "ownerRoles": [
+      "Builds",
+      "Platform",
+      "FrontComposer/Web"
+    ],
+    "supportTableListed": false,
+    "decision": "approved-explicit-exception"
+  },
+  "sentinelScan": {
+    "passed": true,
+    "matches": 0,
+    "rawDiagnosticsRetained": false
+  },
+  "rollback": {
+    "requiresDomainDataMutation": false,
+    "action": "restore the prior repository pins and rerun restore/build/qualification; retained PostgreSQL data is not rewritten"
+  },
+  "containment": {
+    "g4Approved": false,
+    "g5Approved": false,
+    "deploymentApproved": false,
+    "releaseApproved": false
+  },
+  "status": "pending"
+}

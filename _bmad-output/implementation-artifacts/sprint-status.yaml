@@ -69,7 +69,7 @@ p1r_acceptance_gate:
     eventstore_revision: f13f9925fdca53efa2ab8c90d396ab106f91bb9c
     builds_revision: 7af20f8bafbfe561df6f7705913a0800603090b5
 p1r_current_revalidation:
-  status: pending-owner-decisions
+  status: technical-evidence-complete-pending-exact-owner-decisions
   usable_as_prerequisite: false
   owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3108-exact-baseline-candidate.md
   candidate:
@@ -78,9 +78,16 @@ p1r_current_revalidation:
     eventstore_revision: b15ad59abca82d5980ef92a510c2379e05f4d46f
     builds_revision: 2326f983bad14d5398ee55bf2bdf6c86b63c39ea
   eventstore_checkout_observed: 8ac62359c1ffdd520488ecd03bd9689c217e3788
-  g6_current_validation: invalid-central-package-pin-drift
-  g6_current_qualification: unaccepted
-  owner_decisions: pending
+  eventstore_checkout_latest_evidence: 1cc6b44b4a71950fbd8f92469bebad3b0c9c05c5
+  eventstore_published_package_evidence: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3108/public-packages.json
+  eventstore_rollback_probe: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3108/rollback-probe/README.md
+  builds_exact_revision_ci: https://github.com/Hexalith/Hexalith.Builds/actions/runs/36193212159
+  g6_current_validation: historical-packet-invalid-current-pin-drift
+  g6_current_qualification: technical-candidate-validator-passed-accepted-gate-closed
+  g6_candidate_preflight: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-3108-20260926-candidate/README.md
+  g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json
+  g6_fresh_candidate_sha256: ccc2cab78b24873bb92133d4a5bc753d7bf9b7a8ffe1ff418d847572db54745d
+  owner_decisions: "Jérôme Piquot approved the candidate direction, Toolkit .767, and isolated test on 2026-09-27; exact P1R and fresh G-6 packet acceptance still need review of bounded rollback, mixed AppHost pins, FrontComposer and inventory failures, and seven uncommitted source bindings."
   containment: "Keep the accepted 3.106.0 tuple and 3.70.1 rollback; P0 Stage 6 and Story 6.1 remain blocked."
 historical_development_status_sha256: ce120516809be4a3814565f67c7a1e648650b3b9f0547ed9a4135a78eba0bbaf
 production_authority_guard:
@@ -209,7 +216,12 @@ qualification_gates:
     status: accepted
     accepted_scope: "Historical 2026-09-06 packet only; excludes the EventStore 3.108.1 / Builds 2326f983bad14d5398ee55bf2bdf6c86b63c39ea candidate."
     current_candidate_usable: false
+    current_candidate_preflight: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-3108-20260926-candidate/README.md"
+    current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json"
+    current_candidate_sha256: ccc2cab78b24873bb92133d4a5bc753d7bf9b7a8ffe1ff418d847572db54745d
+    current_candidate_validation: "candidate-mode passed; accepted-only mode rejects pending status"
     accepted_on: 2026-09-06
+    packet_recapture_accepted_at_utc: 2026-09-22T22:44:16Z
     approved_by: "Jérôme Piquot"
     owner_roles: ["Builds", "Platform", "FrontComposer/Web"]
     disposition: "Explicit Dapr runtime 1.18.2 / .NET packages 1.18.5 exception; not support-table-listed"

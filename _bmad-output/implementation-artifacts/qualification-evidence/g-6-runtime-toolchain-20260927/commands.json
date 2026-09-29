@@ -1,0 +1,95 @@
+{
+  "schema": "hexalith.runtime-toolchain-command-record.v1",
+  "commands": [
+    {
+      "purpose": "install exact Dapr runtime tuple",
+      "command": "gh release download v1.18.0 -R dapr/cli --pattern dapr_linux_amd64.tar.gz --pattern dapr_linux_amd64.tar.gz.sha256; sha256sum -c; copy daprd from ghcr.io/dapr/dapr:1.18.2 to isolated HOME/.dapr/bin; temporarily replace named placement/scheduler with ghcr.io/dapr/dapr:1.18.2; run qualifier; restore original containers",
+      "exitCode": 0,
+      "outcome": "Dapr CLI 1.18.0 archive checksum passed (sha256 2a94739e0aa101289d88418225319562bc6800db273b3d9cf819a0efd1ea1bfe); daprd 1.18.2 sha256 e730688f06b9b7cea0d616a7dde8fc0124cb6cc8d6dae149192422c7ea67f4e6; control-plane image sha256:5a5b6be9b9ecb6d8fcb54d410969c88fe15695b3c38df4fa3ac0a2151382938d; exact original 1.18.4 placement/scheduler container IDs restored running after capture"
+    },
+    {
+      "purpose": "observe exact tool versions",
+      "command": "dotnet --version && PATH=<isolated-tools> aspire --version && HOME=<isolated-home> PATH=<isolated-tools> dapr --version",
+      "exitCode": 0,
+      "outcome": ".NET SDK 10.0.401; Aspire CLI 13.5.4; Dapr CLI 1.18.0; Dapr runtime 1.18.2"
+    },
+    {
+      "purpose": "Builds focused module and evidence tests",
+      "command": "TMPDIR=/var/tmp dotnet test test/Hexalith.Builds.Module.Tests/Hexalith.Builds.Module.Tests.csproj --no-restore --configuration Release; TMPDIR=/var/tmp dotnet test/Hexalith.Builds.Evidence.Tests/bin/Release/net10.0/Hexalith.Builds.Evidence.Tests.dll",
+      "exitCode": 0,
+      "outcome": "Module 214 passed; Evidence 107 passed; 0 failed; 0 skipped; direct Evidence assembly runner used after project-level Microsoft.Testing.Platform discovery mismatch"
+    },
+    {
+      "purpose": "G-6 mutation controls",
+      "command": "python3 references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py",
+      "exitCode": 0,
+      "outcome": "22 scenarios passed; candidate/default status separation assertions also passed"
+    },
+    {
+      "purpose": "real PostgreSQL two-sidecar stop/restart qualifier",
+      "command": "HOME=<isolated-home> NUGET_PACKAGES=<isolated-cache> HEXALITH_OQ8_EVIDENCE_DIRECTORY=<isolated-capture> dotnet tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Release/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll -method Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants -noColor -result-ctrf <isolated-live-ctrf>",
+      "exitCode": 0,
+      "outcome": "1 passed; 0 failed; 0 skipped; current EventStore source at 1cc6b44b4a71950fbd8f92469bebad3b0c9c05c5, binaries rebuilt --no-incremental with isolated NuGet cache, exact runtime 1.18.2"
+    },
+    {
+      "purpose": "21 exact deterministic support selectors",
+      "command": "dotnet tests/Hexalith.EventStore.Server.Tests/bin/Release/net10.0/Hexalith.EventStore.Server.Tests.dll with the 21 exact -method selectors retained in eventstore/deterministic-support.json -noColor -result-ctrf <isolated-support-ctrf>",
+      "exitCode": 0,
+      "outcome": "21 selectors; 33 passed cases; 0 failed; 0 skipped"
+    },
+    {
+      "purpose": "strict EventStore capture validation",
+      "command": "python3 tools/validate-oq8-platform-evidence.py --capture-directory <isolated-capture> --ctrf <isolated-live-ctrf> --support-ctrf <isolated-support-ctrf> --expected-runtime-version 1.18.2",
+      "exitCode": 0,
+      "outcome": "OQ8 capture validation passed; sanitized observations, one test result, 21-selector support result, and linked capture-validation retained"
+    },
+    {
+      "purpose": "root workflow pin contract",
+      "command": "pwsh -NoProfile -File ./tests/tools/run-ci-workflow-gates.ps1",
+      "exitCode": 0,
+      "outcome": "passed; 5 workflow files validated with new G-6 packet/baseline path and exact Builds revision refs"
+    },
+    {
+      "purpose": "Projects restore and release build",
+      "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet restore Hexalith.Projects.CI.slnx -p:NuGetAudit=false && dotnet build Hexalith.Projects.CI.slnx --configuration Release --no-restore --no-incremental -warnaserror -m:1 -p:NuGetAudit=false",
+      "exitCode": 0,
+      "outcome": "build succeeded with 0 warnings and 0 errors"
+    },
+    {
+      "purpose": "Projects Integration tests",
+      "command": "dotnet tests/Hexalith.Projects.Integration.Tests/bin/Release/net10.0/Hexalith.Projects.Integration.Tests.dll -noColor",
+      "exitCode": 0,
+      "outcome": "27 passed; 0 failed; 0 skipped"
+    },
+    {
+      "purpose": "managed restart smoke credential preflight",
+      "command": "env -u TEST_USER_PASSWORD KEYCLOAK_CLIENT_ID=hexalith-eventstore TEST_USER_USERNAME=g6-qualification-user ./tests/e2e/run-live-apphost.sh",
+      "exitCode": 1,
+      "outcome": "blocked before AppHost start because TEST_USER_PASSWORD was absent; no false pass"
+    },
+    {
+      "purpose": "changed owner AppHost consumption",
+      "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet build each Conversations, Memories, Parties, Tenants, EventStore, and Folders AppHost project --configuration Release -warnaserror -p:UseHexalithProjectReferences=false; force-evaluate restore all eight AppHosts",
+      "exitCode": 0,
+      "outcome": "six listed AppHost builds succeeded with 0 warnings/errors; all eight fresh AppHost restores resolved CommunityToolkit.Aspire.Hosting.Dapr 13.5.1-beta.767; separate FrontComposer full AppHost build failed with 49 missing EventStore/Parties symbol errors and is recorded as an open limitation"
+    },
+    {
+      "purpose": "changed owner pin assertions",
+      "command": "run Conversations GlobalJsonShouldPinRequestedSdkVersion and FrontComposer ToolchainPins_MatchApprovedDotnetAndAspireVersions from Release test assemblies",
+      "exitCode": 0,
+      "outcome": "both selectors passed 1/1 each; 0 failed; 0 skipped"
+    },
+    {
+      "purpose": "shared workflow test-platform contracts",
+      "command": "pwsh -NoProfile -File ./Tools/test-domain-workflow-test-platforms.ps1",
+      "exitCode": 0,
+      "outcome": "169 assertions passed"
+    },
+    {
+      "purpose": "broad package-exception inventory outside G-6 affected set",
+      "command": "pwsh -NoProfile -File ./Tools/validate-package-version-exceptions.ps1 -InventoryPath ./Tools/package-version-exceptions.json -CatalogPath ./Props/Directory.Packages.props -WorkspaceRoot ../..",
+      "exitCode": 1,
+      "outcome": "pre-existing drift (14 errors): five AppHost SDK 13.5.3 versus Aspire.Hosting 13.5.4 alignments, four related allowlist version mismatches, unlisted Builds AppHost, EventStore admin CLI 3.82.0 versus allowlist 3.48.0, and absent ChatBot/Timesheets repositories; not a new Toolkit .767 rejection"
+    }
+  ]
+}

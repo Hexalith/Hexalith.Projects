@@ -1,0 +1,74 @@
+{
+  "schema": "hexalith.projects.g6-toolkit-resolution.v1",
+  "capturedUtc": "2026-09-26T22:47:21Z",
+  "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet restore <each of eight AppHost.csproj> --force-evaluate -p:Configuration=Release -p:UseHexalithProjectReferences=false -p:NuGetAudit=false",
+  "allRestoresExitCode": 0,
+  "rows": [
+    {
+      "repository": "Hexalith.Projects",
+      "appHostProject": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "appHostSdk": "13.5.4",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.767",
+      "assetsSha256": "0c926dabbc5d6a4f419b114ac278c08b071f29527ededf754a2734ae8320a0df"
+    },
+    {
+      "repository": "Hexalith.Conversations",
+      "appHostProject": "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
+      "appHostSdk": "13.5.3",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.767",
+      "assetsSha256": "d61434a7506fc67a961f44f0080ec47ec245c60033a199a12688dd455e0edb95"
+    },
+    {
+      "repository": "Hexalith.EventStore",
+      "appHostProject": "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+      "appHostSdk": "13.5.3",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.767",
+      "assetsSha256": "6922bb34c55af2d9229b067381661b4fa4fe47b13f2e826c0fe49e0e9dd59571"
+    },
+    {
+      "repository": "Hexalith.Folders",
+      "appHostProject": "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
+      "appHostSdk": "13.5.4",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.767",
+      "assetsSha256": "6c3c48ab886adb435a9aa6a3ce99afb8a6d01a7d6329e6944cfa1448722cf738"
+    },
+    {
+      "repository": "Hexalith.FrontComposer",
+      "appHostProject": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+      "appHostSdk": "13.5.4",
+      "directToolkitReference": false,
+      "resolvedToolkit": "13.5.1-beta.767",
+      "assetsSha256": "81de638abae7d5c133d1c54790d2058572af8037162f7d60ea40ef03a9a1c9da"
+    },
+    {
+      "repository": "Hexalith.Memories",
+      "appHostProject": "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+      "appHostSdk": "13.5.3",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.767",
+      "assetsSha256": "281d3e9f3115472cc611a9e03fd14dbfd416d0d6d72f017a6def44ce0c7d2649"
+    },
+    {
+      "repository": "Hexalith.Parties",
+      "appHostProject": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+      "appHostSdk": "13.5.3",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.767",
+      "assetsSha256": "85c17e95a234aae006db776e75e9bf9faf9ebcf761d3821dab67cf222695ccf8"
+    },
+    {
+      "repository": "Hexalith.Tenants",
+      "appHostProject": "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
+      "appHostSdk": "13.5.3",
+      "directToolkitReference": false,
+      "resolvedToolkit": "13.5.1-beta.767",
+      "assetsSha256": "46d4bc55590aa8e670922102e31a70162c981150e07cd15f30f0e24a5d52a2d1"
+    }
+  ],
+  "allResolvedSelectedToolkit": true,
+  "scope": "AppHost package restore resolution only; five owner AppHosts retain explicit Aspire.AppHost.Sdk/13.5.3 source pins while three use 13.5.4."
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "hexalith.projects.g6-frontcomposer-build-limitation.v1",
+  "observedUtc": "2026-09-26T22:46:18Z",
+  "appHost": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+  "freshRestore": {
+    "command": "CI=true dotnet restore src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj --force-evaluate -p:Configuration=Release -p:UseHexalithProjectReferences=false -p:NuGetAudit=false",
+    "exitCode": 0,
+    "resolvedToolkit": "13.5.1-beta.767"
+  },
+  "buildAttempts": [
+    {
+      "command": "CI=true dotnet build src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj --configuration Release --no-restore -warnaserror -m:1 -p:NuGetAudit=false -p:UseHexalithProjectReferences=false",
+      "exitCode": 1,
+      "errorCount": 49
+    },
+    {
+      "command": "dotnet build src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj --configuration Release -warnaserror -m:1 -p:NuGetAudit=false",
+      "exitCode": 1,
+      "errorCount": 49
+    }
+  ],
+  "errorComparison": {
+    "identicalCompilerErrorMultisets": true,
+    "codes": [
+      "CS0234",
+      "CS0246",
+      "CS0103"
+    ],
+    "affectedSymbols": [
+      "Hexalith.EventStore",
+      "Hexalith.Parties",
+      "PartiesUiAuthorization"
+    ],
+    "toolkitNamedInCompilerErrors": false,
+    "attribution": "The same missing source/dependency symbols fail in both build modes. These observations do not prove the cause and do not make the AppHost build green."
+  },
+  "focusedPinTest": {
+    "command": "dotnet tests/Hexalith.FrontComposer.Shell.Tests/bin/Release/net10.0/Hexalith.FrontComposer.Shell.Tests.dll -method Hexalith.FrontComposer.Shell.Tests.Governance.CiGovernanceTests.ToolchainPins_MatchApprovedDotnetAndAspireVersions -noColor",
+    "exitCode": 0,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "status": "open-build-limitation"
+}

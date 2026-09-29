@@ -1,0 +1,54 @@
+{
+  "schema": "hexalith.projects.g6-tuple-proposal.v1",
+  "status": "pending-owner-disposition",
+  "capturedUtc": "2026-09-26T21:50:21Z",
+  "acceptedBaseline": {
+    "path": "references/Hexalith.Builds/Tools/runtime-toolchain-baseline.json",
+    "sha256": "525615c65ada8cabf5a6911a374bb22b62f6a3c1bfa6c91f7245312da9720265",
+    "tuple": {
+      "dotnetSdk": "10.0.401",
+      "aspireSdk": "13.5.4",
+      "aspireCli": "13.5.4",
+      "communityToolkitAspireDapr": "13.5.1-beta.757",
+      "daprCli": "1.18.0",
+      "daprRuntime": "1.18.2",
+      "daprDotnetPackages": "1.18.8",
+      "fluentUi": "5.0.0-rc.5-26219.1",
+      "nSubstitute": "6.2.0",
+      "fluxor": "6.11.0"
+    }
+  },
+  "candidateTuple": {
+    "dotnetSdk": "10.0.401",
+    "aspireSdk": "13.5.4",
+    "aspireCli": "13.5.4",
+    "communityToolkitAspireDapr": "13.5.1-beta.767",
+    "daprCli": "1.18.0",
+    "daprRuntime": "1.18.2",
+    "daprDotnetPackages": "1.18.8",
+    "fluentUi": "5.0.0-rc.5-26219.1",
+    "nSubstitute": "6.2.0",
+    "fluxor": "6.11.0"
+  },
+  "change": {
+    "field": "communityToolkitAspireDapr",
+    "acceptedValue": "13.5.1-beta.757",
+    "currentCatalogValue": "13.5.1-beta.767",
+    "source": "references/Hexalith.Builds/Props/Directory.Packages.props"
+  },
+  "ownerDecision": {
+    "status": "pending",
+    "roles": [
+      "Builds",
+      "Platform",
+      "FrontComposer/Web"
+    ],
+    "requiredDisposition": "accept or reject the .767 Toolkit prerelease and refreshed G-6 qualification against the current source and live runtime"
+  },
+  "containment": {
+    "g4Approved": false,
+    "g5Approved": false,
+    "deploymentApproved": false,
+    "releaseApproved": false
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "schema": "hexalith.projects.g6-command-audit-candidate.v1",
+  "capturedUtc": "2026-09-26T21:50:02Z",
+  "dockerCommandRecheckedUtc": "2026-09-26T22:04:19Z",
+  "commands": [
+    {
+      "purpose": "accepted-packet-validator",
+      "command": "python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py --workspace . --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline.json --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json",
+      "workdir": ".",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "G6-EVIDENCE-INVALID: Central package pin drift: CommunityToolkit.Aspire.Hosting.Dapr"
+    },
+    {
+      "purpose": "validator-mutations",
+      "command": "python3 references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py",
+      "workdir": ".",
+      "exitCode": 0,
+      "stdout": "G6-EVIDENCE-MUTATIONS-PASSED: 22 scenarios",
+      "stderr": ""
+    },
+    {
+      "purpose": "projects-workflow-gate",
+      "command": "pwsh -NoProfile -File ./tests/tools/run-ci-workflow-gates.ps1",
+      "workdir": ".",
+      "exitCode": 0,
+      "stdout": "ci-workflow-gate: PASSED — 5 workflow file(s), caller-owned Trusted Publishing, immutable release action refs, safe E2E, and root-only submodule policy validated.",
+      "stderr": ""
+    },
+    {
+      "purpose": "builds-shared-test-platform-contracts",
+      "command": "pwsh -NoProfile -File ./Tools/test-domain-workflow-test-platforms.ps1",
+      "workdir": "references/Hexalith.Builds",
+      "exitCode": 0,
+      "stdout": "Domain workflow test-platform checks passed: 169 assertions.",
+      "stderr": ""
+    },
+    {
+      "purpose": "host-dotnet-sdk",
+      "command": "dotnet --version",
+      "workdir": ".",
+      "exitCode": 0,
+      "stdout": "10.0.401",
+      "stderr": ""
+    },
+    {
+      "purpose": "host-aspire-cli",
+      "command": "aspire --version",
+      "workdir": ".",
+      "exitCode": 0,
+      "stdout": "13.5.3+b5f143315ffb6968ea939a9978797a5b20e4c688",
+      "stderr": ""
+    },
+    {
+      "purpose": "host-dapr-cli-runtime",
+      "command": "dapr --version",
+      "workdir": ".",
+      "exitCode": 0,
+      "stdout": "CLI version: 1.18.2 \nRuntime version: 1.18.4",
+      "stderr": ""
+    },
+    {
+      "purpose": "host-dapr-control-plane",
+      "command": "docker ps --format '{{.Names}} {{.Image}}'",
+      "workdir": ".",
+      "exitCode": 0,
+      "stdout": "dapr_placement daprio/dapr:1.18.4\ndapr_scheduler daprio/dapr:1.18.4\ndapr_redis redis:6\ndapr_zipkin openzipkin/zipkin",
+      "stderr": ""
+    }
+  ],
+  "liveQualification": {
+    "executed": false,
+    "reason": "Current host has Aspire CLI 13.5.3, Dapr CLI 1.18.2, runtime/control plane 1.18.4, while baseline requires Aspire CLI 13.5.4, Dapr CLI 1.18.0, runtime/control plane 1.18.2; candidate Toolkit .767 lacks owner disposition. No fresh two-sidecar capture was run."
+  }
+}
