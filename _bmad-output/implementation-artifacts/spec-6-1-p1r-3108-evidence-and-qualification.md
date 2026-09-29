@@ -85,6 +85,7 @@ The original request authorized evidence gathering and owner-repository edits wh
 - Projects gitlinks commit `bd180b66b81b2893f6249cc282929b9cf62e5557` pins both owner commits, runs CI Builds at `a912464e`, and adds a candidate-mode G-6 step before the accepted-only step; the workflow gate fails when the executed Builds SHA differs from the root Builds gitlink.
 - The fresh G-6 packet `g-6-runtime-toolchain-20260929/packet.json` (SHA-256 `7e7d7ea2…`) binds 72 committed source files with zero uncommitted bindings. At the committed gitlinks the candidate validator exits 0 and the accepted-only validator exits 1. The isolated Dapr `1.18.2` two-sidecar qualifier passed 1/1 with 33/33 support tests; original control-plane containers were restored by exact ID. Every command is recorded with its real exit code: the managed restart smoke preflight and the package-exception inventory exit 1, and the Parties (3 errors) and FrontComposer (52 errors) AppHost builds exit 1 in `apphost-builds.json`.
 - The new owner packet `6-1-p1r-3109-exact-baseline-candidate.md`, the superseded 3108 packet, `sprint-status.yaml` and the Spine index the pending candidate and name its open gaps; the 3.106.0 record, 3.70.1 rollback, P0 Stage 6, readiness and Story 6.1 states are unchanged. Exact-SHA CI is pending the owner's push.
+- Matrix test audit (2026-09-29): the release-bypass and checkout-drift rows had no re-runnable check. `tests/tools/test_p1r_candidate_evidence.py` now compares the recorded release run, Commitlint source proof, failing tag CI job, Projects index text, commit and `src` path counts, and storage-record blobs against GitHub Actions and EventStore Git; 6/6 passed.
 
 ## Spec Change Log
 
@@ -172,6 +173,7 @@ The original request authorized evidence gathering and owner-repository edits wh
 - `python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py --workspace . --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json --candidate` -- expected: exit 0; exit 1 without `--candidate` while the packet is pending.
 - `sha256sum references/Hexalith.Builds/Tools/runtime-toolchain-baseline.json references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-27.json` -- expected: `525615c6…` and `b9aa6791…`.
 - `python3 references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/verify_public_packages.py` -- expected: exit 0.
+- `python3 -m unittest tests/tools/test_p1r_candidate_evidence.py -v` -- expected: 6 tests pass (needs network for GitHub Actions run metadata).
 - `python3 tools/planning/validate_production_authority.py --validate-index` -- expected: exit 0.
 - `pwsh -NoProfile -File ./tests/tools/run-ci-workflow-gates.ps1` -- expected: pass.
 - `git diff --check` in each changed repository -- expected: no whitespace errors.
