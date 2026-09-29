@@ -760,3 +760,21 @@ status: open
 - source_spec: `references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md`
   summary: Replace the stale "candidate" XML doc wording on SupportedPlatformPins.EventStoreVersion at the next G-6 re-seal.
   evidence: The file is G-6-bound source state; editing it now would invalidate the accepted packet (Stage 3 review R19).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Fix the Folders malformed-success tests so they reach the changed fallback under the published `Hexalith.Folders.Client` 1.0.0; `ValidateLink_MalformedSuccess_IsUnavailable` currently fails in CI package mode.
+  evidence: Commit `6bc5155` (not P1R); under `CI=true` a 200 `{}` body deserializes and `Evaluate` returns Denied, while the folder test passes through `ValidateLifecycle` instead of `MapFoldersStatus` (review VG-01/BH-28/EC-20).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Restrict the Folders `MapFoldersStatus` Unavailable fallback to unexpected 2xx and restore a deliberate fail-closed default for unlisted 3xx/4xx statuses.
+  evidence: Commit `6bc5155` changed `_ => Denied` to `_ => Unavailable` in both adapters, so 405/410/412/429 and folder-side 413/422 become retryable (review BH-27/EC-08/EC-09/VG-07).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Stop the accepted-only G-6 step from masking the FrontComposer inspect and OpenAPI fingerprint gates and the scheduled E2E lane in Projects CI.
+  evidence: `project-gates` runs the G-6 validator first and it exits 1 while the packet is pending (already true for the historical packet at baseline), so later gates never run (review BH-19/EC-04/VG-06).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Record approval provenance for the 2026-09-27 "Approved McpCli course correction" notes in the Spine, PRD, and epics, and reconcile Spine line 342 with AD-29 (unverified, would be medium).
+  evidence: Commit `b42beb3` added the notes but no `sprint-change-proposal-2026-09-27*` exists; settle by locating the approval record and comparing AD-29 with line 342 (review BH-29/EC-24).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Confirm whether `prepare-oq8-v5-candidate.py` reports `workingTreeDirty=false` while reading ROOT selector inputs from a dirty worktree (unverified, would be medium).
+  evidence: Story 4.15 helper change swept into EventStore `1cc6b44b`; settle by running with `--for-v5-activation` against a dirty selector and inspecting the output (review EC-18).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Add a Conversations check that the AppHost restores the catalog-pinned `CommunityToolkit.Aspire.Hosting.Dapr` version.
+  evidence: Removing the direct reference added in Conversations `62ddb9e` falls back to `.757` with no failing test (review VG-03).

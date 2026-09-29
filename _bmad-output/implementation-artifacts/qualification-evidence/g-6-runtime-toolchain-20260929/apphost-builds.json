@@ -1,0 +1,138 @@
+{
+  "schema": "hexalith.projects.g6-apphost-builds.v1",
+  "capturedUtc": "2026-09-29T16:56:41Z",
+  "scope": "Every AppHost compilation attempted for this capture, with its real exit code. Package mode uses CI=true, an isolated NuGet cache, and UseHexalithProjectReferences=false against the committed gitlinks.",
+  "builds": [
+    {
+      "appHost": "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
+      "mode": "package",
+      "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet build references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj --configuration Release --no-restore -warnaserror -m:1 -p:UseHexalithProjectReferences=false -p:NuGetAudit=false",
+      "exitCode": 0,
+      "warnings": 0,
+      "errorCount": 0,
+      "distinctErrorMessages": 0,
+      "codes": []
+    },
+    {
+      "appHost": "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+      "mode": "package",
+      "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet build references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj --configuration Release --no-restore -warnaserror -m:1 -p:UseHexalithProjectReferences=false -p:NuGetAudit=false",
+      "exitCode": 0,
+      "warnings": 0,
+      "errorCount": 0,
+      "distinctErrorMessages": 0,
+      "codes": []
+    },
+    {
+      "appHost": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+      "mode": "package",
+      "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet build references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj --configuration Release --no-restore -warnaserror -m:1 -p:UseHexalithProjectReferences=false -p:NuGetAudit=false",
+      "exitCode": 1,
+      "warnings": 0,
+      "errorCount": 3,
+      "distinctErrorMessages": 2,
+      "codes": [
+        "CS0234"
+      ]
+    },
+    {
+      "appHost": "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
+      "mode": "package",
+      "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet build references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj --configuration Release --no-restore -warnaserror -m:1 -p:UseHexalithProjectReferences=false -p:NuGetAudit=false",
+      "exitCode": 0,
+      "warnings": 0,
+      "errorCount": 0,
+      "distinctErrorMessages": 0,
+      "codes": []
+    },
+    {
+      "appHost": "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+      "mode": "package",
+      "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet build references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj --configuration Release --no-restore -warnaserror -m:1 -p:UseHexalithProjectReferences=false -p:NuGetAudit=false",
+      "exitCode": 0,
+      "warnings": 0,
+      "errorCount": 0,
+      "distinctErrorMessages": 0,
+      "codes": []
+    },
+    {
+      "appHost": "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
+      "mode": "package",
+      "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet build references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj --configuration Release --no-restore -warnaserror -m:1 -p:UseHexalithProjectReferences=false -p:NuGetAudit=false",
+      "exitCode": 0,
+      "warnings": 0,
+      "errorCount": 0,
+      "distinctErrorMessages": 0,
+      "codes": []
+    },
+    {
+      "appHost": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+      "mode": "package",
+      "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet build references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj --configuration Release --no-restore -warnaserror -m:1 -p:NuGetAudit=false -p:UseHexalithProjectReferences=false",
+      "exitCode": 1,
+      "warnings": 0,
+      "errorCount": 52,
+      "distinctErrorMessages": 18,
+      "codes": [
+        "CS0103",
+        "CS0234",
+        "CS0246",
+        "MSB9008",
+        "RZ10012"
+      ]
+    },
+    {
+      "appHost": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+      "mode": "default (no CI variable, shared NuGet cache)",
+      "command": "dotnet build references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj --configuration Release -warnaserror -m:1 -p:NuGetAudit=false",
+      "exitCode": 1,
+      "warnings": 0,
+      "errorCount": 52,
+      "distinctErrorMessages": 18,
+      "codes": [
+        "CS0103",
+        "CS0234",
+        "CS0246",
+        "MSB9008",
+        "RZ10012"
+      ]
+    },
+    {
+      "appHost": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+      "mode": "default (no CI variable, shared NuGet cache)",
+      "command": "dotnet build references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj --configuration Release -warnaserror -m:1 -p:NuGetAudit=false",
+      "exitCode": 1,
+      "warnings": 0,
+      "errorCount": 3,
+      "distinctErrorMessages": 2,
+      "codes": [
+        "CS0234"
+      ]
+    },
+    {
+      "appHost": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "mode": "package (Projects CI solution)",
+      "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet build Hexalith.Projects.CI.slnx --configuration Release --no-restore --no-incremental -warnaserror -m:1 -p:NuGetAudit=false",
+      "exitCode": 0,
+      "warnings": 0,
+      "errorCount": 0,
+      "distinctErrorMessages": 0,
+      "codes": []
+    }
+  ],
+  "passed": [
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
+    "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+    "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+    "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
+    "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
+  ],
+  "failed": [
+    "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+    "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+    "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+    "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj"
+  ],
+  "status": "open-build-limitations"
+}

@@ -1,0 +1,98 @@
+{
+  "schema": "hexalith.projects.g6-toolkit-resolution.v1",
+  "capturedUtc": "2026-09-29T16:56:41Z",
+  "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet restore <each of eight AppHost.csproj> --force-evaluate -p:Configuration=Release -p:UseHexalithProjectReferences=false -p:NuGetAudit=false",
+  "allRestoresExitCode": 0,
+  "rows": [
+    {
+      "repository": "Hexalith.Projects",
+      "appHostProject": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "appHostSdk": "13.5.4",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.770",
+      "restoreSources": [
+        "https://api.nuget.org/v3/index.json"
+      ],
+      "assetsSha256": "d1febbd656329822e3104e1e6d78e0d5f4c09b9e74302ff1b7cf4d129d0756b5"
+    },
+    {
+      "repository": "Hexalith.Conversations",
+      "appHostProject": "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
+      "appHostSdk": "13.5.3",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.770",
+      "restoreSources": [
+        "https://api.nuget.org/v3/index.json"
+      ],
+      "assetsSha256": "484c8aae500074119b9ca07534a94329dd159bd719e1680f047f9524825d251f"
+    },
+    {
+      "repository": "Hexalith.EventStore",
+      "appHostProject": "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+      "appHostSdk": "13.5.3",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.770",
+      "restoreSources": [
+        "https://api.nuget.org/v3/index.json"
+      ],
+      "assetsSha256": "f34c0ca24cdeae8fb6941804c560e51eaaecd62888cef3c9840fe57b3c6b35ff"
+    },
+    {
+      "repository": "Hexalith.Folders",
+      "appHostProject": "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
+      "appHostSdk": "13.5.4",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.770",
+      "restoreSources": [
+        "https://api.nuget.org/v3/index.json"
+      ],
+      "assetsSha256": "af39dd770af632a7f2058415f20690545a384dd7d1bc08499a67283334a22f90"
+    },
+    {
+      "repository": "Hexalith.FrontComposer",
+      "appHostProject": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+      "appHostSdk": "13.5.4",
+      "directToolkitReference": false,
+      "resolvedToolkit": "13.5.1-beta.770",
+      "restoreSources": [
+        "https://api.nuget.org/v3/index.json"
+      ],
+      "assetsSha256": "73019035325a31fc900f179d1f7033e107b49e243753636bb1effa66febf4660"
+    },
+    {
+      "repository": "Hexalith.Memories",
+      "appHostProject": "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+      "appHostSdk": "13.5.3",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.770",
+      "restoreSources": [
+        "https://api.nuget.org/v3/index.json"
+      ],
+      "assetsSha256": "d9e84a490cf3ecf041c27637f7e28746bb5cfeef689003121d84e654b6b6fe18"
+    },
+    {
+      "repository": "Hexalith.Parties",
+      "appHostProject": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+      "appHostSdk": "13.5.3",
+      "directToolkitReference": true,
+      "resolvedToolkit": "13.5.1-beta.770",
+      "restoreSources": [
+        "https://api.nuget.org/v3/index.json"
+      ],
+      "assetsSha256": "ee7c075f64dfb18bc27f343c4d0658f2fa2a71b5224670258a1d5713e0b023fd"
+    },
+    {
+      "repository": "Hexalith.Tenants",
+      "appHostProject": "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
+      "appHostSdk": "13.5.3",
+      "directToolkitReference": false,
+      "resolvedToolkit": "13.5.1-beta.770",
+      "restoreSources": [
+        "https://api.nuget.org/v3/index.json"
+      ],
+      "assetsSha256": "7f16f35e1d70869b8fabfa1b4d234ea1337f61fa8929647713f1697833672c2c"
+    }
+  ],
+  "allResolvedSelectedToolkit": true,
+  "scope": "AppHost package restore resolution only; AppHost compilation results are recorded separately in apphost-builds.json. Five owner AppHosts retain explicit Aspire.AppHost.Sdk/13.5.3 source pins while three use 13.5.4."
+}

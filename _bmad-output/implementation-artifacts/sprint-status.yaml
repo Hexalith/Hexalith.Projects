@@ -50,7 +50,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 2026-09-26
+last_updated: 2026-09-29
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -69,25 +69,44 @@ p1r_acceptance_gate:
     eventstore_revision: f13f9925fdca53efa2ab8c90d396ab106f91bb9c
     builds_revision: 7af20f8bafbfe561df6f7705913a0800603090b5
 p1r_current_revalidation:
-  status: technical-evidence-complete-pending-exact-owner-decisions
+  status: technical-candidate-pending-open-gaps-and-exact-owner-decisions
   usable_as_prerequisite: false
-  owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3108-exact-baseline-candidate.md
+  owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3109-exact-baseline-candidate.md
   candidate:
+    eventstore_version: 3.109.0
+    eventstore_tag: v3.109.0
+    eventstore_revision: 818e28a8af421994e4f77e66327dc33a8c67ca5f
+    builds_revision: a912464e5f0294ccfb34a2a29d6d2072bafb6116
+  projects_gitlinks_commit: bd180b66b81b2893f6249cc282929b9cf62e5557
+  eventstore_checkout_gitlink: 5b9494835fcba6152789653add8f84bee5666035
+  eventstore_checkout_source_equals: 489e5d76253f68c6cf53c443aa8755ad059e621e
+  eventstore_release_run: https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36238526310
+  eventstore_release_validation: "BYPASS_VALIDATION; Commitlint run 36237813667 was the source proof, not CI"
+  eventstore_release_builds_revision: 22a578b576a515d2af214fe81859447fffc97981
+  eventstore_tag_ci: "https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36237813612 failed: 3 Contracts OQ8 Story 4.15 governance tests"
+  eventstore_published_package_evidence: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/public-packages.json
+  eventstore_rollback_probe: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/rollback-probe/README.md
+  builds_exact_revision_ci: pending-owner-push
+  g6_baseline: references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
+  g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
+  g6_fresh_candidate_sha256: 7e7d7ea2f39256b829367c56bf289ff97889e190f6e7481db35def986d53a5bb
+  g6_current_qualification: candidate-validator-exit-0-accepted-only-exit-1-committed-source-closure
+  open_technical_gaps:
+    - "EventStore release validation bypass and failing tag CI need an EventStore Owner disposition"
+    - "3.109.0 to 3.70.1 actor/domain replay, API downgrade, and operational backup/restore rehearsal are unproven; only a storage-record read passed"
+    - "489e5d76 checkout RetainedFloor and interface changes are untested against the published packages"
+    - "Builds a912464e has no exact-SHA CI, published tool consumer pin, persisted-run proof, or 3.109.0 exact-pair package/runner probe"
+    - "Parties and FrontComposer AppHosts do not compile; managed restart smoke blocked; package-exception inventory exits 1 with 14 drifts"
+  superseded_candidate:
     eventstore_version: 3.108.1
-    eventstore_tag: v3.108.1
     eventstore_revision: b15ad59abca82d5980ef92a510c2379e05f4d46f
     builds_revision: 2326f983bad14d5398ee55bf2bdf6c86b63c39ea
-  eventstore_checkout_observed: 8ac62359c1ffdd520488ecd03bd9689c217e3788
-  eventstore_checkout_latest_evidence: 1cc6b44b4a71950fbd8f92469bebad3b0c9c05c5
-  eventstore_published_package_evidence: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3108/public-packages.json
-  eventstore_rollback_probe: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3108/rollback-probe/README.md
-  builds_exact_revision_ci: https://github.com/Hexalith/Hexalith.Builds/actions/runs/36193212159
-  g6_current_validation: historical-packet-invalid-current-pin-drift
-  g6_current_qualification: technical-candidate-validator-passed-accepted-gate-closed
-  g6_candidate_preflight: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-3108-20260926-candidate/README.md
-  g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json
-  g6_fresh_candidate_sha256: ccc2cab78b24873bb92133d4a5bc753d7bf9b7a8ffe1ff418d847572db54745d
-  owner_decisions: "Jérôme Piquot approved the candidate direction, Toolkit .767, and isolated test on 2026-09-27; exact P1R and fresh G-6 packet acceptance still need review of bounded rollback, mixed AppHost pins, FrontComposer and inventory failures, and seven uncommitted source bindings."
+    owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3108-exact-baseline-candidate.md
+    g6_packet: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json
+    g6_packet_sha256: ccc2cab78b24873bb92133d4a5bc753d7bf9b7a8ffe1ff418d847572db54745d
+    current_result: "candidate validator exits 1 at the committed gitlinks: Central package pin drift: CommunityToolkit.Aspire.Hosting.Dapr"
+    superseded_on: 2026-09-29
+  owner_decisions: "Jérôme Piquot retargeted P1R to 3.109.0 and approved the Toolkit .770 exception and isolated Dapr 1.18.2 rerun on 2026-09-29; the four exact-tuple P1R role decisions and the post-run G-6 decision on packet 7e7d7ea2 are still required."
   containment: "Keep the accepted 3.106.0 tuple and 3.70.1 rollback; P0 Stage 6 and Story 6.1 remain blocked."
 historical_development_status_sha256: ce120516809be4a3814565f67c7a1e648650b3b9f0547ed9a4135a78eba0bbaf
 production_authority_guard:
@@ -214,12 +233,14 @@ development_status:
 qualification_gates:
   G-6:
     status: accepted
-    accepted_scope: "Historical 2026-09-06 packet only; excludes the EventStore 3.108.1 / Builds 2326f983bad14d5398ee55bf2bdf6c86b63c39ea candidate."
+    accepted_scope: "Historical 2026-09-06 packet only; excludes the superseded EventStore 3.108.1 / Builds 2326f983bad14d5398ee55bf2bdf6c86b63c39ea candidate and the pending EventStore 3.109.0 / Builds a912464e5f0294ccfb34a2a29d6d2072bafb6116 candidate."
     current_candidate_usable: false
-    current_candidate_preflight: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-3108-20260926-candidate/README.md"
-    current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json"
-    current_candidate_sha256: ccc2cab78b24873bb92133d4a5bc753d7bf9b7a8ffe1ff418d847572db54745d
-    current_candidate_validation: "candidate-mode passed; accepted-only mode rejects pending status"
+    current_candidate_baseline: "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json"
+    current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json"
+    current_candidate_sha256: 7e7d7ea2f39256b829367c56bf289ff97889e190f6e7481db35def986d53a5bb
+    current_candidate_validation: "candidate-mode exits 0 at the committed gitlinks; accepted-only mode exits 1 on pending status"
+    superseded_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json"
+    superseded_candidate_validation: "candidate-mode exits 1 at the committed gitlinks: Central package pin drift: CommunityToolkit.Aspire.Hosting.Dapr"
     accepted_on: 2026-09-06
     packet_recapture_accepted_at_utc: 2026-09-22T22:44:16Z
     approved_by: "Jérôme Piquot"
@@ -319,7 +340,7 @@ action_items:
     current_candidate_usable: false
     depends_on: ["6.1-P1"]
     unblocks: ["6.1-P0", "6.1-P2", "6.1-P4"]
-    unblocks_scope: "Historical accepted tuple only; the 3.108.1 candidate cannot unblock current work before exact four-role acceptance and fresh G-6 qualification."
+    unblocks_scope: "Historical accepted tuple only; the pending 3.109.0 candidate (which superseded 3.108.1) cannot unblock current work before exact four-role acceptance and owner acceptance of its fresh G-6 packet."
     acceptance_record: "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
     routed_to: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
   - epic: 6
