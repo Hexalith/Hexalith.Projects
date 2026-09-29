@@ -778,3 +778,24 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Add a Conversations check that the AppHost restores the catalog-pinned `CommunityToolkit.Aspire.Hosting.Dapr` version.
   evidence: Removing the direct reference added in Conversations `62ddb9e` falls back to `.757` with no failing test (review VG-03).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Bind the G-6 limitation files (source closure, AppHost builds, Toolkit resolution, pin audit, control-plane restoration) into the packet hash.
+  evidence: The validator's fixed `EXPECTED_ARTIFACT_KINDS` leaves them unbound, so owner acceptance of a packet hash does not cover them (review R2-BH-01).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Let the G-6 command contract record a real managed restart smoke instead of requiring the credential preflight to exit 1.
+  evidence: `REQUIRED_COMMAND_EXIT_CODES` forces exit 1, so the 2026-09-29 run unset `TEST_USER_PASSWORD` to comply (review R2-BH-03b).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Record EventStore container image digests, per-platform manifests and signatures in the P1R package evidence.
+  evidence: Neither the 3.108.1 nor the 3.109.0 evidence verifies `registry.hexalith.com/eventstore` images (review R2-BH-05).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Extend G-6 catalog and pin audit to Dapr actor/AspNetCore packages, `Aspire.Hosting` and `HexalithEventStoreVersion`.
+  evidence: Only `Dapr.Client`/`Dapr.Workflow` and four other packages are checked; the P1R coordinate itself can drift unnoticed (review R2-BH-09).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Align or explicitly exempt the Projects `release.yml` Builds execution SHA from the root Builds gitlink.
+  evidence: `release.yml` runs Builds `a07078ad…` while the gitlink and G-6 bindings use another revision (review R2-BH-11/R2-EC-04).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Add a release containment rule for Projects `main` while it builds against an unaccepted EventStore tuple, and name the rollback pin target.
+  evidence: Package builds consume EventStore 3.109.0 while the accepted P1R tuple is 3.106.0; semantic-release could publish from that state (review R2-BH-12).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Refresh the Story 6.1 draft spec's Design Notes, which still call 3.108.1 the current Builds baseline.
+  evidence: `spec-6-1-list-and-open-projects-through-supported-authenticated-paths-2.md` Design Notes predate the 3.109.0 retarget (review R2-EC-17).

@@ -1,21 +1,22 @@
 {
   "schema": "hexalith.projects.g6-control-plane-restoration.v1",
-  "swapStartedUtc": "2026-09-29T16:49:44Z",
+  "swapStartedUtc": "2026-09-29T17:38:35Z",
   "temporaryContainers": [
     {
       "name": "dapr_placement",
-      "id": "e9c30a7a672d9bb6231f49f52cefb01f6a86aa2442e8d3adb16faa924cece468",
+      "id": "560172389b2d08868fd627287fd0f6bb0b52a16bc155fc329304b885427704e9",
       "image": "ghcr.io/dapr/dapr:1.18.2",
       "imageId": "sha256:5a5b6be9b9ecb6d8fcb54d410969c88fe15695b3c38df4fa3ac0a2151382938d",
       "hostPorts": [
         50005,
         58080,
         59090
-      ]
+      ],
+      "runningDuringQualifier": true
     },
     {
       "name": "dapr_scheduler",
-      "id": "45621e50583e6185a22f9d1a5990bb325a67bfb97629f5c88ebb3aa6898fd2b9",
+      "id": "c3449a71801148fca900e159b95ec061ee513e6c48e06d43aa5465e39e3d28a5",
       "image": "ghcr.io/dapr/dapr:1.18.2",
       "imageId": "sha256:5a5b6be9b9ecb6d8fcb54d410969c88fe15695b3c38df4fa3ac0a2151382938d",
       "hostPorts": [
@@ -24,10 +25,11 @@
         58081,
         59091
       ],
+      "runningDuringQualifier": true,
       "dataVolume": "tmpfs /var/lock (the original dapr_scheduler volume was not mounted)"
     }
   ],
-  "restoredUtc": "2026-09-29T16:50:24Z",
+  "restoredUtc": "2026-09-29T17:39:09Z",
   "originalContainers": [
     {
       "name": "dapr_placement",
@@ -48,14 +50,15 @@
   ],
   "activeContainers": [
     "dapr_placement daprio/dapr:1.18.4",
-    "dapr_scheduler daprio/dapr:1.18.4",
     "dapr_redis redis:6",
+    "dapr_scheduler daprio/dapr:1.18.4",
     "dapr_zipkin openzipkin/zipkin"
   ],
   "temporaryContainersPresent": false,
+  "renamedOriginalsPresent": false,
   "testDaprdProcessCount": 0,
   "fixturePostgresContainersPresent": false,
   "result": "restored",
   "rawCtrfRetained": false,
-  "cleanupCheckedUtc": "2026-09-29T16:56:19Z"
+  "cleanupCheckedUtc": "2026-09-29T17:39:13Z"
 }

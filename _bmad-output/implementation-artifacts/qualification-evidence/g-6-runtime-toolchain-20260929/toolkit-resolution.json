@@ -1,6 +1,6 @@
 {
   "schema": "hexalith.projects.g6-toolkit-resolution.v1",
-  "capturedUtc": "2026-09-29T16:56:41Z",
+  "capturedUtc": "2026-09-29T17:42:46Z",
   "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet restore <each of eight AppHost.csproj> --force-evaluate -p:Configuration=Release -p:UseHexalithProjectReferences=false -p:NuGetAudit=false",
   "allRestoresExitCode": 0,
   "rows": [
@@ -13,7 +13,7 @@
       "restoreSources": [
         "https://api.nuget.org/v3/index.json"
       ],
-      "assetsSha256": "d1febbd656329822e3104e1e6d78e0d5f4c09b9e74302ff1b7cf4d129d0756b5"
+      "assetsSha256": "0926b0fc92a5c9c935caed5c9319a2ed9bba733d6335d96e19ac7dd319bc8df4"
     },
     {
       "repository": "Hexalith.Conversations",
@@ -24,7 +24,7 @@
       "restoreSources": [
         "https://api.nuget.org/v3/index.json"
       ],
-      "assetsSha256": "484c8aae500074119b9ca07534a94329dd159bd719e1680f047f9524825d251f"
+      "assetsSha256": "5abbedc5a51fc9dac2ac904ec15faf15ee79e405691d6be7657e2035a3f29e0a"
     },
     {
       "repository": "Hexalith.EventStore",
@@ -35,7 +35,7 @@
       "restoreSources": [
         "https://api.nuget.org/v3/index.json"
       ],
-      "assetsSha256": "f34c0ca24cdeae8fb6941804c560e51eaaecd62888cef3c9840fe57b3c6b35ff"
+      "assetsSha256": "9443006e7fcdcb6d70b5c0d0ad857e8c12d2145968a13a81953b42c7d5ee3ffc"
     },
     {
       "repository": "Hexalith.Folders",
@@ -46,7 +46,7 @@
       "restoreSources": [
         "https://api.nuget.org/v3/index.json"
       ],
-      "assetsSha256": "af39dd770af632a7f2058415f20690545a384dd7d1bc08499a67283334a22f90"
+      "assetsSha256": "12cd985eaa5161bdaf34aebde6bf9004ba2172a25026364128c51fd92ae357fb"
     },
     {
       "repository": "Hexalith.FrontComposer",
@@ -57,7 +57,7 @@
       "restoreSources": [
         "https://api.nuget.org/v3/index.json"
       ],
-      "assetsSha256": "73019035325a31fc900f179d1f7033e107b49e243753636bb1effa66febf4660"
+      "assetsSha256": "172c4ff88bb300a64eca9bada9072c12af2fdb585eda66d60429b51873d9d8c2"
     },
     {
       "repository": "Hexalith.Memories",
@@ -68,7 +68,7 @@
       "restoreSources": [
         "https://api.nuget.org/v3/index.json"
       ],
-      "assetsSha256": "d9e84a490cf3ecf041c27637f7e28746bb5cfeef689003121d84e654b6b6fe18"
+      "assetsSha256": "8e3c3d6ef504c4ab40612d839b664069729c2f929b938f4c4bc2ee78d489c614"
     },
     {
       "repository": "Hexalith.Parties",
@@ -79,7 +79,7 @@
       "restoreSources": [
         "https://api.nuget.org/v3/index.json"
       ],
-      "assetsSha256": "ee7c075f64dfb18bc27f343c4d0658f2fa2a71b5224670258a1d5713e0b023fd"
+      "assetsSha256": "ababd1f21eaa63d31cde303db7a6975704c33c397b11b35a120065bea8651a59"
     },
     {
       "repository": "Hexalith.Tenants",
@@ -90,9 +90,9 @@
       "restoreSources": [
         "https://api.nuget.org/v3/index.json"
       ],
-      "assetsSha256": "7f16f35e1d70869b8fabfa1b4d234ea1337f61fa8929647713f1697833672c2c"
+      "assetsSha256": "e59fe0774f9b2d20c9a9186daf24e739ba6ee2d9e17ac7b387a37ceb8621dd21"
     }
   ],
   "allResolvedSelectedToolkit": true,
-  "scope": "AppHost package restore resolution only; AppHost compilation results are recorded separately in apphost-builds.json. Five owner AppHosts retain explicit Aspire.AppHost.Sdk/13.5.3 source pins while three use 13.5.4."
+  "scope": "AppHost package restore resolution only, read from project.assets.json snapshots taken right after the eight restores; AppHost compilation results are recorded separately in apphost-builds.json. Five owner AppHosts retain explicit Aspire.AppHost.Sdk/13.5.3 source pins while three use 13.5.4."
 }
