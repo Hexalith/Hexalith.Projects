@@ -88,7 +88,7 @@ jobs:
 
   ci:
     needs: workflow-gates
-    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@2326f983bad14d5398ee55bf2bdf6c86b63c39ea
+    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@a912464e5f0294ccfb34a2a29d6d2072bafb6116
     with:
       # Bare solution path only. The callee runs `dotnet restore "$SOLUTION"`, so an
       # embedded `-p:` switch is parsed as part of the project path (MSB1009), and
@@ -126,7 +126,19 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@2326f983bad14d5398ee55bf2bdf6c86b63c39ea
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@a912464e5f0294ccfb34a2a29d6d2072bafb6116
+
+      # Candidate mode proves the pending packet still matches the committed gitlinks and
+      # baseline; the accepted-only step stays fail-closed until a named owner accepts it.
+      - name: Validate fresh G-6 runtime/toolchain packet (candidate)
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: >-
+          python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py
+          --workspace .
+          --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
+          --candidate
 
       - name: Validate fresh G-6 runtime/toolchain packet
         env:
@@ -134,11 +146,11 @@ jobs:
         run: >-
           python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py
           --workspace .
-          --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-27.json
-          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json
+          --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@2326f983bad14d5398ee55bf2bdf6c86b63c39ea
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@a912464e5f0294ccfb34a2a29d6d2072bafb6116
         with:
           global-json-file: global.json
 
@@ -168,10 +180,10 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@2326f983bad14d5398ee55bf2bdf6c86b63c39ea
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@a912464e5f0294ccfb34a2a29d6d2072bafb6116
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@2326f983bad14d5398ee55bf2bdf6c86b63c39ea
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@a912464e5f0294ccfb34a2a29d6d2072bafb6116
         with:
           global-json-file: global.json
 

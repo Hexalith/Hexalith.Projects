@@ -16,7 +16,7 @@ $frontComposerGatePath = Join-Path $scriptRoot 'run-frontcomposer-inspect-gate.p
 $openApiGatePath = Join-Path $scriptRoot 'run-openapi-fingerprint-gate.ps1'
 $managedE2EPath = Join-Path $repositoryRoot 'tests/e2e/run-live-apphost.sh'
 $failures = [System.Collections.Generic.List[string]]::new()
-$buildsExecutionSha = '2326f983bad14d5398ee55bf2bdf6c86b63c39ea'
+$buildsExecutionSha = 'a912464e5f0294ccfb34a2a29d6d2072bafb6116'
 $releaseBuildsExecutionSha = 'a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec'
 $nugetLoginSha = '8d196754b4036150537f80ac539e15c2f1028841'
 $expectedReleasePackageIds = @(
@@ -499,9 +499,44 @@ Require-Match $ci '^\s*schedule:\s*$' 'CI must include a scheduled lane.'
 Require-Match $ci "dapr-version:\s*'1\.18(?:\.0)?'" 'CI must use the supported Dapr 1.18 baseline.'
 Require-Match $ci "dapr-runtime-version:\s*'1\.18\.2'" 'CI must use the approved Dapr 1.18.2 runtime exception.'
 Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflow must run Integration.Tests separately.'
-Require-Match $ci '^\s*- name:\s*Validate fresh G-6 runtime/toolchain packet\s*$' 'CI must run the fresh G-6 packet validator after root submodules initialize.'
-Require-Match $ci 'validate-runtime-toolchain-evidence\.py\s*\r?\n\s*--workspace \.\s*\r?\n\s*--baseline references/Hexalith\.Builds/Tools/runtime-toolchain-baseline-2026-09-27\.json\s*\r?\n\s*--packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet\.json' 'CI must validate the real bound fresh G-6 packet.'
+# G-6: a candidate-mode step proves the pending packet against the committed gitlinks,
+# then the accepted-only step stays fail-closed until a named owner accepts that packet.
+$g6BaselinePath = 'references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json'
+$g6PacketPath = '_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json'
+$g6Command = 'validate-runtime-toolchain-evidence\.py\s*\r?\n\s*--workspace \.\s*\r?\n\s*--baseline ' +
+    [regex]::Escape($g6BaselinePath) + '\s*\r?\n\s*--packet ' + [regex]::Escape($g6PacketPath)
+$ciJobBlocks = @(Get-WorkflowJobBlocks -Text $ci)
+$projectGatesJobCandidates = @($ciJobBlocks | Where-Object { $_.Name -ceq 'project-gates' })
+if ($projectGatesJobCandidates.Count -ne 1) {
+    $failures.Add("CI must define exactly one project-gates job; found $($projectGatesJobCandidates.Count).")
+}
+$projectGatesJob = if ($projectGatesJobCandidates.Count -eq 1) { $projectGatesJobCandidates[0].Text } else { '' }
+$projectGatesSteps = @(Get-NamedStepBlocks -JobText $projectGatesJob)
+$g6InitializeStep = Get-RequiredNamedStep -Steps $projectGatesSteps -Name 'Initialize root-declared submodules' -Owner 'project-gates'
+$g6CandidateStep = Get-RequiredNamedStep -Steps $projectGatesSteps -Name 'Validate fresh G-6 runtime/toolchain packet (candidate)' -Owner 'project-gates'
+$g6AcceptedStep = Get-RequiredNamedStep -Steps $projectGatesSteps -Name 'Validate fresh G-6 runtime/toolchain packet' -Owner 'project-gates'
+if ($null -ne $g6CandidateStep) {
+    Require-Match $g6CandidateStep.Text ($g6Command + '\s*\r?\n\s*--candidate\s*$') 'The candidate G-6 step must validate the real bound fresh packet with --candidate.'
+}
+if ($null -ne $g6AcceptedStep) {
+    Require-Match $g6AcceptedStep.Text ($g6Command + '\s*$') 'The accepted-only G-6 step must validate the real bound fresh packet.'
+    Forbid-Match $g6AcceptedStep.Text '--candidate' 'The accepted-only G-6 step must not run in --candidate mode.'
+}
+if ($null -ne $g6InitializeStep -and $null -ne $g6CandidateStep -and $null -ne $g6AcceptedStep -and
+    -not ($g6InitializeStep.Index -lt $g6CandidateStep.Index -and $g6CandidateStep.Index -lt $g6AcceptedStep.Index)) {
+    $failures.Add('CI must run the candidate G-6 step after root submodules initialize and before the accepted-only G-6 step.')
+}
 Require-Match $ci ('uses:\s*Hexalith/Hexalith\.Builds/\.github/workflows/domain-ci\.yml@' + $buildsExecutionSha) 'CI must call the accepted package-aware domain-ci workflow SHA.'
+# The executed Builds workflows/actions and the root Builds gitlink (whose catalog, baseline, and
+# validator the G-6 packet binds) must be one revision.
+$buildsGitlinkEntry = (& git -C $repositoryRoot ls-files --stage -- references/Hexalith.Builds 2>$null) -join "`n"
+$buildsGitlinkMatch = [regex]::Match($buildsGitlinkEntry, '^160000 (?<sha>[0-9a-f]{40}) 0\treferences/Hexalith\.Builds$')
+if (-not $buildsGitlinkMatch.Success) {
+    $failures.Add('The root references/Hexalith.Builds gitlink could not be read from the Git index.')
+}
+elseif ($buildsGitlinkMatch.Groups['sha'].Value -cne $buildsExecutionSha) {
+    $failures.Add("CI executes Hexalith.Builds '$buildsExecutionSha' but the root Hexalith.Builds gitlink is '$($buildsGitlinkMatch.Groups['sha'].Value)'.")
+}
 Require-Match $ci '(?ms)^  ci:\r?\n\s+needs:\s*workflow-gates\r?\n\s+uses:' 'The reusable restore/build job must wait for independent workflow and package fixtures.'
 Forbid-Match $ci 'uses:\s*Hexalith/Hexalith\.Builds/.+@main' 'CI must not execute mutable Hexalith.Builds actions or workflows.'
 foreach ($buildsCall in [regex]::Matches($ci, 'uses:\s*Hexalith/Hexalith\.Builds/[^\s]+@([^\s#]+)')) {
