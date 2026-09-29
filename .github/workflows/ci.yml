@@ -88,7 +88,7 @@ jobs:
 
   ci:
     needs: workflow-gates
-    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@a912464e5f0294ccfb34a2a29d6d2072bafb6116
+    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@3f44bc01df6057cd265adb3f800e68b31e6185f0
     with:
       # Bare solution path only. The callee runs `dotnet restore "$SOLUTION"`, so an
       # embedded `-p:` switch is parsed as part of the project path (MSB1009), and
@@ -126,10 +126,10 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@a912464e5f0294ccfb34a2a29d6d2072bafb6116
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@3f44bc01df6057cd265adb3f800e68b31e6185f0
 
-      # Candidate mode proves the pending packet still matches the committed gitlinks and
-      # baseline; the accepted-only step stays fail-closed until a named owner accepts it.
+      # Candidate mode proves the pending packet against the committed gitlinks and baseline
+      # without granting acceptance; the accepted-only check runs in the separate g6-acceptance job.
       - name: Validate fresh G-6 runtime/toolchain packet (candidate)
         env:
           PYTHONDONTWRITEBYTECODE: '1'
@@ -140,17 +140,8 @@ jobs:
           --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
           --candidate
 
-      - name: Validate fresh G-6 runtime/toolchain packet
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-        run: >-
-          python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py
-          --workspace .
-          --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
-          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
-
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@a912464e5f0294ccfb34a2a29d6d2072bafb6116
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@3f44bc01df6057cd265adb3f800e68b31e6185f0
         with:
           global-json-file: global.json
 
@@ -163,6 +154,61 @@ jobs:
         shell: pwsh
         timeout-minutes: 15
         run: ./tests/tools/run-openapi-fingerprint-gate.ps1
+
+  # Fail-closed G-6 owner acceptance. While the packet is pending this job fails and no other
+  # job needs it, so it never hides the candidate step or the later project gates. Owner
+  # acceptance of the exact packet flips packet.json status to accepted and removes the
+  # candidate step from project-gates (and its workflow-gate contract) in one change.
+  g6-acceptance:
+    name: G-6 owner acceptance (accepted-only)
+    runs-on: ubuntu-latest
+    needs: workflow-gates
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          submodules: false
+
+      - name: Initialize root-declared submodules
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@3f44bc01df6057cd265adb3f800e68b31e6185f0
+
+      - name: Validate fresh G-6 runtime/toolchain packet
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: >-
+          python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py
+          --workspace .
+          --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
+
+  # Replays the pending P1R candidate's release-bypass and checkout-drift claims against the
+  # public EventStore Actions runs and the EventStore history at the root gitlink.
+  p1r-candidate-evidence:
+    name: P1R candidate evidence replay
+    runs-on: ubuntu-latest
+    needs: workflow-gates
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 1
+          submodules: false
+
+      - name: Initialize root-declared submodules
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@3f44bc01df6057cd265adb3f800e68b31e6185f0
+
+      - name: Fetch EventStore tags read by the P1R evidence replay
+        run: >-
+          git -C references/Hexalith.EventStore fetch --no-tags origin
+          +refs/tags/v3.70.1:refs/tags/v3.70.1
+          +refs/tags/v3.109.0:refs/tags/v3.109.0
+
+      - name: Replay P1R candidate evidence
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest tests/tools/test_p1r_candidate_evidence.py -v
 
   e2e:
     name: Scheduled managed AppHost E2E
@@ -180,10 +226,10 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@a912464e5f0294ccfb34a2a29d6d2072bafb6116
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@3f44bc01df6057cd265adb3f800e68b31e6185f0
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@a912464e5f0294ccfb34a2a29d6d2072bafb6116
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@3f44bc01df6057cd265adb3f800e68b31e6185f0
         with:
           global-json-file: global.json
 

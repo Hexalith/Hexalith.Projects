@@ -16,7 +16,7 @@ $frontComposerGatePath = Join-Path $scriptRoot 'run-frontcomposer-inspect-gate.p
 $openApiGatePath = Join-Path $scriptRoot 'run-openapi-fingerprint-gate.ps1'
 $managedE2EPath = Join-Path $repositoryRoot 'tests/e2e/run-live-apphost.sh'
 $failures = [System.Collections.Generic.List[string]]::new()
-$buildsExecutionSha = 'a912464e5f0294ccfb34a2a29d6d2072bafb6116'
+$buildsExecutionSha = '3f44bc01df6057cd265adb3f800e68b31e6185f0'
 $releaseBuildsExecutionSha = 'a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec'
 $nugetLoginSha = '8d196754b4036150537f80ac539e15c2f1028841'
 $expectedReleasePackageIds = @(
@@ -129,6 +129,25 @@ function Get-ActiveWorkflowText {
     param([string] $Text)
 
     return (($Text -split "`r?`n" | Where-Object { $_ -notmatch '^\s*#' }) -join "`n")
+}
+
+# Normalizes a job or step block for exact comparison: LF line endings, with the trailing
+# blank and comment-only lines that belong to the next block's leading comment removed.
+# Every other line, including any added key, command, `|| true`, `if:` or
+# `continue-on-error`, stays in the text and breaks exact equality.
+function Get-TrimmedBlockText {
+    param([string] $Text)
+
+    $lines = [System.Collections.Generic.List[string]]::new()
+    foreach ($line in (($Text -replace "`r`n", "`n") -split "`n")) {
+        $lines.Add($line)
+    }
+
+    while ($lines.Count -gt 0 -and $lines[$lines.Count - 1] -match '^\s*(#.*)?$') {
+        $lines.RemoveAt($lines.Count - 1)
+    }
+
+    return ($lines -join "`n")
 }
 
 if (-not (Test-Path $ciPath)) {
@@ -499,12 +518,78 @@ Require-Match $ci '^\s*schedule:\s*$' 'CI must include a scheduled lane.'
 Require-Match $ci "dapr-version:\s*'1\.18(?:\.0)?'" 'CI must use the supported Dapr 1.18 baseline.'
 Require-Match $ci "dapr-runtime-version:\s*'1\.18\.2'" 'CI must use the approved Dapr 1.18.2 runtime exception.'
 Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflow must run Integration.Tests separately.'
-# G-6: a candidate-mode step proves the pending packet against the committed gitlinks,
-# then the accepted-only step stays fail-closed until a named owner accepts that packet.
+# G-6: project-gates runs the candidate-mode validator so every run proves the pending packet
+# against the committed gitlinks and baseline, then continues to the FrontComposer and OpenAPI
+# gates. The accepted-only validator runs in its own g6-acceptance job, which fails closed until
+# a named owner accepts the exact packet and which no other job needs. Owner acceptance flips the
+# packet status to accepted and removes the candidate step, and its contract here, in one change.
 $g6BaselinePath = 'references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json'
 $g6PacketPath = '_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json'
-$g6Command = 'validate-runtime-toolchain-evidence\.py\s*\r?\n\s*--workspace \.\s*\r?\n\s*--baseline ' +
-    [regex]::Escape($g6BaselinePath) + '\s*\r?\n\s*--packet ' + [regex]::Escape($g6PacketPath)
+$g6ValidatorStepLines = @(
+    '        env:'
+    '          PYTHONDONTWRITEBYTECODE: ''1'''
+    '        run: >-'
+    '          python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py'
+    '          --workspace .'
+    "          --baseline $g6BaselinePath"
+    "          --packet $g6PacketPath"
+)
+$expectedG6CandidateStep = (@('      - name: Validate fresh G-6 runtime/toolchain packet (candidate)') + $g6ValidatorStepLines + @('          --candidate')) -join "`n"
+$expectedG6AcceptedStep = (@('      - name: Validate fresh G-6 runtime/toolchain packet') + $g6ValidatorStepLines) -join "`n"
+$checkoutActionLine = '        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0'
+$initializeBuildLine = "        uses: Hexalith/Hexalith.Builds/Github/initialize-build@$buildsExecutionSha"
+$expectedG6AcceptanceJob = (@(
+    '  g6-acceptance:'
+    '    name: G-6 owner acceptance (accepted-only)'
+    '    runs-on: ubuntu-latest'
+    '    needs: workflow-gates'
+    '    steps:'
+    '      - name: Checkout repository'
+    $checkoutActionLine
+    '        with:'
+    '          fetch-depth: 0'
+    '          submodules: false'
+    ''
+    '      - name: Initialize root-declared submodules'
+    $initializeBuildLine
+    ''
+) + @($expectedG6AcceptedStep)) -join "`n"
+$expectedP1rEvidenceJob = @(
+    '  p1r-candidate-evidence:'
+    '    name: P1R candidate evidence replay'
+    '    runs-on: ubuntu-latest'
+    '    needs: workflow-gates'
+    '    steps:'
+    '      - name: Checkout repository'
+    $checkoutActionLine
+    '        with:'
+    '          fetch-depth: 1'
+    '          submodules: false'
+    ''
+    '      - name: Initialize root-declared submodules'
+    $initializeBuildLine
+    ''
+    '      - name: Fetch EventStore tags read by the P1R evidence replay'
+    '        run: >-'
+    '          git -C references/Hexalith.EventStore fetch --no-tags origin'
+    '          +refs/tags/v3.70.1:refs/tags/v3.70.1'
+    '          +refs/tags/v3.109.0:refs/tags/v3.109.0'
+    ''
+    '      - name: Replay P1R candidate evidence'
+    '        env:'
+    '          GITHUB_TOKEN: ${{ github.token }}'
+    '          PYTHONDONTWRITEBYTECODE: ''1'''
+    '        run: python3 -m unittest tests/tools/test_p1r_candidate_evidence.py -v'
+) -join "`n"
+$expectedProjectGatesStepNames = @(
+    'Checkout repository',
+    'Initialize root-declared submodules',
+    'Validate fresh G-6 runtime/toolchain packet (candidate)',
+    'Initialize .NET',
+    'FrontComposer inspect gate',
+    'OpenAPI fingerprint / compatibility gate'
+)
+
 $ciJobBlocks = @(Get-WorkflowJobBlocks -Text $ci)
 $projectGatesJobCandidates = @($ciJobBlocks | Where-Object { $_.Name -ceq 'project-gates' })
 if ($projectGatesJobCandidates.Count -ne 1) {
@@ -512,19 +597,58 @@ if ($projectGatesJobCandidates.Count -ne 1) {
 }
 $projectGatesJob = if ($projectGatesJobCandidates.Count -eq 1) { $projectGatesJobCandidates[0].Text } else { '' }
 $projectGatesSteps = @(Get-NamedStepBlocks -JobText $projectGatesJob)
-$g6InitializeStep = Get-RequiredNamedStep -Steps $projectGatesSteps -Name 'Initialize root-declared submodules' -Owner 'project-gates'
+$projectGatesStepNames = @($projectGatesSteps | ForEach-Object { $_.Name })
+if (($projectGatesStepNames -join "`n") -cne ($expectedProjectGatesStepNames -join "`n")) {
+    $failures.Add("project-gates must run exactly these steps in order: $($expectedProjectGatesStepNames -join '; '). The accepted-only G-6 step belongs to g6-acceptance.")
+}
 $g6CandidateStep = Get-RequiredNamedStep -Steps $projectGatesSteps -Name 'Validate fresh G-6 runtime/toolchain packet (candidate)' -Owner 'project-gates'
-$g6AcceptedStep = Get-RequiredNamedStep -Steps $projectGatesSteps -Name 'Validate fresh G-6 runtime/toolchain packet' -Owner 'project-gates'
-if ($null -ne $g6CandidateStep) {
-    Require-Match $g6CandidateStep.Text ($g6Command + '\s*\r?\n\s*--candidate\s*$') 'The candidate G-6 step must validate the real bound fresh packet with --candidate.'
+if ($null -ne $g6CandidateStep -and (Get-TrimmedBlockText -Text $g6CandidateStep.Text) -cne $expectedG6CandidateStep) {
+    $failures.Add('The candidate G-6 step must be the exact name/env/run block for the bound fresh packet with --candidate; extra lines, || true, if: and continue-on-error are forbidden.')
 }
-if ($null -ne $g6AcceptedStep) {
-    Require-Match $g6AcceptedStep.Text ($g6Command + '\s*$') 'The accepted-only G-6 step must validate the real bound fresh packet.'
-    Forbid-Match $g6AcceptedStep.Text '--candidate' 'The accepted-only G-6 step must not run in --candidate mode.'
+Forbid-Match $projectGatesJob '^\s*continue-on-error:' 'project-gates must not tolerate failures with continue-on-error.'
+Forbid-Match $projectGatesJob '^    if:' 'project-gates must not be conditional.'
+
+$g6AcceptanceJobCandidates = @($ciJobBlocks | Where-Object { $_.Name -ceq 'g6-acceptance' })
+if ($g6AcceptanceJobCandidates.Count -ne 1) {
+    $failures.Add("CI must define exactly one g6-acceptance job; found $($g6AcceptanceJobCandidates.Count).")
 }
-if ($null -ne $g6InitializeStep -and $null -ne $g6CandidateStep -and $null -ne $g6AcceptedStep -and
-    -not ($g6InitializeStep.Index -lt $g6CandidateStep.Index -and $g6CandidateStep.Index -lt $g6AcceptedStep.Index)) {
-    $failures.Add('CI must run the candidate G-6 step after root submodules initialize and before the accepted-only G-6 step.')
+elseif ((Get-TrimmedBlockText -Text $g6AcceptanceJobCandidates[0].Text) -cne $expectedG6AcceptanceJob) {
+    $failures.Add('g6-acceptance must be the exact fail-closed job: checkout, root submodules, then the exact accepted-only G-6 step; extra steps or lines, || true, if: and continue-on-error are forbidden.')
+}
+$g6AcceptanceReferences = [regex]::Matches((Get-ActiveWorkflowText -Text $ci), '(?<![A-Za-z0-9_-])g6-acceptance(?![A-Za-z0-9_-])').Count
+if ($g6AcceptanceReferences -ne 1) {
+    $failures.Add("Only the g6-acceptance job key may name g6-acceptance; no other job may need it (found $g6AcceptanceReferences active references).")
+}
+
+$p1rEvidenceJobCandidates = @($ciJobBlocks | Where-Object { $_.Name -ceq 'p1r-candidate-evidence' })
+if ($p1rEvidenceJobCandidates.Count -ne 1) {
+    $failures.Add("CI must define exactly one p1r-candidate-evidence job; found $($p1rEvidenceJobCandidates.Count).")
+}
+elseif ((Get-TrimmedBlockText -Text $p1rEvidenceJobCandidates[0].Text) -cne $expectedP1rEvidenceJob) {
+    $failures.Add('p1r-candidate-evidence must initialize root submodules, fetch the EventStore tags it reads, and run tests/tools/test_p1r_candidate_evidence.py as an exact blocking step.')
+}
+
+# Every submodule revision bound by the pending G-6 packet must be the root gitlink CI checks out.
+$g6PacketFullPath = Join-Path $repositoryRoot $g6PacketPath
+if (-not (Test-Path $g6PacketFullPath)) {
+    $failures.Add("The bound G-6 packet must exist at $g6PacketPath.")
+}
+else {
+    $g6Packet = Get-Content -Path $g6PacketFullPath -Raw | ConvertFrom-Json
+    $g6SubmoduleBindings = @($g6Packet.repositories | Where-Object { $_.path -cne '.' })
+    if ($g6SubmoduleBindings.Count -eq 0) {
+        $failures.Add('The G-6 packet must bind the revisions of its submodule repositories.')
+    }
+    foreach ($binding in $g6SubmoduleBindings) {
+        $gitlinkEntry = (& git -C $repositoryRoot ls-files --stage -- $binding.path 2>$null) -join "`n"
+        $gitlinkMatch = [regex]::Match($gitlinkEntry, '^160000 (?<sha>[0-9a-f]{40}) 0\t' + [regex]::Escape($binding.path) + '$')
+        if (-not $gitlinkMatch.Success) {
+            $failures.Add("The G-6 packet binds $($binding.name) at '$($binding.path)', which is not a root gitlink.")
+        }
+        elseif ($gitlinkMatch.Groups['sha'].Value -cne $binding.revision) {
+            $failures.Add("The G-6 packet binds $($binding.name) '$($binding.revision)' but the root gitlink is '$($gitlinkMatch.Groups['sha'].Value)'.")
+        }
+    }
 }
 Require-Match $ci ('uses:\s*Hexalith/Hexalith\.Builds/\.github/workflows/domain-ci\.yml@' + $buildsExecutionSha) 'CI must call the accepted package-aware domain-ci workflow SHA.'
 # The executed Builds workflows/actions and the root Builds gitlink (whose catalog, baseline, and
