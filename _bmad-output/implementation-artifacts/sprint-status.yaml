@@ -50,7 +50,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 2026-09-29
+last_updated: 2026-09-30
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -76,8 +76,8 @@ p1r_current_revalidation:
     eventstore_version: 3.109.0
     eventstore_tag: v3.109.0
     eventstore_revision: 818e28a8af421994e4f77e66327dc33a8c67ca5f
-    builds_revision: 3f44bc01df6057cd265adb3f800e68b31e6185f0
-  projects_gitlinks_commit: d580907210a134297675fcf0b8aa4a8923ed5999
+    builds_revision: 86cda4703eeff4621098baad3cee82348d1522ca
+  projects_gitlinks_commit: a263e0d0fcac28e28a01a00113a57f7fae19ac20
   eventstore_checkout_gitlink: 5b9494835fcba6152789653add8f84bee5666035
   eventstore_checkout_source_equals: 489e5d76253f68c6cf53c443aa8755ad059e621e
   eventstore_release_run: https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36238526310
@@ -89,15 +89,18 @@ p1r_current_revalidation:
   builds_exact_revision_ci: pending-owner-push
   g6_baseline: references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
   g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
-  g6_fresh_candidate_sha256: e3090bd938ccbea7ee63ddb7427ce75ab815397f6eaa6183ab97ec2da0f8b82b
-  g6_superseded_pending_candidate_sha256: 7e7d7ea2f39256b829367c56bf289ff97889e190f6e7481db35def986d53a5bb
+  g6_fresh_candidate_sha256: 26d7a6e0d9b7aaa3136864529e261d36f9346a1166b08b31d6b8edda51d52000
+  g6_superseded_pending_candidate_sha256: e3090bd938ccbea7ee63ddb7427ce75ab815397f6eaa6183ab97ec2da0f8b82b
+  g6_earlier_superseded_pending_candidate_sha256: 7e7d7ea2f39256b829367c56bf289ff97889e190f6e7481db35def986d53a5bb
   g6_current_qualification: candidate-validator-exit-0-accepted-only-exit-1-committed-source-closure-revisions-equal-gitlinks
+  g6_gitlink_check: "tests/tools/check_g6_packet_gitlinks.py runs last in project-gates and g6-acceptance; a submodule gitlink that moves after the capture fails only those G-6 jobs"
+  projects_releases: "blocked while the G-6 packet is pending: release.yml verify-source needs a successful push CI run and g6-acceptance fails until owner acceptance"
   g6_oq8_binaries: "LiveSidecar and Server test binaries built from EventStore checkout source 5b949483, not the published 3.109.0 archives"
   open_technical_gaps:
     - "EventStore release validation bypass and failing tag CI need an EventStore Owner disposition"
     - "3.109.0 to 3.70.1 actor/domain replay, API downgrade, and operational backup/restore rehearsal are unproven; only a storage-record read passed"
     - "489e5d76 checkout RetainedFloor and interface changes are untested against the published packages"
-    - "Builds 3f44bc01 has no exact-SHA CI, published tool consumer pin, persisted-run proof, or 3.109.0 exact-pair package/runner probe"
+    - "Builds 86cda470 has no exact-SHA CI, published tool consumer pin, persisted-run proof, or 3.109.0 exact-pair package/runner probe"
     - "Parties and FrontComposer AppHosts do not compile; managed restart smoke not run (its preflight is deliberately run without TEST_USER_PASSWORD, exit 1 by contract); package-exception inventory exits 1 with 14 drifts"
     - "G-6 OQ8 pass used checkout-source test binaries, not the published 3.109.0 archives; the consumer smoke compiles only types unchanged since 3.106.0"
   superseded_candidate:

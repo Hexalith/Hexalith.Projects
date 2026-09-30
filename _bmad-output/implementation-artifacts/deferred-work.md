@@ -799,3 +799,15 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Refresh the Story 6.1 draft spec's Design Notes, which still call 3.108.1 the current Builds baseline.
   evidence: `spec-6-1-list-and-open-projects-through-supported-authenticated-paths-2.md` Design Notes predate the 3.109.0 retarget (review R2-EC-17).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Archive the EventStore 3.109.0 release bypass log excerpts, failing tag-CI test output, and `release-evidence-36238526310-1` `publication-identity.json` before GitHub retention expires (about 2026-12-25).
+  evidence: The bypass and release-time Builds claims are only replayable from Actions logs and artifacts (review R3-BH-07).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Decide whether the 14-package `verify_public_packages.py` replay runs automatically before the P1R decision.
+  evidence: No CI caller exists; the lightweight evidence job lacks `dotnet nuget verify` and the archive downloads (review R3-BH-08/R3-VG-04).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Let the G-6 command contract accept a clean package-exception inventory and check the reason for any required exit-1 preflight.
+  evidence: `REQUIRED_COMMAND_EXIT_CODES` requires the inventory to exit 1, so fixing its 14 drifts would invalidate a packet (review R3-BH-10).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Compile the APIs changed in 3.109.0 (`CommandStatusQueryResponse.EventCount`/`TenantId`, `Contracts.Effects`, `IAggregateActor.ProcessTrustedEffectAsync`) in the EventStore P1R consumer smoke.
+  evidence: The consumer compiles only types unchanged since 3.106.0 (review R3-BH-17).
