@@ -82,13 +82,20 @@ jobs:
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest tests/tools/test_release_workflow.py -v
 
+      - name: Validate G-6 packet gitlink check fixtures
+        # Hermetic fixtures only: the real packet-versus-gitlink check runs in the G-6 jobs, so a
+        # routine submodule bump never blocks the build and test jobs that need workflow-gates.
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest tests/tools/test_check_g6_packet_gitlinks.py -v
+
       - name: Validate CI/CD invariants
         shell: pwsh
         run: ./tests/tools/run-ci-workflow-gates.ps1
 
   ci:
     needs: workflow-gates
-    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@3f44bc01df6057cd265adb3f800e68b31e6185f0
+    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@86cda4703eeff4621098baad3cee82348d1522ca
     with:
       # Bare solution path only. The callee runs `dotnet restore "$SOLUTION"`, so an
       # embedded `-p:` switch is parsed as part of the project path (MSB1009), and
@@ -126,9 +133,9 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@3f44bc01df6057cd265adb3f800e68b31e6185f0
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@86cda4703eeff4621098baad3cee82348d1522ca
 
-      # Candidate mode proves the pending packet against the committed gitlinks and baseline
+      # Candidate mode proves the pending packet against the committed baseline and sources
       # without granting acceptance; the accepted-only check runs in the separate g6-acceptance job.
       - name: Validate fresh G-6 runtime/toolchain packet (candidate)
         env:
@@ -141,7 +148,7 @@ jobs:
           --candidate
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@3f44bc01df6057cd265adb3f800e68b31e6185f0
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@86cda4703eeff4621098baad3cee82348d1522ca
         with:
           global-json-file: global.json
 
@@ -155,10 +162,21 @@ jobs:
         timeout-minutes: 15
         run: ./tests/tools/run-openapi-fingerprint-gate.ps1
 
+      # Last, so the gates above still report: a submodule gitlink that moved after the packet
+      # capture fails only the G-6 jobs (here and in g6-acceptance) until the packet is recaptured.
+      - name: Require G-6 packet revisions to equal root gitlinks
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: >-
+          python3 tests/tools/check_g6_packet_gitlinks.py
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
+
   # Fail-closed G-6 owner acceptance. While the packet is pending this job fails and no other
   # job needs it, so it never hides the candidate step or the later project gates. Owner
   # acceptance of the exact packet flips packet.json status to accepted and removes the
   # candidate step from project-gates (and its workflow-gate contract) in one change.
+  # Releases stay blocked until that owner acceptance: release.yml verify-source requires a
+  # successful push run of this workflow, and this failing job makes every run unsuccessful.
   g6-acceptance:
     name: G-6 owner acceptance (accepted-only)
     runs-on: ubuntu-latest
@@ -171,7 +189,7 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@3f44bc01df6057cd265adb3f800e68b31e6185f0
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@86cda4703eeff4621098baad3cee82348d1522ca
 
       - name: Validate fresh G-6 runtime/toolchain packet
         env:
@@ -180,6 +198,13 @@ jobs:
           python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py
           --workspace .
           --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
+
+      - name: Require G-6 packet revisions to equal root gitlinks
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: >-
+          python3 tests/tools/check_g6_packet_gitlinks.py
           --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
 
   # Replays the pending P1R candidate's release-bypass and checkout-drift claims against the
@@ -196,7 +221,7 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@3f44bc01df6057cd265adb3f800e68b31e6185f0
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@86cda4703eeff4621098baad3cee82348d1522ca
 
       - name: Fetch EventStore tags read by the P1R evidence replay
         run: >-
@@ -226,10 +251,10 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@3f44bc01df6057cd265adb3f800e68b31e6185f0
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@86cda4703eeff4621098baad3cee82348d1522ca
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@3f44bc01df6057cd265adb3f800e68b31e6185f0
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@86cda4703eeff4621098baad3cee82348d1522ca
         with:
           global-json-file: global.json
 

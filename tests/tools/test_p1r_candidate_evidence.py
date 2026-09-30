@@ -1,9 +1,21 @@
 """Replay the pending 6.1-P1R EventStore 3.109.0 candidate's release-bypass and checkout-drift claims.
 
-Every technical claim in the EventStore owner record is compared with an independent source: the
-public GitHub Actions run, job and workflow-run resources, or EventStore Git history at the root
-gitlink. Only the containment policy (the bypass and tag-CI failure stay open EventStore Owner
-disposition items) is asserted against fixed constants.
+Replayed against public GitHub Actions resources: the release run's event, head, workflow and
+conclusion and its Commitlint source-proof run; the absence of any successful push CI run for the
+tag; and the job conclusions of the recorded tag-CI attempt. Replayed against EventStore Git: the
+recorded checkout is an ancestor of the root EventStore gitlink with no `src` difference, the
+tag-to-checkout commit and `src` path counts, the storage-record blobs, `RetainedFloor` and each
+recorded interface member. The open EventStore Owner disposition is checked in the record and
+the Projects index text.
+
+Not replayed here: the 14 package hashes and signatures (`verify_public_packages.py`), the
+`BYPASS_VALIDATION` job environment and the failing test names (job logs need authentication),
+and the release-time Builds revision (release artifact).
+
+Update or retire this replay when an EventStore Owner disposition of the bypass or the tag-CI
+failure is recorded, when the tag CI is rerun (a new attempt or a successful push run), when the
+root EventStore gitlink moves to a commit whose `src` differs from the recorded checkout, or when
+an owner-accepted P1R record supersedes the 3.109.0 candidate.
 """
 
 from __future__ import annotations
@@ -14,6 +26,7 @@ import re
 import subprocess
 import time
 import unittest
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -26,17 +39,46 @@ OWNER_PACKET_PATH = PROJECT_ROOT / "_bmad-output/implementation-artifacts/6-1-p1
 REPOSITORY_API = "https://api.github.com/repos/Hexalith/Hexalith.EventStore/"
 OPEN_DISPOSITION = "open-eventstore-owner-disposition"
 PASSING_JOB_CONCLUSIONS = {"success", "skipped"}
+# The record captured the tag CI run's first attempt (its failed job belongs to attempt 1); a later
+# rerun adds attempts, so jobs are read from this attempt rather than from the latest one.
+TAG_CI_RECORDED_ATTEMPT = 1
+# Transient GitHub responses (rate limits and server errors) are retried a bounded number of times.
+RETRIED_HTTP_STATUSES = {403, 429}
+API_ATTEMPTS = 4
 RECORD = json.loads(RECORD_PATH.read_text(encoding="utf-8"))
 
 
-def github_api(path: str) -> dict:
-    """Read one public EventStore API resource; GITHUB_TOKEN only raises the rate limit."""
-    request = urllib.request.Request(REPOSITORY_API + path, headers={"Accept": "application/vnd.github+json"})
-    token = os.environ.get("GITHUB_TOKEN")
-    if token:
-        request.add_header("Authorization", f"Bearer {token}")
-    with urllib.request.urlopen(request, timeout=60) as response:
-        return json.load(response)
+def retry_delay(attempt: int, error: urllib.error.HTTPError | None) -> float:
+    """Honor a short Retry-After header, otherwise back off 2, 4, 8 seconds."""
+    retry_after = error.headers.get("Retry-After") if error is not None and error.headers is not None else None
+    if retry_after is not None and retry_after.isdigit() and int(retry_after) <= 60:
+        return float(retry_after)
+    return float(2 ** (attempt + 1))
+
+
+def github_api(path: str, attempts: int = API_ATTEMPTS) -> dict:
+    """Read one public EventStore API resource; GITHUB_TOKEN only raises the rate limit.
+
+    Network errors, HTTP 5xx and rate-limit 403/429 responses are retried; any other HTTP error, or
+    the last failed attempt, is raised so the replay fails loudly instead of skipping.
+    """
+    for attempt in range(attempts):
+        request = urllib.request.Request(REPOSITORY_API + path, headers={"Accept": "application/vnd.github+json"})
+        token = os.environ.get("GITHUB_TOKEN")
+        if token:
+            request.add_header("Authorization", f"Bearer {token}")
+        try:
+            with urllib.request.urlopen(request, timeout=60) as response:
+                return json.load(response)
+        except urllib.error.HTTPError as error:
+            if attempt == attempts - 1 or not (error.code >= 500 or error.code in RETRIED_HTTP_STATUSES):
+                raise
+            time.sleep(retry_delay(attempt, error))
+        except urllib.error.URLError:
+            if attempt == attempts - 1:
+                raise
+            time.sleep(retry_delay(attempt, None))
+    raise AssertionError("unreachable")
 
 
 def github_run(path: str) -> dict:
@@ -57,6 +99,22 @@ def eventstore_git(*arguments: str) -> str:
     completed = subprocess.run(
         ["git", "-C", str(EVENTSTORE_ROOT), *arguments], capture_output=True, text=True, check=True, timeout=60)
     return completed.stdout.strip()
+
+
+def eventstore_git_status(*arguments: str) -> int:
+    return subprocess.run(
+        ["git", "-C", str(EVENTSTORE_ROOT), *arguments], capture_output=True, text=True, check=False, timeout=60).returncode
+
+
+def root_eventstore_gitlink() -> str:
+    """Return the EventStore commit the root index records (what CI checks out)."""
+    entry = subprocess.run(
+        ["git", "-C", str(PROJECT_ROOT), "ls-files", "--stage", "--", "references/Hexalith.EventStore"],
+        capture_output=True, text=True, check=True, timeout=60).stdout.strip()
+    match = re.fullmatch(r"160000 ([0-9a-f]{40}) 0\treferences/Hexalith\.EventStore", entry)
+    if match is None:
+        raise AssertionError(f"references/Hexalith.EventStore is not a root gitlink: {entry!r}")
+    return match.group(1)
 
 
 def contains_word(text: str, word: str) -> bool:
@@ -91,14 +149,17 @@ class ReleaseValidationBypassTests(unittest.TestCase):
 
     def test_tag_ci_failed_only_in_contracts(self) -> None:
         tag_ci = RECORD["tag_ci_run"]
-        run = github_run(str(tag_ci["id"]))
+        attempt = f"{tag_ci['id']}/attempts/{TAG_CI_RECORDED_ATTEMPT}"
+        run = github_run(attempt)
+        self.assertEqual(run["run_attempt"], TAG_CI_RECORDED_ATTEMPT)
         self.assertEqual(run["head_sha"], RECORD["tag_commit"])
         self.assertEqual(run["path"], ".github/workflows/ci.yml")
         self.assertEqual(run["event"], "push")
         self.assertEqual(run["conclusion"], "failure")
-        page = github_run(f"{tag_ci['id']}/jobs?per_page=100")
+        page = github_run(f"{attempt}/jobs?per_page=100")
         jobs = page["jobs"]
         self.assertEqual(page["total_count"], len(jobs))
+        self.assertEqual({job["run_attempt"] for job in jobs}, {TAG_CI_RECORDED_ATTEMPT})
         conclusions = {job["name"]: job["conclusion"] for job in jobs}
         self.assertEqual(len(conclusions), len(jobs), "job names must be unique")
         # Any conclusion other than success or skipped (failure, cancelled, timed_out, action_required,
@@ -127,6 +188,16 @@ class CheckoutDriftTests(unittest.TestCase):
     """The later EventStore checkout's drift from the tag is recorded exactly and marked untested."""
 
     observation = RECORD["newer_checkout_observation"]
+
+    def test_recorded_checkout_is_the_root_gitlink_source(self) -> None:
+        # The drift below is measured at the recorded checkout; it describes the root gitlink only
+        # while that checkout is an ancestor of the gitlink with an identical src tree.
+        checkout = self.observation["sha"]
+        gitlink = root_eventstore_gitlink()
+        self.assertEqual(eventstore_git_status("merge-base", "--is-ancestor", checkout, gitlink), 0,
+                         f"recorded checkout {checkout} is not an ancestor of the root EventStore gitlink {gitlink}")
+        self.assertEqual(eventstore_git_status("diff", "--quiet", checkout, gitlink, "--", "src"), 0,
+                         f"src differs between the recorded checkout {checkout} and the root EventStore gitlink {gitlink}")
 
     def test_commit_and_source_path_counts_match_git(self) -> None:
         checkout = self.observation["sha"]
