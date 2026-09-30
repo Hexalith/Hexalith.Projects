@@ -2,7 +2,7 @@
 title: '6.1-P1R Qualify the EventStore 3.109.0 candidate'
 type: 'chore'
 created: '2026-09-29'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 4
 baseline_commit: '1152c8397f35fed1580e20915833dd958e8dbe07'
