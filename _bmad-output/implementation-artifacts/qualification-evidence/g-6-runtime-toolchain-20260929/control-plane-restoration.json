@@ -1,10 +1,10 @@
 {
   "schema": "hexalith.projects.g6-control-plane-restoration.v1",
-  "swapStartedUtc": "2026-09-30T06:30:06Z",
+  "swapStartedUtc": "2026-09-30T07:14:36Z",
   "temporaryContainers": [
     {
       "name": "dapr_placement",
-      "id": "d2af0183b00937e5611deeb709739557a34d1b28bb53d90d79021132d801ceac",
+      "id": "db14a5a70afebc58dd9a09f56a4944f3d0e07e140ffc90338b4eb737a028dea9",
       "image": "ghcr.io/dapr/dapr:1.18.2",
       "imageId": "sha256:5a5b6be9b9ecb6d8fcb54d410969c88fe15695b3c38df4fa3ac0a2151382938d",
       "hostPorts": [
@@ -16,7 +16,7 @@
     },
     {
       "name": "dapr_scheduler",
-      "id": "083fb51f09c0a6a6fc667a84a59b53220d1887e7704806dccae3d458a53f98ab",
+      "id": "5125dde8d4390e7c4d93b9f35beb44cae8400f25accd5b45f1e4f68f4315d560",
       "image": "ghcr.io/dapr/dapr:1.18.2",
       "imageId": "sha256:5a5b6be9b9ecb6d8fcb54d410969c88fe15695b3c38df4fa3ac0a2151382938d",
       "hostPorts": [
@@ -29,7 +29,7 @@
       "dataVolume": "tmpfs /var/lock (the original dapr_scheduler volume was not mounted)"
     }
   ],
-  "restoredUtc": "2026-09-30T06:30:42Z",
+  "restoredUtc": "2026-09-30T07:15:15Z",
   "originalContainers": [
     {
       "name": "dapr_placement",
@@ -60,5 +60,5 @@
   "fixturePostgresContainersPresent": false,
   "result": "restored",
   "rawCtrfRetained": false,
-  "cleanupCheckedUtc": "2026-09-30T06:30:46Z"
+  "cleanupCheckedUtc": "2026-09-30T07:15:19Z"
 }

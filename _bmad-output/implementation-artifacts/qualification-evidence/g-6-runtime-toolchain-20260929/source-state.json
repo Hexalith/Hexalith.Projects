@@ -4,12 +4,12 @@
     {
       "name": "Hexalith.Projects",
       "path": ".",
-      "revision": "a263e0d0fcac28e28a01a00113a57f7fae19ac20",
-      "diffSha256": "e20402f2aaa8e77d3fd36d991519f9450d196188d2e0429b4df229cc0934c1f9",
+      "revision": "9bacf3a6324f4b6402247289a1ed5a665ab91f0f",
+      "diffSha256": "24b15e7e2a328d23937494c61d4d80b662ac05834731745b4d6dcbc0c275dc6b",
       "files": [
         {
           "path": ".github/workflows/ci.yml",
-          "sha256": "a293f31c40ef6f1295d0de6df12e0638e74bcabd7f6e962fd8a13b8fe00a59e1"
+          "sha256": "54000131aab1e32054ca852d95ef6ed38c2b23a1c76023617e92db0f725ff027"
         },
         {
           "path": ".github/workflows/release.yml",
@@ -29,7 +29,7 @@
         },
         {
           "path": "tests/tools/run-ci-workflow-gates.ps1",
-          "sha256": "f78f0802523c67e735bd625acabb24c1d4dcd68a82d88908b0a1f4e538ef5b2d"
+          "sha256": "141b56e827d2ad4831242c2aee7893c714f21caae0cfe2720c7948bc0aeadaa2"
         },
         {
           "path": "docs/runbooks/projects-topology.md",
@@ -41,15 +41,23 @@
         },
         {
           "path": "tests/tools/check_g6_packet_gitlinks.py",
-          "sha256": "0cbf61bd467a88288d8b1ef159e7f75b96d4bb925a649a42819abd936582e924"
+          "sha256": "85aaf98ecdf622234b922b0dda9f95cc93732dcca9e11afc05c5c3f1c674cc02"
+        },
+        {
+          "path": "tests/tools/run_g6_candidate_gate.py",
+          "sha256": "fbd240947e29ca80811b12c6e28ab315647ed3244993c21cc0e2c24f02bea98d"
+        },
+        {
+          "path": "tests/tools/test_g6_packet_references.py",
+          "sha256": "37e2ddb1a5a8033b09077cd0feddfbe00953550dd969456354121da0bfd6f738"
         }
       ]
     },
     {
       "name": "Hexalith.Builds",
       "path": "references/Hexalith.Builds",
-      "revision": "86cda4703eeff4621098baad3cee82348d1522ca",
-      "diffSha256": "3e5f70505b14373c65d0bd2ccfd6cceb4f3a5106a640aa6d2c8fb5567d231930",
+      "revision": "ac58d02cd69f4c74cc71fc05430983d51b58fd84",
+      "diffSha256": "4b46f16ffee9c86aecb46f8549ab8fd52c66dce488ebe1ae94e755de0130ae7f",
       "files": [
         {
           "path": "references/Hexalith.Builds/.github/workflows/domain-ci.md",
@@ -69,7 +77,7 @@
         },
         {
           "path": "references/Hexalith.Builds/README.md",
-          "sha256": "6d0bc3cf71b5b5f31a4cefc6d747e49f0fc8ab8e83171c8bbcaccebc6e91e943"
+          "sha256": "d7f1c74193045f41c18aa77381b4974620a1ea24a4283aaaeb6eac90beab9117"
         },
         {
           "path": "references/Hexalith.Builds/Tools/runtime-toolchain-baseline.json",
@@ -77,11 +85,11 @@
         },
         {
           "path": "references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py",
-          "sha256": "13cda3db82508a9a25b2005e57ae3e93d6cb75f2ff59ef1833dc556566d56bcd"
+          "sha256": "d56da948cd33748ccb406391a3e1fa58ff0ab22ba6cf9d22b3b70a7e1efd881e"
         },
         {
           "path": "references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py",
-          "sha256": "d435694b314d844255ebd0d70d72b49a8393205884c264545025e2031ba28b38"
+          "sha256": "3845fad0b32791a9f16c19f9981777858f29215a835a1c7e9e4108a022cf03cf"
         },
         {
           "path": "references/Hexalith.Builds/schemas/hexalith.module-manifest.v1.json",
@@ -89,7 +97,7 @@
         },
         {
           "path": "references/Hexalith.Builds/schemas/hexalith.runtime-toolchain-evidence.v1.json",
-          "sha256": "5810b6e23ef8aba023fe491ebadf96ad7a873c1e633fcf148aae4179d606d592"
+          "sha256": "e340334f4290860930f91351f59a2d2453c9b6398973a444a7a90da5bba3c60b"
         },
         {
           "path": "references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Manifest/SupportedPlatformPins.cs",

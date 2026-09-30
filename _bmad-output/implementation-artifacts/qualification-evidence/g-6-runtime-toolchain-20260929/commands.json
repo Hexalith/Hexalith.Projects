@@ -17,19 +17,19 @@
       "purpose": "Builds focused module and evidence tests",
       "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet restore and dotnet build test/Hexalith.Builds.{Module,Evidence}.Tests --configuration Release --no-restore --no-incremental -m:1; TMPDIR=/var/tmp dotnet test/Hexalith.Builds.Module.Tests/bin/Release/net10.0/Hexalith.Builds.Module.Tests.dll -noColor; TMPDIR=/var/tmp dotnet test/Hexalith.Builds.Evidence.Tests/bin/Release/net10.0/Hexalith.Builds.Evidence.Tests.dll -noColor",
       "exitCode": 0,
-      "outcome": "Module 214 passed; Evidence 107 passed; 0 failed; 0 skipped; direct xUnit v3 assembly runners at Builds 86cda4703eeff4621098baad3cee82348d1522ca"
+      "outcome": "Module 214 passed; Evidence 107 passed; 0 failed; 0 skipped; direct xUnit v3 assembly runners at Builds ac58d02cd69f4c74cc71fc05430983d51b58fd84"
     },
     {
       "purpose": "G-6 mutation controls",
       "command": "python3 references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py",
       "exitCode": 0,
-      "outcome": "G6-EVIDENCE-MUTATIONS-PASSED: 24 scenarios for each of 3 baselines; 48 baseline-drift controls; 69 authority controls; 2 historical baseline SHA-256 pins"
+      "outcome": "G6-EVIDENCE-MUTATIONS-PASSED: 30 scenarios for each of 3 baselines; 48 baseline-drift controls; 141 authority controls; 2 historical baseline SHA-256 pins"
     },
     {
       "purpose": "real PostgreSQL two-sidecar stop/restart qualifier",
       "command": "HOME=<isolated-home> NUGET_PACKAGES=<isolated-cache> HEXALITH_OQ8_EVIDENCE_DIRECTORY=<isolated-capture> dotnet tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Release/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll -method Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants -noColor -result-ctrf <isolated-live-ctrf>",
       "exitCode": 0,
-      "outcome": "1 passed; 0 failed; 0 skipped (25.7 s); LiveSidecar test binaries built from EventStore checkout source 5b9494835fcba6152789653add8f84bee5666035 (src identical to 489e5d76253f68c6cf53c443aa8755ad059e621e, 28 commits after tag v3.109.0), not from the published 3.109.0 package archives; rebuilt --no-incremental in Release with the isolated NuGet cache; exact runtime 1.18.2"
+      "outcome": "1 passed; 0 failed; 0 skipped (26.9 s); LiveSidecar test binaries built from EventStore checkout source 5b9494835fcba6152789653add8f84bee5666035 (src identical to 489e5d76253f68c6cf53c443aa8755ad059e621e, 28 commits after tag v3.109.0), not from the published 3.109.0 package archives; rebuilt --no-incremental in Release with the isolated NuGet cache; exact runtime 1.18.2"
     },
     {
       "purpose": "21 exact deterministic support selectors",
@@ -47,13 +47,13 @@
       "purpose": "root workflow pin contract",
       "command": "pwsh -NoProfile -File ./tests/tools/run-ci-workflow-gates.ps1",
       "exitCode": 0,
-      "outcome": "passed; 5 workflow files validated, including the exact candidate G-6 step and the final exact G-6 packet-gitlink step in project-gates, the separate fail-closed g6-acceptance job (accepted-only step, then the same gitlink step) that no job needs, the p1r-candidate-evidence job, the hermetic gitlink-check fixtures in workflow-gates, and Builds execution SHA equal to the root Builds gitlink 86cda4703eeff4621098baad3cee82348d1522ca; the packet-revision-equals-gitlink comparison itself runs only in the G-6 jobs"
+      "outcome": "passed; 5 workflow files validated for CI structure only: the exact workflow-gates job with every hermetic fixture step as an exact blocking block, the exact status-aware g6-candidate job (status-aware G-6 gate script, then the G-6 document reference test) and the exact fail-closed g6-acceptance job (accepted-only step, then the packet-gitlink step), both needing only workflow-gates and needed by no job, project-gates with only the FrontComposer and OpenAPI gates, e2e needing no G-6 job, the p1r-candidate-evidence job, and every CI Hexalith.Builds reference at ac58d02cd69f4c74cc71fc05430983d51b58fd84; the validator, packet-gitlink and Builds execution-SHA-equals-gitlink checks run only in the G-6 jobs"
     },
     {
       "purpose": "Projects restore and release build",
       "command": "CI=true NUGET_PACKAGES=<isolated-cache> dotnet restore Hexalith.Projects.CI.slnx -p:NuGetAudit=false && dotnet build Hexalith.Projects.CI.slnx --configuration Release --no-restore --no-incremental -warnaserror -m:1 -p:NuGetAudit=false",
       "exitCode": 0,
-      "outcome": "build succeeded with 0 warnings and 0 errors at Projects a263e0d0fcac28e28a01a00113a57f7fae19ac20, consuming published EventStore 3.109.0, Dapr .NET 1.18.10 and Toolkit 13.5.1-beta.770 packages"
+      "outcome": "build succeeded with 0 warnings and 0 errors at Projects 9bacf3a6324f4b6402247289a1ed5a665ab91f0f, consuming published EventStore 3.109.0, Dapr .NET 1.18.10 and Toolkit 13.5.1-beta.770 packages"
     },
     {
       "purpose": "Projects Integration tests",

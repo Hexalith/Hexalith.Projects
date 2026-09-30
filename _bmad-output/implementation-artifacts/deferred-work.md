@@ -811,3 +811,6 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Compile the APIs changed in 3.109.0 (`CommandStatusQueryResponse.EventCount`/`TenantId`, `Contracts.Effects`, `IAggregateActor.ProcessTrustedEffectAsync`) in the EventStore P1R consumer smoke.
   evidence: The consumer compiles only types unchanged since 3.106.0 (review R3-BH-17).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Record the test-binary source commit in the EventStore OQ8 capture artifacts, and state when `shippedReleaseEntryAssemblies` means checkout-built rather than published binaries.
+  evidence: The hash-bound `eventstore/observations.json` omits the source commit, so the bound packet alone can be misread as evidence for the published release (review R4-BH-09).

@@ -1,6 +1,6 @@
 {
   "schema": "hexalith.projects.g6-pin-audit.v1",
-  "capturedUtc": "2026-09-30T06:34:07Z",
+  "capturedUtc": "2026-09-30T07:18:12Z",
   "baselinePath": "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json",
   "baselineSha256": "260d1abae7d9eba358c5eaf749f12a0f46cf6adf5b0b4830d423615908820fbd",
   "checks": [
@@ -324,6 +324,303 @@
     "matched": 44,
     "mismatched": 0
   },
+  "literalPinForms": [
+    {
+      "pin": ".github/workflows/ci.yml::dapr-version: '1.18.0'",
+      "occurrences": 1,
+      "forms": [
+        "dapr-version input"
+      ],
+      "tupleField": [
+        "daprCli"
+      ],
+      "versions": [
+        "1.18.0"
+      ],
+      "matches": true
+    },
+    {
+      "pin": ".github/workflows/ci.yml::dapr-runtime-version: '1.18.2'",
+      "occurrences": 1,
+      "forms": [
+        "dapr-runtime-version input"
+      ],
+      "tupleField": [
+        "daprRuntime"
+      ],
+      "versions": [
+        "1.18.2"
+      ],
+      "matches": true
+    },
+    {
+      "pin": ".github/workflows/ci.yml::version: '1.18.0'",
+      "occurrences": 1,
+      "forms": [
+        "version: of a Dapr CLI setup action"
+      ],
+      "tupleField": [
+        "daprCli"
+      ],
+      "versions": [
+        "1.18.0"
+      ],
+      "matches": true
+    },
+    {
+      "pin": ".github/workflows/ci.yml::runtime-version: '1.18.2'",
+      "occurrences": 1,
+      "forms": [
+        "runtime-version input"
+      ],
+      "tupleField": [
+        "daprRuntime"
+      ],
+      "versions": [
+        "1.18.2"
+      ],
+      "matches": true
+    },
+    {
+      "pin": ".github/workflows/ci.yml::run: dotnet tool install --global Aspire.Cli --version 13.5.4",
+      "occurrences": 1,
+      "forms": [
+        "Aspire CLI install step"
+      ],
+      "tupleField": [
+        "aspireCli"
+      ],
+      "versions": [
+        "13.5.4"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Builds/.github/workflows/domain-ci.yml::default: '1.18.0'",
+      "occurrences": 1,
+      "forms": [
+        "default: of the dapr-version workflow input"
+      ],
+      "tupleField": [
+        "daprCli"
+      ],
+      "versions": [
+        "1.18.0"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Builds/.github/workflows/domain-ci.yml::default: '1.18.2'",
+      "occurrences": 1,
+      "forms": [
+        "default: of the dapr-runtime-version workflow input"
+      ],
+      "tupleField": [
+        "daprRuntime"
+      ],
+      "versions": [
+        "1.18.2"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Builds/.github/workflows/domain-release.yml::default: '1.18.0'",
+      "occurrences": 1,
+      "forms": [
+        "default: of the dapr-version workflow input"
+      ],
+      "tupleField": [
+        "daprCli"
+      ],
+      "versions": [
+        "1.18.0"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Builds/.github/workflows/domain-release.yml::default: '1.18.2'",
+      "occurrences": 1,
+      "forms": [
+        "default: of the dapr-runtime-version workflow input"
+      ],
+      "tupleField": [
+        "daprRuntime"
+      ],
+      "versions": [
+        "1.18.2"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.EventStore/.github/workflows/integration.yml::DAPR_CLI_VERSION: '1.18.0'",
+      "occurrences": 1,
+      "forms": [
+        "DAPR_CLI_VERSION variable"
+      ],
+      "tupleField": [
+        "daprCli"
+      ],
+      "versions": [
+        "1.18.0"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.EventStore/.github/workflows/integration.yml::DAPR_RUNTIME_VERSION: '1.18.2'",
+      "occurrences": 1,
+      "forms": [
+        "DAPR_RUNTIME_VERSION variable"
+      ],
+      "tupleField": [
+        "daprRuntime"
+      ],
+      "versions": [
+        "1.18.2"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.FrontComposer/.github/workflows/quality.yml::ASPIRE_CLI_INSTALL: dotnet tool install --global Aspire.Cli --version 13.5.4",
+      "occurrences": 1,
+      "forms": [
+        "ASPIRE_CLI_INSTALL variable"
+      ],
+      "tupleField": [
+        "aspireCli"
+      ],
+      "versions": [
+        "13.5.4"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.FrontComposer/.github/workflows/quality.yml::version: '1.18.0'",
+      "occurrences": 2,
+      "forms": [
+        "version: of a Dapr CLI setup action"
+      ],
+      "tupleField": [
+        "daprCli"
+      ],
+      "versions": [
+        "1.18.0"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.FrontComposer/.github/workflows/quality.yml::dapr init --runtime-version 1.18.2",
+      "occurrences": 1,
+      "forms": [
+        "dapr init --runtime-version command"
+      ],
+      "tupleField": [
+        "daprRuntime"
+      ],
+      "versions": [
+        "1.18.2"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Memories/.github/workflows/ci.yml::DAPR_CLI_VERSION: '1.18.0'",
+      "occurrences": 1,
+      "forms": [
+        "DAPR_CLI_VERSION variable"
+      ],
+      "tupleField": [
+        "daprCli"
+      ],
+      "versions": [
+        "1.18.0"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Memories/.github/workflows/ci.yml::DAPR_RUNTIME_VERSION: '1.18.2'",
+      "occurrences": 1,
+      "forms": [
+        "DAPR_RUNTIME_VERSION variable"
+      ],
+      "tupleField": [
+        "daprRuntime"
+      ],
+      "versions": [
+        "1.18.2"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Memories/.github/workflows/nightly.yml::DAPR_CLI_VERSION: '1.18.0'",
+      "occurrences": 1,
+      "forms": [
+        "DAPR_CLI_VERSION variable"
+      ],
+      "tupleField": [
+        "daprCli"
+      ],
+      "versions": [
+        "1.18.0"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Memories/.github/workflows/nightly.yml::DAPR_RUNTIME_VERSION: '1.18.2'",
+      "occurrences": 1,
+      "forms": [
+        "DAPR_RUNTIME_VERSION variable"
+      ],
+      "tupleField": [
+        "daprRuntime"
+      ],
+      "versions": [
+        "1.18.2"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Memories/tools/verify-production-deployment.ps1::[string]$DaprRuntimeVersion = \"1.18.2\",",
+      "occurrences": 1,
+      "forms": [
+        "$DaprRuntimeVersion parameter"
+      ],
+      "tupleField": [
+        "daprRuntime"
+      ],
+      "versions": [
+        "1.18.2"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Parties/.github/workflows/ci.yml::dapr-version: '1.18.0'",
+      "occurrences": 1,
+      "forms": [
+        "dapr-version input"
+      ],
+      "tupleField": [
+        "daprCli"
+      ],
+      "versions": [
+        "1.18.0"
+      ],
+      "matches": true
+    },
+    {
+      "pin": "references/Hexalith.Parties/.github/workflows/ci.yml::dapr-runtime-version: '1.18.2'",
+      "occurrences": 1,
+      "forms": [
+        "dapr-runtime-version input"
+      ],
+      "tupleField": [
+        "daprRuntime"
+      ],
+      "versions": [
+        "1.18.2"
+      ],
+      "matches": true
+    }
+  ],
+  "everyLiteralPinSetsOneRole": true,
   "tupleCliRuntimeInSameRolePins": [
     {
       "tupleField": "daprCli",
@@ -331,26 +628,73 @@
       "sameRoleLiteralPins": [
         {
           "pin": ".github/workflows/ci.yml::dapr-version: '1.18.0'",
+          "forms": [
+            "dapr-version input"
+          ],
+          "version": "1.18.0",
+          "matches": true
+        },
+        {
+          "pin": ".github/workflows/ci.yml::version: '1.18.0'",
+          "forms": [
+            "version: of a Dapr CLI setup action"
+          ],
+          "version": "1.18.0",
+          "matches": true
+        },
+        {
+          "pin": "references/Hexalith.Builds/.github/workflows/domain-ci.yml::default: '1.18.0'",
+          "forms": [
+            "default: of the dapr-version workflow input"
+          ],
+          "version": "1.18.0",
+          "matches": true
+        },
+        {
+          "pin": "references/Hexalith.Builds/.github/workflows/domain-release.yml::default: '1.18.0'",
+          "forms": [
+            "default: of the dapr-version workflow input"
+          ],
           "version": "1.18.0",
           "matches": true
         },
         {
           "pin": "references/Hexalith.EventStore/.github/workflows/integration.yml::DAPR_CLI_VERSION: '1.18.0'",
+          "forms": [
+            "DAPR_CLI_VERSION variable"
+          ],
+          "version": "1.18.0",
+          "matches": true
+        },
+        {
+          "pin": "references/Hexalith.FrontComposer/.github/workflows/quality.yml::version: '1.18.0'",
+          "forms": [
+            "version: of a Dapr CLI setup action"
+          ],
           "version": "1.18.0",
           "matches": true
         },
         {
           "pin": "references/Hexalith.Memories/.github/workflows/ci.yml::DAPR_CLI_VERSION: '1.18.0'",
+          "forms": [
+            "DAPR_CLI_VERSION variable"
+          ],
           "version": "1.18.0",
           "matches": true
         },
         {
           "pin": "references/Hexalith.Memories/.github/workflows/nightly.yml::DAPR_CLI_VERSION: '1.18.0'",
+          "forms": [
+            "DAPR_CLI_VERSION variable"
+          ],
           "version": "1.18.0",
           "matches": true
         },
         {
           "pin": "references/Hexalith.Parties/.github/workflows/ci.yml::dapr-version: '1.18.0'",
+          "forms": [
+            "dapr-version input"
+          ],
           "version": "1.18.0",
           "matches": true
         }
@@ -363,41 +707,81 @@
       "sameRoleLiteralPins": [
         {
           "pin": ".github/workflows/ci.yml::dapr-runtime-version: '1.18.2'",
+          "forms": [
+            "dapr-runtime-version input"
+          ],
           "version": "1.18.2",
           "matches": true
         },
         {
           "pin": ".github/workflows/ci.yml::runtime-version: '1.18.2'",
+          "forms": [
+            "runtime-version input"
+          ],
+          "version": "1.18.2",
+          "matches": true
+        },
+        {
+          "pin": "references/Hexalith.Builds/.github/workflows/domain-ci.yml::default: '1.18.2'",
+          "forms": [
+            "default: of the dapr-runtime-version workflow input"
+          ],
+          "version": "1.18.2",
+          "matches": true
+        },
+        {
+          "pin": "references/Hexalith.Builds/.github/workflows/domain-release.yml::default: '1.18.2'",
+          "forms": [
+            "default: of the dapr-runtime-version workflow input"
+          ],
           "version": "1.18.2",
           "matches": true
         },
         {
           "pin": "references/Hexalith.EventStore/.github/workflows/integration.yml::DAPR_RUNTIME_VERSION: '1.18.2'",
+          "forms": [
+            "DAPR_RUNTIME_VERSION variable"
+          ],
           "version": "1.18.2",
           "matches": true
         },
         {
           "pin": "references/Hexalith.FrontComposer/.github/workflows/quality.yml::dapr init --runtime-version 1.18.2",
+          "forms": [
+            "dapr init --runtime-version command"
+          ],
           "version": "1.18.2",
           "matches": true
         },
         {
           "pin": "references/Hexalith.Memories/.github/workflows/ci.yml::DAPR_RUNTIME_VERSION: '1.18.2'",
+          "forms": [
+            "DAPR_RUNTIME_VERSION variable"
+          ],
           "version": "1.18.2",
           "matches": true
         },
         {
           "pin": "references/Hexalith.Memories/.github/workflows/nightly.yml::DAPR_RUNTIME_VERSION: '1.18.2'",
+          "forms": [
+            "DAPR_RUNTIME_VERSION variable"
+          ],
           "version": "1.18.2",
           "matches": true
         },
         {
           "pin": "references/Hexalith.Memories/tools/verify-production-deployment.ps1::[string]$DaprRuntimeVersion = \"1.18.2\",",
+          "forms": [
+            "$DaprRuntimeVersion parameter"
+          ],
           "version": "1.18.2",
           "matches": true
         },
         {
           "pin": "references/Hexalith.Parties/.github/workflows/ci.yml::dapr-runtime-version: '1.18.2'",
+          "forms": [
+            "dapr-runtime-version input"
+          ],
           "version": "1.18.2",
           "matches": true
         }
@@ -410,25 +794,23 @@
       "sameRoleLiteralPins": [
         {
           "pin": ".github/workflows/ci.yml::run: dotnet tool install --global Aspire.Cli --version 13.5.4",
+          "forms": [
+            "Aspire CLI install step"
+          ],
           "version": "13.5.4",
           "matches": true
         },
         {
           "pin": "references/Hexalith.FrontComposer/.github/workflows/quality.yml::ASPIRE_CLI_INSTALL: dotnet tool install --global Aspire.Cli --version 13.5.4",
+          "forms": [
+            "ASPIRE_CLI_INSTALL variable"
+          ],
           "version": "13.5.4",
           "matches": true
         }
       ],
       "matches": true
     }
-  ],
-  "roleLessLiteralPins": [
-    ".github/workflows/ci.yml::version: '1.18.0'",
-    "references/Hexalith.Builds/.github/workflows/domain-ci.yml::default: '1.18.0'",
-    "references/Hexalith.Builds/.github/workflows/domain-ci.yml::default: '1.18.2'",
-    "references/Hexalith.Builds/.github/workflows/domain-release.yml::default: '1.18.0'",
-    "references/Hexalith.Builds/.github/workflows/domain-release.yml::default: '1.18.2'",
-    "references/Hexalith.FrontComposer/.github/workflows/quality.yml::version: '1.18.0'"
   ],
   "tupleAspireSdkInAuditedAppHostPins": {
     "version": "13.5.4",
