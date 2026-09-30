@@ -86,7 +86,10 @@ p1r_current_revalidation:
   eventstore_tag_ci: "https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36237813612 failed: 3 Contracts OQ8 Story 4.15 governance tests"
   eventstore_published_package_evidence: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/public-packages.json
   eventstore_rollback_probe: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/rollback-probe/README.md
-  builds_exact_revision_ci: pending-owner-push
+  builds_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Builds/actions/runs/36698188312 success at ac58d02c (temporary prerelease branch, deleted after the run): Build and test, Python contract tests and CodeQL passed"
+  builds_main_merge: "fdebf0fa7505ebc18c500a4da88eeee05df1203a (parents ac58d02c and remote 125566f1); CI 36698191862 success, Commitlint 36698191621 success"
+  eventstore_main_merge: "6e972132c7b5b630246c58cff59e6b90e50d44ba (parents 5b949483 and remote bbe7582e); CI 36698207328 failure: build-and-test SecretsProtectionTests flags remote ReminderReconcilerTests.cs:234 (also fails at bbe7582e run 36685058689); contracts SharedConsumerAuthorityValidator rejects the 6-1-p1r-3109 consumer and rollback-probe projects, which 27279fe6's 6-1-p1r-3108 probe exclusions do not cover (new with the merge)"
+  projects_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Projects/actions/runs/36698221404 failure at 27341e150eacf08c8279564eebcdda1c642d6ca9: workflow-gates, g6-candidate and p1r-candidate-evidence passed; g6-acceptance failed by design (Packet status must be accepted); ci/build-and-test failed package consumer validation (tools/release-packages.json expects Hexalith.EventStore.Contracts 3.106.0, Builds ac58d02c pins 3.109.0) before any test tier ran, so project-gates was skipped; Commitlint 36698221478 and CodeQL 36698221345 passed"
   g6_baseline: references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
   g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
   g6_fresh_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
@@ -96,7 +99,7 @@ p1r_current_revalidation:
   g6_current_qualification: candidate-validator-exit-0-accepted-only-exit-1-committed-source-closure-revisions-equal-gitlinks
   g6_ci_jobs: "every G-6 check runs in g6-candidate (status-aware tests/tools/run_g6_candidate_gate.py: the validator in candidate mode while pending and accepted-only mode once accepted, then the packet-gitlink and Builds execution-SHA-equals-gitlink checks, then tests/tools/test_g6_packet_references.py) and g6-acceptance (accepted-only validator, then the packet-gitlink check); both need only workflow-gates and no job needs them, so G-6 drift fails only those two jobs while workflow-gates, ci, project-gates and e2e still run"
   g6_acceptance_procedure: "status flip only: one Projects commit changes packet.json status from pending to accepted and adds a named decision record (approver, date, owner roles, reviewed packet SHA-256) under qualification_gates.G-6; no bound file changes, and both G-6 jobs then pass"
-  push_order: "push Builds ac58d02c and EventStore 5b949483 before Projects; integrate any advanced remote main with a merge commit; never squash or rebase the bound commits"
+  push_order: "push Builds ac58d02c and EventStore 5b949483 before Projects; integrate any advanced remote main with a merge commit; never squash or rebase the bound commits (done 2026-09-30: Builds main fdebf0fa, EventStore main 6e972132, Projects main 27341e15; gitlinks unchanged)"
   branch_protection: "require only workflow-gates, the ci reusable-workflow jobs and project-gates; never require g6-candidate, g6-acceptance or p1r-candidate-evidence, which fail by design on G-6 drift (including routine bumps of packet-bound submodules), while the packet is pending, or when the EventStore gitlink src or the recorded EventStore disposition changes; e2e is schedule-only. release.yml needs a successful whole ci.yml run, so any such failure, including G-6 drift after acceptance, blocks releases until a recapture or evidence update"
   projects_releases: "blocked while the G-6 packet is pending: release.yml verify-source needs a successful push CI run and g6-acceptance fails until owner acceptance"
   g6_oq8_binaries: "LiveSidecar and Server test binaries built from EventStore checkout source 5b949483, not the published 3.109.0 archives"
@@ -104,7 +107,9 @@ p1r_current_revalidation:
     - "EventStore release validation bypass and failing tag CI need an EventStore Owner disposition"
     - "3.109.0 to 3.70.1 actor/domain replay, API downgrade, and operational backup/restore rehearsal are unproven; only a storage-record read passed, through a disposable Dapr state.redis store on local runtime 1.18.4 (never PostgreSQL)"
     - "489e5d76 checkout RetainedFloor and interface changes are untested against the published packages"
-    - "Builds ac58d02c has no exact-SHA CI, published tool consumer pin, persisted-run proof, or 3.109.0 exact-pair package/runner probe"
+    - "Builds ac58d02c has no published tool consumer pin, persisted-run proof, or 3.109.0 exact-pair package/runner probe (exact-SHA CI 36698188312 passed)"
+    - "Projects main CI build-and-test fails package consumer validation (tools/release-packages.json expects Hexalith.EventStore.Contracts 3.106.0, Builds ac58d02c pins 3.109.0) on every main run since at least 6bc51555, so no CI test tier has run and the Folders ValidateLink_MalformedSuccess_IsUnavailable failure is not yet observed in CI"
+    - "EventStore main CI fails at merge 6e972132: the 6-1-p1r-3109 evidence projects need the same package-authority scan exclusion 27279fe6 gave the 6-1-p1r-3108 probes, and SecretsProtectionTests flags remote ReminderReconcilerTests.cs:234"
     - "Parties and FrontComposer AppHosts do not compile; managed restart smoke not run (its preflight is deliberately run without TEST_USER_PASSWORD, exit 1 by contract); package-exception inventory exits 1 with 14 drifts"
     - "G-6 OQ8 pass used checkout-source test binaries, not the published 3.109.0 archives; the consumer smoke compiles only types unchanged since 3.106.0"
   superseded_candidate:
