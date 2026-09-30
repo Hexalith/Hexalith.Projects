@@ -835,3 +835,9 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-update-eventstore-package-version.md`
   summary: Projects package validation still fails because ServiceDefaults packs OpenTelemetry 1.19.1 while `tools/release-packages.json` says 1.19.0.
   evidence: `python3 scripts/pack-release-packages.py ./nupkgs 0.0.0-ci-test` and `scripts/validate-nuget-packages.py` exit 1 with `wrong_versions` for `OpenTelemetry`, `OpenTelemetry.Exporter.OpenTelemetryProtocol`, and `OpenTelemetry.Extensions.Hosting`. The four `Hexalith.EventStore.Contracts` nuspecs are `3.110.0`. The OpenTelemetry mismatch was already in the catalog.
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-3.md`
+  summary: Prove shadow equivalence of supported list/open against legacy GET.
+  evidence: Split from the Story 6.1 spec because the 2142-token draft mixed the read with its legacy comparison harness. Routing cutover stays in Story 6.7; this slice keeps the equivalence proof.
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-3.md`
+  summary: Inspect a quarantined folderless Project on the Tenant-role open path.
+  evidence: Split from the Story 6.1 spec because operator inspection of Safe Metadata, the Project name, and any pre-v1 Folder or creation receipt is a separate edge from authorization-filtered list/open. Chatbot still omits these Projects.
