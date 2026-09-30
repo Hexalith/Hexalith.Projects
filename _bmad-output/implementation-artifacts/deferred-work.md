@@ -829,3 +829,9 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: At the next G-6 recapture, build the Builds self-test catalog fixture from a test-owned package table and add a drift control per catalog package.
   evidence: Removing entries from `CATALOG_TUPLE_FIELDS` leaves the self-test green and lets a `daprDotnetPackages` 1.18.8 baseline validate (review R5-VG-01).
+- source_spec: `_bmad-output/implementation-artifacts/spec-update-eventstore-package-version.md`
+  summary: The Builds package audit still has a duplicate xunit consumer, so an incremental refresh of one family fails closed.
+  evidence: `package-version-audit.json` lists `P0Fixture.NativeTests.VsTest.csproj` twice under family `xunit` (6 rows, 5 unique). `audit-central-package-versions.ps1 -Family hexalith-eventstore` stopped on that prior-family check. This pin used a complete refresh instead. The duplicate predates the EventStore `3.110.0` pin.
+- source_spec: `_bmad-output/implementation-artifacts/spec-update-eventstore-package-version.md`
+  summary: Projects package validation still fails because ServiceDefaults packs OpenTelemetry 1.19.1 while `tools/release-packages.json` says 1.19.0.
+  evidence: `python3 scripts/pack-release-packages.py ./nupkgs 0.0.0-ci-test` and `scripts/validate-nuget-packages.py` exit 1 with `wrong_versions` for `OpenTelemetry`, `OpenTelemetry.Exporter.OpenTelemetryProtocol`, and `OpenTelemetry.Extensions.Hosting`. The four `Hexalith.EventStore.Contracts` nuspecs are `3.110.0`. The OpenTelemetry mismatch was already in the catalog.

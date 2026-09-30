@@ -100,7 +100,7 @@ jobs:
 
   ci:
     needs: workflow-gates
-    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@ac58d02cd69f4c74cc71fc05430983d51b58fd84
+    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@caad9bae6da30f667f82f6005758f2916fa766a8
     with:
       # Bare solution path only. The callee runs `dotnet restore "$SOLUTION"`, so an
       # embedded `-p:` switch is parsed as part of the project path (MSB1009), and
@@ -138,10 +138,10 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@ac58d02cd69f4c74cc71fc05430983d51b58fd84
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@caad9bae6da30f667f82f6005758f2916fa766a8
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@ac58d02cd69f4c74cc71fc05430983d51b58fd84
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@caad9bae6da30f667f82f6005758f2916fa766a8
         with:
           global-json-file: global.json
 
@@ -176,7 +176,7 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@ac58d02cd69f4c74cc71fc05430983d51b58fd84
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@caad9bae6da30f667f82f6005758f2916fa766a8
 
       - name: Run status-aware G-6 gate
         env:
@@ -210,7 +210,7 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@ac58d02cd69f4c74cc71fc05430983d51b58fd84
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@caad9bae6da30f667f82f6005758f2916fa766a8
 
       - name: Validate fresh G-6 runtime/toolchain packet
         env:
@@ -242,7 +242,7 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@ac58d02cd69f4c74cc71fc05430983d51b58fd84
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@caad9bae6da30f667f82f6005758f2916fa766a8
 
       - name: Fetch EventStore tags read by the P1R evidence replay
         run: >-
@@ -272,10 +272,10 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@ac58d02cd69f4c74cc71fc05430983d51b58fd84
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@caad9bae6da30f667f82f6005758f2916fa766a8
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@ac58d02cd69f4c74cc71fc05430983d51b58fd84
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@caad9bae6da30f667f82f6005758f2916fa766a8
         with:
           global-json-file: global.json
 
