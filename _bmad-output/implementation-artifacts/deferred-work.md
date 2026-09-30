@@ -814,3 +814,18 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Record the test-binary source commit in the EventStore OQ8 capture artifacts, and state when `shippedReleaseEntryAssemblies` means checkout-built rather than published binaries.
   evidence: The hash-bound `eventstore/observations.json` omits the source commit, so the bound packet alone can be misread as evidence for the published release (review R4-BH-09).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Require a named G-6 decision record (reviewed hash, allowlisted approver, owner roles, date on or after capture) whenever the packet status is `accepted`, and define its `sprint-status.yaml` keys and follow-up fields.
+  evidence: A bare status flip turns both G-6 jobs green today; the validator has never checked a decision record (review R5-BH-01/02, R5-EC-10).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Audit and bind the Builds `Github/dapr-init/action.yml` defaults, whose runtime falls back to 1.18.0 when callers omit `runtime-version`.
+  evidence: The action is outside the 2026-09-29 `pinAudit` and source-state (review R5-BH-05).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: Make the Builds execution-SHA check follow nested Builds action refs, or narrow its message to direct `ci.yml` references.
+  evidence: `domain-ci.yml` pins `dapr-init@410bd595…`, which is neither the gitlink nor bound; latent while byte-identical (review R5-BH-06).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: At the next G-6 recapture, tighten `test_g6_packet_references.py` (exact replaced-hash and gitlink matches, fixtures, an accepted-status case) and add expected-repository-set and argument assertions to the G-6 gate tests.
+  evidence: These packet-bound files accept loose matches and never exercise the accepted branch (review R5-BH-09/11, R5-VG-02).
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
+  summary: At the next G-6 recapture, build the Builds self-test catalog fixture from a test-owned package table and add a drift control per catalog package.
+  evidence: Removing entries from `CATALOG_TUPLE_FIELDS` leaves the self-test green and lets a `daprDotnetPackages` 1.18.8 baseline validate (review R5-VG-01).

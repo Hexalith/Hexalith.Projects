@@ -2,7 +2,7 @@
 title: '6.1-P1R Qualify the EventStore 3.109.0 candidate'
 type: 'chore'
 created: '2026-09-29'
-status: 'in-progress'
+status: 'in-review'
 route: 'dispatch'
 review_loop_iteration: 4
 baseline_commit: '1152c8397f35fed1580e20915833dd958e8dbe07'
@@ -123,6 +123,7 @@ The original request authorized evidence gathering and owner-repository edits wh
 - `tests/tools/check_g6_packet_gitlinks.py` reports a non-object packet, a non-object binding, a missing git executable and an unreadable root index as their own failures (`G6-PACKET-GITLINK-GIT-UNAVAILABLE` for the last two); its fixtures pass 9/9. `tests/tools/test_p1r_candidate_evidence.py` also retries `TimeoutError`, `http.client.IncompleteRead` and `json.JSONDecodeError` (mocked controls: each retried once then read; a persistent timeout raised after four attempts; 404 raised at once) and reports `merge-base` exit `128` as missing EventStore history rather than a non-ancestor; 8/8 pass with `GITHUB_TOKEN=$(gh auth token)`. The hermetic `tests/tools/test_g6_packet_references.py` requires the G-6 README, the 3109 owner packet, the Spine and `sprint-status.yaml` to quote the full reviewed packet SHA-256 (packet.json while pending; once accepted, the same bytes with the status member restored to `pending`) and the full Builds and EventStore gitlinks, the README to list every bound submodule gitlink, the current sprint-status keys to carry those values, and every replaced pending hash to appear only on a line marked replaced or superseded. At the loop 3 commit `70cca76` it fails on exactly the R4-BH-01 lines (sprint-status `owner_decisions` and G-6 `current_candidate_sha256` naming `e3090bd9`).
 - The pending G-6 packet was recaptured after both commits in `/var/tmp/g6-20260930b` with a fresh isolated NuGet cache (546 packages, all from nuget.org), the checksum-verified Dapr CLI `1.18.0` and `daprd` `1.18.2` (extracted on the first attempt). Results match loop 3: Builds Module 214/214 and Evidence 107/107, the self-test line above, the fourth isolated Dapr `1.18.2` two-sidecar OQ8 qualifier 1/1 (originals `9d57dbed…`/`baede0ae…` restored running by exact ID, no temporary container, fixture PostgreSQL or `daprd` left), support 33/33, strict capture validation, the workflow gate, Projects package-mode Release build (0 warnings/errors) and Integration 27/27, the credential-less restart-smoke preflight (exit `1` by contract), eight AppHost restores at Toolkit `.770`, AppHost builds (Parties 3 errors and FrontComposer 52 errors, exit `1`), both pin selectors, 169 workflow assertions and the inventory (exit `1`, 14 drifts). The new packet `g-6-runtime-toolchain-20260929/packet.json` has SHA-256 `f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2` (`capturedUtc=2026-09-30T07:18:12Z`) and binds 75 committed files (the loop 3 paths plus `tests/tools/run_g6_candidate_gate.py` and `tests/tools/test_g6_packet_references.py`); `source-closure.json` reports zero uncommitted bindings and every revision equal to its root gitlink, and `pin-audit.json` classifies all 21 literal pins (22 active occurrences) to one role each. Candidate mode exits `0`, accepted-only mode exits `1`, the gitlink check and the status-aware gate exit `0`, and the reference test passes 5/5. The replaced never-accepted packet `26d7a6e0…` is recorded as superseded, beside `e3090bd9…` and `7e7d7ea2…`. `verify_public_packages.py` still exits `0`.
 - The 3109 owner packet, G-6 README, `sprint-status.yaml` (including G-6 `current_candidate_sha256`, `accepted_scope` and `owner_decisions`) and Spine carry the new packet hash, Builds `ac58d02c` and Projects gitlinks commit `9bacf3a6`; they document the push order (Builds and EventStore before Projects; merge, never squash or rebase the bound commits), the checks branch protection should require (`workflow-gates`, `ci`, `project-gates`, `g6-candidate`; not `g6-acceptance`, `e2e` or `p1r-candidate-evidence`), the status-flip-only acceptance procedure, and that the rollback probe used `state.redis` on local Dapr runtime `1.18.4` and never PostgreSQL. Controls on the final state: flipping only the packet status to `accepted` makes the status-aware gate (accepted-only mode), the reference test, the accepted-only validator and the gitlink check all exit `0` with no other file changed (the packet was restored to `f62a8f66…` afterwards); with a scratch index, a Tenants gitlink bump and a Builds-only gitlink bump each leave the workflow gate at exit `0` while the G-6 gate and gitlink step exit `1`, and a one-byte change to a bound file leaves the workflow gate at `0` while the G-6 gate exits `1` with `Source file hash mismatch`. The 3.106.0 record, the 3.70.1 rollback, the historical and superseded packet folders, P0 Stage 6, readiness and Story 6.1 are unchanged. Exact-SHA CI remains pending the owner's push.
+- Review loop 5 patch (2026-09-30, Projects `ffcd649`): corrects the loop-4 branch-protection advice above. Require only `workflow-gates`, the `ci` jobs and `project-gates`; never require `g6-candidate`, `g6-acceptance` or `p1r-candidate-evidence`. Because `release.yml` needs a successful whole `ci.yml` run, any of their failures, including G-6 drift after acceptance, blocks releases until a recapture or evidence update. All spec verification commands pass afterwards, and packet `f62a8f66…` is unchanged.
 
 ## Spec Change Log
 
@@ -319,6 +320,35 @@ The original request authorized evidence gathering and owner-repository edits wh
 | R4-VG-04 sprint-status stale values | medium | patch | Same defect as R4-BH-01. |
 | R4-VG-05 mutation-controls counts unbound | medium | patch | Same defect as R4-BH-05. |
 | R4-VG-06 Builds bump blocks all CI, docs say otherwise | medium | bad_spec | Same defect as R4-EC-17. |
+| R5-BH-01 accepted mode checks only the status string | medium | defer | Pre-existing acceptance design (carried from BH-18/R3-EC-16): the validator never required a decision record; a flipped copy prints `G6-EVIDENCE-VALID`. |
+| R5-BH-02 acceptance record keys and follow-up fields undefined | medium | defer | Same root cause as R5-BH-01. |
+| R5-BH-03 post-acceptance drift blocks releases, undocumented | low | patch | `release.yml` needs a successful whole `ci.yml` run, so G-6 or P1R-evidence failures after acceptance block releases; the docs mention only the pending period. |
+| R5-BH-04 advice to require `g6-candidate` blocks bump merges | medium | patch | README, owner packet and `sprint-status.yaml` `branch_protection` tell branch protection to require `g6-candidate`, which fails on every routine bound-submodule bump, contrary to the 2026-09-30 decision. |
+| R5-BH-05 `dapr-init` action default unaudited | medium | defer | Pre-existing G-6 scope: `Github/dapr-init/action.yml` defaults `version` to 1.18.0 and is outside `pinAudit` and source-state. |
+| R5-BH-06 execution-SHA check ignores nested Builds actions | medium | defer | `domain-ci.yml` pins `dapr-init@410bd595…`; latent because the action is byte-identical; follow nested refs or narrow the gate message. |
+| R5-BH-07 historical results hide later failures | low | reject | The recorded first-failure results are accurate; historical packets validate only at their own bound tooling, as before. |
+| R5-BH-08 spec content stale | low | reject | Fix edits this build's spec. |
+| R5-BH-09 document-reference test loose and fixture-less | medium | defer | `test_g6_packet_references.py` is packet-bound; tighten the replaced-hash and SHA matches and add fixtures at the next recapture. |
+| R5-BH-10 new jobs lack timeouts | low | reject | Adds guards to bound `ci.yml`; a hang is visible. |
+| R5-BH-11 gate tests miss argument wiring and binding-set checks | medium | defer | Bound gate files; add expected-repository-set and argument assertions at the next recapture. |
+| R5-EC-01 case-variant Builds `uses:` bypasses the SHA check | low | reject | Guards an undemonstrated deliberate edit. |
+| R5-EC-02 invalid UTF-8 raises a traceback | low | reject | Loud failure. |
+| R5-EC-03 approval date compared by day | low | reject | Carried from R3-BH-01. |
+| R5-EC-04 block-scalar text mimics YAML structure | low | reject | Guards an undemonstrated edit. |
+| R5-EC-05 `project-gates` `needs:` unchecked | low | reject | Guards an undemonstrated edit. |
+| R5-EC-06 unnormalized binding paths | low | reject | Packets are written by tooling with normalized paths. |
+| R5-EC-07 connection resets during read not retried | low | reject | A rare transient; the job reruns. |
+| R5-EC-08 rollback probe exception type | low | reject | Carried from R2-EC-10. |
+| R5-EC-09 verifier uses the checkout release validator | false | reject | Carried from R3-EC-14: the file is identical at the tag and checkout. |
+| R5-EC-10 status flip alone passes acceptance | medium | defer | Same root cause as R5-BH-01. |
+| R5-EC-11 Builds SHA edit in `ci.yml` fails `workflow-gates` | false | reject | Editing CI Builds refs is a CI-structure change; G-6 drift (gitlink versus execution SHA) fails only `g6-candidate`. |
+| R5-EC-12 EventStore `src` bump also fails the P1R replay | low | patch | Build/test still run; document that `p1r-candidate-evidence` also turns red (folded into R5-BH-03/04 wording). |
+| R5-EC-13 loop-2 AC names `project-gates` for the candidate step | low | reject | Fix edits this build's spec. |
+| R5-EC-14 loop-2 acceptance wording | low | reject | Fix edits this build's spec; the `ci.yml` comment is already correct. |
+| R5-EC-15 loop-3 wording names `project-gates` | low | reject | Fix edits this build's spec. |
+| R5-EC-16 loop-2 wording on packet gitlinks in the gate script | low | reject | Fix edits this build's spec. |
+| R5-VG-01 self-test catalog fixture uses the validator's table | medium | defer | Pre-verified gap; the fix changes the bound self-test, so apply it at the next recapture with per-package drift controls. |
+| R5-VG-02 accepted branch of the reference test never runs | medium | defer | Pre-verified gap, filed as defer: works today and would fail loudly. |
 
 ## Design Notes
 
