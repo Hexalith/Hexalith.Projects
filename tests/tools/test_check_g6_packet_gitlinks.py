@@ -14,6 +14,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 SCRIPT = Path(__file__).resolve().with_name("check_g6_packet_gitlinks.py")
@@ -47,11 +48,13 @@ class PacketGitlinkCheckTests(unittest.TestCase):
     def run_git(self, *arguments: str) -> None:
         subprocess.run(["git", "-C", str(self.workspace), *arguments], capture_output=True, text=True, check=True)
 
-    def run_check(self, repositories: list[dict[str, str]]) -> tuple[int, str, str]:
-        self.packet_path.write_text(json.dumps({"repositories": repositories}), encoding="utf-8")
+    def run_check(self, repositories: object, packet: object | None = None, workspace: Path | None = None) -> tuple[int, str, str]:
+        workspace = workspace or self.workspace
+        document = {"repositories": repositories} if packet is None else packet
+        (workspace / "packet.json").write_text(json.dumps(document), encoding="utf-8")
         stdout, stderr = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-            exit_code = CHECK.main(["--workspace", str(self.workspace), "--packet", "packet.json"])
+            exit_code = CHECK.main(["--workspace", str(workspace), "--packet", "packet.json"])
         return exit_code, stdout.getvalue(), stderr.getvalue()
 
     @staticmethod
@@ -96,6 +99,35 @@ class PacketGitlinkCheckTests(unittest.TestCase):
 
         self.assertEqual(1, exit_code)
         self.assertIn("the packet binds no submodule repositories", stderr)
+
+    def test_packet_that_is_not_an_object_fails(self) -> None:
+        exit_code, _, stderr = self.run_check(None, packet=self.bindings())
+
+        self.assertEqual(1, exit_code)
+        self.assertIn("the packet is not a JSON object", stderr)
+
+    def test_binding_that_is_not_an_object_fails(self) -> None:
+        exit_code, _, stderr = self.run_check(self.bindings() + ["references/Hexalith.Tenants"])
+
+        self.assertEqual(1, exit_code)
+        self.assertIn("repository binding 3 is not an object", stderr)
+        self.assertNotIn("not a root gitlink", stderr)
+
+    def test_missing_git_is_reported_as_git_unavailable(self) -> None:
+        with mock.patch.object(CHECK.subprocess, "run", side_effect=FileNotFoundError("git")):
+            exit_code, _, stderr = self.run_check(self.bindings())
+
+        self.assertEqual(1, exit_code)
+        self.assertIn("G6-PACKET-GITLINK-GIT-UNAVAILABLE: git is not available", stderr)
+        self.assertNotIn("not a root gitlink", stderr)
+
+    def test_workspace_without_a_git_index_is_reported_as_git_unavailable(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            exit_code, _, stderr = self.run_check(self.bindings(), workspace=Path(directory))
+
+        self.assertEqual(1, exit_code)
+        self.assertIn("G6-PACKET-GITLINK-GIT-UNAVAILABLE: git cannot read the root index", stderr)
+        self.assertNotIn("not a root gitlink", stderr)
 
 
 if __name__ == "__main__":

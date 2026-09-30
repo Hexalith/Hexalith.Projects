@@ -20,6 +20,7 @@ an owner-accepted P1R record supersedes the 3.109.0 candidate.
 
 from __future__ import annotations
 
+import http.client
 import json
 import os
 import re
@@ -42,9 +43,14 @@ PASSING_JOB_CONCLUSIONS = {"success", "skipped"}
 # The record captured the tag CI run's first attempt (its failed job belongs to attempt 1); a later
 # rerun adds attempts, so jobs are read from this attempt rather than from the latest one.
 TAG_CI_RECORDED_ATTEMPT = 1
-# Transient GitHub responses (rate limits and server errors) are retried a bounded number of times.
+# Transient GitHub responses (rate limits and server errors) are retried a bounded number of times,
+# as are network errors, read timeouts and truncated or unparsable response bodies.
 RETRIED_HTTP_STATUSES = {403, 429}
+RETRIED_READ_ERRORS = (urllib.error.URLError, TimeoutError, http.client.IncompleteRead, json.JSONDecodeError)
 API_ATTEMPTS = 4
+# `git merge-base --is-ancestor` exits 1 for "not an ancestor" and 128 when an object is missing.
+NOT_AN_ANCESTOR = 1
+MISSING_HISTORY = 128
 RECORD = json.loads(RECORD_PATH.read_text(encoding="utf-8"))
 
 
@@ -59,8 +65,9 @@ def retry_delay(attempt: int, error: urllib.error.HTTPError | None) -> float:
 def github_api(path: str, attempts: int = API_ATTEMPTS) -> dict:
     """Read one public EventStore API resource; GITHUB_TOKEN only raises the rate limit.
 
-    Network errors, HTTP 5xx and rate-limit 403/429 responses are retried; any other HTTP error, or
-    the last failed attempt, is raised so the replay fails loudly instead of skipping.
+    Network errors, read timeouts, truncated or unparsable bodies, HTTP 5xx and rate-limit 403/429
+    responses are retried; any other HTTP error, or the last failed attempt, is raised so the replay
+    fails loudly instead of skipping.
     """
     for attempt in range(attempts):
         request = urllib.request.Request(REPOSITORY_API + path, headers={"Accept": "application/vnd.github+json"})
@@ -74,7 +81,7 @@ def github_api(path: str, attempts: int = API_ATTEMPTS) -> dict:
             if attempt == attempts - 1 or not (error.code >= 500 or error.code in RETRIED_HTTP_STATUSES):
                 raise
             time.sleep(retry_delay(attempt, error))
-        except urllib.error.URLError:
+        except RETRIED_READ_ERRORS:
             if attempt == attempts - 1:
                 raise
             time.sleep(retry_delay(attempt, None))
@@ -191,11 +198,18 @@ class CheckoutDriftTests(unittest.TestCase):
 
     def test_recorded_checkout_is_the_root_gitlink_source(self) -> None:
         # The drift below is measured at the recorded checkout; it describes the root gitlink only
-        # while that checkout is an ancestor of the gitlink with an identical src tree.
+        # while that checkout is an ancestor of the gitlink with an identical src tree. A missing
+        # object (exit 128, e.g. a shallow EventStore clone) is reported as missing history, not as
+        # a checkout that is not an ancestor.
         checkout = self.observation["sha"]
         gitlink = root_eventstore_gitlink()
-        self.assertEqual(eventstore_git_status("merge-base", "--is-ancestor", checkout, gitlink), 0,
-                         f"recorded checkout {checkout} is not an ancestor of the root EventStore gitlink {gitlink}")
+        status = eventstore_git_status("merge-base", "--is-ancestor", checkout, gitlink)
+        self.assertNotEqual(status, MISSING_HISTORY,
+                            f"EventStore history is missing: the recorded checkout {checkout} or the root EventStore "
+                            f"gitlink {gitlink} is not in the clone; fetch the full EventStore history")
+        self.assertNotEqual(status, NOT_AN_ANCESTOR,
+                            f"recorded checkout {checkout} is not an ancestor of the root EventStore gitlink {gitlink}")
+        self.assertEqual(status, 0, f"git merge-base --is-ancestor {checkout} {gitlink} exited {status}")
         self.assertEqual(eventstore_git_status("diff", "--quiet", checkout, gitlink, "--", "src"), 0,
                          f"src differs between the recorded checkout {checkout} and the root EventStore gitlink {gitlink}")
 

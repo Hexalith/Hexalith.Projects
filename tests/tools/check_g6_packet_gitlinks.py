@@ -3,8 +3,12 @@
 The G-6 validator only requires a bound revision to be an ancestor of the checked-out
 submodule commit. This check makes the binding exact: each packet repository other than the
 root (path ".") must be a root gitlink whose recorded commit is the packet revision. It runs
-as a step of the G-6 CI jobs, so a routine submodule bump fails only those jobs until the
-packet is recaptured, while the build and test jobs keep running.
+in the G-6 CI jobs, so a routine submodule bump fails only those jobs until the packet is
+recaptured, while the workflow, build, test and project gates keep running.
+
+A packet that is not a JSON object, a repository binding that is not an object, a missing git
+executable and an unreadable root index are each reported as their own failure, never as a
+missing gitlink.
 """
 
 from __future__ import annotations
@@ -17,16 +21,24 @@ import sys
 from pathlib import Path
 
 
+class GitUnavailableError(Exception):
+    """Raised when git cannot run or cannot read the root index."""
+
+
 def root_gitlink(workspace: Path, path: str) -> str | None:
     """Return the commit the root index records for a gitlink path, or None when it is not one."""
-    completed = subprocess.run(
-        ["git", "-C", str(workspace), "ls-files", "--stage", "--", path],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    try:
+        completed = subprocess.run(
+            ["git", "-C", str(workspace), "ls-files", "--stage", "--", path],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as error:
+        raise GitUnavailableError(f"git is not available: {error}") from error
     if completed.returncode != 0:
-        return None
+        raise GitUnavailableError(
+            f"git cannot read the root index of {workspace}: {completed.stderr.strip() or f'exit {completed.returncode}'}")
     match = re.fullmatch(r"160000 ([0-9a-f]{40}) 0\t" + re.escape(path), completed.stdout.strip())
     return match.group(1) if match else None
 
@@ -34,10 +46,16 @@ def root_gitlink(workspace: Path, path: str) -> str | None:
 def packet_gitlink_drift(workspace: Path, packet_path: Path) -> tuple[list[str], int]:
     """Return every binding that is not its exact root gitlink, and the number of submodule bindings."""
     packet = json.loads(packet_path.read_text(encoding="utf-8"))
+    if not isinstance(packet, dict):
+        return ["the packet is not a JSON object"], 0
     repositories = packet.get("repositories")
     if not isinstance(repositories, list):
         return ["the packet has no repository bindings"], 0
-    bindings = [item for item in repositories if isinstance(item, dict) and item.get("path") != "."]
+    malformed = [f"repository binding {index} is not an object"
+                 for index, item in enumerate(repositories) if not isinstance(item, dict)]
+    if malformed:
+        return malformed, 0
+    bindings = [item for item in repositories if item.get("path") != "."]
     if not bindings:
         return ["the packet binds no submodule repositories"], 0
     drift = []
@@ -65,6 +83,9 @@ def main(arguments: list[str] | None = None) -> int:
         drift, bound = packet_gitlink_drift(workspace, packet_path)
     except (OSError, json.JSONDecodeError) as error:
         print(f"G6-PACKET-GITLINK-DRIFT: unable to read {options.packet}: {error}", file=sys.stderr)
+        return 1
+    except GitUnavailableError as error:
+        print(f"G6-PACKET-GITLINK-GIT-UNAVAILABLE: {error}", file=sys.stderr)
         return 1
     if drift:
         for item in drift:
