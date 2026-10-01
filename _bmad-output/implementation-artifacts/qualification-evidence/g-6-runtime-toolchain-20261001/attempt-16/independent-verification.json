@@ -1,0 +1,81 @@
+{
+  "schema": "hexalith.g6-closure-verification.v1",
+  "verifiedAtUtc": "2026-10-01T14:26:57.275484+00:00",
+  "reviewedPacketSha256": "b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139",
+  "capturedRootRevision": "b26129c35604689a3a0a13e8af545bab7586e77e",
+  "checks": [
+    {
+      "purpose": "status-aware candidate, exact gitlinks and Builds CI SHA",
+      "command": [
+        "python3",
+        "tests/tools/run_g6_candidate_gate.py",
+        "--workspace",
+        ".",
+        "--baseline",
+        "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json",
+        "--packet",
+        "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
+      ],
+      "workspace": "/home/administrator/projects/hexalith/g6-committed-closure-20261001",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "output": "G6-GATE-VALIDATOR: packet status pending; candidate mode exited 0: G6-EVIDENCE-CANDIDATE-VALID\nG6-PACKET-GITLINKS-EXACT: 12 submodule revisions equal their root gitlinks\nG6-BUILDS-EXECUTION-SHA-EXACT: CI executes Hexalith.Builds at the root gitlink 51af786cf156d2a3396dbd49f5e4898222e55c12\nG6-GATE-PASSED: validator, packet gitlinks and Builds execution SHA\n"
+    },
+    {
+      "purpose": "accepted-only negative control while pending",
+      "command": [
+        "python3",
+        "references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py",
+        "--workspace",
+        ".",
+        "--baseline",
+        "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json",
+        "--packet",
+        "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
+      ],
+      "workspace": "/home/administrator/projects/hexalith/g6-committed-closure-20261001",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "output": "G6-EVIDENCE-INVALID: Current packet acceptance is pending\n"
+    }
+  ],
+  "sourceFiles": 12244,
+  "sourceManifestSha256": "16f588694881a0b33f0dc57095d828d46ab169d63103f5d9ebf45750128cd9fd",
+  "ownedContainerIdsAbsent": [
+    "c5a4ab06db69d62d84b820ba8bd5cc8b91e53db5eb5a0d54b886a77ea8a8bcb7",
+    "b8241303a95b5078b28892281db37a69c1bdfdbe01c1e1719444c9aa1393ddf3",
+    "af1b1434581e268dcf88d21bc270c77a0cf0eb62ff9d01f35ddc890665cdfebb",
+    "b75b6f78b4206cd197ad945bfb8efccfaff3486650625e8ceaedc67acd0de1ab"
+  ],
+  "ownedProcessGroupMembers": {
+    "1127009": [],
+    "1127976": [],
+    "1128159": [],
+    "1130733": [],
+    "1132333": [],
+    "1132377": [],
+    "1135758": [],
+    "1135808": [],
+    "1135812": [],
+    "1138756": [],
+    "1139680": [],
+    "1141024": [],
+    "1141912": [],
+    "1145806": [],
+    "1147184": [],
+    "1148113": [],
+    "1151675": [],
+    "1156738": [],
+    "1157152": [],
+    "1157536": [],
+    "1157547": [],
+    "1158666": []
+  },
+  "sharedSnapshotsEqual": true,
+  "preservedEarlierEvidenceFiles": 196,
+  "originalBuildsFilesBytePreserved": 253,
+  "frozenIntentSha256": "0cd9897d8e454a2ff8bcf0dc265764d483fdf68ab173887bbfb8324286b95b66",
+  "acceptance": null,
+  "usableAsPrerequisite": false,
+  "cleanVerificationCheckout": "/home/administrator/projects/hexalith/g6-committed-closure-20261001"
+}
