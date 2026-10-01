@@ -1,0 +1,17 @@
+# Final G-6 implementation verification
+
+Selected attempt 14 SHA-256: `9caa2699bc6dca0c2366e0f9eaa088a9ffa9ce9ec4d27f448b31b8c53a87cfaa`. Technical qualification passes; status remains pending, committed closure false, acceptance null and prerequisite usability false. The [machine-readable independent checks](independent-verification.json) retain exact commands, outcomes and preservation facts.
+
+All 22 recorded qualification commands exit zero: fresh Debug/source qualifier and support builds; qualifier 1/1; support 33/33 across 21 selectors; fixture 31/31; all ten AppHosts and McpCli; strict capture; 12 runner controls; 103 current evidence controls plus accepted metadata-commit positive control; 90 historical packet scenarios; 48 baseline controls; 165 authority controls; two historical hash pins; root workflow contract. No test lane fails or skips.
+
+Independent candidate validation exits 0. The status-aware root gate exits 1 solely on Parties checkout `8c49383e94d16162ef30d102f4c3e536cda9790f` versus root gitlink `60b9836ea23151c5319dd06fd3deb80122f7abc3`. Builds CI execution exactly matches root gitlink `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`. Accepted-only validation exits 1 because the packet is pending. These required negative decisions remain preserved.
+
+Root gate/gitlink/reference/runner tests pass 38 cases. Production-authority tests pass 21. The [freshly built Memories guard](../source-prerequisite-preflight/memories-guard-final.json) passes its one focused method. The final standalone Builds command `python3 Tools/test-runtime-toolchain-evidence-validator.py` passes 103 current controls and all historical controls from a temporary copy of only Builds Tools and its local immutable fixture corpus, without Projects/EventStore siblings; [log](standalone-builds-verification.log). Fixture provenance SHA-256 is `f75bf867e002b981fa0d66781ecd6dd3d806d9846578f13dc1eaff86d250a168`.
+
+Pre/post source snapshots match. The manifest has 12,246 files and digest `656f5a357bbb4ddb370c4d6d7777ddb9152ad43b1cb6138bcabc52a64a374401`. Of 11,880 pre-resume source paths, 11,864 retain identical bytes and 16 intentional implementation paths differ; no path is missing. Frozen approval remains SHA-256 `0cd9897d8e454a2ff8bcf0dc265764d483fdf68ab173887bbfb8324286b95b66`, and the spec baseline commit remains `4d8dcf65803792f7def3b10ed21227329536154b`.
+
+Shared container/binary snapshots match. Every exact owned container ID is absent; every recorded owned process group has no remaining member; both scratch areas are removed. Eight sidecar launches/restarts share private discovery bindings. No shared resources were stopped or changed by qualification.
+
+Planning-index validation passes before edits, on the metadata candidate and after replacement. Every selected document quotes the current packet hash and exact captured coordinates; replaced hashes are explicitly superseded. Whitespace checks pass in all ten dirty repositories. All retained packet hashes for attempts 3–14 are independently checked; earlier packets and cleanup receipts are unchanged.
+
+The Build spec is done for authorized implementation/review/technical qualification. Committed exact-gitlink closure and a separate named decision on the reviewed packet hash remain outstanding. G-6 is a qualification gate rather than an epic story, so no development status is advanced. The frozen prohibition on staging/committing/pushing overrides the generic Build completion instruction; no Git recording or downstream approval occurred. No review finding was deferred.

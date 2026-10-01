@@ -1,0 +1,13 @@
+{
+  "schema": "hexalith.runtime-toolchain-command-record.v2",
+  "commands": [
+    {
+      "purpose": "install isolated tools",
+      "command": "python3 [workspace]/tools/qualification/run_g6_qualification.py --baseline [workspace]/references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json --install-tools [scratch]",
+      "exitCode": 1,
+      "outcome": "urllib.error.HTTPError: HTTP Error 504: Gateway Time-out",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-12/logs/install-isolated-tools.log",
+      "logSha256": "cdffa25c3ef744e92742805f6c9a5bb3afc6d21e3ead1a3c881bf1e8c8f1347d"
+    }
+  ]
+}

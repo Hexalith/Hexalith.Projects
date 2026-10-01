@@ -16,6 +16,7 @@ captured, the same change must update every quoted hash and gitlink.
 from __future__ import annotations
 
 import hashlib
+import copy
 import json
 import re
 import subprocess
@@ -25,7 +26,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 ARTIFACTS = PROJECT_ROOT / "_bmad-output/implementation-artifacts"
-PACKET_PATH = ARTIFACTS / "qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json"
+PACKET_PATH = ARTIFACTS / "qualification-evidence/g-6-runtime-toolchain-20261001/attempt-15/packet.json"
 README_PATH = PACKET_PATH.with_name("README.md")
 OWNER_PACKET_PATH = ARTIFACTS / "6-1-p1r-current-exact-baseline-candidate.md"
 SPRINT_STATUS_PATH = ARTIFACTS / "sprint-status.yaml"
@@ -36,9 +37,9 @@ ACCEPTED_STATUS = b'"status": "accepted"'
 REPLACED_MARKERS = ("supersed", "replac")
 
 
-def reviewed_packet_sha256() -> str:
+def reviewed_packet_sha256(packet: dict | None = None) -> str:
     """Normalized-LF SHA-256 of the packet as the owner reviews it (status pending)."""
-    packet = json.loads(PACKET_PATH.read_text(encoding="utf-8"))
+    packet = json.loads(PACKET_PATH.read_text(encoding="utf-8")) if packet is None else copy.deepcopy(packet)
     if packet["status"] == "accepted":
         packet.update(status="pending", acceptance=None, usableAsPrerequisite=False)
     elif packet["status"] != "pending":
@@ -75,16 +76,27 @@ def yaml_value(block: str, key: str, indent: int) -> str:
     return match.group(1).strip('"')
 
 
-PACKET = json.loads(PACKET_PATH.read_text(encoding="utf-8"))
-SUBMODULE_BINDINGS = [binding for binding in PACKET["repositories"] if binding["path"] != "."]
-PROJECTS_REVISION = next(binding["revision"] for binding in PACKET["repositories"] if binding["path"] == ".")
-SPRINT_STATUS = read(SPRINT_STATUS_PATH)
-P1R_BLOCK = yaml_block(SPRINT_STATUS, "p1r_current_revalidation", 0)
-G6_BLOCK = yaml_block(yaml_block(SPRINT_STATUS, "qualification_gates", 0), "G-6", 2)
+def load_selected_inputs() -> None:
+    global PACKET, SUBMODULE_BINDINGS, PROJECTS_REVISION, SPRINT_STATUS, P1R_BLOCK, G6_BLOCK
+    PACKET = json.loads(PACKET_PATH.read_text(encoding="utf-8"))
+    SUBMODULE_BINDINGS = [binding for binding in PACKET["repositories"] if binding["path"] != "."]
+    PROJECTS_REVISION = next(binding["revision"] for binding in PACKET["repositories"] if binding["path"] == ".")
+    SPRINT_STATUS = read(SPRINT_STATUS_PATH)
+    P1R_BLOCK = yaml_block(SPRINT_STATUS, "p1r_current_revalidation", 0)
+    G6_BLOCK = yaml_block(yaml_block(SPRINT_STATUS, "qualification_gates", 0), "G-6", 2)
+
+
+def assert_packet_usability(packet: dict) -> None:
+    if packet["status"] not in {"pending", "accepted"} or packet["usableAsPrerequisite"] is not (packet["status"] == "accepted"):
+        raise AssertionError("Packet usability must follow pending/accepted status")
 
 
 class G6PacketReferenceTests(unittest.TestCase):
     """The documents index exactly the selected pending packet and the gitlinks it binds."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        load_selected_inputs()
 
     def test_documents_quote_the_reviewed_packet_hash(self) -> None:
         packet_hash = reviewed_packet_sha256()
@@ -115,14 +127,18 @@ class G6PacketReferenceTests(unittest.TestCase):
         builds = root_gitlink("references/Hexalith.Builds")
         eventstore = root_gitlink("references/Hexalith.EventStore")
         candidate = yaml_block(P1R_BLOCK, "candidate", 2)
-        self.assertEqual(yaml_value(candidate, "builds_revision", 4), builds)
+        self.assertEqual(yaml_value(P1R_BLOCK, "g6_builds_source_revision", 2), builds)
+        # Published P1R acceptance keeps its exact package/source coordinate when
+        # the current G-6 checkout advances to committed qualification tooling.
+        accepted = yaml_block(yaml_block(SPRINT_STATUS, "p1r_acceptance_gate", 0), "selected", 2)
+        self.assertEqual(yaml_value(candidate, "builds_revision", 4), yaml_value(accepted, "builds_revision", 4))
         self.assertEqual(yaml_value(P1R_BLOCK, "eventstore_checkout_gitlink", 2), eventstore)
         self.assertEqual(yaml_value(P1R_BLOCK, "projects_baseline_commit", 2), PROJECTS_REVISION)
         self.assertEqual(yaml_value(P1R_BLOCK, "g6_fresh_candidate_sha256", 2), packet_hash)
         self.assertEqual(yaml_value(P1R_BLOCK, "usable_as_prerequisite", 2), "false")
-        self.assertFalse(PACKET["usableAsPrerequisite"])
+        assert_packet_usability(PACKET)
         self.assertEqual(yaml_value(G6_BLOCK, "current_candidate_sha256", 4), packet_hash)
-        self.assertIn(builds, yaml_value(G6_BLOCK, "accepted_scope", 4))
+        self.assertEqual(yaml_value(G6_BLOCK, "current_candidate_builds_source_revision", 4), builds)
 
     def test_replaced_packet_hashes_appear_only_as_replaced(self) -> None:
         replaced = {value for key, value in re.findall(r"(?m)^\s*(\w*(?:superseded|replaced)\w*sha256): ([0-9a-f]{64})\s*$",
@@ -135,6 +151,27 @@ class G6PacketReferenceTests(unittest.TestCase):
                     if value[:8] in line:
                         with self.subTest(document=document.name, line=number, hash=value[:8]):
                             self.assertTrue(any(marker in line.lower() for marker in REPLACED_MARKERS), line)
+
+
+class PacketUsabilityStateTests(unittest.TestCase):
+    def test_pending_packet_is_unusable_and_preserves_downstream_state(self):
+        downstream = {"p1r": False, "downstream": "blocked"}
+        assert_packet_usability({"status": "pending", "usableAsPrerequisite": False})
+        self.assertEqual(downstream, {"p1r": False, "downstream": "blocked"})
+        with self.assertRaises(AssertionError):
+            assert_packet_usability({"status": "pending", "usableAsPrerequisite": True})
+
+    def test_accepted_packet_is_usable_without_accepting_p1r(self):
+        downstream = {"p1r": False, "downstream": "blocked"}
+        assert_packet_usability({"status": "accepted", "usableAsPrerequisite": True})
+        self.assertFalse(downstream["p1r"])
+        self.assertEqual(downstream["downstream"], "blocked")
+        with self.assertRaises(AssertionError):
+            assert_packet_usability({"status": "accepted", "usableAsPrerequisite": False})
+        accepted = {"status": "accepted", "usableAsPrerequisite": True, "acceptance": {"decision": "accept"}}
+        pending = {"status": "pending", "usableAsPrerequisite": False, "acceptance": None}
+        self.assertEqual(reviewed_packet_sha256(accepted), reviewed_packet_sha256(pending))
+        self.assertTrue(accepted["usableAsPrerequisite"])
 
 
 if __name__ == "__main__":

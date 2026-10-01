@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "captureKind": "debug-entry-binaries-test-seams-sidecar-postgresql",
+  "capturedOn": "2026-10-01",
+  "topology": {
+    "eventStoreProcessCount": 2,
+    "eventStoreSidecarCount": 2,
+    "sampleProcessCount": 1,
+    "sampleSidecarCount": 1,
+    "independentProcessIdentities": true
+  },
+  "profile": {
+    "name": "oq8-postgresql-v1",
+    "stateStoreType": "state.postgresql",
+    "stateComponentSha256": "e8024498786765a32b0ea299778248ade35c855f77ede16ee4775162a971d0eb",
+    "resiliencySha256": "115bdb0d3d330c69920692a80654066937e6b2dd3bd18806c0b276e1de011645"
+  },
+  "runtime": {
+    "dotnet": "10.0.12",
+    "dapr": "1.18.2",
+    "postgresImage": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636",
+    "postgresImageIdentity": "sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636"
+  },
+  "executionConfiguration": {
+    "shippedReleaseEntryAssemblies": false,
+    "shadowCopiedBeforeLaunch": true,
+    "environmentName": "Testing",
+    "testOnlyHostingStartup": true,
+    "productionConfigurationUntouched": false,
+    "seams": [
+      "deterministic-time",
+      "idempotency-intent-adapter",
+      "boundary-counter"
+    ]
+  },
+  "artifacts": {
+    "eventStoreSha256": "43f20e71f281701dfbae95cc2e49d61042d6b679b88df4f048eba5d3dd599543",
+    "sampleSha256": "a023616308b11bcdfd9b71251c19afb5df5786e8112ea454cc4e22ba0c861734",
+    "eventStoreRuntimeSetSha256": "b4dc0583f48ffa0558f9977b9000e56a07636072dd9acbb6cb6b814d6ac354e4",
+    "sampleRuntimeSetSha256": "422ab1d0654683b024e78a4929da3375a10ad0b641f79baebf6ccc20c9263a4a",
+    "hostingStartupSha256": "1d57b176083333cdcc24be8ff1328153b26c2a98428cf75ff5da3393fa6db19d",
+    "additionalDepsSha256": "418a4cda540fdda8682d0a72d390fdd49a3e7408c5299d2c47ccb2448c90ce32"
+  },
+  "diagnostics": {
+    "streamsScanned": 12,
+    "boundedCharacterLimitPerStream": 32768,
+    "forbiddenTermClassesScanned": [
+      "protected-input",
+      "protected-result",
+      "request-identifier",
+      "test-key-material",
+      "bearer-token",
+      "database-credential",
+      "private-path"
+    ],
+    "postRedactionProtectedMatches": 0,
+    "rawDiagnosticsCommitted": false,
+    "sanitizedProjectionSha256": "93b0b016fc91f8e036aaea5009d98883711030228f1334aa6e0a521ced1f3863"
+  },
+  "observations": {}
+}

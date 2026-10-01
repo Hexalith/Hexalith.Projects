@@ -31,6 +31,8 @@ _This file contains critical rules and patterns that AI agents must follow when 
 
 Current G-6 inputs are authorized by `spec-g-6-current-runtime-toolchain-qualification.md`; historical G-6 and P1R acceptance do not accept the current runtime packet. Local qualification uses isolated Debug/source resources, with Platform’s file-based NuGet directives disclosed separately. Dirty source and pending packet acceptance keep prerequisite usability false.
 
+The isolated qualifier uses a fixture-private SQLite discovery registry because Dapr 1.18.2's mDNS provider does not scope service lookups by `NAMESPACE`. The namespace still isolates actor/scheduler activity. SQLite's Alpha resolver is a test-only harness selection, not a qualified production provider; domain state remains PostgreSQL through Dapr. Preserve `sample`/`eventstore` IDs, the OQ8 matrix, shared services and prior failed packets.
+
 ## Critical Implementation Rules
 
 ### Language-Specific Rules

@@ -1,0 +1,28 @@
+{
+  "commands": [
+    {
+      "purpose": "install isolated tools",
+      "command": "python3 [workspace]/tools/qualification/run_g6_qualification.py --baseline [workspace]/references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json --install-tools [scratch]",
+      "exitCode": 0,
+      "outcome": "--------------------------------------------------------------------------------------",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/diagnostic-http-client-5/logs/install-isolated-tools.log",
+      "logSha256": "4bf0d3d51b01a422c46204d23becbcae9b6845eb809fe84a0c7780850b86ec3e"
+    },
+    {
+      "purpose": "fresh focused diagnostic build",
+      "command": "dotnet build tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:21.77",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/diagnostic-http-client-5/logs/fresh-focused-diagnostic-build.log",
+      "logSha256": "2d45446fbccd5cdd37faaa025cf35331c46ac61c7fe5fec57122dd491223eaf2"
+    },
+    {
+      "purpose": "focused HTTP client diagnostic",
+      "command": "dotnet [workspace]/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll -method Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants -noColor",
+      "exitCode": 1,
+      "outcome": "   Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 1, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 12.247s",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/diagnostic-http-client-5/logs/focused-http-client-diagnostic.log",
+      "logSha256": "e10a8c3b5c89e6f77dbe6f855c9a5793d0657b0ef06f44a30fabdc94ab01381f"
+    }
+  ]
+}

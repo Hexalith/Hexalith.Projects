@@ -1,0 +1,20 @@
+{
+  "commands": [
+    {
+      "purpose": "install isolated tools",
+      "command": "python3 [workspace]/tools/qualification/run_g6_qualification.py --baseline [workspace]/references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json --install-tools [scratch]",
+      "exitCode": 0,
+      "outcome": "--------------------------------------------------------------------------------------",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/diagnostic-http-client/logs/install-isolated-tools.log",
+      "logSha256": "4bf0d3d51b01a422c46204d23becbcae9b6845eb809fe84a0c7780850b86ec3e"
+    },
+    {
+      "purpose": "focused HTTP client diagnostic",
+      "command": "dotnet [workspace]/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll -method Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants -noColor",
+      "exitCode": 1,
+      "outcome": "   Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 1, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 2.644s",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/diagnostic-http-client/logs/focused-http-client-diagnostic.log",
+      "logSha256": "318e49c40fd4b831488a00259ee9714f88803261b6895d949924e4e432c08bd4"
+    }
+  ]
+}

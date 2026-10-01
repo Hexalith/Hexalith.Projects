@@ -1,0 +1,105 @@
+{
+  "candidate": {
+    "name": "candidate",
+    "args": [
+      "python3",
+      "references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py",
+      "--workspace",
+      ".",
+      "--baseline",
+      "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json",
+      "--packet",
+      "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-14/packet.json",
+      "--candidate"
+    ],
+    "chunk_id": "08657a",
+    "wall_time_seconds": 0.000012505,
+    "session_id": 66146,
+    "original_token_count": 7,
+    "output": "G6-EVIDENCE-CANDIDATE-VALID\n",
+    "exit_code": 0
+  },
+  "rootGate": {
+    "name": "rootGate",
+    "args": [
+      "python3",
+      "tests/tools/run_g6_candidate_gate.py",
+      "--baseline",
+      "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json",
+      "--packet",
+      "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-14/packet.json"
+    ],
+    "chunk_id": "f235a1",
+    "wall_time_seconds": 0.000011372,
+    "session_id": 21436,
+    "original_token_count": 118,
+    "output": "G6-PACKET-GITLINK-DRIFT: Hexalith.Parties is bound at '8c49383e94d16162ef30d102f4c3e536cda9790f' but the root gitlink is '60b9836ea23151c5319dd06fd3deb80122f7abc3'; recapture the G-6 packet at the committed gitlinks\nG6-GATE-FAILED: 1 G-6 check(s) failed\nG6-GATE-VALIDATOR: packet status pending; candidate mode exited 0: G6-EVIDENCE-CANDIDATE-VALID\nG6-BUILDS-EXECUTION-SHA-EXACT: CI executes Hexalith.Builds at the root gitlink 21ce044ab465ccb2adab58b3d66e394ffbecf3c2\n",
+    "exit_code": 1
+  },
+  "acceptedOnly": {
+    "name": "acceptedOnly",
+    "args": [
+      "python3",
+      "references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py",
+      "--workspace",
+      ".",
+      "--baseline",
+      "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json",
+      "--packet",
+      "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-14/packet.json"
+    ],
+    "chunk_id": "16480d",
+    "wall_time_seconds": 0.732050298,
+    "exit_code": 1,
+    "original_token_count": 15,
+    "output": "G6-EVIDENCE-INVALID: Current packet acceptance is pending\n"
+  },
+  "integrity": {
+    "name": "integrity",
+    "args": [
+      "python3",
+      "/tmp/verify_g6_final_capture.py",
+      "attempt-14"
+    ],
+    "chunk_id": "b26c19",
+    "wall_time_seconds": 0.5168971,
+    "exit_code": 0,
+    "original_token_count": 490,
+    "output": "{\n  \"packetSha256\": \"9caa2699bc6dca0c2366e0f9eaa088a9ffa9ce9ec4d27f448b31b8c53a87cfaa\",\n  \"commands\": 22,\n  \"counts\": {\n    \"qualification\": {\n      \"selectors\": 1,\n      \"total\": 1,\n      \"passed\": 1,\n      \"failed\": 0,\n      \"skipped\": 0\n    },\n    \"support\": {\n      \"selectors\": 21,\n      \"total\": 33,\n      \"passed\": 33,\n      \"failed\": 0,\n      \"skipped\": 0\n    }\n  },\n  \"appHosts\": 10,\n  \"sourceFiles\": 12246,\n  \"sourceManifestSha256\": \"656f5a357bbb4ddb370c4d6d7777ddb9152ad43b1cb6138bcabc52a64a374401\",\n  \"ownedContainersRemoved\": 4,\n  \"sidecarLaunches\": 8,\n  \"sharedResourcesUnchanged\": true,\n  \"remainingOwnedProcesses\": [],\n  \"preservedBaselineSourceFiles\": 11864,\n  \"intentionalChangedBaselinePaths\": [\n    \".github/workflows/ci.yml\",\n    \"references/Hexalith.Builds/Tools/runtime_toolchain_v2.py\",\n    \"references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py\",\n    \"references/Hexalith.Builds/Tools/test_runtime_toolchain_v2.py\",\n    \"references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/Hexalith.Builds.Module.AppHost.csproj\",\n    \"references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8HostingStartup.cs\",\n    \"references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs\",\n    \"references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8QualificationOverrides.cs\",\n    \"references/Hexalith.FrontComposer/deps.local.props\",\n    \"references/Hexalith.Memories/Directory.Build.props\",\n    \"references/Hexalith.Memories/tests/Hexalith.Memories.Server.Tests/NaturalLanguage/SubmoduleGuardTests.cs\",\n    \"references/Hexalith.Parties/Directory.Build.props\",\n    \"references/Hexalith.Platform/apphost.cs\",\n    \"tests/tools/run-ci-workflow-gates.ps1\",\n    \"tests/tools/test_g6_packet_references.py\",\n    \"tools/qualification/run_g6_qualification.py\"\n  ],\n  \"frozenIntentUnchanged\": true\n}\n"
+  },
+  "planningGuard": {
+    "name": "planningGuard",
+    "args": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "chunk_id": "5672c6",
+    "wall_time_seconds": 0.000019137,
+    "exit_code": 0,
+    "original_token_count": 12,
+    "output": "PASS: production-authority index is [6, 7, 8]\n"
+  },
+  "check0": {
+    "chunk_id": "36ec69",
+    "wall_time_seconds": 0.420711431,
+    "exit_code": 0,
+    "original_token_count": 35,
+    "output": "......................................\n----------------------------------------------------------------------\nRan 38 tests in 0.464s\n\nOK\n"
+  },
+  "check1": {
+    "chunk_id": "a68439",
+    "wall_time_seconds": 0.000011793,
+    "session_id": 53363,
+    "original_token_count": 28,
+    "output": "..........\n----------------------------------------------------------------------\nRan 21 tests in 1.351s\n\nOK\n",
+    "exit_code": 0
+  },
+  "check2": {
+    "chunk_id": "62c189",
+    "wall_time_seconds": 0.352117975,
+    "exit_code": 0,
+    "original_token_count": 234,
+    "output": "[\n  {\n    \"repository\": \".\",\n    \"exitCode\": 0,\n    \"output\": \"\"\n  },\n  {\n    \"repository\": \"references/Hexalith.EventStore\",\n    \"exitCode\": 0,\n    \"output\": \"\"\n  },\n  {\n    \"repository\": \"references/Hexalith.Tenants\",\n    \"exitCode\": 0,\n    \"output\": \"\"\n  },\n  {\n    \"repository\": \"references/Hexalith.FrontComposer\",\n    \"exitCode\": 0,\n    \"output\": \"\"\n  },\n  {\n    \"repository\": \"references/Hexalith.Conversations\",\n    \"exitCode\": 0,\n    \"output\": \"\"\n  },\n  {\n    \"repository\": \"references/Hexalith.Folders\",\n    \"exitCode\": 0,\n    \"output\": \"\"\n  },\n  {\n    \"repository\": \"references/Hexalith.Parties\",\n    \"exitCode\": 0,\n    \"output\": \"\"\n  },\n  {\n    \"repository\": \"references/Hexalith.Builds\",\n    \"exitCode\": 0,\n    \"output\": \"\"\n  },\n  {\n    \"repository\": \"references/Hexalith.Memories\",\n    \"exitCode\": 0,\n    \"output\": \"\"\n  },\n  {\n    \"repository\": \"references/Hexalith.Platform\",\n    \"exitCode\": 0,\n    \"output\": \"\"\n  }\n]\n"
+  }
+}

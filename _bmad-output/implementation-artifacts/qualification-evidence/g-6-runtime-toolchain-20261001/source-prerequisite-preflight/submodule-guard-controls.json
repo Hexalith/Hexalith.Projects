@@ -1,0 +1,40 @@
+{
+  "schema": "hexalith.g6-source-guard-controls.v1",
+  "controls": [
+    {
+      "purpose": "current required dependencies",
+      "command": [
+        "dotnet",
+        "msbuild",
+        "<workspace>/references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+        "-t:CheckSubmodules",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:Configuration=Debug",
+        "-nologo",
+        "-v:minimal"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "output": ""
+    },
+    {
+      "purpose": "missing required source guard",
+      "command": [
+        "dotnet",
+        "msbuild",
+        "<workspace>/references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+        "-t:CheckSubmodules",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:Configuration=Debug",
+        "-nologo",
+        "-v:minimal",
+        "-p:CustomBeforeMicrosoftCommonTargets=<isolated-control>/missing-dependency.targets"
+      ],
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "output": "<workspace>/references/Hexalith.Memories/Directory.Build.props(88,5): error : Git submodule 'references/G6MissingSource' is missing. Run: git submodule update --init references/G6MissingSource from the repository root. [<workspace>/references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj]\n"
+    }
+  ],
+  "targetEnforcementPreserved": true,
+  "nestedSubmodulesInitialized": false
+}

@@ -1,0 +1,425 @@
+{
+  "schema": "hexalith.runtime-toolchain-cleanup.v2",
+  "before": {
+    "containers": [
+      {
+        "id": "32aa1b1c54031db999975a21d84ea4c20add0d6da1b1cc2740435201cc00ec32",
+        "name": "memories-vectors-qjzqxaew",
+        "image": "sha256:5d5154123426693540ea6c1d9e638eae2bf2024879c839db6fcfdd7717e817c7",
+        "running": true,
+        "startedAt": "2026-09-30T10:01:47.333315826Z",
+        "restartCount": 0
+      },
+      {
+        "id": "3d42e75b9a62fbd74afafa6a52aa0a9ecc827098327dd22af9ae03957707fea7",
+        "name": "security-avuwfhfc",
+        "image": "sha256:f9ba7b2af90db8dc749a57ca9aedca51e840cb9224441ab546a968da941da900",
+        "running": true,
+        "startedAt": "2026-09-30T10:01:50.225649359Z",
+        "restartCount": 0
+      },
+      {
+        "id": "69033d10a1652fbf7c6bb0929db6cbdfa9acb3be7a5388c7cd8ca5cb5434701a",
+        "name": "memories-vectors-wkjffyjr",
+        "image": "sha256:5d5154123426693540ea6c1d9e638eae2bf2024879c839db6fcfdd7717e817c7",
+        "running": false,
+        "startedAt": "2026-08-30T13:01:44.744997415Z",
+        "restartCount": 0
+      },
+      {
+        "id": "777d21d77f11e7910413170d56767cdae4ee1acd9f47a5d25ecb209a5eb46c4b",
+        "name": "aspire-container-network-tunnelproxy-2etcj7lvbk",
+        "image": "sha256:e60f9c44a55437e17b67b0e5492e2618ab827c79e2be90815e6471193a673d04",
+        "running": false,
+        "startedAt": "2026-08-30T13:01:44.160369659Z",
+        "restartCount": 0
+      },
+      {
+        "id": "8d0788f8322fdb91a51f3960cb9a0ceab4a7b892f27bacf2147e97fc4d471922",
+        "name": "dapr_redis",
+        "image": "sha256:c35b83ce044bb6d148c484d36e059ad28e02d5714ba6731fb55b6421e2ed0ccf",
+        "running": true,
+        "startedAt": "2026-09-25T20:29:22.938893285Z",
+        "restartCount": 0
+      },
+      {
+        "id": "9303afb431fcee432d7df752a202d42b5472a606ef7bb3dde3fb4bf6d902afa1",
+        "name": "memories-graphs-dkqtrnud",
+        "image": "sha256:d61be0c43eb7556c476efedd3e3f4f7c668d2bf0df9d05f6c95a2f3d1255c559",
+        "running": false,
+        "startedAt": "0001-01-01T00:00:00Z",
+        "restartCount": 0
+      },
+      {
+        "id": "973f0a11b167de9a8472fa29580e27828ed0d548fd199020ecf4b606e0f608e2",
+        "name": "memories-graphs-cqjrzzew",
+        "image": "sha256:d61be0c43eb7556c476efedd3e3f4f7c668d2bf0df9d05f6c95a2f3d1255c559",
+        "running": true,
+        "startedAt": "2026-09-30T10:01:47.308025543Z",
+        "restartCount": 0
+      },
+      {
+        "id": "9d57dbed126bc65317a061dfdd63278e3d2103386b081cedd298bf12fc92b523",
+        "name": "dapr_placement",
+        "image": "sha256:68bb6057abbd3cc1267ad895a73415426ba77f2b451de99693aac54b45ea7d0e",
+        "running": true,
+        "startedAt": "2026-09-30T07:15:16.319361101Z",
+        "restartCount": 0
+      },
+      {
+        "id": "b27fa2dad48b0301f65f568d17a5cab3be761a39cb0bf1647c26571040937b52",
+        "name": "memories-graphs-pfcabjcq",
+        "image": "sha256:d61be0c43eb7556c476efedd3e3f4f7c668d2bf0df9d05f6c95a2f3d1255c559",
+        "running": false,
+        "startedAt": "2026-08-30T13:01:44.623501234Z",
+        "restartCount": 0
+      },
+      {
+        "id": "b6975246f99abc9c32c17b8b88aafd7b675a7ad8b8d9041af7dc1e7788ab13ad",
+        "name": "memories-vectors-fbbstvbc",
+        "image": "sha256:5d5154123426693540ea6c1d9e638eae2bf2024879c839db6fcfdd7717e817c7",
+        "running": false,
+        "startedAt": "0001-01-01T00:00:00Z",
+        "restartCount": 0
+      },
+      {
+        "id": "baede0aec9163cf5980047628c359728a2e8ed3afb74bb35eff7d504439ae077",
+        "name": "dapr_scheduler",
+        "image": "sha256:68bb6057abbd3cc1267ad895a73415426ba77f2b451de99693aac54b45ea7d0e",
+        "running": true,
+        "startedAt": "2026-09-30T07:15:16.585507698Z",
+        "restartCount": 0
+      },
+      {
+        "id": "cb7c12622c180c9a16d24a67fc57115f8aeb0d038fed8793d6c9d49e11d1e488",
+        "name": "dapr_zipkin",
+        "image": "sha256:bb570eb45c2994eaf32da783cc098b3d51d1095b73ec92919863d73d0a9eaafb",
+        "running": true,
+        "startedAt": "2026-09-25T20:29:22.942562136Z",
+        "restartCount": 0
+      },
+      {
+        "id": "d0ae9352d2c22aca7252e887d8a58bc6137a8bea4519de453b3f1d62e11d5037",
+        "name": "codex-daprd-inspect-182",
+        "image": "sha256:9ec89d30076155d2376c06f98028b6920f31fac5df0eb40e0b8b94cc88dd5b59",
+        "running": false,
+        "startedAt": "0001-01-01T00:00:00Z",
+        "restartCount": 0
+      },
+      {
+        "id": "dcf01876533d041f30f1c2ce64d22bcaa7046a6b6353df5bd1940f8442f1da15",
+        "name": "story41-20261001t105700z-control-plane",
+        "image": "sha256:ac9a987616d4fd0dcbc19dcc53ed519d4d4a942bb8b8cd7026aa1c69ef351dab",
+        "running": true,
+        "startedAt": "2026-10-01T11:07:24.398323561Z",
+        "restartCount": 0
+      },
+      {
+        "id": "de3de45eca7b7af84ce3235730e8d406f84cde214a836d4b989a5c5b915dc807",
+        "name": "security-bdpeyryx",
+        "image": "sha256:f9ba7b2af90db8dc749a57ca9aedca51e840cb9224441ab546a968da941da900",
+        "running": false,
+        "startedAt": "2026-08-30T13:01:47.172650409Z",
+        "restartCount": 0
+      },
+      {
+        "id": "f963116b24a50607d2ee426eaa88bb6d4c166961000d509b3ea1cb37cd7076be",
+        "name": "aspire-container-network-tunnelproxy-v01cnadsb4",
+        "image": "sha256:d332e94cf50cd2853bafec464d8be6a253d9202f592d71fd9b437046ac9abeca",
+        "running": true,
+        "startedAt": "2026-09-30T10:01:47.865313165Z",
+        "restartCount": 0
+      }
+    ],
+    "binaries": [
+      {
+        "name": "dapr",
+        "sha256": "43429557ff18a7230737b945699417ec391ad41bd431244c175b79ab3c904ce5"
+      },
+      {
+        "name": "daprd",
+        "sha256": "cf6320ebdf7729e10b18c2dcd4c610995c9e2048263dac8ecf734a095cf9567c"
+      }
+    ]
+  },
+  "after": {
+    "containers": [
+      {
+        "id": "32aa1b1c54031db999975a21d84ea4c20add0d6da1b1cc2740435201cc00ec32",
+        "name": "memories-vectors-qjzqxaew",
+        "image": "sha256:5d5154123426693540ea6c1d9e638eae2bf2024879c839db6fcfdd7717e817c7",
+        "running": true,
+        "startedAt": "2026-09-30T10:01:47.333315826Z",
+        "restartCount": 0
+      },
+      {
+        "id": "3d42e75b9a62fbd74afafa6a52aa0a9ecc827098327dd22af9ae03957707fea7",
+        "name": "security-avuwfhfc",
+        "image": "sha256:f9ba7b2af90db8dc749a57ca9aedca51e840cb9224441ab546a968da941da900",
+        "running": true,
+        "startedAt": "2026-09-30T10:01:50.225649359Z",
+        "restartCount": 0
+      },
+      {
+        "id": "69033d10a1652fbf7c6bb0929db6cbdfa9acb3be7a5388c7cd8ca5cb5434701a",
+        "name": "memories-vectors-wkjffyjr",
+        "image": "sha256:5d5154123426693540ea6c1d9e638eae2bf2024879c839db6fcfdd7717e817c7",
+        "running": false,
+        "startedAt": "2026-08-30T13:01:44.744997415Z",
+        "restartCount": 0
+      },
+      {
+        "id": "777d21d77f11e7910413170d56767cdae4ee1acd9f47a5d25ecb209a5eb46c4b",
+        "name": "aspire-container-network-tunnelproxy-2etcj7lvbk",
+        "image": "sha256:e60f9c44a55437e17b67b0e5492e2618ab827c79e2be90815e6471193a673d04",
+        "running": false,
+        "startedAt": "2026-08-30T13:01:44.160369659Z",
+        "restartCount": 0
+      },
+      {
+        "id": "8d0788f8322fdb91a51f3960cb9a0ceab4a7b892f27bacf2147e97fc4d471922",
+        "name": "dapr_redis",
+        "image": "sha256:c35b83ce044bb6d148c484d36e059ad28e02d5714ba6731fb55b6421e2ed0ccf",
+        "running": true,
+        "startedAt": "2026-09-25T20:29:22.938893285Z",
+        "restartCount": 0
+      },
+      {
+        "id": "9303afb431fcee432d7df752a202d42b5472a606ef7bb3dde3fb4bf6d902afa1",
+        "name": "memories-graphs-dkqtrnud",
+        "image": "sha256:d61be0c43eb7556c476efedd3e3f4f7c668d2bf0df9d05f6c95a2f3d1255c559",
+        "running": false,
+        "startedAt": "0001-01-01T00:00:00Z",
+        "restartCount": 0
+      },
+      {
+        "id": "973f0a11b167de9a8472fa29580e27828ed0d548fd199020ecf4b606e0f608e2",
+        "name": "memories-graphs-cqjrzzew",
+        "image": "sha256:d61be0c43eb7556c476efedd3e3f4f7c668d2bf0df9d05f6c95a2f3d1255c559",
+        "running": true,
+        "startedAt": "2026-09-30T10:01:47.308025543Z",
+        "restartCount": 0
+      },
+      {
+        "id": "9d57dbed126bc65317a061dfdd63278e3d2103386b081cedd298bf12fc92b523",
+        "name": "dapr_placement",
+        "image": "sha256:68bb6057abbd3cc1267ad895a73415426ba77f2b451de99693aac54b45ea7d0e",
+        "running": true,
+        "startedAt": "2026-09-30T07:15:16.319361101Z",
+        "restartCount": 0
+      },
+      {
+        "id": "b27fa2dad48b0301f65f568d17a5cab3be761a39cb0bf1647c26571040937b52",
+        "name": "memories-graphs-pfcabjcq",
+        "image": "sha256:d61be0c43eb7556c476efedd3e3f4f7c668d2bf0df9d05f6c95a2f3d1255c559",
+        "running": false,
+        "startedAt": "2026-08-30T13:01:44.623501234Z",
+        "restartCount": 0
+      },
+      {
+        "id": "b6975246f99abc9c32c17b8b88aafd7b675a7ad8b8d9041af7dc1e7788ab13ad",
+        "name": "memories-vectors-fbbstvbc",
+        "image": "sha256:5d5154123426693540ea6c1d9e638eae2bf2024879c839db6fcfdd7717e817c7",
+        "running": false,
+        "startedAt": "0001-01-01T00:00:00Z",
+        "restartCount": 0
+      },
+      {
+        "id": "baede0aec9163cf5980047628c359728a2e8ed3afb74bb35eff7d504439ae077",
+        "name": "dapr_scheduler",
+        "image": "sha256:68bb6057abbd3cc1267ad895a73415426ba77f2b451de99693aac54b45ea7d0e",
+        "running": true,
+        "startedAt": "2026-09-30T07:15:16.585507698Z",
+        "restartCount": 0
+      },
+      {
+        "id": "cb7c12622c180c9a16d24a67fc57115f8aeb0d038fed8793d6c9d49e11d1e488",
+        "name": "dapr_zipkin",
+        "image": "sha256:bb570eb45c2994eaf32da783cc098b3d51d1095b73ec92919863d73d0a9eaafb",
+        "running": true,
+        "startedAt": "2026-09-25T20:29:22.942562136Z",
+        "restartCount": 0
+      },
+      {
+        "id": "d0ae9352d2c22aca7252e887d8a58bc6137a8bea4519de453b3f1d62e11d5037",
+        "name": "codex-daprd-inspect-182",
+        "image": "sha256:9ec89d30076155d2376c06f98028b6920f31fac5df0eb40e0b8b94cc88dd5b59",
+        "running": false,
+        "startedAt": "0001-01-01T00:00:00Z",
+        "restartCount": 0
+      },
+      {
+        "id": "dcf01876533d041f30f1c2ce64d22bcaa7046a6b6353df5bd1940f8442f1da15",
+        "name": "story41-20261001t105700z-control-plane",
+        "image": "sha256:ac9a987616d4fd0dcbc19dcc53ed519d4d4a942bb8b8cd7026aa1c69ef351dab",
+        "running": true,
+        "startedAt": "2026-10-01T11:07:24.398323561Z",
+        "restartCount": 0
+      },
+      {
+        "id": "de3de45eca7b7af84ce3235730e8d406f84cde214a836d4b989a5c5b915dc807",
+        "name": "security-bdpeyryx",
+        "image": "sha256:f9ba7b2af90db8dc749a57ca9aedca51e840cb9224441ab546a968da941da900",
+        "running": false,
+        "startedAt": "2026-08-30T13:01:47.172650409Z",
+        "restartCount": 0
+      },
+      {
+        "id": "f963116b24a50607d2ee426eaa88bb6d4c166961000d509b3ea1cb37cd7076be",
+        "name": "aspire-container-network-tunnelproxy-v01cnadsb4",
+        "image": "sha256:d332e94cf50cd2853bafec464d8be6a253d9202f592d71fd9b437046ac9abeca",
+        "running": true,
+        "startedAt": "2026-09-30T10:01:47.865313165Z",
+        "restartCount": 0
+      }
+    ],
+    "binaries": [
+      {
+        "name": "dapr",
+        "sha256": "43429557ff18a7230737b945699417ec391ad41bd431244c175b79ab3c904ce5"
+      },
+      {
+        "name": "daprd",
+        "sha256": "cf6320ebdf7729e10b18c2dcd4c610995c9e2048263dac8ecf734a095cf9567c"
+      }
+    ]
+  },
+  "ownedContainers": [
+    {
+      "name": "g6-oq8-39a3c19c282e40759d896c56970aaccb-placement",
+      "id": "cc8bbd06331f8de8078f01c58df33ff3cc319ca68426638f9e43c770a5f0c713",
+      "image": "daprio/dapr:1.18.2"
+    },
+    {
+      "name": "g6-oq8-39a3c19c282e40759d896c56970aaccb-scheduler",
+      "id": "88e9d399f2be65b93c9a675b6e9a40075c78b4b3c2ca115d2e821f959ead0ee0",
+      "image": "daprio/dapr:1.18.2"
+    },
+    {
+      "name": "g6-oq8-39a3c19c282e40759d896c56970aaccb-redis",
+      "id": "23f9502bd28c25181d5a59c5978448a7fc5605e17a731b71adf903d5479f7cc6",
+      "image": "redis:7.4"
+    },
+    {
+      "name": "fixture-owned-postgresql",
+      "id": "33aa368db0cd5204fd4581f3023870ae544a4dc9aa55616345cc7dd3aa8ff684",
+      "image": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636"
+    }
+  ],
+  "removedContainerIds": [
+    "23f9502bd28c25181d5a59c5978448a7fc5605e17a731b71adf903d5479f7cc6",
+    "88e9d399f2be65b93c9a675b6e9a40075c78b4b3c2ca115d2e821f959ead0ee0",
+    "cc8bbd06331f8de8078f01c58df33ff3cc319ca68426638f9e43c770a5f0c713",
+    "33aa368db0cd5204fd4581f3023870ae544a4dc9aa55616345cc7dd3aa8ff684"
+  ],
+  "ownedProcessesStopped": true,
+  "scratchRemoved": true,
+  "fixtureScratchRemoved": true,
+  "ownedProcessGroups": [
+    270980,
+    273345,
+    273960,
+    277855,
+    279905,
+    280006,
+    285583,
+    285703,
+    285719,
+    293862,
+    295005,
+    296190,
+    296682,
+    299819,
+    300603,
+    301637,
+    303582,
+    304329,
+    304440,
+    304704,
+    304705,
+    305399
+  ],
+  "daprNamespace": "g6-oq8-39a3c19c282e40759d896c56970aaccb",
+  "sidecarNamespaceObservations": [
+    {
+      "node": "sample",
+      "appId": "sample",
+      "processId": 280476,
+      "daprNamespace": "g6-oq8-39a3c19c282e40759d896c56970aaccb",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "d5b8877497fb312141107fbb0f9154f9768479715d5949373fb12ab3ca301ea8",
+      "discoveryConfigurationSha256": "51ece740370eca7d7ccc6c0eea4367744abeeecb6b85ea15c0d0e7b693ea922e",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-1",
+      "appId": "eventstore",
+      "processId": 280737,
+      "daprNamespace": "g6-oq8-39a3c19c282e40759d896c56970aaccb",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "d5b8877497fb312141107fbb0f9154f9768479715d5949373fb12ab3ca301ea8",
+      "discoveryConfigurationSha256": "51ece740370eca7d7ccc6c0eea4367744abeeecb6b85ea15c0d0e7b693ea922e",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-2",
+      "appId": "eventstore",
+      "processId": 280955,
+      "daprNamespace": "g6-oq8-39a3c19c282e40759d896c56970aaccb",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "d5b8877497fb312141107fbb0f9154f9768479715d5949373fb12ab3ca301ea8",
+      "discoveryConfigurationSha256": "51ece740370eca7d7ccc6c0eea4367744abeeecb6b85ea15c0d0e7b693ea922e",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-1",
+      "appId": "eventstore",
+      "processId": 281990,
+      "daprNamespace": "g6-oq8-39a3c19c282e40759d896c56970aaccb",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "d5b8877497fb312141107fbb0f9154f9768479715d5949373fb12ab3ca301ea8",
+      "discoveryConfigurationSha256": "51ece740370eca7d7ccc6c0eea4367744abeeecb6b85ea15c0d0e7b693ea922e",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-1",
+      "appId": "eventstore",
+      "processId": 282857,
+      "daprNamespace": "g6-oq8-39a3c19c282e40759d896c56970aaccb",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "d5b8877497fb312141107fbb0f9154f9768479715d5949373fb12ab3ca301ea8",
+      "discoveryConfigurationSha256": "51ece740370eca7d7ccc6c0eea4367744abeeecb6b85ea15c0d0e7b693ea922e",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-2",
+      "appId": "eventstore",
+      "processId": 283218,
+      "daprNamespace": "g6-oq8-39a3c19c282e40759d896c56970aaccb",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "d5b8877497fb312141107fbb0f9154f9768479715d5949373fb12ab3ca301ea8",
+      "discoveryConfigurationSha256": "51ece740370eca7d7ccc6c0eea4367744abeeecb6b85ea15c0d0e7b693ea922e",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-1",
+      "appId": "eventstore",
+      "processId": 284022,
+      "daprNamespace": "g6-oq8-39a3c19c282e40759d896c56970aaccb",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "d5b8877497fb312141107fbb0f9154f9768479715d5949373fb12ab3ca301ea8",
+      "discoveryConfigurationSha256": "51ece740370eca7d7ccc6c0eea4367744abeeecb6b85ea15c0d0e7b693ea922e",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-2",
+      "appId": "eventstore",
+      "processId": 284353,
+      "daprNamespace": "g6-oq8-39a3c19c282e40759d896c56970aaccb",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "d5b8877497fb312141107fbb0f9154f9768479715d5949373fb12ab3ca301ea8",
+      "discoveryConfigurationSha256": "51ece740370eca7d7ccc6c0eea4367744abeeecb6b85ea15c0d0e7b693ea922e",
+      "privateDiscoveryRegistryObserved": true
+    }
+  ]
+}

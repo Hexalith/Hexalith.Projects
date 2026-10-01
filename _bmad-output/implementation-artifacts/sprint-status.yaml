@@ -69,7 +69,7 @@ p1r_acceptance_gate:
     eventstore_revision: f13f9925fdca53efa2ab8c90d396ab106f91bb9c
     builds_revision: 7af20f8bafbfe561df6f7705913a0800603090b5
 p1r_current_revalidation:
-  status: accepted-p1r-only-current-g6-failed-pending
+  status: accepted-p1r-only-current-g6-passing-pending-closure
   usable_as_prerequisite: false
   observed_on: 2026-10-01
   owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md
@@ -79,9 +79,9 @@ p1r_current_revalidation:
     eventstore_revision: 27279fe6431925a6ea046c3f89af61487185c7de
     builds_revision: 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
   builds_version: 4.29.1
-  projects_baseline_commit: 4d8dcf65803792f7def3b10ed21227329536154b
-  eventstore_checkout_gitlink: 6dededdecd62dd6dc6d1f15810108d860ec70c8f
-  eventstore_checkout_source_drift: "13 commits and 43 changed src paths after v3.110.0 (40 added, 3 modified); published archives and checkout are distinct coordinates"
+  projects_baseline_commit: bb364eb86e2008068617d4f95fb32c2661a8a08f
+  eventstore_checkout_gitlink: 08b9cfbce38fd34b9d791c63c848a8e685d72f36
+  eventstore_checkout_source_drift: "22 commits and 44 changed src paths after v3.110.0 (40 added, 4 modified); published archives and checkout are distinct coordinates"
   eventstore_release_run: https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36608763986
   eventstore_release_validation: "BYPASS_VALIDATION; Commitlint run 36608682105 was the publication source proof; independent tag CI 36608682063 passed"
   eventstore_release_builds_revision: 22a578b576a515d2af214fe81859447fffc97981
@@ -94,14 +94,15 @@ p1r_current_revalidation:
   builds_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Builds/actions/runs/36740809340 success at 21ce044ab465ccb2adab58b3d66e394ffbecf3c2"
   builds_release_run: https://github.com/Hexalith/Hexalith.Builds/actions/runs/36743051740
   builds_availability_observation: _bmad-output/implementation-artifacts/evidence/6-1-p0-20261001-preflight.json
-  ci_builds_execution_revision: 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+  ci_builds_execution_revision: 51af786cf156d2a3396dbd49f5e4898222e55c12
+  g6_builds_source_revision: 51af786cf156d2a3396dbd49f5e4898222e55c12
   g6_baseline: references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json
   g6_superseded_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
   g6_superseded_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
-  g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json
-  g6_fresh_candidate_sha256: 724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd
-  g6_current_qualification: failed-pending-post-capture-contract-drift-gate-exit-1-two-failed-checks
-  g6_failures: "Qualifier 1 failed/0 skips; 33 support and 21 fixture cases pass; five AppHosts fail upstream source/UI requirements; capture validator rejected stale Memories resolved Aspire.Hosting assets; final validator rejects post-capture current mutation-test artifact hash; EventStore checkout HEAD 96a6041c5d63a933a58f1df09f7fad123c9ada41 differs from root gitlink 6dededdecd62dd6dc6d1f15810108d860ec70c8f"
+  g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-14/packet.json
+  g6_fresh_candidate_sha256: 9caa2699bc6dca0c2366e0f9eaa088a9ffa9ce9ec4d27f448b31b8c53a87cfaa
+  g6_current_qualification: technical-passing-pending-exact-gitlink-closure-gate-exit-1
+  g6_failures: "Technical candidate validation passes; Parties checkout 8c49383e94d16162ef30d102f4c3e536cda9790f differs from root gitlink 60b9836ea23151c5319dd06fd3deb80122f7abc3; dirty source, missing committed closure and absent named acceptance keep usability false"
   g6_run_approved_tuple: "SDK 10.0.401; Aspire SDK/CLI/hosting 13.6.0; Toolkit 13.6.0-beta.910; Dapr CLI/runtime/.NET 1.18.0/1.18.2/1.18.10; Fluent UI 5.0.0; NSubstitute 6.2.0; Fluxor 6.11.0; spec/run approval 2026-10-01T08:29:35Z; packet acceptance absent"
   role_decisions:
     EventStore Owner: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
@@ -111,7 +112,18 @@ p1r_current_revalidation:
   owner_decisions: "Jérôme Piquot explicitly accepted all four roles at 2026-10-01T06:17:01Z for the exact 3.110.0 / Builds 4.29.1 tuple and fixed record, including EventStore Stack rebinding, with recorded limitations; G-6 remains unaccepted for this baseline"
   accepted_at_utc: 2026-10-01T06:17:01Z
   prior_acceptance_evidence: _bmad-output/implementation-artifacts/evidence/6-1-p1r-acceptance-20260922-3.106.0.json
-  containment: "P1R accepts 3.110.0 / Builds 4.29.1 only; preserve archived 3.106.0 acceptance, 3.70.1 rollback, and already-done P1R/P0 Stage 1/DW-35/DW-68 statuses; current usability stays false while current G-6 is failed and pending; P0 stages 2-7, P2-P4, NOT_READY, and blocked Story 6.1 retain their states"
+  containment: "P1R accepts 3.110.0 / Builds 4.29.1 only; preserve archived 3.106.0 acceptance, 3.70.1 rollback, and already-done P1R/P0 Stage 1/DW-35/DW-68 statuses; current usability stays false while G-6 closure and acceptance remain pending; P0 stages 2-7, P2-P4, NOT_READY, and blocked Story 6.1 retain their states"
+  g6_superseded_20261001_attempt3_sha256: 724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd
+  g6_superseded_20261001_attempt4_sha256: 162649ffec5aa8ee9a795b5f306d33376b8bfa2e87abc6b6f010a0ca7845b8e1
+  g6_superseded_20261001_attempt5_sha256: a4aec7b8c4a676ede15335225ada47f701af9b188888691d80566141a38c9f01
+  g6_superseded_20261001_attempt6_sha256: 0eb0b46e8ed2ec8fdcaf01317cb9f6122328185942c78fc76656171aabc4d853
+  g6_superseded_20261001_attempt7_sha256: edd626a36f50a53114f3abdfe0c6b5cf725a75dad9b46801f679882342f717fa
+  g6_superseded_20261001_attempt8_sha256: dfb2ed58424678f564f1b2debceb385ee2620645ac5d7aaf2af9e0543ef69931
+  g6_superseded_20261001_attempt9_sha256: b42104afedd6e92bb8cf146f73d2cf2b48c225abbb2a1b7c9cea72363e92a48d
+  g6_superseded_20261001_attempt10_sha256: 865fa27083b6ef16907b2735116899a68b3a898c82911a93f8b0263fb1771adf
+  g6_superseded_20261001_attempt11_sha256: bbc418e944815e7d2bc0108d326367405884e076d5e6084742534da405a2124a
+  g6_superseded_20261001_attempt12_sha256: d257e7133abe74f4599c0524e8437a1f29b56cd42390bb4f5b47eb286d6b8e1a
+  g6_superseded_20261001_attempt13_sha256: ff49ce42b8eb8ecd238bce6be10b6764325b1f341339e0d981c09199f34147d1
   superseded_candidate:
     superseded_as_current_on: 2026-10-01
     status: technical-candidate-pending-open-gaps-and-exact-owner-decisions
@@ -293,13 +305,14 @@ development_status:
 qualification_gates:
   G-6:
     status: accepted
-    accepted_scope: "Historical 2026-09-06 packet only; excludes superseded 3.108.1 and 3.109.0 candidates and the P1R-accepted EventStore 3.110.0 / Builds 21ce044ab465ccb2adab58b3d66e394ffbecf3c2 baseline, whose current G-6 qualification remains failed and pending."
+    accepted_scope: "Historical 2026-09-06 packet only; excludes superseded 3.108.1 and 3.109.0 candidates and the P1R-accepted EventStore 3.110.0 / Builds 21ce044ab465ccb2adab58b3d66e394ffbecf3c2 baseline, whose current G-6 closure and acceptance remain pending."
     current_candidate_usable: false
+    current_candidate_builds_source_revision: 51af786cf156d2a3396dbd49f5e4898222e55c12
     current_candidate_baseline: "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json"
-    current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json"
-    current_candidate_sha256: 724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd
-    current_candidate_validation: "2026-10-01 attempt 3: qualifier 1 failed/0 skips; support 33 passed and fixture 21 passed; five AppHosts failed; capture gate exit 1 rejected stale Memories resolved Aspire.Hosting and EventStore HEAD/gitlink mismatch; final gate rejects post-capture current mutation-test artifact hash and the same EventStore mismatch; technicalValidity false; shared snapshots unchanged and owned cleanup passed"
-    current_candidate_acceptance: "Unavailable while technical qualification fails and source is dirty; resolve failures, recapture committed exact bindings and record a separate named decision on the reviewed packet hash; historical status flips do not repair current evidence"
+    current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-14/packet.json"
+    current_candidate_sha256: 9caa2699bc6dca0c2366e0f9eaa088a9ffa9ce9ec4d27f448b31b8c53a87cfaa
+    current_candidate_validation: "2026-10-01 attempt-14: qualifier 1 and support 33 across 21 selectors passed with zero failures/skips; fixture 31, ten AppHosts, McpCli, strict capture, runner 12 and evidence 103 controls passed; candidate validator exit 0; root candidate gate exit 1 on Parties checkout/root-gitlink mismatch; technicalValidity true; shared snapshots unchanged and exact owned cleanup passed"
+    current_candidate_acceptance: "Technical qualification passes; dirty source and the preserved Parties checkout/gitlink mismatch prevent committed exact closure. Recapture committed exact bindings and obtain a separate named decision on the reviewed packet hash before prerequisite usability becomes true."
     superseded_20260929_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
     replaced_pending_candidate_sha256: 26d7a6e0d9b7aaa3136864529e261d36f9346a1166b08b31d6b8edda51d52000
     earlier_replaced_pending_candidate_sha256: e3090bd938ccbea7ee63ddb7427ce75ab815397f6eaa6183ab97ec2da0f8b82b
@@ -313,6 +326,17 @@ qualification_gates:
     disposition: "Explicit Dapr runtime 1.18.2 / .NET packages 1.18.5 exception; not support-table-listed"
     evidence: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json"
     containment: "G-4, G-5, deployment, and release remain unapproved"
+    superseded_20261001_attempt3_sha256: 724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd
+    superseded_20261001_attempt4_sha256: 162649ffec5aa8ee9a795b5f306d33376b8bfa2e87abc6b6f010a0ca7845b8e1
+    superseded_20261001_attempt5_sha256: a4aec7b8c4a676ede15335225ada47f701af9b188888691d80566141a38c9f01
+    superseded_20261001_attempt6_sha256: 0eb0b46e8ed2ec8fdcaf01317cb9f6122328185942c78fc76656171aabc4d853
+    superseded_20261001_attempt7_sha256: edd626a36f50a53114f3abdfe0c6b5cf725a75dad9b46801f679882342f717fa
+    superseded_20261001_attempt8_sha256: dfb2ed58424678f564f1b2debceb385ee2620645ac5d7aaf2af9e0543ef69931
+    superseded_20261001_attempt9_sha256: b42104afedd6e92bb8cf146f73d2cf2b48c225abbb2a1b7c9cea72363e92a48d
+    superseded_20261001_attempt10_sha256: 865fa27083b6ef16907b2735116899a68b3a898c82911a93f8b0263fb1771adf
+    superseded_20261001_attempt11_sha256: bbc418e944815e7d2bc0108d326367405884e076d5e6084742534da405a2124a
+    superseded_20261001_attempt12_sha256: d257e7133abe74f4599c0524e8437a1f29b56cd42390bb4f5b47eb286d6b8e1a
+    superseded_20261001_attempt13_sha256: ff49ce42b8eb8ecd238bce6be10b6764325b1f341339e0d981c09199f34147d1
 
 action_items:
   - epic: 5

@@ -16,7 +16,7 @@ $frontComposerGatePath = Join-Path $scriptRoot 'run-frontcomposer-inspect-gate.p
 $openApiGatePath = Join-Path $scriptRoot 'run-openapi-fingerprint-gate.ps1'
 $managedE2EPath = Join-Path $repositoryRoot 'tests/e2e/run-live-apphost.sh'
 $failures = [System.Collections.Generic.List[string]]::new()
-$buildsExecutionSha = '21ce044ab465ccb2adab58b3d66e394ffbecf3c2'
+$buildsExecutionSha = '51af786cf156d2a3396dbd49f5e4898222e55c12'
 $releaseBuildsExecutionSha = 'a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec'
 $nugetLoginSha = '8d196754b4036150537f80ac539e15c2f1028841'
 $expectedReleasePackageIds = @(
@@ -547,7 +547,7 @@ Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflo
 # gate checks CI structure only: it never reads the packet or the gitlinks, and it requires the
 # exact workflow-gates job, so every hermetic fixture step keeps its exact blocking block.
 $g6BaselinePath = 'references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json'
-$g6PacketPath = '_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json'
+$g6PacketPath = '_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-15/packet.json'
 $checkoutActionLine = '        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0'
 $initializeBuildLine = "        uses: Hexalith/Hexalith.Builds/Github/initialize-build@$buildsExecutionSha"
 $expectedWorkflowGatesJob = (@'
@@ -649,7 +649,7 @@ $expectedG6CandidateJob = (@'
         run: >-
           python3 tests/tools/run_g6_candidate_gate.py
           --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json
-          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-15/packet.json
 
       - name: Require G-6 documents to quote the packet and gitlinks
         env:

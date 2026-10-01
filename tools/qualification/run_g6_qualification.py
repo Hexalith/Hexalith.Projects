@@ -21,6 +21,7 @@ import socket
 import subprocess
 import tarfile
 import tempfile
+import time
 import urllib.request
 import uuid
 from pathlib import Path
@@ -82,6 +83,46 @@ def install(scratch: Path, baseline: dict) -> None:
     subprocess.run([str(tools / "dapr"), "init", "--slim", "--runtime-path", str(scratch / "runtime"), "--runtime-version", baseline["tuple"]["daprRuntime"]], check=True)
 
 
+def stop_owned_process_groups(groups: list[int]) -> bool:
+    """Stop only recorded groups and prove final disappearance within two seconds each."""
+    stopped = True
+    for group in groups:
+        if type(group) is not int or group <= 1 or group == os.getpgrp():
+            stopped = False
+            continue
+        try:
+            os.killpg(group, 0)
+            os.killpg(group, signal.SIGKILL)
+        except ProcessLookupError:
+            continue
+        except OSError:
+            stopped = False
+            continue
+        deadline = time.monotonic() + 2
+        while True:
+            try:
+                os.killpg(group, 0)
+            except ProcessLookupError:
+                break
+            except OSError:
+                stopped = False
+                break
+            if time.monotonic() >= deadline:
+                stopped = False
+                break
+            time.sleep(0.05)
+    return stopped
+
+
+def retain_cleanup_failure(cleanup: dict, errors: list[str]) -> bool:
+    valid = all(cleanup.get(field) is True for field in ("ownedProcessesStopped", "scratchRemoved", "fixtureScratchRemoved"))
+    valid = valid and cleanup["before"] == cleanup["after"]
+    valid = valid and sorted(item["id"] for item in cleanup["ownedContainers"]) == sorted(cleanup["removedContainerIds"])
+    if not valid:
+        errors.append("Qualification cleanup did not prove owned processes, containers and scratch removed with shared resources unchanged.")
+    return valid
+
+
 class Qualification:
     """Retain sanitized command outcomes and remove only resources created by this run."""
 
@@ -131,9 +172,20 @@ class Qualification:
         return code
 
     def start_container(self, name: str, image: str, arguments: list[str], port: int, published: int = 0) -> tuple[str, int]:
-        identity = subprocess.check_output(["docker", "run", "--rm", "-d", "--name", name,
-                                           "--label", "hexalith.g6.isolated=true", "-p", f"127.0.0.1:{published or ''}:{port}", image, *arguments], text=True).strip()
-        self.owned.append({"name": name, "id": identity, "image": image})
+        identity_file = self.scratch / f"{name}.cid"
+        result = subprocess.run(["docker", "run", "--rm", "-d", "--cidfile", str(identity_file), "--name", name,
+                                 "--label", "hexalith.g6.isolated=true", "-p", f"127.0.0.1:{published or ''}:{port}", image, *arguments],
+                                capture_output=True, text=True, check=False)
+        identity = identity_file.read_text().strip() if identity_file.is_file() else result.stdout.strip()
+        if re.fullmatch(r"[0-9a-f]{64}", identity):
+            # Docker can create the container before port publication fails. Retain its exact
+            # identity even on failure so the finally cleanup owns every created resource.
+            self.owned.append({"name": name, "role": name.rsplit("-", 1)[-1], "id": identity, "image": image})
+        else:
+            identity = ""
+        if result.returncode != 0:
+            raise RuntimeError(f"Isolated container launch failed (exit {result.returncode}): {self.sanitize(result.stderr)}")
+        API.require(bool(identity), "Isolated container launch did not return an exact container identity")
         binding = subprocess.check_output(["docker", "port", identity, f"{port}/tcp"], text=True).strip()
         return identity, int(binding.rsplit(":", 1)[1])
 
@@ -145,33 +197,31 @@ class Qualification:
                 self.removed.append(item["id"])
         # The qualifier owns its application processes and PostgreSQL container. Failure cleanup
         # runs inside its fixture; detect every remaining run-labelled or fixture-owned container.
-        groups_stopped = True
-        for group in self.process_groups:
-            try:
-                os.killpg(group, 0)
-                os.killpg(group, signal.SIGKILL)
-                groups_stopped = False
-            except ProcessLookupError:
-                pass
+        groups_stopped = stop_owned_process_groups(self.process_groups)
+        fixture_processes_stopped = False
         namespace_observations = []
+        fixture_scratch_removed = False
         receipt_path = self.scratch / "fixture-cleanup.json"
         if receipt_path.exists():
             receipt = json.loads(receipt_path.read_text())
             namespace_observations = receipt.get("sidecarNamespaceObservations", [])
+            fixture_scratch_removed = receipt.get("runtimeScratchRemoved") is True
             identity = receipt["postgresContainerId"]
-            self.owned.append({"name": "fixture-owned-postgresql", "id": identity, "image": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636"})
+            API.require(isinstance(identity, str) and re.fullmatch(r"[0-9a-f]{64}", identity) is not None, "Fixture cleanup identity is invalid")
+            self.owned.append({"name": "fixture-owned-postgresql", "role": "postgresql", "id": identity, "image": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636"})
             if subprocess.run(["docker", "inspect", identity], capture_output=True).returncode != 0:
                 self.removed.append(identity)
             else:
                 subprocess.run(["docker", "rm", "-f", identity], capture_output=True)
                 if subprocess.run(["docker", "inspect", identity], capture_output=True).returncode != 0:
                     self.removed.append(identity)
-            groups_stopped = groups_stopped and receipt["processesStopped"]
+            fixture_processes_stopped = receipt.get("processesStopped") is True
+        groups_stopped = groups_stopped and fixture_processes_stopped
         after = shared_snapshot()
         shutil.rmtree(self.scratch)
         return {"schema": "hexalith.runtime-toolchain-cleanup.v2", "before": self.before, "after": after,
                 "ownedContainers": self.owned, "removedContainerIds": self.removed,
-                "ownedProcessesStopped": groups_stopped, "scratchRemoved": not self.scratch.exists(), "ownedProcessGroups": self.process_groups, "daprNamespace": self.env.get("HEXALITH_OQ8_NAMESPACE"), "sidecarNamespaceObservations": namespace_observations}
+                "ownedProcessesStopped": groups_stopped, "scratchRemoved": not self.scratch.exists(), "fixtureScratchRemoved": fixture_scratch_removed, "ownedProcessGroups": self.process_groups, "daprNamespace": self.env.get("HEXALITH_OQ8_NAMESPACE"), "sidecarNamespaceObservations": namespace_observations}
 
 
 def repositories(baseline: dict, files: list[dict]) -> list[dict]:
@@ -205,10 +255,72 @@ def resolved(projects: list[str], baseline: dict, scratch: Path) -> list[dict]:
                                    and (item["path"] == "references/Hexalith.Builds/Props/Directory.Packages.props"
                                         or relative.startswith(str(Path(item["path"]).parent) + "/"))
                                    for item in baseline["consumerInventory"]["unqualifiedExclusions"])
+                    expected = baseline["qualification"][field] if field == "eventStorePackageVersion" else baseline["tuple"][field]
+                    API.require(excluded or version == expected, "Resolved package drift: " + relative + "::" + package)
                     packages.append({"id": package, "version": version, "qualified": not excluded})
         unique = {(item["id"], item["version"]): item for item in packages}
+        API.require(CURRENT.required_packages(API, ROOT, baseline, relative) <= {item["id"] for item in unique.values()}, "Required resolved dependencies are missing: " + relative)
         result.append({"path": relative, "packages": sorted(unique.values(), key=lambda item: (item["id"], item["version"]))})
     return result
+
+
+def retain_support_results(ctrf: Path, destination: Path, oq8) -> None:
+    """Project only counts and pinned method identities before passing-only validation."""
+    results = API.read_json(ctrf)["results"]
+    summary = API.result_summary({field: results["summary"][field] for field in ("tests", "passed", "failed", "skipped")}, "Actual support")
+    methods = {identity: {"identity": identity, "expectedCases": expected, "observedCases": 0, "passedCases": 0}
+               for identity, expected in oq8.EXPECTED_SUPPORT_METHOD_CASES.items()}
+    failed = summary["failed"] != 0 or summary["skipped"] != 0
+    if failed:
+        for method in methods.values():
+            method.update(failedCases=0, skippedCases=0)
+    unknown = []
+    for case in results["tests"]:
+        name = case.get("name", "")
+        identities = [identity for identity in methods if name == identity or name.startswith(identity + "(")]
+        status = case.get("status")
+        if len(identities) != 1 or status not in {"passed", "failed", "skipped"}:
+            unknown.append({"identitySha256": hashlib.sha256(str(name).encode()).hexdigest(), "status": status if status in {"passed", "failed", "skipped"} else "unknown"})
+            continue
+        method = methods[identities[0]]
+        method["observedCases"] += 1
+        if status == "passed":
+            method["passedCases"] += 1
+        elif failed:
+            method[status + "Cases"] += 1
+    document = {"schemaVersion": 1, "runner": "xUnit.net v3", "command": oq8.SUPPORT_CURRENT_COMMAND.replace("/Release/", "/Debug/"),
+                "selectors": list(methods), "summary": summary, "methods": list(methods.values()), "classifications": oq8.expected_support_classifications()}
+    if unknown:
+        document["unrecognizedCases"] = unknown
+    write(destination, document)
+
+
+def run_fixture_controls(run: Qualification, live_build: int, live_dll: Path) -> int:
+    if live_build != 0:
+        command = ["python3", "-c", "raise SystemExit('Fresh qualifier build failed; stale fixture binaries were not executed')"]
+    else:
+        command = ["dotnet", str(live_dll), *[argument for name in CURRENT.FIXTURE_CLASSES for argument in ("-class", name)], "-noColor"]
+    return run.run("fixture override tests", command, EVENTSTORE)
+
+
+def source_snapshot(baseline: dict) -> dict:
+    files = CURRENT.source_manifest(API, ROOT, baseline)
+    return {"schema": "hexalith.runtime-toolchain-source-state.v2", "files": files, "repositories": repositories(baseline, files)}
+
+
+def check_source_snapshot(snapshot: dict, baseline: dict, errors: list[str]) -> bool:
+    try:
+        current = source_snapshot(baseline)
+    except (API.ValidationError, OSError):
+        errors.append("Qualification source snapshot became unavailable during execution; retained pre-execution evidence is failed.")
+        return False
+    drift = snapshot["files"] != current["files"]
+    drift = drift or any(before["rootGitlink"] != after["rootGitlink"] or
+                        (before["path"] != "." and before["revision"] != after["revision"])
+                        for before, after in zip(snapshot["repositories"], current["repositories"], strict=True))
+    if drift:
+        errors.append("Qualification source/revisions changed during execution; the retained packet binds the pre-execution snapshot and is failed.")
+    return not drift
 
 
 def main() -> int:
@@ -229,6 +341,9 @@ def main() -> int:
     scratch = Path(tempfile.mkdtemp(prefix="hexalith-g6-", dir="/var/tmp"))
     run = Qualification(output, scratch, baseline)
     write(output / "consumer-audit.json", {"schema": "hexalith.runtime-toolchain-consumer-audit.v2", "consumers": CURRENT.inventory(API, ROOT, baseline), "exclusions": baseline["consumerInventory"]["unqualifiedExclusions"]})
+    snapshot = source_snapshot(baseline)
+    write(output / "source-state.json", snapshot)
+    policy_hashes = {kind: API.sha256(ROOT / relative) for kind, relative in CURRENT.CANONICAL_ARTIFACTS.items()}
     attempts, apphosts, errors = [], [], []
     capture = output / "capture"
     capture.mkdir()
@@ -264,7 +379,7 @@ def main() -> int:
         support_build = run.run("fresh EventStore support build", ["dotnet", "build", support_project, *build_args], EVENTSTORE)
         live_dll = EVENTSTORE / "tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll"
         support_dll = EVENTSTORE / "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll"
-        run.run("fixture override tests", ["dotnet", str(live_dll), "-class", "Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8QualificationOverridesTests", "-class", "Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.DockerPublishedPortResolverTests", "-noColor"], EVENTSTORE)
+        run_fixture_controls(run, live_build, live_dll)
         if live_build == 0:
             qualifier_code = run.run("real PostgreSQL two-sidecar stop/restart qualifier", ["dotnet", str(live_dll), "-method", QUALIFIER, "-noColor", "-result-ctrf", str(scratch / "qualifier-ctrf.json")], EVENTSTORE, 900)
         else:
@@ -283,7 +398,7 @@ def main() -> int:
             test = raw["tests"][0]
             write(capture / "test-results.json", {"schemaVersion": 1, "runner": "xUnit.net v3", "command": oq8.FOCUSED_CURRENT_COMMAND.replace("/Release/", "/Debug/"), "summary": {field: raw["summary"][field] for field in ["tests", "passed", "failed", "skipped"]}, "test": {"name": test["name"], "status": test["status"], "durationMilliseconds": test["duration"], "traits": {name: [value] for name, value in test.get("labels", {}).items()}}})
         if not (capture / "deterministic-support.json").exists() and (scratch / "support-ctrf.json").exists():
-            oq8.sanitize_support_ctrf(scratch / "support-ctrf.json", capture / "deterministic-support.json", oq8.SUPPORT_CURRENT_COMMAND.replace("/Release/", "/Debug/"))
+            retain_support_results(scratch / "support-ctrf.json", capture / "deterministic-support.json", oq8)
         if (scratch / "fixture-diagnostics.json").exists():
             diagnostic = run.sanitize((scratch / "fixture-diagnostics.json").read_text())
             (output / "fixture-diagnostics.json").write_text(diagnostic)
@@ -300,6 +415,7 @@ def main() -> int:
         mcp_project = "references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj"
         run.run("McpCli transitive Dapr consumer", ["dotnet", "build", str(ROOT / mcp_project), *build_args], ROOT / "references/Hexalith.McpCli")
         write(output / "resolved-packages.json", {"schema": "hexalith.runtime-toolchain-resolved-packages.v2", "projects": resolved([item["path"] for item in apphosts] + [mcp_project], baseline, scratch)})
+        run.run("isolated container cleanup controls", ["python3", "tests/tools/test_g6_qualification_runner.py"])
         run.run("G-6 mutation controls", ["python3", str(BUILDS / "Tools/test-runtime-toolchain-evidence-validator.py")])
         run.run("root workflow pin contract", ["pwsh", "-NoProfile", "-File", "tests/tools/run-ci-workflow-gates.ps1"])
     except Exception as error:
@@ -313,30 +429,30 @@ def main() -> int:
             cleanup = {"schema": "hexalith.runtime-toolchain-cleanup.v2", "before": run.before,
                        "after": {"observationFailed": True}, "ownedContainers": run.owned,
                        "removedContainerIds": run.removed, "ownedProcessesStopped": False,
-                       "scratchRemoved": not scratch.exists(), "ownedProcessGroups": run.process_groups, "daprNamespace": run.env.get("HEXALITH_OQ8_NAMESPACE"), "sidecarNamespaceObservations": []}
+                       "scratchRemoved": not scratch.exists(), "fixtureScratchRemoved": False, "ownedProcessGroups": run.process_groups, "daprNamespace": run.env.get("HEXALITH_OQ8_NAMESPACE"), "sidecarNamespaceObservations": []}
         write(output / "cleanup.json", cleanup)
+    retain_cleanup_failure(cleanup, errors)
+    check_source_snapshot(snapshot, baseline, errors)
     write(output / "command-record.json", {"schema": "hexalith.runtime-toolchain-command-record.v2", "commands": run.commands})
     write(output / "apphost-outcomes.json", {"schema": "hexalith.runtime-toolchain-apphost-outcomes.v2", "projects": apphosts})
     write(output / "attempts.json", {"schema": "hexalith.runtime-toolchain-attempts.v2", "attempts": attempts, "errors": errors})
-    limitations = ["Pending named acceptance on the exact reviewed packet hash.", "Dirty source requires committed closure and exact root gitlinks before immutable acceptance.", "Debug checkout-source proof does not qualify published EventStore 3.110.0 archives or P1R rollback.", "Test-only hosting startup, deterministic time, intent adapter and boundary counter; Testing environment.", "Run-specific Dapr NAMESPACE isolates self-hosted discovery; application IDs sample/eventstore and the OQ8 matrix are unchanged.", "Works/mTLS Dapr 1.18.3 and catalog preview integrations are unselected or unqualified.", "Platform file-based AppHost has explicit NuGet directives; its Debug compilation is package consumption and does not qualify checkout-source behavior."]
+    limitations = ["Pending named acceptance on the exact reviewed packet hash.", "Dirty source requires committed closure and exact root gitlinks before immutable acceptance.", "Debug checkout-source proof does not qualify published EventStore 3.110.0 archives or P1R rollback.", "Test-only hosting startup, deterministic time, intent adapter and boundary counter; Testing environment.", "Run-specific Dapr NAMESPACE isolates actors/scheduler. Every owned sidecar and restart selects SQLite v1 discovery with one fixture-private registry; application IDs sample/eventstore and the OQ8 matrix are unchanged. SQLite name resolution is Alpha and qualified only as isolated test infrastructure, not a production resolver. The registry identity hashes its absolute path; the configuration hash binds selected resolver bytes. Raw paths and connection strings are not retained.", "Works/mTLS Dapr 1.18.3 and catalog preview integrations are unselected or unqualified.", "Platform file-based AppHost has explicit NuGet directives; its Debug compilation is package consumption and does not qualify checkout-source behavior."]
     limitations += [f"Command failed: {item['purpose']} (exit {item['exitCode']})." for item in run.commands if item["exitCode"] != 0]
     limitations += errors
     write(output / "limitations.json", {"schema": "hexalith.runtime-toolchain-limitations.v2", "items": limitations, "publishedEventStoreArchivesQualified": False})
     for relative in ["fixture-diagnostics.json", "observed-versions.json", "resolved-packages.json", "capture/observations.json", "capture/test-results.json", "capture/deterministic-support.json", "capture/capture-validation.json"]:
         if not (output / relative).exists():
             write(output / relative, {"status": "failed", "reason": "Required observation was not produced; this is not passing evidence"})
-    files = CURRENT.source_manifest(API, ROOT, baseline)
-    bindings = repositories(baseline, files)
-    write(output / "source-state.json", {"schema": "hexalith.runtime-toolchain-source-state.v2", "files": files, "repositories": bindings})
+    files, bindings = snapshot["files"], snapshot["repositories"]
     paths = {"fixture-diagnostics": output / "fixture-diagnostics.json", "source-state": output / "source-state.json", "consumer-audit": output / "consumer-audit.json", "observed-versions": output / "observed-versions.json", "command-record": output / "command-record.json", "apphost-outcomes": output / "apphost-outcomes.json", "resolved-packages": output / "resolved-packages.json", "cleanup": output / "cleanup.json", "limitations": output / "limitations.json", "attempts": output / "attempts.json", "eventstore-observations": capture / "observations.json", "eventstore-qualification-results": capture / "test-results.json", "eventstore-support-results": capture / "deterministic-support.json", "eventstore-capture-validation": capture / "capture-validation.json", "baseline-governance": baseline_path, "evidence-schema": BUILDS / "schemas/hexalith.runtime-toolchain-evidence.v2.json", "evidence-validator": BUILDS / "Tools/validate-runtime-toolchain-evidence.py", "current-validator": BUILDS / "Tools/runtime_toolchain_v2.py", "mutation-tests": BUILDS / "Tools/test-runtime-toolchain-evidence-validator.py", "current-mutation-tests": BUILDS / "Tools/test_runtime_toolchain_v2.py", "central-catalog": BUILDS / "Props/Directory.Packages.props", "qualification-runner": Path(__file__).resolve()}
-    artifacts = [{"kind": kind, "path": path.relative_to(ROOT).as_posix(), "sha256": API.sha256(path)} for kind, path in sorted(paths.items())]
+    artifacts = [{"kind": kind, "path": path.relative_to(ROOT).as_posix(), "sha256": policy_hashes[kind] if kind in policy_hashes else API.sha256(path)} for kind, path in sorted(paths.items())]
     passed = not errors and all(item["exitCode"] == 0 for item in run.commands) and len(apphosts) == 10 and cleanup["before"] == cleanup["after"]
     counts = {}
     for label, name, selectors in [("qualification", "test-results.json", 1), ("support", "deterministic-support.json", 21)]:
         document = API.read_json(capture / name)
         summary = document.get("summary", {})
         counts[label] = {"selectors": selectors, "total": summary.get("tests", 0), "passed": summary.get("passed", 0), "failed": summary.get("failed", 1), "skipped": summary.get("skipped", 0)}
-    packet = {"schema": "hexalith.runtime-toolchain-evidence.v2", "baseline": {"path": baseline_path.relative_to(ROOT).as_posix(), "sha256": API.sha256(baseline_path)}, "capturedUtc": utc(), "repositories": bindings, "artifacts": artifacts, "observedVersions": baseline["tuple"], "testCounts": counts, "approval": API.baseline_approval(baseline), "status": "pending", "technicalValidity": passed, "usableAsPrerequisite": False, "closure": {"committed": all(not item["dirty"] and (item["path"] == "." or item["revision"] == item["rootGitlink"]) for item in bindings), "sourceManifestSha256": API.manifest_digest(files)}, "acceptance": None, "containment": baseline["containment"], "rollback": baseline["rollback"]}
+    packet = {"schema": "hexalith.runtime-toolchain-evidence.v2", "baseline": {"path": baseline_path.relative_to(ROOT).as_posix(), "sha256": policy_hashes["baseline-governance"]}, "capturedUtc": utc(), "repositories": bindings, "artifacts": artifacts, "observedVersions": baseline["tuple"], "testCounts": counts, "approval": API.baseline_approval(baseline), "status": "pending", "technicalValidity": passed, "usableAsPrerequisite": False, "closure": {"committed": all(not item["dirty"] and (item["path"] == "." or item["revision"] == item["rootGitlink"]) for item in bindings), "sourceManifestSha256": API.manifest_digest(files)}, "acceptance": None, "containment": baseline["containment"], "rollback": baseline["rollback"]}
     write(output / "packet.json", packet)
     try:
         API.validate_packet(ROOT, output / "packet.json", baseline_path, baseline, candidate=True)

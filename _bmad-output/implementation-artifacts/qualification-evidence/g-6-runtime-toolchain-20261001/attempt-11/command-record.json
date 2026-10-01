@@ -1,0 +1,13 @@
+{
+  "schema": "hexalith.runtime-toolchain-command-record.v2",
+  "commands": [
+    {
+      "purpose": "install isolated tools",
+      "command": "python3 [workspace]/tools/qualification/run_g6_qualification.py --baseline [workspace]/references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json --install-tools [scratch]",
+      "exitCode": 1,
+      "outcome": "subprocess.CalledProcessError: Command '['[scratch]/tools/dapr', 'init', '--slim', '--runtime-path', '[scratch]/runtime', '--runtime-version', '1.18.2']' returned non-zero exit status 1.",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-11/logs/install-isolated-tools.log",
+      "logSha256": "013792f89b1dc2b4746a8adde00e6affbe68a9de3a6fa024eee51893a7885175"
+    }
+  ]
+}

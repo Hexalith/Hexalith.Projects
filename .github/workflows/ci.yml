@@ -100,7 +100,7 @@ jobs:
 
   ci:
     needs: workflow-gates
-    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+    uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@51af786cf156d2a3396dbd49f5e4898222e55c12
     with:
       # Bare solution path only. The callee runs `dotnet restore "$SOLUTION"`, so an
       # embedded `-p:` switch is parsed as part of the project path (MSB1009), and
@@ -138,10 +138,10 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@51af786cf156d2a3396dbd49f5e4898222e55c12
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@51af786cf156d2a3396dbd49f5e4898222e55c12
         with:
           global-json-file: global.json
 
@@ -176,7 +176,7 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@51af786cf156d2a3396dbd49f5e4898222e55c12
 
       - name: Run status-aware G-6 gate
         env:
@@ -184,7 +184,7 @@ jobs:
         run: >-
           python3 tests/tools/run_g6_candidate_gate.py
           --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json
-          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-15/packet.json
 
       - name: Require G-6 documents to quote the packet and gitlinks
         env:
@@ -210,7 +210,7 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@51af786cf156d2a3396dbd49f5e4898222e55c12
 
       - name: Validate fresh G-6 runtime/toolchain packet
         env:
@@ -219,14 +219,14 @@ jobs:
           python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py
           --workspace .
           --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json
-          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-15/packet.json
 
       - name: Require G-6 packet revisions to equal root gitlinks
         env:
           PYTHONDONTWRITEBYTECODE: '1'
         run: >-
           python3 tests/tools/check_g6_packet_gitlinks.py
-          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-15/packet.json
 
   # Replays the pending P1R candidate's release-bypass and checkout-drift claims against the
   # public EventStore Actions runs and the EventStore history at the root gitlink.
@@ -242,7 +242,7 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@51af786cf156d2a3396dbd49f5e4898222e55c12
 
       - name: Fetch EventStore tags read by the P1R evidence replay
         run: >-
@@ -272,10 +272,10 @@ jobs:
           submodules: false
 
       - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+        uses: Hexalith/Hexalith.Builds/Github/initialize-build@51af786cf156d2a3396dbd49f5e4898222e55c12
 
       - name: Initialize .NET
-        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+        uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@51af786cf156d2a3396dbd49f5e4898222e55c12
         with:
           global-json-file: global.json
 

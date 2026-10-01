@@ -1,0 +1,181 @@
+{
+  "schema": "hexalith.runtime-toolchain-command-record.v2",
+  "commands": [
+    {
+      "purpose": "install isolated tools",
+      "command": "python3 [workspace]/tools/qualification/run_g6_qualification.py --baseline [workspace]/references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json --install-tools [scratch]",
+      "exitCode": 0,
+      "outcome": "--------------------------------------------------------------------------------------",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/install-isolated-tools.log",
+      "logSha256": "4bf0d3d51b01a422c46204d23becbcae9b6845eb809fe84a0c7780850b86ec3e"
+    },
+    {
+      "purpose": "observe exact tool versions",
+      "command": "python3 -c 'import subprocess; [subprocess.run(c,check=True) for c in [['\"'\"'dotnet'\"'\"','\"'\"'--version'\"'\"'],['\"'\"'aspire'\"'\"','\"'\"'--version'\"'\"'],['\"'\"'dapr'\"'\"','\"'\"'--runtime-path'\"'\"','\"'\"'[scratch]/runtime'\"'\"','\"'\"'--version'\"'\"']]]'",
+      "exitCode": 0,
+      "outcome": "Runtime version: 1.18.2",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/observe-exact-tool-versions.log",
+      "logSha256": "cd225e146d830c1211736322bfe66f3905ae7d143427dafd87da65d3bb9cd6a7"
+    },
+    {
+      "purpose": "fresh EventStore qualifier build",
+      "command": "dotnet build tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:13.52",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/fresh-eventstore-qualifier-build.log",
+      "logSha256": "feb7e60193ec22c4e81f278e6c3e793bf2084735a39e21dfa2d66e6b3f431f27"
+    },
+    {
+      "purpose": "fresh EventStore support build",
+      "command": "dotnet build tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:13.13",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/fresh-eventstore-support-build.log",
+      "logSha256": "1fe5c8db9d92ee0c4e3ab39ef91f8207f8f452022270f5c022f39d8b023ba555"
+    },
+    {
+      "purpose": "fixture override tests",
+      "command": "dotnet [workspace]/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll -class Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8QualificationOverridesTests -class Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.DockerPublishedPortResolverTests -class Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8DiscoveryConfigurationTests -class Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8InvocationDiagnosticHandlerTests -noColor",
+      "exitCode": 0,
+      "outcome": "   Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 27, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 0.195s",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/fixture-override-tests.log",
+      "logSha256": "b08d2c4243cbc5aa2167c817221d952b17eb489e2f892a041d19f37ee4608cdb"
+    },
+    {
+      "purpose": "real PostgreSQL two-sidecar stop/restart qualifier",
+      "command": "dotnet [workspace]/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll -method Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants -noColor -result-ctrf [scratch]/qualifier-ctrf.json",
+      "exitCode": 0,
+      "outcome": "   Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 1, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 23.528s",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/real-postgresql-two-sidecar-stop-restart-qualifier.log",
+      "logSha256": "218f1a9657d615389ae525eb1f58ba9559e14e2b2e8ee0def5f6d802a6c3a756"
+    },
+    {
+      "purpose": "21 exact deterministic support selectors",
+      "command": "dotnet [workspace]/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_PendingEquivalent_ReturnsFirstWriterTaskEvidenceWithoutDownstreamWork -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_Conflict_DeniesBeforeAggregateAndAdvisoryStores -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_AdmissionStoreUnavailableFailsClosedBeforeRoute -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_UnverifiableAdmission_ReturnsStableFailClosedOutcome -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_UnknownOutcome_ReconcilesReadOnlyAndFinalizesExactAggregateResult -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_UnknownOutcomeWithoutAuthoritativeResult_RemainsFailClosed -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.Coordinator_UnsafeLegacyInventoryDoesNoLifecycleAdmissionDirectoryOrMigrationWork -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.AdmitAsync_StateStoreUnavailableFailsClosedWithoutReservation -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.AdmitAsync_UnknownSchema_FailsClosedAsCorrupt -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.AdmitAsync_VerificationTagMismatchFailsClosedAsCollision -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyTenantLifecycleActorTests.MigrateLegacyAsync_RestartFromEveryDurablePhaseFinishesPinnedTarget -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyTenantLifecycleActorTests.MigrateLegacyAsync_UnsafeSourceEvidenceNeverPreparesTarget -method Hexalith.EventStore.Server.Tests.Actors.PublicationRecoveryActivationTests.OnActivate_MissingCheckpointPruned_ReleasesTheRecoverableIdempotencyRecord -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_RouteFailure_MarksUnknownOutcomeUnderSameFence -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_WriteAheadFailureAfterFenceMarksUnknownOutcome -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionExpiryTests.ValidateAuthorityAsync_PendingAcceptsOnlyExactExecuteAuthorityWithoutMutation -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionExpiryTests.ValidateAuthorityAsync_UnknownOutcomeAcceptsOnlyExactReconciliationAuthorityWithoutMutation -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_TamperedCapabilityLeavesAdmissionUnchangedBeforeBegin -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_ContextThatLostDurableAuthorityPerformsZeroDownstreamWork -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionDirectoryActorTests.AdvanceAsync_PromotionOrder_KeepsSourceCanonicalUntilDirectoryFlip -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.Coordinator_OrdinaryActivationResponseLossReprovesExactTargetBeforeAdvance -noColor -result-ctrf [scratch]/support-ctrf.json",
+      "exitCode": 0,
+      "outcome": "   Hexalith.EventStore.Server.Tests  Total: 33, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 0.437s",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/21-exact-deterministic-support-selectors.log",
+      "logSha256": "b003fe261fc4090ca0f0ed8e331869db564c972d95a18271a1400f2856546dfc"
+    },
+    {
+      "purpose": "strict EventStore capture validation",
+      "command": "python3 tools/validate-oq8-platform-evidence.py --capture-directory [workspace]/_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/capture --ctrf [scratch]/qualifier-ctrf.json --support-ctrf [scratch]/support-ctrf.json --expected-runtime-version 1.18.2 --expected-configuration Debug",
+      "exitCode": 0,
+      "outcome": "OQ8 capture validation passed.",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/strict-eventstore-capture-validation.log",
+      "logSha256": "14a1bcf8a7bc75ae36d1d1e8779b7cc894b4cc677a912da74496243b2d3efd7d"
+    },
+    {
+      "purpose": "AppHost build Hexalith.Projects.AppHost",
+      "command": "dotnet build [workspace]/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:29.50",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/apphost-build-hexalith-projects-apphost.log",
+      "logSha256": "5c97de004bfa90124457d5dc7bd9938cd80b44212b0335e164f132dea3549af7"
+    },
+    {
+      "purpose": "AppHost build Hexalith.Conversations.AppHost",
+      "command": "dotnet build [workspace]/references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:14.28",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/apphost-build-hexalith-conversations-apphost.log",
+      "logSha256": "32f159ae23db8fefc979e5da5c2162cb8b4a2f8903adcdff92e9d6e367a0c96f"
+    },
+    {
+      "purpose": "AppHost build Hexalith.EventStore.AppHost",
+      "command": "dotnet build [workspace]/references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:19.25",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/apphost-build-hexalith-eventstore-apphost.log",
+      "logSha256": "603f8601be9bf2666bf90eb7a7665ab9f98e1c3f20881727b2e75f66e0890115"
+    },
+    {
+      "purpose": "AppHost build Hexalith.Folders.AppHost",
+      "command": "dotnet build [workspace]/references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:09.08",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/apphost-build-hexalith-folders-apphost.log",
+      "logSha256": "9c83d3487f95cb8dccfd361d77b6d56fb5a30486a6e7ed4561a970090409b07c"
+    },
+    {
+      "purpose": "AppHost build Hexalith.FrontComposer.AppHost",
+      "command": "dotnet build [workspace]/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:44.95",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/apphost-build-hexalith-frontcomposer-apphost.log",
+      "logSha256": "325b72d299e601898ada2631602f33dbc955dd887cfc29c26f9c4c0cd6f06438"
+    },
+    {
+      "purpose": "AppHost build Hexalith.Memories.AppHost",
+      "command": "dotnet build [workspace]/references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:14.36",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/apphost-build-hexalith-memories-apphost.log",
+      "logSha256": "772b062baaa676b8e4990e7173d250e6203f9d6f5810c3c6df36248afbe09062"
+    },
+    {
+      "purpose": "AppHost build Hexalith.Parties.AppHost",
+      "command": "dotnet build [workspace]/references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:19.66",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/apphost-build-hexalith-parties-apphost.log",
+      "logSha256": "8fb5fd87cd7a1245cab2f3a83827156c07f89d5fe3c9a8252cf12e0b4d4731c3"
+    },
+    {
+      "purpose": "AppHost build Hexalith.Tenants.AppHost",
+      "command": "dotnet build [workspace]/references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:29.34",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/apphost-build-hexalith-tenants-apphost.log",
+      "logSha256": "e2d1900f65c75dbf6f0d53fbd6829470d29acc6fc636ebfb00d17d812f1b2cb3"
+    },
+    {
+      "purpose": "AppHost build Hexalith.Builds.Module.AppHost",
+      "command": "dotnet build [workspace]/references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/Hexalith.Builds.Module.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:09.31",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/apphost-build-hexalith-builds-module-apphost.log",
+      "logSha256": "fe730eb2d53e9e0079e0cdc55ca0dba03e431ccd786cd95b77bd8fff7e22453a"
+    },
+    {
+      "purpose": "AppHost build Hexalith.Platform",
+      "command": "dotnet build [workspace]/references/Hexalith.Platform/apphost.cs --configuration Debug --no-incremental -v:minimal -p:BaseIntermediateOutputPath=[scratch]/platform-obj/",
+      "exitCode": 0,
+      "outcome": "  apphost.cs -> [user]/.local/share/dotnet/runfile/apphost-9e69f7fdc7ecd96464eba6bba78a38f987fcffa8a046cd3d9a96d5357fb423ce/bin/debug/apphost.dll",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/apphost-build-hexalith-platform.log",
+      "logSha256": "8b6505fc5efef49b04ce70b6742a235f5f521bc02a77e0437a43a5035c6fc0ed"
+    },
+    {
+      "purpose": "McpCli transitive Dapr consumer",
+      "command": "dotnet build [workspace]/references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+      "exitCode": 0,
+      "outcome": "Time Elapsed 00:00:03.05",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/mcpcli-transitive-dapr-consumer.log",
+      "logSha256": "3c9cd53c30f83b882d43485220621ee8896c9ce37a67f75f59748424876593e2"
+    },
+    {
+      "purpose": "isolated container cleanup controls",
+      "command": "python3 tests/tools/test_g6_qualification_runner.py",
+      "exitCode": 0,
+      "outcome": "OK",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/isolated-container-cleanup-controls.log",
+      "logSha256": "6f283ee6225d2cef4c0127d95456a6f954c45141c92b97dd89016cb1c630e8f4"
+    },
+    {
+      "purpose": "G-6 mutation controls",
+      "command": "python3 [workspace]/references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py",
+      "exitCode": 0,
+      "outcome": "G6-EVIDENCE-MUTATIONS-PASSED: 30 scenarios for each of 3 baselines; 48 baseline-drift controls; 165 authority controls; 2 historical baseline SHA-256 pins",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/g-6-mutation-controls.log",
+      "logSha256": "89e95e6d62cf3b10b3611929079b277e10a2e916a69d89e7bb1b53d9af8f3516"
+    },
+    {
+      "purpose": "root workflow pin contract",
+      "command": "pwsh -NoProfile -File tests/tools/run-ci-workflow-gates.ps1",
+      "exitCode": 0,
+      "outcome": "ci-workflow-gate: PASSED — 5 workflow file(s), caller-owned Trusted Publishing, immutable release action refs, safe E2E, and root-only submodule policy validated.",
+      "logPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-6/logs/root-workflow-pin-contract.log",
+      "logSha256": "6fe55fc5720abb50e31be9ca0abcdcca77ba3285fe04014de7dc756cfa496ab8"
+    }
+  ]
+}

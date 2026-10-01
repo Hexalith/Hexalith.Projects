@@ -1,0 +1,3 @@
+# Superseded G-6 attempt 13
+
+Superseded [packet](packet.json), SHA-256 `ff49ce42b8eb8ecd238bce6be10b6764325b1f341339e0d981c09199f34147d1`, remains rejected. All 22 commands, the strict capture, and owned cleanup pass; shared snapshots differ. A separate Aspire process in another WSL session, outside every recorded qualification group, started at 13:15:07 UTC and replaced shared Memories/security/network-tunnel containers. The qualification preserved the failure and removed its four exact containers, owned processes and both scratch areas. Original packet, observations and cleanup receipt bytes remain unchanged.
