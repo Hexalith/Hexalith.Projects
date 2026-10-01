@@ -16,7 +16,7 @@ $frontComposerGatePath = Join-Path $scriptRoot 'run-frontcomposer-inspect-gate.p
 $openApiGatePath = Join-Path $scriptRoot 'run-openapi-fingerprint-gate.ps1'
 $managedE2EPath = Join-Path $repositoryRoot 'tests/e2e/run-live-apphost.sh'
 $failures = [System.Collections.Generic.List[string]]::new()
-$buildsExecutionSha = '212583e08c7b6db22c7ccee881ad11699e1f7522'
+$buildsExecutionSha = '21ce044ab465ccb2adab58b3d66e394ffbecf3c2'
 $releaseBuildsExecutionSha = 'a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec'
 $nugetLoginSha = '8d196754b4036150537f80ac539e15c2f1028841'
 $expectedReleasePackageIds = @(
@@ -546,8 +546,8 @@ Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflo
 # record, so no bound file (this gate included) changes and both G-6 jobs then pass. This workflow
 # gate checks CI structure only: it never reads the packet or the gitlinks, and it requires the
 # exact workflow-gates job, so every hermetic fixture step keeps its exact blocking block.
-$g6BaselinePath = 'references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json'
-$g6PacketPath = '_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json'
+$g6BaselinePath = 'references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json'
+$g6PacketPath = '_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json'
 $checkoutActionLine = '        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0'
 $initializeBuildLine = "        uses: Hexalith/Hexalith.Builds/Github/initialize-build@$buildsExecutionSha"
 $expectedWorkflowGatesJob = (@'
@@ -648,8 +648,8 @@ $expectedG6CandidateJob = (@'
           PYTHONDONTWRITEBYTECODE: '1'
         run: >-
           python3 tests/tools/run_g6_candidate_gate.py
-          --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
-          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
+          --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json
 
       - name: Require G-6 documents to quote the packet and gitlinks
         env:
@@ -796,7 +796,7 @@ Require-Match $ci 'npm --prefix tests/e2e ci --ignore-scripts' 'E2E must use the
 Require-Match $ci 'npm --prefix tests/e2e run install:browsers' 'E2E browser installation must be explicit.'
 Require-Match $ci 'uses:\s*\./references/Hexalith\.Builds/Github/dapr-init' 'Scheduled E2E must initialize Dapr through the reviewed root dependency.'
 Require-Match $ci "runtime-version:\s*'1\.18\.2'" 'Scheduled E2E must initialize the approved Dapr 1.18.2 runtime.'
-Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.5\.4' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
+Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.6\.0' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
 Require-Match $ci 'npm --prefix tests/e2e run test:live:managed' 'Scheduled E2E must use the managed AppHost lifecycle runner.'
 Require-Match $ci '^\s*TEST_USER_PASSWORD:\s*\$\{\{ secrets\.[A-Z0-9_]+ \}\}\s*$' 'Scheduled E2E credentials must come from a GitHub secret.'
 Require-Match $ci '^\s*if:\s*always\(\)\s*$' 'Scheduled E2E must unconditionally run exact-AppHost teardown.'

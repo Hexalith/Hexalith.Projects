@@ -1,0 +1,102 @@
+{
+  "artifact_kind": "planning-preflight-observations",
+  "work_package_id": "6.1-P0",
+  "observed_on": "2026-10-01",
+  "acceptance_evidence": false,
+  "disposition": "blocked-on-exact-p1r-and-g6-acceptance",
+  "revisions": {
+    "projects": "4d8dcf65803792f7def3b10ed21227329536154b",
+    "builds": "21ce044ab465ccb2adab58b3d66e394ffbecf3c2"
+  },
+  "current_pins": {
+    "eventstore": "3.110.0",
+    "dapr_runtime": "1.18.2",
+    "dapr_sdk": "1.18.10",
+    "frontcomposer": "4.5.0",
+    "dotnet_sdk": "10.0.401",
+    "aspire_apphost_sdk": "13.6.0",
+    "toolkit_dapr": "13.6.0-beta.910",
+    "fluent_ui": "5.0.0"
+  },
+  "accepted_p1r": {
+    "record": "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json",
+    "eventstore_version": "3.106.0",
+    "eventstore_revision": "76051c70cbf868c40edc00ca0344fa5bd8879b69",
+    "builds_revision": "ad52f350a2f0bc47849179ae17b4594dafff5363"
+  },
+  "prior_pin_authorization": {
+    "spec": "_bmad-output/implementation-artifacts/spec-update-eventstore-package-version.md",
+    "scope": "pin-only; P1R and G-6 records deliberately unchanged"
+  },
+  "release": {
+    "version": "4.29.1",
+    "source_revision": "21ce044ab465ccb2adab58b3d66e394ffbecf3c2",
+    "url": "https://github.com/Hexalith/Hexalith.Builds/releases/tag/v4.29.1",
+    "ci_url": "https://github.com/Hexalith/Hexalith.Builds/actions/runs/36740809340",
+    "ci_conclusion": "success",
+    "release_run_url": "https://github.com/Hexalith/Hexalith.Builds/actions/runs/36743051740",
+    "release_conclusion": "success",
+    "inventory_url": "https://github.com/Hexalith/Hexalith.Builds/releases/download/v4.29.1/g4-tool-package-inventory.json",
+    "inventory_sha256": "edc3802707ad3f3878e31dfb77d432463587ca7291647d836487f2e5e1e5de7d",
+    "inventory_source_clean": true,
+    "inventory_release_eligible": true,
+    "inventory_source_validation": "passed",
+    "inventory_controls": "passed"
+  },
+  "availability_probe": {
+    "workspace": "/var/tmp/hexalith-p0-preflight-nhr3avr6",
+    "isolated_package_cache": true,
+    "source": "https://api.nuget.org/v3/index.json",
+    "command": "dotnet tool restore --configfile NuGet.Config --no-http-cache",
+    "exit_code": 0,
+    "tool_commands": [
+      {
+        "command": "dotnet tool run hexalith-module -- --version",
+        "exit_code": 0,
+        "output": "4.29.1+21ce044ab465ccb2adab58b3d66e394ffbecf3c2"
+      },
+      {
+        "command": "dotnet tool run hexalith-evidence -- --version",
+        "exit_code": 0,
+        "output": "4.29.1+21ce044ab465ccb2adab58b3d66e394ffbecf3c2"
+      }
+    ],
+    "packages": [
+      {
+        "id": "Hexalith.Builds.Module.Cli",
+        "version": "4.29.1",
+        "restored_nupkg_sha256": "e0405045ba53a23b891bafe523a9cfad3d8b86c4e8b9d4495dbcefea964c1e9f",
+        "release_inventory_unsigned_nupkg_sha256": "1A34F97C198E2FC1F5FBE1A244CD4639DC36D343AA853F980EA962E73B5F3337"
+      },
+      {
+        "id": "Hexalith.Builds.Evidence.Cli",
+        "version": "4.29.1",
+        "restored_nupkg_sha256": "739ae9b3da7233510a1588c2629940b835c29b3d9c940a843f139d7b55d1eddb",
+        "release_inventory_unsigned_nupkg_sha256": "BF86E754F0899D5C4D21D7A0131103E1565CEE6D520397E21DB7DD68A67048C4"
+      }
+    ],
+    "limitation": "Availability and version probes only. Signed remote archives have different hashes from the prepublication inventory; this observation does not assert payload equivalence, persisted qualification, rollback, or owner acceptance."
+  },
+  "g6_checks": [
+    {
+      "working_directory": "/home/administrator/projects/hexalith/projects",
+      "command": "python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py --workspace . --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json",
+      "exit_code": 1,
+      "output": "G6-EVIDENCE-INVALID: Central package pin drift: CommunityToolkit.Aspire.Hosting.Dapr"
+    },
+    {
+      "working_directory": "/home/administrator/projects/hexalith/projects",
+      "command": "python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py --workspace . --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json --candidate",
+      "exit_code": 1,
+      "output": "G6-EVIDENCE-INVALID: Central package pin drift: CommunityToolkit.Aspire.Hosting.Dapr"
+    }
+  ],
+  "remaining": [
+    "accepted current P1R tuple",
+    "accepted fresh G-6 packet",
+    "current published-package persisted qualification",
+    "checked-in owner sample consumer manifest",
+    "exercised rollback",
+    "exact full-P0 owner approvals"
+  ]
+}

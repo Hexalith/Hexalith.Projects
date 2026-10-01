@@ -7,8 +7,8 @@ operations guide, not production configuration.
 
 Prerequisites:
 
-- .NET SDK `10.0.400`.
-- Aspire CLI `13.5.3` (matching the AppHost SDK/hosting/orchestration stack).
+- .NET SDK `10.0.401`.
+- Aspire CLI `13.6.0` (matching the AppHost SDK/hosting/orchestration stack).
 - Dapr CLI `1.18.0` with runtime `1.18.2` initialized for local sidecars.
 - `jq` for JSON endpoint extraction and `curl` for health probes.
 - Docker-compatible container runtime for Aspire-managed infrastructure.
@@ -46,6 +46,14 @@ Do not use `aspire stop --all` when other workspaces may have active AppHosts.
 
 Do not run recursive submodule initialization for this topology. If a root-level sibling project is
 missing, fetch only the required root-level submodule or repository according to the workspace setup.
+
+## Current G-6 qualification
+
+The approved 2026-10-01 tuple uses SDK `10.0.401`, Aspire SDK/CLI/hosting `13.6.0`, Toolkit `13.6.0-beta.910`, Dapr CLI/runtime/.NET `1.18.0`/`1.18.2`/`1.18.10`, Fluent UI `5.0.0`, NSubstitute `6.2.0`, and Fluxor `6.11.0`. The run approval includes the Toolkit prerelease and unlisted Dapr support-table exceptions; final packet acceptance remains separate.
+
+Run the approved qualifier from the root with `python3 tools/qualification/run_g6_qualification.py --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json --output _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/<new-attempt>`. It installs isolated tools/cache and starts disposable loopback PostgreSQL, Redis, placement, and scheduler. A unique validated `g6-oq8-*` namespace is supplied through `NAMESPACE` to every owned sidecar, including restarts, so self-hosted discovery cannot resolve shared `sample` or `eventstore` app IDs. It never reinitializes shared Dapr. Exact process groups/container IDs and shared-resource comparisons are retained in the pending packet. An existing packet is never overwritten.
+
+The checkout-source proof is distinct from published EventStore `3.110.0` archives. Platform’s Works/mTLS `1.18.3` development preview remains unselected and unqualified; Dapr.Workflow remains unselected. Dirty source and pending acceptance keep current prerequisite usability false.
 
 ## Expected Resources
 

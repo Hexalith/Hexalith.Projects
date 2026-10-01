@@ -1,0 +1,297 @@
+{
+  "schema": "hexalith.projects.p3-local-evidence.v1",
+  "recorded_at_utc": "2026-10-01T06:16:57.018910+00:00",
+  "disposition": "local implementation and review complete; owner acceptance blocked",
+  "verification_scope": "Local Debug sibling-source working trees; no immutable, Release package, G-4, or production deployment certification.",
+  "baseline_commit": "d4a69ad9a640294e849444a60d7ddfbd0468f91a",
+  "repositories": {
+    "Projects": {
+      "path": ".",
+      "head": "4d8dcf65803792f7def3b10ed21227329536154b",
+      "working_tree_dirty": true
+    },
+    "EventStore": {
+      "path": "references/Hexalith.EventStore",
+      "head": "6dededdecd62dd6dc6d1f15810108d860ec70c8f",
+      "working_tree_dirty": true
+    },
+    "Builds": {
+      "path": "references/Hexalith.Builds",
+      "head": "21ce044ab465ccb2adab58b3d66e394ffbecf3c2",
+      "working_tree_dirty": true
+    }
+  },
+  "source_sha256": {
+    "src/Hexalith.Projects.Server/Program.cs": "bd233863ee3ef4604bcb71947b7e48484c3744dd584a367e1bac898f12e4b5e0",
+    "src/Hexalith.Projects.Server/Authentication/ProjectsAuthenticationOptions.cs": "16c0eb348ad137cfb774067e334713267cda538a9920699963699a673761794a",
+    "src/Hexalith.Projects.Server/Authentication/ValidateProjectsAuthenticationOptions.cs": "1cb4dda883fee265d317d30ed5fb567b7b8951793c2755ecdd39e2e6ee23f99c",
+    "src/Hexalith.Projects.Server/Authentication/ProjectsAuthenticationServiceCollectionExtensions.cs": "bf66e8fd2832c632a62bf896170efb4a1116e751e0c3fcd097ee812b72499815",
+    "src/Hexalith.Projects.Server/Authentication/ProjectsClaimsTransformation.cs": "d18962c76f95373575d56dffd2b93a67272eada24d52e435c9612ed71d4ed116",
+    "src/Hexalith.Projects.Server/EventStoreGatewayTokenForwardingHandler.cs": "c820387b535bbffab06c16e5f89fb04343a03613a3f192f342853e91a2374d99",
+    "src/Hexalith.Projects.Server/HttpContextProjectTenantContextAccessor.cs": "e022a719d75197268d4f5d5ef5719cb076fd29f1f9fde743d8de1365a7f33080",
+    "src/Hexalith.Projects.AppHost/Program.cs": "742d7ef70fb2374108900371e7c36d30e5ad99a645454814e9235c124f6fe1f6",
+    "src/Hexalith.Projects.AppHost/KeycloakRealms/hexalith-realm.json": "3ac7bcbbc31bbd857a1a4a5e964d298bd6d75c4f1949ec000b0515e8baf37a4b",
+    "docs/runbooks/projects-production-identity-contract.md": "78867cd7aa2c7d04f2cf52bd2416a15dcca85c68fb8c91941469f8fb3f18fdc9",
+    "_bmad-output/implementation-artifacts/spec-6-1-p3-approve-production-identity-authentication-contract.md": "60a54fa9ee295d97fea4e55784af0d125463f30d83d9fad089473cbb9baafd5d",
+    "tests/Hexalith.Projects.Server.Tests/Authentication/ProjectsAuthenticationContractTests.cs": "325cdcc118a8d6b92e3c8d6203195fa6c2bdd225b6c57a12d5e34bfe47a4aa82",
+    "tests/Hexalith.Projects.Server.Tests/Authentication/CapturingHttpMessageHandler.cs": "ecb30e4207544718087f39e375a740dd8b426f07efe58f6009669a076c93d298",
+    "tests/Hexalith.Projects.Server.Tests/Authentication/QueryIdentityCaptureHandler.cs": "1f0c8e5ee407f64d05379c030c5d2357e0cbd8506be454e50f51eeef5e095a57",
+    "tests/Hexalith.Projects.Server.Tests/ProjectsClaimsTransformationTests.cs": "14870f8366edfca39e57ab63b9cda7f98f0944079ad551fc0eaedfe47ef873e4",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Authorization/DualPrincipalClaimsHelper.cs": "f56f6fabe3b678645d8a4cd0d24af3a6f06627e3ec62df2d2153f8dbbf0589ad",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs": "9b968d2fc18f5e92dc6bb463f331692aa3c9392d342a75ba4ae4e61090546c7c",
+    "global.json": "7e4c820f5d664523cbd36a384cbf90787d7911679098fde25bc5d7117c153db1",
+    "Directory.Build.props": "dfdaff88fcb7046374a027f20f20e7ae8b8eb3adb088618100699d7597d670db",
+    "Directory.Packages.props": "ac21e8c5b987c99e661e488d6c172c1665c2d413edd1d8e48a55b52f1a9ad75c"
+  },
+  "assembly_sha256": {
+    "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll": "2bc526c3fb09b9d6464d9a419b7ae22c4ba650387c1605b9cbb31f544da1ff69",
+    "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll": "00f88de20bcab4d99bd2742807f86a49399a3d382b12dd51e1d67badfa56adbd",
+    "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.dll": "4c7563f5ad7b00297c45cb857ffb90ccbd222e01aee12fc334c9f7410b57d4f3",
+    "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Gateway.dll": "78b159a248148f2db04f0c5d5d75e20c3166e375b3c8b0a5d379c268b5cb6e8e",
+    "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll": "99095abd86b3b9d76c3976152e2506803b590cbd50c415d116026a0e8bc4bb16"
+  },
+  "lanes": [
+    {
+      "lane": "red-regressions",
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-method",
+        "*JwtMiddleware_InvalidSubjectIdentity*",
+        "-method",
+        "*JwtMiddleware_InvalidCredentials*",
+        "-method",
+        "*ProtectedRead_MalformedArrayPermission*"
+      ],
+      "working_directory": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 1,
+      "note": "Before runtime repairs; source hashes below are the final repaired tree.",
+      "log_last_modified_utc": "2026-10-01T06:07:31.446597+00:00",
+      "log_archive": "red-regressions.log.gz",
+      "archive_sha256": "1211c75ddef34c4767322de9dbffe502f75d5ad23e9dfb372c270a02dc48edc4",
+      "uncompressed_sha256": "921bbcf3398712f385c5bbe3d6c5f46a41eb8fd61914123424b9cb85d5cd3200",
+      "tests": {
+        "total": 24,
+        "errors": 0,
+        "failed": 10,
+        "skipped": 0,
+        "not_run": 0
+      }
+    },
+    {
+      "lane": "server-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "-p:MinVerVersionOverride=1.0.0"
+      ],
+      "working_directory": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "note": "Final repaired source build.",
+      "log_last_modified_utc": "2026-10-01T06:11:22.289731+00:00",
+      "log_archive": "repair-server-build.log.gz",
+      "archive_sha256": "d92303962d7645a78d32137716063c7b1b3b42e6368d3b9b38271949af67cbc0",
+      "uncompressed_sha256": "b0a7bcbc2761dfb45ad64432c3f97fdd239f6b20d43d26f29770123201059cde",
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      }
+    },
+    {
+      "lane": "focused-server",
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "Hexalith.Projects.Server.Tests.Authentication.ProjectsAuthenticationContractTests",
+        "-class",
+        "Hexalith.Projects.Server.Tests.ProjectsClaimsTransformationTests"
+      ],
+      "working_directory": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "note": "Final repaired authentication/identity lane.",
+      "log_last_modified_utc": "2026-10-01T06:12:47.290164+00:00",
+      "log_archive": "repair-focused-server.log.gz",
+      "archive_sha256": "3531cbee1aef8cfaea132a2135e0dedb9f8e1ac3abed9ac711f5cbf19c0d26e0",
+      "uncompressed_sha256": "e306ee58f288c2797e999fd6205ee298f430cbc299b2aa3c6c9b8266b38bb34e",
+      "tests": {
+        "total": 117,
+        "errors": 0,
+        "failed": 0,
+        "skipped": 0,
+        "not_run": 0
+      }
+    },
+    {
+      "lane": "all-server",
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll"
+      ],
+      "working_directory": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "note": "Final full Server suite.",
+      "log_last_modified_utc": "2026-10-01T06:13:46.945918+00:00",
+      "log_archive": "final-all-server.log.gz",
+      "archive_sha256": "52279b986539fd3142b2b75df867be4bd2579c8599d2eb5b5df1cfe326344286",
+      "uncompressed_sha256": "5782c7c798b6d7664d5a24b77a12aea695e5765d1d3ad7bc607e1013e4d79832",
+      "tests": {
+        "total": 792,
+        "errors": 0,
+        "failed": 0,
+        "skipped": 0,
+        "not_run": 0
+      }
+    },
+    {
+      "lane": "integration-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--no-restore",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "-p:MinVerVersionOverride=1.0.0"
+      ],
+      "working_directory": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "note": "Final Integration source build.",
+      "log_last_modified_utc": "2026-10-01T06:13:43.477708+00:00",
+      "log_archive": "final-integration-build.log.gz",
+      "archive_sha256": "4f35f47a1366ee3a2460d8ab1a964c51281aee400e07a0782b948c2ab83671ad",
+      "uncompressed_sha256": "72296210b66eb4b1afd2d6361df49fb289eb9ef6a6126405af2a95b97b4e96b0",
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      }
+    },
+    {
+      "lane": "all-integration",
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll"
+      ],
+      "working_directory": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "note": "Final full Integration suite.",
+      "log_last_modified_utc": "2026-10-01T06:13:55.894481+00:00",
+      "log_archive": "final-all-integration.log.gz",
+      "archive_sha256": "c657974d3e086458dbc213225880c9007b4a5d9fa57817ee1c4b77d6752e424a",
+      "uncompressed_sha256": "d1a14671bd89c1444cdeafe69157e3272c5b607e5d8405850fa60d2645ad48c1",
+      "tests": {
+        "total": 27,
+        "errors": 0,
+        "failed": 0,
+        "skipped": 0,
+        "not_run": 0
+      }
+    }
+  ],
+  "aspire_baseline": {
+    "argv": [
+      "aspire",
+      "start",
+      "--apphost",
+      "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--no-build",
+      "--isolated",
+      "--non-interactive",
+      "--format",
+      "Json"
+    ],
+    "start_exit_code": 0,
+    "describe_exit_code": 0,
+    "wait_projects_exit_code": 0,
+    "stop_exit_code": 0,
+    "resources": [
+      {
+        "displayName": "eventstore-dapr-cli",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "eventstore",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "projects-dapr-cli",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "projects-ui",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "projects-workers-dapr-cli",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "projects-workers",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "projects",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "security-eventstore-client-password",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "security-eventstore-client-username",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "security",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "tenants-dapr-cli",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      },
+      {
+        "displayName": "tenants",
+        "state": "Running",
+        "healthStatus": "Healthy"
+      }
+    ],
+    "final_state": "No running AppHost confirmed by describe.",
+    "limit": "Resource health only; no authenticated persisted Keycloak/G-4 proof."
+  },
+  "owner_approval": null,
+  "rollback_coordinates": null,
+  "deferred_review_findings": [
+    "Resume Blind B4: additional-identity accessor path, unverified medium",
+    "Resume Blind B7: eventual production graph/secret bindings, unverified medium"
+  ],
+  "workspace_note": "Concurrent planning and sibling edits remain user-owned; no staging, commit, pin change, or production-approval transition was performed.",
+  "preservation_check": {
+    "index_changed_concurrently": true,
+    "concurrent_staged_paths": [
+      ".gitmodules",
+      "references/Hexalith.McpCli",
+      "references/Hexalith.Platform"
+    ],
+    "p3_files_staged": false,
+    "note": "The initial unchanged-index assertion detected unrelated concurrent staging. The scope-aware check confirmed that no P3 file was staged; external staged changes were left intact."
+  }
+}

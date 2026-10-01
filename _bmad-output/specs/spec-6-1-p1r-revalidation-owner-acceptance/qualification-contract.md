@@ -23,15 +23,19 @@ Both `selected` and `rollback` contain exactly
 `eventstore_version`, `eventstore_tag`, `eventstore_revision`, and
 `builds_revision`.
 
-The selected tuple is EventStore `3.106.0` / `v3.106.0` /
-`76051c70cbf868c40edc00ca0344fa5bd8879b69` plus Builds
-`ad52f350a2f0bc47849179ae17b4594dafff5363`.
+The selected tuple is EventStore `3.110.0` / `v3.110.0` /
+`27279fe6431925a6ea046c3f89af61487185c7de` plus Builds
+`21ce044ab465ccb2adab58b3d66e394ffbecf3c2`.
 
 The rollback tuple is EventStore `3.70.1` / `v3.70.1` /
 `f13f9925fdca53efa2ab8c90d396ab106f91bb9c` plus Builds
 `7af20f8bafbfe561df6f7705913a0800603090b5`.
 
 The sprint index carries the same tuples. Any mismatch fails acceptance.
+
+Jérôme Piquot accepted this exact selected tuple in all four roles at
+`2026-10-01T06:17:01Z`. This is P1R acceptance only: stale G-6 evidence keeps
+current prerequisite usability false and does not advance downstream work.
 
 ## Timestamp and Decisions
 
@@ -64,10 +68,10 @@ must not be persisted as a placeholder:
 {
   "schema": "hexalith.projects.p1r-acceptance.v1",
   "selected": {
-    "eventstore_version": "3.106.0",
-    "eventstore_tag": "v3.106.0",
-    "eventstore_revision": "76051c70cbf868c40edc00ca0344fa5bd8879b69",
-    "builds_revision": "ad52f350a2f0bc47849179ae17b4594dafff5363"
+    "eventstore_version": "3.110.0",
+    "eventstore_tag": "v3.110.0",
+    "eventstore_revision": "27279fe6431925a6ea046c3f89af61487185c7de",
+    "builds_revision": "21ce044ab465ccb2adab58b3d66e394ffbecf3c2"
   },
   "rollback": {
     "eventstore_version": "3.70.1",
@@ -75,7 +79,7 @@ must not be persisted as a placeholder:
     "eventstore_revision": "f13f9925fdca53efa2ab8c90d396ab106f91bb9c",
     "builds_revision": "7af20f8bafbfe561df6f7705913a0800603090b5"
   },
-  "timestamp_utc": "2026-09-22T12:00:00Z",
+  "timestamp_utc": "2026-10-01T06:17:01Z",
   "decisions": {
     "EventStore Owner": {
       "decision": "accept",

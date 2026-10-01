@@ -329,12 +329,17 @@ status: open
 origin: Epic 6 production-readiness correction
 location: Projects sprint ledger and fixed P1R acceptance record
 source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-minimal-acceptance-gate.md
-reason: The selected EventStore and Builds coordinates still require four explicit role decisions in the fixed JSON record.
+reason: Jérôme Piquot explicitly accepted the exact 3.110.0 / Builds 4.29.1 tuple in all four roles; current runtime qualification remains unavailable while G-6 is stale.
 status: done
-resolution: 2026-09-22 Satisfied by the fixed four-role acceptance record at _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json for the selected tuple.
+resolution: 2026-10-01 Rebound the fixed four-role record to the exact 3.110.0 / Builds 4.29.1 tuple accepted by Jérôme Piquot at 2026-10-01T06:17:01Z; existing done status retained.
+historical_resolution: 2026-09-22 acceptance for 3.106.0 / Builds ad52f350a2f0bc47849179ae17b4594dafff5363 preserved at _bmad-output/implementation-artifacts/evidence/6-1-p1r-acceptance-20260922-3.106.0.json
 acceptance_record: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
-selected: EventStore 3.106.0 / v3.106.0 / 76051c70cbf868c40edc00ca0344fa5bd8879b69; Builds ad52f350a2f0bc47849179ae17b4594dafff5363
+selected: EventStore 3.110.0 / v3.110.0 / 27279fe6431925a6ea046c3f89af61487185c7de; Builds 4.29.1 / 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
 rollback: EventStore 3.70.1 / v3.70.1 / f13f9925fdca53efa2ab8c90d396ab106f91bb9c; Builds 7af20f8bafbfe561df6f7705913a0800603090b5
+current_candidate: EventStore 3.110.0 / v3.110.0 / 27279fe6431925a6ea046c3f89af61487185c7de; Builds 4.29.1 / 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+current_candidate_packet: _bmad-output/implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md
+current_candidate_usable: false
+current_decisions: Accept by Jérôme Piquot as EventStore Owner, Builds Owner, Solution Architect (including EventStore Stack rebinding), and Test Architect at 2026-10-01T06:17:01Z; each binds the fixed record and #/selected. G-6 is not accepted by this decision.
 
 ### DW-36: Sequential shutil.rmtree calls across multiple validated targets are not atomic, so a later target's filesystem failure can leave earlier targets already deleted.
 origin: spec-deferred 8d336adc2d02
@@ -664,12 +669,17 @@ gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 origin: Epic 6 P1R coordinate qualification
 location: Projects sprint ledger and fixed P1R acceptance record
 source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-minimal-acceptance-gate.md
-reason: No valid four-role acceptance record exists for the selected tuple.
+reason: Jérôme Piquot explicitly accepted the exact 3.110.0 / Builds 4.29.1 tuple in all four roles; current runtime qualification remains unavailable while G-6 is stale.
 status: done
-resolution: 2026-09-22 Satisfied by the fixed four-role acceptance record at _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json for the selected tuple.
+resolution: 2026-10-01 Rebound the fixed four-role record to the exact 3.110.0 / Builds 4.29.1 tuple accepted by Jérôme Piquot at 2026-10-01T06:17:01Z; existing done status retained.
+historical_resolution: 2026-09-22 acceptance for 3.106.0 / Builds ad52f350a2f0bc47849179ae17b4594dafff5363 preserved at _bmad-output/implementation-artifacts/evidence/6-1-p1r-acceptance-20260922-3.106.0.json
 acceptance_record: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
-selected: EventStore 3.106.0 / v3.106.0 / 76051c70cbf868c40edc00ca0344fa5bd8879b69; Builds ad52f350a2f0bc47849179ae17b4594dafff5363
+selected: EventStore 3.110.0 / v3.110.0 / 27279fe6431925a6ea046c3f89af61487185c7de; Builds 4.29.1 / 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
 rollback: EventStore 3.70.1 / v3.70.1 / f13f9925fdca53efa2ab8c90d396ab106f91bb9c; Builds 7af20f8bafbfe561df6f7705913a0800603090b5
+current_candidate: EventStore 3.110.0 / v3.110.0 / 27279fe6431925a6ea046c3f89af61487185c7de; Builds 4.29.1 / 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+current_candidate_packet: _bmad-output/implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md
+current_candidate_usable: false
+current_decisions: Accept by Jérôme Piquot as EventStore Owner, Builds Owner, Solution Architect (including EventStore Stack rebinding), and Test Architect at 2026-10-01T06:17:01Z; each binds the fixed record and #/selected. G-6 is not accepted by this decision.
 
 ### DW-69: Reconcile Story 6.5 status across its spec and sprint tracker.
 
@@ -847,3 +857,43 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-4.md`
   summary: Return the Project name on Tenant-role list and open only when inspection is authorized, and write no FR-21 event.
   evidence: Split from the Story 6.1 spec because inspection-gated name disclosure is a separate goal from the supported Safe Metadata list/open path. Story 8.1 records that inspection.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p3-approve-production-identity-authentication-contract.md`
+  summary: Unverified medium concern: determine whether a reachable additional-identity producer can feed unauthenticated authority claims into the pre-existing Projects tenant-context accessor.
+  evidence: Resumed Blind B4 found principal-wide accessor reads while the P3 transformer isolates its authenticated identity; the current bearer host produces a single identity. A concrete secondary-identity producer or explicit accessor contract is needed to settle the HTTP-path claim. No platform or accessor policy was changed.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p3-approve-production-identity-authentication-contract.md`
+  summary: Unverified medium concern: bind the eventual production deployment graph to managed identity configuration instead of the local AppHost UI fixture credential.
+  evidence: Resumed Blind B7 identified the explicitly local E2E credential in the Development AppHost, but no production deployment graph or secret-binding record was available. Inspect the owner-supplied production graph to establish whether that fixture could reach deployment. P3 local verification does not authorize deployment or select an identity provider.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
+  summary: Pre-existing medium guard consistency gap: optional current usability flags and accepted revalidation metadata can drift while the minimal acceptance/index guard still passes.
+  evidence: Disposable fixtures flipping p1r_current_revalidation.usable_as_prerequisite and both current_candidate_usable fields to true, or changing the optional candidate to 9.0.0, returned (6, 7, 8). The authoritative fixed record/gate remain strict and the actual transition preserves false flags. Add a separate consistency policy that still allows pending future candidates to differ from historical acceptance.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
+  summary: Pre-existing medium authentication issue: a validly signed raw numeric sub is normalized to a string subject and passes the current callback.
+  evidence: The raw-JSON scratch reproduction signed sub=42 with RS256; JsonWebTokenHandler accepted it as string 42 and OnTokenValidated reported no failure. RFC 7519 section 4.1.2 defines a string subject (https://www.rfc-editor.org/rfc/rfc7519#section-4.1.2). Authentication files are concurrent P3 work untouched by P1R; add raw-type rejection and middleware fixtures there.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
+  summary: Pre-existing medium coverage gap: verify bearer forwarding through the registered outbound gateway pipeline.
+  evidence: Both forwarding controls construct EventStoreGatewayTokenForwardingHandler directly, so removal of AddHttpMessageHandler registration in ProjectsServerServiceCollectionExtensions.cs would escape those tests. Exercise the actual registered client in the owner authentication verification.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
+  summary: Pre-existing medium coverage gap: use a signed tenant-b token against existing tenant-a Project data with authorized controls in both tenants.
+  evidence: ProtectedRead_CrossTenantHint_ReturnsSameSafeDenial changes only a hint while its token remains tenant-a. Separate principal-binding controls use constructed principals, leaving the complete JWT-to-tenant read composition without this negative control.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
+  summary: Pre-existing medium coverage gap: reject a signed middleware token with no expiration.
+  evidence: CreateToken always sets Expires; no no-exp middleware fixture was found. RequireExpirationTime currently protects the host, but disabling it would not be detected by the existing expired-token control.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
+  summary: Unverified medium concern: bind the concurrent no-build Aspire health observation to retained command output and executed AppHost/service binary hashes.
+  evidence: The P3 manifest records summary results, source hashes, and test-assembly hashes without the launch/describe streams or AppHost/service hashes. No wrong runtime bytes were demonstrated. Retain those outputs, launch metadata, and matching binary hashes to settle the binding; P1R does not grant runtime qualification.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
+  summary: Pre-existing medium CI issue: update or retire the obsolete 3.109.0 P1R candidate replay and its matching CI invariants.
+  evidence: test_p1r_candidate_evidence.py documents retirement on changed checkout src or a superseding accepted record. The source had already drifted at the initial 6dededde EventStore gitlink, and P1R now accepts 3.110.0. The old CI job and exact-job invariants remain active; it is historical evidence, not current qualification.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
+  summary: Pre-existing medium verification gap: isolate duplicate-sub rejection from conflicting-alias rejection in the signed middleware fixture.
+  evidence: The multiple-sub fixture supplies NameIdentifier=actor-a and first sub=actor-b, so choosing the first subject would still reject on the alias rule and pass the fixture. Add multiple subjects with no conflicting alias and assert authentication failure plus safe protected-read denial in the concurrent P3 suite.

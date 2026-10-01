@@ -1,0 +1,96 @@
+---
+title: 'G-6 Current Runtime and Toolchain Qualification'
+type: 'feature'
+created: '2026-10-01'
+status: 'in-progress'
+baseline_commit: '4d8dcf65803792f7def3b10ed21227329536154b'
+approved_at_utc: '2026-10-01T08:29:35Z'
+approval_decision: 'Approve and stop'
+approval_scope: 'spec, proposed tuple, and qualification run'
+route: 'dispatch'
+review_loop_iteration: 0
+context:
+  - '{project-root}/_bmad-output/project-context.md'
+---
+
+<frozen-after-approval reason="human-owned intent — do not modify unless human renegotiates">
+
+## Intent
+
+**Problem:** G-6 fails seven checks after catalog/revision changes. Historical G-6 and separate P1R acceptance do not qualify this toolchain.
+
+**Approach:** Qualify .NET SDK `10.0.401`, Aspire SDK/CLI/hosting `13.6.0`, Toolkit `13.6.0-beta.910`, Dapr CLI/runtime/.NET `1.18.0`/`1.18.2`/`1.18.10`, Fluent UI `5.0.0`, NSubstitute `6.2.0`, and Fluxor `6.11.0`. Align Aspire pins; capture isolated PostgreSQL two-sidecar stop/restart proof and a hashed review packet.
+
+**Approval:** Spec approval authorizes this tuple/run as Builds, Platform, and FrontComposer/Web owner, including Toolkit prerelease and non-support-table-listed Dapr exceptions. Final acceptance separately requires a named decision on the packet hash.
+
+## Boundaries & Constraints
+
+**Always:** Preserve existing changes/history. Bind source, versions, outcomes, limitations, and cleanup. Distinguish checkout proof from published EventStore `3.110.0` archives. Use Debug/source locally and Release/packages in CI. Dirty source remains pending; immutable acceptance requires committed closure and exact gitlinks.
+
+**Never:** Stage/commit/push, publish/deploy, initialize nested submodules, mutate domain data, interrupt shared Dapr/Redis, infer downstream approval, or activate Dapr.Workflow. Inventory Platform Works/mTLS `1.18.3` as an unselected, unqualified preview.
+
+## I/O & Edge-Case Matrix
+
+| Scenario | Input / State | Expected Output / Behavior | Error Handling |
+|----------|---------------|----------------------------|----------------|
+| Pin audit | Current root-declared consumers | Exact tuple or explicit exclusion | Missing/drifting consumer fails |
+| Isolated lifecycle | Two distinct sidecars and disposable PostgreSQL | One execution; identical survivor/restart replay and authority | Missing persistence, duplicate execution, or skips fail |
+| Packet mutation | Altered source, outcome, approval, or limitation | Deterministic rejection | No partial acceptance |
+
+</frozen-after-approval>
+
+## Code Map
+
+- Builds `Tools` contracts and `schemas/hexalith.runtime-toolchain-evidence.v1.json`: preserve dirty stable-Fluent work and historical requirements/hashes.
+- Root/sibling AppHosts, Builds Module.AppHost, Platform file-based directives, and McpCli transitive Dapr consumers need coverage.
+- EventStore `Oq8PostgresqlFixture` owns binary/output, control-plane, and Redis selection. Reuse `DockerPublishedPortResolver` and the existing OQ8 matrix.
+
+## Tasks & Acceptance
+
+**Execution:**
+- [x] `references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json` -- add authorized tuple, exceptions, rollback, and consumer inventory.
+- [x] `src/Hexalith.Projects.AppHost/*.csproj`, `references/*/src/**/*AppHost/*.csproj`, `references/Hexalith.Platform/apphost.cs`, and FrontComposer `.github/workflows/quality.yml` -- align Aspire/Toolkit; bind Platform EventStore to P1R `3.110.0`.
+- [x] Builds `Tools/{validate-runtime-toolchain-evidence.py,test-runtime-toolchain-evidence-validator.py}` and schema -- audit file-based directives, Aspire.Hosting, Dapr packages, and EventStore binding; hash closure, AppHost outcomes, resolved packages, audit, and cleanup. Version new requirements while preserving history.
+- [x] `references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs` and fixture tests -- add validated binary/configuration/container-name/Redis overrides; use disposable loopback resources and exact-ID teardown.
+- [x] `tools/qualification/run_g6_qualification.py` -- require approved inputs; orchestrate isolated tools/cache, fresh builds, exact selectors, sanitization, failed attempts, and unchanged shared-resource checks.
+- [x] `.github/workflows/ci.yml`, `tests/tools/{run-ci-workflow-gates.ps1,test_g6_packet_references.py}` -- select new packet/baseline; align Builds execution with root gitlink; preserve gate isolation.
+- [x] `_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/` -- retain actual commands/counts/versions/hashes/limitations/rollback; failures remain failures.
+- [x] `_bmad-output/implementation-artifacts/{sprint-status.yaml,6-1-p1r-current-exact-baseline-candidate.md}`, the existing context spine, `docs/runbooks/projects-topology.md`, and `tests/e2e/README.md` -- coordinate candidate truth through the scheduling guard; preserve concurrent changes/downstream states.
+
+**Acceptance Criteria:**
+- Given approved inputs, when consumers restore/audit, then pins match or have explicit unqualified exclusions.
+- Given isolated resources, when qualifier/support run, then 1 qualification and 33 cases across 21 selectors pass without failures/skips; shared resources remain unchanged.
+- Given a candidate, when validators/mutations run, then hashes/outcomes reconcile and stale, unapproved, secret-bearing, or contradictory evidence fails.
+- Given dirty source or pending acceptance, when gates run, then prerequisite usability remains false and downstream states remain intact.
+
+## Implementation Notes
+
+Implemented the approved v2 baseline, pin inventory, current evidence contract/schema, complete OQ8 semantics and hash/authority mutation controls, isolated runner and fixture overrides, CI selection, retained failed-attempt packets and coordinated planning/docs. Historical v1 baselines and acceptance remain preserved. The fixture now uses exact-ID teardown, loopback PostgreSQL publication and a unique validated Dapr namespace for every owned sidecar launch.
+
+Selected attempt 3 packet SHA-256 is `724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd`. Actual results: 1 failed qualifier, 33 passed deterministic support cases across 21 selectors, 21 passed fixture controls, zero skips. Five AppHosts pass and five fail; Platform and the separate McpCli consumer pass after routine harness/configuration corrections. Namespace-isolated `sample/process` invocation still returns HTTP 404, producing HTTP 500 at concurrent writer admission. Strict observation validation fails. Projects/Memories/Tenants preserve their missing nested Polymorphic source gate; FrontComposer preserves missing CounterFixture EventStore references, and FrontComposer/Parties preserve missing UI types. Shared resource snapshots remain unchanged, four owned containers are removed, owned process groups stop and scratch is removed.
+
+After capture, a final source-only closure correction allows later metadata-only root evidence/acceptance commits, requiring an ancestor captured root revision and identical committed bound source/gitlinks at both revisions. Exact submodule HEAD/gitlinks remain required. A full accepted positive control and 40 mutation controls pass. Attempt 3 was preserved, with no rewritten source bindings, and is additionally stale against the post-capture validator/runner/test bytes. The final gate exits 1 on the mutation-test artifact hash plus EventStore checkout HEAD `96a6041c5d63a933a58f1df09f7fad123c9ada41` versus root gitlink `6dededdecd62dd6dc6d1f15810108d860ec70c8f`. Current usability remains false; no named G-6 acceptance is inferred.
+
+Remaining acceptance work:
+
+- [ ] Resolve the observed runtime/domain-service HTTP 404/500 failure without weakening the matrix; capture 1 qualifier and 33 support passes with zero failures/skips.
+- [ ] Restore/build every required AppHost with current resolved packages after authorized upstream source prerequisites are supplied; do not initialize nested dependencies or bypass guards under this task.
+- [ ] Recapture final committed implementation/source and exact root gitlinks; validate the complete new packet and cleanup.
+- [ ] Obtain a separate named decision on the final reviewed packet hash before prerequisite usability can become true.
+
+## Spec Change Log
+
+2026-10-01: Implementation/evidence notes added; frozen approved intent unchanged. Spec remains in-progress because live qualification and final committed acceptance are incomplete.
+
+## Review Triage Log
+
+## Verification
+
+- `python3 references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py` -- controls pass; retain emitted counts.
+- Existing root gate/gitlink fixtures and updated packet-reference tests -- pass.
+- `pwsh -NoProfile -File tests/tools/run-ci-workflow-gates.ps1` -- pass.
+- Per-project builds/tests, exact OQ8/support commands from EventStore `integration.yml`, and strict capture validation -- zero skips; retain outcomes.
+- Candidate/accepted-only gates -- distinguish technical validity from closure/acceptance.
+- `python3 tools/planning/validate_production_authority.py --validate-index` and whitespace checks -- pass before/after planning edits.
+
+Actual verification outcomes (2026-10-01): current 40 mutation controls plus accepted metadata-commit positive control; historical 30 scenarios across three baselines, 48 baseline-drift controls, 165 authority controls and two historical hash pins pass. Root gate/gitlink fixtures pass 19 controls; packet-reference tests pass 5 controls after coordinated updates; workflow gates and scheduling guard pass. Whitespace checks pass in every changed repository. Candidate validation/gate and accepted-only validation exit 1 as required for the retained failed/stale/pending packet. Exact final commands/results are recorded in `qualification-evidence/g-6-runtime-toolchain-20261001/post-capture-implementation-verification.md`.

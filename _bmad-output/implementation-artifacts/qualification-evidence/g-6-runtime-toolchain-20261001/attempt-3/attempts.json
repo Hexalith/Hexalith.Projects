@@ -1,0 +1,79 @@
+{
+  "schema": "hexalith.runtime-toolchain-attempts.v2",
+  "attempts": [
+    {
+      "attempt": 1,
+      "exitCode": 1,
+      "outcome": "failed",
+      "accepted": false,
+      "packetPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/packet.json",
+      "packetSha256": "43713e531691dacd8a40c7757f9e8428075d628cc7cb191eb67bf204129aec7d",
+      "testCounts": {
+        "qualification": {
+          "selectors": 1,
+          "total": 1,
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0
+        },
+        "support": {
+          "selectors": 21,
+          "total": 33,
+          "passed": 33,
+          "failed": 0,
+          "skipped": 0
+        }
+      },
+      "reasonForNextAttempt": "Initial isolated attempt; static sample/eventstore discovery namespace; Platform file-based CPM conflict and unsuitable McpCli ConformanceHost package consumer."
+    },
+    {
+      "attempt": 2,
+      "exitCode": 1,
+      "outcome": "failed",
+      "accepted": false,
+      "packetPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-2/packet.json",
+      "packetSha256": "ee9e8a1d24871f513895d28ed7673e350214e86bc1d94fe35ea7143c64d452f7",
+      "testCounts": {
+        "qualification": {
+          "selectors": 1,
+          "total": 1,
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0
+        },
+        "support": {
+          "selectors": 21,
+          "total": 33,
+          "passed": 33,
+          "failed": 0,
+          "skipped": 0
+        }
+      },
+      "reasonForNextAttempt": "Diagnostic retry after Platform CPM and actual McpCli consumer correction; discovery was not namespace-isolated and captured sample/process invocation returned 404. A run-specific NAMESPACE was therefore applied without changing the matrix."
+    },
+    {
+      "attempt": 3,
+      "exitCode": 1,
+      "outcome": "failed",
+      "accepted": false,
+      "testCounts": {
+        "qualification": {
+          "selectors": 1,
+          "total": 1,
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0
+        },
+        "support": {
+          "selectors": 21,
+          "total": 33,
+          "passed": 33,
+          "failed": 0,
+          "skipped": 0
+        }
+      },
+      "isolationCorrection": "Every owned daprd uses the validated unique NAMESPACE recorded in cleanup; original sample/eventstore app IDs and matrix semantics are unchanged."
+    }
+  ],
+  "errors": []
+}

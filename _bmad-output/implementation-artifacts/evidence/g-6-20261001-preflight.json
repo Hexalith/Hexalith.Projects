@@ -1,0 +1,59 @@
+{
+  "schema": "hexalith.projects.g6-planning-preflight.v1",
+  "observedUtc": "2026-10-01T07:19:22Z",
+  "projectsRevision": "4d8dcf65803792f7def3b10ed21227329536154b",
+  "purpose": "Planning diagnostics only; no fresh live capture or G-6 acceptance",
+  "workingTreeDirty": true,
+  "commands": [
+    {
+      "command": "python3 tests/tools/run_g6_candidate_gate.py --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json",
+      "exitCode": 1,
+      "failedChecks": 7,
+      "failures": [
+        "Central package pin drift: CommunityToolkit.Aspire.Hosting.Dapr",
+        "Hexalith.Builds packet revision differs from root gitlink",
+        "Hexalith.Conversations packet revision differs from root gitlink",
+        "Hexalith.EventStore packet revision differs from root gitlink",
+        "Hexalith.FrontComposer packet revision differs from root gitlink",
+        "Hexalith.Tenants packet revision differs from root gitlink",
+        "CI Builds execution SHA differs from root Builds gitlink"
+      ]
+    },
+    {
+      "command": "python3 -m unittest tests/tools/test_run_g6_candidate_gate.py tests/tools/test_check_g6_packet_gitlinks.py -v",
+      "exitCode": 0,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "python3 references/Hexalith.Builds/Tools/test-runtime-toolchain-evidence-validator.py",
+      "exitCode": 0,
+      "outcome": "G6-EVIDENCE-MUTATIONS-PASSED: 30 scenarios for each of 3 baselines; 48 baseline-drift controls; 165 authority controls; 2 historical baseline SHA-256 pins"
+    },
+    {
+      "command": "pwsh -NoProfile -File tests/tools/run-ci-workflow-gates.ps1",
+      "exitCode": 0,
+      "outcome": "ci-workflow-gate: PASSED; 5 workflow files"
+    },
+    {
+      "command": "python3 tools/planning/validate_production_authority.py --validate-index",
+      "exitCode": 0,
+      "outcome": "PASS: production-authority index is [6, 7, 8]"
+    }
+  ],
+  "currentG6Usable": false,
+  "newTupleAuthorized": false,
+  "freshLiveQualificationExecuted": false,
+  "containment": {
+    "historicalEvidencePreserved": true,
+    "existingChangesPreserved": true,
+    "sharedContainersChanged": false,
+    "domainDataChanged": false,
+    "gitMutationsPerformed": false,
+    "g4Approved": false,
+    "g5Approved": false,
+    "deploymentApproved": false,
+    "releaseApproved": false
+  }
+}

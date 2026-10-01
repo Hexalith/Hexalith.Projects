@@ -50,7 +50,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 2026-09-30
+last_updated: 2026-10-01
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -59,70 +59,115 @@ production_authority_epics: [6, 7, 8]
 p1r_acceptance_gate:
   record_path: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
   selected:
-    eventstore_version: 3.106.0
-    eventstore_tag: v3.106.0
-    eventstore_revision: 76051c70cbf868c40edc00ca0344fa5bd8879b69
-    builds_revision: ad52f350a2f0bc47849179ae17b4594dafff5363
+    eventstore_version: 3.110.0
+    eventstore_tag: v3.110.0
+    eventstore_revision: 27279fe6431925a6ea046c3f89af61487185c7de
+    builds_revision: 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
   rollback:
     eventstore_version: 3.70.1
     eventstore_tag: v3.70.1
     eventstore_revision: f13f9925fdca53efa2ab8c90d396ab106f91bb9c
     builds_revision: 7af20f8bafbfe561df6f7705913a0800603090b5
 p1r_current_revalidation:
-  status: technical-candidate-pending-open-gaps-and-exact-owner-decisions
+  status: accepted-p1r-only-current-g6-failed-pending
   usable_as_prerequisite: false
-  owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3109-exact-baseline-candidate.md
+  observed_on: 2026-10-01
+  owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md
   candidate:
-    eventstore_version: 3.109.0
-    eventstore_tag: v3.109.0
-    eventstore_revision: 818e28a8af421994e4f77e66327dc33a8c67ca5f
-    builds_revision: ac58d02cd69f4c74cc71fc05430983d51b58fd84
-  projects_gitlinks_commit: 9bacf3a6324f4b6402247289a1ed5a665ab91f0f
-  eventstore_checkout_gitlink: 5b9494835fcba6152789653add8f84bee5666035
-  eventstore_checkout_source_equals: 489e5d76253f68c6cf53c443aa8755ad059e621e
-  eventstore_release_run: https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36238526310
-  eventstore_release_validation: "BYPASS_VALIDATION; Commitlint run 36237813667 was the source proof, not CI"
+    eventstore_version: 3.110.0
+    eventstore_tag: v3.110.0
+    eventstore_revision: 27279fe6431925a6ea046c3f89af61487185c7de
+    builds_revision: 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+  builds_version: 4.29.1
+  projects_baseline_commit: 4d8dcf65803792f7def3b10ed21227329536154b
+  eventstore_checkout_gitlink: 6dededdecd62dd6dc6d1f15810108d860ec70c8f
+  eventstore_checkout_source_drift: "13 commits and 43 changed src paths after v3.110.0 (40 added, 3 modified); published archives and checkout are distinct coordinates"
+  eventstore_release_run: https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36608763986
+  eventstore_release_validation: "BYPASS_VALIDATION; Commitlint run 36608682105 was the publication source proof; independent tag CI 36608682063 passed"
   eventstore_release_builds_revision: 22a578b576a515d2af214fe81859447fffc97981
-  eventstore_tag_ci: "https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36237813612 failed: 3 Contracts OQ8 Story 4.15 governance tests"
-  eventstore_published_package_evidence: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/public-packages.json
-  eventstore_rollback_probe: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/rollback-probe/README.md
-  builds_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Builds/actions/runs/36698188312 success at ac58d02c (temporary prerelease branch, deleted after the run): Build and test, Python contract tests and CodeQL passed"
-  builds_main_merge: "fdebf0fa7505ebc18c500a4da88eeee05df1203a (parents ac58d02c and remote 125566f1); CI 36698191862 success, Commitlint 36698191621 success"
-  eventstore_main_merge: "6e972132c7b5b630246c58cff59e6b90e50d44ba (parents 5b949483 and remote bbe7582e); CI 36698207328 failure: build-and-test SecretsProtectionTests flags remote ReminderReconcilerTests.cs:234 (also fails at bbe7582e run 36685058689); contracts SharedConsumerAuthorityValidator rejects the 6-1-p1r-3109 consumer and rollback-probe projects, which 27279fe6's 6-1-p1r-3108 probe exclusions do not cover (new with the merge)"
-  projects_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Projects/actions/runs/36698221404 failure at 27341e150eacf08c8279564eebcdda1c642d6ca9: workflow-gates, g6-candidate and p1r-candidate-evidence passed; g6-acceptance failed by design (Packet status must be accepted); ci/build-and-test failed package consumer validation (tools/release-packages.json expects Hexalith.EventStore.Contracts 3.106.0, Builds ac58d02c pins 3.109.0) before any test tier ran, so project-gates was skipped; Commitlint 36698221478 and CodeQL 36698221345 passed"
-  g6_baseline: references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
-  g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
-  g6_fresh_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
-  g6_superseded_pending_candidate_sha256: 26d7a6e0d9b7aaa3136864529e261d36f9346a1166b08b31d6b8edda51d52000
-  g6_earlier_superseded_pending_candidate_sha256: e3090bd938ccbea7ee63ddb7427ce75ab815397f6eaa6183ab97ec2da0f8b82b
-  g6_earliest_superseded_pending_candidate_sha256: 7e7d7ea2f39256b829367c56bf289ff97889e190f6e7481db35def986d53a5bb
-  g6_current_qualification: candidate-validator-exit-0-accepted-only-exit-1-committed-source-closure-revisions-equal-gitlinks
-  g6_ci_jobs: "every G-6 check runs in g6-candidate (status-aware tests/tools/run_g6_candidate_gate.py: the validator in candidate mode while pending and accepted-only mode once accepted, then the packet-gitlink and Builds execution-SHA-equals-gitlink checks, then tests/tools/test_g6_packet_references.py) and g6-acceptance (accepted-only validator, then the packet-gitlink check); both need only workflow-gates and no job needs them, so G-6 drift fails only those two jobs while workflow-gates, ci, project-gates and e2e still run"
-  g6_acceptance_procedure: "status flip only: one Projects commit changes packet.json status from pending to accepted and adds a named decision record (approver, date, owner roles, reviewed packet SHA-256) under qualification_gates.G-6; no bound file changes, and both G-6 jobs then pass"
-  push_order: "push Builds ac58d02c and EventStore 5b949483 before Projects; integrate any advanced remote main with a merge commit; never squash or rebase the bound commits (done 2026-09-30: Builds main fdebf0fa, EventStore main 6e972132, Projects main 27341e15; gitlinks unchanged)"
-  branch_protection: "require only workflow-gates, the ci reusable-workflow jobs and project-gates; never require g6-candidate, g6-acceptance or p1r-candidate-evidence, which fail by design on G-6 drift (including routine bumps of packet-bound submodules), while the packet is pending, or when the EventStore gitlink src or the recorded EventStore disposition changes; e2e is schedule-only. release.yml needs a successful whole ci.yml run, so any such failure, including G-6 drift after acceptance, blocks releases until a recapture or evidence update"
-  projects_releases: "blocked while the G-6 packet is pending: release.yml verify-source needs a successful push CI run and g6-acceptance fails until owner acceptance"
-  g6_oq8_binaries: "LiveSidecar and Server test binaries built from EventStore checkout source 5b949483, not the published 3.109.0 archives"
-  open_technical_gaps:
-    - "EventStore release validation bypass and failing tag CI need an EventStore Owner disposition"
-    - "3.109.0 to 3.70.1 actor/domain replay, API downgrade, and operational backup/restore rehearsal are unproven; only a storage-record read passed, through a disposable Dapr state.redis store on local runtime 1.18.4 (never PostgreSQL)"
-    - "489e5d76 checkout RetainedFloor and interface changes are untested against the published packages"
-    - "Builds ac58d02c has no published tool consumer pin, persisted-run proof, or 3.109.0 exact-pair package/runner probe (exact-SHA CI 36698188312 passed)"
-    - "Projects main CI build-and-test fails package consumer validation (tools/release-packages.json expects Hexalith.EventStore.Contracts 3.106.0, Builds ac58d02c pins 3.109.0) on every main run since at least 6bc51555, so no CI test tier has run and the Folders ValidateLink_MalformedSuccess_IsUnavailable failure is not yet observed in CI"
-    - "EventStore main CI fails at merge 6e972132: the 6-1-p1r-3109 evidence projects need the same package-authority scan exclusion 27279fe6 gave the 6-1-p1r-3108 probes, and SecretsProtectionTests flags remote ReminderReconcilerTests.cs:234"
-    - "Parties and FrontComposer AppHosts do not compile; managed restart smoke not run (its preflight is deliberately run without TEST_USER_PASSWORD, exit 1 by contract); package-exception inventory exits 1 with 14 drifts"
-    - "G-6 OQ8 pass used checkout-source test binaries, not the published 3.109.0 archives; the consumer smoke compiles only types unchanged since 3.106.0"
+  eventstore_tag_ci: "https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36608682063 success at 27279fe6431925a6ea046c3f89af61487185c7de; Aspire and performance jobs skipped"
+  eventstore_publication_artifact: "release-evidence-36608763986-1 / 11052572354; downloaded ZIP SHA-256 6837c6db518f98228962c512106f83bdd618e2f47284bf4fa7895f95e51572d1"
+  eventstore_archive_verification: not-run-for-3.110.0
+  eventstore_metadata_rollback: unverified-RetainedFloor-shape-differs-from-3.70.1
+  eventstore_actor_replay: unverified-3.110.0-to-3.70.1
+  eventstore_checkout_compatibility: unverified
+  builds_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Builds/actions/runs/36740809340 success at 21ce044ab465ccb2adab58b3d66e394ffbecf3c2"
+  builds_release_run: https://github.com/Hexalith/Hexalith.Builds/actions/runs/36743051740
+  builds_availability_observation: _bmad-output/implementation-artifacts/evidence/6-1-p0-20261001-preflight.json
+  ci_builds_execution_revision: 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+  g6_baseline: references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json
+  g6_superseded_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
+  g6_superseded_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
+  g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json
+  g6_fresh_candidate_sha256: 724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd
+  g6_current_qualification: failed-pending-post-capture-contract-drift-gate-exit-1-two-failed-checks
+  g6_failures: "Qualifier 1 failed/0 skips; 33 support and 21 fixture cases pass; five AppHosts fail upstream source/UI requirements; capture validator rejected stale Memories resolved Aspire.Hosting assets; final validator rejects post-capture current mutation-test artifact hash; EventStore checkout HEAD 96a6041c5d63a933a58f1df09f7fad123c9ada41 differs from root gitlink 6dededdecd62dd6dc6d1f15810108d860ec70c8f"
+  g6_run_approved_tuple: "SDK 10.0.401; Aspire SDK/CLI/hosting 13.6.0; Toolkit 13.6.0-beta.910; Dapr CLI/runtime/.NET 1.18.0/1.18.2/1.18.10; Fluent UI 5.0.0; NSubstitute 6.2.0; Fluxor 6.11.0; spec/run approval 2026-10-01T08:29:35Z; packet acceptance absent"
+  role_decisions:
+    EventStore Owner: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
+    Builds Owner: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
+    Solution Architect: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
+    Test Architect: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
+  owner_decisions: "Jérôme Piquot explicitly accepted all four roles at 2026-10-01T06:17:01Z for the exact 3.110.0 / Builds 4.29.1 tuple and fixed record, including EventStore Stack rebinding, with recorded limitations; G-6 remains unaccepted for this baseline"
+  accepted_at_utc: 2026-10-01T06:17:01Z
+  prior_acceptance_evidence: _bmad-output/implementation-artifacts/evidence/6-1-p1r-acceptance-20260922-3.106.0.json
+  containment: "P1R accepts 3.110.0 / Builds 4.29.1 only; preserve archived 3.106.0 acceptance, 3.70.1 rollback, and already-done P1R/P0 Stage 1/DW-35/DW-68 statuses; current usability stays false while current G-6 is failed and pending; P0 stages 2-7, P2-P4, NOT_READY, and blocked Story 6.1 retain their states"
   superseded_candidate:
-    eventstore_version: 3.108.1
-    eventstore_revision: b15ad59abca82d5980ef92a510c2379e05f4d46f
-    builds_revision: 2326f983bad14d5398ee55bf2bdf6c86b63c39ea
-    owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3108-exact-baseline-candidate.md
-    g6_packet: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json
-    g6_packet_sha256: ccc2cab78b24873bb92133d4a5bc753d7bf9b7a8ffe1ff418d847572db54745d
-    current_result: "candidate validator exits 1 at the committed gitlinks: Central package pin drift: CommunityToolkit.Aspire.Hosting.Dapr"
-    superseded_on: 2026-09-29
-  owner_decisions: "Jérôme Piquot retargeted P1R to 3.109.0 and approved the Toolkit .770 exception and isolated Dapr 1.18.2 rerun on 2026-09-29; the four exact-tuple P1R role decisions and the post-run G-6 decision on packet f62a8f66 are still required."
-  containment: "Keep the accepted 3.106.0 tuple and 3.70.1 rollback; P0 Stage 6 and Story 6.1 remain blocked."
+    superseded_as_current_on: 2026-10-01
+    status: technical-candidate-pending-open-gaps-and-exact-owner-decisions
+    usable_as_prerequisite: false
+    owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3109-exact-baseline-candidate.md
+    candidate:
+      eventstore_version: 3.109.0
+      eventstore_tag: v3.109.0
+      eventstore_revision: 818e28a8af421994e4f77e66327dc33a8c67ca5f
+      builds_revision: ac58d02cd69f4c74cc71fc05430983d51b58fd84
+    projects_gitlinks_commit: 9bacf3a6324f4b6402247289a1ed5a665ab91f0f
+    eventstore_checkout_gitlink: 5b9494835fcba6152789653add8f84bee5666035
+    eventstore_checkout_source_equals: 489e5d76253f68c6cf53c443aa8755ad059e621e
+    eventstore_release_run: https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36238526310
+    eventstore_release_validation: "BYPASS_VALIDATION; Commitlint run 36237813667 was the source proof, not CI"
+    eventstore_release_builds_revision: 22a578b576a515d2af214fe81859447fffc97981
+    eventstore_tag_ci: "https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36237813612 failed: 3 Contracts OQ8 Story 4.15 governance tests"
+    eventstore_published_package_evidence: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/public-packages.json
+    eventstore_rollback_probe: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/rollback-probe/README.md
+    builds_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Builds/actions/runs/36698188312 success at ac58d02c (temporary prerelease branch, deleted after the run): Build and test, Python contract tests and CodeQL passed"
+    builds_main_merge: "fdebf0fa7505ebc18c500a4da88eeee05df1203a (parents ac58d02c and remote 125566f1); CI 36698191862 success, Commitlint 36698191621 success"
+    eventstore_main_merge: "6e972132c7b5b630246c58cff59e6b90e50d44ba (parents 5b949483 and remote bbe7582e); CI 36698207328 failure: build-and-test SecretsProtectionTests flags remote ReminderReconcilerTests.cs:234 (also fails at bbe7582e run 36685058689); contracts SharedConsumerAuthorityValidator rejects the 6-1-p1r-3109 consumer and rollback-probe projects, which 27279fe6's 6-1-p1r-3108 probe exclusions do not cover (new with the merge)"
+    projects_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Projects/actions/runs/36698221404 failure at 27341e150eacf08c8279564eebcdda1c642d6ca9: workflow-gates, g6-candidate and p1r-candidate-evidence passed; g6-acceptance failed by design (Packet status must be accepted); ci/build-and-test failed package consumer validation (tools/release-packages.json expects Hexalith.EventStore.Contracts 3.106.0, Builds ac58d02c pins 3.109.0) before any test tier ran, so project-gates was skipped; Commitlint 36698221478 and CodeQL 36698221345 passed"
+    g6_baseline: references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
+    g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
+    g6_superseded_fresh_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
+    g6_superseded_pending_candidate_sha256: 26d7a6e0d9b7aaa3136864529e261d36f9346a1166b08b31d6b8edda51d52000
+    g6_earlier_superseded_pending_candidate_sha256: e3090bd938ccbea7ee63ddb7427ce75ab815397f6eaa6183ab97ec2da0f8b82b
+    g6_earliest_superseded_pending_candidate_sha256: 7e7d7ea2f39256b829367c56bf289ff97889e190f6e7481db35def986d53a5bb
+    g6_current_qualification: candidate-validator-exit-0-accepted-only-exit-1-committed-source-closure-revisions-equal-gitlinks
+    g6_ci_jobs: "every G-6 check runs in g6-candidate (status-aware tests/tools/run_g6_candidate_gate.py: the validator in candidate mode while pending and accepted-only mode once accepted, then the packet-gitlink and Builds execution-SHA-equals-gitlink checks, then tests/tools/test_g6_packet_references.py) and g6-acceptance (accepted-only validator, then the packet-gitlink check); both need only workflow-gates and no job needs them, so G-6 drift fails only those two jobs while workflow-gates, ci, project-gates and e2e still run"
+    g6_acceptance_procedure: "status flip only: one Projects commit changes packet.json status from pending to accepted and adds a named decision record (approver, date, owner roles, reviewed packet SHA-256) under qualification_gates.G-6; no bound file changes, and both G-6 jobs then pass"
+    push_order: "push Builds ac58d02c and EventStore 5b949483 before Projects; integrate any advanced remote main with a merge commit; never squash or rebase the bound commits (done 2026-09-30: Builds main fdebf0fa, EventStore main 6e972132, Projects main 27341e15; gitlinks unchanged)"
+    branch_protection: "require only workflow-gates, the ci reusable-workflow jobs and project-gates; never require g6-candidate, g6-acceptance or p1r-candidate-evidence, which fail by design on G-6 drift (including routine bumps of packet-bound submodules), while the packet is pending, or when the EventStore gitlink src or the recorded EventStore disposition changes; e2e is schedule-only. release.yml needs a successful whole ci.yml run, so any such failure, including G-6 drift after acceptance, blocks releases until a recapture or evidence update"
+    projects_releases: "blocked while the G-6 packet is pending: release.yml verify-source needs a successful push CI run and g6-acceptance fails until owner acceptance"
+    g6_oq8_binaries: "LiveSidecar and Server test binaries built from EventStore checkout source 5b949483, not the published 3.109.0 archives"
+    open_technical_gaps:
+      - "EventStore release validation bypass and failing tag CI need an EventStore Owner disposition"
+      - "3.109.0 to 3.70.1 actor/domain replay, API downgrade, and operational backup/restore rehearsal are unproven; only a storage-record read passed, through a disposable Dapr state.redis store on local runtime 1.18.4 (never PostgreSQL)"
+      - "489e5d76 checkout RetainedFloor and interface changes are untested against the published packages"
+      - "Builds ac58d02c has no published tool consumer pin, persisted-run proof, or 3.109.0 exact-pair package/runner probe (exact-SHA CI 36698188312 passed)"
+      - "Projects main CI build-and-test fails package consumer validation (tools/release-packages.json expects Hexalith.EventStore.Contracts 3.106.0, Builds ac58d02c pins 3.109.0) on every main run since at least 6bc51555, so no CI test tier has run and the Folders ValidateLink_MalformedSuccess_IsUnavailable failure is not yet observed in CI"
+      - "EventStore main CI fails at merge 6e972132: the 6-1-p1r-3109 evidence projects need the same package-authority scan exclusion 27279fe6 gave the 6-1-p1r-3108 probes, and SecretsProtectionTests flags remote ReminderReconcilerTests.cs:234"
+      - "Parties and FrontComposer AppHosts do not compile; managed restart smoke not run (its preflight is deliberately run without TEST_USER_PASSWORD, exit 1 by contract); package-exception inventory exits 1 with 14 drifts"
+      - "G-6 OQ8 pass used checkout-source test binaries, not the published 3.109.0 archives; the consumer smoke compiles only types unchanged since 3.106.0"
+    superseded_candidate:
+      eventstore_version: 3.108.1
+      eventstore_revision: b15ad59abca82d5980ef92a510c2379e05f4d46f
+      builds_revision: 2326f983bad14d5398ee55bf2bdf6c86b63c39ea
+      owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3108-exact-baseline-candidate.md
+      g6_packet: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json
+      g6_packet_sha256: ccc2cab78b24873bb92133d4a5bc753d7bf9b7a8ffe1ff418d847572db54745d
+      current_result: "candidate validator exits 1 at the committed gitlinks: Central package pin drift: CommunityToolkit.Aspire.Hosting.Dapr"
+      superseded_on: 2026-09-29
+    owner_decisions: "Jérôme Piquot retargeted P1R to 3.109.0 and approved the Toolkit .770 exception and isolated Dapr 1.18.2 rerun on 2026-09-29; the four exact-tuple P1R role decisions and the post-run G-6 decision on superseded packet f62a8f66 were still required at that observation."
+    containment: "Keep the accepted 3.106.0 tuple and 3.70.1 rollback; P0 Stage 6 and Story 6.1 remain blocked."
 historical_development_status_sha256: ce120516809be4a3814565f67c7a1e648650b3b9f0547ed9a4135a78eba0bbaf
 production_authority_guard:
   validator: tools/planning/validate_production_authority.py
@@ -248,13 +293,14 @@ development_status:
 qualification_gates:
   G-6:
     status: accepted
-    accepted_scope: "Historical 2026-09-06 packet only; excludes the superseded EventStore 3.108.1 / Builds 2326f983bad14d5398ee55bf2bdf6c86b63c39ea candidate and the pending EventStore 3.109.0 / Builds ac58d02cd69f4c74cc71fc05430983d51b58fd84 candidate."
+    accepted_scope: "Historical 2026-09-06 packet only; excludes superseded 3.108.1 and 3.109.0 candidates and the P1R-accepted EventStore 3.110.0 / Builds 21ce044ab465ccb2adab58b3d66e394ffbecf3c2 baseline, whose current G-6 qualification remains failed and pending."
     current_candidate_usable: false
-    current_candidate_baseline: "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json"
-    current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json"
-    current_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
-    current_candidate_validation: "candidate-mode exits 0 at the committed gitlinks; accepted-only mode exits 1 on pending status; the status-aware g6-candidate job passes and the separate g6-acceptance job fails until owner acceptance"
-    current_candidate_acceptance: "status flip only: change packet.json status from pending to accepted and add a named decision record here (approver, date, owner roles, reviewed SHA-256 f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2); no bound file changes"
+    current_candidate_baseline: "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json"
+    current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json"
+    current_candidate_sha256: 724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd
+    current_candidate_validation: "2026-10-01 attempt 3: qualifier 1 failed/0 skips; support 33 passed and fixture 21 passed; five AppHosts failed; capture gate exit 1 rejected stale Memories resolved Aspire.Hosting and EventStore HEAD/gitlink mismatch; final gate rejects post-capture current mutation-test artifact hash and the same EventStore mismatch; technicalValidity false; shared snapshots unchanged and owned cleanup passed"
+    current_candidate_acceptance: "Unavailable while technical qualification fails and source is dirty; resolve failures, recapture committed exact bindings and record a separate named decision on the reviewed packet hash; historical status flips do not repair current evidence"
+    superseded_20260929_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
     replaced_pending_candidate_sha256: 26d7a6e0d9b7aaa3136864529e261d36f9346a1166b08b31d6b8edda51d52000
     earlier_replaced_pending_candidate_sha256: e3090bd938ccbea7ee63ddb7427ce75ab815397f6eaa6183ab97ec2da0f8b82b
     earliest_replaced_pending_candidate_sha256: 7e7d7ea2f39256b829367c56bf289ff97889e190f6e7481db35def986d53a5bb
@@ -355,11 +401,11 @@ action_items:
     repository_authority: "EventStore and Builds owners; Solution and Test Architects"
     owner: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
     status: done
-    accepted_scope: "Historical EventStore 3.106.0 / Builds ad52f350a2f0bc47849179ae17b4594dafff5363 tuple only."
+    accepted_scope: "EventStore 3.110.0 / v3.110.0 / 27279fe6431925a6ea046c3f89af61487185c7de with Builds 4.29.1 / 21ce044ab465ccb2adab58b3d66e394ffbecf3c2; four exact named accepts by Jérôme Piquot at 2026-10-01T06:17:01Z; P1R boundary only."
     current_candidate_usable: false
     depends_on: ["6.1-P1"]
     unblocks: ["6.1-P0", "6.1-P2", "6.1-P4"]
-    unblocks_scope: "Historical accepted tuple only; the pending 3.109.0 candidate (which superseded 3.108.1) cannot unblock current work before exact four-role acceptance and owner acceptance of its fresh G-6 packet."
+    unblocks_scope: "Exact P1R tuple accepted; current work remains blocked while G-6 is stale and P0/P2/P3/P4/readiness prerequisites retain their existing states."
     acceptance_record: "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
     routed_to: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
   - epic: 6

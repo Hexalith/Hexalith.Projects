@@ -27,10 +27,10 @@ ACCEPTANCE_RECORD_RELATIVE_PATH = Path(
     "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
 )
 SELECTED_TUPLE = {
-    "eventstore_version": "3.106.0",
-    "eventstore_tag": "v3.106.0",
-    "eventstore_revision": "76051c70cbf868c40edc00ca0344fa5bd8879b69",
-    "builds_revision": "ad52f350a2f0bc47849179ae17b4594dafff5363",
+    "eventstore_version": "3.110.0",
+    "eventstore_tag": "v3.110.0",
+    "eventstore_revision": "27279fe6431925a6ea046c3f89af61487185c7de",
+    "builds_revision": "21ce044ab465ccb2adab58b3d66e394ffbecf3c2",
 }
 ROLLBACK_TUPLE = {
     "eventstore_version": "3.70.1",

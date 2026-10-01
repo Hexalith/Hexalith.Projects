@@ -54,7 +54,8 @@ context:
 **Execution:**
 - [x] `references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Queries/QueryEnvelope.cs`, `...Server/Pipeline/Queries/SubmitQuery.cs`, `.../Authorization/DualPrincipalIdentity.cs`, `DualPrincipalClaimsHelper.cs`, `.../Controllers/QueriesController.cs`, `...Server/Queries/QueryRouter.cs`, and `.../Queries/HandlerAwareQueryRouter.cs` -- add optional `DelegationId` end to end while preserving legacy defaults.
 - [x] `references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Projections/ProjectionEventDto.cs`, `...Server/Projections/ProjectionEventWireBuilder.cs`, and `...Client/Queries/QueryCursorScope.cs` -- forward exact persisted positions and provide a named watermark binding with validation and invariant formatting.
-- [ ] `references/Hexalith.EventStore/tests/Hexalith.EventStore.Contracts.Tests/`, `...Client.Tests/`, `...QueryRouting.Tests/`, `...Server.Tests/`, and `...IntegrationTests/` -- cover the matrix, including old payloads, gapped positions, cursor tamper/staleness, cross-Tenant equivalence, rebuild, and actor/process restart.
+- [x] `references/Hexalith.EventStore/tests/Hexalith.EventStore.Contracts.Tests/Queries/ProjectionAdapterContractTests.cs` and `...Server.LiveSidecar.Tests/Integration/ProjectionWatermarkProcess*` -- add explicit legacy-payload tests and prove durable duplicate detection plus stale-model recovery across three processes through the supported dispatcher.
+- [ ] `references/Hexalith.EventStore/tests/Hexalith.EventStore.Contracts.Tests/`, `...Client.Tests/`, `...QueryRouting.Tests/`, `...Server.Tests/`, and `...IntegrationTests/` -- cover the matrix, including old payloads, gapped positions, cursor tamper/staleness, cross-Tenant equivalence, rebuild, and actor/process restart. Local lanes pass; authenticated persisted protected-consumer denial and external 404-equivalence evidence remain unproven.
 - [ ] `references/Hexalith.EventStore/_bmad-output/implementation-artifacts/6-1-p2-query-security-projection-capability-acceptance-record.md` -- record exact public signatures, source/package candidate, commands/results, G-4 artifacts, residual risks, approvals, and the owner-approved rollback procedure; update `_bmad-output/implementation-artifacts/sprint-status.yaml` only after every gate is accepted.
 
 **Acceptance Criteria:**
@@ -66,10 +67,12 @@ context:
 
 ## Implementation Notes
 
+- 2026-10-01: Added explicit legacy JSON/DataContract query payload tests and strengthened the live persistence proof to use the supported projection dispatcher in three processes. The second process verifies the durable duplicate receipt; a separate batch then persists stale state `(1, 101)`, which the third process must observe and rebuild to `(3, 109)` from unchanged event history. The final focused lane passed. Local compatibility, identity, cursor, denial-router, and persistence lanes pass; authenticated persisted protected-consumer denial/external 404-equivalence evidence and published-candidate/owner acceptance remain unmet gates. The draft [EventStore handoff](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/6-1-p2-query-security-projection-capability-acceptance-record.md) and [machine manifest](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p2-local-2026-10-01/manifest.json) retain exact commands, results, source hashes, and limitations.
 - 2026-09-24: Added persisted-watermark cursor coverage and a live-sidecar test that rebuilds from Dapr/Redis-persisted events in a second operating-system process. Both focused tests passed. A separate test-fixture correction made the full Server suite green (3,370 total, 0 failed, 25 skipped); the current-HEAD Release solution build passed with zero warnings/errors. The draft EventStore handoff records source coordinates and exact commands. P2 remains open because the G-4 runner, authenticated persisted cross-Tenant fixture, accepted package/pin/rollback decisions, and a green full Contracts gate are absent.
 
 ## Spec Change Log
 
+- 2026-10-01: Expanded local compatibility and persisted restart coverage and refreshed the draft acceptance handoff. Corrected an existing reminder test fixture to the unchanged secret guard's supported placeholder vocabulary. No publication, pin update, rollback selection, owner acceptance, or sprint transition occurred; the spec remains in-progress.
 - 2026-07-19: Implemented and locally verified the additive EventStore capability surface. Preserved the released 3.77.2 constructor/deconstruction entry points and frozen v1 delivery fingerprints. The test task remains open because an actual process-restart/G-4 lane is unavailable; publication, accepted pins, rollback selection, the owner record, and root P2 acceptance also remain open.
 
 ## Design Notes
@@ -86,6 +89,16 @@ context:
 - `dotnet test tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj` -- expected: claim, safe-denial, wire, persistence, replay, and restart cases pass.
 - `dotnet tool run hexalith-module test --profile reads --filter Story=6.1-P2` -- expected: G-4 emits passing persisted/restart/cross-Tenant evidence for the exact candidate pin.
 
+**Local results (2026-10-01):**
+- EventStore base: `6dededdecd62dd6dc6d1f15810108d860ec70c8f` plus uncommitted test changes; Builds observation: `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`. The locally evaluated version `3.110.0` is not a selected published P2 pin.
+- Final Release solution build passed with zero warnings/errors. Focused Contracts: 119 passed; full Client: 838 passed; full QueryRouting: 19 passed; focused Server: 263 passed; watermark/rebuild integration: 3 passed; admin denial regression: 36 passed. All these focused lanes had zero failures/skips.
+- Final three-process stale-model rebuild lane: 1 passed, zero failures/skips; its final focused project build passed with zero warnings/errors. The prior single-record stale injection failed and remains retained separately; the final proof injects stale state through the supported batch-store seam.
+- Full Server rerun: 3,458 passed, zero failures, 25 existing skips. Reminder fixture and secret guard reruns passed 17 and 47 tests respectively.
+- The solution build and broad suite results predate the final test-only rebuild-proof correction. After that correction, only the affected LiveSidecar project build and focused restart lane were rerun; their final source bytes and results are bound by the current manifest.
+- Full Contracts: 2,137 passed, 31 Packaging governance/evidence failures, 2 skips; exact failed classes and outputs are retained. This broad gate remains unmet.
+- G-4 command: exit 1, missing `hexalith-module` tool command. The AppHost baseline attempt exited 2 because nested Tenants host projects are missing; no nested submodule was initialized or updated. The dedicated Dapr/Redis fixture ran successfully.
+- Exact compiled public signatures and source/evidence hashes are retained in the linked handoff and manifest. The final diff check passed.
+
 **Local results (2026-07-19):**
 - EventStore working-tree base during final verification: `5ba794b0459bce64afd419f45d71b1d52b303c00`; the capability remains an uncommitted local change. The local `origin/main` tracking ref later advanced to non-overlapping commit `442447599da624c4a0d16f24070ca2cf09c752b9`; no synchronization was performed.
 - `dotnet build Hexalith.EventStore.slnx --configuration Release --no-restore -m:1 /nr:false -p:UseSharedCompilation=false -p:NuGetAudit=false` -- passed with 0 warnings and 0 errors.
@@ -97,5 +110,5 @@ context:
 
 **Open gates:**
 - The Builds-owned 6.1-P0/G-4 runner remains unavailable from this workspace. The new live-sidecar test proves an operating-system restart over persisted state, but does not provide the required G-4 authenticated cross-Tenant fixture or exact-candidate evidence. The required command exited 1 with `Cannot find a tool in the manifest file that has a command named 'hexalith-module'.`
-- The latest full Contracts assembly run completed with 97 failures, all in `Packaging.*` governance/evidence tests; focused P2 contract classes passed. The draft EventStore handoff records the current results.
-- No release, package/source pin update, rollback selection, acceptance record, or P2 sprint-status transition has been authorized or performed.
+- The latest full Contracts assembly run completed with 31 failures and 2 skips, all failures in `Packaging.*` governance/evidence tests; focused P2 contract classes passed. The draft EventStore handoff records the current results.
+- The draft acceptance handoff exists, but no release, package/source pin update, rollback selection, owner acceptance, or P2 sprint-status transition has been authorized or performed.

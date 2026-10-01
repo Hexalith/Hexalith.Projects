@@ -75,7 +75,13 @@ public sealed class ProjectsClaimsTransformation : IClaimsTransformation
         string sourceClaimType,
         string targetClaimType)
     {
-        foreach (Claim sourceClaim in identity.FindAll(sourceClaimType).ToArray())
+        Claim[] sourceClaims = identity.FindAll(sourceClaimType).ToArray();
+        if (sourceClaims.Any(static claim => claim.ValueType != ClaimValueTypes.String))
+        {
+            return;
+        }
+
+        foreach (Claim sourceClaim in sourceClaims)
         {
             foreach (string value in SplitClaimValues(sourceClaim.Value))
             {
@@ -95,6 +101,11 @@ public sealed class ProjectsClaimsTransformation : IClaimsTransformation
         }
 
         string trimmed = value.Trim();
+        if (trimmed.StartsWith('{'))
+        {
+            yield break;
+        }
+
         if (trimmed.StartsWith('['))
         {
             string[]? items = null;
@@ -107,7 +118,7 @@ public sealed class ProjectsClaimsTransformation : IClaimsTransformation
                 items = null;
             }
 
-            if (items is not null)
+            if (items is not null && items.All(static item => item is not null))
             {
                 foreach (string item in items)
                 {
@@ -117,8 +128,10 @@ public sealed class ProjectsClaimsTransformation : IClaimsTransformation
                     }
                 }
 
-                yield break;
             }
+
+            // Array-shaped evidence must parse successfully before it can grant permissions.
+            yield break;
         }
 
         foreach (string part in trimmed.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))

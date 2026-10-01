@@ -1,0 +1,31 @@
+{
+  "schema": "hexalith.runtime-toolchain-failed-attempt-supplement.v2",
+  "attempt": 1,
+  "packetPath": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/packet.json",
+  "packetSha256": "43713e531691dacd8a40c7757f9e8428075d628cc7cb191eb67bf204129aec7d",
+  "actualTestCountsFromBoundLogs": {
+    "qualification": {
+      "tests": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0
+    },
+    "support": {
+      "tests": 33,
+      "passed": 33,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "commandLogs": [
+    {
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/logs/real-postgresql-two-sidecar-stop-restart-qualifier.log",
+      "sha256": "734760186cd2a741b8e4b5b38a1ee08fce752fccec9708fd42282cf34bb1be7f"
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/logs/21-exact-deterministic-support-selectors.log",
+      "sha256": "a11be49a51007b920f4e40e19ab1b276b5502050fd86a52f9945f7424b366c0b"
+    }
+  ],
+  "limitation": "The first producer wrote missing-capture placeholders after strict capture failure: packet totals 0 were inaccurate. Actual hash-bound logs show one failed qualifier and 33 passed support cases. The original failed packet remains unchanged; this supplement preserves actual outcomes, without claiming validity or acceptance."
+}

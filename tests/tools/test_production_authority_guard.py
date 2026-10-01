@@ -209,6 +209,69 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                 workspace_root=workspace,
             )
 
+    def test_selected_baseline_matches_the_explicit_current_owner_decision(self) -> None:
+        self.assertEqual(
+            {
+                "eventstore_version": "3.110.0",
+                "eventstore_tag": "v3.110.0",
+                "eventstore_revision": "27279fe6431925a6ea046c3f89af61487185c7de",
+                "builds_revision": "21ce044ab465ccb2adab58b3d66e394ffbecf3c2",
+            },
+            GUARD.SELECTED_TUPLE,
+        )
+
+    def test_historical_or_mixed_selected_tuple_cannot_accept_the_current_baseline(self) -> None:
+        historical = {
+            "eventstore_version": "3.106.0",
+            "eventstore_tag": "v3.106.0",
+            "eventstore_revision": "76051c70cbf868c40edc00ca0344fa5bd8879b69",
+            "builds_revision": "ad52f350a2f0bc47849179ae17b4594dafff5363",
+        }
+        candidates = [("historical tuple", historical)]
+        candidates.extend(
+            (coordinate, {**GUARD.SELECTED_TUPLE, coordinate: value})
+            for coordinate, value in historical.items()
+        )
+        candidates.append(
+            (
+                "later source checkout",
+                {
+                    **GUARD.SELECTED_TUPLE,
+                    "eventstore_revision": "6dededdecd62dd6dc6d1f15810108d860ec70c8f",
+                },
+            )
+        )
+        for name, selected in candidates:
+            with self.subTest(name=name):
+                record = self.acceptance_record()
+                record["selected"] = selected
+                with self.assertRaisesRegex(GUARD.GuardViolation, "selected coordinate mismatch"):
+                    self.validate_boundary(
+                        sprint=self.accepted_sprint(),
+                        deferred=self.accepted_deferred(),
+                        p0=self.accepted_p0(),
+                        record=record,
+                    )
+
+    def test_current_p1r_acceptance_keeps_stale_g6_prerequisites_unusable(self) -> None:
+        sprint = self.accepted_sprint()
+        self.assertEqual(
+            GUARD.EXPECTED_PRODUCTION_EPICS,
+            self.validate_boundary(
+                sprint=sprint,
+                deferred=self.accepted_deferred(),
+                p0=self.accepted_p0(),
+                record=self.acceptance_record(),
+            ),
+        )
+        index = GUARD._load_yaml_text(sprint, "accepted current P1R fixture")
+        self.assertIs(index["p1r_current_revalidation"]["usable_as_prerequisite"], False)
+        self.assertIs(index["qualification_gates"]["G-6"]["current_candidate_usable"], False)
+        action = next(item for item in index["action_items"] if item.get("id") == "6.1-P1R")
+        self.assertIs(action["current_candidate_usable"], False)
+        self.assertEqual("NOT_READY", index["readiness_provenance"]["current_result"])
+        self.assertEqual("blocked", index["development_status"][GUARD.STORY_6_1_KEY])
+
     def test_open_gate_passes_without_acceptance_record(self) -> None:
         self.assertEqual(GUARD.EXPECTED_PRODUCTION_EPICS, self.validate_boundary())
         with self.assertRaisesRegex(GUARD.GuardViolation, "6.1-P1R"):
@@ -227,10 +290,11 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
 
     def test_missing_or_rejected_role_fails_closed_and_names_role(self) -> None:
         for role, mutation in (
-            ("Builds Owner", "missing"),
-            ("Solution Architect", "reject"),
+            (role, mutation)
+            for role in GUARD.ACCEPTED_ROLES
+            for mutation in ("missing", "reject")
         ):
-            with self.subTest(role=role):
+            with self.subTest(role=role, mutation=mutation):
                 record = self.acceptance_record()
                 decisions = record["decisions"]
                 assert isinstance(decisions, dict)

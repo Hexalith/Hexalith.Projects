@@ -12,7 +12,7 @@ the running Aspire resource graph plus a real local Keycloak user and projected 
 ## Prerequisites
 
 - **Node.js ≥ 24** (`.nvmrc` → `nvm use`). The Playwright/utils stack requires it.
-- Aspire CLI `13.5.4`, .NET SDK `10.0.401`, `jq`, Dapr CLI `1.18.0`, Dapr runtime `1.18.2`, and a Docker-compatible runtime for the live lane.
+- Aspire CLI `13.6.0`, .NET SDK `10.0.401`, `jq`, Dapr CLI `1.18.0`, Dapr runtime `1.18.2`, and a Docker-compatible runtime for the live lane.
 
 ## Setup
 
@@ -180,3 +180,10 @@ tests/e2e/
 `@seontechnologies/playwright-utils`. See also the system test design at
 `_bmad-output/test-artifacts/test-design-*.md` (risks R1–R13, scenarios F5/F6, ASRs) and the
 architecture/epics under `_bmad-output/planning-artifacts/`.
+
+
+## Current runtime qualification
+
+The approved G-6 tuple is SDK `10.0.401`, Aspire SDK/CLI/hosting `13.6.0`, Toolkit `13.6.0-beta.910`, Dapr CLI/runtime/.NET `1.18.0`/`1.18.2`/`1.18.10`, Fluent UI `5.0.0`, NSubstitute `6.2.0`, and Fluxor `6.11.0`. Run approval includes the Toolkit prerelease and Dapr exceptions; packet acceptance remains separate. Local qualification uses Debug/source, isolated caches/tools, loopback disposable infrastructure and a private Dapr namespace. It does not start the browser topology or change shared Dapr. CI keeps Release/package consumption.
+
+The selected packet is `_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-3/packet.json`. Preserve prior failed attempts. Dirty source and pending acceptance keep current prerequisite usability false. Checkout-source OQ8 proof does not qualify published EventStore `3.110.0` archives, P1R rollback, Works/mTLS previews or Dapr.Workflow. See [the topology runbook](../../docs/runbooks/projects-topology.md#current-g-6-qualification) for the repeatable isolated runner.
