@@ -1,0 +1,2356 @@
+{
+  "schema": "hexalith.runtime-toolchain-consumer-audit.v2",
+  "consumers": [
+    {
+      "path": "global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "pins": [
+        {
+          "package": "Aspire.Hosting",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Azure.AppContainers",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Azure.CosmosDB",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Docker",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8",
+          "qualified": false
+        },
+        {
+          "package": "Aspire.Hosting.Kubernetes",
+          "version": "13.6.0-preview.1.26479.8",
+          "qualified": false
+        },
+        {
+          "package": "Aspire.Hosting.Redis",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Testing",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.AI",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.AI.Microsoft.Extensions",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Actors",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Actors.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Actors.Generators",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Workflow",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Fluxor",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "Fluxor.Blazor.Web",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Admin.Abstractions",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Admin.Server",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.DomainService",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Gateway",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.RestApi.Generators",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Server",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.ServiceDefaults",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.SignalR",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Testing",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Testing.Integration",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components.Icons",
+          "version": "5.0.0",
+          "qualified": true
+        },
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Builds/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/Hexalith.Builds.Module.AppHost.csproj",
+      "pins": [
+        {
+          "package": "Aspire.AppHost.Sdk",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8",
+          "qualified": false
+        },
+        {
+          "package": "Aspire.Hosting.Redis",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.EventStoreHost/Hexalith.Builds.Module.EventStoreHost.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Gateway",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Commons/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Commons/src/libraries/Hexalith.Commons.Aspire/Hexalith.Commons.Aspire.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Commons/test/Hexalith.Commons.Aspire.Tests/Hexalith.Commons.Aspire.Tests.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Conversations/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
+      "pins": [
+        {
+          "package": "Aspire.AppHost.Sdk",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Hexalith.Conversations.Server.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.DomainService",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations/Hexalith.Conversations.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.AppHost.Tests/Hexalith.Conversations.AppHost.Tests.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Testing",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.IntegrationTests/Hexalith.Conversations.IntegrationTests.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Server",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Testing",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Testing.Integration",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Testing",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Tests/Hexalith.Conversations.Tests.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/samples/Hexalith.EventStore.Sample.BlazorUI/Hexalith.EventStore.Sample.BlazorUI.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components.Icons",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.Server.Host/Hexalith.EventStore.Admin.Server.Host.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.Server/Hexalith.EventStore.Admin.Server.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.UI/Hexalith.EventStore.Admin.UI.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components.Icons",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+      "pins": [
+        {
+          "package": "Aspire.AppHost.Sdk",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Azure.AppContainers",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Docker",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Kubernetes",
+          "version": "13.6.0-preview.1.26479.8",
+          "qualified": false
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/Hexalith.EventStore.Aspire.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8",
+          "qualified": false
+        },
+        {
+          "package": "Aspire.Hosting.Redis",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Hexalith.EventStore.Client.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Actors.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Operations/Hexalith.EventStore.Operations.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Actors",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Actors.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Hexalith.EventStore.Server.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Actors",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Actors.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Testing.Integration/Hexalith.EventStore.Testing.Integration.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Testing",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Actors.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Admin.Cli.Tests/Hexalith.EventStore.Admin.Cli.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Admin.Mcp.Tests/Hexalith.EventStore.Admin.Mcp.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Admin.Server.Host.Tests/Hexalith.EventStore.Admin.Server.Host.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Admin.Server.Tests/Hexalith.EventStore.Admin.Server.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Admin.UI.Tests/Hexalith.EventStore.Admin.UI.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.AppHost.Tests/Hexalith.EventStore.AppHost.Tests.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting.Testing",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.IntegrationTests/Hexalith.EventStore.IntegrationTests.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting.Testing",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Operations.Tests/Hexalith.EventStore.Operations.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.QueryRouting.Tests/Hexalith.EventStore.QueryRouting.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.SignalR.Tests/Hexalith.EventStore.SignalR.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/Directory.Packages.props",
+      "pins": [
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.0.0",
+          "qualified": false
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
+      "pins": [
+        {
+          "package": "Aspire.AppHost.Sdk",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Redis",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.Aspire/Hexalith.Folders.Aspire.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.DomainService",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Gateway",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.DomainService",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.DomainService",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders/Hexalith.Folders.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/tests/Hexalith.Folders.AppHost.Tests/Hexalith.Folders.AppHost.Tests.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting.Testing",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/tests/Hexalith.Folders.Cli.Tests/Hexalith.Folders.Cli.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/tests/Hexalith.Folders.IntegrationTests/Hexalith.Folders.IntegrationTests.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/tests/Hexalith.Folders.Mcp.Tests/Hexalith.Folders.Mcp.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/tests/Hexalith.Folders.UI.E2E.Tests/Hexalith.Folders.UI.E2E.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/tests/Hexalith.Folders.UI.Tests/Hexalith.Folders.UI.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/tests/Hexalith.Folders.Workers.Tests/Hexalith.Folders.Workers.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/samples/Counter/Counter.Domain/Counter.Domain.csproj",
+      "pins": [
+        {
+          "package": "Fluxor.Blazor.Web",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/samples/Counter/Counter.Specimens.Domain/Counter.Specimens.Domain.csproj",
+      "pins": [
+        {
+          "package": "Fluxor.Blazor.Web",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/samples/Counter/Counter.Specimens/Counter.Specimens.csproj",
+      "pins": [
+        {
+          "package": "Fluxor.Blazor.Web",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/samples/IdeParityCounter/IdeParityCounter.csproj",
+      "pins": [
+        {
+          "package": "Fluxor.Blazor.Web",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+      "pins": [
+        {
+          "package": "Aspire.AppHost.Sdk",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Contracts.UI/Hexalith.FrontComposer.Contracts.UI.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Shell/Hexalith.FrontComposer.Shell.csproj",
+      "pins": [
+        {
+          "package": "Fluxor.Blazor.Web",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components.Icons",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Testing/Hexalith.FrontComposer.Testing.csproj",
+      "pins": [
+        {
+          "package": "Fluxor.Blazor.Web",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.UI/Hexalith.FrontComposer.UI.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/tests/Hexalith.FrontComposer.Contracts.UI.Tests/Hexalith.FrontComposer.Contracts.UI.Tests.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/tests/Hexalith.FrontComposer.Mcp.Tests/Hexalith.FrontComposer.Mcp.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/tests/Hexalith.FrontComposer.Shell.Tests/Hexalith.FrontComposer.Shell.Tests.csproj",
+      "pins": [
+        {
+          "package": "Fluxor.Blazor.Web",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/tests/Hexalith.FrontComposer.SourceTools.Tests/Hexalith.FrontComposer.SourceTools.Tests.csproj",
+      "pins": [
+        {
+          "package": "Fluxor.Blazor.Web",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.McpCli/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.McpCli/src/Hexalith.McpCli.Core/Hexalith.McpCli.Core.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.McpCli/tests/Directory.Build.props",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.McpCli/tests/Hexalith.McpCli.Sample.Contracts/Hexalith.McpCli.Sample.Contracts.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.McpCli/tests/fixtures/Catalog.Invalid.Contracts/Catalog.Invalid.Contracts.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.McpCli/tests/fixtures/Catalog.Lint.Contracts/Catalog.Lint.Contracts.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.McpCli/tests/fixtures/Catalog.Routing.Contracts/Catalog.Routing.Contracts.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.AccessTelemetry.Clock/Hexalith.Memories.AccessTelemetry.Clock.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.AccessTelemetry/Hexalith.Memories.AccessTelemetry.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Actors",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Actors.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+      "pins": [
+        {
+          "package": "Aspire.AppHost.Sdk",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.Aspire/Hexalith.Memories.Aspire.csproj",
+      "pins": [
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.EventStore/Hexalith.Memories.EventStore.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Workflow",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.Mcp/Hexalith.Memories.Mcp.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.Server/Hexalith.Memories.Server.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AI",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.AI.Microsoft.Extensions",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Actors",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Actors.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Workflow",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.Web/Hexalith.Memories.Web.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/tests/Hexalith.Memories.AccessTelemetry.Tests/Hexalith.Memories.AccessTelemetry.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/tests/Hexalith.Memories.Benchmarks/Hexalith.Memories.Benchmarks.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/tests/Hexalith.Memories.Cli.Tests/Hexalith.Memories.Cli.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/tests/Hexalith.Memories.Contracts.Tests/Hexalith.Memories.Contracts.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/tests/Hexalith.Memories.DerivedStores.Tests/Hexalith.Memories.DerivedStores.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/tests/Hexalith.Memories.EventStore.Tests/Hexalith.Memories.EventStore.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/tests/Hexalith.Memories.IntegrationTests/Hexalith.Memories.IntegrationTests.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting.Testing",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/tests/Hexalith.Memories.Mcp.Tests/Hexalith.Memories.Mcp.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/tests/Hexalith.Memories.Server.Tests/Hexalith.Memories.Server.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/tools/MigrateEmbeddingVectors/MigrateEmbeddingVectors.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Actors",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/samples/Hexalith.Parties.Sample/Hexalith.Parties.Sample.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.AdminPortal/Hexalith.Parties.AdminPortal.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+      "pins": [
+        {
+          "package": "Aspire.AppHost.Sdk",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Azure.AppContainers",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Docker",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8",
+          "qualified": false
+        },
+        {
+          "package": "Aspire.Hosting.Kubernetes",
+          "version": "13.6.0-preview.1.26479.8",
+          "qualified": false
+        },
+        {
+          "package": "Aspire.Hosting.Redis",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.Client/Hexalith.Parties.Client.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.ConsumerPortal/Hexalith.Parties.ConsumerPortal.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.Contracts/Hexalith.Parties.Contracts.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.Projections/Hexalith.Parties.Projections.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.DomainService",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.Security/Hexalith.Parties.Security.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Actors",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.UI/Hexalith.Parties.UI.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.SignalR",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties/Hexalith.Parties.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Actors.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.DomainService",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.Client.Tests/Hexalith.Parties.Client.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.ConsumerPortal.Tests/Hexalith.Parties.ConsumerPortal.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.Contracts.Tests/Hexalith.Parties.Contracts.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.EventStoreGateway.TestHost/Hexalith.Parties.EventStoreGateway.TestHost.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Gateway",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.IntegrationTests/Hexalith.Parties.IntegrationTests.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting.Testing",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Server",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.Mcp.Tests/Hexalith.Parties.Mcp.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.Projections.Tests/Hexalith.Parties.Projections.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.Sample.Tests/Hexalith.Parties.Sample.Tests.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Server",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.Security.Tests/Hexalith.Parties.Security.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.Server.Tests/Hexalith.Parties.Server.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.Tests/Hexalith.Parties.Tests.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Testing",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/tests/Hexalith.Parties.UI.Tests/Hexalith.Parties.UI.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Platform/apphost.cs",
+      "pins": [
+        {
+          "package": "Aspire.AppHost.Sdk",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Docker",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8",
+          "qualified": false
+        },
+        {
+          "package": "Aspire.Hosting.Redis",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Platform/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/global.json",
+      "pins": [
+        {
+          "package": "dotnetSdk",
+          "version": "10.0.401",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/samples/Hexalith.Tenants.Sample.Tests/Hexalith.Tenants.Sample.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/samples/Hexalith.Tenants.Sample/Hexalith.Tenants.Sample.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.DomainService",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.Api/Hexalith.Tenants.Api.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.RestApi.Generators",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.ServiceDefaults",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
+      "pins": [
+        {
+          "package": "Aspire.AppHost.Sdk",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.Aspire/Hexalith.Tenants.Aspire.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.Client/Hexalith.Tenants.Client.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.Contracts/Hexalith.Tenants.Contracts.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.Server/Hexalith.Tenants.Server.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Server",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.UI/Hexalith.Tenants.UI.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.DomainService",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Gateway",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/tests/Directory.Build.props",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.IntegrationTests/Hexalith.Tenants.IntegrationTests.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting.Testing",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Testing",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Testing.Integration",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.UI.Tests/Hexalith.Tenants.UI.Tests.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/tests/performance/tenant-audit/seed.csproj",
+      "pins": [
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "pins": [
+        {
+          "package": "Aspire.AppHost.Sdk",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Aspire",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "src/Hexalith.Projects.Aspire/Hexalith.Projects.Aspire.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj",
+      "pins": [
+        {
+          "package": "Fluxor.Blazor.Web",
+          "version": "6.11.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "src/Hexalith.Projects.Infrastructure/Hexalith.Projects.Infrastructure.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Dapr.Client",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Client",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.DomainService",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Gateway",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "src/Hexalith.Projects.UI/Hexalith.Projects.UI.csproj",
+      "pins": [
+        {
+          "package": "Microsoft.FluentUI.AspNetCore.Components",
+          "version": "5.0.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj",
+      "pins": [
+        {
+          "package": "Dapr.AspNetCore",
+          "version": "1.18.10",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Contracts",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "tests/Hexalith.Projects.Cli.Tests/Hexalith.Projects.Cli.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "pins": [
+        {
+          "package": "Aspire.Hosting",
+          "version": "13.6.0",
+          "qualified": true
+        },
+        {
+          "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-beta.910",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "tests/Hexalith.Projects.Mcp.Tests/Hexalith.Projects.Mcp.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "pins": [
+        {
+          "package": "Hexalith.EventStore.Gateway",
+          "version": "3.110.0",
+          "qualified": true
+        },
+        {
+          "package": "Hexalith.EventStore.Testing",
+          "version": "3.110.0",
+          "qualified": true
+        }
+      ]
+    },
+    {
+      "path": "tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj",
+      "pins": [
+        {
+          "package": "NSubstitute",
+          "version": "6.2.0",
+          "qualified": true
+        }
+      ]
+    }
+  ],
+  "exclusions": [
+    {
+      "path": "references/Hexalith.Platform/DaprSelfHostedMtls.cs",
+      "package": "Dapr.Works/mTLS-preview",
+      "version": "1.18.3",
+      "reason": "unselected Works/mTLS development preview; not executed or qualified"
+    },
+    {
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "package": "Aspire.Hosting.Keycloak",
+      "version": "13.6.0-preview.1.26479.8",
+      "reason": "catalog preview integration; restoration and compilation are recorded but runtime is unqualified"
+    },
+    {
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "package": "Aspire.Hosting.Kubernetes",
+      "version": "13.6.0-preview.1.26479.8",
+      "reason": "catalog preview integration; restoration and compilation are recorded but runtime is unqualified"
+    },
+    {
+      "path": "references/Hexalith.Folders/Directory.Packages.props",
+      "package": "CommunityToolkit.Aspire.Hosting.Dapr",
+      "version": "13.0.0",
+      "reason": "existing conditional stable public Folders.Aspire dependency; excluded from current Toolkit runtime qualification"
+    }
+  ]
+}

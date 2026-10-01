@@ -547,7 +547,7 @@ Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflo
 # gate checks CI structure only: it never reads the packet or the gitlinks, and it requires the
 # exact workflow-gates job, so every hermetic fixture step keeps its exact blocking block.
 $g6BaselinePath = 'references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json'
-$g6PacketPath = '_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-15/packet.json'
+$g6PacketPath = '_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json'
 $checkoutActionLine = '        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0'
 $initializeBuildLine = "        uses: Hexalith/Hexalith.Builds/Github/initialize-build@$buildsExecutionSha"
 $expectedWorkflowGatesJob = (@'
@@ -649,7 +649,7 @@ $expectedG6CandidateJob = (@'
         run: >-
           python3 tests/tools/run_g6_candidate_gate.py
           --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json
-          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-15/packet.json
+          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json
 
       - name: Require G-6 documents to quote the packet and gitlinks
         env:

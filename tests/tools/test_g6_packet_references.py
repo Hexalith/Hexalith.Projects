@@ -26,7 +26,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 ARTIFACTS = PROJECT_ROOT / "_bmad-output/implementation-artifacts"
-PACKET_PATH = ARTIFACTS / "qualification-evidence/g-6-runtime-toolchain-20261001/attempt-15/packet.json"
+PACKET_PATH = ARTIFACTS / "qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
 README_PATH = PACKET_PATH.with_name("README.md")
 OWNER_PACKET_PATH = ARTIFACTS / "6-1-p1r-current-exact-baseline-candidate.md"
 SPRINT_STATUS_PATH = ARTIFACTS / "sprint-status.yaml"
