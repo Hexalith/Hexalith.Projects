@@ -1,0 +1,43 @@
+You can invoke the tool using the following command: aspire
+Tool 'aspire.cli' (version '13.6.0') was successfully installed.
+⌛  Making the jump to hyperspace...
+ℹ️  Installing runtime version 1.18.2
+❌  Downloading binaries and setting up components...
+
+Welcome to .NET 10.0!
+---------------------
+SDK Version: 10.0.401
+
+Telemetry
+---------
+The .NET tools collect usage data in order to help us improve your experience. It is collected by Microsoft and shared with the community. You can opt-out of telemetry by setting the DOTNET_CLI_TELEMETRY_OPTOUT environment variable to '1' or 'true' using your favorite shell.
+
+Read more about .NET CLI Tools telemetry: https://aka.ms/dotnet-cli-telemetry
+
+----------------
+Installed an ASP.NET Core HTTPS development certificate.
+To trust the certificate, run 'dotnet dev-certs https --trust'
+Learn about HTTPS: https://aka.ms/dotnet-https
+
+----------------
+Write your first app: https://aka.ms/dotnet-hello-world
+Find out what's new: https://aka.ms/dotnet-whats-new
+Explore documentation: https://aka.ms/dotnet-docs
+Report issues and find source on GitHub: https://github.com/dotnet/core
+Use 'dotnet --help' to see available commands or visit: https://aka.ms/dotnet-cli
+--------------------------------------------------------------------------------------
+❌  error downloading placement binary: Get "https://github.com/dapr/dapr/releases/download/v1.18.2/placement_linux_amd64.tar.gz": net/http: timeout awaiting response headers
+Traceback (most recent call last):
+  File "[workspace]/tools/qualification/run_g6_qualification.py", line 467, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "[workspace]/tools/qualification/run_g6_qualification.py", line 335, in main
+    install(args.install_tools, baseline)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "[workspace]/tools/qualification/run_g6_qualification.py", line 83, in install
+    subprocess.run([str(tools / "dapr"), "init", "--slim", "--runtime-path", str(scratch / "runtime"), "--runtime-version", baseline["tuple"]["daprRuntime"]], check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['[scratch]/tools/dapr', 'init', '--slim', '--runtime-path', '[scratch]/runtime', '--runtime-version', '1.18.2']' returned non-zero exit status 1.

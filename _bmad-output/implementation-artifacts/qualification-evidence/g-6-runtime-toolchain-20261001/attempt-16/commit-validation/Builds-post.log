@@ -1,0 +1,15 @@
+commitlint --from 21ce044ab465ccb2adab58b3d66e394ffbecf3c2 --to 51af786cf156d2a3396dbd49f5e4898222e55c12
+exit 0
+[main 51af786] feat(g6): add current runtime qualification evidence contract
+ 15 files changed, 8031 insertions(+), 4 deletions(-)
+ create mode 100644 Tools/runtime-toolchain-baseline-2026-10-01.json
+ create mode 100644 Tools/runtime_toolchain_v2.py
+ create mode 100644 Tools/test_runtime_toolchain_v2.py
+ create mode 100644 schemas/hexalith.runtime-toolchain-evidence.v2.json
+ create mode 100644 test/fixtures/runtime-toolchain-v2/deploy/dapr/resiliency.yaml
+ create mode 100644 test/fixtures/runtime-toolchain-v2/deploy/dapr/statestore-postgresql.yaml
+ create mode 100644 test/fixtures/runtime-toolchain-v2/deterministic-support.json
+ create mode 100644 test/fixtures/runtime-toolchain-v2/observations.json
+ create mode 100644 test/fixtures/runtime-toolchain-v2/provenance.json
+ create mode 100644 test/fixtures/runtime-toolchain-v2/test-results.json
+ create mode 100644 test/fixtures/runtime-toolchain-v2/tools/validate-oq8-platform-evidence.py

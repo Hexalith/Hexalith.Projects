@@ -1,0 +1,18 @@
+xUnit.net v3 In-Process Runner v4.0.1+8ed8aa354c (64-bit .NET 10.0.12)
+  Discovering: Hexalith.EventStore.Server.LiveSidecar.Tests
+  Discovered:  Hexalith.EventStore.Server.LiveSidecar.Tests
+  Starting:    Hexalith.EventStore.Server.LiveSidecar.Tests
+    Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants [FAIL]
+      Collection fixture type 'Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture' threw in InitializeAsync
+      ---- System.InvalidOperationException : The NuGet package cache required by OQ8 hosting-startup dependencies is unavailable.
+      Stack Trace:
+        
+        ----- Inner Stack Trace -----
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(1704,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.ResolveNuGetPackageCache()
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(806,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.StartApplication(Oq8ProcessNode node)
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(788,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.StartNodeAsync(Oq8ProcessNode node)
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(109,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.InitializeAsync()
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(120,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.InitializeAsync()
+  Finished:    Hexalith.EventStore.Server.LiveSidecar.Tests (ID = '10fbc9230c4a0fdb0df86e5488e88125e809fdc2c43afbd5e9e7d8739e2300e1')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 1, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 2.644s
