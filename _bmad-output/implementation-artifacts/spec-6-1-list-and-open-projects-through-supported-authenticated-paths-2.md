@@ -2,7 +2,9 @@
 title: 'Story 6.1: List and open Projects through supported authenticated paths'
 type: 'feature'
 created: '2026-09-30'
-status: 'ready-for-dev'
+status: 'done'
+disposition: 'superseded'
+superseded_by: 'spec-6-1-list-and-open-projects-through-supported-authenticated-paths-5.md'
 route: 'dispatch'
 review_loop_iteration: 0
 context:

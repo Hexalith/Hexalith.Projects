@@ -2,9 +2,10 @@
 title: 'Story 6.1: List and open Projects through supported authenticated paths'
 type: 'feature'
 created: '2026-10-01'
-status: 'ready-for-dev'
+status: 'blocked'
 route: 'dispatch'
 review_loop_iteration: 0
+baseline_commit: '0ca208255ebd2a45ed28f8ba14622dbf1ed2dca9'
 context:
   - '{project-root}/_bmad-output/implementation-artifacts/epic-6-context.md'
   - '{project-root}/_bmad-output/implementation-artifacts/sprint-status.yaml'
@@ -51,7 +52,7 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `_bmad-output/implementation-artifacts/sprint-status.yaml` — confirm current-baseline P1R, P0, P2, P3, architect sign-off, P4, and independent `READY` — stop with no runtime edits while any gate is open.
+- [x] `_bmad-output/implementation-artifacts/sprint-status.yaml` — confirm current-baseline P1R, P0, P2, P3, architect sign-off, P4, and independent `READY` — stop with no runtime edits while any gate is open.
 - [ ] `src/Hexalith.Projects.Contracts/Queries/` — add list/open query, 50/200 page, and Safe Metadata result types, one public type per file — leave `PageRequest` unchanged and omit Project name.
 - [ ] `src/Hexalith.Projects.Server/Projections/ProjectList/` and `ProjectDetail/` — add incremental persisted handlers over the pure folds.
 - [ ] `src/Hexalith.Projects.Server/Queries/`, `ProjectsServerModule.cs`, and `ProjectsServerServiceCollectionExtensions.cs` — register authorization-first handlers on the existing `POST /query`.
@@ -62,6 +63,8 @@ context:
 - Given a completed list or open after the gate, when the call finishes, then no resolution candidate is selected and no Project domain state is written.
 
 ## Implementation Notes
+
+- 2026-10-01 gate task: entry gate open; stopped with no runtime source, test, package pin, or submodule change. `sprint-status.yaml` has the story key `blocked`. 6.1-P1R is accepted only for the historical 3.106.0 / Builds `ad52f350` tuple (`current_candidate_usable: false`), and the 3.109.0 candidate is still pending owner decisions. 6.1-P0 (`open`, stages 2–7 open), 6.1-P2, 6.1-P3, and 6.1-P4 are `open`. No Solution Architect sign-off and no `evidence/epic6/6.1-entry-gate.yaml` exist. `readiness_provenance.current_result` is `NOT_READY` (report rerun-4: `NOT READY`). `validate_production_authority.py --story-id 6.1` printed `PASS: Story 6.1 is within production authority` (exit 0). The Builds `HexalithEventStoreVersion` pin (3.110.0) and the EventStore/Builds gitlinks are unchanged.
 
 ## Spec Change Log
 
