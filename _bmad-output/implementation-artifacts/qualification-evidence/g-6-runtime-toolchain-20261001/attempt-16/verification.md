@@ -1,4 +1,4 @@
-# Committed G-6 closure verification
+# Pre-acceptance committed G-6 closure verification
 
 Reviewed pending packet SHA-256 `b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139`. Source root `b26129c35604689a3a0a13e8af545bab7586e77e`; committed closure true; all 12 root gitlinks exact; Builds CI SHA exact. Full qualification passes all 22 commands: qualifier 1, support 33 across 21 selectors, fixture 31, ten AppHosts, McpCli, strict capture, runner 12, current evidence 103 and the historical controls. Zero failures/skips.
 
@@ -8,4 +8,4 @@ The clean verification checkout is `/home/administrator/projects/hexalith/g6-com
 
 Earlier evidence remains byte-preserved (196 checked files); frozen intent and spec baseline are unchanged. Published P1R remains at Builds 4.29.1 / 21ce044ab465ccb2adab58b3d66e394ffbecf3c2. No downstream state, publication, deployment, shared service or Workflow approval was inferred. Local Conventional Commits passed commitlint before and after creation; source/module logs are in [commit-validation](commit-validation/). Exact independent commands and preservation facts are in [independent-verification.json](independent-verification.json).
 
-Only an explicit decision by Jérôme Piquot on the reviewed packet hash remains pending.
+This report records the pre-acceptance state. Jérôme Piquot subsequently accepted this exact reviewed hash at `2026-10-01T14:58:12Z`. See [acceptance verification](acceptance-verification.json) for the accepted-only gate.

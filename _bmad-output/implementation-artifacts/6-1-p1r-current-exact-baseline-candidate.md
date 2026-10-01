@@ -1,6 +1,6 @@
 # 6.1-P1R current exact-baseline candidate — owner decision packet
 
-Recorded 2026-10-01. **Status: accepted for P1R only; unusable as a current prerequisite while named G-6 acceptance is pending.** Jérôme Piquot explicitly accepted the exact EventStore `3.110.0` / Builds `4.29.1` tuple below in all four roles at `2026-10-01T06:17:01Z`, including the Solution Architect EventStore Stack rebinding, with this packet's recorded limitations. The decision is recorded in [the implementation spec](spec-6-1-p1r-current-baseline-acceptance.md) and the fixed [acceptance record](6-1-p1r-acceptance.json). Selection and CI success were not substituted for those explicit decisions.
+Recorded 2026-10-01. **Status: accepted for P1R only; current P1R prerequisite usability remains false under its separate published-coordinate and verification limitations.** Jérôme Piquot explicitly accepted the exact EventStore `3.110.0` / Builds `4.29.1` tuple below in all four roles at `2026-10-01T06:17:01Z`, including the Solution Architect EventStore Stack rebinding, with this packet's recorded limitations. The decision is recorded in [the implementation spec](spec-6-1-p1r-current-baseline-acceptance.md) and the fixed [acceptance record](6-1-p1r-acceptance.json). Selection and CI success were not substituted for those explicit decisions.
 
 This packet supersedes the [3.109.0 candidate](6-1-p1r-3109-exact-baseline-candidate.md) as the current owner packet. The 3.109.0 and [3.108.1](6-1-p1r-3108-exact-baseline-candidate.md) packets and their evidence remain historical. The [2026-09-22 record](evidence/6-1-p1r-acceptance-20260922-3.106.0.json) for EventStore `3.106.0` / Builds `ad52f350a2f0bc47849179ae17b4594dafff5363` is preserved verbatim as historical evidence outside the fixed gate. The fixed record now selects `3.110.0` / Builds `21ce044ab465ccb2adab58b3d66e394ffbecf3c2` on the new explicit decisions; older decisions supply no authority for this transition.
 
@@ -39,13 +39,13 @@ The rollback remains EventStore `3.70.1` / `v3.70.1` / `f13f9925fdca53efa2ab8c90
 - **CI evidence coverage is stale.** The existing `p1r-candidate-evidence` lane still fetches `v3.109.0` and replays its historical package record; it supplies no current `3.110.0` evidence. That lane remains historical and is not changed by this P1R acceptance.
 - **Checkout compatibility is unverified.** The 28-commit, 44-source-path difference is measured between the tagged source and the committed EventStore gitlink. Neither successful tag CI nor older checkout-source test binaries proves interchangeability with the current checkout or runtime behavior of the tagged packages. The G-6 fixture changes are now committed; checkout proof still does not qualify the published archives.
 
-## Current G-6 run — committed closure complete, named acceptance pending
+## Current G-6 run — committed source accepted
 
-The approved 2026-10-01 spec/tuple/run binds [attempt-16](qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json), SHA-256 `b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139`. SDK `10.0.401`, Aspire `13.6.0`, Toolkit `13.6.0-beta.910`, Dapr CLI/runtime/.NET `1.18.0`/`1.18.2`/`1.18.10`, Fluent UI `5.0.0`, NSubstitute `6.2.0` and Fluxor `6.11.0` are run-approved, including the explicit Toolkit prerelease and Dapr exceptions. Candidate validation passes; packet status remains pending with `technicalValidity=true`, `closure.committed=true`, `acceptance=null` and `usableAsPrerequisite=false`.
+The approved 2026-10-01 spec/tuple/run binds [attempt-16](qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json), reviewed pending SHA-256 `b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139`. SDK `10.0.401`, Aspire `13.6.0`, Toolkit `13.6.0-beta.910`, Dapr CLI/runtime/.NET `1.18.0`/`1.18.2`/`1.18.10`, Fluent UI `5.0.0`, NSubstitute `6.2.0` and Fluxor `6.11.0` are run-approved, including the explicit Toolkit prerelease and Dapr exceptions. Jérôme Piquot explicitly accepted attempt 16 at `2026-10-01T14:58:12Z` on this exact reviewed hash. Accepted-only validation passes; packet status is accepted with `technicalValidity=true`, `closure.committed=true`, a named acceptance record and `usableAsPrerequisite=true` for G-6 only.
 
 Actual results: 1/1 qualifier; 33/33 support cases across 21 selectors; 31/31 fixture controls; all ten AppHosts and McpCli; strict OQ8 capture validation; 103 current evidence controls plus accepted metadata-commit positive control; 12 runner controls; zero failures/skips. Private SQLite discovery fixes routing collisions while preserving the two-sidecar PostgreSQL matrix and application IDs. SQLite's Alpha resolver is test-only infrastructure, not production qualification; domain state remains PostgreSQL. Platform's file-based Debug compilation is explicit package consumption. The catalog Keycloak preview stays unqualified. Shared container/binary snapshots are unchanged, four exact owned containers are removed, owned processes stop, and both scratch areas are removed.
 
-The status-aware candidate gate exits `0`; all 12 checkout revisions equal their committed root gitlinks. Parties is `937cb2a343aaa74963db9bb867a2c3a01ff48677`, EventStore is `8096455e4f23f2912998e36738058b8e3d961be6`, and Builds/root CI execution are `51af786cf156d2a3396dbd49f5e4898222e55c12`. Clean isolated capture at `b26129c35604689a3a0a13e8af545bab7586e77e` proves committed closure. Original unrelated G-4 work remains preserved in Builds. Named packet acceptance is absent and prerequisite usability stays false.
+The status-aware candidate gate exits `0`; all 12 checkout revisions equal their committed root gitlinks. Parties is `937cb2a343aaa74963db9bb867a2c3a01ff48677`, EventStore is `8096455e4f23f2912998e36738058b8e3d961be6`, and Builds/root CI execution are `51af786cf156d2a3396dbd49f5e4898222e55c12`. Clean isolated capture at `b26129c35604689a3a0a13e8af545bab7586e77e` proves committed closure. Original unrelated G-4 work remains preserved in Builds. The named packet acceptance grants exact-scope G-6 usability; current P1R usability remains false and downstream states remain unchanged.
 
 Superseded attempt 3, SHA-256 `724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd`, retains its failed qualifier/AppHost outcomes and later source drift; no old packet bindings are rewritten. Superseded attempts 4–15 and focused diagnostics are preserved with their actual outcomes; see the [selected README](qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/README.md).
 
@@ -53,7 +53,7 @@ This checkout qualification supplies no archive/signature, metadata rollback, ta
 
 ## Superseded G-6 observation and containment
 
-The superseded [2026-09-29 G-6 packet](qualification-evidence/g-6-runtime-toolchain-20260929/packet.json), SHA-256 `f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2`, is still pending and is stale for this candidate. The current catalog has Toolkit `13.6.0-beta.910` and Fluent UI `5.0.0`; neither has current G-6 acceptance. Historical G-6 approval does not apply to those changed pins.
+The superseded [2026-09-29 G-6 packet](qualification-evidence/g-6-runtime-toolchain-20260929/packet.json), SHA-256 `f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2`, is still pending and is stale for this candidate. Historical G-6 approval does not apply to the changed Toolkit `13.6.0-beta.910` and Fluent UI `5.0.0` pins. The independent attempt-16 decision above now accepts those pins only in its recorded exact-source scope.
 
 Before the current qualification changes, the superseded gate command exited `1` with **seven failed checks**:
 
@@ -69,7 +69,7 @@ python3 tests/tools/run_g6_candidate_gate.py --baseline references/Hexalith.Buil
 6. Tenants: packet `55f3dc63b6ce10bb0afdf929d026fa07cffd9105`; root gitlink `54ceb3e1d50d3fc7bf1846e08cd2835828adfcdf`.
 7. CI executes Builds `212583e08c7b6db22c7ccee881ad11699e1f7522`; root gitlink is `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`.
 
-This P1R acceptance cannot itself make G-6 current. A fresh valid G-6 capture and its independent owner acceptance remain necessary before current prerequisite usability can become true. No packet status is flipped, source binding waived, or gate weakened here.
+This P1R acceptance cannot itself make G-6 current. Attempt 16 now supplies the independently accepted G-6 committed-source qualification. Its decision does not qualify the published P1R archives, rollback or downstream readiness; current P1R usability remains false under those separate limitations.
 
 ## Four-role acceptance
 
@@ -82,7 +82,7 @@ Each role explicitly accepted **the candidate tuple above**, bound to `_bmad-out
 | Solution Architect | **Accept / Jérôme Piquot / 2026-10-01T06:17:01Z** | Exact candidate conformance and an explicit EventStore Stack rebinding decision; preserved `3.70.1` rollback; independent toolchain dispositions |
 | Test Architect | **Accept / Jérôme Piquot / 2026-10-01T06:17:01Z** | Exact provenance and remaining archive, metadata rollback, actor replay, checkout compatibility, and stale G-6 evidence limits |
 
-**Missing P1R decisions: none.** The transition is authorized by the four explicit named accepts. Missing, rejected, malformed, or mixed-tuple records still fail closed; the archived historical record is preserved. Current G-6 acceptance remains absent.
+**Missing P1R decisions: none.** The transition is authorized by the four explicit named accepts. Missing, rejected, malformed, or mixed-tuple records still fail closed; the archived historical record is preserved. Current G-6 attempt 16 has a separate named acceptance; it grants no additional P1R decision.
 
 ## Coordinated acceptance transition
 
@@ -95,4 +95,4 @@ P1R, P0 Stage 1, DW-35, and DW-68 retain their already-done statuses for the new
 
 Current source-closure checks allow later metadata-only Projects evidence/acceptance commits only through ancestor and identical committed-source checks. Bound runtime/build/test/configuration bytes and exact submodule HEAD/gitlinks remain mandatory. Current 103 evidence controls and the accepted metadata-commit positive control pass; dirty source cannot become usable by a status flip.
 
-Superseded attempt 14 SHA-256 `9caa2699bc6dca0c2366e0f9eaa088a9ffa9ce9ec4d27f448b31b8c53a87cfaa` remains byte-preserved. Attempt 16 is selected only for the new committed-source observation; separate named acceptance remains mandatory.
+Superseded attempt 14 SHA-256 `9caa2699bc6dca0c2366e0f9eaa088a9ffa9ce9ec4d27f448b31b8c53a87cfaa` remains byte-preserved. Attempt 16 now has separate explicit named acceptance for the reviewed committed-source observation; recorded runtime and downstream limits remain in force.

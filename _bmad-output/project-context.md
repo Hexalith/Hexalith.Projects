@@ -21,15 +21,15 @@ _This file contains critical rules and patterns that AI agents must follow when 
 - .NET SDK: `10.0.401` via `global.json` with `rollForward: latestPatch`; primary projects target `net10.0`.
 - C#: nullable enabled, implicit usings enabled, warnings treated as errors; several modules set `LangVersion` to `latest`.
 - Package management: central NuGet package management via `Directory.Packages.props`; package versions belong there, not inline in project files.
-- Dapr: primary modules use `Dapr.Client`, `Dapr.AspNetCore`, and actor packages `1.18.10` under the current G-6 candidate.
+- Dapr: primary modules use `Dapr.Client`, `Dapr.AspNetCore`, and actor packages `1.18.10` under the accepted G-6 attempt-16 tuple.
 - Aspire: AppHost/service defaults pattern using Aspire SDK/CLI/hosting `13.6.0` and Toolkit `13.6.0-beta.910`; Folders.Aspire’s conditional stable `13.0.0` override is explicitly unqualified.
 - EventStore foundation: domain services build on Hexalith.EventStore command, aggregate, projection, query, SignalR, admin, CLI, MCP, and testing packages.
-- Blazor/Fluent UI: Microsoft Fluent UI Blazor `5.0.0`; stable UI remains pinned and current G-6 packet acceptance is pending.
+- Blazor/Fluent UI: Microsoft Fluent UI Blazor `5.0.0`; stable UI remains pinned and G-6 attempt 16 is accepted for its recorded exact committed-source scope.
 - FrontComposer: Roslyn incremental generators with `Microsoft.CodeAnalysis.CSharp` exactly `4.12.0`, Fluxor `6.11.0`, MCP packages, and generated Razor/Fluxor artifacts.
 - Testing: xUnit v3 in EventStore/Tenants/FrontComposer, xUnit v2 in Parties, Shouldly `4.3.0`, NSubstitute `6.2.0`, bUnit `2.7.2`, Testcontainers `4.10.0`, Verify `31.15.0`, FsCheck `3.3.1`, BenchmarkDotNet `0.15.4`, and Playwright for E2E.
 - JavaScript tooling: Node/npm is mainly for semantic-release, commitlint, Husky, and Playwright E2E; FrontComposer E2E requires Node `>=24.0.0`.
 
-Current G-6 inputs are authorized by `spec-g-6-current-runtime-toolchain-qualification.md`; historical G-6 and P1R acceptance do not accept the current runtime packet. Local qualification uses isolated Debug/source resources, with Platform’s file-based NuGet directives disclosed separately. Dirty source and pending packet acceptance keep prerequisite usability false.
+Current G-6 inputs are authorized by `spec-g-6-current-runtime-toolchain-qualification.md`; historical G-6 and P1R acceptance do not accept the current runtime packet. Local qualification uses isolated Debug/source resources, with Platform’s file-based NuGet directives disclosed separately. Jérôme Piquot accepted attempt 16 at `2026-10-01T14:58:12Z` on reviewed packet SHA-256 `b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139`. Accepted-only validation passes in the retained clean checkout; G-6 usability is true only for the exact recorded scope. Current P1R usability and downstream readiness remain unchanged. Dirty or drifting checkouts cannot reuse this acceptance.
 
 The isolated qualifier uses a fixture-private SQLite discovery registry because Dapr 1.18.2's mDNS provider does not scope service lookups by `NAMESPACE`. The namespace still isolates actor/scheduler activity. SQLite's Alpha resolver is a test-only harness selection, not a qualified production provider; domain state remains PostgreSQL through Dapr. Preserve `sample`/`eventstore` IDs, the OQ8 matrix, shared services and prior failed packets.
 

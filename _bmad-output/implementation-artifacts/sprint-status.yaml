@@ -69,7 +69,7 @@ p1r_acceptance_gate:
     eventstore_revision: f13f9925fdca53efa2ab8c90d396ab106f91bb9c
     builds_revision: 7af20f8bafbfe561df6f7705913a0800603090b5
 p1r_current_revalidation:
-  status: accepted-p1r-only-current-g6-committed-pending-acceptance
+  status: accepted-p1r-only-current-g6-accepted-committed-source
   usable_as_prerequisite: false
   observed_on: 2026-10-01
   owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md
@@ -101,18 +101,18 @@ p1r_current_revalidation:
   g6_superseded_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
   g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json
   g6_fresh_candidate_sha256: b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139
-  g6_current_qualification: technical-passing-committed-exact-gitlinks-candidate-gate-exit-0-acceptance-pending
-  g6_failures: "No technical or committed-closure failures; separate named packet-hash acceptance is pending; prerequisite usability remains false"
-  g6_run_approved_tuple: "SDK 10.0.401; Aspire SDK/CLI/hosting 13.6.0; Toolkit 13.6.0-beta.910; Dapr CLI/runtime/.NET 1.18.0/1.18.2/1.18.10; Fluent UI 5.0.0; NSubstitute 6.2.0; Fluxor 6.11.0; spec/run approval 2026-10-01T08:29:35Z; packet acceptance absent"
+  g6_current_qualification: accepted-committed-exact-gitlinks-accepted-only-gate-exit-0
+  g6_failures: "None for accepted G-6 attempt 16; current P1R usability remains false under its separate published-coordinate and verification limitations"
+  g6_run_approved_tuple: "SDK 10.0.401; Aspire SDK/CLI/hosting 13.6.0; Toolkit 13.6.0-beta.910; Dapr CLI/runtime/.NET 1.18.0/1.18.2/1.18.10; Fluent UI 5.0.0; NSubstitute 6.2.0; Fluxor 6.11.0; spec/run approval 2026-10-01T08:29:35Z; named attempt-16 acceptance 2026-10-01T14:58:12Z"
   role_decisions:
     EventStore Owner: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
     Builds Owner: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
     Solution Architect: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
     Test Architect: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
-  owner_decisions: "Jérôme Piquot explicitly accepted all four roles at 2026-10-01T06:17:01Z for the exact 3.110.0 / Builds 4.29.1 tuple and fixed record, including EventStore Stack rebinding, with recorded limitations; G-6 remains unaccepted for this baseline"
+  owner_decisions: "Jérôme Piquot explicitly accepted all four roles at 2026-10-01T06:17:01Z for the exact 3.110.0 / Builds 4.29.1 tuple and fixed record, including EventStore Stack rebinding, with recorded limitations; G-6 attempt 16 is separately accepted for its committed-source scope"
   accepted_at_utc: 2026-10-01T06:17:01Z
   prior_acceptance_evidence: _bmad-output/implementation-artifacts/evidence/6-1-p1r-acceptance-20260922-3.106.0.json
-  containment: "P1R accepts 3.110.0 / Builds 4.29.1 only; preserve archived 3.106.0 acceptance, 3.70.1 rollback, and already-done P1R/P0 Stage 1/DW-35/DW-68 statuses; current usability stays false while named G-6 acceptance remains pending; P0 stages 2-7, P2-P4, NOT_READY, and blocked Story 6.1 retain their states"
+  containment: "P1R accepts 3.110.0 / Builds 4.29.1 only; preserve archived 3.106.0 acceptance, 3.70.1 rollback, and already-done P1R/P0 Stage 1/DW-35/DW-68 statuses; current P1R usability stays false under its separate published-coordinate and verification limitations; G-6 attempt 16 usability is true only for its exact accepted committed-source scope; P0 stages 2-7, P2-P4, NOT_READY, and blocked Story 6.1 retain their states"
   g6_superseded_20261001_attempt3_sha256: 724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd
   g6_superseded_20261001_attempt4_sha256: 162649ffec5aa8ee9a795b5f306d33376b8bfa2e87abc6b6f010a0ca7845b8e1
   g6_superseded_20261001_attempt5_sha256: a4aec7b8c4a676ede15335225ada47f701af9b188888691d80566141a38c9f01
@@ -307,14 +307,23 @@ development_status:
 qualification_gates:
   G-6:
     status: accepted
-    accepted_scope: "Historical 2026-09-06 packet only; excludes superseded 3.108.1 and 3.109.0 candidates and the P1R-accepted EventStore 3.110.0 / Builds 21ce044ab465ccb2adab58b3d66e394ffbecf3c2 baseline, whose current named G-6 acceptance remains pending."
+    accepted_scope: "Historical 2026-09-06 scope remains preserved. Current attempt 16 is separately accepted by Jérôme Piquot at 2026-10-01T14:58:12Z on reviewed hash b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139, for its exact committed source and approved tuple only; published P1R archives, rollback, G-4/G-5, downstream work, release, deployment and Workflow remain outside this acceptance."
+    # Preserve the reviewed pending copy; the selected accepted packet is indexed separately.
+    current_candidate_status: preserved-reviewed-pending-copy
     current_candidate_usable: false
     current_candidate_builds_source_revision: 51af786cf156d2a3396dbd49f5e4898222e55c12
     current_candidate_baseline: "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json"
-    current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
+    current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/reviewed-packet.json"
+    current_accepted_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
+    current_accepted_usable: true
+    current_accepted_reviewed_sha256: b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139
     current_candidate_sha256: b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139
-    current_candidate_validation: "2026-10-01 attempt-16: all 22 commands pass; qualifier 1, support 33 across 21 selectors, fixture 31, ten AppHosts, McpCli, strict capture, runner 12 and evidence 103 controls pass; zero failures/skips; candidate and exact-gitlink gates exit 0; committed closure true; shared snapshots unchanged and four exact owned containers removed"
-    current_candidate_acceptance: "Technical qualification and committed exact closure pass. Separate named acceptance by Jérôme Piquot on the reviewed packet hash remains pending; usability stays false."
+    current_accepted_at_utc: 2026-10-01T14:58:12Z
+    current_accepted_by: "Jérôme Piquot"
+    current_accepted_packet_sha256: 49ae8176481f5ef130aa95ba296a9f3c7ca7d30f7ee6f457a0cf94378fa20f05
+    current_accepted_acceptance_record: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/acceptance.json"
+    current_accepted_validation: "2026-10-01 attempt-16: all 22 commands pass; qualifier 1, support 33 across 21 selectors, fixture 31, ten AppHosts, McpCli, strict capture, runner 12 and evidence 103 controls pass; zero failures/skips; accepted-only, status-aware and exact-gitlink gates exit 0; committed closure true; shared snapshots unchanged and four exact owned containers removed"
+    current_candidate_acceptance: "The exact reviewed pending copy is preserved without acceptance or usability; the independent named decision applies to current_accepted_packet only."
     superseded_20260929_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
     replaced_pending_candidate_sha256: 26d7a6e0d9b7aaa3136864529e261d36f9346a1166b08b31d6b8edda51d52000
     earlier_replaced_pending_candidate_sha256: e3090bd938ccbea7ee63ddb7427ce75ab815397f6eaa6183ab97ec2da0f8b82b

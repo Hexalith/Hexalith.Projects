@@ -1,0 +1,94 @@
+{
+  "schema": "hexalith.g6-acceptance-verification.v1",
+  "verifiedAtUtc": "2026-10-01T15:09:53.302256+00:00",
+  "acceptance": {
+    "approvedBy": "Jérôme Piquot",
+    "approvedAtUtc": "2026-10-01T14:58:12Z",
+    "decision": "accept",
+    "reviewedPacketSha256": "b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139"
+  },
+  "acceptedPacketSha256": "49ae8176481f5ef130aa95ba296a9f3c7ca7d30f7ee6f457a0cf94378fa20f05",
+  "checks": [
+    {
+      "purpose": "accepted-only selected packet",
+      "command": [
+        "python3",
+        "references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py",
+        "--workspace",
+        ".",
+        "--baseline",
+        "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json",
+        "--packet",
+        "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
+      ],
+      "workspace": "/home/administrator/projects/hexalith/g6-committed-closure-20261001",
+      "exitCode": 0,
+      "output": "G6-EVIDENCE-VALID\n"
+    },
+    {
+      "purpose": "preserved reviewed pending copy",
+      "command": [
+        "python3",
+        "references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py",
+        "--workspace",
+        ".",
+        "--baseline",
+        "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json",
+        "--packet",
+        "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/reviewed-packet.json",
+        "--candidate"
+      ],
+      "workspace": "/home/administrator/projects/hexalith/g6-committed-closure-20261001",
+      "exitCode": 0,
+      "output": "G6-EVIDENCE-CANDIDATE-VALID\n"
+    },
+    {
+      "purpose": "status-aware accepted packet, exact gitlinks and Builds CI SHA",
+      "command": [
+        "python3",
+        "tests/tools/run_g6_candidate_gate.py",
+        "--workspace",
+        ".",
+        "--baseline",
+        "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json",
+        "--packet",
+        "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
+      ],
+      "workspace": "/home/administrator/projects/hexalith/g6-committed-closure-20261001",
+      "exitCode": 0,
+      "output": "G6-GATE-VALIDATOR: packet status accepted; accepted-only mode exited 0: G6-EVIDENCE-VALID\nG6-PACKET-GITLINKS-EXACT: 12 submodule revisions equal their root gitlinks\nG6-BUILDS-EXECUTION-SHA-EXACT: CI executes Hexalith.Builds at the root gitlink 51af786cf156d2a3396dbd49f5e4898222e55c12\nG6-GATE-PASSED: validator, packet gitlinks and Builds execution SHA\n"
+    },
+    {
+      "purpose": "coordinated metadata and production authority",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "tests/tools/test_g6_packet_references.py",
+        "tests/tools/test_production_authority_guard.py",
+        "-v"
+      ],
+      "workspace": "/home/administrator/projects/hexalith/g6-committed-closure-20261001",
+      "exitCode": 0,
+      "output": "test_documents_quote_the_current_builds_and_eventstore_gitlinks (tests.tools.test_g6_packet_references.G6PacketReferenceTests.test_documents_quote_the_current_builds_and_eventstore_gitlinks) ... ok\ntest_documents_quote_the_reviewed_packet_hash (tests.tools.test_g6_packet_references.G6PacketReferenceTests.test_documents_quote_the_reviewed_packet_hash) ... ok\ntest_readme_quotes_every_bound_submodule_gitlink (tests.tools.test_g6_packet_references.G6PacketReferenceTests.test_readme_quotes_every_bound_submodule_gitlink) ... ok\ntest_replaced_packet_hashes_appear_only_as_replaced (tests.tools.test_g6_packet_references.G6PacketReferenceTests.test_replaced_packet_hashes_appear_only_as_replaced) ... ok\ntest_sprint_status_current_keys_carry_the_packet_and_gitlinks (tests.tools.test_g6_packet_references.G6PacketReferenceTests.test_sprint_status_current_keys_carry_the_packet_and_gitlinks) ... ok\ntest_accepted_packet_is_usable_without_accepting_p1r (tests.tools.test_g6_packet_references.PacketUsabilityStateTests.test_accepted_packet_is_usable_without_accepting_p1r) ... ok\ntest_pending_packet_is_unusable_and_preserves_downstream_state (tests.tools.test_g6_packet_references.PacketUsabilityStateTests.test_pending_packet_is_unusable_and_preserves_downstream_state) ... ok\ntest_acceptance_record_symlink_fails_closed (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_acceptance_record_symlink_fails_closed) ... ok\ntest_command_line_exit_codes_enforce_the_boundary (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_command_line_exit_codes_enforce_the_boundary) ... ok\ntest_current_p1r_acceptance_keeps_stale_g6_prerequisites_unusable (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_current_p1r_acceptance_keeps_stale_g6_prerequisites_unusable) ... ok\ntest_current_production_epics_are_allowed (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_current_production_epics_are_allowed) ... ok\ntest_decision_metadata_and_timestamp_fail_closed (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_decision_metadata_and_timestamp_fail_closed) ... ok\ntest_each_downstream_category_remains_closed (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_each_downstream_category_remains_closed) ... ok\ntest_each_required_closure_site_transitions_atomically (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_each_required_closure_site_transitions_atomically) ... ok\ntest_historical_and_unknown_stories_are_rejected (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_historical_and_unknown_stories_are_rejected) ... ok\ntest_historical_or_mixed_selected_tuple_cannot_accept_the_current_baseline (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_historical_or_mixed_selected_tuple_cannot_accept_the_current_baseline) ... ok\ntest_invalid_utf8_fails_closed (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_invalid_utf8_fails_closed) ... ok\ntest_malformed_json_fails_closed (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_malformed_json_fails_closed) ... ok\ntest_missing_or_rejected_role_fails_closed_and_names_role (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_missing_or_rejected_role_fails_closed_and_names_role) ... ok\ntest_open_gate_passes_without_acceptance_record (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_open_gate_passes_without_acceptance_record) ... ok\ntest_p0_capability_and_blocker_fields_cannot_advance (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_p0_capability_and_blocker_fields_cannot_advance) ... ok\ntest_scheduling_authority_and_history_fail_closed (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_scheduling_authority_and_history_fail_closed) ... ok\ntest_selected_and_rollback_coordinate_mismatches_fail_closed (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_selected_and_rollback_coordinate_mismatches_fail_closed) ... ok\ntest_selected_baseline_matches_the_explicit_current_owner_decision (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_selected_baseline_matches_the_explicit_current_owner_decision) ... ok\ntest_story_mode_uses_all_supplied_paths_and_reads_sprint_once (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_story_mode_uses_all_supplied_paths_and_reads_sprint_once) ... ok\ntest_unauthorized_closure_fails_closed (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_unauthorized_closure_fails_closed) ... ok\ntest_valid_acceptance_closes_only_the_four_authorized_items (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_valid_acceptance_closes_only_the_four_authorized_items) ... ok\ntest_workflows_and_ci_consume_only_the_minimal_guard (tests.tools.test_production_authority_guard.ProductionAuthorityGuardTests.test_workflows_and_ci_consume_only_the_minimal_guard) ... ok\n\n----------------------------------------------------------------------\nRan 28 tests in 1.684s\n\nOK\n"
+    },
+    {
+      "purpose": "active planning index",
+      "command": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "workspace": "/home/administrator/projects/hexalith/g6-committed-closure-20261001",
+      "exitCode": 0,
+      "output": "PASS: production-authority index is [6, 7, 8]\n"
+    }
+  ],
+  "reviewedPendingBytesPreserved": true,
+  "technicalArtifactHashesUnchanged": true,
+  "frozenIntentSha256": "0cd9897d8e454a2ff8bcf0dc265764d483fdf68ab173887bbfb8324286b95b66",
+  "originalBuildsFilesBytePreserved": 253,
+  "usableAsPrerequisite": true,
+  "p1rUsableAsPrerequisite": false,
+  "downstreamStateChanged": false
+}
