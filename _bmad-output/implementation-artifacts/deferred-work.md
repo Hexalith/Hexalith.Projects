@@ -841,3 +841,9 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-3.md`
   summary: Inspect a quarantined folderless Project on the Tenant-role open path.
   evidence: Split from the Story 6.1 spec because operator inspection of Safe Metadata, the Project name, and any pre-v1 Folder or creation receipt is a separate edge from authorization-filtered list/open. Chatbot still omits these Projects.
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-4.md`
+  summary: Limit Chatbot list and open to Projects whose Folder that actor can currently read.
+  evidence: Split from the Story 6.1 spec because Chatbot Folder-read visibility, Unavailable non-current Folder rows, and hiding pre-activation work are a separate disclosure goal from the supported Safe Metadata list/open path.
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-4.md`
+  summary: Return the Project name on Tenant-role list and open only when inspection is authorized, and write no FR-21 event.
+  evidence: Split from the Story 6.1 spec because inspection-gated name disclosure is a separate goal from the supported Safe Metadata list/open path. Story 8.1 records that inspection.
