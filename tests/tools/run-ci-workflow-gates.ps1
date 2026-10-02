@@ -300,9 +300,9 @@ else {
     }
 }
 
-# Release is an operator-dispatched caller-owned workflow behind a verified green
-# main SHA. The protected job owns the OIDC subject so NuGet never has to trust a
-# reusable-workflow identity.
+# Release is an operator-dispatched caller-owned workflow behind exact-source CI.
+# An explicit dispatch input can exclude only G-6 evidence failures; all other
+# jobs remain required. The protected job owns the NuGet OIDC subject.
 if (-not (Test-Path $releasePath)) {
     $failures.Add('release.yml must exist; release is an operator-dispatched workflow in every Hexalith module.')
     $release = ''
@@ -353,7 +353,7 @@ foreach ($sharedWorkflow in @('codeql.yml', 'commitlint.yml', 'dependency-review
     }
 }
 
-Require-Match $release '^on:\s*\r?\n\s*workflow_dispatch:\s*$' 'Release must be dispatch-only so publication stays an explicit operator action.'
+Require-Match $release '(?m)^on:\r?\n  workflow_dispatch:\r?\n    inputs:\r?\n      allow_stale_g6:\r?\n        description: Allow only the two G-6 evidence jobs to fail on exact-source CI\r?\n        required: false\r?\n        type: boolean\r?\n        default: false\r?$' 'Release must be dispatch-only with a default-off G-6-only exception.'
 Forbid-Match $release '^\s*(push|pull_request|schedule):\s*$' 'Release must never be triggered by push, pull_request, or schedule.'
 if ($null -eq $verifySourceStep) {
     $verifySourceStepText = ''
@@ -362,6 +362,11 @@ else {
     $verifySourceStepText = $verifySourceStep.Text
 }
 Require-Match $verifySourceStepText 'No successful push CI run exists for the exact current main SHA' 'The named exact-source preflight must prove a successful push CI run for the dispatched SHA.'
+Require-Match $verifySourceStepText 'No exact-source CI run passed every required non-G-6 job for the G-6 exception' 'The explicit G-6 exception must require the remaining CI jobs to pass.'
+Require-Match $verifySourceStepText 'passed\("ci / build-and-test"\)' 'The G-6 exception must require a successful build-and-test job.'
+Require-Match $verifySourceStepText 'passed\("Projects generated-artifact gates"\)' 'The G-6 exception must require successful generated-artifact gates.'
+Require-Match $verifySourceStepText 'passed\("Validate workflow policy"\)' 'The G-6 exception must require successful workflow policy validation.'
+Require-Match $verifySourceStepText 'passed\("P1R candidate evidence replay"\)' 'The G-6 exception must require successful P1R evidence replay.'
 Require-Match $verifySourceStepText 'The dispatched source is no longer the live main tip' 'The named exact-source preflight must prove the dispatch selected the live main tip.'
 Require-Match $releaseJob '^\s{4}needs:\s*verify-source\s*$' 'The release job must depend on the exact-source preflight.'
 Require-Match $releaseJob '^\s{4}runs-on:\s*ubuntu-latest\s*$' 'The release job must run as a caller-owned job.'

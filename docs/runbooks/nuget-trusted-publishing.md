@@ -1,9 +1,16 @@
 # NuGet Trusted Publishing migration
 
 This runbook activates the caller-owned Projects release workflow after the
-workflow change has merged and exact-source CI is green. Implementation and
-review must not enable publication, dispatch Release, change the NuGet.org
-policy, create or delete secrets, or publish packages.
+workflow change has merged and exact-source CI meets the release preflight.
+Implementation and review must not enable publication, dispatch Release, change
+the NuGet.org policy, create or delete secrets, or publish packages.
+
+For a specifically authorized G-6 evidence exception, dispatch Release with
+`allow_stale_g6=true`. The default is `false`. The source preflight still
+requires the current `main` commit and a completed push CI run with successful
+workflow policy, build/tests, generated-artifact gates, and P1R evidence replay.
+Only the two G-6 evidence jobs may fail. This exception does not refresh or
+accept the stale G-6 packet; keep its separate qualification state visible.
 
 NuGet Trusted Publishing exchanges a GitHub OIDC token for a masked API key
 that is valid for one hour. The release workflow requests that key immediately
@@ -66,7 +73,7 @@ runbook in one reviewed change.
 
 ## Resolve and record the release version
 
-Run the locked Semantic Release graph from the exact green `main` SHA before
+Run the locked Semantic Release graph from the exact eligible `main` SHA before
 enablement. The dry run must resolve one version; no-release output is not an
 activation candidate. Store the preview, source SHA, and resolved version in
 the durable repository evidence directory:
@@ -92,13 +99,13 @@ printf '%s\n' "$RELEASE_VERSION" >"$EVIDENCE_DIR/release-version.txt"
 
 ## Activate and verify
 
-1. With publication still frozen, merge the migration and wait for successful
-   push CI on the current `main` SHA.
+1. With publication still frozen, merge the migration and wait for exact-source
+   CI that meets the release preflight on the current `main` SHA.
 2. Dispatch **Release** from that exact `main` tip and approve `production`.
    The package-only restore and Release build must complete, the freeze notice
    must say that NuGet login and Semantic Release were skipped, and the run must
    finish successfully without requesting an OIDC credential.
-3. Wait until a reviewed, releasable Conventional Commit exists on a new green
+3. Wait until a reviewed, releasable Conventional Commit exists on a new eligible
    `main` tip. Complete the dry-run/version record above and confirm the intended
    version is absent for all five package IDs.
 4. Prove no older Release is queued, waiting, pending, requested, or running.
@@ -111,7 +118,9 @@ printf '%s\n' "$RELEASE_VERSION" >"$EVIDENCE_DIR/release-version.txt"
    gh variable set HEXALITH_RELEASE_PUBLISH_ENABLED --repo Hexalith/Hexalith.Projects --body true
    ```
 
-5. Dispatch **Release** once from the exact green tip and approve `production`.
+5. Dispatch **Release** once from the exact source tip. Include
+   `-f allow_stale_g6=true` only for the specifically authorized G-6 exception,
+   and complete any `production` environment review configured for the repository.
 6. In the job log, confirm source revalidation succeeded before `NuGet/login`,
    the login step succeeded without displaying its output, and Semantic Release
    published exactly five packages. Never print, copy, download, or persist the

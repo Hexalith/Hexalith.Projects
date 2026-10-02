@@ -2,9 +2,16 @@ name: Release
 
 # Publication is an explicit operator action. The unprotected preflight proves
 # the dispatch selected the current main tip and that exact source already has
-# a successful push CI run before the protected release environment is entered.
+# a successful push CI run, or an explicit G-6-only exception with every other
+# CI job passing, before the protected release environment is entered.
 on:
   workflow_dispatch:
+    inputs:
+      allow_stale_g6:
+        description: Allow only the two G-6 evidence jobs to fail on exact-source CI
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: release-production
@@ -28,6 +35,7 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           DISPATCH_REF: ${{ github.ref }}
           DISPATCH_SHA: ${{ github.sha }}
+          ALLOW_STALE_G6: ${{ inputs.allow_stale_g6 }}
         run: |
           set -euo pipefail
           if [ "$DISPATCH_REF" != "refs/heads/main" ]; then
@@ -54,9 +62,8 @@ jobs:
             -f branch=main \
             -f event=push \
             -f head_sha="$DISPATCH_SHA" \
-            -f status=success \
             -f per_page=100)"
-          if ! printf '%s\n' "$ci_runs" | jq -e --arg sha "$DISPATCH_SHA" '
+          if printf '%s\n' "$ci_runs" | jq -e --arg sha "$DISPATCH_SHA" '
             [.workflow_runs[] | select(
               .head_sha == $sha and
               .head_branch == "main" and
@@ -65,9 +72,55 @@ jobs:
               .conclusion == "success"
             )] | length > 0
           ' >/dev/null; then
+            exit 0
+          fi
+          if [ "${ALLOW_STALE_G6-}" != "true" ]; then
             echo "No successful push CI run exists for the exact current main SHA." >&2
             exit 1
           fi
+
+          run_ids="$(printf '%s\n' "$ci_runs" | jq -r --arg sha "$DISPATCH_SHA" '
+            .workflow_runs[] | select(
+              .head_sha == $sha and
+              .head_branch == "main" and
+              .event == "push" and
+              .status == "completed" and
+              .conclusion == "failure"
+            ) | .id
+          ')"
+          while IFS= read -r run_id; do
+            [ -n "$run_id" ] || continue
+            if [[ ! "$run_id" =~ ^[0-9]+$ ]]; then
+              echo "The exact-source CI run ID is invalid." >&2
+              exit 1
+            fi
+            ci_jobs="$(gh api "repos/${REPOSITORY}/actions/runs/${run_id}/jobs?per_page=100")"
+            if printf '%s\n' "$ci_jobs" | jq -e '
+              def passed($name):
+                [.jobs[] | select(.name == $name and .status == "completed" and .conclusion == "success")] | length == 1;
+              def g6_complete($name):
+                [.jobs[] | select(.name == $name and .status == "completed" and
+                  (.conclusion == "success" or .conclusion == "failure"))] | length == 1;
+              .total_count == (.jobs | length) and
+              ([.jobs[].name] | unique | length) == (.jobs | length) and
+              passed("Validate workflow policy") and
+              passed("ci / build-and-test") and
+              passed("Projects generated-artifact gates") and
+              passed("P1R candidate evidence replay") and
+              g6_complete("G-6 runtime/toolchain packet (status-aware)") and
+              g6_complete("G-6 owner acceptance (accepted-only)") and
+              all(.jobs[]; .status == "completed" and (
+                .conclusion == "success" or .conclusion == "skipped" or
+                ((.name == "G-6 runtime/toolchain packet (status-aware)" or
+                  .name == "G-6 owner acceptance (accepted-only)") and .conclusion == "failure")
+              ))
+            ' >/dev/null; then
+              echo "::notice title=G-6 exception::Exact-source CI run ${run_id} passed every non-G-6 job; only G-6 evidence failures are allowed by this dispatch."
+              exit 0
+            fi
+          done <<< "$run_ids"
+          echo "No exact-source CI run passed every required non-G-6 job for the G-6 exception." >&2
+          exit 1
 
   release:
     name: Release packages

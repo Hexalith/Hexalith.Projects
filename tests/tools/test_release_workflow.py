@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import tempfile
@@ -27,7 +28,12 @@ def extract_named_step_run(step_name: str) -> str:
 
     start = matches[0]
     end = next(
-        (index for index in range(start + 1, len(lines)) if lines[index].startswith("      - ")),
+        (
+            index for index in range(start + 1, len(lines))
+            if lines[index].startswith("      - ")
+            or (lines[index].startswith("  ") and not lines[index].startswith("    ")
+                and lines[index].endswith(":"))
+        ),
         len(lines),
     )
     run_markers = [index for index in range(start + 1, end) if lines[index] == "        run: |"]
@@ -55,8 +61,141 @@ class ReleaseWorkflowShellTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        cls.verify_script = extract_named_step_run("Require current main with successful exact-source CI")
         cls.freeze_script = extract_named_step_run("Resolve release publication freeze")
         cls.source_script = extract_named_step_run("Revalidate current source before NuGet login")
+
+    def run_verify(
+        self,
+        *,
+        allow_stale_g6: str,
+        run_conclusion: str = "failure",
+        job_conclusions: dict[str, str] | None = None,
+        dispatch_sha: str = VALID_SHA,
+        live_sha: str = VALID_SHA,
+    ) -> subprocess.CompletedProcess[str]:
+        with tempfile.TemporaryDirectory(prefix="projects-release-preflight-") as temporary:
+            directory = Path(temporary)
+            names = (
+                "Validate workflow policy",
+                "ci / build-and-test",
+                "Projects generated-artifact gates",
+                "P1R candidate evidence replay",
+                "G-6 runtime/toolchain packet (status-aware)",
+                "G-6 owner acceptance (accepted-only)",
+            )
+            conclusions = job_conclusions or {name: "success" for name in names}
+            jobs = [
+                {"name": name, "status": "completed", "conclusion": conclusion}
+                for name, conclusion in conclusions.items()
+            ]
+            (directory / "live-sha").write_text(live_sha + "\n", encoding="utf-8")
+            (directory / "runs.json").write_text(json.dumps({"workflow_runs": [{
+                "id": 123,
+                "head_sha": dispatch_sha,
+                "head_branch": "main",
+                "event": "push",
+                "status": "completed",
+                "conclusion": run_conclusion,
+            }]}), encoding="utf-8")
+            (directory / "jobs.json").write_text(json.dumps({
+                "total_count": len(jobs), "jobs": jobs,
+            }), encoding="utf-8")
+            write_executable(directory, "gh", """#!/usr/bin/env bash
+case "$*" in
+  *git/ref/heads/main*) cat "$FIXTURE_DIR/live-sha" ;;
+  *actions/workflows/ci.yml/runs*) cat "$FIXTURE_DIR/runs.json" ;;
+  *actions/runs/123/jobs?per_page=100*) cat "$FIXTURE_DIR/jobs.json" ;;
+  *) exit 97 ;;
+esac
+""")
+            environment = os.environ.copy()
+            environment.update({
+                "ALLOW_STALE_G6": allow_stale_g6,
+                "DISPATCH_REF": "refs/heads/main",
+                "DISPATCH_SHA": dispatch_sha,
+                "FIXTURE_DIR": str(directory),
+                "GH_TOKEN": "fixture-token",
+                "PATH": f"{directory}{os.pathsep}{environment['PATH']}",
+                "REPOSITORY": "Hexalith/Hexalith.Projects",
+            })
+            return subprocess.run(
+                ["bash", "-c", self.verify_script],
+                cwd=directory,
+                env=environment,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+    def test_preflight_accepts_successful_exact_source_ci(self) -> None:
+        result = self.run_verify(allow_stale_g6="false", run_conclusion="success")
+        self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_preflight_rejects_failed_ci_without_exception(self) -> None:
+        result = self.run_verify(allow_stale_g6="false")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("No successful push CI run", result.stderr)
+
+    def test_preflight_allows_only_g6_job_failures_when_selected(self) -> None:
+        conclusions = {
+            "Validate workflow policy": "success",
+            "ci / build-and-test": "success",
+            "Projects generated-artifact gates": "success",
+            "P1R candidate evidence replay": "success",
+            "G-6 runtime/toolchain packet (status-aware)": "failure",
+            "G-6 owner acceptance (accepted-only)": "failure",
+            "Scheduled managed AppHost E2E": "skipped",
+        }
+        result = self.run_verify(allow_stale_g6="true", job_conclusions=conclusions)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("only G-6 evidence failures", result.stdout)
+
+    def test_preflight_exception_rejects_other_job_failure(self) -> None:
+        conclusions = {
+            "Validate workflow policy": "success",
+            "ci / build-and-test": "failure",
+            "Projects generated-artifact gates": "success",
+            "P1R candidate evidence replay": "success",
+            "G-6 runtime/toolchain packet (status-aware)": "failure",
+            "G-6 owner acceptance (accepted-only)": "failure",
+        }
+        result = self.run_verify(allow_stale_g6="true", job_conclusions=conclusions)
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("No exact-source CI run passed", result.stderr)
+
+    def test_preflight_exception_rejects_missing_job(self) -> None:
+        conclusions = {
+            "Validate workflow policy": "success",
+            "ci / build-and-test": "success",
+            "P1R candidate evidence replay": "success",
+            "G-6 runtime/toolchain packet (status-aware)": "failure",
+            "G-6 owner acceptance (accepted-only)": "failure",
+        }
+        result = self.run_verify(allow_stale_g6="true", job_conclusions=conclusions)
+        self.assertNotEqual(0, result.returncode)
+
+    def test_preflight_exception_rejects_unrelated_job_failure(self) -> None:
+        conclusions = {
+            "Validate workflow policy": "success",
+            "ci / build-and-test": "success",
+            "Projects generated-artifact gates": "success",
+            "P1R candidate evidence replay": "success",
+            "G-6 runtime/toolchain packet (status-aware)": "failure",
+            "G-6 owner acceptance (accepted-only)": "failure",
+            "Unexpected check": "failure",
+        }
+        result = self.run_verify(allow_stale_g6="true", job_conclusions=conclusions)
+        self.assertNotEqual(0, result.returncode)
+
+    def test_preflight_exception_requires_exact_true(self) -> None:
+        result = self.run_verify(allow_stale_g6="True")
+        self.assertNotEqual(0, result.returncode)
+
+    def test_preflight_rejects_stale_main(self) -> None:
+        result = self.run_verify(allow_stale_g6="true", live_sha=OTHER_SHA)
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("no longer the live main tip", result.stderr)
 
     def run_freeze(self, value: str | None) -> tuple[subprocess.CompletedProcess[str], str]:
         with tempfile.TemporaryDirectory(prefix="projects-release-freeze-") as temporary:
