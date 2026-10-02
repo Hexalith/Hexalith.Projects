@@ -2,16 +2,10 @@ name: Release
 
 # Publication is an explicit operator action. The unprotected preflight proves
 # the dispatch selected the current main tip and that exact source already has
-# a successful push CI run, or an explicit G-6-only exception with every other
-# CI job passing, before the protected release environment is entered.
+# a successful push CI run before the protected release environment is entered.
+# The protected job then reruns the focused G-6 proof on that exact checkout.
 on:
   workflow_dispatch:
-    inputs:
-      allow_stale_g6:
-        description: Allow only the two G-6 evidence jobs to fail on exact-source CI
-        required: false
-        type: boolean
-        default: false
 
 concurrency:
   group: release-production
@@ -35,7 +29,6 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           DISPATCH_REF: ${{ github.ref }}
           DISPATCH_SHA: ${{ github.sha }}
-          ALLOW_STALE_G6: ${{ inputs.allow_stale_g6 }}
         run: |
           set -euo pipefail
           if [ "$DISPATCH_REF" != "refs/heads/main" ]; then
@@ -74,59 +67,14 @@ jobs:
           ' >/dev/null; then
             exit 0
           fi
-          if [ "${ALLOW_STALE_G6-}" != "true" ]; then
-            echo "No successful push CI run exists for the exact current main SHA." >&2
-            exit 1
-          fi
-
-          run_ids="$(printf '%s\n' "$ci_runs" | jq -r --arg sha "$DISPATCH_SHA" '
-            .workflow_runs[] | select(
-              .head_sha == $sha and
-              .head_branch == "main" and
-              .event == "push" and
-              .status == "completed" and
-              .conclusion == "failure"
-            ) | .id
-          ')"
-          while IFS= read -r run_id; do
-            [ -n "$run_id" ] || continue
-            if [[ ! "$run_id" =~ ^[0-9]+$ ]]; then
-              echo "The exact-source CI run ID is invalid." >&2
-              exit 1
-            fi
-            ci_jobs="$(gh api "repos/${REPOSITORY}/actions/runs/${run_id}/jobs?per_page=100")"
-            if printf '%s\n' "$ci_jobs" | jq -e '
-              def passed($name):
-                [.jobs[] | select(.name == $name and .status == "completed" and .conclusion == "success")] | length == 1;
-              def g6_complete($name):
-                [.jobs[] | select(.name == $name and .status == "completed" and
-                  (.conclusion == "success" or .conclusion == "failure"))] | length == 1;
-              .total_count == (.jobs | length) and
-              ([.jobs[].name] | unique | length) == (.jobs | length) and
-              passed("Validate workflow policy") and
-              passed("ci / build-and-test") and
-              passed("Projects generated-artifact gates") and
-              passed("P1R candidate evidence replay") and
-              g6_complete("G-6 runtime/toolchain packet (status-aware)") and
-              g6_complete("G-6 owner acceptance (accepted-only)") and
-              all(.jobs[]; .status == "completed" and (
-                .conclusion == "success" or .conclusion == "skipped" or
-                ((.name == "G-6 runtime/toolchain packet (status-aware)" or
-                  .name == "G-6 owner acceptance (accepted-only)") and .conclusion == "failure")
-              ))
-            ' >/dev/null; then
-              echo "::notice title=G-6 exception::Exact-source CI run ${run_id} passed every non-G-6 job; only G-6 evidence failures are allowed by this dispatch."
-              exit 0
-            fi
-          done <<< "$run_ids"
-          echo "No exact-source CI run passed every required non-G-6 job for the G-6 exception." >&2
+          echo "No successful push CI run exists for the exact current main SHA." >&2
           exit 1
 
   release:
     name: Release packages
     needs: verify-source
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     environment: production
     permissions:
       actions: read
@@ -183,6 +131,33 @@ jobs:
         run: dotnet restore Hexalith.Projects.CI.slnx
       - name: Build release solution
         run: dotnet build Hexalith.Projects.CI.slnx --no-restore --configuration Release -warnaserror
+      - name: Run fresh exact-source G-6 qualifier
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          G6_OUTPUT: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
+        run: >-
+          python3 tools/qualification/run_g6_current.py
+          --policy references/Hexalith.Builds/Tools/g6-current-policy.json
+          --output "$G6_OUTPUT"
+          --execution-scope release
+      - name: Validate fresh exact-source G-6 evidence
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          G6_OUTPUT: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
+        run: >-
+          python3 references/Hexalith.Builds/Tools/g6_current.py validate
+          --workspace .
+          --policy references/Hexalith.Builds/Tools/g6-current-policy.json
+          --evidence "$G6_OUTPUT/result.json"
+          --release
+      - name: Upload exact-source G-6 evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: g6-release-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          retention-days: 90
       - name: Validate five-package manifest
         shell: bash
         env:

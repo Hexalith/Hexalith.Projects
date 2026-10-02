@@ -25,7 +25,7 @@ context:
 
 ## Boundaries & Constraints
 
-**Always:** Preserve existing changes/history. Bind source, versions, outcomes, limitations, and cleanup. Distinguish checkout proof from published EventStore `3.110.0` archives. Use Debug/source locally and Release/packages in CI. Dirty source remains pending; immutable acceptance requires committed closure and exact gitlinks.
+**Always:** Preserve existing changes/history. Bind source, versions, outcomes, limitations, and cleanup. Distinguish checkout proof from published EventStore `3.110.0` archives. Attempt 16 retains its Debug/source and Release/packages evidence, committed closure, and exact-gitlink acceptance. Current G-6 uses a Debug/source runtime qualifier and builds selected source-mode consumers plus the package-mode Platform AppHost on the CI and release checkouts. Dirty source remains pending. For future G-6 applicability, use the approved 2026-10-02 material-input and exact-release-source policy below.
 
 **Never:** Stage/commit/push, publish/deploy, initialize nested submodules, mutate domain data, interrupt shared Dapr/Redis, infer downstream approval, or activate Dapr.Workflow. Inventory Platform Works/mTLS `1.18.3` as an unselected, unqualified preview.
 
@@ -38,6 +38,16 @@ context:
 | Packet mutation | Altered source, outcome, approval, or limitation | Deterministic rejection | No partial acceptance |
 
 </frozen-after-approval>
+
+## Approved 2026-10-02 G-6 applicability amendment
+
+Jérôme approved the [2026-10-02 Sprint Change Proposal](../planning-artifacts/sprint-change-proposal-2026-10-02.md) after reviewing its complete change set. This supersedes the original requirement to recapture and reaccept the entire 13-repository, 12,244-file packet after every gitlink movement. It does not change the bytes or scope of the accepted attempt-16 packet, approve the newer `13.6.0-preview.1.261001-0243` Toolkit version, or grant downstream readiness or release authority.
+
+Current G-6 applicability requires an approved effective runtime/toolchain tuple and passing isolated PostgreSQL two-sidecar restart proof for a reviewed fingerprint of material runtime inputs. The tested root SHA and gitlinks remain provenance; an unrelated gitlink advance alone does not revoke tuple approval or matching runtime proof. A controlled version, exception, tested runtime path, fixture, or critical result change requires a new qualifying run. A new tuple or exception also requires a named Builds, Platform, and FrontComposer/Web owner disposition. A dirty local checkout cannot claim current qualification.
+
+The qualifier must retain actual result counts, environment and resolved package versions, source/package distinction, limitations, and exact owned-resource cleanup. Failed, skipped, or unavailable critical evidence is `failed` or `not verified`, never `qualified`. Exact-source release qualification reruns the focused proof on the current release SHA and checks the resulting artifact against that SHA and the approved tuple. Historical source-mode proof does not qualify published EventStore archives. G-4/G-5, P1R, AD-30, Story 6.1, Story 8.11, Dapr.Workflow, deployment, and publication retain their separate gates.
+
+The initial v3 implementation disables non-release proof reuse until Platform's file-based transitive restore graph is covered. CI audits every checkout, runs live qualification for material changes, runtime-owning gitlinks, uncertain change ranges, and schedules, and reports unrelated changes as `not required by this change` without claiming G-6 has passed. Release always reruns the live proof.
 
 ## Code Map
 
@@ -97,6 +107,8 @@ Remaining acceptance work:
 2026-10-01: The user instructed “do” in response to the scoped closure prompt. This authorizes staging and local Conventional Commits of reviewed G-6 changes, exact root gitlinks and the Builds CI SHA, followed by a fresh committed-source capture and evidence-only commits. Unrelated work is preserved and excluded using a clean isolated checkout when necessary. Push, publication, deployment, nested submodule initialization, downstream approval and Dapr.Workflow activation remain excluded. The new packet stays pending and unusable until a separate explicit decision by Jérôme Piquot on its reviewed hash. The original frozen intent, recorded approval and baseline commit remain historical and unchanged.
 
 ## Spec Change Log
+
+2026-10-02: Jérôme approved the material-input and exact-release-source applicability amendment above. The attempt-16 approval, packet, tests, and historical exact-gitlink interpretation remain immutable for their recorded source. New Toolkit preview qualification and its separate owner disposition are pending.
 
 2026-10-01: Earlier attempt 3 implementation/evidence notes added; frozen approved intent unchanged. At that point, the spec remained in-progress because live qualification and final committed acceptance were incomplete.
 

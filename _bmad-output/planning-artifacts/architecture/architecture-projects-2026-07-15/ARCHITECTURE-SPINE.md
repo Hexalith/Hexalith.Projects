@@ -7,7 +7,7 @@ paradigm: Domain-centric EventStore DomainService with platform-owned runtime an
 scope: Hexalith.Projects v1 — FR-1 through FR-25 and NFR-1 through NFR-11
 status: final
 created: 2026-07-15
-updated: 2026-09-27
+updated: 2026-10-02
 binds:
   - FR-1 through FR-25
   - NFR-1 through NFR-11
@@ -17,6 +17,7 @@ binds:
 sources:
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/addendum.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-10-02.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-16.md
   - _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-15.md
@@ -304,6 +305,8 @@ flowchart LR
 - **Prevents:** implementation from starting on unresolved external gates and failed, skipped, or unavailable evidence from being represented as passing.
 - **Rule:** The canonical evidence source is `_bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml`, schema `hexalith.readiness-evidence.v1`; the required Markdown matrix is a human view over the same row identities. `Hexalith.Builds` owns the `hexalith-evidence validate` capability. Each stable row key maps requirement/finding, AD, UX journey, story, repository and named owner, pinned revision/dependencies/gates, environment/fixture, exact command, evidence artifact, estimate, status, and release disposition. Validation rejects duplicate/missing keys, unresolved placeholder values, absent owner/version/command/artifact, incomplete FR/NFR/P1/P2/release categories, failed critical evidence, unexplained critical skips, and `passed` for unavailable environments. Placeholder reconciliation is atomic and grants no implementation authority; no replacement story is created for execution or becomes `ready-for-dev`, and sprint reconciliation does not occur, until an independent superseding assessment returns exactly `READY`. Production, consequential MCP confirmation by a human actor, MCP Selection Evidence, and proposed-Project confirmation on MCP remain blocked until Story 8.11 deployment/rollback evidence passes together with §9 A-7 and Jerome and John record dated terminal acceptance. Autonomous MCP confirmation and blanket service-identity mutation stay out of scope and are never enabled by that record; a blocker or unavailable environment cannot complete Story 8.11 or a critical release case.
 
+The approved 2026-10-02 G-6 applicability change narrows only the runtime/toolchain proof boundary. A current G-6 result still needs an approved effective tuple and passing critical runtime evidence; its absence, failure, or skip cannot be recorded as an AD-30 pass. Release reruns the focused qualifier on its exact source. This does not change any other evidence row or terminal release condition.
+
 ### AD-31 — [ADOPTED] Canonical creation classifies metadata before admission
 
 - **Binds:** FR-1, FR-15, FR-19; NFR-1, NFR-10; API-001
@@ -377,15 +380,15 @@ Verified against the checked-out root configuration, centralized package catalog
 
 | Name | Version |
 | --- | --- |
-| .NET SDK feature-band policy | `10.0.401` with `rollForward: latestPatch`; approved 2026-10-01 run, current G-6 acceptance pending |
+| .NET SDK feature-band policy | `10.0.401` with `rollForward: latestPatch`; attempt-16 scope accepted 2026-10-01, current tuple applicability pending fresh qualification |
 | Target framework | `net10.0` |
 | C# | 14 (`LangVersion=latest`) |
-| Hexalith.EventStore package binding | 3.110.0 / `v3.110.0` / `27279fe6431925a6ea046c3f89af61487185c7de`, paired with Builds 4.29.1 / `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`; explicitly rebound by Solution Architect Jérôme Piquot at `2026-10-01T06:17:01Z` under P1R with the owner packet's recorded limitations. This is the tagged package coordinate, not checkout `6dededdecd62dd6dc6d1f15810108d860ec70c8f`; current G-6 qualification remains unavailable. Rollback: EventStore 3.70.1 / `f13f9925fdca53efa2ab8c90d396ab106f91bb9c`, Builds `7af20f8bafbfe561df6f7705913a0800603090b5`. |
+| Hexalith.EventStore package binding | 3.110.0 / `v3.110.0` / `27279fe6431925a6ea046c3f89af61487185c7de`, paired with Builds 4.29.1 / `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`; explicitly rebound by Solution Architect Jérôme Piquot at `2026-10-01T06:17:01Z` under P1R with the owner packet's recorded limitations. This is the tagged package coordinate, not checkout `6dededdecd62dd6dc6d1f15810108d860ec70c8f`; source-mode G-6 proof does not qualify these published archives. Rollback: EventStore 3.70.1 / `f13f9925fdca53efa2ab8c90d396ab106f91bb9c`, Builds `7af20f8bafbfe561df6f7705913a0800603090b5`. |
 | Hexalith.FrontComposer package-mode binding | 4.0.0; checked-out source is 4.0.1 and requires G-3 parity disposition |
-| Aspire AppHost SDK / Aspire.Hosting platform binding | 13.6.0; Aspire CLI 13.6.0; current G-6 acceptance pending |
+| Aspire AppHost SDK / Aspire.Hosting platform binding | 13.6.0; Aspire CLI 13.6.0; attempt-16 scope accepted, current tuple applicability pending |
 | Dapr runtime current CI/test evidence | 1.18.2 with CLI 1.18.0; owner-approved explicit exception to the packaged table's runtime 1.18.0 / .NET SDK 1.18.1 pair; not support-table-listed |
-| Dapr .NET Client / ASP.NET Core current platform packages | 1.18.10; runtime 1.18.2 under the approved 2026-10-01 run exception; current acceptance pending |
-| Microsoft Fluent UI Blazor presentation binding | 5.0.0 stable; approved 2026-10-01 run; current G-6 acceptance pending |
+| Dapr .NET Client / ASP.NET Core current platform packages | 1.18.10; runtime 1.18.2 under the approved 2026-10-01 run exception; current tuple applicability pending |
+| Microsoft Fluent UI Blazor presentation binding | 5.0.0 stable; accepted in attempt-16 scope; current tuple applicability pending |
 | ByteAether.Ulid | 1.3.8 |
 | NSwag.MSBuild | 14.7.1 |
 | xUnit v3 | 3.2.2 |
@@ -396,7 +399,7 @@ Verified against the checked-out root configuration, centralized package catalog
 
 | Name | Version |
 | --- | --- |
-| CommunityToolkit.Aspire.Hosting.Dapr migration adapter | 13.6.0-beta.910; explicitly approved 2026-10-01 prerelease run exception; current acceptance pending |
+| CommunityToolkit.Aspire.Hosting.Dapr migration adapter | `13.6.0-beta.910` accepted only in attempt-16 scope; current Builds catalog pins `13.6.0-preview.1.261001-0243`, which needs fresh qualification and a separate named prerelease decision |
 | Fluxor.Blazor.Web legacy UI migration input | 6.11.0 stable |
 | Dapr.Workflow catalog entry, unselected pending G-1 | 1.18.5 |
 | `Dapr` package | Catalog-only classification; absent from the selected central catalog and not activated |
@@ -490,7 +493,7 @@ flowchart TB
 | G-3 | FrontComposer runtime adapters | Reconcile root package-mode 4.0.0 with checked-out source 4.0.1 and record the patch disposition; then prove pinned descriptor discovery, generated Web/CLI/MCP schemas, real credential propagation, current MCP annotations/tasks, and authenticated parity |
 | G-4 | Platform development composition runner | Approved manifest schema/version; pinned .NET tool in the repository tool manifest; checked-in valid module manifest; repository-owned run/teardown commands; repository-relative paths; deterministic IDs; runner-owned identity/secrets; thin manifest-aware fixtures; clean-checkout Debug and CI package-mode proof for persisted, restart, two-instance, and authenticated Web/CLI/MCP lanes before removal of Projects AppHost/Aspire/runtime code |
 | G-5 | Platform identity, KMS, secrets, telemetry, and environment bindings | Fail-fast dual-principal admission, key rotation/revocation, encryption, health, deployment, and recovery evidence; interactive-session claim (A-7); per-Tenant descriptive-metadata inspection permission (A-5) |
-| G-6 | Runtime/toolchain alignment | **Accepted 2026-09-06** for the exact tuple retained in `_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json`: .NET 10.0.400, Aspire SDK/CLI 13.5.3, Toolkit Dapr preview, Dapr CLI 1.18.0/runtime 1.18.2/.NET packages 1.18.5, Fluent UI RC5, NSubstitute 6.2.0, and Fluxor 6.11.0. Jérôme Piquot approved the explicitly non-support-table-listed Dapr exception as Builds, Platform, and FrontComposer/Web owner. This acceptance does not approve G-4, G-5, deployment, or release; Dapr remains catalog-only/not activated and Dapr.Workflow remains unselected pending G-1. |
+| G-6 | Runtime/toolchain alignment | The September and October accepted packets remain historical proof for their exact source and tuple. For current applicability, audit effective controlled versions and the approved exceptions, and require passing isolated PostgreSQL two-sidecar restart evidence for the reviewed material runtime inputs. An unrelated gitlink move does not revoke matching tuple approval or runtime proof; changed controlled versions, runtime/fixture inputs, or critical outcomes require a new run, and a new tuple/exception requires named Builds, Platform, and FrontComposer/Web owner disposition. Release reruns on its exact source SHA; failure, skip, or unavailable infrastructure is not qualified. Current Toolkit `13.6.0-preview.1.261001-0243` is unqualified. No G-4, G-5, P1R, deployment, release, or Dapr.Workflow approval is inferred. |
 
 ## Capability → Architecture Map
 
@@ -544,3 +547,11 @@ Root captured source is `b26129c35604689a3a0a13e8af545bab7586e77e`. EventStore c
 Superseded attempt 3, SHA-256 `724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd`, remains a failed/stale observation. Superseded attempts 4–15 and diagnostic captures are preserved; historical September G-6 acceptance supplies no current authority. The accepted metadata-commit positive control and 103 current evidence controls enforce exact source, approval, outcome, cleanup and qualification limits. Later metadata-only root commits require ancestor and identical committed-source checks; exact submodule checkout/gitlink closure remains mandatory.
 
 Superseded attempt 14 SHA-256 `9caa2699bc6dca0c2366e0f9eaa088a9ffa9ce9ec4d27f448b31b8c53a87cfaa` remains unchanged. Attempt 15 retains its rejected Docker port-publication result; attempt 16 supplies the fresh committed-source capture.
+
+### G-6 policy correction and current applicability (2026-10-02)
+
+Jérôme approved the [G-6 scope correction](../../sprint-change-proposal-2026-10-02.md). The October 1 result above remains accepted for its recorded beta.910 source only. On October 2 the status-aware gate exits 1: the Builds catalog selects Toolkit `13.6.0-preview.1.261001-0243`, nine packet-bound root gitlinks differ, and CI executes Builds at the earlier SHA. The newer preview has no current named tuple disposition or passing focused qualification. The accepted packet is not rewritten or transferred.
+
+Future G-6 applicability is based on approved effective versions and a reviewed material-input fingerprint with passing runtime proof. Root SHA and gitlinks identify the tested checkout; they are not compared to every historical packet binding after unrelated movement. A release needs a fresh focused qualifier on its exact source. `qualified`, `failed`, and `not verified` remain distinct, and AD-30 rejects a false pass. Current P1R, G-4/G-5, Story 6.1, downstream readiness, and Story 8.11 retain their separate boundaries.
+
+The initial v3 gate disables non-release proof reuse until the Platform file-based transitive graph is covered. CI audits each checkout and selects live qualification for material changes, runtime-owning gitlinks, uncertain change ranges, and schedules; unrelated changes are reported as `not required by this change` without asserting qualification. The current Toolkit preview remains a pending candidate, and Platform still pins beta.910 directly.

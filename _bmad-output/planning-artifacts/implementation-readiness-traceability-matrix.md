@@ -77,7 +77,7 @@
 | `finding-ops-001` | OPS-001 | P2 | Implement truthful health and source-generated observability | 8.6 | — | AD-26, AD-28 | inferred | 🟡 pending | — |
 | `finding-mcp-001` | MCP-001 | P2 | Publish accurate MCP schemas, annotations, and task semantics | 8.5 | — | AD-29 | inferred | 🔒 blocked-external | G-3 FrontComposer/MCP adapters |
 | `finding-build-001` | BUILD-001 | P2 | Align dependency modes, Dapr runtime, central build policy, and immutable Actions (Builds owns NSwag/Fluxor versions) | 8.7 | — | AD-24, AD-25 | unassigned-in-source | 🔒 blocked-external | G-6 toolchain alignment (Dapr runtime↔SDK; Builds central versions) |
-| `finding-ux-001` | UX-001 | P2 | Rebuild operator UI with Fluent V5 components, current tokens, and accessible composition | 8.3 | 8.8 | AD-34 | inferred | 🔒 blocked-external | G-3 FrontComposer; G-6 Fluent UI RC governance; accepted immutable 8.3-P1/P2/P3 Web packages and their three bound manifests |
+| `finding-ux-001` | UX-001 | P2 | Rebuild operator UI with Fluent V5 components, current tokens, and accessible composition | 8.3 | 8.8 | AD-34 | inferred | 🔒 blocked-external | G-3 FrontComposer; G-6 current Fluent UI V5 stable and Toolkit/Fluxor composition qualification; accepted immutable 8.3-P1/P2/P3 Web packages and their three bound manifests |
 | `finding-code-001` | CODE-001 | P2 | Enforce one handwritten C# type per file | 8.7 | — | AD-16 | unassigned-in-source | 🟡 pending | — |
 | `finding-cli-001` | CLI-001 | P2 | Reject unknown, duplicate, and unsupported CLI options deterministically | 8.4 | 6.6 | AD-19 | inferred | 🟡 pending | — |
 

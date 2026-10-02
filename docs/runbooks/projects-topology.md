@@ -49,11 +49,44 @@ missing, fetch only the required root-level submodule or repository according to
 
 ## Current G-6 qualification
 
-The approved 2026-10-01 tuple uses SDK `10.0.401`, Aspire SDK/CLI/hosting `13.6.0`, Toolkit `13.6.0-beta.910`, Dapr CLI/runtime/.NET `1.18.0`/`1.18.2`/`1.18.10`, Fluent UI `5.0.0`, NSubstitute `6.2.0`, and Fluxor `6.11.0`. The run approval includes the Toolkit prerelease and unlisted Dapr support-table exceptions; Jérôme Piquot separately accepted attempt 16 at `2026-10-01T14:58:12Z` on reviewed packet SHA-256 `b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139`.
+G-6 now audits the effective versions and resolved consumer packages against
+`references/Hexalith.Builds/Tools/g6-current-policy.json`. The current Toolkit
+preview `13.6.0-preview.1.261001-0243` needs its own named tuple decision and
+live qualification. Historical attempt 16 accepted Toolkit
+`13.6.0-beta.910` at `2026-10-01T14:58:12Z` on reviewed packet SHA-256
+`b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139`;
+that acceptance remains valid only for its recorded scope.
 
-Run the approved qualifier from the root with `python3 tools/qualification/run_g6_qualification.py --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json --output _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/<new-attempt>`. It installs isolated tools/cache and starts disposable loopback PostgreSQL, Redis, placement, and scheduler. Every owned sidecar, including restarts, uses a private SQLite discovery registry in the disposable fixture directory, preserving the `sample` and `eventstore` app IDs. `NAMESPACE` supplies separate actor/scheduler isolation; Dapr 1.18.2's mDNS resolver does not use it for service lookups. The SQLite resolver is Alpha and is selected only for this fixture; this proof does not qualify it for production. Domain state remains in PostgreSQL through Dapr. Exact process groups/container IDs, discovery configuration and registry-identity hashes, and shared-resource comparisons are retained in the pending packet. An existing packet is never overwritten.
+On a clean committed checkout with the root-declared submodules initialized,
+run `python3 tools/qualification/run_g6_current.py --output .g6-current-evidence/<new-run>`.
+The runner writes a compact `result.json`, the current tuple/material audit,
+sanitized OQ8 capture files, command logs, and isolated cleanup receipt. It
+never overwrites an existing result. Check the result with
+`python3 references/Hexalith.Builds/Tools/g6_current.py validate --workspace . --policy references/Hexalith.Builds/Tools/g6-current-policy.json --evidence .g6-current-evidence/<new-run>/result.json`.
+Pass `--release` to require the exact root SHA and gitlinks. Release itself
+runs this focused proof anew on its checked-out source. CI audits the tuple and
+resolved graph on every event. It runs the live proof for changed material
+paths, runtime-owning submodule gitlinks, schedules, or an uncertain change
+range. An unrelated change is reported as `not required by this change` with
+the audit issues and approval status retained; that report makes no passing
+qualification claim. Reuse of an older proof remains disabled while transitive
+material-input coverage is being closed.
 
-The checkout-source proof is distinct from published EventStore `3.110.0` archives. Platform’s Works/mTLS `1.18.3` development preview remains unselected and unqualified; Dapr.Workflow remains unselected. Attempt 16 has accepted committed-source closure and exact gitlinks in the retained clean checkout. G-6 prerequisite usability is true for that exact scope; dirty/drifting checkouts cannot reuse the acceptance. Current P1R usability and downstream readiness remain unchanged.
+The qualifier installs isolated tools/cache and starts disposable loopback
+PostgreSQL, Redis, placement, and scheduler. Every owned sidecar, including
+restarts, uses a private SQLite discovery registry in the disposable fixture
+directory, preserving the `sample` and `eventstore` app IDs. `NAMESPACE`
+separates actors and the scheduler; Dapr 1.18.2's mDNS resolver does not use it
+for service lookups. The SQLite resolver is Alpha and selected only for this
+fixture, not production. Domain state remains in PostgreSQL through Dapr.
+Exact process groups/container IDs and shared-resource comparisons are retained
+with the current result.
+
+The checkout-source proof is distinct from published EventStore `3.110.0`
+archives. Platform’s Works/mTLS `1.18.3` development preview remains
+unselected and unqualified; Dapr.Workflow remains unselected. Attempt 16 has
+accepted committed-source closure and exact gitlinks in its retained checkout.
+Current P1R usability and downstream readiness remain unchanged.
 
 ## Expected Resources
 

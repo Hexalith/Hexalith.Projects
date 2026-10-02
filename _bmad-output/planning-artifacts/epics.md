@@ -38,6 +38,7 @@ inputDocuments:
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03-g4-p0.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-02.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-10-02.md
   - _bmad-output/planning-artifacts/research/domain-eventstore-persistence-for-hexalith-projects-module-data-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-folders-integration-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-projects-referencing-conversations-research-2026-05-24.md
@@ -1297,8 +1298,9 @@ designated manager with no Tenant-default read; Conversations Tenant-role recogn
 prior-membership receipt; no degraded fallback per §9 A-3) · **G-3** FrontComposer adapters (reconcile package
 4.0.0 vs checked-out 4.0.1 + prove descriptor/schema/credential/MCP parity) · **G-4** platform
 composition runner + evidence tool · **G-5** identity/KMS/secrets/telemetry bindings, including the interactive-session claim (§9 A-7) and the per-Tenant descriptive-metadata inspection permission (§9 A-5) · **G-6**
-runtime/toolchain alignment (Dapr runtime↔SDK tuple, Fluent UI RC, CommunityToolkit preview,
-NSubstitute RC, Fluxor 6.9 governance).
+runtime/toolchain alignment (effective Dapr runtime↔SDK, Aspire/Toolkit, Fluent UI,
+NSubstitute, and Fluxor tuple; selected previews or unsupported pairs need named
+owner disposition and passing focused runtime proof).
 
 **Canonical evidence.** The AD-30 artifact is
 `implementation-readiness-traceability-matrix.yaml` (schema `hexalith.readiness-evidence.v1`) with a
@@ -1330,6 +1332,11 @@ obligation without making unrelated later-surface gates prerequisites for Story 
 - Story 6.5 additionally requires the approved G-3 FrontComposer contract; Story 6.6 requires its
   approved CLI adapter contract.
 - G-6 applies before any affected build, runner, or evidence lane is claimed passing.
+  Current applicability requires an approved effective tuple and passing proof
+  for the reviewed material runtime inputs. Historical packet acceptance does
+  not cover a changed tuple or runtime path; unrelated gitlink movement alone
+  does not revoke matching tuple approval or runtime proof. Release reruns the
+  focused qualifier on its exact source.
 
 **Story 6.1 prerequisite work packages.** These are enablement packages, not user-value stories and
 not Story 6.1 implementation subtasks. The approved routing and complete acceptance contracts are in
@@ -1346,6 +1353,13 @@ rerun-4 correction preserving the complete entry chain without accepting any ste
 | 6.1-P2 | EventStore/platform | Supported dual-principal query envelope, indistinguishable safe denial, and authoritative global-position watermark | EventStore Owner + Identity/Security Owner + Solution Architect | open; blocked by accepted P1R |
 | 6.1-P3 | Identity/security platform | Approved mandatory fail-closed production identity/authentication contract and fixtures | Identity/Security Owner + Projects Owner + Solution Architect | open; blocked by P2 |
 | 6.1-P4 | Hexalith.Projects planning/evidence | Owner-approved 6.1 gate record linking accepted P0, historical P1, current P1R, P2, and P3 pins, signed same-baseline architecture conformance, commands, evidence, normalization, and rollback | Product Owner + Solution Architect + Test Architect + prerequisite owners | open; blocked by P0, P1R, P2, P3, and Solution Architect conformance sign-off; historical P1 is a satisfied evidence input |
+
+**G-6 applicability correction (approved 2026-10-02).** The 2026-10-01 attempt-16
+decision remains accepted only for its recorded beta.910 source. The current
+Builds catalog's Toolkit `13.6.0-preview.1.261001-0243` needs a new focused
+qualifier and named prerelease disposition. This policy correction does not
+advance 6.1-P0, P1R, Story 6.1, or the readiness result; the current action
+ledger records their operational statuses.
 
 _All Epic 6 stories share: **Repository authority** Hexalith.Projects (`Contracts`, read models,
 query handlers) with platform-generated read adapters; **owner** Product Owner (author) + Solution
@@ -2158,7 +2172,7 @@ identity.
 **Epic 8 entry gate (prerequisite, not delivered value).** Supplies **deterministic
 persisted-boundary fixtures** (authorized Tenant, seeded Projects/references/audit, required UI/static
 assets) and **blocking CI** lanes over the real supported platform path (G-4 runner + `hexalith-evidence`),
-with G-5 identity/KMS/secret bindings and G-6 toolchain alignment pinned. No failed/skipped/blocked/
+with G-5 identity/KMS/secret bindings and G-6 current-tuple qualification. No failed/skipped/blocked/
 unavailable critical case may be represented as passing.
 
 _Shared attributes for all Epic 8 stories: **repository authority** platform adapters + Hexalith.Projects
@@ -2257,8 +2271,9 @@ require all of the following:
 2. G-3 accepted at immutable revisions, including one supported FrontComposer dependency mode,
    descriptor discovery/generation, real credential propagation, and authenticated Web-adapter
    proof; and
-3. G-6 accepted at immutable revisions, including the approved Fluent UI V5 RC and Fluxor
-   governance used by this package.
+3. G-6 applicable to this package's material runtime inputs, including its
+   selected Fluent UI V5 stable, Toolkit preview, and Fluxor versions, with
+   passing focused proof and a named disposition for any changed preview.
 
 A local checkout, floating version, skipped environment, or partially satisfied gate is not an
 accepted input.

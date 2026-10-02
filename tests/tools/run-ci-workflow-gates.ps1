@@ -301,8 +301,8 @@ else {
 }
 
 # Release is an operator-dispatched caller-owned workflow behind exact-source CI.
-# An explicit dispatch input can exclude only G-6 evidence failures; all other
-# jobs remain required. The protected job owns the NuGet OIDC subject.
+# A successful exact-source CI run is required; no G-6 failure exception exists.
+# The protected job reruns G-6 before requesting a NuGet credential.
 if (-not (Test-Path $releasePath)) {
     $failures.Add('release.yml must exist; release is an operator-dispatched workflow in every Hexalith module.')
     $release = ''
@@ -353,7 +353,8 @@ foreach ($sharedWorkflow in @('codeql.yml', 'commitlint.yml', 'dependency-review
     }
 }
 
-Require-Match $release '(?m)^on:\r?\n  workflow_dispatch:\r?\n    inputs:\r?\n      allow_stale_g6:\r?\n        description: Allow only the two G-6 evidence jobs to fail on exact-source CI\r?\n        required: false\r?\n        type: boolean\r?\n        default: false\r?$' 'Release must be dispatch-only with a default-off G-6-only exception.'
+Require-Match $release '(?m)^on:\r?\n  workflow_dispatch:\r?$' 'Release must be dispatch-only.'
+Forbid-Match $release 'allow_stale_g6|ALLOW_STALE_G6' 'Release must not include a stale G-6 bypass.'
 Forbid-Match $release '^\s*(push|pull_request|schedule):\s*$' 'Release must never be triggered by push, pull_request, or schedule.'
 if ($null -eq $verifySourceStep) {
     $verifySourceStepText = ''
@@ -362,16 +363,11 @@ else {
     $verifySourceStepText = $verifySourceStep.Text
 }
 Require-Match $verifySourceStepText 'No successful push CI run exists for the exact current main SHA' 'The named exact-source preflight must prove a successful push CI run for the dispatched SHA.'
-Require-Match $verifySourceStepText 'No exact-source CI run passed every required non-G-6 job for the G-6 exception' 'The explicit G-6 exception must require the remaining CI jobs to pass.'
-Require-Match $verifySourceStepText 'passed\("ci / build-and-test"\)' 'The G-6 exception must require a successful build-and-test job.'
-Require-Match $verifySourceStepText 'passed\("Projects generated-artifact gates"\)' 'The G-6 exception must require successful generated-artifact gates.'
-Require-Match $verifySourceStepText 'passed\("Validate workflow policy"\)' 'The G-6 exception must require successful workflow policy validation.'
-Require-Match $verifySourceStepText 'passed\("P1R candidate evidence replay"\)' 'The G-6 exception must require successful P1R evidence replay.'
 Require-Match $verifySourceStepText 'The dispatched source is no longer the live main tip' 'The named exact-source preflight must prove the dispatch selected the live main tip.'
 Require-Match $releaseJob '^\s{4}needs:\s*verify-source\s*$' 'The release job must depend on the exact-source preflight.'
 Require-Match $releaseJob '^\s{4}runs-on:\s*ubuntu-latest\s*$' 'The release job must run as a caller-owned job.'
 Require-Match $releaseJob '^\s{4}environment:\s*production\s*$' 'Release must enter the protected production environment.'
-Require-Match $releaseJob '^\s{4}timeout-minutes:\s*60\s*$' 'The protected release job must preserve its 60-minute timeout.'
+Require-Match $releaseJob '^\s{4}timeout-minutes:\s*120\s*$' 'The protected release job must allow the fresh isolated G-6 run.'
 Require-Match $release '^\s*cancel-in-progress:\s*false\s*$' 'An in-flight release must never be cancelled by a newer dispatch.'
 
 # The caller job needs OIDC only for the official NuGet login action and retains
@@ -388,6 +384,9 @@ $installNpmStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Install npm 
 $verifyNpmStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Verify npm dependency provenance and signatures' -Owner 'release'
 $restoreStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Restore release solution' -Owner 'release'
 $buildStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Build release solution' -Owner 'release'
+$g6RunStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Run fresh exact-source G-6 qualifier' -Owner 'release'
+$g6ValidateStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Validate fresh exact-source G-6 evidence' -Owner 'release'
+$g6UploadStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Upload exact-source G-6 evidence' -Owner 'release'
 $manifestStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Validate five-package manifest' -Owner 'release'
 $freezeStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Resolve release publication freeze' -Owner 'release'
 $sourceStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Revalidate current source before NuGet login' -Owner 'release'
@@ -405,6 +404,16 @@ Require-Match $installNpmStep.Text '^\s{8}run:\s*npm ci --ignore-scripts\s*$' 'T
 Require-Match $verifyNpmStep.Text '^\s{8}run:\s*npm audit signatures\s*$' 'The npm provenance step must verify registry signatures.'
 Require-Match $restoreStep.Text '^\s{8}run:\s*dotnet restore Hexalith\.Projects\.CI\.slnx\s*$' 'The restore step must use the package-only CI solution.'
 Require-Match $buildStep.Text '^\s{8}run:\s*dotnet build Hexalith\.Projects\.CI\.slnx --no-restore --configuration Release -warnaserror\s*$' 'The build step must use the package-only CI solution in Release with warnings as errors.'
+Require-Match $g6RunStep.Text 'run_g6_current\.py' 'Release must run the focused G-6 qualifier.'
+Require-Match $g6RunStep.Text '--execution-scope release' 'Release G-6 must record the release Builds execution pin.'
+Require-Match $g6ValidateStep.Text 'g6_current\.py validate' 'Release must validate the current G-6 result.'
+Require-Match $g6ValidateStep.Text '--release' 'Release G-6 validation must require exact source and gitlinks.'
+Require-Match $g6UploadStep.Text 'if-no-files-found: error' 'Release must fail if current G-6 evidence is absent.'
+foreach ($step in @($g6RunStep, $g6ValidateStep)) {
+    if ($null -ne $step) {
+        Forbid-Match $step.Text '(?m)^\s{8}(if|continue-on-error):' 'Fresh release G-6 execution and validation must not be conditional or tolerated.'
+    }
+}
 
 # The declared package count is the fail-closed gate: it must agree with both the
 # manifest it is checked against and the count semantic-release publishes.
@@ -459,6 +468,9 @@ $orderedReleaseSteps = @(
     'Verify npm dependency provenance and signatures',
     'Restore release solution',
     'Build release solution',
+    'Run fresh exact-source G-6 qualifier',
+    'Validate fresh exact-source G-6 evidence',
+    'Upload exact-source G-6 evidence',
     'Validate five-package manifest',
     'Resolve release publication freeze',
     'Revalidate current source before NuGet login',
@@ -540,19 +552,8 @@ Require-Match $ci '^\s*schedule:\s*$' 'CI must include a scheduled lane.'
 Require-Match $ci "dapr-version:\s*'1\.18(?:\.0)?'" 'CI must use the supported Dapr 1.18 baseline.'
 Require-Match $ci "dapr-runtime-version:\s*'1\.18\.2'" 'CI must use the approved Dapr 1.18.2 runtime exception.'
 Require-Match $ci '^\s*integration-test-projects:\s*\|' 'The reusable CI workflow must run Integration.Tests separately.'
-# G-6: every G-6 check runs in the two G-6 jobs, which need only workflow-gates and which no other
-# job needs, so G-6 drift (a bound file, a submodule gitlink that moved after the packet capture,
-# or a CI Builds execution SHA that differs from the root Builds gitlink) fails only g6-candidate
-# and g6-acceptance while workflow-gates, ci, project-gates and e2e still run. g6-candidate runs
-# the status-aware gate script (the validator in --candidate mode while the packet is pending and
-# in accepted-only mode once it is accepted, then the packet-gitlink check and the Builds
-# execution-SHA-equals-gitlink check) and then the G-6 document reference test; g6-acceptance
-# stays accepted-only. Owner acceptance changes only the packet status and adds a named decision
-# record, so no bound file (this gate included) changes and both G-6 jobs then pass. This workflow
-# gate checks CI structure only: it never reads the packet or the gitlinks, and it requires the
-# exact workflow-gates job, so every hermetic fixture step keeps its exact blocking block.
-$g6BaselinePath = 'references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json'
-$g6PacketPath = '_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json'
+# G-6 current proof is source-bound. Historical packet checks are retained as
+# archived test fixtures and are no longer required jobs in CI.
 $checkoutActionLine = '        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0'
 $initializeBuildLine = "        uses: Hexalith/Hexalith.Builds/Github/initialize-build@$buildsExecutionSha"
 $expectedWorkflowGatesJob = (@'
@@ -618,8 +619,7 @@ $expectedWorkflowGatesJob = (@'
         run: python3 -m unittest tests/tools/test_release_workflow.py -v
 
       - name: Validate G-6 packet gitlink check fixtures
-        # Hermetic G-6 fixtures only: the real G-6 checks run in the g6-candidate and g6-acceptance
-        # jobs, so G-6 drift never blocks the jobs that need workflow-gates.
+        # Historical packet fixtures remain regression coverage; current G-6 runs in g6-current.
         env:
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest tests/tools/test_check_g6_packet_gitlinks.py -v
@@ -629,69 +629,15 @@ $expectedWorkflowGatesJob = (@'
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest tests/tools/test_run_g6_candidate_gate.py -v
 
+      - name: Validate current G-6 change selection
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest tests/tools/test_run_g6_ci_gate.py -v
+
       - name: Validate CI/CD invariants
         shell: pwsh
         run: ./tests/tools/run-ci-workflow-gates.ps1
-'@ -replace "`r`n", "`n").Replace('{BUILDS_SHA}', $buildsExecutionSha).TrimEnd("`n")
-$expectedG6CandidateJob = (@'
-  g6-candidate:
-    name: G-6 runtime/toolchain packet (status-aware)
-    runs-on: ubuntu-latest
-    needs: workflow-gates
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          fetch-depth: 0
-          submodules: false
-
-      - name: Initialize root-declared submodules
-        uses: Hexalith/Hexalith.Builds/Github/initialize-build@{BUILDS_SHA}
-
-      - name: Run status-aware G-6 gate
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-        run: >-
-          python3 tests/tools/run_g6_candidate_gate.py
-          --baseline references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json
-          --packet _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json
-
-      - name: Require G-6 documents to quote the packet and gitlinks
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-        run: python3 -m unittest tests/tools/test_g6_packet_references.py -v
-'@ -replace "`r`n", "`n").Replace('{BUILDS_SHA}', $buildsExecutionSha).TrimEnd("`n")
-$expectedG6AcceptanceJob = @(
-    '  g6-acceptance:'
-    '    name: G-6 owner acceptance (accepted-only)'
-    '    runs-on: ubuntu-latest'
-    '    needs: workflow-gates'
-    '    steps:'
-    '      - name: Checkout repository'
-    $checkoutActionLine
-    '        with:'
-    '          fetch-depth: 0'
-    '          submodules: false'
-    ''
-    '      - name: Initialize root-declared submodules'
-    $initializeBuildLine
-    ''
-    '      - name: Validate fresh G-6 runtime/toolchain packet'
-    '        env:'
-    '          PYTHONDONTWRITEBYTECODE: ''1'''
-    '        run: >-'
-    '          python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py'
-    '          --workspace .'
-    "          --baseline $g6BaselinePath"
-    "          --packet $g6PacketPath"
-    ''
-    '      - name: Require G-6 packet revisions to equal root gitlinks'
-    '        env:'
-    '          PYTHONDONTWRITEBYTECODE: ''1'''
-    '        run: >-'
-    '          python3 tests/tools/check_g6_packet_gitlinks.py'
-    "          --packet $g6PacketPath"
-) -join "`n"
+'@ -replace "`r`n", "`n").TrimEnd("`n")
 $expectedP1rEvidenceJob = @(
     '  p1r-candidate-evidence:'
     '    name: P1R candidate evidence replay'
@@ -730,8 +676,6 @@ $expectedProjectGatesStepNames = @(
 
 $ciJobBlocks = @(Get-WorkflowJobBlocks -Text $ci)
 Require-ExactJob -JobBlocks $ciJobBlocks -Name 'workflow-gates' -Expected $expectedWorkflowGatesJob -Message 'workflow-gates must be the exact job: every hermetic fixture step, including both G-6 fixture steps, is an exact blocking name/env/run block in its fixed order before the CI/CD invariants; extra steps or lines, || true, if: and continue-on-error are forbidden.'
-Require-ExactJob -JobBlocks $ciJobBlocks -Name 'g6-candidate' -Expected $expectedG6CandidateJob -Message 'g6-candidate must be the exact job that needs only workflow-gates: checkout, root submodules, the exact status-aware G-6 gate step, then the exact G-6 document reference step; extra steps or lines, || true, if: and continue-on-error are forbidden.'
-Require-ExactJob -JobBlocks $ciJobBlocks -Name 'g6-acceptance' -Expected $expectedG6AcceptanceJob -Message 'g6-acceptance must be the exact fail-closed job: checkout, root submodules, the exact accepted-only G-6 step, then the exact G-6 gitlink step; extra steps or lines, || true, if: and continue-on-error are forbidden.'
 Require-ExactJob -JobBlocks $ciJobBlocks -Name 'p1r-candidate-evidence' -Expected $expectedP1rEvidenceJob -Message 'p1r-candidate-evidence must initialize root submodules, fetch the EventStore tags it reads, and run tests/tools/test_p1r_candidate_evidence.py as an exact blocking step.'
 
 $projectGatesJobCandidates = @($ciJobBlocks | Where-Object { $_.Name -ceq 'project-gates' })
@@ -741,23 +685,40 @@ if ($projectGatesJobCandidates.Count -ne 1) {
 $projectGatesJob = if ($projectGatesJobCandidates.Count -eq 1) { $projectGatesJobCandidates[0].Text } else { '' }
 $projectGatesStepNames = @(Get-NamedStepBlocks -JobText $projectGatesJob | ForEach-Object { $_.Name })
 if (($projectGatesStepNames -join "`n") -cne ($expectedProjectGatesStepNames -join "`n")) {
-    $failures.Add("project-gates must run exactly these steps in order: $($expectedProjectGatesStepNames -join '; '). Every G-6 check belongs to g6-candidate and g6-acceptance.")
+    $failures.Add("project-gates must run exactly these steps in order: $($expectedProjectGatesStepNames -join '; '). Current G-6 runs in g6-current.")
 }
 Forbid-Match (Get-ActiveWorkflowText -Text $projectGatesJob) '(validate-runtime-toolchain-evidence|check_g6_packet_gitlinks|run_g6_candidate_gate|test_g6_packet_references)' 'project-gates must not run any G-6 check, so G-6 drift never skips the FrontComposer and OpenAPI gates.'
 Forbid-Match $projectGatesJob '^\s*continue-on-error:' 'project-gates must not tolerate failures with continue-on-error.'
 Forbid-Match $projectGatesJob '^    if:' 'project-gates must not be conditional.'
 
-# No other job may need a G-6 job, so e2e and every other job still run on G-6 drift.
-foreach ($g6Job in @('g6-candidate', 'g6-acceptance')) {
-    $g6JobReferences = [regex]::Matches((Get-ActiveWorkflowText -Text $ci), "(?<![A-Za-z0-9_-])$g6Job(?![A-Za-z0-9_-])").Count
-    if ($g6JobReferences -ne 1) {
-        $failures.Add("Only the $g6Job job key may name $g6Job; no other job may need it (found $g6JobReferences active references).")
+# The current result may fail without suppressing ordinary build and project gates.
+$g6CurrentJobCandidates = @($ciJobBlocks | Where-Object { $_.Name -ceq 'g6-current' })
+if ($g6CurrentJobCandidates.Count -ne 1) {
+    $failures.Add("CI must define exactly one g6-current job; found $($g6CurrentJobCandidates.Count).")
+}
+else {
+    $g6CurrentJob = $g6CurrentJobCandidates[0].Text
+    Require-Match $g6CurrentJob '(?m)^    needs: workflow-gates$' 'G-6 current must run independently of package and project gates.'
+    Require-Match $g6CurrentJob 'Restore effective G-6 package graphs' 'G-6 current must restore the audited package graph.'
+    Require-Match $g6CurrentJob 'Validate current G-6 preflight' 'G-6 current must exercise the preflight fixture after Builds initialization.'
+    Require-Match $g6CurrentJob 'Audit and qualify current G-6 when required' 'G-6 current must run the fail-closed selector.'
+    Require-Match $g6CurrentJob 'run_g6_ci_gate.py' 'G-6 current must use the source-aware gate.'
+    Require-Match $g6CurrentJob 'if-no-files-found: error' 'G-6 current must fail if its artifact is absent.'
+    Forbid-Match $g6CurrentJob 'continue-on-error:|g6-candidate|g6-acceptance' 'G-6 current must be blocking and independent of historical packets.'
+    Forbid-Match $g6CurrentJob '(?m)^    if:' 'G-6 current job must not be skipped.'
+    $g6CurrentSteps = @(Get-NamedStepBlocks -JobText $g6CurrentJob)
+    $g6InitializeStep = Get-RequiredNamedStep -Steps $g6CurrentSteps -Name 'Initialize root-declared submodules' -Owner 'g6-current'
+    $g6PreflightStep = Get-RequiredNamedStep -Steps $g6CurrentSteps -Name 'Validate current G-6 preflight' -Owner 'g6-current'
+    if ($null -ne $g6InitializeStep -and $null -ne $g6PreflightStep -and $g6PreflightStep.Index -le $g6InitializeStep.Index) {
+        $failures.Add('Current G-6 preflight fixtures must run after root submodule initialization.')
+    }
+    $g6GateStep = Get-RequiredNamedStep -Steps $g6CurrentSteps -Name 'Audit and qualify current G-6 when required' -Owner 'g6-current'
+    if ($null -ne $g6GateStep) {
+        Forbid-Match $g6GateStep.Text '(?m)^\s{8}(if|continue-on-error):' 'The current G-6 gate must always execute and block on failure.'
     }
 }
-$e2eJobCandidates = @($ciJobBlocks | Where-Object { $_.Name -ceq 'e2e' })
-if ($e2eJobCandidates.Count -eq 1) {
-    Require-Match $e2eJobCandidates[0].Text '^    needs:\r?\n      - ci\r?\n      - workflow-gates\r?\n      - project-gates\r?\n    steps:' 'The scheduled e2e job must need exactly ci, workflow-gates and project-gates, never a G-6 job.'
-}
+Forbid-Match $ci '(?m)^  g6-(?:candidate|acceptance):' 'Historical G-6 packet jobs must not gate current CI.'
+Forbid-Match $ci 'allow_stale_g6|ALLOW_STALE_G6' 'CI must not contain a stale G-6 bypass.'
 
 Require-Match $ci ('uses:\s*Hexalith/Hexalith\.Builds/\.github/workflows/domain-ci\.yml@' + $buildsExecutionSha) 'CI must call the accepted package-aware domain-ci workflow SHA.'
 Require-Match $ci '(?ms)^  ci:\r?\n\s+needs:\s*workflow-gates\r?\n\s+uses:' 'The reusable restore/build job must wait for independent workflow and package fixtures.'

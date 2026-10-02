@@ -1,5 +1,5 @@
 # generated: 09-20-2026 22:44
-# last_updated: 2026-09-22
+# last_updated: 2026-10-02
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -102,7 +102,7 @@ p1r_current_revalidation:
   g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json
   g6_fresh_candidate_sha256: b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139
   g6_current_qualification: accepted-committed-exact-gitlinks-accepted-only-gate-exit-0
-  g6_failures: "None for accepted G-6 attempt 16; current P1R usability remains false under its separate published-coordinate and verification limitations"
+  g6_failures: "Attempt 16 remains accepted for its exact historical source. Current G-6 is not verified: Toolkit changed from beta.910 to preview.1.261001-0243 without a new named decision or passing current proof. The legacy attempt-16 gate additionally reports nine packet-bound gitlink differences and a CI Builds execution-SHA difference; current P1R usability remains separate and false."
   g6_run_approved_tuple: "SDK 10.0.401; Aspire SDK/CLI/hosting 13.6.0; Toolkit 13.6.0-beta.910; Dapr CLI/runtime/.NET 1.18.0/1.18.2/1.18.10; Fluent UI 5.0.0; NSubstitute 6.2.0; Fluxor 6.11.0; spec/run approval 2026-10-01T08:29:35Z; named attempt-16 acceptance 2026-10-01T14:58:12Z"
   role_decisions:
     EventStore Owner: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
@@ -307,7 +307,12 @@ development_status:
 qualification_gates:
   G-6:
     status: accepted
-    accepted_scope: "Historical 2026-09-06 scope remains preserved. Current attempt 16 is separately accepted by Jérôme Piquot at 2026-10-01T14:58:12Z on reviewed hash b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139, for its exact committed source and approved tuple only; published P1R archives, rollback, G-4/G-5, downstream work, release, deployment and Workflow remain outside this acceptance."
+    accepted_scope: "Historical 2026-09-06 scope remains preserved. Attempt 16 is separately accepted by Jérôme Piquot at 2026-10-01T14:58:12Z on reviewed hash b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139, for its exact committed beta.910 source and approved tuple only; current preview.1.261001-0243, published P1R archives, rollback, G-4/G-5, downstream work, release, deployment and Workflow remain outside this acceptance."
+    applicability_policy: "Approved 2026-10-02: effective controlled tuple plus matching reviewed material-input fingerprint and passing focused PostgreSQL two-sidecar proof; initial v3 disables evidence reuse pending Platform transitive-graph closure; release reruns at exact source SHA; historical packet/gitlinks remain immutable provenance."
+    current_checkout_status: not-verified
+    current_checkout_usable: false
+    current_checkout_toolkit_pin: 13.6.0-preview.1.261001-0243
+    current_checkout_reason: "Changed Toolkit preview lacks focused current-source qualification and separate named owner disposition; the historical packet gate also reports nine gitlink mismatches and a Builds execution-SHA mismatch."
     # Preserve the reviewed pending copy; the selected accepted packet is indexed separately.
     current_candidate_status: preserved-reviewed-pending-copy
     current_candidate_usable: false
@@ -315,6 +320,7 @@ qualification_gates:
     current_candidate_baseline: "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json"
     current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/reviewed-packet.json"
     current_accepted_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
+    # Packet usability is true only for attempt 16's historical exact-source scope.
     current_accepted_usable: true
     current_accepted_reviewed_sha256: b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139
     current_candidate_sha256: b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139

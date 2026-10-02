@@ -5,12 +5,14 @@ workflow change has merged and exact-source CI meets the release preflight.
 Implementation and review must not enable publication, dispatch Release, change
 the NuGet.org policy, create or delete secrets, or publish packages.
 
-For a specifically authorized G-6 evidence exception, dispatch Release with
-`allow_stale_g6=true`. The default is `false`. The source preflight still
-requires the current `main` commit and a completed push CI run with successful
-workflow policy, build/tests, generated-artifact gates, and P1R evidence replay.
-Only the two G-6 evidence jobs may fail. This exception does not refresh or
-accept the stale G-6 packet; keep its separate qualification state visible.
+Release requires a successful push CI run at the exact current `main` commit.
+The protected release job reruns the isolated G-6 qualifier on that checkout
+and validates its current-source result before NuGet login. There is no stale
+G-6 exception. Historical attempt-16 remains evidence for its recorded source
+and tuple only. CI audits the current tuple on every event and runs the live
+qualifier when material runtime paths change, a runtime-owning submodule moves,
+the change range is uncertain, or a scheduled run is due. Older proof reuse is
+disabled until material-input closure is reviewed.
 
 NuGet Trusted Publishing exchanges a GitHub OIDC token for a masked API key
 that is valid for one hour. The release workflow requests that key immediately
@@ -118,9 +120,10 @@ printf '%s\n' "$RELEASE_VERSION" >"$EVIDENCE_DIR/release-version.txt"
    gh variable set HEXALITH_RELEASE_PUBLISH_ENABLED --repo Hexalith/Hexalith.Projects --body true
    ```
 
-5. Dispatch **Release** once from the exact source tip. Include
-   `-f allow_stale_g6=true` only for the specifically authorized G-6 exception,
-   and complete any `production` environment review configured for the repository.
+5. Dispatch **Release** once from the exact source tip and complete any
+   `production` environment review configured for the repository. Confirm the
+   fresh G-6 result names that source SHA, the approved tuple, passing critical
+   tests, and successful isolated-resource cleanup before publication.
 6. In the job log, confirm source revalidation succeeded before `NuGet/login`,
    the login step succeeded without displaying its output, and Semantic Release
    published exactly five packages. Never print, copy, download, or persist the
