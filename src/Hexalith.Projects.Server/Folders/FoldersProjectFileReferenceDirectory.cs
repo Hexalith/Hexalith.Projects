@@ -94,8 +94,9 @@ public sealed class FoldersProjectFileReferenceDirectory(FoldersClient foldersCl
 
     private static ProjectFileReferenceValidationResult Evaluate(FileMetadataResult? result, string normalizedPath, string correlationId)
     {
-        // No evidence at all is untrusted: fail closed as unavailable (retryable) rather than accept.
-        if (result is null || result.Items is null)
+        // Older generated clients default missing collections/freshness instead of rejecting them.
+        // An unobserved response is not authorization evidence, including an otherwise empty result.
+        if (result is null || result.Items is null || result.Freshness is null || result.Freshness.ObservedAt == default)
         {
             return new(ProjectFileReferenceValidationOutcome.Unavailable, correlationId);
         }

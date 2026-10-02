@@ -1,7 +1,7 @@
 import { mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
 
-import { chromium, request } from '@playwright/test';
+import { chromium, request, type FullConfig } from '@playwright/test';
 
 import { browserSessionStoragePath } from './support/auth/browser-session.js';
 import {
@@ -11,7 +11,7 @@ import {
 import { authorityFromAccessToken, ensureProjectsTenantAccess } from './support/helpers/tenant-access-readiness.js';
 
 /** Establishes API readiness and a real browser authorization-code session for the live lane. */
-async function globalSetup(): Promise<void> {
+async function globalSetup(config: FullConfig): Promise<void> {
   if (process.env.E2E_LIVE_APPHOST !== '1') return;
 
   const apiContext = await request.newContext({ ignoreHTTPSErrors: true });
@@ -39,12 +39,12 @@ async function globalSetup(): Promise<void> {
     await apiContext.dispose();
   }
 
-  await createBrowserSession();
+  await createBrowserSession(config);
 }
 
-async function createBrowserSession(): Promise<void> {
-  const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH?.trim();
-  const browser = await chromium.launch(executablePath ? { executablePath } : undefined);
+async function createBrowserSession(config: FullConfig): Promise<void> {
+  const chromiumProject = config.projects.find((project) => project.name === 'chromium');
+  const browser = await chromium.launch(chromiumProject?.use.launchOptions);
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
   try {
     const page = await context.newPage();

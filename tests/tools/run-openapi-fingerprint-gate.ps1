@@ -48,7 +48,8 @@ if (-not (Test-Path $clientTests)) {
 # supported when global.json selects Microsoft.Testing.Platform.
 Push-Location $repositoryRoot
 try {
-    dotnet build $clientTests --configuration Release -warnaserror
+    # Serialize the focused build, matching the repository's fallback validation lane.
+    dotnet build $clientTests --configuration Release -m:1 -warnaserror
     $exitCode = $LASTEXITCODE
     if ($exitCode -eq 0) {
         $testAssembly = Join-Path $repositoryRoot 'tests/Hexalith.Projects.Client.Tests/bin/Release/net10.0/Hexalith.Projects.Client.Tests.dll'

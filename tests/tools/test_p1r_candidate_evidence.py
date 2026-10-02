@@ -20,6 +20,8 @@ Update the selected replay when a new exact tuple is accepted; preserve historic
 
 from __future__ import annotations
 
+import ast
+import copy
 import http.client
 import hashlib
 import json
@@ -31,6 +33,7 @@ import unittest
 import urllib.error
 import urllib.request
 from pathlib import Path
+from unittest import mock
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -255,12 +258,24 @@ class CheckoutDriftTests(unittest.TestCase):
         self.assertTrue(self.observation["source_breaking_for_implementers"])
 
 
+def approved_selected_tuple() -> dict:
+    """Read the canonical scheduling guard's literal tuple without importing its YAML dependency."""
+    guard = PROJECT_ROOT / "tools/planning/validate_production_authority.py"
+    for statement in ast.parse(guard.read_text(encoding="utf-8")).body:
+        if isinstance(statement, ast.Assign) and any(
+            isinstance(target, ast.Name) and target.id == "SELECTED_TUPLE" for target in statement.targets
+        ):
+            return ast.literal_eval(statement.value)
+    raise AssertionError("The scheduling guard has no canonical SELECTED_TUPLE")
+
+
 class SelectedPublishedEvidenceTests(unittest.TestCase):
     """The current published replay binds the accepted tuple without granting checkout usability."""
 
     def test_archive_record_binds_the_fixed_selected_tuple(self) -> None:
         acceptance = json.loads(ACCEPTANCE_PATH.read_text(encoding="utf-8"))
         selected = acceptance["selected"]
+        self.assertEqual(selected, approved_selected_tuple())
         self.assertEqual(SELECTED_RECORD["version"], selected["eventstore_version"])
         self.assertEqual(SELECTED_RECORD["tag"], selected["eventstore_tag"])
         self.assertEqual(SELECTED_RECORD["tag_commit"], selected["eventstore_revision"])
@@ -333,15 +348,79 @@ class SelectedPublishedEvidenceTests(unittest.TestCase):
         for row in packages:
             with self.subTest(package=row["id"]):
                 self.assertEqual(row["nuget_version"], SELECTED_RECORD["version"])
-                self.assertEqual(row["nuget_repository"]["commit"], SELECTED_RECORD["tag_commit"])
-                self.assertEqual(row["github_repository"], row["nuget_repository"])
+                expected_repository = {
+                    "type": "git",
+                    "url": "https://github.com/Hexalith/Hexalith.EventStore",
+                    "commit": SELECTED_RECORD["tag_commit"],
+                }
+                self.assertEqual(row["nuget_repository"], expected_repository)
+                self.assertEqual(row["github_repository"], expected_repository)
 
     def test_selected_consumer_fixture_bytes_match_the_archive_replay(self) -> None:
         consumer = SELECTED_RECORD["independent_consumer"]
+        for field in ("restore_exit_code", "release_build_exit_code", "build_warnings", "build_errors",
+                      "resolved_project_libraries", "tool_install_exit_code", "tool_help_exit_code"):
+            with self.subTest(outcome=field):
+                self.assertEqual(consumer[field], 0)
+        self.assertEqual(consumer["library_package_count"], 13)
+        self.assertEqual(consumer["resolved_eventstore_libraries"], 13)
+        self.assertEqual(consumer["restored_archive_hashes_match_nuget_sha256"], 13)
+        self.assertEqual(consumer["scoped_api_compile_count"], 7)
+        self.assertEqual(consumer["dotnet_tool_id"], "Hexalith.EventStore.Admin.Cli")
+        self.assertEqual(consumer["tool_version_output"],
+                         f"{SELECTED_RECORD['version']}+{SELECTED_RECORD['tag_commit']}")
+        tool = next(row for row in SELECTED_RECORD["packages"] if row["id"] == consumer["dotnet_tool_id"])
+        self.assertEqual(consumer["tool_archive_sha256"], tool["nuget_sha256"])
         self.assertEqual(set(consumer["fixture_sha256"]), {"Consumer.csproj", "PublishedApiSmoke.cs", "NuGet.Config"})
         for name, expected in consumer["fixture_sha256"].items():
             with self.subTest(file=name):
                 self.assertEqual(hashlib.sha256((SELECTED_RECORD_PATH.parent / "consumer" / name).read_bytes()).hexdigest(), expected)
+
+
+class SelectedEvidenceMutationTests(unittest.TestCase):
+    """Reject corrupt recorded claims without changing any qualification evidence."""
+
+    def test_a_historical_builds_revision_cannot_replace_the_accepted_revision(self) -> None:
+        acceptance = json.loads(ACCEPTANCE_PATH.read_text(encoding="utf-8"))
+        acceptance["selected"]["builds_revision"] = "22a578b576a515d2af214fe81859447fffc97981"
+        path = mock.Mock()
+        path.read_text.return_value = json.dumps(acceptance)
+        with mock.patch.dict(globals(), {"ACCEPTANCE_PATH": path}):
+            with self.assertRaises(AssertionError):
+                SelectedPublishedEvidenceTests().test_archive_record_binds_the_fixed_selected_tuple()
+
+    def test_failed_or_source_based_consumer_claims_are_rejected(self) -> None:
+        mutations = {
+            "restore_exit_code": 1,
+            "release_build_exit_code": 1,
+            "build_warnings": 1,
+            "build_errors": 1,
+            "resolved_project_libraries": 13,
+            "resolved_eventstore_libraries": 0,
+            "restored_archive_hashes_match_nuget_sha256": 0,
+            "scoped_api_compile_count": 0,
+            "tool_install_exit_code": 1,
+            "tool_help_exit_code": 1,
+            "tool_version_output": "wrong-version",
+            "tool_archive_sha256": "0" * 64,
+        }
+        for field, value in mutations.items():
+            with self.subTest(field=field):
+                record = copy.deepcopy(SELECTED_RECORD)
+                record["independent_consumer"][field] = value
+                with mock.patch.dict(globals(), {"SELECTED_RECORD": record}):
+                    with self.assertRaises(AssertionError):
+                        SelectedPublishedEvidenceTests().test_selected_consumer_fixture_bytes_match_the_archive_replay()
+
+    def test_agreeing_but_wrong_repository_provenance_is_rejected(self) -> None:
+        for field, value in (("url", "https://invalid.example/repository"), ("type", "invalid")):
+            with self.subTest(field=field):
+                record = copy.deepcopy(SELECTED_RECORD)
+                for source in ("nuget_repository", "github_repository"):
+                    record["packages"][0][source][field] = value
+                with mock.patch.dict(globals(), {"SELECTED_RECORD": record}):
+                    with self.assertRaises(AssertionError):
+                        SelectedPublishedEvidenceTests().test_tagged_manifest_and_recorded_checkout_match_archive_inventory()
 
 
 if __name__ == "__main__":

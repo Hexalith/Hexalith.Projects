@@ -36,10 +36,11 @@ public sealed class ProjectFolderDirectoryTests
         result.Outcome.ShouldBe(ProjectFolderValidationOutcome.Accepted);
     }
 
+    /// <summary>Checks task identity headers against the resolved Folders client contract.</summary>
     [Fact]
-    public async Task ValidateSetProjectFolder_EffectivePermissions_UsesCorrelationAsTaskId()
+    public async Task ValidateSetProjectFolder_EffectivePermissions_MatchesClientTaskIdContract()
     {
-        QueueHandler handler = new(
+        ProjectFolderDirectoryResponseHandler handler = new(
         [
             JsonResponse(HttpStatusCode.OK, LifecycleJson(archived: false, stale: false)),
             JsonResponse(HttpStatusCode.OK, PermissionsJson("allowed", "read", stale: false)),
@@ -51,7 +52,10 @@ public sealed class ProjectFolderDirectoryTests
             .ConfigureAwait(true);
 
         result.Outcome.ShouldBe(ProjectFolderValidationOutcome.Accepted);
-        handler.TaskIds.ShouldBe([null, "corr-a"]);
+        bool supportsTaskId = typeof(FoldersGeneratedClient).GetMethods().Any(method =>
+            method.Name == "GetEffectivePermissionsAsync"
+            && method.GetParameters().Any(parameter => parameter.Name == "x_Hexalith_Task_Id"));
+        handler.TaskIds.ShouldBe([null, supportsTaskId ? "corr-a" : null]);
     }
 
     [Fact]
@@ -203,7 +207,7 @@ public sealed class ProjectFolderDirectoryTests
     }
 
     private static FoldersProjectFolderDirectory Directory(params HttpResponseMessage[] responses)
-        => Directory(new QueueHandler(responses));
+        => Directory(new ProjectFolderDirectoryResponseHandler(responses));
 
     private static FoldersProjectFolderDirectory Directory(HttpMessageHandler handler)
     {
@@ -285,18 +289,4 @@ public sealed class ProjectFolderDirectoryTests
         }
         """;
 
-    private sealed class QueueHandler(IReadOnlyList<HttpResponseMessage> responses) : HttpMessageHandler
-    {
-        private readonly Queue<HttpResponseMessage> _responses = new(responses);
-
-        public List<string?> TaskIds { get; } = [];
-
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            TaskIds.Add(request.Headers.TryGetValues("X-Hexalith-Task-Id", out IEnumerable<string>? values)
-                ? values.FirstOrDefault()
-                : null);
-            return Task.FromResult(_responses.Dequeue());
-        }
-    }
 }

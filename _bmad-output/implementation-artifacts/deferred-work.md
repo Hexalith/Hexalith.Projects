@@ -897,3 +897,12 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Pre-existing medium verification gap: isolate duplicate-sub rejection from conflicting-alias rejection in the signed middleware fixture.
   evidence: The multiple-sub fixture supplies NameIdentifier=actor-a and first sub=actor-b, so choosing the first subject would still reject on the alias rule and pass the fixture. Add multiple subjects with no conflicting alias and assert authentication failure plus safe protected-read denial in the concurrent P3 suite.
+
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-run-all-tests-and-fix-failures.md`
+  summary: Low owner-packet documentation drift: append a dated clarification that the Projects P1R CI lane now includes the selected EventStore 3.110.0 replay.
+  evidence: `6-1-p1r-current-exact-baseline-candidate.md:40` says the lane still fetches only v3.109.0, while `.github/workflows/ci.yml`, its exact policy fixture, and the 16-test selected replay now include v3.110.0. Preserve the historical owner decision and remaining rollback/runtime limitations; this correction grants no new acceptance.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-run-all-tests-and-fix-failures.md`
+  summary: Medium pinned-package parity blocker: qualify a Folders client that implements the current metadata v2 route before changing the dependency pin.
+  evidence: The Release Server run against pinned Folders.Client 1.0.0 has 807 passing tests and one failing required v2 metadata-route assertion; its generated client calls v1. The corresponding current Debug/source client passes. The empty-response defect was repaired without changing pins. Log: `/tmp/projects-build-20261002-release-Server-reviewed.Tests.log`; this task's frozen Intent prohibits dependency updates and weakening the assertion.
