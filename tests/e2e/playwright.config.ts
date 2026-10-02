@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import { existsSync } from 'node:fs';
 
-import { defineConfig, devices } from '@playwright/test';
+import { chromium, defineConfig, devices } from '@playwright/test';
 
 import { browserSessionStoragePath } from './support/auth/browser-session.js';
 
@@ -35,12 +35,17 @@ if (LIVE_APPHOST_ENABLED) {
   requireLiveText('TEST_USER_PASSWORD');
 }
 const IS_CI = !!process.env.CI;
-const CHROMIUM_EXECUTABLE_PATH = resolveExecutable([
+const CHROMIUM_FALLBACK_EXECUTABLE_PATH = resolveExecutable([
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
   !IS_CI ? '/usr/bin/google-chrome' : undefined,
   !IS_CI ? '/usr/bin/google-chrome-stable' : undefined,
   !IS_CI ? '/usr/bin/chromium' : undefined,
   !IS_CI ? '/usr/bin/chromium-browser' : undefined,
+]);
+const CHROMIUM_EXECUTABLE_PATH = resolveExecutable([
+  process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
+  !IS_CI ? chromium.executablePath() : undefined,
+  CHROMIUM_FALLBACK_EXECUTABLE_PATH,
 ]);
 const VIDEO_MODE = process.env.PLAYWRIGHT_DISABLE_VIDEO === '1' ? 'off' : 'retain-on-failure';
 const CHROMIUM_USE = CHROMIUM_EXECUTABLE_PATH
@@ -51,7 +56,7 @@ const INCLUDE_MANAGED_BROWSER_PROJECTS =
   IS_CI ||
   MANAGED_BROWSER_PROJECT_REQUESTED ||
   process.env.PLAYWRIGHT_INCLUDE_MANAGED_BROWSERS === '1' ||
-  !CHROMIUM_EXECUTABLE_PATH;
+  !CHROMIUM_FALLBACK_EXECUTABLE_PATH;
 const BROWSER_PROJECTS = [
   { name: 'chromium', use: CHROMIUM_USE },
   ...(INCLUDE_MANAGED_BROWSER_PROJECTS

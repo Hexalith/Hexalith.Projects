@@ -707,6 +707,7 @@ $expectedP1rEvidenceJob = @(
     '          git -C references/Hexalith.EventStore fetch --no-tags origin'
     '          +refs/tags/v3.70.1:refs/tags/v3.70.1'
     '          +refs/tags/v3.109.0:refs/tags/v3.109.0'
+    '          +refs/tags/v3.110.0:refs/tags/v3.110.0'
     ''
     '      - name: Replay P1R candidate evidence'
     '        env:'

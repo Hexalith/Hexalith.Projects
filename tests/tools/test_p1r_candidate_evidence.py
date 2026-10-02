@@ -1,26 +1,27 @@
-"""Replay the pending 6.1-P1R EventStore 3.109.0 candidate's release-bypass and checkout-drift claims.
+"""Replay the selected 3.110.0 P1R evidence and preserve the historical 3.109.0 claims.
 
 Replayed against public GitHub Actions resources: the release run's event, head, workflow and
 conclusion and its Commitlint source-proof run; the absence of any successful push CI run for the
 tag; and the job conclusions of the recorded tag-CI attempt. Replayed against EventStore Git: the
-recorded checkout is an ancestor of the root EventStore gitlink with no `src` difference, the
-tag-to-checkout commit and `src` path counts, the storage-record blobs, `RetainedFloor` and each
-recorded interface member. The open EventStore Owner disposition is checked in the record and
-the Projects index text.
+recorded historical checkout descends from its tag, the tag-to-checkout commit and `src` path
+counts, the storage-record blobs, `RetainedFloor` and each recorded interface member. Historical
+open dispositions stay in the record and historical Projects index text. The selected archive
+record is bound to the fixed accepted tuple, independent push CI for its tagged commit,
+Commitlint publication proof, tagged manifest, and consumer fixture bytes. G-6 checks checkout drift;
+the historical source observation does not describe today's root gitlink.
 
 Not replayed here: the 14 package hashes and signatures (`verify_public_packages.py`), the
 `BYPASS_VALIDATION` job environment and the failing test names (job logs need authentication),
 and the release-time Builds revision (release artifact).
 
-Update or retire this replay when an EventStore Owner disposition of the bypass or the tag-CI
-failure is recorded, when the tag CI is rerun (a new attempt or a successful push run), when the
-root EventStore gitlink moves to a commit whose `src` differs from the recorded checkout, or when
-an owner-accepted P1R record supersedes the 3.109.0 candidate.
+Archive hashes and signatures are replayed by the selected record's verify_public_packages.py.
+Update the selected replay when a new exact tuple is accepted; preserve historical records.
 """
 
 from __future__ import annotations
 
 import http.client
+import hashlib
 import json
 import os
 import re
@@ -35,6 +36,9 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EVENTSTORE_ROOT = PROJECT_ROOT / "references" / "Hexalith.EventStore"
 RECORD_PATH = EVENTSTORE_ROOT / "_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/public-packages.json"
+SELECTED_RECORD_PATH = EVENTSTORE_ROOT / "_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/public-packages.json"
+ACCEPTANCE_PATH = PROJECT_ROOT / "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
+CURRENT_OWNER_PACKET_PATH = PROJECT_ROOT / "_bmad-output/implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md"
 SPRINT_STATUS_PATH = PROJECT_ROOT / "_bmad-output/implementation-artifacts/sprint-status.yaml"
 OWNER_PACKET_PATH = PROJECT_ROOT / "_bmad-output/implementation-artifacts/6-1-p1r-3109-exact-baseline-candidate.md"
 REPOSITORY_API = "https://api.github.com/repos/Hexalith/Hexalith.EventStore/"
@@ -52,6 +56,7 @@ API_ATTEMPTS = 4
 NOT_AN_ANCESTOR = 1
 MISSING_HISTORY = 128
 RECORD = json.loads(RECORD_PATH.read_text(encoding="utf-8"))
+SELECTED_RECORD = json.loads(SELECTED_RECORD_PATH.read_text(encoding="utf-8"))
 
 
 def retry_delay(attempt: int, error: urllib.error.HTTPError | None) -> float:
@@ -111,17 +116,6 @@ def eventstore_git(*arguments: str) -> str:
 def eventstore_git_status(*arguments: str) -> int:
     return subprocess.run(
         ["git", "-C", str(EVENTSTORE_ROOT), *arguments], capture_output=True, text=True, check=False, timeout=60).returncode
-
-
-def root_eventstore_gitlink() -> str:
-    """Return the EventStore commit the root index records (what CI checks out)."""
-    entry = subprocess.run(
-        ["git", "-C", str(PROJECT_ROOT), "ls-files", "--stage", "--", "references/Hexalith.EventStore"],
-        capture_output=True, text=True, check=True, timeout=60).stdout.strip()
-    match = re.fullmatch(r"160000 ([0-9a-f]{40}) 0\treferences/Hexalith\.EventStore", entry)
-    if match is None:
-        raise AssertionError(f"references/Hexalith.EventStore is not a root gitlink: {entry!r}")
-    return match.group(1)
 
 
 def contains_word(text: str, word: str) -> bool:
@@ -196,22 +190,18 @@ class CheckoutDriftTests(unittest.TestCase):
 
     observation = RECORD["newer_checkout_observation"]
 
-    def test_recorded_checkout_is_the_root_gitlink_source(self) -> None:
-        # The drift below is measured at the recorded checkout; it describes the root gitlink only
-        # while that checkout is an ancestor of the gitlink with an identical src tree. A missing
-        # object (exit 128, e.g. a shallow EventStore clone) is reported as missing history, not as
-        # a checkout that is not an ancestor.
+    def test_historical_checkout_descends_from_the_recorded_tag(self) -> None:
+        # The 3.109.0 packet is superseded by the accepted 3.110.0 published tuple. Its source
+        # measurements still bind this recorded checkout; current checkout closure belongs to G-6.
         checkout = self.observation["sha"]
-        gitlink = root_eventstore_gitlink()
-        status = eventstore_git_status("merge-base", "--is-ancestor", checkout, gitlink)
+        tag = RECORD["tag_commit"]
+        status = eventstore_git_status("merge-base", "--is-ancestor", tag, checkout)
         self.assertNotEqual(status, MISSING_HISTORY,
-                            f"EventStore history is missing: the recorded checkout {checkout} or the root EventStore "
-                            f"gitlink {gitlink} is not in the clone; fetch the full EventStore history")
+                            f"EventStore history is missing: the recorded checkout {checkout} or tag {tag} "
+                            "is not in the clone; fetch the full EventStore history")
         self.assertNotEqual(status, NOT_AN_ANCESTOR,
-                            f"recorded checkout {checkout} is not an ancestor of the root EventStore gitlink {gitlink}")
-        self.assertEqual(status, 0, f"git merge-base --is-ancestor {checkout} {gitlink} exited {status}")
-        self.assertEqual(eventstore_git_status("diff", "--quiet", checkout, gitlink, "--", "src"), 0,
-                         f"src differs between the recorded checkout {checkout} and the root EventStore gitlink {gitlink}")
+                            f"recorded tag {tag} is not an ancestor of historical checkout {checkout}")
+        self.assertEqual(status, 0, f"git merge-base --is-ancestor {tag} {checkout} exited {status}")
 
     def test_commit_and_source_path_counts_match_git(self) -> None:
         checkout = self.observation["sha"]
@@ -263,6 +253,95 @@ class CheckoutDriftTests(unittest.TestCase):
                 self.assertFalse(contains_word(tag_source, identifier), f"{item}: {identifier} already at the tag")
                 self.assertTrue(contains_word(checkout_source, identifier), f"{item}: {identifier} absent at the checkout")
         self.assertTrue(self.observation["source_breaking_for_implementers"])
+
+
+class SelectedPublishedEvidenceTests(unittest.TestCase):
+    """The current published replay binds the accepted tuple without granting checkout usability."""
+
+    def test_archive_record_binds_the_fixed_selected_tuple(self) -> None:
+        acceptance = json.loads(ACCEPTANCE_PATH.read_text(encoding="utf-8"))
+        selected = acceptance["selected"]
+        self.assertEqual(SELECTED_RECORD["version"], selected["eventstore_version"])
+        self.assertEqual(SELECTED_RECORD["tag"], selected["eventstore_tag"])
+        self.assertEqual(SELECTED_RECORD["tag_commit"], selected["eventstore_revision"])
+        self.assertEqual(set(acceptance["decisions"]),
+                         {"EventStore Owner", "Builds Owner", "Solution Architect", "Test Architect"})
+        for role, decision in acceptance["decisions"].items():
+            with self.subTest(role=role):
+                self.assertEqual(decision["decision"], "accept")
+                self.assertTrue(decision["approver"].strip())
+                self.assertEqual(decision["selected"], "#/selected")
+        self.assertEqual(SELECTED_RECORD["release_validation_bypass"]["status"], "already-accepted")
+        self.assertIn(selected["builds_revision"], CURRENT_OWNER_PACKET_PATH.read_text(encoding="utf-8"))
+        self.assertIn(SELECTED_RECORD_PATH.parent.name, SPRINT_STATUS_PATH.read_text(encoding="utf-8"))
+        self.assertIn("usable_as_prerequisite remains false", SELECTED_RECORD["open_limitations"])
+
+    def test_selected_release_uses_commitlint_proof_and_separate_push_ci(self) -> None:
+        bypass = SELECTED_RECORD["release_validation_bypass"]
+        for run_id, workflow, event in (
+            (bypass["release_run_id"], ".github/workflows/release.yml", "workflow_dispatch"),
+            (bypass["source_proof_run_id"], ".github/workflows/commitlint.yml", "push"),
+        ):
+            with self.subTest(run_id=run_id):
+                run = github_run(f"{run_id}/attempts/1")
+                self.assertEqual(run["head_sha"], SELECTED_RECORD["tag_commit"])
+                self.assertEqual(run["run_attempt"], 1)
+                self.assertEqual(run["event"], event)
+                self.assertEqual(run["path"], workflow)
+                self.assertEqual(run["conclusion"], "success")
+        self.assertEqual(bypass["source_proof_workflow"], "commitlint.yml")
+        self.assertNotEqual(bypass["source_proof_run_id"], bypass["independent_tag_ci_run_id"])
+
+    def test_independent_push_ci_for_tagged_commit_passed_with_only_aspire_and_performance_skipped(self) -> None:
+        bypass = SELECTED_RECORD["release_validation_bypass"]
+        attempt = f"{bypass['independent_tag_ci_run_id']}/attempts/1"
+        run = github_run(attempt)
+        self.assertEqual(run["head_sha"], SELECTED_RECORD["tag_commit"])
+        self.assertEqual(run["run_attempt"], 1)
+        self.assertEqual(run["path"], ".github/workflows/ci.yml")
+        self.assertEqual(run["event"], "push")
+        self.assertEqual(bypass["independent_tag_ci_conclusion"], "success")
+        self.assertEqual(run["conclusion"], bypass["independent_tag_ci_conclusion"])
+        page = github_run(f"{attempt}/jobs?per_page=100")
+        jobs = page["jobs"]
+        self.assertEqual(page["total_count"], len(jobs))
+        self.assertEqual({job["run_attempt"] for job in jobs}, {1})
+        conclusions = {job["name"]: job["conclusion"] for job in jobs}
+        self.assertEqual(len(conclusions), len(jobs), "job names must be unique")
+        self.assertEqual({name for name, conclusion in conclusions.items() if conclusion == "success"},
+                         {"ci / contracts", "ci / tenants-source-mode", "ci / semantic-release-governance", "ci / build-and-test"})
+        self.assertEqual({name for name, conclusion in conclusions.items() if conclusion == "skipped"},
+                         {"ci / aspire-tests", "ci / performance-tests"})
+        self.assertTrue(all(conclusion in PASSING_JOB_CONCLUSIONS for conclusion in conclusions.values()))
+
+    def test_tagged_manifest_and_recorded_checkout_match_archive_inventory(self) -> None:
+        self.assertEqual(eventstore_git("rev-parse", f"{SELECTED_RECORD['tag']}^{{commit}}"), SELECTED_RECORD["tag_commit"])
+        path = "tools/release-packages.json"
+        source = subprocess.run(["git", "-C", str(EVENTSTORE_ROOT), "show", f"{SELECTED_RECORD['tag']}:{path}"],
+                                capture_output=True, check=True, timeout=60).stdout
+        self.assertEqual(hashlib.sha256(source).hexdigest(), SELECTED_RECORD["release_manifest_sha256"])
+        manifest = json.loads(source)
+        packages = SELECTED_RECORD["packages"]
+        self.assertEqual(len(packages), 14)
+        self.assertEqual(manifest["packages"], [{"id": row["id"], "project": row["project"]} for row in packages])
+        observation = SELECTED_RECORD["release_manifest_current_checkout"]
+        self.assertEqual(observation["sha256"], SELECTED_RECORD["release_manifest_sha256"])
+        self.assertIs(observation["unchanged_since_tag"], True)
+        self.assertEqual(observation["exit_code"], 0)
+        checkout = observation["checkout"]
+        self.assertEqual(eventstore_git_status("diff", "--quiet", SELECTED_RECORD["tag"], checkout, "--", path), 0)
+        for row in packages:
+            with self.subTest(package=row["id"]):
+                self.assertEqual(row["nuget_version"], SELECTED_RECORD["version"])
+                self.assertEqual(row["nuget_repository"]["commit"], SELECTED_RECORD["tag_commit"])
+                self.assertEqual(row["github_repository"], row["nuget_repository"])
+
+    def test_selected_consumer_fixture_bytes_match_the_archive_replay(self) -> None:
+        consumer = SELECTED_RECORD["independent_consumer"]
+        self.assertEqual(set(consumer["fixture_sha256"]), {"Consumer.csproj", "PublishedApiSmoke.cs", "NuGet.Config"})
+        for name, expected in consumer["fixture_sha256"].items():
+            with self.subTest(file=name):
+                self.assertEqual(hashlib.sha256((SELECTED_RECORD_PATH.parent / "consumer" / name).read_bytes()).hexdigest(), expected)
 
 
 if __name__ == "__main__":

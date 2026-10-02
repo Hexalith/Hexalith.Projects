@@ -76,7 +76,7 @@ def test_marketplace_json_content():
     """Test that marketplace.json contains correct module metadata."""
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
-        skill_dir = make_skill_dir(tmp, name="bmad-exc-tools")
+        skill_dir = make_skill_dir(tmp, name="exc-tools")
 
         code, data = run_scaffold(
             skill_dir, module_code="exc", module_name="Excalidraw Tools"
@@ -86,10 +86,10 @@ def test_marketplace_json_content():
         marketplace = json.loads(
             (tmp / ".claude-plugin" / "marketplace.json").read_text()
         )
-        assert marketplace["name"] == "bmad-exc"
+        assert marketplace["name"] == "exc"
         plugin = marketplace["plugins"][0]
-        assert plugin["name"] == "bmad-exc"
-        assert plugin["skills"] == ["./bmad-exc-tools"]
+        assert plugin["name"] == "exc"
+        assert plugin["skills"] == ["./exc-tools"]
         assert plugin["description"] == "A test module"
         assert plugin["version"] == "1.0.0"
 
