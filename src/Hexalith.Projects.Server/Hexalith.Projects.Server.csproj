@@ -3,10 +3,6 @@
     <IsPackable>false</IsPackable>
     <IsPublishable>true</IsPublishable>
   </PropertyGroup>
-  <!-- The current Folders source client adds a task-id header absent from the pinned 1.0.0 package. -->
-  <PropertyGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
-    <DefineConstants>$(DefineConstants);HEXALITH_FOLDERS_SOURCE_CLIENT</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Hexalith.Projects.Server.Tests" />
     <InternalsVisibleTo Include="Hexalith.Projects.Integration.Tests" />
