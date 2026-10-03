@@ -5,7 +5,8 @@ This directory keeps both local v3 runs from
 authority attempt. The local runs are byte-identical copies of the gitignored
 `.g6-current-evidence/<run>/` directories. The CI attempt is a byte-identical
 copy of its uploaded artifact. Each `result.json` receipt still names its
-original `.g6-current-evidence/...` path. [SHA256SUMS](SHA256SUMS) indexes every retained file; check it with
+original `.g6-current-evidence/...` path. [SHA256SUMS](SHA256SUMS) indexes every retained file except
+`README.md`, `SHA256SUMS` itself, and `.gitattributes`. Check it with
 `sha256sum -c SHA256SUMS` from this directory.
 
 These local runs are pre-checks. The CI `g6-current` run on the pushed root
@@ -76,12 +77,14 @@ Its `result.json` has SHA-256
 Several things passed in CI:
 
 - The `env -u CI` restore succeeded.
-- The audit had zero issues, with `tupleApproved=true` and the same effective
-  tuple and resolved graph as the local final run.
+- The audit had zero issues, with `tupleApproved=true`. Its effective tuple and
+  resolved controlled-package graph match the local final run. That match
+  covers package IDs and versions only; it does not imply the source bytes
+  match (see the fingerprint note below).
 - Support passed 33/33.
 - The shared snapshot was unchanged.
 
-The CI run failed for these environment reasons:
+The CI run failed for these reasons:
 
 - **Qualifier: 0/1.** The fixture prerequisite
   `docker image inspect postgres@sha256:a02db8…` failed (`Oq8PostgresqlFixture.cs:1625`).
@@ -91,8 +94,22 @@ The CI run failed for these environment reasons:
   `fixtureScratchRemoved` are false.
 - **FrontComposer and Parties AppHosts did not compile.** Both failed with
   `NU5118` while packing `references/Hexalith.Commons/src/libraries/Hexalith.Commons`:
-  `[workspace]/references/README.md` collides with `/README.md` under
-  GitHub Actions. This does not reproduce locally.
+  `[workspace]/references/README.md` collides with `/README.md`. This is a
+  Hexalith.Commons packing defect, not a runner gap. `$(ProjectRoot)/README.md`
+  (`Hexalith.Package.props:32`, with `ProjectRoot` set at
+  `Hexalith.Build.props:24`) resolves to `references/README.md`, and it
+  reproduces in any non-IDE shell. The local runs avoided it only because
+  the inherited `TERM_PROGRAM=vscode` set `IDEBuild=true`
+  (`Props/Environment.Build.props:9`), which makes `IsPackable=false`
+  (`Hexalith.Package.props:20`). So the local `qualified` pre-check never
+  exercised that pack path.
+
+The local material fingerprint `3ad7d5d5…` differs from CI's `81d2066a…`.
+Both cover 7,021 files. The fingerprint hashes working-tree bytes, and
+several local submodule working trees hold CRLF bytes for LF-committed files
+even though `git status` is clean: FrontComposer 6,082 files, Memories 4,372,
+McpCli 224 and Builds 197. Local and CI fingerprints are therefore not
+comparable.
 
 ## Tuple and environment
 
@@ -124,6 +141,9 @@ execution scope `ci`. The Builds execution SHA was
   `13.6.0-preview.1.26479.8` exclusions, Works/mTLS `1.18.3`, and Dapr.Workflow.
 - `reuseEnabled` is false, so each qualified result must match its exact
   source.
+- The Platform gitlink move `e7aee88..7342130` also brings in 12 upstream
+  `origin/main` commits. They leave `apphost.cs` and `DaprSelfHostedMtls.cs`
+  unchanged and are outside the proof's material inputs.
 
 ## Final-run source
 
