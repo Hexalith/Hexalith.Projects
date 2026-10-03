@@ -193,7 +193,7 @@ jobs:
         run: |
           set -euo pipefail
           while IFS= read -r project; do
-            dotnet restore "$project" -p:UseHexalithProjectReferences=true
+            env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true
           done < <(jq -r '.resolvedProjects[]' references/Hexalith.Builds/Tools/g6-current-policy.json)
 
       - name: Audit and qualify current G-6 when required
