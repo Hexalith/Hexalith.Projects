@@ -2,10 +2,11 @@
 title: 'G-6 Qualify the Current Toolkit Preview Tuple'
 type: 'chore'
 created: '2026-10-03'
-status: 'ready-for-dev'
+status: 'in-progress'
 approved_at_utc: '2026-10-03T06:51:47Z'
 approval_decision: 'Approve and stop'
 route: 'dispatch'
+baseline_commit: '53c6f29a9b0aaf858f11ecd919b32e676b6a41f1'
 review_loop_iteration: 0
 context:
   - '{project-root}/_bmad-output/planning-artifacts/sprint-change-proposal-2026-10-02.md'
