@@ -1,0 +1,61 @@
+{
+  "schema": "hexalith.runtime-toolchain-cleanup.v2",
+  "before": {
+    "containers": [],
+    "binaries": []
+  },
+  "after": {
+    "containers": [],
+    "binaries": []
+  },
+  "ownedContainers": [
+    {
+      "name": "g6-oq8-24349642e9fd493f8642fe1f043938c3-placement",
+      "role": "placement",
+      "id": "6f141dbc2928c4f091f421ef59d2dbc896fcd25af41894bf1ef94a263aadf7f2",
+      "image": "daprio/dapr:1.18.2"
+    },
+    {
+      "name": "g6-oq8-24349642e9fd493f8642fe1f043938c3-scheduler",
+      "role": "scheduler",
+      "id": "3689fab64435205c9238cc1296d9e077f8b4720ae8903452b87f6af07cc499e7",
+      "image": "daprio/dapr:1.18.2"
+    },
+    {
+      "name": "g6-oq8-24349642e9fd493f8642fe1f043938c3-redis",
+      "role": "redis",
+      "id": "b15b10dcc847c6307c04a9ef6d0dab6326b92e6c10fdddcfac333a54fcdee2a0",
+      "image": "redis:7.4"
+    }
+  ],
+  "removedContainerIds": [
+    "b15b10dcc847c6307c04a9ef6d0dab6326b92e6c10fdddcfac333a54fcdee2a0",
+    "3689fab64435205c9238cc1296d9e077f8b4720ae8903452b87f6af07cc499e7",
+    "6f141dbc2928c4f091f421ef59d2dbc896fcd25af41894bf1ef94a263aadf7f2"
+  ],
+  "ownedProcessesStopped": false,
+  "scratchRemoved": true,
+  "fixtureScratchRemoved": false,
+  "ownedProcessGroups": [
+    3482,
+    3930,
+    4021,
+    4087,
+    4103,
+    4154,
+    4169,
+    4170,
+    4399,
+    4475,
+    4574,
+    4627,
+    4758,
+    4820,
+    4897,
+    4995,
+    5047,
+    5097
+  ],
+  "daprNamespace": "g6-oq8-24349642e9fd493f8642fe1f043938c3",
+  "sidecarNamespaceObservations": []
+}

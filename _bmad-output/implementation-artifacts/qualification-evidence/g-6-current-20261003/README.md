@@ -1,10 +1,11 @@
-# Current G-6 qualification — 2026-10-03 (local pre-check)
+# Current G-6 qualification — 2026-10-03
 
-This directory keeps both v3 runs from
-`spec-g-6-qualify-current-toolkit-preview-tuple.md`. They are byte-identical
-copies of the gitignored `.g6-current-evidence/<run>/` directories. Each
-`result.json` receipt still names its original `.g6-current-evidence/...`
-path. [SHA256SUMS](SHA256SUMS) indexes every retained file; check it with
+This directory keeps both local v3 runs from
+`spec-g-6-qualify-current-toolkit-preview-tuple.md`, plus the failed CI
+authority attempt. The local runs are byte-identical copies of the gitignored
+`.g6-current-evidence/<run>/` directories. The CI attempt is a byte-identical
+copy of its uploaded artifact. Each `result.json` receipt still names its
+original `.g6-current-evidence/...` path. [SHA256SUMS](SHA256SUMS) indexes every retained file; check it with
 `sha256sum -c SHA256SUMS` from this directory.
 
 These local runs are pre-checks. The CI `g6-current` run on the pushed root
@@ -57,6 +58,41 @@ python3 references/Hexalith.Builds/Tools/g6_current.py validate --workspace . \
   --policy references/Hexalith.Builds/Tools/g6-current-policy.json \
   --evidence .g6-current-evidence/final-20261003-1/result.json
 ```
+
+## CI authority run: failed
+
+CI run [37106225245](https://github.com/Hexalith/Hexalith.Projects/actions/runs/37106225245),
+job `G-6 current runtime qualification`, ran on pushed root
+`e7dc4d876793f6254ce42409c9067bd6516901d4` and reported
+`G6-CURRENT-FAILED`. It uploaded the artifact
+`g6-current-e7dc4d876793f6254ce42409c9067bd6516901d4-37106225245-1`
+(id `11268610154`, digest
+`sha256:da3160e46c96193fb073f44d292bea11be14decb01e2364df61ad0258b01a5e8`).
+That artifact is retained byte-for-byte in [ci-37106225245-1](ci-37106225245-1/result.json).
+Its `result.json` has SHA-256
+`a5f1331f29d2f290d825cc40d8ad7bf554f7df20a6688360ed7ec70e6d3d2437` and
+`artifactSha256` `bd0d383a1119490c8985ee726e5b1db8a32a67f49b8c9b5142187c032ff0a970`.
+
+Several things passed in CI:
+
+- The `env -u CI` restore succeeded.
+- The audit had zero issues, with `tupleApproved=true` and the same effective
+  tuple and resolved graph as the local final run.
+- Support passed 33/33.
+- The shared snapshot was unchanged.
+
+The CI run failed for these environment reasons:
+
+- **Qualifier: 0/1.** The fixture prerequisite
+  `docker image inspect postgres@sha256:a02db8…` failed (`Oq8PostgresqlFixture.cs:1625`).
+  The pinned PostgreSQL image is not present on a fresh runner, and nothing pulls
+  it first. Strict capture validation then rejected the capture directory, and
+  fixture cleanup was not proven: `ownedProcessesStopped` and
+  `fixtureScratchRemoved` are false.
+- **FrontComposer and Parties AppHosts did not compile.** Both failed with
+  `NU5118` while packing `references/Hexalith.Commons/src/libraries/Hexalith.Commons`:
+  `[workspace]/references/README.md` collides with `/README.md` under
+  GitHub Actions. This does not reproduce locally.
 
 ## Tuple and environment
 

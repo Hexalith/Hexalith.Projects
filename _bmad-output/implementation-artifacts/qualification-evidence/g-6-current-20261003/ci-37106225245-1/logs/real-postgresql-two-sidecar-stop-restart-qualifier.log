@@ -1,0 +1,28 @@
+xUnit.net v3 In-Process Runner v4.0.1+8ed8aa354c (64-bit .NET 10.0.12)
+  Discovering: Hexalith.EventStore.Server.LiveSidecar.Tests
+  Discovered:  Hexalith.EventStore.Server.LiveSidecar.Tests
+  Starting:    Hexalith.EventStore.Server.LiveSidecar.Tests
+    Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants [FAIL]
+      Collection fixture type 'Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture' threw in InitializeAsync
+      ---- System.InvalidOperationException : Required process 'docker' exited with code 1; stderrSha256=fabeee674e424052c4b1585319b04ae71363d621ad579d5ce00605e9a93828e0.
+      Stack Trace:
+        
+        ----- Inner Stack Trace -----
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(1688,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.RunProcessAsync(String fileName, IReadOnlyList`1 arguments)
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(1625,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.VerifyPrerequisitesAsync()
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(97,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.InitializeAsync()
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(128,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.InitializeAsync()
+    [Test Collection Cleanup Failure (Oq8Postgresql)] Xunit.Sdk.TestPipelineException
+      Collection fixture type 'Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture' threw in DisposeAsync
+      ---- System.InvalidOperationException : Required process 'docker' exited with code 1; stderrSha256=fabeee674e424052c4b1585319b04ae71363d621ad579d5ce00605e9a93828e0.
+      Stack Trace:
+        --- End of stack trace from previous location ---
+        ----- Inner Stack Trace -----
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(1688,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.RunProcessAsync(String fileName, IReadOnlyList`1 arguments)
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(1278,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.BuildEvidenceJsonAsync()
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(1362,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.EmitEvidenceIfRequestedAsync()
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(614,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.DisposeAsync()
+        tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Fixtures/Oq8PostgresqlFixture.cs(619,0): at Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8PostgresqlFixture.DisposeAsync()
+  Finished:    Hexalith.EventStore.Server.LiveSidecar.Tests (ID = 'd322687bec06fcf677b8af0053a6a38634b18f47264557b13408c371b0c87659')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 1, Errors: 1, Failed: 1, Skipped: 0, Not Run: 0, Time: 0.261s

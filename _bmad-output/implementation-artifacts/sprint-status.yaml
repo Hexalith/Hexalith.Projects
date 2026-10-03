@@ -1,5 +1,5 @@
 # generated: 09-20-2026 22:44
-# last_updated: 2026-10-02
+# last_updated: 2026-10-03
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -102,7 +102,7 @@ p1r_current_revalidation:
   g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json
   g6_fresh_candidate_sha256: b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139
   g6_current_qualification: accepted-committed-exact-gitlinks-accepted-only-gate-exit-0
-  g6_failures: "Attempt 16 remains accepted for its exact historical source. Current G-6 is not verified: Toolkit changed from beta.910 to preview.1.261001-0243 without a new named decision or passing current proof. The legacy attempt-16 gate additionally reports nine packet-bound gitlink differences and a CI Builds execution-SHA difference; current P1R usability remains separate and false."
+  g6_failures: "Attempt 16 remains accepted for its exact historical source. Jérôme Piquot approved the current preview.1.261001-0243 tuple and prerelease exception at 2026-10-03T07:15:52Z, and the local pre-check at root dac6ef2c qualified it. The CI authority run 37106225245 at e7dc4d87 failed on runner environment gaps: the pinned PostgreSQL image was absent, and FrontComposer/Parties AppHosts hit NU5118. Current G-6 is therefore failed; current P1R usability remains separate and false."
   g6_run_approved_tuple: "SDK 10.0.401; Aspire SDK/CLI/hosting 13.6.0; Toolkit 13.6.0-beta.910; Dapr CLI/runtime/.NET 1.18.0/1.18.2/1.18.10; Fluent UI 5.0.0; NSubstitute 6.2.0; Fluxor 6.11.0; spec/run approval 2026-10-01T08:29:35Z; named attempt-16 acceptance 2026-10-01T14:58:12Z"
   role_decisions:
     EventStore Owner: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
@@ -309,10 +309,14 @@ qualification_gates:
     status: accepted
     accepted_scope: "Historical 2026-09-06 scope remains preserved. Attempt 16 is separately accepted by Jérôme Piquot at 2026-10-01T14:58:12Z on reviewed hash b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139, for its exact committed beta.910 source and approved tuple only; current preview.1.261001-0243, published P1R archives, rollback, G-4/G-5, downstream work, release, deployment and Workflow remain outside this acceptance."
     applicability_policy: "Approved 2026-10-02: effective controlled tuple plus matching reviewed material-input fingerprint and passing focused PostgreSQL two-sidecar proof; initial v3 disables evidence reuse pending Platform transitive-graph closure; release reruns at exact source SHA; historical packet/gitlinks remain immutable provenance."
-    current_checkout_status: not-verified
+    current_checkout_status: failed
     current_checkout_usable: false
     current_checkout_toolkit_pin: 13.6.0-preview.1.261001-0243
-    current_checkout_reason: "Changed Toolkit preview lacks focused current-source qualification and separate named owner disposition; the historical packet gate also reports nine gitlink mismatches and a Builds execution-SHA mismatch."
+    current_checkout_reason: "CI g6-current at root e7dc4d876793f6254ce42409c9067bd6516901d4 reported G6-CURRENT-FAILED. The audit had zero issues and tupleApproved=true, and support passed 33/33. The qualifier failed 0/1 because its fixture prerequisite 'docker image inspect postgres@sha256:a02db8…' found no image on the runner. The FrontComposer and Parties AppHost source builds failed with NU5118 on references/README.md. Fixture cleanup was not proven. Each cause needs a CI or runner change outside the approved scope. The local pre-check at dac6ef2c was qualified, with validate exit 0, but it is not the authority."
+    current_checkout_tuple_decision: "Approve; Jérôme Piquot (Builds/Platform/FrontComposer-Web); 2026-10-03T07:15:52Z; tuple 52c8d36a9db4aae09e7a32f7a62be61ed7eee4e0f33a15099215bd61ff780098; candidate result 399befab8b1035496f8b60bf59652e6e24bf55189a260f1b4ccd4d5faf97c26e; Builds c16249a6a0c88b903e14c7f6612632e2c70d4e94; _bmad-output/implementation-artifacts/spec-g-6-qualify-current-toolkit-preview-tuple.md#implementation-notes"
+    current_checkout_ci_run: https://github.com/Hexalith/Hexalith.Projects/actions/runs/37106225245
+    current_checkout_ci_artifact: "g6-current-e7dc4d876793f6254ce42409c9067bd6516901d4-37106225245-1 (id 11268610154, sha256:da3160e46c96193fb073f44d292bea11be14decb01e2364df61ad0258b01a5e8); result.json a5f1331f29d2f290d825cc40d8ad7bf554f7df20a6688360ed7ec70e6d3d2437, status failed"
+    current_checkout_local_evidence: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-current-20261003/SHA256SUMS (candidate 399befab not verified; final dc834ba4 qualified at dac6ef2c; CI attempt retained)"
     # Preserve the reviewed pending copy; the selected accepted packet is indexed separately.
     current_candidate_status: preserved-reviewed-pending-copy
     current_candidate_usable: false

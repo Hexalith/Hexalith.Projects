@@ -1,0 +1,669 @@
+{
+  "schema": "hexalith.g6-current-evidence.v1",
+  "audit": {
+    "schema": "hexalith.g6-current-audit.v1",
+    "policySha256": "de3c614a23109838e53524c6f033cbc8c86c68edfa5815da608710d59feb7dfb",
+    "source": {
+      "rootSha": "e7dc4d876793f6254ce42409c9067bd6516901d4",
+      "gitlinks": [
+        {
+          "path": "references/Hexalith.AI.Tools",
+          "sha": "3f194e17174994d308ec84af9ee2b5aa68674d0d"
+        },
+        {
+          "path": "references/Hexalith.EventStore",
+          "sha": "2c58ffda41759e895ace4b9625c9bd931a217672"
+        },
+        {
+          "path": "references/Hexalith.Tenants",
+          "sha": "11e65e37f0fbf6649642a512052eebd37d50166d"
+        },
+        {
+          "path": "references/Hexalith.FrontComposer",
+          "sha": "bf40099f81fcaeac324b7b4377513ac7d49cead4"
+        },
+        {
+          "path": "references/Hexalith.Conversations",
+          "sha": "35121cab6bfc963fb2a8d411a51800f6ef5a2a70"
+        },
+        {
+          "path": "references/Hexalith.Folders",
+          "sha": "ebefb2836d5debe6735b60d070d805cee55168c5"
+        },
+        {
+          "path": "references/Hexalith.Parties",
+          "sha": "937cb2a343aaa74963db9bb867a2c3a01ff48677"
+        },
+        {
+          "path": "references/Hexalith.Commons",
+          "sha": "c13dc6679aa91144b6d541078f3f20019d79c2eb"
+        },
+        {
+          "path": "references/Hexalith.Builds",
+          "sha": "c16249a6a0c88b903e14c7f6612632e2c70d4e94"
+        },
+        {
+          "path": "references/Hexalith.Memories",
+          "sha": "ece4edc4c9a37a62b34d3b7c8aa901fc363c038c"
+        },
+        {
+          "path": "references/Hexalith.Platform",
+          "sha": "73421308fd42fecf034751a2f3d5bf821caf3c8d"
+        },
+        {
+          "path": "references/Hexalith.McpCli",
+          "sha": "9b0b6e7a082bf93b669a883e48672c26c6f0630d"
+        }
+      ]
+    },
+    "materialInputs": {
+      "fingerprint": "81d2066ac014321cc3ca95dfc6b1e97a0596538ecdbfbde3a1c3dd76152739a4",
+      "fileCount": 7021
+    },
+    "effectiveTuple": {
+      "dotnetSdk": "10.0.401",
+      "aspireSdk": "13.6.0",
+      "aspireCli": "13.6.0",
+      "communityToolkitAspireDapr": "13.6.0-preview.1.261001-0243",
+      "daprCli": "1.18.0",
+      "daprRuntime": "1.18.2",
+      "daprDotnetPackages": "1.18.10",
+      "fluentUi": "5.0.0",
+      "nSubstitute": "6.2.0",
+      "fluxor": "6.11.0"
+    },
+    "resolvedPackages": [
+      {
+        "path": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+        "packages": [
+          {
+            "id": "Aspire.Hosting",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.AppHost",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Keycloak",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Redis",
+            "version": "13.6.0"
+          },
+          {
+            "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+            "version": "13.6.0-preview.1.261001-0243"
+          }
+        ]
+      },
+      {
+        "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
+        "packages": [
+          {
+            "id": "Aspire.Hosting",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.AppHost",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Keycloak",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Redis",
+            "version": "13.6.0"
+          },
+          {
+            "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+            "version": "13.6.0-preview.1.261001-0243"
+          }
+        ]
+      },
+      {
+        "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+        "packages": [
+          {
+            "id": "Aspire.Hosting",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.AppHost",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Azure",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Azure.AppContainers",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Azure.ContainerRegistry",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Azure.OperationalInsights",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Docker",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Keycloak",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Kubernetes",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Orchestration.linux-x64",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Redis",
+            "version": "13.6.0"
+          },
+          {
+            "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+            "version": "13.6.0-preview.1.261001-0243"
+          }
+        ]
+      },
+      {
+        "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj",
+        "packages": [
+          {
+            "id": "Aspire.Hosting",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.AppHost",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Testing",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Dapr.Actors",
+            "version": "1.18.10"
+          },
+          {
+            "id": "Dapr.Actors.AspNetCore",
+            "version": "1.18.10"
+          },
+          {
+            "id": "Dapr.AspNetCore",
+            "version": "1.18.10"
+          },
+          {
+            "id": "Dapr.Client",
+            "version": "1.18.10"
+          },
+          {
+            "id": "Dapr.Common",
+            "version": "1.18.10"
+          },
+          {
+            "id": "Dapr.Protos",
+            "version": "1.18.10"
+          },
+          {
+            "id": "NSubstitute",
+            "version": "6.2.0"
+          }
+        ]
+      },
+      {
+        "path": "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
+        "packages": [
+          {
+            "id": "Aspire.Hosting",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.AppHost",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Keycloak",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Orchestration.linux-x64",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Redis",
+            "version": "13.6.0"
+          },
+          {
+            "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+            "version": "13.6.0-preview.1.261001-0243"
+          }
+        ]
+      },
+      {
+        "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+        "packages": [
+          {
+            "id": "Aspire.Hosting",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.AppHost",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Keycloak",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Redis",
+            "version": "13.6.0"
+          },
+          {
+            "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+            "version": "13.6.0-preview.1.261001-0243"
+          }
+        ]
+      },
+      {
+        "path": "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+        "packages": [
+          {
+            "id": "Aspire.Hosting",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.AppHost",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Keycloak",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Redis",
+            "version": "13.6.0"
+          },
+          {
+            "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+            "version": "13.6.0-preview.1.261001-0243"
+          }
+        ]
+      },
+      {
+        "path": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+        "packages": [
+          {
+            "id": "Aspire.Hosting",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.AppHost",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Azure",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Azure.AppContainers",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Azure.ContainerRegistry",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Azure.OperationalInsights",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Docker",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Keycloak",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Kubernetes",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Redis",
+            "version": "13.6.0"
+          },
+          {
+            "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+            "version": "13.6.0-preview.1.261001-0243"
+          }
+        ]
+      },
+      {
+        "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
+        "packages": [
+          {
+            "id": "Aspire.Hosting",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.AppHost",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Keycloak",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Redis",
+            "version": "13.6.0"
+          },
+          {
+            "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+            "version": "13.6.0-preview.1.261001-0243"
+          }
+        ]
+      },
+      {
+        "path": "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/Hexalith.Builds.Module.AppHost.csproj",
+        "packages": [
+          {
+            "id": "Aspire.Hosting",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.AppHost",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Keycloak",
+            "version": "13.6.0-preview.1.26479.8"
+          },
+          {
+            "id": "Aspire.Hosting.Orchestration.linux-x64",
+            "version": "13.6.0"
+          },
+          {
+            "id": "Aspire.Hosting.Redis",
+            "version": "13.6.0"
+          },
+          {
+            "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+            "version": "13.6.0-preview.1.261001-0243"
+          }
+        ]
+      },
+      {
+        "path": "references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj",
+        "packages": [
+          {
+            "id": "Dapr.Client",
+            "version": "1.18.10"
+          },
+          {
+            "id": "Dapr.Common",
+            "version": "1.18.10"
+          },
+          {
+            "id": "Dapr.Protos",
+            "version": "1.18.10"
+          }
+        ]
+      }
+    ],
+    "tupleApproved": true,
+    "issues": []
+  },
+  "qualification": {
+    "status": "failed",
+    "runner": "tools/qualification/run_g6_current.py",
+    "fixture": "Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants",
+    "commands": [
+      {
+        "purpose": "observe exact tool versions",
+        "command": "python3 -c 'import subprocess; [subprocess.run(c,check=True) for c in [['\"'\"'dotnet'\"'\"','\"'\"'--version'\"'\"'],['\"'\"'aspire'\"'\"','\"'\"'--version'\"'\"'],['\"'\"'dapr'\"'\"','\"'\"'--runtime-path'\"'\"','\"'\"'[scratch]/runtime'\"'\"','\"'\"'--version'\"'\"']]]'",
+        "exitCode": 0
+      },
+      {
+        "purpose": "fresh EventStore qualifier build",
+        "command": "dotnet build tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 0
+      },
+      {
+        "purpose": "fresh EventStore support build",
+        "command": "dotnet build tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 0
+      },
+      {
+        "purpose": "fixture override tests",
+        "command": "dotnet [workspace]/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll -class Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8QualificationOverridesTests -class Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.DockerPublishedPortResolverTests -class Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8DiscoveryConfigurationTests -class Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8InvocationDiagnosticHandlerTests -class Hexalith.EventStore.Server.LiveSidecar.Tests.Fixtures.Oq8OwnedContainerLaunchTests -noColor",
+        "exitCode": 0
+      },
+      {
+        "purpose": "real PostgreSQL two-sidecar stop/restart qualifier",
+        "command": "dotnet [workspace]/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.LiveSidecar.Tests.dll -method Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants -noColor -result-ctrf [scratch]/qualifier-ctrf.json",
+        "exitCode": 1
+      },
+      {
+        "purpose": "21 exact deterministic support selectors",
+        "command": "dotnet [workspace]/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_PendingEquivalent_ReturnsFirstWriterTaskEvidenceWithoutDownstreamWork -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_Conflict_DeniesBeforeAggregateAndAdvisoryStores -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_AdmissionStoreUnavailableFailsClosedBeforeRoute -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_UnverifiableAdmission_ReturnsStableFailClosedOutcome -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_UnknownOutcome_ReconcilesReadOnlyAndFinalizesExactAggregateResult -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_UnknownOutcomeWithoutAuthoritativeResult_RemainsFailClosed -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.Coordinator_UnsafeLegacyInventoryDoesNoLifecycleAdmissionDirectoryOrMigrationWork -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.AdmitAsync_StateStoreUnavailableFailsClosedWithoutReservation -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.AdmitAsync_UnknownSchema_FailsClosedAsCorrupt -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.AdmitAsync_VerificationTagMismatchFailsClosedAsCollision -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyTenantLifecycleActorTests.MigrateLegacyAsync_RestartFromEveryDurablePhaseFinishesPinnedTarget -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyTenantLifecycleActorTests.MigrateLegacyAsync_UnsafeSourceEvidenceNeverPreparesTarget -method Hexalith.EventStore.Server.Tests.Actors.PublicationRecoveryActivationTests.OnActivate_MissingCheckpointPruned_ReleasesTheRecoverableIdempotencyRecord -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_RouteFailure_MarksUnknownOutcomeUnderSameFence -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_WriteAheadFailureAfterFenceMarksUnknownOutcome -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionExpiryTests.ValidateAuthorityAsync_PendingAcceptsOnlyExactExecuteAuthorityWithoutMutation -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionExpiryTests.ValidateAuthorityAsync_UnknownOutcomeAcceptsOnlyExactReconciliationAuthorityWithoutMutation -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_TamperedCapabilityLeavesAdmissionUnchangedBeforeBegin -method Hexalith.EventStore.Server.Tests.Pipeline.SubmitCommandHandlerIdempotencyAdmissionTests.Handle_ContextThatLostDurableAuthorityPerformsZeroDownstreamWork -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionDirectoryActorTests.AdvanceAsync_PromotionOrder_KeepsSourceCanonicalUntilDirectoryFlip -method Hexalith.EventStore.Server.Tests.Actors.IdempotencyAdmissionActorTests.Coordinator_OrdinaryActivationResponseLossReprovesExactTargetBeforeAdvance -noColor -result-ctrf [scratch]/support-ctrf.json",
+        "exitCode": 0
+      },
+      {
+        "purpose": "strict EventStore capture validation",
+        "command": "python3 tools/validate-oq8-platform-evidence.py --capture-directory [workspace]/.g6-current-evidence/ci-37106225245-1/capture --ctrf [scratch]/qualifier-ctrf.json --support-ctrf [scratch]/support-ctrf.json --expected-runtime-version 1.18.2 --expected-configuration Debug",
+        "exitCode": 1
+      },
+      {
+        "purpose": "AppHost build Hexalith.Projects.AppHost",
+        "command": "dotnet build [workspace]/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 0
+      },
+      {
+        "purpose": "AppHost build Hexalith.Conversations.AppHost",
+        "command": "dotnet build [workspace]/references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 0
+      },
+      {
+        "purpose": "AppHost build Hexalith.EventStore.AppHost",
+        "command": "dotnet build [workspace]/references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 0
+      },
+      {
+        "purpose": "AppHost build Hexalith.Folders.AppHost",
+        "command": "dotnet build [workspace]/references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 0
+      },
+      {
+        "purpose": "AppHost build Hexalith.FrontComposer.AppHost",
+        "command": "dotnet build [workspace]/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 1
+      },
+      {
+        "purpose": "AppHost build Hexalith.Memories.AppHost",
+        "command": "dotnet build [workspace]/references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 0
+      },
+      {
+        "purpose": "AppHost build Hexalith.Parties.AppHost",
+        "command": "dotnet build [workspace]/references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 1
+      },
+      {
+        "purpose": "AppHost build Hexalith.Tenants.AppHost",
+        "command": "dotnet build [workspace]/references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 0
+      },
+      {
+        "purpose": "AppHost build Hexalith.Builds.Module.AppHost",
+        "command": "dotnet build [workspace]/references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/Hexalith.Builds.Module.AppHost.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 0
+      },
+      {
+        "purpose": "AppHost build Hexalith.Platform",
+        "command": "dotnet build [workspace]/references/Hexalith.Platform/apphost.cs --configuration Debug --no-incremental -v:minimal -p:BaseIntermediateOutputPath=[scratch]/platform-obj/",
+        "exitCode": 0
+      },
+      {
+        "purpose": "McpCli transitive Dapr consumer",
+        "command": "dotnet build [workspace]/references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj --configuration Debug --no-incremental -m:1 -p:UseHexalithProjectReferences=true -v:minimal",
+        "exitCode": 0
+      }
+    ],
+    "tests": {
+      "qualifier": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0
+      },
+      "support": {
+        "total": 33,
+        "passed": 33,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "receipts": {
+      "captureDirectory": ".g6-current-evidence/ci-37106225245-1/capture",
+      "files": [],
+      "logs": [
+        {
+          "purpose": "observe exact tool versions",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/observe-exact-tool-versions.log",
+          "sha256": "cd225e146d830c1211736322bfe66f3905ae7d143427dafd87da65d3bb9cd6a7"
+        },
+        {
+          "purpose": "fresh EventStore qualifier build",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/fresh-eventstore-qualifier-build.log",
+          "sha256": "948dab6c1e202f1238cae9a9921b89ba6e7555e3a92192e01f5099d3c5be9b13"
+        },
+        {
+          "purpose": "fresh EventStore support build",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/fresh-eventstore-support-build.log",
+          "sha256": "054a8d799adf2dd60e05831036d328088a8d1e53561b78b9c6c9dc973691a9f4"
+        },
+        {
+          "purpose": "fixture override tests",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/fixture-override-tests.log",
+          "sha256": "b05af2c9d14727abd8a94412184b6d3777f3f36ffe867e6796ac7f10af0ffa0c"
+        },
+        {
+          "purpose": "real PostgreSQL two-sidecar stop/restart qualifier",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/real-postgresql-two-sidecar-stop-restart-qualifier.log",
+          "sha256": "8add656f8ab73b117c7017c74ecbc1d245cca439c258aa7681fc503ebfd5b1ed"
+        },
+        {
+          "purpose": "21 exact deterministic support selectors",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/21-exact-deterministic-support-selectors.log",
+          "sha256": "19119cdb80bd313709c2e535e0c0dd0571df18fa520b578d601eb9ec3543ed44"
+        },
+        {
+          "purpose": "strict EventStore capture validation",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/strict-eventstore-capture-validation.log",
+          "sha256": "e5cbb43eb5525b75f7d9d1db5e25a8f0a41c90c66e25114cbbf33811088afaa0"
+        },
+        {
+          "purpose": "AppHost build Hexalith.Projects.AppHost",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/apphost-build-hexalith-projects-apphost.log",
+          "sha256": "7dc9fc68c83e0d41cad16e5739bb16f84c2b4d05909f6c0b7dc3dcca51219438"
+        },
+        {
+          "purpose": "AppHost build Hexalith.Conversations.AppHost",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/apphost-build-hexalith-conversations-apphost.log",
+          "sha256": "d60ed35a285b25e16c4c09f1d94b2a1da0a823ee8f531f10aba1dc5a50defa62"
+        },
+        {
+          "purpose": "AppHost build Hexalith.EventStore.AppHost",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/apphost-build-hexalith-eventstore-apphost.log",
+          "sha256": "bae528cf6e7c43ee1b9c72e3864ec5ad0a4b97d641eaab0e30b05360d0843fe5"
+        },
+        {
+          "purpose": "AppHost build Hexalith.Folders.AppHost",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/apphost-build-hexalith-folders-apphost.log",
+          "sha256": "7d10d7f929792f294ea8d30fc3cef74a5ee93c973005afe55aec59343404a774"
+        },
+        {
+          "purpose": "AppHost build Hexalith.FrontComposer.AppHost",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/apphost-build-hexalith-frontcomposer-apphost.log",
+          "sha256": "b587c7112c35485c96ea3400fcf625d74d47321e78da8728df0c3b647be1fe82"
+        },
+        {
+          "purpose": "AppHost build Hexalith.Memories.AppHost",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/apphost-build-hexalith-memories-apphost.log",
+          "sha256": "6a7340496b8e53253cc0a466233287b884abbfd9552607a5f64c423ecf6756bd"
+        },
+        {
+          "purpose": "AppHost build Hexalith.Parties.AppHost",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/apphost-build-hexalith-parties-apphost.log",
+          "sha256": "2078a8cc4c6d854410a6e563f9435d5d1770b68a86a2c290e8a89a373e9cd449"
+        },
+        {
+          "purpose": "AppHost build Hexalith.Tenants.AppHost",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/apphost-build-hexalith-tenants-apphost.log",
+          "sha256": "beffe99143d2706e48babfc2da7eb3c50bfb03613dfbe153b906771d16517b30"
+        },
+        {
+          "purpose": "AppHost build Hexalith.Builds.Module.AppHost",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/apphost-build-hexalith-builds-module-apphost.log",
+          "sha256": "81efe9eba95743593cf0d2f61b633c661120dc7b050cd375d480544aa1a61be8"
+        },
+        {
+          "purpose": "AppHost build Hexalith.Platform",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/apphost-build-hexalith-platform.log",
+          "sha256": "5c8cde83cb4147d3d66f8af22868069f26b47302eb1d18034aee2cbb6a6ce49d"
+        },
+        {
+          "purpose": "McpCli transitive Dapr consumer",
+          "path": ".g6-current-evidence/ci-37106225245-1/logs/mcpcli-transitive-dapr-consumer.log",
+          "sha256": "98da96585211bccd5535f1e330c22b376ab7ea4b9289907f0cac9e8d7c665eaa"
+        }
+      ],
+      "cleanup": {
+        "path": ".g6-current-evidence/ci-37106225245-1/cleanup.json",
+        "sha256": "d20a3ed2eccf91961a0744b8598e5afa1349e6d1a7d32d96160ba80d0db23f53"
+      }
+    },
+    "cleanup": {
+      "ownedProcessesStopped": false,
+      "scratchRemoved": true,
+      "fixtureScratchRemoved": false,
+      "sharedResourcesUnchanged": true,
+      "ownedContainersRemoved": true
+    },
+    "environment": {
+      "configuration": "Debug",
+      "dependencyMode": "source",
+      "daprRuntime": "1.18.2",
+      "platformAppHostDependencyMode": "packages",
+      "executionScope": "ci",
+      "buildsExecutionSha": "51af786cf156d2a3396dbd49f5e4898222e55c12"
+    },
+    "limitations": [
+      "Checkout-source proof; published EventStore archives, G-4/G-5, P1R and release readiness are separate.",
+      "Qualification cleanup did not prove owned processes, containers and scratch removed with shared resources unchanged.",
+      "A required qualifier, support, consumer, or capture command failed",
+      "Critical runtime or support tests failed, skipped, or were unavailable",
+      "Selected AppHosts did not all compile",
+      "The four required EventStore capture documents were not retained"
+    ]
+  },
+  "approval": {
+    "decision": "approved",
+    "approvedBy": "Jérôme Piquot",
+    "approvedAtUtc": "2026-10-03T07:15:52Z",
+    "reference": "Hexalith.Projects _bmad-output/implementation-artifacts/spec-g-6-qualify-current-toolkit-preview-tuple.md#implementation-notes, tuple disposition record 2026-10-03T07:15:52Z: Builds/Platform/FrontComposer-Web owner answered verbatim \"Approve\" for tuple 52c8d36a9db4aae09e7a32f7a62be61ed7eee4e0f33a15099215bd61ff780098 and the CommunityToolkit.Aspire.Hosting.Dapr 13.6.0-preview.1.261001-0243 prerelease exception, given candidate result.json SHA-256 399befab8b1035496f8b60bf59652e6e24bf55189a260f1b4ccd4d5faf97c26e",
+    "tupleSha256": "52c8d36a9db4aae09e7a32f7a62be61ed7eee4e0f33a15099215bd61ff780098"
+  },
+  "artifactSha256": "bd0d383a1119490c8985ee726e5b1db8a32a67f49b8c9b5142187c032ff0a970"
+}
