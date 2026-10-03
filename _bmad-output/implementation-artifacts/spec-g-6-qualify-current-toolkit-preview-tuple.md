@@ -50,10 +50,10 @@ context:
 - `references/Hexalith.Builds/Tools/README.md:466-470` -- replace pending/beta.910 wording once approved. Controls: `Tools/test_g6_current.py`.
 - `tools/qualification/run_g6_current.py` -- runner. Output goes to gitignored `.g6-current-evidence/<run>`. It needs Docker, network (Dapr CLI, Aspire CLI tool, images) and system `dotnet` 10.0.401, and uses an isolated `NUGET_PACKAGES`. It emits `qualified` only with an approved tuple and zero audit issues.
 - `references/Hexalith.Builds/Tools/g6_current.py` -- `audit`/`validate`; validate requires clean root and submodules and exact source equality (`:482-487`).
-- `.github/workflows/ci.yml:165-219` -- `g6-current`: restore each `resolvedProjects` entry with `-p:UseHexalithProjectReferences=true`, then `tests/tools/run_g6_ci_gate.py`. Release reruns proof unconditionally.
+- `.github/workflows/ci.yml:165-219` -- `g6-current`: restore each `resolvedProjects` entry with `-p:UseHexalithProjectReferences=true`, then `tests/tools/run_g6_ci_gate.py`. Release reruns proof unconditionally. Under `CI=true` that restore trips `Directory.Build.props:42-45` (`RejectUnsafeHexalithProjectReferenceMode`), as seen in run 37104548736 on `53c6f29`. The runner avoids it by dropping `CI` (`tools/qualification/run_g6_qualification.py:139`). Owner-approved fix: run only this restore as `env -u CI dotnet restore …`. `ci.yml` is a policy material input, so commit the fix before the final run.
 - `tools/qualification/run_g6_qualification.py:58-71` -- shared snapshot covers every host container.
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` -- `qualification_gates.G-6.current_checkout_*` and `p1r_current_revalidation.g6_failures`; `epic-6-context.md:36`. Update only current-checkout fields.
-- Do not change: attempt-16 packets/acceptance, v1/v2 validators and baselines, CI/release logic, EventStore pins.
+- Do not change: attempt-16 packets/acceptance, v1/v2 validators and baselines, CI/release logic (sole exception: the owner-approved `env -u CI` on the `g6-current` restore step), EventStore pins.
 
 ## Tasks & Acceptance
 
@@ -61,6 +61,7 @@ context:
 - [ ] `references/Hexalith.Platform/apphost.cs` -- fast-forward Platform main to `origin/main`, set Toolkit to `13.6.0-preview.1.261001-0243`, commit; commit the root Platform gitlink -- removes the only direct pin drift.
 - [ ] Restore the 11 policy consumers with isolated NuGet cache, then audit -- the only remaining issue must be pending approval.
 - [ ] `.g6-current-evidence/<candidate-run>/` -- run the pending candidate; HALT with result hash, counts and limitations for the named decision.
+- [ ] `.github/workflows/ci.yml` -- in the `g6-current` "Restore effective G-6 package graphs" step, prefix `dotnet restore` with `env -u CI`; change nothing else; commit with root commitlint -- unblocks the CI authority run.
 - [ ] `references/Hexalith.Builds/Tools/{g6-current-policy.json,README.md}` -- record the decision verbatim, pass Builds controls, commit; commit the root Builds gitlink.
 - [ ] `.g6-current-evidence/<final-run>/` -- run on clean committed source; `validate` must exit 0 before any later commit.
 - [ ] `_bmad-output/implementation-artifacts/qualification-evidence/g-6-current-20261003/` -- copy validated result, cleanup, capture and logs with SHA-256 index.
@@ -81,6 +82,10 @@ context:
 - `python3 tools/planning/validate_production_authority.py --validate-index` and `git diff --check` -- pass.
 
 ## Implementation Notes
+
+**Tuple disposition record (2026-10-03T07:15:52Z).** The owner was asked: "As Jérôme Piquot (Builds/Platform/FrontComposer-Web owner), what is your named disposition on tuple 52c8d36a… and the CommunityToolkit.Aspire.Hosting.Dapr 13.6.0-preview.1.261001-0243 prerelease exception, given candidate result 399befab…?" Answer, verbatim: "Approve". Candidate: `.g6-current-evidence/candidate-20261003-1/result.json`, file SHA-256 `399befab8b1035496f8b60bf59652e6e24bf55189a260f1b4ccd4d5faf97c26e`, `artifactSha256` `03648b68affe1fbac1d04316ae38008a6e76fbaf1a89596c8887b226b94ea89d`, source root `accaee7`, status `not verified`, qualifier 1/1, support 33/33, zero skips, 18/18 commands exited 0, all cleanup flags true. The only issue was pending approval. Policy values: `decision: approved`, `approvedBy: "Jérôme Piquot"`, `approvedAtUtc: 2026-10-03T07:15:52Z`, and `reference` pointing to this record.
+
+**CI restore amendment (owner decision, 2026-10-03).** The owner was asked: "How should the CI g6-current restore blocker be handled?" Answer, verbatim: "Unset CI in restore (Recommended)". Scope: `env -u CI` on the `g6-current` restore step only. This matches the local runner's environment. The `Directory.Build.props` guard stays in force for every other build. Push remains authorized as in the frozen Decisions.
 
 ## Spec Change Log
 
