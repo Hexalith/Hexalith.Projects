@@ -1,0 +1,661 @@
+﻿2026-10-03T11:14:12.9880955Z Current runner version: '2.337.0'
+2026-10-03T11:14:12.9901349Z ##[group]Runner Image Provisioner
+2026-10-03T11:14:12.9902017Z Hosted Compute Agent
+2026-10-03T11:14:12.9902614Z Version: 20260901.588
+2026-10-03T11:14:12.9903180Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+2026-10-03T11:14:12.9903817Z Build Date: 2026-09-01T19:56:44Z
+2026-10-03T11:14:12.9904367Z Worker ID: {a3958171-62e2-4e6c-a18b-6046b678ff6c}
+2026-10-03T11:14:12.9904952Z Azure Region: westus3
+2026-10-03T11:14:12.9905935Z ##[endgroup]
+2026-10-03T11:14:12.9907128Z ##[group]Operating System
+2026-10-03T11:14:12.9907678Z Ubuntu
+2026-10-03T11:14:12.9908124Z 24.04.5
+2026-10-03T11:14:12.9908554Z LTS
+2026-10-03T11:14:12.9909053Z ##[endgroup]
+2026-10-03T11:14:12.9909545Z ##[group]Runner Image
+2026-10-03T11:14:12.9910107Z Image: ubuntu-24.04
+2026-10-03T11:14:12.9910593Z Version: 20260927.320.1
+2026-10-03T11:14:12.9911660Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-03T11:14:12.9912911Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+2026-10-03T11:14:12.9913707Z ##[endgroup]
+2026-10-03T11:14:12.9914591Z ##[group]GITHUB_TOKEN Permissions
+2026-10-03T11:14:12.9916611Z Contents: read
+2026-10-03T11:14:12.9917125Z Metadata: read
+2026-10-03T11:14:12.9917588Z ##[endgroup]
+2026-10-03T11:14:12.9919270Z Secret source: Actions
+2026-10-03T11:14:12.9920061Z Cache mode: write
+2026-10-03T11:14:12.9920725Z Prepare workflow directory
+2026-10-03T11:14:13.0647035Z Prepare all required actions
+2026-10-03T11:14:13.0685812Z Getting action download info
+2026-10-03T11:14:13.3894337Z Download action repository 'actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0' (SHA:9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0)
+2026-10-03T11:14:13.7639917Z Download action repository 'Hexalith/Hexalith.Builds@51af786cf156d2a3396dbd49f5e4898222e55c12' (SHA:51af786cf156d2a3396dbd49f5e4898222e55c12)
+2026-10-03T11:14:15.4555332Z Download action repository 'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' (SHA:043fb46d1a93c77aae656e7c1c64a875d1fc6a0a)
+2026-10-03T11:14:15.6328371Z Getting action download info
+2026-10-03T11:14:15.7605630Z Download action repository 'actions/setup-dotnet@v6.0.0' (SHA:a98b56852c35b8e3190ac28c8c2271da59106c68)
+2026-10-03T11:14:16.5560344Z Complete job name: G-6 current runtime qualification
+2026-10-03T11:14:16.6099716Z ##[group]Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+2026-10-03T11:14:16.6100398Z with:
+2026-10-03T11:14:16.6159458Z   fetch-depth: 0
+2026-10-03T11:14:16.6159765Z   submodules: false
+2026-10-03T11:14:16.6160128Z   repository: Hexalith/Hexalith.Projects
+2026-10-03T11:14:16.6163529Z   token: ***
+2026-10-03T11:14:16.6163752Z   ssh-strict: true
+2026-10-03T11:14:16.6163957Z   ssh-user: git
+2026-10-03T11:14:16.6164168Z   persist-credentials: true
+2026-10-03T11:14:16.6164409Z   clean: true
+2026-10-03T11:14:16.6164633Z   sparse-checkout-cone-mode: true
+2026-10-03T11:14:16.6164890Z   fetch-tags: false
+2026-10-03T11:14:16.6165308Z   show-progress: true
+2026-10-03T11:14:16.6165523Z   lfs: false
+2026-10-03T11:14:16.6165726Z   set-safe-directory: true
+2026-10-03T11:14:16.6165958Z   allow-unsafe-pr-checkout: false
+2026-10-03T11:14:16.6166759Z env:
+2026-10-03T11:14:16.6166973Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-03T11:14:16.6167282Z   G6_OUTPUT: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:14:16.6167561Z ##[endgroup]
+2026-10-03T11:14:16.6980883Z Syncing repository: Hexalith/Hexalith.Projects
+2026-10-03T11:14:16.6982029Z ##[group]Getting Git version info
+2026-10-03T11:14:16.6982437Z Working directory is '/home/runner/work/Hexalith.Projects/Hexalith.Projects'
+2026-10-03T11:14:16.6983036Z [command]/usr/bin/git version
+2026-10-03T11:14:16.7020830Z git version 2.55.0
+2026-10-03T11:14:16.7036454Z ##[endgroup]
+2026-10-03T11:14:16.7046152Z Temporarily overriding HOME='/home/runner/work/_temp/436f6f88-c37f-40f0-8371-da946ce13ad9' before making global git config changes
+2026-10-03T11:14:16.7047222Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-03T11:14:16.7052985Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Hexalith.Projects/Hexalith.Projects
+2026-10-03T11:14:16.7092978Z Deleting the contents of '/home/runner/work/Hexalith.Projects/Hexalith.Projects'
+2026-10-03T11:14:16.7100645Z ##[group]Determining repository object format
+2026-10-03T11:14:16.7102724Z ##[endgroup]
+2026-10-03T11:14:16.7103745Z ##[group]Initializing the repository
+2026-10-03T11:14:16.7104596Z [command]/usr/bin/git init /home/runner/work/Hexalith.Projects/Hexalith.Projects
+2026-10-03T11:14:16.7170112Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-03T11:14:16.7170914Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-03T11:14:16.7171617Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-03T11:14:16.7172050Z hint: call:
+2026-10-03T11:14:16.7172245Z hint:
+2026-10-03T11:14:16.7172551Z hint: 	git config --global init.defaultBranch <name>
+2026-10-03T11:14:16.7172851Z hint:
+2026-10-03T11:14:16.7173148Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-03T11:14:16.7173593Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-03T11:14:16.7173924Z hint:
+2026-10-03T11:14:16.7174147Z hint: 	git branch -m <name>
+2026-10-03T11:14:16.7174373Z hint:
+2026-10-03T11:14:16.7174680Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-03T11:14:16.7179257Z Initialized empty Git repository in /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/
+2026-10-03T11:14:16.7186325Z [command]/usr/bin/git remote add origin https://github.com/Hexalith/Hexalith.Projects
+2026-10-03T11:14:16.7224325Z ##[endgroup]
+2026-10-03T11:14:16.7225318Z ##[group]Disabling automatic garbage collection
+2026-10-03T11:14:16.7227280Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-03T11:14:16.7253548Z ##[endgroup]
+2026-10-03T11:14:16.7254121Z ##[group]Setting up auth
+2026-10-03T11:14:16.7254552Z Removing SSH command configuration
+2026-10-03T11:14:16.7259418Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-03T11:14:16.7284153Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-03T11:14:16.7563547Z Removing HTTP extra header
+2026-10-03T11:14:16.7568778Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-03T11:14:16.7599017Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-03T11:14:16.7789243Z Removing includeIf entries pointing to credentials config files
+2026-10-03T11:14:16.7793380Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:14:16.7821799Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-03T11:14:16.8015785Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-03T11:14:16.8047507Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git.path /home/runner/work/_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:14:16.8075925Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:14:16.8106882Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:14:16.8135380Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:14:16.8161607Z ##[endgroup]
+2026-10-03T11:14:16.8162039Z ##[group]Fetching the repository
+2026-10-03T11:14:16.8166797Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-10-03T11:14:18.5817381Z From https://github.com/Hexalith/Hexalith.Projects
+2026-10-03T11:14:18.5818085Z  * [new branch]      main       -> origin/main
+2026-10-03T11:14:18.5818466Z  * [new tag]         v1.0.0     -> v1.0.0
+2026-10-03T11:14:18.5818782Z  * [new tag]         v1.1.0     -> v1.1.0
+2026-10-03T11:14:18.5825668Z [command]/usr/bin/git branch --list --remote origin/main
+2026-10-03T11:14:18.5851087Z   origin/main
+2026-10-03T11:14:18.5857579Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+2026-10-03T11:14:18.5879588Z 0f03582b3457a6d9212d60e2f9146a6043af5f7e
+2026-10-03T11:14:18.5886519Z ##[endgroup]
+2026-10-03T11:14:18.5887004Z ##[group]Determining the checkout info
+2026-10-03T11:14:18.5887520Z ##[endgroup]
+2026-10-03T11:14:18.5887838Z [command]/usr/bin/git sparse-checkout disable
+2026-10-03T11:14:18.5930728Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-03T11:14:18.5959264Z ##[group]Checking out the ref
+2026-10-03T11:14:18.5963318Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-10-03T11:14:18.9854747Z Switched to a new branch 'main'
+2026-10-03T11:14:18.9859209Z branch 'main' set up to track 'origin/main'.
+2026-10-03T11:14:18.9882618Z ##[endgroup]
+2026-10-03T11:14:18.9926200Z [command]/usr/bin/git log -1 --format=%H
+2026-10-03T11:14:18.9952776Z 0f03582b3457a6d9212d60e2f9146a6043af5f7e
+2026-10-03T11:14:19.0121499Z ##[group]Run Hexalith/Hexalith.Builds/Github/initialize-build@51af786cf156d2a3396dbd49f5e4898222e55c12
+2026-10-03T11:14:19.0121906Z env:
+2026-10-03T11:14:19.0122085Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-03T11:14:19.0122329Z   G6_OUTPUT: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:14:19.0122577Z ##[endgroup]
+2026-10-03T11:14:19.0164838Z ##[start-action display=Initialize root-declared submodules;id=__Hexalith_Hexalith_Builds.__run]
+2026-10-03T11:14:19.0192973Z ##[group]Run git -c submodule.recurse=false submodule update --init
+2026-10-03T11:14:19.0193438Z [36;1mgit -c submodule.recurse=false submodule update --init[0m
+2026-10-03T11:14:19.0382682Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-03T11:14:19.0383013Z env:
+2026-10-03T11:14:19.0383225Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-03T11:14:19.0383481Z   G6_OUTPUT: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:14:19.0383733Z ##[endgroup]
+2026-10-03T11:14:19.0657767Z Submodule 'Hexalith.AI.Tools' (https://github.com/Hexalith/Hexalith.AI.Tools.git) registered for path 'references/Hexalith.AI.Tools'
+2026-10-03T11:14:19.0663545Z Submodule 'Hexalith.Builds' (https://github.com/Hexalith/Hexalith.Builds.git) registered for path 'references/Hexalith.Builds'
+2026-10-03T11:14:19.0670237Z Submodule 'Hexalith.Commons' (https://github.com/Hexalith/Hexalith.Commons.git) registered for path 'references/Hexalith.Commons'
+2026-10-03T11:14:19.0693380Z Submodule 'Hexalith.Conversations' (https://github.com/Hexalith/Hexalith.Conversations.git) registered for path 'references/Hexalith.Conversations'
+2026-10-03T11:14:19.0699871Z Submodule 'Hexalith.EventStore' (https://github.com/Hexalith/Hexalith.EventStore.git) registered for path 'references/Hexalith.EventStore'
+2026-10-03T11:14:19.0706281Z Submodule 'Hexalith.Folders' (https://github.com/Hexalith/Hexalith.Folders.git) registered for path 'references/Hexalith.Folders'
+2026-10-03T11:14:19.0712952Z Submodule 'Hexalith.FrontComposer' (https://github.com/Hexalith/Hexalith.FrontComposer.git) registered for path 'references/Hexalith.FrontComposer'
+2026-10-03T11:14:19.0719568Z Submodule 'Hexalith.McpCli' (https://github.com/Hexalith/Hexalith.McpCli.git) registered for path 'references/Hexalith.McpCli'
+2026-10-03T11:14:19.0726437Z Submodule 'Hexalith.Memories' (https://github.com/Hexalith/Hexalith.Memories.git) registered for path 'references/Hexalith.Memories'
+2026-10-03T11:14:19.0733048Z Submodule 'Hexalith.Parties' (https://github.com/Hexalith/Hexalith.Parties.git) registered for path 'references/Hexalith.Parties'
+2026-10-03T11:14:19.0739877Z Submodule 'Hexalith.Platform' (https://github.com/Hexalith/Hexalith.Platform.git) registered for path 'references/Hexalith.Platform'
+2026-10-03T11:14:19.0746737Z Submodule 'Hexalith.Tenants' (https://github.com/Hexalith/Hexalith.Tenants.git) registered for path 'references/Hexalith.Tenants'
+2026-10-03T11:14:19.0770317Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.AI.Tools'...
+2026-10-03T11:14:19.6791502Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Builds'...
+2026-10-03T11:14:21.5668725Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons'...
+2026-10-03T11:14:23.1088676Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations'...
+2026-10-03T11:14:24.6533360Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore'...
+2026-10-03T11:14:27.8459844Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders'...
+2026-10-03T11:14:29.5580698Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer'...
+2026-10-03T11:14:34.2004551Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli'...
+2026-10-03T11:14:35.6105615Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories'...
+2026-10-03T11:14:38.4511277Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties'...
+2026-10-03T11:14:40.5365239Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Platform'...
+2026-10-03T11:14:42.1123367Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants'...
+2026-10-03T11:14:44.3722123Z Submodule path 'references/Hexalith.AI.Tools': checked out '3f194e17174994d308ec84af9ee2b5aa68674d0d'
+2026-10-03T11:14:44.4575574Z Submodule path 'references/Hexalith.Builds': checked out '688eec9a4333245cc0ff7772115c769094471863'
+2026-10-03T11:14:44.4746834Z Submodule path 'references/Hexalith.Commons': checked out '116d26815eb81e35b3c161e1799e5ee12805fc0a'
+2026-10-03T11:14:44.7558296Z Submodule path 'references/Hexalith.Conversations': checked out '8f2594db2f6e29e6eb98e2fea90467d615674dd0'
+2026-10-03T11:14:45.3538291Z Submodule path 'references/Hexalith.EventStore': checked out '2c58ffda41759e895ace4b9625c9bd931a217672'
+2026-10-03T11:14:45.6644050Z Submodule path 'references/Hexalith.Folders': checked out '92da4b01352448cb06296776097e2da4383d9340'
+2026-10-03T11:14:46.3340499Z Submodule path 'references/Hexalith.FrontComposer': checked out 'bf40099f81fcaeac324b7b4377513ac7d49cead4'
+2026-10-03T11:14:46.5998616Z Submodule path 'references/Hexalith.McpCli': checked out '9b0b6e7a082bf93b669a883e48672c26c6f0630d'
+2026-10-03T11:14:47.1240547Z Submodule path 'references/Hexalith.Memories': checked out '42995692634af9ba35982ec0e1aedec4f5576e71'
+2026-10-03T11:14:47.4353654Z Submodule path 'references/Hexalith.Parties': checked out '06714c166c090200ac87373b11d8243aa11b2126'
+2026-10-03T11:14:47.6727494Z Submodule path 'references/Hexalith.Platform': checked out 'c3c473a4aa8da421896e4795fcdb0f4d2771a0be'
+2026-10-03T11:14:48.1223974Z Submodule path 'references/Hexalith.Tenants': checked out 'bfc10cb62dff6784c4b4bcabadfd537ef74fd77a'
+2026-10-03T11:14:48.1245638Z ##[end-action id=__Hexalith_Hexalith_Builds.__run;outcome=success;conclusion=success;duration_ms=29107]
+2026-10-03T11:14:48.1300015Z ##[group]Run Hexalith/Hexalith.Builds/Github/initialize-dotnet@51af786cf156d2a3396dbd49f5e4898222e55c12
+2026-10-03T11:14:48.1300391Z with:
+2026-10-03T11:14:48.1300562Z   global-json-file: global.json
+2026-10-03T11:14:48.1300768Z   dotnet-version: 10.0.401
+2026-10-03T11:14:48.1300952Z env:
+2026-10-03T11:14:48.1301121Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-03T11:14:48.1301349Z   G6_OUTPUT: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:14:48.1301580Z ##[endgroup]
+2026-10-03T11:14:48.1304973Z ##[start-action display=Setup .NET from global.json;id=__Hexalith_Hexalith_Builds_2.__actions_setup-dotnet]
+2026-10-03T11:14:48.1347481Z ##[group]Run actions/setup-dotnet@v6.0.0
+2026-10-03T11:14:48.1347709Z with:
+2026-10-03T11:14:48.1347885Z   global-json-file: global.json
+2026-10-03T11:14:48.1348085Z   cache: false
+2026-10-03T11:14:48.1348246Z env:
+2026-10-03T11:14:48.1348419Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-03T11:14:48.1348648Z   G6_OUTPUT: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:14:48.1348926Z ##[endgroup]
+2026-10-03T11:14:48.2337424Z [command]/home/runner/work/_actions/actions/setup-dotnet/v6.0.0/externals/install-dotnet.sh --skip-non-versioned-files --runtime dotnet --channel LTS
+2026-10-03T11:14:48.4343293Z dotnet-install: .NET Core Runtime with version '10.0.12' is already installed.
+2026-10-03T11:14:48.4362475Z [command]/home/runner/work/_actions/actions/setup-dotnet/v6.0.0/externals/install-dotnet.sh --skip-non-versioned-files --channel 10.0.4xx
+2026-10-03T11:14:48.5884090Z dotnet-install: .NET Core SDK with version '10.0.401' is already installed.
+2026-10-03T11:14:48.5986227Z ##[end-action id=__Hexalith_Hexalith_Builds_2.__actions_setup-dotnet;outcome=success;conclusion=success;duration_ms=467]
+2026-10-03T11:14:48.5995904Z ##[start-action display=Setup .NET 10.0.401;id=__Hexalith_Hexalith_Builds_2.__actions_setup-dotnet_2]
+2026-10-03T11:14:48.6002560Z ##[end-action id=__Hexalith_Hexalith_Builds_2.__actions_setup-dotnet_2;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-03T11:14:48.6004287Z ##[start-action display=Add Aspire Workloads;id=__Hexalith_Hexalith_Builds_2.__run]
+2026-10-03T11:14:48.6029549Z ##[end-action id=__Hexalith_Hexalith_Builds_2.__run;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-03T11:14:48.6053397Z ##[group]Run python3 -m unittest tests/tools/test_run_g6_current.py tests/tools/test_g6_qualification_runner.py -v
+2026-10-03T11:14:48.6054029Z [36;1mpython3 -m unittest tests/tools/test_run_g6_current.py tests/tools/test_g6_qualification_runner.py -v[0m
+2026-10-03T11:14:48.6054527Z [36;1mpython3 references/Hexalith.Builds/Tools/test_package_readme.py -v[0m
+2026-10-03T11:14:48.6112540Z shell: /usr/bin/bash -e {0}
+2026-10-03T11:14:48.6112746Z env:
+2026-10-03T11:14:48.6112912Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-03T11:14:48.6113145Z   G6_OUTPUT: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:14:48.6113402Z   DOTNET_ROOT: /usr/share/dotnet
+2026-10-03T11:14:48.6113598Z ##[endgroup]
+2026-10-03T11:14:48.7440401Z test_failed_install_retains_normalized_build_controls_without_caller_secrets (tests.tools.test_run_g6_current.CurrentRunnerPreflightTests.test_failed_install_retains_normalized_build_controls_without_caller_secrets) ... G6-CURRENT-FAILED: install failed
+2026-10-03T11:14:48.7451031Z ok
+2026-10-03T11:14:48.7463948Z test_mismatched_tuple_retains_not_verified_without_starting_resources (tests.tools.test_run_g6_current.CurrentRunnerPreflightTests.test_mismatched_tuple_retains_not_verified_without_starting_resources) ... G6-CURRENT-NOT-VERIFIED: controlled tuple changed: communityToolkitAspireDapr preview != beta
+2026-10-03T11:14:48.7464993Z ok
+2026-10-03T11:14:48.7477886Z test_pending_selected_tuple_can_reach_live_runner_despite_consumer_pin_drift (tests.tools.test_run_g6_current.CurrentRunnerPreflightTests.test_pending_selected_tuple_can_reach_live_runner_despite_consumer_pin_drift) ... ok
+2026-10-03T11:14:48.7487558Z test_failed_launch_with_cid_removes_only_that_exact_container (tests.tools.test_g6_qualification_runner.QualificationContainerCleanupTests.test_failed_launch_with_cid_removes_only_that_exact_container) ... ok
+2026-10-03T11:14:48.7494969Z test_failed_launch_without_cid_does_not_target_any_container (tests.tools.test_g6_qualification_runner.QualificationContainerCleanupTests.test_failed_launch_without_cid_does_not_target_any_container) ... ok
+2026-10-03T11:14:48.7502809Z test_caller_ide_and_build_overrides_are_removed_case_insensitively (tests.tools.test_g6_qualification_runner.QualificationEnvironmentTests.test_caller_ide_and_build_overrides_are_removed_case_insensitively) ... ok
+2026-10-03T11:14:48.7509398Z G6-CURRENT-FAILED: /home/runner/work/Hexalith.Projects/Hexalith.Projects/.g6-current-evidence/tmpl1gvhvpk/result/result.json
+2026-10-03T11:14:48.7509935Z G6-RUN: inspect normalized build properties
+2026-10-03T11:14:49.6716319Z G6-RESULT: inspect normalized build properties: exit 0; }
+2026-10-03T11:14:49.6722120Z test_hostile_caller_cannot_disable_real_msbuild_packing_or_ci_properties (tests.tools.test_g6_qualification_runner.QualificationEnvironmentTests.test_hostile_caller_cannot_disable_real_msbuild_packing_or_ci_properties) ... ok
+2026-10-03T11:14:49.6734663Z test_isolated_tool_install_uses_the_supplied_build_environment (tests.tools.test_g6_qualification_runner.QualificationEnvironmentTests.test_isolated_tool_install_uses_the_supplied_build_environment) ... ok
+2026-10-03T11:14:49.6763799Z test_actual_assets_retain_transitive_families_and_exact_preview_exclusions (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_actual_assets_retain_transitive_families_and_exact_preview_exclusions) ... ok
+2026-10-03T11:14:49.6777272Z test_actual_mcp_assets_require_transitive_dapr_client (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_actual_mcp_assets_require_transitive_dapr_client) ... ok
+2026-10-03T11:14:49.6786808Z test_cleanup_failure_is_retained_even_when_commands_pass (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_cleanup_failure_is_retained_even_when_commands_pass) ... ok
+2026-10-03T11:14:49.6789010Z test_failed_fresh_build_never_executes_fixture_dll (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_failed_fresh_build_never_executes_fixture_dll) ... ok
+2026-10-03T11:14:49.6791018Z test_failed_support_keeps_actual_counts_and_safe_identities (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_failed_support_keeps_actual_counts_and_safe_identities) ... ok
+2026-10-03T11:14:49.6797551Z test_fixture_disagreement_keeps_cleanup_false (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_fixture_disagreement_keeps_cleanup_false) ... ok
+2026-10-03T11:14:49.6810302Z test_process_group_disappearance_after_kill_is_proven (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_process_group_disappearance_after_kill_is_proven) ... ok
+2026-10-03T11:14:49.6819286Z test_source_drift_retains_original_snapshot_and_failure (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_source_drift_retains_original_snapshot_and_failure) ... ok
+2026-10-03T11:14:49.6831248Z test_still_present_process_group_keeps_cleanup_false (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_still_present_process_group_keeps_cleanup_false) ... ok
+2026-10-03T11:14:49.6842326Z test_unverifiable_process_group_keeps_cleanup_false (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_unverifiable_process_group_keeps_cleanup_false) ... ok
+2026-10-03T11:14:49.6843269Z 
+2026-10-03T11:14:49.6843562Z ----------------------------------------------------------------------
+2026-10-03T11:14:49.6844008Z Ran 18 tests in 0.942s
+2026-10-03T11:14:49.6844163Z 
+2026-10-03T11:14:49.6844247Z OK
+2026-10-03T11:14:53.1141862Z test_backslash_root_package_path_is_replaced (__main__.PackageReadmeTests.test_backslash_root_package_path_is_replaced) ... ok
+2026-10-03T11:14:54.9751012Z test_forward_slash_root_package_path_is_replaced (__main__.PackageReadmeTests.test_forward_slash_root_package_path_is_replaced) ... ok
+2026-10-03T11:14:56.3260057Z test_missing_module_readme_remains_a_pack_failure (__main__.PackageReadmeTests.test_missing_module_readme_remains_a_pack_failure) ... ok
+2026-10-03T11:14:58.1053102Z README-DEFAULT-CONTENT: omitted PackagePath: content/omitted/README.md, contentFiles/any/net10.0/omitted/README.md
+2026-10-03T11:14:58.1096144Z test_omitted_package_path_preserves_default_content_packaging (__main__.PackageReadmeTests.test_omitted_package_path_preserves_default_content_packaging) ... ok
+2026-10-03T11:15:01.6084003Z test_same_source_root_docs_and_unpacked_items_are_distinguished (__main__.PackageReadmeTests.test_same_source_root_docs_and_unpacked_items_are_distinguished) ... ok
+2026-10-03T11:15:03.2954208Z test_standalone_module_readme_is_packed (__main__.PackageReadmeTests.test_standalone_module_readme_is_packed) ... ok
+2026-10-03T11:15:03.2954862Z 
+2026-10-03T11:15:03.2958620Z ----------------------------------------------------------------------
+2026-10-03T11:15:03.2959076Z Ran 6 tests in 13.545s
+2026-10-03T11:15:03.2959231Z 
+2026-10-03T11:15:03.2959324Z OK
+2026-10-03T11:15:03.3076851Z ##[group]Run docker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+2026-10-03T11:15:03.3077439Z [36;1mdocker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636[0m
+2026-10-03T11:15:03.3132972Z shell: /usr/bin/bash -e {0}
+2026-10-03T11:15:03.3133181Z env:
+2026-10-03T11:15:03.3133358Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-03T11:15:03.3133597Z   G6_OUTPUT: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:15:03.3133853Z   DOTNET_ROOT: /usr/share/dotnet
+2026-10-03T11:15:03.3134053Z ##[endgroup]
+2026-10-03T11:15:03.9471010Z docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636: Pulling from library/postgres
+2026-10-03T11:15:04.1947112Z 26c307b5e35a: Pulling fs layer
+2026-10-03T11:15:04.1947564Z 5db2b7edf527: Pulling fs layer
+2026-10-03T11:15:04.1948232Z 130549402290: Pulling fs layer
+2026-10-03T11:15:04.1948975Z 8241f4a14319: Pulling fs layer
+2026-10-03T11:15:04.1949435Z a4dcdc0137d7: Pulling fs layer
+2026-10-03T11:15:04.1949781Z d1052e262c2e: Pulling fs layer
+2026-10-03T11:15:04.1950097Z 39762d0b4bb2: Pulling fs layer
+2026-10-03T11:15:04.1950398Z 38639b9be6a6: Pulling fs layer
+2026-10-03T11:15:04.1950725Z 4e6c52c74256: Pulling fs layer
+2026-10-03T11:15:04.1951038Z f51baa0c6c0d: Pulling fs layer
+2026-10-03T11:15:04.1951363Z 88bb22edda9b: Pulling fs layer
+2026-10-03T11:15:04.1951687Z f7d54729e84b: Pulling fs layer
+2026-10-03T11:15:04.1952029Z f90dd111f2e5: Pulling fs layer
+2026-10-03T11:15:04.1952227Z 38639b9be6a6: Waiting
+2026-10-03T11:15:04.1952415Z 4e6c52c74256: Waiting
+2026-10-03T11:15:04.1952604Z f51baa0c6c0d: Waiting
+2026-10-03T11:15:04.1952780Z 88bb22edda9b: Waiting
+2026-10-03T11:15:04.1952954Z f7d54729e84b: Waiting
+2026-10-03T11:15:04.1953127Z f90dd111f2e5: Waiting
+2026-10-03T11:15:04.1953295Z 8241f4a14319: Waiting
+2026-10-03T11:15:04.1953473Z a4dcdc0137d7: Waiting
+2026-10-03T11:15:04.1953645Z d1052e262c2e: Waiting
+2026-10-03T11:15:04.1953822Z 39762d0b4bb2: Waiting
+2026-10-03T11:15:04.4003440Z 5db2b7edf527: Verifying Checksum
+2026-10-03T11:15:04.4005148Z 5db2b7edf527: Download complete
+2026-10-03T11:15:04.4200082Z 130549402290: Verifying Checksum
+2026-10-03T11:15:04.4204899Z 130549402290: Download complete
+2026-10-03T11:15:04.4891082Z 26c307b5e35a: Verifying Checksum
+2026-10-03T11:15:04.4891981Z 26c307b5e35a: Download complete
+2026-10-03T11:15:04.5792277Z 8241f4a14319: Verifying Checksum
+2026-10-03T11:15:04.5792737Z 8241f4a14319: Download complete
+2026-10-03T11:15:04.6287308Z a4dcdc0137d7: Verifying Checksum
+2026-10-03T11:15:04.6287737Z a4dcdc0137d7: Download complete
+2026-10-03T11:15:04.6658724Z d1052e262c2e: Verifying Checksum
+2026-10-03T11:15:04.6659194Z d1052e262c2e: Download complete
+2026-10-03T11:15:04.7458719Z 39762d0b4bb2: Verifying Checksum
+2026-10-03T11:15:04.7460024Z 39762d0b4bb2: Download complete
+2026-10-03T11:15:04.8043722Z 38639b9be6a6: Verifying Checksum
+2026-10-03T11:15:04.8044153Z 38639b9be6a6: Download complete
+2026-10-03T11:15:04.9169872Z f51baa0c6c0d: Verifying Checksum
+2026-10-03T11:15:04.9170504Z f51baa0c6c0d: Download complete
+2026-10-03T11:15:04.9758172Z 88bb22edda9b: Verifying Checksum
+2026-10-03T11:15:04.9758676Z 88bb22edda9b: Download complete
+2026-10-03T11:15:05.0929546Z f7d54729e84b: Verifying Checksum
+2026-10-03T11:15:05.0930200Z f7d54729e84b: Download complete
+2026-10-03T11:15:05.1190039Z 4e6c52c74256: Verifying Checksum
+2026-10-03T11:15:05.1190434Z 4e6c52c74256: Download complete
+2026-10-03T11:15:05.1497132Z f90dd111f2e5: Download complete
+2026-10-03T11:15:05.2844920Z 26c307b5e35a: Pull complete
+2026-10-03T11:15:09.5066418Z 5db2b7edf527: Pull complete
+2026-10-03T11:15:09.7805682Z 130549402290: Pull complete
+2026-10-03T11:15:09.8297706Z 8241f4a14319: Pull complete
+2026-10-03T11:15:10.2575678Z a4dcdc0137d7: Pull complete
+2026-10-03T11:15:10.3236617Z d1052e262c2e: Pull complete
+2026-10-03T11:15:10.3304689Z 39762d0b4bb2: Pull complete
+2026-10-03T11:15:10.3364289Z 38639b9be6a6: Pull complete
+2026-10-03T11:15:14.0174751Z 4e6c52c74256: Pull complete
+2026-10-03T11:15:14.0305350Z f51baa0c6c0d: Pull complete
+2026-10-03T11:15:14.0396201Z 88bb22edda9b: Pull complete
+2026-10-03T11:15:14.0476175Z f7d54729e84b: Pull complete
+2026-10-03T11:15:14.0559800Z f90dd111f2e5: Pull complete
+2026-10-03T11:15:14.0587406Z Digest: sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+2026-10-03T11:15:14.0592963Z Status: Downloaded newer image for postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+2026-10-03T11:15:14.0599492Z docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+2026-10-03T11:15:14.0638702Z ##[group]Run set -euo pipefail
+2026-10-03T11:15:14.0638958Z [36;1mset -euo pipefail[0m
+2026-10-03T11:15:14.0639165Z [36;1mwhile IFS= read -r project; do[0m
+2026-10-03T11:15:14.0639524Z [36;1m  # Jérôme Piquot, 2026-10-03: “Unset CI in restore (Recommended)”.[0m
+2026-10-03T11:15:14.0639964Z [36;1m  # This dedicated Debug source proof retains the normal package-only CI guard.[0m
+2026-10-03T11:15:14.0640389Z [36;1m  env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true[0m
+2026-10-03T11:15:14.0640849Z [36;1mdone < <(jq -r '.resolvedProjects[]' references/Hexalith.Builds/Tools/g6-current-policy.json)[0m
+2026-10-03T11:15:14.0697159Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-03T11:15:14.0697434Z env:
+2026-10-03T11:15:14.0697608Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-03T11:15:14.0697839Z   G6_OUTPUT: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:15:14.0698082Z   DOTNET_ROOT: /usr/share/dotnet
+2026-10-03T11:15:14.0698323Z ##[endgroup]
+2026-10-03T11:15:15.1341364Z   Determining projects to restore...
+2026-10-03T11:15:19.2001393Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Shell/Hexalith.FrontComposer.Shell.csproj (in 1.57 sec).
+2026-10-03T11:15:19.2166645Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects/Hexalith.Projects.csproj (in 1.57 sec).
+2026-10-03T11:15:19.2176912Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.UI/Hexalith.Projects.UI.csproj (in 1.57 sec).
+2026-10-03T11:15:19.2196210Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj (in 1.57 sec).
+2026-10-03T11:15:19.2226392Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.ServiceDefaults/Hexalith.Projects.ServiceDefaults.csproj (in 7 ms).
+2026-10-03T11:15:19.2404230Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj (in 11 ms).
+2026-10-03T11:15:19.2405812Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Infrastructure/Hexalith.Projects.Infrastructure.csproj (in 14 ms).
+2026-10-03T11:15:19.5688945Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj (in 322 ms).
+2026-10-03T11:15:20.1182517Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj (in 537 ms).
+2026-10-03T11:15:20.1279612Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj (in 896 ms).
+2026-10-03T11:15:20.1351576Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Contracts/Hexalith.Tenants.Contracts.csproj (in 3 ms).
+2026-10-03T11:15:20.1461561Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Client/Hexalith.Tenants.Client.csproj (in 6 ms).
+2026-10-03T11:15:20.1496906Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Contracts/Hexalith.Memories.Contracts.csproj (in 1 ms).
+2026-10-03T11:15:20.2537011Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Client.Rest/Hexalith.Memories.Client.Rest.csproj (in 95 ms).
+2026-10-03T11:15:20.2680298Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Server/Hexalith.Tenants.Server.csproj (in 137 ms).
+2026-10-03T11:15:21.2616132Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Aspire/Hexalith.Projects.Aspire.csproj (in 2.01 sec).
+2026-10-03T11:15:21.2797324Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Contracts.UI/Hexalith.FrontComposer.Contracts.UI.csproj (in 8 ms).
+2026-10-03T11:15:21.2947272Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj (in 2.04 sec).
+2026-10-03T11:15:21.3033814Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj (in 4 ms).
+2026-10-03T11:15:21.3171789Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Hexalith.EventStore.Client.csproj (in 8 ms).
+2026-10-03T11:15:21.3208381Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/Hexalith.EventStore.Aspire.csproj (in 9 ms).
+2026-10-03T11:15:21.3281105Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Hexalith.Conversations.Contracts.csproj (in 2 ms).
+2026-10-03T11:15:21.3283576Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.Abstractions/Hexalith.EventStore.Admin.Abstractions.csproj (in 4 ms).
+2026-10-03T11:15:21.3318784Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.UniqueIds/Hexalith.Commons.UniqueIds.csproj (in 2 ms).
+2026-10-03T11:15:21.3321159Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Contracts/Hexalith.FrontComposer.Contracts.csproj (in 1.05 sec).
+2026-10-03T11:15:21.3357687Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.Serialization/Hexalith.Commons.Serialization.csproj (in 1 ms).
+2026-10-03T11:15:21.3397228Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.Http/Hexalith.Commons.Http.csproj (in 2 ms).
+2026-10-03T11:15:21.3406191Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Client/Hexalith.Conversations.Client.csproj (in 5 ms).
+2026-10-03T11:15:21.3537135Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/tests/Hexalith.Projects.E2E.Fixtures/Hexalith.Projects.E2E.Fixtures.csproj (in 2 ms).
+2026-10-03T11:15:21.3553318Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.Contracts/Hexalith.Folders.Contracts.csproj (in 1 ms).
+2026-10-03T11:15:21.3597212Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.Client/Hexalith.Folders.Client.csproj (in 3 ms).
+2026-10-03T11:15:21.3726561Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj (in 4 ms).
+2026-10-03T11:15:21.3876298Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj (in 20 ms).
+2026-10-03T11:15:21.3936336Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Hexalith.EventStore.Server.csproj (in 12 ms).
+2026-10-03T11:15:21.4146833Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj (in 11 ms).
+2026-10-03T11:15:21.4166284Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj (in 16 ms).
+2026-10-03T11:15:21.5900598Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.SourceTools/Hexalith.FrontComposer.SourceTools.csproj (in 1.32 sec).
+2026-10-03T11:15:22.2101727Z   Determining projects to restore...
+2026-10-03T11:15:24.5057901Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Admin.Web/Hexalith.Conversations.Admin.Web.csproj (in 617 ms).
+2026-10-03T11:15:24.5327096Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Hexalith.Conversations.Server.csproj (in 468 ms).
+2026-10-03T11:15:24.5888833Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.TenantAccess/Hexalith.Commons.TenantAccess.csproj (in 23 ms).
+2026-10-03T11:15:24.6131851Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.Publication/Hexalith.Commons.Publication.csproj (in 5 ms).
+2026-10-03T11:15:24.6529376Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.Diagnostics/Hexalith.Commons.Diagnostics.csproj (in 9 ms).
+2026-10-03T11:15:24.7346795Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Testing/Hexalith.Conversations.Testing.csproj (in 790 ms).
+2026-10-03T11:15:24.7394273Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations/Hexalith.Conversations.csproj (in 929 ms).
+2026-10-03T11:15:25.4163782Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj (in 895 ms).
+2026-10-03T11:15:25.4247883Z   14 of 22 projects are up-to-date for restore.
+2026-10-03T11:15:26.0308275Z   Determining projects to restore...
+2026-10-03T11:15:28.2287842Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.SignalR/Hexalith.EventStore.SignalR.csproj (in 584 ms).
+2026-10-03T11:15:28.2359339Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.Server.Host/Hexalith.EventStore.Admin.Server.Host.csproj (in 459 ms).
+2026-10-03T11:15:28.2407512Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Api/Hexalith.Tenants.Api.csproj (in 484 ms).
+2026-10-03T11:15:28.2676916Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.RestApi.Generators/Hexalith.EventStore.RestApi.Generators.csproj (in 26 ms).
+2026-10-03T11:15:28.3216911Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.Server/Hexalith.EventStore.Admin.Server.csproj (in 17 ms).
+2026-10-03T11:15:28.3388651Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.UI/Hexalith.EventStore.Admin.UI.csproj (in 34 ms).
+2026-10-03T11:15:28.4055502Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/samples/Hexalith.EventStore.Sample.Contracts/Hexalith.EventStore.Sample.Contracts.csproj (in 11 ms).
+2026-10-03T11:15:28.5467170Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/samples/Hexalith.EventStore.Sample.BlazorUI/Hexalith.EventStore.Sample.BlazorUI.csproj (in 25 ms).
+2026-10-03T11:15:28.5658990Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/samples/Hexalith.EventStore.Sample/Hexalith.EventStore.Sample.csproj (in 101 ms).
+2026-10-03T11:15:28.5887282Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/samples/Hexalith.EventStore.Sample.Api/Hexalith.EventStore.Sample.Api.csproj (in 22 ms).
+2026-10-03T11:15:29.1872412Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.TestSubscriber/Hexalith.EventStore.TestSubscriber.csproj (in 1.5 sec).
+2026-10-03T11:15:30.7132937Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj (in 2.44 sec).
+2026-10-03T11:15:30.7170847Z   13 of 25 projects are up-to-date for restore.
+2026-10-03T11:15:31.2388812Z   Determining projects to restore...
+2026-10-03T11:15:32.6826160Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj (in 633 ms).
+2026-10-03T11:15:32.6840663Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing.Integration/Hexalith.EventStore.Testing.Integration.csproj (in 632 ms).
+2026-10-03T11:15:33.1796448Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj (in 1.18 sec).
+2026-10-03T11:15:33.1849966Z   12 of 15 projects are up-to-date for restore.
+2026-10-03T11:15:33.7196878Z   Determining projects to restore...
+2026-10-03T11:15:34.7642509Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.ServiceDefaults/Hexalith.Folders.ServiceDefaults.csproj (in 282 ms).
+2026-10-03T11:15:35.0935824Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.UI/Hexalith.Folders.UI.csproj (in 652 ms).
+2026-10-03T11:15:35.0986559Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj (in 606 ms).
+2026-10-03T11:15:35.1265723Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj (in 10 ms).
+2026-10-03T11:15:35.1276992Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj (in 618 ms).
+2026-10-03T11:15:35.1326899Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders/Hexalith.Folders.csproj (in 361 ms).
+2026-10-03T11:15:35.2066179Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.Aspire/Hexalith.Folders.Aspire.csproj (in 104 ms).
+2026-10-03T11:15:35.2527952Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj (in 122 ms).
+2026-10-03T11:15:35.2566270Z   2 of 10 projects are up-to-date for restore.
+2026-10-03T11:15:35.7997459Z   Determining projects to restore...
+2026-10-03T11:15:38.7068035Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Schema/Hexalith.FrontComposer.Schema.csproj (in 232 ms).
+2026-10-03T11:15:38.7097099Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/tests/Hexalith.FrontComposer.CounterFixture/Hexalith.FrontComposer.CounterFixture.csproj (in 285 ms).
+2026-10-03T11:15:38.7455457Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.UI/Hexalith.Tenants.UI.csproj (in 22 ms).
+2026-10-03T11:15:38.7641649Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/samples/Hexalith.Tenants.Sample/Hexalith.Tenants.Sample.csproj (in 14 ms).
+2026-10-03T11:15:38.8578118Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Mcp/Hexalith.FrontComposer.Mcp.csproj (in 404 ms).
+2026-10-03T11:15:38.8817596Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.UI/Hexalith.Parties.UI.csproj (in 89 ms).
+2026-10-03T11:15:38.9223602Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Security/Hexalith.Parties.Security.csproj (in 33 ms).
+2026-10-03T11:15:38.9278289Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.UI/Hexalith.FrontComposer.UI.csproj (in 464 ms).
+2026-10-03T11:15:38.9649717Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Contracts/Hexalith.Parties.Contracts.csproj (in 24 ms).
+2026-10-03T11:15:38.9736618Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Picker/Hexalith.Parties.Picker.csproj (in 26 ms).
+2026-10-03T11:15:38.9938601Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.ConsumerPortal/Hexalith.Parties.ConsumerPortal.csproj (in 15 ms).
+2026-10-03T11:15:38.9992932Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Client/Hexalith.Parties.Client.csproj (in 16 ms).
+2026-10-03T11:15:39.0024072Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Authentication/Hexalith.Parties.Authentication.csproj (in 6 ms).
+2026-10-03T11:15:39.0347205Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.AdminPortal/Hexalith.Parties.AdminPortal.csproj (in 22 ms).
+2026-10-03T11:15:39.0428614Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Projections/Hexalith.Parties.Projections.csproj (in 142 ms).
+2026-10-03T11:15:39.0657615Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.ServiceDefaults/Hexalith.Commons.ServiceDefaults.csproj (in 14 ms).
+2026-10-03T11:15:39.3648784Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/samples/Counter/Counter.Web/Counter.Web.csproj (in 34 ms).
+2026-10-03T11:15:39.5037252Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/samples/Counter/Counter.Specimens/Counter.Specimens.csproj (in 10 ms).
+2026-10-03T11:15:39.5235216Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/samples/Counter/Counter.Specimens.Domain/Counter.Specimens.Domain.csproj (in 13 ms).
+2026-10-03T11:15:39.5416814Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/samples/Counter/Counter.Domain/Counter.Domain.csproj (in 6 ms).
+2026-10-03T11:15:39.6018327Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj (in 536 ms).
+2026-10-03T11:15:39.6102343Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties/Hexalith.Parties.csproj (in 848 ms).
+2026-10-03T11:15:39.7734948Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons/Hexalith.Commons.csproj (in 731 ms).
+2026-10-03T11:15:39.7779597Z   25 of 48 projects are up-to-date for restore.
+2026-10-03T11:15:40.3355962Z   Determining projects to restore...
+2026-10-03T11:15:41.2047422Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Telemetry/Hexalith.Memories.Telemetry.csproj (in 145 ms).
+2026-10-03T11:15:41.2955762Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.AccessTelemetry.Contracts/Hexalith.Memories.AccessTelemetry.Contracts.csproj (in 246 ms).
+2026-10-03T11:15:41.5557206Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.ServiceDefaults/Hexalith.Memories.ServiceDefaults.csproj (in 451 ms).
+2026-10-03T11:15:41.5559562Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.AccessTelemetry.Clock/Hexalith.Memories.AccessTelemetry.Clock.csproj (in 502 ms).
+2026-10-03T11:15:41.6484658Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Mcp/Hexalith.Memories.Mcp.csproj (in 333 ms).
+2026-10-03T11:15:41.6626900Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.EventStore/Hexalith.Memories.EventStore.csproj (in 101 ms).
+2026-10-03T11:15:41.6686670Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.AccessTelemetry/Hexalith.Memories.AccessTelemetry.csproj (in 9 ms).
+2026-10-03T11:15:41.8348575Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj (in 261 ms).
+2026-10-03T11:15:47.8916274Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Server/Hexalith.Memories.Server.csproj (in 6.36 sec).
+2026-10-03T11:15:47.8958513Z   3 of 12 projects are up-to-date for restore.
+2026-10-03T11:15:48.4300328Z   Determining projects to restore...
+2026-10-03T11:15:50.6466034Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj (in 288 ms).
+2026-10-03T11:15:50.6467106Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Mcp/Hexalith.Parties.Mcp.csproj (in 240 ms).
+2026-10-03T11:15:50.6499903Z   30 of 32 projects are up-to-date for restore.
+2026-10-03T11:15:51.1923063Z   Determining projects to restore...
+2026-10-03T11:15:53.2797391Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Aspire/Hexalith.Tenants.Aspire.csproj (in 355 ms).
+2026-10-03T11:15:53.2809972Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj (in 355 ms).
+2026-10-03T11:15:53.3265832Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Aspire/Hexalith.Memories.Aspire.csproj (in 417 ms).
+2026-10-03T11:15:53.3267673Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.Aspire/Hexalith.Commons.Aspire.csproj (in 338 ms).
+2026-10-03T11:15:53.3304979Z   33 of 37 projects are up-to-date for restore.
+2026-10-03T11:15:53.8737494Z   Determining projects to restore...
+2026-10-03T11:15:55.1155430Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/Hexalith.Builds.Module.AppHost.csproj (in 773 ms).
+2026-10-03T11:15:55.1158501Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.EventStoreHost/Hexalith.Builds.Module.EventStoreHost.csproj (in 765 ms).
+2026-10-03T11:15:55.1160776Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.UiHost/Hexalith.Builds.Module.UiHost.csproj (in 765 ms).
+2026-10-03T11:15:55.1162768Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Hexalith.Builds.Tooling.csproj (in 765 ms).
+2026-10-03T11:15:55.6466082Z   Determining projects to restore...
+2026-10-03T11:15:56.1160509Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli/src/Hexalith.McpCli.Abstractions/Hexalith.McpCli.Abstractions.csproj (in 74 ms).
+2026-10-03T11:15:56.2290894Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli/src/Hexalith.McpCli.Analyzers/Hexalith.McpCli.Analyzers.csproj (in 107 ms).
+2026-10-03T11:15:56.3784887Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli/src/Hexalith.McpCli.Core/Hexalith.McpCli.Core.csproj (in 348 ms).
+2026-10-03T11:15:56.3813808Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj (in 350 ms).
+2026-10-03T11:15:56.3822662Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli/src/Hexalith.McpCli.Mcp/Hexalith.McpCli.Mcp.csproj (in 348 ms).
+2026-10-03T11:15:56.4221594Z ##[group]Run python3 tests/tools/run_g6_ci_gate.py --event "$G6_EVENT_NAME" --base-sha "$G6_BASE_SHA" --policy references/Hexalith.Builds/Tools/g6-current-policy.json --output "$G6_OUTPUT"
+2026-10-03T11:15:56.4222522Z [36;1mpython3 tests/tools/run_g6_ci_gate.py --event "$G6_EVENT_NAME" --base-sha "$G6_BASE_SHA" --policy references/Hexalith.Builds/Tools/g6-current-policy.json --output "$G6_OUTPUT"[0m
+2026-10-03T11:15:56.4279149Z shell: /usr/bin/bash -e {0}
+2026-10-03T11:15:56.4279358Z env:
+2026-10-03T11:15:56.4279540Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-03T11:15:56.4279782Z   G6_OUTPUT: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:15:56.4280040Z   DOTNET_ROOT: /usr/share/dotnet
+2026-10-03T11:15:56.4280244Z   G6_EVENT_NAME: push
+2026-10-03T11:15:56.4280456Z   G6_BASE_SHA: 049d24f87704cc26f927f451d6a9d75fd65cce89
+2026-10-03T11:15:56.4280694Z ##[endgroup]
+2026-10-03T11:15:58.2947706Z G6-CURRENT-REQUIRED: runtime-owning submodule changed: references/Hexalith.Conversations
+2026-10-03T11:16:06.1534407Z You can invoke the tool using the following command: aspire
+2026-10-03T11:16:06.1534829Z Tool 'aspire.cli' (version '13.6.0') was successfully installed.
+2026-10-03T11:16:06.1873390Z ⌛  Making the jump to hyperspace...
+2026-10-03T11:16:06.1873942Z ℹ️  Installing runtime version 1.18.2
+2026-10-03T11:16:09.5007879Z 
+2026-10-03T11:16:09.5016751Z Dapr runtime installed to /var/tmp/hexalith-g6-current-mb8d97sm/runtime/.dapr/bin, you may run the following to add it to your path if you want to run daprd directly:
+2026-10-03T11:16:09.5017496Z     export PATH=$PATH:/var/tmp/hexalith-g6-current-mb8d97sm/runtime/.dapr/bin
+2026-10-03T11:16:09.5018121Z ✅  Downloading binaries and setting up components...
+2026-10-03T11:16:09.5018486Z ✅  Downloaded binaries and completed components set up.
+2026-10-03T11:16:09.5018988Z ℹ️  daprd binary has been installed to /var/tmp/hexalith-g6-current-mb8d97sm/runtime/.dapr/bin.
+2026-10-03T11:16:09.5019601Z ℹ️  placement binary has been installed to /var/tmp/hexalith-g6-current-mb8d97sm/runtime/.dapr/bin.
+2026-10-03T11:16:09.5020170Z ℹ️  scheduler binary has been installed to /var/tmp/hexalith-g6-current-mb8d97sm/runtime/.dapr/bin.
+2026-10-03T11:16:09.5020771Z ✅  Success! Dapr is up and running. To get started, go here: https://docs.dapr.io/getting-started
+2026-10-03T11:16:09.5034218Z G6-RUN: observe exact tool versions
+2026-10-03T11:16:09.7501703Z G6-RESULT: observe exact tool versions: exit 0; Runtime version: 1.18.2
+2026-10-03T11:16:25.3059306Z G6-RUN: fresh EventStore qualifier build
+2026-10-03T11:16:51.1512971Z G6-RESULT: fresh EventStore qualifier build: exit 0; Time Elapsed 00:00:25.60
+2026-10-03T11:16:51.1513703Z G6-RUN: fresh EventStore support build
+2026-10-03T11:17:20.9446176Z G6-RESULT: fresh EventStore support build: exit 0; Time Elapsed 00:00:29.53
+2026-10-03T11:17:20.9446567Z G6-RUN: fixture override tests
+2026-10-03T11:17:21.4711755Z G6-RESULT: fixture override tests: exit 0;    Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 31, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 0.281s
+2026-10-03T11:17:21.4712427Z G6-RUN: real PostgreSQL two-sidecar stop/restart qualifier
+2026-10-03T11:17:42.6759541Z G6-RESULT: real PostgreSQL two-sidecar stop/restart qualifier: exit 0;    Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 1, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 20.959s
+2026-10-03T11:17:42.6760773Z G6-RUN: 21 exact deterministic support selectors
+2026-10-03T11:17:43.5411626Z G6-RESULT: 21 exact deterministic support selectors: exit 0;    Hexalith.EventStore.Server.Tests  Total: 33, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 0.454s
+2026-10-03T11:17:43.5412574Z G6-RUN: strict EventStore capture validation
+2026-10-03T11:17:43.6465477Z G6-RESULT: strict EventStore capture validation: exit 0; OQ8 capture validation passed.
+2026-10-03T11:17:43.6470178Z G6-RUN: AppHost build Hexalith.Projects.AppHost
+2026-10-03T11:18:29.5989024Z G6-RESULT: AppHost build Hexalith.Projects.AppHost: exit 0; Time Elapsed 00:00:45.70
+2026-10-03T11:18:29.5990068Z G6-RUN: AppHost build Hexalith.Conversations.AppHost
+2026-10-03T11:18:46.4399109Z G6-RESULT: AppHost build Hexalith.Conversations.AppHost: exit 0; Time Elapsed 00:00:16.61
+2026-10-03T11:18:46.4399580Z G6-RUN: AppHost build Hexalith.EventStore.AppHost
+2026-10-03T11:19:10.4043230Z G6-RESULT: AppHost build Hexalith.EventStore.AppHost: exit 0; Time Elapsed 00:00:23.71
+2026-10-03T11:19:10.4043817Z G6-RUN: AppHost build Hexalith.Folders.AppHost
+2026-10-03T11:19:20.1618461Z G6-RESULT: AppHost build Hexalith.Folders.AppHost: exit 0; Time Elapsed 00:00:09.52
+2026-10-03T11:19:20.1619173Z G6-RUN: AppHost build Hexalith.FrontComposer.AppHost
+2026-10-03T11:20:15.5491241Z G6-RESULT: AppHost build Hexalith.FrontComposer.AppHost: exit 0; Time Elapsed 00:00:55.12
+2026-10-03T11:20:15.5491711Z G6-RUN: AppHost build Hexalith.Memories.AppHost
+2026-10-03T11:20:32.9917615Z G6-RESULT: AppHost build Hexalith.Memories.AppHost: exit 0; Time Elapsed 00:00:17.21
+2026-10-03T11:20:32.9918295Z G6-RUN: AppHost build Hexalith.Parties.AppHost
+2026-10-03T11:20:59.1677522Z G6-RESULT: AppHost build Hexalith.Parties.AppHost: exit 0; Time Elapsed 00:00:25.94
+2026-10-03T11:20:59.1677962Z G6-RUN: AppHost build Hexalith.Tenants.AppHost
+2026-10-03T11:21:35.8038139Z G6-RESULT: AppHost build Hexalith.Tenants.AppHost: exit 0; Time Elapsed 00:00:36.39
+2026-10-03T11:21:35.8038884Z G6-RUN: AppHost build Hexalith.Builds.Module.AppHost
+2026-10-03T11:21:47.1963050Z G6-RESULT: AppHost build Hexalith.Builds.Module.AppHost: exit 0; Time Elapsed 00:00:11.14
+2026-10-03T11:21:47.1963504Z G6-RUN: AppHost build Hexalith.Platform
+2026-10-03T11:21:49.8109802Z G6-RESULT: AppHost build Hexalith.Platform: exit 0;   apphost.cs -> [user]/.local/share/dotnet/runfile/apphost-a3695b11b1c97eadfc2b9bce9961734ff039303070b61b1c2cebaca6f13219e3/bin/debug/apphost.dll
+2026-10-03T11:21:49.8112546Z G6-RUN: McpCli transitive Dapr consumer
+2026-10-03T11:21:53.2782295Z G6-RESULT: McpCli transitive Dapr consumer: exit 0; Time Elapsed 00:00:03.22
+2026-10-03T11:21:58.5882346Z G6-CURRENT-QUALIFIED: /home/runner/work/Hexalith.Projects/Hexalith.Projects/.g6-current-evidence/ci-37118950623-1/result.json
+2026-10-03T11:22:08.7249151Z G6-CURRENT-QUALIFIED: approved tuple, material inputs, critical proof, cleanup and source verified
+2026-10-03T11:22:08.7488190Z ##[group]Run actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+2026-10-03T11:22:08.7488620Z with:
+2026-10-03T11:22:08.7489002Z   name: g6-current-0f03582b3457a6d9212d60e2f9146a6043af5f7e-37118950623-1
+2026-10-03T11:22:08.7489438Z   path: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:22:08.7489768Z   if-no-files-found: error
+2026-10-03T11:22:08.7490096Z   retention-days: 30
+2026-10-03T11:22:08.7490399Z   compression-level: 6
+2026-10-03T11:22:08.7490733Z   overwrite: false
+2026-10-03T11:22:08.7491026Z   include-hidden-files: false
+2026-10-03T11:22:08.7491314Z   archive: true
+2026-10-03T11:22:08.7491646Z env:
+2026-10-03T11:22:08.7491914Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-03T11:22:08.7492224Z   G6_OUTPUT: .g6-current-evidence/ci-37118950623-1
+2026-10-03T11:22:08.7492619Z   DOTNET_ROOT: /usr/share/dotnet
+2026-10-03T11:22:08.7492914Z ##[endgroup]
+2026-10-03T11:22:08.8729595Z With the provided path, there will be 28 files uploaded
+2026-10-03T11:22:08.8733209Z Artifact name is valid!
+2026-10-03T11:22:08.8733597Z Root directory input is valid!
+2026-10-03T11:22:09.2094930Z Uploading artifact: g6-current-0f03582b3457a6d9212d60e2f9146a6043af5f7e-37118950623-1.zip
+2026-10-03T11:22:09.2140382Z Beginning upload of artifact content to blob storage
+2026-10-03T11:22:11.3253617Z Uploaded bytes 31971
+2026-10-03T11:22:11.3801287Z Finished uploading artifact content to blob storage!
+2026-10-03T11:22:11.3802061Z SHA256 digest of uploaded artifact is 02a2eaef4d00642f90df2bf34975417f8a5265aa2c2c5992860200cdf0830108
+2026-10-03T11:22:11.3802602Z Finalizing artifact upload
+2026-10-03T11:22:11.7739208Z Artifact g6-current-0f03582b3457a6d9212d60e2f9146a6043af5f7e-37118950623-1 successfully finalized. Artifact ID 11273215715
+2026-10-03T11:22:11.7740098Z Artifact g6-current-0f03582b3457a6d9212d60e2f9146a6043af5f7e-37118950623-1 has been successfully uploaded! Final size is 31971 bytes. Artifact ID is 11273215715
+2026-10-03T11:22:11.7742348Z Artifact download URL: https://github.com/Hexalith/Hexalith.Projects/actions/runs/37118950623/artifacts/11273215715
+2026-10-03T11:22:11.7885952Z Post job cleanup.
+2026-10-03T11:22:11.7888947Z ##[start-action display=Setup .NET from global.json;id=__c9587cd7-5b40-43be-9678-21cfbbf0ef0e.__actions_setup-dotnet]
+2026-10-03T11:22:11.7916186Z Post job cleanup.
+2026-10-03T11:22:11.8940985Z ##[end-action id=__c9587cd7-5b40-43be-9678-21cfbbf0ef0e.__actions_setup-dotnet;outcome=success;conclusion=success;duration_ms=105]
+2026-10-03T11:22:11.9012760Z Post job cleanup.
+2026-10-03T11:22:11.9735765Z [command]/usr/bin/git version
+2026-10-03T11:22:11.9754789Z git version 2.55.0
+2026-10-03T11:22:11.9789911Z Temporarily overriding HOME='/home/runner/work/_temp/18851f85-4983-4637-91ca-eb06bfeef194' before making global git config changes
+2026-10-03T11:22:11.9791262Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-03T11:22:11.9794121Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Hexalith.Projects/Hexalith.Projects
+2026-10-03T11:22:11.9822264Z Removing SSH command configuration
+2026-10-03T11:22:11.9827500Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-03T11:22:11.9856545Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-03T11:22:12.0080946Z Entering 'references/Hexalith.AI.Tools'
+2026-10-03T11:22:12.0128309Z Entering 'references/Hexalith.Builds'
+2026-10-03T11:22:12.0167481Z Entering 'references/Hexalith.Commons'
+2026-10-03T11:22:12.0207561Z Entering 'references/Hexalith.Conversations'
+2026-10-03T11:22:12.0248600Z Entering 'references/Hexalith.EventStore'
+2026-10-03T11:22:12.0297936Z Entering 'references/Hexalith.Folders'
+2026-10-03T11:22:12.0341761Z Entering 'references/Hexalith.FrontComposer'
+2026-10-03T11:22:12.0392046Z Entering 'references/Hexalith.McpCli'
+2026-10-03T11:22:12.0437709Z Entering 'references/Hexalith.Memories'
+2026-10-03T11:22:12.0485478Z Entering 'references/Hexalith.Parties'
+2026-10-03T11:22:12.0530988Z Entering 'references/Hexalith.Platform'
+2026-10-03T11:22:12.0574030Z Entering 'references/Hexalith.Tenants'
+2026-10-03T11:22:12.0628160Z Removing HTTP extra header
+2026-10-03T11:22:12.0633661Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-03T11:22:12.0665556Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-03T11:22:12.0865731Z Entering 'references/Hexalith.AI.Tools'
+2026-10-03T11:22:12.0898416Z Entering 'references/Hexalith.Builds'
+2026-10-03T11:22:12.0937570Z Entering 'references/Hexalith.Commons'
+2026-10-03T11:22:12.0975410Z Entering 'references/Hexalith.Conversations'
+2026-10-03T11:22:12.1018498Z Entering 'references/Hexalith.EventStore'
+2026-10-03T11:22:12.1068694Z Entering 'references/Hexalith.Folders'
+2026-10-03T11:22:12.1112685Z Entering 'references/Hexalith.FrontComposer'
+2026-10-03T11:22:12.1159960Z Entering 'references/Hexalith.McpCli'
+2026-10-03T11:22:12.1203942Z Entering 'references/Hexalith.Memories'
+2026-10-03T11:22:12.1249090Z Entering 'references/Hexalith.Parties'
+2026-10-03T11:22:12.1292303Z Entering 'references/Hexalith.Platform'
+2026-10-03T11:22:12.1334374Z Entering 'references/Hexalith.Tenants'
+2026-10-03T11:22:12.1385545Z Removing includeIf entries pointing to credentials config files
+2026-10-03T11:22:12.1391542Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.1419127Z includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git.path
+2026-10-03T11:22:12.1420175Z includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/worktrees/*.path
+2026-10-03T11:22:12.1421015Z includeif.gitdir:/github/workspace/.git.path
+2026-10-03T11:22:12.1421669Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-03T11:22:12.1427711Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git.path
+2026-10-03T11:22:12.1450322Z /home/runner/work/_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:22:12.1459594Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git.path /home/runner/work/_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:22:12.1493513Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/worktrees/*.path
+2026-10-03T11:22:12.1517038Z /home/runner/work/_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:22:12.1524943Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:22:12.1562659Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-03T11:22:12.1585307Z /github/runner_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:22:12.1591623Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:22:12.1622146Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-03T11:22:12.1643533Z /github/runner_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:22:12.1649508Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config
+2026-10-03T11:22:12.1680530Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-03T11:22:12.1867177Z Entering 'references/Hexalith.AI.Tools'
+2026-10-03T11:22:12.1885910Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.AI.Tools/config	remote.origin.url
+2026-10-03T11:22:12.1900995Z Entering 'references/Hexalith.Builds'
+2026-10-03T11:22:12.1917453Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Builds/config	remote.origin.url
+2026-10-03T11:22:12.1936270Z Entering 'references/Hexalith.Commons'
+2026-10-03T11:22:12.1951358Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Commons/config	remote.origin.url
+2026-10-03T11:22:12.1967614Z Entering 'references/Hexalith.Conversations'
+2026-10-03T11:22:12.1983877Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Conversations/config	remote.origin.url
+2026-10-03T11:22:12.2004975Z Entering 'references/Hexalith.EventStore'
+2026-10-03T11:22:12.2021825Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.EventStore/config	remote.origin.url
+2026-10-03T11:22:12.2050220Z Entering 'references/Hexalith.Folders'
+2026-10-03T11:22:12.2067325Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Folders/config	remote.origin.url
+2026-10-03T11:22:12.2089291Z Entering 'references/Hexalith.FrontComposer'
+2026-10-03T11:22:12.2105399Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.FrontComposer/config	remote.origin.url
+2026-10-03T11:22:12.2130061Z Entering 'references/Hexalith.McpCli'
+2026-10-03T11:22:12.2146061Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.McpCli/config	remote.origin.url
+2026-10-03T11:22:12.2168309Z Entering 'references/Hexalith.Memories'
+2026-10-03T11:22:12.2184219Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Memories/config	remote.origin.url
+2026-10-03T11:22:12.2209013Z Entering 'references/Hexalith.Parties'
+2026-10-03T11:22:12.2225563Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Parties/config	remote.origin.url
+2026-10-03T11:22:12.2247956Z Entering 'references/Hexalith.Platform'
+2026-10-03T11:22:12.2264525Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Platform/config	remote.origin.url
+2026-10-03T11:22:12.2285513Z Entering 'references/Hexalith.Tenants'
+2026-10-03T11:22:12.2302174Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Tenants/config	remote.origin.url
+2026-10-03T11:22:12.2336371Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.AI.Tools/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2365812Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Builds/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2392175Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Commons/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2420073Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Conversations/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2453740Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.EventStore/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2486301Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Folders/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2515818Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.FrontComposer/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2543527Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.McpCli/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2571274Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Memories/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2599603Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Parties/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2627472Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Platform/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2655437Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Tenants/config --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-03T11:22:12.2679227Z Removing credentials config '/home/runner/work/_temp/git-credentials-32685c2a-5ef0-47e0-94e4-40595fadcae7.config'
+2026-10-03T11:22:12.2804127Z Cleaning up orphan processes
+2026-10-03T11:22:12.3072354Z Terminate orphan process: pid (2504) (VBCSCompiler)
+2026-10-03T11:22:12.3091200Z Terminate orphan process: pid (2919) (dotnet)
+2026-10-03T11:22:12.3108365Z Terminate orphan process: pid (2925) (dotnet)
+2026-10-03T11:22:12.3141803Z Terminate orphan process: pid (2926) (dotnet)

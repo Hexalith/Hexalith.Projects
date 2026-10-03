@@ -1,0 +1,32 @@
+{
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "tests/tools/test_run_g6_current.py",
+        "tests/tools/test_g6_qualification_runner.py",
+        "tests/tools/test_run_g6_ci_gate.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "testsPassed": 25,
+      "log": "runner-gate-controls.log"
+    },
+    {
+      "command": [
+        "python3",
+        "references/Hexalith.Builds/Tools/test_g6_current.py"
+      ],
+      "exitCode": 0,
+      "testsPassed": 3,
+      "log": "builds-tuple-controls.log"
+    }
+  ],
+  "workingDirectory": "/home/administrator/projects/hexalith/projects",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "purpose": "Review follow-up retention of passing local investigation controls; not runtime qualification."
+}

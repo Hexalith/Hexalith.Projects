@@ -1,0 +1,316 @@
+{
+  "startedAtUtc": "2026-10-03T11:33:16.702282+00:00",
+  "preparationCommands": [
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "0f03582b3457a6d9212d60e2f9146a6043af5f7e"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.AI.Tools",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.AI.Tools"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.AI.Tools",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "3f194e17174994d308ec84af9ee2b5aa68674d0d"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.EventStore"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.EventStore",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "2c58ffda41759e895ace4b9625c9bd931a217672"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Tenants"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Tenants",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "bfc10cb62dff6784c4b4bcabadfd537ef74fd77a"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.FrontComposer"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.FrontComposer",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "bf40099f81fcaeac324b7b4377513ac7d49cead4"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Conversations"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Conversations",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "8f2594db2f6e29e6eb98e2fea90467d615674dd0"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Folders"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Folders",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "92da4b01352448cb06296776097e2da4383d9340"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Parties"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Parties",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "06714c166c090200ac87373b11d8243aa11b2126"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Commons"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Commons",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "116d26815eb81e35b3c161e1799e5ee12805fc0a"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Builds"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Builds",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "688eec9a4333245cc0ff7772115c769094471863"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Memories"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Memories",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "42995692634af9ba35982ec0e1aedec4f5576e71"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Platform"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Platform",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "c3c473a4aa8da421896e4795fcdb0f4d2771a0be"
+    ],
+    [
+      "git",
+      "clone",
+      "--shared",
+      "--no-checkout",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.McpCli"
+    ],
+    [
+      "git",
+      "-C",
+      "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.McpCli",
+      "-c",
+      "core.autocrlf=false",
+      "checkout",
+      "--detach",
+      "9b0b6e7a082bf93b669a883e48672c26c6f0630d"
+    ]
+  ],
+  "graphInputs": [
+    {
+      "path": "src/Hexalith.Projects.AppHost/obj/project.assets.json",
+      "sha256": "442b996faec41b74094810466443e164d4441e602cc0defe7795c13c9ab9636e"
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/obj/project.assets.json",
+      "sha256": "b3fc5c3e379684e7bbda2893b2263a9e4616c9f7b9f41cf063ed97619ef8d75c"
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/obj/project.assets.json",
+      "sha256": "c08d199b7bce6ebdc991b5eceb123087d9ebe984627a76d66a51904864df87ce"
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/obj/project.assets.json",
+      "sha256": "8bab7553065894a206e735c44ddcc1c75b4a578bb54b4f920624b43c2ad9b6b7"
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/obj/project.assets.json",
+      "sha256": "67fab6a27a665f067bc5d717acb3f4fade3964ee5b7708520c521e9fa251ce7c"
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/obj/project.assets.json",
+      "sha256": "c7fc4c300821b1a3455ffb72f2b85288c59462c36653317f7da808eb6b7fcd08"
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/obj/project.assets.json",
+      "sha256": "cfcf1888eb1d7a04a27a3d0d134f7204ba5bd0e17f81271cf95a29fae2c45d42"
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/obj/project.assets.json",
+      "sha256": "1f69acd90213cb583012b4245d4852fa9398292ecce846936d94b7472b4e0b98"
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/obj/project.assets.json",
+      "sha256": "2e0d8584e65131fea460b3cc6a268d2647d82ea6b2c9040d113cf1a9f8e84bac"
+    },
+    {
+      "path": "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/obj/project.assets.json",
+      "sha256": "d76e65044722363655d9b84e0c90719ec9f027ced7c333f22747519f389c7452"
+    },
+    {
+      "path": "references/Hexalith.McpCli/src/Hexalith.McpCli/obj/project.assets.json",
+      "sha256": "38ea9e66319833fa5fe1e2e53503f4c96bc4ffcde3de9c4033a3d5924ef239c6"
+    }
+  ],
+  "uploadedZipDigestVerified": true,
+  "zipMembersByteIdentical": true,
+  "canonicalResultDigestVerified": true,
+  "command": [
+    "python3",
+    "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Builds/Tools/g6_current.py",
+    "validate",
+    "--workspace",
+    "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace",
+    "--policy",
+    "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Builds/Tools/g6-current-policy.json",
+    "--evidence",
+    "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/.g6-current-evidence/ci-37118950623-1/result.json"
+  ],
+  "auditCommand": [
+    "python3",
+    "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Builds/Tools/g6_current.py",
+    "audit",
+    "--workspace",
+    "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace",
+    "--policy",
+    "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace/references/Hexalith.Builds/Tools/g6-current-policy.json",
+    "--out",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/qualification-evidence/g-6-checkout-refresh-20261003/replay/audit.json"
+  ],
+  "workingDirectory": "/var/tmp/hexalith-g6-replay-1ukhxm6g/workspace",
+  "validatorSha256": "b6520047303661450edd6888d2a2a47eb5d9bed139d65e2bfd7cc0c3e43ba032",
+  "validatorRevision": "688eec9a4333245cc0ff7772115c769094471863",
+  "exitCode": 0,
+  "temporaryCheckoutRemoved": true,
+  "completedAtUtc": "2026-10-03T11:33:30.728684+00:00"
+}

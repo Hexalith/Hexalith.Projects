@@ -1,0 +1,30 @@
+[
+  {
+    "command": [
+      "python3",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/Tools/g6_current.py",
+      "validate",
+      "--workspace",
+      "/home/administrator/projects/hexalith/projects",
+      "--policy",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/Tools/g6-current-policy.json",
+      "--evidence",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/qualification-evidence/g-6-ci-readiness-20261003/ci-37111866011-1/result.json"
+    ],
+    "workingDirectory": "/home/administrator/projects/hexalith/projects",
+    "exitCode": 1,
+    "log": "historical-result-rejection.log",
+    "evidenceSha256": "bc04ab1d5ec236db3b7fcdc18b41cb89ef355e3f4731af9f69dcd95e35c7b280"
+  },
+  {
+    "command": [
+      "sha256sum",
+      "-c",
+      "SHA256SUMS"
+    ],
+    "workingDirectory": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/qualification-evidence/g-6-ci-readiness-20261003",
+    "exitCode": 0,
+    "log": "historical-preservation.log",
+    "indexSha256": "554bd2b6c33a4c15d9699e33ca3673904feca4e426a07d4356955b17b53d14bb"
+  }
+]
