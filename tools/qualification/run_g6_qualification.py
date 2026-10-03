@@ -71,7 +71,7 @@ def shared_snapshot() -> dict:
     return {"containers": container_snapshot(), "binaries": binaries}
 
 
-def install(scratch: Path, baseline: dict) -> None:
+def install(scratch: Path, baseline: dict, environment: dict[str, str] | None = None) -> None:
     tools = scratch / "tools"
     tools.mkdir()
     url = f"https://github.com/dapr/cli/releases/download/v{baseline['tuple']['daprCli']}/dapr_linux_amd64.tar.gz"
@@ -79,8 +79,8 @@ def install(scratch: Path, baseline: dict) -> None:
     urllib.request.urlretrieve(url, archive)
     with tarfile.open(archive) as stream:
         stream.extractall(tools, filter="data")
-    subprocess.run(["dotnet", "tool", "install", "Aspire.Cli", "--tool-path", str(tools), "--version", baseline["tuple"]["aspireCli"]], check=True)
-    subprocess.run([str(tools / "dapr"), "init", "--slim", "--runtime-path", str(scratch / "runtime"), "--runtime-version", baseline["tuple"]["daprRuntime"]], check=True)
+    subprocess.run(["dotnet", "tool", "install", "Aspire.Cli", "--tool-path", str(tools), "--version", baseline["tuple"]["aspireCli"]], check=True, env=environment)
+    subprocess.run([str(tools / "dapr"), "init", "--slim", "--runtime-path", str(scratch / "runtime"), "--runtime-version", baseline["tuple"]["daprRuntime"]], check=True, env=environment)
 
 
 def stop_owned_process_groups(groups: list[int]) -> bool:
@@ -132,12 +132,30 @@ class Qualification:
         self.owned = []
         self.removed = []
         self.process_groups = []
-        self.env = dict(os.environ)
+        # MSBuild treats environment property names case-insensitively. Strip caller
+        # overrides before selecting the non-IDE GitHub Actions build policy.
+        removed = {"CI", "GITHUB_ACTIONS", "TF_BUILD", "TERM_PROGRAM", "IDEBUILD",
+                   "BUILDINGINSIDEVISUALSTUDIO", "BUILDINGBYRESHARPER", "CIBUILD",
+                   "CONTINUOUSINTEGRATIONBUILD", "ISPACKABLE", "GENERATEPACKAGEONBUILD",
+                   "USEHEXALITHPROJECTREFERENCES", "DESIGNTIMEBUILD", "BUILDPROJECTREFERENCES"}
+        self.env = {key: value for key, value in os.environ.items()
+                    if key.upper() not in removed and not key.upper().startswith("VSCODE_")}
+        self.env["GITHUB_ACTIONS"] = "true"
         self.env.update(NUGET_PACKAGES=str(scratch / "nuget"), DOTNET_CLI_HOME=str(scratch / "dotnet-home"),
                         DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER="1", MSBUILDDISABLENODEREUSE="1",
                         PYTHONDONTWRITEBYTECODE="1")
-        self.env.pop("CI", None)
+        # The approved dedicated Debug source proof must leave CI unset.
         self.before = shared_snapshot()
+
+    def build_controls(self) -> dict:
+        """Retain only normalized build controls, never arbitrary caller environment."""
+        names = ("GITHUB_ACTIONS", "TF_BUILD", "CI", "TERM_PROGRAM", "IDEBuild",
+                 "BuildingInsideVisualStudio", "BuildingByReSharper", "CIBuild",
+                 "ContinuousIntegrationBuild", "IsPackable", "GeneratePackageOnBuild",
+                 "UseHexalithProjectReferences", "DesignTimeBuild", "BuildProjectReferences",
+                 "DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER",
+                 "MSBUILDDISABLENODEREUSE")
+        return {name: self.env.get(name) for name in names}
 
     def sanitize(self, value: str) -> str:
         for path, alias in [(self.scratch, "[scratch]"), (ROOT, "[workspace]"), (Path.home(), "[user]")]:

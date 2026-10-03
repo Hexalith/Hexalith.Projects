@@ -18,6 +18,7 @@ $managedE2EPath = Join-Path $repositoryRoot 'tests/e2e/run-live-apphost.sh'
 $failures = [System.Collections.Generic.List[string]]::new()
 $buildsExecutionSha = '51af786cf156d2a3396dbd49f5e4898222e55c12'
 $releaseBuildsExecutionSha = 'a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec'
+$g6PostgresqlImage = 'postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636'
 $nugetLoginSha = '8d196754b4036150537f80ac539e15c2f1028841'
 $expectedReleasePackageIds = @(
     'Hexalith.Projects.Contracts',
@@ -101,6 +102,24 @@ function Get-RequiredNamedStep {
     }
 
     return $matches[0]
+}
+
+function Require-G6PostgresqlPull {
+    param(
+        [object[]] $Steps,
+        [string] $BeforeStep,
+        [string] $Owner
+    )
+
+    $pull = Get-RequiredNamedStep -Steps $Steps -Name 'Pull pinned G-6 PostgreSQL fixture image' -Owner $Owner
+    $proof = Get-RequiredNamedStep -Steps $Steps -Name $BeforeStep -Owner $Owner
+    $expected = "      - name: Pull pinned G-6 PostgreSQL fixture image`n        run: docker pull $g6PostgresqlImage"
+    if ($null -ne $pull -and (Get-TrimmedBlockText -Text $pull.Text) -cne $expected) {
+        $failures.Add("$Owner must unconditionally pull the exact PostgreSQL fixture digest and stop on pull failure.")
+    }
+    if ($null -ne $pull -and $null -ne $proof -and $pull.Index -ge $proof.Index) {
+        $failures.Add("$Owner must pull the pinned PostgreSQL image before its live G-6 proof.")
+    }
 }
 
 function Get-UsesReferences {
@@ -384,6 +403,7 @@ $installNpmStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Install npm 
 $verifyNpmStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Verify npm dependency provenance and signatures' -Owner 'release'
 $restoreStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Restore release solution' -Owner 'release'
 $buildStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Build release solution' -Owner 'release'
+Require-G6PostgresqlPull -Steps $releaseSteps -BeforeStep 'Run fresh exact-source G-6 qualifier' -Owner 'release'
 $g6RunStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Run fresh exact-source G-6 qualifier' -Owner 'release'
 $g6ValidateStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Validate fresh exact-source G-6 evidence' -Owner 'release'
 $g6UploadStep = Get-RequiredNamedStep -Steps $releaseSteps -Name 'Upload exact-source G-6 evidence' -Owner 'release'
@@ -468,6 +488,7 @@ $orderedReleaseSteps = @(
     'Verify npm dependency provenance and signatures',
     'Restore release solution',
     'Build release solution',
+    'Pull pinned G-6 PostgreSQL fixture image',
     'Run fresh exact-source G-6 qualifier',
     'Validate fresh exact-source G-6 evidence',
     'Upload exact-source G-6 evidence',
@@ -707,8 +728,19 @@ else {
     Forbid-Match $g6CurrentJob 'continue-on-error:|g6-candidate|g6-acceptance' 'G-6 current must be blocking and independent of historical packets.'
     Forbid-Match $g6CurrentJob '(?m)^    if:' 'G-6 current job must not be skipped.'
     $g6CurrentSteps = @(Get-NamedStepBlocks -JobText $g6CurrentJob)
+    Require-G6PostgresqlPull -Steps $g6CurrentSteps -BeforeStep 'Audit and qualify current G-6 when required' -Owner 'g6-current'
     $g6InitializeStep = Get-RequiredNamedStep -Steps $g6CurrentSteps -Name 'Initialize root-declared submodules' -Owner 'g6-current'
     $g6PreflightStep = Get-RequiredNamedStep -Steps $g6CurrentSteps -Name 'Validate current G-6 preflight' -Owner 'g6-current'
+    if ($null -ne $g6PreflightStep) {
+        Forbid-Match $g6PreflightStep.Text '(?m)^\s{8}(if|continue-on-error):' 'Current G-6 preflight must always execute and block on failure.'
+    }
+    $g6DotnetStep = Get-RequiredNamedStep -Steps $g6CurrentSteps -Name 'Initialize .NET' -Owner 'g6-current'
+    if ($null -ne $g6DotnetStep -and $null -ne $g6PreflightStep -and $g6PreflightStep.Index -le $g6DotnetStep.Index) {
+        $failures.Add('Current G-6 build-property and packing controls must run after .NET initialization.')
+    }
+    Require-Match $g6PreflightStep.Text 'python3 -m unittest tests/tools/test_run_g6_current.py tests/tools/test_g6_qualification_runner.py -v' 'Current G-6 preflight must exercise runner environment and retention controls.'
+    Require-Match $g6PreflightStep.Text 'python3 references/Hexalith.Builds/Tools/test_package_readme.py -v' 'Current G-6 preflight must exercise real package README controls.'
+
     if ($null -ne $g6InitializeStep -and $null -ne $g6PreflightStep -and $g6PreflightStep.Index -le $g6InitializeStep.Index) {
         $failures.Add('Current G-6 preflight fixtures must run after root submodule initialization.')
     }

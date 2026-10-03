@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
+import re
 import subprocess
 import tempfile
 import unittest
@@ -79,6 +81,38 @@ class G6ChangeSelectionTests(unittest.TestCase):
             self.assertEqual("not required by this change", selected["status"])
             self.assertFalse(selected["tupleApproved"])
             self.assertEqual(["owner approval is pending"], selected["issues"])
+
+
+class G6WorkflowPostgresqlTests(unittest.TestCase):
+    IMAGE = "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636"
+
+    def check_pull(self, workflow_name: str, job_name: str, before_step: str, exit_code: int) -> None:
+        workflow = (GATE.ROOT / ".github/workflows" / workflow_name).read_text()
+        job = re.search(r"(?ms)^  " + job_name + r":\n.*?(?=^  [A-Za-z0-9_-]+:\n|\Z)", workflow).group()
+        pulls = re.findall(r"(?ms)^      - name: Pull pinned G-6 PostgreSQL fixture image\n.*?(?=^      - |\Z)", job)
+        self.assertEqual(1, len(pulls))
+        expected = "      - name: Pull pinned G-6 PostgreSQL fixture image\n        run: docker pull " + self.IMAGE
+        self.assertEqual(expected, pulls[0].strip("\n"))
+        self.assertLess(job.index(pulls[0]), job.index("      - name: " + before_step))
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            log = directory / "docker.log"
+            docker = directory / "docker"
+            docker.write_text('#!/usr/bin/env bash\nprintf "%s\n" "$*" > "$DOCKER_LOG"\nexit "$DOCKER_EXIT"\n')
+            docker.chmod(0o755)
+            environment = dict(os.environ, PATH=str(directory) + os.pathsep + os.environ["PATH"],
+                               DOCKER_LOG=str(log), DOCKER_EXIT=str(exit_code))
+            result = subprocess.run(["bash", "-c", "docker pull " + self.IMAGE], env=environment,
+                                    capture_output=True, text=True, check=False)
+            self.assertEqual(exit_code, result.returncode)
+            self.assertEqual("pull " + self.IMAGE, log.read_text().strip())
+
+    def test_ci_and_release_pull_exact_digest_and_propagate_pull_failure(self) -> None:
+        for workflow, job, before in (("ci.yml", "g6-current", "Audit and qualify current G-6 when required"),
+                                      ("release.yml", "release", "Run fresh exact-source G-6 qualifier")):
+            for exit_code in (0, 19):
+                with self.subTest(workflow=workflow, exit_code=exit_code):
+                    self.check_pull(workflow, job, before, exit_code)
 
 
 if __name__ == "__main__":

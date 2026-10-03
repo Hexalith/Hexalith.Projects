@@ -41,6 +41,34 @@ class CurrentRunnerPreflightTests(unittest.TestCase):
             self.assertEqual("ci", receipt["qualification"]["environment"]["executionScope"])
             self.assertEqual("b" * 40, receipt["qualification"]["environment"]["buildsExecutionSha"])
 
+    def test_failed_install_retains_normalized_build_controls_without_caller_secrets(self) -> None:
+        (ROOT / ".g6-current-evidence").mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=ROOT / ".g6-current-evidence") as temporary:
+            root = Path(temporary)
+            policy = root / "policy.json"
+            policy.write_text(json.dumps({"tuple": {"daprRuntime": "1.18.2"}, "approval": {"decision": "approved"}}))
+            audit = {"issues": [], "tupleApproved": True, "source": {}, "materialInputs": {"fingerprint": "a" * 64}}
+            output = root / "result"
+            with patch.dict(RUNNER.os.environ, {"ci": "true", "idebuild": "true", "VSCODE_PID": "123", "CALLER_SECRET": "protected-marker"}), \
+                 patch.object(RUNNER, "audit", return_value=audit), \
+                 patch.object(RUNNER.CURRENT_API, "builds_execution_sha", return_value="b" * 40), \
+                 patch.object(RUNNER.tempfile, "mkdtemp", return_value=str(root / "scratch")), \
+                 patch.object(RUNNER.historical, "shared_snapshot", return_value={}), \
+                 patch.object(RUNNER.historical.Qualification, "cleanup", return_value={}), \
+                 patch.object(RUNNER.historical, "install", side_effect=RuntimeError("install failed")) as install:
+                self.assertEqual(1, RUNNER.main(["--policy", str(policy), "--output", str(output)]))
+            environment = install.call_args.kwargs["environment"]
+            self.assertEqual("true", environment["GITHUB_ACTIONS"])
+            self.assertFalse(any(name.upper() in {"CI", "IDEBUILD"} or name.upper().startswith("VSCODE_") for name in environment))
+            result_text = (output / "result.json").read_text()
+            receipt = json.loads(result_text)
+            self.assertEqual("failed", receipt["qualification"]["status"])
+            self.assertTrue(all(value is False for value in receipt["qualification"]["cleanup"].values()))
+            self.assertEqual("true", receipt["qualification"]["environment"]["buildControls"]["GITHUB_ACTIONS"])
+            self.assertIsNone(receipt["qualification"]["environment"]["buildControls"]["CI"])
+            self.assertNotIn("CALLER_SECRET", result_text)
+            self.assertNotIn("protected-marker", result_text)
+
     def test_pending_selected_tuple_can_reach_live_runner_despite_consumer_pin_drift(self) -> None:
         (ROOT / ".g6-current-evidence").mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(dir=ROOT / ".g6-current-evidence") as temporary:

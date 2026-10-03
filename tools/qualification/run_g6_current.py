@@ -110,7 +110,7 @@ def main(arguments: list[str] | None = None) -> int:
     support_count = dict(live_count)
     cleanup: dict = {}
     try:
-        historical.install(scratch, policy)
+        historical.install(scratch, policy, environment=run.env)
         tools = scratch / "tools"
         daprd = next((scratch / "runtime").rglob("daprd"))
         run.env["PATH"] = str(tools) + os.pathsep + run.env["PATH"]
@@ -246,7 +246,8 @@ def main(arguments: list[str] | None = None) -> int:
                     == sorted(cleanup.get("removedContainerIds", []))) if cleanup else False},
             "environment": {"configuration": "Debug", "dependencyMode": "source",
                 "daprRuntime": policy["tuple"]["daprRuntime"], "platformAppHostDependencyMode": "packages",
-                "executionScope": options.execution_scope, "buildsExecutionSha": execution_sha},
+                "executionScope": options.execution_scope, "buildsExecutionSha": execution_sha,
+                "buildControls": run.build_controls()},
             "limitations": ["Checkout-source proof; published EventStore archives, G-4/G-5, P1R and release readiness are separate.", *errors],
         },
         "approval": policy.get("approval", {}),

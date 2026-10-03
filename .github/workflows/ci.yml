@@ -180,19 +180,26 @@ jobs:
       - name: Initialize root-declared submodules
         uses: Hexalith/Hexalith.Builds/Github/initialize-build@51af786cf156d2a3396dbd49f5e4898222e55c12
 
-      - name: Validate current G-6 preflight
-        run: python3 -m unittest tests/tools/test_run_g6_current.py -v
-
       - name: Initialize .NET
         uses: Hexalith/Hexalith.Builds/Github/initialize-dotnet@51af786cf156d2a3396dbd49f5e4898222e55c12
         with:
           global-json-file: global.json
+
+      - name: Validate current G-6 preflight
+        run: |
+          python3 -m unittest tests/tools/test_run_g6_current.py tests/tools/test_g6_qualification_runner.py -v
+          python3 references/Hexalith.Builds/Tools/test_package_readme.py -v
+
+      - name: Pull pinned G-6 PostgreSQL fixture image
+        run: docker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
 
       - name: Restore effective G-6 package graphs
         shell: bash
         run: |
           set -euo pipefail
           while IFS= read -r project; do
+            # Jérôme Piquot, 2026-10-03: “Unset CI in restore (Recommended)”.
+            # This dedicated Debug source proof retains the normal package-only CI guard.
             env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true
           done < <(jq -r '.resolvedProjects[]' references/Hexalith.Builds/Tools/g6-current-policy.json)
 

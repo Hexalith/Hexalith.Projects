@@ -131,6 +131,8 @@ jobs:
         run: dotnet restore Hexalith.Projects.CI.slnx
       - name: Build release solution
         run: dotnet build Hexalith.Projects.CI.slnx --no-restore --configuration Release -warnaserror
+      - name: Pull pinned G-6 PostgreSQL fixture image
+        run: docker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
       - name: Run fresh exact-source G-6 qualifier
         env:
           PYTHONDONTWRITEBYTECODE: '1'

@@ -20,6 +20,88 @@ CONTAINER_ID = "a" * 64
 SHARED = {"containers": [{"id": "b" * 64, "name": "dapr_redis"}], "binaries": []}
 
 
+class QualificationEnvironmentTests(unittest.TestCase):
+    def hostile_environment(self) -> dict[str, str]:
+        return {"PATH": RUNNER.os.environ["PATH"], "CI": "true", "ci": "true",
+                "TERM_PROGRAM": "cursor", "term_program": "vscode", "VSCODE_PID": "123",
+                "vscode_cwd": "/caller", "VSCODE_CUSTOM": "caller-only",
+                "idebuild": "true", "bUiLdInGiNsIdEvIsUaLsTuDiO": "true",
+                "BUILDINGBYRESHARPER": "true", "gItHuB_aCtIoNs": "false", "TF_BUILD": "true",
+                "cibuild": "false", "ContinuousIntegrationBuild": "false",
+                "IsPackable": "false", "GeneratePackageOnBuild": "false",
+                "UseHexalithProjectReferences": "false", "dEsIgNtImEbUiLd": "true",
+                "bUiLdPrOjEcTrEfErEnCeS": "false", "CALLER_SECRET": "protected-marker"}
+
+    def test_caller_ide_and_build_overrides_are_removed_case_insensitively(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            scratch = Path(temporary)
+            caller = self.hostile_environment()
+            with patch.dict(RUNNER.os.environ, caller, clear=True), patch.object(
+                RUNNER, "shared_snapshot", return_value=SHARED
+            ):
+                run = RUNNER.Qualification(scratch, scratch, {})
+                self.assertEqual(caller, dict(RUNNER.os.environ))
+            self.assertEqual("true", run.env["GITHUB_ACTIONS"])
+            self.assertEqual("protected-marker", run.env["CALLER_SECRET"])
+            allowed = {"PATH", "GITHUB_ACTIONS", "CALLER_SECRET", "NUGET_PACKAGES", "DOTNET_CLI_HOME",
+                       "DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER", "MSBUILDDISABLENODEREUSE",
+                       "PYTHONDONTWRITEBYTECODE"}
+            self.assertEqual(allowed, set(run.env))
+            controls = run.build_controls()
+            self.assertEqual("true", controls["GITHUB_ACTIONS"])
+            self.assertIsNone(controls["CI"])
+            self.assertIsNone(controls["TF_BUILD"])
+            self.assertIsNone(controls["IDEBuild"])
+            self.assertIsNone(controls["DesignTimeBuild"])
+            self.assertIsNone(controls["BuildProjectReferences"])
+            self.assertEqual("1", controls["MSBUILDDISABLENODEREUSE"])
+            self.assertNotIn("protected-marker", json.dumps(controls))
+            self.assertNotIn("CALLER_SECRET", controls)
+
+    def test_hostile_caller_cannot_disable_real_msbuild_packing_or_ci_properties(self) -> None:
+        evidence_root = ROOT / ".g6-current-evidence"
+        evidence_root.mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=evidence_root) as temporary:
+            output = Path(temporary)
+            scratch = output / "scratch"
+            scratch.mkdir()
+            with patch.dict(RUNNER.os.environ, self.hostile_environment(), clear=True), patch.object(
+                RUNNER, "shared_snapshot", return_value=SHARED
+            ):
+                run = RUNNER.Qualification(output, scratch, {})
+            command = ["dotnet", "msbuild", str(ROOT / "references/Hexalith.Commons/src/libraries/Hexalith.Commons/Hexalith.Commons.csproj"),
+                       "-p:Configuration=Debug", "-p:UseHexalithProjectReferences=true",
+                       "-getProperty:CI,GITHUB_ACTIONS,TF_BUILD,IDEBuild,CIBuild,ContinuousIntegrationBuild,IsPackable,GeneratePackageOnBuild,UseHexalithProjectReferences,DesignTimeBuild,BuildProjectReferences,ProjectRoot",
+                       "-getItem:None"]
+            self.assertEqual(0, run.run("inspect normalized build properties", command))
+            text = (output / "logs/inspect-normalized-build-properties.log").read_text()
+            evaluation = json.loads(text[text.index("{"):])
+            properties = evaluation["Properties"]
+            for field in ("GITHUB_ACTIONS", "CIBuild", "ContinuousIntegrationBuild", "IsPackable", "GeneratePackageOnBuild", "UseHexalithProjectReferences"):
+                self.assertEqual("true", properties[field], field)
+            for field in ("CI", "TF_BUILD", "IDEBuild", "DesignTimeBuild"):
+                self.assertEqual("", properties[field], field)
+            self.assertEqual("true", properties["BuildProjectReferences"])
+            commons = ROOT / "references/Hexalith.Commons"
+            self.assertEqual(commons, Path(properties["ProjectRoot"].replace("[workspace]", str(ROOT))).resolve())
+            root_readmes = [item for item in evaluation["Items"]["None"]
+                            if item.get("Pack", "").lower() == "true" and item.get("Filename", "").lower() == "readme"
+                            and item.get("Extension", "").lower() == ".md" and "PackagePath" in item
+                            and item["PackagePath"] in ("", "/", "\\")]
+            self.assertEqual([commons / "README.md"],
+                             [Path(item["FullPath"].replace("[workspace]", str(ROOT))) for item in root_readmes])
+            self.assertNotIn("protected-marker", text)
+
+    def test_isolated_tool_install_uses_the_supplied_build_environment(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            environment = {"PATH": "/tools", "GITHUB_ACTIONS": "true"}
+            with patch.object(RUNNER.urllib.request, "urlretrieve"), patch.object(RUNNER.tarfile, "open"), \
+                 patch.object(RUNNER.subprocess, "run") as invoke:
+                RUNNER.install(Path(temporary), {"tuple": {"daprCli": "1.18.0", "aspireCli": "13.6.0", "daprRuntime": "1.18.2"}}, environment)
+            self.assertEqual(2, invoke.call_count)
+            self.assertTrue(all(call.kwargs["env"] is environment for call in invoke.call_args_list))
+
+
 class QualificationContainerCleanupTests(unittest.TestCase):
     """Launch failure cleanup must preserve the shared-resource snapshot."""
 
