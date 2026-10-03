@@ -2,7 +2,7 @@
 title: 'G-6 CI Readiness for the Approved Current Tuple'
 type: 'bugfix'
 created: '2026-10-03'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 baseline_commit: '193fceecab74555f46016b2ab835b37f5673e7e6'
 review_loop_iteration: 0
@@ -58,9 +58,9 @@ context:
 - [x] Workflows -- exact image pulls and owner comment.
 - [x] Commons/Builds props -- correct root and inherited README replacement; verify package contents and root-path cases.
 - [x] Runner files and focused tests -- normalize build environment, retain controls, prove hostile caller variables cannot disable packing/CI properties.
-- [ ] Coordinator after implementation/review -- validate commit messages and commit fixes/gitlinks; restore all 11 policy consumers and run fresh clean-shell proof; validate exit 0 before later commits.
-- [ ] Coordinator -- retain pre-check, fetch/check divergence, push submodules then root, observe exact-SHA g6-current; retain downloaded CI artifact and logs.
-- [ ] Coordinator after qualifying CI -- update only current_checkout tracking and close these three deferred items, commit and push records.
+- [x] Coordinator after implementation/review -- validate commit messages and commit fixes/gitlinks; restore all 11 policy consumers and run fresh clean-shell proof; validate exit 0 before later commits.
+- [x] Coordinator -- retain pre-check, fetch/check divergence, push submodules then root, observe exact-SHA g6-current; retain downloaded CI artifact and logs.
+- [x] Coordinator after qualifying CI -- update only current_checkout tracking and close these three deferred items, commit and push records.
 
 **Acceptance Criteria:**
 - Given the committed fixes and approved tuple, when a fresh clean-shell proof runs, then qualifier 1/1, support 33/33, zero skips, 10 AppHosts and McpCli succeed, all cleanup flags are true and validate exits 0.
@@ -76,6 +76,12 @@ Focused verification passed: runner/gate controls 25/25, Builds README archive c
 Review patches preserve same-source nonroot/unpacked README items using metadata matching. Real NuGet verification treats omitted PackagePath as default content packaging; the regression preserves that content and still requires one owned root README. Explicit-empty metadata can create duplicate root ZIP entries before this change, as can ./ and multi-destination shapes; the guard targets the explicit / and backslash roots used by the affected imports. DesignTimeBuild/BuildProjectReferences normalization and actual Commons ownership are covered by the real MSBuild regression, and preflight skip/bypass mutations are rejected.
 
 Final focused verification after review patches: runner/gate controls 25/25 and README package controls 6/6, plus Builds current-tuple controls 3/3, workflow policy, production-authority index and whitespace checks. All review fixes preserve the approved tuple and historical records.
+
+Completion: Builds `688eec9a4333245cc0ff7772115c769094471863`, Commons `116d26815eb81e35b3c161e1799e5ee12805fc0a`, root implementation `455b26fbea4c914cea643f5c37566e91ed3e599c` and root gitlinks `387b5af242bc99f48848f3d0265fa3c38575bc03` were committed with owning-repository commitlint before the fresh proof. The first local restore bootstrap stalled and was stopped using only its owned processes; the second local attempt failed Docker port forwarding before runtime proof, validated exit 1, removed owned containers and preserved shared resources. Both are retained. The third attempt used a fresh isolated cache, a non-IDE shell, serialized restore and disabled node reuse on the same committed root; qualifier 1/1, support 33/33, fixture controls 31/31, strict captures, all 10 AppHosts and McpCli passed. All 18 commands exited 0, zero tests skipped, all cleanup flags true, audit zero issues and local validate exit 0. Local result SHA-256: `b508bb380516ff4ed4f4f6cd63ded19eafe8af833dd4439a4f30dfb3161780a4`.
+
+After checking divergence and commit ranges, Builds and Commons were pushed before root. Authoritative CI [37111866011](https://github.com/Hexalith/Hexalith.Projects/actions/runs/37111866011), job `111171338892`, passed on exact root `387b5af242bc99f48848f3d0265fa3c38575bc03` and printed `G6-CURRENT-QUALIFIED` from both the runner and validator. CI matched the local proof counts, all successful commands and cleanup, with the same tuple, named approval and gitlinks. Its artifact `g6-current-387b5af242bc99f48848f3d0265fa3c38575bc03-37111866011-1` is id `11270158612`, uploaded ZIP digest `sha256:a85f319814a2dbc8c2761909d6f5af99e6498b4b78e516d1fa1330aff5de3cf4`; result SHA-256 `bc04ab1d5ec236db3b7fcdc18b41cb89ef355e3f4731af9f69dcd95e35c7b280`, internal artifactSha256 `48239d5fdeee8a59a42f4031906ac68b6f8b63d7b87111af449d7b6c5a93ff66`. Original ZIP digest, all canonical result digests and bound receipt hashes were verified before current_checkout tracking advanced.
+
+Durable evidence: [qualification-evidence/g-6-ci-readiness-20261003/README.md](qualification-evidence/g-6-ci-readiness-20261003/README.md) and SHA256SUMS. Only the G-6 current_checkout fields advance; the three readiness ledger items are resolved. The approved tuple/policy, attempt-16, G-4/G-5, P1R and downstream statuses are preserved. Release was not dispatched. Existing EOL fingerprint drift, Platform app-model startup and test_g6_packet_references.py remain separate deferred work; no reuse was enabled.
 
 ## Spec Change Log
 

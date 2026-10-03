@@ -1,0 +1,424 @@
+{
+  "schema": "hexalith.g6-current-audit.v1",
+  "policySha256": "de3c614a23109838e53524c6f033cbc8c86c68edfa5815da608710d59feb7dfb",
+  "source": {
+    "rootSha": "387b5af242bc99f48848f3d0265fa3c38575bc03",
+    "gitlinks": [
+      {
+        "path": "references/Hexalith.AI.Tools",
+        "sha": "3f194e17174994d308ec84af9ee2b5aa68674d0d"
+      },
+      {
+        "path": "references/Hexalith.EventStore",
+        "sha": "2c58ffda41759e895ace4b9625c9bd931a217672"
+      },
+      {
+        "path": "references/Hexalith.Tenants",
+        "sha": "bfc10cb62dff6784c4b4bcabadfd537ef74fd77a"
+      },
+      {
+        "path": "references/Hexalith.FrontComposer",
+        "sha": "bf40099f81fcaeac324b7b4377513ac7d49cead4"
+      },
+      {
+        "path": "references/Hexalith.Conversations",
+        "sha": "35121cab6bfc963fb2a8d411a51800f6ef5a2a70"
+      },
+      {
+        "path": "references/Hexalith.Folders",
+        "sha": "ebefb2836d5debe6735b60d070d805cee55168c5"
+      },
+      {
+        "path": "references/Hexalith.Parties",
+        "sha": "937cb2a343aaa74963db9bb867a2c3a01ff48677"
+      },
+      {
+        "path": "references/Hexalith.Commons",
+        "sha": "116d26815eb81e35b3c161e1799e5ee12805fc0a"
+      },
+      {
+        "path": "references/Hexalith.Builds",
+        "sha": "688eec9a4333245cc0ff7772115c769094471863"
+      },
+      {
+        "path": "references/Hexalith.Memories",
+        "sha": "ece4edc4c9a37a62b34d3b7c8aa901fc363c038c"
+      },
+      {
+        "path": "references/Hexalith.Platform",
+        "sha": "c3c473a4aa8da421896e4795fcdb0f4d2771a0be"
+      },
+      {
+        "path": "references/Hexalith.McpCli",
+        "sha": "9b0b6e7a082bf93b669a883e48672c26c6f0630d"
+      }
+    ]
+  },
+  "materialInputs": {
+    "fingerprint": "4afa46578dacd7e237c497588ba0989c38e6693d5c3db6d2636f7aef9458382c",
+    "fileCount": 7024
+  },
+  "effectiveTuple": {
+    "dotnetSdk": "10.0.401",
+    "aspireSdk": "13.6.0",
+    "aspireCli": "13.6.0",
+    "communityToolkitAspireDapr": "13.6.0-preview.1.261001-0243",
+    "daprCli": "1.18.0",
+    "daprRuntime": "1.18.2",
+    "daprDotnetPackages": "1.18.10",
+    "fluentUi": "5.0.0",
+    "nSubstitute": "6.2.0",
+    "fluxor": "6.11.0"
+  },
+  "resolvedPackages": [
+    {
+      "path": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Redis",
+          "version": "13.6.0"
+        },
+        {
+          "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-preview.1.261001-0243"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Redis",
+          "version": "13.6.0"
+        },
+        {
+          "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-preview.1.261001-0243"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Azure",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Azure.AppContainers",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Azure.ContainerRegistry",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Azure.OperationalInsights",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Docker",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Kubernetes",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Orchestration.linux-x64",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Redis",
+          "version": "13.6.0"
+        },
+        {
+          "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-preview.1.261001-0243"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Testing",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Dapr.Actors",
+          "version": "1.18.10"
+        },
+        {
+          "id": "Dapr.Actors.AspNetCore",
+          "version": "1.18.10"
+        },
+        {
+          "id": "Dapr.AspNetCore",
+          "version": "1.18.10"
+        },
+        {
+          "id": "Dapr.Client",
+          "version": "1.18.10"
+        },
+        {
+          "id": "Dapr.Common",
+          "version": "1.18.10"
+        },
+        {
+          "id": "Dapr.Protos",
+          "version": "1.18.10"
+        },
+        {
+          "id": "NSubstitute",
+          "version": "6.2.0"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Orchestration.linux-x64",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Redis",
+          "version": "13.6.0"
+        },
+        {
+          "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-preview.1.261001-0243"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Redis",
+          "version": "13.6.0"
+        },
+        {
+          "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-preview.1.261001-0243"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Redis",
+          "version": "13.6.0"
+        },
+        {
+          "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-preview.1.261001-0243"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Azure",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Azure.AppContainers",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Azure.ContainerRegistry",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Azure.OperationalInsights",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Docker",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Kubernetes",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Redis",
+          "version": "13.6.0"
+        },
+        {
+          "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-preview.1.261001-0243"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Redis",
+          "version": "13.6.0"
+        },
+        {
+          "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-preview.1.261001-0243"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/Hexalith.Builds.Module.AppHost.csproj",
+      "packages": [
+        {
+          "id": "Aspire.Hosting",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.AppHost",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Keycloak",
+          "version": "13.6.0-preview.1.26479.8"
+        },
+        {
+          "id": "Aspire.Hosting.Orchestration.linux-x64",
+          "version": "13.6.0"
+        },
+        {
+          "id": "Aspire.Hosting.Redis",
+          "version": "13.6.0"
+        },
+        {
+          "id": "CommunityToolkit.Aspire.Hosting.Dapr",
+          "version": "13.6.0-preview.1.261001-0243"
+        }
+      ]
+    },
+    {
+      "path": "references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj",
+      "packages": [
+        {
+          "id": "Dapr.Client",
+          "version": "1.18.10"
+        },
+        {
+          "id": "Dapr.Common",
+          "version": "1.18.10"
+        },
+        {
+          "id": "Dapr.Protos",
+          "version": "1.18.10"
+        }
+      ]
+    }
+  ],
+  "tupleApproved": true,
+  "issues": []
+}

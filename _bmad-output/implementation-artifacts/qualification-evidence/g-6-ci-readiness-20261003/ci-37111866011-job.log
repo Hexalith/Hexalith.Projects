@@ -1,0 +1,659 @@
+G-6 current runtime qualification	Set up job	﻿2026-10-03T09:06:28.1518918Z Current runner version: '2.337.0'
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1537499Z ##[group]Runner Image Provisioner
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1538239Z Hosted Compute Agent
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1538699Z Version: 20260901.588
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1539635Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1540238Z Build Date: 2026-09-01T19:56:44Z
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1540810Z Worker ID: {291bac0f-c56f-4aa6-8b54-0cf3fd51a091}
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1541411Z Azure Region: centralus
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1541911Z ##[endgroup]
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1543525Z ##[group]Operating System
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1544045Z Ubuntu
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1544483Z 24.04.5
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1544929Z LTS
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1545384Z ##[endgroup]
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1545847Z ##[group]Runner Image
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1546325Z Image: ubuntu-24.04
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1546783Z Version: 20260927.320.1
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1547717Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1549143Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1549971Z ##[endgroup]
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1550921Z ##[group]GITHUB_TOKEN Permissions
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1552725Z Contents: read
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1553204Z Metadata: read
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1553724Z ##[endgroup]
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1555407Z Secret source: Actions
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1556211Z Cache mode: write
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1556798Z Prepare workflow directory
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.1985837Z Prepare all required actions
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.2027554Z Getting action download info
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.4864373Z Download action repository 'actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0' (SHA:9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0)
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:28.6645007Z Download action repository 'Hexalith/Hexalith.Builds@51af786cf156d2a3396dbd49f5e4898222e55c12' (SHA:51af786cf156d2a3396dbd49f5e4898222e55c12)
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:29.6680512Z Download action repository 'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a' (SHA:043fb46d1a93c77aae656e7c1c64a875d1fc6a0a)
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:29.9077498Z Getting action download info
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:30.0109060Z Download action repository 'actions/setup-dotnet@v6.0.0' (SHA:a98b56852c35b8e3190ac28c8c2271da59106c68)
+G-6 current runtime qualification	Set up job	2026-10-03T09:06:30.6429999Z Complete job name: G-6 current runtime qualification
+G-6 current runtime qualification	Checkout repository	﻿2026-10-03T09:06:30.7038571Z ##[group]Run actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7039901Z with:
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7040519Z   fetch-depth: 0
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7041170Z   submodules: false
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7041895Z   repository: Hexalith/Hexalith.Projects
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7049265Z   token: ***
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7049906Z   ssh-strict: true
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7050544Z   ssh-user: git
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7051209Z   persist-credentials: true
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7051926Z   clean: true
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7052715Z   sparse-checkout-cone-mode: true
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7053531Z   fetch-tags: false
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7054222Z   show-progress: true
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7054885Z   lfs: false
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7055520Z   set-safe-directory: true
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7056300Z   allow-unsafe-pr-checkout: false
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7057256Z env:
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7057936Z   PYTHONDONTWRITEBYTECODE: 1
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7058812Z   G6_OUTPUT: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7059734Z ##[endgroup]
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7914048Z Syncing repository: Hexalith/Hexalith.Projects
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7917373Z ##[group]Getting Git version info
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7919215Z Working directory is '/home/runner/work/Hexalith.Projects/Hexalith.Projects'
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7921756Z [command]/usr/bin/git version
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7940562Z git version 2.55.0
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7955911Z ##[endgroup]
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7963221Z Temporarily overriding HOME='/home/runner/work/_temp/52fea14e-6d58-4ccb-aec6-0e22c72adf08' before making global git config changes
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7966398Z Adding repository directory to the temporary git global config as a safe directory
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.7969444Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Hexalith.Projects/Hexalith.Projects
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8000585Z Deleting the contents of '/home/runner/work/Hexalith.Projects/Hexalith.Projects'
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8003564Z ##[group]Determining repository object format
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8005792Z ##[endgroup]
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8007660Z ##[group]Initializing the repository
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8010287Z [command]/usr/bin/git init /home/runner/work/Hexalith.Projects/Hexalith.Projects
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8076386Z hint: Using 'master' as the name for the initial branch. This default branch name
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8078872Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8081114Z hint: to use in all of your new repositories, which will suppress this warning,
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8083135Z hint: call:
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8084088Z hint:
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8085291Z hint: 	git config --global init.defaultBranch <name>
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8086723Z hint:
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8087784Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8089390Z hint: 'development'. The just-created branch can be renamed via this command:
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8090899Z hint:
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8091630Z hint: 	git branch -m <name>
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8092666Z hint:
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8094296Z hint: Disable this message with "git config set advice.defaultBranchName false"
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8096048Z Initialized empty Git repository in /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8099318Z [command]/usr/bin/git remote add origin https://github.com/Hexalith/Hexalith.Projects
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8152646Z ##[endgroup]
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8153944Z ##[group]Disabling automatic garbage collection
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8155513Z [command]/usr/bin/git config --local gc.auto 0
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8188794Z ##[endgroup]
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8190770Z ##[group]Setting up auth
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8192119Z Removing SSH command configuration
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8194291Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8219197Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8456247Z Removing HTTP extra header
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8461132Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8492696Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8658012Z Removing includeIf entries pointing to credentials config files
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8663759Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8688877Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8849576Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8876884Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git.path /home/runner/work/_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8901576Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8928204Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8953433Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8975171Z ##[endgroup]
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8976796Z ##[group]Fetching the repository
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:30.8981490Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3253282Z From https://github.com/Hexalith/Hexalith.Projects
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3254043Z  * [new branch]      main       -> origin/main
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3254580Z  * [new tag]         v1.0.0     -> v1.0.0
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3255049Z  * [new tag]         v1.1.0     -> v1.1.0
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3265472Z [command]/usr/bin/git branch --list --remote origin/main
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3281268Z   origin/main
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3288763Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3305833Z 387b5af242bc99f48848f3d0265fa3c38575bc03
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3309227Z ##[endgroup]
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3309872Z ##[group]Determining the checkout info
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3310585Z ##[endgroup]
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3313524Z [command]/usr/bin/git sparse-checkout disable
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3357947Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3381472Z ##[group]Checking out the ref
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.3385967Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.6878579Z Switched to a new branch 'main'
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.6881798Z branch 'main' set up to track 'origin/main'.
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.6895234Z ##[endgroup]
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.6938469Z [command]/usr/bin/git log -1 --format=%H
+G-6 current runtime qualification	Checkout repository	2026-10-03T09:06:32.6944876Z 387b5af242bc99f48848f3d0265fa3c38575bc03
+G-6 current runtime qualification	Initialize root-declared submodules	﻿2026-10-03T09:06:32.7126416Z ##[group]Run Hexalith/Hexalith.Builds/Github/initialize-build@51af786cf156d2a3396dbd49f5e4898222e55c12
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7127055Z env:
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7127250Z   PYTHONDONTWRITEBYTECODE: 1
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7127500Z   G6_OUTPUT: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7127748Z ##[endgroup]
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7175631Z ##[start-action display=Initialize root-declared submodules;id=__Hexalith_Hexalith_Builds.__run]
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7212247Z ##[group]Run git -c submodule.recurse=false submodule update --init
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7212936Z [36;1mgit -c submodule.recurse=false submodule update --init[0m
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7356489Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7356816Z env:
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7357030Z   PYTHONDONTWRITEBYTECODE: 1
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7357284Z   G6_OUTPUT: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7357543Z ##[endgroup]
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7579457Z Submodule 'Hexalith.AI.Tools' (https://github.com/Hexalith/Hexalith.AI.Tools.git) registered for path 'references/Hexalith.AI.Tools'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7584691Z Submodule 'Hexalith.Builds' (https://github.com/Hexalith/Hexalith.Builds.git) registered for path 'references/Hexalith.Builds'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7589991Z Submodule 'Hexalith.Commons' (https://github.com/Hexalith/Hexalith.Commons.git) registered for path 'references/Hexalith.Commons'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7595314Z Submodule 'Hexalith.Conversations' (https://github.com/Hexalith/Hexalith.Conversations.git) registered for path 'references/Hexalith.Conversations'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7600124Z Submodule 'Hexalith.EventStore' (https://github.com/Hexalith/Hexalith.EventStore.git) registered for path 'references/Hexalith.EventStore'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7605760Z Submodule 'Hexalith.Folders' (https://github.com/Hexalith/Hexalith.Folders.git) registered for path 'references/Hexalith.Folders'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7610573Z Submodule 'Hexalith.FrontComposer' (https://github.com/Hexalith/Hexalith.FrontComposer.git) registered for path 'references/Hexalith.FrontComposer'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7615960Z Submodule 'Hexalith.McpCli' (https://github.com/Hexalith/Hexalith.McpCli.git) registered for path 'references/Hexalith.McpCli'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7620956Z Submodule 'Hexalith.Memories' (https://github.com/Hexalith/Hexalith.Memories.git) registered for path 'references/Hexalith.Memories'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7626487Z Submodule 'Hexalith.Parties' (https://github.com/Hexalith/Hexalith.Parties.git) registered for path 'references/Hexalith.Parties'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7631883Z Submodule 'Hexalith.Platform' (https://github.com/Hexalith/Hexalith.Platform.git) registered for path 'references/Hexalith.Platform'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7637276Z Submodule 'Hexalith.Tenants' (https://github.com/Hexalith/Hexalith.Tenants.git) registered for path 'references/Hexalith.Tenants'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:32.7657982Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.AI.Tools'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:33.1771447Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Builds'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:34.7300328Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:35.4643970Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:36.8081435Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:39.5917521Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:40.8456250Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:45.1739610Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:46.2541927Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:47.8819136Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:49.2087013Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Platform'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:50.8471202Z Cloning into '/home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants'...
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:53.3917468Z Submodule path 'references/Hexalith.AI.Tools': checked out '3f194e17174994d308ec84af9ee2b5aa68674d0d'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:53.4633572Z Submodule path 'references/Hexalith.Builds': checked out '688eec9a4333245cc0ff7772115c769094471863'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:53.4765609Z Submodule path 'references/Hexalith.Commons': checked out '116d26815eb81e35b3c161e1799e5ee12805fc0a'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:53.7618251Z Submodule path 'references/Hexalith.Conversations': checked out '35121cab6bfc963fb2a8d411a51800f6ef5a2a70'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:54.2983405Z Submodule path 'references/Hexalith.EventStore': checked out '2c58ffda41759e895ace4b9625c9bd931a217672'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:54.5792137Z Submodule path 'references/Hexalith.Folders': checked out 'ebefb2836d5debe6735b60d070d805cee55168c5'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:55.2109054Z Submodule path 'references/Hexalith.FrontComposer': checked out 'bf40099f81fcaeac324b7b4377513ac7d49cead4'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:55.4510585Z Submodule path 'references/Hexalith.McpCli': checked out '9b0b6e7a082bf93b669a883e48672c26c6f0630d'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:55.9956741Z Submodule path 'references/Hexalith.Memories': checked out 'ece4edc4c9a37a62b34d3b7c8aa901fc363c038c'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:56.2705344Z Submodule path 'references/Hexalith.Parties': checked out '937cb2a343aaa74963db9bb867a2c3a01ff48677'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:56.4882501Z Submodule path 'references/Hexalith.Platform': checked out 'c3c473a4aa8da421896e4795fcdb0f4d2771a0be'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:56.8230009Z Submodule path 'references/Hexalith.Tenants': checked out 'bfc10cb62dff6784c4b4bcabadfd537ef74fd77a'
+G-6 current runtime qualification	Initialize root-declared submodules	2026-10-03T09:06:56.8249440Z ##[end-action id=__Hexalith_Hexalith_Builds.__run;outcome=success;conclusion=success;duration_ms=24107]
+G-6 current runtime qualification	Initialize .NET	﻿2026-10-03T09:06:56.8311056Z ##[group]Run Hexalith/Hexalith.Builds/Github/initialize-dotnet@51af786cf156d2a3396dbd49f5e4898222e55c12
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8311541Z with:
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8311788Z   global-json-file: global.json
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8312108Z   dotnet-version: 10.0.401
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8312820Z env:
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8313096Z   PYTHONDONTWRITEBYTECODE: 1
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8313429Z   G6_OUTPUT: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8313733Z ##[endgroup]
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8318705Z ##[start-action display=Setup .NET from global.json;id=__Hexalith_Hexalith_Builds_2.__actions_setup-dotnet]
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8370805Z ##[group]Run actions/setup-dotnet@v6.0.0
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8371119Z with:
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8371382Z   global-json-file: global.json
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8371677Z   cache: false
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8371940Z env:
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8372224Z   PYTHONDONTWRITEBYTECODE: 1
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8372781Z   G6_OUTPUT: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.8373092Z ##[endgroup]
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:56.9423708Z [command]/home/runner/work/_actions/actions/setup-dotnet/v6.0.0/externals/install-dotnet.sh --skip-non-versioned-files --runtime dotnet --channel LTS
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:57.2613176Z dotnet-install: .NET Core Runtime with version '10.0.12' is already installed.
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:57.2637984Z [command]/home/runner/work/_actions/actions/setup-dotnet/v6.0.0/externals/install-dotnet.sh --skip-non-versioned-files --channel 10.0.4xx
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:57.5244403Z dotnet-install: .NET Core SDK with version '10.0.401' is already installed.
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:57.5306777Z ##[end-action id=__Hexalith_Hexalith_Builds_2.__actions_setup-dotnet;outcome=success;conclusion=success;duration_ms=698]
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:57.5316069Z ##[start-action display=Setup .NET 10.0.401;id=__Hexalith_Hexalith_Builds_2.__actions_setup-dotnet_2]
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:57.5323560Z ##[end-action id=__Hexalith_Hexalith_Builds_2.__actions_setup-dotnet_2;outcome=skipped;conclusion=skipped;duration_ms=0]
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:57.5325897Z ##[start-action display=Add Aspire Workloads;id=__Hexalith_Hexalith_Builds_2.__run]
+G-6 current runtime qualification	Initialize .NET	2026-10-03T09:06:57.5329729Z ##[end-action id=__Hexalith_Hexalith_Builds_2.__run;outcome=skipped;conclusion=skipped;duration_ms=0]
+G-6 current runtime qualification	Validate current G-6 preflight	﻿2026-10-03T09:06:57.5354748Z ##[group]Run python3 -m unittest tests/tools/test_run_g6_current.py tests/tools/test_g6_qualification_runner.py -v
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.5355460Z [36;1mpython3 -m unittest tests/tools/test_run_g6_current.py tests/tools/test_g6_qualification_runner.py -v[0m
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.5355991Z [36;1mpython3 references/Hexalith.Builds/Tools/test_package_readme.py -v[0m
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.5392708Z shell: /usr/bin/bash -e {0}
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.5393088Z env:
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.5393361Z   PYTHONDONTWRITEBYTECODE: 1
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.5393693Z   G6_OUTPUT: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.5394065Z   DOTNET_ROOT: /usr/share/dotnet
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.5394344Z ##[endgroup]
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.7868464Z test_failed_install_retains_normalized_build_controls_without_caller_secrets (tests.tools.test_run_g6_current.CurrentRunnerPreflightTests.test_failed_install_retains_normalized_build_controls_without_caller_secrets) ... G6-CURRENT-FAILED: install failed
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.7878021Z ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.7890021Z test_mismatched_tuple_retains_not_verified_without_starting_resources (tests.tools.test_run_g6_current.CurrentRunnerPreflightTests.test_mismatched_tuple_retains_not_verified_without_starting_resources) ... G6-CURRENT-NOT-VERIFIED: controlled tuple changed: communityToolkitAspireDapr preview != beta
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.7891263Z ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.7903611Z test_pending_selected_tuple_can_reach_live_runner_despite_consumer_pin_drift (tests.tools.test_run_g6_current.CurrentRunnerPreflightTests.test_pending_selected_tuple_can_reach_live_runner_despite_consumer_pin_drift) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.7912731Z test_failed_launch_with_cid_removes_only_that_exact_container (tests.tools.test_g6_qualification_runner.QualificationContainerCleanupTests.test_failed_launch_with_cid_removes_only_that_exact_container) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.7920328Z test_failed_launch_without_cid_does_not_target_any_container (tests.tools.test_g6_qualification_runner.QualificationContainerCleanupTests.test_failed_launch_without_cid_does_not_target_any_container) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.7927963Z test_caller_ide_and_build_overrides_are_removed_case_insensitively (tests.tools.test_g6_qualification_runner.QualificationEnvironmentTests.test_caller_ide_and_build_overrides_are_removed_case_insensitively) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.7934687Z G6-CURRENT-FAILED: /home/runner/work/Hexalith.Projects/Hexalith.Projects/.g6-current-evidence/tmp8t6j01bj/result/result.json
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:06:57.7935277Z G6-RUN: inspect normalized build properties
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.8810248Z G6-RESULT: inspect normalized build properties: exit 0; }
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.8815319Z test_hostile_caller_cannot_disable_real_msbuild_packing_or_ci_properties (tests.tools.test_g6_qualification_runner.QualificationEnvironmentTests.test_hostile_caller_cannot_disable_real_msbuild_packing_or_ci_properties) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.8828498Z test_isolated_tool_install_uses_the_supplied_build_environment (tests.tools.test_g6_qualification_runner.QualificationEnvironmentTests.test_isolated_tool_install_uses_the_supplied_build_environment) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.8854048Z test_actual_assets_retain_transitive_families_and_exact_preview_exclusions (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_actual_assets_retain_transitive_families_and_exact_preview_exclusions) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.8864587Z test_actual_mcp_assets_require_transitive_dapr_client (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_actual_mcp_assets_require_transitive_dapr_client) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.8894207Z test_cleanup_failure_is_retained_even_when_commands_pass (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_cleanup_failure_is_retained_even_when_commands_pass) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.8896562Z test_failed_fresh_build_never_executes_fixture_dll (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_failed_fresh_build_never_executes_fixture_dll) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.8898804Z test_failed_support_keeps_actual_counts_and_safe_identities (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_failed_support_keeps_actual_counts_and_safe_identities) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.8900720Z test_fixture_disagreement_keeps_cleanup_false (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_fixture_disagreement_keeps_cleanup_false) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.8902110Z test_process_group_disappearance_after_kill_is_proven (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_process_group_disappearance_after_kill_is_proven) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.9059099Z test_source_drift_retains_original_snapshot_and_failure (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_source_drift_retains_original_snapshot_and_failure) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.9071876Z test_still_present_process_group_keeps_cleanup_false (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_still_present_process_group_keeps_cleanup_false) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.9082476Z test_unverifiable_process_group_keeps_cleanup_false (tests.tools.test_g6_qualification_runner.QualificationEvidenceRetentionTests.test_unverifiable_process_group_keeps_cleanup_false) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.9084158Z 
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.9084617Z ----------------------------------------------------------------------
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.9085349Z Ran 18 tests in 4.123s
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.9085663Z 
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:01.9085886Z OK
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:07.6446845Z test_backslash_root_package_path_is_replaced (__main__.PackageReadmeTests.test_backslash_root_package_path_is_replaced) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:09.6099418Z test_forward_slash_root_package_path_is_replaced (__main__.PackageReadmeTests.test_forward_slash_root_package_path_is_replaced) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:10.8107055Z test_missing_module_readme_remains_a_pack_failure (__main__.PackageReadmeTests.test_missing_module_readme_remains_a_pack_failure) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:12.4816201Z README-DEFAULT-CONTENT: omitted PackagePath: content/omitted/README.md, contentFiles/any/net10.0/omitted/README.md
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:12.4845182Z test_omitted_package_path_preserves_default_content_packaging (__main__.PackageReadmeTests.test_omitted_package_path_preserves_default_content_packaging) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:15.6451583Z test_same_source_root_docs_and_unpacked_items_are_distinguished (__main__.PackageReadmeTests.test_same_source_root_docs_and_unpacked_items_are_distinguished) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:17.1976360Z test_standalone_module_readme_is_packed (__main__.PackageReadmeTests.test_standalone_module_readme_is_packed) ... ok
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:17.1977407Z 
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:17.1977790Z ----------------------------------------------------------------------
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:17.1978673Z Ran 6 tests in 15.220s
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:17.1979110Z 
+G-6 current runtime qualification	Validate current G-6 preflight	2026-10-03T09:07:17.1979318Z OK
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	﻿2026-10-03T09:07:17.2104605Z ##[group]Run docker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.2105272Z [36;1mdocker pull postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636[0m
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.2139782Z shell: /usr/bin/bash -e {0}
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.2140102Z env:
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.2140401Z   PYTHONDONTWRITEBYTECODE: 1
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.2140704Z   G6_OUTPUT: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.2141029Z   DOTNET_ROOT: /usr/share/dotnet
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.2141342Z ##[endgroup]
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.6550900Z docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636: Pulling from library/postgres
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8391888Z 26c307b5e35a: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8394830Z 5db2b7edf527: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8395343Z 130549402290: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8395789Z 8241f4a14319: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8396496Z a4dcdc0137d7: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8397069Z d1052e262c2e: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8397672Z 39762d0b4bb2: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8398320Z 38639b9be6a6: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8398731Z 4e6c52c74256: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8399325Z f51baa0c6c0d: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8399624Z 88bb22edda9b: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8400170Z f7d54729e84b: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8400457Z f90dd111f2e5: Pulling fs layer
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8400924Z d1052e262c2e: Waiting
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8401209Z 39762d0b4bb2: Waiting
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8401666Z 38639b9be6a6: Waiting
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8401963Z 4e6c52c74256: Waiting
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8402639Z 8241f4a14319: Waiting
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8402911Z a4dcdc0137d7: Waiting
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8403250Z 88bb22edda9b: Waiting
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8403679Z f90dd111f2e5: Waiting
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8404007Z f7d54729e84b: Waiting
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:17.8404411Z f51baa0c6c0d: Waiting
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.0003388Z 5db2b7edf527: Verifying Checksum
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.0004365Z 5db2b7edf527: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.1043271Z 130549402290: Verifying Checksum
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.1043842Z 130549402290: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.2005849Z 26c307b5e35a: Verifying Checksum
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.2006628Z 26c307b5e35a: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.2414438Z 8241f4a14319: Verifying Checksum
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.2415349Z 8241f4a14319: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.3302389Z a4dcdc0137d7: Verifying Checksum
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.3313053Z a4dcdc0137d7: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.4016810Z 39762d0b4bb2: Verifying Checksum
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.4017479Z 39762d0b4bb2: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.4586693Z d1052e262c2e: Verifying Checksum
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.4587225Z d1052e262c2e: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.4600528Z 38639b9be6a6: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.5927395Z f51baa0c6c0d: Verifying Checksum
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.5928121Z f51baa0c6c0d: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.6228324Z 88bb22edda9b: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.7098281Z f7d54729e84b: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.7690265Z f90dd111f2e5: Verifying Checksum
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.7690979Z f90dd111f2e5: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.8767211Z 4e6c52c74256: Verifying Checksum
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.8767784Z 4e6c52c74256: Download complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:18.9282912Z 26c307b5e35a: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:20.2099132Z 5db2b7edf527: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:20.4546238Z 130549402290: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:20.5089243Z 8241f4a14319: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:20.9031854Z a4dcdc0137d7: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:20.9774289Z d1052e262c2e: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:20.9837208Z 39762d0b4bb2: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:20.9919549Z 38639b9be6a6: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:24.8782675Z 4e6c52c74256: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:24.8920229Z f51baa0c6c0d: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:24.8987386Z 88bb22edda9b: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:24.9097101Z f7d54729e84b: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:24.9176151Z f90dd111f2e5: Pull complete
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:24.9208778Z Digest: sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:24.9215136Z Status: Downloaded newer image for postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+G-6 current runtime qualification	Pull pinned G-6 PostgreSQL fixture image	2026-10-03T09:07:24.9225630Z docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+G-6 current runtime qualification	Restore effective G-6 package graphs	﻿2026-10-03T09:07:24.9263719Z ##[group]Run set -euo pipefail
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9264095Z [36;1mset -euo pipefail[0m
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9264421Z [36;1mwhile IFS= read -r project; do[0m
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9264876Z [36;1m  # Jérôme Piquot, 2026-10-03: “Unset CI in restore (Recommended)”.[0m
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9265382Z [36;1m  # This dedicated Debug source proof retains the normal package-only CI guard.[0m
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9266087Z [36;1m  env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true[0m
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9266669Z [36;1mdone < <(jq -r '.resolvedProjects[]' references/Hexalith.Builds/Tools/g6-current-policy.json)[0m
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9301564Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9301935Z env:
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9302243Z   PYTHONDONTWRITEBYTECODE: 1
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9302908Z   G6_OUTPUT: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9303272Z   DOTNET_ROOT: /usr/share/dotnet
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:24.9303572Z ##[endgroup]
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:25.9906745Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:28.2476151Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.Contracts/Hexalith.Folders.Contracts.csproj (in 147 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:29.3884197Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.Client/Hexalith.Folders.Client.csproj (in 1.13 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:29.8021097Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Shell/Hexalith.FrontComposer.Shell.csproj (in 1.71 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:29.8088298Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Client.Rest/Hexalith.Memories.Client.Rest.csproj (in 1.72 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:29.8630540Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.SourceTools/Hexalith.FrontComposer.SourceTools.csproj (in 1.78 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.3684001Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj (in 560 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.3960617Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/Hexalith.EventStore.DomainService.csproj (in 17 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.4025515Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Gateway/Hexalith.EventStore.Gateway.csproj (in 525 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.4027370Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Hexalith.EventStore.Server.csproj (in 581 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.4053640Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/tests/Hexalith.Projects.E2E.Fixtures/Hexalith.Projects.E2E.Fixtures.csproj (in 2 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.4083464Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore/Hexalith.EventStore.csproj (in 780 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.4144290Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.ServiceDefaults/Hexalith.Projects.ServiceDefaults.csproj (in 4 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.4492745Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Workers/Hexalith.Projects.Workers.csproj (in 25 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.4793637Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.UI/Hexalith.Projects.UI.csproj (in 61 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.4913781Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Infrastructure/Hexalith.Projects.Infrastructure.csproj (in 14 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.5053282Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Contracts/Hexalith.Projects.Contracts.csproj (in 10 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.5197537Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj (in 38 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.5806903Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Client/Hexalith.Projects.Client.csproj (in 42 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.6533541Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj (in 51 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.6839830Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Server/Hexalith.Tenants.Server.csproj (in 17 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.6870118Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects/Hexalith.Projects.csproj (in 270 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.6908257Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Contracts/Hexalith.Tenants.Contracts.csproj (in 3 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.8720887Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Client/Hexalith.Tenants.Client.csproj (in 7 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:30.8722617Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Contracts/Hexalith.Memories.Contracts.csproj (in 3 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:31.0183684Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Contracts.UI/Hexalith.FrontComposer.Contracts.UI.csproj (in 3 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:31.0219637Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Contracts/Hexalith.FrontComposer.Contracts.csproj (in 6 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:31.0254681Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Hexalith.EventStore.Contracts.csproj (in 3 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:31.0593027Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Hexalith.EventStore.Client.csproj (in 26 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:31.0667974Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.Abstractions/Hexalith.EventStore.Admin.Abstractions.csproj (in 3 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:31.0708237Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Hexalith.Conversations.Contracts.csproj (in 2 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:31.0788313Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Client/Hexalith.Conversations.Client.csproj (in 4 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:31.0827199Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.UniqueIds/Hexalith.Commons.UniqueIds.csproj (in 2 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:31.0856404Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.Serialization/Hexalith.Commons.Serialization.csproj (in 1 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:31.0895932Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.Http/Hexalith.Commons.Http.csproj (in 1 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:32.2322191Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/Hexalith.EventStore.Aspire.csproj (in 1.2 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:32.2332130Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.Aspire/Hexalith.Projects.Aspire.csproj (in 1.73 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:32.2366131Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj (in 1.7 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:32.8574211Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:35.0084293Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Admin.Web/Hexalith.Conversations.Admin.Web.csproj (in 463 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:35.0213951Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Hexalith.Conversations.Server.csproj (in 452 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:35.0418032Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.TenantAccess/Hexalith.Commons.TenantAccess.csproj (in 9 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:35.3244000Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.Publication/Hexalith.Commons.Publication.csproj (in 8 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:35.3501419Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.Diagnostics/Hexalith.Commons.Diagnostics.csproj (in 18 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:35.5170250Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations/Hexalith.Conversations.csproj (in 1.13 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:35.5194256Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.Testing/Hexalith.Conversations.Testing.csproj (in 1.01 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:36.0692070Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Conversations/src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj (in 1.02 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:36.0753375Z   14 of 22 projects are up-to-date for restore.
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:36.6359320Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:38.7464318Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.SignalR/Hexalith.EventStore.SignalR.csproj (in 461 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:38.7591081Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/samples/Hexalith.EventStore.Sample/Hexalith.EventStore.Sample.csproj (in 445 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:38.7624442Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Api/Hexalith.Tenants.Api.csproj (in 470 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:38.7800886Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/samples/Hexalith.EventStore.Sample.Contracts/Hexalith.EventStore.Sample.Contracts.csproj (in 14 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:38.8133830Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/samples/Hexalith.EventStore.Sample.Api/Hexalith.EventStore.Sample.Api.csproj (in 21 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:38.8394389Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/samples/Hexalith.EventStore.Sample.BlazorUI/Hexalith.EventStore.Sample.BlazorUI.csproj (in 46 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:38.8486320Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.RestApi.Generators/Hexalith.EventStore.RestApi.Generators.csproj (in 42 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:38.9397241Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.Server/Hexalith.EventStore.Admin.Server.csproj (in 60 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:38.9729364Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.UI/Hexalith.EventStore.Admin.UI.csproj (in 70 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:39.0043897Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Admin.Server.Host/Hexalith.EventStore.Admin.Server.Host.csproj (in 55 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:39.9839800Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.TestSubscriber/Hexalith.EventStore.TestSubscriber.csproj (in 1.55 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:41.6241069Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj (in 2.79 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:41.6281341Z   13 of 25 projects are up-to-date for restore.
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:42.1393849Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:43.6604144Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing/Hexalith.EventStore.Testing.csproj (in 688 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:43.6634315Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Testing.Integration/Hexalith.EventStore.Testing.Integration.csproj (in 679 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:44.1350414Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Hexalith.EventStore.Server.LiveSidecar.Tests.csproj (in 1.17 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:44.1380868Z   12 of 15 projects are up-to-date for restore.
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:44.6393392Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:45.7781845Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.ServiceDefaults/Hexalith.Folders.ServiceDefaults.csproj (in 394 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:45.8467418Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.Aspire/Hexalith.Folders.Aspire.csproj (in 529 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:45.8504793Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.AppHost/Hexalith.Folders.AppHost.csproj (in 529 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:45.9045355Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.EventStore/Hexalith.Folders.EventStore.csproj (in 594 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:46.0694000Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.UI/Hexalith.Folders.UI.csproj (in 173 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:46.2264257Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders/Hexalith.Folders.csproj (in 437 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:46.2282570Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj (in 369 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:46.2293345Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj (in 312 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:46.2330386Z   2 of 10 projects are up-to-date for restore.
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:46.7390361Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.4374719Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Schema/Hexalith.FrontComposer.Schema.csproj (in 254 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.4406680Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/tests/Hexalith.FrontComposer.CounterFixture/Hexalith.FrontComposer.CounterFixture.csproj (in 327 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6044157Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.Mcp/Hexalith.FrontComposer.Mcp.csproj (in 442 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6183667Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/samples/Counter/Counter.Web/Counter.Web.csproj (in 157 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6213791Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.AppHost/Hexalith.FrontComposer.AppHost.csproj (in 168 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6288272Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/samples/Counter/Counter.Specimens/Counter.Specimens.csproj (in 11 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6374148Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/samples/Counter/Counter.Specimens.Domain/Counter.Specimens.Domain.csproj (in 8 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6385302Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/src/Hexalith.FrontComposer.UI/Hexalith.FrontComposer.UI.csproj (in 521 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6404019Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.FrontComposer/samples/Counter/Counter.Domain/Counter.Domain.csproj (in 10 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6643703Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.ServiceDefaults/Hexalith.Commons.ServiceDefaults.csproj (in 7 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6728789Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Client/Hexalith.Parties.Client.csproj (in 9 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6760272Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Authentication/Hexalith.Parties.Authentication.csproj (in 5 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.6939603Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.ConsumerPortal/Hexalith.Parties.ConsumerPortal.csproj (in 17 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.7224060Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.AdminPortal/Hexalith.Parties.AdminPortal.csproj (in 17 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.7964123Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.UI/Hexalith.Tenants.UI.csproj (in 25 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.8101683Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/samples/Hexalith.Tenants.Sample/Hexalith.Tenants.Sample.csproj (in 47 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.8519145Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Security/Hexalith.Parties.Security.csproj (in 11 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:49.8613798Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.UI/Hexalith.Parties.UI.csproj (in 34 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:50.1092461Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Picker/Hexalith.Parties.Picker.csproj (in 11 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:50.3969667Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Contracts/Hexalith.Parties.Contracts.csproj (in 5 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:50.4659893Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Projections/Hexalith.Parties.Projections.csproj (in 551 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:50.6263253Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons/Hexalith.Commons.csproj (in 971 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:50.6343204Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties/Hexalith.Parties.csproj (in 887 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:50.6383319Z   25 of 48 projects are up-to-date for restore.
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:51.1572984Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:52.2134735Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.AccessTelemetry.Contracts/Hexalith.Memories.AccessTelemetry.Contracts.csproj (in 288 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:52.2219899Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Telemetry/Hexalith.Memories.Telemetry.csproj (in 1 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:52.4533891Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.ServiceDefaults/Hexalith.Memories.ServiceDefaults.csproj (in 98 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:52.4583828Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.AccessTelemetry/Hexalith.Memories.AccessTelemetry.csproj (in 484 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:52.4615777Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.AccessTelemetry.Clock/Hexalith.Memories.AccessTelemetry.Clock.csproj (in 540 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:52.4945308Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.AppHost/Hexalith.Memories.AppHost.csproj (in 524 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:52.6259679Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.EventStore/Hexalith.Memories.EventStore.csproj (in 165 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:07:52.6412141Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Mcp/Hexalith.Memories.Mcp.csproj (in 180 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:00.7801293Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Server/Hexalith.Memories.Server.csproj (in 8 sec).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:00.7845705Z   3 of 12 projects are up-to-date for restore.
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:01.2966144Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:03.4487612Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.Mcp/Hexalith.Parties.Mcp.csproj (in 298 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:03.4491663Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Parties/src/Hexalith.Parties.AppHost/Hexalith.Parties.AppHost.csproj (in 297 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:03.4519973Z   30 of 32 projects are up-to-date for restore.
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:03.9601862Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:05.8594601Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.Aspire/Hexalith.Tenants.Aspire.csproj (in 361 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:05.8615776Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Tenants/src/Hexalith.Tenants.AppHost/Hexalith.Tenants.AppHost.csproj (in 361 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:05.8909164Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Memories/src/Hexalith.Memories.Aspire/Hexalith.Memories.Aspire.csproj (in 384 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:05.8911312Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Commons/src/libraries/Hexalith.Commons.Aspire/Hexalith.Commons.Aspire.csproj (in 392 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:05.8949934Z   33 of 37 projects are up-to-date for restore.
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:06.3921980Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:07.6255148Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.AppHost/Hexalith.Builds.Module.AppHost.csproj (in 806 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:07.6257686Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.UiHost/Hexalith.Builds.Module.UiHost.csproj (in 797 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:07.6259560Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Hexalith.Builds.Tooling.csproj (in 797 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:07.6262271Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.EventStoreHost/Hexalith.Builds.Module.EventStoreHost.csproj (in 797 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:08.1251249Z   Determining projects to restore...
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:08.5869850Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli/src/Hexalith.McpCli.Abstractions/Hexalith.McpCli.Abstractions.csproj (in 83 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:08.6696290Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli/src/Hexalith.McpCli.Analyzers/Hexalith.McpCli.Analyzers.csproj (in 182 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:08.9013865Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli/src/Hexalith.McpCli.Core/Hexalith.McpCli.Core.csproj (in 414 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:08.9019388Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli/src/Hexalith.McpCli.Mcp/Hexalith.McpCli.Mcp.csproj (in 309 ms).
+G-6 current runtime qualification	Restore effective G-6 package graphs	2026-10-03T09:08:08.9037488Z   Restored /home/runner/work/Hexalith.Projects/Hexalith.Projects/references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj (in 415 ms).
+G-6 current runtime qualification	Audit and qualify current G-6 when required	﻿2026-10-03T09:08:08.9342018Z ##[group]Run python3 tests/tools/run_g6_ci_gate.py --event "$G6_EVENT_NAME" --base-sha "$G6_BASE_SHA" --policy references/Hexalith.Builds/Tools/g6-current-policy.json --output "$G6_OUTPUT"
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:08.9343198Z [36;1mpython3 tests/tools/run_g6_ci_gate.py --event "$G6_EVENT_NAME" --base-sha "$G6_BASE_SHA" --policy references/Hexalith.Builds/Tools/g6-current-policy.json --output "$G6_OUTPUT"[0m
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:08.9377556Z shell: /usr/bin/bash -e {0}
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:08.9377917Z env:
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:08.9378174Z   PYTHONDONTWRITEBYTECODE: 1
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:08.9378505Z   G6_OUTPUT: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:08.9378868Z   DOTNET_ROOT: /usr/share/dotnet
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:08.9379166Z   G6_EVENT_NAME: push
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:08.9379471Z   G6_BASE_SHA: 193fceecab74555f46016b2ab835b37f5673e7e6
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:08.9379799Z ##[endgroup]
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:10.4613640Z G6-CURRENT-REQUIRED: material or submodule change: .github/workflows/ci.yml
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:17.9227335Z You can invoke the tool using the following command: aspire
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:17.9228382Z Tool 'aspire.cli' (version '13.6.0') was successfully installed.
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:17.9595773Z ⌛  Making the jump to hyperspace...
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:17.9596546Z ℹ️  Installing runtime version 1.18.2
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.5163911Z 
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.5173754Z Dapr runtime installed to /var/tmp/hexalith-g6-current-0rotglkd/runtime/.dapr/bin, you may run the following to add it to your path if you want to run daprd directly:
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.5175031Z     export PATH=$PATH:/var/tmp/hexalith-g6-current-0rotglkd/runtime/.dapr/bin
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.5176004Z ✅  Downloading binaries and setting up components...
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.5176591Z ✅  Downloaded binaries and completed components set up.
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.5177329Z ℹ️  daprd binary has been installed to /var/tmp/hexalith-g6-current-0rotglkd/runtime/.dapr/bin.
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.5178161Z ℹ️  placement binary has been installed to /var/tmp/hexalith-g6-current-0rotglkd/runtime/.dapr/bin.
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.5179017Z ℹ️  scheduler binary has been installed to /var/tmp/hexalith-g6-current-0rotglkd/runtime/.dapr/bin.
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.5179894Z ✅  Success! Dapr is up and running. To get started, go here: https://docs.dapr.io/getting-started
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.5187395Z G6-RUN: observe exact tool versions
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:21.7697356Z G6-RESULT: observe exact tool versions: exit 0; Runtime version: 1.18.2
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:08:36.8239014Z G6-RUN: fresh EventStore qualifier build
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:05.4564150Z G6-RESULT: fresh EventStore qualifier build: exit 0; Time Elapsed 00:00:28.40
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:05.4564892Z G6-RUN: fresh EventStore support build
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:35.6690613Z G6-RESULT: fresh EventStore support build: exit 0; Time Elapsed 00:00:29.98
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:35.6691259Z G6-RUN: fixture override tests
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:36.2461557Z G6-RESULT: fixture override tests: exit 0;    Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 31, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 0.335s
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:36.2463018Z G6-RUN: real PostgreSQL two-sidecar stop/restart qualifier
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:56.8721104Z G6-RESULT: real PostgreSQL two-sidecar stop/restart qualifier: exit 0;    Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 1, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 20.390s
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:56.8722530Z G6-RUN: 21 exact deterministic support selectors
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:57.7614616Z G6-RESULT: 21 exact deterministic support selectors: exit 0;    Hexalith.EventStore.Server.Tests  Total: 33, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 0.442s
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:57.7615825Z G6-RUN: strict EventStore capture validation
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:57.8646403Z G6-RESULT: strict EventStore capture validation: exit 0; OQ8 capture validation passed.
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:09:57.8651438Z G6-RUN: AppHost build Hexalith.Projects.AppHost
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:10:43.8848779Z G6-RESULT: AppHost build Hexalith.Projects.AppHost: exit 0; Time Elapsed 00:00:45.77
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:10:43.8849885Z G6-RUN: AppHost build Hexalith.Conversations.AppHost
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:11:01.3315499Z G6-RESULT: AppHost build Hexalith.Conversations.AppHost: exit 0; Time Elapsed 00:00:17.21
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:11:01.3316250Z G6-RUN: AppHost build Hexalith.EventStore.AppHost
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:11:25.2468581Z G6-RESULT: AppHost build Hexalith.EventStore.AppHost: exit 0; Time Elapsed 00:00:23.69
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:11:25.2469412Z G6-RUN: AppHost build Hexalith.Folders.AppHost
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:11:34.9105651Z G6-RESULT: AppHost build Hexalith.Folders.AppHost: exit 0; Time Elapsed 00:00:09.44
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:11:34.9106518Z G6-RUN: AppHost build Hexalith.FrontComposer.AppHost
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:12:30.7823602Z G6-RESULT: AppHost build Hexalith.FrontComposer.AppHost: exit 0; Time Elapsed 00:00:55.62
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:12:30.7824326Z G6-RUN: AppHost build Hexalith.Memories.AppHost
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:12:48.2376000Z G6-RESULT: AppHost build Hexalith.Memories.AppHost: exit 0; Time Elapsed 00:00:17.23
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:12:48.2377159Z G6-RUN: AppHost build Hexalith.Parties.AppHost
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:13:13.5175447Z G6-RESULT: AppHost build Hexalith.Parties.AppHost: exit 0; Time Elapsed 00:00:25.03
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:13:13.5176146Z G6-RUN: AppHost build Hexalith.Tenants.AppHost
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:13:50.0768230Z G6-RESULT: AppHost build Hexalith.Tenants.AppHost: exit 0; Time Elapsed 00:00:36.33
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:13:50.0768932Z G6-RUN: AppHost build Hexalith.Builds.Module.AppHost
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:14:00.9288465Z G6-RESULT: AppHost build Hexalith.Builds.Module.AppHost: exit 0; Time Elapsed 00:00:10.63
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:14:00.9289435Z G6-RUN: AppHost build Hexalith.Platform
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:14:05.3810056Z G6-RESULT: AppHost build Hexalith.Platform: exit 0;   apphost.cs -> [user]/.local/share/dotnet/runfile/apphost-a3695b11b1c97eadfc2b9bce9961734ff039303070b61b1c2cebaca6f13219e3/bin/debug/apphost.dll
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:14:05.3811239Z G6-RUN: McpCli transitive Dapr consumer
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:14:09.1017548Z G6-RESULT: McpCli transitive Dapr consumer: exit 0; Time Elapsed 00:00:03.48
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:14:13.4490187Z G6-CURRENT-QUALIFIED: /home/runner/work/Hexalith.Projects/Hexalith.Projects/.g6-current-evidence/ci-37111866011-1/result.json
+G-6 current runtime qualification	Audit and qualify current G-6 when required	2026-10-03T09:14:21.1801322Z G6-CURRENT-QUALIFIED: approved tuple, material inputs, critical proof, cleanup and source verified
+G-6 current runtime qualification	Upload G-6 result and diagnostics	﻿2026-10-03T09:14:21.2033487Z ##[group]Run actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2033883Z with:
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2034254Z   name: g6-current-387b5af242bc99f48848f3d0265fa3c38575bc03-37111866011-1
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2034649Z   path: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2034960Z   if-no-files-found: error
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2035287Z   retention-days: 30
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2035541Z   compression-level: 6
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2035810Z   overwrite: false
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2036062Z   include-hidden-files: false
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2036328Z   archive: true
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2036585Z env:
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2036819Z   PYTHONDONTWRITEBYTECODE: 1
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2037200Z   G6_OUTPUT: .g6-current-evidence/ci-37111866011-1
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2037510Z   DOTNET_ROOT: /usr/share/dotnet
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.2037800Z ##[endgroup]
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.4466395Z With the provided path, there will be 28 files uploaded
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.4470599Z Artifact name is valid!
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.4471212Z Root directory input is valid!
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.7452140Z Uploading artifact: g6-current-387b5af242bc99f48848f3d0265fa3c38575bc03-37111866011-1.zip
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.7483215Z Beginning upload of artifact content to blob storage
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:21.9728053Z Uploaded bytes 31979
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:22.0117699Z Finished uploading artifact content to blob storage!
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:22.0118823Z SHA256 digest of uploaded artifact is a85f319814a2dbc8c2761909d6f5af99e6498b4b78e516d1fa1330aff5de3cf4
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:22.0119718Z Finalizing artifact upload
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:22.3144153Z Artifact g6-current-387b5af242bc99f48848f3d0265fa3c38575bc03-37111866011-1 successfully finalized. Artifact ID 11270158612
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:22.3145208Z Artifact g6-current-387b5af242bc99f48848f3d0265fa3c38575bc03-37111866011-1 has been successfully uploaded! Final size is 31979 bytes. Artifact ID is 11270158612
+G-6 current runtime qualification	Upload G-6 result and diagnostics	2026-10-03T09:14:22.3146724Z Artifact download URL: https://github.com/Hexalith/Hexalith.Projects/actions/runs/37111866011/artifacts/11270158612
+G-6 current runtime qualification	Post Initialize .NET	﻿2026-10-03T09:14:22.3261172Z Post job cleanup.
+G-6 current runtime qualification	Post Initialize .NET	2026-10-03T09:14:22.3265363Z ##[start-action display=Setup .NET from global.json;id=__e3cebee4-7a2d-4172-847a-f67e4db69160.__actions_setup-dotnet]
+G-6 current runtime qualification	Post Initialize .NET	2026-10-03T09:14:22.3298388Z Post job cleanup.
+G-6 current runtime qualification	Post Initialize .NET	2026-10-03T09:14:22.4279520Z ##[end-action id=__e3cebee4-7a2d-4172-847a-f67e4db69160.__actions_setup-dotnet;outcome=success;conclusion=success;duration_ms=101]
+G-6 current runtime qualification	Post Checkout repository	﻿2026-10-03T09:14:22.4338732Z Post job cleanup.
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5079979Z [command]/usr/bin/git version
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5120547Z git version 2.55.0
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5160099Z Temporarily overriding HOME='/home/runner/work/_temp/577f3b70-f7ba-476d-970d-cc96c27f9296' before making global git config changes
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5161040Z Adding repository directory to the temporary git global config as a safe directory
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5165568Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Hexalith.Projects/Hexalith.Projects
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5189870Z Removing SSH command configuration
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5209457Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5234470Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5488344Z Entering 'references/Hexalith.AI.Tools'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5559005Z Entering 'references/Hexalith.Builds'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5609189Z Entering 'references/Hexalith.Commons'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5644759Z Entering 'references/Hexalith.Conversations'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5681624Z Entering 'references/Hexalith.EventStore'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5724168Z Entering 'references/Hexalith.Folders'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5760417Z Entering 'references/Hexalith.FrontComposer'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5800433Z Entering 'references/Hexalith.McpCli'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5835686Z Entering 'references/Hexalith.Memories'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5883209Z Entering 'references/Hexalith.Parties'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5914157Z Entering 'references/Hexalith.Platform'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5948586Z Entering 'references/Hexalith.Tenants'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5989708Z Removing HTTP extra header
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.5994319Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6019652Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6173760Z Entering 'references/Hexalith.AI.Tools'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6205158Z Entering 'references/Hexalith.Builds'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6237154Z Entering 'references/Hexalith.Commons'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6268434Z Entering 'references/Hexalith.Conversations'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6303543Z Entering 'references/Hexalith.EventStore'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6342689Z Entering 'references/Hexalith.Folders'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6378498Z Entering 'references/Hexalith.FrontComposer'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6415784Z Entering 'references/Hexalith.McpCli'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6449893Z Entering 'references/Hexalith.Memories'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6487668Z Entering 'references/Hexalith.Parties'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6522665Z Entering 'references/Hexalith.Platform'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6558004Z Entering 'references/Hexalith.Tenants'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6599648Z Removing includeIf entries pointing to credentials config files
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6605197Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6624531Z includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git.path
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6625660Z includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/worktrees/*.path
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6626903Z includeif.gitdir:/github/workspace/.git.path
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6627735Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6631897Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git.path
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6650642Z /home/runner/work/_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6658755Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git.path /home/runner/work/_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6685735Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/worktrees/*.path
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6702864Z /home/runner/work/_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6709522Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6741308Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6758488Z /github/runner_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6764076Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6788412Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6806942Z /github/runner_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6811565Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6837188Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.6991543Z Entering 'references/Hexalith.AI.Tools'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7009409Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.AI.Tools/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7022124Z Entering 'references/Hexalith.Builds'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7037137Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Builds/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7050962Z Entering 'references/Hexalith.Commons'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7065234Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Commons/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7078573Z Entering 'references/Hexalith.Conversations'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7092755Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Conversations/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7109384Z Entering 'references/Hexalith.EventStore'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7126400Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.EventStore/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7148783Z Entering 'references/Hexalith.Folders'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7164078Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Folders/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7180986Z Entering 'references/Hexalith.FrontComposer'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7195939Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.FrontComposer/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7214822Z Entering 'references/Hexalith.McpCli'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7229099Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.McpCli/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7246591Z Entering 'references/Hexalith.Memories'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7261198Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Memories/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7280074Z Entering 'references/Hexalith.Parties'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7294343Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Parties/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7311845Z Entering 'references/Hexalith.Platform'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7326898Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Platform/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7343022Z Entering 'references/Hexalith.Tenants'
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7357194Z file:/home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Tenants/config	remote.origin.url
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7383479Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.AI.Tools/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7406679Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Builds/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7428474Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Commons/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7450566Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Conversations/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7475564Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.EventStore/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7502117Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Folders/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7525979Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.FrontComposer/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7547822Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.McpCli/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7570252Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Memories/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7591618Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Parties/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7613052Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Platform/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7634388Z [command]/usr/bin/git config --file /home/runner/work/Hexalith.Projects/Hexalith.Projects/.git/modules/Hexalith.Tenants/config --name-only --get-regexp ^includeIf\.gitdir:
+G-6 current runtime qualification	Post Checkout repository	2026-10-03T09:14:22.7653137Z Removing credentials config '/home/runner/work/_temp/git-credentials-7f71c861-f9b9-43f6-b53f-a8698d4274ae.config'
+G-6 current runtime qualification	Complete job	﻿2026-10-03T09:14:22.7789536Z Cleaning up orphan processes
+G-6 current runtime qualification	Complete job	2026-10-03T09:14:22.8060697Z Terminate orphan process: pid (2521) (VBCSCompiler)
+G-6 current runtime qualification	Complete job	2026-10-03T09:14:22.8087684Z Terminate orphan process: pid (2926) (dotnet)
+G-6 current runtime qualification	Complete job	2026-10-03T09:14:22.8112219Z Terminate orphan process: pid (2927) (dotnet)
+G-6 current runtime qualification	Complete job	2026-10-03T09:14:22.8159634Z Terminate orphan process: pid (2928) (dotnet)

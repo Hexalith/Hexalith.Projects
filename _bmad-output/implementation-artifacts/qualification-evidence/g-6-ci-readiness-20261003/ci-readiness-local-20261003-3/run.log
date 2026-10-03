@@ -1,0 +1,73 @@
+
+Welcome to .NET 10.0!
+---------------------
+SDK Version: 10.0.401
+
+Telemetry
+---------
+The .NET tools collect usage data in order to help us improve your experience. It is collected by Microsoft and shared with the community. You can opt-out of telemetry by setting the DOTNET_CLI_TELEMETRY_OPTOUT environment variable to '1' or 'true' using your favorite shell.
+
+Read more about .NET CLI Tools telemetry: https://aka.ms/dotnet-cli-telemetry
+
+----------------
+Installed an ASP.NET Core HTTPS development certificate.
+To trust the certificate, run 'dotnet dev-certs https --trust'
+Learn about HTTPS: https://aka.ms/dotnet-https
+
+----------------
+Write your first app: https://aka.ms/dotnet-hello-world
+Find out what's new: https://aka.ms/dotnet-whats-new
+Explore documentation: https://aka.ms/dotnet-docs
+Report issues and find source on GitHub: https://github.com/dotnet/core
+Use 'dotnet --help' to see available commands or visit: https://aka.ms/dotnet-cli
+--------------------------------------------------------------------------------------
+You can invoke the tool using the following command: aspire
+Tool 'aspire.cli' (version '13.6.0') was successfully installed.
+⌛  Making the jump to hyperspace...
+ℹ️  Installing runtime version 1.18.2
+
+Dapr runtime installed to /var/tmp/hexalith-g6-current-jsu_snil/runtime/.dapr/bin, you may run the following to add it to your path if you want to run daprd directly:
+    export PATH=$PATH:/var/tmp/hexalith-g6-current-jsu_snil/runtime/.dapr/bin
+✅  Downloading binaries and setting up components...
+✅  Downloaded binaries and completed components set up.
+ℹ️  daprd binary has been installed to /var/tmp/hexalith-g6-current-jsu_snil/runtime/.dapr/bin.
+ℹ️  placement binary has been installed to /var/tmp/hexalith-g6-current-jsu_snil/runtime/.dapr/bin.
+ℹ️  scheduler binary has been installed to /var/tmp/hexalith-g6-current-jsu_snil/runtime/.dapr/bin.
+✅  Success! Dapr is up and running. To get started, go here: https://docs.dapr.io/getting-started
+G6-RUN: observe exact tool versions
+G6-RESULT: observe exact tool versions: exit 0; Runtime version: 1.18.2
+G6-RUN: fresh EventStore qualifier build
+G6-RESULT: fresh EventStore qualifier build: exit 0; Time Elapsed 00:00:14.70
+G6-RUN: fresh EventStore support build
+G6-RESULT: fresh EventStore support build: exit 0; Time Elapsed 00:00:13.35
+G6-RUN: fixture override tests
+G6-RESULT: fixture override tests: exit 0;    Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 31, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 0.265s
+G6-RUN: real PostgreSQL two-sidecar stop/restart qualifier
+G6-RESULT: real PostgreSQL two-sidecar stop/restart qualifier: exit 0;    Hexalith.EventStore.Server.LiveSidecar.Tests  Total: 1, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 23.496s
+G6-RUN: 21 exact deterministic support selectors
+G6-RESULT: 21 exact deterministic support selectors: exit 0;    Hexalith.EventStore.Server.Tests  Total: 33, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 0.467s
+G6-RUN: strict EventStore capture validation
+G6-RESULT: strict EventStore capture validation: exit 0; OQ8 capture validation passed.
+G6-RUN: AppHost build Hexalith.Projects.AppHost
+G6-RESULT: AppHost build Hexalith.Projects.AppHost: exit 0; Time Elapsed 00:00:31.86
+G6-RUN: AppHost build Hexalith.Conversations.AppHost
+G6-RESULT: AppHost build Hexalith.Conversations.AppHost: exit 0; Time Elapsed 00:00:14.53
+G6-RUN: AppHost build Hexalith.EventStore.AppHost
+G6-RESULT: AppHost build Hexalith.EventStore.AppHost: exit 0; Time Elapsed 00:00:18.64
+G6-RUN: AppHost build Hexalith.Folders.AppHost
+G6-RESULT: AppHost build Hexalith.Folders.AppHost: exit 0; Time Elapsed 00:00:09.34
+G6-RUN: AppHost build Hexalith.FrontComposer.AppHost
+G6-RESULT: AppHost build Hexalith.FrontComposer.AppHost: exit 0; Time Elapsed 00:00:47.87
+G6-RUN: AppHost build Hexalith.Memories.AppHost
+G6-RESULT: AppHost build Hexalith.Memories.AppHost: exit 0; Time Elapsed 00:00:13.61
+G6-RUN: AppHost build Hexalith.Parties.AppHost
+G6-RESULT: AppHost build Hexalith.Parties.AppHost: exit 0; Time Elapsed 00:00:20.55
+G6-RUN: AppHost build Hexalith.Tenants.AppHost
+G6-RESULT: AppHost build Hexalith.Tenants.AppHost: exit 0; Time Elapsed 00:00:29.61
+G6-RUN: AppHost build Hexalith.Builds.Module.AppHost
+G6-RESULT: AppHost build Hexalith.Builds.Module.AppHost: exit 0; Time Elapsed 00:00:08.41
+G6-RUN: AppHost build Hexalith.Platform
+G6-RESULT: AppHost build Hexalith.Platform: exit 0;   apphost.cs -> [user]/.local/share/dotnet/runfile/apphost-9e69f7fdc7ecd96464eba6bba78a38f987fcffa8a046cd3d9a96d5357fb423ce/bin/debug/apphost.dll
+G6-RUN: McpCli transitive Dapr consumer
+G6-RESULT: McpCli transitive Dapr consumer: exit 0; Time Elapsed 00:00:03.13
+G6-CURRENT-QUALIFIED: /home/administrator/projects/hexalith/projects/.g6-current-evidence/ci-readiness-local-20261003-3/result.json

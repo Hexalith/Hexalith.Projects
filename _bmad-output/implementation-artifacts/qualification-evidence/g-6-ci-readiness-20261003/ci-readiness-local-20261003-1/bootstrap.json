@@ -1,0 +1,18 @@
+{
+  "phase": "restore bootstrap before runtime proof",
+  "status": "aborted stalled restore",
+  "rootSha": "387b5af242bc99f48848f3d0265fa3c38575bc03",
+  "command": "dotnet restore src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj -p:UseHexalithProjectReferences=true",
+  "terminatedOwnedRestorePid": 2172409,
+  "terminatedOwnedMsbuildNodes": [
+    2173474,
+    2173482,
+    2173483,
+    2173499,
+    2173500
+  ],
+  "runtimeProofStarted": false,
+  "reason": "Restore had no progress for more than four minutes; retry serialized without node reuse.",
+  "terminatedBootstrapProcessGroup": 2171786,
+  "exitCode": -9
+}
