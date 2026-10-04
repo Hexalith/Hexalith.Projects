@@ -97,3 +97,5 @@ P1R, P0 Stage 1, DW-35, and DW-68 retain their already-done statuses for the new
 Current source-closure checks allow later metadata-only Projects evidence/acceptance commits only through ancestor and identical committed-source checks. Bound runtime/build/test/configuration bytes and exact submodule HEAD/gitlinks remain mandatory. Current 103 evidence controls and the accepted metadata-commit positive control pass; dirty source cannot become usable by a status flip.
 
 Superseded attempt 14 SHA-256 `9caa2699bc6dca0c2366e0f9eaa088a9ffa9ce9ec4d27f448b31b8c53a87cfaa` remains byte-preserved. Attempt 16 now has separate explicit named acceptance for the reviewed committed-source observation; recorded runtime and downstream limits remain in force.
+
+The 2026-10-04 [EventStore-owned P1R compatibility, replay and rollback investigation](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verification/README.md) records the complete executed matrix and its incompatible outcomes. P1R usability remains false; this report link changes no named owner decision, rollback policy or downstream state/readiness.
