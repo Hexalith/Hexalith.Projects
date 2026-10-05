@@ -69,8 +69,8 @@ All implementation paths are relative to `references/Hexalith.EventStore`.
 ## Implementation Notes
 
 - Implemented the EventStore-owned [verification packet](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verification/README.md) with isolated published 3.110.0/3.70.1 Release lanes and a separate exact-current-source Debug lane.
-- Latest `attempt-14` executes all 17 scenarios and 72 cases with 2,782 assertions and 2,114 literal command receipts. Seven compatibility dispositions remain incompatible. The invocation and offline validator exit 2 because an unrelated shared container appeared; owned cleanup passes. Qualification, usability and owner acceptance remain false. The work stays in review pending a quiet shared-resource interval.
-- Parent acceptance audit reproduced incomplete assembly coverage and startup-discovery cleanup gaps, then verified strict signed archive/DLL anchors, live/source identity bindings, minimal Docker diagnostics and retained failure receipts. All 60 runner controls pass.
+- Selected `attempt-17` executes all 17 scenarios and 72 cases with 2,822 assertions and 2,119 literal command receipts. Invocation/offline validation exit 2 for unrelated shared-container removal; seven incompatible dispositions remain. Owned cleanup and all operation bindings pass. Final verification stays in review pending a quiet shared-resource interval. Qualification, usability and owner acceptance remain false.
+- Parent acceptance audit reproduced incomplete assembly coverage and startup-discovery cleanup gaps, then verified strict signed archive/DLL anchors, live/source identity bindings, minimal Docker diagnostics and retained failure receipts. That earlier review passed 60 runner controls; the third pass below passes 100.
 - The rollback archive source discrepancy, scoped current-source equivalence, null-input selected-method dispatch limit and pre-upgrade backup containment limit are recorded explicitly. Production runtime and protected acceptance/sprint evidence retain their original bytes.
 - Matrix audit: real actor/domain replay and restore cases assert state, sequence, event inventories and tenant isolation; incompatible/drop/unsupported controls retain their dispositions; missing/tampered artifacts, zero assertions, timeout, SIGINT and failed cleanup controls ran and passed; completed-report controls preserve every scenario and downstream state.
 
@@ -135,6 +135,36 @@ Fresh-capture corrections (2026-10-04):
 
 - Attempt 13 completed all 17 scenarios, 72 cases, 2,782 assertions and 2,120 receipts; all bound operation/source/wire/persisted-invariant checks passed. Owned process/container/scratch cleanup passed without errors. Strict validation rejected the disappearing unrelated shared container `8fff54bb833de009698ae4c455ee4811b15a730b7e35ad16be9b1c657dc2fd12`; no other shared identity changed, and no owned removal receipt targets it. Preserve this packet as nonpassing evidence and rerun against a quiet baseline.
 
+
+
+Resumed review (2026-10-04, third pass):
+
+| Finding | Verdict | Route | Evidence |
+| --- | --- | --- | --- |
+| BH3-01 | medium | patch | Cleanup booleans accept failed Docker removals after resealing; bind ownership/removal and final label-discovery receipts. |
+| BH3-02 | medium | patch | Successful fresh createdb receipts are not required before persisted database operations; bind unique creation before first use. |
+| BH3-03 | medium | patch | Host/Domain launch failures and lifetimes do not constrain identity/actor requests; require successful applications and sidecars bracketing requests. |
+| BH3-04 | medium | patch | Writer finish timestamps can follow pg_dump without rejection; require all preceding writers quiesced before backup/restore. |
+| BH3-05 | medium | patch | Status URLs can target unrelated hosts; bind selected/rollback endpoints to their application identities and lifetimes. |
+| BH3-06 | medium | patch | Cursor query URLs can target unrelated consumers; bind mint/consume requests to their actual Domain endpoints. |
+| BH3-07 | medium | patch | Safe request observations can drift from request hashes/scope; retain a safe observation commitment and validate exact cursor fixture scope. |
+| BH3-08 | medium | patch | Failed adjacent public-package verifier receipts do not reject passed provenance; require the successful preflight receipt. |
+| BH3-09 | medium | patch | Common query routing/payload/authority/paging fields are omitted from typed observations and compatibility checks; record and compare all supplied common fields. |
+| BH3-10 | medium | patch | Common projection event fields can drift while the watermark passes; record and compare the full common event fixture. |
+| EC3-01 | medium | patch | Interrupted binary commands retain raw dump stdout; apply digest/length-only retention on timeout and cancellation. |
+| EC3-02 | medium | patch | Cancellation between child creation and registration leaks an untracked process and receipt; defer cancellation through launch/registration and retain failed launch attempts. |
+| EC3-03 | medium | patch | Termination failures during timeout/cancellation erase command receipts; retain attempted operations before independent cleanup retries. |
+| EC3-04 | medium | patch | Killed archive verification children can leave default temporary directories outside owned scratch; set child TMPDIR to owned scratch. |
+| EC3-05 | medium | patch | Released ephemeral sockets permit duplicate six-port allocation; reserve distinct sockets together before launch. |
+| EC3-06 | medium | patch | Exceptions reading HTTPError bodies escape receipt capture; place response-body reading inside the protected request boundary. |
+| VG3-01 | medium | patch | Pre-verified: deleting the restore inventory invariant leaves all 77 controls green; add resealed restored/post-replay event mutation controls for both restore scenarios. |
+
+All findings correct demonstrated private verification paths, with no public surface or owner decision. Temporary-copy reproductions preserved shared fixtures. Historical captures retain their original bytes; the corrected fixtures require a fresh capture.
+
+
+
+Third-pass live validation correction (2026-10-04): attempt 16 completed all 17 scenarios/72 cases and 2,822 assertions, with successful owned cleanup and unchanged shared resources. Its offline validator rejected the status case because setup application/identity receipts were outside its case bindings. BH3-05 now includes those scoped prerequisites; a temporary diagnostic copy verifies the remaining new bindings without editing the original packet. A focused omission control covers this boundary. The original attempt 16 remains unchanged and nonpassing; final verification requires a fresh capture.
+
 ## Verification
 
 - From EventStore: `python3 _bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verify_public_packages.py` — exact published provenance preflight.
@@ -154,3 +184,12 @@ Fresh-capture corrections (2026-10-04):
 - Verification: `python3 run_verification.py --validate attempt-14` — exit 2: `INVALID: Shared resource drift`. New unrelated shared ID: `c1c8c0d4f857486f86eb7d863bcb86b8b0930b5076429ec336e0307b11260150`; every pre-existing shared identity is unchanged. Owned process/container/scratch cleanup passes without errors. No owned removal receipt targets this new container.
 - Attempt 13 independently retained an unrelated shared-container removal; another full retry did not settle the preservation gate. Do not stop shared resources or relax the guard. The explicit build workflow requires a halt when verification cannot pass; resume the same final fixtures during a quiet Docker/Aspire interval.
 - Projects authority story/index guards pass, and all 21 focused authority controls pass. Fixed acceptance JSON, historical acceptance and sprint-status hashes match the initial values; 408 tracked historical invocation files remain unchanged.
+
+### Third-pass verification result (2026-10-04)
+
+- `python3 -W error::ResourceWarning -m unittest test_run_verification.py` — 100 controls pass. All 17 review findings were patched in the private runner, typed probe and controls.
+- `python3 run_verification.py --out attempt-17` — all 17 scenarios/72 cases execute, 2,822 assertions and 2,119 receipts; exit 2 retains shared-resource drift and seven incompatible dispositions.
+- `python3 run_verification.py --validate attempt-17` — exit 2, `INVALID: Shared resource drift`. Owned process/container/scratch cleanup passes without errors. Unrelated shared container `d7de6a5cd37701ec145fff56694b5e51d4d5296764a1d4eec7abfe3e060eb49d` disappeared; no owned removal targets it. All other binding checks pass before the shared-resource gate. P1R remains unqualified.
+- Attempt 15 independently completed the preceding fixtures with identical shared snapshots. Its packet and all earlier invocations remain unchanged; the hardened validator requires the fresh selected capture.
+- Independent in-memory mutation verification confirms all four new restore controls fail when only the invariant is disabled.
+- Projects production-authority story/index guards and all 21 authority controls pass. Acceptance JSON, archived acceptance, sprint status, prior archive evidence and historical invocation files retain their original hashes.
