@@ -936,3 +936,15 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-g-6-qualify-current-toolkit-preview-tuple.md`
   summary: Medium stale-gate issue: `tests/tools/test_g6_packet_references.py` fails 17 subtests and no workflow runs it.
   evidence: It fails at HEAD and already failed at baseline `53c6f29` on packet-bound gitlink and Builds execution-SHA differences (for example `51af786…` vs. the Builds gitlink). Its only reference is a `Forbid-Match` in `tests/tools/run-ci-workflow-gates.ps1:690`. Retire it or rebase it on the accepted attempt-16 provenance so it is not mistaken for live coverage.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-compatibility-replay-and-rollback-verification.md`
+  summary: Parent gitlinks other than the EventStore verification commit, and later EventStore commits after that verification commit, need their own provenance check.
+  evidence: Since `cbcf54fa` the Projects diff moves Conversations, Folders, FrontComposer, Memories, Parties, Tenants, and Builds, and EventStore HEAD `ff7f07d1` is many commits after the verification commits. The verifier SOURCES still bind the approved comparison coordinates. Those pointer moves are not produced by the fixture runner.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-compatibility-replay-and-rollback-verification.md`
+  summary: Story 6.1 non-frozen acceptance text was condensed to "full frozen scope" while the test task still names Folder filtering and inspection audit.
+  evidence: `spec-6-1-list-and-open-projects-through-supported-authenticated-paths-6.md` lost the explicit Folder-before-pagination, FR-21 audit, and indistinguishable-denial acceptance sentences. The 2026-10-03 frozen prerequisite line matches the recorded P1R decision. Restore the detailed acceptance text in that story, not in the verification packet.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-compatibility-replay-and-rollback-verification.md`
+  summary: Unverified whether a null `CommandEnvelope` body reaches the verification host lambda or is rejected by minimal-API binding.
+  evidence: `host/Program.cs` maps `/command` to a non-null `CommandEnvelope` parameter and dereferences `command.AggregateIdentity` immediately. Confirm with a null-body request whether ASP.NET returns 400 before the lambda. If the lambda runs, the host turns a null body into an unstructured failure.

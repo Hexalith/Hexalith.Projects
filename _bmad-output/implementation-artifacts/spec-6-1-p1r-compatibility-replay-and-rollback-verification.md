@@ -2,13 +2,13 @@
 title: '6.1-P1R Compatibility, replay, and rollback verification'
 type: 'chore'
 created: '2026-10-03'
-status: 'in-review'
+status: 'in-progress'
 route: 'dispatch'
 work_package_id: '6.1-P1R-verification'
 baseline_commit: 'cbcf54fa4d7a8c17bbfc3f9fb555ac0a85c179c0'
 implementation_repository: 'references/Hexalith.EventStore'
 observed_eventstore_revision: '2c58ffda41759e895ace4b9625c9bd931a217672'
-review_loop_iteration: 0
+review_loop_iteration: 1
 context:
   - '{project-root}/_bmad-output/implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md'
   - '{project-root}/_bmad-output/implementation-artifacts/6-1-p1r-compatibility-scenarios.md'
@@ -59,6 +59,9 @@ All implementation paths are relative to `references/Hexalith.EventStore`.
 - [x] `verification/run_verification.py` — execute every supporting scenario, launch only owned resources, quiesce writers, capture committed state, dump/restore separate PostgreSQL databases, verify rollback/restart, and retain command/cleanup receipts.
 - [x] `verification/test_run_verification.py` — verify rejection of missing scenarios, mismatched artifacts, secret-bearing receipts and failed cleanup, plus cancellation/idempotent cleanup controls.
 - [x] `verification/{manifest.json,scenario-results.json,SHA256SUMS,README.md}` — retain actual results, package/source identities and limitations; append the report link to the Projects owner packet without changing decisions or readiness.
+- [x] `verification/probe/Program.cs` — when the contract wire type is absent, record an unsupported outcome. Do not deserialize `Hexalith.EventStore.Server.Actors.QueryEnvelope` in its place.
+- [x] `verification/run_verification.py` — post-upgrade restore must write a retained-floor stream and record `incompatible` when downgrade drops that floor. A `compatible` label requires the floor to survive. Lifetime comparisons use sub-second timestamps. `IndexError` and `StopIteration` during validation are invalid evidence, not tracebacks.
+- [x] `verification/test_run_verification.py` — add resealed mutation controls for replay/snapshot/retained-floor/metadata dispositions, invalid-evidence acceptance, checkout label mismatch, old-dispatcher success, and a failure-cleanup exit outside 7/124/130.
 
 **Acceptance Criteria:**
 
@@ -73,8 +76,11 @@ All implementation paths are relative to `references/Hexalith.EventStore`.
 - Parent acceptance audit reproduced incomplete assembly coverage and startup-discovery cleanup gaps, then verified strict signed archive/DLL anchors, live/source identity bindings, minimal Docker diagnostics and retained failure receipts. That earlier review passed 60 runner controls; the third pass below passes 100.
 - The rollback archive source discrepancy, scoped current-source equivalence, null-input selected-method dispatch limit and pre-upgrade backup containment limit are recorded explicitly. Production runtime and protected acceptance/sprint evidence retain their original bytes.
 - Matrix audit: real actor/domain replay and restore cases assert state, sequence, event inventories and tenant isolation; incompatible/drop/unsupported controls retain their dispositions; missing/tampered artifacts, zero assertions, timeout, SIGINT and failed cleanup controls ran and passed; completed-report controls preserve every scenario and downstream state.
+- 2026-10-05 re-derivation: a missing contract wire type is recorded as unsupported and is not deserialized as the server `QueryEnvelope`. Post-upgrade restore writes a retained-floor stream and is compatible only when that floor survives downgrade. Lifetime comparisons use microsecond timestamps, and `IndexError` or `StopIteration` during validation is invalid evidence. `python3 -W error::ResourceWarning -m unittest test_run_verification.py` passes 116 tests. No attempt-18 capture was taken; attempts 01–17, acceptance JSON, sprint status, usability and downstream decisions stay unchanged.
 
 ## Spec Change Log
+
+- 2026-10-05 review loop 1, triggered by BH4-09 and BH4-15. Amended the non-frozen tasks so a missing contract wire type stays unsupported, and so post-upgrade restore writes a retained-floor stream before it can be called compatible. Known-bad state avoided: a server `QueryEnvelope` substitution reported as a cross-version round trip, and a compatible downgrade label for a stream that never stored `RetainedFloor`. KEEP: published 3.110.0/3.70.1 lanes, the separate current-source lane, attempt packets 01–17 byte-for-byte, acceptance JSON, sprint status, and historical evidence hashes. Do not re-derive those packets or grant usability.
 
 ## Review Triage Log
 
@@ -164,6 +170,50 @@ All findings correct demonstrated private verification paths, with no public sur
 
 
 Third-pass live validation correction (2026-10-04): attempt 16 completed all 17 scenarios/72 cases and 2,822 assertions, with successful owned cleanup and unchanged shared resources. Its offline validator rejected the status case because setup application/identity receipts were outside its case bindings. BH3-05 now includes those scoped prerequisites; a temporary diagnostic copy verifies the remaining new bindings without editing the original packet. A focused omission control covers this boundary. The original attempt 16 remains unchanged and nonpassing; final verification requires a fresh capture.
+
+Resumed review (2026-10-05):
+
+| Finding | Verdict | Route | Evidence |
+| --- | --- | --- | --- |
+| BH4-01 | medium | defer | Parent gitlinks besides the verification commit moved, and EventStore HEAD is later than the verification commits. SOURCES still bind the approved coordinates. |
+| BH4-02 | medium | defer | Same pointer drift as BH4-01 for Conversations, Folders, FrontComposer, Memories, Parties, and Tenants. |
+| BH4-03 | false | reject | The removed root pins are replaced by the Builds catalog: Conversations and Folders Client/Contracts use `$(HexalithConversationsVersion)` and `$(HexalithFoldersVersion)`. |
+| BH4-04 | false | reject | The Story 6.1 frozen line records the same 2026-10-03 user decision already frozen in this spec. |
+| BH4-05 | medium | defer | Story 6.1 non-frozen acceptance sentences were condensed. The test task still names Folder filtering and inspection audit. |
+| BH4-06 | low | reject | The entry-gate checkbox records that missing gates prohibit runtime work. The code map still says the gate file is absent. Everyday readers of this packet do not depend on that checkbox. |
+| BH4-07 | false | reject | Attempt directories 01–17 exist under the EventStore verification tree, including tracked `attempt-17/manifest.json`. They were omitted from the review diff because of size. |
+| BH4-08 | false | reject | `retained-covered` also requires events 5–12, floor `"5"`, the prefix-deletion statement, and unchanged domain rows. Snapshot sequence 9 is not sufficient. |
+| BH4-09 | medium | bad_spec | `restore()` always returns `compatible`, and the post-upgrade seed never writes `RetainedFloor`. The scenario says to record an incompatible downgrade. |
+| BH4-10 | false | reject | Failure-cleanup's synthetic exits prove the lifecycle receipts. Global validation still requires final owned-container discovery and removal. |
+| BH4-11 | false | reject | `unknown-version` updates `{metadataVersion}` on event 7, which is the scenario's unknown event-version fixture. |
+| BH4-12 | false | reject | A floor other than the supplied floor above 1 makes `check_group` incompatible, and `row["compatibility"]==derived` then rejects the packet. |
+| BH4-13 | medium | carried | carried EC3-05. `ports()` still closes the reserved sockets before the caller binds them. |
+| BH4-14 | false | reject | The current lane points every catalog property at Builds `Props/Directory.Packages.props`, which is the shared catalog those properties import. |
+| BH4-15 | medium | bad_spec | Missing contract wire types fall through to `Hexalith.EventStore.Server.Actors.QueryEnvelope` instead of an unsupported outcome. |
+| BH4-16 | false | reject | Cursor decode uses the fixture scope `tenant-a\|watermark:987` that validation requires. `GetRetainedFloorAsync` returning proves the method exists; a numeric floor check would be extra. |
+| BH4-17 | low | reject | Transport failures are stored with exit 0 and then re-raised, so they do not become a passed operation. A long diagnostic fails `receipt_json` rather than passing. |
+| BH4-18 | false | reject | Seed totals add the probe's per-command acceptance checks. The printed `2 * (count + 1)` matches that loop. |
+| BH4-19 | low | reject | The fix would edit this spec's review prose. `review_loop_iteration` is advanced by this loop instead. |
+| EC4-01 | false | reject | The runner always passes a probe operation. An empty argv fails loudly and is not a packet path. |
+| EC4-02 | false | reject | Seed counts in the runner are 12 and 3. A negative count is not supplied. |
+| EC4-03 | false | reject | The same small counts cannot reach `Int32.MaxValue` wrap. |
+| EC4-04 | medium | bad_spec | Same substitution as BH4-15 when the projection contract type is absent. |
+| EC4-05 | maybe-false | defer | Null `CommandEnvelope` binding was not executed. Minimal APIs may return 400 before the lambda. |
+| EC4-06 | medium | patch | Empty `splitlines()` raises `IndexError`, which `validate` does not catch. Moot while bad_spec re-derives this path. |
+| EC4-07 | medium | patch | A short gitlink diagnostic raises `IndexError` at `split()[2]`. Same validator gap as EC4-06. |
+| EC4-08 | medium | patch | `utc()` uses `timespec="seconds"`, so a request can bind to a process inside the same second. Moot while bad_spec re-derives this path. |
+| EC4-09 | medium | patch | `next(...)` without a default raises `StopIteration` when append metadata is absent. Same validator gap as EC4-06. |
+| EC4-10 | medium | patch | Replay metadata uses the same bare `next(...)`. |
+| EC4-11 | medium | patch | Writer-finished and dump-started timestamps share the one-second `utc()` clock. Same cause as EC4-08. |
+| EC4-12 | low | reject | PID reuse after reap is unlikely in this short-lived fixture, and holding `/proc` start time adds a new guard. |
+| EC4-13 | false | reject | `urllib.error.HTTPError` subclasses `URLError`, so a 500/503 stays inside the startup retry loop. |
+| EC4-14 | low | reject | A hashing failure after `mkdir` can leave an output directory. The next run refuses to overwrite it, and the fix adds another cleanup branch. |
+| EC4-15 | low | reject | A final manifest `OSError` already escapes as a traceback. Mapping it to exit 2 adds a handler the frozen intent does not require beyond retained nonpassing receipts. |
+| EC4-16 | medium | patch | `--validate` catches `ValueError`, `KeyError`, `OSError`, and `JSONDecodeError` only. Same gap as EC4-06. |
+| VG4-01 | medium | patch | Pre-verified: replay, snapshot, retained-floor, and metadata `check_group` arms have no resealed mutation tests. |
+| VG4-02 | medium | patch | Pre-verified: invalid-evidence acceptance, checkout labels, old-dispatcher success, and failure-cleanup exits are not mutation-tested. |
+
+BH4-09, BH4-15, and EC4-04 are this loop's spec deviations. Patch rows stay unapplied until that re-derivation.
 
 ## Verification
 
