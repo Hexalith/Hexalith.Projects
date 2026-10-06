@@ -432,10 +432,9 @@
 
     private async Task ApplyDashboardFilterAsync(DashboardFilter filter)
     {
-        _diagnosticUnavailableOnly = filter == DashboardFilter.DiagnosticUnavailable;
-
         // Lifecycle is a server-side query parameter, so lifecycle tiles must re-query rather than only
-        // setting the dropdown value (which would leave the loaded rows unchanged).
+        // setting the dropdown value (which would leave the loaded rows unchanged). They keep the current
+        // warning filter, including the diagnostic-only qualifier, like every other warning filter.
         if (filter is DashboardFilter.Active or DashboardFilter.Archived)
         {
             _selectedLifecycle = filter == DashboardFilter.Active
@@ -444,6 +443,10 @@
             await LoadAsync().ConfigureAwait(true);
             return;
         }
+
+        // The diagnostic tile counts only synthetic per-project diagnostic failures, so it narrows the
+        // Unavailable state to those rows; any other warning tile takes over and clears that narrowing.
+        _diagnosticUnavailableOnly = filter == DashboardFilter.DiagnosticUnavailable;
 
         // Warning tiles drive a state-set filter so the queue shows exactly the states the tile counts
         // (grouped tiles must not silently hide part of their own count).
@@ -458,8 +461,9 @@
             _ => [],
         };
 
-        // The single-select dropdown can only reflect a single state; clear it for multi-state groups.
-        _selectedWarningState = _warningStateFilter.Count == 1
+        // The single-select dropdown can only reflect a single plain state; clear it for multi-state groups
+        // and for the diagnostic-only subset, so choosing a state from the dropdown always applies it.
+        _selectedWarningState = _warningStateFilter.Count == 1 && !_diagnosticUnavailableOnly
             ? _warningStateFilter.First().ToString()
             : string.Empty;
     }

@@ -212,12 +212,81 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
         diagnosticQueue.ShouldContain("project-002");
         diagnosticQueue.ShouldNotContain("file-001");
 
+        // The diagnostic-only subset is not a plain state, so the dropdown must not claim "Unavailable";
+        // otherwise a browser user could not re-select Unavailable to reach the general state filter.
+        cut.Find("[data-testid='project-warning-filter-state']").GetAttribute("value").ShouldBe(string.Empty);
+
         cut.Find("[data-testid='project-warning-filter-state']").Change(ReferenceState.Unavailable.ToString());
 
         cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2);
         string unavailableQueue = cut.Find("[data-testid='project-warnings-queue']").TextContent;
         unavailableQueue.ShouldContain("project-002");
         unavailableQueue.ShouldContain("file-001");
+    }
+
+    [Fact]
+    public void DiagnosticDashboardTileYieldsToOtherWarningTiles()
+    {
+        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        source.LoadAsync(null, Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
+                [Row(), Row("project-002", "Unavailable Project")],
+                [
+                    Warning("file-001", ReferenceState.Unavailable, null, "file"),
+                    Warning("folder-001", ReferenceState.Stale, ProjectReasonCode.ProjectFolderMatched, "folder"),
+                    DiagnosticUnavailableWarning(),
+                ],
+                DiagnosticDrillInDashboard())));
+        Services.AddSingleton(source);
+
+        IRenderedComponent<Home> cut = Render<Home>();
+
+        cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(3));
+        ClickDashboardTile(cut, "Diagnostic unavailable");
+        cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(1);
+
+        ClickDashboardTile(cut, "Denied/unavailable");
+
+        cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2);
+        string unavailableQueue = cut.Find("[data-testid='project-warnings-queue']").TextContent;
+        unavailableQueue.ShouldContain("project-002");
+        unavailableQueue.ShouldContain("file-001");
+
+        ClickDashboardTile(cut, "Diagnostic unavailable");
+        cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(1);
+
+        ClickDashboardTile(cut, "Total visible");
+
+        cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task DiagnosticDashboardTileSurvivesLifecycleTileReload()
+    {
+        IProjectWarningsDashboardSource source = Substitute.For<IProjectWarningsDashboardSource>();
+        source.LoadAsync(Arg.Any<ProjectLifecycle?>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectWarningsDashboardLoadResult.FromRows(
+                [Row(), Row("project-002", "Unavailable Project")],
+                [
+                    Warning("file-001", ReferenceState.Unavailable, null, "file"),
+                    DiagnosticUnavailableWarning(),
+                ],
+                DiagnosticDrillInDashboard())));
+        Services.AddSingleton(source);
+
+        IRenderedComponent<Home> cut = Render<Home>();
+
+        cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(2));
+        ClickDashboardTile(cut, "Diagnostic unavailable");
+        ClickDashboardTile(cut, "Active");
+
+        // A lifecycle tile keeps the warning filter, so the reloaded queue still matches the diagnostic count
+        // instead of silently widening to every unavailable reference.
+        cut.WaitForAssertion(() => cut.FindAll("[data-testid='project-warning-row']").Count.ShouldBe(1));
+        await source.Received(1).LoadAsync(ProjectLifecycle.Active, Arg.Any<CancellationToken>()).ConfigureAwait(true);
+        string queue = cut.Find("[data-testid='project-warnings-queue']").TextContent;
+        queue.ShouldContain("project-002");
+        queue.ShouldNotContain("file-001");
     }
 
     [Fact]
@@ -239,6 +308,11 @@ public sealed class ProjectInventoryPageTests : FrontComposerTestBase
         // rather than only updating the dropdown value while leaving the loaded rows untouched.
         await source.Received(1).LoadAsync(ProjectLifecycle.Archived, Arg.Any<CancellationToken>()).ConfigureAwait(true);
     }
+
+    private static void ClickDashboardTile(IRenderedComponent<Home> cut, string label)
+        => cut.FindAll("[data-testid='project-dashboard-tile']")
+            .Single(tile => tile.TextContent.Contains(label, StringComparison.Ordinal))
+            .Click();
 
     private static ProjectInventoryRowProjection Row(
         string projectId = "project-001",

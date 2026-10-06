@@ -227,7 +227,11 @@ public sealed class ProjectWarningsDashboardSourceTests
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
                 Arg.Any<CancellationToken>())
-            .Returns<Task<ProjectListResponse>>(_ => throw new OperationCanceledException());
+            .Returns(call =>
+            {
+                call.ArgAt<CancellationToken>(3).ThrowIfCancellationRequested();
+                return Task.FromResult(ListResponse());
+            });
 
         using var cts = new CancellationTokenSource();
         cts.Cancel();
@@ -260,7 +264,11 @@ public sealed class ProjectWarningsDashboardSourceTests
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
                 Arg.Any<CancellationToken>())
-            .Returns<Task<GeneratedDiagnostic>>(_ => throw new OperationCanceledException());
+            .Returns(call =>
+            {
+                call.ArgAt<CancellationToken>(4).ThrowIfCancellationRequested();
+                return Task.FromResult(Diagnostic("project-001", ProjectLifecycleState.Active));
+            });
 
         using var cts = new CancellationTokenSource();
         cts.Cancel();
@@ -273,6 +281,80 @@ public sealed class ProjectWarningsDashboardSourceTests
             Arg.Any<string>(),
             ReadConsistencyClass.Eventually_consistent,
             Arg.Any<CancellationToken>()).ConfigureAwait(true);
+    }
+
+    [Fact]
+    public async Task SourceMapsUncancelledInventoryTimeoutToSafeFeedback()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.ListProjectsAsync(
+                null,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns<Task<ProjectListResponse>>(_ => throw new TaskCanceledException("transport timeout"));
+
+        var source = new ProjectWarningsDashboardSource(client);
+        ProjectWarningsDashboardLoadResult result = await source
+            .LoadAsync(null, CancellationToken.None)
+            .ConfigureAwait(true);
+
+        // A timeout is not caller cancellation, so it keeps the existing safe failure mapping.
+        result.InventoryRows.ShouldBeEmpty();
+        result.QueueItems.ShouldBeEmpty();
+        result.Feedback.ShouldNotBeNull();
+        result.Feedback.Category.ShouldBe(ProjectConsoleFeedback.ErrorCategory);
+        result.Feedback.SafeReasonCode.ShouldBe("warnings_dashboard_query_failed");
+        result.Feedback.Message.ShouldNotContain("transport timeout");
+    }
+
+    [Fact]
+    public async Task SourceMapsUncancelledDiagnosticTimeoutToSyntheticRowAndContinues()
+    {
+        IClient client = Substitute.For<IClient>();
+        client.ListProjectsAsync(
+                null,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ListResponse(
+                ListItem("project-001", ProjectLifecycleState.Active),
+                ListItem("project-002", ProjectLifecycleState.Active))));
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-001",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns<Task<GeneratedDiagnostic>>(_ => throw new TaskCanceledException("transport timeout"));
+        client.GetProjectOperatorDiagnosticsAsync(
+                "project-002",
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(Diagnostic(
+                "project-002",
+                ProjectLifecycleState.Active,
+                Reference(
+                    ProjectReferenceSummaryReferenceKind.Memory,
+                    ProjectReferenceSummaryReferenceState.Stale,
+                    "memory-002",
+                    "MemoryMatched"))));
+
+        var source = new ProjectWarningsDashboardSource(client);
+        ProjectWarningsDashboardLoadResult result = await source
+            .LoadAsync(null, CancellationToken.None)
+            .ConfigureAwait(true);
+
+        // A timeout is not caller cancellation, so it keeps the existing synthetic row and the scan continues.
+        result.Feedback.ShouldBeNull();
+        ProjectWarningQueueItemProjection unavailable = result.QueueItems.Single(item => item.ProjectId == "project-001");
+        unavailable.Id.ShouldBe("project-001:diagnostic:diagnostic_query_failed");
+        ProjectWarningsDashboardMapper.IsDiagnosticUnavailableItem(unavailable).ShouldBeTrue();
+        result.QueueItems.Single(item => item.ProjectId == "project-002").ReferenceId.ShouldBe("memory-002");
+        result.Dashboard.DiagnosticUnavailable.ShouldBe(1);
+        JsonSerializer.Serialize(result).ShouldNotContain("transport timeout");
     }
 
     [Theory]
@@ -341,6 +423,7 @@ public sealed class ProjectWarningsDashboardSourceTests
         item.FreshnessTrustState.ShouldBe(EvidenceFreshnessStateCode.Current);
         item.SourceSection.ShouldContain("unknown-state");
         item.SourceSection.ShouldContain("unknown-reason");
+        ProjectWarningsDashboardMapper.IsDiagnosticUnavailableItem(item).ShouldBeFalse();
     }
 
     [Fact]
@@ -355,8 +438,15 @@ public sealed class ProjectWarningsDashboardSourceTests
             SourceSection = "operator-diagnostics.references",
         };
 
+        var markerWithOtherState = new ProjectWarningQueueItemProjection
+        {
+            State = ReferenceState.Stale,
+            SourceSection = synthetic.SourceSection,
+        };
+
         ProjectWarningsDashboardMapper.IsDiagnosticUnavailableItem(synthetic).ShouldBeTrue();
         ProjectWarningsDashboardMapper.IsDiagnosticUnavailableItem(ordinary).ShouldBeFalse();
+        ProjectWarningsDashboardMapper.IsDiagnosticUnavailableItem(markerWithOtherState).ShouldBeFalse();
         ProjectWarningsDashboardMapper.IsDiagnosticUnavailableItem(null).ShouldBeFalse();
     }
 
