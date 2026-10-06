@@ -80,6 +80,11 @@ Projects `evidence/6-1-p0-20261001-preflight.json` beside this spec records the 
 - Target and continuation authorized on 2026-10-01. Preserve concurrent P1R/P2/P3 work; do not edit those artifacts or the EventStore worktree.
 - Candidate evidence: [published controls](../../references/Hexalith.Builds/evidence/g4/published-4.29.1-20261001/README.md); 97 controls, 107 evidence tests, 214 module tests passed. Source/package gate exited 143 without inventory; first module attempt and harness failures retained.
 - [G-6 preparation](../../references/Hexalith.Builds/evidence/g4/g6-current-target-preparation-20261001/README.md): 165 authority controls; current packet/catalog/gitlink/CI drift remains blocked. P1R acceptance was consumed from the concurrent owner record; final qualification, rollback, and exact P0 owner decisions remain open.
+- **Blocker (2026-10-06), recorded at user direction:** live qualification stopped under the matrix's first row. No Stage 6–7 run, acceptance record, or owner decision was produced.
+  - **P1R:** the [2026-10-06 proposal](../planning-artifacts/sprint-change-proposal-2026-10-06.md) keeps the `3.110.0` acceptance. It marks current usability false after attempt 21 measured seven incompatibilities. [P1R remediation](spec-6-1-p1r-remediation.md) is `handed-off` and waiting for repository-local scope.
+  - **G-6:** current G-6 is failed. CI authority run `37106225245` at `e7dc4d876793f6254ce42409c9067bd6516901d4` failed for two reasons: the pinned PostgreSQL image was missing, and Hexalith.Commons hit `NU5118`. The packet is still pending.
+  - **Drift:** Builds is at `ba4ca78c3868a4757cb92d912a54c8a237871b54` (`v4.29.1-22-gba4ca78`, equal to the Projects gitlink). Since `567a80f5726960c7ec66864d67849b22f9164bf0` it defaults EventStore to `3.113.0`. The consumer fixture still pins tools `4.29.1`.
+  - Resume only once a usable, accepted P1R tuple and an accepted G-6 result bind the same tuple. Any tuple other than the frozen Decision's requires renegotiating it.
 
 ## Spec Change Log
 

@@ -28,6 +28,7 @@ test.describe('Projects warnings queue and operational dashboard (Story 5.8)', (
   liveAppHostTest('loads warning dashboard metadata through bounded query enrichment only', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     seededProject,
   }) => {
@@ -36,7 +37,7 @@ test.describe('Projects warnings queue and operational dashboard (Story 5.8)', (
       tenantContext.tenantId,
       {
         authToken,
-        correlationId: 'corr-story-5-8-warning-dashboard-list',
+        correlationId: requestIdentity('warnings-dashboard-list').correlationId,
         freshness: 'eventually_consistent',
       },
       'active',
@@ -54,7 +55,7 @@ test.describe('Projects warnings queue and operational dashboard (Story 5.8)', (
       {
         authToken,
         auditLimit: 25,
-        correlationId: 'corr-story-5-8-warning-dashboard-diagnostics',
+        correlationId: requestIdentity('warnings-dashboard-diagnostics').correlationId,
         freshness: 'eventually_consistent',
       },
     );
@@ -75,13 +76,14 @@ test.describe('Projects warnings queue and operational dashboard (Story 5.8)', (
   liveAppHostTest('rejects warning dashboard query misuse without echoing project metadata', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     seededProject,
   }) => {
     const listWithIdempotency = await listProjects(apiRequest, tenantContext.tenantId, {
       authToken,
-      correlationId: 'corr-story-5-8-list-idempotency',
-      extraHeaders: { 'Idempotency-Key': 'warning-dashboard-is-read-only' },
+      correlationId: requestIdentity('warnings-dashboard-list-idempotency').correlationId,
+      extraHeaders: { 'Idempotency-Key': requestIdentity('warnings-dashboard-list-idempotency').idempotencyKey },
     });
     expect(listWithIdempotency.status).toBe(400);
     expect(JSON.stringify(listWithIdempotency.body)).not.toContain(seededProject.projectId);
@@ -94,8 +96,8 @@ test.describe('Projects warnings queue and operational dashboard (Story 5.8)', (
       {
         authToken,
         auditLimit: 25,
-        correlationId: 'corr-story-5-8-diagnostics-idempotency',
-        extraHeaders: { 'Idempotency-Key': 'warning-dashboard-enrichment-is-read-only' },
+        correlationId: requestIdentity('warnings-dashboard-diagnostics-idempotency').correlationId,
+        extraHeaders: { 'Idempotency-Key': requestIdentity('warnings-dashboard-diagnostics-idempotency').idempotencyKey },
       },
     );
     expect(diagnosticsWithIdempotency.status).toBe(400);

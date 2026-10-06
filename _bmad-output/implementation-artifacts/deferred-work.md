@@ -950,3 +950,15 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-compatibility-replay-and-rollback-verification.md`
   summary: Unverified whether a null `CommandEnvelope` body reaches the verification host lambda or is rejected by minimal-API binding.
   evidence: `host/Program.cs` maps `/command` to a non-null `CommandEnvelope` parameter and dereferences `command.AggregateIdentity` immediately. Confirm with a null-body request whether ASP.NET returns 400 before the lambda. If the lambda runs, the host turns a null body into an unstructured failure.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-gate-catalog-pins.md`
+  summary: The CI workflow gate does not stop the root from overriding the catalog's `HexalithConversationsVersion`/`HexalithFoldersVersion` version-set properties.
+  evidence: `references/Hexalith.Builds/Props/Directory.Packages.props` sets both properties to `1.0.0` only when they are empty. Setting either one in root `Directory.Packages.props`, in `Directory.Build.props`, through a CI `-p:` switch, or through an environment variable changes the whole set without touching any `PackageVersion`, and `run-ci-workflow-gates.ps1` passes. This predates the fix, which deliberately scoped itself to root `PackageVersion` declarations.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-gate-catalog-pins.md`
+  summary: `run-ci-workflow-gates.ps1` reports only its first collected failure.
+  evidence: The script sets `$ErrorActionPreference = 'Stop'`, and its final reporting loop calls `Write-Error` once per failure. The first `Write-Error` therefore ends the script, and the CI log shows one failure even when several exist. On 2026-10-06, a copy that printed every failure listed 4 Conversations/Folders pin failures, while CI printed only the first. Fix: print every failure, then `exit 1`.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-gate-catalog-pins.md`
+  summary: `run-ci-workflow-gates.ps1` has no regression test; its negative cases are checked by hand in scratch copies.
+  evidence: No `tests/tools/test_*.py` drives this gate, although `test_release_package_tools.py` shows the pwsh-from-unittest pattern. The 10 Directory.Packages.props mutation cases from the catalog-pin fix, and every other gate invariant, can regress silently on the next gate edit. The live-apphost spec already plans gate edits.

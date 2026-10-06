@@ -8,13 +8,16 @@ import { test as networkErrorMonitorFixture } from '@seontechnologies/playwright
 import { requestKeycloakAccessToken } from './auth/keycloak-auth-provider.js';
 import { createTenantContext } from './factories/tenant-factory.js';
 import { createProjectInput } from './factories/project-factory.js';
+import { CleanupLedger, reportCleanup, setupWithReverseCleanup } from './fixtures/cleanup-evidence.js';
 import {
   identitiesForTest,
   provisionLiveFixtureGraph,
+  requestIdentityFactory,
   type LiveFixtureFixtures,
 } from './fixtures/live-fixtures.js';
 import {
   type ProjectFixtures,
+  projectArchiveStep,
   seedActiveProject,
   seedReferencedProject,
   seedResolutionProjects,
@@ -35,8 +38,14 @@ import type { ApiRequest } from './helpers/projects-api-client.js';
  *  - log                 report-integrated step logging (log)
  *  - interceptNetworkCall  network-first spy/stub (intercept-network-call)
  *  - networkErrorMonitor   automatic 4xx/5xx detection (network-error-monitor)
- *  - tenantContext       configured projected tenant with per-test metadata (custom)
+ *  - tenantContext       token-derived projected tenant with per-test metadata (custom)
+ *  - liveFixtureGraph    run/worker/retry/repeat/scenario-scoped sibling graph (custom)
+ *  - requestIdentity     operation-scoped correlation/task/idempotency identities (custom)
+ *  - liveCleanup         reverse archive-to-convergence cleanup for directly created Projects (custom)
  *  - seededProject       active project converged in the read model (custom)
+ *
+ * Cleanup runs in reverse dependency order, reports attempted role/status only, and fails a test
+ * only when the test itself passed, so the primary failure is always preserved.
  */
 
 const utilsTest = mergeTests(
@@ -74,59 +83,51 @@ export const test = utilsTest.extend<ProjectFixtures & LiveFixtureFixtures & Dir
     await use(identitiesForTest(testInfo));
   },
 
+  requestIdentity: async ({ liveFixtureIdentities }, use) => {
+    await use(requestIdentityFactory(liveFixtureIdentities));
+  },
+
   liveFixtureGraph: async ({ liveFixtureIdentities }, use, testInfo) => {
     const { graph, cleanup } = await provisionLiveFixtureGraph(liveFixtureIdentities);
     await use(graph);
-    const result = await cleanup();
-    if (!result.succeeded) {
-      await testInfo.attach('live-fixture-cleanup.json', {
-        body: JSON.stringify(result),
-        contentType: 'application/json',
-      });
-      if (testInfo.status === testInfo.expectedStatus) {
-        throw new Error('[live-fixtures] one or more sibling cleanup roles did not succeed.');
-      }
-    }
+    // Sibling roles are removed after every dependent Project fixture has been archived.
+    await reportCleanup(testInfo, 'live-fixture-cleanup', await cleanup());
   },
 
-  seededProject: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use) => {
-    const requestIdentity = fixtureRequestIdentity(liveFixtureGraph);
-    const { project, cleanup } = await seedActiveProject(
-      { apiRequest, authToken, recurse, tenantContext, requestIdentity },
-      createProjectInput({ projectId: liveFixtureGraph.projectId }),
-    );
+  liveCleanup: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use, testInfo) => {
+    const ledger = new CleanupLedger();
+    const deps = { apiRequest, authToken, recurse, tenantContext, graph: liveFixtureGraph };
+    await use({
+      trackProject: (projectId, label) => ledger.register(projectArchiveStep(deps, projectId, `projects:${label}`)),
+    });
+    await reportCleanup(testInfo, 'live-project-cleanup', await ledger.runReverse());
+  },
+
+  seededProject: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use, testInfo) => {
+    const ledger = new CleanupLedger();
+    const deps = { apiRequest, authToken, recurse, tenantContext, graph: liveFixtureGraph };
+    const project = await setupWithReverseCleanup(testInfo, 'seeded-project-cleanup', ledger, () =>
+      seedActiveProject(deps, ledger, 'projects:seeded', createProjectInput({ projectId: liveFixtureGraph.projectId })));
     await use(project);
-    await cleanup();
+    await reportCleanup(testInfo, 'seeded-project-cleanup', await ledger.runReverse());
   },
 
-  referencedProject: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use) => {
-    const { project, cleanup } = await seedReferencedProject(
-      {
-        apiRequest,
-        authToken,
-        recurse,
-        tenantContext,
-        requestIdentity: fixtureRequestIdentity(liveFixtureGraph),
-      },
-      liveFixtureGraph,
-    );
+  referencedProject: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use, testInfo) => {
+    const ledger = new CleanupLedger();
+    const deps = { apiRequest, authToken, recurse, tenantContext, graph: liveFixtureGraph };
+    const project = await setupWithReverseCleanup(testInfo, 'referenced-project-cleanup', ledger, () =>
+      seedReferencedProject(deps, ledger, liveFixtureGraph));
     await use(project);
-    await cleanup();
+    await reportCleanup(testInfo, 'referenced-project-cleanup', await ledger.runReverse());
   },
 
-  resolutionProjects: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use) => {
-    const { projects, cleanup } = await seedResolutionProjects(
-      {
-        apiRequest,
-        authToken,
-        recurse,
-        tenantContext,
-        requestIdentity: fixtureRequestIdentity(liveFixtureGraph),
-      },
-      liveFixtureGraph,
-    );
+  resolutionProjects: async ({ apiRequest, authToken, recurse, tenantContext, liveFixtureGraph }, use, testInfo) => {
+    const ledger = new CleanupLedger();
+    const deps = { apiRequest, authToken, recurse, tenantContext, graph: liveFixtureGraph };
+    const projects = await setupWithReverseCleanup(testInfo, 'resolution-projects-cleanup', ledger, () =>
+      seedResolutionProjects(deps, ledger, liveFixtureGraph));
     await use(projects);
-    await cleanup();
+    await reportCleanup(testInfo, 'resolution-projects-cleanup', await ledger.runReverse());
   },
 });
 
@@ -149,14 +150,6 @@ function requireLiveFixtureEnv(name: string): string {
     throw new Error(`[projects-fixtures] ${name} must be set for AppHost-backed tests.`);
   }
   return value;
-}
-
-function fixtureRequestIdentity(graph: LiveFixtureFixtures['liveFixtureGraph']) {
-  return {
-    correlationId: graph.correlationId,
-    taskId: graph.taskId,
-    idempotencyKey: graph.idempotencyKey,
-  };
 }
 
 export { expect };

@@ -73,6 +73,34 @@ export function createLiveFixtureIdentities(dimensions: LiveFixtureDimensions): 
   };
 }
 
+/** Request identities for one live API operation; every value is canonical for the Projects API. */
+export interface LiveRequestIdentity {
+  correlationId: string;
+  taskId: string;
+  idempotencyKey: string;
+}
+
+/**
+ * Derives deterministic, operation-scoped request identities from one attempt's graph identity.
+ * Two operations, attempts, workers, retries, repeats, or scenarios never share a request identity,
+ * so an idempotency key can never replay a different attempt's request body.
+ */
+export function createLiveRequestIdentity(
+  identities: Pick<LiveFixtureIdentities, 'graphId'>,
+  operation: string,
+): LiveRequestIdentity {
+  const normalizedOperation = operation.trim();
+  if (!identities.graphId.trim() || !normalizedOperation) {
+    throw new Error('[live-fixture-identities] graphId and operation are required for request identities.');
+  }
+  const source = `${identities.graphId}|${normalizedOperation}`;
+  return {
+    correlationId: boundedId('correlation', `${source}|correlation`),
+    taskId: boundedId('task', `${source}|task`),
+    idempotencyKey: boundedId('idempotency', `${source}|idempotency`),
+  };
+}
+
 /** Rejects accidentally reused attempt dimensions before parallel live work starts. */
 export function assertDisjointLiveFixtureDimensions(dimensions: readonly LiveFixtureDimensions[]): void {
   const seen = new Set<string>();

@@ -64,6 +64,7 @@ static IReadOnlyList<HelperModel> BuildHelpers(YamlMappingNode root, IReadOnlyLi
 {
     YamlMappingNode schemas = RequiredMapping(RequiredMapping(root, "components"), "schemas");
     Dictionary<string, List<HelperVariantModel>> variantsBySchema = new(StringComparer.Ordinal);
+    IdempotencyCollectionCanonicalization collectionCanonicalization = new();
 
     foreach (OperationModel operation in operations.Where(o => o.IdempotencyFields.Count > 0))
     {
@@ -113,7 +114,7 @@ static IReadOnlyList<HelperModel> BuildHelpers(YamlMappingNode root, IReadOnlyLi
 
         foreach (string field in operation.IdempotencyFields)
         {
-            FieldModel fieldModel = ResolveField(operation, field, operation.RequestSchema, schemaProperties, helperParameters);
+            FieldModel fieldModel = ResolveField(operation, field, operation.RequestSchema, schemaProperties, helperParameters, collectionCanonicalization);
             fields.Add(fieldModel);
         }
 
@@ -131,6 +132,8 @@ static IReadOnlyList<HelperModel> BuildHelpers(YamlMappingNode root, IReadOnlyLi
 
         variants.Add(new HelperVariantModel(operation.OperationId, operation.IdempotencyFields, fields, orderedParameters));
     }
+
+    collectionCanonicalization.EnsureAllDeclarationsApplied(root);
 
     List<HelperModel> helpers = variantsBySchema
         .Select(group => new HelperModel(
@@ -160,7 +163,8 @@ static FieldModel ResolveField(
     string field,
     string schemaName,
     IReadOnlyDictionary<string, SchemaPropertyModel> schemaProperties,
-    List<ParameterModel> helperParameters)
+    List<ParameterModel> helperParameters,
+    IdempotencyCollectionCanonicalization collectionCanonicalization)
 {
     Dictionary<string, string> operationParameters = [];
     foreach (ParameterModel parameter in operation.Parameters)
@@ -204,7 +208,7 @@ static FieldModel ResolveField(
         return new FieldModel(
             field,
             "true",
-            ApplyCollectionCanonicalization(operation, field, schemaProperty, expression));
+            collectionCanonicalization.Apply(operation.OperationId, field, schemaProperty.Schema, expression));
     }
 
     string rootProperty = ToPropertyName(bodyParts[0]);
@@ -213,36 +217,6 @@ static FieldModel ResolveField(
         ? $"{rootProperty} is not null"
         : rootProperty + "?." + string.Join("?.", bodyParts.Skip(1).Take(bodyParts.Length - 2).Select(ToPropertyName)) + " is not null";
     return new FieldModel(field, presentExpression, nullSafeExpression);
-}
-
-static string ApplyCollectionCanonicalization(
-    OperationModel operation,
-    string field,
-    SchemaPropertyModel property,
-    string expression)
-{
-    const string extensionName = "x-hexalith-idempotency-collection-canonicalization";
-    const string supportedPolicy = "ordinal-sort-null-to-empty";
-    if (!property.Schema.Children.TryGetValue(new YamlScalarNode(extensionName), out YamlNode? policyNode))
-    {
-        return expression;
-    }
-
-    string policy = policyNode.ShouldBeScalar(extensionName).Value ?? string.Empty;
-    if (!string.Equals(policy, supportedPolicy, StringComparison.Ordinal))
-    {
-        throw new InvalidOperationException(
-            $"Operation {operation.OperationId} field '{field}' declares unsupported {extensionName} policy '{policy}'. " +
-            $"The only supported policy is '{supportedPolicy}'.");
-    }
-
-    if (!string.Equals(RequiredScalar(property.Schema, "type"), "array", StringComparison.Ordinal))
-    {
-        throw new InvalidOperationException(
-            $"Operation {operation.OperationId} field '{field}' declares {extensionName} but is not an array schema.");
-    }
-
-    return $"{expression} is null ? Array.Empty<string>() : {expression}.OrderBy(static item => item, StringComparer.Ordinal).ToArray()";
 }
 
 static bool SchemaMatchesLogicalPrefix(string schemaName, string prefix)

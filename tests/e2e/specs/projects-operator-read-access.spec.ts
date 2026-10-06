@@ -30,6 +30,7 @@ test.describe('Projects operator read access', () => {
   liveAppHostTest('returns metadata-only project diagnostics with bounded audit evidence (Story 5.2 AC1,3,5)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     seededProject,
   }) => {
@@ -37,7 +38,7 @@ test.describe('Projects operator read access', () => {
       apiRequest,
       tenantContext.tenantId,
       seededProject.projectId,
-      { authToken, correlationId: 'corr-operator-read-happy', auditLimit: 25 },
+      { authToken, correlationId: requestIdentity('operator-read').correlationId, auditLimit: 25 },
     );
 
     expect(status).toBe(200);
@@ -64,6 +65,7 @@ test.describe('Projects operator read access', () => {
   liveAppHostTest('rejects query idempotency and non-eventual freshness after authorization (Story 5.2 AC2,7)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     seededProject,
   }) => {
@@ -73,8 +75,8 @@ test.describe('Projects operator read access', () => {
       seededProject.projectId,
       {
         authToken,
-        correlationId: 'corr-operator-idempotency',
-        extraHeaders: { 'Idempotency-Key': 'operator-query-is-not-a-command' },
+        correlationId: requestIdentity('operator-read-idempotency').correlationId,
+        extraHeaders: { 'Idempotency-Key': requestIdentity('operator-read-idempotency').idempotencyKey },
       },
     );
     expect(idempotencyRejected.status).toBe(400);
@@ -86,7 +88,7 @@ test.describe('Projects operator read access', () => {
       seededProject.projectId,
       {
         authToken,
-        correlationId: 'corr-operator-freshness',
+        correlationId: requestIdentity('operator-read-freshness').correlationId,
         freshness: 'strong',
       },
     );
@@ -97,13 +99,14 @@ test.describe('Projects operator read access', () => {
   liveAppHostTest('collapses malformed or unauthorized project reads to safe denial (Story 5.2 AC2)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
   }) => {
     const { status, body } = await getProjectOperatorDiagnostics(
       apiRequest,
       tenantContext.tenantId,
       'not/a/canonical/project-id',
-      { authToken, correlationId: 'corr-operator-malformed' },
+      { authToken, correlationId: requestIdentity('operator-read-malformed').correlationId },
     );
 
     expect(status).toBe(404);
@@ -112,6 +115,7 @@ test.describe('Projects operator read access', () => {
 
   liveAppHostTest('does not disclose existence to unauthenticated operator probes (Story 5.2 AC1,2)', async ({
     apiRequest,
+    requestIdentity,
     tenantContext,
     seededProject,
   }) => {
@@ -119,7 +123,7 @@ test.describe('Projects operator read access', () => {
       method: 'GET',
       path: `/api/v1/projects/${seededProject.projectId}/operator-diagnostics`,
       headers: {
-        ...queryHeaders({ authToken: '', correlationId: 'corr-operator-no-auth' }),
+        ...queryHeaders({ authToken: '', correlationId: requestIdentity('operator-read-anonymous').correlationId }),
         Authorization: '',
         'X-Hexalith-Tenant-Id': tenantContext.tenantId,
       },

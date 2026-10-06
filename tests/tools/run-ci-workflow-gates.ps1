@@ -813,6 +813,65 @@ Require-Match $managedE2E 'npx playwright test[\s\S]*live-apphost-startup\.spec\
 Require-Match $managedE2E 'npx playwright test\s*\\\s*\r?\n\s*--project chromium\s*\\\s*\r?\n\s*--workers 2' 'The managed E2E runner must run the full Chromium lane with two workers.'
 Forbid-Match $managedE2E 'aspire stop --all' 'The managed E2E runner must never stop unrelated AppHosts.'
 
+# The managed lane owns the lifecycle as a structural invariant: the AppHost is marked owned before
+# it starts (so a partial start is still stopped), every wait is explicitly bounded, endpoints come
+# only from the single describe capture, and the smoke and full phases use distinct run identities.
+$runnerOwnedIndex = $managedE2E.IndexOf("`nstarted=1")
+$runnerStartIndex = $managedE2E.IndexOf("`naspire start --apphost ")
+if ($runnerOwnedIndex -lt 0 -or $runnerStartIndex -lt 0 -or $runnerOwnedIndex -gt $runnerStartIndex) {
+    $failures.Add('The managed E2E runner must mark the exact AppHost as owned before aspire start so teardown covers a partial start.')
+}
+Require-Match $managedE2E 'aspire wait "\$resource" --apphost "\$apphost" --timeout "\$resource_timeout_seconds" --non-interactive' 'The managed E2E runner must bound every resource wait explicitly.'
+Require-Match $managedE2E 'E2E_RUN_ID="\$run_id-smoke" npx playwright test' 'The managed E2E smoke phase must use its own run identity.'
+Require-Match $managedE2E 'E2E_RUN_ID="\$run_id-full" npx playwright test' 'The managed E2E full phase must use its own run identity.'
+foreach ($endpointName in @('BASE_URL', 'API_URL', 'EVENTSTORE_API_URL', 'KEYCLOAK_URL', 'FIXTURE_API_URL')) {
+    Require-Match $managedE2E ('^' + $endpointName + '="\$\(endpoint [a-z-]+ http\)"\s*$') "The managed E2E runner must derive $endpointName from the single describe capture."
+}
+Forbid-Match $managedE2E '(?i)(localhost|127\.0\.0\.1|\[::1\]):\d+' 'The managed E2E runner must never guess ports.'
+Forbid-Match $managedE2E '--(pass-with-no-tests|retries|grep-invert)\b' 'The managed E2E runner must not relax collection, retries, or selection.'
+
+$e2eJobs = @($ciJobBlocks | Where-Object { $_.Name -ceq 'e2e' })
+if ($e2eJobs.Count -ne 1) {
+    $failures.Add("CI must define exactly one scheduled e2e job; found $($e2eJobs.Count).")
+}
+else {
+    $e2eJobText = $e2eJobs[0].Text
+    $e2eSteps = @(Get-NamedStepBlocks -JobText $e2eJobText)
+    $e2eRunStep = Get-RequiredNamedStep -Steps $e2eSteps -Name 'Run managed AppHost E2E suite' -Owner 'Scheduled E2E'
+    $e2eStopStep = Get-RequiredNamedStep -Steps $e2eSteps -Name 'Stop the exact Projects AppHost' -Owner 'Scheduled E2E'
+    Require-Match $e2eJobText '^\s*submodules:\s*false\s*$' 'Scheduled E2E must check out without recursive submodules.'
+    Forbid-Match $e2eJobText '(?i)continue-on-error' 'Scheduled E2E must not continue on error.'
+    Forbid-Match $e2eJobText '\.auth' 'Scheduled E2E artifacts must never include browser session state.'
+    if ($null -ne $e2eRunStep) {
+        Require-Match $e2eRunStep.Text "^\s*CI:\s*'true'\s*$" 'The managed E2E run must build in CI package-reference mode.'
+        Require-Match $e2eRunStep.Text '^\s*run:\s*npm --prefix tests/e2e run test:live:managed\s*$' 'The managed E2E run must invoke only the lifecycle runner.'
+        Forbid-Match $e2eRunStep.Text '^\s*if:' 'The managed E2E run must not be conditional.'
+    }
+    if ($null -ne $e2eStopStep) {
+        Require-Match $e2eStopStep.Text '^\s*if:\s*always\(\)\s*$' 'The exact-AppHost stop step must run unconditionally.'
+        Require-Match $e2eStopStep.Text 'aspire stop --apphost "\$GITHUB_WORKSPACE/src/Hexalith\.Projects\.AppHost/Hexalith\.Projects\.AppHost\.csproj" --non-interactive' 'The scheduled stop step must target the exact Projects AppHost.'
+        Forbid-Match $e2eStopStep.Text 'aspire stop --all' 'The scheduled stop step must never stop unrelated AppHosts.'
+    }
+    if ($null -ne $e2eRunStep -and $null -ne $e2eStopStep -and $e2eStopStep.Index -lt $e2eRunStep.Index) {
+        $failures.Add('The exact-AppHost stop step must follow the managed E2E run.')
+    }
+}
+
+$playwrightConfigPath = Join-Path $repositoryRoot 'tests/e2e/playwright.config.ts'
+$zeroSkipReporterPath = Join-Path $repositoryRoot 'tests/e2e/reporters/zero-live-skip-reporter.ts'
+if (-not (Test-Path $playwrightConfigPath) -or -not (Test-Path $zeroSkipReporterPath)) {
+    $failures.Add('The Playwright config and the zero-live-skip reporter must exist.')
+}
+else {
+    $playwrightConfig = Get-Content -Path $playwrightConfigPath -Raw
+    $zeroSkipReporter = Get-Content -Path $zeroSkipReporterPath -Raw
+    Require-Match $playwrightConfig "LIVE_APPHOST_ENABLED \? \[\['\./reporters/zero-live-skip-reporter\.ts'\]\]" 'The live lane must register the zero-live-skip reporter.'
+    Require-Match $playwrightConfig 'workers:\s*LIVE_APPHOST_ENABLED \? 2\b' 'The live lane must run with two isolated workers.'
+    Require-Match $playwrightConfig "trace:\s*LIVE_APPHOST_ENABLED \? 'off'" 'Live traces carry bearer tokens and must stay disabled.'
+    Require-Match $zeroSkipReporter 'this\.collected === 0 \|\| this\.skipped\.size > 0' 'The zero-live-skip reporter must fail empty or skipped live runs.'
+    Require-Match $zeroSkipReporter "return \{ status: 'failed' \}" 'The zero-live-skip reporter must override the run status to failed.'
+}
+
 $testProjects = @(
     'Hexalith.Projects.Contracts.Tests',
     'Hexalith.Projects.Client.Tests',
@@ -848,8 +907,25 @@ if ($referenceModeTargets.Count -ne 1 -or
     $null -eq $referenceModeTargets[0].Error) {
     $failures.Add('Directory.Build.props must reject explicit source mode in CI and every non-Debug configuration before restore/build.')
 }
+# The shared Hexalith.Builds catalog owns the Conversations/Folders version set.
+# The root must import it and must not redeclare, update, or remove those versions.
+[xml] $directoryPackagesXml = $directoryPackages
+$catalogImports = @($directoryPackagesXml.SelectNodes('/Project/Import[@Project="$(Hexalith1BuildPackageProps)"]'))
+$catalogPaths = @($directoryPackagesXml.SelectNodes('/Project/PropertyGroup/Hexalith1BuildPackageProps'))
+if ($catalogImports.Count -ne 1 -or
+    $catalogPaths.Count -ne 1 -or
+    $catalogPaths[0].InnerText.Trim() -cne '$(MSBuildThisFileDirectory)references/Hexalith.Builds/Props/Directory.Packages.props') {
+    $failures.Add('Directory.Packages.props must import the root-declared Hexalith.Builds package catalog.')
+}
+$rootPackageVersionIds = @($directoryPackagesXml.SelectNodes('//PackageVersion') |
+    ForEach-Object { $_.GetAttribute('Include'), $_.GetAttribute('Update'), $_.GetAttribute('Remove') } |
+    Where-Object { $_ } |
+    ForEach-Object { $_ -split ';' } |
+    ForEach-Object { $_.Trim() })
 foreach ($packageId in @('Hexalith.Conversations.Client', 'Hexalith.Conversations.Contracts', 'Hexalith.Folders.Client', 'Hexalith.Folders.Contracts')) {
-    Require-Match $directoryPackages ('<PackageVersion Include="' + [regex]::Escape($packageId) + '" Version="1\.0\.0"\s*/>') "$packageId must remain pinned to the unpublished 1.0.0 blocker version."
+    if ($rootPackageVersionIds -contains $packageId) {
+        $failures.Add("$packageId version must be owned by the Hexalith.Builds package catalog, not root Directory.Packages.props.")
+    }
 }
 
 $projectFiles = Get-ChildItem -Path $repositoryRoot -Recurse -Filter '*.csproj' -File |

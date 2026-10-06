@@ -5,9 +5,9 @@ import type { LiveFixtureGraph } from '../support/helpers/live-fixtures-api-clie
 /**
  * F5 critical journey — optional File Reference link/unlink (Story 2.5; FR-9 / FR-11; AR-11 Folders ACL).
  *
- * Live-gated until the Hexalith.Projects API + AppHost expose the file-reference routes through a
- * running topology (mirrors the lifecycle/resolution specs, which are also scaffolded). The bodies are
- * pattern-complete and document the load-bearing E2E disciplines this slice must honour:
+ * Live-only: the Project, folder, workspace, and file identities come from the attempt-scoped fixture
+ * graph served by the explicit live-fixture profile. The bodies document the load-bearing E2E
+ * disciplines this slice must honour:
  *   - command-async (202 AcceptedCommand), no read-after-write — converge on the read model (no sleeps);
  *   - File References are OPTIONAL and supplement Project Context — they never satisfy or replace the
  *     single Project Folder (AC3);
@@ -163,8 +163,8 @@ test.describe('Projects file references (link / unlink)', () => {
     expect(serialized).not.toContain('redacted');
   });
 
-  liveAppHostTest('equivalent duplicate link with the same Idempotency-Key replays safely (AC8)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject, liveFixtureGraph }) => {
-    const idempotencyKey = `idem-file-link-${seededProject.projectId}`;
+  liveAppHostTest('equivalent duplicate link with the same Idempotency-Key replays safely (AC8)', async ({ apiRequest, authToken, requestIdentity, recurse, tenantContext, seededProject, liveFixtureGraph }) => {
+    const { idempotencyKey } = requestIdentity('file-link-replay');
     const headers = { ...mutationHeaders({ authToken, idempotencyKey }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId };
 
     const first = await apiRequest({

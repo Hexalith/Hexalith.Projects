@@ -37,8 +37,8 @@ function expectNoReferencePayloadLeakage(serialized: string, tenantId: string): 
 /**
  * Story 5.5 critical journeys - Reference Inventory & Health View.
  *
- * These run only in the explicit live lane; linked conversation/folder/file/memory
- * references with health outcomes remain a required fixture prerequisite. The assertions bind
+ * These run only in the explicit live lane; the linked conversation/folder/file/memory references
+ * come from the attempt-scoped `referencedProject` fixture graph. The assertions bind
  * the Story 5.5 contract: metadata-only API inputs, shared context-evaluation sources,
  * explicit matrix columns, visible non-color-only states, and read-only safe actions.
  */
@@ -46,6 +46,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
   liveAppHostTest('loads reference-health source reads with eventual freshness and no payload leakage', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     referencedProject,
   }) => {
@@ -55,7 +56,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
       referencedProject.projectId,
       {
         authToken,
-        correlationId: 'corr-story-5-5-operator-diagnostics',
+        correlationId: requestIdentity('reference-health-operator-diagnostics').correlationId,
         auditLimit: 25,
         freshness: 'eventually_consistent',
       },
@@ -66,7 +67,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
       referencedProject.projectId,
       {
         authToken,
-        correlationId: 'corr-story-5-5-context-explain',
+        correlationId: requestIdentity('reference-health-context-explain').correlationId,
         freshness: 'eventually_consistent',
       },
     );
@@ -76,7 +77,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
       referencedProject.projectId,
       {
         authToken,
-        correlationId: 'corr-story-5-5-conversations',
+        correlationId: requestIdentity('reference-health-conversations').correlationId,
         freshness: 'eventually_consistent',
         pageSize: 100,
       },
@@ -112,6 +113,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
   liveAppHostTest('rejects reference-health query idempotency and non-eventual freshness safely', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     referencedProject,
   }) => {
@@ -121,8 +123,8 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
       referencedProject.projectId,
       {
         authToken,
-        correlationId: 'corr-story-5-5-explain-idempotency',
-        extraHeaders: { 'Idempotency-Key': 'context-explain-is-a-query' },
+        correlationId: requestIdentity('reference-health-explain-idempotency').correlationId,
+        extraHeaders: { 'Idempotency-Key': requestIdentity('reference-health-explain-idempotency').idempotencyKey },
       },
     );
     expect(explanationWithIdempotency.status).toBe(400);
@@ -134,8 +136,8 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
       referencedProject.projectId,
       {
         authToken,
-        correlationId: 'corr-story-5-5-conversations-idempotency',
-        extraHeaders: { 'Idempotency-Key': 'conversation-list-is-a-query' },
+        correlationId: requestIdentity('reference-health-conversations-idempotency').correlationId,
+        extraHeaders: { 'Idempotency-Key': requestIdentity('reference-health-conversations-idempotency').idempotencyKey },
       },
     );
     expect(conversationsWithIdempotency.status).toBe(400);
@@ -147,7 +149,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
       referencedProject.projectId,
       {
         authToken,
-        correlationId: 'corr-story-5-5-explain-freshness',
+        correlationId: requestIdentity('reference-health-explain-freshness').correlationId,
         freshness: 'strong',
       },
     );
@@ -159,7 +161,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
       referencedProject.projectId,
       {
         authToken,
-        correlationId: 'corr-story-5-5-conversations-freshness',
+        correlationId: requestIdentity('reference-health-conversations-freshness').correlationId,
         freshness: 'strong',
       },
     );

@@ -52,7 +52,8 @@ public sealed class ProposeNewProjectEndpointTests
     private const string ExistingProjectId = "project-existing";
     private const string FolderIdValue = "folder-001";
     private const string FileIdValue = "file-001";
-    private const string SecondFileIdValue = "file-002";
+    private const string UpperCaseFileIdValue = "file-Bravo";
+    private const string LowerCaseFileIdValue = "file-alpha";
     private const string WorkspaceIdValue = "workspace-001";
     private const string CorrelationIdValue = "corr-001";
     private const string TaskIdValue = "task-001";
@@ -345,15 +346,16 @@ public sealed class ProposeNewProjectEndpointTests
     [Fact]
     public async Task Confirm_ReversedFileReferenceIdsFingerprintMatchesGeneratedSortedCanonicalForm()
     {
-        string[] sortedIds = [FileIdValue, SecondFileIdValue];
-        string[] reversedIds = [SecondFileIdValue, FileIdValue];
+        // Ordinal order puts "file-Bravo" before "file-alpha"; culture-aware order would not.
+        string[] sortedIds = [UpperCaseFileIdValue, LowerCaseFileIdValue];
+        string[] reversedIds = [LowerCaseFileIdValue, UpperCaseFileIdValue];
         CapturingProposalConfirmationIdempotencyLedger ledger = new();
         using ServiceProvider provider = await BuildProviderAsync(idempotencyLedger: ledger).ConfigureAwait(true);
 
         EndpointResponse response = await SendConfirmAsync(
             provider,
             ConfirmBody(
-                fileReferencesJson: ConfirmFileReferencesJson(sortedIds),
+                fileReferencesJson: ConfirmFileReferencesJson(reversedIds),
                 fileReferenceIdsJson: JsonSerializer.Serialize(reversedIds))).ConfigureAwait(true);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Accepted);

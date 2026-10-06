@@ -2,11 +2,14 @@ import { request, type TestInfo } from '@playwright/test';
 
 import {
   createLiveFixtureIdentities,
+  createLiveRequestIdentity,
   type LiveFixtureIdentities,
+  type LiveRequestIdentity,
 } from '../factories/live-fixture-identities.js';
 import {
   createLiveFixtureGraph,
   deleteLiveFixtureGraph,
+  toLiveFixtureGraph,
   type FixtureCleanupResult,
   type LiveFixtureGraph,
 } from '../helpers/live-fixtures-api-client.js';
@@ -14,6 +17,15 @@ import {
 export interface LiveFixtureFixtures {
   liveFixtureIdentities: LiveFixtureIdentities;
   liveFixtureGraph: LiveFixtureGraph;
+  /** Operation-scoped request identities derived from this attempt's isolation dimensions. */
+  requestIdentity: (operation: string) => LiveRequestIdentity;
+  /** Registers Projects created directly by a test for reverse archive-to-convergence cleanup. */
+  liveCleanup: LiveCleanup;
+}
+
+export interface LiveCleanup {
+  /** Archives `projectId` to convergence on teardown; `label` becomes the metadata-only role. */
+  trackProject(projectId: string, label: string): void;
 }
 
 /** Creates all deterministic IDs for one test attempt from Playwright's isolation dimensions. */
@@ -27,6 +39,11 @@ export function identitiesForTest(testInfo: TestInfo): LiveFixtureIdentities {
   });
 }
 
+/** Binds the request-identity factory to one attempt's graph identity. */
+export function requestIdentityFactory(identities: LiveFixtureIdentities): (operation: string) => LiveRequestIdentity {
+  return (operation) => createLiveRequestIdentity(identities, operation);
+}
+
 /** Seeds the sibling compatibility host using metadata only. */
 export async function provisionLiveFixtureGraph(
   identities: LiveFixtureIdentities,
@@ -35,14 +52,10 @@ export async function provisionLiveFixtureGraph(
     baseURL: requireLiveEnv('FIXTURE_API_URL'),
     ignoreHTTPSErrors: true,
   });
-  const graph: LiveFixtureGraph = {
-    ...identities,
-    runId: identities.runId.slice(0, 128),
-    scenario: identities.scenario.slice(0, 128),
+  const graph = toLiveFixtureGraph(identities, {
     tenantId: requireLiveEnv('TEST_TENANT_ID'),
     principalId: requireLiveEnv('TEST_PRINCIPAL_ID'),
-    filePath: 'docs/contract.pdf',
-  };
+  });
 
   try {
     const provisioned = await createLiveFixtureGraph(fixtureRequest, graph);

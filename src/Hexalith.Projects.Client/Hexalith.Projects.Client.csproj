@@ -11,6 +11,7 @@
     <None Remove="Generation\**" />
     <None Include="Generation\Hexalith.Projects.Client.Generation.csproj" Pack="false" />
     <None Include="Generation\Program.cs" Pack="false" />
+    <HexalithProjectsHelperGeneratorInput Include="Generation\Shared\**\*.cs;Generation\Shared\*.csproj" Exclude="Generation\Shared\bin\**;Generation\Shared\obj\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
@@ -57,7 +58,7 @@
   </Target>
   <Target Name="GenerateHexalithProjectsIdempotencyHelpers"
           BeforeTargets="BeforeCompile"
-          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)/nswag.json;$(HexalithProjectsHelperGeneratorProject);$(MSBuildProjectDirectory)/Generation/Program.cs"
+          Inputs="$(HexalithProjectsContractSpine);$(MSBuildProjectDirectory)/nswag.json;$(HexalithProjectsHelperGeneratorProject);$(MSBuildProjectDirectory)/Generation/Program.cs;@(HexalithProjectsHelperGeneratorInput)"
           Outputs="$(HexalithProjectsGeneratedHelpers)"
           Condition="'$(DesignTimeBuild)' != 'true'">
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)"

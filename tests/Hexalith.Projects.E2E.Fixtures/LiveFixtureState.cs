@@ -16,23 +16,31 @@ public sealed class LiveFixtureState
     public IReadOnlyCollection<LiveFixtureGraph> Graphs => [.. _graphs.Values];
 
     /// <summary>Adds a graph idempotently.</summary>
-    public LiveFixtureGraph Add(LiveFixtureGraph graph)
+    /// <param name="graph">The validated metadata-only graph.</param>
+    /// <returns>
+    /// <see langword="true"/> when the graph was added or an identical graph already exists;
+    /// <see langword="false"/> when the graph identity is reused with different metadata.
+    /// </returns>
+    /// <exception cref="ArgumentException">Thrown when the graph metadata is invalid.</exception>
+    public bool TryAdd(LiveFixtureGraph graph)
     {
         ArgumentNullException.ThrowIfNull(graph);
-        graph.Validate();
-        LiveFixtureGraph current = _graphs.GetOrAdd(graph.GraphId, graph);
-        if (current != graph)
+        if (!graph.IsValid())
         {
-            throw new InvalidOperationException($"Fixture graph '{graph.GraphId}' was reused with different metadata.");
+            throw new ArgumentException("The fixture graph metadata is invalid.", nameof(graph));
         }
 
-        return current;
+        return _graphs.GetOrAdd(graph.GraphId, graph) == graph;
     }
 
     /// <summary>Removes one graph without affecting sibling runs.</summary>
+    /// <param name="graphId">The graph identity.</param>
+    /// <returns><see langword="true"/> when the graph existed.</returns>
     public bool Remove(string graphId) => _graphs.TryRemove(graphId, out _);
 
     /// <summary>Finds a graph using an exact metadata identity.</summary>
+    /// <param name="predicate">The exact-match predicate.</param>
+    /// <returns>The first matching graph, or <see langword="null"/>.</returns>
     public LiveFixtureGraph? Find(Func<LiveFixtureGraph, bool> predicate)
     {
         ArgumentNullException.ThrowIfNull(predicate);

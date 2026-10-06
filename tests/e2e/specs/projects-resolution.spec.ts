@@ -5,12 +5,10 @@ import { confirmProjectResolution, resolveProjectFromAttachments } from '../supp
 /**
  * F5 critical journey — resolution → confirm (FR-12/13/14; E1 / R10).
  *
- * `test.fixme` until the AppHost exposes seeded resolution fixtures for the real API.
- * The spine-backed routes and exact wire assertions are scaffolded here: binary outcomes,
- * reason codes, safe-denial, query validation, and the never-silently-attach guarantee.
- *
- * Story 4.3's attachment-resolution query is now spine-backed; the explicit live lane
- * still requires seeded folder/file reference fixtures.
+ * Live-only: the two resolution Projects and their folder/file/conversation evidence come from the
+ * attempt-scoped fixture graph, and every request identity is derived from the same attempt. The
+ * assertions cover binary outcomes, reason codes, safe-denial, query validation, and the
+ * never-silently-attach guarantee.
  */
 test.describe('Projects resolution', () => {
   function assertNoResolutionPayloadLeakage(serialized: string, tenantId: string): void {
@@ -24,6 +22,7 @@ test.describe('Projects resolution', () => {
   liveAppHostTest('folder attachment resolves to a single candidate without leaking tenant or path data (FR-13 / AC1,7)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     resolutionProjects,
     liveFixtureGraph,
@@ -32,7 +31,7 @@ test.describe('Projects resolution', () => {
       apiRequest,
       tenantContext.tenantId,
       { folderIds: [liveFixtureGraph.folderId] },
-      { authToken, correlationId: 'corr-resolution-folder' },
+      { authToken, correlationId: requestIdentity('resolution-folder').correlationId },
     );
 
     expect(status).toBe(200);
@@ -49,6 +48,7 @@ test.describe('Projects resolution', () => {
   liveAppHostTest('file attachment resolves with FileReferenceMatched and does not read raw content (FR-13 / AC1,2)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     resolutionProjects,
     liveFixtureGraph,
@@ -57,7 +57,7 @@ test.describe('Projects resolution', () => {
       apiRequest,
       tenantContext.tenantId,
       { fileIds: [liveFixtureGraph.fileReferenceId] },
-      { authToken, correlationId: 'corr-resolution-file' },
+      { authToken, correlationId: requestIdentity('resolution-file').correlationId },
     );
 
     expect(status).toBe(200);
@@ -74,6 +74,7 @@ test.describe('Projects resolution', () => {
   liveAppHostTest('folder and file attachments can produce multiple candidates and never auto-attach (FR-13 / NFR-9)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     liveFixtureGraph,
     resolutionProjects,
@@ -82,7 +83,7 @@ test.describe('Projects resolution', () => {
       apiRequest,
       tenantContext.tenantId,
       { folderIds: [liveFixtureGraph.folderId], fileIds: [liveFixtureGraph.fileReferenceId] },
-      { authToken, correlationId: 'corr-resolution-multiple' },
+      { authToken, correlationId: requestIdentity('resolution-multiple').correlationId },
     );
 
     expect(status).toBe(200);
@@ -97,6 +98,7 @@ test.describe('Projects resolution', () => {
   liveAppHostTest('attachment query rejects Idempotency-Key and strong freshness as validation errors (AC5)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     liveFixtureGraph,
   }) => {
@@ -106,8 +108,8 @@ test.describe('Projects resolution', () => {
       { folderIds: [liveFixtureGraph.folderId] },
       {
         authToken,
-        correlationId: 'corr-resolution-idempotency',
-        extraHeaders: { 'Idempotency-Key': 'query-idempotency-is-invalid' },
+        correlationId: requestIdentity('resolution-query-idempotency').correlationId,
+        extraHeaders: { 'Idempotency-Key': requestIdentity('resolution-query-idempotency').idempotencyKey },
       },
     );
     expect(idempotencyRejected.status).toBe(400);
@@ -118,7 +120,7 @@ test.describe('Projects resolution', () => {
       { folderIds: [liveFixtureGraph.folderId] },
       {
         authToken,
-        correlationId: 'corr-resolution-freshness',
+        correlationId: requestIdentity('resolution-query-freshness').correlationId,
         freshness: 'strong',
       },
     );
@@ -128,13 +130,14 @@ test.describe('Projects resolution', () => {
   liveAppHostTest('missing or malformed attachment identifiers collapse to safe-denial 404 (AC6)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
   }) => {
     const missing = await resolveProjectFromAttachments(
       apiRequest,
       tenantContext.tenantId,
       {},
-      { authToken, correlationId: 'corr-resolution-missing' },
+      { authToken, correlationId: requestIdentity('resolution-missing').correlationId },
     );
     expect(missing.status).toBe(404);
 
@@ -142,7 +145,7 @@ test.describe('Projects resolution', () => {
       apiRequest,
       tenantContext.tenantId,
       { fileIds: ['bad/slash'] },
-      { authToken, correlationId: 'corr-resolution-malformed' },
+      { authToken, correlationId: requestIdentity('resolution-malformed').correlationId },
     );
     expect(malformed.status).toBe(404);
   });
@@ -166,6 +169,7 @@ test.describe('Projects resolution', () => {
   liveAppHostTest('confirming a candidate accepts only explicit MultipleCandidates evidence (FR-14 / AC2,3,4)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     resolutionProjects,
     liveFixtureGraph,
@@ -178,12 +182,7 @@ test.describe('Projects resolution', () => {
         conversationId: liveFixtureGraph.ambiguousConversationId,
         candidateProjectIds: [resolutionProjects.primary.projectId, resolutionProjects.secondary.projectId],
       },
-      {
-        authToken,
-        correlationId: 'corr-resolution-confirm',
-        taskId: 'task-resolution-confirm',
-        idempotencyKey: 'idem-resolution-confirm',
-      },
+      { authToken, ...requestIdentity('resolution-confirm') },
     );
 
     expect(status).toBe(202);
@@ -194,6 +193,7 @@ test.describe('Projects resolution', () => {
   liveAppHostTest('confirmation mutation requires Idempotency-Key and rejects non-ambiguous evidence (FR-14 / AC3,7)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     resolutionProjects,
     liveFixtureGraph,
@@ -212,7 +212,7 @@ test.describe('Projects resolution', () => {
     const missingIdempotency = await apiRequest({
       method: 'POST',
       path,
-      headers: { ...queryHeaders({ authToken, correlationId: 'corr-confirm-missing-idem' }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
+      headers: { ...queryHeaders({ authToken, correlationId: requestIdentity('resolution-confirm-missing-idempotency').correlationId }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
       body,
       retryConfig: { maxRetries: 0 },
     });
@@ -222,7 +222,7 @@ test.describe('Projects resolution', () => {
       method: 'POST',
       path,
       headers: {
-        ...mutationHeaders({ authToken, correlationId: 'corr-confirm-single', idempotencyKey: 'idem-confirm-single' }),
+        ...mutationHeaders({ authToken, ...requestIdentity('resolution-confirm-single-candidate') }),
         'X-Hexalith-Tenant-Id': tenantContext.tenantId,
       },
       body: { ...body, resolutionResult: 'SingleCandidate' },

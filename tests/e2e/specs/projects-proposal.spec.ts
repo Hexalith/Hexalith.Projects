@@ -2,47 +2,23 @@ import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { queryHeaders } from '../support/helpers/correlation.js';
 import type { LiveFixtureGraph } from '../support/helpers/live-fixtures-api-client.js';
 import {
-  archiveProject,
   confirmNewProjectProposal,
   proposeNewProject,
-  type ApiRequest,
   type ConfirmNewProjectProposalInput,
   type ProjectCreationProposalInput,
 } from '../support/helpers/projects-api-client.js';
-import type { Recurse } from '../support/helpers/readiness.js';
-import { waitForProject } from '../support/helpers/readiness.js';
 
 /**
  * F5 critical journey — NoMatch proposal preview → explicit confirm (FR-15 / Story 4.5).
  *
- * Live-gated until the AppHost exposes seeded conversation/folder/file ACL fixtures for
- * the real cross-module API. These tests lock the Playwright API shape for preview-only
- * inference, explicit command-async confirmation, idempotent recovery, safe-denial, and
- * no-payload-leakage assertions.
+ * Live-only: conversation/folder/file metadata comes from the attempt-scoped sibling graph and every
+ * Project/request identity is derived from it. Created Projects are archived to convergence in
+ * reverse order by `liveCleanup`, which preserves the primary failure.
  */
 test.describe('Projects new-project proposal', () => {
   function safeFailureSummary(body: unknown): string {
     const problem = body as { category?: unknown; details?: { rejectedField?: unknown } };
     return `category=${String(problem?.category ?? 'none')}, rejectedField=${String(problem?.details?.rejectedField ?? 'none')}, body=${JSON.stringify(body)}`;
-  }
-
-  async function cleanupCreatedProposal(
-    apiRequest: ApiRequest,
-    recurse: Recurse,
-    tenantId: string,
-    authToken: string,
-    projectId: string,
-    suffix: string,
-  ): Promise<void> {
-    const { status } = await archiveProject(apiRequest, tenantId, projectId, {
-      authToken,
-      correlationId: `corr-proposal-cleanup-${suffix}`,
-      taskId: `task-proposal-cleanup-${suffix}`,
-      idempotencyKey: `idem-proposal-cleanup-${suffix}`,
-    });
-    if (status === 404) return;
-    expect(status).toBe(202);
-    await waitForProject(recurse, apiRequest, tenantId, projectId, { authToken }, { lifecycle: 'archived' });
   }
 
   function proposalRequest(graph: LiveFixtureGraph, overrides: Partial<ProjectCreationProposalInput> = {}): ProjectCreationProposalInput {
@@ -109,6 +85,7 @@ test.describe('Projects new-project proposal', () => {
   liveAppHostTest('previews a NoMatch proposal without creating or leaking sibling payload data (AC1,3,8)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     liveFixtureGraph,
   }) => {
@@ -118,7 +95,7 @@ test.describe('Projects new-project proposal', () => {
       proposalRequest(liveFixtureGraph),
       {
         authToken,
-        correlationId: 'corr-proposal-preview',
+        correlationId: requestIdentity('proposal-preview').correlationId,
         freshness: 'eventually_consistent',
       },
     );
@@ -139,6 +116,7 @@ test.describe('Projects new-project proposal', () => {
   liveAppHostTest('rejects preview idempotency, strong freshness, duplicate references, and unsafe metadata (AC3,8)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     liveFixtureGraph,
   }) => {
@@ -148,8 +126,8 @@ test.describe('Projects new-project proposal', () => {
       proposalRequest(liveFixtureGraph),
       {
         authToken,
-        correlationId: 'corr-proposal-idempotency',
-        extraHeaders: { 'Idempotency-Key': 'query-idempotency-is-invalid' },
+        correlationId: requestIdentity('proposal-preview-idempotency').correlationId,
+        extraHeaders: { 'Idempotency-Key': requestIdentity('proposal-preview-idempotency').idempotencyKey },
       },
     );
     expect(idempotencyRejected.status).toBe(400);
@@ -160,7 +138,7 @@ test.describe('Projects new-project proposal', () => {
       proposalRequest(liveFixtureGraph),
       {
         authToken,
-        correlationId: 'corr-proposal-freshness',
+        correlationId: requestIdentity('proposal-preview-freshness').correlationId,
         freshness: 'strong',
       },
     );
@@ -170,7 +148,7 @@ test.describe('Projects new-project proposal', () => {
       apiRequest,
       tenantContext.tenantId,
       proposalRequest(liveFixtureGraph, { fileReferenceIds: [liveFixtureGraph.proposalFileReferenceId, liveFixtureGraph.proposalFileReferenceId] }),
-      { authToken, correlationId: 'corr-proposal-duplicate-reference' },
+      { authToken, correlationId: requestIdentity('proposal-preview-duplicate-reference').correlationId },
     );
     expect(duplicateReferenceRejected.status).toBe(400);
 
@@ -178,7 +156,7 @@ test.describe('Projects new-project proposal', () => {
       apiRequest,
       tenantContext.tenantId,
       proposalRequest(liveFixtureGraph, { setupMetadata: 'secret raw token' }),
-      { authToken, correlationId: 'corr-proposal-unsafe-metadata' },
+      { authToken, correlationId: requestIdentity('proposal-preview-unsafe-metadata').correlationId },
     );
     expect(unsafeMetadataRejected.status).toBe(400);
     assertNoProposalPayloadLeakage(JSON.stringify(unsafeMetadataRejected.body), tenantContext.tenantId, liveFixtureGraph);
@@ -187,6 +165,7 @@ test.describe('Projects new-project proposal', () => {
   liveAppHostTest('returns a safe conflict when an existing Project now qualifies instead of proposing creation (AC1,3)', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     seededProject,
     liveFixtureGraph,
@@ -195,7 +174,7 @@ test.describe('Projects new-project proposal', () => {
       apiRequest,
       tenantContext.tenantId,
       proposalRequest(liveFixtureGraph, { conversationId: liveFixtureGraph.existingConversationId }),
-      { authToken, correlationId: 'corr-proposal-existing-match' },
+      { authToken, correlationId: requestIdentity('proposal-existing-match').correlationId },
     );
 
     expect(status).toBe(400);
@@ -205,99 +184,67 @@ test.describe('Projects new-project proposal', () => {
   });
 
   liveAppHostTest('confirms a NoMatch proposal through command-async create, conversation assignment, folder, and file links (AC2,4,5,7)', async ({
-    apiRequest,
     authToken,
-    recurse,
+    liveCleanup,
     request,
+    requestIdentity,
     tenantContext,
     liveFixtureGraph,
   }) => {
-    try {
-      const { status, body } = await confirmNewProjectProposal(
-        request,
-        tenantContext.tenantId,
-        confirmRequest(liveFixtureGraph),
-        {
-          authToken,
-          correlationId: 'corr-proposal-confirm',
-          taskId: 'task-proposal-confirm',
-          idempotencyKey: 'idem-proposal-confirm',
-        },
-      );
+    const { status, body } = await confirmNewProjectProposal(
+      request,
+      tenantContext.tenantId,
+      confirmRequest(liveFixtureGraph),
+      { authToken, ...requestIdentity('proposal-confirm') },
+    );
+    if (status === 202) liveCleanup.trackProject(liveFixtureGraph.proposalProjectId, 'proposal');
 
-      expect(status, safeFailureSummary(body)).toBe(202);
-      expect(body.correlationId).toBeTruthy();
-      assertNoProposalPayloadLeakage(JSON.stringify(body), tenantContext.tenantId, liveFixtureGraph);
-    } finally {
-      await cleanupCreatedProposal(
-        apiRequest,
-        recurse,
-        tenantContext.tenantId,
-        authToken,
-        liveFixtureGraph.proposalProjectId,
-        liveFixtureGraph.graphId,
-      );
-    }
+    expect(status, safeFailureSummary(body)).toBe(202);
+    expect(body.correlationId).toBeTruthy();
+    assertNoProposalPayloadLeakage(JSON.stringify(body), tenantContext.tenantId, liveFixtureGraph);
   });
 
   liveAppHostTest('same root idempotency key with a different confirm body returns conflict without duplicate writes (AC7)', async ({
-    apiRequest,
     authToken,
-    recurse,
+    liveCleanup,
     request,
+    requestIdentity,
     tenantContext,
     liveFixtureGraph,
   }) => {
-    try {
-      const first = await confirmNewProjectProposal(
-        request,
-        tenantContext.tenantId,
-        confirmRequest(liveFixtureGraph, { projectId: liveFixtureGraph.proposalRetryProjectId }),
-        {
-          authToken,
-          correlationId: 'corr-proposal-idem-first',
-          taskId: 'task-proposal-idem-first',
-          idempotencyKey: 'idem-proposal-retry',
-        },
-      );
-      expect(first.status, safeFailureSummary(first.body)).toBe(202);
+    // Both requests share one attempt-scoped idempotency root; correlation/task identities differ.
+    const { idempotencyKey } = requestIdentity('proposal-retry');
+    const first = await confirmNewProjectProposal(
+      request,
+      tenantContext.tenantId,
+      confirmRequest(liveFixtureGraph, { projectId: liveFixtureGraph.proposalRetryProjectId }),
+      { authToken, ...requestIdentity('proposal-retry-first'), idempotencyKey },
+    );
+    if (first.status === 202) liveCleanup.trackProject(liveFixtureGraph.proposalRetryProjectId, 'proposal-retry');
+    expect(first.status, safeFailureSummary(first.body)).toBe(202);
 
-      const conflict = await confirmNewProjectProposal(
-        request,
-        tenantContext.tenantId,
-        confirmRequest(liveFixtureGraph, {
-          projectId: liveFixtureGraph.proposalRetryProjectId,
-          projectMetadata: {
-            displayName: 'synthetic-project-beta',
-            metadataClass: 'tenant_sensitive',
-          },
-        }),
-        {
-          authToken,
-          correlationId: 'corr-proposal-idem-conflict',
-          taskId: 'task-proposal-idem-conflict',
-          idempotencyKey: 'idem-proposal-retry',
+    const conflict = await confirmNewProjectProposal(
+      request,
+      tenantContext.tenantId,
+      confirmRequest(liveFixtureGraph, {
+        projectId: liveFixtureGraph.proposalRetryProjectId,
+        projectMetadata: {
+          displayName: 'synthetic-project-beta',
+          metadataClass: 'tenant_sensitive',
         },
-      );
+      }),
+      { authToken, ...requestIdentity('proposal-retry-conflict'), idempotencyKey },
+    );
 
-      expect(conflict.status).toBe(409);
-      assertNoProposalPayloadLeakage(JSON.stringify(conflict.body), tenantContext.tenantId, liveFixtureGraph);
-    } finally {
-      await cleanupCreatedProposal(
-        apiRequest,
-        recurse,
-        tenantContext.tenantId,
-        authToken,
-        liveFixtureGraph.proposalRetryProjectId,
-        `${liveFixtureGraph.graphId}-retry`,
-      );
-    }
+    expect(conflict.status).toBe(409);
+    assertNoProposalPayloadLeakage(JSON.stringify(conflict.body), tenantContext.tenantId, liveFixtureGraph);
   });
 
   liveAppHostTest('confirm validation fails closed for missing idempotency and mismatched file evidence (AC4,6,8)', async ({
     apiRequest,
     authToken,
     request,
+    requestIdentity,
     tenantContext,
     liveFixtureGraph,
   }) => {
@@ -305,7 +252,7 @@ test.describe('Projects new-project proposal', () => {
       method: 'POST',
       path: '/api/v1/projects/proposals/confirm',
       headers: {
-        ...queryHeaders({ authToken, correlationId: 'corr-proposal-missing-idem' }),
+        ...queryHeaders({ authToken, correlationId: requestIdentity('proposal-confirm-missing-idempotency').correlationId }),
         'X-Hexalith-Tenant-Id': tenantContext.tenantId,
       },
       body: confirmRequest(liveFixtureGraph),
@@ -317,12 +264,7 @@ test.describe('Projects new-project proposal', () => {
       request,
       tenantContext.tenantId,
       confirmRequest(liveFixtureGraph, { fileReferenceIds: [liveFixtureGraph.secondaryFileReferenceId] }),
-      {
-        authToken,
-        correlationId: 'corr-proposal-file-evidence',
-        taskId: 'task-proposal-file-evidence',
-        idempotencyKey: 'idem-proposal-file-evidence',
-      },
+      { authToken, ...requestIdentity('proposal-confirm-file-evidence') },
     );
     expect(mismatchedFileEvidence.status).toBe(400);
     assertNoProposalPayloadLeakage(JSON.stringify(mismatchedFileEvidence.body), tenantContext.tenantId, liveFixtureGraph);

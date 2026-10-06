@@ -9,15 +9,28 @@ using Hexalith.Projects.E2E.Fixtures;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<LiveFixtureState>();
-builder.Services.AddHttpClient<FixtureProxy>();
+builder.Services.AddHttpClient<FixtureProxy>(static client => client.Timeout = TimeSpan.FromSeconds(10));
+
+// Fixture ingress is metadata-only: malformed requests become bodiless 400s instead of developer
+// diagnostics, and unexpected failures never render stack traces, endpoints, or private paths.
+builder.Services.Configure<RouteHandlerOptions>(static options => options.ThrowOnBadRequest = false);
 
 WebApplication app = builder.Build();
+app.UseExceptionHandler(static exceptionApp => exceptionApp.Run(static context =>
+{
+    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+    return Task.CompletedTask;
+}));
+
 string role = app.Configuration["FixtureRole"]?.Trim().ToLowerInvariant()
     ?? throw new InvalidOperationException("FixtureRole is required.");
 LiveFixtureState state = app.Services.GetRequiredService<LiveFixtureState>();
 
 app.MapGet("/health", () => Results.Ok(new { role, status = "ready" }));
-app.MapPost("/_fixtures/graphs", (LiveFixtureGraph graph) => Results.Ok(state.Add(graph)));
+app.MapPost("/_fixtures/graphs", (LiveFixtureGraph graph) =>
+    !graph.IsValid()
+        ? Results.BadRequest()
+        : state.TryAdd(graph) ? Results.Ok(graph) : Results.Conflict());
 app.MapDelete("/_fixtures/graphs/{graphId}", (string graphId) =>
     state.Remove(graphId) ? Results.NoContent() : Results.NotFound());
 
@@ -28,9 +41,26 @@ if (role == "control")
         FixtureProxy proxy,
         CancellationToken cancellationToken) =>
     {
-        graph.Validate();
-        await proxy.SeedAsync(graph, cancellationToken).ConfigureAwait(false);
-        return Results.Created($"/api/v1/live-fixtures/graphs/{Uri.EscapeDataString(graph.GraphId)}", state.Add(graph));
+        if (!graph.IsValid())
+        {
+            return Results.BadRequest();
+        }
+
+        LiveFixtureGraph? existing = state.Find(item => string.Equals(item.GraphId, graph.GraphId, StringComparison.Ordinal));
+        if (existing is not null && existing != graph)
+        {
+            return Results.Conflict();
+        }
+
+        FixtureSeedFailure? failure = await proxy.SeedAsync(graph, cancellationToken).ConfigureAwait(false);
+        if (failure is not null)
+        {
+            return Results.Json(failure, statusCode: StatusCodes.Status502BadGateway);
+        }
+
+        return state.TryAdd(graph)
+            ? Results.Created($"/api/v1/live-fixtures/graphs/{Uri.EscapeDataString(graph.GraphId)}", graph)
+            : Results.Conflict();
     });
     app.MapGet("/api/v1/live-fixtures/graphs/{graphId}", (string graphId) =>
     {

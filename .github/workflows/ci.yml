@@ -302,7 +302,9 @@ jobs:
       - name: Run managed AppHost E2E suite
         timeout-minutes: 45
         env:
-          CI: '1'
+          # 'true' keeps the AppHost build in CI package-reference mode; any other value selects
+          # local Debug sibling-source references through Directory.Build.props.
+          CI: 'true'
           KEYCLOAK_CLIENT_ID: hexalith-eventstore
           TEST_USER_USERNAME: admin-user
           TEST_USER_PASSWORD: ${{ secrets.PROJECTS_E2E_TEST_USER_PASSWORD }}

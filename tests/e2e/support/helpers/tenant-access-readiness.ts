@@ -28,8 +28,11 @@ export function authorityFromAccessToken(accessToken: string, configuredTenant?:
 }
 
 /**
- * Serial readiness gate used once by Playwright global setup. Rejections are tolerated only when
- * an intentionally invalid Projects create request subsequently reaches HTTP 400 after authorization.
+ * Serial readiness gate used once by Playwright global setup. Tenant command rejections (for example
+ * an already-existing tenant or membership) are tolerated only when the outer Projects authorization
+ * response then converges: the authorized list read returns HTTP 200 and an intentionally invalid
+ * create returns HTTP 400 from body validation, which the API evaluates only after authorization.
+ * Nothing is written to a projection directly.
  */
 export async function ensureProjectsTenantAccess(options: {
   eventStore: APIRequestContext;
@@ -41,7 +44,7 @@ export async function ensureProjectsTenantAccess(options: {
 }): Promise<void> {
   const timeoutMs = options.timeoutMs ?? 45_000;
   const initial = await projectsAccessProbe(options.projects, options.authToken, options.authority.tenantId, options.runId);
-  if (initial.status === 400) return;
+  if (isProjectsAccessReady(initial)) return;
 
   const results: TerminalCommandResult[] = [];
   for (const [commandType, payload] of [
@@ -82,7 +85,7 @@ export async function ensureProjectsTenantAccess(options: {
   let last = initial;
   while (Date.now() < deadline) {
     last = await projectsAccessProbe(options.projects, options.authToken, options.authority.tenantId, options.runId);
-    if (last.status === 400) return;
+    if (isProjectsAccessReady(last)) return;
     await pollDelay(500);
   }
 
@@ -121,30 +124,49 @@ function collectTenantClaims(claims: Record<string, unknown>): string[] {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
 
+interface ProjectsAccessProbe {
+  /** Authorized list read status; 200 proves read authorization against the tenant projection. */
+  listStatus: number;
+  /** Invalid-create status; 400 proves mutation authorization passed before body validation. */
+  createStatus: number;
+}
+
+function isProjectsAccessReady(probe: ProjectsAccessProbe): boolean {
+  return probe.listStatus === 200 && probe.createStatus === 400;
+}
+
 async function projectsAccessProbe(
   projects: APIRequestContext,
   authToken: string,
   tenantId: string,
   runId: string,
-): Promise<{ status: number }> {
-  const probeId = stableRequestId(runId, tenantId, 'authorization-probe');
+): Promise<ProjectsAccessProbe> {
+  const headers = {
+    Authorization: `Bearer ${authToken}`,
+    'X-Hexalith-Tenant-Id': tenantId,
+    'X-Correlation-Id': `tenant-readiness-${stableRequestId(runId, tenantId)}`,
+  };
+  const listStatus = await safeStatus(() => projects.get('/api/v1/projects', {
+    headers,
+    failOnStatusCode: false,
+    timeout: 5_000,
+  }));
+  const createStatus = await safeStatus(() => projects.post('/api/v1/projects', {
+    headers: { ...headers, 'Idempotency-Key': stableRequestId(runId, tenantId, 'authorization-probe') },
+    data: {},
+    failOnStatusCode: false,
+    timeout: 5_000,
+  }));
+  return { listStatus, createStatus };
+}
+
+async function safeStatus(send: () => Promise<{ status(): number }>): Promise<number> {
   try {
-    const response = await projects.post('/api/v1/projects', {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        'X-Hexalith-Tenant-Id': tenantId,
-        'X-Correlation-Id': `tenant-readiness-${stableRequestId(runId, tenantId)}`,
-        'Idempotency-Key': probeId,
-      },
-      data: {},
-      failOnStatusCode: false,
-      timeout: 5_000,
-    });
-    return { status: response.status() };
+    return (await send()).status();
   } catch {
     // A cold authorization/projection dependency may not answer before the per-attempt bound.
     // Collapse transport details (which can contain credentials) into a retryable safe status.
-    return { status: 503 };
+    return 503;
   }
 }
 

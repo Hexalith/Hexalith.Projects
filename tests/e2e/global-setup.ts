@@ -1,18 +1,28 @@
-import { mkdir } from 'node:fs/promises';
+import { mkdir, rm } from 'node:fs/promises';
 import { dirname } from 'node:path';
 
 import { chromium, request, type FullConfig } from '@playwright/test';
 
-import { browserSessionStoragePath } from './support/auth/browser-session.js';
+import {
+  assertServerOnlySession,
+  browserSessionStoragePath,
+  inspectBrowserSession,
+} from './support/auth/browser-session.js';
 import {
   browserLoginCredentials,
   requestKeycloakAccessToken,
 } from './support/auth/keycloak-auth-provider.js';
 import { authorityFromAccessToken, ensureProjectsTenantAccess } from './support/helpers/tenant-access-readiness.js';
 
-/** Establishes API readiness and a real browser authorization-code session for the live lane. */
+/**
+ * Establishes token-derived tenant readiness once per Playwright invocation, then a real browser
+ * authorization-code session whose only persisted state is the HttpOnly server-session cookie.
+ */
 async function globalSetup(config: FullConfig): Promise<void> {
   if (process.env.E2E_LIVE_APPHOST !== '1') return;
+
+  // Never reuse a previous run's session; a stale cookie must not mask a broken login flow.
+  await rm(browserSessionStoragePath, { force: true });
 
   const apiContext = await request.newContext({ ignoreHTTPSErrors: true });
   try {
@@ -49,20 +59,26 @@ async function createBrowserSession(config: FullConfig): Promise<void> {
   try {
     const page = await context.newPage();
     const baseUrl = requireEnv('BASE_URL');
+    const uiOrigin = new URL(baseUrl).origin;
+    const keycloakOrigin = new URL(requireEnv('KEYCLOAK_URL')).origin;
     const credentials = browserLoginCredentials();
+
+    // An anonymous protected route must be challenged through the real Keycloak code flow.
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
+    if (new URL(page.url()).origin !== keycloakOrigin) {
+      throw new Error('[global-setup] the protected Projects UI did not challenge through Keycloak.');
+    }
     await page.locator('#username').fill(credentials.username);
     await page.locator('#password').fill(credentials.password);
     await page.locator('#kc-login').click();
-    await page.waitForURL((url) => url.origin === new URL(baseUrl).origin, { timeout: 30_000 });
+    await page.waitForURL((url) => url.origin === uiOrigin, { timeout: 30_000 });
 
-    const browserStorage = await page.evaluate(() => ({
-      local: Object.keys(localStorage),
-      session: Object.keys(sessionStorage),
-    }));
-    if ([...browserStorage.local, ...browserStorage.session].some((key) => /token/i.test(key))) {
-      throw new Error('[global-setup] browser session exposed a token-bearing storage key.');
+    // The session must survive a reload without another challenge.
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    if (new URL(page.url()).origin !== uiOrigin) {
+      throw new Error('[global-setup] the Projects UI session did not persist across reload.');
     }
+    assertServerOnlySession(await inspectBrowserSession(page, context, baseUrl), 'global-setup');
 
     await mkdir(dirname(browserSessionStoragePath), { recursive: true });
     await context.storageState({ path: browserSessionStoragePath });

@@ -28,6 +28,7 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
   liveAppHostTest('lists metadata-only project inventory rows with eventual freshness and no tenantId on the wire', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     seededProject,
   }) => {
@@ -36,7 +37,7 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
       tenantContext.tenantId,
       {
         authToken,
-        correlationId: 'corr-story-5-4-inventory-list',
+        correlationId: requestIdentity('inventory-list').correlationId,
         freshness: 'eventually_consistent',
       },
       'active',
@@ -61,13 +62,14 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
   liveAppHostTest('rejects inventory query idempotency and non-eventual freshness without echoing row metadata', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     seededProject,
   }) => {
     const idempotencyRejected = await listProjects(apiRequest, tenantContext.tenantId, {
       authToken,
-      correlationId: 'corr-story-5-4-inventory-idempotency',
-      extraHeaders: { 'Idempotency-Key': 'queries-must-not-carry-idempotency' },
+      correlationId: requestIdentity('inventory-list-idempotency').correlationId,
+      extraHeaders: { 'Idempotency-Key': requestIdentity('inventory-list-idempotency').idempotencyKey },
     });
     expect(idempotencyRejected.status).toBe(400);
     expect(JSON.stringify(idempotencyRejected.body)).not.toContain(seededProject.projectId);
@@ -75,7 +77,7 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
 
     const freshnessRejected = await listProjects(apiRequest, tenantContext.tenantId, {
       authToken,
-      correlationId: 'corr-story-5-4-inventory-freshness',
+      correlationId: requestIdentity('inventory-list-freshness').correlationId,
       freshness: 'strong',
     });
     expect(freshnessRejected.status).toBe(400);
@@ -86,12 +88,13 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
   liveAppHostTest('loads project detail through query semantics and safe failure mapping', async ({
     apiRequest,
     authToken,
+    requestIdentity,
     tenantContext,
     seededProject,
   }) => {
     const detail = await getProject(apiRequest, tenantContext.tenantId, seededProject.projectId, {
       authToken,
-      correlationId: 'corr-story-5-4-detail',
+      correlationId: requestIdentity('inventory-detail').correlationId,
       freshness: 'eventually_consistent',
     });
 
@@ -101,15 +104,15 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
 
     const idempotencyRejected = await getProject(apiRequest, tenantContext.tenantId, seededProject.projectId, {
       authToken,
-      correlationId: 'corr-story-5-4-detail-idempotency',
-      extraHeaders: { 'Idempotency-Key': 'query-detail-must-not-use-idempotency' },
+      correlationId: requestIdentity('inventory-detail-idempotency').correlationId,
+      extraHeaders: { 'Idempotency-Key': requestIdentity('inventory-detail-idempotency').idempotencyKey },
     });
     expect(idempotencyRejected.status).toBe(400);
     expect(JSON.stringify(idempotencyRejected.body)).not.toContain(seededProject.name);
 
     const deniedOrMissing = await getProject(apiRequest, tenantContext.tenantId, 'not/a/canonical/project-id', {
       authToken,
-      correlationId: 'corr-story-5-4-detail-safe-denial',
+      correlationId: requestIdentity('inventory-detail-safe-denial').correlationId,
     });
     expect(deniedOrMissing.status).toBe(404);
     expect(JSON.stringify(deniedOrMissing.body)).not.toContain(seededProject.projectId);

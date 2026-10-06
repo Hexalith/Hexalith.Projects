@@ -47,7 +47,10 @@ const CHROMIUM_EXECUTABLE_PATH = resolveExecutable([
   !IS_CI ? chromium.executablePath() : undefined,
   CHROMIUM_FALLBACK_EXECUTABLE_PATH,
 ]);
-const VIDEO_MODE = process.env.PLAYWRIGHT_DISABLE_VIDEO === '1' ? 'off' : 'retain-on-failure';
+// Live artifacts stay metadata-only: browser pixels can show the real login page and fixture data,
+// so the live lane keeps no video/screenshot, and traces are disabled because requests carry tokens.
+const VIDEO_MODE = LIVE_APPHOST_ENABLED || process.env.PLAYWRIGHT_DISABLE_VIDEO === '1' ? 'off' : 'retain-on-failure';
+const SCREENSHOT_MODE = LIVE_APPHOST_ENABLED ? 'off' : 'only-on-failure';
 const CHROMIUM_USE = CHROMIUM_EXECUTABLE_PATH
   ? { ...devices['Desktop Chrome'], launchOptions: { executablePath: CHROMIUM_EXECUTABLE_PATH } }
   : { ...devices['Desktop Chrome'] };
@@ -157,7 +160,7 @@ export default defineConfig({
     navigationTimeout: 30_000,
     // Live requests carry real bearer tokens. Do not persist them in trace archives.
     trace: LIVE_APPHOST_ENABLED ? 'off' : 'retain-on-failure',
-    screenshot: 'only-on-failure',
+    screenshot: SCREENSHOT_MODE,
     video: VIDEO_MODE,
     storageState: LIVE_APPHOST_ENABLED ? browserSessionStoragePath : undefined,
     // Keycloak dev certs are self-signed; the AppHost serves https locally.
@@ -174,6 +177,7 @@ export default defineConfig({
   // through system Chrome.
   projects: BROWSER_PROJECTS,
   outputDir: 'test-results',
-  // Live global setup establishes supported tenant access and a real OIDC cookie session.
+  // Live global setup establishes supported tenant access and a real OIDC cookie session. Live mode
+  // always runs two isolated workers and the zero-live-skip reporter fails empty or skipped runs.
   globalSetup: './global-setup.ts',
 });

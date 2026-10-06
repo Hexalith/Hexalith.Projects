@@ -2,7 +2,7 @@
 title: 'Fix CI/CD without changing submodule pointers'
 type: 'bugfix'
 created: '2026-07-14'
-status: 'in-progress'
+status: 'done'
 review_loop_iteration: 0
 baseline_commit: 'b89cb8f9f2ee7d1c4a2965cd9c317aae083b224d'
 context:
@@ -70,6 +70,7 @@ context:
 ## Spec Change Log
 
 - 2026-07-14: Implemented all root-owned workflow, solution, artifact-gate, package-gate, and E2E documentation changes. Verification stopped fail-closed at the approved Ask First boundary because `Hexalith.Conversations.Contracts` is not published to NuGet.org, so the five prepared packages cannot yet restore as package consumers.
+- 2026-10-06: Closed as superseded. This work landed in f03a8d6. Later commits deliberately replaced parts of its design: 8aa2451 moved release back into a dispatch-only `release.yml` with exact-SHA verify-source, ae1b3d7 adopted NuGet trusted publishing, and 72182df moved the Conversations/Folders package pins to the Hexalith.Builds catalog. The Design Notes above describe the July design and are no longer current. The Ask First blocker has cleared: on 2026-10-06, nuget.org listed `1.0.0` for Conversations.Client/Contracts and Folders.Client/Contracts. The remaining CI failure, a stale root-pin assertion in `run-ci-workflow-gates.ps1`, is fixed in [spec-fix-ci-gate-catalog-pins.md](spec-fix-ci-gate-catalog-pins.md).
 
 ## Design Notes
 

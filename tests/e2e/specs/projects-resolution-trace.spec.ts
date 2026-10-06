@@ -21,8 +21,8 @@ const FORBIDDEN_TRACE_MARKERS = [
 /**
  * Story 5.6 critical journeys - Resolution Trace Workbench.
  *
- * These run only in the explicit live lane; deterministic trace data for conversation and
- * attachment resolution remains a required fixture prerequisite. The assertions bind the Web journey contract:
+ * These run only in the explicit live lane; conversation and attachment trace inputs come from the
+ * attempt-scoped fixture graph and its converged resolution Projects. The assertions bind the Web journey contract:
  * explicit compute-on-demand inputs, stable selectors, keyboard access, non-color-only
  * result/reason/exclusion states, and metadata-only rendering.
  */
@@ -64,7 +64,11 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
     await detail.resolutionTraceFileId.fill(liveFixtureGraph.fileReferenceId);
     await detail.resolutionTraceRun.click();
     await expect(detail.resolutionTraceCandidateComparison).toBeVisible();
-    await expect(detail.resolutionTraceOutcome).toContainText(/Resolved|NoMatch|MultipleCandidates|Excluded|FailedClosed/);
+    // The fixture graph seeds the folder on the primary and the file on the secondary Project, so the
+    // combined attachment trace is deterministically ambiguous and names both fixture Projects.
+    await expect(detail.resolutionTraceOutcome).toContainText('MultipleCandidates');
+    await expect(detail.resolutionTraceCandidateComparison).toContainText(resolutionProjects.primary.projectId);
+    await expect(detail.resolutionTraceCandidateComparison).toContainText(resolutionProjects.secondary.projectId);
 
     const bodyText = await page.locator('body').innerText();
     for (const marker of FORBIDDEN_TRACE_MARKERS) {

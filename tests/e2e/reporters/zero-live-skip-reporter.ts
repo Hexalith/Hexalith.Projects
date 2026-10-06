@@ -1,22 +1,29 @@
-import type { FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
+import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
 
-/** Fails the explicit live lane if collection is empty or any case resolves as skipped. */
+/**
+ * Fails the explicit live lane when collection is empty or any collected case resolves as skipped.
+ * The summary is metadata-only: counts, never titles, URLs, identifiers, or error text.
+ */
 export default class ZeroLiveSkipReporter implements Reporter {
   private collected = 0;
-  private skipped = 0;
+  private readonly skipped = new Set<string>();
 
-  onBegin(_config: unknown, suite: Suite): void {
+  onBegin(_config: FullConfig, suite: Suite): void {
     this.collected = suite.allTests().length;
   }
 
-  onTestEnd(_test: TestCase, result: TestResult): void {
-    if (result.status === 'skipped') this.skipped += 1;
+  onTestEnd(test: TestCase, result: TestResult): void {
+    if (result.status === 'skipped') this.skipped.add(test.id);
   }
 
-  onEnd(result: FullResult): { status: FullResult['status'] } | undefined {
-    if (process.env.E2E_LIVE_APPHOST === '1' && (this.collected === 0 || this.skipped > 0)) {
+  async onEnd(result: FullResult): Promise<{ status?: FullResult['status'] } | undefined> {
+    if (process.env.E2E_LIVE_APPHOST !== '1') return undefined;
+
+    console.log(`[zero-live-skip] collected=${this.collected} skipped=${this.skipped.size} status=${result.status}`);
+    if (this.collected === 0 || this.skipped.size > 0) {
+      console.error('[zero-live-skip] the live lane must collect cases and must not skip any of them.');
       return { status: 'failed' };
     }
-    return result.status === 'passed' ? undefined : { status: result.status };
+    return undefined;
   }
 }

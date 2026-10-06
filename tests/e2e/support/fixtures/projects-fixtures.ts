@@ -2,6 +2,7 @@ import type { ApiRequest, ProjectDetail } from '../helpers/projects-api-client.j
 import {
   archiveProject,
   createProject,
+  getProject,
   getProjectOperatorDiagnostics,
   linkProjectFileReference,
   linkProjectMemory,
@@ -12,7 +13,9 @@ import type { Recurse } from '../helpers/readiness.js';
 import { waitForProject } from '../helpers/readiness.js';
 import type { TenantContext } from '../factories/tenant-factory.js';
 import { createProjectInput, type CreateProjectInput } from '../factories/project-factory.js';
-import type { LiveFixtureGraph } from '../helpers/live-fixtures-api-client.js';
+import { createLiveRequestIdentity } from '../factories/live-fixture-identities.js';
+import type { FixtureCleanupAttempt, LiveFixtureGraph } from '../helpers/live-fixtures-api-client.js';
+import type { CleanupLedger, CleanupStep } from './cleanup-evidence.js';
 
 /**
  * Project-domain fixture surface. The implementations live here (logic), the wiring into
@@ -40,300 +43,224 @@ export interface SeedProjectDeps {
   authToken: string;
   recurse: Recurse;
   tenantContext: TenantContext;
-  requestIdentity?: {
-    correlationId: string;
-    taskId: string;
-    idempotencyKey: string;
-  };
+  /** The attempt graph; every Project and request identity is derived from it. */
+  graph: Pick<LiveFixtureGraph, 'graphId'>;
 }
 
+const ARCHIVE_CONVERGENCE_TIMEOUT = 30_000;
+
 /**
- * Create an active project and wait for read-model convergence (command-async, no sleeps).
- * Returns the converged detail plus a `cleanup` that archives it (Projects has no hard delete).
+ * Create an active project with a caller-owned ProjectId and wait for read-model convergence
+ * (command-async, no sleeps). The archive-to-convergence cleanup is registered in `ledger` as soon as
+ * creation is accepted, so a convergence failure still archives the Project in reverse order.
  */
 export async function seedActiveProject(
   deps: SeedProjectDeps,
-  input?: CreateProjectInput,
-): Promise<{ project: ProjectDetail; cleanup: () => Promise<void> }> {
+  ledger: CleanupLedger,
+  role: string,
+  input: CreateProjectInput,
+): Promise<ProjectDetail> {
   const { apiRequest, authToken, recurse, tenantContext } = deps;
-  const payload = input ?? createProjectInput();
-
-  if (!payload.projectId?.trim()) {
+  const projectId = input.projectId?.trim();
+  if (!projectId) {
     throw new Error('[projects-fixtures] live project seed requires a caller-owned projectId.');
   }
   const retryableCreationStatuses = new Set([404, 502, 503, 504]);
   const creation = await recurse(
-    () => createProject(
-      apiRequest,
-      tenantContext.tenantId,
-      payload,
-      mutationOptions(deps, 'create'),
-    ),
+    () => createProject(apiRequest, tenantContext.tenantId, input, requestOptions(deps, `${role}:create`)),
     (response) => response.status === 202 || !retryableCreationStatuses.has(response.status),
     {
       timeout: 30_000,
       interval: 1_000,
-      log: `Waiting for project ${payload.projectId} creation to be accepted`,
-      error: `Project ${payload.projectId} creation was not accepted within 30000ms.`,
+      log: `Waiting for ${role} creation to be accepted`,
+      error: `${role} creation was not accepted within 30000ms.`,
     },
   );
   if (creation.status !== 202) {
     throw new Error(
-      `[projects-fixtures] project seed was not accepted (status ${creation.status}); verify TEST_TENANT_ID and its projected tenant access.`,
+      `[projects-fixtures] ${role} seed was not accepted (status ${creation.status}); verify the token tenant's projected access.`,
     );
-  }
-  let project: ProjectDetail;
-  try {
-    project = await waitForProject(
-      recurse,
-      apiRequest,
-      tenantContext.tenantId,
-      payload.projectId,
-      { authToken },
-      { lifecycle: 'active' },
-    );
-  } catch (error) {
-    try {
-      await archiveProject(apiRequest, tenantContext.tenantId, payload.projectId, mutationOptions(deps, 'seed-failure-archive'));
-    } catch {
-      // Preserve the convergence error; cleanup is best effort on this failure path.
-    }
-    throw error;
   }
 
-  const cleanup = async (): Promise<void> => {
-    const { status: cleanupStatus } = await archiveProject(
-      apiRequest,
-      tenantContext.tenantId,
-      project.projectId,
-      mutationOptions(deps, 'archive'),
-    );
-    if (cleanupStatus !== 202 && cleanupStatus !== 404) {
-      throw new Error(`[projects-fixtures] project cleanup was not accepted (status ${cleanupStatus}).`);
-    }
-    await waitForProject(
-      recurse,
-      apiRequest,
-      tenantContext.tenantId,
-      project.projectId,
-      { authToken },
-      { lifecycle: 'archived' },
-    );
+  ledger.register(projectArchiveStep(deps, projectId, role));
+  return waitForProject(recurse, apiRequest, tenantContext.tenantId, projectId, { authToken }, { lifecycle: 'active' });
+}
+
+/**
+ * Registers archive-to-convergence cleanup for a Project created outside the seed helpers (for
+ * example by a proposal confirmation). The step first waits for the Project to become observable,
+ * because an archive racing an accepted-but-unprojected creation would leave it Active.
+ */
+export function projectArchiveStep(deps: SeedProjectDeps, projectId: string, role: string): CleanupStep {
+  return {
+    role,
+    run: async (): Promise<FixtureCleanupAttempt[]> => {
+      const tenantId = deps.tenantContext.tenantId;
+      let observed: Awaited<ReturnType<typeof getProject>>;
+      try {
+        observed = await deps.recurse(
+          () => getProject(deps.apiRequest, tenantId, projectId, { authToken: deps.authToken }),
+          (response) => response.status === 200,
+          { timeout: ARCHIVE_CONVERGENCE_TIMEOUT, interval: 1_000, log: `Waiting for ${role} before archive cleanup` },
+        );
+      } catch {
+        return [{ role, statusCode: 404, succeeded: false }];
+      }
+      if (observed.body.lifecycleState === 'archived') {
+        return [{ role, statusCode: 200, succeeded: true }];
+      }
+
+      const archive = await archiveProject(deps.apiRequest, tenantId, projectId, requestOptions(deps, `${role}:archive`));
+      try {
+        await deps.recurse(
+          () => getProject(deps.apiRequest, tenantId, projectId, { authToken: deps.authToken }),
+          (response) => response.status === 200 && response.body.lifecycleState === 'archived',
+          { timeout: ARCHIVE_CONVERGENCE_TIMEOUT, interval: 1_000, log: `Waiting for ${role} archive convergence` },
+        );
+      } catch {
+        return [{ role, statusCode: archive.status, succeeded: false }];
+      }
+      return [{ role, statusCode: archive.status, succeeded: true }];
+    },
   };
-
-  return { project, cleanup };
 }
 
 /** Seeds one Project with the full profile-owned metadata graph through supported APIs only. */
 export async function seedReferencedProject(
   deps: SeedProjectDeps,
+  ledger: CleanupLedger,
   graph: LiveFixtureGraph,
-): Promise<{ project: ProjectDetail; cleanup: () => Promise<void> }> {
-  const seeded = await seedActiveProject(
+): Promise<ProjectDetail> {
+  const project = await seedActiveProject(
     deps,
-    createProjectInput({
-      projectId: graph.projectId,
-      name: `Fixture conversation ${graph.scenario}`,
-    }),
+    ledger,
+    'projects:referenced',
+    createProjectInput({ projectId: graph.projectId, name: `Fixture conversation ${graph.scenario}` }),
   );
 
-  try {
-    expectAccepted(
-      'folder seed',
-      await setProjectFolder(
-        deps.apiRequest,
-        deps.tenantContext.tenantId,
-        {
-          projectId: seeded.project.projectId,
-          folderId: graph.folderId,
-          displayName: `Fixture folder ${graph.scenario}`,
-        },
-        mutationOptions(deps, 'folder'),
-      ),
-    );
-    expectAccepted(
-      'file seed',
-      await linkProjectFileReference(
-        deps.apiRequest,
-        deps.tenantContext.tenantId,
-        {
-          projectId: seeded.project.projectId,
-          fileReferenceId: graph.fileReferenceId,
-          folderId: graph.folderId,
-          workspaceId: graph.workspaceId,
-          filePath: graph.filePath,
-          displayName: 'contract.pdf',
-        },
-        mutationOptions(deps, 'file'),
-      ),
-    );
-    expectAccepted(
-      'memory seed',
-      await linkProjectMemory(
-        deps.apiRequest,
-        deps.tenantContext.tenantId,
-        {
-          projectId: seeded.project.projectId,
-          memoryReferenceId: graph.memoryReferenceId,
-          displayName: `Fixture memory ${graph.scenario}`,
-        },
-        mutationOptions(deps, 'memory'),
-      ),
-    );
-
-    await deps.recurse(
-      () => getProjectOperatorDiagnostics(
-        deps.apiRequest,
-        deps.tenantContext.tenantId,
-        seeded.project.projectId,
-        { authToken: deps.authToken, freshness: 'eventually_consistent' },
-      ),
-      ({ status, body }) => status === 200
-        && [graph.folderId, graph.fileReferenceId, graph.memoryReferenceId, graph.existingConversationId]
-          .every((id) => body.references.some((reference) => reference.referenceId === id)),
+  expectAccepted(
+    'folder seed',
+    await setProjectFolder(
+      deps.apiRequest,
+      deps.tenantContext.tenantId,
+      { projectId: project.projectId, folderId: graph.folderId, displayName: `Fixture folder ${graph.scenario}` },
+      requestOptions(deps, 'projects:referenced:folder'),
+    ),
+  );
+  expectAccepted(
+    'file seed',
+    await linkProjectFileReference(
+      deps.apiRequest,
+      deps.tenantContext.tenantId,
       {
-        timeout: 30_000,
-        interval: 1_000,
-        log: `Waiting for referenced Project ${seeded.project.projectId} to converge`,
+        projectId: project.projectId,
+        fileReferenceId: graph.fileReferenceId,
+        folderId: graph.folderId,
+        workspaceId: graph.workspaceId,
+        filePath: graph.filePath,
+        displayName: 'contract.pdf',
       },
-    );
-  } catch (error) {
-    await cleanupPreservingPrimary(seeded.cleanup, error);
-  }
+      requestOptions(deps, 'projects:referenced:file'),
+    ),
+  );
+  expectAccepted(
+    'memory seed',
+    await linkProjectMemory(
+      deps.apiRequest,
+      deps.tenantContext.tenantId,
+      {
+        projectId: project.projectId,
+        memoryReferenceId: graph.memoryReferenceId,
+        displayName: `Fixture memory ${graph.scenario}`,
+      },
+      requestOptions(deps, 'projects:referenced:memory'),
+    ),
+  );
 
-  return seeded;
+  await deps.recurse(
+    () => getProjectOperatorDiagnostics(
+      deps.apiRequest,
+      deps.tenantContext.tenantId,
+      project.projectId,
+      { authToken: deps.authToken, freshness: 'eventually_consistent' },
+    ),
+    ({ status, body }) => status === 200
+      && [graph.folderId, graph.fileReferenceId, graph.memoryReferenceId, graph.existingConversationId]
+        .every((id) => body.references.some((reference) => reference.referenceId === id)),
+    { timeout: 30_000, interval: 1_000, log: 'Waiting for the referenced Project graph to converge' },
+  );
+  return project;
 }
 
 /** Seeds two real Projects whose folder/file evidence yields deterministic single and multiple matches. */
 export async function seedResolutionProjects(
   deps: SeedProjectDeps,
+  ledger: CleanupLedger,
   graph: LiveFixtureGraph,
-): Promise<{ projects: ResolutionProjects; cleanup: () => Promise<void> }> {
+): Promise<ResolutionProjects> {
   const displayName = `Fixture conversation ${graph.scenario}`;
   const primary = await seedActiveProject(
-    withIdentitySuffix(deps, 'primary'),
+    deps,
+    ledger,
+    'projects:resolution-primary',
     createProjectInput({ projectId: graph.projectId, name: displayName }),
   );
-  let secondary: Awaited<ReturnType<typeof seedActiveProject>> | undefined;
+  const secondary = await seedActiveProject(
+    deps,
+    ledger,
+    'projects:resolution-secondary',
+    createProjectInput({ projectId: graph.secondaryProjectId, name: displayName }),
+  );
 
-  try {
-    secondary = await seedActiveProject(
-      withIdentitySuffix(deps, 'secondary'),
-      createProjectInput({ projectId: graph.secondaryProjectId, name: displayName }),
-    );
-    expectAccepted(
-      'resolution folder seed',
-      await setProjectFolder(
-        deps.apiRequest,
-        deps.tenantContext.tenantId,
-        {
-          projectId: primary.project.projectId,
-          folderId: graph.folderId,
-          displayName: `Fixture folder ${graph.scenario}`,
-        },
-        mutationOptions(deps, 'resolution-folder'),
-      ),
-    );
-    expectAccepted(
-      'resolution file seed',
-      await linkProjectFileReference(
-        deps.apiRequest,
-        deps.tenantContext.tenantId,
-        {
-          projectId: secondary.project.projectId,
-          fileReferenceId: graph.fileReferenceId,
-          folderId: graph.folderId,
-          workspaceId: graph.workspaceId,
-          filePath: graph.filePath,
-          displayName: 'contract.pdf',
-        },
-        mutationOptions(deps, 'resolution-file'),
-      ),
-    );
-
-    await deps.recurse(
-      () => resolveProjectFromAttachments(
-        deps.apiRequest,
-        deps.tenantContext.tenantId,
-        { folderIds: [graph.folderId], fileIds: [graph.fileReferenceId] },
-        { authToken: deps.authToken, freshness: 'eventually_consistent' },
-      ),
-      ({ status, body }) => status === 200
-        && body.result === 'MultipleCandidates'
-        && [primary.project.projectId, secondary!.project.projectId]
-          .every((id) => body.candidates.some((candidate) => candidate.projectId === id)),
+  expectAccepted(
+    'resolution folder seed',
+    await setProjectFolder(
+      deps.apiRequest,
+      deps.tenantContext.tenantId,
+      { projectId: primary.projectId, folderId: graph.folderId, displayName: `Fixture folder ${graph.scenario}` },
+      requestOptions(deps, 'projects:resolution-primary:folder'),
+    ),
+  );
+  expectAccepted(
+    'resolution file seed',
+    await linkProjectFileReference(
+      deps.apiRequest,
+      deps.tenantContext.tenantId,
       {
-        timeout: 30_000,
-        interval: 1_000,
-        log: 'Waiting for deterministic resolution evidence to converge',
+        projectId: secondary.projectId,
+        fileReferenceId: graph.fileReferenceId,
+        folderId: graph.folderId,
+        workspaceId: graph.workspaceId,
+        filePath: graph.filePath,
+        displayName: 'contract.pdf',
       },
-    );
-  } catch (error) {
-    if (secondary) {
-      try {
-        await secondary.cleanup();
-      } catch {
-        // Preserve the primary setup failure.
-      }
-    }
-    await cleanupPreservingPrimary(primary.cleanup, error);
-  }
+      requestOptions(deps, 'projects:resolution-secondary:file'),
+    ),
+  );
 
-  const cleanup = async (): Promise<void> => {
-    let secondaryFailure: unknown;
-    try {
-      await secondary!.cleanup();
-    } catch (error) {
-      secondaryFailure = error;
-    }
-
-    try {
-      await primary.cleanup();
-    } catch (primaryFailure) {
-      throw primaryFailure;
-    }
-
-    if (secondaryFailure) throw secondaryFailure;
-  };
-  return { projects: { primary: primary.project, secondary: secondary!.project }, cleanup };
+  await deps.recurse(
+    () => resolveProjectFromAttachments(
+      deps.apiRequest,
+      deps.tenantContext.tenantId,
+      { folderIds: [graph.folderId], fileIds: [graph.fileReferenceId] },
+      { authToken: deps.authToken, freshness: 'eventually_consistent' },
+    ),
+    ({ status, body }) => status === 200
+      && body.result === 'MultipleCandidates'
+      && [primary.projectId, secondary.projectId]
+        .every((id) => body.candidates.some((candidate) => candidate.projectId === id)),
+    { timeout: 30_000, interval: 1_000, log: 'Waiting for deterministic resolution evidence to converge' },
+  );
+  return { primary, secondary };
 }
 
-function mutationOptions(deps: SeedProjectDeps, operation: string) {
-  return {
-    authToken: deps.authToken,
-    ...(deps.requestIdentity
-      ? {
-          correlationId: `${deps.requestIdentity.correlationId}-${operation}`,
-          taskId: `${deps.requestIdentity.taskId}-${operation}`,
-          idempotencyKey: `${deps.requestIdentity.idempotencyKey}-${operation}`,
-        }
-      : {}),
-  };
-}
-
-function withIdentitySuffix(deps: SeedProjectDeps, suffix: string): SeedProjectDeps {
-  if (!deps.requestIdentity) return deps;
-  return {
-    ...deps,
-    requestIdentity: {
-      correlationId: `${deps.requestIdentity.correlationId}-${suffix}`,
-      taskId: `${deps.requestIdentity.taskId}-${suffix}`,
-      idempotencyKey: `${deps.requestIdentity.idempotencyKey}-${suffix}`,
-    },
-  };
+/** Operation-scoped request identities derived from the attempt graph; never shared across attempts. */
+export function requestOptions(deps: Pick<SeedProjectDeps, 'authToken' | 'graph'>, operation: string) {
+  return { authToken: deps.authToken, ...createLiveRequestIdentity(deps.graph, operation) };
 }
 
 function expectAccepted(operation: string, response: { status: number }): void {
   if (response.status !== 202) {
     throw new Error(`[projects-fixtures] ${operation} was not accepted (status ${response.status}).`);
   }
-}
-
-async function cleanupPreservingPrimary(cleanup: () => Promise<void>, primary: unknown): Promise<never> {
-  try {
-    await cleanup();
-  } catch {
-    // Preserve the setup failure; cleanup remains best effort on this path.
-  }
-  throw primary;
 }
