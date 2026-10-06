@@ -944,6 +944,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-compatibility-replay-and-rollback-verification.md`
   summary: Story 6.1 non-frozen acceptance text was condensed to "full frozen scope" while the test task still names Folder filtering and inspection audit.
   evidence: `spec-6-1-list-and-open-projects-through-supported-authenticated-paths-6.md` lost the explicit Folder-before-pagination, FR-21 audit, and indistinguishable-denial acceptance sentences. The 2026-10-03 frozen prerequisite line matches the recorded P1R decision. Restore the detailed acceptance text in that story, not in the verification packet.
+  status: resolved
+  resolution: 2026-10-06; Jerome approved sprint-change-proposal-2026-10-06.md. The non-frozen Story 6.1 acceptance section now explicitly requires Folder filtering before pagination, inspection authorization plus durable FR-21 audit, and indistinguishable safe-404 denial. Frozen intent, runtime/tests, pins and blocked readiness remain unchanged.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-compatibility-replay-and-rollback-verification.md`
   summary: Unverified whether a null `CommandEnvelope` body reaches the verification host lambda or is rejected by minimal-API binding.

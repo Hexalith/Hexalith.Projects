@@ -1,5 +1,5 @@
 # generated: 09-20-2026 22:44
-# last_updated: 2026-10-03
+# last_updated: 2026-10-06
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -50,7 +50,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 2026-10-01
+last_updated: 2026-10-06
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -69,9 +69,9 @@ p1r_acceptance_gate:
     eventstore_revision: f13f9925fdca53efa2ab8c90d396ab106f91bb9c
     builds_revision: 7af20f8bafbfe561df6f7705913a0800603090b5
 p1r_current_revalidation:
-  status: accepted-p1r-only-current-g6-accepted-committed-source
+  status: accepted-p1r-only-verification-complete-remediation-open
   usable_as_prerequisite: false
-  observed_on: 2026-10-01
+  observed_on: 2026-10-06
   owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md
   candidate:
     eventstore_version: 3.110.0
@@ -88,9 +88,25 @@ p1r_current_revalidation:
   eventstore_tag_ci: "https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36608682063 success at 27279fe6431925a6ea046c3f89af61487185c7de; Aspire and performance jobs skipped"
   eventstore_publication_artifact: "release-evidence-36608763986-1 / 11052572354; downloaded ZIP SHA-256 6837c6db518f98228962c512106f83bdd618e2f47284bf4fa7895f95e51572d1"
   eventstore_archive_verification: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/README.md
-  eventstore_metadata_rollback: unverified-RetainedFloor-shape-differs-from-3.70.1
-  eventstore_actor_replay: unverified-3.110.0-to-3.70.1
-  eventstore_checkout_compatibility: unverified
+  eventstore_metadata_rollback: restore-hydration-passes-old-writer-drops-retained-floor
+  eventstore_actor_replay: measured-compatible-shared-replay-seven-incompatible-dispositions
+  eventstore_checkout_compatibility: recorded-source-shared-scope-equivalent-invalid-evidence-incompatible
+  compatibility_verification:
+    report: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verification/README.md
+    selected_attempt: attempt-21
+    execution: complete
+    scenarios: 17
+    cases: 72
+    assertions: 2845
+    incompatible_scenarios: [metadata-read, metadata-write, invalid-evidence, query-wire, projection-wire, mixed-api, checkout]
+    recorded_source_comparison: 2c58ffda41759e895ace4b9625c9bd931a217672
+    packet_validation: valid-against-captured-protected-workspace-before-approved-planning-update
+    captured_sprint_sha256: bc0d564d8c07a9299c9e678dca2df1d98345ae870a798a6ec99a258bf11e6a93
+    captured_sprint_git_revision: 311aa85c8e81c7c0b19d5c0004ddf36ceafd5651
+    operational_qualification: incompatible
+    remediation_status: open
+    remediation_artifact: _bmad-output/implementation-artifacts/spec-6-1-p1r-remediation.md
+    approved_proposal: _bmad-output/planning-artifacts/sprint-change-proposal-2026-10-06.md
   builds_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Builds/actions/runs/36740809340 success at 21ce044ab465ccb2adab58b3d66e394ffbecf3c2"
   builds_release_run: https://github.com/Hexalith/Hexalith.Builds/actions/runs/36743051740
   builds_availability_observation: _bmad-output/implementation-artifacts/evidence/6-1-p0-20261001-preflight.json
@@ -453,9 +469,27 @@ action_items:
     current_candidate_usable: false
     depends_on: ["6.1-P1"]
     unblocks: ["6.1-P0", "6.1-P2", "6.1-P4"]
-    unblocks_scope: "Exact P1R tuple accepted; current work remains blocked while G-6 is stale and P0/P2/P3/P4/readiness prerequisites retain their existing states."
+    unblocks_scope: "Exact P1R tuple acceptance remains done; attempt 21 verification is complete with seven incompatibilities. Current P1R usability is false, remediation is open, and P0/P2/P3/P4/readiness retain their existing states; G-6 qualification is separate."
     acceptance_record: "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
     routed_to: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
+  - epic: 6
+    id: "6.1-P1R-remediation"
+    action: "Remediate the seven measured P1R incompatibilities and prepare a qualified candidate and supported rollback envelope."
+    repository_authority: "EventStore and Builds owners; Platform and Identity/Security for supported transport; Projects for planning handoff"
+    owner: "EventStore Owner / Builds Owner / Solution Architect / Test Architect; Platform and Identity/Security through P2"
+    status: open
+    target_date: uncommitted
+    planning_approved: 2026-10-06
+    planning_approved_by: Jerome
+    owner_execution_status: pending-repository-local-scope
+    handoff_status: routed
+    depends_on: ["6.1-P1R"]
+    artifact: "_bmad-output/implementation-artifacts/spec-6-1-p1r-remediation.md"
+    approval: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-10-06.md"
+    expected_evidence: "Current-source reproduction, invalid-evidence rejection, metadata-preserving restore-plus-append, complete authority/watermark/capability behavior, actual published candidate and rollback packages, independent validation and exact owner decisions"
+    current_candidate_usable: false
+    unblocks_scope: "No status advances from this handoff; usable P1R still requires the supported envelope and exact evidence/owner decisions."
+    routed_to: "EventStore Developer / Builds Owner / Platform and Identity-Security P2 implementers / Solution Architect / Test Architect / Product Owner"
   - epic: 6
     id: "6.1-P2"
     action: "Supply supported dual-principal query identity, indistinguishable safe denial, and authoritative global-position watermark capabilities."

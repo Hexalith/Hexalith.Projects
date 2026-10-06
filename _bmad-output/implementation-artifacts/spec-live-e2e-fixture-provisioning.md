@@ -2,7 +2,8 @@
 title: 'Live E2E fixture provisioning'
 type: 'feature'
 created: '2026-08-26'
-status: ready-for-dev
+status: in-progress
+baseline_commit: '311aa85c8e81c7c0b19d5c0004ddf36ceafd5651'
 baseline_revision: '1e9f847169c94e275d6c7277fdb5d2d040cefc87'
 review_loop_iteration: 0
 followup_review_recommended: false
@@ -75,6 +76,8 @@ Treat unavailable host watcher capacity, including Dapr startup `ENOSPC`, as an 
 
 ## Spec Change Log
 
+- 2026-10-06: Resumed build and captured the current full baseline commit. Implementation halted under the existing tenant-contract Block If condition; no source or sibling changes were made. Live acceptance remains unsatisfied.
+
 ## Review Triage Log
 
 ## Design Notes
@@ -91,3 +94,36 @@ The test host is a runner-owned compatibility fixture, not a replacement sibling
 
 **Live environment prerequisite:** Before live test collection, the explicit fixture profile must reach authenticated outer Projects readiness. If Dapr startup fails because host watcher capacity is unavailable, restore sufficient capacity or use an isolated host, then rerun every live matrix covering test; each must collect and pass, and skipped or uncollected tests remain unsatisfied.
 
+## Build Attempt — 2026-10-06
+
+**Outcome:** Blocked by the existing intent contract. Status remains `in-progress`;
+no implementation tasks or acceptance criteria are newly marked complete.
+
+**Contract evidence:** Existing membership causes `AddUserToTenant` to reject;
+a same-role `ChangeUserRole` is a no-op; `UpdateTenant` emits only `TenantUpdated`.
+Projects requires lifecycle and membership events to restore its authorization
+projection. Installed EventStore projection replay rebuilds the owning Tenants
+read model through `/project`, rather than Projects' independent tenant-event
+subscription projection. No supported safe refresh/republication contract was found.
+
+- [Tenants membership rejection](../../references/Hexalith.Tenants/src/Hexalith.Tenants.Server/Aggregates/TenantAggregate.cs#L112)
+- [Tenants same-role no-op](../../references/Hexalith.Tenants/src/Hexalith.Tenants.Server/Aggregates/TenantAggregate.cs#L215)
+- [Projects authorization event requirements](../../src/Hexalith.Projects/Projections/TenantAccess/ProjectTenantAccessHandler.cs#L119)
+- [EventStore owning-domain projection delivery](../../references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionUpdateOrchestrator.cs#L990)
+
+**Checks run against existing code:**
+
+| Command | Result |
+| --- | --- |
+| `npm --prefix tests/e2e run typecheck` | Exit 0. |
+| `npm --prefix tests/e2e test -- --workers=2 --project=chromium specs/live-fixture-identities.spec.ts` | Exit 0; 3 passed. |
+| `dotnet build Hexalith.Projects.slnx --no-restore` | Exit 1; CS1704 duplicate FrontComposer Shell/Contracts assemblies. |
+| `Projects__E2E__LiveFixtures=true HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons aspire start --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj --format Json --non-interactive` | Exit 2; CS1501 at `FoldersProjectFolderDirectory.cs:66`: no `GetEffectivePermissionsAsync` overload takes 5 arguments. |
+| `aspire ps --non-interactive` | No running AppHost. |
+
+Integration and live matrix verification did not complete. No watcher-capacity
+failure was observed. These focused passes do not establish acceptance.
+The referenced `.bmad-loop/runs/20260826-164827-cb61/bundles/live-e2e-fixture-provisioning/intent.md`
+is absent. Existing readiness still probes create-validation HTTP 400 instead of
+the required list HTTP 200, and some cleanup failure paths suppress diagnostics;
+these remain implementation gaps after the prerequisite contract is resolved.

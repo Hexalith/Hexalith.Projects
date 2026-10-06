@@ -39,6 +39,7 @@ inputDocuments:
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-02.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-10-02.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-10-06.md
   - _bmad-output/planning-artifacts/research/domain-eventstore-persistence-for-hexalith-projects-module-data-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-folders-integration-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-projects-referencing-conversations-research-2026-05-24.md
@@ -1349,10 +1350,39 @@ rerun-4 correction preserving the complete entry chain without accepting any ste
 |---|---|---|---|---|
 | 6.1-P0 | Builds/platform tooling | Supported G-4 persisted runner, remotely restored tool packages, and fail-closed machine-checkable acceptance record | Builds Owner + Platform Owner + Test Architect | open; external implementation in progress at Builds `7bdbd293991985d150dfca62f77709e61152de76`; manifest, module-run-evidence, and readiness-validator foundations are implemented but unaccepted; P0 acceptance validation and supported composition are not implemented; persisted qualification is not run; published `4.23.0` tools embed EventStore `3.70.1` and are not the supported/accepted consumer baseline; Projects consumer pin and owner acceptance are absent; blocked by P1R with G-6 as a qualification dependency; target uncommitted |
 | 6.1-P1 | EventStore + Builds + architecture record | Historical owner-approved source/package/architecture/runner baseline and finite normalization record | EventStore Owner + Builds Owner + Solution Architect | done 2026-07-18 on 3.70.1; accepted historical evidence, satisfied but superseded for current package/runtime selection by P1R |
-| 6.1-P1R | EventStore + Builds + architecture + qualification record | Revalidated exact source/package/runner/architecture pin after post-P1 dependency drift, including compatibility and rollback proof | EventStore Owner + Builds Owner + Solution Architect + Test Architect | open; multi-coordinate `3.89.0` candidate pending acceptance: EventStore source checkout `7854f8e51ce9b852bb6c3cac6012670122e93792` (`v3.89.0-9-g7854f8e5`) is intentionally distinct from package tag/revision `v3.89.0` / `c590590bc581a3f72ef6e67148eda988ba4b8fe6`; Builds catalog is `3.89.0` from `10af541e7b2a5a4664be37c9495930844e0954a8`; current runner source remains the superseded unaccepted `3.88.0` candidate at observed Builds `7bdbd293991985d150dfca62f77709e61152de76`; published G-4 `4.23.0` from `7ac2849d79e603b88c7cb76e178cd2ba106eaf00` embeds `3.70.1`; Architecture and rollback remain `3.70.1`; owner selection, atomic alignment, clean qualification, executable rollback, immutable accepted revisions, and four-owner acceptance pending; target uncommitted |
+| 6.1-P1R | EventStore + Builds + architecture + qualification record | Revalidated exact source/package/runner/architecture pin after post-P1 dependency drift, including compatibility and rollback proof | EventStore Owner + Builds Owner + Solution Architect + Test Architect | Historical initial state (see current disposition below): open; multi-coordinate `3.89.0` candidate pending acceptance: EventStore source checkout `7854f8e51ce9b852bb6c3cac6012670122e93792` (`v3.89.0-9-g7854f8e5`) is intentionally distinct from package tag/revision `v3.89.0` / `c590590bc581a3f72ef6e67148eda988ba4b8fe6`; Builds catalog is `3.89.0` from `10af541e7b2a5a4664be37c9495930844e0954a8`; current runner source remains the superseded unaccepted `3.88.0` candidate at observed Builds `7bdbd293991985d150dfca62f77709e61152de76`; published G-4 `4.23.0` from `7ac2849d79e603b88c7cb76e178cd2ba106eaf00` embeds `3.70.1`; Architecture and rollback remain `3.70.1`; owner selection, atomic alignment, clean qualification, executable rollback, immutable accepted revisions, and four-owner acceptance pending; target uncommitted |
 | 6.1-P2 | EventStore/platform | Supported dual-principal query envelope, indistinguishable safe denial, and authoritative global-position watermark | EventStore Owner + Identity/Security Owner + Solution Architect | open; blocked by accepted P1R |
 | 6.1-P3 | Identity/security platform | Approved mandatory fail-closed production identity/authentication contract and fixtures | Identity/Security Owner + Projects Owner + Solution Architect | open; blocked by P2 |
 | 6.1-P4 | Hexalith.Projects planning/evidence | Owner-approved 6.1 gate record linking accepted P0, historical P1, current P1R, P2, and P3 pins, signed same-baseline architecture conformance, commands, evidence, normalization, and rollback | Product Owner + Solution Architect + Test Architect + prerequisite owners | open; blocked by P0, P1R, P2, P3, and Solution Architect conformance sign-off; historical P1 is a satisfied evidence input |
+
+### Current P1R disposition and remediation (approved 2026-10-06)
+
+The P1R table's 3.89.0 initial state is historical. Four named October 1 decisions
+accept EventStore 3.110.0 / Builds 4.29.1 with recorded limitations. That acceptance,
+P0 Stage 1 and DW-35/DW-68 remain done. Attempt 21 completes the separate
+investigation (17 scenarios, 72 cases, 2,845 assertions); seven incompatible
+dispositions keep current P1R usability false: metadata read/write, invalid
+evidence, query wire, projection wire, mixed API and the pinned checkout comparison.
+Replay and retained-snapshot restore pass; an actual old-writer append drops floor
+5, so old-host hydration does not establish writable rollback. The recorded
+source comparison is 2c58ffda, not qualification of later checkout commits.
+
+Jerome approved [the remediation proposal](sprint-change-proposal-2026-10-06.md).
+Follow-up `6.1-P1R-remediation` is open and handed to EventStore/Builds, Platform
+and Identity/Security through P2, Solution Architect and Test Architect. Its
+[bounded spec](../implementation-artifacts/spec-6-1-p1r-remediation.md) requires
+current-source reproduction, fail-closed persisted-evidence validation,
+metadata-preserving rollback or AD-17 mutation freeze/forward recovery,
+complete authority/watermark/capability behavior and actual published-package
+proof. Repository-local implementation scope and later exact tuple/rollback
+decisions remain required. Historical binaries and investigation packets retain
+their measured outcomes. No epic or story is added or renumbered.
+
+Story 6.1 stays blocked behind usable current P1R, P0/P2/P3, same-baseline
+architect sign-off, P4, specification readiness and independent READY. Epic 7
+requires the capable single-writer boundary; Stories 8.7/8.10 and 8.11-P3 consume
+new package/resilience/rollback evidence. Story 8.11 remains the terminal release
+decision. G-6 qualification remains separate.
 
 **G-6 applicability correction (approved 2026-10-02).** The 2026-10-01 attempt-16
 decision remains accepted only for its recorded beta.910 source. The current
@@ -1408,7 +1438,7 @@ I want **to list visible Projects and open one Project's authorized metadata, li
 So that **operators and Chatbot get current, authorization-filtered Project truth to initialize a Conversation (FR-2, FR-5) with no legacy runtime**.
 
 - **Traceability:** FR-2, FR-5; NFR-1, NFR-5, NFR-10; AD-3, AD-14, AD-19, AD-20, AD-32, AD-33; UJ-1; findings ARCH-001/API-001 (read side); evidence rows `fr-2`, `fr-5`; §9 A-3, A-5.
-- **Implementation state:** `blocked-external`. Historical P1 is satisfied but does not authorize the drifted candidate. The open blockers are 6.1-P1R, 6.1-P0, 6.1-P2, 6.1-P3, Solution Architect conformance sign-off, and 6.1-P4. Story 6.1 returns to `ready-for-dev` only after P4 acceptance, successful clean-checkout verification, the Story 6.1 specification passes the complete ready-for-development standard, and an independent assessment returns exactly `READY`.
+- **Implementation state:** `blocked-external`. Historical P1 and the exact October 1 P1R tuple decision are satisfied; current P1R usability remains false after the completed investigation, with `6.1-P1R-remediation` open. The blockers are usable current P1R, 6.1-P0, 6.1-P2, 6.1-P3, Solution Architect conformance sign-off, and 6.1-P4. Story 6.1 returns to `ready-for-dev` only after P4 acceptance, successful clean-checkout verification, the Story 6.1 specification passes the complete ready-for-development standard, and an independent assessment returns exactly `READY`.
 
 **Acceptance Criteria:**
 

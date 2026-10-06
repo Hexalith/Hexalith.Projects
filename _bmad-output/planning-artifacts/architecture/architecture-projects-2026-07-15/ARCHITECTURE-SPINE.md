@@ -7,7 +7,7 @@ paradigm: Domain-centric EventStore DomainService with platform-owned runtime an
 scope: Hexalith.Projects v1 — FR-1 through FR-25 and NFR-1 through NFR-11
 status: final
 created: 2026-07-15
-updated: 2026-10-02
+updated: 2026-10-06
 binds:
   - FR-1 through FR-25
   - NFR-1 through NFR-11
@@ -18,6 +18,7 @@ sources:
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/addendum.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-10-02.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-10-06.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-07-16.md
   - _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-15.md
@@ -227,6 +228,17 @@ flowchart LR
     Writer -. freeze and roll forward if old writer cannot replay or emit compliant behavior .-> Retirement
 ```
 
+**Measured P1R application (approved 2026-10-06):** Attempt 21 demonstrates
+retained-floor-5 hydration after restore but a 3.70.1 append drops the floor.
+Therefore that package is not a qualified writable rollback target for newer
+retained streams. Preserve the historical rollback coordinate; fence incompatible
+writers, and apply this decision's mutation freeze plus forward recovery until a
+capable replacement rollback family passes replay and compliant writes. Restoring
+a pre-upgrade backup does not authorize loss of later committed events. Read-route
+rollback retains its separate equivalence gate. The approved remediation requires
+complete supported authority/watermark/API transport and actual published-package
+proof; absent fields remain unknown and unsupported operations fail closed.
+
 ### AD-18 — [ADOPTED] Platform-generated ULIDs identify governed work
 
 - **Binds:** FR-1 through FR-25; ID-001
@@ -375,6 +387,24 @@ MCP follows AD-29: read and task control until the consequential-MCP gate; the g
 Verified against the checked-out root configuration, centralized package catalog, checked-out sibling revisions, and published/clean package evidence on 2026-07-16. Toolchain pin indexed at commit `2d9c75a` (2026-09-06): G-6 accepted for the tuple in `_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json` only; this index is not a product-rule change. `Hexalith.EventStore package binding` re-verified and normalized under Story 6.1-P1 on 2026-07-18 against published/clean `3.70.1` evidence (Solution-Architect authorization: Jerome).
 
 **Accepted 6.1-P1R EventStore binding (2026-10-01):** Jérôme Piquot explicitly accepted the published EventStore `3.110.0` family from tag `v3.110.0` at `27279fe6431925a6ea046c3f89af61487185c7de`, paired with Builds `4.29.1` / `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`, as EventStore Owner, Builds Owner, Solution Architect, and Test Architect at `2026-10-01T06:17:01Z`. The Solution Architect decision includes conformance and rebinding the EventStore Stack row to this exact tagged package coordinate, with the [owner packet's limitations](../../../implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md). The fixed record `_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json` binds every role to `#/selected`; the [prior 3.106.0 record](../../../implementation-artifacts/evidence/6-1-p1r-acceptance-20260922-3.106.0.json) and older packets remain historical evidence. Tag CI `36608682063` succeeded independently of release `36608763986`, which used `BYPASS_VALIDATION` and Commitlint `36608682105` as publication source proof. Owner acceptance dispositions those recorded facts without claiming fresh archive verification. The EventStore checkout `6dededdecd62dd6dc6d1f15810108d860ec70c8f` remains later source: 13 commits and 43 changed source paths after the tag. Current archives, `RetainedFloor` metadata downgrade to `3.70.1`, actor/domain replay, checkout/package compatibility, and operational rollback remain unverified. The P1R rollback is EventStore `3.70.1` / `f13f9925fdca53efa2ab8c90d396ab106f91bb9c` with Builds `7af20f8bafbfe561df6f7705913a0800603090b5`. Independent toolchain rows retain their historical dispositions. At P1R acceptance time, Toolkit `13.6.0-beta.910` and Fluent UI `5.0.0` lacked current G-6 acceptance; the later attempt-16 decision accepts their exact committed-source scope separately; the superseded pending 2026-09-29 G-6 packet (`f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2`) remains stale on Toolkit drift, five submodule revision mismatches, and the Builds execution-SHA mismatch. P1R acceptance does not accept G-6 or make current prerequisites usable. P0 stages 2–7, P2–P4, readiness `NOT_READY`, and Story 6.1 `blocked` retain their states.
+
+### Current P1R verification and remediation (2026-10-06)
+
+The October 1 Stack binding and four named accepts remain historical authority
+for EventStore 3.110.0 / Builds 4.29.1 with recorded limitations. Archive proof is
+complete. Attempt 21 executes 17 scenarios/72 cases with 2,845 assertions; seven
+incompatible dispositions retain false P1R usability. The pinned shared source
+comparison at 2c58ffda is equivalent but reproduces unsafe invalid evidence;
+Reminder additions and later source remain outside that proof. The earlier
+unverified archive/replay paragraphs describe their dated observation.
+
+Jerome approved [the P1R remediation proposal](../../sprint-change-proposal-2026-10-06.md).
+The [open handoff](../../../implementation-artifacts/spec-6-1-p1r-remediation.md)
+requires EventStore/Builds repository-local scope, current-source reproduction,
+safe persisted evidence, supported transport/actor behavior and a qualified
+rollback envelope under AD-17. Rebinding Stack/consumer/catalog pins requires
+later actual published evidence and exact owner decisions. No FR/NFR, UX, G-6,
+readiness or release status changes through this note.
 
 ### Target and compatibility bindings
 

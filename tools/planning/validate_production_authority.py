@@ -114,6 +114,7 @@ ACTION_STATUSES = {
     "6.1-P0": (6, "open"),
     "6.1-P1": (6, "done"),
     "6.1-P1R": (6, None),
+    "6.1-P1R-remediation": (6, "open"),
     "6.1-P2": (6, "open"),
     "6.1-P3": (6, "open"),
     "6.1-P4": (6, "open"),

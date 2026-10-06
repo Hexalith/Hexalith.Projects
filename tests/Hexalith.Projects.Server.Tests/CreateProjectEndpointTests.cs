@@ -107,13 +107,20 @@ public sealed class CreateProjectEndpointTests
     }
 
     [Theory]
-    [InlineData(null, false)]
-    [InlineData(null, true)]
-    [InlineData("", true)]
-    [InlineData("   ", true)]
+    [InlineData(null, false, false)]
+    [InlineData(null, false, true)]
+    [InlineData(null, true, false)]
+    [InlineData(null, true, true)]
+    [InlineData("", true, false)]
+    [InlineData("", true, true)]
+    [InlineData("   ", true, false)]
+    [InlineData("   ", true, true)]
+    [InlineData("\t\r\n", true, false)]
+    [InlineData("\t\r\n", true, true)]
     public async Task PostProject_InvalidCanonicalDisplayName_ReturnsMetadataOnly400WithoutSubmitting(
         string? displayName,
-        bool includeDisplayName)
+        bool includeDisplayName,
+        bool includeLegacyName)
     {
         FakeProjectCommandSubmitter submitter = new(ProjectCommandSubmissionResult.Accepted("corr-a", idempotentReplay: false));
         WebApplication app = await StartAppAsync(submitter, tenantId: "tenant-a", principalId: "principal-a").ConfigureAwait(true);
@@ -123,7 +130,7 @@ public sealed class CreateProjectEndpointTests
             using HttpRequestMessage request = GeneratedClientCreateRequest(
                 displayName: displayName,
                 includeDisplayName: includeDisplayName,
-                legacyName: "Legacy Fallback");
+                legacyName: includeLegacyName ? "Legacy Fallback" : null);
             HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
             string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
 
@@ -131,6 +138,8 @@ public sealed class CreateProjectEndpointTests
             submitter.Submitted.ShouldBeEmpty();
 
             using JsonDocument document = JsonDocument.Parse(body);
+            document.RootElement.GetProperty("category").GetString().ShouldBe("validation_error");
+            document.RootElement.GetProperty("code").GetString().ShouldBe("validation_error");
             JsonElement details = document.RootElement.GetProperty("details");
             details.GetProperty("visibility").GetString().ShouldBe("metadata_only");
             details.GetProperty("rejectedField").GetString().ShouldBe("projectMetadata.displayName");

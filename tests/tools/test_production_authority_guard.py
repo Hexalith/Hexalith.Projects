@@ -272,6 +272,40 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
         self.assertEqual("NOT_READY", index["readiness_provenance"]["current_result"])
         self.assertEqual("blocked", index["development_status"][GUARD.STORY_6_1_KEY])
 
+    def test_remediation_cannot_advance_or_replace_accepted_p1r(self) -> None:
+        sprint = self.accepted_sprint()
+        self.assertEqual(
+            GUARD.EXPECTED_PRODUCTION_EPICS,
+            self.validate_boundary(
+                sprint=sprint,
+                deferred=self.accepted_deferred(),
+                p0=self.accepted_p0(),
+                record=self.acceptance_record(),
+            ),
+        )
+        for status in ("done", "in-progress", "blocked-external"):
+            candidate = self.replace_after(
+                sprint,
+                '    id: "6.1-P1R-remediation"',
+                "    status: open",
+                "    status: " + status,
+            )
+            with self.subTest(status=status):
+                with self.assertRaisesRegex(GUARD.GuardViolation, "6.1-P1R-remediation"):
+                    self.validate_boundary(
+                        sprint=candidate,
+                        deferred=self.accepted_deferred(),
+                        p0=self.accepted_p0(),
+                        record=self.acceptance_record(),
+                    )
+        renamed = self.replace_once(
+            sprint,
+            '    id: "6.1-P1R-remediation"',
+            '    id: "6.1-P1R-replacement"',
+        )
+        with self.assertRaisesRegex(GUARD.GuardViolation, "inventory must remain exact"):
+            self.validate_boundary(sprint=renamed)
+
     def test_open_gate_passes_without_acceptance_record(self) -> None:
         self.assertEqual(GUARD.EXPECTED_PRODUCTION_EPICS, self.validate_boundary())
         with self.assertRaisesRegex(GUARD.GuardViolation, "6.1-P1R"):

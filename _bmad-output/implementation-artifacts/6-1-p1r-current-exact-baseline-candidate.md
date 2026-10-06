@@ -107,3 +107,35 @@ The third-pass [P1R verification report](../../references/Hexalith.EventStore/_b
 The 2026-10-05 verification re-derivation records an unsupported outcome when a contract wire type is absent, and requires a retained-floor stream before post-upgrade restore can be labeled compatible. Unit controls now number 116 and pass. Attempt 17 remains the selected historical capture and was not rewritten; no fresh matrix was captured. P1R usability, qualification, named owner decisions, rollback policy and downstream readiness/state remain unchanged.
 
 The 2026-10-06 [verification update](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verification/README.md) corrects port reservation handoff and retains ownership-checked, bounded startup retries. All 125 controls and the independent 14-package archive preflight pass. [Attempt 18](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verification/attempt-18/README.md) retains a fresh infrastructure failure: `docker ps -aq --no-trunc` exits 1 because Docker is unavailable in this WSL distro. Its three local lifecycle cases pass with six assertions; the other 16 scenarios are unavailable. Invocation/offline validation exit 2 (`Failed cleanup`) because shared-resource discovery is unavailable; all five owned processes stop, zero containers launch and scratch is removed. Attempt 17 and all earlier capture bytes remain unchanged. Final verification still requires a complete capture under the current retained-floor and unsupported-contract rules; P1R usability, qualification, named owner decisions, rollback policy and downstream readiness/state remain unchanged.
+
+The later 2026-10-06 [completed verification report](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verification/README.md) selects [attempt 19](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verification/attempt-19/README.md) after Docker became available. All 17 scenarios/72 cases pass 2,845 assertions with 2,326 literal command receipts. Offline validation exits 0 for complete matching evidence; invocation exits 1 because seven compatibility dispositions remain incompatible. The retained-floor-5 post-upgrade backup hydrates on old hosts while preserving floor 5, sequence 12, event hashes and tenant isolation; a separate actual old-writer append drops the floor and remains incompatible. All 1,096 owned processes stop, four owned containers are removed, scratch is deleted, cleanup errors are empty and all six shared-resource snapshot entries match. The parent independently validates the packet and confirms protected/historical preservation. Attempts 01–18 retain their original bytes. This completes the investigation capture and grants no P1R usability, qualification, named owner decision, rollback-policy change or downstream readiness/state change.
+
+The subsequent 2026-10-06 [review correction report](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verification/README.md) selects [attempt 21](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verification/attempt-21/README.md) after applying R01–R07 to retry CID retirement, complete shared/protected observations, launched process coverage, malformed evidence, inherited .NET injection variables and real startup-exit coverage. The parent runs all 135 controls successfully (40.650 seconds), then captures all 17 scenarios/72 cases with 2,845 assertions and 2,333 command receipts. Invocation exits 1 for seven measured incompatible dispositions; independent parent and reporting-update offline validation both exit 0 for complete matching evidence. All 1,100 owned processes stop, four containers and scratch are removed, cleanup errors are empty and all six shared entries match. The parent confirms all 1,587 snapshotted protected/historical files through attempt 19 are unchanged. Attempt 19 remains prior reviewed evidence under its original fixture version; attempt 20 preserves its scheduler forwarding-500 startup failure and complete owned cleanup/shared preservation. Every sealed packet retains its bytes. This report selection changes no qualification, P1R usability, acceptance, fixed comparison coordinates, named owner decision, rollback policy, sprint status or downstream readiness/state.
+
+## Approved remediation handoff (2026-10-06)
+
+Jerome approved [the moderate P1R correction](../planning-artifacts/sprint-change-proposal-2026-10-06.md).
+[6.1-P1R-remediation](spec-6-1-p1r-remediation.md) is open and routed to the
+EventStore/Builds owners, Platform and Identity/Security through P2, and the
+Solution/Test Architects. The investigation is complete; seven measured
+incompatibilities keep current prerequisite usability false. Ordinary replay and
+retained-floor-5 restore/hydration pass, while the actual 3.70.1 append drops that
+floor. Writable downgrade needs a capable qualified target; otherwise AD-17
+requires mutation freeze and forward recovery. Pre-upgrade restore does not
+authorize loss of later committed writes. New source/package proof and exact
+owner decisions are required for any future candidate/rollback transition.
+
+The existing CI lane now includes the selected 3.110.0 archive replay alongside
+the historical 3.109.0 replay. The earlier CI-only-3.109.0 observation above is
+historical; neither archive lane closes runtime/rollback qualification.
+
+This approved planning update changes sprint-status bytes intentionally.
+Attempt 21's captured protected sprint hash is
+`bc0d564d8c07a9299c9e678dca2df1d98345ae870a798a6ec99a258bf11e6a93`, recoverable
+from Projects `311aa85c8e81c7c0b19d5c0004ddf36ceafd5651`. Its offline validation
+passed before this update; the validator must reject the changed live protected
+workspace. Retain the packet, fixtures and old hash rather than resealing it or
+weakening that check. Fresh qualification uses separate current evidence. The
+fixed acceptance JSON, October 1 tuple/rollback decisions, completed verification
+spec and all EventStore investigation bytes remain unchanged. P0/P2/P3/P4,
+NOT_READY, Story 6.1 and downstream statuses do not advance.

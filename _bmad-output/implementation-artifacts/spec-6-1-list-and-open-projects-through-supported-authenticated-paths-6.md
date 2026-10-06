@@ -4,7 +4,7 @@ type: 'feature'
 created: '2026-10-02'
 status: 'draft'
 route: 'dispatch'
-updated: '2026-10-03'
+updated: '2026-10-06'
 baseline_commit: 'cbcf54fa4d7a8c17bbfc3f9fb555ac0a85c179c0'
 review_loop_iteration: 0
 story_key: '6-1-list-and-open-projects-through-supported-authenticated-paths'
@@ -65,11 +65,16 @@ context:
 **Acceptance Criteria:**
 
 - Given accepted gates and current authorized evidence, when list/open executes, then the full frozen scope and AD-32 fields apply; pre-activation tasks and source payloads are absent, and Archived blocks context use.
+- Given a Chatbot Project User, when list/open runs, then current Folder-read authorization filters Projects before pagination; rows, counts and scoped cursors reveal only that permitted set, and Tenant-role authority never widens Chatbot visibility.
+- Given a Tenant-role caller without descriptive-metadata inspection authorization, when list/open runs, then results contain only Safe Metadata and no Project name. With inspection authorization, authorized descriptive fields require one durable FR-21 event per request recording the inspected Project-set counts and field class without descriptive payload.
+- Given a denied, cross-Tenant or nonexistent target, when list/open runs, then the accepted indistinguishable safe-404 contract reveals no protected existence or metadata.
 - Given shadow comparison, when an unapproved output/key/watermark/cursor/order/Tenant delta occurs, then qualification fails.
 
 ## Implementation Notes
 
 ## Spec Change Log
+
+- 2026-10-06: Jerome approved the P1R course correction. Restored explicit Folder-before-pagination, inspection-gated names with durable FR-21 audit, and indistinguishable denial criteria in the non-frozen section. The frozen intent/entry gate, Story status, runtime/tests and pins remain unchanged. These cases become executable only after all existing entry prerequisites pass.
 
 ## Review Triage Log
 
