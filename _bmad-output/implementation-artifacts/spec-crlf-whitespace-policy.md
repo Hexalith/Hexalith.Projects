@@ -2,7 +2,7 @@
 title: 'Reconcile CRLF whitespace policy'
 type: 'bugfix'
 created: '2026-08-27'
-status: 'in-progress'
+status: 'done'
 baseline_revision: 'd9dbf9e1f53f26e9a6b23d241bab0112c0fcae4c'
 baseline_commit: 'd9dbf9e1f53f26e9a6b23d241bab0112c0fcae4c'
 review_loop_iteration: 0
@@ -63,12 +63,25 @@ deferred: []
 ## Spec Change Log
 
 - 2026-08-27: Implemented the tracked whitespace policy, hermetic Git command tests, and CI gate.
+- 2026-10-06: Completed the resumed build by isolating Git configuration, attributes, templates, repository overrides, and diagnostic locale in subprocess environments. Removed the unnecessary temporary baseline commit, added default-whitespace and inherited-setting regression coverage, and preserved module, direct-file, and discovery execution. The existing root attribute and CI gate required no changes; the original baseline identifiers remain unchanged.
 
 ## Review Triage Log
+
+Review on 2026-10-06 used the preserved baseline and the task's attribute, test, CI, and spec paths. The complete workspace baseline diff was captured separately; it includes unrelated later work. The edge-case and verification-gap reviewers reported no findings. The blind-hunter findings were classified individually below; none requires a whitespace-policy patch or a deferred-work entry.
+
+| Finding | Verdict | Evidence and disposition |
+|---------|---------|--------------------------|
+| BH-1: Unrelated dependency and CI changes appear in the review diff. | false | The historical baseline includes later CI changes, but this build changes neither `.github/workflows/ci.yml` nor dependency configuration. No prohibited dependency update was performed; reject the claim of a deviation by this implementation. |
+| BH-2: The shared CI package lane omits the SourceTools declaration checks. | medium | The pinned shared workflow executes Python packaging tools without the declaration checks in `tests/tools/run-package-dependency-gate.ps1:42-55`; `release.config.cjs` still executes that script before publication. This is a pre-existing CI coverage gap for analyzer-reference configuration, independent of the whitespace intent; reject as outside that intent. The ledger remains untouched as required. |
+| BH-3: The test would not detect future EditorConfig changes. | low | The gate tests Git attributes rather than EditorConfig syntax, so a separate future editor-policy edit would not fail it. This build preserves `.editorconfig` byte-for-byte (SHA-256 `b703637e2bf829f7628ac63a6b11761e55a4e23a6d29e4520ca1a262cf06d4ea`), and its diff from the preserved baseline is empty. Reject additional configuration guards for hypothetical edits to the explicitly excluded file. |
+| BH-4: LF exception paths have attribute checks but no dedicated behavioral test. | low | The suite verifies the same exact whitespace value and unspecified `eol`/`text` on shell, Dockerfile, YAML, and YML paths. Additional isolated real-command checks on `.sh` and `.yaml` files accepted valid LF content and rejected trailing spaces. No LF defect was demonstrated; reject redundant coverage rather than adding test complexity. |
+| BH-5: Nested evidence attributes override the root policy. | low | The existing `qualification-evidence/g-6-current-20261003/.gitattributes` intentionally uses `text eol=lf` and `*.log whitespace=-trailing-space` for hash-bound historical evidence. Those pre-existing overrides remain unchanged and are excluded by the intent's prohibition on editing bundle evidence. Reject the proposed spec edit; the hermetic gate proves the root policy. |
 
 ## Design Notes
 
 Git's `whitespace=cr-at-eol` attribute augments the default whitespace rules for matching paths: CR at line end is accepted, while trailing blanks and the other default error classes remain active. Avoid `text` and `eol` attributes because this bundle concerns diagnostics, not content normalization.
+
+The gate removes inherited Git environment overrides and disables external configuration and attributes only in child processes. A temporary empty template prevents developer templates from adding repository settings or hooks. The staged temporary fixture provides the plain diff baseline without requiring a commit or author identity. An adversarial child run checks isolation without relying on the unittest import name.
 
 ## Verification
 
@@ -76,3 +89,13 @@ Git's `whitespace=cr-at-eol` attribute augments the default whitespace rules for
 - `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests/tools/test_git_whitespace_policy.py -v` -- expected: all policy scenarios pass using isolated temporary repositories.
 - `git check-attr whitespace eol -- AGENTS.md tests/e2e/run-live-apphost.sh Dockerfile .github/workflows/ci.yml` -- expected: `whitespace` is `cr-at-eol` for every path and `eol` is unspecified.
 - `git diff --check` -- expected: no whitespace errors in the implementation diff under the tracked policy.
+
+**Results (2026-10-06):**
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests/tools/test_git_whitespace_policy.py -v` -- passed all five tests, including the child run with conflicting inherited Git settings.
+- `PYTHONDONTWRITEBYTECODE=1 python3 tests/tools/test_git_whitespace_policy.py -v` -- passed all five tests through the executable entry point.
+- `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/tools -p test_git_whitespace_policy.py -v` -- passed all five tests through discovery.
+- The documented module command also passed in a temporary minimal checkout containing only the root attribute and test, using Python `-B -S` to disable bytecode and site packages; no `references/` directory was present.
+- `git check-attr whitespace eol text -- AGENTS.md tests/e2e/run-live-apphost.sh scripts/example.bash scripts/example.zsh Dockerfile .github/workflows/ci.yml configuration/example.yaml` -- every path reported `whitespace: cr-at-eol`, `eol: unspecified`, and `text: unspecified`.
+- `git diff --check` -- passed. The policy and test retain CRLF, and `.editorconfig` is byte-identical to its pre-build contents.
+- Matrix audit: required CRLF acceptance, real trailing-space rejection, and LF exception non-interference all ran and passed. Negative coverage additionally rejects trailing tabs, blank lines at EOF, spaces before tabs, and extra carriage returns.
+- All three independent review layers completed; no in-scope finding remains and no work was deferred. No workspace staging or commit was performed.
