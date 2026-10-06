@@ -8,7 +8,7 @@ namespace Hexalith.Projects.Mcp;
 /// <summary>
 /// Safe MCP summary for one deterministic warning diagnostic scan.
 /// </summary>
-/// <param name="ScannedProjectCount">The number of visible projects diagnosed.</param>
+/// <param name="ScannedProjectCount">The number of projects selected for attempted diagnosis, including unavailable diagnostics.</param>
 /// <param name="DiagnosticUnavailable">The number of scanned diagnostics that were unavailable.</param>
 /// <param name="TenantScope">The server-derived tenant scope label.</param>
 /// <param name="ShortExplanation">A short metadata-only explanation.</param>

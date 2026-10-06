@@ -22,10 +22,12 @@ public sealed class ProjectsMcpStory511ParityTests
     public void Parity_Matrix_Lists_Every_Mcp_Resource_And_Tool()
     {
         string parityMatrix = ReadRepositoryFile("docs/parity-matrix.md");
+        string projectionCatalog = ReadRepositoryFile("docs/projection-catalog.md");
 
         foreach (string resource in ProjectsMcpDescriptors.ResourceNames)
         {
             parityMatrix.ShouldContain($"`{resource}`");
+            projectionCatalog.ShouldContain($"`{resource}`");
         }
 
         foreach (string action in ProjectsMcpDescriptors.MaintenanceActionNames)
@@ -57,6 +59,10 @@ public sealed class ProjectsMcpStory511ParityTests
         parityMatrix.ShouldContain("diagnosticUnavailable");
         parityMatrix.ShouldContain("projects.warningScanSummary");
         parityMatrix.ShouldContain("PayloadExcluded");
+
+        string projectionCatalog = ReadRepositoryFile("docs/projection-catalog.md");
+        projectionCatalog.ShouldContain("`ScannedProjectCount`");
+        projectionCatalog.ShouldContain("`DiagnosticUnavailable`");
     }
 
     private static string ReadRepositoryFile(string relativePath)

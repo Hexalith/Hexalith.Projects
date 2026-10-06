@@ -189,8 +189,15 @@ public sealed class ProjectsMcpResourceReaderFailureTests
         serialized.ShouldNotContain("secret-problem-detail");
     }
 
-    [Fact]
-    public async Task Query_EmptyWarningQueue_StillEmitsScanSummaryWithUnavailableCount()
+    [Theory]
+    [InlineData(0, 0, 0)]
+    [InlineData(2, 2, 1)]
+    [InlineData(30, 25, 1)]
+    [InlineData(30, 25, 25)]
+    public async Task Query_EmptyWarningQueue_StillEmitsScanSummaryWithUnavailableCount(
+        int visibleProjectCount,
+        int scannedProjectCount,
+        int diagnosticUnavailable)
     {
         IClient client = Substitute.For<IClient>();
         client.ListProjectsAsync(
@@ -200,34 +207,42 @@ public sealed class ProjectsMcpResourceReaderFailureTests
                 Arg.Any<CancellationToken>())
             .Returns(new ProjectListResponse
             {
-                Items =
-                {
-                    ListItem("project-1"),
-                    ListItem("project-2"),
-                },
+                Items = Enumerable.Range(1, visibleProjectCount)
+                    .Reverse()
+                    .Select(static index => ListItem($"project-{index:000}"))
+                    .ToArray(),
             });
+        var diagnosedProjectIds = new List<string>();
+        HashSet<string> unavailableProjectIds = Enumerable.Range(0, diagnosticUnavailable)
+            .Select(index => $"project-{scannedProjectCount - index:000}")
+            .ToHashSet(StringComparer.Ordinal);
         client.GetProjectOperatorDiagnosticsAsync(
-                "project-1",
+                Arg.Any<string>(),
                 25,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
                 Arg.Any<CancellationToken>())
-            .Returns(DiagnosticWithoutWarnings("project-1"));
-        client.GetProjectOperatorDiagnosticsAsync(
-                "project-2",
-                25,
-                Arg.Any<string>(),
-                ReadConsistencyClass.Eventually_consistent,
-                Arg.Any<CancellationToken>())
-            .ThrowsAsync(Api(503));
+            .Returns(call =>
+            {
+                string projectId = call.ArgAt<string>(0);
+                diagnosedProjectIds.Add(projectId);
+                return unavailableProjectIds.Contains(projectId)
+                    ? throw Api(503)
+                    : DiagnosticWithoutWarnings(projectId);
+            });
         var reader = new ProjectsMcpResourceReader(client);
 
         QueryResult<ProjectsMcpWarningQueueItem> warningResult =
             await reader.QueryAsync<ProjectsMcpWarningQueueItem>(
                 QueryRequest.Create(
-                    new ProjectionQuery(typeof(ProjectsMcpWarningQueueItem).AssemblyQualifiedName!),
+                    new ProjectionQuery(typeof(ProjectsMcpWarningQueueItem).AssemblyQualifiedName!, Take: 1),
                     "tenant-1"),
                 TestContext.Current.CancellationToken);
+        string[] expectedScan = Enumerable.Range(1, scannedProjectCount)
+            .Select(static index => $"project-{index:000}")
+            .ToArray();
+        diagnosedProjectIds.ShouldBe(expectedScan, ignoreOrder: false);
+        diagnosedProjectIds.Clear();
         QueryResult<ProjectsMcpWarningScanSummaryItem> summaryResult =
             await reader.QueryAsync<ProjectsMcpWarningScanSummaryItem>(
                 QueryRequest.Create(
@@ -237,14 +252,18 @@ public sealed class ProjectsMcpResourceReaderFailureTests
 
         warningResult.Items.ShouldBeEmpty();
         warningResult.TotalCount.ShouldBe(0);
+        diagnosedProjectIds.ShouldBe(expectedScan, ignoreOrder: false);
         summaryResult.TotalCount.ShouldBe(1);
         ProjectsMcpWarningScanSummaryItem summary = summaryResult.Items.ShouldHaveSingleItem();
-        summary.ScannedProjectCount.ShouldBe(2);
-        summary.DiagnosticUnavailable.ShouldBe(1);
+        summary.ScannedProjectCount.ShouldBe(scannedProjectCount);
+        summary.DiagnosticUnavailable.ShouldBe(diagnosticUnavailable);
+        summary.DiagnosticUnavailable.ShouldBeLessThanOrEqualTo(summary.ScannedProjectCount);
+        summary.TenantScope.ShouldBe("server-derived tenant");
         summary.ShortExplanation.ShouldNotBeNullOrWhiteSpace();
-        summary.ShortExplanation.ShouldNotContain("unsafe-exception-detail");
-        summary.ShortExplanation.ShouldNotContain("secret-problem-detail");
         summary.PayloadExcluded.ShouldBeTrue();
+        string serialized = JsonSerializer.Serialize(summary);
+        serialized.ShouldNotContain("unsafe-exception-detail");
+        serialized.ShouldNotContain("secret-problem-detail");
     }
 
     [Fact]

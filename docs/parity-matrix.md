@@ -100,6 +100,8 @@ truth: Web renders the healthy warning plus a synthetic safe `Unavailable` row a
 `diagnosticUnavailable: 1` at the top level of both `projects warnings` and `projects dashboard` JSON.
 MCP also returns one `projects.warningScanSummary` row with the selected-project cardinality and unavailable
 count, so partial failures remain observable when the warning queue has no healthy row.
+`ScannedProjectCount` counts every project selected for attempted diagnosis, including unavailable
+diagnostics; `DiagnosticUnavailable` is a subset of that count.
 Because the Web synthetic row participates in its existing warning-project aggregation, this fixture has
 two Web warning Projects; MCP and CLI keep their existing aggregate-only unavailable shape and report one
 Project with an actual warning row. Changing that counting or no-row behavior requires a separate contract

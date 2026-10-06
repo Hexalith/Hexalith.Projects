@@ -117,61 +117,75 @@ public sealed class ProjectsMcpResourceReaderTests
         result.TotalCount.ShouldBe(2);
     }
 
-    [Fact]
-    public async Task Query_WarningQueue_Bounds_Results_To_Canonical_Take()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(40)]
+    public async Task Query_WarningQueue_Limits_Emitted_Rows_After_The_Complete_Project_Window(int take)
     {
         IClient client = Substitute.For<IClient>();
+        var inventory = new ProjectListResponse
+        {
+            Items = Enumerable.Range(1, 30)
+                .Reverse()
+                .Select(static index => ListItem($"project-{index:000}"))
+                .ToArray(),
+        };
         client.ListProjectsAsync(
                 Lifecycle.All,
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
                 Arg.Any<CancellationToken>())
-            .Returns(new ProjectListResponse
-            {
-                Items =
-                {
-                    ListItem("project-1"),
-                    ListItem("project-2"),
-                    ListItem("project-3"),
-                },
-            });
+            .Returns(inventory);
+        var diagnosedProjectIds = new List<string>();
         client.GetProjectOperatorDiagnosticsAsync(
                 Arg.Any<string>(),
                 Arg.Any<int>(),
                 Arg.Any<string>(),
                 ReadConsistencyClass.Eventually_consistent,
                 Arg.Any<CancellationToken>())
-            .Returns(call => call.ArgAt<string>(0) == "project-2"
-                ? throw new InvalidOperationException("unsafe diagnostic failure detail")
-                : DiagnosticWithWarnings(call.ArgAt<string>(0)));
+            .Returns(call =>
+            {
+                string projectId = call.ArgAt<string>(0);
+                diagnosedProjectIds.Add(projectId);
+                return projectId == "project-025"
+                    ? throw new InvalidOperationException("unsafe diagnostic failure detail")
+                    : DiagnosticWithWarnings(projectId, mixReferenceKinds: projectId.EndsWith("2", StringComparison.Ordinal));
+            });
         var reader = new ProjectsMcpResourceReader(client);
 
         QueryResult<ProjectsMcpWarningQueueItem> result = await reader.QueryAsync<ProjectsMcpWarningQueueItem>(
             QueryRequest.Create(
                 new ProjectionQuery(
                     typeof(ProjectsMcpWarningQueueItem).AssemblyQualifiedName!,
-                    Take: 1),
+                    Take: take),
                 "tenant-1"),
             TestContext.Current.CancellationToken);
 
-        result.Items.Count.ShouldBe(1);
-        result.TotalCount.ShouldBe(4);
+        result.Items.Count.ShouldBe(take);
+        result.TotalCount.ShouldBe(48);
+        (string ProjectId, string ReferenceKind, string ReferenceId)[] expectedRows = Enumerable.Range(1, 24)
+            .SelectMany(static index => index % 10 == 2
+                ? new[]
+                {
+                    ($"project-{index:000}", "file", "ref-2"),
+                    ($"project-{index:000}", "memory", "ref-1"),
+                }
+                : new[]
+                {
+                    ($"project-{index:000}", "folder", "ref-1"),
+                    ($"project-{index:000}", "folder", "ref-2"),
+                })
+            .Take(take)
+            .ToArray();
+        result.Items.Select(static item => (item.ProjectId, item.ReferenceKind, item.ReferenceId ?? string.Empty))
+            .ShouldBe(expectedRows, ignoreOrder: false);
         result.Items.ShouldAllBe(item => item.FreshnessTrustState == EvidenceFreshnessStateCode.Current);
         result.Items.ShouldAllBe(item => item.DiagnosticUnavailable == 1);
-        await client.Received(1).GetProjectOperatorDiagnosticsAsync(
-            "project-1",
-            25,
+        diagnosedProjectIds.ShouldBe(
+            Enumerable.Range(1, 25).Select(static index => $"project-{index:000}").ToArray(),
+            ignoreOrder: false);
+        await client.Received(25).GetProjectOperatorDiagnosticsAsync(
             Arg.Any<string>(),
-            ReadConsistencyClass.Eventually_consistent,
-            Arg.Any<CancellationToken>());
-        await client.Received(1).GetProjectOperatorDiagnosticsAsync(
-            "project-2",
-            25,
-            Arg.Any<string>(),
-            ReadConsistencyClass.Eventually_consistent,
-            Arg.Any<CancellationToken>());
-        await client.Received(1).GetProjectOperatorDiagnosticsAsync(
-            "project-3",
             25,
             Arg.Any<string>(),
             ReadConsistencyClass.Eventually_consistent,
@@ -184,7 +198,9 @@ public sealed class ProjectsMcpResourceReaderTests
         IClient client = Substitute.For<IClient>();
         ProjectListItem[] visibleProjects = Enumerable.Range(1, 30)
             .Reverse()
-            .Select(static index => ListItem($"project-{index:000}"))
+            .Select(static index => ListItem(
+                $"project-{index:000}",
+                index <= 18 ? ProjectLifecycleState.Active : ProjectLifecycleState.Archived))
             .ToArray();
         var list = new ProjectListResponse();
         foreach (ProjectListItem project in visibleProjects)
@@ -242,34 +258,40 @@ public sealed class ProjectsMcpResourceReaderTests
         diagnosedProjectIds.ShouldBe(expectedScan, ignoreOrder: false);
         ProjectsMcpOperationalDashboardItem dashboard = dashboardResult.Items.ShouldHaveSingleItem();
         dashboard.TotalVisibleProjects.ShouldBe(30);
-        dashboard.ActiveProjects.ShouldBe(30);
-        dashboard.ArchivedProjects.ShouldBe(0);
+        dashboard.ActiveProjects.ShouldBe(18);
+        dashboard.ArchivedProjects.ShouldBe(12);
         dashboard.ProjectsWithWarnings.ShouldBe(25);
         dashboard.DiagnosticUnavailable.ShouldBe(0);
     }
 
     private static ProjectOperatorDiagnostic DiagnosticWithWarnings(
         string projectId,
-        ProjectionTrustState trustState = ProjectionTrustState.Trusted)
+        ProjectionTrustState trustState = ProjectionTrustState.Trusted,
+        bool mixReferenceKinds = false)
         => new()
         {
             ProjectId = projectId,
             Name = projectId,
             LifecycleState = ProjectLifecycleState.Active,
             Freshness = Fresh(),
-            References =
-            {
-                ExcludedReference("ref-1", trustState),
-                ExcludedReference("ref-2", trustState),
-            },
+            References = mixReferenceKinds
+                ? [
+                    ExcludedReference("ref-1", trustState, ProjectReferenceSummaryReferenceKind.Memory),
+                    ExcludedReference("ref-2", trustState, ProjectReferenceSummaryReferenceKind.File),
+                ]
+                : [
+                    ExcludedReference("ref-2", trustState),
+                    ExcludedReference("ref-1", trustState),
+                ],
         };
 
     private static ProjectReferenceSummary ExcludedReference(
         string referenceId,
-        ProjectionTrustState trustState = ProjectionTrustState.Trusted)
+        ProjectionTrustState trustState = ProjectionTrustState.Trusted,
+        ProjectReferenceSummaryReferenceKind referenceKind = ProjectReferenceSummaryReferenceKind.Folder)
         => new()
         {
-            ReferenceKind = ProjectReferenceSummaryReferenceKind.Folder,
+            ReferenceKind = referenceKind,
             ReferenceState = ProjectReferenceSummaryReferenceState.Excluded,
             ReferenceId = referenceId,
             ReasonCode = "excluded",
@@ -285,12 +307,14 @@ public sealed class ProjectsMcpResourceReaderTests
             TrustState = trustState,
         };
 
-    private static ProjectListItem ListItem(string projectId)
+    private static ProjectListItem ListItem(
+        string projectId,
+        ProjectLifecycleState lifecycleState = ProjectLifecycleState.Active)
         => new()
         {
             ProjectId = projectId,
             Name = projectId,
-            LifecycleState = ProjectLifecycleState.Active,
+            LifecycleState = lifecycleState,
             UpdatedAt = DateTimeOffset.UnixEpoch,
             Freshness = Fresh(),
         };

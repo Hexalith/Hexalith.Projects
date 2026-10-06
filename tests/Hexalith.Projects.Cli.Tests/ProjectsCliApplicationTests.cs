@@ -357,6 +357,65 @@ public sealed class ProjectsCliApplicationTests
         stdout.ToString().ShouldNotContain("secret-problem-detail");
     }
 
+    [Theory]
+    [InlineData("warnings", false)]
+    [InlineData("warnings", true)]
+    [InlineData("dashboard", false)]
+    [InlineData("dashboard", true)]
+    public async Task WarningSurfacesStopOnCancellationWithoutEmittingPartialResults(
+        string command,
+        bool cancelDuringDiagnostics)
+    {
+        IClient client = Substitute.For<IClient>();
+        using var cancellation = new CancellationTokenSource();
+        client.ListProjectsAsync(
+                Lifecycle.All,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                cancellation.Token)
+            .Returns(_ =>
+            {
+                if (!cancelDuringDiagnostics)
+                {
+                    cancellation.Cancel();
+                    throw new OperationCanceledException("unsafe cancellation detail", cancellation.Token);
+                }
+
+                return ProjectList("project-3", "project-2", "project-1");
+            });
+        var diagnosedProjectIds = new List<string>();
+        client.GetProjectOperatorDiagnosticsAsync(
+                Arg.Any<string>(),
+                25,
+                Arg.Any<string>(),
+                ReadConsistencyClass.Eventually_consistent,
+                cancellation.Token)
+            .Returns(call =>
+            {
+                string projectId = call.ArgAt<string>(0);
+                diagnosedProjectIds.Add(projectId);
+                if (projectId == "project-2")
+                {
+                    cancellation.Cancel();
+                    throw new OperationCanceledException("unsafe cancellation detail", cancellation.Token);
+                }
+
+                return DiagnosticWithWarning(projectId);
+            });
+        using var stdout = new StringWriter();
+        using var stderr = new StringWriter();
+        var app = new ProjectsCliApplication(client, stdout, stderr);
+
+        int exitCode = await app.RunAsync(["projects", command], cancellation.Token);
+
+        exitCode.ShouldBe(ProjectsCliExitCodes.Unavailable);
+        stdout.ToString().ShouldBeEmpty();
+        stderr.ToString().Trim().ShouldBe("operation_canceled");
+        diagnosedProjectIds.ShouldBe(
+            cancelDuringDiagnostics ? ["project-1", "project-2"] : Array.Empty<string>(),
+            ignoreOrder: false);
+    }
+
     private static ProjectListResponse ProjectList(params string[] projectIds)
     {
         var response = new ProjectListResponse();

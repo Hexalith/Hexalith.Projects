@@ -433,7 +433,9 @@ boundaries.
   (default 25, max 100). Warning, scan-summary, and dashboard resources diagnose the ordinal-first
   25 projects from one visible inventory snapshot. Queue `Take` limits emitted ordered rows only;
   `TotalCount` covers all matching warning rows. The always-emitted summary reports selected-project
-  cardinality and unavailable diagnostics without exposing failure detail.
+  cardinality and unavailable diagnostics without exposing failure detail. `ScannedProjectCount`
+  includes every project selected for attempted diagnosis, including unavailable diagnostics;
+  `DiagnosticUnavailable` is a subset of that count.
 - **Leakage boundary:** output may include safe opaque ids, lifecycle/reference/result/reason states,
   freshness, timestamps, correlation/task/audit ids, safe feedback codes, descriptor metadata, and
   short safe explanations. Output must not include idempotency keys, command bodies, raw ProblemDetails,

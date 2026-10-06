@@ -40,6 +40,26 @@ public sealed class ProjectsMcpDescriptorTests
     }
 
     [Fact]
+    public void WarningScanSummary_Registers_Selected_And_Unavailable_Counts_With_Safe_Fields()
+    {
+        var resource = ProjectsMcpDescriptors.Manifest.Resources
+            .Single(static resource => resource.Name == "projects.warningScanSummary");
+
+        resource.ProtocolUri.ShouldBe("frontcomposer://Projects/projections/projects.warningScanSummary");
+        Type.GetType(resource.ProjectionTypeName, throwOnError: true).ShouldBe(typeof(ProjectsMcpWarningScanSummaryItem));
+        resource.Fields.Select(static field => field.Name).ShouldBe([
+            nameof(ProjectsMcpWarningScanSummaryItem.ScannedProjectCount),
+            nameof(ProjectsMcpWarningScanSummaryItem.DiagnosticUnavailable),
+            nameof(ProjectsMcpWarningScanSummaryItem.TenantScope),
+            nameof(ProjectsMcpWarningScanSummaryItem.ShortExplanation),
+            nameof(ProjectsMcpWarningScanSummaryItem.PayloadExcluded),
+        ], ignoreOrder: false);
+        resource.Fields.Single(static field => field.Name == nameof(ProjectsMcpWarningScanSummaryItem.ScannedProjectCount)).JsonType.ShouldBe("integer");
+        resource.Fields.Single(static field => field.Name == nameof(ProjectsMcpWarningScanSummaryItem.DiagnosticUnavailable)).JsonType.ShouldBe("integer");
+        resource.Fields.Single(static field => field.Name == nameof(ProjectsMcpWarningScanSummaryItem.PayloadExcluded)).JsonType.ShouldBe("boolean");
+    }
+
+    [Fact]
     public void MutatingToolDescriptors_Require_ConfirmationEvidence_And_IdempotencyKey()
     {
         foreach (var command in ProjectsMcpDescriptors.Manifest.Commands)

@@ -9,7 +9,7 @@ namespace Hexalith.Projects.Mcp;
 /// Captures the complete result of one deterministic MCP warning scan.
 /// </summary>
 /// <param name="Warnings">All ordered warning rows before an emitted-row limit is applied.</param>
-/// <param name="ScannedProjectCount">The number of visible projects diagnosed.</param>
+/// <param name="ScannedProjectCount">The number of projects selected for attempted diagnosis, including unavailable diagnostics.</param>
 /// <param name="DiagnosticUnavailable">The number of scanned diagnostics that were unavailable.</param>
 internal sealed record ProjectsMcpWarningScan(
     IReadOnlyList<ProjectsMcpWarningQueueItem> Warnings,
