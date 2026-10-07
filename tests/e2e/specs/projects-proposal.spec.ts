@@ -3,6 +3,7 @@ import { queryHeaders } from '../support/helpers/correlation.js';
 import type { LiveFixtureGraph } from '../support/helpers/live-fixtures-api-client.js';
 import {
   confirmNewProjectProposal,
+  getProjectOperatorDiagnostics,
   proposeNewProject,
   type ConfirmNewProjectProposalInput,
   type ProjectCreationProposalInput,
@@ -16,9 +17,10 @@ import {
  * reverse order by `liveCleanup`, which preserves the primary failure.
  */
 test.describe('Projects new-project proposal', () => {
+  // Assertion messages land in JUnit/HTML artifacts, so they carry metadata-only problem codes, never the body.
   function safeFailureSummary(body: unknown): string {
     const problem = body as { category?: unknown; details?: { rejectedField?: unknown } };
-    return `category=${String(problem?.category ?? 'none')}, rejectedField=${String(problem?.details?.rejectedField ?? 'none')}, body=${JSON.stringify(body)}`;
+    return `category=${String(problem?.category ?? 'none')}, rejectedField=${String(problem?.details?.rejectedField ?? 'none')}`;
   }
 
   function proposalRequest(graph: LiveFixtureGraph, overrides: Partial<ProjectCreationProposalInput> = {}): ProjectCreationProposalInput {
@@ -184,24 +186,42 @@ test.describe('Projects new-project proposal', () => {
   });
 
   liveAppHostTest('confirms a NoMatch proposal through command-async create, conversation assignment, folder, and file links (AC2,4,5,7)', async ({
+    apiRequest,
     authToken,
     liveCleanup,
+    recurse,
     request,
     requestIdentity,
     tenantContext,
     liveFixtureGraph,
   }) => {
+    // Tracked before any status assertion: a partially accepted confirm must still be archived.
+    liveCleanup.trackProject(liveFixtureGraph.proposalProjectId, 'proposal');
     const { status, body } = await confirmNewProjectProposal(
       request,
       tenantContext.tenantId,
       confirmRequest(liveFixtureGraph),
       { authToken, ...requestIdentity('proposal-confirm') },
     );
-    if (status === 202) liveCleanup.trackProject(liveFixtureGraph.proposalProjectId, 'proposal');
 
     expect(status, safeFailureSummary(body)).toBe(202);
     expect(body.correlationId).toBeTruthy();
     assertNoProposalPayloadLeakage(JSON.stringify(body), tenantContext.tenantId, liveFixtureGraph);
+
+    // 202 is only an acknowledgement: the created Project must converge with its folder and file links.
+    await recurse(
+      () => getProjectOperatorDiagnostics(
+        apiRequest,
+        tenantContext.tenantId,
+        liveFixtureGraph.proposalProjectId,
+        { authToken, freshness: 'eventually_consistent' },
+      ),
+      ({ status: diagnosticsStatus, body: diagnostics }) => diagnosticsStatus === 200
+        && diagnostics.lifecycleState === 'active'
+        && [liveFixtureGraph.proposalFolderId, liveFixtureGraph.proposalFileReferenceId]
+          .every((id) => diagnostics.references.some((reference) => reference.referenceId === id)),
+      { timeout: 30_000, interval: 1_000, log: 'Waiting for the confirmed proposal Project to converge with its folder and file' },
+    );
   });
 
   liveAppHostTest('same root idempotency key with a different confirm body returns conflict without duplicate writes (AC7)', async ({
@@ -214,15 +234,19 @@ test.describe('Projects new-project proposal', () => {
   }) => {
     // Both requests share one attempt-scoped idempotency root; correlation/task identities differ.
     const { idempotencyKey } = requestIdentity('proposal-retry');
+    // Tracked before any status assertion: a partially accepted confirm must still be archived.
+    liveCleanup.trackProject(liveFixtureGraph.proposalRetryProjectId, 'proposal-retry');
     const first = await confirmNewProjectProposal(
       request,
       tenantContext.tenantId,
       confirmRequest(liveFixtureGraph, { projectId: liveFixtureGraph.proposalRetryProjectId }),
       { authToken, ...requestIdentity('proposal-retry-first'), idempotencyKey },
     );
-    if (first.status === 202) liveCleanup.trackProject(liveFixtureGraph.proposalRetryProjectId, 'proposal-retry');
     expect(first.status, safeFailureSummary(first.body)).toBe(202);
 
+    // The changed body carries conversation evidence only. Once the first Project's folder and file
+    // links converge, they would legitimately match a repeated folder/file proposal, so a changed
+    // body that repeated them would observe that match instead of the idempotency binding.
     const conflict = await confirmNewProjectProposal(
       request,
       tenantContext.tenantId,
@@ -232,6 +256,9 @@ test.describe('Projects new-project proposal', () => {
           displayName: 'synthetic-project-beta',
           metadataClass: 'tenant_sensitive',
         },
+        folder: undefined,
+        fileReferences: [],
+        fileReferenceIds: [],
       }),
       { authToken, ...requestIdentity('proposal-retry-conflict'), idempotencyKey },
     );

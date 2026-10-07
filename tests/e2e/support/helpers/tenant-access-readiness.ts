@@ -30,9 +30,10 @@ export function authorityFromAccessToken(accessToken: string, configuredTenant?:
 /**
  * Serial readiness gate used once by Playwright global setup. Tenant command rejections (for example
  * an already-existing tenant or membership) are tolerated only when the outer Projects authorization
- * response then converges: the authorized list read returns HTTP 200 and an intentionally invalid
- * create returns HTTP 400 from body validation, which the API evaluates only after authorization.
- * Nothing is written to a projection directly.
+ * response then converges: the list read passes authorization (HTTP 200, or `read_model_unavailable`
+ * for a tenant with no projected Project yet) and an intentionally invalid create returns HTTP 400
+ * from body validation, which the API evaluates only after authorization. Nothing is written to a
+ * projection directly.
  */
 export async function ensureProjectsTenantAccess(options: {
   eventStore: APIRequestContext;
@@ -70,15 +71,24 @@ export async function ensureProjectsTenantAccess(options: {
     ],
   ] as const) {
     const stem = stableRequestId(options.runId, commandType, options.authority.tenantId, options.authority.principalId);
-    results.push(
-      await submitAndWaitForTenantCommand(options.eventStore, options.authToken, {
-        messageId: `message-${stem}`,
-        tenantId: options.authority.tenantId,
-        commandType,
-        payload,
-        correlationId: `correlation-${stem}`,
-      }, timeoutMs),
-    );
+    try {
+      results.push(
+        await submitAndWaitForTenantCommand(options.eventStore, options.authToken, {
+          messageId: `message-${stem}`,
+          tenantId: options.authority.tenantId,
+          commandType,
+          payload,
+          correlationId: `correlation-${stem}`,
+        }, timeoutMs),
+      );
+    } catch (error) {
+      // Keep the diagnostic metadata-only: the command error already carries statuses only.
+      throw new Error(
+        `${error instanceof Error ? error.message : '[tenant-readiness] tenant command failed.'} ` +
+          `initialProjects=${JSON.stringify(initial)}; ` +
+          `completed=${JSON.stringify(results.map((item) => ({ status: item.status.status, statusCode: item.status.statusCode })))}`,
+      );
+    }
   }
 
   const deadline = Date.now() + timeoutMs;
@@ -125,14 +135,21 @@ function collectTenantClaims(claims: Record<string, unknown>): string[] {
 }
 
 interface ProjectsAccessProbe {
-  /** Authorized list read status; 200 proves read authorization against the tenant projection. */
+  /** List read status; anything but 200 or an empty-journal 503 means read access is not ready. */
   listStatus: number;
+  /** Problem category of a 503 list read; `null` for other statuses and transport failures. */
+  listCategory: string | null;
   /** Invalid-create status; 400 proves mutation authorization passed before body validation. */
   createStatus: number;
 }
 
 function isProjectsAccessReady(probe: ProjectsAccessProbe): boolean {
-  return probe.listStatus === 200 && probe.createStatus === 400;
+  // Unauthorized list reads are a safe-denial 404. A tenant with no projected Project has no list
+  // journal yet, and the API reports that as `read_model_unavailable` only after authorization
+  // passed; the first seeded Project creates the journal.
+  const listAuthorized = probe.listStatus === 200
+    || (probe.listStatus === 503 && probe.listCategory === 'read_model_unavailable');
+  return listAuthorized && probe.createStatus === 400;
 }
 
 async function projectsAccessProbe(
@@ -146,18 +163,33 @@ async function projectsAccessProbe(
     'X-Hexalith-Tenant-Id': tenantId,
     'X-Correlation-Id': `tenant-readiness-${stableRequestId(runId, tenantId)}`,
   };
-  const listStatus = await safeStatus(() => projects.get('/api/v1/projects', {
-    headers,
-    failOnStatusCode: false,
-    timeout: 5_000,
-  }));
+  let listCategory: string | null = null;
+  const listStatus = await safeStatus(async () => {
+    const response = await projects.get('/api/v1/projects', {
+      headers,
+      failOnStatusCode: false,
+      timeout: 5_000,
+    });
+    if (response.status() === 503) listCategory = await problemCategory(response);
+    return response;
+  });
   const createStatus = await safeStatus(() => projects.post('/api/v1/projects', {
     headers: { ...headers, 'Idempotency-Key': stableRequestId(runId, tenantId, 'authorization-probe') },
     data: {},
     failOnStatusCode: false,
     timeout: 5_000,
   }));
-  return { listStatus, createStatus };
+  return { listStatus, listCategory, createStatus };
+}
+
+/** Reads only the problem category; the rest of the body is never retained. */
+async function problemCategory(response: { json(): Promise<unknown> }): Promise<string | null> {
+  try {
+    const category = ((await response.json()) as { category?: unknown }).category;
+    return typeof category === 'string' ? category : null;
+  } catch {
+    return null;
+  }
 }
 
 async function safeStatus(send: () => Promise<{ status(): number }>): Promise<number> {

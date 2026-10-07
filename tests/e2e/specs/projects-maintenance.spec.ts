@@ -1,6 +1,6 @@
 import { test as base } from '@playwright/test';
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
-import { ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
+import { openProjectDetailSection, ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
 import { waitForProject } from '../support/helpers/readiness.js';
 
 const FORBIDDEN_MAINTENANCE_MARKERS = [
@@ -33,7 +33,7 @@ test.describe('Projects maintenance (Story 5.9)', () => {
   liveAppHostTest('dry-run an archive shows the expected audit event before execution (UX-DR17/25)', async ({ page, seededProject }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
-    await page.getByTestId('project-detail-tab-actions').click();
+    await openProjectDetailSection(page, 'actions');
     await detail.maintenanceActionSelect.selectOption('archive');
     await page.getByTestId('maintenance-action-dry-run-run').click();
 
@@ -53,7 +53,7 @@ test.describe('Projects maintenance (Story 5.9)', () => {
   }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
-    await page.getByTestId('project-detail-tab-actions').click();
+    await openProjectDetailSection(page, 'actions');
     await detail.maintenanceActionSelect.selectOption('archive');
     await page.getByTestId('maintenance-action-dry-run-run').click();
     await detail.maintenanceConfirm.check();
@@ -74,7 +74,7 @@ test.describe('Projects maintenance (Story 5.9)', () => {
   liveAppHostTest('restore preview and confirmation preserve metadata-only lifecycle semantics', async ({ page, seededProject }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
-    await page.getByTestId('project-detail-tab-actions').click();
+    await openProjectDetailSection(page, 'actions');
     await detail.maintenanceActionSelect.selectOption('restore');
     await detail.maintenanceDryRunRun.click();
 
@@ -90,7 +90,7 @@ test.describe('Projects maintenance (Story 5.9)', () => {
   }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
-    await page.getByTestId('project-detail-tab-actions').click();
+    await openProjectDetailSection(page, 'actions');
 
     await detail.maintenanceActionSelect.selectOption('relink');
     await detail.maintenanceDryRunRun.click();
@@ -106,7 +106,7 @@ test.describe('Projects maintenance (Story 5.9)', () => {
   liveAppHostTest('re-evaluate reloads diagnostics without persisting traces or candidate scores', async ({ page, seededProject }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
-    await page.getByTestId('project-detail-tab-actions').click();
+    await openProjectDetailSection(page, 'actions');
     await detail.maintenanceActionSelect.selectOption('reevaluate');
     await detail.maintenanceDryRunRun.click();
 

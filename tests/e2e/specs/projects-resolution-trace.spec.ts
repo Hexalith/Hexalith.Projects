@@ -1,6 +1,6 @@
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { expectNoA11yViolations } from '../support/helpers/a11y.js';
-import { ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
+import { openProjectDetailSection, ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
 import { test as base } from '@playwright/test';
 
 const FORBIDDEN_TRACE_MARKERS = [
@@ -30,7 +30,7 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
   liveAppHostTest('renders stable selectors and supports the keyboard path', async ({ page, seededProject }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
-    await page.getByTestId('project-detail-tab-resolution').click();
+    await openProjectDetailSection(page, 'resolution');
 
     await expect(detail.resolutionTraceWorkbench).toBeVisible();
     await expect(detail.resolutionTraceMode).toBeVisible();
@@ -50,7 +50,7 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
   liveAppHostTest('runs conversation and attachment traces without leaking payload data', async ({ page, resolutionProjects, liveFixtureGraph }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(resolutionProjects.primary.projectId);
-    await page.getByTestId('project-detail-tab-resolution').click();
+    await openProjectDetailSection(page, 'resolution');
 
     await detail.resolutionTraceConversationId.fill(liveFixtureGraph.existingConversationId);
     await detail.resolutionTraceRun.click();
@@ -79,7 +79,7 @@ test.describe('Project resolution trace workbench (Story 5.6)', () => {
   liveAppHostTest('passes axe accessibility scan after a trace renders', async ({ page, seededProject, liveFixtureGraph }, testInfo) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(seededProject.projectId);
-    await page.getByTestId('project-detail-tab-resolution').click();
+    await openProjectDetailSection(page, 'resolution');
     await detail.resolutionTraceConversationId.fill(liveFixtureGraph.conversationId);
     await detail.resolutionTraceRun.click();
 

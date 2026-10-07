@@ -175,11 +175,38 @@ public sealed class ProposeNewProjectEndpointTests
         EndpointResponse response = await SendConfirmAsync(provider, ConfirmBody()).ConfigureAwait(true);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
-        submitter.Created.Single().IdempotencyKey.ShouldBe(IdempotencyKeyValue + ":create");
-        assignment.Confirmed.Single().Metadata.IdempotencyKey.ShouldBe(IdempotencyKeyValue + ":conversation");
-        submitter.Folders.Single().IdempotencyKey.ShouldBe(IdempotencyKeyValue + ":folder");
-        submitter.Files.Single().IdempotencyKey.ShouldBe(IdempotencyKeyValue + ":file:" + FileIdValue);
+        submitter.Created.Single().IdempotencyKey.ShouldBe(ChildKey(IdempotencyKeyValue, "create"));
+        assignment.Confirmed.Single().Metadata.IdempotencyKey.ShouldBe(ChildKey(IdempotencyKeyValue, "conversation"));
+        submitter.Folders.Single().IdempotencyKey.ShouldBe(ChildKey(IdempotencyKeyValue, "folder"));
+        submitter.Files.Single().IdempotencyKey.ShouldBe(ChildKey(IdempotencyKeyValue, "file:" + FileIdValue));
         submitter.Files.Single().FileMetadata.DisplayName.ShouldBe("Design brief");
+    }
+
+    [Fact]
+    public async Task Confirm_ChildKeysAreEventStoreMessageIdentitiesForAnyCanonicalRoot()
+    {
+        // The root is a valid Projects canonical identifier, but '.' and '_' are not EventStore
+        // message-identity characters; every derived child key must still be accepted by EventStore.
+        const string root = "proposal.root_with.dots_and_underscores";
+        CapturingProjectCommandSubmitter submitter = new();
+        CapturingAssignmentDirectory assignment = new(ProjectConversationAssignmentResult.Accepted("assignment-corr"));
+        using ServiceProvider provider = await BuildProviderAsync(submitter: submitter, assignmentDirectory: assignment).ConfigureAwait(true);
+
+        EndpointResponse response = await SendConfirmAsync(provider, ConfirmBody(), idempotencyKey: root).ConfigureAwait(true);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        string[] childKeys =
+        [
+            submitter.Created.Single().IdempotencyKey,
+            assignment.Confirmed.Single().Metadata.IdempotencyKey,
+            submitter.Folders.Single().IdempotencyKey,
+            submitter.Files.Single().IdempotencyKey,
+        ];
+        childKeys.ShouldAllBe(key => key.Length <= 128
+            && System.Text.RegularExpressions.Regex.IsMatch(key, "^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"));
+        childKeys.Distinct(StringComparer.Ordinal).Count().ShouldBe(childKeys.Length);
+        childKeys[0].ShouldBe(ChildKey(root, "create"));
+        childKeys[3].ShouldBe(ChildKey(root, "file:" + FileIdValue));
     }
 
     [Fact]
@@ -192,7 +219,7 @@ public sealed class ProposeNewProjectEndpointTests
         EndpointResponse response = await SendConfirmAsync(provider, ConfirmBody()).ConfigureAwait(true);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
-        submitter.Created.Single().IdempotencyKey.ShouldBe(IdempotencyKeyValue + ":create");
+        submitter.Created.Single().IdempotencyKey.ShouldBe(ChildKey(IdempotencyKeyValue, "create"));
         submitter.Folders.Count.ShouldBe(1);
         submitter.Files.Count.ShouldBe(1);
     }
@@ -685,7 +712,7 @@ public sealed class ProposeNewProjectEndpointTests
 
         response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
         submitter.Created.Count.ShouldBe(1);
-        submitter.Created.Single().IdempotencyKey.ShouldBe(IdempotencyKeyValue + ":create");
+        submitter.Created.Single().IdempotencyKey.ShouldBe(ChildKey(IdempotencyKeyValue, "create"));
         assignment.Confirmed.Count.ShouldBe(1);
         submitter.Folders.ShouldBeEmpty();
         submitter.Files.ShouldBeEmpty();
@@ -856,6 +883,11 @@ public sealed class ProposeNewProjectEndpointTests
                 provider.GetRequiredService<TimeProvider>(),
                 args.CancellationToken,
             ]);
+
+    // Mirrors the endpoint's EventStore-safe child identity: label plus a digest of (root, child).
+    private static string ChildKey(string root, string child)
+        => child.Split(':', 2)[0] + "-"
+            + Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(root + "\n" + child)))[..40];
 
     private static Task<EndpointResponse> SendConfirmAsync(
         ServiceProvider provider,

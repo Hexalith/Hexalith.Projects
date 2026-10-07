@@ -3,6 +3,7 @@ using Hexalith.FrontComposer.Shell.Extensions;
 using Hexalith.FrontComposer.Shell.Options;
 using Hexalith.Projects.Client;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.UI;
 using Hexalith.Projects.UI.Components;
 using Hexalith.Projects.UI.Diagnostics;
 
@@ -31,21 +32,10 @@ builder.Services.AddHexalithFrontComposerQuickstart(
 builder.Services.AddHexalithDomain<ProjectsFrontComposerDomain>();
 builder.Services.Configure<FcShellOptions>(builder.Configuration.GetSection("Hexalith:Shell"));
 
-bool authEnabled =
-    Uri.TryCreate(builder.Configuration["Authentication:OpenIdConnect:Authority"], UriKind.Absolute, out Uri? oidcAuthority)
-    && !string.IsNullOrWhiteSpace(builder.Configuration["Authentication:OpenIdConnect:ClientId"])
-    && !string.IsNullOrWhiteSpace(builder.Configuration["Authentication:OpenIdConnect:ClientSecret"]);
-
-if (authEnabled)
-{
-    _ = builder.Services.AddHexalithFrontComposerServerSecurity(options => options.UseKeycloak(
-        oidcAuthority!,
-        builder.Configuration["Authentication:OpenIdConnect:ClientId"]!,
-        builder.Configuration["Authentication:OpenIdConnect:ClientSecret"]!,
-        tenantClaimType: "eventstore:current-tenant",
-        userClaimType: "sub"));
-    _ = projectsClient.AddFrontComposerGatewayAuthorization();
-}
+// Configured OIDC composes the FrontComposer cookie/code-flow session and relays the signed-in user's
+// token on every outbound Projects call; absent settings keep auth-disabled local startup, and
+// partial settings fail closed at startup.
+bool authEnabled = builder.Services.AddProjectsUiSecurity(builder.Configuration, projectsClient);
 
 WebApplication app = builder.Build();
 

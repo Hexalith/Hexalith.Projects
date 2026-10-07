@@ -74,7 +74,24 @@ npm run test:live:managed
 Do not preconfigure ports: `BASE_URL`, `API_URL`, `EVENTSTORE_API_URL`, `KEYCLOAK_URL`, and
 `FIXTURE_API_URL` are assigned by Aspire and exported from the single captured graph. The runner
 derives tenant and principal identities from the signed token, then provisions tenant access through
-supported EventStore and Projects APIs. A unique `E2E_RUN_ID` is generated unless explicitly supplied.
+supported EventStore and Projects APIs. A unique `E2E_RUN_ID` (1-64 characters of `[A-Za-z0-9._-]`)
+is generated unless explicitly supplied; the smoke and full phases run as `<run>-smoke` and
+`<run>-full`, so their fixture graphs, Project IDs, and request identities never collide.
+
+Every `aspire wait` is bounded by `E2E_RESOURCE_TIMEOUT_SECONDS` (default `600`). The runner marks
+the AppHost as owned before `aspire start`, so a partial start, a failed phase, or an interruption
+still ends with `aspire stop --apphost <exact AppHost>`; it never uses `aspire stop --all`. It also
+exports `HexalithCommonsRoot` to the root-declared Commons checkout for sibling source builds. When a
+root-declared sibling checkout is not buildable in local Debug source mode, run the lane with
+`CI=true` to build the AppHost in package-reference mode, exactly as the scheduled job does.
+
+Global setup runs once per Playwright invocation. It requires both outer Projects authorization
+responses to converge — the list read passes authorization (`200`, or `503` with category
+`read_model_unavailable` while the tenant has no projected Project yet) and an intentionally invalid
+create returns `400` from validation that runs only after authorization — before any fixture resolves.
+When the token's tenant or membership is missing, it submits `CreateTenant`, `UpdateTenant`, and
+`AddUserToTenant` through the authenticated EventStore command API and polls each to a terminal
+status; it never writes a projection directly.
 
 ## Authentication (real Keycloak / OIDC)
 
@@ -87,10 +104,15 @@ KEYCLOAK_CLIENT_ID=hexalith-eventstore
 TEST_USER_USERNAME=...        TEST_USER_PASSWORD=...
 ```
 
-API fixtures use an OAuth2 resource-owner password grant only for supported setup calls. Browser
-proof performs a real Keycloak authorization-code login and persists only the server session cookie
-in `.auth/` (gitignored). Access, refresh, and identity tokens must never be readable from browser
-local or session storage.
+API fixtures use an OAuth2 resource-owner password grant against the separate
+`hexalith-eventstore` client only for supported setup calls. Browser proof uses the confidential
+`hexalith-projects-ui` client: an anonymous protected route is challenged through the real Keycloak
+authorization-code flow (PKCE), and the UI server relays the signed-in user's token on outbound
+Projects calls. Global setup saves that browser session as Playwright storage state in `.auth/`
+(gitignored): the UI-origin HttpOnly FrontComposer server-session cookies plus the Keycloak-origin
+login cookies, never a token. It is recreated at the start of every live run and the managed runner
+deletes it after each run. Access, refresh, and identity tokens must never be readable from
+browser cookies, local storage, or session storage, and the browser never calls the Projects API.
 
 ## Architecture
 
@@ -112,9 +134,12 @@ tests/e2e/
 
 - **Fixtures** (`merged-fixtures.ts`): one project `test` object. Built on
   `@seontechnologies/playwright-utils` (`apiRequest`, `authToken`, `recurse`, `log`,
-  `interceptNetworkCall`, `networkErrorMonitor`) plus custom `tenantContext` / `seededProject`.
-  `seededProject` creates a project via API, waits for read-model convergence, and **archives it on
-  teardown** (auto-cleanup — Projects has no hard delete).
+  `interceptNetworkCall`, `networkErrorMonitor`) plus custom `tenantContext`, `liveFixtureGraph`,
+  `requestIdentity`, `liveCleanup`, `seededProject`, `referencedProject`, and `resolutionProjects`.
+  Seeded Projects use caller-owned IDs from the attempt graph, wait for read-model convergence, and
+  are **archived to convergence on teardown** (Projects has no hard delete). Tests that create a
+  Project directly register it with `liveCleanup.trackProject(...)`; every request identity comes
+  from `requestIdentity('<operation>')`, never a literal.
 - **Factories** (`support/factories`): `createProjectInput` / `createTenantContext` with `Partial`
   overrides and `faker` for parallel-safe, schema-tolerant data. Metadata only — never sibling payloads.
 - **Helpers** (`support/helpers`): `projects-api-client` (typed v1 calls), `correlation`
@@ -129,8 +154,11 @@ tests/e2e/
   never `waitForTimeout`. Command-async means no read-after-write (TC-3, TC-10).
 - **Isolation:** live tests derive their tenant from the token and provision disjoint IDs from run,
   worker, retry, repeat, and scenario dimensions. The managed lane runs with two workers.
-- **Cleanup:** seeded Projects are archived to convergence and sibling fixture roles are removed in
-  reverse order. Cleanup artifacts contain attempted role and status only.
+- **Cleanup:** seeded Projects are archived to convergence before the sibling graph is removed, and
+  the control resource removes sibling roles in reverse order (`memories`, `folders`,
+  `conversations`). Failed cleanup is attached as `*-cleanup.json` with attempted role and HTTP
+  status only, and fails the test only when the test itself passed, so the primary failure is
+  always preserved.
 - **Determinism:** `reducedMotion: 'reduce'`; deterministic anchors before assertions; flaky
   T3/E2E goes to a **quarantine lane**, never silenced (R8).
 - **Security/privacy:** real Keycloak tokens; assert safe-denial (404 for unauthorized == nonexistent)
@@ -141,8 +169,10 @@ tests/e2e/
 - **Lane:** the scheduled job runs `test:live:managed` with a GitHub-secret test password. The runner
   owns dynamic endpoint discovery, startup/auth smoke, full Chromium execution, and exact teardown.
 - **Reporters:** JUnit (`test-results/junit.xml`) for CI aggregation + HTML (`playwright-report/`).
-- **Retries:** `2` on CI, `0` locally. Live traces are disabled because requests carry real bearer
-  tokens; screenshots/video remain failure diagnostics and must stay metadata-only.
+- **Retries:** `2` on CI, `0` locally; a retry gets new attempt-scoped identities. The live lane keeps
+  metadata-only artifacts: traces are disabled because requests carry real bearer tokens, and video
+  and screenshots are disabled because browser pixels show the real login page and fixture data.
+  JUnit, the HTML report, and role/status cleanup attachments remain.
 - **Browsers:** `npm run install:browsers` in the CI job before `npm run test`.
 - **.NET tiers are not here:** Tier-1/2/3 xUnit v3 tests live inside the `Hexalith.Projects` module
   (`tests/`), run via `dotnet test <Module>.slnx` (and `--collect:"XPlat Code Coverage"`), and are
@@ -155,7 +185,7 @@ tests/e2e/
 - **`Cannot find module '@seontechnologies/playwright-utils/...'`** — run `CI=1 npm ci --ignore-scripts`.
   The pin is
   `^3.14.0` (the documented TEA API). The package is now on 4.x; if you intentionally upgrade, re-verify
-  the fixture subpath imports and `auth-session` function names in `support/`.
+  the fixture subpath imports in `support/`.
 - **Config/TypeScript errors** — ensure `@playwright/test` types are installed; run `npm run typecheck`.
 - **Smoke test can't launch a browser** — run `npm run install:browsers` (`playwright install --with-deps`).
 - **Live journeys show as skipped** — use `npm run test:live:managed`; its live-only reporter fails
@@ -168,6 +198,12 @@ tests/e2e/
   `interceptNetworkCall(...)` **before** `page.goto(...)`.
 - **`waitForProject` times out** — the read model never converged: check the Workers projection host
   and Dapr pub/sub; never paper over it with a sleep.
+- **Global setup times out submitting tenant commands** — EventStore accepted the request but its
+  aggregate actor never activated. Check the `eventstore-dapr-cli` logs with
+  `aspire logs eventstore-dapr-cli --apphost <AppHost>`; repeated `Failed to connect to placement
+  service ... connection reset by peer` means the shared Dapr placement/scheduler control plane is
+  unreachable from the sidecars. That is a host prerequisite, not a product failure: restore the
+  local Dapr control plane (operator action) and rerun the managed lane.
 - **Seed returns safe-denial 404** — confirm the signed token contains a single current-tenant claim;
   global setup provisions and verifies access through supported APIs before fixtures run.
 - **Self-signed cert errors** — local browser/API contexts and live token prefetch trust Aspire's
@@ -175,7 +211,7 @@ tests/e2e/
 
 ## Knowledge base references (TEA fragments applied)
 
-`overview`, `fixtures-composition`, `auth-session`, `api-request`, `recurse`,
+`overview`, `fixtures-composition`, `api-request`, `recurse`,
 `intercept-network-call`, `data-factories`, `network-error-monitor`, `log` — from
 `@seontechnologies/playwright-utils`. See also the system test design at
 `_bmad-output/test-artifacts/test-design-*.md` (risks R1–R13, scenarios F5/F6, ASRs) and the

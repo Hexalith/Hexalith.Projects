@@ -16,9 +16,15 @@ export interface LiveFixtureIdentities extends LiveFixtureDimensions {
   secondaryProjectId: string;
   proposalProjectId: string;
   proposalRetryProjectId: string;
+  /** Project whose sibling conversations deterministically report Stale, Forbidden, and Unavailable trust. */
+  degradedProjectId: string;
   conversationId: string;
   ambiguousConversationId: string;
   existingConversationId: string;
+  staleConversationId: string;
+  forbiddenConversationId: string;
+  /** Degraded conversation whose single read is also slow, so loading states are observable. */
+  unavailableConversationId: string;
   folderId: string;
   secondaryFolderId: string;
   proposalFolderId: string;
@@ -55,9 +61,13 @@ export function createLiveFixtureIdentities(dimensions: LiveFixtureDimensions): 
     secondaryProjectId: id('project-secondary'),
     proposalProjectId: id('project-proposal'),
     proposalRetryProjectId: id('project-proposal-retry'),
+    degradedProjectId: id('project-degraded'),
     conversationId: id('conversation'),
     ambiguousConversationId: id('conversation-ambiguous'),
     existingConversationId: id('conversation-existing'),
+    staleConversationId: id('conversation-stale'),
+    forbiddenConversationId: id('conversation-forbidden'),
+    unavailableConversationId: id('conversation-unavailable'),
     folderId: id('folder'),
     secondaryFolderId: id('folder-secondary'),
     proposalFolderId: id('folder-proposal'),

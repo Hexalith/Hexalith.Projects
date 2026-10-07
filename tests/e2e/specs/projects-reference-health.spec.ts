@@ -1,10 +1,13 @@
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import {
+  archiveProject,
   getProjectContextExplanation,
   getProjectOperatorDiagnostics,
   listProjectConversations,
 } from '../support/helpers/projects-api-client.js';
-import { ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
+import { createTrackedProject } from '../support/fixtures/projects-fixtures.js';
+import { waitForProject } from '../support/helpers/readiness.js';
+import { openProjectDetailSection, ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
 
 const FORBIDDEN_REFERENCE_HEALTH_MARKERS = [
   'tenantId',
@@ -38,8 +41,10 @@ function expectNoReferencePayloadLeakage(serialized: string, tenantId: string): 
  * Story 5.5 critical journeys - Reference Inventory & Health View.
  *
  * These run only in the explicit live lane; the linked conversation/folder/file/memory references
- * come from the attempt-scoped `referencedProject` fixture graph. The assertions bind
- * the Story 5.5 contract: metadata-only API inputs, shared context-evaluation sources,
+ * come from the attempt-scoped `referencedProject` fixture graph, degraded Unauthorized/Stale/
+ * Unavailable rows come from the graph's degraded Project, and Archived rows from archiving the
+ * referenced Project. Conflict is not producible live: Project read models never store a Conflict
+ * reference state (it exists only on rejected commands). The assertions bind the Story 5.5 contract: metadata-only API inputs, shared context-evaluation sources,
  * explicit matrix columns, visible non-color-only states, and read-only safe actions.
  */
 test.describe('Project reference health matrix (Story 5.5)', () => {
@@ -174,7 +179,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
   }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(referencedProject.projectId);
-    await page.getByTestId('project-detail-tab-references').click();
+    await openProjectDetailSection(page, 'references');
 
     await expect(detail.referencesSection).toBeVisible();
     await expect(detail.referenceHealthMatrix).toBeVisible();
@@ -202,7 +207,7 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
   }) => {
     const detail = new ProjectDetailPage(page);
     await detail.goto(referencedProject.projectId);
-    await page.getByTestId('project-detail-tab-references').click();
+    await openProjectDetailSection(page, 'references');
 
     await expect(detail.referenceHealthMatrix).toContainText(/conversation|folder|file|memory/);
     await expect(detail.referenceStateCells.first()).not.toHaveText('');
@@ -216,5 +221,73 @@ test.describe('Project reference health matrix (Story 5.5)', () => {
 
     const bodyText = await page.locator('body').innerText();
     expectNoReferencePayloadLeakage(bodyText, '');
+  });
+  liveAppHostTest('renders degraded sibling trust as Unauthorized, Stale, and Unavailable rows', async ({
+    page,
+    apiRequest,
+    authToken,
+    recurse,
+    tenantContext,
+    liveCleanup,
+    liveFixtureGraph,
+  }) => {
+    const degraded = await createTrackedProject(
+      { apiRequest, authToken, recurse, tenantContext, graph: liveFixtureGraph },
+      liveCleanup,
+      liveFixtureGraph.degradedProjectId,
+      'reference-health-degraded',
+    );
+    const detail = new ProjectDetailPage(page);
+    await detail.goto(degraded.projectId);
+    await openProjectDetailSection(page, 'references');
+
+    // The degraded Project's three fixture conversations report Forbidden, Stale, and Unavailable trust.
+    // Each conversation renders once from the Conversations-backed list and once from context evaluation,
+    // so every matching row must carry the degraded state.
+    for (const [conversationId, state] of [
+      [liveFixtureGraph.forbiddenConversationId, 'Unauthorized'],
+      [liveFixtureGraph.staleConversationId, 'Stale'],
+      [liveFixtureGraph.unavailableConversationId, 'Unavailable'],
+    ] as const) {
+      const rows = detail.referenceHealthRows.filter({ hasText: conversationId });
+      await expect(rows.first()).toBeVisible();
+      const count = await rows.count();
+      for (let index = 0; index < count; index++) {
+        const row = rows.nth(index);
+        await expect(row.getByTestId('project-reference-state')).toContainText(state);
+        await expect(row.getByTestId('project-reference-kind')).toHaveText('conversation');
+        await expect(row.getByTestId('project-reference-reason')).not.toHaveText('');
+        await expect(row.getByRole('button', { name: 'Inspect' })).toHaveAttribute('aria-disabled', 'true');
+      }
+    }
+
+    expectNoReferencePayloadLeakage(await page.locator('body').innerText(), '');
+  });
+
+  liveAppHostTest('renders Archived reference evaluations once the referenced Project is archived', async ({
+    page,
+    apiRequest,
+    authToken,
+    recurse,
+    requestIdentity,
+    tenantContext,
+    referencedProject,
+    liveFixtureGraph,
+  }) => {
+    const archived = await archiveProject(apiRequest, tenantContext.tenantId, referencedProject.projectId, {
+      authToken,
+      ...requestIdentity('reference-health-archive'),
+    });
+    expect(archived.status).toBe(202);
+    await waitForProject(recurse, apiRequest, tenantContext.tenantId, referencedProject.projectId, { authToken }, { lifecycle: 'archived' });
+
+    const detail = new ProjectDetailPage(page);
+    await detail.goto(referencedProject.projectId);
+    await openProjectDetailSection(page, 'references');
+
+    // An archived Project's folder, file, and memory references are excluded by the lifecycle check.
+    for (const referenceId of [liveFixtureGraph.folderId, liveFixtureGraph.fileReferenceId, liveFixtureGraph.memoryReferenceId]) {
+      await expect(detail.referenceHealthRows.filter({ hasText: referenceId }).getByTestId('project-reference-state')).toContainText('Archived');
+    }
   });
 });

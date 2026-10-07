@@ -43,6 +43,12 @@ const linkBody = (projectId: string, graph: LiveFixtureGraph, fileReferenceId = 
 
 const fileReferences = (refs: ReferenceSummary[]) => refs.filter((r) => r.referenceKind === 'file');
 const folderReferences = (refs: ReferenceSummary[]) => refs.filter((r) => r.referenceKind === 'folder');
+// Freshness watermarks advance with every Project event; the folder lane's identity and state must not.
+const folderLane = (refs: ReferenceSummary[]) =>
+  folderReferences(refs).map((reference) => {
+    const { freshness: _freshness, ...identity } = reference as ReferenceSummary & { freshness?: unknown };
+    return identity;
+  });
 
 test.describe('Projects file references (link / unlink)', () => {
   liveAppHostTest('links an authorized file reference (202) and surfaces it as referenceKind=file (FR-9 / AC1,2,7)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject, liveFixtureGraph }) => {
@@ -73,7 +79,7 @@ test.describe('Projects file references (link / unlink)', () => {
       path: `/api/v1/projects/${seededProject.projectId}`,
       headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
     });
-    const folderBefore = folderReferences(before.body.references);
+    const folderBefore = folderLane(before.body.references);
 
     const { status } = await apiRequest({
       method: 'POST',
@@ -99,8 +105,14 @@ test.describe('Projects file references (link / unlink)', () => {
       path: `/api/v1/projects/${seededProject.projectId}`,
       headers: { ...queryHeaders({ authToken }), 'X-Hexalith-Tenant-Id': tenantContext.tenantId },
     });
-    // The folder lane is disjoint from the file lane: linking a file must not add/remove a Project Folder.
-    expect(folderReferences(after.body.references)).toEqual(folderBefore);
+    // The folder lane is disjoint from the file lane. The seeded Project has no folder, so its lane holds only
+    // the pending folder requirement, which converges on its own schedule (possibly between the two reads).
+    const folderAfter = folderLane(after.body.references) as Array<Record<string, unknown>>;
+    // Linking a file never removes or replaces a folder-lane row that already existed ...
+    for (const row of folderBefore) expect(folderAfter).toContainEqual(row);
+    // ... never turns the file's folder into the Project Folder, and never satisfies the requirement.
+    expect(folderAfter.filter((row) => row.referenceId === liveFixtureGraph.folderId)).toEqual([]);
+    expect(folderAfter.every((row) => row.referenceState === 'pending')).toBe(true);
   });
 
   liveAppHostTest('unlinking a file removes only the association, never the Project Folder row (FR-9 / AC4)', async ({ apiRequest, authToken, recurse, tenantContext, seededProject, liveFixtureGraph }) => {

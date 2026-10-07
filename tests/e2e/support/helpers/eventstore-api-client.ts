@@ -26,6 +26,9 @@ export interface TerminalCommandResult {
 
 const TERMINAL_STATUSES = new Set(['Completed', 'Rejected', 'PublishFailed', 'TimedOut']);
 const TRANSIENT_SUBMISSION_STATUSES = new Set([502, 503, 504]);
+// The first command after AppHost start activates the tenant aggregate actor, which takes several
+// seconds; aborting it early and resubmitting never lets activation finish.
+const SUBMISSION_ATTEMPT_TIMEOUT_MS = 30_000;
 
 /** Submits through EventStore's supported authenticated command API and waits for a terminal outcome. */
 export async function submitAndWaitForTenantCommand(
@@ -52,7 +55,7 @@ export async function submitAndWaitForTenantCommand(
           payload: command.payload,
           correlationId: command.correlationId,
         },
-        timeout: 5_000,
+        timeout: Math.max(1_000, Math.min(SUBMISSION_ATTEMPT_TIMEOUT_MS, submissionDeadline - Date.now())),
       });
       submissionStatus = response.status();
     } catch {

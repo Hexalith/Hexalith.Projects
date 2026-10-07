@@ -132,11 +132,33 @@ and `SECURITY_URL` to `KEYCLOAK_URL`, then set `E2E_LIVE_APPHOST=1`. The complet
 credential variables are documented in `tests/e2e/README.md`.
 
 For the repeatable live verification path, use `npm --prefix tests/e2e run test:live:managed`.
-The runner enables `Projects__E2E__LiveFixtures=1`, waits for the core and fixture resources,
-captures `aspire describe` exactly once, exports all five dynamically assigned endpoints, runs the
-two-worker Chromium lane with zero skips, and stops only the exact Projects AppHost on every exit.
-The `live-fixtures` control resource and sibling fixture routes do not exist when the profile is
-disabled. Never publish or enable this profile outside the managed local/scheduled test lane.
+The runner enables `Projects__E2E__LiveFixtures=1`, marks the exact AppHost as owned before
+`aspire start`, waits for the core, sidecar, and fixture resources with an explicit bound
+(`E2E_RESOURCE_TIMEOUT_SECONDS`, default 600), captures `aspire describe` exactly once, exports all
+five dynamically assigned endpoints, runs the startup/session smoke and then the full two-worker
+Chromium lane with zero skips under distinct `<run>-smoke`/`<run>-full` identities, and stops only
+the exact Projects AppHost on every exit, including failures and interruptions. The scheduled CI
+job runs it with `CI=true` so the AppHost builds in package-reference mode, and repeats the
+exact-AppHost stop in an `if: always()` step. Live artifacts are metadata-only: JUnit, the HTML
+report, and role/status cleanup attachments; traces, video, and screenshots are disabled.
+
+With the profile enabled, `conversations`, `folders`, and `memories` are internal role hosts that
+Projects reaches through service discovery, and only the `live-fixtures` control resource exposes an
+external endpoint to the runner. Each role answers the sibling client contract the Projects server
+consumes (published Folders `api/v2/folders`, Conversations `api/v1/conversations`, Memories
+`api/v1/tenants/{tenantId}/cases`) with metadata only; `LiveFixtureSiblingContractTests` pins every
+role by calling it through the Projects adapters and the referenced sibling client packages. The
+`live-fixtures` control resource and sibling fixture routes do
+not exist when the profile is disabled; the AppHost then keeps Projects on its normal sibling
+addresses and Keycloak-enforced authentication. Never publish or enable this profile outside the
+managed local/scheduled test lane.
+
+The Projects UI authenticates through the confidential `hexalith-projects-ui` authorization-code
+client in the checked-in realm. The AppHost wires it with the EventStore Aspire
+`WithOpenIdConnectSecurity` helper; the UI composes FrontComposer server security (HttpOnly cookie
+session, server authentication state, and per-user token relay on the Projects client). Partial
+OpenID Connect settings fail UI startup; only a topology started with `EnableKeycloak=false` runs the
+UI without authentication.
 
 Interpretation:
 

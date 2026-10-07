@@ -1,6 +1,6 @@
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { getProject, listProjects } from '../support/helpers/projects-api-client.js';
-import { ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
+import { openProjectDetailSection, ProjectDetailPage } from '../support/page-objects/project-detail.page.js';
 
 const FORBIDDEN_INVENTORY_MARKERS = [
   'tenantId',
@@ -148,16 +148,16 @@ test.describe('Project inventory and detail views (Story 5.4)', () => {
     await expect(detail.inspector).toBeVisible();
     await expect(detail.metadataSection).toContainText(seededProject.projectId);
 
-    await page.getByTestId('project-detail-tab-setup').click();
+    await openProjectDetailSection(page, 'setup');
     await expect(detail.setupSection).toBeVisible();
-    await page.getByTestId('project-detail-tab-references').click();
+    await openProjectDetailSection(page, 'references');
     await expect(detail.referencesSection).toBeVisible();
-    await page.getByTestId('project-detail-tab-resolution').click();
+    await openProjectDetailSection(page, 'resolution');
     await expect(detail.resolutionTraceWorkbench).toBeVisible();
     await expect(detail.resolutionTraceFeedback).toContainText('No trace has been run yet');
-    await page.getByTestId('project-detail-tab-audit').click();
+    await openProjectDetailSection(page, 'audit');
     await expect(detail.auditSection).toBeVisible();
-    await page.getByTestId('project-detail-tab-actions').click();
+    await openProjectDetailSection(page, 'actions');
     await expect(detail.maintenancePanel).toBeVisible();
     await expect(detail.maintenancePanel.getByRole('heading', { name: 'Maintenance actions' })).toBeVisible();
 

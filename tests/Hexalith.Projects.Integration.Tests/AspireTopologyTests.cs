@@ -112,6 +112,13 @@ public sealed class AspireTopologyTests
     public void LiveFixtureProfileShouldAddNoIngressWhenDisabled()
     {
         IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder();
+
+        // The builder reads environment variables, so an exported Projects__E2E__LiveFixtures must not
+        // turn this disabled-profile assertion into an enabled one.
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            [ProjectsLiveE2EFixtureProfile.EnabledConfigurationKey] = "false",
+        });
         string fixtureProject = FixtureProjectPath();
         IResourceBuilder<ProjectResource> projects = builder.AddProject("projects", fixtureProject);
 
@@ -126,6 +133,37 @@ public sealed class AspireTopologyTests
             || string.Equals(resource.Name, "conversations", StringComparison.Ordinal)
             || string.Equals(resource.Name, "folders", StringComparison.Ordinal)
             || string.Equals(resource.Name, "memories", StringComparison.Ordinal));
+
+        // Fail closed: Projects keeps its production sibling bindings, with no wait on or reference to
+        // a fixture role, and the topology exposes no external ingress.
+        projects.Resource.Annotations.OfType<WaitAnnotation>().ShouldBeEmpty();
+        projects.Resource.Annotations.OfType<ResourceRelationshipAnnotation>().ShouldBeEmpty();
+        projects.Resource.Annotations.OfType<EndpointAnnotation>().ShouldAllBe(static endpoint => !endpoint.IsExternal);
+    }
+
+    /// <summary>Verifies only the explicit values enable the profile; every other value keeps it disabled.</summary>
+    /// <param name="value">The configured profile value.</param>
+    /// <param name="expected">Whether the profile must be enabled.</param>
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData("", false)]
+    [InlineData("false", false)]
+    [InlineData("0", false)]
+    [InlineData("yes", false)]
+    [InlineData("enabled", false)]
+    [InlineData("true", true)]
+    [InlineData("TRUE", true)]
+    [InlineData(" 1 ", true)]
+    public void LiveFixtureProfileShouldEnableOnlyForExplicitValues(string? value, bool expected)
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                [ProjectsLiveE2EFixtureProfile.EnabledConfigurationKey] = value,
+            })
+            .Build();
+
+        ProjectsLiveE2EFixtureProfile.IsEnabled(configuration).ShouldBe(expected);
     }
 
     /// <summary>Verifies the explicit live profile adds all role hosts and one external control ingress.</summary>
@@ -152,6 +190,54 @@ public sealed class AspireTopologyTests
         resourceNames.ShouldContain("folders");
         resourceNames.ShouldContain("memories");
         resourceNames.ShouldContain(ProjectsLiveE2EFixtureProfile.ControlResourceName);
+
+        // Only the runner-facing control resource is external; sibling roles stay internal service-discovery targets.
+        EndpointAnnotation controlEndpoint = control.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem();
+        controlEndpoint.Name.ShouldBe("http");
+        controlEndpoint.IsExternal.ShouldBeTrue();
+        control.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldNotBeEmpty();
+        foreach (string role in new[] { "conversations", "folders", "memories" })
+        {
+            IResource roleResource = builder.Resources.Single(resource => string.Equals(resource.Name, role, StringComparison.Ordinal));
+            roleResource.Annotations.OfType<EndpointAnnotation>().ShouldAllBe(static endpoint => !endpoint.IsExternal);
+            roleResource.Annotations.OfType<HealthCheckAnnotation>().ShouldNotBeEmpty();
+            projects.Resource.Annotations.OfType<WaitAnnotation>()
+                .ShouldContain(wait => string.Equals(wait.Resource.Name, role, StringComparison.Ordinal));
+        }
+    }
+
+    /// <summary>Verifies the AppHost composes the fixture profile through its single gated entry point.</summary>
+    [Fact]
+    public void AppHostShouldComposeFixtureProfileOnlyThroughTheGatedEntryPoint()
+    {
+        string appHost = File.ReadAllText(Path.Combine(ProjectRoot(), "src", "Hexalith.Projects.AppHost", "Program.cs"));
+
+        appHost.ShouldContain("_ = ProjectsLiveE2EFixtureProfile.AddResources(builder, projects);");
+        appHost.ShouldNotContain("FixtureRole");
+        appHost.ShouldNotContain("Hexalith.Projects.E2E.Fixtures");
+    }
+
+    /// <summary>Verifies the AppHost's Projects UI OIDC client matches the confidential client in the checked-in realm.</summary>
+    [Fact]
+    public void AppHostProjectsUiOidcClientShouldMatchTheConfidentialRealmClient()
+    {
+        string root = ProjectRoot();
+        string appHost = File.ReadAllText(Path.Combine(root, "src", "Hexalith.Projects.AppHost", "Program.cs"));
+        using JsonDocument realm = JsonDocument.Parse(File.ReadAllText(Path.Combine(
+            root,
+            "src",
+            "Hexalith.Projects.AppHost",
+            "KeycloakRealms",
+            "hexalith-realm.json")));
+        JsonElement uiClient = realm.RootElement
+            .GetProperty("clients")
+            .EnumerateArray()
+            .Single(static client => client.GetProperty("clientId").GetString() == "hexalith-projects-ui");
+
+        appHost.ShouldContain($"const string projectsUiOidcClientId = \"{uiClient.GetProperty("clientId").GetString()}\";");
+        appHost.ShouldContain($"const string projectsUiOidcClientSecret = \"{uiClient.GetProperty("secret").GetString()}\";");
+        appHost.ShouldContain("projectsUiOidcClientId,");
+        appHost.ShouldContain("projectsUiOidcClientSecret);");
     }
 
     /// <summary>Verifies AppHost-provided OIDC always disables the diagnostic bypass.</summary>

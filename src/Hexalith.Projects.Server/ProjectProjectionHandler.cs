@@ -8,6 +8,7 @@ namespace Hexalith.Projects.Server;
 using System;
 using System.Text.Json;
 
+using Hexalith.EventStore.Contracts.Events;
 using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Contracts.Events;
@@ -24,6 +25,14 @@ internal static class ProjectProjectionHandler
         .GetTypes()
         .Where(static type => !type.IsAbstract && !type.IsInterface && typeof(IProjectEvent).IsAssignableFrom(type))
         .ToDictionary(static type => type.FullName!, StringComparer.Ordinal);
+
+    // EventStore persists rejection results as ordinary stream events; they occupy a sequence number
+    // but never change Project state.
+    private static readonly IReadOnlySet<string> ProjectRejectionEventTypes = typeof(IProjectEvent).Assembly
+        .GetTypes()
+        .Where(static type => !type.IsAbstract && !type.IsInterface && typeof(IRejectionEvent).IsAssignableFrom(type))
+        .Select(static type => type.FullName!)
+        .ToHashSet(StringComparer.Ordinal);
 
     /// <summary>Rebuilds a Project aggregate from the complete ordered event sequence.</summary>
     /// <param name="request">The authoritative aggregate identity and full event history.</param>
@@ -49,8 +58,18 @@ internal static class ProjectProjectionHandler
                 throw new InvalidOperationException("Project projection history is not a complete ordered sequence.");
             }
 
-            if (!string.Equals(eventEnvelope.SerializationFormat, "json", StringComparison.OrdinalIgnoreCase)
-                || !ProjectEventTypes.TryGetValue(eventEnvelope.EventTypeName, out Type? eventType))
+            if (!string.Equals(eventEnvelope.SerializationFormat, "json", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Project projection history contains an unsupported event.");
+            }
+
+            if (ProjectRejectionEventTypes.Contains(eventEnvelope.EventTypeName))
+            {
+                expectedSequence++;
+                continue;
+            }
+
+            if (!ProjectEventTypes.TryGetValue(eventEnvelope.EventTypeName, out Type? eventType))
             {
                 throw new InvalidOperationException("Project projection history contains an unsupported event.");
             }

@@ -165,6 +165,76 @@ public sealed class ProjectsDomainProcessorTests
     }
 
     [Fact]
+    public async Task ProcessArchive_HistoryWithPersistedRejection_SkipsRejectionAndRehydrates()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        DomainServiceCurrentState currentState = new(
+            null,
+            [
+                Persisted(ExistingCreatedEvent(), 1),
+                Persisted(new ProjectRestoreRejected(new ProjectId(ProjectIdValue), Tenant, Contracts.Ui.ReferenceState.Conflict), 2),
+            ],
+            0,
+            2);
+
+        DomainResult result = await processor.ProcessAsync(ArchiveEnvelope(), DaprRoundTrip(currentState)).ConfigureAwait(true);
+
+        result.IsSuccess.ShouldBeTrue();
+        result.Events.Single().ShouldBeOfType<ProjectArchived>();
+    }
+
+    [Fact]
+    public async Task ProcessArchive_FlatProjectStateSnapshotPlusTail_AppliesTailAfterSnapshot()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        ProjectState snapshot = ProjectState.Empty.Apply([ExistingCreatedEvent()], new ProjectIdentity(Tenant, new ProjectId(ProjectIdValue)));
+        DomainServiceCurrentState currentState = new(
+            JsonSerializer.SerializeToElement(snapshot, WebJson),
+            [Persisted(ArchivedEvent(), 2)],
+            1,
+            2);
+
+        DomainResult result = await processor.ProcessAsync(ArchiveEnvelope(), DaprRoundTrip(currentState)).ConfigureAwait(true);
+
+        result.IsRejection.ShouldBeTrue();
+        result.Events.Single().ShouldBeOfType<ProjectArchiveRejected>().Reason.ShouldBe(Contracts.Ui.ReferenceState.Archived);
+    }
+
+    [Fact]
+    public async Task ProcessArchive_NestedSnapshotAwareSnapshotPlusTail_RehydratesSnapshotHistoryRecursively()
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+
+        // EventStore snapshots the whole snapshot-aware state: the snapshot carries the pre-snapshot history.
+        DomainServiceCurrentState snapshot = new(null, [Persisted(ExistingCreatedEvent(), 1)], 0, 1);
+        DomainServiceCurrentState currentState = new(snapshot, [Persisted(ArchivedEvent(), 2)], 1, 2);
+
+        DomainResult result = await processor.ProcessAsync(ArchiveEnvelope(), DaprRoundTrip(currentState)).ConfigureAwait(true);
+
+        result.IsRejection.ShouldBeTrue();
+        result.Events.Single().ShouldBeOfType<ProjectArchiveRejected>().Reason.ShouldBe(Contracts.Ui.ReferenceState.Archived);
+    }
+
+    [Theory]
+    [InlineData("tenant-b", ProjectIdValue)]
+    [InlineData(Tenant, "01HZ9K8YQ3W6V2N4R7T5P0X1ZZ")]
+    public async Task ProcessArchive_HistoryEventFromAnotherStream_Throws(string tenant, string aggregateId)
+    {
+        ProjectsDomainProcessor processor = CreateProcessor();
+        DomainServiceCurrentState currentState = new(
+            null,
+            [
+                Persisted(ExistingCreatedEvent(), 1),
+                Persisted(new ProjectRestoreRejected(new ProjectId(ProjectIdValue), Tenant, Contracts.Ui.ReferenceState.Conflict), 2, tenant, aggregateId),
+            ],
+            0,
+            2);
+
+        _ = await Should.ThrowAsync<InvalidOperationException>(
+            () => processor.ProcessAsync(ArchiveEnvelope(), DaprRoundTrip(currentState))).ConfigureAwait(true);
+    }
+
+    [Fact]
     public async Task ProcessSetProjectFolder_ExistingState_YieldsProjectFolderSet()
     {
         ProjectsDomainProcessor processor = CreateProcessor();
@@ -217,6 +287,47 @@ public sealed class ProjectsDomainProcessorTests
         result.IsRejection.ShouldBeTrue();
         result.Events.Single().ShouldBeOfType<ProjectSetupUpdateRejected>().RejectedField.ShouldBe("requestSchemaVersion");
     }
+
+    private static readonly JsonSerializerOptions WebJson = new(JsonSerializerDefaults.Web);
+
+    private static JsonElement DaprRoundTrip(DomainServiceCurrentState currentState)
+        => JsonSerializer.Deserialize<JsonElement>(JsonSerializer.SerializeToUtf8Bytes(currentState, WebJson), WebJson);
+
+    private static Hexalith.EventStore.Contracts.Events.EventEnvelope Persisted(
+        object payload,
+        long sequence,
+        string tenant = Tenant,
+        string aggregateId = ProjectIdValue)
+        => new(
+            new Hexalith.EventStore.Contracts.Events.EventMetadata(
+                $"message-{sequence}",
+                aggregateId,
+                "Project",
+                tenant,
+                ProjectsServerModule.DomainName,
+                sequence,
+                sequence,
+                DateTimeOffset.UnixEpoch,
+                "corr-history",
+                "key-history",
+                "principal-a",
+                "1.0.0",
+                payload.GetType().FullName!,
+                1,
+                "json"),
+            JsonSerializer.SerializeToUtf8Bytes(payload, payload.GetType()),
+            null);
+
+    private static ProjectArchived ArchivedEvent() => new(
+        Tenant,
+        ProjectIdValue,
+        Contracts.Ui.ProjectLifecycle.Archived,
+        "principal-a",
+        "corr-archived",
+        "task-archived",
+        "key-archived",
+        "sha256:archived",
+        DateTimeOffset.UnixEpoch);
 
     private static ProjectsDomainProcessor CreateProcessor()
         => new(new FixedTimeProvider(DateTimeOffset.UnixEpoch), new AllowingProjectEventStoreAuthorizationValidator());

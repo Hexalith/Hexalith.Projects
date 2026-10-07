@@ -1,5 +1,6 @@
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { queryHeaders } from '../support/helpers/correlation.js';
+import { openProjectDetailSection } from '../support/page-objects/project-detail.page.js';
 
 /**
  * F5 critical journey — audit timeline (FR-21 / F1) + NoPayloadLeakage (NFR-2 / R2).
@@ -40,7 +41,7 @@ test.describe('Projects audit timeline', () => {
 
   liveAppHostTest('audit timeline renders as a screen-reader-readable list and safe export (UX-DR16/18)', async ({ page, seededProject }) => {
     await page.goto(`/projects/${seededProject.projectId}`);
-    await page.getByTestId('project-detail-tab-audit').click();
+    await openProjectDetailSection(page, 'audit');
     await expect(page.getByTestId('audit-timeline')).toBeVisible();
     // Entries are individually addressable for assistive tech.
     await expect(page.getByTestId('audit-timeline-entry').first()).toBeVisible();

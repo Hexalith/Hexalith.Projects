@@ -10,6 +10,7 @@ apphost="$repository_root/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHos
 resource_timeout_seconds="${E2E_RESOURCE_TIMEOUT_SECONDS:-600}"
 describe_file=$(mktemp)
 start_file=$(mktemp)
+browser_session_file="$repository_root/tests/e2e/.auth/projects-ui-browser-session.json"
 started=0
 
 cleanup() {
@@ -19,6 +20,9 @@ cleanup() {
         if ! aspire stop --apphost "$apphost" --non-interactive >/dev/null 2>&1 && test "$result" = 0; then
             result=1
         fi
+        # The browser storage state (UI and Keycloak-origin HttpOnly cookies) never outlives the run that
+        # created it; a run that refused to start never owned it and leaves it alone.
+        rm -f "$browser_session_file"
     fi
     # The captured graph and start output stay local and are never published as artifacts.
     rm -f "$describe_file" "$start_file"
@@ -56,6 +60,13 @@ export HexalithCommonsRoot="${HexalithCommonsRoot:-$repository_root/references/H
 unset BASE_URL API_URL EVENTSTORE_API_URL KEYCLOAK_URL FIXTURE_API_URL TEST_TENANT_ID TEST_PRINCIPAL_ID
 
 cd "$repository_root"
+# Never adopt an AppHost this runner did not start: a running instance would be stopped by this run's
+# teardown and could mask a broken start. `aspire describe` exits 0 with empty JSON when nothing runs,
+# so ownership is decided on the described resources, not the exit status.
+if aspire describe --apphost "$apphost" --format Json --non-interactive 2>/dev/null | jq -e '(.resources // []) | length > 0' >/dev/null 2>&1; then
+    echo "[run-live-apphost] the Projects AppHost is already running; stop it before starting the managed lane." >&2
+    exit 2
+fi
 # Mark the AppHost as owned before starting it, so a partial start is still stopped.
 started=1
 aspire start --apphost "$apphost" --non-interactive --format Json >"$start_file"

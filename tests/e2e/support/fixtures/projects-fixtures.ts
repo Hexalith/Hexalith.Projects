@@ -6,6 +6,7 @@ import {
   getProjectOperatorDiagnostics,
   linkProjectFileReference,
   linkProjectMemory,
+  listProjectConversations,
   resolveProjectFromAttachments,
   setProjectFolder,
 } from '../helpers/projects-api-client.js';
@@ -125,6 +126,30 @@ export function projectArchiveStep(deps: SeedProjectDeps, projectId: string, rol
   };
 }
 
+/**
+ * Creates a caller-owned Project directly from a test. The archive-to-convergence cleanup is
+ * registered before the creation status is asserted, so a partially accepted create cannot leak an
+ * Active Project.
+ */
+export async function createTrackedProject(
+  deps: SeedProjectDeps,
+  liveCleanup: { trackProject(projectId: string, label: string): void },
+  projectId: string,
+  label: string,
+): Promise<ProjectDetail> {
+  const creation = await createProject(
+    deps.apiRequest,
+    deps.tenantContext.tenantId,
+    createProjectInput({ projectId }),
+    requestOptions(deps, `projects:${label}:create`),
+  );
+  liveCleanup.trackProject(projectId, label);
+  if (creation.status !== 202) {
+    throw new Error(`[projects-fixtures] ${label} Project creation was not accepted (status ${creation.status}).`);
+  }
+  return waitForProject(deps.recurse, deps.apiRequest, deps.tenantContext.tenantId, projectId, { authToken: deps.authToken }, { lifecycle: 'active' });
+}
+
 /** Seeds one Project with the full profile-owned metadata graph through supported APIs only. */
 export async function seedReferencedProject(
   deps: SeedProjectDeps,
@@ -177,6 +202,8 @@ export async function seedReferencedProject(
     ),
   );
 
+  // Projects owns the folder/file/memory references; Conversations owns membership (AD-10), so the
+  // existing conversation is observed through the Conversations-backed project conversation list.
   await deps.recurse(
     () => getProjectOperatorDiagnostics(
       deps.apiRequest,
@@ -185,9 +212,21 @@ export async function seedReferencedProject(
       { authToken: deps.authToken, freshness: 'eventually_consistent' },
     ),
     ({ status, body }) => status === 200
-      && [graph.folderId, graph.fileReferenceId, graph.memoryReferenceId, graph.existingConversationId]
+      && [graph.folderId, graph.fileReferenceId, graph.memoryReferenceId]
         .every((id) => body.references.some((reference) => reference.referenceId === id)),
     { timeout: 30_000, interval: 1_000, log: 'Waiting for the referenced Project graph to converge' },
+  );
+  await deps.recurse(
+    () => listProjectConversations(
+      deps.apiRequest,
+      deps.tenantContext.tenantId,
+      project.projectId,
+      { authToken: deps.authToken, freshness: 'eventually_consistent', pageSize: 100 },
+    ),
+    ({ status, body }) => status === 200
+      // The Projects wire form carries the Conversations-owned prefixed identity (`conv:{id}`).
+      && body.items.some((item) => item.conversationId === `conv:${graph.existingConversationId}`),
+    { timeout: 30_000, interval: 1_000, log: 'Waiting for the referenced Project conversation membership' },
   );
   return project;
 }

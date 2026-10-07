@@ -253,7 +253,13 @@ else if (_result?.Feedback is not null)
             return;
         }
 
-        _result = await Details.GetProjectDetailAsync(ProjectId, CancellationToken.None).ConfigureAwait(true);
+        // A reload after a confirmed action refreshes the inspector only when it yields a detail; feedback
+        // (for example a transient read-model miss) keeps the current inspector and its action panel.
+        ProjectDetailLoadResult reloaded = await Details.GetProjectDetailAsync(ProjectId, CancellationToken.None).ConfigureAwait(true);
+        if (reloaded.Detail is not null)
+        {
+            _result = reloaded;
+        }
     }
 
     private static string FreshnessText(ProjectOperatorFreshnessMetadata freshness)

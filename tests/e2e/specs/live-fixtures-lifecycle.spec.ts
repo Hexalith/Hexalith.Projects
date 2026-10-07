@@ -3,6 +3,7 @@ import { request, type TestInfo } from '@playwright/test';
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { createLiveFixtureIdentities } from '../support/factories/live-fixture-identities.js';
 import { CleanupLedger, reportCleanup, setupWithReverseCleanup } from '../support/fixtures/cleanup-evidence.js';
+import { scenarioForTest } from '../support/fixtures/live-fixtures.js';
 import {
   createLiveFixtureGraph,
   deleteLiveFixtureGraph,
@@ -42,7 +43,7 @@ test.describe('live fixture lifecycle', () => {
         workerIndex: testInfo.workerIndex,
         retry: testInfo.retry,
         repeatEachIndex: testInfo.repeatEachIndex,
-        scenario: `${testInfo.file}:${testInfo.title}:manual-cleanup`,
+        scenario: scenarioForTest(testInfo, 'manual-cleanup'),
       }),
       liveFixtureGraph,
     );
@@ -87,7 +88,7 @@ test.describe('live fixture lifecycle', () => {
       workerIndex: testInfo.workerIndex,
       retry: testInfo.retry,
       repeatEachIndex: testInfo.repeatEachIndex,
-      scenario: `${testInfo.file}:${testInfo.title}:invalid`,
+      scenario: scenarioForTest(testInfo, 'invalid'),
     });
     const control = await fixtureControl();
     try {

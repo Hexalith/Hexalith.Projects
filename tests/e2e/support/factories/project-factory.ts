@@ -21,11 +21,22 @@ export interface CreateProjectInput {
 }
 
 export const createProjectInput = (overrides: Partial<CreateProjectInput> = {}): CreateProjectInput => ({
-  name: `${faker.commerce.productAdjective()} ${faker.commerce.department()} Project ${faker.string.alphanumeric(6)}`,
-  description: faker.lorem.sentence(),
-  setupMetadata: `${faker.company.catchPhrase()}. ${faker.lorem.sentence()}`,
+  name: metadataSafe(`${faker.commerce.productAdjective()} ${faker.commerce.department()} Project ${faker.string.alphanumeric(6)}`),
+  // Free-text faker phrases (catch-phrases such as "content-based", lorem words) can contain the
+  // payload markers that metadata-only specs assert absent; hex suffixes cannot spell any of them.
+  description: `Live E2E description ${faker.string.hexadecimal({ length: 12, casing: 'lower', prefix: '' })}`,
+  setupMetadata: `Live E2E setup ${faker.string.hexadecimal({ length: 12, casing: 'lower', prefix: '' })}`,
   ...overrides,
 });
+
+/**
+ * Keeps generated positive metadata inside the Projects safe-metadata profile. Faker phrases such as
+ * "24/7" contain path separators, which the command validator rightly rejects as unrestricted paths;
+ * an unsanitized phrase makes roughly one seeded Project in eighty fail at random.
+ */
+export function metadataSafe(text: string): string {
+  return text.replace(/[\\/:]+/g, ' ').replace(/\.{2,}/g, '.').replace(/\s+/g, ' ').trim();
+}
 
 /** A minimal create input exercising the "name is the only required field" path (FR-1). */
 export const createMinimalProjectInput = (overrides: Partial<CreateProjectInput> = {}): CreateProjectInput => ({

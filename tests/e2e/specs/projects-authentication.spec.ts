@@ -1,7 +1,11 @@
 import type { Page } from '@playwright/test';
 
 import { browserLoginCredentials } from '../support/auth/keycloak-auth-provider.js';
-import { assertServerOnlySession, inspectBrowserSession } from '../support/auth/browser-session.js';
+import {
+  assertServerOnlySession,
+  browserSessionStoragePath,
+  inspectBrowserSession,
+} from '../support/auth/browser-session.js';
 import { expect, liveAppHostTest, test } from '../support/merged-fixtures.js';
 
 /**
@@ -29,14 +33,25 @@ test.describe('Projects browser authentication', () => {
     try {
       const page = await context.newPage();
       const browserTraffic = observeBrowserTraffic(page);
+      // Keycloak may redirect the authorize request to its login-actions form, so the code-flow
+      // parameters are asserted on the authorize request in the redirect chain, not the landed page.
+      const authorizeRequest = page.waitForRequest((request) =>
+        new URL(request.url()).pathname.endsWith('/protocol/openid-connect/auth'));
 
       await page.goto(requireEnv('BASE_URL'), { waitUntil: 'domcontentloaded' });
-      const authorize = new URL(page.url());
+      const authorize = new URL((await authorizeRequest).url());
       expect(authorize.origin).toBe(new URL(requireEnv('KEYCLOAK_URL')).origin);
-      expect(authorize.pathname).toMatch(/\/protocol\/openid-connect\/auth$/);
-      expect(authorize.searchParams.get('response_type')).toBe('code');
+      expect(new URL(page.url()).origin).toBe(new URL(requireEnv('KEYCLOAK_URL')).origin);
       expect(authorize.searchParams.get('client_id')).toBe('hexalith-projects-ui');
-      expect(authorize.searchParams.get('code_challenge_method')).toBe('S256');
+      if (authorize.searchParams.has('request_uri')) {
+        // Pushed authorization request (RFC 9126): the server sends response_type, PKCE, and redirect
+        // parameters over the back channel, so the browser carries only an opaque request URI.
+        expect(authorize.searchParams.get('request_uri')).toMatch(/^urn:ietf:params:oauth:request_uri:/);
+        expect(authorize.searchParams.has('code_challenge')).toBe(false);
+      } else {
+        expect(authorize.searchParams.get('response_type')).toBe('code');
+        expect(authorize.searchParams.get('code_challenge_method')).toBe('S256');
+      }
 
       const credentials = browserLoginCredentials();
       await page.locator('#username').fill(credentials.username);
@@ -46,9 +61,62 @@ test.describe('Projects browser authentication', () => {
       await page.reload({ waitUntil: 'domcontentloaded' });
       expect(new URL(page.url()).origin).toBe(new URL(requireEnv('BASE_URL')).origin);
 
-      expect(browserTraffic.authorizationHeaders).toBe(0);
-      expect(browserTraffic.tokenBearingUrls).toBe(0);
+      const traffic = await browserTraffic.settle();
+      expect(traffic.authorizationHeaders).toBe(0);
+      expect(traffic.tokenBearingUrls).toBe(0);
       assertServerOnlySession(await inspectBrowserSession(page, context, requireEnv('BASE_URL')), 'projects-authentication');
+    } finally {
+      await context.close();
+    }
+  });
+
+  liveAppHostTest('challenges again through Keycloak when the server-session cookie is invalidated', async ({ browser }) => {
+    const baseUrl = requireEnv('BASE_URL');
+    const context = await browser.newContext({ ignoreHTTPSErrors: true, storageState: browserSessionStoragePath });
+    try {
+      // Replace every FrontComposer session cookie (including chunks) with a value the server cannot unprotect.
+      const sessionCookies = (await context.cookies(baseUrl)).filter((cookie) => /FrontComposer/i.test(cookie.name));
+      expect(sessionCookies.length).toBeGreaterThan(0);
+      await context.addCookies(sessionCookies.map((cookie) => ({ ...cookie, value: 'invalidated-session' })));
+
+      const page = await context.newPage();
+      const browserTraffic = observeBrowserTraffic(page);
+      const authorizeRequest = page.waitForRequest((request) =>
+        new URL(request.url()).pathname.endsWith('/protocol/openid-connect/auth'));
+
+      await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
+      const authorize = new URL((await authorizeRequest).url());
+      expect(authorize.origin).toBe(new URL(requireEnv('KEYCLOAK_URL')).origin);
+      expect(authorize.searchParams.get('client_id')).toBe('hexalith-projects-ui');
+
+      // The authorize request proves the invalidated cookie was not accepted as a UI session. Keycloak may
+      // complete the challenge from its own SSO session; when it does, the re-issued session must hold.
+      // Wait for a settled destination: the UI past its OIDC callback, or the Keycloak login form.
+      const uiOrigin = new URL(baseUrl).origin;
+      const settled = await Promise.race([
+        page
+          .waitForURL((url) => url.origin === uiOrigin && !/^\/(signin-|authentication\/)/.test(url.pathname), {
+            waitUntil: 'load',
+            timeout: 30_000,
+          })
+          .then(() => 'ui' as const, () => 'timeout' as const),
+        page
+          .locator('#kc-login')
+          .waitFor({ state: 'visible', timeout: 30_000 })
+          .then(() => 'login' as const, () => 'timeout' as const),
+      ]);
+      expect(settled).not.toBe('timeout');
+      if (settled === 'ui') {
+        await page.reload({ waitUntil: 'load' });
+        expect(new URL(page.url()).origin).toBe(uiOrigin);
+      }
+      const traffic = await browserTraffic.settle();
+      expect(traffic.authorizationHeaders).toBe(0);
+      expect(traffic.tokenBearingUrls).toBe(0);
+      const exposure = await inspectBrowserSession(page, context, baseUrl);
+      expect(exposure.tokenLikeStorageKeys).toEqual([]);
+      expect(exposure.tokenLikeCookieNames).toEqual([]);
+      expect(exposure.scriptReadableSessionCookies).toEqual([]);
     } finally {
       await context.close();
     }
@@ -64,9 +132,10 @@ test.describe('Projects browser authentication', () => {
     await page.reload();
     await expect(page.getByTestId('project-detail-name')).toHaveText(seededProject.name);
 
-    expect(browserTraffic.apiOriginRequests).toBe(0);
-    expect(browserTraffic.authorizationHeaders).toBe(0);
-    expect(browserTraffic.tokenBearingUrls).toBe(0);
+    const traffic = await browserTraffic.settle();
+    expect(traffic.apiOriginRequests).toBe(0);
+    expect(traffic.authorizationHeaders).toBe(0);
+    expect(traffic.tokenBearingUrls).toBe(0);
     assertServerOnlySession(await inspectBrowserSession(page, context, requireEnv('BASE_URL')), 'projects-authentication');
   });
 
@@ -79,17 +148,38 @@ test.describe('Projects browser authentication', () => {
   });
 });
 
-/** Counts browser-originated traffic properties without retaining URLs, headers, or bodies. */
-function observeBrowserTraffic(page: Page): { apiOriginRequests: number; authorizationHeaders: number; tokenBearingUrls: number } {
+interface BrowserTraffic {
+  apiOriginRequests: number;
+  authorizationHeaders: number;
+  tokenBearingUrls: number;
+}
+
+/**
+ * Counts browser-originated traffic properties without retaining URLs, headers, or bodies. Uses
+ * `allHeaders()` because `headers()` omits security-related headers such as Authorization, which
+ * would make the no-Authorization assertion pass vacuously.
+ */
+function observeBrowserTraffic(page: Page): { settle: () => Promise<BrowserTraffic> } {
   const apiOrigin = new URL(requireEnv('API_URL')).origin;
-  const traffic = { apiOriginRequests: 0, authorizationHeaders: 0, tokenBearingUrls: 0 };
+  const traffic: BrowserTraffic = { apiOriginRequests: 0, authorizationHeaders: 0, tokenBearingUrls: 0 };
+  const pending: Promise<void>[] = [];
   page.on('request', (request) => {
     const url = new URL(request.url());
     if (url.origin === apiOrigin) traffic.apiOriginRequests += 1;
-    if (request.headers().authorization) traffic.authorizationHeaders += 1;
     if (/(?:^|[?#&])(?:access_token|id_token|refresh_token)=/.test(`${url.search}${url.hash}`)) traffic.tokenBearingUrls += 1;
+    pending.push(request.allHeaders().then(
+      (headers) => {
+        if (headers.authorization) traffic.authorizationHeaders += 1;
+      },
+      () => undefined,
+    ));
   });
-  return traffic;
+  return {
+    settle: async () => {
+      await Promise.all(pending);
+      return traffic;
+    },
+  };
 }
 
 function requireEnv(name: string): string {

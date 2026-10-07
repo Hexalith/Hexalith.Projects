@@ -1,4 +1,21 @@
-import type { Page, Locator } from '@playwright/test';
+import { expect, type Page, type Locator } from '@playwright/test';
+
+/** Inspector sections rendered by the Project detail page. */
+export type ProjectDetailSection = 'metadata' | 'setup' | 'references' | 'resolution' | 'audit' | 'actions';
+
+/**
+ * Opens one Project detail inspector section. The page is prerendered before its Blazor Server
+ * circuit attaches, and a tab click during prerender is silently dropped, so the click is retried
+ * until the section's tab panel renders. Clicking an already-selected tab is idempotent.
+ */
+export async function openProjectDetailSection(page: Page, section: ProjectDetailSection): Promise<void> {
+  const tab = page.getByTestId(`project-detail-tab-${section}`);
+  const panel = page.getByTestId(`project-detail-section-${section}`);
+  await expect(async () => {
+    await tab.click();
+    await expect(panel).toBeVisible({ timeout: 1_000 });
+  }).toPass({ timeout: 30_000, intervals: [250, 500, 1_000] });
+}
 
 /**
  * Optional Page Object for the Project Detail console view (UX-DR7 / UX-DR13).
@@ -193,6 +210,11 @@ export class ProjectDetailPage {
     this.maintenanceSubmit = page.getByTestId('maintenance-action-submit');
     this.maintenanceFeedback = page.getByTestId('maintenance-action-feedback');
     this.maintenanceAuditEvent = page.getByTestId('maintenance-action-audit-event');
+  }
+
+  /** Opens one inspector section once the interactive circuit accepts the tab click. */
+  async openSection(section: ProjectDetailSection): Promise<void> {
+    await openProjectDetailSection(this.page, section);
   }
 
   async goto(projectId: string): Promise<void> {

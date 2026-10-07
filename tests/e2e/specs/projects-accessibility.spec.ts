@@ -1,6 +1,7 @@
 import { test, liveAppHostTest, expect } from '../support/merged-fixtures.js';
 import { expectNoA11yViolations } from '../support/helpers/a11y.js';
 import { test as base, type Page } from '@playwright/test';
+import { openProjectDetailSection } from '../support/page-objects/project-detail.page.js';
 
 /**
  * F6 — Operational console WCAG 2.2 AA hardening (UX-DR27).
@@ -25,7 +26,7 @@ const consoleViews: ConsoleView[] = [
     anchorTestId: 'project-detail-section-references',
     prepare: async (page: Page) => {
       await page.getByTestId('project-diagnostic-header').waitFor({ state: 'visible' });
-      await page.getByTestId('project-detail-tab-references').click();
+      await openProjectDetailSection(page, 'references');
     },
   },
   {
@@ -34,7 +35,7 @@ const consoleViews: ConsoleView[] = [
     anchorTestId: 'project-resolution-trace-workbench',
     prepare: async (page: Page) => {
       await page.getByTestId('project-diagnostic-header').waitFor({ state: 'visible' });
-      await page.getByTestId('project-detail-tab-resolution').click();
+      await openProjectDetailSection(page, 'resolution');
     },
   },
   {
@@ -43,7 +44,7 @@ const consoleViews: ConsoleView[] = [
     anchorTestId: 'audit-timeline',
     prepare: async (page: Page) => {
       await page.getByTestId('project-diagnostic-header').waitFor({ state: 'visible' });
-      await page.getByTestId('project-detail-tab-audit').click();
+      await openProjectDetailSection(page, 'audit');
     },
   },
 ];

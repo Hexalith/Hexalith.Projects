@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+import type { FullConfig, FullResult, Suite, TestCase, TestResult } from '@playwright/test/reporter';
+
+import ZeroLiveSkipReporter from '../reporters/zero-live-skip-reporter.js';
 import {
   createProjectInput,
   createMinimalProjectInput,
@@ -54,3 +57,36 @@ test.describe('framework self-check (no app required)', () => {
     await expectNoA11yViolations(page, testInfo);
   });
 });
+
+/**
+ * Reporter self-check — proves the live lane's zero-skip gate fails empty and skipped runs and passes a
+ * clean run, without starting any app. The live flag is set only for the call and restored afterwards.
+ */
+test.describe('zero-live-skip reporter self-check (no app required)', () => {
+  test('fails a live run that skipped a collected case', async () => {
+    expect(await runReporter(['passed', 'skipped'])).toEqual({ status: 'failed' });
+  });
+
+  test('fails a live run that collected no cases', async () => {
+    expect(await runReporter([])).toEqual({ status: 'failed' });
+  });
+
+  test('accepts a clean live run', async () => {
+    expect(await runReporter(['passed', 'passed'])).toBeUndefined();
+  });
+});
+
+async function runReporter(statuses: TestResult['status'][]): Promise<{ status?: FullResult['status'] } | undefined> {
+  const previous = process.env.E2E_LIVE_APPHOST;
+  process.env.E2E_LIVE_APPHOST = '1';
+  try {
+    const tests = statuses.map((_, index) => ({ id: `case-${index}` }) as TestCase);
+    const reporter = new ZeroLiveSkipReporter();
+    reporter.onBegin({} as FullConfig, { allTests: () => tests } as unknown as Suite);
+    statuses.forEach((status, index) => reporter.onTestEnd(tests[index]!, { status } as TestResult));
+    return await reporter.onEnd({ status: 'passed' } as FullResult);
+  } finally {
+    if (previous === undefined) delete process.env.E2E_LIVE_APPHOST;
+    else process.env.E2E_LIVE_APPHOST = previous;
+  }
+}

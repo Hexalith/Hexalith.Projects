@@ -139,7 +139,7 @@ test.describe('Projects warnings queue and operational dashboard (Story 5.8)', (
     const warnings = new ProjectDetailPage(page);
     await warnings.gotoWarnings();
 
-    await expectNoA11yViolations(page, testInfo, { include: 'main' });
+    await expectNoA11yViolations(page, testInfo, { include: '[role="main"]' });
   });
 });
 

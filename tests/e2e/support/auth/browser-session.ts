@@ -2,11 +2,18 @@ import { resolve } from 'node:path';
 
 import type { BrowserContext, Page } from '@playwright/test';
 
-/** Server-session storage state used by live Chromium; it contains only HttpOnly cookies. */
+/**
+ * Live Chromium storage state written by global setup: the UI-origin HttpOnly server-session cookies,
+ * the Keycloak-origin login cookies (Secure, scoped to the realm path), and non-credential UI
+ * preferences. It never holds an access, refresh, or identity token, and the managed runner deletes it
+ * after each run.
+ */
 export const browserSessionStoragePath = resolve('.auth', 'projects-ui-browser-session.json');
 
 const TOKEN_LIKE_VALUE = /access_token|refresh_token|id_token|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/i;
 const SESSION_LIKE_COOKIE = /cookie|session|auth|token|oidc|nonce|correlation/i;
+// Credential-bearing storage keys; generic names such as UI design tokens are not credentials.
+const TOKEN_LIKE_KEY = /(?:access|refresh|id)[_-]?token|bearer|oidc|jwt/i;
 
 /** Metadata-only summary of the browser-visible session surface; never contains cookie values. */
 export interface BrowserSessionExposure {
@@ -45,7 +52,7 @@ export async function inspectBrowserSession(page: Page, context: BrowserContext,
       .filter((cookie) => TOKEN_LIKE_VALUE.test(cookie.value) && !cookie.httpOnly)
       .map((cookie) => cookie.name),
     tokenLikeStorageKeys: storage.entries
-      .filter(([key, value]) => TOKEN_LIKE_VALUE.test(key) || TOKEN_LIKE_VALUE.test(value) || /token/i.test(key))
+      .filter(([key, value]) => TOKEN_LIKE_VALUE.test(key) || TOKEN_LIKE_VALUE.test(value) || TOKEN_LIKE_KEY.test(key))
       .map(([key]) => key),
   };
 }

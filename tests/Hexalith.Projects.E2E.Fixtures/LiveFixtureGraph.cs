@@ -21,9 +21,13 @@ namespace Hexalith.Projects.E2E.Fixtures;
 /// <param name="SecondaryProjectId">The caller-owned secondary Project identity.</param>
 /// <param name="ProposalProjectId">The caller-owned proposal Project identity.</param>
 /// <param name="ProposalRetryProjectId">The caller-owned proposal retry Project identity.</param>
+/// <param name="DegradedProjectId">The caller-owned Project whose sibling conversations report degraded trust.</param>
 /// <param name="ConversationId">The unlinked conversation identity.</param>
 /// <param name="AmbiguousConversationId">The ambiguous conversation identity.</param>
 /// <param name="ExistingConversationId">The conversation already assigned to the primary Project.</param>
+/// <param name="StaleConversationId">The degraded-Project conversation whose projection is stale.</param>
+/// <param name="ForbiddenConversationId">The degraded-Project conversation the caller may not read.</param>
+/// <param name="UnavailableConversationId">The degraded-Project conversation whose read model is unavailable and slow.</param>
 /// <param name="FolderId">The primary folder identity.</param>
 /// <param name="SecondaryFolderId">The secondary folder identity.</param>
 /// <param name="ProposalFolderId">The proposal folder identity.</param>
@@ -50,9 +54,13 @@ public sealed record LiveFixtureGraph(
     string SecondaryProjectId,
     string ProposalProjectId,
     string ProposalRetryProjectId,
+    string DegradedProjectId,
     string ConversationId,
     string AmbiguousConversationId,
     string ExistingConversationId,
+    string StaleConversationId,
+    string ForbiddenConversationId,
+    string UnavailableConversationId,
     string FolderId,
     string SecondaryFolderId,
     string ProposalFolderId,
@@ -105,9 +113,13 @@ public sealed record LiveFixtureGraph(
         yield return SecondaryProjectId;
         yield return ProposalProjectId;
         yield return ProposalRetryProjectId;
+        yield return DegradedProjectId;
         yield return ConversationId;
         yield return AmbiguousConversationId;
         yield return ExistingConversationId;
+        yield return StaleConversationId;
+        yield return ForbiddenConversationId;
+        yield return UnavailableConversationId;
         yield return FolderId;
         yield return SecondaryFolderId;
         yield return ProposalFolderId;

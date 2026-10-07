@@ -33,7 +33,7 @@ import type { ApiRequest } from './helpers/projects-api-client.js';
  *
  * Available fixtures:
  *  - apiRequest          typed HTTP client (api-request)
- *  - authToken / authOptions   real Keycloak token (auth-session)
+ *  - authToken           direct Keycloak API-fixture token (ROPC client; offline placeholder otherwise)
  *  - recurse             deterministic polling (recurse) — use for read-model convergence
  *  - log                 report-integrated step logging (log)
  *  - interceptNetworkCall  network-first spy/stub (intercept-network-call)

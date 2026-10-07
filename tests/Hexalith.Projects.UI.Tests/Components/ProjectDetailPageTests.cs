@@ -145,9 +145,43 @@ public sealed class ProjectDetailPageTests : FrontComposerTestBase
         cut.Find("[data-testid='maintenance-action-submit']").Click();
 
         cut.WaitForAssertion(() => cut.Find("[data-testid='project-lifecycle-badge']").TextContent.ShouldContain("Archived"));
+        cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("Succeeded");
+        cut.Find("[data-testid='maintenance-action-feedback']").TextContent.ShouldContain("confirmed");
         source.Received(2).GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>());
         cut.Markup.ShouldNotContain("token");
         cut.Markup.ShouldNotContain("ProblemDetails");
+    }
+
+    [Fact]
+    public void ConfirmedActionKeepsTheInspectorWhenTheReloadReturnsFeedback()
+    {
+        IProjectDetailSource source = Substitute.For<IProjectDetailSource>();
+        source.GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>())
+            .Returns(
+                Task.FromResult(ProjectDetailLoadResult.FromDetail(Detail())),
+                Task.FromResult(ProjectDetailLoadResult.FromFeedback(ProjectConsoleFeedback.Warning("data_unavailable", "corr-002"))));
+        IProjectMaintenanceActionSource maintenance = Substitute.For<IProjectMaintenanceActionSource>();
+        maintenance.ExecuteAsync(Arg.Any<ProjectMaintenanceActionExecutionRequest>(), Arg.Any<IProgress<string>?>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ProjectMaintenanceActionExecutionResult.Confirmed("corr-001", "task-001", "audit-archive")));
+        Services.AddSingleton(source);
+        Services.AddSingleton(Substitute.For<IProjectResolutionTraceSource>());
+        Services.AddSingleton(Substitute.For<IProjectAuditTimelineSource>());
+        Services.AddSingleton(maintenance);
+
+        IRenderedComponent<ProjectDiagnostics> cut = Render<ProjectDiagnostics>(parameters => parameters
+            .Add(p => p.ProjectId, "project-001"));
+
+        cut.WaitForAssertion(() => cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull());
+        cut.Find("[data-testid='project-detail-tab-actions']").Click();
+        cut.Find("[data-testid='maintenance-action-dry-run-run']").Click();
+        cut.Find("[data-testid='maintenance-action-confirm']").Change(true);
+        cut.Find("[data-testid='maintenance-action-submit']").Click();
+
+        cut.WaitForAssertion(() => source.Received(2).GetProjectDetailAsync("project-001", Arg.Any<CancellationToken>()));
+        cut.WaitForAssertion(() => cut.Find("[data-testid='maintenance-action-state']").TextContent.ShouldContain("Succeeded"));
+        cut.Find("[data-testid='maintenance-action-feedback']").TextContent.ShouldContain("confirmed");
+        cut.Find("[data-testid='project-detail-inspector']").ShouldNotBeNull();
+        cut.Find("[data-testid='project-lifecycle-badge']").TextContent.ShouldContain("Active");
     }
 
     [Fact]

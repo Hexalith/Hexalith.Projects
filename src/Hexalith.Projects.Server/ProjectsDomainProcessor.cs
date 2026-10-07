@@ -49,6 +49,14 @@ public sealed class ProjectsDomainProcessor(
         .Where(static type => !type.IsAbstract && !type.IsInterface && typeof(IProjectEvent).IsAssignableFrom(type))
         .ToDictionary(static type => type.FullName!, StringComparer.Ordinal);
 
+    // EventStore persists rejection results as ordinary stream events. They record a refused command and
+    // never change Project state, so rehydration skips them after the stream-identity checks.
+    private static readonly IReadOnlySet<string> ProjectRejectionEventTypes = typeof(IProjectEvent).Assembly
+        .GetTypes()
+        .Where(static type => !type.IsAbstract && !type.IsInterface && typeof(IRejectionEvent).IsAssignableFrom(type))
+        .Select(static type => type.FullName!)
+        .ToHashSet(StringComparer.Ordinal);
+
     private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
     private readonly IProjectEventStoreAuthorizationValidator _authorizationValidator =
         authorizationValidator ?? throw new ArgumentNullException(nameof(authorizationValidator));
@@ -700,47 +708,41 @@ public sealed class ProjectsDomainProcessor(
             : envelope.CorrelationId;
 
     private static ProjectState RehydrateProjectState(CommandEnvelope command, object? currentState)
-    {
-        DomainServiceCurrentState? snapshotAwareState = currentState switch
+        => currentState switch
         {
-            null => null,
-            ProjectState => null,
-            DomainServiceCurrentState typed => typed,
-            JsonElement json when IsSnapshotAwareState(json) =>
-                json.Deserialize<DomainServiceCurrentState>(StateJsonOptions)
-                    ?? throw new InvalidOperationException("Unable to deserialize Project aggregate state."),
-            _ => null,
+            null => ProjectState.Empty,
+            ProjectState typedState => typedState,
+            DomainServiceCurrentState snapshotAware => RehydrateFromCurrentState(command, snapshotAware),
+            JsonElement json when IsSnapshotAwareState(json) => RehydrateFromCurrentState(command, DeserializeCurrentState(json)),
+            JsonElement json when json.ValueKind == JsonValueKind.Null => ProjectState.Empty,
+            JsonElement json => json.Deserialize<ProjectState>(StateJsonOptions)
+                ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
+            _ => JsonSerializer.SerializeToElement(currentState, currentState.GetType(), StateJsonOptions)
+                .Deserialize<ProjectState>(StateJsonOptions)
+                ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
         };
 
-        if (currentState is ProjectState typedState)
-        {
-            return typedState;
-        }
-
-        if (snapshotAwareState is null)
-        {
-            return currentState switch
-            {
-                null => ProjectState.Empty,
-                JsonElement json when json.ValueKind == JsonValueKind.Null => ProjectState.Empty,
-                JsonElement json => json.Deserialize<ProjectState>(StateJsonOptions)
-                    ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
-                _ => JsonSerializer.SerializeToElement(currentState, currentState.GetType(), StateJsonOptions)
-                    .Deserialize<ProjectState>(StateJsonOptions)
-                    ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
-            };
-        }
-
-        ProjectState state = DeserializeSnapshot(snapshotAwareState.SnapshotState);
+    private static ProjectState RehydrateFromCurrentState(CommandEnvelope command, DomainServiceCurrentState currentState)
+    {
+        ProjectState state = DeserializeSnapshot(command, currentState.SnapshotState);
         ProjectIdentity identity = new(command.TenantId, new ProjectId(command.AggregateId));
 
-        foreach (Hexalith.EventStore.Contracts.Events.EventEnvelope eventEnvelope in snapshotAwareState.Events)
+        foreach (Hexalith.EventStore.Contracts.Events.EventEnvelope eventEnvelope in currentState.Events)
         {
             Hexalith.EventStore.Contracts.Events.EventMetadata metadata = eventEnvelope.Metadata;
             if (!string.Equals(metadata.TenantId, command.TenantId, StringComparison.Ordinal)
                 || !string.Equals(metadata.Domain, command.Domain, StringComparison.Ordinal)
-                || !string.Equals(metadata.AggregateId, command.AggregateId, StringComparison.Ordinal)
-                || !ProjectEventTypes.TryGetValue(metadata.EventTypeName, out Type? eventType))
+                || !string.Equals(metadata.AggregateId, command.AggregateId, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("Project aggregate history contains invalid event metadata.");
+            }
+
+            if (ProjectRejectionEventTypes.Contains(metadata.EventTypeName))
+            {
+                continue;
+            }
+
+            if (!ProjectEventTypes.TryGetValue(metadata.EventTypeName, out Type? eventType))
             {
                 throw new InvalidOperationException("Project aggregate history contains invalid event metadata.");
             }
@@ -753,18 +755,24 @@ public sealed class ProjectsDomainProcessor(
         return state;
     }
 
-    private static ProjectState DeserializeSnapshot(object? snapshotState)
+    // EventStore snapshots the whole snapshot-aware current state, so a snapshot can itself carry an
+    // older snapshot plus the events folded into it; rehydrate it recursively before applying the tail.
+    private static ProjectState DeserializeSnapshot(CommandEnvelope command, object? snapshotState)
         => snapshotState switch
         {
             null => ProjectState.Empty,
             ProjectState typed => typed,
+            DomainServiceCurrentState nested => RehydrateFromCurrentState(command, nested),
+            JsonElement json when IsSnapshotAwareState(json) => RehydrateFromCurrentState(command, DeserializeCurrentState(json)),
             JsonElement json when json.ValueKind == JsonValueKind.Null => ProjectState.Empty,
             JsonElement json => json.Deserialize<ProjectState>(StateJsonOptions)
                 ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
-            _ => JsonSerializer.SerializeToElement(snapshotState, snapshotState.GetType(), StateJsonOptions)
-                .Deserialize<ProjectState>(StateJsonOptions)
-                ?? throw new InvalidOperationException("Unable to deserialize Project aggregate snapshot."),
+            _ => DeserializeSnapshot(command, JsonSerializer.SerializeToElement(snapshotState, snapshotState.GetType(), StateJsonOptions)),
         };
+
+    private static DomainServiceCurrentState DeserializeCurrentState(JsonElement json)
+        => json.Deserialize<DomainServiceCurrentState>(StateJsonOptions)
+            ?? throw new InvalidOperationException("Unable to deserialize Project aggregate state.");
 
     private static bool IsSnapshotAwareState(JsonElement json)
         => json.ValueKind == JsonValueKind.Object

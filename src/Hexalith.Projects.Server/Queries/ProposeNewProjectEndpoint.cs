@@ -731,8 +731,16 @@ public static partial class ProjectsDomainServiceEndpoints
             _ => SafeDenial(correlationId, taskId),
         };
 
+    // EventStore message identities accept only ASCII letters, digits, and inner hyphens (at most 128
+    // characters), so a child key cannot append a ':'-separated suffix to the caller's root key. The
+    // child key is a bounded digest of the exact (root, child) pair: equivalent retries derive the same
+    // message identity, and distinct children of one root never collide.
     private static string DeriveChildIdempotencyKey(string root, string child)
-        => root + ":" + child;
+    {
+        string label = child.Split(':', 2)[0];
+        byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(root + "\n" + child));
+        return $"{label}-{Convert.ToHexStringLower(digest)[..40]}";
+    }
 
     private static string ComputeConfirmProposalFingerprint(ConfirmNewProjectProposalHttpRequest body)
     {

@@ -16,7 +16,8 @@ import { authorityFromAccessToken, ensureProjectsTenantAccess } from './support/
 
 /**
  * Establishes token-derived tenant readiness once per Playwright invocation, then a real browser
- * authorization-code session whose only persisted state is the HttpOnly server-session cookie.
+ * authorization-code session saved as storage state: the UI-origin HttpOnly server-session cookies
+ * plus the Keycloak-origin login cookies, never a token. The managed runner deletes it after each run.
  */
 async function globalSetup(config: FullConfig): Promise<void> {
   if (process.env.E2E_LIVE_APPHOST !== '1') return;
