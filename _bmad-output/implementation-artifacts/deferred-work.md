@@ -6,7 +6,8 @@ origin: bmad-loop-resolve for spec-6-5-inspect-projects-through-an-authenticated
 location: _bmad-output/implementation-artifacts/spec-6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface.md:31
 severity: critical
 reason: Story 6.5 must not dispatch until its prerequisite record pins accepted Story 6.1–6.4 supported contracts, read models, projections, handlers, identity inputs, and executable G-4 profiles. Close this entry only after every artifact required by the frozen prerequisite gate exists and is accepted; legacy REST and planning-only artifacts never satisfy the gate.
-status: done 2026-09-06
+status: open
+reopened: 2026-10-06 The 2026-09-06 closure was orchestrator bookkeeping, recorded as not proof by the Story 6.5 spec on 2026-09-06 (`8bc91b2`). `prerequisite_record` remains null and Stories 6.1 and 6.4 are blocked, so the closure condition is unmet. Approved by sprint-change-proposal-2026-10-06-epic-6-tracking-reconciliation.md.
 gate: 6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface
 
 ### DW-2: Correct the Hexalith.AI.Tools agent entrypoints to reference `hexalith-git-instructions.md` instead of the absent `hexalith-commit-instructions.md`.
@@ -687,7 +688,8 @@ origin: restored independent obligation from the pre-minimal P1R ledger
 location: Story 6.5 specification and sprint-status.yaml
 source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-sibling-materialization.md
 reason: The Story 6.5 spec records `blocked` while the sprint tracker records `backlog`, so queue consumers do not receive one authoritative state.
-status: open
+status: done
+resolution: 2026-10-06 Approved sprint-change-proposal-2026-10-06-epic-6-tracking-reconciliation.md set the sprint tracker and production-authority guard to `blocked` for Story 6.5, matching its specification; no dispatch, readiness or prerequisite state changed.
 
 ### DW-70: Make retained EventStore 3.97 qualification logs durable.
 

@@ -477,6 +477,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
 
     def test_each_downstream_category_remains_closed(self) -> None:
         accepted = self.accepted_sprint()
+        story_6_5 = "  6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface"
         cases = (
             (
                 "P0 action",
@@ -521,6 +522,28 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                     accepted, "  current_result: NOT_READY", "  current_result: READY"
                 ),
                 "NOT_READY",
+            ),
+            (
+                "Epic 6 completion",
+                self.replace_once(accepted, "  epic-6: in-progress", "  epic-6: done"),
+                "open boundary",
+            ),
+            (
+                "Epic 6 regression",
+                self.replace_once(accepted, "  epic-6: in-progress", "  epic-6: backlog"),
+                "open boundary",
+            ),
+            (
+                "Story 6.5 dispatch",
+                self.replace_once(
+                    accepted, f"{story_6_5}: blocked", f"{story_6_5}: ready-for-dev"
+                ),
+                "open boundary",
+            ),
+            (
+                "Story 6.5 regression",
+                self.replace_once(accepted, f"{story_6_5}: blocked", f"{story_6_5}: backlog"),
+                "open boundary",
             ),
             (
                 "Epic 7",

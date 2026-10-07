@@ -66,12 +66,12 @@ ACCEPTED_ROLES = (
 SELECTED_REFERENCE = "#/selected"
 
 EPIC6_DEVELOPMENT_STATUSES = {
-    "epic-6": "backlog",
+    "epic-6": "in-progress",
     STORY_6_1_KEY: "blocked",
     "6-2-retrieve-conversation-start-setup-with-admission-truth": "done",
     "6-3-retrieve-assembled-project-context-through-supported-read-models": "done",
     "6-4-resolve-projects-with-transient-current-explanations": "blocked",
-    "6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface": "backlog",
+    "6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface": "blocked",
     "6-6-inspect-projects-through-an-authenticated-cli-read-surface": "backlog",
     "6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback": "backlog",
     "6-8-split-hexalith-projects-ui-contracts-from-contracts": "backlog",
