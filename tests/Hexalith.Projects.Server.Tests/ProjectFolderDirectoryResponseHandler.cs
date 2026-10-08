@@ -7,7 +7,7 @@ namespace Hexalith.Projects.Server.Tests;
 
 using System.Net.Http;
 
-/// <summary>Returns queued Folders responses and records task identity headers.</summary>
+/// <summary>Returns queued Folders responses and records routes and task identity headers.</summary>
 /// <param name="responses">The responses returned in request order.</param>
 internal sealed class ProjectFolderDirectoryResponseHandler(IReadOnlyList<HttpResponseMessage> responses) : HttpMessageHandler
 {
@@ -16,9 +16,13 @@ internal sealed class ProjectFolderDirectoryResponseHandler(IReadOnlyList<HttpRe
     /// <summary>Gets the task identities observed on outgoing requests.</summary>
     internal List<string?> TaskIds { get; } = [];
 
+    /// <summary>Gets the public routes observed on outgoing requests.</summary>
+    internal List<string> RequestPaths { get; } = [];
+
     /// <inheritdoc />
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
+        RequestPaths.Add(request.RequestUri?.AbsolutePath ?? string.Empty);
         TaskIds.Add(request.Headers.TryGetValues("X-Hexalith-Task-Id", out IEnumerable<string>? values)
             ? values.FirstOrDefault()
             : null);

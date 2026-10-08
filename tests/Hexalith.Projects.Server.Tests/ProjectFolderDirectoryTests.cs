@@ -36,7 +36,7 @@ public sealed class ProjectFolderDirectoryTests
         result.Outcome.ShouldBe(ProjectFolderValidationOutcome.Accepted);
     }
 
-    /// <summary>Checks task identity headers against the resolved Folders client contract.</summary>
+    /// <summary>Checks the v2 lifecycle and permissions routes and the required task identity.</summary>
     [Fact]
     public async Task ValidateSetProjectFolder_EffectivePermissions_MatchesClientTaskIdContract()
     {
@@ -52,10 +52,11 @@ public sealed class ProjectFolderDirectoryTests
             .ConfigureAwait(true);
 
         result.Outcome.ShouldBe(ProjectFolderValidationOutcome.Accepted);
-        bool supportsTaskId = typeof(FoldersGeneratedClient).GetMethods().Any(method =>
-            method.Name == "GetEffectivePermissionsAsync"
-            && method.GetParameters().Any(parameter => parameter.Name == "x_Hexalith_Task_Id"));
-        handler.TaskIds.ShouldBe([null, supportsTaskId ? "corr-a" : null]);
+        handler.RequestPaths.ShouldBe([
+            $"/api/v2/folders/{FolderId}/lifecycle-status",
+            $"/api/v2/folders/{FolderId}/effective-permissions",
+        ]);
+        handler.TaskIds.ShouldBe([null, "corr-a"]);
     }
 
     [Fact]
@@ -161,13 +162,46 @@ public sealed class ProjectFolderDirectoryTests
         HttpStatusCode statusCode,
         ProjectFolderValidationOutcome expectedOutcome)
     {
-        FoldersProjectFolderDirectory directory = Directory(JsonResponse(statusCode, ProblemJson()));
+        FoldersProjectFolderDirectory directory = Directory(JsonResponse(statusCode, ProblemJson(statusCode)));
 
         ProjectFolderValidationResult result = await directory
             .ValidateSetProjectFolderAsync(ProjectId(), FolderId, "corr-a", TestContext.Current.CancellationToken)
             .ConfigureAwait(true);
 
         result.Outcome.ShouldBe(expectedOutcome);
+    }
+
+    [Theory]
+    [InlineData(HttpStatusCode.Unauthorized, ProjectFolderValidationOutcome.Denied)]
+    [InlineData(HttpStatusCode.NotFound, ProjectFolderValidationOutcome.Denied)]
+    [InlineData(HttpStatusCode.ServiceUnavailable, ProjectFolderValidationOutcome.Unavailable)]
+    public async Task RefreshFolderReference_PermissionsCanonicalStatus_MapsTypedOutcome(
+        HttpStatusCode statusCode,
+        ProjectFolderValidationOutcome expectedOutcome)
+    {
+        FoldersProjectFolderDirectory directory = Directory(
+            JsonResponse(HttpStatusCode.OK, LifecycleJson(archived: false, stale: false)),
+            JsonResponse(statusCode, ProblemJson(statusCode)));
+
+        ProjectFolderValidationResult result = await directory
+            .RefreshFolderReferenceAsync(ProjectId(), FolderId, "corr-a", TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(expectedOutcome);
+    }
+
+    [Fact]
+    public async Task RefreshFolderReference_MalformedPermissions_IsUnavailable()
+    {
+        FoldersProjectFolderDirectory directory = Directory(
+            JsonResponse(HttpStatusCode.OK, LifecycleJson(archived: false, stale: false)),
+            JsonResponse(HttpStatusCode.OK, "{}"));
+
+        ProjectFolderValidationResult result = await directory
+            .RefreshFolderReferenceAsync(ProjectId(), FolderId, "corr-a", TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectFolderValidationOutcome.Unavailable);
     }
 
     [Fact]
@@ -273,20 +307,28 @@ public sealed class ProjectFolderDirectoryTests
         }
         """;
 
-    private static string ProblemJson()
-        => """
+    private static string ProblemJson(HttpStatusCode statusCode = HttpStatusCode.NotFound)
+    {
+        (string category, string code, string action, bool retryable, string title, string message) = statusCode switch
+        {
+            HttpStatusCode.Unauthorized => ("authentication_failure", "authentication_required", "check_credentials", false, "Authentication required", "Authentication is required."),
+            HttpStatusCode.ServiceUnavailable => ("read_model_unavailable", "projection_unavailable", "retry", true, "Authorization evidence unavailable", "Authorization evidence is temporarily unavailable."),
+            _ => ("tenant_access_denied", "resource_unavailable", "no_action", false, "Resource not available", "The requested resource is unavailable."),
+        };
+        return $$"""
         {
           "type": "about:blank",
-          "title": "Access unavailable",
-          "status": 404,
-          "category": "tenant_access_denied",
-          "code": "resource_unavailable",
-          "message": "The requested resource is unavailable.",
+          "title": "{{title}}",
+          "status": {{(int)statusCode}},
+          "category": "{{category}}",
+          "code": "{{code}}",
+          "message": "{{message}}",
           "correlationId": "corr-a",
-          "retryable": false,
-          "clientAction": "no_action",
+          "retryable": {{retryable.ToString().ToLowerInvariant()}},
+          "clientAction": "{{action}}",
           "details": { "visibility": "redacted" }
         }
         """;
+    }
 
 }

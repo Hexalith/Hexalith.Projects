@@ -214,7 +214,7 @@ public sealed class ProjectFileReferenceDirectoryTests
         ProjectFileReferenceValidationOutcome expectedOutcome)
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
-            new RecordingHandler(JsonResponse(statusCode, ProblemJson())));
+            new RecordingHandler(JsonResponse(statusCode, ProblemJson(statusCode))));
 
         ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
 
@@ -226,6 +226,22 @@ public sealed class ProjectFileReferenceDirectoryTests
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
             new RecordingHandler(JsonResponse(HttpStatusCode.OK, "{}")));
+
+        ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(ProjectFileReferenceValidationOutcome.Unavailable);
+    }
+
+    [Fact]
+    public async Task ValidateLink_V1MetadataWithoutLimits_IsUnavailable()
+    {
+        string metadata = MetadataJson("file", "not_redacted", stale: false);
+        using JsonDocument document = JsonDocument.Parse(metadata);
+        Dictionary<string, JsonElement> legacyResponse = document.RootElement.EnumerateObject()
+            .Where(property => property.Name != "limits")
+            .ToDictionary(property => property.Name, property => property.Value);
+        FoldersProjectFileReferenceDirectory directory = Directory(
+            new RecordingHandler(JsonResponse(HttpStatusCode.OK, JsonSerializer.Serialize(legacyResponse))));
 
         ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
 
@@ -307,21 +323,29 @@ public sealed class ProjectFileReferenceDirectoryTests
         }
         """;
 
-    private static string ProblemJson()
-        => """
+    private static string ProblemJson(HttpStatusCode statusCode = HttpStatusCode.NotFound)
+    {
+        (string category, string code, string action, bool retryable, string title, string message) = statusCode switch
+        {
+            HttpStatusCode.Unauthorized => ("authentication_failure", "authentication_required", "check_credentials", false, "Authentication required", "Authentication is required."),
+            HttpStatusCode.ServiceUnavailable => ("read_model_unavailable", "projection_unavailable", "retry", true, "Authorization evidence unavailable", "Authorization evidence is temporarily unavailable."),
+            _ => ("tenant_access_denied", "resource_unavailable", "no_action", false, "Resource not available", "The requested resource is unavailable."),
+        };
+        return $$"""
         {
           "type": "about:blank",
-          "title": "Access unavailable",
-          "status": 404,
-          "category": "tenant_access_denied",
-          "code": "resource_unavailable",
-          "message": "The requested resource is unavailable.",
+          "title": "{{title}}",
+          "status": {{(int)statusCode}},
+          "category": "{{category}}",
+          "code": "{{code}}",
+          "message": "{{message}}",
           "correlationId": "corr-a",
-          "retryable": false,
-          "clientAction": "no_action",
+          "retryable": {{retryable.ToString().ToLowerInvariant()}},
+          "clientAction": "{{action}}",
           "details": { "visibility": "redacted" }
         }
         """;
+    }
 
     private sealed class RecordingHandler(HttpResponseMessage response) : HttpMessageHandler
     {
