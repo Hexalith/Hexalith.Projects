@@ -4,8 +4,8 @@ type: 'feature'
 created: '2026-10-02'
 status: 'draft'
 route: 'dispatch'
-updated: '2026-10-06'
-baseline_commit: 'cbcf54fa4d7a8c17bbfc3f9fb555ac0a85c179c0'
+updated: '2026-10-09'
+baseline_commit: '8de2e5bb2600fde2565f06638d51cd2eba4a4c53'
 review_loop_iteration: 0
 story_key: '6-1-list-and-open-projects-through-supported-authenticated-paths'
 context:
@@ -45,30 +45,30 @@ context:
 
 ## Code Map
 
-- `_bmad-output/implementation-artifacts/sprint-status.yaml` — Story blocked; P0/P2/P3/P4 open, P1R unusable, readiness `NOT_READY`; architect signature and `evidence/epic6/6.1-entry-gate.yaml` absent.
-- `qualification-evidence/g-6-checkout-refresh-20261003/` beside this spec — passing G-6 at `0f03582b3457a6d9212d60e2f9146a6043af5f7e`; 48 checksums verified. Historical checkout proof cannot qualify published P1R packages or current HEAD.
-- `src/Hexalith.Projects/Projections/{ProjectList,ProjectDetail}/` — reuse pure folds and detail Seed. List lacks Folder identity/status. Server's existing setup projection persists aggregate sequence, not global watermark.
-- `src/Hexalith.Projects.Server/Queries/` — reuse `ProjectQueryEnvelopePrincipalBinding`, `ProjectContextQueryExecutor` and `GetProjectContextQueryHandler`; preserve legacy endpoints and reuse `AdmissionSnapshot`.
-- `src/Hexalith.Projects.Server/Folders/FoldersProjectFolderDirectory.cs` — eventual/task-scoped; actor bearer forwarding unproved. Inspection permission, durable read audit, and list/open shadow normalization lack accepted contracts.
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` — exact gate: current P1R unusable; P0/P2/P3/P4, architect signature, and independent `READY` pending. Story is blocked.
+- `src/Hexalith.Projects/Projections/{ProjectList,ProjectDetail}/` — reuse deterministic folds; supported persisted envelopes need authoritative watermark.
+- `src/Hexalith.Projects.Server/Queries/` — reuse envelope checks; domain handlers need the approved principal adapter.
+- `src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs` — retain legacy list/open; `ProjectsServerServiceCollectionExtensions.cs` registers `/query`.
+- `tests/Hexalith.Projects.Server.Tests/CreateProjectEndpointTests.cs` and `tests/Hexalith.Projects.Tests/Replay/ProjectionRebuildDeterminismTests.cs` — retain regressions; fake stores do not prove persistence.
 
 ## Tasks & Acceptance
 
 **Execution:**
 
-- [x] `sprint-status.yaml` beside this spec — verify the entry conditions; missing gates prohibit runtime work.
-- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add `ListProjectsQuery`, `GetProjectQuery`, `ProjectListPage`, `ProjectListRow`, and `ProjectOpenResult`; reuse snapshot vocabulary and separate 50/200 paging.
-- [ ] `src/Hexalith.Projects.Server/Projections/{ProjectList,ProjectDetail}/` — add persisted handlers/envelopes over existing folds, retaining authoritative global position separately from aggregate sequence; use platform store/write policy.
-- [ ] `src/Hexalith.Projects.Server/Queries/` — add list/open handlers and `ProjectReadAuditService`; register in `ProjectsServerModule.cs` and `ProjectsServerServiceCollectionExtensions.cs` using accepted P4 authority/audit seams and platform cursor.
-- [ ] `src/Hexalith.Projects.Testing/Reads/` — add `ProjectListShadowComparator` and `ProjectOpenShadowComparator` with only P4's finite normalization rules.
-- [ ] `tests/Hexalith.Projects.Server.Tests/Queries/` and `tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTests.cs` — cover the matrix, Folder filtering before pagination, inspection audit, persisted replay/restart, denial/leakage, scoped cursors and zero Project writes.
+- [x] `_bmad-output/implementation-artifacts/sprint-status.yaml` — check current entry gate; no runtime/test edit while blocked.
+- [ ] `evidence/epic6/6.1-entry-gate.yaml` — consume owner-accepted P0/P1R/P2/P3/P4, architect signature, approved spec and independent `READY`.
+- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add additive list/open contracts and AD-32 snapshot with list-only 50/200 paging.
+- [ ] `src/Hexalith.Projects/Projections/{ProjectList,ProjectDetail}/` — add incremental persisted models over existing folds; classify events and expose honest faults.
+- [ ] `src/Hexalith.Projects/Queries/Handlers/` and `src/Hexalith.Projects.Server/` — implement/register authenticated reads using approved Folder authority, inspection/audit, store and cursor seams; preserve legacy route.
+- [ ] `src/Hexalith.Projects.Testing/Reads/` — compare outputs, keys, watermarks, cursors and Tenant isolation using P4 rules.
+- [ ] `tests/Hexalith.Projects.Server.Tests/Queries/` and `tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTests.cs` — test matrix, persisted replay/restart, safe denial, leakage, cursors and zero Project writes; generate real G-4 evidence.
 
 **Acceptance Criteria:**
 
-- Given accepted gates and current authorized evidence, when list/open executes, then the full frozen scope and AD-32 fields apply; pre-activation tasks and source payloads are absent, and Archived blocks context use.
-- Given a Chatbot Project User, when list/open runs, then current Folder-read authorization filters Projects before pagination; rows, counts and scoped cursors reveal only that permitted set, and Tenant-role authority never widens Chatbot visibility.
-- Given a Tenant-role caller without descriptive-metadata inspection authorization, when list/open runs, then results contain only Safe Metadata and no Project name. With inspection authorization, authorized descriptive fields require one durable FR-21 event per request recording the inspected Project-set counts and field class without descriptive payload.
-- Given a denied, cross-Tenant or nonexistent target, when list/open runs, then the accepted indistinguishable safe-404 contract reveals no protected existence or metadata.
-- Given shadow comparison, when an unapproved output/key/watermark/cursor/order/Tenant delta occurs, then qualification fails.
+- Given authorized current evidence, when list/open runs, then AD-32 Safe Metadata is scoped; Chatbot Folder reads filter before paging; inspection-gated names cause a metadata-only durable FR-21 audit; Archived blocks context use.
+- Given denied, cross-Tenant or absent identity, when open runs, then indistinguishable safe `404` discloses nothing protected.
+- Given stale, incomplete or unknown-event evidence, when authorized reads run, then `Partial`/`Unavailable` is honest and no Project state changes.
+- Given persisted shadow comparison, when any unapproved delta appears, then qualification fails and legacy routing remains active.
 
 ## Implementation Notes
 
@@ -80,6 +80,5 @@ context:
 
 ## Verification
 
-- `python3 tools/planning/validate_production_authority.py --story-id 6.1` — exit 0, authority scope passes.
-- `python3 tools/planning/validate_production_authority.py --validate-index` — exit 0; does not establish execution readiness.
-- After gate acceptance: Debug solution build and individual Server/Integration test projects, then actual persisted evidence through the accepted P0 runner. The proposed `hexalith-module --profile reads` consumer lane is currently absent.
+- `python3 tools/planning/validate_production_authority.py --story-id 6.1` — authority scope only, not readiness.
+- After accepted gates: Debug build, Server/Integration tests and G-4 persisted reads profile with actual `.trx`, JSON and shadow reports.
