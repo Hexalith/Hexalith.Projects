@@ -968,3 +968,7 @@ status: open
 - source_spec: `references/Hexalith.EventStore/_bmad-output/implementation-artifacts/spec-6-1-p1r-31190-requalification.md`
   summary: P1R published-executor restore receipts bind recovery steps to `self.commands[-1]`, so the `create-database` and `backup` steps cite the wrong command.
   evidence: In `restore_case`, `create-database` records the last `pg_isready` probe instead of `docker create`/`docker start`, and `backup` records the `docker cp` copy-out instead of `pg_dump`. Baseline 785260fa had the same pattern on its Redis path, where these steps bound the `docker inspect` and `docker cp` rows. No check depends on the step label, but owners reading restore receipts are misled. Fix: return command ids from `container`/`postgres_backup` and pass them to `recovery_command`.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-restore-receipt-command-attribution.md`
+  summary: Bind both the PostgreSQL dump and its Docker copy-out to the P1R restore receipt's backup provenance.
+  evidence: The recovery receipt schema binds one command to its backup artifact hash. Before the attribution fix that command was `docker cp`; afterward it is `pg_dump`. The raw execution journal retains both, and inventory equality checks the restored state, but the receipt does not explicitly link the two commands as one byte-transfer chain. This is a pre-existing evidence-model limitation requiring a separate compatible receipt contract change.
