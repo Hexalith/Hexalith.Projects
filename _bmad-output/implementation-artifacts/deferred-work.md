@@ -964,3 +964,7 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-gate-catalog-pins.md`
   summary: `run-ci-workflow-gates.ps1` has no regression test; its negative cases are checked by hand in scratch copies.
   evidence: No `tests/tools/test_*.py` drives this gate, although `test_release_package_tools.py` shows the pwsh-from-unittest pattern. The 10 Directory.Packages.props mutation cases from the catalog-pin fix, and every other gate invariant, can regress silently on the next gate edit. The live-apphost spec already plans gate edits.
+
+- source_spec: `references/Hexalith.EventStore/_bmad-output/implementation-artifacts/spec-6-1-p1r-31190-requalification.md`
+  summary: P1R published-executor restore receipts bind recovery steps to `self.commands[-1]`, so the `create-database` and `backup` steps cite the wrong command.
+  evidence: In `restore_case`, `create-database` records the last `pg_isready` probe instead of `docker create`/`docker start`, and `backup` records the `docker cp` copy-out instead of `pg_dump`. Baseline 785260fa had the same pattern on its Redis path, where these steps bound the `docker inspect` and `docker cp` rows. No check depends on the step label, but owners reading restore receipts are misled. Fix: return command ids from `container`/`postgres_backup` and pass them to `recovery_command`.
