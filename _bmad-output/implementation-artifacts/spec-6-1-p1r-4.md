@@ -71,7 +71,7 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 
 - Local Builds validator now reports empty XML explicitly. The EventStore Contracts authority test excludes only the 300 exact, hash-bound historical 3.119.0 probe files; current consumer graph authority remains checked. The guarded Story 3.15 tracker block is restored.
 - The successor executor checks selected tag, live source, tag Builds identity, and signed archive bytes before protected runtime access. The qualification tooling requires a separate candidate-specific measured support boundary and Solution Architect disposition. The new table file remains deliberately unpopulated until authorized published archives produce receipts. The 3.119.0 table and sealed evidence were not changed.
-- EventStore `3099cb27` retains the repaired Builds gitlink `608c164c3637240fed2dd92dbfdaaf581ba9846d` and adds live-sidecar fail-closed snapshot/replay assertions. The nested Builds worktree remains uninitialized. The user authorized pushing preparation fixes after the preceding CI run. Exact-source CI `38146720449`, Integration Tests `38146720145`, and P1R Preparation `38146720151` passed as push runs on `main` for `3099cb27`. There is no selected successor version or release authorization; publication and PostgreSQL/Dapr package execution remain pending. Story 6.1, pins, Stack, and P1R usability remain blocked.
+- EventStore `3099cb27` retains the repaired Builds gitlink `608c164c3637240fed2dd92dbfdaaf581ba9846d` and adds live-sidecar fail-closed snapshot/replay assertions. The nested Builds worktree remains uninitialized. The user authorized pushing preparation fixes after the preceding CI run. Exact-source CI `38146720449`, Integration Tests `38146720145`, and P1R Preparation `38146720151` passed as push runs on `main` for `3099cb27`. Jérôme Piquot, Owner, authorized the exact-source `release.yml` dispatch with `bypass-validation=false` and the full 14-package/container scope on 2026-10-11; no successor version is selected yet. Publication and PostgreSQL/Dapr package execution remain pending. Story 6.1, pins, Stack, and P1R usability remain blocked.
 
 ## Spec Change Log
 
@@ -80,6 +80,8 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 - 2026-10-11: EventStore `39962529` passed Contracts CI and P1R Qualification Preparation 35/35, but CI build-and-test failed only the tracked-content secret gate. Pushed `e26173a4` with verified local gate repair; its exact-source CI and owner release decision remain pending.
 - 2026-10-11: Exact-source CI for `e26173a4` passed. A separate Integration Tests workflow remains red on two snapshot tests that also failed at `b57310fb` and `d35ab1`; release decision remains pending their disposition.
 - 2026-10-11: Story 6.2's qualified folded-snapshot rule explained both live-sidecar failures. Updated the two tests to prove fail-closed no-snapshot behavior and full-prefix replay; pushed EventStore `3099cb27`. Exact-source CI, Integration Tests, and P1R Preparation passed. Release and candidate-specific qualification still require owner decisions.
+
+- 2026-10-11: Jérôme Piquot, Owner, authorized the exact-source `3099cb27` Green CI release dispatch with `bypass-validation=false`, full 14-package/container scope, and `rollback=null`; publication outcome and candidate-specific qualification remain pending.
 
 ## Review Triage Log
 
