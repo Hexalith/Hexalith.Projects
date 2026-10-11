@@ -12,8 +12,4 @@
   <Import Project="$(Hexalith1BuildPackageProps)" Condition="Exists('$(Hexalith1BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
   <Import Project="$(Hexalith2BuildPackageProps)" Condition="Exists('$(Hexalith2BuildPackageProps)') And '$(HexalithVersionsLoaded)' != 'true'" />
   <Import Project="$(Hexalith3BuildPackageProps)" Condition="'$(HexalithVersionsLoaded)' != 'true'" />
-  <ItemGroup>
-    <!-- EventStore Gateway 3.120.0 requires this newer SwaggerUI transitive dependency. -->
-    <PackageVersion Update="Swashbuckle.AspNetCore.SwaggerUI" Version="10.3.0" />
-  </ItemGroup>
 </Project>
