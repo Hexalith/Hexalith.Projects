@@ -53,7 +53,7 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 
 **Execution:**
 - [x] Workspace `_bmad-output/implementation-artifacts/6-1-p1r-published-successor-decision-packet-2026-10-11.md` — record the Green CI route and leave exact-source release authorization and role acceptance pending.
-- [ ] `tests/Hexalith.EventStore.Contracts.Tests/Packaging/ContractsPackageDependencyTests.cs` and workspace `references/Hexalith.Builds/Tools/validate-consumer-package-authority.ps1` — reproduce and fix the null-expression failure without weakening authority; update EventStore's nested Builds gitlink only if required.
+- [x] `tests/Hexalith.EventStore.Contracts.Tests/Packaging/ContractsPackageDependencyTests.cs` and workspace `references/Hexalith.Builds/Tools/validate-consumer-package-authority.ps1` — reproduce and fix the null-expression failure without weakening authority; update EventStore's nested Builds gitlink only if required.
 - [ ] `tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs`, `tests/Hexalith.EventStore.Contracts.Tests/Packaging/CorrectedDeployedRuntimeParityClosureTests.cs`, and `_bmad-output/implementation-artifacts/sprint-status.yaml` — resolve both guarded Story 3.15 tracker assertions with truthful caveat and subject evidence; prove exact-source green CI.
 - [x] `tools/p1r_published_executor.py`, `tools/p1r_published_qualification.py`, and new `tools/p1r_successor_support_boundary.json` — prepare identity-bound successor measurement and a separate case table without guessing a version or altering 3.119.0 evidence.
 - [x] `tools/tests/test_p1r_published_executor.py` and `tools/tests/test_p1r_published_qualification.py` — reject substitution, candidate failures, invented refusals and missing assertions.
@@ -69,7 +69,7 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 
 - Local Builds validator now reports empty XML explicitly. The EventStore Contracts authority test excludes only the 300 exact, hash-bound historical 3.119.0 probe files; current consumer graph authority remains checked. The guarded Story 3.15 tracker block is restored.
 - The successor executor checks selected tag, live source, tag Builds identity, and signed archive bytes before protected runtime access. The qualification tooling requires a separate candidate-specific measured support boundary and Solution Architect disposition. The new table file remains deliberately unpopulated until authorized published archives produce receipts. The 3.119.0 table and sealed evidence were not changed.
-- The EventStore nested Builds gitlink still points to the previous Builds commit. Local validation uses the repaired Builds working tree, so the exact-source CI gate requires authorized repository commits, the nested gitlink update, and a new CI push run. This workflow forbids push and remote operations. There is no selected successor version or release authorization; publication and PostgreSQL/Dapr package execution remain pending. Story 6.1, pins, Stack, and P1R usability remain blocked.
+- The EventStore nested Builds gitlink is staged to repaired Builds commit `608c164c3637240fed2dd92dbfdaaf581ba9846d`. EventStore was locally fast-forwarded to recorded `origin/main` commit `d35ab1f8bb2a527d38e901ac0b9faf69e1a7519a`; the exact-source CI gate still requires an EventStore commit containing the pointer and a new successful CI push run. This workflow forbids push and remote operations. There is no selected successor version or release authorization; publication and PostgreSQL/Dapr package execution remain pending. Story 6.1, pins, Stack, and P1R usability remain blocked.
 
 ## Spec Change Log
 
@@ -84,6 +84,9 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 - Built Contracts test assembly with the three focused `-method` patterns for consumer authority and the two Story 3.15 guards — exit 0, four invocations, zero failures.
 - `python3 -m unittest discover -s tools/tests -p 'test_p1r_published_*.py'` in EventStore — 118 tests, pass.
 - `git diff --check` in workspace, EventStore, and Builds — pass.
+- Full Contracts assembly run (`timeout 600s dotnet tests/Hexalith.EventStore.Contracts.Tests/bin/Release/net10.0/Hexalith.EventStore.Contracts.Tests.dll`) reported a five-second process-test timeout, then was interrupted after no further output (exit 130); the later fixture checkout failure was caused by that interruption. This is not a full-suite pass.
+- Isolated rerun (`timeout 120s dotnet tests/Hexalith.EventStore.Contracts.Tests/bin/Release/net10.0/Hexalith.EventStore.Contracts.Tests.dll -method '*ProcessContractDistinguishesOwnedExternalAndExitedProcesses'`) passed 1/1 in 1.716 seconds.
+- On EventStore `d35ab1f8bb2a527d38e901ac0b9faf69e1a7519a` with the repaired Builds pointer staged: Contracts Release build passed with zero warnings/errors; the consumer-authority test passed 1/1 in 170.967 seconds; the current-subject guard passed 2/2; the lifecycle guard passed 1/1; successor Python tests passed 118/118.
 
 **Matrix audit:** The local tests cover 3.120.0 refusal, successor identity substitution, protected old-route plan, missing assertions, and `rollback=null` selection. The exact-source CI row and candidate stale-fence, logical-alias, persisted restore/restart, and PostgreSQL/Dapr runtime observations cannot pass until a published successor exists. No case receipt or role acceptance is claimed from source tests.
 
