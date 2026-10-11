@@ -22,6 +22,7 @@ using Hexalith.EventStore.DomainService;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
 using Hexalith.Memories.Client.Rest;
 using Hexalith.Projects.Authorization;
+using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Infrastructure;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Server.Conversations;
@@ -132,7 +133,6 @@ public static class ProjectsServerServiceCollectionExtensions
         services.AddSingleton<ProjectContextQueryExecutor>();
         services.AddSingleton<IDomainQueryHandler, GetProjectContextQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, ExplainContextSelectionQueryHandler>();
-        services.AddTransient<IDomainQueryHandler, ProjectChatBotAuthorityQueryHandler>();
 
         return services;
     }
@@ -158,7 +158,8 @@ public static class ProjectsServerServiceCollectionExtensions
         services.AddEventStoreWorkloadPolicies(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
             [EventStoreWorkloadOperations.DomainServiceProcess,
                 EventStoreWorkloadOperations.DomainServiceQuery,
-                EventStoreWorkloadOperations.DomainServiceProject]);
+                EventStoreWorkloadOperations.DomainServiceProject,
+                EventStoreWorkloadOperations.DomainServiceMetadata]);
         services.AddSingleton<ProjectAuthorityRuntimeSecurity>();
         services.AddEventStoreWorkloadAssertionIssuer();
         string authorityDaprEndpoint = Environment.GetEnvironmentVariable("DAPR_HTTP_ENDPOINT")
@@ -169,6 +170,7 @@ public static class ProjectsServerServiceCollectionExtensions
         services.AddTransient<IAuthoritativeEventStreamReader>(provider =>
             new AuthoritativeEventStreamReader(provider.GetRequiredService<ProjectChatBotAuthorityGateway>(),
                 provider.GetRequiredService<TimeProvider>(), TimeSpan.FromSeconds(10)));
+        services.AddTransient<IDomainQueryHandler, ProjectChatBotAuthorityQueryHandler>();
         services.RemoveAll<IReadModelStore>();
         services.RemoveAll<InMemoryProjectReadModelStore>();
         services.AddEventStoreReadModelStore();
@@ -246,6 +248,12 @@ public static class ProjectsServerServiceCollectionExtensions
                 QueryResult result = await DomainQueryDispatcher.ExecuteAsync(serviceProvider, query, cancellationToken).ConfigureAwait(false);
                 return result.Success ? Results.Ok(result) : Results.NotFound(result);
             });
+        RouteHandlerBuilder metadataEndpoint = endpoints.MapPost(
+            "/admin/operational-index-metadata",
+            static (AdminOperationalIndexMetadata.Request request) =>
+                CreateOperationalIndexMetadata(request) is { } response
+                    ? Results.Ok(response)
+                    : Results.BadRequest());
         IConfiguration configuration = endpoints.ServiceProvider.GetRequiredService<IConfiguration>();
         IHostEnvironment environment = endpoints.ServiceProvider.GetRequiredService<IHostEnvironment>();
         if (endpoints.ServiceProvider.GetService<ProjectAuthorityRuntimeSecurity>() is not null)
@@ -253,13 +261,43 @@ public static class ProjectsServerServiceCollectionExtensions
             _ = processEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Process);
             _ = projectEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Project);
             _ = queryEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Query);
+            _ = metadataEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Metadata);
         }
         else if (!ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(configuration, environment))
         {
             _ = queryEndpoint.RequireAuthorization();
+            _ = metadataEndpoint.RequireAuthorization();
         }
 
         endpoints.MapProjectsDomainServiceEndpoints();
         return endpoints;
+    }
+
+    internal static AdminOperationalIndexMetadata.Response? CreateOperationalIndexMetadata(
+        AdminOperationalIndexMetadata.Request request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        if (request.Domains is not { Count: 1 } ||
+            !string.Equals(request.Domains[0], ProjectsServerModule.DomainName, StringComparison.Ordinal) ||
+            !string.Equals(request.AppId, ProjectsServerModule.DomainName, StringComparison.Ordinal) ||
+            !string.Equals(request.ServiceVersion, "v1", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        // Projects uses its own processor rather than an EventStoreAggregate<TState>. Advertise the
+        // exact handler routes so EventStore dispatches these reads to /query instead of a projection actor.
+        return new AdminOperationalIndexMetadata.Response(
+        [
+            new AdminOperationalIndexMetadata.DomainMetadata(
+                ProjectsServerModule.DomainName,
+                [], [], [], [], [],
+                [
+                    ProjectsServerModule.GetConversationStartSetupQueryType,
+                    ProjectsServerModule.GetProjectContextQueryType,
+                    ProjectsServerModule.ExplainContextSelectionQueryType,
+                    ResolveProjectChatBotAuthority.QueryType,
+                ]),
+        ]);
     }
 }

@@ -192,11 +192,10 @@ public static class ProjectStateApply
         {
             [scope] = new(granted.GrantId, granted.ExpiresAt, false),
         };
-        HashSet<string> ids = new(state.ChatBotGrantIssuanceIds, StringComparer.Ordinal) { granted.GrantId };
         return state with
         {
             ChatBotGrants = grants.ToFrozenDictionary(StringComparer.Ordinal),
-            ChatBotGrantIssuanceIds = ids,
+            ChatBotGrantIssuanceIds = state.ChatBotGrantIssuanceIds.Add(granted.GrantId),
             IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, granted),
         };
     }

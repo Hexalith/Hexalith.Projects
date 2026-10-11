@@ -52,6 +52,41 @@ public sealed class ProjectChatBotAuthorityQueryHandlerTests
             new JsonSerializerOptions(JsonSerializerDefaults.Web))!.Allowed.ShouldBeFalse();
     }
 
+    [Fact]
+    public async Task LiveCreateWithPendingFolderAndConversationGrantReplaysAsAllowed()
+    {
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        var identity = new AggregateIdentity("tenant-alpha", "projects", "project-a");
+        StreamReadEvent[] events =
+        [
+            Event(1, new ProjectCreated("tenant-alpha", "project-a", "Project", null, null,
+                ProjectLifecycle.Active, "actor-alpha", "corr-create", "task-create", "message-create",
+                "fingerprint-create", now), now),
+            Event(2, new ProjectFolderCreationPending("tenant-alpha", "project-a", "Project",
+                "folder_create_external_unavailable", true, "actor-alpha", "corr-create", "task-create",
+                "message-pending", "fingerprint-pending", now), now),
+            Event(3, new ProjectChatBotAuthorityGranted("tenant-alpha", "project-a", "actor-alpha",
+                "project-conversation", "human", "Ui", "grant-conversation", now.AddHours(1),
+                "actor-alpha", "corr-grant", "task-grant", "message-grant", "fingerprint-grant", now), now),
+        ];
+        var reader = new ProjectAuthorityReaderFixture(new(new(identity, 3, now, events, "observation-live"), null));
+        var handler = new ProjectChatBotAuthorityQueryHandler(reader, TimeProvider.System);
+        var request = new ResolveProjectChatBotAuthority("tenant-alpha", "actor-alpha", "project-a",
+            "project-conversation", "human", "Ui");
+        QueryEnvelope query = Envelope("actor-alpha") with
+        {
+            Payload = JsonSerializer.SerializeToUtf8Bytes(request, new JsonSerializerOptions(JsonSerializerDefaults.Web)),
+        };
+
+        QueryResult result = await handler.ExecuteAsync(query, CancellationToken.None);
+        result.Success.ShouldBeTrue();
+        ProjectChatBotAuthorityResult evidence = JsonSerializer.Deserialize<ProjectChatBotAuthorityResult>(
+            result.PayloadBytes!, new JsonSerializerOptions(JsonSerializerDefaults.Web)).ShouldNotBeNull();
+        evidence.Allowed.ShouldBeTrue();
+        evidence.GrantId.ShouldBe("grant-conversation");
+        evidence.SourceVersion.ShouldBe(3);
+    }
+
     private static QueryEnvelope Envelope(string requester)
     {
         var payload = new ResolveProjectChatBotAuthority("tenant-alpha", "actor-alpha", "project-a",

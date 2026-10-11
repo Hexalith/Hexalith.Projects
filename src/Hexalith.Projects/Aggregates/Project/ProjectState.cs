@@ -8,6 +8,7 @@ namespace Hexalith.Projects.Aggregates.Project;
 using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
@@ -51,7 +52,7 @@ public sealed record ProjectState(
         FrozenDictionary<string, ProjectChatBotGrant>.Empty;
 
     /// <summary>Gets every used issuance id, including revoked issuances.</summary>
-    public IReadOnlySet<string> ChatBotGrantIssuanceIds { get; init; } = new HashSet<string>(StringComparer.Ordinal);
+    public ImmutableHashSet<string> ChatBotGrantIssuanceIds { get; init; } = ImmutableHashSet.Create<string>(StringComparer.Ordinal);
     /// <summary>The maximum number of bounded optional File References a single Project may hold.</summary>
     public const int MaxFileReferences = 100;
 

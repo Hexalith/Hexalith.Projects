@@ -10,15 +10,20 @@ using System.Net.Http.Json;
 using System.Text.Json;
 
 using Hexalith.EventStore.Contracts.Projections;
+using Hexalith.EventStore.DomainService;
+using Hexalith.EventStore.Indexes;
 using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Server;
 using Hexalith.Projects.Workers;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Shouldly;
@@ -73,6 +78,67 @@ public sealed class ProjectsServerModuleTests
             .OfType<RouteEndpoint>()
             .Single(item => string.Equals(item.RoutePattern.RawText, ProjectsServerModule.ProjectRoute, StringComparison.Ordinal));
         endpoint.Metadata.GetMetadata<HttpMethodMetadata>()!.HttpMethods.ShouldContain("POST");
+    }
+
+    /// <summary>Verifies EventStore can discover the Projects handler routes through protected metadata.</summary>
+    [Fact]
+    public void OperationalIndexMetadataAdvertisesTheBoundProjectQueryHandlers()
+    {
+        var request = new AdminOperationalIndexMetadata.Request([ProjectsServerModule.DomainName])
+        {
+            AppId = ProjectsServerModule.DomainName,
+            ServiceVersion = "v1",
+        };
+
+        AdminOperationalIndexMetadata.Response response =
+            ProjectsServerServiceCollectionExtensions.CreateOperationalIndexMetadata(request).ShouldNotBeNull();
+        AdminOperationalIndexMetadata.DomainMetadata domain = response.Domains.ShouldHaveSingleItem();
+        domain.Domain.ShouldBe(ProjectsServerModule.DomainName);
+        domain.QueryTypes.ShouldContain(ResolveProjectChatBotAuthority.QueryType);
+        domain.QueryTypes.ShouldContain(ProjectsServerModule.GetConversationStartSetupQueryType);
+        domain.QueryTypes.ShouldContain(ProjectsServerModule.GetProjectContextQueryType);
+        domain.QueryTypes.ShouldContain(ProjectsServerModule.ExplainContextSelectionQueryType);
+        JsonSerializer.Deserialize<AdminOperationalIndexMetadataResponse>(JsonSerializer.Serialize(response))!
+            .Domains.ShouldHaveSingleItem().QueryTypes.ShouldNotBeNull()
+            .ShouldContain(ResolveProjectChatBotAuthority.QueryType);
+    }
+
+    /// <summary>Verifies metadata cannot advertise another domain or deployment identity.</summary>
+    [Theory]
+    [InlineData("other", "projects", "v1")]
+    [InlineData("projects", "other", "v1")]
+    [InlineData("projects", "projects", "v2")]
+    [InlineData("projects", null, "v1")]
+    public void OperationalIndexMetadataRejectsForeignIdentity(string domain, string? appId, string version)
+    {
+        var request = new AdminOperationalIndexMetadata.Request([domain])
+        {
+            AppId = appId,
+            ServiceVersion = version,
+        };
+
+        ProjectsServerServiceCollectionExtensions.CreateOperationalIndexMetadata(request).ShouldBeNull();
+    }
+
+    /// <summary>Verifies runtime metadata route requires the EventStore metadata operation policy.</summary>
+    [Fact]
+    public void OperationalIndexMetadataRouteRequiresEventStoreMetadataPolicy()
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder();
+        builder.Services.AddProjectsServer();
+        builder.Services.AddSingleton<ProjectAuthorityRuntimeSecurity>();
+        WebApplication app = builder.Build();
+
+        app.MapProjectsServerEndpoints();
+
+        RouteEndpoint endpoint = ((IEndpointRouteBuilder)app).DataSources
+            .SelectMany(static source => source.Endpoints)
+            .OfType<RouteEndpoint>()
+            .Single(item => string.Equals(item.RoutePattern.RawText,
+                "/admin/operational-index-metadata", StringComparison.Ordinal));
+        endpoint.Metadata.GetMetadata<HttpMethodMetadata>()!.HttpMethods.ShouldContain("POST");
+        endpoint.Metadata.GetOrderedMetadata<IAuthorizeData>()
+            .ShouldContain(policy => policy.Policy == EventStoreDomainServicePolicies.Metadata);
     }
 
     /// <summary>Verifies the projection callback rebuilds meaningful aggregate state from EventStore history.</summary>
