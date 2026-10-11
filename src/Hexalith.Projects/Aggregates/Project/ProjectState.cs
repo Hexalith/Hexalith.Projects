@@ -46,6 +46,12 @@ public sealed record ProjectState(
     ProjectLifecycle? Lifecycle,
     IReadOnlyDictionary<string, string> IdempotencyFingerprints)
 {
+    /// <summary>Gets the last issuance for each exact ChatBot project authority scope.</summary>
+    public IReadOnlyDictionary<string, ProjectChatBotGrant> ChatBotGrants { get; init; } =
+        FrozenDictionary<string, ProjectChatBotGrant>.Empty;
+
+    /// <summary>Gets every used issuance id, including revoked issuances.</summary>
+    public IReadOnlySet<string> ChatBotGrantIssuanceIds { get; init; } = new HashSet<string>(StringComparer.Ordinal);
     /// <summary>The maximum number of bounded optional File References a single Project may hold.</summary>
     public const int MaxFileReferences = 100;
 

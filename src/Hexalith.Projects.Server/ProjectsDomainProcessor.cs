@@ -9,6 +9,7 @@ using System;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,11 +18,13 @@ using Hexalith.EventStore.Contracts.Commands;
 using Hexalith.EventStore.Contracts.Events;
 using Hexalith.EventStore.Contracts.Results;
 using Hexalith.Projects.Aggregates.Project;
+using Hexalith.Projects.Server.Authorization;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Commands;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Identifiers;
 using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Contracts.Ui;
 
 /// <summary>
 /// The Projects <c>/process</c> aggregate-callback domain processor (Story 1.4). Mirrors the Folders
@@ -34,7 +37,8 @@ using Hexalith.Projects.Contracts.Models;
 /// </summary>
 public sealed class ProjectsDomainProcessor(
     TimeProvider timeProvider,
-    IProjectEventStoreAuthorizationValidator authorizationValidator) : IDomainProcessor
+    IProjectEventStoreAuthorizationValidator authorizationValidator,
+    ProjectOwnerBootstrapVerifier? bootstrap = null) : IDomainProcessor
 {
     private static readonly JsonSerializerOptions PayloadJsonOptions = new(JsonSerializerDefaults.Web)
     {
@@ -60,6 +64,7 @@ public sealed class ProjectsDomainProcessor(
     private readonly TimeProvider _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
     private readonly IProjectEventStoreAuthorizationValidator _authorizationValidator =
         authorizationValidator ?? throw new ArgumentNullException(nameof(authorizationValidator));
+    private readonly ProjectOwnerBootstrapVerifier? _bootstrap = bootstrap;
 
     /// <inheritdoc/>
     public async Task<DomainResult> ProcessAsync(CommandEnvelope command, object? currentState)
@@ -69,6 +74,12 @@ public sealed class ProjectsDomainProcessor(
         if (!string.Equals(command.Domain, ProjectsServerModule.DomainName, StringComparison.Ordinal))
         {
             return Rejection(command, ProjectResultCode.ValidationFailed, null, ProjectsServerModule.CreateProjectCommandType);
+        }
+
+        if (command.CommandType is ProjectsServerModule.GrantProjectChatBotAuthorityCommandType or
+            ProjectsServerModule.RevokeProjectChatBotAuthorityCommandType)
+        {
+            return await ProcessChatBotAuthorityAsync(command, currentState).ConfigureAwait(false);
         }
 
         string? actionToken = command.CommandType switch
@@ -130,6 +141,96 @@ public sealed class ProjectsDomainProcessor(
             _ => Rejection(command, ProjectResultCode.ValidationFailed, null, command.CommandType),
         };
     }
+
+    private async Task<DomainResult> ProcessChatBotAuthorityAsync(CommandEnvelope envelope, object? currentState)
+    {
+        string operation = envelope.CommandType == ProjectsServerModule.GrantProjectChatBotAuthorityCommandType
+            ? nameof(GrantProjectChatBotAuthority) : nameof(RevokeProjectChatBotAuthority);
+        if (_bootstrap is null || !IsSafeGrantToken(envelope.TenantId) ||
+            !IsSafeGrantToken(envelope.AggregateId) || !IsSafeGrantToken(envelope.UserId) ||
+            !await _bootstrap.IsCurrentOwnerAsync(envelope.TenantId, envelope.UserId, operation,
+                CancellationToken.None).ConfigureAwait(false))
+        {
+            return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("owner_unavailable")]);
+        }
+
+        ProjectState state;
+        try
+        {
+            state = RehydrateProjectState(envelope, currentState);
+        }
+        catch (Exception exception) when (exception is JsonException or ArgumentException or InvalidOperationException)
+        {
+            return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("source_unavailable")]);
+        }
+
+        if (!state.IsCreated || state.TenantId != envelope.TenantId ||
+            state.ProjectId != envelope.AggregateId || state.Lifecycle != ProjectLifecycle.Active)
+        {
+            return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("project_unavailable")]);
+        }
+
+        try
+        {
+            if (operation == nameof(GrantProjectChatBotAuthority))
+            {
+                GrantProjectChatBotAuthority? grant = JsonSerializer.Deserialize<GrantProjectChatBotAuthority>(envelope.Payload, PayloadJsonOptions);
+                DateTimeOffset now = _timeProvider.GetUtcNow();
+                if (grant is null || !ValidGrantScope(grant.PrincipalId, grant.Operation, grant.ActorClass, grant.Origin) ||
+                    !IsSafeGrantToken(grant.GrantId) || grant.ExpiresAt.Offset != TimeSpan.Zero ||
+                    grant.ExpiresAt <= now || grant.ExpiresAt > now.AddDays(30) ||
+                    state.ChatBotGrantIssuanceIds.Contains(grant.GrantId))
+                {
+                    return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("invalid_grant")]);
+                }
+
+                string scope = ChatBotGrantScope.For(grant.PrincipalId, grant.Operation, grant.ActorClass, grant.Origin);
+                if (state.ChatBotGrants.TryGetValue(scope, out ProjectChatBotGrant? prior) && !prior.Revoked)
+                {
+                    return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("grant_active")]);
+                }
+
+                return DomainResult.Success([new ProjectChatBotAuthorityGranted(envelope.TenantId,
+                    envelope.AggregateId, grant.PrincipalId, grant.Operation, grant.ActorClass,
+                    grant.Origin, grant.GrantId, grant.ExpiresAt, envelope.UserId,
+                    envelope.CorrelationId, ReadTaskId(envelope), envelope.MessageId,
+                    Convert.ToHexString(SHA256.HashData(envelope.Payload)), now)]);
+            }
+
+            RevokeProjectChatBotAuthority? revoke = JsonSerializer.Deserialize<RevokeProjectChatBotAuthority>(envelope.Payload, PayloadJsonOptions);
+            if (revoke is null || !ValidGrantScope(revoke.PrincipalId, revoke.Operation, revoke.ActorClass, revoke.Origin) ||
+                !IsSafeGrantToken(revoke.GrantId))
+            {
+                return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("invalid_revoke")]);
+            }
+
+            string revokeScope = ChatBotGrantScope.For(revoke.PrincipalId, revoke.Operation, revoke.ActorClass, revoke.Origin);
+            if (!state.ChatBotGrants.TryGetValue(revokeScope, out ProjectChatBotGrant? current) ||
+                current.GrantId != revoke.GrantId || current.Revoked)
+            {
+                return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("grant_mismatch")]);
+            }
+
+            return DomainResult.Success([new ProjectChatBotAuthorityRevoked(envelope.TenantId,
+                envelope.AggregateId, revoke.PrincipalId, revoke.Operation, revoke.ActorClass,
+                revoke.Origin, revoke.GrantId, envelope.UserId, envelope.CorrelationId,
+                ReadTaskId(envelope), envelope.MessageId,
+                Convert.ToHexString(SHA256.HashData(envelope.Payload)), _timeProvider.GetUtcNow())]);
+        }
+        catch (Exception exception) when (exception is JsonException or ArgumentException)
+        {
+            return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("invalid_grant_payload")]);
+        }
+    }
+
+    private static bool IsSafeGrantToken(string? value)
+        => !string.IsNullOrWhiteSpace(value) && value.Length <= 128 && value != "*" &&
+            value.All(static character => char.IsAsciiLetterOrDigit(character) || character is '-' or '_' or '.' or ':');
+
+    private static bool ValidGrantScope(string principal, string operation, string actorClass, string origin)
+        => IsSafeGrantToken(principal) && IsSafeGrantToken(operation) &&
+            actorClass is "human" or "service" or "ai" &&
+            origin is "Api" or "Ui" or "Cli" or "Mcp" or "Worker" or "Mailbox" or "Ai";
 
     private DomainResult ProcessCreate(CommandEnvelope envelope, object? currentState)
     {

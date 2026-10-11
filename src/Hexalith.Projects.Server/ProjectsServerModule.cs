@@ -62,6 +62,12 @@ public static class ProjectsServerModule
     /// <summary>The fully qualified <c>ConfirmProjectResolution</c> command type discriminator on the wire.</summary>
     public const string ConfirmProjectResolutionCommandType = "Hexalith.Projects.Commands.ConfirmProjectResolution";
 
+    /// <summary>The exact protected project-grant issuance discriminator.</summary>
+    public const string GrantProjectChatBotAuthorityCommandType = "Hexalith.Projects.Contracts.Commands.GrantProjectChatBotAuthority";
+
+    /// <summary>The exact protected project-grant revocation discriminator.</summary>
+    public const string RevokeProjectChatBotAuthorityCommandType = "Hexalith.Projects.Contracts.Commands.RevokeProjectChatBotAuthority";
+
     /// <summary>The aggregate-callback route the EventStore command pipeline invokes.</summary>
     public const string ProcessRoute = "/process";
 

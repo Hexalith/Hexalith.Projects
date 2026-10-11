@@ -163,10 +163,60 @@ public static class ProjectStateApply
                 IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, projectEvent),
             },
 
+            ProjectChatBotAuthorityGranted granted => ApplyGrant(state, granted),
+
+            ProjectChatBotAuthorityRevoked revoked => ApplyRevocation(state, revoked),
+
             // Unknown event types fail loudly. Silently no-op'ing would let a future event type poison
             // the idempotency ledger on cold replay against an older code path (mirrors Folders).
             _ => throw new InvalidOperationException(
                 $"Unhandled project event type: result code {ProjectResultCode.StateTransitionInvalid}."),
+        };
+    }
+
+    private static ProjectState ApplyGrant(ProjectState state, ProjectChatBotAuthorityGranted granted)
+    {
+        if (!state.IsCreated || state.ChatBotGrantIssuanceIds.Contains(granted.GrantId))
+        {
+            throw new InvalidOperationException("Invalid project authority grant history.");
+        }
+
+        string scope = ChatBotGrantScope.For(granted.PrincipalId, granted.Operation, granted.ActorClass, granted.Origin);
+        if (state.ChatBotGrants.TryGetValue(scope, out ProjectChatBotGrant? current) && !current.Revoked)
+        {
+            throw new InvalidOperationException("Overlapping project authority grant history.");
+        }
+
+        Dictionary<string, ProjectChatBotGrant> grants = new(state.ChatBotGrants, StringComparer.Ordinal)
+        {
+            [scope] = new(granted.GrantId, granted.ExpiresAt, false),
+        };
+        HashSet<string> ids = new(state.ChatBotGrantIssuanceIds, StringComparer.Ordinal) { granted.GrantId };
+        return state with
+        {
+            ChatBotGrants = grants.ToFrozenDictionary(StringComparer.Ordinal),
+            ChatBotGrantIssuanceIds = ids,
+            IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, granted),
+        };
+    }
+
+    private static ProjectState ApplyRevocation(ProjectState state, ProjectChatBotAuthorityRevoked revoked)
+    {
+        string scope = ChatBotGrantScope.For(revoked.PrincipalId, revoked.Operation, revoked.ActorClass, revoked.Origin);
+        if (!state.ChatBotGrants.TryGetValue(scope, out ProjectChatBotGrant? current) ||
+            current.GrantId != revoked.GrantId || current.Revoked)
+        {
+            throw new InvalidOperationException("Invalid project authority revocation history.");
+        }
+
+        Dictionary<string, ProjectChatBotGrant> grants = new(state.ChatBotGrants, StringComparer.Ordinal)
+        {
+            [scope] = current with { Revoked = true },
+        };
+        return state with
+        {
+            ChatBotGrants = grants.ToFrozenDictionary(StringComparer.Ordinal),
+            IdempotencyFingerprints = RecordIdempotency(state.IdempotencyFingerprints, revoked),
         };
     }
 

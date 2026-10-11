@@ -13,11 +13,13 @@ using Hexalith.Folders.Client;
 using Hexalith.EventStore.Client.Handlers;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Client.Registration;
+using Hexalith.EventStore.Client.Streams;
 using Hexalith.EventStore.Contracts.Commands;
 using Hexalith.EventStore.Contracts.Projections;
 using Hexalith.EventStore.Contracts.Results;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.DomainService;
+using Hexalith.EventStore.ServiceDefaults.Authentication;
 using Hexalith.Memories.Client.Rest;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Infrastructure;
@@ -29,6 +31,7 @@ using Hexalith.Projects.Server.Proposals;
 using Hexalith.Projects.Server.Projections.ConversationStartSetup;
 using Hexalith.Projects.Server.Queries;
 using Hexalith.Projects.Server.Authentication;
+using Hexalith.Projects.Server.Authorization;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -123,12 +126,13 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IProjectEventStoreAuthorizationValidator, DenyAllProjectEventStoreAuthorizationValidator>();
         services.TryAddSingleton<IProjectDaprPolicyEvidenceProvider, DenyAllProjectDaprPolicyEvidenceProvider>();
         services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();
-        services.TryAddSingleton<IDomainProcessor, ProjectsDomainProcessor>();
+        services.TryAddTransient<IDomainProcessor, ProjectsDomainProcessor>();
         services.AddSingleton<IDomainQueryHandler, GetConversationStartSetupQueryHandler>();
         services.AddSingleton<ProjectQueryEnvelopePrincipalBinding>();
         services.AddSingleton<ProjectContextQueryExecutor>();
         services.AddSingleton<IDomainQueryHandler, GetProjectContextQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, ExplainContextSelectionQueryHandler>();
+        services.AddTransient<IDomainQueryHandler, ProjectChatBotAuthorityQueryHandler>();
 
         return services;
     }
@@ -143,6 +147,28 @@ public static class ProjectsServerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddProjectsDaprInfrastructure();
+        services.AddAuthentication().AddEventStoreWorkloadScheme(
+            EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
+            "Authentication:Workload",
+            static (options, _) =>
+            {
+                options.Audience ??= "projects";
+                if (options.AllowedCallers.Count == 0) { options.AllowedCallers.Add("eventstore"); }
+            });
+        services.AddEventStoreWorkloadPolicies(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
+            [EventStoreWorkloadOperations.DomainServiceProcess,
+                EventStoreWorkloadOperations.DomainServiceQuery,
+                EventStoreWorkloadOperations.DomainServiceProject]);
+        services.AddSingleton<ProjectAuthorityRuntimeSecurity>();
+        services.AddEventStoreWorkloadAssertionIssuer();
+        string authorityDaprEndpoint = Environment.GetEnvironmentVariable("DAPR_HTTP_ENDPOINT")
+            ?? $"http://127.0.0.1:{Environment.GetEnvironmentVariable("DAPR_HTTP_PORT") ?? "3500"}";
+        services.AddHttpClient<ProjectChatBotAuthorityGateway>(client => client.BaseAddress = new Uri(
+            authorityDaprEndpoint.Replace("localhost", "127.0.0.1", StringComparison.OrdinalIgnoreCase)));
+        services.AddTransient<ProjectOwnerBootstrapVerifier>();
+        services.AddTransient<IAuthoritativeEventStreamReader>(provider =>
+            new AuthoritativeEventStreamReader(provider.GetRequiredService<ProjectChatBotAuthorityGateway>(),
+                provider.GetRequiredService<TimeProvider>(), TimeSpan.FromSeconds(10)));
         services.RemoveAll<IReadModelStore>();
         services.RemoveAll<InMemoryProjectReadModelStore>();
         services.AddEventStoreReadModelStore();
@@ -200,7 +226,7 @@ public static class ProjectsServerServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
-        _ = endpoints.MapPost(ProjectsServerModule.ProcessRoute, async (
+        RouteHandlerBuilder processEndpoint = endpoints.MapPost(ProjectsServerModule.ProcessRoute, async (
             DomainServiceRequest request,
             IDomainProcessor processor) =>
         {
@@ -209,7 +235,7 @@ public static class ProjectsServerServiceCollectionExtensions
                 .ConfigureAwait(false);
             return Results.Ok(DomainServiceWireResult.FromDomainResult(result));
         });
-        _ = endpoints.MapPost(ProjectsServerModule.ProjectRoute, static (ProjectionRequest request) =>
+        RouteHandlerBuilder projectEndpoint = endpoints.MapPost(ProjectsServerModule.ProjectRoute, static (ProjectionRequest request) =>
             string.Equals(request.Domain, ProjectsServerModule.DomainName, StringComparison.Ordinal)
                 ? Results.Ok(ProjectProjectionHandler.Project(request))
                 : Results.NotFound());
@@ -222,7 +248,13 @@ public static class ProjectsServerServiceCollectionExtensions
             });
         IConfiguration configuration = endpoints.ServiceProvider.GetRequiredService<IConfiguration>();
         IHostEnvironment environment = endpoints.ServiceProvider.GetRequiredService<IHostEnvironment>();
-        if (!ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(configuration, environment))
+        if (endpoints.ServiceProvider.GetService<ProjectAuthorityRuntimeSecurity>() is not null)
+        {
+            _ = processEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Process);
+            _ = projectEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Project);
+            _ = queryEndpoint.RequireAuthorization(EventStoreDomainServicePolicies.Query);
+        }
+        else if (!ProjectsAuthenticationServiceCollectionExtensions.IsAnonymousDevelopmentBypass(configuration, environment))
         {
             _ = queryEndpoint.RequireAuthorization();
         }
