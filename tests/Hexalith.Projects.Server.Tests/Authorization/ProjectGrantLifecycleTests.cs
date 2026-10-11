@@ -5,6 +5,7 @@ using System.Text.Json;
 
 using Hexalith.EventStore.Contracts.Commands;
 using Hexalith.EventStore.Contracts.Queries;
+using Hexalith.EventStore.Client.Gateway;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
 using Hexalith.Projects.Aggregates.Project;
 using Hexalith.Projects.Authorization;
@@ -35,7 +36,7 @@ public sealed class ProjectGrantLifecycleTests
         DateTimeOffset now = DateTimeOffset.UtcNow;
         using OwnerEvidenceHandler owner = new(now);
         using HttpClient http = new(owner) { BaseAddress = new Uri("http://eventstore.local/") };
-        ProjectOwnerBootstrapVerifier bootstrap = Verifier(http);
+        ProjectOwnerBootstrapVerifier bootstrap = Verifier(http, owner);
         var processor = new ProjectsDomainProcessor(TimeProvider.System,
             new DenyAllProjectEventStoreAuthorizationValidator(), bootstrap);
         ProjectState expired = State(now.AddMinutes(-1));
@@ -60,19 +61,39 @@ public sealed class ProjectGrantLifecycleTests
         using OwnerEvidenceHandler owner = new(DateTimeOffset.UtcNow) { Timeout = true };
         using HttpClient http = new(owner) { BaseAddress = new Uri("http://eventstore.local/") };
 
-        (await Verifier(http).IsCurrentOwnerAsync(Tenant, Principal, "GrantProjectChatBotAuthority",
+        (await Verifier(http, owner).IsCurrentOwnerAsync(Tenant, Principal, "GrantProjectChatBotAuthority",
             TestContext.Current.CancellationToken)).ShouldBeFalse();
     }
 
-    private static ProjectOwnerBootstrapVerifier Verifier(HttpClient http)
+    [Fact]
+    public async Task OwnerObservationCreatedDuringTenantQueryIsCurrent()
+    {
+        DateTimeOffset started = DateTimeOffset.UtcNow;
+        var clock = new AdjustableClock(started);
+        using OwnerEvidenceHandler owner = new(started)
+        {
+            ObservationTime = clock.GetUtcNow,
+            BeforeTenantResponse = () => clock.UtcNow = started.AddSeconds(1),
+        };
+        using HttpClient http = new(owner) { BaseAddress = new Uri("http://eventstore.local/") };
+
+        (await Verifier(http, owner, clock).IsCurrentOwnerAsync(Tenant, Principal,
+            "GrantProjectChatBotAuthority", TestContext.Current.CancellationToken)).ShouldBeTrue();
+        owner.Reads.ShouldBe(2);
+    }
+
+    private static ProjectOwnerBootstrapVerifier Verifier(HttpClient http, OwnerEvidenceHandler owner,
+        TimeProvider? clock = null)
     {
         using RSA key = RSA.Create(2048);
         IConfiguration configuration = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
         {
             ["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(key.ExportPkcs8PrivateKey()),
         }).Build();
-        return new(new ProjectChatBotAuthorityGateway(http, new Issuer(), configuration, TimeProvider.System),
-            TimeProvider.System);
+        owner.PublicKey = Convert.ToBase64String(key.ExportSubjectPublicKeyInfo());
+        TimeProvider effectiveClock = clock ?? TimeProvider.System;
+        return new(new ProjectChatBotAuthorityGateway(http, new Issuer(), configuration, effectiveClock),
+            effectiveClock);
     }
 
     private static ProjectState State(DateTimeOffset expiry)
@@ -108,9 +129,15 @@ public sealed class ProjectGrantLifecycleTests
 
     private sealed class OwnerEvidenceHandler(DateTimeOffset now) : HttpMessageHandler
     {
+        public Action? BeforeTenantResponse { get; set; }
+
+        public Func<DateTimeOffset>? ObservationTime { get; set; }
+
         public bool Timeout { get; set; }
 
         public int Reads { get; private set; }
+
+        public string? PublicKey { get; set; }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -118,22 +145,34 @@ public sealed class ProjectGrantLifecycleTests
             request.RequestUri!.AbsolutePath.ShouldBe("/api/v1/queries/owner-authority/workload");
             request.Headers.Contains("X-Hexalith-Bound-Owner-Query-Proof").ShouldBeTrue();
             request.Headers.Contains(EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName).ShouldBeTrue();
-            JsonElement body = await request.Content!.ReadFromJsonAsync<JsonElement>(cancellationToken)
-                .ConfigureAwait(false);
-            JsonElement query = body.GetProperty("query");
-            string operation = query.GetProperty("payload").GetProperty("operation").GetString()!;
-            string domain = query.GetProperty("domain").GetString()!;
+            BoundOwnerQueryRequest bound = (await request.Content!.ReadFromJsonAsync<BoundOwnerQueryRequest>(cancellationToken)
+                .ConfigureAwait(false)).ShouldNotBeNull();
+            BoundOwnerQueryProof.Verify(bound,
+                request.Headers.GetValues(BoundOwnerQueryProof.HeaderName).Single(), "projects", PublicKey,
+                ObservationTime?.Invoke() ?? now)
+                .ShouldBeTrue();
+            string operation = bound.Query.Payload!.Value.GetProperty("operation").GetString()!;
+            string domain = bound.Query.Domain;
+            if (domain == "tenants") { BeforeTenantResponse?.Invoke(); }
+            DateTimeOffset observedAt = ObservationTime?.Invoke() ?? now;
             object evidence = domain == "tenants"
                 ? new { tenantId = Tenant, principalId = Principal, operation, actorClass = "human",
-                    origin = "Api", allowed = true, sourceVersion = 1, observationId = "observation-owner", observedAt = now }
+                    origin = "Api", allowed = true, sourceVersion = 1, observationId = "observation-owner", observedAt }
                 : new { tenantId = Tenant, principalId = Principal, partyId = Principal, operation,
                     actorClass = "human", origin = "Api", allowed = true, sourceVersion = 1,
-                    observationId = "observation-party", observedAt = now };
+                    observationId = "observation-party", observedAt };
             Reads++;
             return new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = JsonContent.Create(new SubmitQueryResponse("corr", JsonSerializer.SerializeToElement(evidence))),
             };
         }
+    }
+
+    private sealed class AdjustableClock(DateTimeOffset now) : TimeProvider
+    {
+        public DateTimeOffset UtcNow { get; set; } = now;
+
+        public override DateTimeOffset GetUtcNow() => UtcNow;
     }
 }
