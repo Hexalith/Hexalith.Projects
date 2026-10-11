@@ -2,7 +2,8 @@
 title: '6.1-P1R Prepare and qualify a new published EventStore successor'
 type: 'feature'
 created: '2026-10-11'
-status: 'ready-for-dev'
+status: 'in-progress'
+baseline_commit: '25bd0b29ff0d768d8a712908184937d10db6bc9d'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -51,11 +52,11 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] Workspace `_bmad-output/implementation-artifacts/6-1-p1r-published-successor-decision-packet-2026-10-11.md` — record the Green CI route and leave exact-source release authorization and role acceptance pending.
+- [x] Workspace `_bmad-output/implementation-artifacts/6-1-p1r-published-successor-decision-packet-2026-10-11.md` — record the Green CI route and leave exact-source release authorization and role acceptance pending.
 - [ ] `tests/Hexalith.EventStore.Contracts.Tests/Packaging/ContractsPackageDependencyTests.cs` and workspace `references/Hexalith.Builds/Tools/validate-consumer-package-authority.ps1` — reproduce and fix the null-expression failure without weakening authority; update EventStore's nested Builds gitlink only if required.
 - [ ] `tests/Hexalith.EventStore.Contracts.Tests/Packaging/DeployedRuntimeParityClosureTests.cs`, `tests/Hexalith.EventStore.Contracts.Tests/Packaging/CorrectedDeployedRuntimeParityClosureTests.cs`, and `_bmad-output/implementation-artifacts/sprint-status.yaml` — resolve both guarded Story 3.15 tracker assertions with truthful caveat and subject evidence; prove exact-source green CI.
-- [ ] `tools/p1r_published_executor.py`, `tools/p1r_published_qualification.py`, and new `tools/p1r_successor_support_boundary.json` — prepare identity-bound successor measurement and a separate case table without guessing a version or altering 3.119.0 evidence.
-- [ ] `tools/tests/test_p1r_published_executor.py` and `tools/tests/test_p1r_published_qualification.py` — reject substitution, candidate failures, invented refusals and missing assertions.
+- [x] `tools/p1r_published_executor.py`, `tools/p1r_published_qualification.py`, and new `tools/p1r_successor_support_boundary.json` — prepare identity-bound successor measurement and a separate case table without guessing a version or altering 3.119.0 evidence.
+- [x] `tools/tests/test_p1r_published_executor.py` and `tools/tests/test_p1r_published_qualification.py` — reject substitution, candidate failures, invented refusals and missing assertions.
 - [ ] `.github/workflows/release.yml` — after green CI and a reviewable candidate, obtain exact owner authorization and dispatch existing workflow; capture tag, archive hashes, package-build Builds identity and container, or retain failure.
 - [ ] Workspace `_bmad-output/implementation-artifacts/evidence/6-1-p1r-next-published-run/` — run authorized archives on PostgreSQL/Dapr 1.18.2; retain case receipts, pre-effect refusals, persisted restore/restart, hashes, Tenant isolation, cleanup and independent validation. Leave pins, usability and Story 6.1 blocked.
 
@@ -66,11 +67,25 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 
 ## Implementation Notes
 
+- Local Builds validator now reports empty XML explicitly. The EventStore Contracts authority test excludes only the 300 exact, hash-bound historical 3.119.0 probe files; current consumer graph authority remains checked. The guarded Story 3.15 tracker block is restored.
+- The successor executor checks selected tag, live source, tag Builds identity, and signed archive bytes before protected runtime access. The qualification tooling requires a separate candidate-specific measured support boundary and Solution Architect disposition. The new table file remains deliberately unpopulated until authorized published archives produce receipts. The 3.119.0 table and sealed evidence were not changed.
+- The EventStore nested Builds gitlink still points to the previous Builds commit. Local validation uses the repaired Builds working tree, so the exact-source CI gate requires authorized repository commits, the nested gitlink update, and a new CI push run. This workflow forbids push and remote operations. There is no selected successor version or release authorization; publication and PostgreSQL/Dapr package execution remain pending. Story 6.1, pins, Stack, and P1R usability remain blocked.
+
 ## Spec Change Log
+
+- 2026-10-11: Started implementation from workspace baseline `25bd0b29ff0d768d8a712908184937d10db6bc9d`. Completed local repair, successor tooling, and negative-test tasks. Retained release and operational qualification tasks open pending exact-source CI, owner authorization, and published archives.
 
 ## Review Triage Log
 
 ## Verification
+
+**Local results (2026-10-11):**
+- `dotnet build tests/Hexalith.EventStore.Contracts.Tests/Hexalith.EventStore.Contracts.Tests.csproj -c Release -m:1 --no-restore -p:UseHexalithProjectReferences=false -p:NuGetAudit=false -p:MinVerVersionOverride=1.0.0 -v:q` in EventStore — exit 0, zero warnings/errors.
+- Built Contracts test assembly with the three focused `-method` patterns for consumer authority and the two Story 3.15 guards — exit 0, four invocations, zero failures.
+- `python3 -m unittest discover -s tools/tests -p 'test_p1r_published_*.py'` in EventStore — 118 tests, pass.
+- `git diff --check` in workspace, EventStore, and Builds — pass.
+
+**Matrix audit:** The local tests cover 3.120.0 refusal, successor identity substitution, protected old-route plan, missing assertions, and `rollback=null` selection. The exact-source CI row and candidate stale-fence, logical-alias, persisted restore/restart, and PostgreSQL/Dapr runtime observations cannot pass until a published successor exists. No case receipt or role acceptance is claimed from source tests.
 
 **Commands:**
 - `python3 -m unittest discover -s tools/tests -p 'test_p1r_published_*.py'` in EventStore — pass.
