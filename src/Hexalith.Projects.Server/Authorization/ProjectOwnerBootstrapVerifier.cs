@@ -14,6 +14,8 @@ public sealed class ProjectOwnerBootstrapVerifier(
     public async Task<bool> IsCurrentOwnerAsync(string tenantId, string issuerId,
         string operation, CancellationToken cancellationToken)
     {
+        using CancellationTokenSource timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
         try
         {
             DateTimeOffset now = clock.GetUtcNow();
@@ -22,7 +24,7 @@ public sealed class ProjectOwnerBootstrapVerifier(
                 "Hexalith.Tenants.Contracts.Queries.ResolveTenantOwnerAuthority",
                 Payload: JsonSerializer.SerializeToElement(tenantPayload, JsonOptions));
             SubmitQueryResponse tenantResponse = await gateway.ReadOwnerAuthorityAsync(tenantQuery,
-                issuerId, cancellationToken).ConfigureAwait(false);
+                issuerId, timeout.Token).ConfigureAwait(false);
             TenantOwnerResult? tenant = tenantResponse.Payload.Deserialize<TenantOwnerResult>(JsonOptions);
             if (tenant is null || !tenant.Allowed || tenant.TenantId != tenantId ||
                 tenant.PrincipalId != issuerId || tenant.Operation != operation ||
@@ -38,7 +40,7 @@ public sealed class ProjectOwnerBootstrapVerifier(
                 "Hexalith.Parties.Contracts.Queries.ResolveChatBotPartyAuthority",
                 Payload: JsonSerializer.SerializeToElement(partyPayload, JsonOptions));
             SubmitQueryResponse partyResponse = await gateway.ReadOwnerAuthorityAsync(partyQuery,
-                issuerId, cancellationToken).ConfigureAwait(false);
+                issuerId, timeout.Token).ConfigureAwait(false);
             PartyResult? party = partyResponse.Payload.Deserialize<PartyResult>(JsonOptions);
             now = clock.GetUtcNow();
             return party is not null && party.Allowed && party.TenantId == tenantId &&
@@ -48,6 +50,10 @@ public sealed class ProjectOwnerBootstrapVerifier(
                 party.ObservedAt <= now && now - party.ObservedAt <= TimeSpan.FromSeconds(60);
         }
         catch (Exception exception) when (exception is HttpRequestException or InvalidOperationException or JsonException or ArgumentException)
+        {
+            return false;
+        }
+        catch (TaskCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
             return false;
         }

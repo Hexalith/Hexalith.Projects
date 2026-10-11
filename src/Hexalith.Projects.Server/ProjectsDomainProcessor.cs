@@ -185,7 +185,8 @@ public sealed class ProjectsDomainProcessor(
                 }
 
                 string scope = ChatBotGrantScope.For(grant.PrincipalId, grant.Operation, grant.ActorClass, grant.Origin);
-                if (state.ChatBotGrants.TryGetValue(scope, out ProjectChatBotGrant? prior) && !prior.Revoked)
+                if (state.ChatBotGrants.TryGetValue(scope, out ProjectChatBotGrant? prior) &&
+                    !prior.Revoked && prior.ExpiresAt > now)
                 {
                     return DomainResult.Rejection([new ProjectChatBotAuthorityRejected("grant_active")]);
                 }

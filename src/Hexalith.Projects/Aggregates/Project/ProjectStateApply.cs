@@ -182,7 +182,8 @@ public static class ProjectStateApply
         }
 
         string scope = ChatBotGrantScope.For(granted.PrincipalId, granted.Operation, granted.ActorClass, granted.Origin);
-        if (state.ChatBotGrants.TryGetValue(scope, out ProjectChatBotGrant? current) && !current.Revoked)
+        if (state.ChatBotGrants.TryGetValue(scope, out ProjectChatBotGrant? current) &&
+            !current.Revoked && current.ExpiresAt > granted.OccurredAt)
         {
             throw new InvalidOperationException("Overlapping project authority grant history.");
         }
