@@ -44,7 +44,7 @@ context:
 
 EventStore paths below are relative to `references/Hexalith.EventStore/`.
 
-- `.github/workflows/release.yml:32-234` — reuse exact-main CI/Commitlint and protected publication gates. Current source has three Contracts failures in CI 38133533659; Commitlint 38133533676 passed.
+- `.github/workflows/release.yml:32-234` — reuse exact-main CI/Commitlint and protected publication gates. Earlier source had three Contracts failures in CI 38133533659; Commitlint 38133533676 passed. Exact-source CI for the new pushed revision remains unverified.
 - `tests/Hexalith.EventStore.Contracts.Tests/Packaging/`, `_bmad-output/implementation-artifacts/sprint-status.yaml:138`, and workspace `references/Hexalith.Builds/Tools/validate-consumer-package-authority.ps1` — three CI failures; do not initialize nested Builds.
 - `src/Hexalith.EventStore.Server/Commands/IdempotencyExecutionContextProtector.cs`, `Actors/AggregateActor.cs`, `tools/p1r-published-consumers/domain/FixtureEvolutionManifest.cs` — repairs absent from published 3.120.0.
 - `tools/p1r_published_executor.py:35-42,892-1000,1315-1492`, `tools/p1r_published_qualification.py:313-515,1150-1337`, `tools/p1r_support_boundary.json` — 3.119.0 bindings, case receipts and sealed policy.
@@ -69,11 +69,12 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 
 - Local Builds validator now reports empty XML explicitly. The EventStore Contracts authority test excludes only the 300 exact, hash-bound historical 3.119.0 probe files; current consumer graph authority remains checked. The guarded Story 3.15 tracker block is restored.
 - The successor executor checks selected tag, live source, tag Builds identity, and signed archive bytes before protected runtime access. The qualification tooling requires a separate candidate-specific measured support boundary and Solution Architect disposition. The new table file remains deliberately unpopulated until authorized published archives produce receipts. The 3.119.0 table and sealed evidence were not changed.
-- The EventStore nested Builds gitlink is staged to repaired Builds commit `608c164c3637240fed2dd92dbfdaaf581ba9846d`. EventStore was locally fast-forwarded to recorded `origin/main` commit `d35ab1f8bb2a527d38e901ac0b9faf69e1a7519a`; the exact-source CI gate still requires an EventStore commit containing the pointer and a new successful CI push run. This workflow forbids push and remote operations. There is no selected successor version or release authorization; publication and PostgreSQL/Dapr package execution remain pending. Story 6.1, pins, Stack, and P1R usability remain blocked.
+- EventStore commit `ef6e688672e1b09a78e78237e4dbfb607d3635a5` records the repaired Builds gitlink `608c164c3637240fed2dd92dbfdaaf581ba9846d`; Projects commit `f58e7391637e4afcbbb864e50b80c95f5924bb39` records that EventStore revision. The nested Builds worktree remains uninitialized. Exact-source green CI for EventStore `ef6e6886` remains unverified. This workflow forbids push and remote operations. There is no selected successor version or release authorization; publication and PostgreSQL/Dapr package execution remain pending. Story 6.1, pins, Stack, and P1R usability remain blocked.
 
 ## Spec Change Log
 
 - 2026-10-11: Started implementation from workspace baseline `25bd0b29ff0d768d8a712908184937d10db6bc9d`. Completed local repair, successor tooling, and negative-test tasks. Retained release and operational qualification tasks open pending exact-source CI, owner authorization, and published archives.
+- 2026-10-11: Observed pushed EventStore `ef6e688672e1b09a78e78237e4dbfb607d3635a5` with repaired Builds pointer and Projects `f58e7391637e4afcbbb864e50b80c95f5924bb39`. Exact-source CI result and release authorization remain pending.
 
 ## Review Triage Log
 
@@ -87,6 +88,9 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 - Full Contracts assembly run (`timeout 600s dotnet tests/Hexalith.EventStore.Contracts.Tests/bin/Release/net10.0/Hexalith.EventStore.Contracts.Tests.dll`) reported a five-second process-test timeout, then was interrupted after no further output (exit 130); the later fixture checkout failure was caused by that interruption. This is not a full-suite pass.
 - Isolated rerun (`timeout 120s dotnet tests/Hexalith.EventStore.Contracts.Tests/bin/Release/net10.0/Hexalith.EventStore.Contracts.Tests.dll -method '*ProcessContractDistinguishesOwnedExternalAndExitedProcesses'`) passed 1/1 in 1.716 seconds.
 - On EventStore `d35ab1f8bb2a527d38e901ac0b9faf69e1a7519a` with the repaired Builds pointer staged: Contracts Release build passed with zero warnings/errors; the consumer-authority test passed 1/1 in 170.967 seconds; the current-subject guard passed 2/2; the lifecycle guard passed 1/1; successor Python tests passed 118/118.
+- On pushed EventStore `ef6e688672e1b09a78e78237e4dbfb607d3635a5`: the Contracts Release build passed with zero warnings/errors, and successor Python tests passed 118/118. No exact-source CI result has been verified.
+- Exact-source CI run 38142379376 was still in progress at 2026-10-11 13:23 UTC; green CI is not established.
+- P1R Qualification Preparation run 38142379130 failed 1/35: the external-SIGINT test did not observe the descendants control before its 20-second watch ended or the child exited. The original assertion did not retain child diagnostics. A local test-only change extends the bounded watch to 120 seconds and reports child status/output; the targeted test passed 1/1 and the full preparation suite passed 35/35. That change is not in the pushed revision and needs a new exact-source run.
 
 **Matrix audit:** The local tests cover 3.120.0 refusal, successor identity substitution, protected old-route plan, missing assertions, and `rollback=null` selection. The exact-source CI row and candidate stale-fence, logical-alias, persisted restore/restart, and PostgreSQL/Dapr runtime observations cannot pass until a published successor exists. No case receipt or role acceptance is claimed from source tests.
 
