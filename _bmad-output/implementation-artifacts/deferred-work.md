@@ -972,3 +972,7 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-restore-receipt-command-attribution.md`
   summary: Bind both the PostgreSQL dump and its Docker copy-out to the P1R restore receipt's backup provenance.
   evidence: The recovery receipt schema binds one command to its backup artifact hash. Before the attribution fix that command was `docker cp`; afterward it is `pg_dump`. The raw execution journal retains both, and inventory equality checks the restored state, but the receipt does not explicitly link the two commands as one byte-transfer chain. This is a pre-existing evidence-model limitation requiring a separate compatible receipt contract change.
+
+- source_spec: `references/Hexalith.EventStore/_bmad-output/implementation-artifacts/spec-6-1-p1r-current-ci-repair.md`
+  summary: Add isolated public projection-only domain diagnostics discovery coverage in EventStore.
+  evidence: Both public projection fixtures use widget, already contributed by an aggregate, so the exact diagnostics-domain assertion cannot detect omitted synchronous or asynchronous projection-domain enumeration; this existing gap predates the P1R CI fixture repair.
