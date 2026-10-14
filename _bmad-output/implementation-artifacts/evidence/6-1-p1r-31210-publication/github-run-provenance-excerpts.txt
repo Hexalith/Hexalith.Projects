@@ -1,0 +1,57 @@
+Publish EventStore packages and container	Checkout approved Builds actions	2026-10-14T06:41:47.7811459Z   ref: 22a578b576a515d2af214fe81859447fffc97981
+Publish EventStore packages and container	Checkout approved Builds actions	2026-10-14T06:41:48.0087753Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 22a578b576a515d2af214fe81859447fffc97981
+Publish EventStore packages and container	Checkout approved Builds actions	2026-10-14T06:41:48.4830268Z  * branch            22a578b576a515d2af214fe81859447fffc97981 -> FETCH_HEAD
+Publish EventStore packages and container	Checkout approved Builds actions	2026-10-14T06:41:48.4839458Z [command]/usr/bin/git rev-parse --verify --quiet 22a578b576a515d2af214fe81859447fffc97981^{object}
+Publish EventStore packages and container	Checkout approved Builds actions	2026-10-14T06:41:48.4870134Z 22a578b576a515d2af214fe81859447fffc97981
+Publish EventStore packages and container	Checkout approved Builds actions	2026-10-14T06:41:48.4967340Z [command]/usr/bin/git checkout --progress --force 22a578b576a515d2af214fe81859447fffc97981
+Publish EventStore packages and container	Checkout approved Builds actions	2026-10-14T06:41:48.5223748Z Note: switching to '22a578b576a515d2af214fe81859447fffc97981'.
+Publish EventStore packages and container	Checkout approved Builds actions	2026-10-14T06:41:48.5231390Z HEAD is now at 22a578b feat: enhance semantic version validation and authority evidence handling
+Publish EventStore packages and container	Checkout approved Builds actions	2026-10-14T06:41:48.5308152Z 22a578b576a515d2af214fe81859447fffc97981
+Publish EventStore packages and container	Validate approved Builds execution identity	2026-10-14T06:41:48.6622775Z [36;1mtest "$(git -C .hexalith/builds-execution rev-parse HEAD)" = "22a578b576a515d2af214fe81859447fffc97981"[0m
+Publish EventStore packages and container	Initialize root-declared submodules	2026-10-14T06:41:59.7123780Z Submodule path 'references/Hexalith.Builds': checked out '608c164c3637240fed2dd92dbfdaaf581ba9846d'
+Publish EventStore packages and container	Build	2026-10-14T06:45:06.4700586Z Build succeeded.
+Publish EventStore packages and container	Prepare release container publisher	2026-10-14T06:45:11.0472835Z   builds-execution-sha: 22a578b576a515d2af214fe81859447fffc97981
+Publish EventStore packages and container	Prepare release container publisher	2026-10-14T06:45:11.0610174Z   HEXALITH_BUILDS_EXECUTION_SHA: 22a578b576a515d2af214fe81859447fffc97981
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:45:14.6799778Z   HEXALITH_BUILDS_EXECUTION_SHA: 22a578b576a515d2af214fe81859447fffc97981
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:45:38.1330484Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.Contracts.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:45:42.5522286Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.Client.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:45:52.4143491Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.Server.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:45:54.8865648Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.SignalR.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:45:57.9480816Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.Testing.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:01.5509463Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.Testing.Integration.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:03.9582107Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.Aspire.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:06.1000933Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.ServiceDefaults.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:08.1556191Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.DomainService.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:10.2708933Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.RestApi.Generators.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:15.1761870Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.Gateway.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:17.3022056Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.Admin.Abstractions.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:20.3791190Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.Admin.Cli.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:23.4259723Z   Successfully created package '/home/runner/work/Hexalith.EventStore/Hexalith.EventStore/nupkgs/Hexalith.EventStore.Admin.Server.3.121.0.nupkg'.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:34.9523428Z Pushing Hexalith.EventStore.RestApi.Generators.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:35.5185579Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:35.5190003Z Pushing Hexalith.EventStore.ServiceDefaults.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:35.8440109Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:35.8441552Z Pushing Hexalith.EventStore.Testing.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:36.2654552Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:36.2655935Z Pushing Hexalith.EventStore.Admin.Server.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:36.6105331Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:36.6106633Z Pushing Hexalith.EventStore.Testing.Integration.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:37.0203074Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:37.0204148Z Pushing Hexalith.EventStore.Aspire.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:37.3705038Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:37.3716897Z Pushing Hexalith.EventStore.Server.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:38.0668933Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:38.0670656Z Pushing Hexalith.EventStore.SignalR.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:38.3825414Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:38.3827010Z Pushing Hexalith.EventStore.Admin.Cli.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:38.7855467Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:38.7857000Z Pushing Hexalith.EventStore.Admin.Abstractions.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:39.0461118Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:39.0462620Z Pushing Hexalith.EventStore.DomainService.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:39.4191067Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:39.4192527Z Pushing Hexalith.EventStore.Client.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:39.8010897Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:39.8012407Z Pushing Hexalith.EventStore.Gateway.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:40.2175975Z Your package was pushed.
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:40.2177225Z Pushing Hexalith.EventStore.Contracts.3.121.0.nupkg to 'https://www.nuget.org/api/v2/package'...
+Publish EventStore packages and container	Semantic Release	2026-10-14T06:46:40.4959039Z Your package was pushed.
