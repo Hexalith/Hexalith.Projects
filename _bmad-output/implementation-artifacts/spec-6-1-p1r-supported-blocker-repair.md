@@ -2,7 +2,7 @@
 title: '6.1-P1R Repair supported qualification fixtures and isolate execution'
 type: 'bugfix'
 created: '2026-10-14'
-status: 'in-progress'
+status: 'done'
 route: 'dispatch'
 baseline_commit: '532c0fb35054a44beb9725a0f795b41c91b46d5f'
 owner_repo_baseline_commit: '21b34c01ec919769cfba9cfe0d47e50886b57ded'
@@ -53,11 +53,11 @@ Owner is `references/Hexalith.EventStore/`; paths below are relative to that rep
 
 **Execution:**
 
-- [ ] `tools/p1r_published_executor.py` and focused tests — replace malformed historical fixture state; verify envelope, protection, tenant and history preservation plus active-writer refusal.
-- [ ] New `tools/p1r_isolation.py`, CLI and tests — implement private execution namespace and daemon; retain exact identity and ownership proof; repeated owned cleanup on success/failure/interruption. Use a digest-pinned glibc SDK runner with ephemeral tools, without repository dependency updates. Prevent ambient Docker endpoint leakage.
-- [ ] Server tests — run meaningful existing corruption/protection/floor controls and add paired folded legacy versus DTO collision regression if missing.
-- [ ] New evidence directory — retain diagnosis, source diff, test/live verification and historical preservation. Re-execute the six affected cases, negative controls, genuine snapshot restore, both additions and strict cleanup with private resources. If broader full qualification is run, keep its scope honest and all failures visible.
-- [ ] README/proposal — provide reviewed correction and concrete next publication/qualification sequence, immutable identities, unchanged profile and pending gates. Never choose an unapproved successor version or claim old package proof covers it.
+- [x] `tools/p1r_published_executor.py` and focused tests — replace malformed historical fixture state; verify envelope, protection, tenant and history preservation plus active-writer refusal.
+- [x] New `tools/p1r_isolation.py`, CLI and tests — implement private execution namespace and daemon; retain exact identity and ownership proof; repeated owned cleanup on success/failure/interruption. Use a digest-pinned glibc SDK runner with ephemeral tools, without repository dependency updates. Prevent ambient Docker endpoint leakage.
+- [x] Server tests — run meaningful existing corruption/protection/floor controls and add paired folded legacy versus DTO collision regression if missing.
+- [x] New evidence directory — retain diagnosis, source diff, test/live verification and historical preservation. Re-execute the six affected cases, negative controls, genuine snapshot restore, both additions and strict cleanup with private resources. If broader full qualification is run, keep its scope honest and all failures visible.
+- [x] README/proposal — provide reviewed correction and concrete next publication/qualification sequence, immutable identities, unchanged profile and pending gates. Never choose an unapproved successor version or claim old package proof covers it.
 
 **Acceptance Criteria:**
 
@@ -71,11 +71,50 @@ The user explicitly authorizes preserving and extending this dirty working tree.
 
 ## Spec Change Log
 
+- Fixture construction was confirmed as the cause; production readers remain unchanged. The approved intent and acceptance criteria did not change.
+- Added actual daemon/namespace proof, exact ownership cleanup and immutable verification-script binding. Follow-up patches address reviewed failure paths and the actual embedded recovery contract.
+- The concurrent external Git event is documented and preserved. User instructions override the workflow's commit and sprint-sync defaults: no staging, commit, push, publication or Story status advance occurred.
+
 ## Review Triage Log
+
+| Finding | Verdict | Route | Evidence |
+| --- | --- | --- | --- |
+| B1 | high | patch | Output outside the only workspace mount loses private evidence during owned teardown; reject before provisioning. Resolved. |
+| B2 | medium | patch | CLI changes cwd to ROOT but forwards relative paths; normalize path-valued arguments against caller cwd. Resolved. |
+| B3 | high | patch | SIGTERM uses default termination and Ctrl+C can remove the SDK before its supervisor records cleanup; forward orderly interruption and retain final receipts. Resolved. |
+| B4 | high | patch | Direct repair-driver execution can reach ambient Docker; require actual private daemon/namespace proof before Docker resources. Resolved. |
+| B5 | high | patch | Evidence scripts are excluded from standard source_binding and recorded driver hash is not independently checked; bind an additional immutable script closure before and after execution. Resolved. |
+| B6 | high | patch | Audit checks only selected receipt paths and trusts summary verified; require exact ten distinct lanes and all registered recovery receipts. Resolved. |
+| B7 | high | patch | Measurement audit does not bind or validate outer teardown; add independent final controller audit binding both isolation receipts and actual owned absence. Resolved. |
+| B8 | high | patch | Fixed plan/summary paths overwrite earlier attempts; use unique measurement/audit directories and refuse reuse. Resolved. |
+| B9 | medium | patch | Public CLI returns from captured Docker exec without structured stdout; restore concrete execution and isolation locations. Resolved. |
+| V1 | medium | patch | Existing CI discovers exact filenames and omits isolation controls; add that suite to the P1R workflow. Resolved. |
+| V2 | medium | patch | Tests mock private_proof itself; execute actual daemon/namespace refusal predicates with mismatched inputs and assert no command launch. Resolved. |
+| V3 | medium | patch | No control exercises automatic public CLI reentry; add routing/path/output controls and a retained live CLI entry-point proof. Resolved. |
+| E1 | medium | patch | Same reproduced relative-path defect as B2; separate reviewer finding retained. Resolved. |
+| E2 | high | patch | Same outside-mount evidence loss as B1; separate reviewer finding retained. Resolved. |
+| E3 | high | patch | Same SIGTERM cleanup gap as B3; separate reviewer finding retained. Resolved. |
+| R1 | high | patch | Wrapper permits an explicit command leaving a private sentinel, then removes its daemon/volume without inventorying nested resources. Refuse teardown while unexpected inner containers remain; preserve their parent daemon and volume. Resolved. |
+| R2 | medium | patch | Follow-up edge review found docker() replaced a SIGTERM IsolationInterrupted instance with a plain KeyboardInterrupt. Re-raise the original instance so the retained signal remains accurate; focused regression passes in the 23-control isolation suite. Resolved. |
+| R3 | high | patch | Follow-up verification found interruption could skip final controller checks and leave validity true. Initialize validity false, retain SIGINT/SIGTERM, and require the exact nine completed checks. Real injected SIGINT and SIGTERM controls both retain nonpassing final-audit receipts. Resolved. |
+| R4 | high | patch | Follow-up verification found the outer activity proof could substitute an owned SDK container. Require a distinct exact identity, launch-bound nonce/ownership and recorded creation, running/stopped observations and removal in order. Independent receipt-substitution control is required before handoff. Resolved. |
+| R5 | medium | patch | Final independent proposal review found future V enrollment omitted three strict snapshot witness gates. Proposal now enumerates requires_qualified_snapshot, qualified-snapshot writer allowlist and restore writer selection, all three compiler defines and meaningful missing/substituted witness controls. No current version guard was changed. Resolved. |
+| R6 | high | patch | The first complete live measurement passed all 3,218 assertions but its independent audit invented a top-level restore.invocation field. Actual restore schema embeds the exact cleanup receipt. Require cleanup.invocation==execution.invocation and full restore.cleanup==cleanup, with unrelated/mismatched invocation negatives; preserve the failed audit and repeat a fresh frozen complete attempt. Resolved. |
+
+All 21 findings are resolved; none is deferred. Three independent layers completed before the initial triage; follow-up independent checks confirmed the repairs. The final proposal enrollment omission and actual recovery-schema mismatch were corrected and independently checked before handoff.
 
 ## Verification
 
-- `python3 -m unittest discover -s tools/tests -p 'test_p1r_published*.py' -v` and focused isolation controls.
-- Build Server test project in Debug and run built xUnit assembly with `-class` for EventStreamReaderTests, SnapshotManagerTests, AggregateActorManualSnapshotTests and AggregateActorFoldedSnapshotMigrationTests; use source references where available.
-- Fresh isolated package and distinct Debug/source measurements; independently rederive retained witnesses, coordinates, recovery and strict cleanup.
-- Compare historical SHA-256 manifest, pre-existing tooling diff, Git index and blocked-state files. No staging or publication.
+- 136 published Python controls and 23 final isolation controls passed.
+- Debug Server build passed; all 178 selected EventStreamReader, SnapshotManager, AggregateActorManualSnapshot and AggregateActorFoldedSnapshotMigration tests passed, with no skipped tests.
+- Fresh private run: ten complete lanes, 72 cases, 3,218 assertions passed. All six original supported cases retain their classification and all sixteen former failures pass. Signed package role proofs pass 89/89 each.
+- Independent measurement audit: 45 checks passed. Final controller audit: all nine required checks passed after teardown. Cleanup 7/7 and dependent restore 12/12 pass, including complete nonempty strict shared equality during actual outer-daemon activity.
+- Real private-resource mutation remains nonpassing; actual SIGINT/SIGTERM and copied outer-ID substitution are rejected. Real automatic public CLI isolation retains expected refusal and owned cleanup. Recovery contract recheck passes 41 independent controls including six meaningful mismatched-receipt negatives.
+- Historical preservation: all 174,690 prior evidence files and the complete inventory match; three protected Projects files and 68 untouched tooling files match. Final read-only absence scan confirms 34 registered outer resources and six scratch directories removed. No unowned removal.
+- All old/new failed attempts remain unchanged. A complete earlier measurement passed but its independent audit failed on an invented restore field; that failure remains visible and a new frozen attempt passed after correction.
+
+Evidence: `references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-31210-blocker-repair-20261014/README.md` and its concrete successor proposal.
+
+`done` applies only to this repair spec. Four-role acceptance, same-baseline conformance and support disposition remain pending; P1R is unusable and Story 6.1 remains blocked. Full immutable successor qualification and all separate Story gates remain required. No stage, commit, push or publication was performed by this agent.
+
+Final independent handoff recheck: 46 controls passed without Docker commands or source changes. Final workspace verification confirms the frozen intent, all nine source hashes, three protected documents, both external HEADs and canonical indexes, no staged paths, and unchanged production source.
