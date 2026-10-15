@@ -976,3 +976,7 @@ status: open
 - source_spec: `references/Hexalith.EventStore/_bmad-output/implementation-artifacts/spec-6-1-p1r-current-ci-repair.md`
   summary: Add isolated public projection-only domain diagnostics discovery coverage in EventStore.
   evidence: Both public projection fixtures use widget, already contributed by an aggregate, so the exact diagnostics-domain assertion cannot detect omitted synchronous or asynchronous projection-domain enumeration; this existing gap predates the P1R CI fixture repair.
+
+- source_spec: `spec-6-1-p1r-successor-enrollment-publication-readiness.md`
+  summary: Qualify or explicitly refuse TLS-authenticated remote outer Docker controllers in the P1R isolation wrapper.
+  evidence: Independent review B8 found the pre-existing controller strips DOCKER_TLS_VERIFY/certificate/configuration inputs; this task uses the observed local Unix outer endpoint and does not qualify the separate remote TLS profile.
