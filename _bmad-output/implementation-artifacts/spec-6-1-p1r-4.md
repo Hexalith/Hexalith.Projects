@@ -2,7 +2,9 @@
 title: '6.1-P1R Prepare and qualify a new published EventStore successor'
 type: 'feature'
 created: '2026-10-11'
-status: 'in-progress'
+status: 'done'
+disposition: 'superseded'
+superseded_by: 'spec-6-1-p1r-31210-published-qualification.md'
 baseline_commit: '25bd0b29ff0d768d8a712908184937d10db6bc9d'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -59,8 +61,8 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 - [x] EventStore Integration Tests — exact-source live-sidecar workflow `38156506970` passed for prospective live-main source `3147eac6`; the earlier test correction remains included.
 - [x] `tools/p1r_published_executor.py`, `tools/p1r_published_qualification.py`, and new `tools/p1r_successor_support_boundary.json` — prepare identity-bound successor measurement and a separate case table without guessing a version or altering 3.119.0 evidence.
 - [x] `tools/tests/test_p1r_published_executor.py` and `tools/tests/test_p1r_published_qualification.py` — reject substitution, candidate failures, invented refusals and missing assertions.
-- [ ] `.github/workflows/release.yml` — after green CI and a reviewable candidate, obtain exact owner authorization and dispatch existing workflow; capture tag, archive hashes, package-build Builds identity and container, or retain failure.
-- [ ] Workspace `_bmad-output/implementation-artifacts/evidence/6-1-p1r-next-published-run/` — run authorized archives on PostgreSQL/Dapr 1.18.2; retain case receipts, pre-effect refusals, persisted restore/restart, hashes, Tenant isolation, cleanup and independent validation. Leave pins, usability and Story 6.1 blocked.
+- [~] (superseded by 3.121.0 publication; no dispatch performed here) `.github/workflows/release.yml` — after green CI and a reviewable candidate, obtain exact owner authorization and dispatch existing workflow; capture tag, archive hashes, package-build Builds identity and container, or retain failure.
+- [~] (superseded by spec-6-1-p1r-31210-published-qualification.md, evidence/6-1-p1r-31210-published-run/) Workspace `_bmad-output/implementation-artifacts/evidence/6-1-p1r-next-published-run/` — run authorized archives on PostgreSQL/Dapr 1.18.2; retain case receipts, pre-effect refusals, persisted restore/restart, hashes, Tenant isolation, cleanup and independent validation. Leave pins, usability and Story 6.1 blocked.
 
 **Acceptance Criteria:**
 - Given 3.120.0 lacks the repair, when successor selection runs, then it is refused without qualification.
@@ -86,6 +88,8 @@ EventStore paths below are relative to `references/Hexalith.EventStore/`.
 - 2026-10-11: Authorized release run `38155905626` failed closed before Semantic Release because live EventStore `main` advanced from `3099cb27` to `3147eac6` during execution. No successor was published; new-source proof and a new exact owner decision are pending.
 
 - 2026-10-11: Live EventStore `main` advanced to `3147eac6` with in-progress Story 6.2 folded-snapshot changes. Exact-source CI, Integration Tests, and P1R Preparation passed; release remains blocked on a new named owner decision for this changed source.
+
+- 2026-10-16: Closed as superseded. Release run 38155905626 published nothing; the successor family 3.121.0 was later selected by the owner (2026-10-14) and qualified under spec-6-1-p1r-31210-published-qualification.md. The two open tasks are not executed here. No release dispatched, no pins, Stack, P1R usability or Story 6.1 status changed; four-role acceptance remains pending.
 
 ## Review Triage Log
 
