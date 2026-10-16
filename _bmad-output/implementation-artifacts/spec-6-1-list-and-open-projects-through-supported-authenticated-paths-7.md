@@ -2,6 +2,7 @@
 title: 'Story 6.1: Supported authenticated Project list and open'
 type: 'feature'
 created: '2026-10-13'
+updated: '2026-10-15'
 status: 'draft'
 route: 'dispatch'
 baseline_commit: '4b72d845f5d0e731913d20a259d6e406dbe5ff80'
@@ -42,30 +43,32 @@ implementation_gate: 'blocked'
 
 </frozen-after-approval>
 
+## Open Questions
+
+1. Recover the reviewed October 14 P1R source/evidence bundle (provide its path), or prepare fresh prerequisite work against canonical EventStore main? The current checkout lacks both that bundle and 3.122.1 enrollment. Fresh work needs new review/qualification; publication and owner acceptance remain separate gates.
+
 ## Code Map
 
-- `src/Hexalith.Projects.Contracts/Queries/AdmissionSnapshot.cs` — reuse approved snapshot semantics.
-- `src/Hexalith.Projects.Server/Queries/ProjectQueryEnvelopePrincipalBinding.cs` — binding pattern; P4 approves authorization and placement.
+- `src/Hexalith.Projects.Contracts/Queries/AdmissionSnapshot.cs`: reuse AD-32 vocabulary.
+- `src/Hexalith.Projects.Server/Queries/ProjectQueryEnvelopePrincipalBinding.cs`: reuse authenticated binding; handlers belong here.
+- `src/Hexalith.Projects.Testing/Reads/ProjectContextShadowComparator.cs`: comparison pattern; list/open requires approved normalization.
 
 ## Tasks & Acceptance
 
 **Execution:**
 
-- [ ] `evidence/epic6/6.1-entry-gate.yaml` — verify accepted P0/current usable P1R/P2/P3, architect sign-off, P4, rollback, adapter/inspection contracts, finite normalization and independent `READY`; never fabricate approvals.
-- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add `ListProjectsQuery.cs`, `GetProjectQuery.cs`, `ProjectListPage.cs`, `ProjectListRow.cs`, `GetProjectResponse.cs`; reuse the shared snapshot and exact metadata allowlist.
-- [ ] `src/Hexalith.Projects/Projections/ProjectList/ProjectListProjection.cs`, `ProjectDetail/ProjectDetailProjection.cs` — reuse incremental folds in platform-backed envelopes; retain authoritative watermarks and explicit event classification.
-- [ ] `src/Hexalith.Projects.Server/Queries/ListProjectsQueryHandler.cs`, `GetProjectQueryHandler.cs` — implement approved binding, Folder filtering before paging, inspection audit, platform cursors, safe denial and honest freshness.
-- [ ] `src/Hexalith.Projects.Server/ProjectsServerModule.cs`, `ProjectsServerServiceCollectionExtensions.cs` — register and advertise both queries beside legacy routes.
-- [ ] `src/Hexalith.Projects.Testing/Reads/ProjectReadShadowComparator.cs` — compare identical inputs, keys, watermarks, ordering and cursors; reject unexplained deltas.
-- [ ] `tests/Hexalith.Projects.Server.Tests/Queries/ListProjectsQueryHandlerTests.cs`, `GetProjectQueryHandlerTests.cs`, `tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTests.cs` — verify the matrix, isolation, leakage, cursor security and persisted replay/restart; emit G-4 reports.
+- [ ] `evidence/epic6/6.1-entry-gate.yaml`: validate the frozen prerequisite chain, contracts, normalization and independent `READY`.
+- [ ] `src/Hexalith.Projects.Contracts/Queries/{ListProjectsQuery,GetProjectQuery,ProjectListPage,ProjectListRow,GetProjectResponse}.cs`: add one type per file using approved metadata.
+- [ ] `src/Hexalith.Projects/Projections/{ProjectList/ProjectListProjection,ProjectDetail/ProjectDetailProjection}.cs`: reuse folds in platform-backed models with watermarks and explicit event classification.
+- [ ] `src/Hexalith.Projects.Server/Queries/{ListProjectsQueryHandler,GetProjectQueryHandler}.cs`: implement binding, Folder filtering before paging, inspection audit, platform cursors, safe denial and freshness.
+- [ ] `src/Hexalith.Projects.Server/{ProjectsServerModule,ProjectsServerServiceCollectionExtensions}.cs`: register both queries beside legacy routes.
+- [ ] `src/Hexalith.Projects.Testing/Reads/ProjectReadShadowComparator.cs`: compare identical inputs, keys, watermarks, ordering and cursors.
+- [ ] `tests/Hexalith.Projects.Server.Tests/Queries/{ListProjectsQueryHandlerTests,GetProjectQueryHandlerTests}.cs` and `tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadTests.cs`: verify the frozen matrix and persisted replay/restart; emit actual G-4 reports.
 
 **Acceptance Criteria:**
 
-- Given current authorized evidence, when list/open runs, then only allowlisted AD-32 metadata returns with stable 50/200 paging, role-specific visibility and Archived context exclusion.
-- Given denied/cross-Tenant/absent identity, when open runs, then safe `404` is observationally indistinguishable; authorized invalid filters/pages/cursors receive metadata-only `400`.
-- Given degraded required evidence, when an authorized read runs, then `Unavailable` blocks context; `Partial` requires current Project/Folder/Setup/authorization and declares all optional omissions.
-- Given any query, when effects are inspected, then only required metadata security/inspection audit may persist; no Project write, task, repair, sibling mutation or candidate occurs.
-- Given the accepted persisted fixture, when shadow and replay/restart checks run, then all unexplained differences fail and actual results establish equivalence.
+- Given any read, when effects are inspected, then only required metadata security/inspection audit may persist; no Project or sibling mutation occurs.
+- Given the accepted fixture, when shadow and replay/restart checks run, then actual reports establish equivalence and every unexplained delta fails.
 
 ## Implementation Notes
 
@@ -75,7 +78,8 @@ implementation_gate: 'blocked'
 
 ## Verification
 
-- `python3 tools/planning/validate_production_authority.py --story-id 6.1` passed, exit 0: scheduling scope only.
-- 2026-10-13: P0/P2/P3/P4 open, P1R unusable, architect signature pending, entry-gate absent, independent `NOT_READY`. P3 implementation is in review; owner acceptance blocked.
-- After acceptance: Debug build; Server/Integration tests separately; approved `dotnet tool run hexalith-module test --profile reads --filter Story=6.1`; retain actual TRX/JSON/shadow reports.
-- `git diff --check` must pass.
+- 2026-10-15 root `42c8e7bc3a58d78e7c6ea4273711d697e81175e7`: `python3 tools/planning/validate_production_authority.py --story-id 6.1` passed, exit 0 (scheduling scope only).
+- P0/P2/P3/P4 remain open, P1R unusable, architect signature pending, entry-gate absent, readiness `NOT_READY`.
+- P1R source-only report references missing owner evidence `evidence/6-1-p1r-successor-enrollment-20261014/`. Current clean EventStore HEAD is `5b0df296abc86adf8d37a92fae02e26574d19ad5`; finite guards lack 3.122.1. Read-only `gh api` confirms canonical main remains `210b90da172cc7ca946fbb06cfd44390bffa707b` and latest GitHub release is v3.122.0. This does not establish package qualification or acceptance.
+- After acceptance: Debug build; test projects separately; `dotnet tool run hexalith-module test --profile reads --filter Story=6.1`; retain actual reports.
+- `git diff --check` must pass. Planning only.
