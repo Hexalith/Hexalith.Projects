@@ -1017,3 +1017,12 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-5.md`
   summary: Test the recovered P1R controller published-run receipt finalization through its real caller after outer cleanup.
   evidence: V1: an in-memory mutation disabling IsolatedRunner._run finalization left all 228 existing Python tests passing. Direct finalizer tests and generic controller tests miss this call site. Add a controlled published-run test whose persisted receipts pass the real importer; exact recovered runner/test hashes remain unchanged here.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-7.md`
+  summary: Story 6.1 cannot serve successful production callbacks until EventStore verifies originating query authority and Folders supports its delegated owner reads.
+  evidence: B10/E08; the genuine workload-policy HTTP test admits SDK projection but safely denies queries because the workload principal lacks the originating actor/inspection permission. See docs/supported-project-reads.md for exact producer/consumer paths. Dependency edits remain outside the approved local Projects scope; Story is incomplete.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-7.md`
+  summary: Resolution of the local Story 6.1 B09/B10/E08 dependency gaps under the user's 2026-10-17 exception.
+  status: resolved-local-production-blocked
+  resolution: SDK-owned conditional-batch recovery and exact signed query-authority transport, current delegated Folder authorization, and their Projects consumers are implemented. Final local verification passed 4,941/4,941 with no skips, including real gateway/owner HTTP and Dapr recovery; evidence is `/tmp/story61-dependency-fixes-20261017-jt9oasms/local-completion-summary.json`. The preceding entry records the earlier scope and remains historical. Production OIDC issuer binding capability, accepted deployed fixture qualification, P1R and formal Story 6.1 acceptance remain blocked. No package pins or release state changed.

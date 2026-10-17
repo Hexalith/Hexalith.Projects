@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 /// <summary>Shared AD-32 response snapshot governing supported Project read usability.</summary>
 /// <param name="ResponseState">The aggregate response state.</param>
-/// <param name="AsOf">The persisted read-model observation instant.</param>
+/// <param name="AsOf">The current authorization and evidence computation instant; component observations remain separate.</param>
 /// <param name="ProjectVersion">The authorized Project read-model version, or zero when not disclosable.</param>
 /// <param name="Components">Metadata-only component evidence.</param>
 /// <param name="RecoveryActions">Bounded recovery actions.</param>

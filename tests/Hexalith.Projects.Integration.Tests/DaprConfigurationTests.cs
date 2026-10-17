@@ -19,8 +19,8 @@ using Xunit;
 /// </summary>
 public sealed class DaprConfigurationTests
 {
-    private static readonly string DaprComponentsDirectory = Path.GetFullPath(
-        Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "Hexalith.Projects.AppHost", "DaprComponents"));
+    private static readonly string DaprComponentsDirectory = Path.Combine(
+        TestRepositoryRoot.Find(), "src", "Hexalith.Projects.AppHost", "DaprComponents");
 
     /// <summary>Verifies access control config exists and declares explicit local-only policies.</summary>
     [Fact]
@@ -43,18 +43,7 @@ public sealed class DaprConfigurationTests
     [Fact]
     public void LocalIdentityFixtureShouldDeclareExternalProductionConfiguration()
     {
-        string path = Path.Combine(
-            AppContext.BaseDirectory,
-            "..",
-            "..",
-            "..",
-            "..",
-            "..",
-            "src",
-            "Hexalith.Projects.AppHost",
-            "KeycloakRealms",
-            "hexalith-realm.json");
-        string content = File.ReadAllText(Path.GetFullPath(path));
+        string content = File.ReadAllText(RealmPath());
 
         content.ShouldContain("hexalith.identity.environment");
         content.ShouldContain("Development");
@@ -120,15 +109,10 @@ public sealed class DaprConfigurationTests
     }
 
     private static string RealmPath()
-        => Path.GetFullPath(Path.Combine(
-            AppContext.BaseDirectory,
-            "..",
-            "..",
-            "..",
-            "..",
-            "..",
+        => Path.Combine(
+            TestRepositoryRoot.Find(),
             "src",
             "Hexalith.Projects.AppHost",
             "KeycloakRealms",
-            "hexalith-realm.json"));
+            "hexalith-realm.json");
 }

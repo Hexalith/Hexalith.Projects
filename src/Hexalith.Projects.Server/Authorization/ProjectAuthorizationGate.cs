@@ -28,6 +28,17 @@ public sealed class ProjectAuthorizationGate(
     /// <summary>The action token required to list project rows.</summary>
     public const string ListProjectsAction = "projects:list";
 
+    /// <summary>Authorizes a supported read scope using current Tenant evidence before input validation.</summary>
+    public Task<ProjectAuthorizationResult> AuthorizeSupportedScopeAsync(
+        bool list,
+        IProjectTenantContextAccessor tenantContext,
+        HttpContext httpContext,
+        string correlationId,
+        CancellationToken cancellationToken = default)
+        => AuthorizeAsync(tenantContext, httpContext, list ? ListProjectsAction : ReadProjectAction,
+            projectId: null, correlationId, taskId: null, allowBoundedStaleTenantProjection: false,
+            requireProjectDetail: false, cancellationToken);
+
     /// <summary>The action token required to update project setup.</summary>
     public const string UpdateProjectSetupAction = "projects:update_setup";
 
