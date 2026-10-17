@@ -12,4 +12,9 @@ using Hexalith.Projects.Contracts.Models;
 /// <param name="Included">Whether the component is present.</param>
 /// <param name="Freshness">The component freshness.</param>
 /// <param name="Reason">A bounded safe reason code.</param>
-public sealed record AdmissionComponent(string Name, bool Included, EvidenceFreshnessState Freshness, string Reason);
+public sealed record AdmissionComponent(string Name, bool Included, EvidenceFreshnessState Freshness, string Reason)
+{
+    /// <summary>Gets the last verified evidence instant when supplied by the supported producer.</summary>
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public DateTimeOffset? LastVerifiedAt { get; init; }
+}

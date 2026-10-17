@@ -138,7 +138,7 @@ public sealed partial class LiveFixtureGraphContractTests
             IdempotencyKey: "idempotency-1");
 
     private static string ProjectRoot()
-        => Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+        => TestRepositoryRoot.Find();
 
     [GeneratedRegex(@"LIVE_FIXTURE_GRAPH_FIELDS\s*=\s*\[(?<fields>[^\]]*)\]", RegexOptions.CultureInvariant)]
     private static partial Regex GraphFieldListRegex();

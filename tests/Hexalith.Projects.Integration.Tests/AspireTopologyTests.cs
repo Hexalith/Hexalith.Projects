@@ -369,7 +369,7 @@ public sealed class AspireTopologyTests
     }
 
     private static string ProjectRoot()
-        => Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+        => TestRepositoryRoot.Find();
 
     private static string FixtureProjectPath()
         => Path.Combine(

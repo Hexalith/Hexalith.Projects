@@ -1014,8 +1014,20 @@ public sealed class GetProjectContextQueryHandlerTests
             .Single(static value => !string.IsNullOrWhiteSpace(value))!;
     }
 
-    private static string ProjectRoot()
-        => Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+    private static string ProjectRoot([System.Runtime.CompilerServices.CallerFilePath] string sourcePath = "")
+    {
+        foreach (string candidate in new[] { Path.GetDirectoryName(sourcePath)!, Directory.GetCurrentDirectory(), AppContext.BaseDirectory })
+        {
+            for (DirectoryInfo? directory = new(candidate); directory is not null; directory = directory.Parent)
+            {
+                if (File.Exists(Path.Combine(directory.FullName, "Hexalith.Projects.slnx")))
+                {
+                    return directory.FullName;
+                }
+            }
+        }
+        throw new DirectoryNotFoundException("Projects repository root was not found for the realm fixture.");
+    }
 
     private static async Task<InMemoryProjectTenantAccessProjectionStore> SeedTenantAccessStoreAsync()
     {

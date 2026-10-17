@@ -12,6 +12,12 @@
     <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Client\Hexalith.Conversations.Client.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
   </ItemGroup>
+  <PropertyGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
+    <DefineConstants>$(DefineConstants);HEXALITH_SOURCE_FIXTURE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
+    <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Server\Hexalith.Folders.Server.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hexalith.Conversations.Client" Condition="'$(UseHexalithProjectReferences)' != 'true'" />
     <PackageReference Include="Hexalith.Conversations.Contracts" Condition="'$(UseHexalithProjectReferences)' != 'true'" />

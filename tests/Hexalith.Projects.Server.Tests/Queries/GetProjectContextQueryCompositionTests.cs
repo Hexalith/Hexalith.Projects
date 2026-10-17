@@ -44,6 +44,20 @@ public sealed class GetProjectContextQueryCompositionTests
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     [Fact]
+    public async Task DirectFolderDirectory_WithoutDapr_ResolvesAndKeepsUnavailableBehavior()
+    {
+        WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
+        builder.Services.AddProjectsServer();
+        await using WebApplication app = builder.Build();
+        app.Services.GetService<Dapr.Client.DaprClient>().ShouldBeNull();
+        var directory = app.Services.GetRequiredService<Hexalith.Projects.Server.Folders.IProjectFolderDirectory>();
+        var result = await directory.RefreshFolderReferenceAsync(
+            new Hexalith.Projects.Contracts.Identifiers.ProjectId(ProjectId), "folder-a", "direct-no-dapr",
+            TestContext.Current.CancellationToken).ConfigureAwait(true);
+        result.Outcome.ShouldBe(Hexalith.Projects.Server.Folders.ProjectFolderValidationOutcome.Unavailable);
+    }
+
+    [Fact]
     public async Task Query_GetProjectContext_ReturnsCompleteThroughSupportedComposition()
     {
         WebApplication app = await StartAppAsync(seedDetail: true, seedTenantAccess: true).ConfigureAwait(true);

@@ -8,6 +8,7 @@ namespace Hexalith.Projects.Server.Queries;
 using System.Security.Claims;
 
 using Hexalith.EventStore.Authorization;
+using Hexalith.EventStore.DomainService;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.Projects.Server.Authentication;
 
@@ -28,7 +29,22 @@ public sealed class ProjectQueryEnvelopePrincipalBinding(
     private readonly IHostEnvironment _environment = environment ?? throw new ArgumentNullException(nameof(environment));
 
     /// <summary>Gets the current callback HTTP context.</summary>
-    public HttpContext? HttpContext => _httpContextAccessor.HttpContext;
+    public HttpContext? HttpContext
+    {
+        get
+        {
+            HttpContext? original = _httpContextAccessor.HttpContext;
+            VerifiedQueryCaller? caller = VerifiedQueryCaller.Get(original);
+            if (caller is null) { return original; }
+            DefaultHttpContext effective = new() { User = caller.Principal, TraceIdentifier = original!.TraceIdentifier, RequestServices = original.RequestServices };
+            foreach (var header in original.Request.Headers) { effective.Request.Headers[header.Key] = header.Value; }
+            effective.Request.QueryString = original.Request.QueryString;
+            return effective;
+        }
+    }
+
+    /// <summary>Gets the deployment-owned audience validated by Projects bearer authentication.</summary>
+    public string? ExpectedAudience => _configuration[$"{ProjectsAuthenticationOptions.SectionName}:Audience"];
 
     /// <summary>Validates principal-to-envelope identity and returns the authority context to evaluate.</summary>
     /// <param name="query">The immutable EventStore query envelope.</param>
@@ -45,6 +61,12 @@ public sealed class ProjectQueryEnvelopePrincipalBinding(
             return !string.IsNullOrWhiteSpace(query.TenantId)
                 && !string.IsNullOrWhiteSpace(actorId)
                 && string.Equals(query.UserId, actorId, StringComparison.Ordinal);
+        }
+
+        if (VerifiedQueryCaller.Get(_httpContextAccessor.HttpContext) is { } verified)
+        {
+            tenantContext = new VerifiedProjectQueryTenantContextAccessor(verified);
+            return ReferenceEquals(verified.Query, query) && verified.Query.CallerAuthority?.Origin == "authenticated-caller";
         }
 
         tenantContext = _tenantContextAccessor;

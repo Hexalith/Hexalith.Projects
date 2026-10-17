@@ -11,6 +11,7 @@ using System.Linq;
 using Hexalith.Conversations.Client;
 using Hexalith.Folders.Client;
 using Hexalith.EventStore.Client.Handlers;
+using Hexalith.EventStore.Client.Discovery;
 using Hexalith.EventStore.Client.Projections;
 using Hexalith.EventStore.Client.Registration;
 using Hexalith.EventStore.Client.Streams;
@@ -30,6 +31,7 @@ using Hexalith.Projects.Server.Folders;
 using Hexalith.Projects.Server.Memories;
 using Hexalith.Projects.Server.Proposals;
 using Hexalith.Projects.Server.Projections.ConversationStartSetup;
+using Hexalith.Projects.Server.Projections.ProjectReads;
 using Hexalith.Projects.Server.Queries;
 using Hexalith.Projects.Server.Authentication;
 using Hexalith.Projects.Server.Authorization;
@@ -42,6 +44,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 using FoldersClient = Hexalith.Folders.Client.Generated.IClient;
 
@@ -103,12 +106,14 @@ public static class ProjectsServerServiceCollectionExtensions
                 ? new UnavailableProjectConversationResolutionDirectory()
                 : new ConversationsProjectConversationResolutionDirectory(client);
         });
+        services.AddHttpClient();
+        services.TryAddTransient<DelegatedOwnerQueryClient>(sp => ActivatorUtilities.CreateInstance<DelegatedOwnerQueryClient>(sp));
         services.TryAddTransient<IProjectFolderDirectory>(sp =>
         {
             FoldersClient? client = sp.GetService<FoldersClient>();
-            return client is null
-                ? new UnavailableProjectFolderDirectory()
-                : new FoldersProjectFolderDirectory(client);
+            IProjectFolderDirectory direct = client is null ? new UnavailableProjectFolderDirectory() : new FoldersProjectFolderDirectory(client);
+            return new DelegatedProjectFolderDirectory(() => sp.GetRequiredService<DelegatedOwnerQueryClient>(),
+                sp.GetRequiredService<IHttpContextAccessor>(), direct);
         });
         services.TryAddTransient<IProjectFileReferenceDirectory>(sp =>
         {
@@ -128,11 +133,25 @@ public static class ProjectsServerServiceCollectionExtensions
         services.TryAddSingleton<IProjectDaprPolicyEvidenceProvider, DenyAllProjectDaprPolicyEvidenceProvider>();
         services.TryAddSingleton<IClaimsTransformation, ProjectsClaimsTransformation>();
         services.TryAddTransient<IDomainProcessor, ProjectsDomainProcessor>();
+        services.AddKeyedTransient<IDomainProcessor>(ProjectsServerModule.DomainName,
+            (provider, _) => provider.GetRequiredService<IDomainProcessor>());
+        services.AddOptions<ProjectionDispatchOptions>().BindConfiguration("EventStore:ProjectionDispatch");
+        services.AddOptions<DomainProjectionIdentityOptions>().BindConfiguration("EventStore:DomainService")
+            .PostConfigure(options =>
+            {
+                if (string.IsNullOrWhiteSpace(options.AppId)) { options.AppId = ProjectsServerModule.DomainName; }
+            });
         services.AddSingleton<IDomainQueryHandler, GetConversationStartSetupQueryHandler>();
         services.AddSingleton<ProjectQueryEnvelopePrincipalBinding>();
         services.AddSingleton<ProjectContextQueryExecutor>();
         services.AddSingleton<IDomainQueryHandler, GetProjectContextQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, ExplainContextSelectionQueryHandler>();
+        services.AddDataProtection();
+        services.AddEventStoreQueryCursorCodec("Hexalith.Projects.ReadCursor.v1");
+        services.AddSingleton<ProjectReadAudit>();
+        services.AddSingleton<ProjectReadQueryExecutor>();
+        services.AddSingleton<IDomainQueryHandler, ListProjectsQueryHandler>();
+        services.AddSingleton<IDomainQueryHandler, GetProjectQueryHandler>();
 
         return services;
     }
@@ -175,6 +194,8 @@ public static class ProjectsServerServiceCollectionExtensions
         services.RemoveAll<InMemoryProjectReadModelStore>();
         services.AddEventStoreReadModelStore();
         services.AddSingleton<IAsyncDomainProjectionHandler, ConversationStartSetupProjectionHandler>();
+        services.AddSingleton<ProjectReadProjectionHandler>();
+        services.AddSingleton<IAsyncDomainProjectionHandler>(sp => sp.GetRequiredService<ProjectReadProjectionHandler>());
         services.RemoveAll<IProjectTenantAccessProjectionStore>();
         services.AddSingleton<IProjectTenantAccessProjectionStore, DaprProjectTenantAccessProjectionStore>();
         services.RemoveAll<IProjectEventStoreAuthorizationValidator>();
@@ -200,7 +221,9 @@ public static class ProjectsServerServiceCollectionExtensions
 
         if (!services.Any(static service => service.ServiceType == typeof(FoldersClient)))
         {
-            services.AddFoldersClient(options => options.BaseAddress = new Uri("http://folders"));
+            services.TryAddTransient<EventStoreGatewayTokenForwardingHandler>();
+            services.AddFoldersClient(options => options.BaseAddress = new Uri("http://folders"))
+                .AddHttpMessageHandler<EventStoreGatewayTokenForwardingHandler>();
         }
 
         if (!services.Any(static service => service.ServiceType == typeof(MemoriesClient)))
@@ -246,12 +269,19 @@ public static class ProjectsServerServiceCollectionExtensions
             async (QueryEnvelope query, IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
             {
                 QueryResult result = await DomainQueryDispatcher.ExecuteAsync(serviceProvider, query, cancellationToken).ConfigureAwait(false);
-                return result.Success ? Results.Ok(result) : Results.NotFound(result);
+                if (query.QueryType is not (ListProjectsQuery.QueryType or GetProjectQuery.QueryType))
+                {
+                    return result.Success ? Results.Ok(result) : Results.NotFound(result);
+                }
+                return result.Success ? Results.Ok(result)
+                    : result.ErrorMessage is QueryAdapterFailureReason.InvalidEnvelope or QueryAdapterFailureReason.InvalidCursor
+                        ? Results.BadRequest(result)
+                        : Results.NotFound(QueryResult.Failure("safe-denial"));
             });
         RouteHandlerBuilder metadataEndpoint = endpoints.MapPost(
             "/admin/operational-index-metadata",
-            static (AdminOperationalIndexMetadata.Request request) =>
-                CreateOperationalIndexMetadata(request) is { } response
+            static (AdminOperationalIndexMetadata.Request request, IServiceProvider services) =>
+                CreateOperationalIndexMetadata(request, services) is { } response
                     ? Results.Ok(response)
                     : Results.BadRequest());
         IConfiguration configuration = endpoints.ServiceProvider.GetRequiredService<IConfiguration>();
@@ -270,11 +300,12 @@ public static class ProjectsServerServiceCollectionExtensions
         }
 
         endpoints.MapProjectsDomainServiceEndpoints();
+        endpoints.MapProjectReadPlatformEndpoints();
         return endpoints;
     }
 
     internal static AdminOperationalIndexMetadata.Response? CreateOperationalIndexMetadata(
-        AdminOperationalIndexMetadata.Request request)
+        AdminOperationalIndexMetadata.Request request, IServiceProvider? services = null)
     {
         ArgumentNullException.ThrowIfNull(request);
         if (request.Domains is not { Count: 1 } ||
@@ -283,6 +314,16 @@ public static class ProjectsServerServiceCollectionExtensions
             !string.Equals(request.ServiceVersion, "v1", StringComparison.Ordinal))
         {
             return null;
+        }
+
+        if (services is not null && services.GetServices<IAsyncDomainProjectionHandler>().Any())
+        {
+            DomainProjectionIdentityOptions identity = services.GetRequiredService<IOptions<DomainProjectionIdentityOptions>>().Value;
+            if (request.AppId != identity.AppId || request.ServiceVersion != identity.ServiceVersion) { return null; }
+            return AdminOperationalIndexMetadata.Create(new DiscoveryResult([], []), request.Domains,
+                services.GetServices<IDomainQueryHandler>(), services.GetServices<IAsyncDomainProjectionHandler>(),
+                identity.AppId, identity.ServiceVersion, services.GetRequiredService<IOptions<ProjectionDispatchOptions>>().Value,
+                [ProjectsServerModule.DomainName]);
         }
 
         // Projects uses its own processor rather than an EventStoreAggregate<TState>. Advertise the
@@ -297,6 +338,8 @@ public static class ProjectsServerServiceCollectionExtensions
                     ProjectsServerModule.GetProjectContextQueryType,
                     ProjectsServerModule.ExplainContextSelectionQueryType,
                     ResolveProjectChatBotAuthority.QueryType,
+                    ListProjectsQuery.QueryType,
+                    GetProjectQuery.QueryType,
                 ]),
         ]);
     }
