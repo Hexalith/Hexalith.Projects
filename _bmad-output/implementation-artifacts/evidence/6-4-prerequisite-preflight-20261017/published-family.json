@@ -1,0 +1,97 @@
+{
+  "schema": "hexalith.projects.story64-prerequisite-preflight.v1",
+  "purpose": "Read-only published-package observation; not package selection or qualification",
+  "candidate_version": "3.124.0",
+  "packages": [
+    {
+      "package": "Hexalith.EventStore.Client",
+      "version": "3.124.0",
+      "source_revision": "0737c0befce5338e294a789092a0e223e8264a04",
+      "url": "https://api.nuget.org/v3-flatcontainer/hexalith.eventstore.client/3.124.0/hexalith.eventstore.client.3.124.0.nupkg",
+      "archive_sha256": "a4c5b8aa7a5d2a165f90a45a33de2f479157ffff1aed1ea51d2c037e7d400736",
+      "size_bytes": 417821,
+      "repository_signature_present": true
+    },
+    {
+      "package": "Hexalith.EventStore.Contracts",
+      "version": "3.124.0",
+      "source_revision": "0737c0befce5338e294a789092a0e223e8264a04",
+      "url": "https://api.nuget.org/v3-flatcontainer/hexalith.eventstore.contracts/3.124.0/hexalith.eventstore.contracts.3.124.0.nupkg",
+      "archive_sha256": "3eba6febc7ee3bf06a25b46c5cd770ce869f1a631e4a93683f7f15ab97ecb635",
+      "size_bytes": 339288,
+      "repository_signature_present": true
+    },
+    {
+      "package": "Hexalith.EventStore.DomainService",
+      "version": "3.124.0",
+      "source_revision": "0737c0befce5338e294a789092a0e223e8264a04",
+      "url": "https://api.nuget.org/v3-flatcontainer/hexalith.eventstore.domainservice/3.124.0/hexalith.eventstore.domainservice.3.124.0.nupkg",
+      "archive_sha256": "b189a3f54b62e583044450acbf53a62f65ab6e524e6ce13f968d0fe71b32c741",
+      "size_bytes": 356154,
+      "repository_signature_present": true
+    },
+    {
+      "package": "Hexalith.EventStore.Server",
+      "version": "3.124.0",
+      "source_revision": "0737c0befce5338e294a789092a0e223e8264a04",
+      "url": "https://api.nuget.org/v3-flatcontainer/hexalith.eventstore.server/3.124.0/hexalith.eventstore.server.3.124.0.nupkg",
+      "archive_sha256": "66374a5d0d976d4dc62b12347ac309f0646a75fef5ae114eed55c73d70d5c250",
+      "size_bytes": 914092,
+      "repository_signature_present": true
+    },
+    {
+      "package": "Hexalith.EventStore.ServiceDefaults",
+      "version": "3.124.0",
+      "source_revision": "0737c0befce5338e294a789092a0e223e8264a04",
+      "url": "https://api.nuget.org/v3-flatcontainer/hexalith.eventstore.servicedefaults/3.124.0/hexalith.eventstore.servicedefaults.3.124.0.nupkg",
+      "archive_sha256": "9729128546171703d22b50ab8ba6722dfb00b9d2960172a469ee48882dcb37d5",
+      "size_bytes": 67153,
+      "repository_signature_present": true
+    }
+  ],
+  "observed_at_utc": "2026-10-17T18:11:02.930278+00:00",
+  "projects_revision": "71c326813e75e7b3486555b5f22ed377b42064d6",
+  "eventstore_source_revision": "bb986902d3c1b2f3b1c209fe8eb0ffa0292153d9",
+  "workspace_builds_revision": "b7a9c9ec9f57e098b408d3b940929ef4b160985b",
+  "published_tag_revision": "0737c0befce5338e294a789092a0e223e8264a04",
+  "published_tag_builds_revision": "5aceb5ab0683b5e8c494e82f865e138685180f36",
+  "post_release_source_files": 67,
+  "signature_verification": {
+    "command": "dotnet nuget verify --all /tmp/story64-prerequisite-preflight-rluyxthr/*.nupkg",
+    "exit_code": 0,
+    "log": "signature-verification.log"
+  },
+  "tooling_checks": [
+    {
+      "name": "executor",
+      "command": "python3 -m unittest discover -s tools/tests -p 'test_p1r_published_executor.py'",
+      "working_repository": "references/Hexalith.EventStore",
+      "exit_code": 0,
+      "tests": 108,
+      "seconds": 48.836,
+      "log": "executor-tests.log"
+    },
+    {
+      "name": "qualification",
+      "command": "python3 -m unittest discover -s tools/tests -p 'test_p1r_published_qualification.py'",
+      "working_repository": "references/Hexalith.EventStore",
+      "exit_code": 0,
+      "tests": 61,
+      "seconds": 10.433,
+      "log": "qualification-tests.log"
+    },
+    {
+      "name": "isolation",
+      "command": "python3 -m unittest discover -s tools/tests -p 'test_p1r_isolation*.py'",
+      "working_repository": "references/Hexalith.EventStore",
+      "exit_code": 0,
+      "tests": 55,
+      "seconds": 39.556,
+      "log": "isolation-tests.log"
+    }
+  ],
+  "tests_passed": 224,
+  "qualifying_runtime_run": false,
+  "candidate_selected": false,
+  "prerequisite_accepted": false
+}
