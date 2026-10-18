@@ -6,7 +6,7 @@ updated: '2026-10-18'
 status: 'draft'
 route: 'dispatch'
 story_key: '6-4-resolve-projects-with-transient-current-explanations'
-baseline_commit: '3faac93ac718b16629923ac824e9f463759c5c17'
+baseline_commit: '25f9fdab6106f5bcbf06aaabe8ca351f543bb52e'
 review_loop_iteration: 0
 context:
   - '_bmad-output/implementation-artifacts/epic-6-context.md'
@@ -41,29 +41,29 @@ context:
 
 **Decision (2026-10-18):** The user selected option 1, approving the separate exact five-file governed-retirement prerequisite and its bounded validator/lineage work. This does not approve Story 6.4 implementation or waive its remaining gates. The original proposal and explicit selection are retained under `evidence/6-4-resume-20261018/`.
 
+**Decision (2026-10-18, option 2):** Target published 3.125.1 for the next finite-enrollment prerequisite. This selects planning scope only; exact execution selection, qualification and Story 6.4 implementation remain separately gated.
+
 </frozen-after-approval>
 
 ## Code Map
 
 - `src/Hexalith.Projects.Contracts/Queries/Admission*.cs` — shared AD-32 vocabulary.
-- `src/Hexalith.Projects/Resolution/` — pure engine/mappers; authorize before identity-bearing exclusions.
-- `src/Hexalith.Projects.Server/Queries/` — supported handlers/stores exist; `ProjectReadQueryExecutor` writes audit; `ProjectContextQueryExecutor` lacks owner-backed RTI.
-- `src/Hexalith.Projects.Server/Conversations/` — full owner detail retrieves Messages.
-- `src/Hexalith.Projects.Server/Folders/` — singleton Folder outcome lacks metadata/watermarks; opaque File read unavailable.
-- `evidence/6-4-resume-20261018/current-preflight-3faac93.json` — exact source, commands, package indexes, missing seams and protected hashes.
+- `src/Hexalith.Projects/Resolution/` — engine/mappers; filter protected exclusions first.
+- `evidence/6-4-resume-20261018/current-preflight-25f9fda.json` — findings and checks.
+- `spec-6-4-prerequisite-p1r-31251-enrollment.md` — selected prerequisite plan.
 
 ## Tasks & Acceptance
 
-**Execution, after prerequisite acceptance:**
+**After accepted prerequisites:**
 
-- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add both resolution queries and response using shared vocabulary.
-- [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionSnapshotComposer.cs` — compose authorized snapshots without I/O or writes.
-- [ ] `src/Hexalith.Projects.Server/Queries/` — add both handlers using approved bounded owner/RTI contracts.
+- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add both resolution contracts using shared vocabulary.
+- [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionSnapshotComposer.cs` — compose authorized snapshots purely.
+- [ ] `src/Hexalith.Projects.Server/Queries/` — add both handlers over approved owner/RTI contracts.
 - [ ] `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` — register additively.
-- [ ] `tests/Hexalith.Projects.Contracts.Tests/`, `tests/Hexalith.Projects.Tests/Resolution/`, `tests/Hexalith.Projects.Server.Tests/Queries/` — verify the frozen matrix.
-- [ ] `tests/Hexalith.Projects.Integration.Tests/` — prove persisted zero writes, restart/two-instance behavior and shadow equivalence through G-4.
+- [ ] `tests/Hexalith.Projects.Contracts.Tests/`, `tests/Hexalith.Projects.Tests/Resolution/`, `tests/Hexalith.Projects.Server.Tests/Queries/` — test the frozen matrix.
+- [ ] `tests/Hexalith.Projects.Integration.Tests/` — prove zero writes, restart/two-instance behavior and shadow equivalence through G-4.
 
-**Acceptance:** Given accepted entry gates, when both handlers execute, then the frozen matrix holds and actual `evidence/epic6/6.4-resolution-reads.trx` and `.json` prove persisted boundaries.
+**Acceptance:** Given accepted gates, when both handlers run, then the matrix holds and actual `evidence/epic6/6.4-resolution-reads.{trx,json}` proves persisted boundaries.
 
 ## Implementation Notes
 
@@ -72,16 +72,18 @@ context:
 - 2026-10-18: Resumed planning at Projects `3d3b3fab63afe63090e6314e2c2b6e66bcd0ec31`; retained reviewed EventStore source hashes match checkout. Seven historical findings in five files remain; no fresh full scan is claimed. Independent source inspection confirms missing owner metadata/RTI contracts. Local 6.1–6.3 exceptions do not authorize 6.4. Retained command outputs and an unapproved exact-file proposal in the linked JSON; runtime, pins, acceptance and original story/tracker remain unchanged.
 - 2026-10-18 recheck: Projects `3faac93ac718b16629923ac824e9f463759c5c17`, EventStore `47e234ccb535a71e7dd4a039fd0e2281083083ae`. Current-source P1R preparation and Commitlint pass; CI is pending. All five indexes omit proposed 3.125.0. Approved retirement is pushed; owner batches/RTI and G-4 remain absent. The earlier publication proposal needs refreshed coordinates before an owner decision. Detailed evidence and prior verification are retained in the Code Map JSON.
 
+- 2026-10-18 live recheck: both 3.125.0 and 3.125.1 are published in all five indexes; tag/nuspec sources match. Both releases differ from the proposed source. Local owner/RTI and G-4 gaps remain. The preflight retains observations; selection/qualification/acceptance remain pending.
+
 ## Spec Change Log
 
 ## Review Triage Log
 
 ## Design Notes
 
-Intent gaps: none; prerequisites-first remains binding. Irreversibles: none. Footprint: this draft and one preflight JSON. Entry gates remain unresolved, so readiness fails and status stays draft.
+No intent gap: 3.125.1 selected for planning. Story readiness remains blocked by its original prerequisites.
 
 ## Verification
 
 - `python3 tools/planning/validate_production_authority.py --story-id 6.4` — PASS; scheduling only.
 - `dotnet tool run hexalith-module test --profile reads --filter Story=6.4` — exit 1: `Cannot find a tool in the manifest file that has a command named 'hexalith-module'.`
-- Check frozen intent, protected hashes, CRLF and `git diff --check`; source, pins, acceptance and tracker must remain unchanged.
+- Check frozen intent, protected hashes, CRLF and `git diff --check`.

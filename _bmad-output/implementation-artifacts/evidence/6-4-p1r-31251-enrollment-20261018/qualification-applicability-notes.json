@@ -1,0 +1,52 @@
+{
+  "source": "55432c50d4b6f1666b4bd6d4a60bfc263b2d0e0b",
+  "all_52_tools_and_tests_equal_released_source": true,
+  "finite_enrollment": "Released source enrolls 3.125.0 but not 3.125.1; later patch requires explicitly finite version enrollment in consumer/host/domain build branches, seed/restoration executor, witness and import/cleanup controls plus targeted negative cases.",
+  "immutable_guard_excerpt": {
+    "file": "tools/p1r_published_executor.py",
+    "lines": [
+      {
+        "number": 196,
+        "text": "    require(qualification.is_successor_selection(inputs) and candidate[\"tag_builds_commit\"],"
+      },
+      {
+        "number": 197,
+        "text": "            \"unrepaired or unbound successor selection\")"
+      },
+      {
+        "number": 198,
+        "text": "    tag_commit = preparation.git(ROOT, \"rev-parse\", candidate[\"tag\"] + \"^{commit}\").decode().strip()"
+      },
+      {
+        "number": 199,
+        "text": "    source_commit = preparation.git(ROOT, \"rev-parse\", \"HEAD\").decode().strip()"
+      },
+      {
+        "number": 200,
+        "text": "    tag_builds = preparation.git(ROOT, \"ls-tree\", candidate[\"tag\"], \"references/Hexalith.Builds\").decode().split()"
+      },
+      {
+        "number": 201,
+        "text": "    require(tag_commit == source_commit == candidate[\"tag_commit\"]"
+      },
+      {
+        "number": 202,
+        "text": "            and len(tag_builds) == 4 and tag_builds[:2] == [\"160000\", \"commit\"]"
+      },
+      {
+        "number": 203,
+        "text": "            and tag_builds[2] == candidate[\"tag_builds_commit\"],"
+      },
+      {
+        "number": 204,
+        "text": "            \"successor tag, exact source, or tag Builds identity substituted\")"
+      },
+      {
+        "number": 205,
+        "text": ""
+      }
+    ]
+  },
+  "binding_limit": "Guard requires selected tag commit == current HEAD == candidate.tag_commit; uncommitted or newly committed enrollment repair cannot be substituted for immutable released tooling without an explicit approved provenance/binding approach. No guard change proposed or made by this receipt.",
+  "hash_limit": "The measured verification content hashes below are not a resolved graph. Future owner-selected execution must independently require actual restored metadata/lock/assets agreement."
+}

@@ -1,0 +1,9 @@
+[
+  {
+    "time_window": "2026-10-18T14:39:33.585813Z\u201314:39:34Z",
+    "command": "initial in-memory urllib registration probe",
+    "result": "First probe saved gzip-compressed registration response then json.loads(raw) failed UnicodeDecodeError; no network failure.",
+    "correction": "Detected gzip magic bytes, decompressed already saved response and reused it without rerequest. Subsequent collector supports gzip.",
+    "impact": "client registration initial exact received timestamp/headers were not retained; raw body retained at client-registration.json and reused_from is explicit in HTTP receipt."
+  }
+]

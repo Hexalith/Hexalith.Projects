@@ -1,0 +1,50 @@
+{
+  "recorded_utc": "2026-10-18T14:46:55.996173+00:00",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.4"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: Story 6.4 is within production authority\n",
+      "stderr": ""
+    }
+  ],
+  "protected_files": "unchanged except parent draft records the selected option",
+  "owner_files_and_history": "unchanged; clean",
+  "old_preflight_receipt": "byte-identical",
+  "frozen_parent_scope": "unchanged except exact answered decision",
+  "drafts": {
+    "_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md": {
+      "status": "draft",
+      "tokens_o200k": 1580
+    },
+    "_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-31251-enrollment.md": {
+      "status": "draft",
+      "tokens_o200k": 1511
+    }
+  },
+  "signatures": "five verified; package-provenance.json and nuget-signature-verification.json",
+  "project_evaluation": "three roles lack 3.125.1 constants; project-evaluation-before.json",
+  "tooling_tests": "three existing tests pass; tooling-baseline-tests.json; no implementation test pass claimed",
+  "readiness": "Enrollment prerequisite specification meets planning standard; awaiting approval. Parent Story 6.4 remains blocked.",
+  "not_executed": [
+    "finite enrollment implementation",
+    "published qualification",
+    "owner acceptance or exact execution selection",
+    "dependency/Git/lifecycle mutation"
+  ]
+}

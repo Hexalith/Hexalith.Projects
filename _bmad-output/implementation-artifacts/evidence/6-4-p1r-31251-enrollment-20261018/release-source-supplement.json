@@ -1,0 +1,47 @@
+{
+  "scope": "Supplemental retained publication-source link and selected package-build checkout observation; no archive/restore graph qualification.",
+  "original_source": "/tmp/story-6-4-live-publication.json",
+  "retained_source": "story-6-4-live-publication.json",
+  "retained_source_sha256": "1255f4a228ecf600dca372c2aad217bbf762da651ce6cdf37c5fa5ed3bfdbded",
+  "supplements_without_rewriting": "release-source-identities.json",
+  "source_record": "new_log_observations[name=release_31251_job_log]",
+  "package_build_checkout_observed": "4629ff2d3bd66376b29a553663c241d3a7b87853",
+  "selected_checkout_line": "2026-10-18T13:41:29.0012813Z Submodule path 'references/Hexalith.Builds': checked out '4629ff2d3bd66376b29a553663c241d3a7b87853'",
+  "job_log_observation": {
+    "name": "release_31251_job_log",
+    "command": [
+      "gh",
+      "api",
+      "--method",
+      "GET",
+      "repos/Hexalith/Hexalith.EventStore/actions/jobs/117690423502/logs"
+    ],
+    "request_started_at": "2026-10-18T14:26:33.553210+00:00",
+    "response_received_at": "2026-10-18T14:26:34.706573+00:00",
+    "exit_code": 0,
+    "stderr": "",
+    "body_sha256": "f9a964ce6da5fdfa6456205ccd345c157de70845f4fd80ef5f784d27fb29b007",
+    "body_bytes": 190394,
+    "selected_log_lines": [
+      "2026-10-18T13:40:42.5937327Z   ref: 22a578b576a515d2af214fe81859447fffc97981",
+      "2026-10-18T13:40:43.4992159Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 22a578b576a515d2af214fe81859447fffc97981",
+      "2026-10-18T13:40:44.0452748Z  * branch            22a578b576a515d2af214fe81859447fffc97981 -> FETCH_HEAD",
+      "2026-10-18T13:40:44.0462063Z [command]/usr/bin/git rev-parse --verify --quiet 22a578b576a515d2af214fe81859447fffc97981^{object}",
+      "2026-10-18T13:40:44.0491429Z 22a578b576a515d2af214fe81859447fffc97981",
+      "2026-10-18T13:40:44.0593714Z [command]/usr/bin/git checkout --progress --force 22a578b576a515d2af214fe81859447fffc97981",
+      "2026-10-18T13:40:44.0847895Z Note: switching to '22a578b576a515d2af214fe81859447fffc97981'.",
+      "2026-10-18T13:40:44.0930729Z 22a578b576a515d2af214fe81859447fffc97981",
+      "2026-10-18T13:40:44.2242322Z \u001b[36;1mtest \"$(git -C .hexalith/builds-execution rev-parse HEAD)\" = \"22a578b576a515d2af214fe81859447fffc97981\"\u001b[0m",
+      "2026-10-18T13:41:29.0012813Z Submodule path 'references/Hexalith.Builds': checked out '4629ff2d3bd66376b29a553663c241d3a7b87853'",
+      "2026-10-18T13:44:47.0638419Z   builds-execution-sha: 22a578b576a515d2af214fe81859447fffc97981",
+      "2026-10-18T13:44:47.0751565Z   HEXALITH_BUILDS_EXECUTION_SHA: 22a578b576a515d2af214fe81859447fffc97981",
+      "2026-10-18T13:44:51.9694345Z   HEXALITH_BUILDS_EXECUTION_SHA: 22a578b576a515d2af214fe81859447fffc97981",
+      "2026-10-18T13:46:01.3906825Z [1:46:01 PM] [semantic-release] \u203a \u2714  Created tag v3.125.1"
+    ]
+  },
+  "limits": [
+    "This preserves the original receipt bytes and its selected job-log observations; it does not retain or re-fetch the full 190394-byte job log.",
+    "Observed package-build checkout is distinct from the tag gitlink, successful CI reusable workflow and release-execution Builds identity.",
+    "Actual archive construction/restore graph agreement remains unmeasured; no owner tuple is selected and operational qualification remains blocked."
+  ]
+}
