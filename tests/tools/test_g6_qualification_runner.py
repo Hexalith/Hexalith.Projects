@@ -28,7 +28,7 @@ class QualificationEnvironmentTests(unittest.TestCase):
                 "idebuild": "true", "bUiLdInGiNsIdEvIsUaLsTuDiO": "true",
                 "BUILDINGBYRESHARPER": "true", "gItHuB_aCtIoNs": "false", "TF_BUILD": "true",
                 "cibuild": "false", "ContinuousIntegrationBuild": "false",
-                "IsPackable": "false", "GeneratePackageOnBuild": "false",
+                "IsPackable": "false", "GeneratePackageOnBuild": "true",
                 "UseHexalithProjectReferences": "false", "dEsIgNtImEbUiLd": "true",
                 "bUiLdPrOjEcTrEfErEnCeS": "false", "CALLER_SECRET": "protected-marker"}
 
@@ -77,8 +77,10 @@ class QualificationEnvironmentTests(unittest.TestCase):
             text = (output / "logs/inspect-normalized-build-properties.log").read_text()
             evaluation = json.loads(text[text.index("{"):])
             properties = evaluation["Properties"]
-            for field in ("GITHUB_ACTIONS", "CIBuild", "ContinuousIntegrationBuild", "IsPackable", "GeneratePackageOnBuild", "UseHexalithProjectReferences"):
+            for field in ("GITHUB_ACTIONS", "CIBuild", "ContinuousIntegrationBuild", "IsPackable", "UseHexalithProjectReferences"):
                 self.assertEqual("true", properties[field], field)
+            # Hexalith.Package.props packs explicitly. A caller cannot turn packaging back on.
+            self.assertEqual("false", properties["GeneratePackageOnBuild"], "GeneratePackageOnBuild")
             for field in ("CI", "TF_BUILD", "IDEBuild", "DesignTimeBuild"):
                 self.assertEqual("", properties[field], field)
             self.assertEqual("true", properties["BuildProjectReferences"])
