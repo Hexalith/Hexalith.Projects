@@ -2,10 +2,10 @@
   "authorization": "push all changes and give me next step prompt",
   "eventstore_commit": "794369b30c2f3615a7f1d70a5beb1935f6470b36",
   "eventstore_remote_base": "ab8fa115c486875be3a22860a273d5d68a26c749",
-  "commitlint": "eventstore-commitlint.log",
+  "commitlint": "eventstore-commitlint.txt",
   "rebased_without_conflicts": true,
   "upstream_changed_owner_files": false,
-  "push_status": "EventStore push succeeded; this record precedes the separate Projects pointer/evidence commit.",
+  "push_status": "EventStore and Projects pointer/evidence commits pushed successfully; commitlint receipts retained as tracked text files.",
   "recorded_utc": "2026-10-18T07:39:12.962862+00:00",
   "post_rebase_checks": [
     {
@@ -24,5 +24,8 @@
   "observed_warnings": "Both passing post-rebase runs emitted ResourceWarning for an interrupted /proc/<pid>/environ file read. No test failed.",
   "eventstore_remote_main_verified": "794369b30c2f3615a7f1d70a5beb1935f6470b36",
   "remote_ci_status": "pending; local suite success does not certify remote CI or prerequisite qualification",
-  "patch_format": "git show --format= --unified=0 794369b30c2f3615a7f1d70a5beb1935f6470b36; zero context avoids literal context-only whitespace in the tracked evidence file."
+  "patch_format": "git show --format= --unified=0 794369b30c2f3615a7f1d70a5beb1935f6470b36; zero context avoids literal context-only whitespace in the tracked evidence file.",
+  "projects_commitlint": "projects-commitlint.txt",
+  "projects_pointer_commit": "f4f38368833f31eb7e010e1198273270d42ee3ed",
+  "projects_pointer_push_succeeded": true
 }
