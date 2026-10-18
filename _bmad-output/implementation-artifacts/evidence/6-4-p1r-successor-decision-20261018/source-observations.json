@@ -1,0 +1,161 @@
+{
+  "schema": "hexalith.projects.p1r-successor-source-observation.v1",
+  "observed_at_utc": "2026-10-18T06:40:53.715081+00:00",
+  "github_api": "https://api.github.com/repos/Hexalith/Hexalith.EventStore",
+  "main_sha": "ab8fa115c486875be3a22860a273d5d68a26c749",
+  "latest_release": {
+    "tag_name": "v3.124.0",
+    "published_at": "2026-10-16T18:39:44Z",
+    "url": "https://github.com/Hexalith/Hexalith.EventStore/releases/tag/v3.124.0",
+    "tag_ref_object_type": "commit",
+    "tag_ref_sha": "0737c0befce5338e294a789092a0e223e8264a04",
+    "peeled_commit": "0737c0befce5338e294a789092a0e223e8264a04"
+  },
+  "compare": {
+    "status": "ahead",
+    "ahead_by": 14,
+    "commits": [
+      {
+        "sha": "9dbb3aaf0254a607e5b6489e0de2a8aee0f82edb",
+        "message": "build: sync local changes via /pushall"
+      },
+      {
+        "sha": "b99a03dfc29021af16511ee664820e05126b73f8",
+        "message": "fix: story 6.4"
+      },
+      {
+        "sha": "77d9af18a54d92506e310fe5a45021a395e66f60",
+        "message": "build: sync local changes via /pushall"
+      },
+      {
+        "sha": "7842a1fb81aa329ecac6271d885b959b40522767",
+        "message": "fix: story 6.4"
+      },
+      {
+        "sha": "1353b83939de812671260f1d7a5910ee8fb60119",
+        "message": "test(story-6.4): correct runtime qualification fixtures\n\nDrain adapter workers during teardown, reuse the private HotReload override,\nand retain failed-startup evidence without reading deleted runtimes.\n\nRecord focused checks and one full run of each previously failed cohort.\nDebug DomainService: 978 passed. Debug Live: 194 passed, 1 declared skip.\nRelease Live: 193 passed, 1 failed, 1 declared skip.\n\nPreserve hash-bound evidence bytes with a packet-specific Git attribute.\nKeep Story 6.4 in progress with the OQ8 timeout and formal gates open."
+      },
+      {
+        "sha": "ac059da7e13047600d65c592dad3204238fd9eb5",
+        "message": "build: sync local changes via /pushall"
+      },
+      {
+        "sha": "db23b193549f4554a6fdbf54b6a8f2e13b815510",
+        "message": "feat(queries): add verified caller authority and recoverable batches\n\nPreserve originating query authority through workload and owner callbacks.\nAdd opt-in SDK recovery for interrupted conditional read-model batches.\n\nValidated in the local Story 6.1 source-reference test run: 4,941 passed.\nProduction acceptance and publication remain blocked."
+      },
+      {
+        "sha": "191b7128f1a86d47407f5f5a68aae67c1918ce44",
+        "message": "docs(story-6.4): record OQ8 qualification evidence\n\nPreserve focused and full Release Live results, runtime identities, and the external-source cutoff.\n\nRecord the failed tracked-content scan: 2,810 findings, including 788 new package-metadata matches.\nKeep story 6.4 in progress while latest-source and formal acceptance gates remain open."
+      },
+      {
+        "sha": "bb986902d3c1b2f3b1c209fe8eb0ffa0292153d9",
+        "message": "build: merge feat/story-6-1-supported-project-reads into main via /pushall"
+      },
+      {
+        "sha": "9ed9b9742bd006e568f026cc1c588275cf9db097",
+        "message": "fix(queries): distinguish invalid page failures\n\nPreserve legacy cursor responses and sanitize paging diagnostics."
+      },
+      {
+        "sha": "80b0cd9cff8453f6aaa95c430bb8c6688a09fdd6",
+        "message": "feat(governance): enforce corrective-work authorization"
+      },
+      {
+        "sha": "269b20d58236f07228bc2afd54807b94bd96f37b",
+        "message": "build(p1r): enroll proposed 3.125.0 source tooling"
+      },
+      {
+        "sha": "1cbdc7639446850cc541d56b9de2bf8cb6615ab2",
+        "message": "build: sync local changes via /pushall"
+      },
+      {
+        "sha": "ab8fa115c486875be3a22860a273d5d68a26c749",
+        "message": "build: merge feat/story-9-1-corrective-work-authorization into main via /pushall"
+      }
+    ]
+  },
+  "eventstore_builds_gitlink": "544fd2e907d62ccdc4b8f24168b8ab5dfcc13eb9",
+  "builds_remote_main": "544fd2e907d62ccdc4b8f24168b8ab5dfcc13eb9",
+  "release_config": {
+    "path": ".releaserc.json",
+    "blob_sha": "cc875a3f3aac9ca4d3d96f932f3952028fcb0fe1",
+    "sha256": "2d26f9511f4a7e153f3be0c4189e0b07dffd38cae60c84ee20cb04485d3e5907",
+    "text": "{\n  \"branches\": [\"main\"],\n  \"tagFormat\": \"v${version}\",\n  \"plugins\": [\n    \"@semantic-release/commit-analyzer\",\n    \"@semantic-release/release-notes-generator\",\n    [\n      \"@semantic-release/exec\",\n      {\n        \"verifyReleaseCmd\": \"HEXALITH_REQUIRE_CONTAINER_PUBLISHER=true bash scripts/validate-release-secrets.sh && bash scripts/validate-publication-preflight.sh ${nextRelease.version} verify >&2\",\n        \"prepareCmd\": \"python3 tools/pack-release-packages.py ./nupkgs ${nextRelease.version} && python3 tools/validate-release-packages.py ./nupkgs ${nextRelease.version}\",\n        \"publishCmd\": \"HEXALITH_REQUIRE_CONTAINER_PUBLISHER=true bash scripts/validate-release-secrets.sh && bash scripts/validate-publication-preflight.sh ${nextRelease.version} publish >&2 && dotnet nuget push \\\"./nupkgs/Hexalith.EventStore.*.nupkg\\\" --source https://api.nuget.org/v3/index.json --api-key \\\"$NUGET_TRUSTED_PUBLISHING_KEY\\\" && ./.hexalith/release/publish-containers.sh ${nextRelease.version}\"\n      }\n    ],\n    [\n      \"@semantic-release/github\",\n      {\n        \"assets\": [\"nupkgs/*.nupkg\"],\n        \"successCommentCondition\": false\n      }\n    ]\n  ]\n}\n"
+  },
+  "release_execution_builds": "22a578b576a515d2af214fe81859447fffc97981",
+  "workflow_push_runs": {
+    "ci.yml": [
+      {
+        "id": 39104649105,
+        "head_sha": "ab8fa115c486875be3a22860a273d5d68a26c749",
+        "status": "in_progress",
+        "conclusion": null,
+        "created_at": "2026-10-18T06:36:37Z",
+        "updated_at": "2026-10-18T06:38:07Z"
+      }
+    ],
+    "p1r-qualification.yml": [
+      {
+        "id": 39104648854,
+        "head_sha": "ab8fa115c486875be3a22860a273d5d68a26c749",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-10-18T06:36:37Z",
+        "updated_at": "2026-10-18T06:39:23Z"
+      }
+    ],
+    "commitlint.yml": [
+      {
+        "id": 39104649076,
+        "head_sha": "ab8fa115c486875be3a22860a273d5d68a26c749",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-18T06:36:37Z",
+        "updated_at": "2026-10-18T06:37:36Z"
+      }
+    ]
+  },
+  "final_main_sha": "ab8fa115c486875be3a22860a273d5d68a26c749",
+  "ci_reusable_builds": {
+    "workflow_blob_sha": "6cf286461acab2c8bcb46598d3a137ff3df3ff42",
+    "workflow_sha256": "1388d7b2f4cf96d01da3f078c09c975768c89ac79e14ef649635b7c2f79a0ae7",
+    "uses": [
+      "uses: Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@main"
+    ],
+    "resolved_sha": null,
+    "resolution_note": "No successful exact-source CI proof; capture the resolved reusable workflow revision from the eventual successful run."
+  },
+  "recent_releases": [
+    {
+      "tag_name": "v3.124.0",
+      "published_at": "2026-10-16T18:39:44Z",
+      "url": "https://github.com/Hexalith/Hexalith.EventStore/releases/tag/v3.124.0"
+    },
+    {
+      "tag_name": "v3.123.0",
+      "published_at": "2026-10-16T14:03:57Z",
+      "url": "https://github.com/Hexalith/Hexalith.EventStore/releases/tag/v3.123.0"
+    },
+    {
+      "tag_name": "v3.122.0",
+      "published_at": "2026-10-14T15:30:59Z",
+      "url": "https://github.com/Hexalith/Hexalith.EventStore/releases/tag/v3.122.0"
+    },
+    {
+      "tag_name": "v3.121.0",
+      "published_at": "2026-10-14T06:51:12Z",
+      "url": "https://github.com/Hexalith/Hexalith.EventStore/releases/tag/v3.121.0"
+    },
+    {
+      "tag_name": "v3.120.0",
+      "published_at": "2026-10-10T07:12:40Z",
+      "url": "https://github.com/Hexalith/Hexalith.EventStore/releases/tag/v3.120.0"
+    }
+  ],
+  "prospective_tag_probe": {
+    "path": "repos/Hexalith/Hexalith.EventStore/git/ref/tags/v3.125.0",
+    "exit_code": 1,
+    "stderr": "gh: Not Found (HTTP 404)",
+    "exists": false
+  },
+  "release_history_supplemented_at_utc": "2026-10-18T06:43:19.496352+00:00"
+}
