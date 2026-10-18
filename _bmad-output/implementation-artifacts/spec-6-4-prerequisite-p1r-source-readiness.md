@@ -2,7 +2,7 @@
 title: 'Story 6.4 prerequisite: P1R current-source successor readiness'
 type: 'chore'
 created: '2026-10-17'
-status: 'in-review'
+status: 'done'
 approved_on: '2026-10-17'
 approval_decision: 'approve and stop'
 route: 'dispatch'
@@ -83,7 +83,7 @@ Paths below are relative to `references/Hexalith.EventStore`.
 
 ## Review Triage Log
 
-- **B01 low / patch:** The evidence README says 3.125.0 `compiles`, while its 12 recorded commands evaluate MSBuild properties and Compile items only. Correct that claim to describe project evaluation; no published package build ran.
+- **B01 low / patch:** The evidence README says 3.125.0 `compiles`, while its 12 recorded commands evaluate MSBuild properties and Compile items only. Corrected the claim to describe project evaluation; no published package build ran.
 - **B02 false:** The matrix describes the strict validator's conditional behavior when genuine evidence is supplied. The executed synthetic-receipt controls exercise that validator, and the evidence explicitly says no genuine published 3.125.0 seed or qualification was run.
 - **B03 low / rejected:** The NuGet index response bodies and HTTP statuses were not retained, so the dated absence observation is not independently replayable. The version remains unselected and the handoff requires a fresh signed-archive check before publication; adding another network capture to this local source package would not change a gate.
 - **B04 low / rejected:** Test logs and compiler evaluations have no separate SHA-256 manifest. The spec requires source/tool hashes and retained results, both present; a second mutable evidence manifest would add process without affecting this uncommitted source-readiness decision.
@@ -95,7 +95,7 @@ Paths below are relative to `references/Hexalith.EventStore`.
 - **B10 medium / defer:** The main 6.4 draft omits the exactly-one-authorized-Folder and folderless-quarantine candidate checks stated in Epic 6. No resolution handler is implemented in this package.
 - **B11 medium / defer:** The main 6.4 draft abbreviates AD-32 as a shared snapshot without listing every field in its future acceptance. The original blocked story lists the fields; reconcile them when the draft is made ready.
 - **B12 medium / defer:** The main 6.4 draft omits the Epic 6 latency targets from future resolution acceptance. Performance gates belong to the later supported read implementation.
-- **V01 medium / patch:** The 3.125.0 Host/Domain/Probe compiler conditions have only retained one-off evaluations; existing executable registration tests use `UseCurrentSource=true`. Add a narrow automated MSBuild evaluation test for proposed and unenrolled versions so later condition drift is caught.
+- **V01 medium / patch:** The 3.125.0 Host/Domain/Probe compiler conditions have only retained one-off evaluations; existing executable registration tests use `UseCurrentSource=true`. Added a narrow automated MSBuild evaluation test for proposed and unenrolled versions; its full registration suite passed 2/2 after review.
 
 ## Design Notes
 
@@ -104,7 +104,7 @@ No intent gaps or irreversibles. Footprint: tooling/project files, tests, README
 ## Verification
 
 - Final executor suite: 128 passed; qualification: 61 passed; isolation: 31 + 24 passed; snapshot registration: 1 passed. Twelve Host/Domain compiler evaluations passed, including proposed 3.125.0 and unenrolled 3.126.0.
-- Five individual Debug source test projects built with zero warnings/errors. Focused Contracts, Client, DomainService and Server suites passed; P1R LiveSidecar 2/2 and isolated Client recovery 2/2 passed.
+- Five individual Debug source test projects built with zero warnings/errors. Focused Contracts, Client, DomainService and Server suites passed; P1R LiveSidecar 2/2 and isolated Client recovery 2/2 passed. Post-review, 17 sequential checks passed, including the full affected Python suites, five rebuilt projects and seven focused .NET runs; retained results are in [the EventStore post-review results](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-4-prerequisite-p1r-source-readiness-20261017/postreview-20261017/results.json).
 - Matrix audit: compiler evaluations and seed tests cover finite and unenrolled versions; snapshot witness and tampering tests cover strict provenance; focused source/live tests cover authority, recovery and restart; package-scope/tag-source tests cover the publication boundary. All covering suites ran and passed in the retained final logs.
 - `git diff --check` passed in both repositories; the ten recorded EventStore source/tool SHA-256 values match the current files. Original 6.4 and sprint statuses remain blocked.
 

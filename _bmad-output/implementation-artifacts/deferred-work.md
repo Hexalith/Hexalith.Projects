@@ -1026,3 +1026,31 @@ status: open
   summary: Resolution of the local Story 6.1 B09/B10/E08 dependency gaps under the user's 2026-10-17 exception.
   status: resolved-local-production-blocked
   resolution: SDK-owned conditional-batch recovery and exact signed query-authority transport, current delegated Folder authorization, and their Projects consumers are implemented. Final local verification passed 4,941/4,941 with no skips, including real gateway/owner HTTP and Dapr recovery; evidence is `/tmp/story61-dependency-fixes-20261017-jt9oasms/local-completion-summary.json`. The preceding entry records the earlier scope and remains historical. Production OIDC issuer binding capability, accepted deployed fixture qualification, P1R and formal Story 6.1 acceptance remain blocked. No package pins or release state changed.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
+  summary: Specify the server-owned action for future Story 6.4 resolution authorization.
+  evidence: The existing blocked Story 6.4 draft names Tenant, actor, workload and delegation but omits the action required by Epic 6; this EventStore prerequisite explicitly excludes resolution handlers.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
+  summary: Distinguish unauthorized or foreign attachment no-match behavior from safe denial of a protected Project target in Story 6.4.
+  evidence: The existing draft has one protected-target row; Epic 6 requires unauthorized attachment evidence to behave as no match. Resolution implementation remains gated.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
+  summary: Specify Conversation membership and explicitly opened session Project fallback for Story 6.4.
+  evidence: Epic 6 names the precedence rule, while the pre-existing blocked draft does not; owner metadata contracts remain absent.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
+  summary: Enumerate current Project, Folder, Setup and first-response authority evidence required for usable Partial resolution.
+  evidence: The pre-existing Story 6.4 draft uses a generic current-required-evidence phrase; the prerequisite package cannot set future query policy.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
+  summary: Enforce exactly one authorized Folder and quarantine folderless legacy Projects in Story 6.4 candidate admission.
+  evidence: Epic 6 states the Folder invariant, while the pre-existing blocked draft does not make it an explicit candidate test.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
+  summary: Spell out AD-32 snapshot fields in Story 6.4 acceptance before the draft becomes ready.
+  evidence: The main draft abbreviates the snapshot as shared; the blocked story source lists response state, as-of, disclosable version, component freshness, safe reasons and recovery actions.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
+  summary: Add Epic 6 metadata-read latency targets to future Story 6.4 resolution acceptance.
+  evidence: The pre-existing draft omits p95 under 500 ms at 1,000 Projects/500 references and under one second at supported maximum size; no resolution read is implemented yet.
