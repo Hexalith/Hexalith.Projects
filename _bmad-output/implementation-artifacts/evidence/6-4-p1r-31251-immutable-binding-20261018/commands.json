@@ -1,0 +1,114 @@
+[
+  {
+    "name": "qualification",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_qualification.py",
+      "-k",
+      "Separate",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 8.05046882899478,
+    "log": "qualification.log"
+  },
+  {
+    "name": "executor",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_published_executor.py",
+      "-k",
+      "Separate",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 4.089995696005644,
+    "log": "executor.log"
+  },
+  {
+    "name": "packet",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_published_qualification.py",
+      "-k",
+      "Separate",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 0.7456208890071139,
+    "log": "packet.log"
+  },
+  {
+    "name": "isolation",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_isolation_hardening.py",
+      "-k",
+      "Separate",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 2.2318653959955554,
+    "log": "isolation.log"
+  },
+  {
+    "name": "optimized-isolation",
+    "command": [
+      "python3",
+      "-O",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_isolation_hardening.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 61.58541801900719,
+    "log": "optimized-isolation.log"
+  },
+  {
+    "name": "legacy-binding",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_published_executor.py",
+      "-k",
+      "EditedToolingHead",
+      "-v"
+    ],
+    "exit_code": 0,
+    "log": "legacy-binding.log"
+  }
+]

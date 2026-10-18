@@ -1,0 +1,122 @@
+[
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_qualification.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 61.062864196981536,
+    "tests": 46,
+    "log": "test_p1r_qualification.log"
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_published_executor.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 93.33720509998966,
+    "tests": 157,
+    "log": "test_p1r_published_executor.log"
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_published_qualification.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 43.956812621996505,
+    "tests": 67,
+    "log": "test_p1r_published_qualification.log"
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_isolation.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 1.7288031129864976,
+    "tests": 32,
+    "log": "test_p1r_isolation.log"
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_isolation_hardening.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 37.130782500025816,
+    "tests": 27,
+    "log": "test_p1r_isolation_hardening.log"
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_snapshot_registration.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 70.13154697002028,
+    "tests": 3,
+    "log": "test_p1r_snapshot_registration.log"
+  },
+  {
+    "command": [
+      "python3",
+      "-O",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/tests",
+      "-p",
+      "test_p1r_isolation_hardening.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 38.264772384020034,
+    "tests": 27,
+    "log": "optimized-isolation.log"
+  }
+]

@@ -27,8 +27,9 @@ its prerequisites-first hold. The historical
 [3.125.0 handoff](spec-6-1-p1r-31250-published-qualification-handoff.md) is preserved.
 
 **Execution is blocked.** Named owners must separately approve the exact tuple,
-restored/locked/loaded graph agreement must be measured, and a separately
-approved tooling/source binding strategy must resolve the immutable guard.
+restored/locked/loaded graph agreement must be measured, and reviewed tooling
+and qualification Builds commits must be selected under the separately approved
+tooling/source binding repair.
 The enrollment changes are local tooling repairs; they cannot inherit the
 released source's immutable proof. No executable qualification command is
 provided while these gates remain unresolved.
@@ -102,14 +103,24 @@ publication-completeness disposition remain entry gates.
   comparisons 3.70.1/3.110.0, `p1r-executed-checks-v1`, Reminder recovery and
   logical-event evolution additions. The planning choice supplies none of this
   exact-tuple authority.
-- [ ] Approve a separately scoped immutable tooling/source binding strategy.
-  The unchanged `validate_execution_inputs` and `observe_inputs` guards require
-  selected tag == selected source == tooling HEAD. Local HEAD
-  `47e234ccb535a71e7dd4a039fd0e2281083083ae` and its enrollment edits differ
-  from the released source; the release lacks this enrollment. Never bypass
-  equality, relabel edited tools as released, or assume a tooling commit selects
-  a runtime. Any strategy requiring a different publication must re-scope the
-  candidate and obtain owner approval.
+- [ ] Select the final reviewed tooling and qualification Builds commits under
+  the approved [immutable binding prerequisite](spec-6-4-prerequisite-p1r-31251-immutable-binding.md).
+  The optional `tooling: {commit, builds_commit}` block pins the scripts and
+  their actual Builds checkout independently of runtime/source. Both `observe`
+  and `run` require `--source-root` at clean v3.125.1/source
+  `55432c50d4b6f1666b4bd6d4a60bfc263b2d0e0b` and `--source-builds-root` at
+  release gitlink `4629ff2d3bd66376b29a553663c241d3a7b87853`; both roots must
+  be inside the isolated workspace. Dirty tracked inputs, untracked code or
+  configuration (including ignored compiler inputs), missing pins and tag/path
+  substitutions refuse before restore or resource creation. Without the block,
+  selected tag == selected source == tooling HEAD remains required. This path
+  is bounded to exact 3.125.1 and provides no bypass flag or execution authority.
+  Scripts, fixtures and witnesses stay under tooling; Debug source references,
+  the PostgreSQL template and verified Builds imports use the release roots.
+  Existing binding/receipt hashes retain both inventories through isolation,
+  cleanup, import and final validation. `candidate.builds` remains package
+  construction provenance; actual qualification Builds is bound separately.
+  No final tooling pins, owner selection or acceptance are created by this repair.
 - [ ] Prove fresh isolated Release/package restores, lock/assets/metadata hash
   agreement, package-only graphs and physical loaded assembly identities for
   all selected roles; bind the distinct Debug/source comparison to the approved
