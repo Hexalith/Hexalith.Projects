@@ -1,0 +1,44 @@
+{
+  "schema": "local-tooling-test-command-results-v1",
+  "recorded_utc": "2026-10-18T07:20:46.037511+00:00",
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+  "owner_head": "269b20d58236f07228bc2afd54807b94bd96f37b",
+  "source_sha256_at_recording": {
+    "tools/p1r_qualification.py": "3609a007612caa0434c31ef9092526541bfedea2ffb6bcb5d927a7f554ddb21d",
+    "tools/p1r_qualification_runtime.py": "4a63c2b18e049077a675c52ee0dec2724d55886f67b0744ec99e06bdf29d1f4a",
+    "tools/tests/test_p1r_qualification.py": "acce23d9378111c8a9852550abc649ccbd88ba12701192dd5f6731304f563a9f",
+    "tools/tests/test_p1r_published_qualification.py": "0a4465d8dbf1cbd7faa54825b571ddf717689be4aa97a36411962af62fd9df77"
+  },
+  "checks": [
+    {
+      "command": "python3 -m unittest discover -s tools/tests -p test_p1r_qualification.py",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ".....................................\n----------------------------------------------------------------------\nRan 37 tests in 55.506s\n\nOK\n",
+      "note": "Final run after the abrupt-parent-exit regression replaced the EOF-close-only test."
+    },
+    {
+      "command": "python3 -m unittest discover -s tools/tests -p test_p1r_published_qualification.py",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "..............................................................\n----------------------------------------------------------------------\nRan 62 tests in 44.371s\n\nOK\n",
+      "note": "Final published-tooling suite; production helper/runtime and this suite were unchanged by the later preparation-test strengthening."
+    }
+  ],
+  "scope": "Local tooling tests only. Result lines are transcribed from actual tool output, not an operational or published-family qualification packet.",
+  "p1r_qualified": false,
+  "story_6_4_complete": false,
+  "story_gate_check": {
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "command": "dotnet tool run hexalith-module test --profile reads --filter Story=6.4",
+    "exit_code": 1,
+    "output": "Cannot find a tool in the manifest file that has a command named 'hexalith-module'.\n"
+  },
+  "final_checks": {
+    "diff_check_projects": "passed",
+    "diff_check_eventstore": "passed",
+    "owner_changed_paths": "exact four-file allowlist passed",
+    "story_draft_sprint_acceptance": "unchanged",
+    "source_hashes": "match recorded values"
+  }
+}

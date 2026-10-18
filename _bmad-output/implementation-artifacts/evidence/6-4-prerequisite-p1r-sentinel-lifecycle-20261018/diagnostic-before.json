@@ -1,0 +1,16 @@
+{
+  "schema": "local-diagnostic-command-observation-v1",
+  "recorded_utc": "2026-10-18T07:20:02.593779+00:00",
+  "provenance": "Exact command and stdout transcribed from this build session before edits; temporary process-control receipts were removed by TemporaryDirectory. No persisted-package or operational qualification is claimed.",
+  "owner_repository": "references/Hexalith.EventStore",
+  "owner_head": "269b20d58236f07228bc2afd54807b94bd96f37b",
+  "source_sha256_before_edit": {
+    "tools/p1r_qualification.py": "f8dffdd6ff70e037620675c11da0ed4b14069ae5e78800ae1960fda5504e9586",
+    "tools/p1r_qualification_runtime.py": "166637f96dadbdbf1e0c645bfba215ab791bb9b8bb2c7539c1741697d8ecea47"
+  },
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+  "command": "python3 - <<'PY'\nimport json,sys,tempfile,time\nfrom pathlib import Path\nsys.path.insert(0,str(Path('tools').resolve()))\nimport p1r_qualification_runtime as runtime\nimport p1r_qualification as preparation\nwith tempfile.TemporaryDirectory(prefix='p1r-sentinel-diagnostic-') as scratch:\n out=Path(scratch);(out/'receipts').mkdir()\n section=runtime.new_process_section()\n state={'first':True}\n def slow_verification():\n  if state['first']:\n   state['first']=False\n   time.sleep(31)\n started=time.monotonic()\n runtime.run_process_controls(section,out,'0'*32,str(Path(sys.executable).resolve()),slow_verification,lambda:None)\n print(json.dumps({'scope':'diagnostic-injected-source-check-latency-only','elapsed_seconds':round(time.monotonic()-started,2),'sentinel_before_running':section['sentinel']['before']['running'],'sentinel_after_running':section['sentinel']['after_controls']['running'],'sentinel_released':section['sentinel']['released'],'rows':[{'id':r['id'],'execution':r['execution']} for r in section['rows']],'p1r_qualification':False},indent=2))\nPY",
+  "exit_code": 0,
+  "stdout": "{\n  \"scope\": \"diagnostic-injected-source-check-latency-only\",\n  \"elapsed_seconds\": 32.94,\n  \"sentinel_before_running\": true,\n  \"sentinel_after_running\": false,\n  \"sentinel_released\": true,\n  \"rows\": [\n    {\n      \"id\": \"startup-failure\",\n      \"execution\": \"failed\"\n    },\n    {\n      \"id\": \"success\",\n      \"execution\": \"failed\"\n    },\n    {\n      \"id\": \"timeout\",\n      \"execution\": \"failed\"\n    },\n    {\n      \"id\": \"cancellation\",\n      \"execution\": \"failed\"\n    },\n    {\n      \"id\": \"descendants\",\n      \"execution\": \"failed\"\n    },\n    {\n      \"id\": \"repeated-cleanup\",\n      \"execution\": \"failed\"\n    }\n  ],\n  \"p1r_qualification\": false\n}\n",
+  "interpretation": "The diagnostic process completes successfully, but every process-control row fails because the fixed-lifetime sentinel expires. Injected latency isolates this failure mechanism; it does not measure actual CI verification latency."
+}

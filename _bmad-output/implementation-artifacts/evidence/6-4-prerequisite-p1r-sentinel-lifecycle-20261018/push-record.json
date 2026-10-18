@@ -1,0 +1,28 @@
+{
+  "authorization": "push all changes and give me next step prompt",
+  "eventstore_commit": "794369b30c2f3615a7f1d70a5beb1935f6470b36",
+  "eventstore_remote_base": "ab8fa115c486875be3a22860a273d5d68a26c749",
+  "commitlint": "eventstore-commitlint.log",
+  "rebased_without_conflicts": true,
+  "upstream_changed_owner_files": false,
+  "push_status": "EventStore push succeeded; this record precedes the separate Projects pointer/evidence commit.",
+  "recorded_utc": "2026-10-18T07:39:12.962862+00:00",
+  "post_rebase_checks": [
+    {
+      "command": "python3 -m unittest discover -s tools/tests -p test_p1r_qualification.py",
+      "exit_code": 0,
+      "passed": 37,
+      "duration_seconds": 52.089
+    },
+    {
+      "command": "python3 -m unittest discover -s tools/tests -p test_p1r_published_qualification.py",
+      "exit_code": 0,
+      "passed": 62,
+      "duration_seconds": 42.575
+    }
+  ],
+  "observed_warnings": "Both passing post-rebase runs emitted ResourceWarning for an interrupted /proc/<pid>/environ file read. No test failed.",
+  "eventstore_remote_main_verified": "794369b30c2f3615a7f1d70a5beb1935f6470b36",
+  "remote_ci_status": "pending; local suite success does not certify remote CI or prerequisite qualification",
+  "patch_format": "git show --format= --unified=0 794369b30c2f3615a7f1d70a5beb1935f6470b36; zero context avoids literal context-only whitespace in the tracked evidence file."
+}

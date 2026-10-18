@@ -1,0 +1,115 @@
+diff --git a/tools/p1r_qualification.py b/tools/p1r_qualification.py
+index 545f4b89..694a595d 100644
+--- a/tools/p1r_qualification.py
++++ b/tools/p1r_qualification.py
+@@ -540,0 +541,7 @@ def seal(directory):
++def start_shared_sentinel(python):
++    """Stay alive until explicitly released or the owning parent's pipe closes."""
++    return subprocess.Popen([python, "-I", "-c", "import sys; sys.stdin.buffer.read(1)"],
++                            stdin=subprocess.PIPE, stdout=subprocess.DEVNULL,
++                            stderr=subprocess.DEVNULL, start_new_session=True)
++
++
+@@ -572,2 +579 @@ def create_packet(directory, mode, root=ROOT):
+-            sentinel_process = subprocess.Popen([binding["python"]["path"], "-I", "-c", "import time; time.sleep(30)"],
+-                                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
++            sentinel_process = start_shared_sentinel(binding["python"]["path"])
+@@ -591,0 +598 @@ def create_packet(directory, mode, root=ROOT):
++                sentinel_process.stdin.close()
+diff --git a/tools/p1r_qualification_runtime.py b/tools/p1r_qualification_runtime.py
+index 0b18e120..27be039f 100644
+--- a/tools/p1r_qualification_runtime.py
++++ b/tools/p1r_qualification_runtime.py
+@@ -361,2 +361 @@ def run_process_controls(section, directory, invocation, python, before_each, af
+-        sentinel_process = subprocess.Popen([python, "-I", "-c", "import time; time.sleep(30)"],
+-                                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
++        sentinel_process = preparation.start_shared_sentinel(python)
+@@ -376,0 +376 @@ def run_process_controls(section, directory, invocation, python, before_each, af
++                sentinel_process.stdin.close()
+diff --git a/tools/tests/test_p1r_published_qualification.py b/tools/tests/test_p1r_published_qualification.py
+index 40741fba..0165875e 100644
+--- a/tools/tests/test_p1r_published_qualification.py
++++ b/tools/tests/test_p1r_published_qualification.py
+@@ -1404,0 +1405,24 @@ class ProcessControlTests(PacketFixture):
++    def testSlowSourceVerificationDoesNotExpireSharedSentinel(self):
++        out = self.root / "slow-source-verification-controls"
++        (out / "receipts").mkdir(parents=True)
++        section = runtime.new_process_section()
++        invocation = uuid.uuid4().hex
++        started = preparation.stamp()
++        delayed = False
++
++        def slow_once():
++            nonlocal delayed
++            if not delayed:
++                delayed = True
++                time.sleep(31)
++
++        runtime.run_process_controls(section, out, invocation, PYTHON, slow_once, lambda: None)
++        self.assertEqual(section["sentinel"]["before"], section["sentinel"]["after_controls"])
++        self.assertTrue(section["sentinel"]["released"])
++        start, end = preparation.validate_times({"started_utc": started,
++                                                 "finished_utc": preparation.stamp()})
++        _, assertions = runtime.validate_process_controls(out, section, invocation, PYTHON,
++                                                          start, end)
++        self.assertEqual(assertions, 38)
++        self.assertEqual(section["scope"], "local-process-control")
++
+diff --git a/tools/tests/test_p1r_qualification.py b/tools/tests/test_p1r_qualification.py
+index 1fad0d1f..d80ec662 100644
+--- a/tools/tests/test_p1r_qualification.py
++++ b/tools/tests/test_p1r_qualification.py
+@@ -312,0 +313,23 @@ class PacketTests(unittest.TestCase):
++    def testSlowSourceVerificationDoesNotExpireSharedSentinel(self):
++        out = Path(self.scratch.name) / "slow-source-verification"
++        verify = p.check_current_source
++        delayed = False
++
++        def slow_once(binding):
++            nonlocal delayed
++            verify(binding)
++            if not delayed:
++                delayed = True
++                # Exceed the former lifetime while retaining real process controls.
++                time.sleep(31)
++
++        with mock.patch.object(p, "check_current_source", side_effect=slow_once):
++            packet = p.create_packet(out, "run")
++        self.assertEqual(packet["errors"], [])
++        self.assertEqual(packet["sentinel"]["before"], packet["sentinel"]["after_controls"])
++        self.assertTrue(packet["sentinel"]["released"])
++        result = p.validate_packet(out)
++        self.assertEqual(result["process_assertions"], 38)
++        self.assertFalse(result["qualified"])
++        self.assertFalse(result["p1r_usable"])
++
+@@ -499,0 +523,29 @@ class SourceAndProcessTests(unittest.TestCase):
++    def testSharedSentinelExitsWhenParentDisconnects(self):
++        p.subreaper()
++        script = ("import os,sys; sys.path.insert(0,sys.argv[1]); "
++                  "import p1r_qualification as p; "
++                  "sentinel=p.start_shared_sentinel(sys.executable); "
++                  "print(sentinel.pid,flush=True); os._exit(0)")
++        parent = subprocess.run([sys.executable, "-I", "-c", script, str(p.ROOT / "tools")],
++                                capture_output=True, timeout=5, check=True)
++        pid = int(parent.stdout.strip())
++        reaped = False
++        try:
++            deadline = time.monotonic() + 2
++            while time.monotonic() < deadline:
++                child, status = os.waitpid(pid, os.WNOHANG)
++                if child == pid:
++                    reaped = True
++                    self.assertEqual(os.waitstatus_to_exitcode(status), 0)
++                    break
++                time.sleep(.01)
++            self.assertTrue(reaped, "sentinel survived abrupt parent exit")
++        finally:
++            if not reaped:
++                os.kill(pid, signal.SIGKILL)
++                deadline = time.monotonic() + 2
++                while time.monotonic() < deadline:
++                    if os.waitpid(pid, os.WNOHANG)[0] == pid:
++                        break
++                    time.sleep(.01)
++
