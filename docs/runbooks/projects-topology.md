@@ -7,7 +7,7 @@ operations guide, not production configuration.
 
 Prerequisites:
 
-- .NET SDK `10.0.401`.
+- .NET SDK `10.0.402`.
 - Aspire CLI `13.6.0` (matching the AppHost SDK/hosting/orchestration stack).
 - Dapr CLI `1.18.0` with runtime `1.18.2` initialized for local sidecars.
 - `jq` for JSON endpoint extraction and `curl` for health probes.

@@ -5,7 +5,11 @@ created: '2026-10-18'
 status: 'draft'
 route: 'dispatch'
 candidate_version_proposed: '3.125.0'
-candidate_source_proposed: 'ab8fa115c486875be3a22860a273d5d68a26c749'
+candidate_source_proposed: '39b366bca3dbe508b4cf3c5afa69db1ddadb6dd2'
+candidate_package_builds_proposed: '544fd2e907d62ccdc4b8f24168b8ab5dfcc13eb9'
+candidate_ci_builds_observed: '4629ff2d3bd66376b29a553663c241d3a7b87853'
+candidate_release_execution_builds: '22a578b576a515d2af214fe81859447fffc97981'
+publication_readiness_observed_at: '2026-10-18T11:49:26.545729Z'
 execution_gate: 'blocked-pending-publication-and-owner-selection'
 review_loop_iteration: 0
 context:
@@ -29,6 +33,10 @@ context:
 
 </frozen-after-approval>
 
+## Publication readiness observation — 2026-10-18
+
+The [refreshed decision packet](6-4-p1r-successor-publication-decision-2026-10-18.md) observes live source `39b366bca3dbe508b4cf3c5afa69db1ddadb6dd2`, expected package-build Builds `544fd2e907d62ccdc4b8f24168b8ab5dfcc13eb9`, resolved CI Builds `4629ff2d3bd66376b29a553663c241d3a7b87853` and release-execution Builds `22a578b576a515d2af214fe81859447fffc97981`. At `2026-10-18T11:49:26.545729Z`, P1R preparation **39123504568** and Commitlint **39123504763** passed; CI **39123504769** remained in progress with no conclusion. No successful CI proof is inferred from a resolved Builds identity. All five indexes still stop at 3.124.0; 3.125.0 remains proposed, with no observed tag/release. The old red sentinel proof is historical; current-source readiness beyond the older Debug/Dapr 1.18.7/Redis receipt still requires fresh evidence or explicit named owner disposition before publication authorization. This observation changes no execution authority.
+
 ## Code Map
 
 Paths below belong to `references/Hexalith.EventStore` unless otherwise noted.
@@ -40,7 +48,7 @@ Paths below belong to `references/Hexalith.EventStore` unless otherwise noted.
 
 ## Tasks & Acceptance
 
-**Entry gate:** The [publication decision](6-4-p1r-successor-publication-decision-2026-10-18.md) must be superseded by a dated, named exact-source owner authorization after all release push proofs and current-source readiness pass or receive explicit owner disposition. Record the resolved CI Builds SHA separately. Inventory the complete fourteen-package/container publication, including any partial failure. A partial release needs a new owner decision before retry or selection. For a complete release, owners must separately select the **actual version/tag/source, five archive SHA-256 and NuGet content hashes, tag/package-build and release-execution Builds identities, `rollback=null`, Dapr 1.18.2/PostgreSQL image profile, 3.70.1/3.110.0 comparisons, `p1r-executed-checks-v1` mechanism and both Reminder/evolution additions**. If Semantic Release chooses a version other than 3.125.0 or the tag points elsewhere, re-scope this handoff before execution.
+**Entry gate:** The [publication decision](6-4-p1r-successor-publication-decision-2026-10-18.md) must be superseded by a dated, named exact-source owner authorization after all three required exact-source release push proofs pass and current-source readiness passes or receives explicit owner disposition. Record the resolved successful CI Builds SHA separately. Inventory the complete fourteen-package/container publication, including any partial failure. A partial release needs a new owner decision before retry or selection. For a complete release, owners must separately select the **actual version/tag/source, five archive SHA-256 and NuGet content hashes, tag/package-build, resolved successful CI and release-execution Builds identities, `rollback=null`, Dapr 1.18.2/PostgreSQL image profile, 3.70.1/3.110.0 comparisons, `p1r-executed-checks-v1` mechanism and both Reminder/evolution additions**. If Semantic Release chooses a version other than 3.125.0 or the tag points elsewhere, re-scope this handoff before execution.
 
 **Execution:**
 
@@ -58,4 +66,4 @@ Paths below belong to `references/Hexalith.EventStore` unless otherwise noted.
 
 ## Implementation Notes
 
-Prepared as an execution handoff only. The observed exact-head P1R push proof is red, `3.125.0` is absent from all five indexes, and no owner has selected its published tuple. The older source-readiness receipt, older 3.124.0 signed archives and 3.121.0 qualification failures remain distinct evidence. A new source or version needs reanalysis and an updated work package before a live run.
+Prepared as an execution handoff only. The refreshed exact-source P1R preparation and Commitlint proofs pass; the CI result and current-source readiness disposition remain explicit publication prerequisites. `3.125.0` is absent from all five indexes, and no owner has selected its published tuple. The older source-readiness receipt, older 3.124.0 signed archives and 3.121.0 qualification failures remain distinct evidence. A new source or version needs reanalysis and an updated work package before a live run.

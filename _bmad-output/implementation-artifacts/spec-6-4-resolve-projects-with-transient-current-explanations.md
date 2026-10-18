@@ -6,7 +6,7 @@ updated: '2026-10-18'
 status: 'draft'
 route: 'dispatch'
 story_key: '6-4-resolve-projects-with-transient-current-explanations'
-baseline_commit: '71c326813e75e7b3486555b5f22ed377b42064d6'
+baseline_commit: '3faac93ac718b16629923ac824e9f463759c5c17'
 review_loop_iteration: 0
 context:
   - '_bmad-output/implementation-artifacts/epic-6-context.md'
@@ -45,13 +45,12 @@ context:
 
 ## Code Map
 
-- `src/Hexalith.Projects.Contracts/Queries/Admission*.cs` — reuse shared AD-32 vocabulary.
-- `src/Hexalith.Projects/Resolution/` — reuse scoring; authorize before exclusions expose identities.
-- `src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs` — writes inspection audit; unsuitable for resolution.
-- `src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs` — explicitly lacks owner-backed RTI.
-- `src/Hexalith.Projects.Server/Conversations/` — legacy resolution retrieves Messages.
-- `src/Hexalith.Projects.Server/Folders/` — singleton Folder authorization lacks metadata/watermarks; opaque File recheck is Unavailable.
-- `references/Hexalith.EventStore/docs/architecture/evidence-secret-scanning.md` — replacement/retirement policy; the preserved proposal records five verified hashes; the separately approved retirement prerequisite owns enrollment and authority withdrawal.
+- `src/Hexalith.Projects.Contracts/Queries/Admission*.cs` — shared AD-32 vocabulary.
+- `src/Hexalith.Projects/Resolution/` — pure engine/mappers; authorize before identity-bearing exclusions.
+- `src/Hexalith.Projects.Server/Queries/` — supported handlers/stores exist; `ProjectReadQueryExecutor` writes audit; `ProjectContextQueryExecutor` lacks owner-backed RTI.
+- `src/Hexalith.Projects.Server/Conversations/` — full owner detail retrieves Messages.
+- `src/Hexalith.Projects.Server/Folders/` — singleton Folder outcome lacks metadata/watermarks; opaque File read unavailable.
+- `evidence/6-4-resume-20261018/current-preflight-3faac93.json` — exact source, commands, package indexes, missing seams and protected hashes.
 
 ## Tasks & Acceptance
 
@@ -71,6 +70,7 @@ context:
 - 2026-10-17: Prerequisites-first decision recorded. The first proposed work package is `spec-6-4-prerequisite-p1r-source-readiness.md`; its preflight evidence records five verified package signatures and 224 passing tooling controls without claiming P1R qualification. Story 6.4 remains a draft behind its original gates.
 
 - 2026-10-18: Resumed planning at Projects `3d3b3fab63afe63090e6314e2c2b6e66bcd0ec31`; retained reviewed EventStore source hashes match checkout. Seven historical findings in five files remain; no fresh full scan is claimed. Independent source inspection confirms missing owner metadata/RTI contracts. Local 6.1–6.3 exceptions do not authorize 6.4. Retained command outputs and an unapproved exact-file proposal in the linked JSON; runtime, pins, acceptance and original story/tracker remain unchanged.
+- 2026-10-18 recheck: Projects `3faac93ac718b16629923ac824e9f463759c5c17`, EventStore `47e234ccb535a71e7dd4a039fd0e2281083083ae`. Current-source P1R preparation and Commitlint pass; CI is pending. All five indexes omit proposed 3.125.0. Approved retirement is pushed; owner batches/RTI and G-4 remain absent. The earlier publication proposal needs refreshed coordinates before an owner decision. Detailed evidence and prior verification are retained in the Code Map JSON.
 
 ## Spec Change Log
 
@@ -78,14 +78,10 @@ context:
 
 ## Design Notes
 
-The owner approved the separate five-file retirement prerequisite; its implementation and verification are tracked independently. Irreversibles: none in planning; publication remains separate. Footprint: this draft and planning JSON only. P0/current P1R/P2/P3/P4, G-2/RTI, G-4, current G-6 and independent readiness remain open. The spec cannot become ready-for-dev.
+Intent gaps: none; prerequisites-first remains binding. Irreversibles: none. Footprint: this draft and one preflight JSON. Entry gates remain unresolved, so readiness fails and status stays draft.
 
 ## Verification
 
-- `python3 tools/planning/validate_production_authority.py --story-id 6.4` — passed; scheduling only.
-- `dotnet tool run hexalith-module test --profile reads --filter Story=6.4` — exit 1: `Cannot find a tool in the manifest file that has a command named 'hexalith-module'.` Both runner manifests remain absent.
-- `git diff --check`, CRLF, frozen-intent, five-hash and protected-file checks — passed. Only this draft and the planning JSON changed; EventStore remains clean.
-
-- 2026-10-18: User selected option 1. The separate `spec-6-4-prerequisite-governed-retirement.md` owns the finite approved retirement work; this story remains draft/blocked pending its other original entry gates.
-
-- 2026-10-18 completion: the separately approved five-file retirement prerequisite is locally complete. Strict tracked-content scan plus all 940 remaining guard cases pass, with all historical bytes and four prior registry records preserved. This supplies no approved owner metadata/RTI seam, G-4 runner, exact-source hosted CI/P1R qualification or remaining entry-gate acceptance. Story 6.4 remains draft/blocked.
+- `python3 tools/planning/validate_production_authority.py --story-id 6.4` — PASS; scheduling only.
+- `dotnet tool run hexalith-module test --profile reads --filter Story=6.4` — exit 1: `Cannot find a tool in the manifest file that has a command named 'hexalith-module'.`
+- Check frozen intent, protected hashes, CRLF and `git diff --check`; source, pins, acceptance and tracker must remain unchanged.

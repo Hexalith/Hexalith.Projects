@@ -1,0 +1,278 @@
+{
+  "source": "39b366bca3dbe508b4cf3c5afa69db1ddadb6dd2",
+  "lastTag": "v3.124.0",
+  "baseCommit": "0737c0befce5338e294a789092a0e223e8264a04",
+  "commitCount": 22,
+  "totalCommits": 22,
+  "releaseType": "minor",
+  "proposedVersion": "3.125.0",
+  "proposedTag": "v3.125.0",
+  "actualPublicationVerified": false,
+  "analyzerVersion": "13.0.1",
+  "configSha256": "2d26f9511f4a7e153f3be0c4189e0b07dffd38cae60c84ee20cb04485d3e5907",
+  "commits": [
+    {
+      "hash": "9dbb3aaf0254a607e5b6489e0de2a8aee0f82edb",
+      "message": "build: sync local changes via /pushall"
+    },
+    {
+      "hash": "b99a03dfc29021af16511ee664820e05126b73f8",
+      "message": "fix: story 6.4"
+    },
+    {
+      "hash": "77d9af18a54d92506e310fe5a45021a395e66f60",
+      "message": "build: sync local changes via /pushall"
+    },
+    {
+      "hash": "7842a1fb81aa329ecac6271d885b959b40522767",
+      "message": "fix: story 6.4"
+    },
+    {
+      "hash": "1353b83939de812671260f1d7a5910ee8fb60119",
+      "message": "test(story-6.4): correct runtime qualification fixtures\n\nDrain adapter workers during teardown, reuse the private HotReload override,\nand retain failed-startup evidence without reading deleted runtimes.\n\nRecord focused checks and one full run of each previously failed cohort.\nDebug DomainService: 978 passed. Debug Live: 194 passed, 1 declared skip.\nRelease Live: 193 passed, 1 failed, 1 declared skip.\n\nPreserve hash-bound evidence bytes with a packet-specific Git attribute.\nKeep Story 6.4 in progress with the OQ8 timeout and formal gates open."
+    },
+    {
+      "hash": "ac059da7e13047600d65c592dad3204238fd9eb5",
+      "message": "build: sync local changes via /pushall"
+    },
+    {
+      "hash": "db23b193549f4554a6fdbf54b6a8f2e13b815510",
+      "message": "feat(queries): add verified caller authority and recoverable batches\n\nPreserve originating query authority through workload and owner callbacks.\nAdd opt-in SDK recovery for interrupted conditional read-model batches.\n\nValidated in the local Story 6.1 source-reference test run: 4,941 passed.\nProduction acceptance and publication remain blocked."
+    },
+    {
+      "hash": "191b7128f1a86d47407f5f5a68aae67c1918ce44",
+      "message": "docs(story-6.4): record OQ8 qualification evidence\n\nPreserve focused and full Release Live results, runtime identities, and the external-source cutoff.\n\nRecord the failed tracked-content scan: 2,810 findings, including 788 new package-metadata matches.\nKeep story 6.4 in progress while latest-source and formal acceptance gates remain open."
+    },
+    {
+      "hash": "bb986902d3c1b2f3b1c209fe8eb0ffa0292153d9",
+      "message": "build: merge feat/story-6-1-supported-project-reads into main via /pushall"
+    },
+    {
+      "hash": "9ed9b9742bd006e568f026cc1c588275cf9db097",
+      "message": "fix(queries): distinguish invalid page failures\n\nPreserve legacy cursor responses and sanitize paging diagnostics."
+    },
+    {
+      "hash": "80b0cd9cff8453f6aaa95c430bb8c6688a09fdd6",
+      "message": "feat(governance): enforce corrective-work authorization"
+    },
+    {
+      "hash": "269b20d58236f07228bc2afd54807b94bd96f37b",
+      "message": "build(p1r): enroll proposed 3.125.0 source tooling"
+    },
+    {
+      "hash": "1cbdc7639446850cc541d56b9de2bf8cb6615ab2",
+      "message": "build: sync local changes via /pushall"
+    },
+    {
+      "hash": "ab8fa115c486875be3a22860a273d5d68a26c749",
+      "message": "build: merge feat/story-9-1-corrective-work-authorization into main via /pushall"
+    },
+    {
+      "hash": "794369b30c2f3615a7f1d70a5beb1935f6470b36",
+      "message": "fix(p1r): keep shared sentinel alive during source verification"
+    },
+    {
+      "hash": "9b062d0d4f506bf45b7fdcd8e54189599a36ff9b",
+      "message": "docs(story-9.1): record code review findings\n\nReview of 80b0cd9c leaves four owner-resolved decisions and eleven patches\nopen as action items, so Story 9.1 returns to in-progress. The unowned live\nowner-registry minting step is recorded in the deferred-work ledger.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+    },
+    {
+      "hash": "37bdc90a72b9f0ea547852e903334cc8cc541641",
+      "message": "fix(security): repair secret scan false positives and retain blockers\n\nPreserve seven governed historical findings and all acceptance records.\nRetain 971 passing focused checks without publishing packages."
+    },
+    {
+      "hash": "216b790628574d39802adcc8f4fea0d4034ef9f0",
+      "message": "fix(client): recover create-only receipt conflicts\n\nResolve failed create-only Dapr writes through strong same-key read-back.\nPreserve genuine failures and verify receipt-backed journal recovery."
+    },
+    {
+      "hash": "c0c08d450dff89faaeea2bb88dd570a589ce203d",
+      "message": "feat(protection): wire interaction hooks and owner verifier safeguards\n\nPublish the partial EXT-PROTECTION-1 artifact and acceptance packet.\nKeep production custody, online authority, and complete Live qualification gaps explicit.\nNo Live verification or Agents dependency-status change is included."
+    },
+    {
+      "hash": "1aaa173715305a08aff30c4b9cd6354a7073e541",
+      "message": "fix: protection"
+    },
+    {
+      "hash": "47e234ccb535a71e7dd4a039fd0e2281083083ae",
+      "message": "test(security): govern approved historical retirements\n\nBind five preserved artifacts to the explicit owner decision and authority\noverlay, with exact hashes and adversarial scanner controls.\n\nRetain strict-scan success and 940 passing remaining guard cases.\nStory 6.4 and its other prerequisite gates remain blocked."
+    },
+    {
+      "hash": "39b366bca3dbe508b4cf3c5afa69db1ddadb6dd2",
+      "message": "feat(protection): deliver fail-closed owner qualification checks\n\nKeep Live qualification closed. The published-trust authority denies destruction without installed custody, and local tests do not make the dependency Available.\n\nCo-authored-by: Cursor <cursoragent@cursor.com>"
+    }
+  ],
+  "logs": [
+    [
+      "Analyzing commit: %s",
+      "build: sync local changes via /pushall"
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "fix: story 6.4"
+    ],
+    [
+      "The release type for the commit is %s",
+      "patch"
+    ],
+    [
+      "Analyzing commit: %s",
+      "build: sync local changes via /pushall"
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "fix: story 6.4"
+    ],
+    [
+      "The release type for the commit is %s",
+      "patch"
+    ],
+    [
+      "Analyzing commit: %s",
+      "test(story-6.4): correct runtime qualification fixtures\n\nDrain adapter workers during teardown, reuse the private HotReload override,\nand retain failed-startup evidence without reading deleted runtimes.\n\nRecord focused checks and one full run of each previously failed cohort.\nDebug DomainService: 978 passed. Debug Live: 194 passed, 1 declared skip.\nRelease Live: 193 passed, 1 failed, 1 declared skip.\n\nPreserve hash-bound evidence bytes with a packet-specific Git attribute.\nKeep Story 6.4 in progress with the OQ8 timeout and formal gates open."
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "build: sync local changes via /pushall"
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "feat(queries): add verified caller authority and recoverable batches\n\nPreserve originating query authority through workload and owner callbacks.\nAdd opt-in SDK recovery for interrupted conditional read-model batches.\n\nValidated in the local Story 6.1 source-reference test run: 4,941 passed.\nProduction acceptance and publication remain blocked."
+    ],
+    [
+      "The release type for the commit is %s",
+      "minor"
+    ],
+    [
+      "Analyzing commit: %s",
+      "docs(story-6.4): record OQ8 qualification evidence\n\nPreserve focused and full Release Live results, runtime identities, and the external-source cutoff.\n\nRecord the failed tracked-content scan: 2,810 findings, including 788 new package-metadata matches.\nKeep story 6.4 in progress while latest-source and formal acceptance gates remain open."
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "build: merge feat/story-6-1-supported-project-reads into main via /pushall"
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "fix(queries): distinguish invalid page failures\n\nPreserve legacy cursor responses and sanitize paging diagnostics."
+    ],
+    [
+      "The release type for the commit is %s",
+      "patch"
+    ],
+    [
+      "Analyzing commit: %s",
+      "feat(governance): enforce corrective-work authorization"
+    ],
+    [
+      "The release type for the commit is %s",
+      "minor"
+    ],
+    [
+      "Analyzing commit: %s",
+      "build(p1r): enroll proposed 3.125.0 source tooling"
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "build: sync local changes via /pushall"
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "build: merge feat/story-9-1-corrective-work-authorization into main via /pushall"
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "fix(p1r): keep shared sentinel alive during source verification"
+    ],
+    [
+      "The release type for the commit is %s",
+      "patch"
+    ],
+    [
+      "Analyzing commit: %s",
+      "docs(story-9.1): record code review findings\n\nReview of 80b0cd9c leaves four owner-resolved decisions and eleven patches\nopen as action items, so Story 9.1 returns to in-progress. The unowned live\nowner-registry minting step is recorded in the deferred-work ledger.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "fix(security): repair secret scan false positives and retain blockers\n\nPreserve seven governed historical findings and all acceptance records.\nRetain 971 passing focused checks without publishing packages."
+    ],
+    [
+      "The release type for the commit is %s",
+      "patch"
+    ],
+    [
+      "Analyzing commit: %s",
+      "fix(client): recover create-only receipt conflicts\n\nResolve failed create-only Dapr writes through strong same-key read-back.\nPreserve genuine failures and verify receipt-backed journal recovery."
+    ],
+    [
+      "The release type for the commit is %s",
+      "patch"
+    ],
+    [
+      "Analyzing commit: %s",
+      "feat(protection): wire interaction hooks and owner verifier safeguards\n\nPublish the partial EXT-PROTECTION-1 artifact and acceptance packet.\nKeep production custody, online authority, and complete Live qualification gaps explicit.\nNo Live verification or Agents dependency-status change is included."
+    ],
+    [
+      "The release type for the commit is %s",
+      "minor"
+    ],
+    [
+      "Analyzing commit: %s",
+      "fix: protection"
+    ],
+    [
+      "The release type for the commit is %s",
+      "patch"
+    ],
+    [
+      "Analyzing commit: %s",
+      "test(security): govern approved historical retirements\n\nBind five preserved artifacts to the explicit owner decision and authority\noverlay, with exact hashes and adversarial scanner controls.\n\nRetain strict-scan success and 940 passing remaining guard cases.\nStory 6.4 and its other prerequisite gates remain blocked."
+    ],
+    [
+      "The commit should not trigger a release"
+    ],
+    [
+      "Analyzing commit: %s",
+      "feat(protection): deliver fail-closed owner qualification checks\n\nKeep Live qualification closed. The published-trust authority denies destruction without installed custody, and local tests do not make the dependency Available.\n\nCo-authored-by: Cursor <cursoragent@cursor.com>"
+    ],
+    [
+      "The release type for the commit is %s",
+      "minor"
+    ],
+    [
+      "Analysis of %s commits complete: %s release",
+      22,
+      "minor"
+    ]
+  ],
+  "dependency_identity_file": "analyzer-dependency-identity.json",
+  "package_lock_sha256": "43b6b76465b05b54c6eda620c275604c544bdeeb58b2f28db63a07d77a6ee027",
+  "installed_lock_matches_exact_source": true
+}

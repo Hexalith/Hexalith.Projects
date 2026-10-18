@@ -1,0 +1,77 @@
+{
+  "verified_at": "2026-10-18T11:50:51.715388Z",
+  "command": "python3 /tmp/p1r-refresh-validate.py",
+  "result": "pass",
+  "checks": [
+    {
+      "check": "original user changes, acceptance, sprint and package catalogs",
+      "result": "pass",
+      "before": {
+        "_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md": "f20ce9143e252f5e1ca12741fd30a56233bd293cb005bb8f3621ed26011e6d1f",
+        "_bmad-output/implementation-artifacts/evidence/6-4-resume-20261018/current-preflight-3faac93.json": "9bb40e76f1909c67a17ba6502a26cd9f1a6a4b7682c9aeaba0d9d8b3eeb6bcfe",
+        "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json": "37e2532154319cc030b9559f3cfee4bfb0853a4e50d47dcc0196f89e448a4eb7",
+        "_bmad-output/implementation-artifacts/sprint-status.yaml": "f210b33baf89adc976835e263e11f7d5f8c5acd23aeb09c3060fae19c980168a",
+        "Directory.Packages.props": "db026ea147622209d4280cc35d27de75f3c2c5f480e8502272a2376ea0f07d5e",
+        "Module.Directory.Packages.props": "c369b96d1d7725467d9e76313183a6e52c54d758c7c5d5bed943bd97cd04d9bd"
+      },
+      "after": {
+        "_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md": "f20ce9143e252f5e1ca12741fd30a56233bd293cb005bb8f3621ed26011e6d1f",
+        "_bmad-output/implementation-artifacts/evidence/6-4-resume-20261018/current-preflight-3faac93.json": "9bb40e76f1909c67a17ba6502a26cd9f1a6a4b7682c9aeaba0d9d8b3eeb6bcfe",
+        "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json": "37e2532154319cc030b9559f3cfee4bfb0853a4e50d47dcc0196f89e448a4eb7",
+        "_bmad-output/implementation-artifacts/sprint-status.yaml": "f210b33baf89adc976835e263e11f7d5f8c5acd23aeb09c3060fae19c980168a",
+        "Directory.Packages.props": "db026ea147622209d4280cc35d27de75f3c2c5f480e8502272a2376ea0f07d5e",
+        "Module.Directory.Packages.props": "c369b96d1d7725467d9e76313183a6e52c54d758c7c5d5bed943bd97cd04d9bd"
+      }
+    },
+    {
+      "check": "five official index statuses, byte hashes, versions and Git -text attributes",
+      "result": "pass"
+    },
+    {
+      "check": "exact-source configuration text SHA-256 values",
+      "result": "pass",
+      "count": 7
+    },
+    {
+      "check": "full exact-source push identities and actual pending/success gate claims",
+      "result": "pass",
+      "source": "39b366bca3dbe508b4cf3c5afa69db1ddadb6dd2",
+      "observed_at": "2026-10-18T11:49:26.545729Z",
+      "CI": "pending",
+      "P1R_preparation": "success",
+      "Commitlint": "success"
+    },
+    {
+      "check": "qualification handoff frozen intent, draft status and unchecked execution",
+      "result": "pass"
+    },
+    {
+      "check": "pre-existing historical evidence bytes",
+      "result": "pass",
+      "count": 15
+    },
+    {
+      "check": "local packet, handoff and evidence links",
+      "result": "pass"
+    },
+    {
+      "check": "literal analyzer reproduction, version and exact lock guard",
+      "result": "pass",
+      "command": "node --input-type=module (literal README heredoc)",
+      "stdout": "{ count: 22, releaseType: 'minor', proposedVersion: '3.125.0' }\n",
+      "exit_code": 0
+    },
+    {
+      "check": "EventStore and Builds checkouts unchanged and clean",
+      "result": "pass"
+    },
+    {
+      "check": "exact tracked-file scope, unchanged index and git diff --check",
+      "result": "pass",
+      "command": "git diff --check",
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "limits": "Documentation/evidence integrity checks only. Hosted CI remains pending. No package qualification, owner acceptance or publication was executed."
+}
