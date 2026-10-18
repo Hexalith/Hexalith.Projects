@@ -894,11 +894,12 @@ Require-Match $openApiGate '--configuration Release' 'OpenAPI gate must build it
 Require-Match $openApiGate '-warnaserror' 'OpenAPI gate must fail on build warnings.'
 Require-Match $releaseConfig 'run-package-dependency-gate\.ps1' 'Semantic release must validate prepared packages before publication.'
 
-# Release and CI always consume sibling libraries as packages. Only local Debug
-# builds may default back to source projects; AppHost executable resources are
-# intentionally outside this library policy.
+# Release and CI always consume sibling libraries as packages. Directory.Build.props
+# is imported before the SDK defaults an unset Configuration to Debug, so an unset
+# Configuration and an explicit Debug build may default to source projects. AppHost
+# executable resources are intentionally outside this library policy.
 Require-Match $directoryBuildProps ([regex]::Escape("'`$(CI)' == 'true'") + '">false<') 'CI must force UseHexalithProjectReferences=false.'
-Require-Match $directoryBuildProps ([regex]::Escape("'`$(Configuration)' == 'Debug'") + '">true<') 'Only local Debug builds may default to sibling project references.'
+Require-Match $directoryBuildProps ([regex]::Escape("'`$(UseHexalithProjectReferences)' == '' and ('`$(Configuration)' == '' or '`$(Configuration)' == 'Debug')") + '">true<') 'Only an unset Configuration or an explicit local Debug build may default to sibling project references.'
 $referenceModeTargets = @($directoryBuildPropsXml.Project.Target | Where-Object { $_.Name -eq 'RejectUnsafeHexalithProjectReferenceMode' })
 $expectedReferenceModeCondition = "'`$(UseHexalithProjectReferences)' == 'true' and ('`$(CI)' == 'true' or '`$(Configuration)' != 'Debug')"
 if ($referenceModeTargets.Count -ne 1 -or
@@ -941,11 +942,16 @@ foreach ($projectFile in $projectFiles) {
         $isAppHostExecutable = $projectFile.Name -eq 'Hexalith.Projects.AppHost.csproj' -and
             $normalizedInclude -in @('$(HexalithEventStoreRoot)/src/Hexalith.EventStore/Hexalith.EventStore.csproj', '$(HexalithTenantsRoot)/src/Hexalith.Tenants/Hexalith.Tenants.csproj')
         $condition = if (-not [string]::IsNullOrWhiteSpace($reference.Condition)) { $reference.Condition } else { $reference.ParentNode.Condition }
-        if (-not $isAppHostExecutable -and $condition -ne "'`$(UseHexalithProjectReferences)' == 'true'") {
+        # Folders.Server is an unpackable web host. Server tests reference it only in
+        # source mode, and the consuming fixtures compile only under HEXALITH_SOURCE_FIXTURE.
+        $isSourceOnlyUnpackableHost = $projectFile.Name -eq 'Hexalith.Projects.Server.Tests.csproj' -and
+            $normalizedInclude -eq '$(HexalithFoldersRoot)/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj' -and
+            $condition -eq "'`$(UseHexalithProjectReferences)' == 'true'"
+        if (-not $isAppHostExecutable -and -not $isSourceOnlyUnpackableHost -and $condition -ne "'`$(UseHexalithProjectReferences)' == 'true'") {
             $failures.Add("$($projectFile.FullName.Substring($repositoryRoot.Length + 1)) has an unconditional sibling library ProjectReference: $($reference.Include)")
         }
 
-        if (-not $isAppHostExecutable) {
+        if (-not $isAppHostExecutable -and -not $isSourceOnlyUnpackableHost) {
             $packageId = [System.IO.Path]::GetFileNameWithoutExtension($normalizedInclude)
             $matchingPackageReferences = @($projectXml.Project.ItemGroup.PackageReference | Where-Object { $_.Include -eq $packageId })
             $hasPackageModeReference = $false
