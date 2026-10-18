@@ -2,6 +2,7 @@
 title: 'Story 6.4: Transient current Project resolution'
 type: 'feature'
 created: '2026-10-17'
+updated: '2026-10-18'
 status: 'draft'
 route: 'dispatch'
 story_key: '6-4-resolve-projects-with-transient-current-explanations'
@@ -38,36 +39,38 @@ context:
 | Optional omission | Required evidence current; omission disclosure authorized | Explicit Partial | No protected exclusion identity |
 | Query effects | Either resolution query | No domain/read-model/trace mutation | Persisted before/after proof |
 
+**Decision (2026-10-18):** The user selected option 1, approving the separate exact five-file governed-retirement prerequisite and its bounded validator/lineage work. This does not approve Story 6.4 implementation or waive its remaining gates. The original proposal and explicit selection are retained under `evidence/6-4-resume-20261018/`.
+
 </frozen-after-approval>
 
 ## Code Map
 
-- `src/Hexalith.Projects/Resolution/` — engine/mappers; exclusions retain IDs/names, requiring authorization before evaluation.
-- `src/Hexalith.Projects.Contracts/Queries/` — shared AdmissionSnapshot, components and recovery.
-- `src/Hexalith.Projects.Server/Queries/` — principal binding/authorization; ProjectReadQueryExecutor writes audit and cannot serve resolution.
-- `src/Hexalith.Projects.Server/Projections/ProjectReads/` — persisted Project index/detail; no RTI exists.
-- `src/Hexalith.Projects.Server/Conversations/` — resolution adapter retrieves full detail including Messages; unsuitable.
-- `src/Hexalith.Projects.Server/Folders/` — opaque File refresh is Unavailable; legacy metadata needs paths. Delegated Folder read supplies singleton authorization only.
+- `src/Hexalith.Projects.Contracts/Queries/Admission*.cs` — reuse shared AD-32 vocabulary.
+- `src/Hexalith.Projects/Resolution/` — reuse scoring; authorize before exclusions expose identities.
+- `src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs` — writes inspection audit; unsuitable for resolution.
+- `src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs` — explicitly lacks owner-backed RTI.
+- `src/Hexalith.Projects.Server/Conversations/` — legacy resolution retrieves Messages.
+- `src/Hexalith.Projects.Server/Folders/` — singleton Folder authorization lacks metadata/watermarks; opaque File recheck is Unavailable.
+- `references/Hexalith.EventStore/docs/architecture/evidence-secret-scanning.md` — replacement/retirement policy; the preserved proposal records five verified hashes; the separately approved retirement prerequisite owns enrollment and authority withdrawal.
 
 ## Tasks & Acceptance
 
-**Execution, after the applicable prerequisite gates:**
+**Execution, after prerequisite acceptance:**
 
-- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add ResolveProjectFromConversationQuery, ResolveProjectFromAttachmentsQuery and ProjectResolutionReadResponse; one type per file, shared vocabulary.
-- [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionSnapshotComposer.cs` — map authorized evidence without I/O, clocks, writes or unsafe exclusions.
-- [ ] `src/Hexalith.Projects.Server/Queries/` — add both corresponding QueryHandlers using approved contracts, bounded reads and authority rechecks.
+- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add both resolution queries and response using shared vocabulary.
+- [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionSnapshotComposer.cs` — compose authorized snapshots without I/O or writes.
+- [ ] `src/Hexalith.Projects.Server/Queries/` — add both handlers using approved bounded owner/RTI contracts.
 - [ ] `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` — register additively.
-- [ ] `tests/Hexalith.Projects.Contracts.Tests/`, `tests/Hexalith.Projects.Tests/Resolution/`, `tests/Hexalith.Projects.Server.Tests/Queries/` — cover contracts, matrix, archive policy, leakage and cancellation.
-- [ ] `tests/Hexalith.Projects.Integration.Tests/` — prove persisted zero writes, restart/two-instance behavior and finite shadow equivalence through G-4.
+- [ ] `tests/Hexalith.Projects.Contracts.Tests/`, `tests/Hexalith.Projects.Tests/Resolution/`, `tests/Hexalith.Projects.Server.Tests/Queries/` — verify the frozen matrix.
+- [ ] `tests/Hexalith.Projects.Integration.Tests/` — prove persisted zero writes, restart/two-instance behavior and shadow equivalence through G-4.
 
-**Acceptance Criteria:**
-
-- Given authenticated queries, when evaluated, then the matrix holds without selection or persisted inference.
-- Given full completion, when G-4 runs, then actual `evidence/epic6/6.4-resolution-reads.trx` and `.json` prove persisted boundaries.
+**Acceptance:** Given accepted entry gates, when both handlers execute, then the frozen matrix holds and actual `evidence/epic6/6.4-resolution-reads.trx` and `.json` prove persisted boundaries.
 
 ## Implementation Notes
 
 - 2026-10-17: Prerequisites-first decision recorded. The first proposed work package is `spec-6-4-prerequisite-p1r-source-readiness.md`; its preflight evidence records five verified package signatures and 224 passing tooling controls without claiming P1R qualification. Story 6.4 remains a draft behind its original gates.
+
+- 2026-10-18: Resumed planning at Projects `3d3b3fab63afe63090e6314e2c2b6e66bcd0ec31`; retained reviewed EventStore source hashes match checkout. Seven historical findings in five files remain; no fresh full scan is claimed. Independent source inspection confirms missing owner metadata/RTI contracts. Local 6.1–6.3 exceptions do not authorize 6.4. Retained command outputs and an unapproved exact-file proposal in the linked JSON; runtime, pins, acceptance and original story/tracker remain unchanged.
 
 ## Spec Change Log
 
@@ -75,11 +78,14 @@ context:
 
 ## Design Notes
 
-Scope is resolved: prerequisites first. Irreversibles: none. Footprint after gate acceptance: contracts, composer, handlers, registration and tests. Preserve concurrent changes. P0/P1R/P2/P3/P4/readiness and current runtime qualification remain open; original story/tracker stay blocked. This draft cannot become ready-for-dev until approved callable owner/RTI contracts make its handler tasks actionable.
+The owner approved the separate five-file retirement prerequisite; its implementation and verification are tracked independently. Irreversibles: none in planning; publication remains separate. Footprint: this draft and planning JSON only. P0/current P1R/P2/P3/P4, G-2/RTI, G-4, current G-6 and independent readiness remain open. The spec cannot become ready-for-dev.
 
 ## Verification
 
-- `python3 tools/planning/validate_production_authority.py --story-id 6.4` — passed; scheduling authority only.
-- `dotnet tool run hexalith-module test --profile reads --filter Story=6.4` — exit 1: `Cannot find a tool in the manifest file that has a command named 'hexalith-module'.`
-- After implementation: Debug solution restore/build, affected test projects individually, then G-4 qualification.
-- `git diff --check` — require clean whitespace.
+- `python3 tools/planning/validate_production_authority.py --story-id 6.4` — passed; scheduling only.
+- `dotnet tool run hexalith-module test --profile reads --filter Story=6.4` — exit 1: `Cannot find a tool in the manifest file that has a command named 'hexalith-module'.` Both runner manifests remain absent.
+- `git diff --check`, CRLF, frozen-intent, five-hash and protected-file checks — passed. Only this draft and the planning JSON changed; EventStore remains clean.
+
+- 2026-10-18: User selected option 1. The separate `spec-6-4-prerequisite-governed-retirement.md` owns the finite approved retirement work; this story remains draft/blocked pending its other original entry gates.
+
+- 2026-10-18 completion: the separately approved five-file retirement prerequisite is locally complete. Strict tracked-content scan plus all 940 remaining guard cases pass, with all historical bytes and four prior registry records preserved. This supplies no approved owner metadata/RTI seam, G-4 runner, exact-source hosted CI/P1R qualification or remaining entry-gate acceptance. Story 6.4 remains draft/blocked.

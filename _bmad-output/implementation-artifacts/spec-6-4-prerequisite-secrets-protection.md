@@ -2,7 +2,7 @@
 title: 'Story 6.4 prerequisite: repair reusable-content secret scanning'
 type: 'bugfix'
 created: '2026-10-18'
-status: 'in-progress'
+status: 'done'
 route: 'oneshot'
 review_loop_iteration: 0
 owner_repository: 'references/Hexalith.EventStore'
@@ -49,3 +49,6 @@ context: []
 - Retained evidence: `references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-4-prerequisite-secrets-protection-20261018/README.md`, `final-results.json`, before/after path-line inventories, hosted CI/P1R observations, exact command records, final build/test logs, review-control results, source hashes and protected-history checks. Raw artifacts and all attempts remain under `/tmp/story64-secrets-794369b/`, indexed by retained hashes.
 
 - Subsequent user authorization (2026-10-18): "push all changes in submodules and repository then pull". Committed the reviewed EventStore repair with the pinned validator and intact commit hook, then rebased cleanly over unrelated Story 9.1 review documentation, producing `37bdc90a72b9f0ea547852e903334cc8cc541641`. The exact reviewed source/evidence hashes remain unchanged; push to EventStore origin/main succeeded. The parent Git handoff records this gitlink and the validation receipts. The seven historical findings, this prerequisite and Story 6.4 remain blocked. Earlier evidence, package pins and fixed acceptance records remain unchanged; no release/package publication is authorized by this Git operation.
+
+
+- Successor closure (2026-10-18): the user explicitly selected option 1 for the separate exact five-file governed-retirement proposal. `spec-6-4-prerequisite-governed-retirement.md` implements that later approval without rewriting original evidence or expanding fixture recognition. The strict tracked-content gate now passes; after correcting two unquoted random C# test fixtures, all 940 remaining guard cases pass. This closes the local scanner prerequisite only. Earlier blocked/interrupted/failed results above remain historical facts. Hosted CI/P1R, package publication and Project Story 6.4 acceptance remain pending; original story/sprint and fixed acceptance records are unchanged.
