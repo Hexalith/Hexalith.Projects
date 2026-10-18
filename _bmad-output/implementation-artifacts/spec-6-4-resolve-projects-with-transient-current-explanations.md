@@ -6,7 +6,7 @@ updated: '2026-10-18'
 status: 'draft'
 route: 'dispatch'
 story_key: '6-4-resolve-projects-with-transient-current-explanations'
-baseline_commit: '25f9fdab6106f5bcbf06aaabe8ca351f543bb52e'
+baseline_commit: 'c91c7042c5b89a232d240299843a7e3b4cce0dfd'
 review_loop_iteration: 0
 context:
   - '_bmad-output/implementation-artifacts/epic-6-context.md'
@@ -49,8 +49,8 @@ context:
 
 - `src/Hexalith.Projects.Contracts/Queries/Admission*.cs` — shared AD-32 vocabulary.
 - `src/Hexalith.Projects/Resolution/` — engine/mappers; filter protected exclusions first.
-- `evidence/6-4-resume-20261018/current-preflight-25f9fda.json` — findings and checks.
-- `spec-6-4-prerequisite-p1r-31251-enrollment.md` — selected prerequisite plan.
+- `evidence/6-4-resume-20261018/preflight-c91c704.json` — current symbols, gates, approved owner run and checks.
+- `spec-6-1-p1r-31251-published-qualification-handoff.md` — historical handoff; receipt identifies newer owner approval.
 
 ## Tasks & Acceptance
 
@@ -60,7 +60,7 @@ context:
 - [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionSnapshotComposer.cs` — compose authorized snapshots purely.
 - [ ] `src/Hexalith.Projects.Server/Queries/` — add both handlers over approved owner/RTI contracts.
 - [ ] `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` — register additively.
-- [ ] `tests/Hexalith.Projects.Contracts.Tests/`, `tests/Hexalith.Projects.Tests/Resolution/`, `tests/Hexalith.Projects.Server.Tests/Queries/` — test the frozen matrix.
+- [ ] `tests/` — contract, Resolution and Server query suites: test the frozen matrix.
 - [ ] `tests/Hexalith.Projects.Integration.Tests/` — prove zero writes, restart/two-instance behavior and shadow equivalence through G-4.
 
 **Acceptance:** Given accepted gates, when both handlers run, then the matrix holds and actual `evidence/epic6/6.4-resolution-reads.{trx,json}` proves persisted boundaries.
@@ -74,13 +74,11 @@ context:
 
 - 2026-10-18 live recheck: both 3.125.0 and 3.125.1 are published in all five indexes; tag/nuspec sources match. Both releases differ from the proposed source. Local owner/RTI and G-4 gaps remain. The preflight retains observations; selection/qualification/acceptance remain pending.
 
+- 2026-10-18 resume: enrollment/binding are done. Newer owner approval covers technical qualification, already running separately; it grants no Story 6.4 acceptance. Current blockers and evidence are in the Code Map receipt.
+
 ## Spec Change Log
 
 ## Review Triage Log
-
-## Design Notes
-
-No intent gap: 3.125.1 selected for planning. Story readiness remains blocked by its original prerequisites.
 
 ## Verification
 

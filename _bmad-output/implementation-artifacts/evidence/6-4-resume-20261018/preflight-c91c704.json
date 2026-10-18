@@ -1,0 +1,288 @@
+{
+  "observed_at": "2026-10-18T20:50:30.494553+00:00",
+  "purpose": "Story 6.4 current planning recheck; no Story 6.4 implementation or qualification claim.",
+  "projects_revision": "c91c7042c5b89a232d240299843a7e3b4cce0dfd",
+  "revisions": {
+    "Hexalith.EventStore": "fcf78d6cafb6c0c9f52dc350a9a09aff54ded288",
+    "Hexalith.Builds": "1dfc39e3a3e6ab1c8ce95138490b39d76e7feb2c",
+    "Hexalith.Conversations": "ed81a80ea0a8cb0c6e31f4755f082b8913389e6c",
+    "Hexalith.Folders": "c22b13137202f7bf8c60b80c095a69748435bd6e"
+  },
+  "candidate_release_source": "55432c50d4b6f1666b4bd6d4a60bfc263b2d0e0b",
+  "owner_qualification": {
+    "spec": "references/Hexalith.EventStore/_bmad-output/implementation-artifacts/spec-6-1-p1r-31251-published-qualification.md",
+    "spec_sha256": "0a072ca2ee75901b1d6003bcca5afbc3d9bfac4eb9c91e71b84cdec86261a1ec",
+    "status": "in-progress",
+    "technical_execution_authorized": true,
+    "decisions_complete": false,
+    "historical_projects_handoff_is_stale_on_execution_authority": true,
+    "existing_execution": {
+      "ownership": "Existing separate qualification process; observed read-only, not started/stopped/changed by this resume.",
+      "execution_path": "/tmp/p1r-31251-verifier-final-78617511ec9c4208b1267e1cde6e21bf/_bmad-output/implementation-artifacts/evidence/6-1-p1r-31251-published-run/execution-5d40d0c63beb4512adc644d086b5180e",
+      "pid": 5828,
+      "process_present": true,
+      "started_utc": "2026-10-18T19:40:04.313879+00:00",
+      "finished_utc": null,
+      "errors": [],
+      "p1r_usable": false,
+      "receipt_count": 13,
+      "observed_at": "2026-10-18T20:56:36.268227+00:00"
+    }
+  },
+  "completed_tooling_prerequisites": [
+    "finite 3.125.1 enrollment",
+    "sentinel lifecycle",
+    "immutable tooling/source binding"
+  ],
+  "current_source_findings": [
+    {
+      "path": "src/Hexalith.Projects.Contracts/Queries/Admission*.cs",
+      "finding": "Reuse shared AdmissionSnapshot, AdmissionComponent, AdmissionResponseState and AdmissionRecoveryAction."
+    },
+    {
+      "path": "src/Hexalith.Projects/Resolution/",
+      "finding": "Reuse pure engine/mappers/context/scoring. Weights 50/45/35/30/20, threshold 20, unique reasons and ordinal tie order. Protected identities must be filtered before engine exclusions are produced."
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Projections/ProjectReads/",
+      "finding": "Supported persisted ProjectReadModel, ProjectReadIndex and ProjectReadModelKeys provide Project evidence and enumeration."
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/ProjectQueryEnvelopePrincipalBinding.cs",
+      "finding": "Reuse immutable dual-principal binding, VerifiedQueryCaller and ProjectAuthorizationGate supported authorization seams."
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs",
+      "finding": "Do not reuse inspection reads for resolution: successful descriptive reads and DenyAsync invoke persistent ProjectReadAudit."
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Conversations/ConversationsProjectConversationResolutionDirectory.cs",
+      "finding": "ReadConversationMetadataAsync calls full GetConversationAsync; owner details include Messages and hydration. No approved bounded metadata-only resolution batch exists."
+    },
+    {
+      "path": "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderOwnerReadQuery.cs",
+      "finding": "Existing delegated single-Folder read_metadata authorization is not Folder/File metadata batching."
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs",
+      "line": 205,
+      "finding": "ownerBackedTrustAvailable:false; no approved actor-scoped RTI seam. Legacy ProjectReferenceIndex is not RTI."
+    }
+  ],
+  "remaining_gates": [
+    "Completed exact 3.125.1 technical qualification and genuine required owner/support/conformance acceptance",
+    "P0/G-4 supported runner and module manifest with persisted-boundary qualification",
+    "P2/P3/P4 and same-baseline conformance/readiness",
+    "Approved Conversations/Folder/File metadata-only bounded owner reads and actor-scoped RTI",
+    "G-6 applicability at the current source/runtime tuple; historical exact-source acceptance is not reusable"
+  ],
+  "g6_historical_source": "0f03582b3457a6d9212d60e2f9146a6043af5f7e",
+  "g6_historical_status": "qualified, usable only at its recorded exact source; reuse disabled",
+  "missing_runner_files": [
+    ".config/dotnet-tools.json",
+    "module/hexalith-projects.module.json"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.4"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "started_at": "2026-10-18T20:50:30.171656+00:00",
+      "finished_at": "2026-10-18T20:50:30.252670+00:00",
+      "exit_code": 0,
+      "stdout": "PASS: Story 6.4 is within production authority\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "dotnet",
+        "tool",
+        "run",
+        "hexalith-module",
+        "test",
+        "--profile",
+        "reads",
+        "--filter",
+        "Story=6.4"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "started_at": "2026-10-18T20:50:30.252692+00:00",
+      "finished_at": "2026-10-18T20:50:30.494532+00:00",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Cannot find a tool in the manifest file that has a command named 'hexalith-module'.\n"
+    }
+  ],
+  "focused_tooling_controls": {
+    "status": "passed",
+    "test_count": 365,
+    "skips": 0,
+    "failures": 0,
+    "errors": 0,
+    "tracked_inputs_unchanged": 108,
+    "summary": "references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-31251-published-run/resume-20261018T204831Z-bf06f0/verification/summary.json",
+    "scope": "Local synthetic/process/registration/isolation controls; not published qualification or G-4 evidence.",
+    "commands": [
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools/tests",
+          "-p",
+          "test_p1r_qualification.py"
+        ],
+        "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "tests": 46,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools/tests",
+          "-p",
+          "test_p1r_published_qualification.py"
+        ],
+        "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "tests": 67,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools/tests",
+          "-p",
+          "test_p1r_published_executor.py"
+        ],
+        "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "tests": 161,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools/tests",
+          "-p",
+          "test_p1r_snapshot_registration.py"
+        ],
+        "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "tests": 3,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools/tests",
+          "-p",
+          "test_p1r_isolation.py"
+        ],
+        "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "tests": 34,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools/tests",
+          "-p",
+          "test_p1r_isolation_hardening.py"
+        ],
+        "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "tests": 27,
+        "exit_code": 0
+      },
+      {
+        "argv": [
+          "python3",
+          "-O",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools/tests",
+          "-p",
+          "test_p1r_isolation_hardening.py"
+        ],
+        "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "tests": 27,
+        "exit_code": 0
+      }
+    ]
+  },
+  "disposition": {
+    "story_status": "blocked",
+    "spec_status": "draft",
+    "implementation_started": false,
+    "duplicate_qualification_started": false,
+    "acceptance_created": false,
+    "dependencies_or_refs_updated": false,
+    "owner_contracts_invented": false
+  },
+  "preservation": {
+    "frozen_intent_sha256_before": "4eb4a46d7e73bcad8eee748bb8cd60ea8f0d268fe3df4d5b091acb6897b01560",
+    "frozen_intent_sha256_after": "4eb4a46d7e73bcad8eee748bb8cd60ea8f0d268fe3df4d5b091acb6897b01560",
+    "protected_hashes_before": {
+      "6-4-resolve-projects-with-transient-current-explanations.md": "fecaa78260ec2c606e055059eb67a6f471e46a87faa58bf8919daf2feae33fb5",
+      "sprint-status.yaml": "f210b33baf89adc976835e263e11f7d5f8c5acd23aeb09c3060fae19c980168a",
+      "6-1-p1r-acceptance.json": "37e2532154319cc030b9559f3cfee4bfb0853a4e50d47dcc0196f89e448a4eb7"
+    },
+    "protected_hashes_after": {
+      "6-4-resolve-projects-with-transient-current-explanations.md": "fecaa78260ec2c606e055059eb67a6f471e46a87faa58bf8919daf2feae33fb5",
+      "sprint-status.yaml": "f210b33baf89adc976835e263e11f7d5f8c5acd23aeb09c3060fae19c980168a",
+      "6-1-p1r-acceptance.json": "37e2532154319cc030b9559f3cfee4bfb0853a4e50d47dcc0196f89e448a4eb7"
+    },
+    "spec_tokens_o200k": 1589,
+    "diff_checks": [
+      {
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "cwd": "/home/administrator/projects/hexalith/projects",
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "workflow_disposition": "Step-02 planning recheck: original Story 6.4 entry gate is unsatisfied; keep draft/blocked, do not request redundant technical qualification approval or claim readiness.",
+  "finished_at": "2026-10-18T20:56:36.398287+00:00"
+}
