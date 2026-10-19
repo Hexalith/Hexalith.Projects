@@ -2,11 +2,11 @@
 title: 'Story 6.4: Transient current Project resolution'
 type: 'feature'
 created: '2026-10-17'
-updated: '2026-10-18'
+updated: '2026-10-19'
 status: 'draft'
 route: 'dispatch'
 story_key: '6-4-resolve-projects-with-transient-current-explanations'
-baseline_commit: 'c91c7042c5b89a232d240299843a7e3b4cce0dfd'
+baseline_commit: '83781b31e06214ad6da788c6535f9044df06ed5e'
 review_loop_iteration: 0
 context:
   - '_bmad-output/implementation-artifacts/epic-6-context.md'
@@ -45,43 +45,58 @@ context:
 
 </frozen-after-approval>
 
+## Open Questions
+
+- Display names on a qualifying candidate — options: Return `DisplayName` only after inspection authorization and one `ProjectReadAudit` inspection record (callers with inspection rights see the engine's safe name; the query-effects proof allows that single platform audit write and no other mutation) / Omit `DisplayName` on both supported responses (no inspection audit; shadow comparison ignores names; a separate inspection read is required to see a name).
+
 ## Code Map
 
-- `src/Hexalith.Projects.Contracts/Queries/Admission*.cs` — shared AD-32 vocabulary.
-- `src/Hexalith.Projects/Resolution/` — engine/mappers; filter protected exclusions first.
-- `evidence/6-4-resume-20261018/preflight-c91c704.json` — current symbols, gates, approved owner run and checks.
-- `spec-6-1-p1r-31251-published-qualification-handoff.md` — historical handoff; receipt identifies newer owner approval.
+- `src/Hexalith.Projects/Resolution/ProjectResolutionEngine.cs` — reuse `Resolve`. Rank is score descending, then `ProjectId`. `SingleCandidate` does not select. Do not edit.
+- `src/Hexalith.Projects/Resolution/ProjectResolutionScoringRules.cs` — weights 50/45/35/30/20 and threshold 20. Do not edit.
+- `src/Hexalith.Projects/Resolution/ConversationResolutionEvidenceMapper.cs` and `AttachmentResolutionEvidenceMapper.cs` — reuse `Map`. They emit evidence only. Do not score in the mappers.
+- `src/Hexalith.Projects.Contracts/Queries/AdmissionSnapshot.cs` plus `AdmissionResponseState`, `AdmissionComponent`, and `AdmissionRecoveryAction` — the shared AD-32 vocabulary. Reuse; do not fork.
+- `src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs` — copy bind, two-pass `AuthorizeSupportedReadAsync`, and `safe-denial`. Do not fold resolution into this executor.
+- `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` — register new handlers beside lines 144–154 and advertise their types in `CreateOperationalIndexMetadata`.
+- `src/Hexalith.Projects.Server/ProjectsServerModule.cs` — add two `.v1` constants beside the context query types. Do not change existing constants.
+- `src/Hexalith.Projects.Server/ProjectsDomainServiceEndpoints.cs` lines 216–252 and the legacy `ResolveProjectFrom*Endpoint` types — leave the GET routes and reverse-index read models unchanged.
+- `tests/Hexalith.Projects.Tests/Resolution/ProjectResolutionPersistsNothingTests.cs` — engine zero-write proof. Extend handler coverage; do not weaken this test.
+- No `ReferenceTrust*` types exist under `src/`, and `module/hexalith-projects.module.json` is absent. Do not add either in this story. Prior gate notes: `evidence/6-4-resume-20261018/preflight-c91c704.json`.
 
 ## Tasks & Acceptance
 
-**After accepted prerequisites:**
+**Gate:** P1R 3.125.1 enrollment and immutable binding are done. They are not owner-metadata/RTI approval or a G-4 runner. Do not add product code, and do not edit `sprint-status.yaml`, until both exist.
 
-- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add both resolution contracts using shared vocabulary.
-- [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionSnapshotComposer.cs` — compose authorized snapshots purely.
-- [ ] `src/Hexalith.Projects.Server/Queries/` — add both handlers over approved owner/RTI contracts.
-- [ ] `src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs` — register additively.
-- [ ] `tests/` — contract, Resolution and Server query suites: test the frozen matrix.
-- [ ] `tests/Hexalith.Projects.Integration.Tests/` — prove zero writes, restart/two-instance behavior and shadow equivalence through G-4.
+**Execution:**
+- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add conversation and attachment resolution queries and responses, one type per file, each carrying one `AdmissionSnapshot` and the existing resolution result, with display-name disclosure left to the open question.
+- [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionSnapshotComposer.cs` — map current authorized owner/RTI evidence through the existing mappers into engine inputs.
+- [ ] `src/Hexalith.Projects.Server/Queries/` — add one executor and both handlers: bind, reauthorize, then compose and `Resolve`. Safe denial before disclosure; minimal `Unavailable` when required evidence is non-current; `Partial` only for an authorized optional omission.
+- [ ] `src/Hexalith.Projects.Server/ProjectsServerModule.cs` and `ProjectsServerServiceCollectionExtensions.cs` — register both handlers on the existing `/query` route.
+- [ ] `tests/Hexalith.Projects.Tests/Resolution/` and `tests/Hexalith.Projects.Server.Tests/Queries/` — test the frozen matrix, including order independence, safe 404, and zero writes.
+- [ ] `tests/Hexalith.Projects.Integration.Tests/` — once G-4 exists, prove persisted before/after equality and shadow equivalence with the legacy routes.
 
-**Acceptance:** Given accepted gates, when both handlers run, then the matrix holds and actual `evidence/epic6/6.4-resolution-reads.{trx,json}` proves persisted boundaries.
+**Acceptance Criteria:**
+- Given the gate is met and evidence is current and authorized, when either supported query runs, then the matrix holds and no candidate is selected.
+- Given protected, degraded, or reordered input, when either query runs, then that matrix row holds and no reverse-index row is treated as authority.
+- Given either query, when persisted state is compared, then no domain event, read model, trace, task, or repair was written.
 
 ## Implementation Notes
-
-- 2026-10-17: Prerequisites-first decision recorded. The first proposed work package is `spec-6-4-prerequisite-p1r-source-readiness.md`; its preflight evidence records five verified package signatures and 224 passing tooling controls without claiming P1R qualification. Story 6.4 remains a draft behind its original gates.
-
-- 2026-10-18: Resumed planning at Projects `3d3b3fab63afe63090e6314e2c2b6e66bcd0ec31`; retained reviewed EventStore source hashes match checkout. Seven historical findings in five files remain; no fresh full scan is claimed. Independent source inspection confirms missing owner metadata/RTI contracts. Local 6.1–6.3 exceptions do not authorize 6.4. Retained command outputs and an unapproved exact-file proposal in the linked JSON; runtime, pins, acceptance and original story/tracker remain unchanged.
-- 2026-10-18 recheck: Projects `3faac93ac718b16629923ac824e9f463759c5c17`, EventStore `47e234ccb535a71e7dd4a039fd0e2281083083ae`. Current-source P1R preparation and Commitlint pass; CI is pending. All five indexes omit proposed 3.125.0. Approved retirement is pushed; owner batches/RTI and G-4 remain absent. The earlier publication proposal needs refreshed coordinates before an owner decision. Detailed evidence and prior verification are retained in the Code Map JSON.
-
-- 2026-10-18 live recheck: both 3.125.0 and 3.125.1 are published in all five indexes; tag/nuspec sources match. Both releases differ from the proposed source. Local owner/RTI and G-4 gaps remain. The preflight retains observations; selection/qualification/acceptance remain pending.
-
-- 2026-10-18 resume: enrollment/binding are done. Newer owner approval covers technical qualification, already running separately; it grants no Story 6.4 acceptance. Current blockers and evidence are in the Code Map receipt.
 
 ## Spec Change Log
 
 ## Review Triage Log
 
+## Design Notes
+
+Handlers never read `IProjectReferenceIndexReadModel`. The composer accepts only evidence an approved owner/RTI contract marks current and authorized. Archived candidates stay out unless the query sets `IncludeArchived` and the gate allows that read. A disclosure-unsafe exclusion is omitted; non-current required evidence stays `Unavailable` and is never reported as `NoMatch`.
+
 ## Verification
 
-- `python3 tools/planning/validate_production_authority.py --story-id 6.4` — PASS; scheduling only.
-- `dotnet tool run hexalith-module test --profile reads --filter Story=6.4` — exit 1: `Cannot find a tool in the manifest file that has a command named 'hexalith-module'.`
-- Check frozen intent, protected hashes, CRLF and `git diff --check`.
+**Commands:**
+- `python3 tools/planning/validate_production_authority.py --story-id 6.4` — expected: Story 6.4 remains within production authority.
+- `dotnet test tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj --configuration Debug --filter FullyQualifiedName~Resolution` — expected: scoring, determinism, leakage, and zero-write tests pass.
+- `dotnet test tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj --configuration Debug` — expected: safe denial and both new handlers pass once they exist.
+- `git diff --check` — expected: no whitespace errors.
+
+**Manual checks (if no CLI):**
+- Do not treat `dotnet tool run hexalith-module test --profile reads --filter Story=6.4` as runnable until `module/hexalith-projects.module.json` and the G-4 reads profile exist.
+- Confirm `sprint-status.yaml` has no diff from this story.
