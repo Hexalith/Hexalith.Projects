@@ -3,7 +3,7 @@ title: 'Story 6.4: Transient current Project resolution'
 type: 'feature'
 created: '2026-10-17'
 updated: '2026-10-19'
-status: 'draft'
+status: 'ready-for-dev'
 route: 'dispatch'
 story_key: '6-4-resolve-projects-with-transient-current-explanations'
 baseline_commit: '83781b31e06214ad6da788c6535f9044df06ed5e'
@@ -43,11 +43,9 @@ context:
 
 **Decision (2026-10-18, option 2):** Target published 3.125.1 for the next finite-enrollment prerequisite. This selects planning scope only; exact execution selection, qualification and Story 6.4 implementation remain separately gated.
 
+**Decision (2026-10-19):** Omit `DisplayName` on both supported responses, including exclusion rows. Scoring still uses the name inside the existing mappers. No inspection audit is written. Shadow comparison ignores names. A separate inspection read is required to see a name.
+
 </frozen-after-approval>
-
-## Open Questions
-
-- Display names on a qualifying candidate — options: Return `DisplayName` only after inspection authorization and one `ProjectReadAudit` inspection record (callers with inspection rights see the engine's safe name; the query-effects proof allows that single platform audit write and no other mutation) / Omit `DisplayName` on both supported responses (no inspection audit; shadow comparison ignores names; a separate inspection read is required to see a name).
 
 ## Code Map
 
@@ -67,12 +65,12 @@ context:
 **Gate:** P1R 3.125.1 enrollment and immutable binding are done. They are not owner-metadata/RTI approval or a G-4 runner. Do not add product code, and do not edit `sprint-status.yaml`, until both exist.
 
 **Execution:**
-- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add conversation and attachment resolution queries and responses, one type per file, each carrying one `AdmissionSnapshot` and the existing resolution result, with display-name disclosure left to the open question.
-- [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionSnapshotComposer.cs` — map current authorized owner/RTI evidence through the existing mappers into engine inputs.
-- [ ] `src/Hexalith.Projects.Server/Queries/` — add one executor and both handlers: bind, reauthorize, then compose and `Resolve`. Safe denial before disclosure; minimal `Unavailable` when required evidence is non-current; `Partial` only for an authorized optional omission.
+- [ ] `src/Hexalith.Projects.Contracts/Queries/` — add conversation and attachment resolution queries and responses, one type per file, each carrying one `AdmissionSnapshot` and the resolution result with `DisplayName` empty.
+- [ ] `src/Hexalith.Projects/Resolution/ProjectResolutionSnapshotComposer.cs` — map current authorized owner/RTI evidence through the existing mappers. Pass `DisplayName` into scoring, then clear it on the returned candidates and exclusions.
+- [ ] `src/Hexalith.Projects.Server/Queries/` — add one executor and both handlers: bind, reauthorize, then compose and `Resolve`. Safe denial before disclosure; minimal `Unavailable` when required evidence is non-current; `Partial` only for an authorized optional omission. Do not call the inspection audit.
 - [ ] `src/Hexalith.Projects.Server/ProjectsServerModule.cs` and `ProjectsServerServiceCollectionExtensions.cs` — register both handlers on the existing `/query` route.
 - [ ] `tests/Hexalith.Projects.Tests/Resolution/` and `tests/Hexalith.Projects.Server.Tests/Queries/` — test the frozen matrix, including order independence, safe 404, and zero writes.
-- [ ] `tests/Hexalith.Projects.Integration.Tests/` — once G-4 exists, prove persisted before/after equality and shadow equivalence with the legacy routes.
+- [ ] `tests/Hexalith.Projects.Integration.Tests/` — once G-4 exists, prove persisted before/after equality and shadow equivalence with the legacy routes, ignoring display names.
 
 **Acceptance Criteria:**
 - Given the gate is met and evidence is current and authorized, when either supported query runs, then the matrix holds and no candidate is selected.
@@ -87,7 +85,7 @@ context:
 
 ## Design Notes
 
-Handlers never read `IProjectReferenceIndexReadModel`. The composer accepts only evidence an approved owner/RTI contract marks current and authorized. Archived candidates stay out unless the query sets `IncludeArchived` and the gate allows that read. A disclosure-unsafe exclusion is omitted; non-current required evidence stays `Unavailable` and is never reported as `NoMatch`.
+Handlers never read `IProjectReferenceIndexReadModel`. The composer accepts only evidence an approved owner/RTI contract marks current and authorized, and it passes `DisplayName` only as far as the existing metadata-match score. The supported response clears that name on candidates and exclusions. Archived candidates stay out unless the query sets `IncludeArchived` and the gate allows that read. A disclosure-unsafe exclusion is omitted; non-current required evidence stays `Unavailable` and is never reported as `NoMatch`.
 
 ## Verification
 
