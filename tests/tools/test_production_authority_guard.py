@@ -311,6 +311,36 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
         with self.assertRaisesRegex(GUARD.GuardViolation, "6.1-P1R"):
             self.validate_boundary(sprint=self.accepted_sprint())
 
+    def test_current_p0_handoff_preserves_implemented_but_unaccepted_boundary(self) -> None:
+        fields = GUARD._p0_fields(self.p0, "P0 fixture")
+        self.assertEqual(
+            {
+                "manifest_contract": "implemented-unaccepted",
+                "evidence_validator": "implemented-unaccepted",
+                "persisted_runner": "source-implemented-historically-qualified-unaccepted",
+                "published_tools": "historical-4.29.1-v1-no-current-v2-adoption",
+                "supported_composition": "source-implemented-historically-qualified-unaccepted",
+                "published_consumer_pin": "absent",
+                "persisted_qualification": "historical-local-only-current-approved-tuple-not-run",
+                "acceptance_record": "absent",
+                "owner_acceptance": "absent",
+            },
+            fields["capability_status"],
+        )
+        self.assertEqual(
+            (
+                "usable-p1r",
+                "approved-g6-tuple",
+                "selected-p0-tool-runtime-tuple",
+                "consumer-adoption",
+                "current-persisted-qualification",
+                "acceptance-record",
+                "owner-acceptance",
+            ),
+            fields["blocked_by"],
+        )
+        self.assertEqual(GUARD.EXPECTED_PRODUCTION_EPICS, self.validate_boundary())
+
     def test_valid_acceptance_closes_only_the_four_authorized_items(self) -> None:
         self.assertEqual(
             GUARD.EXPECTED_PRODUCTION_EPICS,
@@ -534,6 +564,15 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                 "open boundary",
             ),
             (
+                "Story 6.4 dispatch",
+                self.replace_once(
+                    accepted,
+                    "  6-4-resolve-projects-with-transient-current-explanations: blocked",
+                    "  6-4-resolve-projects-with-transient-current-explanations: ready-for-dev",
+                ),
+                "open boundary",
+            ),
+            (
                 "Story 6.5 dispatch",
                 self.replace_once(
                     accepted, f"{story_6_5}: blocked", f"{story_6_5}: ready-for-dev"
@@ -566,22 +605,82 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                         record=self.acceptance_record(),
                     )
 
-    def test_p0_capability_and_blocker_fields_cannot_advance(self) -> None:
-        cases = (
-            self.replace_once(
-                self.p0,
-                "  manifest_contract: implemented-unaccepted",
-                "  manifest_contract: accepted",
-            ),
-            self.replace_once(
-                self.p0,
-                "blocked_by: [supported-composition, publication, consumer-pin, persisted-qualification, acceptance-record, owner-acceptance]",
-                "blocked_by: [publication, consumer-pin, persisted-qualification, acceptance-record, owner-acceptance]",
-            ),
+    def test_p0_capability_fields_cannot_advance_or_regress(self) -> None:
+        capabilities = GUARD._p0_fields(self.p0, "P0 fixture")["capability_status"]
+        cases = [(field, "accepted") for field in capabilities]
+        cases.extend(
+            (
+                ("persisted_runner", "not-available"),
+                ("published_tools", "published-stale-pin-not-supported"),
+                ("published_tools", "historical-4.29.2-v1-no-current-v2-adoption"),
+                ("supported_composition", "not-implemented"),
+                ("persisted_qualification", "not-run"),
+            )
         )
-        for candidate in cases:
-            with self.subTest(candidate=candidate[:100]):
-                with self.assertRaisesRegex(GUARD.GuardViolation, "P0"):
+        for field, value in cases:
+            for accepted in (False, True):
+                with self.subTest(field=field, value=value, p1r_accepted=accepted):
+                    candidate = self.replace_once(
+                        self.accepted_p0() if accepted else self.p0,
+                        f"  {field}: {capabilities[field]}\n",
+                        f"  {field}: {value}\n",
+                    )
+                    with self.assertRaisesRegex(GUARD.GuardViolation, "P0 capability_status"):
+                        self.validate_boundary(
+                            sprint=self.accepted_sprint() if accepted else None,
+                            deferred=self.accepted_deferred() if accepted else None,
+                            p0=candidate,
+                            record=self.acceptance_record() if accepted else None,
+                        )
+
+    def test_each_p0_blocker_must_remain_in_the_recorded_order(self) -> None:
+        blockers = GUARD._p0_fields(self.p0, "P0 fixture")["blocked_by"]
+        candidates = [blockers[:index] + blockers[index + 1 :] for index in range(len(blockers))]
+        candidates.append(tuple(reversed(blockers)))
+        for candidate_blockers in candidates:
+            for accepted in (False, True):
+                with self.subTest(blockers=candidate_blockers, p1r_accepted=accepted):
+                    candidate = self.replace_once(
+                        self.accepted_p0() if accepted else self.p0,
+                        f"blocked_by: [{', '.join(blockers)}]",
+                        f"blocked_by: [{', '.join(candidate_blockers)}]",
+                    )
+                    with self.assertRaisesRegex(GUARD.GuardViolation, "P0 blocked_by"):
+                        self.validate_boundary(
+                            sprint=self.accepted_sprint() if accepted else None,
+                            deferred=self.accepted_deferred() if accepted else None,
+                            p0=candidate,
+                            record=self.acceptance_record() if accepted else None,
+                        )
+
+    def test_p0_capability_inventory_must_remain_exact(self) -> None:
+        line = "  published_tools: historical-4.29.1-v1-no-current-v2-adoption\n"
+        for replacement in ("", line + "  unknown_capability: accepted\n"):
+            with self.subTest(replacement=replacement):
+                candidate = self.replace_once(self.p0, line, replacement)
+                with self.assertRaisesRegex(GUARD.GuardViolation, "P0 capability_status"):
+                    self.validate_boundary(p0=candidate)
+
+    def test_duplicate_p0_capability_fields_fail_closed(self) -> None:
+        for field, value in (
+            ("manifest_contract", "implemented-unaccepted"),
+            ("published_tools", "historical-4.29.1-v1-no-current-v2-adoption"),
+        ):
+            for duplicate_value in (value, "accepted"):
+                with self.subTest(field=field, duplicate_value=duplicate_value):
+                    line = f"  {field}: {value}\n"
+                    candidate = self.replace_once(
+                        self.p0, line, line + f"  {field}: {duplicate_value}\n"
+                    )
+                    with self.assertRaisesRegex(GUARD.GuardViolation, "unique named fields"):
+                        self.validate_boundary(p0=candidate)
+
+    def test_versioned_p0_capability_values_reject_trailing_content(self) -> None:
+        for suffix in (" accepted", ": accepted", " # accepted", "\taccepted"):
+            with self.subTest(suffix=suffix):
+                line = "  published_tools: historical-4.29.1-v1-no-current-v2-adoption"
+                candidate = self.replace_once(self.p0, line + "\n", line + suffix + "\n")
+                with self.assertRaisesRegex(GUARD.GuardViolation, "unique named fields"):
                     self.validate_boundary(p0=candidate)
 
     def test_acceptance_record_symlink_fails_closed(self) -> None:
@@ -608,7 +707,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             self.validate_boundary(sprint=b"\xff")
 
     def test_current_production_epics_are_allowed(self) -> None:
-        for epic, story in ((6, 1), (7, 15), (8, 11)):
+        for epic, story in ((6, 1), (6, 4), (7, 15), (8, 11)):
             with self.subTest(epic=epic):
                 self.assertEqual((epic, story), GUARD.validate_story_request(f"{epic}.{story}"))
 
@@ -672,6 +771,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
         for arguments, expected in (
             (("--validate-index",), 0),
             (("--story-id", "6.1"), 0),
+            (("--story-id", "6.4"), 0),
             (("--story-id", "1.1"), 1),
         ):
             with self.subTest(arguments=arguments):

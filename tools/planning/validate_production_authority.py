@@ -41,19 +41,20 @@ ROLLBACK_TUPLE = {
 P0_CAPABILITY_STATUS = {
     "manifest_contract": "implemented-unaccepted",
     "evidence_validator": "implemented-unaccepted",
-    "persisted_runner": "not-available",
-    "published_tools": "published-stale-pin-not-supported",
-    "supported_composition": "not-implemented",
+    "persisted_runner": "source-implemented-historically-qualified-unaccepted",
+    "published_tools": "historical-4.29.1-v1-no-current-v2-adoption",
+    "supported_composition": "source-implemented-historically-qualified-unaccepted",
     "published_consumer_pin": "absent",
-    "persisted_qualification": "not-run",
+    "persisted_qualification": "historical-local-only-current-approved-tuple-not-run",
     "acceptance_record": "absent",
     "owner_acceptance": "absent",
 }
 P0_BLOCKED_BY = (
-    "supported-composition",
-    "publication",
-    "consumer-pin",
-    "persisted-qualification",
+    "usable-p1r",
+    "approved-g6-tuple",
+    "selected-p0-tool-runtime-tuple",
+    "consumer-adoption",
+    "current-persisted-qualification",
     "acceptance-record",
     "owner-acceptance",
 )
@@ -429,7 +430,7 @@ def _markdown_section(lines: list[str], section: str, source: str) -> list[str]:
 def _markdown_mapping(lines: list[str], context: str) -> dict[str, str]:
     result: dict[str, str] = {}
     for line in lines:
-        match = re.fullmatch(r"  ([a-z][a-z0-9_]*): ([A-Za-z0-9][A-Za-z0-9-]*)", line)
+        match = re.fullmatch(r"  ([a-z][a-z0-9_]*): ([A-Za-z0-9][A-Za-z0-9.-]*)", line)
         if match is None or match.group(1) in result:
             raise GuardViolation(f"{context} must contain only unique named fields")
         result[match.group(1)] = match.group(2)
