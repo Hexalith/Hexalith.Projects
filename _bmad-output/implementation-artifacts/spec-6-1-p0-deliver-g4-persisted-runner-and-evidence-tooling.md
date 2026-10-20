@@ -60,7 +60,8 @@ claimed. G-6 passed and independently validated on frozen Projects
 `83c4802be3626560e53d4ef88aa78647e89df589`, qualifier
 `47def45665312410b73fa12cb047c6bbaa431cf2`, artifact SHA-256
 `287663d2a1d5ae25acf64e27a9984780062f26aaa4b8e71a972c73ead4488a08`.
-Its named result assessment remains pending; this is local source qualification.
+The user accepted this exact result in Builds, Platform and FrontComposer/Web
+roles at `2026-10-20T14:40:32Z`; this remains local source qualification.
 P1R fresh observation passed with exact published EventStore source
 `fcf78d6cafb6c0c9f52dc350a9a09aff54ded288`; the complete campaign is running.
 P0 live/native/publication/rollback evidence and actual owner acceptance remain
