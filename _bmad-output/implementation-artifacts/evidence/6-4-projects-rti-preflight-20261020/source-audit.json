@@ -1,0 +1,373 @@
+{
+  "artifact_kind": "projects-rti-owner-source-preflight",
+  "recorded_at_utc": "2026-10-20T03:13:17.995825+00:00",
+  "result": "blocked-owner-source-contracts",
+  "implementation_delivered": false,
+  "baseline_snapshot_captured_at_utc": "2026-10-20T03:07:03.336100+00:00",
+  "repositories_at_baseline_snapshot": {
+    ".": {
+      "head": "16886b7d9c15b5356fad860b0d7b0f97eb9f32b3",
+      "branch": "main",
+      "status": " M _bmad-output/implementation-artifacts/6-4-resolution-evidence-contracts.md\n M _bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md\n M references/Hexalith.Builds\n M references/Hexalith.EventStore\n?? _bmad-output/implementation-artifacts/6-4-prerequisite-decisions-2026-10-20.md\n?? _bmad-output/implementation-artifacts/evidence/6-4-prerequisite-preflight-20261020/owner-readiness.md\n?? _bmad-output/implementation-artifacts/evidence/6-4-prerequisite-preflight-20261020/preflight.json\n",
+      "remotes": "origin\thttps://github.com/Hexalith/Hexalith.Projects.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Projects.git (push)\n",
+      "recent_history": "16886b7d9c15b5356fad860b0d7b0f97eb9f32b3 fix: story 6.4\nb0caf2b5c25a1f761abed685c7c9ef811732c6fb fix: story 6.4\n78dc352c5ae0bb21773ea1831275e598d55a12b2 fix: story 6.4\nd065f6a95bba17f420a6bc06919b8d492e99d748 fix: story 6.4\n83781b31e06214ad6da788c6535f9044df06ed5e build: sync local changes via /pushall\n",
+      "index_sha256": "47bc2db98d9d764246bd5df02c1cf1aa24a45fc4e35d775add03e27c2e84b3b4"
+    },
+    "references/Hexalith.EventStore": {
+      "head": "1eaabca4f8d3597a3a1f9fadf341be5cb9a3a8c0",
+      "branch": "main",
+      "status": "?? _bmad-output/implementation-artifacts/spec-6-4-eventstore-query-authority-prerequisite.md\n",
+      "remotes": "origin\thttps://github.com/Hexalith/Hexalith.EventStore.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.EventStore.git (push)\n",
+      "recent_history": "1eaabca4f8d3597a3a1f9fadf341be5cb9a3a8c0 build: sync local changes via /pushall\n6fccf5f235cebdcb2ae412fc03ee019904e611a7 build: sync local changes via /pushall\n136d83dd725eb5d37f97bbb4fdb07df938951105 build: sync local changes via /pushall\n7520cb915690a44f1ff31390ea36c5a6eb061853 build: sync local changes via /pushall\nc343f46974a3b394efeca658dcd6af53fbe998b2 build: sync local changes via /pushall\n",
+      "index_sha256": "a2c4af18ae33af2ad36fcb7207a383579404a2b05faea34bc39c7a822284714c"
+    },
+    "references/Hexalith.Conversations": {
+      "head": "1f3891274eba5cae0754987ee79b4ffc87944401",
+      "branch": "main",
+      "status": "",
+      "remotes": "origin\thttps://github.com/Hexalith/Hexalith.Conversations.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Conversations.git (push)\n",
+      "recent_history": "1f3891274eba5cae0754987ee79b4ffc87944401 docs(sprint): complete story 11.2 review\n6b1fdc1cfc5e4af6e4c515932ea11176306edfc9 docs(sprint): record story 11.2 final record, fixture proof and receipts\na3e6c15b5882f5f6ca4319af72fd8720a387ac97 fix(authoring): correct the query handler summary and test the reader successor rule\nc9b1b485cb7945f02aecefa479ef471ff2d55c26 docs(sprint): withdraw story 11.2 record for review fixes\n028bb3996f68290064608f05475ad749dc972bef docs(sprint): record story 11.2 final record, fixture proof and receipts\n",
+      "index_sha256": "f2ae9a09cea411bfe4aecee415ff01e9211eec00cc4483070b21167109efbce0"
+    },
+    "references/Hexalith.Folders": {
+      "head": "efb98b1e5215ad73b4591f2a2a8ff00f8b8c794a",
+      "branch": "main",
+      "status": "",
+      "remotes": "origin\thttps://github.com/Hexalith/Hexalith.Folders.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Folders.git (push)\n",
+      "recent_history": "efb98b1e5215ad73b4591f2a2a8ff00f8b8c794a style(tests): format owner-read query fixtures\n5e05e9d15f392cd4634a4718568cbc55daf8e8db build(deps): adopt the EventStore 3.125.1 package catalog\nc22b13137202f7bf8c60b80c095a69748435bd6e docs(story-3.14): keep story held and refresh draft spec\ne8ab7aff5aff6ad1e2f2e837be30ebbf3e593bd2 docs(story-1.17): finalize conditional first-install rollout plan\nc0c341fcd97f40c37422a52b9e2d07e0c687df67 build(sdk): update dotnet sdk to 10.0.402\n",
+      "index_sha256": "1d6fee5110f08d14539f99a2b96479fb1f54faa51b85e35693ae283c42ac0676"
+    },
+    "references/Hexalith.Builds": {
+      "head": "b435f2e3b3892e03f69322d24de6003b0baf7a7d",
+      "branch": "main",
+      "status": " M _bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md\n",
+      "remotes": "origin\thttps://github.com/Hexalith/Hexalith.Builds.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Builds.git (push)\n",
+      "recent_history": "b435f2e3b3892e03f69322d24de6003b0baf7a7d build: merge docs/p1r-3106-attempt3-record into main via /pushall\n060a8e14031a553b9e3bfbe0f7a443b863e39e2b fix(tool): preserve legacy manifest package pins\n32bd31a56056d4788d7ba228cd0858917b275be7 build(deps): update published Hexalith packages\nb8602b2e7aae1bfd3b0e710876d18257257bd1a4 fix(ci): bind package audit to committed source\n4aaeed8ba8a0901086ff77b3ce21f120b2a8c8df fix(deps): record Folders 1.3.0 and Commons 2.30.3 audit\n",
+      "index_sha256": "934bfd53b185549dacb0935dd5b4a5fd6a9bbf0cf094574dfc3fd8cbda0ebecb"
+    }
+  },
+  "repositories_at_receipt": {
+    ".": {
+      "head": "16886b7d9c15b5356fad860b0d7b0f97eb9f32b3",
+      "branch": "main",
+      "status": " M _bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md\n M _bmad-output/implementation-artifacts/6-4-resolution-evidence-contracts.md\n M _bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md\n M references/Hexalith.Builds\n M references/Hexalith.Conversations\n M references/Hexalith.EventStore\n M references/Hexalith.Folders\n?? _bmad-output/implementation-artifacts/6-4-prerequisite-decisions-2026-10-20.md\n?? _bmad-output/implementation-artifacts/evidence/6-4-prerequisite-preflight-20261020/owner-readiness.md\n?? _bmad-output/implementation-artifacts/evidence/6-4-prerequisite-preflight-20261020/preflight.json\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-preflight-20261020/owner-contracts.md\n?? _bmad-output/implementation-artifacts/spec-6-4-prerequisite-projects-reference-trust-index.md\n",
+      "remotes": "origin\thttps://github.com/Hexalith/Hexalith.Projects.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Projects.git (push)\n",
+      "index_sha256": "47bc2db98d9d764246bd5df02c1cf1aa24a45fc4e35d775add03e27c2e84b3b4",
+      "head_unchanged": true,
+      "index_bytes_unchanged": true,
+      "staged_entries_unchanged": true
+    },
+    "references/Hexalith.EventStore": {
+      "head": "1eaabca4f8d3597a3a1f9fadf341be5cb9a3a8c0",
+      "branch": "main",
+      "status": " M docs/security/workload-binding-authority.md\n M src/Hexalith.EventStore.Client/Gateway/BoundOwnerQueryProof.cs\n M src/Hexalith.EventStore.Client/Gateway/BoundStreamReadProof.cs\n M src/Hexalith.EventStore.Contracts/Queries/QueryCallerAuthority.cs\n M src/Hexalith.EventStore.DomainService/VerifiedQueryCaller.cs\n M src/Hexalith.EventStore.Server/Pipeline/Queries/SubmitQuery.cs\n M src/Hexalith.EventStore.ServiceDefaults/Authentication/QueryCallerAuthorityBinding.cs\n M src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorityGrant.cs\n M src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorizationDetails.cs\n M src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadBindingAuthority.cs\n M src/Hexalith.EventStore/Controllers/QueriesController.cs\n M tests/Hexalith.EventStore.Contracts.Tests/Queries/QueryCallerAuthorityTests.cs\n M tests/Hexalith.EventStore.DomainService.Tests/DomainServiceTrustBoundaryTests.QueryAuthority.cs\n M tests/Hexalith.EventStore.DomainService.Tests/QueryAuthorityCorrectionTests.cs\n M tests/Hexalith.EventStore.Server.Tests/Authentication/WorkloadBindingAuthorityTests.cs\n M tests/Hexalith.EventStore.Server.Tests/Controllers/BoundOwnerQueryAuthorityTests.cs\n?? _bmad-output/implementation-artifacts/spec-6-4-eventstore-query-authority-prerequisite.md\n?? src/Hexalith.EventStore.Contracts/Queries/OriginatingQueryContext.cs\n?? tests/Hexalith.EventStore.Client.Tests/Gateway/BoundOwnerQueryProofTests.cs\n?? tests/Hexalith.EventStore.Server.Tests/Authentication/WorkloadBindingAuthorityTests.QueryAuthority.cs\n",
+      "remotes": "origin\thttps://github.com/Hexalith/Hexalith.EventStore.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.EventStore.git (push)\n",
+      "index_sha256": "a2c4af18ae33af2ad36fcb7207a383579404a2b05faea34bc39c7a822284714c",
+      "head_unchanged": true,
+      "index_bytes_unchanged": true
+    },
+    "references/Hexalith.Conversations": {
+      "head": "1f3891274eba5cae0754987ee79b4ffc87944401",
+      "branch": "main",
+      "status": "?? _bmad-output/implementation-artifacts/spec-6-4-conversations-resolution-metadata-prerequisite.md\n",
+      "remotes": "origin\thttps://github.com/Hexalith/Hexalith.Conversations.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Conversations.git (push)\n",
+      "index_sha256": "f2ae9a09cea411bfe4aecee415ff01e9211eec00cc4483070b21167109efbce0",
+      "head_unchanged": true,
+      "index_bytes_unchanged": true
+    },
+    "references/Hexalith.Folders": {
+      "head": "efb98b1e5215ad73b4591f2a2a8ff00f8b8c794a",
+      "branch": "main",
+      "status": "?? _bmad-output/implementation-artifacts/6-4-resolution-evidence-source-contract-2026-10-20.md\n?? _bmad-output/implementation-artifacts/evidence/6-4-folders-resolution-source-20261020/local-authorization-tests.json\n?? _bmad-output/implementation-artifacts/spec-6-4-folders-resolution-evidence-source-contract.md\n",
+      "remotes": "origin\thttps://github.com/Hexalith/Hexalith.Folders.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Folders.git (push)\n",
+      "index_sha256": "1d6fee5110f08d14539f99a2b96479fb1f54faa51b85e35693ae283c42ac0676",
+      "head_unchanged": true,
+      "index_bytes_unchanged": true
+    },
+    "references/Hexalith.Builds": {
+      "head": "b435f2e3b3892e03f69322d24de6003b0baf7a7d",
+      "branch": "main",
+      "status": " M _bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md\n?? evidence/g4/p0-resume-20261020/artifact-directory.txt\n?? evidence/g4/p0-resume-20261020/builds-revision.stderr.txt\n?? evidence/g4/p0-resume-20261020/builds-revision.stdout.txt\n?? evidence/g4/p0-resume-20261020/builds-status.stderr.txt\n?? evidence/g4/p0-resume-20261020/builds-status.stdout.txt\n?? evidence/g4/p0-resume-20261020/commands.json\n?? evidence/g4/p0-resume-20261020/debug-build.stderr.txt\n?? evidence/g4/p0-resume-20261020/debug-build.stdout.txt\n?? evidence/g4/p0-resume-20261020/historical-schema-observation.stderr.txt\n?? evidence/g4/p0-resume-20261020/historical-schema-observation.stdout.txt\n?? evidence/g4/p0-resume-20261020/historical-v2-observation.stderr.txt\n?? evidence/g4/p0-resume-20261020/historical-v2-observation.stdout.txt\n?? evidence/g4/p0-resume-20261020/isolated-debug-build.stderr.txt\n?? evidence/g4/p0-resume-20261020/isolated-debug-build.stdout.txt\n?? evidence/g4/p0-resume-20261020/observation-commands.json\n?? evidence/g4/p0-resume-20261020/sdk.stderr.txt\n?? evidence/g4/p0-resume-20261020/sdk.stdout.txt\n?? evidence/g4/p0-resume-20261020/source-input-hashes.json\n?? test/Hexalith.Builds.Module.Tests/ReadsProfileSelectionTests.cs\n",
+      "remotes": "origin\thttps://github.com/Hexalith/Hexalith.Builds.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Builds.git (push)\n",
+      "index_sha256": "934bfd53b185549dacb0935dd5b4a5fd6a9bbf0cf094574dfc3fd8cbda0ebecb",
+      "head_unchanged": true,
+      "index_bytes_unchanged": true
+    }
+  },
+  "inspected_working_source_sha256": {
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderOwnerReadOutcome.cs": "ecc51203ba6b82bc4e1c3f8d8a361479a5f84d8cf3df0f670ae30f568b7046f6",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderOwnerReadResult.cs": "d191d54baacd0e59c5e26010d9b588862961e6d5c082b7e505756a476c41774a",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderOwnerReadQuery.cs": "d45ed8b9042d7d4c84c6c71f431de874b8c43028f38d4ef233f9527b07759ee7",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs": "8b68bf1f3bae2f2fc0961fcf2b74c451996e38a335d6abb04d61e1f2819500b9",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersServerServiceCollectionExtensions.cs": "eca4e60e65bce1ee6fafae4fece6a7ec7d75e59ec70bc6f44a2e4649eaa5c72c",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs": "8ce1086dea8e5c3b5119e51c74e896fe7640097de41995dc7315d64e36855f80",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Authorization/DaprOrganizationStreamSequenceReader.cs": "4877d7aadf8bed3d9615c0b3fe63b7c8f93f18fc127889a208cfb397f7251efd",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Queries/FileContext/WorkspaceFileContextSourceRequest.cs": "46cbe2517bc1760879ff05f4beeb2e2dbe9546f990e92d8e220a5788f53f29ac",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Projections/SemanticIndexing/SemanticIndexingFileVersionIdentity.cs": "a5a5ec061b64fa7cef95ae4a74c3192f5c09fb25141e010b69c85d89ad2b869d",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Projections/SemanticIndexing/ISemanticIndexingBridgeReadModel.cs": "ee984c403afa36f9176fedba9a3481caed294f7f1e1307f31854b5cbb2cc4621",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Queries/OriginatingQueryContext.cs": "a69d7b497b9000b2b76c2a1c4046c65154b2ce5ce363c84c44e8731c88b709d1",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Streams/SourcePublicationCheckpoint.cs": "7191a96c4ecc4405382b6d575a7aa7fbc009fd78007fe2acbb84c7fe48bbc9a2",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorizationDetails.cs": "aad3d659d5334971074202cd5c67b7df5eb851c9523704ff1c691bd7a5787274",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/QueryCallerAuthorityBinding.cs": "8423c2eb21eb640ec5bbc96167ee54bf5ac0b063c3bf174551148bd14524e8e1",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/JwtWorkloadAssertionIssuer.ResourceBindings.cs": "640ff82b45256e5797bc24fce7002b71a38186b4505016596c4d06e239df3970",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadBindingAuthority.cs": "eb2748111437801a71994580ad8418fd56132db777d695b793709717d9b9a17f",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Gateway/BoundOwnerQueryProof.cs": "6964294cca11da3847ddee133ef5c94678ff6f543b08aab12e845f0aef138ce2",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Streams/ISourcePublicationNamespaceSource.cs": "d7e6fdc116ecf277ffc79ee9105df5221a2744a17de66dfc38579fcfb056cdf7",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Streams/SourcePublicationFeed.cs": "df5f2c4c76c660eedfee137edad4032c308f145624c194888b0d416208e60f51",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/IReadModelStore.cs": "3b8ccc234b494344623b92579e33c41b77a10c7562f0d7e31b396333552ad8c2",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/SharedProjectionCheckpoint.cs": "4e387ef572385325c5a931047459c9af48de1cce182668a4ae8684aaa5158d60",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/IReadModelBatchStore.cs": "612aba0466d534ed256432d5b7ad8e501a3b184efeeef9d5a917f629aa6d0c37",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelWritePolicy.cs": "0ba20acd111bba58dddc9c42c0a97a861337c3686baf4e9fb96f3ecb47853b93",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/SharedProjectionEpochCoordinator.cs": "6ba58bc3870ebcac84a3ceb3a9e36ef6e4764f4d956c8df8b0e42fa5dee2da3e",
+    "src/Hexalith.Projects.Contracts/Models/ProjectFileReference.cs": "ddf255de10c12c06bd025186977f5cc47c9a173de43c87b4e80c46a67304ef20",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/ISourcePublicationNamespaceAuthority.cs": "d4406cd1ce4988ccf630e6c6ff6f38c093520312e67f85f00153303522462952",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/DaprSourcePublicationNamespaceSource.cs": "6cd58d1cbf898a5f0c26fb2f664b2ebc447ef49c32e4ff98a047dd8ab1aa81a5",
+    "src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs": "48b753af1b419bbe552312d59da3bece4332af0dede62b797fc0df18d5e524c3",
+    "src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs": "9708e0e7e33fdc6bad62cf5185eef13ec60ad320ab0137a47f83cb372f113b2c",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadModel.cs": "b9a1187516486ca0179eefd49e8387dacc58ae889ce5fd124ece50c5c1397f1c",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs": "ecb9debded338582659af7da5300bf93532424c45eca6b0f0cc3a4a5e28ef45c",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadIndex.cs": "36a24d899c76641aa553f54b5499ff9596403b9a7f3a8d46ee70033c7c466154",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadModelKeys.cs": "dcdcedeeff93fa6c9059d41415446c49d23b1ac3002db39b1667d2c0e80d37ed",
+    "src/Hexalith.Projects/Resolution/AttachmentResolutionEvidenceMapper.cs": "dfcae048026e61cf8bada7929cb8dd70507888e94bffe52096d01a7d37a5c5bf",
+    "src/Hexalith.Projects/Resolution/ConversationResolutionEvidenceMapper.cs": "a5593263054483c38f397c4210f54f2dfb0bd103d32ddb2d5990080a6c123ca2",
+    "src/Hexalith.Projects/Resolution/ProjectResolutionEngine.cs": "869d6fd6897c768fabe82636c1f0cd1f3c52c2a748193d1d61b5174f1aab4619",
+    "src/Hexalith.Projects/Resolution/ProjectResolutionScoringRules.cs": "07a0fd5ed2561dd6bd20a4281c22692ba69a160aa3b0f260ff74810a4e25539f",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/VerifiedQueryCaller.cs": "b799b9b224ed6c9119608a0c79139f10b62e2460ee1f929c6c5140dc6fc8fa1a",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs": "f7a3af72df388cfa42bc8d4105b8781884acffe67686f368209e1be572104bc8",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Events/ConversationProjectChanged.cs": "8ceba54cf07a49786d40d738878e31326a9b0b8bf31cbc7a14fac83ee2ec2057",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Projections/ProjectionFreshnessV1.cs": "85e37a381b3e0c33c9a9728c3980fe4a9fafc787ecd9014d214bae90bd9ac168",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Projections/ConversationSummaryProjectionV1.cs": "5eb8e75643fd31f99b224d0496af1ac4cf4c984e79ec36bee03f7491e08510e9",
+    "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Agents/EventStoreConversationTenantCatalogueTests.cs": "5474a054a9e24370fc2c8ba141b87a49ed6a9e9c2ddb544a12cdf096872fc1f9",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationAgentServiceCollectionExtensions.cs": "b7826d6b2e11bfd8a64949f38516485c63e33d08973ed1014e0c65cea6ccda2d",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/EventStoreConversationTenantCatalogue.cs": "109fe222c72d802cd8461f694f81ad6d654b529408e784447f76c5a5a486ff21",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationProjector.cs": "e8b78d372fc1c9d90085ad2952b6c21fca4c09b216bc1cce6b51978c3cf93071",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/TenantAccess/ConversationTenantAccessDecision.cs": "d165ee8ac5fcc566bd337bb93819a99a7d7377a7f36a5247f1d3929b2cf124ff",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/TenantAccess/IConversationTenantAccessService.cs": "7abd6fcc51c9161111f3d6c4f3f26014c16c5f3989a836af955f0a6b62d847dd",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs": "7b5b4aa5df017e509a62ec3a2e1b287ed991cc3001ef63f05f291bb5b943b5db",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadModelKeys.cs": "b2be951aecedbb7a77e01ea081e782a71c859a79c556527f508a56905903b9ec",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionMaterializer.cs": "492d3b6711aa8f3b95934511796fdc5695b9b0c191058848f51077531ef5510b",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/IConversationProjectionReadStore.cs": "b837c161faa496130d8942a870645cf913cb77746997cc23674a89de331bf086",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Publication/LocalConversationPublicationConsumer.cs": "d94969108f30d2fd4ddf317cdfa9654b8ea86f38c699d1d6ecf6bd05f72d0b3a"
+  },
+  "annex_proposed_file_presence": {
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Queries/GetConversationResolutionMetadataQuery.cs": false,
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Queries/ConversationResolutionMetadataResultV1.cs": false,
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs": false,
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationResolutionMetadataDomainQueryHandler.cs": false,
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderOwnerReadEvidence.cs": false,
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderFileOwnerReadQuery.cs": false,
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderFileOwnerReadResult.cs": false,
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/Queries/FolderFileOwnerReadQueryHandler.cs": false,
+    "src/Hexalith.Projects.Server/ReferenceTrust/ReferenceTrustIndexProjectionHandler.cs": false
+  },
+  "source_symbol_probes": [
+    {
+      "command": [
+        "rg",
+        "-n",
+        "GetConversationResolutionMetadata|ConversationResolutionMetadataV1|ConversationResolutionMetadataReadModel",
+        "references/Hexalith.Conversations/src",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "FolderOwnerReadEvidence|FolderFileOwnerRead|FileReferenceId|OwnerFileId",
+        "references/Hexalith.Folders/src",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "SourcePublication|SharedProjectionEpochCoordinator|SharedProjectionCheckpoint",
+        "references/Hexalith.Folders/src",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "SourcePublication|SharedProjectionEpochCoordinator|SharedProjectionCheckpoint",
+        "src",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "OriginatingContext|TenantBindingClaimType|DomainBindingClaimType",
+        "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/VerifiedQueryCaller.cs",
+        "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/QueryCallerAuthorityBinding.cs",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/QueryCallerAuthorityBinding.cs:21:            [EventStoreWorkloadAuthenticationDefaults.TenantBindingClaimType] = query.TenantId,\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/QueryCallerAuthorityBinding.cs:22:            [EventStoreWorkloadAuthenticationDefaults.DomainBindingClaimType] = query.Domain,\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/QueryCallerAuthorityBinding.cs:41:            && (authority.OriginatingContext is null || authority.Origin == \"delegated-owner-query\"\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/QueryCallerAuthorityBinding.cs:42:                && authority.OriginatingContext.OriginalActorId == query.UserId)\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/VerifiedQueryCaller.cs:26:    public OriginatingQueryContext? OriginatingContext => OriginalQuery.CallerAuthority?.OriginatingContext;\n",
+      "stderr": ""
+    }
+  ],
+  "required_contract_gaps": [
+    "Certified installed Projects/owner source scopes, complete legacy inventory/all-writer registration, head/change/invalidation mapping and consumer.",
+    "Content-free generation-consistent Conversation resolution metadata read with native resource/permission revision and owner-enforced scoring-label purpose.",
+    "Stable owner File identity/provider and authoritative Projects FileReferenceId mapping with same-Tenant parent/lifecycle semantics; native Folder/File receipt and read contract.",
+    "Supported-scale enrolled source coverage; platform default publication bounds are not qualification."
+  ],
+  "concurrent_transport_observation": "External EventStore working edits include Tenant/domain bindings, dynamic digest handling, verified origin context and aggregate proof bound 256. Initial clean-HEAD absence findings are historical; final transport qualification is not claimed.",
+  "validation": [
+    {
+      "command": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.4"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "BLOCKED: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md capability_status must contain only unique named fields\n"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "BLOCKED: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md capability_status must contain only unique named fields\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "artifact_format_checks": [
+    {
+      "path": "_bmad-output/implementation-artifacts/spec-6-4-prerequisite-projects-reference-trust-index.md",
+      "utf8_crlf_final_newline_no_trailing_whitespace": true,
+      "local_links": [
+        "evidence/6-4-projects-rti-preflight-20261020/owner-contracts.md"
+      ]
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-preflight-20261020/owner-contracts.md",
+      "utf8_crlf_final_newline_no_trailing_whitespace": true,
+      "local_links": [
+        "../../spec-6-4-prerequisite-projects-reference-trust-index.md",
+        "../../6-4-prerequisite-decisions-2026-10-20.md",
+        "../../6-4-resolution-evidence-contracts.md",
+        "source-audit.json"
+      ]
+    }
+  ],
+  "existing_owner_test_attempts": [
+    {
+      "command": [
+        "dotnet",
+        "test",
+        "tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--no-restore",
+        "--",
+        "--filter-class",
+        "*FolderOwnerReadQueryHandlerTests"
+      ],
+      "cwd": "references/Hexalith.Folders",
+      "exit_code": 1,
+      "executed_tests": false,
+      "result": "Blocked before tests by unresolved Hexalith.Commons / Hexalith.EventStore source references (CS0234 and related missing-type errors).",
+      "log": "owner-read-test.log",
+      "log_sha256": "1bbaf6db1ec46ced627990b4c592472a4aa3da08ed4318601a1624986035f0c9",
+      "log_modified_at_utc": "2026-10-20T03:09:42.230434+00:00"
+    },
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--no-restore"
+      ],
+      "cwd": "references/Hexalith.Folders",
+      "exit_code": 1,
+      "executed_tests": false,
+      "result": "Blocked before tests by unresolved Hexalith.Commons / Hexalith.EventStore source references (CS0234 and related missing-type errors).",
+      "log": "owner-read-build.log",
+      "log_sha256": "3c355f5b0f23c63371b6e9284baf250954689c8cef7adce9465222d38b60afc0",
+      "log_modified_at_utc": "2026-10-20T03:09:42.230434+00:00"
+    }
+  ],
+  "assembly_fallback": "No runnable bin/Debug/net10.0 test DLL/runtimeconfig; September 19 obj assembly is stale and was not used. Narrow Debug build failed before tests. No current suite pass claimed.",
+  "unexecuted_required_proofs": [
+    "RTI persisted replay/rebuild convergence",
+    "request-scoped revocation/regrant handling",
+    "indexed/full candidate equivalence through unchanged mappers and engine",
+    "persisted zero-write query comparison",
+    "authenticated complete-result performance and response sizing"
+  ],
+  "preservation": {
+    "original_root_regular_files_checked": 5994,
+    "original_root_byte_changes_observed": [
+      {
+        "path": "_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md",
+        "before_sha256": "7bf029c2ede9bc00d1f7da904d789829215f25bfb8b29c0bf300545b557a63da",
+        "after_sha256": "7ba4ade5a729e8e1599b2dabea319e4569e00ab3997cdc47d94be4548db04022",
+        "attribution": "Concurrent work; this task did not edit this original file."
+      }
+    ],
+    "original_task_evidence_preserved": [
+      "6-4-prerequisite-decisions-2026-10-20.md",
+      "6-4-resolution-evidence-contracts.md",
+      "spec-6-4-prerequisite-current-authorized-resolution-evidence.md",
+      "sprint-status.yaml",
+      "6-4-resolve-projects-with-transient-current-explanations.md",
+      "spec-6-4-resolve-projects-with-transient-current-explanations.md"
+    ],
+    "root_staged_entries_unchanged": true,
+    "all_inspected_heads_unchanged": true,
+    "task_owned_changes": [
+      "spec-6-4-prerequisite-projects-reference-trust-index.md",
+      "evidence/6-4-projects-rti-preflight-20261020/owner-contracts.md",
+      "evidence/6-4-projects-rti-preflight-20261020/source-audit.json",
+      "evidence/6-4-projects-rti-preflight-20261020/owner-read-test.log",
+      "evidence/6-4-projects-rti-preflight-20261020/owner-read-build.log"
+    ]
+  }
+}

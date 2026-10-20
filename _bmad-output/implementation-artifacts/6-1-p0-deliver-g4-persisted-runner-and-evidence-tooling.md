@@ -10,7 +10,7 @@ authorized: 2026-07-17
 authorized_by: Jerome
 repository_authority: Hexalith/Hexalith.Builds
 owner_repository_baseline: edbaeaed68bcdb8deffcd98ed5652d237596e1d1
-owner_observed_revision: 699083549932b9509fa36ed853402fe3f8b04fc5
+owner_observed_revision: b435f2e3b3892e03f69322d24de6003b0baf7a7d
 owner_repository_story: references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md
 owner_packages: [Hexalith.Builds.Module.Cli, Hexalith.Builds.Evidence.Cli]
 owner_rollback_pin: none-greenfield; previous released Builds boundary v4.19.2 / 8e0e2da5e1eff07468b41d85d97979c96c2ac975
@@ -24,14 +24,14 @@ p1r_stage_1:
 capability_status:
   manifest_contract: implemented-unaccepted
   evidence_validator: implemented-unaccepted
-  persisted_runner: not-available
-  published_tools: published-stale-pin-not-supported
-  supported_composition: not-implemented
+  persisted_runner: source-implemented-historically-qualified-unaccepted
+  published_tools: historical-4.29.1-v1-no-current-v2-adoption
+  supported_composition: source-implemented-historically-qualified-unaccepted
   published_consumer_pin: absent
-  persisted_qualification: not-run
+  persisted_qualification: historical-local-only-current-approved-tuple-not-run
   acceptance_record: absent
   owner_acceptance: absent
-blocked_by: [supported-composition, publication, consumer-pin, persisted-qualification, acceptance-record, owner-acceptance]
+blocked_by: [usable-p1r, approved-g6-tuple, selected-p0-tool-runtime-tuple, consumer-adoption, current-persisted-qualification, acceptance-record, owner-acceptance]
 acceptance_record:
   schema: hexalith.g4-p0-acceptance.v1
   path: evidence/g4/6.1-p0-acceptance.json
@@ -161,6 +161,51 @@ The paths below remain historical handoff guidance where the owner story is more
 
 ## Dev Notes
 
+### 2026-10-20 measured continuation and remaining handoff
+
+Builds owns implemented source composition, persisted profiles and native
+reporting with historical local qualification. Its current continuation
+reconciles `--profile reads` without `--filter`, declares one native executor
+and matching source/package mode, and adds 13 focused selection cases using
+the existing validators and executor seams. The isolated Debug build passed
+with zero warnings/errors on SDK `10.0.402`. Six focused classes passed
+**106/106 actual outer xUnit tests**, zero failed/skipped/not-run, with native
+`Completed` outcome. Matching reads tests deliberately return unavailable
+before infrastructure launch; generated inner fixture TRX inputs are synthetic
+regression data. These results establish source contract regressions only.
+
+[Retained Builds evidence](../../references/Hexalith.Builds/evidence/g4/p0-resume-20261020/README.md)
+binds exact commands, native report/counters, redaction, 364 unchanged corrected
+source hashes and 650 unchanged isolated binary/runtime metadata hashes. The
+retained report SHA-256 is
+`1b796a9bafb56700d57f064c0a04984762ddf7ef23df8a8e0e2d23debcb0eaa3`.
+Failed/interrupted build attempts remain visible. The read-only current G-6
+audit completed at exit `0` but reports **`tupleApproved: false`, 56 issues**;
+its missing graphs and SDK/Toolkit/Fluent UI/Aspire drift supply no runtime
+qualification or owner acceptance.
+
+The historical selected P0 target is tools `4.29.1` / EventStore `3.110.0` /
+Builds `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`; current P1R usability is
+false. The newer EventStore-local
+`spec-6-1-p1r-31251-published-qualification.md` is approved for P1R execution
+on 2026-10-18 and selects five published `3.125.1` packages, tagged source
+`55432c50d4b6f1666b4bd6d4a60bfc263b2d0e0b`, tag Builds
+`4629ff2d3bd66376b29a553663c241d3a7b87853` and Dapr `1.18.2`.
+It explicitly preserves Projects/Builds pins and keeps P1R unusable and owner
+and conformance decisions pending. This owner-local execution authorization
+is newer than the draft Projects handoff, but does not select P0 tools or a
+matching G-6 tuple. No replacement P0 approval record was located; current
+catalog observations (`3.126.0`) do not supply that selection.
+
+Projects tool/manifest adoption and live qualification stay blocked pending an
+approved exact tool/runtime tuple, usable P1R and matching G-6/runtime evidence.
+Full P0 Stages 6–7, package/source parity, all required profile classes,
+rollback, the acceptance record and dated Builds/Platform/Test approvals stay
+open. Existing Projects runtime/routing and Story 6.4 prerequisites are
+preserved. Runner capability qualification can proceed once its own tuple is
+authorized; final Story 6.4 persisted scenarios additionally require its
+missing handlers. P0 does not self-accept P4 or Story 6.1.
+
 ### 2026-08-01 Correct Course Rebaseline
 
 - P1R selects EventStore `3.110.0` / `v3.110.0` / `27279fe6431925a6ea046c3f89af61487185c7de` with Builds `4.29.1` / `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`; rollback remains EventStore `3.70.1` / `v3.70.1` / `f13f9925fdca53efa2ab8c90d396ab106f91bb9c` with Builds `7af20f8bafbfe561df6f7705913a0800603090b5`.
@@ -185,11 +230,11 @@ dotnet tool run hexalith-module test --manifest module/hexalith-projects.module.
 dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml
 ```
 
-- Story 6.1 later narrows the test command to `--profile reads --filter Story=6.1` and expects actual `.trx`, JSON summary, and shadow-equivalence evidence. P0 must support that contract but must not fabricate those Story 6.1 artifacts.
+- Current platform-v2 selection uses `--profile reads` without `--filter`. Declare exactly one `tests` entry named `reads`, with native executor `vstest` or `mtp` (xUnit v3), its module-owned `.csproj`, `reportFormat: "trx"`, finite execution/stop timeouts, and one declared mode. `--mode source` is the default; `--mode package` requires `mode: "package"` in that entry. Installing the tool as a package does not choose execution mode. Do not declare both modes under the same name in one manifest: selection must be unique across modules. Supplied filters (including the historical `Story=6.1` example), absent/ambiguous selection and mismatched modes fail before startup. Optional-filter orchestration remains unqualified. Actual `.trx`, JSON summary and shadow-equivalence evidence must come from later product assertions under an approved exact tuple; no current runnable Projects command is claimed.
 
 ### Current Reality and Reuse Boundaries
 
-- Projects has no accepted `.config/dotnet-tools.json`, module manifest, published `hexalith-module` pin, or independently consumable AD-30 validator. Builds contains committed but unaccepted runner candidate `4351d7cba7545a96661ca2ee2ca2629df6d0a118` and qualification revision `699083549932b9509fa36ed853402fe3f8b04fc5`; the readiness matrix therefore truthfully remains `not-available`.
+- Projects has no adopted `.config/dotnet-tools.json` or `module/hexalith-projects.module.json`. Builds has implemented source composition, persisted execution, native reporting and the AD-30 validator, with historical local Stages 3–5 qualification; current approved-tuple qualification and full P0 acceptance are absent. The historical published tools `4.29.1` come from `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`, whose checked source contains only the v1 manifest schema and no platform-v2 contract. That older source does not establish current v2 adoption. No fresh remote package test is claimed by this source observation; readiness remains blocked.
 - Current Projects AppHost/Aspire code owns hard-coded topology and is the migration baseline. Its static topology tests, fake dictionary-backed projection tests, and manual/offline E2E lane are not persisted G-4 evidence. Do not delete or expand that runtime under P0.
 - EventStore exposes reusable composition and persisted-testing seams under `references/Hexalith.EventStore/src/Hexalith.EventStore.Aspire/` and `Hexalith.EventStore.Testing.Integration/`. Its current generic AppHost fixture and skip-on-unavailable behavior do not by themselves satisfy a manifest-driven, fail-closed critical lane.
 - `references/Hexalith.EventStore/scripts/validate-operational-evidence.py` is useful precedent for explicit schemas, stable rule IDs, sorted JSON diagnostics, parse/business-rule separation, redaction, and negative fixtures. It validates a different operational-evidence format and permits scenarios AD-30 must reject; do not rename or claim it as the new validator.

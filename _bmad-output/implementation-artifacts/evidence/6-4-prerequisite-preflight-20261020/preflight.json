@@ -1,0 +1,196 @@
+{
+  "schema": "hexalith.projects.story64.prerequisite-source-inspection.v1",
+  "captured_at_utc": "2026-10-20T02:35:43Z",
+  "kind": "source-inspection-not-qualification",
+  "story": "6.4",
+  "workflow_spec": "_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md",
+  "implementation_authorized": false,
+  "owner_decisions": {
+    "D1": "open",
+    "D2": "open",
+    "D3": "open",
+    "D4": "open",
+    "D5": "open",
+    "D6": "open"
+  },
+  "repositories": {
+    ".": {
+      "head": "16886b7d9c15b5356fad860b0d7b0f97eb9f32b3",
+      "status_porcelain": "?? _bmad-output/implementation-artifacts/evidence/6-4-prerequisite-preflight-20261020/\n"
+    },
+    "references/Hexalith.Conversations": {
+      "head": "1f3891274eba5cae0754987ee79b4ffc87944401",
+      "status_porcelain": "",
+      "root_gitlink": "1f3891274eba5cae0754987ee79b4ffc87944401"
+    },
+    "references/Hexalith.Folders": {
+      "head": "efb98b1e5215ad73b4591f2a2a8ff00f8b8c794a",
+      "status_porcelain": "",
+      "root_gitlink": "efb98b1e5215ad73b4591f2a2a8ff00f8b8c794a"
+    },
+    "references/Hexalith.EventStore": {
+      "head": "1eaabca4f8d3597a3a1f9fadf341be5cb9a3a8c0",
+      "status_porcelain": "",
+      "root_gitlink": "1eaabca4f8d3597a3a1f9fadf341be5cb9a3a8c0"
+    },
+    "references/Hexalith.Builds": {
+      "head": "b435f2e3b3892e03f69322d24de6003b0baf7a7d",
+      "status_porcelain": "",
+      "root_gitlink": "b435f2e3b3892e03f69322d24de6003b0baf7a7d"
+    },
+    "references/Hexalith.Platform": {
+      "head": "15ef6d915c2783021bf639c3d8a22e5793e46c85",
+      "status_porcelain": "",
+      "root_gitlink": "15ef6d915c2783021bf639c3d8a22e5793e46c85"
+    }
+  },
+  "protected_documents": {
+    "_bmad-output/implementation-artifacts/6-4-resolution-evidence-contracts.md": "c8f0909dd1eb447ddda8edfa0ba919c26ac4221005970b6a57c844b2fe77cefd",
+    "_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md": "76aae948fcad7124882f33eebb5aef3ce4a86ceb3d65db25650ca33074c20b7d",
+    "_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md": "125eb2e3b8160f1cdf556bcdbdcdb036613676222d8e23c05dcc0314bb10a26a",
+    "_bmad-output/implementation-artifacts/6-4-resolve-projects-with-transient-current-explanations.md": "fecaa78260ec2c606e055059eb67a6f471e46a87faa58bf8919daf2feae33fb5",
+    "_bmad-output/implementation-artifacts/sprint-status.yaml": "f210b33baf89adc976835e263e11f7d5f8c5acd23aeb09c3060fae19c980168a"
+  },
+  "all_original_tracked_files_unchanged": true,
+  "original_tracked_regular_file_count": 5991,
+  "sources": {
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/QueryCallerAuthorityBinding.cs": "f60ec8f67c0dd33917bf8115c5efa49325392fb3d7bc664f668792203a44217d",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/JwtWorkloadAssertionIssuer.ResourceBindings.cs": "640ff82b45256e5797bc24fce7002b71a38186b4505016596c4d06e239df3970",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/JwtWorkloadAssertionIssuer.cs": "6b9206c966d03dac17cee1aa71d78d895f36f8160c12aee1a23d2ba4126d987b",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorizationDetails.cs": "43311da4e4df3d1ce9c8516a6decdc65f27490305a851f18068692c784240167",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadBindingAuthority.cs": "fb00370407126d940a3daa2c0519c173d3bdb0d579c1471233599c4c3f7bfcd0",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs": "e2767a6239f0e7f6de0bdcafc1520a3a6e254183a2e5c22de245f2d4d6902557",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Pipeline/Queries/SubmitQuery.cs": "7a044adfcf52b6ebcd93c55a26c971cb2972ddca8cca488264b00e59c623a7ad",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Gateway/BoundOwnerQueryProof.cs": "94686bfd90e0a0018094aeda986734c8bfcf611cc404607089a69169dea97cfc",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs": "52ca50199139b37e9fe4ca937bbcad5523bd78c75f85c45a02d1c7a8b6059289",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs": "7b5b4aa5df017e509a62ec3a2e1b287ed991cc3001ef63f05f291bb5b943b5db",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationAsyncProjectionHandler.cs": "07fe513b285e2a08cb42c5435bbfb0b3c85cb96966a950bd0470edef95144541",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Projections/ConversationSummaryProjectionV1.cs": "5eb8e75643fd31f99b224d0496af1ac4cf4c984e79ec36bee03f7491e08510e9",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Projections/ProjectionFreshnessV1.cs": "85e37a381b3e0c33c9a9728c3980fe4a9fafc787ecd9014d214bae90bd9ac168",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs": "8b68bf1f3bae2f2fc0961fcf2b74c451996e38a335d6abb04d61e1f2819500b9",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderOwnerReadResult.cs": "d191d54baacd0e59c5e26010d9b588862961e6d5c082b7e505756a476c41774a",
+    "references/Hexalith.Folders/docs/contract/pd10-v2-consumer-discovery.md": "b2e41c5ad9b57f66a7c7a1d3d7764cec54cf668470f1cfd3886263a83d248b59",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadIndex.cs": "36a24d899c76641aa553f54b5499ff9596403b9a7f3a8d46ee70033c7c466154",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs": "ecb9debded338582659af7da5300bf93532424c45eca6b0f0cc3a4a5e28ef45c",
+    "src/Hexalith.Projects.Server/Queries/ResolveProjectFromAttachmentsEndpoint.cs": "a8c653cb0925cd3df81c93246ab82ae6b831e2a706ed20ea2191e48f9ce1cbc2",
+    "src/Hexalith.Projects.Contracts/Models/ProjectFileReference.cs": "ddf255de10c12c06bd025186977f5cc47c9a173de43c87b4e80c46a67304ef20",
+    "references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Runtime/ModuleCommandExecutionService.cs": "a7d5d289e04bda6b431dbca5b8f69d63cf7a83051e22728022f096bd926c0104",
+    "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md": "669cbbfbe3856006b0a7d86528552ee7476d15a36a1450cdbd21364cbcf418c8"
+  },
+  "consumer_files": {
+    ".config/dotnet-tools.json": {
+      "exists": false
+    },
+    "module/hexalith-projects.module.json": {
+      "exists": false
+    },
+    "references/Hexalith.Builds/evidence/g4/6.1-p0-acceptance.json": {
+      "exists": false
+    }
+  },
+  "checks": [
+    {
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.4"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: Story 6.4 is within production authority\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS: production-authority index is [6, 7, 8]\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "limits": {
+    "general_aggregate_id_characters": 256,
+    "signed_owner_aggregate_id_characters": 200,
+    "signed_owner_principal_characters": 200,
+    "legacy_unique_attachment_count": 32,
+    "proposed_raw_attachment_count": 32,
+    "proposed_raw_limit_approved": false
+  },
+  "findings": [
+    {
+      "id": "production-query-binding-profile",
+      "decision": "D1",
+      "result": "Digest-only binding fails authority decoder requiring tenant and domain."
+    },
+    {
+      "id": "production-query-binding-issuance-policy",
+      "decision": "D1",
+      "result": "Authority grants require exact values; no dynamic per-query digest policy found."
+    },
+    {
+      "id": "originating-owner-context",
+      "decision": "D1",
+      "result": "Gateway verifies original query; downstream envelope does not carry original delegation ID, scopes or audience."
+    },
+    {
+      "id": "opaque-file-authority",
+      "decision": "D2",
+      "result": "Authoritative stable owner File-reference provider remains unidentified."
+    },
+    {
+      "id": "rti-source-completeness",
+      "decision": "D3",
+      "result": "Owner feed and tenant-complete/current-empty protocol remain unapproved and unimplemented."
+    },
+    {
+      "id": "owner-proof-id-limit",
+      "decision": "D4",
+      "result": "200-character signed transport differs from proposed 256-character input."
+    },
+    {
+      "id": "attachment-limit-precedent",
+      "decision": "D4",
+      "result": "Legacy limit applies after deduplication; raw-count ceiling is a new proposal."
+    },
+    {
+      "id": "scoring-label-purpose",
+      "decision": "D5",
+      "result": "Product name policy does not supply owner label classification or purpose authority."
+    },
+    {
+      "id": "production-enrollment",
+      "decision": "D6",
+      "result": "Actual Projects deployment query allowlist/issuer enrollment not located."
+    },
+    {
+      "id": "g4-consumer-readiness",
+      "decision": "6.1-P0",
+      "result": "Builds source runner exists; Projects tool/manifest and full P0 acceptance artifact absent. Platform-v2 runner rejects --filter."
+    }
+  ],
+  "report_sha256": "b3e5049995713a4afa1c8bf27da097746788e530d711830f2cee94d3885ca3a3",
+  "qualification": {
+    "application_tests_run": false,
+    "production_signer_executed": false,
+    "persisted_g4_run": false,
+    "performance_qualified": false,
+    "owner_acceptance_recorded": false
+  },
+  "output_allowlist": [
+    "_bmad-output/implementation-artifacts/evidence/6-4-prerequisite-preflight-20261020/owner-readiness.md",
+    "_bmad-output/implementation-artifacts/evidence/6-4-prerequisite-preflight-20261020/preflight.json"
+  ]
+}
