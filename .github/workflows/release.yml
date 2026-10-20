@@ -139,7 +139,7 @@ jobs:
           G6_OUTPUT: .g6-current-evidence/release-${{ github.run_id }}-${{ github.run_attempt }}
         run: >-
           python3 tools/qualification/run_g6_current.py
-          --policy references/Hexalith.Builds/Tools/g6-current-policy.json
+          --policy references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json
           --output "$G6_OUTPUT"
           --execution-scope release
       - name: Validate fresh exact-source G-6 evidence
@@ -149,7 +149,7 @@ jobs:
         run: >-
           python3 references/Hexalith.Builds/Tools/g6_current.py validate
           --workspace .
-          --policy references/Hexalith.Builds/Tools/g6-current-policy.json
+          --policy references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json
           --evidence "$G6_OUTPUT/result.json"
           --release
       - name: Upload exact-source G-6 evidence
