@@ -11,7 +11,7 @@ design_decisions: 'selected'
 implementation_authorized: false
 owner_prerequisite_implementation_authorized: true
 baseline_commit: 'b0caf2b5c25a1f761abed685c7c9ef811732c6fb'
-review_loop_iteration: 0
+review_loop_iteration: 1
 context:
   - '_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md'
   - '_bmad-output/implementation-artifacts/6-4-resolution-evidence-contracts.md'
@@ -53,18 +53,27 @@ Execute owner work sequentially; source-contract availability determines consume
 
 ### Owner execution plan
 
-- [ ] EventStore `DomainService/EventStoreDomainServiceExtensions.cs`: extract/reuse canonical projection-only `/project` family and metadata endpoint mapping as `MapEventStoreDomainProjectionEndpoints` and `MapEventStoreDomainProjectionMetadataEndpoint`; preserve existing SDK route policies and Folders custom routes. This resolves Folders CS1061 before integration tests.
+Review corrections must bind native cut bytes to their exact native prefix, preserve old public constructor and legacy anchored JSON, carry byte-bound continuation, and validate current generations before negative results. File lineage must use an exact native workspace/path address independent of display metadata, retain tombstones, and enforce the existing 10000-entry read bound before native effects. These refine the selected lifecycle/currentness guarantees; they create no additional resource authority.
+
+- [x] EventStore `DomainService/EventStoreDomainServiceExtensions.cs`: extract/reuse canonical projection-only `/project` family and metadata endpoint mapping as `MapEventStoreDomainProjectionEndpoints` and `MapEventStoreDomainProjectionMetadataEndpoint`; preserve existing SDK route policies and Folders custom routes. This resolves Folders CS1061 before integration tests.
 - [ ] EventStore `Server/Streams/{DaprSourcePublicationWriterRegistration,DaprSourcePublicationNamespaceSource,SourcePublicationNamespaceActor}.cs`, `Server/Configuration/ServiceCollectionExtensions.cs`, native `AggregateActor.SourceProof.cs` and shared roster/fence (InspectSourceProofAsync already supplies a stable-turn zero-write native incarnation/prefix/erasure proof; compare whole inspections instead of sequence-only GetStreamMetadataAsync; cold activation may still recover/write): deliver executable, explicit source enrollment/admission and native head/currentness seams where independent installation coverage exists. Require complete legacy/virgin and all-writer proof; refuse missing authorities. Reuse native source proof, avoiding query recovery writes; prove persisted empty versus missing and recovery behavior. Do not invent certified production coverage or widen capacities.
 - [ ] Folders `Authorization/{EventStoreFolderEffectivePermissionsReadModel,FolderPermissionEvidenceResult,LayeredFolderAuthorizationService}.cs`, contracts and `Server/Queries/FolderOwnerReadQueryHandler.cs`: expose optional native Folder/Organization/Tenant permission/resource evidence, verify strict current authorization twice and fail closed on any revision change including revoke/regrant. Preserve positional v1/JSON compatibility; no cached preauthorization receipt substitution.
 - [ ] Folders native command/event/state and accepted workspace mutation path: deliver explicit event-sourced stable owner File identity and Projects-owned FileReferenceId binding, exact same-Tenant parent and lifecycle enforcement. Preserve declared native lineage only for supported atomic owner operations. Current production provider exposes add/change/remove only; delete/add or cross-Folder move invalidates old binding and requires destination re-verification; do not infer rename continuity. Historical path/digest/operation IDs cannot become FileReferenceId authority. Add identity-only delegated File query through existing SDK, no content/workspace/provider read.
 - [ ] Conversations `Contracts/Queries/`, `Server/Projections/{ConversationProjectionReadModelKeys,ConversationProjectionReadModelWriter,ConversationProjectionReadStore,ConversationAsyncProjectionHandler,ConversationProjectionMaterializer}.cs`: isolated content-free metadata plus lasting committed-generation proof; maintain through normal projection, rebuild and recovery; narrow reads never hydrate detail/index. Membership derives from native ConversationProjectChanged.
 - [ ] Conversations native command/event/state and `Server/Queries/`: persist explicit scoring-label classification/purpose; legacy arbitrary Label is insufficient. Add exact delegated metadata query using existing VerifiedQueryCaller and before/after native Conversation/Tenant resource and permission checks. Null/unbacked native Tenant revision cannot authorize or imply Healthy; deliver a supported native owner authority source where possible, otherwise retain explicit production blocker.
+- [ ] Native provenance source follow-up: inspect EventStore `Contracts/Projections/ProjectionRequest.cs`, native `Server/Projections/` producers and SDK verified dispatch before adding any metadata-only native-proof transport in `Client/Streams/`. If supported, persist actual verified source incarnation/prefix/head identity with the Conversation isolated committed generation; query reads compare native proof without retrieving Conversation events. A local cursor or a newly read head cannot retrospectively certify an existing generation. Inspect Tenants `Queries/Handlers/TenantOwnerAuthorityQueryHandler.cs` as a native-source-fold precedent only (its TenantOwner policy is not Read); any narrow Tenant Read authority must retain existing owner-role policy, managed-Tenant caller binding and SDK delegation. Implementable source work must be pursued; unsupported producer provenance and absent deployed authority remain explicit blockers, never fabricated currentness.
 - [ ] Owner test projects: execute focused real storage end-state, authorization, actor/Tenant isolation, native revoke/regrant, persistence, replay/rebuild/recovery, mixed/expired generations and initialized-empty versus absent tests. Instrument metadata reads to reject content/path/workspace access. Synthetic fixtures demonstrate behavior only, never installation completeness.
-- [ ] Projects prerequisite evidence: record exact full revisions, patch hashes, commands/results and unresolved source/enrollment/qualification/G-4 blockers in a new evidence bundle. Keep RTI and parent Story 6.4 handlers, acceptance and tracking gated.
+- [x] Projects prerequisite evidence: record exact full revisions, patch hashes, commands/results and unresolved source/enrollment/qualification/G-4 blockers in a new evidence bundle. Keep RTI and parent Story 6.4 handlers, acceptance and tracking gated.
 
 The latest source investigation additionally found Tenant local health/age alone is insufficient: Folders head readers invoke actor recovery; Conversations default projection health lacks native revisions. Keep zero-write/cold-activation and exact-current Tenant authority as explicit blockers unless delivered and tested.
 
 No unresolved product choice is introduced: the user explicitly requested these owner contracts. Source limitations remain evidence dependencies. Keep unchecked delivery tasks visible if external authority prevents completion; do not mark the prerequisite done.
+
+### Verified source checkpoint and open owner work
+
+Closing Debug source builds pass for SDK, Tenants, Conversations, Folders and Projects. Current closing suites pass: SDK Client 362, SDK Server 104, SDK endpoints 92, delegated-owner client 9, Tenant authority 19, Conversation Server 1013, Folder Server 1055 and focused Folder core 93. Projects owner integration passes 89 with one isolated Dapr-lane skip. The earlier broad Folder core run retains four missing nested Builds-path failures and two external-provider skips; it is not an all-pass result. Exact commands, source hashes, XML and earlier failures are retained in the [owner delivery evidence](evidence/6-4-owner-prerequisites-20261020/owner-contracts.md).
+
+Review fixes B1/B2/B3/B5/B6/B11/E1/E2/E3/V1/V2/V3/V4 and B4's exact-target correction are implemented and tested. B7 remains deferred cold-activation/G-4 work. B8/B9/B10 remain open production/source contracts: native Folder/Organization generation binding, legacy-compatible native Conversation enrollment and aggregate content-free post-rebuild promotion. Accepted workspace mutation identities do not establish a committed File catalog, commit/abort/reset/branch lifecycle or authoritative whole-Tenant Projects reference registry. Certified installation/all-writer enrollment is absent from the inspected Platform source/metadata. These are incomplete prerequisites, so this spec stays **in-progress** and RTI/parent implementation remains unauthorized.
 
 ## Implementation Evidence Required
 
@@ -105,9 +114,32 @@ D1–D6 directions are selected. Readiness still needs named File/feed APIs, nat
 
 ## Spec Change Log
 
+- 2026-10-20 review 1 — Clarified complete native prefix binding, original constructor/anchor compatibility, byte-bound pagination, exact workspace/path mutation identity independent of display/classification, pre-effect lifetime bounds and current negative lookups. KEEP isolated content-free generations, original rebuild barriers, source message identity, native codec, signed SDK transport, all refusal gates, dependency pins and concurrent changes. Apply scoped corrections without reverting preserved owner work. Native guard enrollment and content-free post-rebuild promotion remain explicit source dependencies.
+
 - 2026-10-20 — Recorded D1–D6 selections; corrected transport/raw-count assumptions and simplified receipt/ingestion scope. Preserve parent gates and scoring.
 
 ## Review Triage Log
+
+| Finding | Verdict | Route | Verified evidence / action |
+| --- | --- | --- | --- |
+| B1 | high | patch | Native cut consumers compare only head message; actual Source.NativeProof/raw native digests are now available but not bound to selected prefix. Bind complete proof and test missing/replaced native sources. |
+| B2 | medium | patch | Native actor byte ceiling can stop below requested count; controller computes truncation from count alone. Preserve bounded-range continuation and verify a byte-limited page. |
+| B3 | medium | patch | Legacy-to-native feed mismatch can persist sticky poison. No migration is authorized; preserve old offset/state bytes and fail closed with an explicit upgrade requirement before mutation. |
+| B4 | high | bad_spec | File lineage uses a digest containing DisplayName and classification; same normalized target with changed description can leave an incarnation active after removal. Require a separate exact native workspace/path address binding and preserve policy digest semantics. |
+| B5 | medium | patch | Negative identity lookup returns before resource-version/current-authority confirmation. Apply the same generation and final-I/O checks before positive or negative classification. |
+| B6 | medium | patch | Native identity history grows beyond the read contract limit of 10000. Enforce the existing bound before effects; retain tombstones and never silently truncate or invent partitions. |
+| B7 | high | defer | Cold AggregateActor activation can recover/write before metadata inspection. This pre-existing SDK lifecycle limitation is explicitly retained in the execution scope and G-4 gate; warm-turn tests do not qualify cold behavior. |
+| B8 | medium | bad_spec | Production Folder native Tenant evidence is absent; default refusal is safe but this owner delivery task remains incomplete. Tenant Read alone cannot upgrade sequence-only Folder/Organization generations to native proof. |
+| B9 | medium | bad_spec | Default Conversation composition has no executable legacy-compatible native guard enrollment. Explicit descriptor and tests are not accepted production capability; keep native-current consumption blocked. |
+| B10 | medium | bad_spec | Rebuilt selection references a potentially rich receipt and strict adapter refuses it. Preserve refusal and recovery barriers; native post-rebuild promotion requires a supported content-free completion protocol, still an open source prerequisite. |
+| B11 | medium | patch | Replacing the public three-argument reader constructor breaks compiled callers even with an optional fourth argument. Restore the existing overload and verify signature compatibility. |
+| E1 | high | patch | Full current Conversation server run independently confirms 16 DI failures resolving DelegatedOwnerQueryClient from production native evidence. Register through supported SDK dependencies and verify normal host discovery. |
+| E2 | high | patch | Same native-prefix binding defect as B1 in snapshot reader; head identity alone cannot authenticate source bytes. |
+| E3 | high | patch | Same native-prefix binding defect as B1 in feed; do not persist descriptors under an unrelated native proof. |
+| V1 | medium | patch | Reviewer verified the changed delegated-origin client branch is not executed by existing tests. Add real client-path success coverage preserving original authority. |
+| V2 | medium | patch | Reviewer verified native Tenant Read tests omit disabled Tenants retaining membership. Add native disabled-prefix denial cases for existing roles. |
+| V3 | medium | patch | Reviewer verified native prefix accumulator tests do not cross 100-event boundary. Add an authenticated 101-event multi-page native case and exact final proof assertions. |
+| V4 | medium | patch | Registration theory expects metadata and legacy access counts without native enrollment. Preserve production fail-closed behavior and separately test executable positive native transport; include full host suite. |
 
 ## Design Notes
 
@@ -117,7 +149,7 @@ One evidence prerequisite spans owner repositories. The annex carries detailed c
 
 - `python3 tools/planning/validate_production_authority.py --story-id 6.4` — planning authority only; no implementation readiness claim.
 - `git diff --check` and document checks — validate this documentation change.
-- Compare tracked-file hashes and repository state with the pre-write snapshot; Story 6.4, sprint, pins, owners and legacy routes must remain unchanged.
-- Application tests and G-4 runs are future prerequisite evidence, not claimed by this draft. See annex §§8–9.
+- Compare protected-file hashes and repository state with the pre-write snapshot; parent Story 6.4, sprint, dependency configuration and pins remain unchanged. Bind owner changes to exact revisions, named-file hashes and working patches; preserve concurrent work.
+- Retain actual owner source-test commands, logs and native XML separately from unavailable deployed integration/G-4 lanes. Passing source fixtures never establish production completeness. See annex §§8–9 and the [owner delivery evidence](evidence/6-4-owner-prerequisites-20261020/owner-contracts.md).
 
-2026-10-20 owner-delivery resume: the user explicitly authorized prerequisite implementation in owning repositories, preserving consumer gates. Source investigations identified executable native-proof/SDK endpoint fixes, isolated metadata and owner File identity work; independent installation coverage and native Tenant authority remain evidence dependencies. The required Aspire baseline started; security awaited missing client-credential parameters and remained unhealthy, while all dependent services waited. The exact Projects AppHost was stopped without force before source tests.
+2026-10-20 owner-delivery resume: the user explicitly authorized prerequisite implementation in owning repositories, preserving consumer gates. Source investigations identified executable native-proof/SDK endpoint fixes, isolated metadata and owner File identity work; independent installation coverage, deployed native Tenant authority, native Folder generations, committed File mapping and native Conversation enrollment/rebuild promotion remain blockers. The required Aspire baseline started; security awaited missing client-credential parameters and remained unhealthy, while all dependent services waited. The exact Projects AppHost was stopped without force before source tests.

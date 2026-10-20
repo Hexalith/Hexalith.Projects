@@ -1,0 +1,806 @@
+{
+  "captured_at": "2026-10-20T12:55:18.545432+00:00",
+  "kind": "owner-source-delivery; partial prerequisites, no production completeness or qualification acceptance",
+  "note": "Initial preservation revisions identify the source comparison, not authorship of concurrent commits. Working patches include named source/test changes and untracked source. No stage/commit/push/submodule/dependency action was performed by this run.",
+  "repositories": {
+    "Hexalith.EventStore": {
+      "baseline": "6c56c27bc1a8d63c83f9631f7162cf79fdde0a1e",
+      "head": "5a38f36cab94e013183ed264b583da61e6eb91d4",
+      "branch": "main",
+      "status": " M src/Hexalith.EventStore.Client/Projections/DaprReadModelStore.OwnerProof.cs\n M src/Hexalith.EventStore.Client/Projections/ReadModelBatch.cs\n M src/Hexalith.EventStore.Client/Projections/ReadModelBatchProtocol.cs\n M src/Hexalith.EventStore.Client/Projections/ReadModelBatchRecoveryAnchor.cs\n M src/Hexalith.EventStore.Client/Projections/ReadModelOwnerProofBinding.cs\n M src/Hexalith.EventStore.Client/Streams/AuthoritativeEventStreamReader.cs\n M src/Hexalith.EventStore.Client/Streams/SourceNamespaceSnapshotReader.cs\n M src/Hexalith.EventStore.Client/Streams/SourcePublicationFeed.cs\n M src/Hexalith.EventStore.Contracts/Streams/AuthoritativeEventStream.cs\n M src/Hexalith.EventStore.Contracts/Streams/SourcePublicationHead.cs\n M src/Hexalith.EventStore.Contracts/Streams/SourcePublicationReconciliationProgress.cs\n M src/Hexalith.EventStore.Contracts/Streams/StreamReadEvent.cs\n M src/Hexalith.EventStore.Contracts/Streams/StreamReadMetadata.cs\n M src/Hexalith.EventStore.Contracts/Streams/StreamReadRequest.cs\n M src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs\n M src/Hexalith.EventStore.Server/Actors/AggregateActor.SourceProof.cs\n M src/Hexalith.EventStore.Server/Actors/IAggregateActor.cs\n M src/Hexalith.EventStore.Server/Configuration/ServiceCollectionExtensions.cs\n M src/Hexalith.EventStore.Server/Events/SourceProofCodec.cs\n M src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDelivery.cs\n M src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDeliveryResult.cs\n M src/Hexalith.EventStore.Server/Streams/DaprSourcePublicationNamespaceSource.cs\n M src/Hexalith.EventStore.Server/Streams/SourcePublicationIndexActor.cs\n M src/Hexalith.EventStore.Testing/Fakes/FakeAggregateActor.cs\n M src/Hexalith.EventStore/Controllers/QueriesController.cs\n M src/Hexalith.EventStore/Controllers/StreamsController.cs\n M tests/Hexalith.EventStore.Client.Tests/Projections/DaprReadModelBatchTests.PendingRecovery.cs\n M tests/Hexalith.EventStore.Client.Tests/Streams/AuthoritativeEventStreamReaderTests.cs\n M tests/Hexalith.EventStore.Client.Tests/Streams/DaprSourcePublicationIndexStoreTests.cs\n M tests/Hexalith.EventStore.Client.Tests/Streams/SourceNamespaceSnapshotReaderTests.cs\n M tests/Hexalith.EventStore.Client.Tests/Streams/SourcePublicationFeedTests.cs\n M tests/Hexalith.EventStore.Client.Tests/Streams/SourcePublicationNamespaceTests.cs\n M tests/Hexalith.EventStore.DomainService.Tests/EventStoreDomainServiceExtensionsTests.cs\n M tests/Hexalith.EventStore.DomainService.Tests/OwnerStatusResponseHandler.cs\n M tests/Hexalith.EventStore.DomainService.Tests/QueryAuthorityCorrectionTests.OwnerStatuses.cs\n M tests/Hexalith.EventStore.Server.Tests/Controllers/BoundOwnerQueryAuthorityTests.cs\n M tools/p1r-published-consumers/README.md\n M tools/tests/test_p1r_published_executor.py\n M tools/tests/test_p1r_qualification.py\n?? src/Hexalith.EventStore.Client/Registration/NativeSourceMetadataServiceCollectionExtensions.cs\n?? src/Hexalith.EventStore.Client/Streams/DaprNativeSourceMetadataReader.cs\n?? src/Hexalith.EventStore.Client/Streams/INativeSourceMetadataReader.cs\n?? src/Hexalith.EventStore.Client/Streams/NativeSourcePrefix.cs\n?? src/Hexalith.EventStore.Client/Streams/NativeSourceProofCodec.cs\n?? src/Hexalith.EventStore.Contracts/Projections/InspectProjectionCurrentQuery.cs\n?? src/Hexalith.EventStore.Contracts/Projections/ProjectionCurrentProof.cs\n?? src/Hexalith.EventStore.Contracts/Streams/NativeSourceInspection.cs\n?? src/Hexalith.EventStore.Contracts/Streams/NativeSourceObservation.cs\n?? src/Hexalith.EventStore.Contracts/Streams/NativeSourceProof.cs\n?? src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryServiceCollectionExtensions.cs\n?? src/Hexalith.EventStore/Controllers/QueriesController.ProjectionCurrent.cs\n?? tests/Hexalith.EventStore.Client.Tests/Projections/DaprReadModelBatchTests.NativeOwnerRecovery.cs\n?? tests/Hexalith.EventStore.Client.Tests/Projections/NativeOwnerRecoveryFault.cs\n?? tests/Hexalith.EventStore.Client.Tests/Streams/NativePublicationFixture.cs\n?? tests/Hexalith.EventStore.Server.Tests/Controllers/ProjectionCurrentAuthorityTests.cs\n?? tests/Hexalith.EventStore.Server.Tests/Streams/\n",
+      "files": [
+        {
+          "path": "src/Hexalith.EventStore.Client/Projections/DaprReadModelStore.OwnerProof.cs",
+          "sha256": "b79e172fe6a2fda6bbb4bbd9b1875ac1d1d4d77d09bc612c85309c59338837da",
+          "baseline_sha256": "506c65caea1cca28efb81867c9987268a15c8d5d31eb9599f444f40acfc159fe"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Projections/ReadModelBatch.cs",
+          "sha256": "4b26bcfc74412e3f27549ccc28a972c850a0a9e4f3069b66d4e5f4e3de9b441f",
+          "baseline_sha256": "459d528016389d94bbc272d86a3f79a2e881b4619a162a618f1ff6e3c34a415b"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Projections/ReadModelBatchProtocol.cs",
+          "sha256": "44f2ca5c454a432e9173c7fd37073cd54690eacf4535d3dea72c96b1f04765ae",
+          "baseline_sha256": "b00c7f3eadbc6ba937cb3ea68689b09d76aa02596d3d0a82749e5c7650305305"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Projections/ReadModelBatchRecoveryAnchor.cs",
+          "sha256": "0c8a3b62d9972664170638eaaa72a620049aa96d83cc3706635219a4a690156c",
+          "baseline_sha256": "4a3f36fefeead5e3827d3a45292af4b4b2ba2271ce3b75f704fd9a8b15388ec8"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Projections/ReadModelOwnerProofBinding.cs",
+          "sha256": "c0a4d75925158d48f169774408728e99e56ae7d193af5eb23292ff3c3cd31770",
+          "baseline_sha256": "652adb6a8c84e5f4aef0c4ef60596c57a8b16b6347377863ae3f4ab2cada2a7e"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Registration/NativeSourceMetadataServiceCollectionExtensions.cs",
+          "sha256": "03c5b3a997ed68e4e13b01fbb1f4ccbd54391321a4ae28420068b7f79ebc30f7",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Streams/AuthoritativeEventStreamReader.cs",
+          "sha256": "d7dbcc4a4b874f3784ecb48613fe8afede8e8cbc407ab8b8bff6b333f846ecae",
+          "baseline_sha256": "71bc18939e0d02ee1322026d6591d0a7fe898aae80821f98c8d6f3571dd36a5c"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Streams/DaprNativeSourceMetadataReader.cs",
+          "sha256": "69570ece967cc221662b1a132991dd0af7fcfc9b5381e228679819a627feb1da",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Streams/INativeSourceMetadataReader.cs",
+          "sha256": "f4adc2494852dd88a63218f536f8e3bd6b916b6928a9f6ea8f9a55eebf89fa6e",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Streams/NativeSourcePrefix.cs",
+          "sha256": "812d77b9dc37a59b68854cb310f01b686ba73d8c9f2930662f58ecf6b5489f4d",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Streams/NativeSourceProofCodec.cs",
+          "sha256": "20c414ebbae7146f531b2dff6b78510702726bff546fca0077c4026c15abb9fe",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Streams/SourceNamespaceSnapshotReader.cs",
+          "sha256": "8aa4bea4ba6612e842520f5147db4e56ddceb994d7452b21310ce36957a643d2",
+          "baseline_sha256": "9de38432247540b1f160bb8253534676475bdf24ce45a7d8cee904a3ac90307b"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Client/Streams/SourcePublicationFeed.cs",
+          "sha256": "2fb65dd51cf368e5ddbe3360a82ee8e8cd724f9de660384c435b1a9cae073d30",
+          "baseline_sha256": "df5f2c4c76c660eedfee137edad4032c308f145624c194888b0d416208e60f51"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Projections/InspectProjectionCurrentQuery.cs",
+          "sha256": "b6947d3ba7304928e3667f50d83e130c58eed95f8c94e1f12ee565593f898e2a",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Projections/ProjectionCurrentProof.cs",
+          "sha256": "dcaf8b79aaae2a32dfa6c93a032297460103630ce7917715af94b271585a85e0",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Streams/AuthoritativeEventStream.cs",
+          "sha256": "9b16966904b318327787da31d0c20d499832dfdb1dc8a574bc56c3a5d56fcf39",
+          "baseline_sha256": "185dd8b4669de1aa3175981706948cd23d296c84cbba4effd67b71af68d4ccc7"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Streams/NativeSourceInspection.cs",
+          "sha256": "1822259a4098c26f4b46e6fc59292ca75af4c9c682d7dc162e1fbc0fc9bb64e4",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Streams/NativeSourceObservation.cs",
+          "sha256": "5b82ec2c8533e1a0db130ddf74f4af71c6c394aab7386305fa93889f648d2c0f",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Streams/NativeSourceProof.cs",
+          "sha256": "6fb522f313ae7efd94881a27924a6c651f9d7631c84311002519bb1fdd1ab9d5",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Streams/SourcePublicationHead.cs",
+          "sha256": "928ce97e7f7b09465b1bf1e48bfab8683b319aebc0b9c518830c8c7dbbffc1f4",
+          "baseline_sha256": "ddbc4e9fe1cbfc651a9a0dcb35ca80716f7a2bf729fe6d1dd01fce73eb992c60"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Streams/SourcePublicationReconciliationProgress.cs",
+          "sha256": "d197104f49bd8dcd027d6d78be51320a13614dd92cad5e50ce44693a918e8e0d",
+          "baseline_sha256": "f6097744350876d473d2a9fb2e5a6380dc1881673985ab6ed49888937f3ac4cb"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Streams/StreamReadEvent.cs",
+          "sha256": "404f5fe88269ec669a9a10c504a0beb945ec3ac152149aee9fe205aeb348f00b",
+          "baseline_sha256": "fd82c1ab0e31b8e665abcda322fa5f7b9fc8970205f5f29c38c5bfa8d0c235dc"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Streams/StreamReadMetadata.cs",
+          "sha256": "413deb9552b0c6507f15f1eef9be3afc5ca0d6f2326f42092048af1e530a979d",
+          "baseline_sha256": "e26d123f7bdc21ad0ee80375e2f1fc7d0afad5bb3f97cc3a2efe322a0949a687"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Contracts/Streams/StreamReadRequest.cs",
+          "sha256": "37fcbfc833662cfe703152a96c1004f649b1425e4001c2506341459b0e062767",
+          "baseline_sha256": "2bb3d0b7833e0fd02e1b4f27d27703aecccd80db41adc7798f1581788b46fdc6"
+        },
+        {
+          "path": "src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryClient.cs",
+          "sha256": "b7f3f917be0a25c17a0f35569fc0604052a4369ca4441baf7fc139a4472b0ea8",
+          "baseline_sha256": "52ca50199139b37e9fe4ca937bbcad5523bd78c75f85c45a02d1c7a8b6059289"
+        },
+        {
+          "path": "src/Hexalith.EventStore.DomainService/DelegatedOwnerQueryServiceCollectionExtensions.cs",
+          "sha256": "6d4dc603d2beec8c3e9159decdc05e6e10cb6b14699ccab27c78a160bba21cbd",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore.DomainService/EventStoreDomainServiceExtensions.cs",
+          "sha256": "63e6f810b7bf5c1b0966ecb2d5562ca7644d5dd5ef284e6fec719cb1b3c4134f",
+          "baseline_sha256": "28b7a1cd626f656731f0c243c42f8c5b3d41ed8554216f8780fc684c998d2d6b"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Actors/AggregateActor.SourceProof.cs",
+          "sha256": "3eac1fc90ebff0a40bc9e0b788be6a051a5950369981612ae7934622db70afac",
+          "baseline_sha256": "0aa059594e5ef302c0bf432fa650bddb025274ecd4dd1a97783e187d312da0f8"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Actors/IAggregateActor.cs",
+          "sha256": "bf8b0a38c20e956ebc3dab4ef2cd11c632dca0305f455b597e7cbe37e69bfc68",
+          "baseline_sha256": "b0a4eae3f11a3e479fb441c9b71539786be5cccaa11bec8ad1ff3d4b9641bea6"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Configuration/ServiceCollectionExtensions.cs",
+          "sha256": "e41e1d289076a7539a171e90a376db55f4964cecb63ef46af70947cf41b138f6",
+          "baseline_sha256": "217790015f549c033602b14efd8992dd7902e314524a1a8e8372d4aaa1c9b2af"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Events/SourceProofCodec.cs",
+          "sha256": "73e3265e7957dc2148bd10de0628cdcf5454e28f3d30ee786a6d1537bf4d87f2",
+          "baseline_sha256": "f6e56578f53dbbcf5183c4732e52c4f3ea2f04530ce4852874de58044e9adf41"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDelivery.cs",
+          "sha256": "caee6849edc8c033eef7af5d5393b8acff99d5c3277e050ee6acacd67ffd6dd2",
+          "baseline_sha256": "a27385d7afca9200757d4465fc03433ce6c65fb7229a97913be4b7dae3ad2778"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDeliveryResult.cs",
+          "sha256": "6e4f8b7888aa6453d60d3f4c0a978833b69144fe0cb934ddd0650127054d8d5e",
+          "baseline_sha256": "3ee145b78e7d142da8861554df8a5b175f54967fe11d1750d1ea6bb4ed3bab71"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Streams/DaprSourcePublicationNamespaceSource.cs",
+          "sha256": "9b3b9f83c94b0d0e9b9aac1bcccc7048fd500713c1a0bd3f5eef46ebf5fde0aa",
+          "baseline_sha256": "6cd58d1cbf898a5f0c26fb2f664b2ebc447ef49c32e4ff98a047dd8ab1aa81a5"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Server/Streams/SourcePublicationIndexActor.cs",
+          "sha256": "2809db2f8ec34c282796c426431be918b86155add3531eaa845a00f86f389a5d",
+          "baseline_sha256": "e831ddc3fc01ed2f96d75549b86208f1a61e15d1ede1e06c6d9ac933e27e356d"
+        },
+        {
+          "path": "src/Hexalith.EventStore.Testing/Fakes/FakeAggregateActor.cs",
+          "sha256": "2fcbcafaf6a3ac66874a9767128b19fffc44a680878e3f93e45bfd82846a8d98",
+          "baseline_sha256": "1e33d46ed1b28cfe75b11b8c8432d81267e63c847a870167c517e85d1517c3b6"
+        },
+        {
+          "path": "src/Hexalith.EventStore/Controllers/QueriesController.ProjectionCurrent.cs",
+          "sha256": "e6e0e7a63da8bef0ef1c501672bb027a91182a90a3c770068edb1d373977c98f",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.EventStore/Controllers/QueriesController.cs",
+          "sha256": "840e0cd207001b5bb4b193b80cf270dfa6161f9a824fe7bb23dbefabc766e6a2",
+          "baseline_sha256": "b70ccbd1af468639d82ebe34a483d249026ee7e11f10f96566793dd11f63ba03"
+        },
+        {
+          "path": "src/Hexalith.EventStore/Controllers/StreamsController.cs",
+          "sha256": "ab428d8548dfa47736073ba89aac9ca3824ead64fdc921a1950f6d24d2e7c73b",
+          "baseline_sha256": "a01730009625b21670c0a0831cd1848574ea10e864e57c2cd8b095dc3ba0c0de"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Client.Tests/Projections/DaprReadModelBatchTests.NativeOwnerRecovery.cs",
+          "sha256": "841a33b8d9200b38755445309e81a2148e504b70b601e953c0c42ab32ab1d69b",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Client.Tests/Projections/DaprReadModelBatchTests.PendingRecovery.cs",
+          "sha256": "59e5805d1e762c7d233a4ab7549fdc7e5ee0b6781e9df424dae192f5e3fb27a6",
+          "baseline_sha256": "a3f16649a363417ba5ce1382f0461a0ad8c83d01354de646af0583495f5cb82b"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Client.Tests/Projections/NativeOwnerRecoveryFault.cs",
+          "sha256": "60330c3e7a379c218b505627f8f2dfcc2a93112a71a0e50b0f89c63493414b31",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Client.Tests/Streams/AuthoritativeEventStreamReaderTests.cs",
+          "sha256": "f410685bcda8be98a51887e6e27396995ea04baa9ccbc7c12b87a8c362b01041",
+          "baseline_sha256": "a06663daca88a944e2bf540075a9367ff34ce6991f891a429809dac678e920e1"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Client.Tests/Streams/DaprSourcePublicationIndexStoreTests.cs",
+          "sha256": "ee8a80e17090ef8e096a9ecd0fcbe44eff59b1bbaa8d2286e987732be750fc87",
+          "baseline_sha256": "57675ddd494206a001cc9edaa83dd4e7d55222f530dec9122a6501ce464aeab1"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Client.Tests/Streams/NativePublicationFixture.cs",
+          "sha256": "ae92ba0c065c315755992c8cb39732f6c9f87c4ae91700c656fbe72c74788f48",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Client.Tests/Streams/SourceNamespaceSnapshotReaderTests.cs",
+          "sha256": "ea4df60247333b2caee8782605ace8470715bacb1427c7ee9b86726d2289a756",
+          "baseline_sha256": "b416bb35096421ac8c2f0106654bc9ee4ccbe1df722bd6bfae4d8e0e5793de24"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Client.Tests/Streams/SourcePublicationFeedTests.cs",
+          "sha256": "e66406b2dc30d4151f7756b312f373ef5ac318f3c9940213d4cc3dede7daf839",
+          "baseline_sha256": "b5b4c0afabfa47c63e214283838cc5a2369afef83160e9e9b4990942caee0a77"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Client.Tests/Streams/SourcePublicationNamespaceTests.cs",
+          "sha256": "d4923f8450b3a5bebd1a754b9ca998bcb941458d00d97b2948a910e225081da3",
+          "baseline_sha256": "9b9da65a9082b42f6732c018fcd33a9b0d1f602b7273e3af804fed5b3c5dc809"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.DomainService.Tests/EventStoreDomainServiceExtensionsTests.cs",
+          "sha256": "77e45bdbbeffcadfa6e2cd7c6facc39aa3fac3dfe8d801570c955fadaed7ea2e",
+          "baseline_sha256": "770c468f1ecfa197d78f7db549e8bd57aecc7046185e941c8e78d9ffed6c58f1"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.DomainService.Tests/OwnerStatusResponseHandler.cs",
+          "sha256": "d408db10144c93dcf4034eb3997a85f8c551990f986a70a8a76c8135ec1b9b19",
+          "baseline_sha256": "f811caa416d821367b37b2f6774ec0e650207414471fc6b4a3c90912851e1eab"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.DomainService.Tests/QueryAuthorityCorrectionTests.OwnerStatuses.cs",
+          "sha256": "03a0a1dc4bfb0fc6714e398a48d78be842ce62dc3d9d29c2493d551054f62a29",
+          "baseline_sha256": "8ff6cb7145f2df129dde98e1bd6457189f804aff4d1a14f503f56ec7e0e91176"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Controllers/BoundOwnerQueryAuthorityTests.cs",
+          "sha256": "0fdda5b310b5fc41f7ad34ad8f64bc52d6bb30eefc2b19eec60477e81f65306e",
+          "baseline_sha256": "79adb35724e9118d85775e6bb449437f2cf6a5de80b887d0df71fb924f43c972"
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Controllers/ProjectionCurrentAuthorityTests.cs",
+          "sha256": "2a6b8410d8ae9e1e0503e70725e6ce1d2949d30815cef8c5610473896cec6b22",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Streams/NativeSourceMetadataHttpHandler.cs",
+          "sha256": "a20e14e07b0b542c3d4d81a60cd9bc8367ea2ef0ca2690fdc4e81c9445af097e",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Streams/NativeSourceMetadataReaderTests.cs",
+          "sha256": "c72bdd8313d8ed84d5a9c8c05c8ea9b28f0e44e12f2f552fced6a1fc4319d17b",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.EventStore.Server.Tests/Streams/NativeSourcePrefixTests.cs",
+          "sha256": "e92ba3ac6aba12a7cc45b563eb4b38cac9fbd8e1c41c86bf955d58f7b91203b8",
+          "baseline_sha256": null
+        }
+      ],
+      "patch": "Hexalith.EventStore-final-source.patch",
+      "patch_sha256": "c6869e13ea1080a419918161d77474cb4a4ee52d5a14ff11860d9f06d7be46bf",
+      "patch_bytes": 181845
+    },
+    "Hexalith.Conversations": {
+      "baseline": "0c7bfac19cafbf4cbb2f67340b06e569280ef05a",
+      "head": "beacc095f40e1cb254d3258bccab34659691cbaa",
+      "branch": "main",
+      "status": " M src/Hexalith.Conversations.Server/Projections/ConversationAsyncProjectionHandler.cs\n M src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs\n M src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadModelKeys.cs\n M src/Hexalith.Conversations.Server/Projections/ConversationResolutionGeneration.cs\n M src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataPersistence.cs\n M src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs\n M src/Hexalith.Conversations.Server/Queries/ConversationQueryServiceCollectionExtensions.cs\n M src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs\n M src/Hexalith.Conversations.Server/Queries/GetConversationResolutionMetadataDomainQueryHandler.cs\n M tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataProjectionTest.cs\n M tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs\n M tests/Hexalith.Conversations.Server.Tests/Queries/ConversationQueryRegistrationTest.cs\n M tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs\n M tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs\n M tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs\n M tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadProxy.cs\n?? src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeProofRegistration.cs\n?? src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeSelection.cs\n?? src/Hexalith.Conversations.Server/Queries/ConversationResolutionNativeEvidence.cs\n?? src/Hexalith.Conversations.Server/Queries/IConversationResolutionNativeEvidence.cs\n?? tests/Hexalith.Conversations.Server.Tests/Queries/ConversationNativeCurrentQueryTests.cs\n?? tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs\n",
+      "files": [
+        {
+          "path": "src/Hexalith.Conversations.Contracts/Queries/ConversationResolutionMetadataResultV1.cs",
+          "sha256": "d918916abfb3cfc61e83a9271df658d3dd564372856ade4c8df3eb7fe368e45e",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Contracts/Queries/ConversationResolutionMetadataV1.cs",
+          "sha256": "ee03cfd31c165ed43fe19ea86ddc0ac392ddf761c4e282ed42232081cf3e048b",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Contracts/Queries/GetConversationResolutionMetadataQuery.cs",
+          "sha256": "62fccfc71fd7b5108ed54d4a1f45bb89e4c04acb8ec07c32348c74da7a9ad2b8",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Contracts/Serialization/ConversationsJsonContext.cs",
+          "sha256": "6ad5e059e34ca885a6fcef149154515a4b65a2888c800495c25a351f6c733d06",
+          "baseline_sha256": "671b28dfb0d5181c5647fdc941412d32e0e6756b88f9aff5a52b4316893a4a81"
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationAsyncProjectionHandler.cs",
+          "sha256": "06e412ee71a2a6b6d7fb99c58f84cfd6165474cc722f0d7a23fd1ca269ed3e3d",
+          "baseline_sha256": "07fe513b285e2a08cb42c5435bbfb0b3c85cb96966a950bd0470edef95144541"
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs",
+          "sha256": "fc8a29e497a0a6120661055754e10dce5829acf6a190a3dca4fb7fcec6ccac05",
+          "baseline_sha256": "0ecf792afb6f50a5edec02cd91782c6121e10d52cef07f010ba56df95da22541"
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadModelKeys.cs",
+          "sha256": "1a6da40f6514750c8a9e4097885028fd4831b93494f1129c44f1fe7e119a2115",
+          "baseline_sha256": "b2be951aecedbb7a77e01ea081e782a71c859a79c556527f508a56905903b9ec"
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadModelWriter.cs",
+          "sha256": "08c8219b8ba439590fc49b01539d337c9d4696ffb7e688d8da27de59a89c87b1",
+          "baseline_sha256": "3d06affed9a0e33487741b8a60d0ea9890283565a969ea034f1388a87e1d6502"
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs",
+          "sha256": "810474e37e66e3c5dfa0d307a24d36db26355cf403b4dccdbfbbbff6e5d203d3",
+          "baseline_sha256": "7b5b4aa5df017e509a62ec3a2e1b287ed991cc3001ef63f05f291bb5b943b5db"
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationResolutionGeneration.cs",
+          "sha256": "54f03cab7559f554a9eb614ecf36063aadaa86df03eb79d2132f2688249c72f8",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataBarrier.cs",
+          "sha256": "97adbf3f211859285af43277d4fa52d67d83279372485f146b0bd84cccf0c530",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataPersistence.cs",
+          "sha256": "9b1350ee7041c8bc6e497cd987b3258caec956a4a6fcd23379b94fdaf27756bb",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataProof.cs",
+          "sha256": "856a74698d34bf3e136ab0214c8efa30f4d7d8659d04f113dc561ba5e61a6ca1",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs",
+          "sha256": "ab2fbe64bbd09d04a2c819d592bac44e9ae06a2486545f448505e19e09f4da79",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeProofRegistration.cs",
+          "sha256": "fabeb6381bec3a1652f3c3a7fdb1da6a667d515e3ce8c386aaaf2f2ee21e6316",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeSelection.cs",
+          "sha256": "111bfd3b4898cc55a3e402e88586bcafbe70001ca82b12a422278fb48e6b0f8a",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/ConversationResolutionScoringPolicy.cs",
+          "sha256": "286f0518141cfcdfbe2350ead212f8391e5670bd5d3f873df03d26587cb24b3c",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Projections/IConversationProjectionReadStore.cs",
+          "sha256": "a015bc5545f338e250d13b23669a87a62e5ab8bba86edd8a46296623cd6a6b4c",
+          "baseline_sha256": "b837c161faa496130d8942a870645cf913cb77746997cc23674a89de331bf086"
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Queries/ConversationQueryServiceCollectionExtensions.cs",
+          "sha256": "55a5b486fc6e2f5a478f507c9a1fa604e7ad97485a637da8dc2c22674fa6efc9",
+          "baseline_sha256": "3845669dd33fad2be28ca5344391377a6551021b685170fd10d07bfce82e7717"
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs",
+          "sha256": "134e4483daa5c5b97cda21a3d3ec0a0d360dd446d0e220869c9f574cdbc080b6",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Queries/ConversationResolutionNativeEvidence.cs",
+          "sha256": "ea83eb948917d18d12bf28e76ce2b0f9b3d9d535170ead2c2388c6772054c8c7",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Queries/GetConversationResolutionMetadataDomainQueryHandler.cs",
+          "sha256": "eb9a8773592b58478f755c7a4286ccaa1bdca0d6af0b07cd1cb2c541bb2afeb8",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Conversations.Server/Queries/IConversationResolutionNativeEvidence.cs",
+          "sha256": "624096d6fddd299aac6cc957aac6fb1b8c01741a1c9c5b825c1fa188e94a16cc",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Contracts.Tests/ContractSamples.cs",
+          "sha256": "ce81042ba5b69f05ed035989cdcc4ec9bfba2a6e004361d961a8a202a68715f3",
+          "baseline_sha256": "50b141f7ee7d685c926eff3a20f881828d86548f2e59b1be95f3c85c4122e9b5"
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Contracts.Tests/Queries/ConversationResolutionMetadataContractTest.cs",
+          "sha256": "f0aaddf0feffd4f0eb64a3b053234ea4fd20fd16555fc7c978a85347ca8dc109",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/Projections/ConversationAsyncProjectionHandlerTest.cs",
+          "sha256": "a7a3157965c9bb50d9f680bba9475c91988df7221af6030681c3506502474142",
+          "baseline_sha256": "1b766f0a55223a927f01db6a8bbada94d374bb0f9335bdae627c77c6c9780852"
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataProjectionTest.cs",
+          "sha256": "44cd0808223d199b99fc737f44a49899a99dd72fe023c6fd337502d9d7bf209b",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs",
+          "sha256": "45b076e6909c62c1557e87dfa07e7c50d257cc3196ba26281ae0af65ff0ab57c",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/Queries/ConversationNativeCurrentQueryTests.cs",
+          "sha256": "4295620d276b6cd697a3120d73250fb7c9c9ebd819c2b5bd144b9574755fbd18",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/Queries/ConversationQueryRegistrationTest.cs",
+          "sha256": "a8c7d4d70112d049a43616438d59f39bc101657e9787f63d28424c044b5a3cd8",
+          "baseline_sha256": "15ab4ce9f9baea9bc1e2974a1f298f520f3a3dc4a723cf5d52f84a7a0fb9fb12"
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs",
+          "sha256": "7bf3935930ae24759169b11aa38f1baf9e94ec37cf0fc7df8cc93f801a306c03",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs",
+          "sha256": "6db0cc7be546c34a80e79a83714ffc00fd095d001d5bd942993b8908251d2264",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataAccess.cs",
+          "sha256": "e7f6221d9de318cb003d43c303d318c0aa6c93cc23b31512660dc0d77c04ad13",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs",
+          "sha256": "0ebb293bec636d747b7be8976ce38a735bdc5d36476be00253168cae8104a978",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs",
+          "sha256": "247507afc1d3af1eae1cdb46a62a9798d03d8c9669e8a859a545daea0a334b15",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadProxy.cs",
+          "sha256": "59251149c1840e7eadef682ec5f22d908829d38cf32895a21fc01e0a9e55ae0c",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadStore.cs",
+          "sha256": "b05053041bac0fb79991e90ac6c6cb54eee6bf165ee4ef4b19c8cebb47ad02c3",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionTenantStore.cs",
+          "sha256": "61c9a167e6072e651edcaa64054720b130636a2eb0040d5c6bc0367809f3bace",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionTestTimeProvider.cs",
+          "sha256": "1368674c0cb5334f96d5b27c5d60c502d4eb9816831245ebc85e80b6bf480f3b",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/fixtures/Hexalith.Conversations.MinimalModule/README.md",
+          "sha256": "1237ce284dbb1dd03e583d76075536ec07a190b24940810e1dece70d2f83d4e2",
+          "baseline_sha256": "29387d7ca25e178230f7caa8d54f6e71cd8f509af14c355e61705f1d27604a15"
+        }
+      ],
+      "patch": "Hexalith.Conversations-final-source.patch",
+      "patch_sha256": "f6a1247c8c4073f0310220807ba0a3a24f5a7777e781191628db6b8db651fb1f",
+      "patch_bytes": 259131
+    },
+    "Hexalith.Folders": {
+      "baseline": "9bacd7f62848c23222dc7309635eb65dc6e5ed9c",
+      "head": "eed43a86c94b49e030b233beb37fe6128456f649",
+      "branch": "main",
+      "status": " M src/Hexalith.Folders.Contracts/FolderOwnerReadResult.cs\n M src/Hexalith.Folders.Server/FolderDomainProcessor.cs\n M src/Hexalith.Folders.Server/FolderDomainProjectionHandler.cs\n M src/Hexalith.Folders.Server/FoldersServerServiceCollectionExtensions.cs\n M src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs\n M src/Hexalith.Folders/Aggregates/Folder/FolderAggregate.cs\n M src/Hexalith.Folders/Aggregates/Folder/FolderCommandValidator.cs\n M src/Hexalith.Folders/Aggregates/Folder/FolderState.cs\n M src/Hexalith.Folders/Aggregates/Folder/FolderStateApply.cs\n M src/Hexalith.Folders/Aggregates/Folder/MutateWorkspaceFile.cs\n M src/Hexalith.Folders/Aggregates/Folder/WorkspaceFileMutationAccepted.cs\n M src/Hexalith.Folders/Aggregates/Folder/WorkspaceFileMutationRequest.cs\n M src/Hexalith.Folders/Aggregates/Folder/WorkspaceFileMutationService.cs\n M src/Hexalith.Folders/Aggregates/Folder/WorkspacePathPolicyValidator.cs\n M src/Hexalith.Folders/Authorization/EffectivePermissionsFolderPermissionEvidenceProvider.cs\n M src/Hexalith.Folders/Authorization/EffectivePermissionsReadModelSnapshot.cs\n M src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs\n M src/Hexalith.Folders/Authorization/EventStoreOrganizationEffectivePermissionsReadModel.cs\n M src/Hexalith.Folders/Authorization/FolderPermissionEvidenceResult.cs\n M src/Hexalith.Folders/Authorization/FolderPermissionProjection.cs\n M src/Hexalith.Folders/Authorization/LayeredFolderAuthorizationAllowedContext.cs\n M src/Hexalith.Folders/Authorization/LayeredFolderAuthorizationService.cs\n M tests/Hexalith.Folders.Server.Tests/FolderOwnerReadQueryHandlerTests.cs\n M tests/Hexalith.Folders.Server.Tests/FolderOwnerReadStore.cs\n M tests/Hexalith.Folders.Tests/Aggregates/Folder/FolderWorkspaceFileMutationAggregateTests.cs\n M tests/Hexalith.Folders.Tests/Aggregates/Folder/FolderWorkspaceFileMutationServiceTests.cs\n M tests/Hexalith.Folders.Tests/Aggregates/Folder/RecordingFolderRepository.cs\n?? src/Hexalith.Folders.Contracts/FolderFileOwnerReadQuery.cs\n?? src/Hexalith.Folders.Contracts/FolderFileOwnerReadResult.cs\n?? src/Hexalith.Folders.Contracts/FolderFileReferenceReadQuery.cs\n?? src/Hexalith.Folders.Contracts/FolderFileReferenceReadResult.cs\n?? src/Hexalith.Folders.Contracts/FolderOwnerReadEvidence.cs\n?? src/Hexalith.Folders.Server/Queries/FolderFileOwnerReadQueryHandler.cs\n?? src/Hexalith.Folders.Server/Queries/FolderFileReferenceReadQueryHandler.cs\n?? src/Hexalith.Folders.Server/Queries/FolderOwnerQueryBinding.cs\n?? src/Hexalith.Folders/Aggregates/Folder/FolderFileIdentity.cs\n?? src/Hexalith.Folders/Aggregates/Folder/FolderFileIdentityState.cs\n?? src/Hexalith.Folders/Aggregates/Folder/FolderFileReferenceBindingRequest.cs\n?? src/Hexalith.Folders/Aggregates/Folder/IFolderFileReferenceBindingAuthority.cs\n?? src/Hexalith.Folders/Authorization/FolderFileIdentityMetadata.cs\n?? src/Hexalith.Folders/Authorization/FolderFileIdentityReadModel.cs\n?? tests/Hexalith.Folders.Server.Tests/FolderFileIdentityProjectionTests.cs\n?? tests/Hexalith.Folders.Server.Tests/FolderFileOwnerReadFixture.cs\n?? tests/Hexalith.Folders.Server.Tests/FolderFileOwnerReadQueryHandlerTests.cs\n?? tests/Hexalith.Folders.Server.Tests/FolderFilePermissionEvidenceProvider.cs\n?? tests/Hexalith.Folders.Tests/Aggregates/Folder/RecordingFileReferenceBindingAuthority.cs\n",
+      "files": [
+        {
+          "path": "src/Hexalith.Folders.Contracts/FolderFileOwnerReadQuery.cs",
+          "sha256": "69296a55edccc9cc8ea99eb457d8626ac1d832b9f5240f36e648fb5dc6e76642",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders.Contracts/FolderFileOwnerReadResult.cs",
+          "sha256": "ff989bb0d6efdb6889cb0d19213b3bf46040b7707933098504ce01c839cb5ae3",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders.Contracts/FolderFileReferenceReadQuery.cs",
+          "sha256": "abc2a5b730186f3f4d857505d7c779fd0aa7e221372e013f38c5140937515ab9",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders.Contracts/FolderFileReferenceReadResult.cs",
+          "sha256": "aecf83ac04aef4d3167eccf8bf504fdf7734f5d942f6f1ee4b5ec65d443c7843",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders.Contracts/FolderOwnerReadEvidence.cs",
+          "sha256": "4419a8fcb11ec6801da4e7231c901ee67017561b8b1daac722a4ed56b82c9eb6",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders.Contracts/FolderOwnerReadResult.cs",
+          "sha256": "26924491a1a7aa82c9c4e891ac1d9e00679bf66d4f390917f681904b165e1212",
+          "baseline_sha256": "d191d54baacd0e59c5e26010d9b588862961e6d5c082b7e505756a476c41774a"
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/FolderDomainProcessor.cs",
+          "sha256": "9958774658c9354ea8cf7c58b4c03eb79c681712ca736c15ee703e39a2bd99bf",
+          "baseline_sha256": "b57340e2136d7576e34225a76758a0a46781c06b4c1f4e6e88c4e4d1a9df25b8"
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/FolderDomainProjectionHandler.cs",
+          "sha256": "59c489df0c0933ca0d0ccf62bf893291ab5d655ce42c021db35d829be7f799a8",
+          "baseline_sha256": "37f1b5c597f7e8f61dd8af1ce30ab26e774de8af573b2b81097bfe9898b30df0"
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/FoldersServerServiceCollectionExtensions.cs",
+          "sha256": "4d5ce19712347a1ef3fc2338633dfc011cf8f00bddf5ed1e0f24214df49d1e05",
+          "baseline_sha256": "ad1f6e169fd7e093da4caeb96336c2386ebd9ff8496b339b709f091448c0f797"
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/Queries/FolderFileOwnerReadQueryHandler.cs",
+          "sha256": "3305d60845593f42624bc7c77b29ecfa6bd6f56083f28e5cbc24f5b082318493",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/Queries/FolderFileReferenceReadQueryHandler.cs",
+          "sha256": "6cd14331b3ca946da26013ebb9af20b005bdd13bfb4187a295d27f2c4b0d07a9",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/Queries/FolderOwnerQueryBinding.cs",
+          "sha256": "6758d25a6e60d6ec9a45243f3b5b863f59c6c8b5cc752f01f8fe0608b22408e5",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs",
+          "sha256": "c58854ef1579eb497079e2dad1af915762f9bc0d09c4dc555e1eceb9fe2ea586",
+          "baseline_sha256": "8b68bf1f3bae2f2fc0961fcf2b74c451996e38a335d6abb04d61e1f2819500b9"
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/FolderAggregate.cs",
+          "sha256": "03588c7587a1db586dbed069d4d24e4c423153707aefa36a6e49747cdb71dae3",
+          "baseline_sha256": "8c04a3dbb530cb0b46a12991aac432d3e80c9323c65fb6e652b683e99ebe1977"
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/FolderCommandValidator.cs",
+          "sha256": "6e6d934fb094c3abb3c4a49410dc874325415fd296c5d41bd2412972be339005",
+          "baseline_sha256": "4b528d2749fa7edbefdb4283b9f69d5305a2524f143ea6142875c76cffda1203"
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/FolderFileIdentity.cs",
+          "sha256": "49f3a1a09a76d6f37f6aa19e98daf677b030549fb9f37dbdad9540291a3e12ef",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/FolderFileIdentityState.cs",
+          "sha256": "08f135121b34df59d4868c73bf71074cff3b3f6dff13d38c8853d64325236e98",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/FolderFileReferenceBindingRequest.cs",
+          "sha256": "5a426671b3940cd7569d8f508d8b4d1a61419354cbc7f7c7c33b31e1a26a2e04",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/FolderState.cs",
+          "sha256": "7b75311c1803724d35c870f739864b8701c0bd5f00c50f1e186022799eebc2dc",
+          "baseline_sha256": "891a4a9a0f4ebabbc283b1e2f78b7dd6138664734fd22ae950666cf47f0aa13b"
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/FolderStateApply.cs",
+          "sha256": "eaa073b45a4671599dcfb9b20c44957f6d70e5ef1563fb19a448b9969994cee8",
+          "baseline_sha256": "dd9a240be4c0179d42bfb2d57467bc0ad53de4c581c1eb675bb5cc69ccccab85"
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/IFolderFileReferenceBindingAuthority.cs",
+          "sha256": "83161a1ed7e44be61555e10f90f69f50d5815db8314a37d232c2e5075d8d1381",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/MutateWorkspaceFile.cs",
+          "sha256": "e502bdc6c36bdb7938cbd44c13863fd2a73243526d34da69d243a4df178166d8",
+          "baseline_sha256": "4f6decc1176fc62ab175cd734b54fdab553623c3bcb83270c8d5c31886ece915"
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/WorkspaceFileMutationAccepted.cs",
+          "sha256": "eea5b0b369b3e00b3511aabe5ed1bcd53277b8e2c9b2d95e24eeb709a9bb349c",
+          "baseline_sha256": "ff243f8364320c0d408b1df9b23f149c78828dc05bc3bf00fd32188a84b3147f"
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/WorkspaceFileMutationRequest.cs",
+          "sha256": "f55dccb55fe9da2043bf6be321a6f84cc5371b715a4f5838c8bd8f7c8339dfee",
+          "baseline_sha256": "e2537b4a91fc5d787c0d111d008beeb715d4eda87f4ccbf31957748e1400cd6a"
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/WorkspaceFileMutationService.cs",
+          "sha256": "1867402cfa36e348532b16e1ffcd2b03fef29ba4d16b3ccf006abef61ffd76b0",
+          "baseline_sha256": "541d3816149be621eaa6d83b96ce2ba61eb6f17c49803c8fe95b06e11232082c"
+        },
+        {
+          "path": "src/Hexalith.Folders/Aggregates/Folder/WorkspacePathPolicyValidator.cs",
+          "sha256": "1f0ac1a5c52931d3398e91d7c982da2ab22a3e12208f4e26be0ec4dd3149f884",
+          "baseline_sha256": "2da81631477911c56284b84ae0625ad68f4dc2804d4c669adbcad15e3ac4fd8c"
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/EffectivePermissionsFolderPermissionEvidenceProvider.cs",
+          "sha256": "f1f1a9e7c55a9490bb32bbbeedad3f50d62f8d8c40460c7a9fd89cf2ae99a8a5",
+          "baseline_sha256": "d0a87786c895fc6b4ca4860772131ecda05bc89c007656337e7d77ea966c2d5f"
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/EffectivePermissionsReadModelSnapshot.cs",
+          "sha256": "3c7fa3e981861b85a732a351aa3012117938ef47000566977cd1283687c4bda2",
+          "baseline_sha256": "5df2813c9df0a8df47e486267926c2773a5d40d296477481b4d92438ff14777f"
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs",
+          "sha256": "9a318b7ed03f61d0d5607ad55fe209192f20f00c4d69c51a101767a4ef089c6b",
+          "baseline_sha256": "8ce1086dea8e5c3b5119e51c74e896fe7640097de41995dc7315d64e36855f80"
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/EventStoreOrganizationEffectivePermissionsReadModel.cs",
+          "sha256": "c65548c268f819a672dfe7edfa5975f70922c7f715a7e3d34b3da8a7d465a104",
+          "baseline_sha256": "30a58310adda6c8bd9cd9a2b0a10f2b00fcdc617e94316a60d2b45153f500173"
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/FolderFileIdentityMetadata.cs",
+          "sha256": "4d78e2d25bdd104778b5441a385fa68bd382670c8bf2b8bc848efbc622839f20",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/FolderFileIdentityReadModel.cs",
+          "sha256": "20a61c4f8daa3bf942a1c4c808194d8ed5018fe0f192cd7b4ed7f391fa383813",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/FolderPermissionEvidenceResult.cs",
+          "sha256": "4e4f448a87d385bb7c69d64f3cf8868de05dee7f1b5eb9b69d1492031e9b2277",
+          "baseline_sha256": "992ad7485f30b547abe99a207ca2862716d2dc036201d1ec3b16d29cdc3f4ac4"
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/FolderPermissionProjection.cs",
+          "sha256": "1d05ce323b92dbb495b674e1c53073a2d4f4eb7ff56647350951c1c1bab739f4",
+          "baseline_sha256": "7f1d8d1e14dceeae7adc8e9cdfd9d95f4477f5e0ca78a36a8faa3328ad670d06"
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/LayeredFolderAuthorizationAllowedContext.cs",
+          "sha256": "ac36d187184df90ef63c85720ed9a182f4c441518f33fa8bc716b394608b013f",
+          "baseline_sha256": "b6acaf520e035e8ec0c9d18d795f17e6e18edd07693a69b596d485f432925704"
+        },
+        {
+          "path": "src/Hexalith.Folders/Authorization/LayeredFolderAuthorizationService.cs",
+          "sha256": "097d4798db1eff1d0383115bdd54ee289903fb49afca6eb6548d3da6b14c31ff",
+          "baseline_sha256": "d438164eb72d42451419ec36739468c81564586865205246feaabe63080b24f1"
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/FolderFileIdentityProjectionTests.cs",
+          "sha256": "39484191caf235f1a2ac8dcfacf5eba638e5a4c1ddb7f7b4691ece23cc2dda63",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/FolderFileOwnerReadFixture.cs",
+          "sha256": "5896960166f3137623d91de23b5d95f343461a310c4a9ad73cb3f921a07bcafc",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/FolderFileOwnerReadQueryHandlerTests.cs",
+          "sha256": "2fd9ba3c65cf6e0be7637fcf776ebe2a3e5e18072452eb95ec736c134d289c74",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/FolderFilePermissionEvidenceProvider.cs",
+          "sha256": "cdef4680b391f3b40a281be4945bf24136049ebab9b8559b4d321cb0b78ce4d6",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/FolderOwnerReadQueryHandlerTests.cs",
+          "sha256": "3c764d0918c52e95f829c8e482e36562568e1cc11dd28da9ba1af0efa7ec6016",
+          "baseline_sha256": "2070b3a5abee2ec13876301bbfcd2d8f6607ccc7cff2a0ecc72cce27d0084078"
+        },
+        {
+          "path": "tests/Hexalith.Folders.Server.Tests/FolderOwnerReadStore.cs",
+          "sha256": "24d84b1ac7c26c3fcebbc7f94f39888bd494d82f16e72e3baac3fbbb49ed8370",
+          "baseline_sha256": "4cd21f23836be7962d76a244e95a743cb015ca5fdeed1aa6ae20bc05f5e412fe"
+        },
+        {
+          "path": "tests/Hexalith.Folders.Tests/Aggregates/Folder/FolderWorkspaceFileMutationAggregateTests.cs",
+          "sha256": "185b0ea90f4a6f1eba9e0dfa356bbe4121010dc3b3ac61310ec0b6132ad52d03",
+          "baseline_sha256": "2b9f48db7e56672acdf12d8f9b6ee37b9e6b1ee1122eae6f3542f75608399820"
+        },
+        {
+          "path": "tests/Hexalith.Folders.Tests/Aggregates/Folder/FolderWorkspaceFileMutationServiceTests.cs",
+          "sha256": "479abbbb892de4bc65a45aca06aec8dad8b62b77310ac8575918ed90d051bb97",
+          "baseline_sha256": "2054e569cfe0d40644185297b7ca59128572e2dafa2da55701a99929fed28501"
+        },
+        {
+          "path": "tests/Hexalith.Folders.Tests/Aggregates/Folder/RecordingFileReferenceBindingAuthority.cs",
+          "sha256": "df1acdb80de5504f5620ecf0c7bb4185d241f9b8117157ba6bd84b1fc9f329c0",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Folders.Tests/Aggregates/Folder/RecordingFolderRepository.cs",
+          "sha256": "fc5c68c691256ba0a3038b4eaa1330156235579c5ba8cc71de1f7bbbb3dbd710",
+          "baseline_sha256": "52c3f6c7e120920e570c93174ad0b1e47d94508051eda0f2037c060e655726e1"
+        }
+      ],
+      "patch": "Hexalith.Folders-final-source.patch",
+      "patch_sha256": "0108f601e063130e33a8f449c724ae41a00c367943994cfb4c417e01a5820bb1",
+      "patch_bytes": 111078
+    },
+    "Hexalith.Tenants": {
+      "baseline": "1f0f4edb6be91dd07028c0303a3f308841c3b414",
+      "head": "1f0f4edb6be91dd07028c0303a3f308841c3b414",
+      "branch": "main",
+      "status": " M src/Hexalith.Tenants/Program.cs\n M src/Hexalith.Tenants/Queries/Handlers/TenantOwnerAuthorityQueryHandler.cs\n?? src/Hexalith.Tenants.Contracts/Queries/ResolveTenantReadAuthority.cs\n?? src/Hexalith.Tenants.Contracts/Queries/TenantReadAuthorityResult.cs\n?? src/Hexalith.Tenants/Queries/Handlers/TenantReadAuthorityQueryHandler.cs\n?? tests/Hexalith.Tenants.Server.Tests/Queries/TenantReadAuthorityQueryHandlerTests.cs\n",
+      "files": [
+        {
+          "path": "src/Hexalith.Tenants.Contracts/Queries/ResolveTenantReadAuthority.cs",
+          "sha256": "c8d212521ede8e2504ff464bc3936337f82e920bc098f9aa529361c01f67636d",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Tenants.Contracts/Queries/TenantReadAuthorityResult.cs",
+          "sha256": "aa2c6ecbe41942cb818afdced1f2029e97cfe0ef8c2aea5e6d96f1b18b50f814",
+          "baseline_sha256": null
+        },
+        {
+          "path": "src/Hexalith.Tenants/Program.cs",
+          "sha256": "7979089c148548cb1f7d3f53778c78d0960fb56a71ecfaeca2c5acbb2032a017",
+          "baseline_sha256": "d6fb622d9220d9d38fd3781581336d6d0df8303d2e1cd7a5a963a264ee68b8de"
+        },
+        {
+          "path": "src/Hexalith.Tenants/Queries/Handlers/TenantOwnerAuthorityQueryHandler.cs",
+          "sha256": "07497eaa2e841a1e53b0af7eaa4e94f87d3e90d78bc31b364abf68997c37d94a",
+          "baseline_sha256": "863b000718b80d46daab51796c9f799f3630c0632c2ec3b2efb1ab46b62a0a66"
+        },
+        {
+          "path": "src/Hexalith.Tenants/Queries/Handlers/TenantReadAuthorityQueryHandler.cs",
+          "sha256": "688cd9347093a8076b3a09ce3110abce95a43c07375d8d3c17024c0ce92b8c7d",
+          "baseline_sha256": null
+        },
+        {
+          "path": "tests/Hexalith.Tenants.Server.Tests/Queries/TenantReadAuthorityQueryHandlerTests.cs",
+          "sha256": "3f85a42ccc4d8d188b6ea53826459cb872ceedd7ee4abd94cea9092cc0ec51d7",
+          "baseline_sha256": null
+        }
+      ],
+      "patch": "Hexalith.Tenants-final-source.patch",
+      "patch_sha256": "2c022abbe84ccf0378231af87af4070783d93757bca37e07504ef32c201a30a3",
+      "patch_bytes": 19986
+    },
+    "Projects": {
+      "head": "7096ee4caf4757a76e086f878c5f79bd52559d3e",
+      "branch": "main",
+      "status": " M _bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md\n M _bmad-output/implementation-artifacts/deferred-work.md\n M _bmad-output/implementation-artifacts/spec-6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md\n M _bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md\n M references/Hexalith.Conversations\n M references/Hexalith.EventStore\n M references/Hexalith.Folders\n M references/Hexalith.Tenants\n?? _bmad-output/implementation-artifacts/evidence/6-4-owner-prerequisites-20261020/\n"
+    },
+    "Hexalith.Builds": {
+      "head": "e40ed9c7110d56a2f38c9291627728aea2f205cb",
+      "branch": "main",
+      "status": ""
+    },
+    "Hexalith.Platform": {
+      "head": "11893ca9fd85644cab8a0414b2076bf346f108f6",
+      "branch": "main",
+      "status": ""
+    }
+  }
+}

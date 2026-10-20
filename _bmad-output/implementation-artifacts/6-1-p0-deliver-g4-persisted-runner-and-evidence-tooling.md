@@ -61,6 +61,33 @@ projects_baseline_commit: ec447e4
 
 Status: handed-off
 
+
+### Approved preparation continuation — 2026-10-20
+
+The user approved the current-catalog preparation tuple with “I approve”. This
+supersedes the historical 4.29.1/3.110.0 preparation target for this continuation;
+it does not replace historical acceptance or accept unseen results. The original
+proposal is retained unchanged in the owning Builds documentation checkout at
+`/home/administrator/projects/hexalith/builds/_bmad-output/implementation-artifacts/6-1-p0-tool-runtime-tuple-proposal-20261020.md`.
+Execution and exact artifact identities are recorded in
+`/home/administrator/projects/hexalith/builds/evidence/g4/approved-tuple-20261020/continuation-state.json`.
+
+Both local tools `4.33.2-p0.20261020.1` passed the source/package contract gate
+from Builds `e40ed9c7110d56a2f38c9291627728aea2f205cb`, embedding EventStore
+`3.126.0` / FrontComposer `4.7.0`. No tool publication or Projects adoption is
+claimed. G-6 passed and independently validated on frozen Projects
+`83c4802be3626560e53d4ef88aa78647e89df589`, qualifier
+`47def45665312410b73fa12cb047c6bbaa431cf2`, artifact SHA-256
+`287663d2a1d5ae25acf64e27a9984780062f26aaa4b8e71a972c73ead4488a08`.
+Its named result assessment remains pending; this is local source qualification.
+P1R fresh observation passed with exact published EventStore source
+`fcf78d6cafb6c0c9f52dc350a9a09aff54ded288`; the complete campaign is running.
+P0 live/native/publication/rollback evidence and actual owner acceptance remain
+required before Projects consumer adoption. Guarded capability status remains
+unaccepted; resolution adoption additionally requires the released owner APIs
+and existing D1–D6 delivery work. No redesign vote or runtime downgrade is inferred.
+
+
 <!--
 This is the Projects-side handoff for the external 6.1-P0 enablement work package. It is not an
 additional Hexalith.Projects user-value story and does not change the approved 33-story backlog.

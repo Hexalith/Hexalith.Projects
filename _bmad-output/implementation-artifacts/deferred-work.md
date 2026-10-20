@@ -1054,3 +1054,7 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
   summary: Add Epic 6 metadata-read latency targets to future Story 6.4 resolution acceptance.
   evidence: The pre-existing draft omits p95 under 500 ms at 1,000 Projects/500 references and under one second at supported maximum size; no resolution read is implemented yet.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
+  summary: Qualify or repair cold native source inspection before Story 6.4 G-4 consumption.
+  evidence: AggregateActor.OnActivateAsync can perform recovery/reminder writes before InspectSourceProofAsync; stable warm-turn tests do not prove cold zero-write behavior. Owner evidence and parent gates remain blocked.
