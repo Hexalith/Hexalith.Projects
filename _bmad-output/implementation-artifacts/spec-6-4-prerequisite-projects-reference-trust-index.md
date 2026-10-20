@@ -7,6 +7,7 @@ route: 'dispatch'
 artifact_kind: 'separately-scoped-rti-prerequisite'
 readiness: 'blocked-owner-source-contracts'
 baseline_commit: '16886b7d9c15b5356fad860b0d7b0f97eb9f32b3'
+revalidated_commit: '02ce53a039d2fd3c87b7c7232662eaa89ec2ddd7'
 review_loop_iteration: 0
 context:
   - '_bmad-output/implementation-artifacts/6-4-prerequisite-decisions-2026-10-20.md'
@@ -41,7 +42,7 @@ context:
 
 ## Source Dependencies
 
-The [fresh owner-contract preflight](evidence/6-4-projects-rti-preflight-20261020/owner-contracts.md) identifies missing certified owner/Projects coverage, content-free Conversation metadata/purpose authority, stable File mapping with native Folder/File evidence, and supported-scale enrollment. Concurrent EventStore transport repairs require qualification when complete. These are dependencies, not new design questions. This draft cannot become ready-for-dev until they are executable.
+The [current revalidation](evidence/6-4-projects-rti-revalidation-20261020/owner-contracts.md) confirms missing certified owner/Projects coverage and initialized-empty proof, content-free Conversation metadata/purpose authority, stable File mapping/native evidence and supported-scale enrollment. EventStore transport repairs are committed and focused SDK checks pass; deployment qualification remains separate. These dependencies keep this draft blocked. The [earlier preflight](evidence/6-4-projects-rti-preflight-20261020/owner-contracts.md) remains historical.
 
 ## Code Map
 
@@ -75,6 +76,8 @@ The [fresh owner-contract preflight](evidence/6-4-projects-rti-preflight-2026102
 
 2026-10-20: User authorized this separate RTI scope. Source inspection failed the prerequisite gate; no product implementation or RTI proof is claimed. Existing decision/annex/spec edits are preserved. See the linked report and receipt for exact source evidence and validation limits.
 
+2026-10-20 resume: Revalidated the advanced owner checkouts; source gates remain closed. Only this spec and new evidence change; frozen intent is preserved. Parent handlers remain gated on owner evidence, exact-current qualification and accepted G-4 consumption. No intent gap or irreversible action is introduced.
+
 ## Spec Change Log
 
 ## Review Triage Log
@@ -85,3 +88,4 @@ The [fresh owner-contract preflight](evidence/6-4-projects-rti-preflight-2026102
 - `git diff --check` plus explicit new-file format/link checks validate these artifacts.
 - Snapshot original file hashes, owner revisions/status and Git index before/after; preserve concurrent work.
 - Application replay/rebuild, revocation, equivalence, zero-write and performance proofs remain unexecuted until the missing owner contracts exist. Existing tests cannot qualify nonexistent operations.
+- Current receipt: resolution tests 101/101; SDK authority tests 20/20. Server test build fails with Folders CS1061 at `FoldersServerHostComposition.cs:138` and `:139`; no current server test assembly is available. Both planning validators pass.

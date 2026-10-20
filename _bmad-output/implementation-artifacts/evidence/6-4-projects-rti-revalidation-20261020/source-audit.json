@@ -1,0 +1,1165 @@
+{
+  "artifact_kind": "projects-rti-owner-source-revalidation",
+  "recorded_at_utc": "2026-10-20T10:55:11.225039+00:00",
+  "result": "blocked-owner-source-contracts",
+  "implementation_delivered": false,
+  "parent_handlers_added": false,
+  "baseline_snapshot_captured_at_utc": "2026-10-20T10:46:53.076586+00:00",
+  "repositories_at_baseline_snapshot": {
+    "Projects": {
+      "path": ".",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "02ce53a039d2fd3c87b7c7232662eaa89ec2ddd7\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "remotes": {
+        "command": [
+          "git",
+          "remote",
+          "-v"
+        ],
+        "exit_code": 0,
+        "stdout": "origin\thttps://github.com/Hexalith/Hexalith.Projects.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Projects.git (push)\n",
+        "stderr": ""
+      },
+      "history": {
+        "command": [
+          "git",
+          "log",
+          "-3",
+          "--format=%H %s"
+        ],
+        "exit_code": 0,
+        "stdout": "02ce53a039d2fd3c87b7c7232662eaa89ec2ddd7 fix: story 6.1\n76844f4eb38c6e3d2938ba025fab7d94080db871 build: sync local changes via /pushall\n5d8f6edf8740e974fec37e40c21c27680b0c7cb4 build: sync local changes via /pushall\n",
+        "stderr": ""
+      },
+      "index_sha256": "3a36e6a5b8e1c7f9391d8ac03b7306c6010770efa84616a2eb084affe3851b4c"
+    },
+    "EventStore": {
+      "path": "references/Hexalith.EventStore",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "6c56c27bc1a8d63c83f9631f7162cf79fdde0a1e\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "remotes": {
+        "command": [
+          "git",
+          "remote",
+          "-v"
+        ],
+        "exit_code": 0,
+        "stdout": "origin\thttps://github.com/Hexalith/Hexalith.EventStore.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.EventStore.git (push)\n",
+        "stderr": ""
+      },
+      "history": {
+        "command": [
+          "git",
+          "log",
+          "-3",
+          "--format=%H %s"
+        ],
+        "exit_code": 0,
+        "stdout": "6c56c27bc1a8d63c83f9631f7162cf79fdde0a1e build: sync local changes via /pushall\n5d140359cc4021156ef32e8cb5e7bfa763a1f00c fix(signalr): enforce serialized metadata limits\nb16be63521e8b784fc68828e0267f892b8e45924 docs: scope the own AppHost in the quickstart\n",
+        "stderr": ""
+      },
+      "index_sha256": "fb8ee8ced610e362bf410d9bcc8239103bff0bf89ebbeb0a26a89aa467162018"
+    },
+    "Conversations": {
+      "path": "references/Hexalith.Conversations",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "0c7bfac19cafbf4cbb2f67340b06e569280ef05a\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "remotes": {
+        "command": [
+          "git",
+          "remote",
+          "-v"
+        ],
+        "exit_code": 0,
+        "stdout": "origin\thttps://github.com/Hexalith/Hexalith.Conversations.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Conversations.git (push)\n",
+        "stderr": ""
+      },
+      "history": {
+        "command": [
+          "git",
+          "log",
+          "-3",
+          "--format=%H %s"
+        ],
+        "exit_code": 0,
+        "stdout": "0c7bfac19cafbf4cbb2f67340b06e569280ef05a build: sync local changes via /pushall\n05d38200ab75d6b367fcaf13a4ba33e7c02caaa7 docs(authoring): publish verified story 11.2 fixture evidence\n71aa15e639c8cea15c46aa1f159df38cb363d06a fix(authoring): verify fixture claims and platform checkout identity\n",
+        "stderr": ""
+      },
+      "index_sha256": "c92e0f874ddfadfa408950ecfb2865082a371c6798a39a880b9154a0a74806b3"
+    },
+    "Folders": {
+      "path": "references/Hexalith.Folders",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "9bacd7f62848c23222dc7309635eb65dc6e5ed9c\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "remotes": {
+        "command": [
+          "git",
+          "remote",
+          "-v"
+        ],
+        "exit_code": 0,
+        "stdout": "origin\thttps://github.com/Hexalith/Hexalith.Folders.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Folders.git (push)\n",
+        "stderr": ""
+      },
+      "history": {
+        "command": [
+          "git",
+          "log",
+          "-3",
+          "--format=%H %s"
+        ],
+        "exit_code": 0,
+        "stdout": "9bacd7f62848c23222dc7309635eb65dc6e5ed9c build: sync local changes via /pushall\n92fe7b40b144a52145ce2c696c9987b3d8d92740 fix: story 12.2\nb49b0b206238056b3aa3c963edc44b1b6fc0f5cc build: sync local changes via /pushall\n",
+        "stderr": ""
+      },
+      "index_sha256": "4c3ec0612b6f7cf1815e86006dc6bbc02976c75eece51fa4b98cf9ac681b81f1"
+    },
+    "Builds": {
+      "path": "references/Hexalith.Builds",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "5d03f1db9c38db34ecac7fe6048937478ffb82cc\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "remotes": {
+        "command": [
+          "git",
+          "remote",
+          "-v"
+        ],
+        "exit_code": 0,
+        "stdout": "origin\thttps://github.com/Hexalith/Hexalith.Builds.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Builds.git (push)\n",
+        "stderr": ""
+      },
+      "history": {
+        "command": [
+          "git",
+          "log",
+          "-3",
+          "--format=%H %s"
+        ],
+        "exit_code": 0,
+        "stdout": "5d03f1db9c38db34ecac7fe6048937478ffb82cc build: merge fix/p1r-3106-rollback-candidate into main via /pushall\nb12240ea117cd1b0b7eaa50bedc2d7bad35b06a3 build: merge backup-caad9ba into main via /pushall\n6a38cb0f2e74977d7457fc59e6af79457ed8196a build: sync local changes via /pushall\n",
+        "stderr": ""
+      },
+      "index_sha256": "00e5ffec38d7eda2f34d2e56cade3b58b0cf265e9517cba5646d4d6a70491fdb"
+    },
+    "Platform": {
+      "path": "references/Hexalith.Platform",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "bb81fc9e98533246cfeed43ffcce08866a2a57f6\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "remotes": {
+        "command": [
+          "git",
+          "remote",
+          "-v"
+        ],
+        "exit_code": 0,
+        "stdout": "origin\thttps://github.com/Hexalith/Hexalith.Platform.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Platform.git (push)\n",
+        "stderr": ""
+      },
+      "history": {
+        "command": [
+          "git",
+          "log",
+          "-3",
+          "--format=%H %s"
+        ],
+        "exit_code": 0,
+        "stdout": "bb81fc9e98533246cfeed43ffcce08866a2a57f6 docs(story): record story 1.11 release approval checkpoint\n23a35074b10f999946ed5fdd621e4bb60af73de8 fix: secrets\n6664e2a6e7d1635b4b2b15968bec9ca30247dc81 fix(platform): apply story 1.11 review pass 2 and bump Builds\n",
+        "stderr": ""
+      },
+      "index_sha256": "0d8bd1c77dbbd63b16d633e0d4eb9f8e1463f182ca40d82887c08e2f4db6c426"
+    }
+  },
+  "root_gitlinks": {
+    "command": [
+      "git",
+      "ls-files",
+      "--stage",
+      "references"
+    ],
+    "exit_code": 0,
+    "stdout": "160000 3f194e17174994d308ec84af9ee2b5aa68674d0d 0\treferences/Hexalith.AI.Tools\n160000 5d03f1db9c38db34ecac7fe6048937478ffb82cc 0\treferences/Hexalith.Builds\n160000 5c23c818f639c5bb3175f964c5549440bd5b876d 0\treferences/Hexalith.Commons\n160000 0c7bfac19cafbf4cbb2f67340b06e569280ef05a 0\treferences/Hexalith.Conversations\n160000 6c56c27bc1a8d63c83f9631f7162cf79fdde0a1e 0\treferences/Hexalith.EventStore\n160000 9bacd7f62848c23222dc7309635eb65dc6e5ed9c 0\treferences/Hexalith.Folders\n160000 a2196fd67d6da3e9e56200847f6ea3b51419fc0a 0\treferences/Hexalith.FrontComposer\n160000 b616db3092a9b1c5af196538a3de37a5c7f2d7ca 0\treferences/Hexalith.McpCli\n160000 72a97345b4230e39627cd2026934a547df7d43a4 0\treferences/Hexalith.Memories\n160000 836b2ba4aa41cdf8a7812b97a5da7c08896c0c7c 0\treferences/Hexalith.Parties\n160000 bb81fc9e98533246cfeed43ffcce08866a2a57f6 0\treferences/Hexalith.Platform\n160000 243d0c4a3f845e3f582a32c08e373651d978ff0e 0\treferences/Hexalith.Tenants\n",
+    "stderr": ""
+  },
+  "source_symbol_probes": [
+    {
+      "command": [
+        "rg",
+        "-n",
+        "GetConversationResolutionMetadata|ConversationResolutionMetadataV1|ConversationResolutionMetadataReadModel|ReadResolutionMetadata",
+        "references/Hexalith.Conversations/src",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "FolderOwnerReadEvidence|FolderFileOwnerRead|FileReferenceId|OwnerFileId",
+        "references/Hexalith.Folders/src",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "ReferenceTrust|SourcePublication|SourceNamespace|ISourcePublicationNamespaceAuthority|IInstallationCoverageAuthority",
+        "src",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "SourcePublication|SourceNamespace|NamespaceAuthority",
+        "references/Hexalith.Folders/src",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "ISourcePublicationNamespaceAuthority|ISourcePublicationOperationAuthority|IInstallationCoverageAuthority",
+        "references/Hexalith.EventStore/src",
+        "references/Hexalith.EventStore/samples",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/SharedProjectionSourceRosterActor.cs:33:public interface IInstallationCoverageAuthority\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/SharedProjectionSourceRosterActor.cs:152:    IInstallationCoverageAuthority? authority = null,\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/DaprSourcePublicationWriterRegistration.cs:14:    private readonly ISourcePublicationNamespaceAuthority _authority;\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/DaprSourcePublicationWriterRegistration.cs:18:        ISourcePublicationNamespaceAuthority authority, TimeProvider clock)\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/SourcePublicationNamespaceActor.cs:10:public sealed class SourcePublicationNamespaceActor(ActorHost host, ISourcePublicationOperationAuthority? operations = null) : Actor(host), ISourcePublicationNamespaceActor\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/ISourcePublicationNamespaceAuthority.cs:7:public interface ISourcePublicationNamespaceAuthority\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/DaprSourcePublicationNamespaceSource.cs:12:public sealed class DaprSourcePublicationNamespaceSource(IActorProxyFactory proxies, ISourcePublicationNamespaceAuthority authority,\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/SourcePublicationIndexActor.cs:12:public sealed class SourcePublicationIndexActor(ActorHost host, ISourcePublicationOperationAuthority? operations = null) : Actor(host), ISourcePublicationIndexActor\nreferences/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/ISourcePublicationOperationAuthority.cs:9:public interface ISourcePublicationOperationAuthority : IAnchoredStateTransitionAuthority\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "SourcePublication|SourceNamespace|NamespaceAuthority",
+        "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationTenantCatalogueRegistration.cs:7:public sealed record ConversationTenantCatalogueRegistration(SourcePublicationScope Scope);\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:21:    public async Task<ConversationAgentsOutcome> DeliverAsync(SourcePublicationIndexEntry entry, CancellationToken cancellationToken = default)\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:103:    public async Task<SourcePublicationDeliveryStatus> LookupAcknowledgementAsync(SourcePublicationIndexEntry entry, CancellationToken cancellationToken = default)\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:112:            { deadline.ThrowIfCancellationRequested(); return SourcePublicationDeliveryStatus.Unavailable; }\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:115:            if (admitted is null) { deadline.ThrowIfCancellationRequested(); return SourcePublicationDeliveryStatus.Unavailable; }\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:119:            { deadline.ThrowIfCancellationRequested(); return SourcePublicationDeliveryStatus.Unavailable; }\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:121:            if (source.Outcome == ConversationAgentsOutcome.Quarantined) { deadline.ThrowIfCancellationRequested(); return SourcePublicationDeliveryStatus.Quarantined; }\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:122:            if (source.Outcome != ConversationAgentsOutcome.Available) { deadline.ThrowIfCancellationRequested(); return SourcePublicationDeliveryStatus.Unavailable; }\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:123:            if (source.Acknowledgement is not null) { deadline.ThrowIfCancellationRequested(); return Confirmed(source) ? SourcePublicationDeliveryStatus.Acknowledged : SourcePublicationDeliveryStatus.Quarantined; }\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:125:                ? SourcePublicationDeliveryStatus.Pending : SourcePublicationDeliveryStatus.Unavailable;\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:127:        catch (OperationCanceledException) { cancellationToken.ThrowIfCancellationRequested(); return SourcePublicationDeliveryStatus.Unavailable; }\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:129:        { cancellationToken.ThrowIfCancellationRequested(); return SourcePublicationDeliveryStatus.Unavailable; }\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDeliveryPump.cs:133:    private static bool Matches(SourcePublicationDescriptor publication, ConversationDeletionSignal signal)\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationDelivery.cs:8:public sealed class ConversationDeletionPublicationDelivery(ConversationDeletionDeliveryPump pump) : ISourcePublicationDelivery\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationDelivery.cs:11:    public Task<SourcePublicationDeliveryStatus> LookupAcknowledgementAsync(SourcePublicationIndexEntry entry, CancellationToken cancellationToken = default)\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationDelivery.cs:14:    public async Task<SourcePublicationDeliveryStatus> DeliverAsync(SourcePublicationIndexEntry entry, CancellationToken cancellationToken = default)\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationDelivery.cs:17:            ConversationAgentsOutcome.Available => SourcePublicationDeliveryStatus.Acknowledged,\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationDelivery.cs:18:            ConversationAgentsOutcome.Quarantined => SourcePublicationDeliveryStatus.Quarantined,\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationDelivery.cs:19:            _ => SourcePublicationDeliveryStatus.Unavailable,\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDispatchWorker.cs:25:                var dispatcher = scope.ServiceProvider.GetRequiredService<SourcePublicationDispatcher>();\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionDispatchWorker.cs:26:                SourcePublicationDispatchResult result = await dispatcher.DispatchAsync(\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationProjector.cs:12:public sealed class ConversationDeletionPublicationProjector : ISourcePublicationProjector\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationProjector.cs:17:    public IReadOnlyList<SourcePublicationDescriptor> Project(AuthoritativeEventStream source, CancellationToken cancellationToken = default)\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationProjector.cs:25:        var publications = new List<SourcePublicationDescriptor>();\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/EventStoreConversationTenantCatalogue.cs:17:    SourceNamespaceSnapshotReader sources, TimeProvider clock) : IConversationTenantCatalogue\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationAgentServiceCollectionExtensions.cs:50:        services.TryAddScoped<SourceNamespaceSnapshotReader>();\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationAgentServiceCollectionExtensions.cs:76:            typeof(ISourcePublicationNamespaceSource), typeof(ISourcePublicationIndexStore),\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationAgentServiceCollectionExtensions.cs:97:        services.AddScoped<ISourcePublicationDelivery, ConversationDeletionPublicationDelivery>();\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationAgentServiceCollectionExtensions.cs:98:        services.AddScoped<ISourcePublicationProjector, ConversationDeletionPublicationProjector>();\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationAgentServiceCollectionExtensions.cs:99:        services.AddScoped<SourcePublicationFeed>();\nreferences/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationAgentServiceCollectionExtensions.cs:100:        services.AddScoped<SourcePublicationDispatcher>();\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "ResolveProjectFromConversationQueryHandler|ResolveProjectFromAttachmentsQueryHandler",
+        "src",
+        "--glob",
+        "*.cs"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "inspected_working_source_sha256": {
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Events/ConversationProjectChanged.cs": "8ceba54cf07a49786d40d738878e31326a9b0b8bf31cbc7a14fac83ee2ec2057",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Projections/ConversationSummaryProjectionV1.cs": "5eb8e75643fd31f99b224d0496af1ac4cf4c984e79ec36bee03f7491e08510e9",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Projections/ProjectionFreshnessV1.cs": "85e37a381b3e0c33c9a9728c3980fe4a9fafc787ecd9014d214bae90bd9ac168",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationAgentServiceCollectionExtensions.cs": "b7826d6b2e11bfd8a64949f38516485c63e33d08973ed1014e0c65cea6ccda2d",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/ConversationDeletionPublicationProjector.cs": "e8b78d372fc1c9d90085ad2952b6c21fca4c09b216bc1cce6b51978c3cf93071",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Agents/EventStoreConversationTenantCatalogue.cs": "109fe222c72d802cd8461f694f81ad6d654b529408e784447f76c5a5a486ff21",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionMaterializer.cs": "492d3b6711aa8f3b95934511796fdc5695b9b0c191058848f51077531ef5510b",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadModelKeys.cs": "b2be951aecedbb7a77e01ea081e782a71c859a79c556527f508a56905903b9ec",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs": "7b5b4aa5df017e509a62ec3a2e1b287ed991cc3001ef63f05f291bb5b943b5db",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/IConversationProjectionReadStore.cs": "b837c161faa496130d8942a870645cf913cb77746997cc23674a89de331bf086",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Publication/LocalConversationPublicationConsumer.cs": "d94969108f30d2fd4ddf317cdfa9654b8ea86f38c699d1d6ecf6bd05f72d0b3a",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/TenantAccess/ConversationTenantAccessDecision.cs": "d165ee8ac5fcc566bd337bb93819a99a7d7377a7f36a5247f1d3929b2cf124ff",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/TenantAccess/IConversationTenantAccessService.cs": "7abd6fcc51c9161111f3d6c4f3f26014c16c5f3989a836af955f0a6b62d847dd",
+    "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Agents/EventStoreConversationTenantCatalogueTests.cs": "5474a054a9e24370fc2c8ba141b87a49ed6a9e9c2ddb544a12cdf096872fc1f9",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Gateway/BoundOwnerQueryProof.cs": "6964294cca11da3847ddee133ef5c94678ff6f543b08aab12e845f0aef138ce2",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/IReadModelBatchStore.cs": "612aba0466d534ed256432d5b7ad8e501a3b184efeeef9d5a917f629aa6d0c37",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/IReadModelStore.cs": "3b8ccc234b494344623b92579e33c41b77a10c7562f0d7e31b396333552ad8c2",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelWritePolicy.cs": "0ba20acd111bba58dddc9c42c0a97a861337c3686baf4e9fb96f3ecb47853b93",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/SharedProjectionCheckpoint.cs": "4e387ef572385325c5a931047459c9af48de1cce182668a4ae8684aaa5158d60",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/SharedProjectionControlIndexWriter.cs": "39a3e933b476bc72e5eac1a790e7883c67403e64d457c21628f44f2c8ef38e5f",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Projections/SharedProjectionEpochCoordinator.cs": "6ba58bc3870ebcac84a3ceb3a9e36ef6e4764f4d956c8df8b0e42fa5dee2da3e",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Streams/ISourcePublicationNamespaceSource.cs": "d7e6fdc116ecf277ffc79ee9105df5221a2744a17de66dfc38579fcfb056cdf7",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Streams/SourcePublicationFeed.cs": "df5f2c4c76c660eedfee137edad4032c308f145624c194888b0d416208e60f51",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Queries/OriginatingQueryContext.cs": "a69d7b497b9000b2b76c2a1c4046c65154b2ce5ce363c84c44e8731c88b709d1",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Streams/SourcePublicationCheckpoint.cs": "7191a96c4ecc4405382b6d575a7aa7fbc009fd78007fe2acbb84c7fe48bbc9a2",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainQueryDispatcher.cs": "d6866e9e51c106c3eed0e3d005e4971f6987edc6c5fdccb7e64ee8e8afe32fc9",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/VerifiedQueryCaller.cs": "b799b9b224ed6c9119608a0c79139f10b62e2460ee1f929c6c5140dc6fc8fa1a",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Configuration/ServiceCollectionExtensions.cs": "217790015f549c033602b14efd8992dd7902e314524a1a8e8372d4aaa1c9b2af",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/DaprSourcePublicationNamespaceSource.cs": "6cd58d1cbf898a5f0c26fb2f664b2ebc447ef49c32e4ff98a047dd8ab1aa81a5",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Streams/ISourcePublicationNamespaceAuthority.cs": "d4406cd1ce4988ccf630e6c6ff6f38c093520312e67f85f00153303522462952",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/JwtWorkloadAssertionIssuer.ResourceBindings.cs": "640ff82b45256e5797bc24fce7002b71a38186b4505016596c4d06e239df3970",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/QueryCallerAuthorityBinding.cs": "8423c2eb21eb640ec5bbc96167ee54bf5ac0b063c3bf174551148bd14524e8e1",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadAuthorizationDetails.cs": "aad3d659d5334971074202cd5c67b7df5eb851c9523704ff1c691bd7a5787274",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Authentication/WorkloadBindingAuthority.cs": "33112e5f621780411eaae1edbdef7dc8e60aa9e0081e04547ff455210cfa0beb",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/QueriesController.cs": "b70ccbd1af468639d82ebe34a483d249026ee7e11f10f96566793dd11f63ba03",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/DomainServiceTrustBoundaryTests.QueryAuthority.cs": "cee15a6215845c2faad832ee4c055528e939cc57c3a6681434f000b874606456",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/QueryAuthorityCorrectionTests.cs": "daf4180b371b3676d07c673391ae7cce4a33ea90158b00f70b820ee9236577b3",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderOwnerReadOutcome.cs": "ecc51203ba6b82bc4e1c3f8d8a361479a5f84d8cf3df0f670ae30f568b7046f6",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderOwnerReadQuery.cs": "d45ed8b9042d7d4c84c6c71f431de874b8c43028f38d4ef233f9527b07759ee7",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderOwnerReadResult.cs": "d191d54baacd0e59c5e26010d9b588862961e6d5c082b7e505756a476c41774a",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersServerServiceCollectionExtensions.cs": "ad1f6e169fd7e093da4caeb96336c2386ebd9ff8496b339b709f091448c0f797",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs": "8b68bf1f3bae2f2fc0961fcf2b74c451996e38a335d6abb04d61e1f2819500b9",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Authorization/DaprOrganizationStreamSequenceReader.cs": "4877d7aadf8bed3d9615c0b3fe63b7c8f93f18fc127889a208cfb397f7251efd",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Authorization/EventStoreFolderEffectivePermissionsReadModel.cs": "8ce1086dea8e5c3b5119e51c74e896fe7640097de41995dc7315d64e36855f80",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Projections/SemanticIndexing/ISemanticIndexingBridgeReadModel.cs": "ee984c403afa36f9176fedba9a3481caed294f7f1e1307f31854b5cbb2cc4621",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Projections/SemanticIndexing/SemanticIndexingFileVersionIdentity.cs": "a5a5ec061b64fa7cef95ae4a74c3192f5c09fb25141e010b69c85d89ad2b869d",
+    "references/Hexalith.Folders/src/Hexalith.Folders/Queries/FileContext/WorkspaceFileContextSourceRequest.cs": "46cbe2517bc1760879ff05f4beeb2e2dbe9546f990e92d8e220a5788f53f29ac",
+    "src/Hexalith.Projects.Contracts/Models/ProjectFileReference.cs": "ddf255de10c12c06bd025186977f5cc47c9a173de43c87b4e80c46a67304ef20",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadIndex.cs": "36a24d899c76641aa553f54b5499ff9596403b9a7f3a8d46ee70033c7c466154",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadModel.cs": "b9a1187516486ca0179eefd49e8387dacc58ae889ce5fd124ece50c5c1397f1c",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadModelKeys.cs": "dcdcedeeff93fa6c9059d41415446c49d23b1ac3002db39b1667d2c0e80d37ed",
+    "src/Hexalith.Projects.Server/Projections/ProjectReads/ProjectReadProjectionHandler.cs": "ecb9debded338582659af7da5300bf93532424c45eca6b0f0cc3a4a5e28ef45c",
+    "src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs": "48b753af1b419bbe552312d59da3bece4332af0dede62b797fc0df18d5e524c3",
+    "src/Hexalith.Projects.Server/Queries/ProjectContextQueryExecutor.cs": "9708e0e7e33fdc6bad62cf5185eef13ec60ad320ab0137a47f83cb372f113b2c",
+    "src/Hexalith.Projects/Resolution/AttachmentResolutionEvidenceMapper.cs": "dfcae048026e61cf8bada7929cb8dd70507888e94bffe52096d01a7d37a5c5bf",
+    "src/Hexalith.Projects/Resolution/ConversationResolutionEvidenceMapper.cs": "a5593263054483c38f397c4210f54f2dfb0bd103d32ddb2d5990080a6c123ca2",
+    "src/Hexalith.Projects/Resolution/ProjectResolutionEngine.cs": "869d6fd6897c768fabe82636c1f0cd1f3c52c2a748193d1d61b5174f1aab4619",
+    "src/Hexalith.Projects/Resolution/ProjectResolutionScoringRules.cs": "07a0fd5ed2561dd6bd20a4281c22692ba69a160aa3b0f260ff74810a4e25539f",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/SharedProjectionSourceBeginProducer.cs": "190317130b72556f72fada64c72b9505e840a4c6f0f36c42b0cba99646ce86a2",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/SharedProjectionSourceRosterActor.cs": "11d74635147abe8d6421c20f49b6446d011f4eaed60d2d1c0c5b1f2b8feace0b",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/SharedProjectionSourceWriteFence.cs": "e7ba666e5b3e28ab8382cfcdbb41deb5bc08c697b384104dfe2e31fff25f061b",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/QueryAuthorityCorrectionTests.OwnerStatuses.cs": "8ff6cb7145f2df129dde98e1bd6457189f804aff4d1a14f503f56ec7e0e91176",
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/FoldersServerHostComposition.cs": "c085ae16fe4d566b46278885c51746462e2578470899f9010188f8080c4d4352",
+    "references/Hexalith.Folders/src/Hexalith.Folders/FoldersServiceCollectionExtensions.cs": "210c5b2902d8a711e2f66bec5f089b725a937370d012744b96a890b4048d93cb"
+  },
+  "proposed_file_presence": {
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Queries/GetConversationResolutionMetadataQuery.cs": false,
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/Queries/ConversationResolutionMetadataResultV1.cs": false,
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs": false,
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationResolutionMetadataDomainQueryHandler.cs": false,
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderOwnerReadEvidence.cs": false,
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderFileOwnerReadQuery.cs": false,
+    "references/Hexalith.Folders/src/Hexalith.Folders.Contracts/FolderFileOwnerReadResult.cs": false,
+    "references/Hexalith.Folders/src/Hexalith.Folders.Server/Queries/FolderFileOwnerReadQueryHandler.cs": false,
+    "src/Hexalith.Projects.Server/ReferenceTrust/ReferenceTrustIndexProjectionHandler.cs": false
+  },
+  "consumer_adoption_file_presence": {
+    ".config/dotnet-tools.json": false,
+    "module/hexalith-projects.module.json": false,
+    "evidence/g4/6.1-p0-acceptance.json": false
+  },
+  "remaining_dependencies": [
+    "Certified installed Projects/Conversation/Folder/File source scopes with complete legacy or virgin inventory, all-writer admission, native heads and invalidation mapping.",
+    "Isolated content-free Conversation metadata read with native resource/permission revisions and owner-enforced scoring-label classification/purpose.",
+    "Native Folder receipt and exact File evidence with authoritative Projects FileReferenceId mapping and stable identity/parent/lifecycle semantics.",
+    "Real supported-scale resolution enrollment and complete-response bound; exact-current qualification and accepted G-4 consumption remain separate parent gates."
+  ],
+  "transport_progress": "D1 correction is committed at the inspected EventStore HEAD. 20 focused SDK tests passed; production issuer/enrollment and real owner resource authorization are not qualified.",
+  "validation": [
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "-m:1"
+      ],
+      "cwd": ".",
+      "exit_code": 1,
+      "executed_tests": false,
+      "result": "CS1061 in FoldersServerHostComposition.cs:138,139: missing MapEventStoreDomainProjectionEndpoints and MapEventStoreDomainProjectionMetadataEndpoint",
+      "log_artifact": "projects-server-build.log.gz"
+    },
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "-m:1"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "warnings": 0,
+      "errors": 0,
+      "log_artifact": "projects-core-build.log.gz"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.Projects.Tests/bin/Debug/net10.0/Hexalith.Projects.Tests.dll",
+        "-class",
+        "Hexalith.Projects.Tests.Resolution.*",
+        "-xml",
+        "/tmp/projects-rti-revalidation-wl93dz0l/projects-resolution-tests.xml"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log_artifact": "projects-resolution-tests.log.gz",
+      "xml_artifact": "projects-resolution-tests.xml.gz",
+      "test_counts": {
+        "total": 101,
+        "passed": 101,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "not-run": 0
+      },
+      "test_assembly_sha256": "8b64abd5d1f68b015b338095773878df17ab2e0c0a5fd47bb42932076bd26a0d"
+    },
+    {
+      "command": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.EventStore.DomainService.Tests/Hexalith.EventStore.DomainService.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "-m:1"
+      ],
+      "cwd": "references/Hexalith.EventStore",
+      "exit_code": 0,
+      "warnings": 0,
+      "errors": 0,
+      "log_artifact": "eventstore-domainservice-build.log.gz"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.EventStore.DomainService.Tests/bin/Debug/net10.0/Hexalith.EventStore.DomainService.Tests.dll",
+        "-class",
+        "*.QueryAuthorityCorrectionTests",
+        "-xml",
+        "/tmp/projects-rti-revalidation-wl93dz0l/eventstore-authority-corrections.xml"
+      ],
+      "cwd": "references/Hexalith.EventStore",
+      "exit_code": 0,
+      "log_artifact": "eventstore-authority-corrections.log.gz",
+      "xml_artifact": "eventstore-authority-corrections.xml.gz",
+      "test_counts": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "not-run": 0
+      },
+      "test_assembly_sha256": "65e5e037d25ef33776a7939a40446dff6709962362393563f97a58e9fdd97bb2"
+    },
+    {
+      "command": [
+        "dotnet",
+        "tests/Hexalith.EventStore.DomainService.Tests/bin/Debug/net10.0/Hexalith.EventStore.DomainService.Tests.dll",
+        "-method",
+        "*.OwnerSdkSeparatelyExposesVerifiedOriginAndStillRunsCurrentOwnerAuthorization",
+        "-method",
+        "*.SignedQueryAuthorityPreservesOriginalWireAndRebuildsAdministratorHint",
+        "-xml",
+        "/tmp/projects-rti-revalidation-wl93dz0l/eventstore-origin-context.xml"
+      ],
+      "cwd": "references/Hexalith.EventStore",
+      "exit_code": 0,
+      "log_artifact": "eventstore-origin-context.log.gz",
+      "xml_artifact": "eventstore-origin-context.xml.gz",
+      "test_counts": {
+        "total": 12,
+        "passed": 12,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "not-run": 0
+      },
+      "test_assembly_sha256": "65e5e037d25ef33776a7939a40446dff6709962362393563f97a58e9fdd97bb2"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.4"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "PASS: Story 6.4 is within production authority\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "PASS: production-authority index is [6, 7, 8]\n",
+      "stderr": ""
+    },
+    {
+      "cwd": ".",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "test_artifacts": {
+    "projects-server-build.log.gz": {
+      "sha256": "47d77c94e615e116009395dbb89e546d566c7a4ae5402a900036c210584a366b",
+      "uncompressed_sha256": "f93413deaed728a2a64c48e2637dc41ac6a318360589e814bd68c17dce826f6b",
+      "uncompressed_bytes": 13876
+    },
+    "projects-core-build.log.gz": {
+      "sha256": "0e3e3b6d63ecfd07217343a711e7db4fa3122ecd467abf81aee1ad5888d5994f",
+      "uncompressed_sha256": "76aee8b6c4c5388dacc4a158c9c1e01ccbf6360721409b1fcc34bc2083b487f6",
+      "uncompressed_bytes": 2586
+    },
+    "projects-resolution-tests.log.gz": {
+      "sha256": "8f15dbd0f63a425137e3519241883567e8d490c40acf764a95e25d652981024c",
+      "uncompressed_sha256": "98d6c35f756e414f8baf7a811a0957705f40a4f3a11f5976a32615c52c7eadcc",
+      "uncompressed_bytes": 542
+    },
+    "projects-resolution-tests.xml.gz": {
+      "sha256": "e295b2a9e51d79ff822c18add50b961de954a53b0b39762771536bcf8adfab67",
+      "uncompressed_sha256": "7e861e728644007b4930b56ce61cf163f77d01784475d9670668511cf7206044",
+      "uncompressed_bytes": 70286
+    },
+    "eventstore-domainservice-build.log.gz": {
+      "sha256": "42ac1ae760d30a52ec96e1d06e9dab96ece39019b2589a5db7bdf200393f3ec1",
+      "uncompressed_sha256": "e00822c6aab48dfb5a80cf7dee068a9779c4b3928747e407efb283df0adb9d15",
+      "uncompressed_bytes": 1785
+    },
+    "eventstore-authority-corrections.log.gz": {
+      "sha256": "e79b1be3e7cce166a1c2ed36457a76d7d1af544bd41f72e9677b6dbb26d90538",
+      "uncompressed_sha256": "399808b455438808d330296a56e284c2a171d2c43307f6f923cd57978f5dbb1f",
+      "uncompressed_bytes": 620
+    },
+    "eventstore-authority-corrections.xml.gz": {
+      "sha256": "e1ddf15babba8f3a70569cc3d11171a4136422b744617a09e3e2740154a9e2e0",
+      "uncompressed_sha256": "505c124eec60deb3301fb7b89abac14bb8d8dbe62feebd58e4b710369793fb7a",
+      "uncompressed_bytes": 6962
+    },
+    "eventstore-origin-context.log.gz": {
+      "sha256": "edb00a557ba64a99c67d95c1dca62eb287c5b95bfe341dffbd791d63b29d161d",
+      "uncompressed_sha256": "ebb3dd43b33947b52a4db376b201d92ea30f8b4ace4a731866e5d6f2f0a47b97",
+      "uncompressed_bytes": 65375
+    },
+    "eventstore-origin-context.xml.gz": {
+      "sha256": "7a9d89e698642ea0ee4a48a3f02d3e9aa9a5be13713108972a03c812909984b6",
+      "uncompressed_sha256": "c5e0724ee2c24a7af037f7bfef5457591c7cce6c3509c945a4387e2714bf2c5d",
+      "uncompressed_bytes": 10312
+    }
+  },
+  "unexecuted_required_proofs": [
+    "RTI persisted replay/rebuild/restart convergence",
+    "actual reader request-scoped revocation/regrant and cross-actor isolation",
+    "complete indexed-versus-complete candidate/reason/outcome/order equivalence",
+    "isolated-producer persisted zero-write query comparison",
+    "authenticated complete-result supported-shape performance, cancellation/bounded concurrency and final response ceiling",
+    "exact-current owner/package/enrollment qualification and accepted G-4 consumption"
+  ],
+  "frozen_intent_sha256": "f57458285a8fb4b76dc38915a9cd9ee4bdd52eb24acc1fa6b218de394606fd45",
+  "repositories_at_receipt": {
+    "Projects": {
+      "path": ".",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "02ce53a039d2fd3c87b7c7232662eaa89ec2ddd7\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": " M _bmad-output/implementation-artifacts/spec-6-4-prerequisite-projects-reference-trust-index.md\n M references/Hexalith.Builds\n M src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj\n M tools/qualification/run_g6_current.py\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/eventstore-authority-corrections.log.gz\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/eventstore-authority-corrections.xml.gz\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/eventstore-domainservice-build.log.gz\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/eventstore-origin-context.log.gz\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/eventstore-origin-context.xml.gz\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/owner-contracts.md\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/projects-core-build.log.gz\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/projects-resolution-tests.log.gz\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/projects-resolution-tests.xml.gz\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/projects-server-build.log.gz\n?? _bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/source-audit.json\n",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "index_sha256": "3a36e6a5b8e1c7f9391d8ac03b7306c6010770efa84616a2eb084affe3851b4c",
+      "staged_diff": {
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--name-status"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "EventStore": {
+      "path": "references/Hexalith.EventStore",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "6c56c27bc1a8d63c83f9631f7162cf79fdde0a1e\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "index_sha256": "fb8ee8ced610e362bf410d9bcc8239103bff0bf89ebbeb0a26a89aa467162018",
+      "staged_diff": {
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--name-status"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "Conversations": {
+      "path": "references/Hexalith.Conversations",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "0c7bfac19cafbf4cbb2f67340b06e569280ef05a\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "index_sha256": "c92e0f874ddfadfa408950ecfb2865082a371c6798a39a880b9154a0a74806b3",
+      "staged_diff": {
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--name-status"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "Folders": {
+      "path": "references/Hexalith.Folders",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "9bacd7f62848c23222dc7309635eb65dc6e5ed9c\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "index_sha256": "4c3ec0612b6f7cf1815e86006dc6bbc02976c75eece51fa4b98cf9ac681b81f1",
+      "staged_diff": {
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--name-status"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "Builds": {
+      "path": "references/Hexalith.Builds",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "5d03f1db9c38db34ecac7fe6048937478ffb82cc\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": " M Tools/G4PackageQualification.functions.ps1\n M Tools/test-g4-tool-package-contracts.ps1\n M Tools/test-publish-g4-tool-packages.ps1\n M schemas/hexalith.module-manifest.v1.json\n M src/libraries/Hexalith.Builds.Tooling/Manifest/ModuleManifestLoader.cs\n M test/Hexalith.Builds.Module.Tests/CompositionRunPlanFactoryTests.cs\n M test/Hexalith.Builds.Module.Tests/ExecutableDescriptorLoaderTests.cs\n M test/Hexalith.Builds.Module.Tests/ManifestValidationTests.cs\n M test/Hexalith.Builds.Module.Tests/ModuleCommandApplicationTests.cs\n M test/Hexalith.Builds.Module.Tests/ModuleInvocationStateStoreTests.cs\n M test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceSerializationTests.cs\n M test/Hexalith.Builds.Module.Tests/ModuleRunEvidenceWriterTests.cs\n M test/Hexalith.Builds.Module.Tests/RuntimePrerequisiteGateTests.cs\n M test/fixtures/evidence/acceptance/README.md\n M test/fixtures/evidence/negative/artifact-command-filter-mismatch.yaml\n M test/fixtures/evidence/negative/artifact-command-manifest-mismatch.yaml\n M test/fixtures/evidence/negative/artifact-command-profile-mismatch.yaml\n M test/fixtures/evidence/negative/artifact-duplicate-option-mismatch.yaml\n M test/fixtures/evidence/negative/artifact-raw-filter-equals-mismatch.yaml\n M test/fixtures/evidence/negative/artifact-raw-filter-mismatch.yaml\n M test/fixtures/evidence/negative/binding-mismatch.yaml\n M test/fixtures/evidence/negative/coverage-shortfall.yaml\n M test/fixtures/evidence/negative/evidence/artifact-command-filter-mismatch.json\n M test/fixtures/evidence/negative/evidence/artifact-command-manifest-mismatch.json\n M test/fixtures/evidence/negative/evidence/artifact-command-profile-mismatch.json\n M test/fixtures/evidence/negative/evidence/artifact-duplicate-option-mismatch.json\n M test/fixtures/evidence/negative/evidence/artifact-raw-filter-equals-mismatch.json\n M test/fixtures/evidence/negative/evidence/artifact-raw-filter-mismatch.json\n M test/fixtures/evidence/negative/evidence/down-run.json\n M test/fixtures/evidence/negative/evidence/fixture-hash-mismatch.json\n M test/fixtures/evidence/negative/evidence/manifest-hash-mismatch.json\n M test/fixtures/evidence/negative/evidence/manifest-profile-fixture-mismatch.json\n M test/fixtures/evidence/negative/evidence/secret-metadata.json\n M test/fixtures/evidence/negative/evidence/test-no-tests.json\n M test/fixtures/evidence/negative/filter-hash-mismatch.yaml\n M test/fixtures/evidence/negative/fixture-hash-mismatch.yaml\n M test/fixtures/evidence/negative/fixture-path-mismatch.yaml\n M test/fixtures/evidence/negative/malformed-row-option-mismatch.yaml\n M test/fixtures/evidence/negative/manifest-hash-mismatch.yaml\n M test/fixtures/evidence/negative/manifest-path-mismatch.yaml\n M test/fixtures/evidence/negative/manifest-profile-fixture-mismatch.yaml\n M test/fixtures/evidence/negative/no-executed-tests.yaml\n M test/fixtures/evidence/negative/outcome-mismatch.yaml\n M test/fixtures/evidence/negative/policy-controls.yaml\n M test/fixtures/evidence/negative/row-duplicate-option-mismatch.yaml\n M test/fixtures/evidence/negative/row-missing-filter-mismatch.yaml\n M test/fixtures/evidence/negative/row-missing-manifest-mismatch.yaml\n M test/fixtures/evidence/negative/row-profile-mismatch.yaml\n M test/fixtures/evidence/negative/secret-metadata.yaml\n M test/fixtures/evidence/positive/evidence/release-passed.json\n M test/fixtures/evidence/positive/readiness.yaml\n M test/fixtures/module/executable/hexalith.module-manifest.v1.json\n M test/fixtures/module/negative/absolute-path.json\n M test/fixtures/module/negative/duplicate-id.json\n M test/fixtures/module/negative/duplicate-json-key.json\n M test/fixtures/module/negative/invalid-profile.json\n M test/fixtures/module/negative/malformed-dependency.json\n M test/fixtures/module/negative/missing-descriptor.json\n M test/fixtures/module/negative/missing-required-value.json\n M test/fixtures/module/negative/path-escape.json\n M test/fixtures/module/negative/placeholder.json\n M test/fixtures/module/negative/secret-bearing.json\n M test/fixtures/module/negative/superseded-frontcomposer-pin.json\n M test/fixtures/module/negative/superseded-platform-pin.json\n M test/fixtures/module/negative/tampered-platform-pin.json\n M test/fixtures/module/negative/unknown-field.json\n M test/fixtures/module/negative/unknown-schema.json\n M test/fixtures/module/negative/unsupported-profile-class.json\n M test/fixtures/module/positive/hexalith.module-manifest.v1.json\n?? Tools/g6-current-policy-2026-10-20.json\n?? evidence/g4/approved-tuple-20261020/approval.json\n",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "index_sha256": "00e5ffec38d7eda2f34d2e56cade3b58b0cf265e9517cba5646d4d6a70491fdb",
+      "staged_diff": {
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--name-status"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "Platform": {
+      "path": "references/Hexalith.Platform",
+      "head": {
+        "command": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "exit_code": 0,
+        "stdout": "bb81fc9e98533246cfeed43ffcce08866a2a57f6\n",
+        "stderr": ""
+      },
+      "status": {
+        "command": [
+          "git",
+          "status",
+          "--porcelain=v1",
+          "--untracked-files=all"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "branch": {
+        "command": [
+          "git",
+          "branch",
+          "--show-current"
+        ],
+        "exit_code": 0,
+        "stdout": "main\n",
+        "stderr": ""
+      },
+      "index_sha256": "0d8bd1c77dbbd63b16d633e0d4eb9f8e1463f182ca40d82887c08e2f4db6c426",
+      "staged_diff": {
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--name-status"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    }
+  },
+  "artifact_format_checks": [
+    {
+      "path": "_bmad-output/implementation-artifacts/spec-6-4-prerequisite-projects-reference-trust-index.md",
+      "utf8_crlf_final_newline_no_trailing_whitespace": true,
+      "local_links": [
+        "evidence/6-4-projects-rti-revalidation-20261020/owner-contracts.md",
+        "evidence/6-4-projects-rti-preflight-20261020/owner-contracts.md"
+      ]
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/owner-contracts.md",
+      "utf8_crlf_final_newline_no_trailing_whitespace": true,
+      "local_links": [
+        "../../spec-6-4-prerequisite-projects-reference-trust-index.md",
+        "../../6-4-prerequisite-decisions-2026-10-20.md",
+        "../../6-4-resolution-evidence-contracts.md",
+        "../6-4-projects-rti-preflight-20261020/owner-contracts.md",
+        "source-audit.json",
+        "../../6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md"
+      ]
+    },
+    {
+      "path": "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/source-audit.json",
+      "utf8_crlf_final_newline_no_trailing_whitespace": true,
+      "local_links": []
+    }
+  ],
+  "preservation": {
+    "original_root_regular_files_checked": 5998,
+    "original_root_byte_changes_observed": [
+      {
+        "path": "_bmad-output/implementation-artifacts/spec-6-4-prerequisite-projects-reference-trust-index.md",
+        "before_sha256": "4b13da089774a72534e52fd50d73c4e78a9079d745a7e419201ac752ca6885ff",
+        "after_sha256": "8a236acb67eae718a021f87d026ef9f45c4973b3c10c7b8cc9abf9d7bf253b44",
+        "attribution": "this RTI run"
+      },
+      {
+        "path": "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+        "before_sha256": "10312b469bea61d7064becdf56293f18728e65e9f99b5e49845a43d640228245",
+        "after_sha256": "69543faa046745c48450cbb3c5150df5f6ebb6fb02cbbdad146ce7939a62efd1",
+        "attribution": "concurrent work; this RTI run did not edit this file"
+      },
+      {
+        "path": "tools/qualification/run_g6_current.py",
+        "before_sha256": "6664f13d79627ed5828ce3ebc8fe1e9733053151689843a88b2f4e25270a4877",
+        "after_sha256": "4dfe42b242826d1f3f9edad8dc02730a182dc6bd0769fdb47839df4525e9df75",
+        "attribution": "concurrent work; this RTI run did not edit this file"
+      }
+    ],
+    "protected_file_hashes": {
+      "_bmad-output/implementation-artifacts/6-4-resolve-projects-with-transient-current-explanations.md": {
+        "before_sha256": "fecaa78260ec2c606e055059eb67a6f471e46a87faa58bf8919daf2feae33fb5",
+        "after_sha256": "fecaa78260ec2c606e055059eb67a6f471e46a87faa58bf8919daf2feae33fb5"
+      },
+      "_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md": {
+        "before_sha256": "125eb2e3b8160f1cdf556bcdbdcdb036613676222d8e23c05dcc0314bb10a26a",
+        "after_sha256": "125eb2e3b8160f1cdf556bcdbdcdb036613676222d8e23c05dcc0314bb10a26a"
+      },
+      "_bmad-output/implementation-artifacts/sprint-status.yaml": {
+        "before_sha256": "f210b33baf89adc976835e263e11f7d5f8c5acd23aeb09c3060fae19c980168a",
+        "after_sha256": "f210b33baf89adc976835e263e11f7d5f8c5acd23aeb09c3060fae19c980168a"
+      },
+      "_bmad-output/implementation-artifacts/6-4-prerequisite-decisions-2026-10-20.md": {
+        "before_sha256": "005672c767f655267004ab8788d83abb118f3732d36b86ff12db26a8ff1256cb",
+        "after_sha256": "005672c767f655267004ab8788d83abb118f3732d36b86ff12db26a8ff1256cb"
+      },
+      "_bmad-output/implementation-artifacts/6-4-resolution-evidence-contracts.md": {
+        "before_sha256": "93337259e741be5847a6273277128332c832fd7316d83abbd2fd3b260a1821de",
+        "after_sha256": "93337259e741be5847a6273277128332c832fd7316d83abbd2fd3b260a1821de"
+      },
+      "_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md": {
+        "before_sha256": "8006efebc8abfc72c1640b031852472e4ac595583f5afca6dfc3682857645357",
+        "after_sha256": "8006efebc8abfc72c1640b031852472e4ac595583f5afca6dfc3682857645357"
+      },
+      "_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md": {
+        "before_sha256": "38da44c4859d73f90371805c42b388089269eed29dcb075e883cd7e3911ca29b",
+        "after_sha256": "38da44c4859d73f90371805c42b388089269eed29dcb075e883cd7e3911ca29b"
+      },
+      "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json": {
+        "before_sha256": "37e2532154319cc030b9559f3cfee4bfb0853a4e50d47dcc0196f89e448a4eb7",
+        "after_sha256": "37e2532154319cc030b9559f3cfee4bfb0853a4e50d47dcc0196f89e448a4eb7"
+      },
+      "src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs": {
+        "before_sha256": "48b753af1b419bbe552312d59da3bece4332af0dede62b797fc0df18d5e524c3",
+        "after_sha256": "48b753af1b419bbe552312d59da3bece4332af0dede62b797fc0df18d5e524c3"
+      },
+      "Directory.Build.props": {
+        "before_sha256": "dd28973111bdb352af15b6e46c0793fe4137d94a6c68c122e0ecdce8fb27ca67",
+        "after_sha256": "dd28973111bdb352af15b6e46c0793fe4137d94a6c68c122e0ecdce8fb27ca67"
+      },
+      "Directory.Packages.props": {
+        "before_sha256": "db026ea147622209d4280cc35d27de75f3c2c5f480e8502272a2376ea0f07d5e",
+        "after_sha256": "db026ea147622209d4280cc35d27de75f3c2c5f480e8502272a2376ea0f07d5e"
+      },
+      "global.json": {
+        "before_sha256": "b3d0d3699172a60245e1a76a4350fe82acb05595e90b7082df5409aafce12b94",
+        "after_sha256": "b3d0d3699172a60245e1a76a4350fe82acb05595e90b7082df5409aafce12b94"
+      },
+      ".gitmodules": {
+        "before_sha256": "5b5054ea8ed4804a52a792e8bd0f77f8a6d6ecdd8185b58840c0fdc7da7946dc",
+        "after_sha256": "5b5054ea8ed4804a52a792e8bd0f77f8a6d6ecdd8185b58840c0fdc7da7946dc"
+      }
+    },
+    "inspected_source_hashes_checked": 64,
+    "all_repository_heads_unchanged": true,
+    "index_byte_digest_unchanged_by_repository": {
+      "Projects": true,
+      "EventStore": true,
+      "Conversations": true,
+      "Folders": true,
+      "Builds": true,
+      "Platform": true
+    },
+    "all_repository_staged_diffs_empty": true,
+    "frozen_block_bytes_identical_to_initial_head": true,
+    "frozen_block_bytes_sha256": "6b3dc205d5092b2acef2e38bf5d65d1f5b9bef2725082992bb09d13e9351fbcf",
+    "new_artifacts_from_this_task": [
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/eventstore-authority-corrections.log.gz",
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/eventstore-authority-corrections.xml.gz",
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/eventstore-domainservice-build.log.gz",
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/eventstore-origin-context.log.gz",
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/eventstore-origin-context.xml.gz",
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/owner-contracts.md",
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/projects-core-build.log.gz",
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/projects-resolution-tests.log.gz",
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/projects-resolution-tests.xml.gz",
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/projects-server-build.log.gz",
+      "_bmad-output/implementation-artifacts/evidence/6-4-projects-rti-revalidation-20261020/source-audit.json"
+    ],
+    "parent_and_sprint_unchanged": true,
+    "concurrent_work": "AppHost SDK pin/runtime qualifier edits and Builds untracked qualification work appeared after the initial clean snapshot. Preserved, not attributed to this RTI run. See repository statuses and per-file before/after hashes."
+  }
+}

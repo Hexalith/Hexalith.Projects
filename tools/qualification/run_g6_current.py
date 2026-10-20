@@ -128,7 +128,11 @@ def main(arguments: list[str] | None = None) -> int:
         suffix = uuid.uuid4().hex
         placement = f"g6-oq8-{suffix}-placement"
         scheduler = f"g6-oq8-{suffix}-scheduler"
-        runtime_image = f"daprio/dapr:{policy['tuple']['daprRuntime']}"
+        # The approved 1.18.2 Linux amd64 registry manifest is part of this qualifier's
+        # material source closure. A mutable tag cannot substitute a different image.
+        runtime_image = {
+            "1.18.2": "daprio/dapr@sha256:1146cf75f6a900f098489f995bcb2145bf9b040f87ab70eb0de2db21000d01bb",
+        }[policy["tuple"]["daprRuntime"]]
         run.start_container(placement, runtime_image, ["./placement", "--port", "50005"], 50005)
         with socket.socket() as connection:
             connection.bind(("127.0.0.1", 0))
