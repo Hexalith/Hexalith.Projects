@@ -63,7 +63,21 @@ claimed. G-6 passed and independently validated on frozen Projects
 The user accepted this exact result in Builds, Platform and FrontComposer/Web
 roles at `2026-10-20T14:40:32Z`; this remains local source qualification.
 P1R fresh observation passed with exact published EventStore source
-`fcf78d6cafb6c0c9f52dc350a9a09aff54ded288`; the complete campaign is running.
+`fcf78d6cafb6c0c9f52dc350a9a09aff54ded288`. Its first complete campaign measured
+4,805/4,808 passing scenario assertions; independent technical audit validated
+all 19 lanes/163 cases and retained the three restore failures. The existing
+retention fixture advanced metadata floor without advancing its source-proof
+floor. Correction is frozen separately at verifier
+`51422dff60f7f1db06f5356efea2548c45c370d7` (213/213 executor tests); a fresh
+campaign remains required. The accepted G-6 source result and approved runtime
+archives remain unchanged. The corrected campaign is running; no P1R acceptance
+is inferred from partial passing lanes.
+A separate observed 4.35.0 tool producer
+`fff4a212180d8cd1c5c0759655a9bc4fb6963c45` is proposed for later tool/G-6
+qualification at Projects `3f5ab317d1d1dbfafd6102308258818a84e0a322`.
+That source/version choice is pending; the approved local target remains active.
+The immutable review is Builds
+`_bmad-output/implementation-artifacts/6-1-p0-published-4-35-0-tuple-addendum-20261020.md`.
 P0 live/native/publication/rollback evidence and actual owner acceptance remain
 required before Projects consumer adoption. Guarded capability status remains
 unaccepted; resolution adoption additionally requires the released owner APIs

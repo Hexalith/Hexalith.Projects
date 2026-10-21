@@ -1,0 +1,904 @@
+diff --git a/src/Hexalith.Conversations.Contracts/Commands/CreateConversationCommand.cs b/src/Hexalith.Conversations.Contracts/Commands/CreateConversationCommand.cs
+index b136023..26baeda 100644
+--- a/src/Hexalith.Conversations.Contracts/Commands/CreateConversationCommand.cs
++++ b/src/Hexalith.Conversations.Contracts/Commands/CreateConversationCommand.cs
+@@ -3,7 +3,10 @@
+ // Licensed under the MIT License.
+ // </copyright>
+ 
++using System.Text.Json.Serialization;
++
+ using Hexalith.Conversations.Contracts.Identifiers;
++using Hexalith.Conversations.Contracts.Queries;
+ 
+ namespace Hexalith.Conversations.Contracts.Commands;
+ 
+@@ -24,4 +27,9 @@ public sealed record CreateConversationCommand(
+     FolderId? FolderId = null,
+     string? Label = null,
+     ProviderCorrelationMetadata? ProviderCorrelation = null,
+-    CallerMetadata? CallerMetadata = null);
++    CallerMetadata? CallerMetadata = null)
++{
++    /// <summary>Gets the explicit native classification of Label for the fixed internal scoring purpose.</summary>
++    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
++    public ConversationResolutionScoringLabel? ResolutionScoringLabel { get; init; }
++}
+diff --git a/src/Hexalith.Conversations.Contracts/Commands/UpdateConversationMetadataCommand.cs b/src/Hexalith.Conversations.Contracts/Commands/UpdateConversationMetadataCommand.cs
+index 890161d..1a12e47 100644
+--- a/src/Hexalith.Conversations.Contracts/Commands/UpdateConversationMetadataCommand.cs
++++ b/src/Hexalith.Conversations.Contracts/Commands/UpdateConversationMetadataCommand.cs
+@@ -3,7 +3,10 @@
+ // Licensed under the MIT License.
+ // </copyright>
+ 
++using System.Text.Json.Serialization;
++
+ using Hexalith.Conversations.Contracts.Identifiers;
++using Hexalith.Conversations.Contracts.Queries;
+ 
+ namespace Hexalith.Conversations.Contracts.Commands;
+ 
+@@ -22,4 +25,9 @@ public sealed record UpdateConversationMetadataCommand(
+     string? Label = null,
+     BusinessReference? BusinessReference = null,
+     IReadOnlyDictionary<string, string>? Attributes = null,
+-    CallerMetadata? CallerMetadata = null);
++    CallerMetadata? CallerMetadata = null)
++{
++    /// <summary>Gets an explicit native reclassification of the supplied Label for internal equality scoring.</summary>
++    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
++    public ConversationResolutionScoringLabel? ResolutionScoringLabel { get; init; }
++}
+diff --git a/src/Hexalith.Conversations.Contracts/Events/ConversationCreated.cs b/src/Hexalith.Conversations.Contracts/Events/ConversationCreated.cs
+index 6f677c1..e5bce5e 100644
+--- a/src/Hexalith.Conversations.Contracts/Events/ConversationCreated.cs
++++ b/src/Hexalith.Conversations.Contracts/Events/ConversationCreated.cs
+@@ -3,7 +3,10 @@
+ // Licensed under the MIT License.
+ // </copyright>
+ 
++using System.Text.Json.Serialization;
++
+ using Hexalith.Conversations.Contracts.Identifiers;
++using Hexalith.Conversations.Contracts.Queries;
+ 
+ namespace Hexalith.Conversations.Contracts.Events;
+ 
+@@ -24,6 +27,10 @@ public sealed record ConversationCreated(
+     string? Label = null,
+     ProviderCorrelationMetadata? ProviderCorrelation = null)
+ {
++    /// <summary>Gets the explicit native classification of Label for the fixed internal scoring purpose.</summary>
++    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
++    public ConversationResolutionScoringLabel? ResolutionScoringLabel { get; init; }
++
+     /// <summary>
+     /// Gets the public creation timestamp from metadata.
+     /// </summary>
+diff --git a/src/Hexalith.Conversations.Contracts/Events/ConversationMetadataUpdated.cs b/src/Hexalith.Conversations.Contracts/Events/ConversationMetadataUpdated.cs
+index fb179e0..8af83f6 100644
+--- a/src/Hexalith.Conversations.Contracts/Events/ConversationMetadataUpdated.cs
++++ b/src/Hexalith.Conversations.Contracts/Events/ConversationMetadataUpdated.cs
+@@ -3,7 +3,10 @@
+ // Licensed under the MIT License.
+ // </copyright>
+ 
++using System.Text.Json.Serialization;
++
+ using Hexalith.Conversations.Contracts.Identifiers;
++using Hexalith.Conversations.Contracts.Queries;
+ 
+ namespace Hexalith.Conversations.Contracts.Events;
+ 
+@@ -18,4 +21,9 @@ public sealed record ConversationMetadataUpdated(
+     ConversationEventMetadata Metadata,
+     string? Label = null,
+     BusinessReference? BusinessReference = null,
+-    IReadOnlyDictionary<string, string>? Attributes = null);
++    IReadOnlyDictionary<string, string>? Attributes = null)
++{
++    /// <summary>Gets an explicit native reclassification of the supplied Label for internal equality scoring.</summary>
++    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
++    public ConversationResolutionScoringLabel? ResolutionScoringLabel { get; init; }
++}
+diff --git a/src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs b/src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs
+index b4759cb..4f824e1 100644
+--- a/src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs
++++ b/src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs
+@@ -4,6 +4,7 @@
+ // </copyright>
+ 
+ using Hexalith.Conversations.Contracts.Projections;
++using Hexalith.Conversations.Contracts.Queries;
+ 
+ namespace Hexalith.Conversations.Server.Projections;
+ 
+@@ -31,6 +32,10 @@ public sealed record ConversationProjectedReadModels(
+     /// </summary>
+     public string DispatchId { get; init; } = string.Empty;
+ 
++    /// <summary>Gets the native classification folded with this generation; never inferred from descriptive Label.</summary>
++    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
++    public ConversationResolutionScoringLabel? ResolutionScoringLabel { get; init; }
++
+     /// <summary>Gets the exact source-local sequence supplied by the named producer, separate from projection position.</summary>
+     public long? SourceHeadSequence { get; init; }
+ 
+diff --git a/src/Hexalith.Conversations.Server/Projections/ConversationProjectionMaterializer.cs b/src/Hexalith.Conversations.Server/Projections/ConversationProjectionMaterializer.cs
+index 6d4dbe8..653a616 100644
+--- a/src/Hexalith.Conversations.Server/Projections/ConversationProjectionMaterializer.cs
++++ b/src/Hexalith.Conversations.Server/Projections/ConversationProjectionMaterializer.cs
+@@ -109,7 +109,7 @@ public sealed class ConversationProjectionMaterializer
+             trustPosture,
+             evidenceEntries);
+ 
+-        return new(summary, detail);
++        return new(summary, detail) { ResolutionScoringLabel = builder.ResolutionScoringLabel };
+     }
+ 
+     private static ProjectionFreshnessV1 CreateFreshness(
+@@ -614,6 +614,9 @@ public sealed class ConversationProjectionMaterializer
+             get; private set;
+         }
+ 
++        /// <summary>Gets the explicitly classified native label folded with this owner prefix.</summary>
++        public ConversationResolutionScoringLabel? ResolutionScoringLabel { get; private set; }
++
+         public string? Label
+         {
+             get; private set;
+@@ -802,6 +805,7 @@ public sealed class ConversationProjectionMaterializer
+                     _participants.Clear();
+                     _attributes.Clear();
+                     Label = null;
++                    ResolutionScoringLabel = null;
+                     BusinessReference = null;
+                     ProviderCorrelation = null;
+                     break;
+@@ -893,7 +897,13 @@ public sealed class ConversationProjectionMaterializer
+                 _lifecycleState = OpenState;
+             }
+ 
++            if (e.ResolutionScoringLabel is { } scoring && scoring.Value != e.Label)
++            {
++                Poisoned = true;
++                return;
++            }
+             Label ??= e.Label;
++            ResolutionScoringLabel = e.ResolutionScoringLabel;
+             BusinessReference ??= e.BusinessReference;
+             ProjectId ??= e.ProjectId;
+             FolderId ??= e.FolderId;
+@@ -979,9 +989,19 @@ public sealed class ConversationProjectionMaterializer
+         {
+             // Replace-all semantics: empty/null Attributes = no-op; non-empty = full replace.
+             // Producers cannot signal per-key deletion through this event.
++            if (e.ResolutionScoringLabel is { } scoring && (scoring.Value != e.Label || scoring.Value != (e.Label ?? Label)))
++            {
++                Poisoned = true;
++                return;
++            }
+             if (e.Label is not null)
+             {
+                 Label = e.Label;
++                ResolutionScoringLabel = null;
++            }
++            if (e.ResolutionScoringLabel is not null)
++            {
++                ResolutionScoringLabel = e.ResolutionScoringLabel;
+             }
+ 
+             if (e.BusinessReference is not null)
+diff --git a/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs b/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs
+index 125a16f..95f8f06 100644
+--- a/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs
++++ b/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs
+@@ -33,21 +33,30 @@ public sealed record ConversationResolutionMetadataReadModel(
+     /// <summary>Gets the actual persisted event identity, never an allocated generation identity.</summary>
+     public string? SourceHeadMessageId { get; init; }
+ 
++    /// <summary>Gets the native label purpose persisted with this isolated generation.</summary>
++    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
++    public string? LabelPurpose { get; init; }
++
+     /// <summary>The owner classification bound for internal equality scoring.</summary>
+-    public const int MaximumLabelLength = 160;
++    public const int MaximumLabelLength = ConversationResolutionScoringLabel.MaximumLength;
+ 
+     /// <summary>Builds the classified subset without truncating over-bound labels.</summary>
+     internal static ConversationResolutionMetadataReadModel From(
+         ConversationProjectedReadModels models, string fingerprint)
+     {
+         var summary = models.Summary;
+-        bool complete = ConversationResolutionScoringPolicy.CanClassify(summary.Label, ConversationResolutionScoringPolicy.Purpose);
++        ConversationResolutionScoringLabel? scoring = models.ResolutionScoringLabel;
++        bool complete = scoring is not null && scoring.Value == summary.Label
++            && scoring.Purpose == ConversationResolutionScoringPolicy.Purpose
++            && scoring.Classification == ConversationResolutionScoringPolicy.Classification
++            && ConversationResolutionScoringPolicy.CanClassify(scoring.Value, scoring.Purpose);
+         return new(summary.TenantId, summary.ConversationId,
+             new(summary.ConversationId.Value, summary.ProjectId?.Value,
+                 complete ? summary.Label : null, summary.LifecycleState),
+             summary.Freshness, models.DispatchId, fingerprint, complete,
+             complete ? ConversationResolutionScoringPolicy.Classification : null)
+-        { SourceHeadSequence = models.SourceHeadSequence, SourceHeadMessageId = models.SourceHeadMessageId };
++        { SourceHeadSequence = models.SourceHeadSequence, SourceHeadMessageId = models.SourceHeadMessageId,
++            LabelPurpose = complete ? scoring!.Purpose : null };
+     }
+ 
+     /// <summary>Computes a content-free consistency binding over the entire isolated generation.</summary>
+@@ -63,8 +72,9 @@ public sealed record ConversationResolutionMetadataReadModel(
+         && Metadata.SafeLabel?.Length is not > MaximumLabelLength
+         && (IsLabelComplete
+             ? LabelClassification == ConversationResolutionScoringPolicy.Classification
++                && LabelPurpose == ConversationResolutionScoringPolicy.Purpose
+                 && ConversationResolutionScoringPolicy.CanClassify(Metadata.SafeLabel, ConversationResolutionScoringPolicy.Purpose)
+-            : Metadata.SafeLabel is null && LabelClassification is null)
++            : Metadata.SafeLabel is null && LabelClassification is null && LabelPurpose is null)
+         && !string.IsNullOrWhiteSpace(DispatchId)
+         && RequestFingerprint is { Length: 64 } && RequestFingerprint.All(Uri.IsHexDigit);
+ }
+diff --git a/src/Hexalith.Conversations.Server/Projections/ConversationResolutionScoringPolicy.cs b/src/Hexalith.Conversations.Server/Projections/ConversationResolutionScoringPolicy.cs
+index 5b84008..d7097b9 100644
+--- a/src/Hexalith.Conversations.Server/Projections/ConversationResolutionScoringPolicy.cs
++++ b/src/Hexalith.Conversations.Server/Projections/ConversationResolutionScoringPolicy.cs
+@@ -1,4 +1,5 @@
+ using Hexalith.Conversations.Contracts.Governance;
++using Hexalith.Conversations.Contracts.Queries;
+ 
+ namespace Hexalith.Conversations.Server.Projections;
+ 
+@@ -6,10 +7,10 @@ namespace Hexalith.Conversations.Server.Projections;
+ internal static class ConversationResolutionScoringPolicy
+ {
+     /// <summary>The only supported purpose; inspection is never implied.</summary>
+-    internal const string Purpose = "projects-internal-equality-scoring";
++    internal const string Purpose = ConversationResolutionScoringLabel.SupportedPurpose;
+ 
+     /// <summary>Persisted owner policy provenance, independent of any caller or grant.</summary>
+-    internal const string Classification = "conversations-owner-safe-metadata-equality-v1";
++    internal const string Classification = ConversationResolutionScoringLabel.OwnerClassification;
+ 
+     /// <summary>Classifies the owner label only under the explicit scoring purpose and safe metadata rules.</summary>
+     internal static bool CanClassify(string? label, string purpose)
+diff --git a/src/Hexalith.Conversations.Server/Publication/ConversationPublicationMapper.cs b/src/Hexalith.Conversations.Server/Publication/ConversationPublicationMapper.cs
+index fe606f8..1b05586 100644
+--- a/src/Hexalith.Conversations.Server/Publication/ConversationPublicationMapper.cs
++++ b/src/Hexalith.Conversations.Server/Publication/ConversationPublicationMapper.cs
+@@ -67,7 +67,7 @@ public static class ConversationPublicationMapper
+                 e.ProjectId,
+                 e.FolderId,
+                 e.Label,
+-                e.ProviderCorrelation),
++                e.ProviderCorrelation) { ResolutionScoringLabel = e.ResolutionScoringLabel },
+             ParticipantAddedDomainEvent e => new ParticipantAdded(
+                 e.Metadata,
+                 e.ParticipantPartyId,
+diff --git a/src/Hexalith.Conversations/Aggregates/ConversationAggregate.cs b/src/Hexalith.Conversations/Aggregates/ConversationAggregate.cs
+index bebc41b..e754526 100644
+--- a/src/Hexalith.Conversations/Aggregates/ConversationAggregate.cs
++++ b/src/Hexalith.Conversations/Aggregates/ConversationAggregate.cs
+@@ -65,7 +65,10 @@ public sealed partial class ConversationAggregate : EventStoreAggregate<Conversa
+             publicCommand.FolderId,
+             publicCommand.Label,
+             commandMetadata.IdempotencyKey,
+-            publicCommand.ProviderCorrelation);
++            publicCommand.ProviderCorrelation)
++        {
++            ResolutionScoringLabel = publicCommand.ResolutionScoringLabel,
++        };
+ 
+         return DomainResult.Success(new IEventPayload[] { created });
+     }
+diff --git a/src/Hexalith.Conversations/Events/ConversationCreatedDomainEvent.cs b/src/Hexalith.Conversations/Events/ConversationCreatedDomainEvent.cs
+index bbcf164..e27f861 100644
+--- a/src/Hexalith.Conversations/Events/ConversationCreatedDomainEvent.cs
++++ b/src/Hexalith.Conversations/Events/ConversationCreatedDomainEvent.cs
+@@ -3,8 +3,11 @@
+ // Licensed under the MIT License.
+ // </copyright>
+ 
++using System.Text.Json.Serialization;
++
+ using Hexalith.Conversations.Contracts.Events;
+ using Hexalith.Conversations.Contracts.Identifiers;
++using Hexalith.Conversations.Contracts.Queries;
+ using Hexalith.EventStore.Contracts.Events;
+ 
+ namespace Hexalith.Conversations.Events;
+@@ -34,6 +37,10 @@ public sealed record ConversationCreatedDomainEvent(
+     string? IdempotencyKey = null,
+     ProviderCorrelationMetadata? ProviderCorrelation = null) : IEventPayload
+ {
++    /// <summary>Gets the explicit native classification of Label for the fixed internal scoring purpose.</summary>
++    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
++    public ConversationResolutionScoringLabel? ResolutionScoringLabel { get; init; }
++
+     /// <summary>
+     /// Gets the Conversations event metadata.
+     /// </summary>
+diff --git a/src/Hexalith.Conversations/Idempotency/ConversationCommandFingerprint.cs b/src/Hexalith.Conversations/Idempotency/ConversationCommandFingerprint.cs
+index e371daa..54e7d3e 100644
+--- a/src/Hexalith.Conversations/Idempotency/ConversationCommandFingerprint.cs
++++ b/src/Hexalith.Conversations/Idempotency/ConversationCommandFingerprint.cs
+@@ -75,7 +75,10 @@ public sealed record ConversationCommandFingerprint(
+                     .Concat(Optional("business.value", command.BusinessReference?.Value))
+                     .Concat(Optional("project.id", command.ProjectId?.Value))
+                     .Concat(Optional("folder.id", command.FolderId?.Value))
+-                    .Concat(Optional("label", command.Label))));
++                    .Concat(Optional("label", command.Label))
++                    .Concat(Optional("resolution.label.value", command.ResolutionScoringLabel?.Value))
++                    .Concat(Optional("resolution.label.purpose", command.ResolutionScoringLabel?.Purpose))
++                    .Concat(Optional("resolution.label.classification", command.ResolutionScoringLabel?.Classification))));
+     }
+ 
+     private static ConversationCommandFingerprint CreateForAppendMessage(AppendMessageCommand command)
+@@ -157,7 +160,10 @@ public sealed record ConversationCommandFingerprint(
+                     .Concat(Optional("label", command.Label))
+                     .Concat(Optional("business.system", command.BusinessReference?.System))
+                     .Concat(Optional("business.value", command.BusinessReference?.Value))
+-                    .Concat(SafeAttributes(command.Attributes))));
++                    .Concat(SafeAttributes(command.Attributes))
++                    .Concat(Optional("resolution.label.value", command.ResolutionScoringLabel?.Value))
++                    .Concat(Optional("resolution.label.purpose", command.ResolutionScoringLabel?.Purpose))
++                    .Concat(Optional("resolution.label.classification", command.ResolutionScoringLabel?.Classification))));
+     }
+ 
+     private static ConversationCommandFingerprint CreateForClose(CloseConversationCommand command)
+diff --git a/src/Hexalith.Conversations/State/ConversationState.cs b/src/Hexalith.Conversations/State/ConversationState.cs
+index 95985a3..1de5967 100644
+--- a/src/Hexalith.Conversations/State/ConversationState.cs
++++ b/src/Hexalith.Conversations/State/ConversationState.cs
+@@ -9,6 +9,7 @@ using Hexalith.Conversations.Contracts.Events;
+ using Hexalith.Conversations.Contracts.Governance;
+ using Hexalith.Conversations.Contracts.Identifiers;
+ using Hexalith.Conversations.Contracts.Participants;
++using Hexalith.Conversations.Contracts.Queries;
+ using Hexalith.Conversations.Contracts.Versioning;
+ using Hexalith.Conversations.Events;
+ 
+@@ -149,6 +150,9 @@ public sealed partial class ConversationState
+         private set;
+     }
+ 
++    /// <summary>Gets the explicit replayed owner classification; legacy labels leave this absent.</summary>
++    public ConversationResolutionScoringLabel? ResolutionScoringLabel { get; private set; }
++
+     /// <summary>
+     /// Gets the optional UI label that is not identity.
+     /// </summary>
+@@ -282,6 +286,10 @@ public sealed partial class ConversationState
+     public void Apply(ConversationCreatedDomainEvent e)
+     {
+         ArgumentNullException.ThrowIfNull(e);
++        if (e.ResolutionScoringLabel is { } scoring && scoring.Value != e.Label)
++        {
++            throw new InvalidOperationException("The native scoring label does not match its classified label.");
++        }
+         _sourceRevision++;
+ 
+         if (IsCreated)
+@@ -306,6 +314,7 @@ public sealed partial class ConversationState
+         ProjectId = e.ProjectId;
+         FolderId = e.FolderId;
+         Label = e.Label;
++        ResolutionScoringLabel = e.ResolutionScoringLabel;
+         IdempotencyKey = e.IdempotencyKey;
+         ProviderCorrelation = e.ProviderCorrelation;
+     }
+@@ -493,7 +502,7 @@ public sealed partial class ConversationState
+             e.ProjectId,
+             e.FolderId,
+             e.Label,
+-            ProviderCorrelation: e.ProviderCorrelation));
++            ProviderCorrelation: e.ProviderCorrelation) { ResolutionScoringLabel = e.ResolutionScoringLabel });
+     }
+ 
+     /// <summary>
+@@ -634,11 +643,20 @@ public sealed partial class ConversationState
+     public void Apply(ConversationMetadataUpdated e)
+     {
+         ArgumentNullException.ThrowIfNull(e);
++        if (e.ResolutionScoringLabel is { } scoring && (scoring.Value != e.Label || scoring.Value != (e.Label ?? Label)))
++        {
++            throw new InvalidOperationException("The native scoring classification does not match its metadata update.");
++        }
+         _sourceRevision++;
+ 
+         if (e.Label is not null)
+         {
+             Label = e.Label;
++            ResolutionScoringLabel = null;
++        }
++        if (e.ResolutionScoringLabel is not null)
++        {
++            ResolutionScoringLabel = e.ResolutionScoringLabel;
+         }
+ 
+         if (e.BusinessReference is not null)
+diff --git a/src/Hexalith.Conversations/Validation/ConversationCommandSchemaValidation.cs b/src/Hexalith.Conversations/Validation/ConversationCommandSchemaValidation.cs
+index 29f662b..eb89927 100644
+--- a/src/Hexalith.Conversations/Validation/ConversationCommandSchemaValidation.cs
++++ b/src/Hexalith.Conversations/Validation/ConversationCommandSchemaValidation.cs
+@@ -96,6 +96,13 @@ internal static class ConversationCommandSchemaValidation
+                 metadata.CausationId);
+         }
+ 
++        if (command is UpdateConversationMetadataCommand { ResolutionScoringLabel: { } scoring } scoringUpdate
++            && scoring.Value != scoringUpdate.Label)
++        {
++            return Reject(ConversationErrorCode.CommandValidationFailed, "scoring_label_mismatch",
++                metadata.SchemaVersion, metadata.CorrelationId, metadata.CausationId);
++        }
++
+         return null;
+     }
+ 
+diff --git a/src/Hexalith.Conversations/Validation/CreateConversationValidation.cs b/src/Hexalith.Conversations/Validation/CreateConversationValidation.cs
+index 310e08c..ae5a894 100644
+--- a/src/Hexalith.Conversations/Validation/CreateConversationValidation.cs
++++ b/src/Hexalith.Conversations/Validation/CreateConversationValidation.cs
+@@ -105,6 +105,12 @@ internal static class CreateConversationValidation
+                 metadata.CausationId);
+         }
+ 
++        if (publicCommand.ResolutionScoringLabel is { } scoring && scoring.Value != publicCommand.Label)
++        {
++            return Reject(ConversationErrorCode.CommandValidationFailed, "scoring_label_mismatch",
++                metadata.SchemaVersion, metadata.CorrelationId, metadata.CausationId);
++        }
++
+         return null;
+     }
+ 
+diff --git a/tests/Hexalith.Conversations.Contracts.Tests/ContractSamples.cs b/tests/Hexalith.Conversations.Contracts.Tests/ContractSamples.cs
+index 27a1e11..ed25f38 100644
+--- a/tests/Hexalith.Conversations.Contracts.Tests/ContractSamples.cs
++++ b/tests/Hexalith.Conversations.Contracts.Tests/ContractSamples.cs
+@@ -1072,6 +1072,8 @@ internal static class ContractSamples
+         Freshness,
+         FreshnessV1,
+         new GetConversationQuery(Version, Tenant, "caller-001", "correlation-001", Conversation),
++        new ConversationResolutionScoringLabel("Case 123", ConversationResolutionScoringLabel.SupportedPurpose,
++            ConversationResolutionScoringLabel.OwnerClassification),
+         new GetConversationResolutionMetadataQuery(),
+         new ConversationResolutionMetadataV1(Conversation.Value, Project.Value, "Case 123", "Open"),
+         new ConversationResolutionMetadataResultV1(
+diff --git a/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs b/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs
+index 4f2c23d..c237105 100644
+--- a/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs
+@@ -558,7 +558,11 @@ public sealed class ConversationResolutionMetadataRecoveryTest
+         ProjectionRequest live = ResolutionMetadataFixture.Request(changedProject: true);
+         var source = JsonSerializer.Deserialize<ConversationProjectChanged>(live.Events[1].Payload, JsonSerializerOptions.Web)!;
+         ConversationMetadataUpdated updated = new(source.Metadata with { EventId = "live-third", EventType = ConversationEventType.ConversationMetadataUpdated,
+-            OccurredAt = ResolutionMetadataFixture.Started.AddSeconds(2) }, "live winner");
++            OccurredAt = ResolutionMetadataFixture.Started.AddSeconds(2) }, "live winner")
++        {
++            ResolutionScoringLabel = new("live winner", ConversationResolutionScoringPolicy.Purpose,
++                ConversationResolutionScoringPolicy.Classification),
++        };
+         live = live with { Events = [.. live.Events, new(nameof(ConversationMetadataUpdated), JsonSerializer.SerializeToUtf8Bytes(updated, JsonSerializerOptions.Web),
+             "json", 3, ResolutionMetadataFixture.Started.AddSeconds(2), "correlation")] };
+         var first = await fixture.Handler().ProjectAsync(live, "dispatch-live-winner", Token);
+@@ -577,6 +581,7 @@ public sealed class ConversationResolutionMetadataRecoveryTest
+         fixture.Store.BatchFaultHook = null;
+         (await fixture.Handler().ProjectAsync(live, "dispatch-live-winner", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+         fixture.Metadata.Metadata.SafeLabel.ShouldBe("live winner");
++        fixture.Metadata.LabelPurpose.ShouldBe(ConversationResolutionScoringPolicy.Purpose);
+         fixture.Metadata.Freshness.LastAppliedEventPosition.ShouldBe(3);
+         (await fixture.Reader().ReadResolutionMetadataAsync(Tenant, Conversation, Token)).ShouldBe(fixture.Metadata);
+         fixture.Store.Snapshot<ConversationProjectedReadModels>("statestore", ConversationProjectionReadModelKeys.ConversationKey(Tenant, Conversation))!
+diff --git a/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs
+index 5e06a6c..8f0b828 100644
+--- a/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs
+@@ -12,6 +12,22 @@ namespace Hexalith.Conversations.Server.Tests.Queries;
+ 
+ public sealed class ConversationResolutionMetadataQueryHandlerTest
+ {
++    [Theory]
++    [InlineData(null)]
++    [InlineData("inspection")]
++    public async Task OlderImplicitClassificationOrAnotherPurposeCannotAuthorizeScoring(string? purpose)
++    {
++        ResolutionMetadataFixture fixture = new();
++        await fixture.ProjectAsync();
++        var unsupported = fixture.Metadata with { LabelPurpose = purpose };
++        fixture.Store.SeedRaw("statestore", ConversationProjectionReadModelKeys.ResolutionMetadataKey(
++            ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation), unsupported);
++        fixture.Store.SeedRaw("statestore", ConversationProjectionReadModelKeys.ResolutionProofKey(
++            ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation),
++            new ConversationResolutionMetadataProof(ConversationResolutionGeneration.From(unsupported, false)));
++        AssertUnavailable(await fixture.DispatchAsync());
++    }
++
+     [Theory]
+     [InlineData("version")]
+     [InlineData("watermark")]
+diff --git a/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs b/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs
+index 277495e..c46b76c 100644
+--- a/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs
+@@ -34,13 +34,17 @@ internal sealed class ResolutionMetadataFixture
+     public ConversationAsyncProjectionHandler Handler(IReadModelStore? store = null)
+         => new(new(), new(store ?? Store), store ?? Store, Time);
+     public ConversationProjectionReadStore Reader(IReadModelStore? store = null) => new(store ?? Store);
+-    public static ProjectionRequest Request(string? label = "Scoring label", bool changedProject = false, TenantId? tenantId = null, ConversationId? conversationId = null)
++    public static ProjectionRequest Request(string? label = "Scoring label", bool changedProject = false, TenantId? tenantId = null, ConversationId? conversationId = null, bool classifyLabel = true)
+     {
+         tenantId ??= Tenant;
+         conversationId ??= Conversation;
+         ConversationEventMetadata metadata = new(SchemaVersion.Current, "event-create", ConversationEventType.ConversationCreated,
+             tenantId, conversationId, "correlation", Started, new PartyId("actor"), "cause");
+-        ConversationCreated created = new(metadata, ProjectId: new("project-original"), Label: label);
++        ConversationCreated created = new(metadata, ProjectId: new("project-original"), Label: label)
++        {
++            ResolutionScoringLabel = classifyLabel && ConversationResolutionScoringPolicy.CanClassify(label, ConversationResolutionScoringPolicy.Purpose)
++                ? new(label, ConversationResolutionScoringLabel.SupportedPurpose, ConversationResolutionScoringLabel.OwnerClassification) : null,
++        };
+         List<ProjectionEventDto> events = [new(nameof(ConversationCreated), JsonSerializer.SerializeToUtf8Bytes(created, JsonSerializerOptions.Web), "json", 1, Started, "correlation", "source-message-1")];
+         if (changedProject)
+         {
+diff --git a/src/Hexalith.Conversations.Contracts/Queries/ConversationResolutionScoringLabel.cs b/src/Hexalith.Conversations.Contracts/Queries/ConversationResolutionScoringLabel.cs
+new file mode 100644
+index 0000000..6e19f87
+--- /dev/null
++++ b/src/Hexalith.Conversations.Contracts/Queries/ConversationResolutionScoringLabel.cs
+@@ -0,0 +1,54 @@
++using System.Text.Json.Serialization;
++
++using Hexalith.Conversations.Contracts.Governance;
++
++namespace Hexalith.Conversations.Contracts.Queries;
++
++/// <summary>Explicit owner classification of a native label for internal Projects equality scoring.</summary>
++public sealed record ConversationResolutionScoringLabel
++{
++    /// <summary>The sole supported purpose; classification never grants inspection or resource access.</summary>
++    public const string SupportedPurpose = "projects-internal-equality-scoring";
++
++    /// <summary>The native owner policy recorded with the label.</summary>
++    public const string OwnerClassification = "conversations-owner-safe-metadata-equality-v1";
++
++    /// <summary>The supported label length, measured without trimming or truncation.</summary>
++    public const int MaximumLength = 160;
++
++    /// <summary>Creates a classified label only after validating its exact purpose, policy and content.</summary>
++    /// <param name="value">The exact descriptive label, or explicitly classified absence.</param>
++    /// <param name="purpose">The explicit supported scoring purpose.</param>
++    /// <param name="classification">The exact owner policy.</param>
++    [JsonConstructor]
++    public ConversationResolutionScoringLabel(string? value, string purpose, string classification)
++    {
++        if (purpose != SupportedPurpose || classification != OwnerClassification)
++        {
++            throw new ArgumentException("Unsupported scoring label policy.", nameof(purpose));
++        }
++
++        if (value is not null)
++        {
++            if (value.Length > MaximumLength)
++            {
++                throw new ArgumentException("The scoring label exceeds its supported bound.", nameof(value));
++            }
++
++            _ = GovernanceContractValidation.RequiredSafeText(value, nameof(value));
++        }
++
++        Value = value;
++        Purpose = purpose;
++        Classification = classification;
++    }
++
++    /// <summary>Gets the original, bounded native label without normalization.</summary>
++    public string? Value { get; }
++
++    /// <summary>Gets the explicitly persisted scoring purpose.</summary>
++    public string Purpose { get; }
++
++    /// <summary>Gets the explicitly persisted owner classification.</summary>
++    public string Classification { get; }
++}
+diff --git a/tests/Hexalith.Conversations.Contracts.Tests/Queries/ConversationResolutionScoringLabelContractTest.cs b/tests/Hexalith.Conversations.Contracts.Tests/Queries/ConversationResolutionScoringLabelContractTest.cs
+new file mode 100644
+index 0000000..9aedf49
+--- /dev/null
++++ b/tests/Hexalith.Conversations.Contracts.Tests/Queries/ConversationResolutionScoringLabelContractTest.cs
+@@ -0,0 +1,53 @@
++using System.Text.Json;
++
++using Hexalith.Conversations.Contracts.Commands;
++using Hexalith.Conversations.Contracts.Queries;
++using Hexalith.Conversations.Contracts.Serialization;
++
++using Shouldly;
++using Xunit;
++
++namespace Hexalith.Conversations.Contracts.Tests.Queries;
++
++public sealed class ConversationResolutionScoringLabelContractTest
++{
++    [Theory]
++    [InlineData(null)]
++    [InlineData(" exact label ")]
++    public void ClassificationRoundTripsExactNativePurposeAndPreservesLegacyConstructor(string? label)
++    {
++        ConversationResolutionScoringLabel value = new(label,
++            ConversationResolutionScoringLabel.SupportedPurpose, ConversationResolutionScoringLabel.OwnerClassification);
++        CreateConversationCommand legacy = new(null!, Label: label);
++        JsonElement before = JsonSerializer.SerializeToElement(legacy, ConversationsJsonContext.Default.CreateConversationCommand);
++        before.TryGetProperty("resolutionScoringLabel", out _).ShouldBeFalse();
++        CreateConversationCommand classified = legacy with { ResolutionScoringLabel = value };
++        string json = JsonSerializer.Serialize(classified, ConversationsJsonContext.Default.CreateConversationCommand);
++        var restored = JsonSerializer.Deserialize(json, ConversationsJsonContext.Default.CreateConversationCommand)!;
++        restored.ResolutionScoringLabel.ShouldBe(value);
++        restored.Label.ShouldBe(label);
++        typeof(CreateConversationCommand).GetConstructors().ShouldContain(constructor => constructor.GetParameters().Length == 7);
++    }
++
++    [Theory]
++    [InlineData("secret value")]
++    [InlineData("https://private.example/data")]
++    [InlineData("line\nbreak")]
++    [InlineData("   ")]
++    public void UnsafeLabelsCannotAcquireClassification(string label)
++        => Should.Throw<ArgumentException>(() => new ConversationResolutionScoringLabel(label,
++            ConversationResolutionScoringLabel.SupportedPurpose, ConversationResolutionScoringLabel.OwnerClassification));
++
++    [Fact]
++    public void UnsupportedPurposeClassificationAndOversizedLabelsAreRejectedWithoutTruncation()
++    {
++        Should.Throw<ArgumentException>(() => new ConversationResolutionScoringLabel("label", "inspection",
++            ConversationResolutionScoringLabel.OwnerClassification));
++        Should.Throw<ArgumentException>(() => new ConversationResolutionScoringLabel("label",
++            ConversationResolutionScoringLabel.SupportedPurpose, "caller-asserted"));
++        Should.Throw<ArgumentException>(() => new ConversationResolutionScoringLabel(new string('a', 161),
++            ConversationResolutionScoringLabel.SupportedPurpose, ConversationResolutionScoringLabel.OwnerClassification));
++        new ConversationResolutionScoringLabel(new string('a', 160), ConversationResolutionScoringLabel.SupportedPurpose,
++            ConversationResolutionScoringLabel.OwnerClassification).Value!.Length.ShouldBe(160);
++    }
++}
+diff --git a/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionScoringLabelProjectionTest.cs b/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionScoringLabelProjectionTest.cs
+new file mode 100644
+index 0000000..7d52aac
+--- /dev/null
++++ b/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionScoringLabelProjectionTest.cs
+@@ -0,0 +1,130 @@
++using System.Text.Json;
++
++using Hexalith.Conversations.Contracts.Events;
++using Hexalith.Conversations.Contracts.Queries;
++using Hexalith.Conversations.Events;
++using Hexalith.Conversations.Server.Publication;
++using Hexalith.Conversations.Server.Projections;
++using Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++using Hexalith.EventStore.Client.Projections;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.DomainService;
++
++using Microsoft.Extensions.DependencyInjection;
++
++namespace Hexalith.Conversations.Server.Tests.Projections;
++
++public sealed class ConversationResolutionScoringLabelProjectionTest
++{
++    private static CancellationToken Token => TestContext.Current.CancellationToken;
++
++    [Fact]
++    public async Task SafeLegacyLabelCannotBeClassifiedByProjectionOrMetadataQuery()
++    {
++        ResolutionMetadataFixture fixture = new();
++        (await fixture.Handler().ProjectAsync(ResolutionMetadataFixture.Request(classifyLabel: false), "legacy-label", Token))
++            .Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        fixture.Metadata.IsLabelComplete.ShouldBeFalse();
++        fixture.Metadata.Metadata.SafeLabel.ShouldBeNull();
++        fixture.Metadata.LabelClassification.ShouldBeNull();
++        fixture.Metadata.LabelPurpose.ShouldBeNull();
++        int count = fixture.Store.Count;
++        var result = await fixture.DispatchAsync();
++        result.Success.ShouldBeTrue();
++        result.GetPayload().GetProperty("metadata").ValueKind.ShouldBe(JsonValueKind.Null);
++        fixture.Store.Count.ShouldBe(count);
++    }
++
++    [Fact]
++    public async Task ExplicitNativeMetadataReclassificationAdmitsALegacyLabelWithoutRewritingHistory()
++    {
++        ResolutionMetadataFixture fixture = new();
++        ProjectionRequest original = ResolutionMetadataFixture.Request(classifyLabel: false);
++        (await fixture.Handler().ProjectAsync(original, "legacy-label", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        fixture.Metadata.IsLabelComplete.ShouldBeFalse();
++        var created = JsonSerializer.Deserialize<ConversationCreated>(original.Events[0].Payload, JsonSerializerOptions.Web)!;
++        ConversationMetadataUpdated classified = new(created.Metadata with
++        {
++            EventId = "event-reclassified", EventType = ConversationEventType.ConversationMetadataUpdated,
++            OccurredAt = ResolutionMetadataFixture.Started.AddSeconds(1),
++        }, Label: created.Label)
++        {
++            ResolutionScoringLabel = new(created.Label, ConversationResolutionScoringLabel.SupportedPurpose,
++                ConversationResolutionScoringLabel.OwnerClassification),
++        };
++        ProjectionRequest next = original with { Events = [.. original.Events,
++            new(nameof(ConversationMetadataUpdated), JsonSerializer.SerializeToUtf8Bytes(classified, JsonSerializerOptions.Web),
++                "json", 2, ResolutionMetadataFixture.Started.AddSeconds(1), "correlation", "source-message-2")] };
++        (await fixture.Handler().ProjectAsync(next, "native-reclassified", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        fixture.Metadata.IsLabelComplete.ShouldBeTrue();
++        fixture.Metadata.Metadata.SafeLabel.ShouldBe(created.Label);
++        fixture.Metadata.LabelPurpose.ShouldBe(ConversationResolutionScoringLabel.SupportedPurpose);
++        next.Events[0].Payload.ShouldBe(original.Events[0].Payload);
++        var result = await fixture.DispatchAsync();
++        result.Success.ShouldBeTrue();
++        result.GetPayload().GetProperty("metadata").GetProperty("safeLabel").GetString().ShouldBe(created.Label);
++    }
++
++    [Fact]
++    public async Task DescriptiveLabelUpdateInvalidatesNativeClassificationThroughNormalProjectionAndRebuild()
++    {
++        ResolutionMetadataFixture fixture = new();
++        await fixture.ProjectAsync();
++        ProjectionRequest initial = ResolutionMetadataFixture.Request();
++        var created = JsonSerializer.Deserialize<ConversationCreated>(initial.Events[0].Payload, JsonSerializerOptions.Web)!;
++        var updated = new ConversationMetadataUpdated(created.Metadata with
++        {
++            EventId = "event-label-update", EventType = ConversationEventType.ConversationMetadataUpdated,
++            OccurredAt = ResolutionMetadataFixture.Started.AddSeconds(1),
++        }, Label: "new descriptive label");
++        ProjectionRequest request = initial with { Events = [.. initial.Events,
++            new(nameof(ConversationMetadataUpdated), JsonSerializer.SerializeToUtf8Bytes(updated, JsonSerializerOptions.Web),
++                "json", 2, ResolutionMetadataFixture.Started.AddSeconds(1), "correlation", "source-message-2")] };
++        (await fixture.Handler().ProjectAsync(request, "updated-label", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        fixture.Metadata.IsLabelComplete.ShouldBeFalse();
++        fixture.Metadata.LabelPurpose.ShouldBeNull();
++        await RebuildAsync(fixture, request);
++        fixture.Metadata.IsLabelComplete.ShouldBeFalse();
++        fixture.Metadata.Metadata.SafeLabel.ShouldBeNull();
++        fixture.Metadata.LabelClassification.ShouldBeNull();
++    }
++
++    [Fact]
++    public async Task NativeClassificationSurvivesPublicationReplayAndCoordinatedRebuildWithoutChangingGenerationTime()
++    {
++        ResolutionMetadataFixture fixture = new();
++        await fixture.ProjectAsync();
++        fixture.Metadata.LabelPurpose.ShouldBe(ConversationResolutionScoringLabel.SupportedPurpose);
++        ProjectionRequest request = ResolutionMetadataFixture.Request(changedProject: true);
++        var original = JsonSerializer.Deserialize<ConversationCreated>(request.Events[0].Payload, JsonSerializerOptions.Web)!;
++        ConversationCreatedDomainEvent durable = new(original.Metadata, original.BusinessReference, original.ProjectId,
++            original.FolderId, original.Label, ProviderCorrelation: original.ProviderCorrelation)
++        { ResolutionScoringLabel = original.ResolutionScoringLabel };
++        var publication = ConversationPublicationMapper.TryMap(PersistedConversationEvent.Success(original.Metadata.TenantId, durable));
++        publication.IsPublished.ShouldBeTrue();
++        ConversationCreated published = publication.GetPublishedEvent<ConversationCreated>();
++        published.ResolutionScoringLabel.ShouldBe(original.ResolutionScoringLabel);
++        request = request with { Events = [request.Events[0] with
++            { Payload = JsonSerializer.SerializeToUtf8Bytes(published, JsonSerializerOptions.Web) }, .. request.Events.Skip(1)] };
++        await RebuildAsync(fixture, request);
++        fixture.Metadata.Metadata.SafeLabel.ShouldBe("Scoring label");
++        fixture.Metadata.LabelPurpose.ShouldBe(ConversationResolutionScoringLabel.SupportedPurpose);
++        fixture.Metadata.LabelClassification.ShouldBe(ConversationResolutionScoringLabel.OwnerClassification);
++        fixture.Metadata.Freshness.LastAppliedEventTimestamp.ShouldBe(ResolutionMetadataFixture.Started.AddSeconds(1));
++        fixture.Proof.Current!.Matches(fixture.Metadata).ShouldBeTrue();
++    }
++
++    private static async Task RebuildAsync(ResolutionMetadataFixture fixture, ProjectionRequest request)
++    {
++        await using ServiceProvider provider = new ServiceCollection().AddSingleton<IReadModelBatchStore>(fixture.Guard)
++            .AddSingleton<IDomainProjectionHandler>(new ConversationProjectionHandler(new(), fixture.Time))
++            .AddSingleton<IAsyncDomainProjectionHandler>(fixture.Handler()).BuildServiceProvider();
++        string fingerprint = ProjectionRouteCatalogFingerprint.Compute("conversations-service", "v1",
++            [new ProjectionDispatchRoute(ConversationProjectionHandler.ConversationDomain,
++                ConversationAsyncProjectionHandler.ConversationReadModelProjectionType)]);
++        var result = await DomainProjectionDispatcher.RebuildAsync(provider,
++            new(request, [ConversationAsyncProjectionHandler.ConversationReadModelProjectionType], "zz-rebuild-scoring-label", fingerprint),
++            new ProjectionDispatchOptions(), new DomainProjectionIdentityOptions { AppId = "conversations-service", ServiceVersion = "v1" }, Token);
++        result.Outcomes.ShouldAllBe(outcome => outcome.Status == ProjectionDispatchStatus.Completed);
++    }
++}
+diff --git a/tests/Hexalith.Conversations.Tests/Validation/ConversationResolutionScoringLabelNativeTest.cs b/tests/Hexalith.Conversations.Tests/Validation/ConversationResolutionScoringLabelNativeTest.cs
+new file mode 100644
+index 0000000..c1d7ef5
+--- /dev/null
++++ b/tests/Hexalith.Conversations.Tests/Validation/ConversationResolutionScoringLabelNativeTest.cs
+@@ -0,0 +1,100 @@
++using System.Text.Json;
++
++using Hexalith.Conversations.Contracts.Commands;
++using Hexalith.Conversations.Contracts.Events;
++using Hexalith.Conversations.Contracts.Identifiers;
++using Hexalith.Conversations.Contracts.Queries;
++using Hexalith.Conversations.Contracts.Versioning;
++using Hexalith.Conversations.Events;
++using Hexalith.Conversations.Idempotency;
++using Hexalith.Conversations.State;
++using Hexalith.Conversations.Validation;
++
++using Shouldly;
++using Xunit;
++
++namespace Hexalith.Conversations.Tests.Validation;
++
++public sealed class ConversationResolutionScoringLabelNativeTest
++{
++    private static readonly DateTimeOffset CreatedAt = new(2026, 10, 20, 10, 0, 0, TimeSpan.Zero);
++    private static readonly ConversationId Conversation = new("conversation-scoring");
++
++    [Fact]
++    public void ClassifiedCreationPersistsExactPurposeAndLabelThroughSerializedNativeReplay()
++    {
++        CreateConversationCommand command = Command() with { ResolutionScoringLabel = Classify(" exact label ") };
++        var result = CreateConversationBoundary.Dispatch(command, Conversation, CreatedAt, "event-created");
++        result.IsSuccess.ShouldBeTrue();
++        var created = result.Events.Single().ShouldBeOfType<ConversationCreatedDomainEvent>();
++        var persisted = JsonSerializer.Deserialize<ConversationCreatedDomainEvent>(JsonSerializer.Serialize(created))!;
++        ConversationState replayed = new();
++        replayed.Apply(persisted);
++        replayed.Label.ShouldBe(" exact label ");
++        replayed.ResolutionScoringLabel.ShouldBe(command.ResolutionScoringLabel);
++        replayed.ResolutionScoringLabel!.Purpose.ShouldBe(ConversationResolutionScoringLabel.SupportedPurpose);
++        replayed.ResolutionScoringLabel.Classification.ShouldBe(ConversationResolutionScoringLabel.OwnerClassification);
++    }
++
++    [Fact]
++    public void LegacyLabelsRemainUnclassifiedAndDescriptiveUpdatesRevokeClassification()
++    {
++        var legacy = CreateConversationBoundary.Dispatch(Command(), Conversation, CreatedAt, "event-legacy")
++            .Events.Single().ShouldBeOfType<ConversationCreatedDomainEvent>();
++        ConversationState state = new();
++        state.Apply(legacy);
++        state.Label.ShouldBe(" exact label ");
++        state.ResolutionScoringLabel.ShouldBeNull();
++        var classified = legacy with { ResolutionScoringLabel = Classify(legacy.Label) };
++        ConversationState classifiedState = new();
++        classifiedState.Apply(classified);
++        classifiedState.Apply(new ConversationMetadataUpdated(classified.Metadata with
++        {
++            EventId = "event-label-changed", EventType = ConversationEventType.ConversationMetadataUpdated,
++        }, Label: "new descriptive label"));
++        classifiedState.Label.ShouldBe("new descriptive label");
++        classifiedState.ResolutionScoringLabel.ShouldBeNull();
++        var reclassified = new ConversationMetadataUpdated(classified.Metadata with
++        {
++            EventId = "event-label-reclassified", EventType = ConversationEventType.ConversationMetadataUpdated,
++        }, Label: "new descriptive label") { ResolutionScoringLabel = Classify("new descriptive label") };
++        var persisted = JsonSerializer.Deserialize<ConversationMetadataUpdated>(JsonSerializer.Serialize(reclassified))!;
++        classifiedState.Apply(persisted);
++        classifiedState.ResolutionScoringLabel.ShouldBe(reclassified.ResolutionScoringLabel);
++    }
++
++    [Fact]
++    public void NativeClassificationCannotBeReusedForADifferentLabelOrIdempotentMeaning()
++    {
++        CreateConversationCommand legacy = Command();
++        var classified = legacy with { ResolutionScoringLabel = Classify(legacy.Label) };
++        var first = ConversationCommandFingerprint.Create(legacy, Conversation);
++        var second = ConversationCommandFingerprint.Create(classified, Conversation);
++        first.Scope.ShouldBe(second.Scope);
++        first.PayloadFingerprint.ShouldNotBe(second.PayloadFingerprint);
++        ConversationCommandFingerprint.Create(legacy with { ResolutionScoringLabel = null }, Conversation).ShouldBe(first);
++        var mismatched = classified with { Label = "another label" };
++        var rejected = CreateConversationBoundary.Dispatch(mismatched, Conversation, CreatedAt, "event-invalid");
++        rejected.IsRejection.ShouldBeTrue();
++        rejected.Events.Single().ShouldBeOfType<ConversationRejectedDomainEvent>().ReasonCode.ShouldBe("scoring_label_mismatch");
++    }
++
++    [Fact]
++    public void MetadataCommandClassificationIsBoundToItsNativeLabelAndIdempotentMeaning()
++    {
++        UpdateConversationMetadataCommand command = new(Command().Metadata, Conversation, Label: "label");
++        var classified = command with { ResolutionScoringLabel = Classify("label") };
++        ConversationCommandSchemaValidation.ValidateEnvelope(classified).ShouldBeNull();
++        ConversationCommandFingerprint.Create(command, Conversation).PayloadFingerprint.ShouldNotBe(
++            ConversationCommandFingerprint.Create(classified, Conversation).PayloadFingerprint);
++        var mismatch = classified with { Label = "other label" };
++        ConversationCommandSchemaValidation.ValidateEnvelope(mismatch)!.ReasonCode.ShouldBe("scoring_label_mismatch");
++    }
++
++    private static ConversationResolutionScoringLabel Classify(string? value)
++        => new(value, ConversationResolutionScoringLabel.SupportedPurpose, ConversationResolutionScoringLabel.OwnerClassification);
++
++    private static CreateConversationCommand Command()
++        => new(new(SchemaVersion.Current, new TenantId("tenant-scoring"), new PartyId("actor-scoring"),
++            "correlation-scoring", IdempotencyKey: "idempotency-scoring"), Label: " exact label ");
++}

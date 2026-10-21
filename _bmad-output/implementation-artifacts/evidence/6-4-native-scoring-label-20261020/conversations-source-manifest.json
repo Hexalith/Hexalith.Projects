@@ -1,0 +1,98 @@
+{
+  "head": "f00d30b8255038058796c4780fcae08e8d6b5ee4",
+  "patch_sha256": "aee664d6e5f0da56b4e604fddfba4501a507a933e4c6ed31a181b8b46892b15b",
+  "files": [
+    {
+      "path": "src/Hexalith.Conversations.Contracts/Commands/CreateConversationCommand.cs",
+      "sha256": "51cc9b7e8c2a249928035a6229c83b29f1f5b35169707c27e65882a0b1ab6cbd"
+    },
+    {
+      "path": "src/Hexalith.Conversations.Contracts/Commands/UpdateConversationMetadataCommand.cs",
+      "sha256": "ca0e89cd480aedb72f1205a41c9c6cfe3ca720d40e56365d7f38263c4cfad5a3"
+    },
+    {
+      "path": "src/Hexalith.Conversations.Contracts/Events/ConversationCreated.cs",
+      "sha256": "7f126ce6f2718eafc4f841a96c8a7ede368fd9acb084a489b92d2c8e63b6d133"
+    },
+    {
+      "path": "src/Hexalith.Conversations.Contracts/Events/ConversationMetadataUpdated.cs",
+      "sha256": "acde2ff6ea39cb7840d7b38d7ea454a0f646e3e2811f48a47c14b5457578a93b"
+    },
+    {
+      "path": "src/Hexalith.Conversations.Contracts/Queries/ConversationResolutionScoringLabel.cs",
+      "sha256": "8742ce4ffc892ce8eaee0751f77cec2d7939b9c784655abedb99e1b40326f2f4"
+    },
+    {
+      "path": "src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs",
+      "sha256": "dcbcd984a522fc273ce2811ea84fb4cc21b6dba94877012ad017ff9d3275b1f3"
+    },
+    {
+      "path": "src/Hexalith.Conversations.Server/Projections/ConversationProjectionMaterializer.cs",
+      "sha256": "36e5f64b713c706a6771df248df24453164faf0210c71a87972a31d8c0a21966"
+    },
+    {
+      "path": "src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs",
+      "sha256": "86c70bb523b055f942b793651b8129b922eb640b2ebab6b62363251bad9e9210"
+    },
+    {
+      "path": "src/Hexalith.Conversations.Server/Projections/ConversationResolutionScoringPolicy.cs",
+      "sha256": "fedbc7fa0358c8277b41ecf3c9d168e1d47b4138c6e9bf4e9800f3b121b871a6"
+    },
+    {
+      "path": "src/Hexalith.Conversations.Server/Publication/ConversationPublicationMapper.cs",
+      "sha256": "e8e0de6b01f70e684b08e5d81669a37270439fc27fb6ebec08f2cbf6efc027aa"
+    },
+    {
+      "path": "src/Hexalith.Conversations/Aggregates/ConversationAggregate.cs",
+      "sha256": "fc20ac32acd1a6649ab1e7b77962a9aaa3f7ea0fc21e6e46d1ae9d04e9b3df86"
+    },
+    {
+      "path": "src/Hexalith.Conversations/Events/ConversationCreatedDomainEvent.cs",
+      "sha256": "37578410861e97deb85746d57b6d60bf34cea877c98a1e364f225aa5b3b0f789"
+    },
+    {
+      "path": "src/Hexalith.Conversations/Idempotency/ConversationCommandFingerprint.cs",
+      "sha256": "4f10e56a45aee0eabfb51a1b99ec03cd26b2ebfaee1f4297bbc39a1d9ed50131"
+    },
+    {
+      "path": "src/Hexalith.Conversations/State/ConversationState.cs",
+      "sha256": "5072b2018fd4bf237c818df17fe1a57030aa3a0798087348ff75605de7797a90"
+    },
+    {
+      "path": "src/Hexalith.Conversations/Validation/ConversationCommandSchemaValidation.cs",
+      "sha256": "c4fc735aa3dd8188f9a523ead9939726deaf738ca77d069ef8c4078fc7ce19bf"
+    },
+    {
+      "path": "src/Hexalith.Conversations/Validation/CreateConversationValidation.cs",
+      "sha256": "96ab5e1c135588cd6923d138b919134c810720f1fa85e7139e24d35866e989fd"
+    },
+    {
+      "path": "tests/Hexalith.Conversations.Contracts.Tests/ContractSamples.cs",
+      "sha256": "02bbb2fcd41fb67ab0df262d3a47414a177d870bee26d213ee64cbffd90997b1"
+    },
+    {
+      "path": "tests/Hexalith.Conversations.Contracts.Tests/Queries/ConversationResolutionScoringLabelContractTest.cs",
+      "sha256": "7bfab8e48df9390abfbcc575e0c0f7bb5130ff501f383835347c1bf4aa7fa5c6"
+    },
+    {
+      "path": "tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs",
+      "sha256": "f347713fda8bf33bc48fdc0ba1d85e00aac4d70108d332f93d56b9f75ee59d4f"
+    },
+    {
+      "path": "tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionScoringLabelProjectionTest.cs",
+      "sha256": "5f043ba30910b9c23530471e23aca0902c6f6d68f06baa4b56825c848d4932ce"
+    },
+    {
+      "path": "tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs",
+      "sha256": "b22e47da3497a8eb711e0399fa979d798c78eee501028d0533c1a966d3b97f59"
+    },
+    {
+      "path": "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs",
+      "sha256": "1d7bd9b0328e6386a8ba50a5cc77bb8d18fffe8d7aaef77e894d5257e7ce7784"
+    },
+    {
+      "path": "tests/Hexalith.Conversations.Tests/Validation/ConversationResolutionScoringLabelNativeTest.cs",
+      "sha256": "2537edd182bfd258af0ac169e6c8190a9ac6df551aeaeee446847e446704299d"
+    }
+  ]
+}

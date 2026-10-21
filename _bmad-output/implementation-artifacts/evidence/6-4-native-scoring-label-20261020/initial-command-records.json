@@ -1,0 +1,379 @@
+{
+  "schema_version": 1,
+  "provenance": "Reconstructed from retained actual tool-call history and native build/test artifacts. No commands or tests were rerun to prepare this record.",
+  "scope": "Actual final build and test invocations plus the source-scratch copy setup. Earlier failed/superseded runs remain separately retained in this directory.",
+  "inherited_environment": "Not captured; environment_overrides records only the explicitly supplied overrides. Build properties are included verbatim in argv.",
+  "source_evidence": {
+    "closing_head": "f00d30b8255038058796c4780fcae08e8d6b5ee4",
+    "closing_patch_sha256": "aee664d6e5f0da56b4e604fddfba4501a507a933e4c6ed31a181b8b46892b15b",
+    "source_manifest": {
+      "path": "/dev/shm/story64-owner-label/conversations-source-manifest.json",
+      "sha256": "847b47e8c3ab3a6ddef8a031af5924d01c5815ce51ff50ef39b1ad01ef2d1769"
+    },
+    "per_invocation_source_hashes": null,
+    "note": "The closing manifest is not a claim that source hashes were captured at every invocation. Final import/header formatting cleanup occurred after the final Contracts/Core builds; it changed no executable behavior. The final Server build compiled the closing source."
+  },
+  "initial_tmp_setup": {
+    "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "argv": [
+      "mkdir",
+      "-p",
+      "/dev/shm/story64-owner-label/tmp"
+    ],
+    "environment_overrides": {},
+    "exit_code": null,
+    "note": "Executed before the initial Contracts build in the same shell; no separate mkdir exit code was captured. The directory was subsequently used by every final build/test via TMPDIR."
+  },
+  "scratch_setup": [
+    {
+      "id": "create-owner-contracts-scratch",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "python3",
+        "-"
+      ],
+      "stdin": "from pathlib import Path\nimport tempfile, shutil\nroot=Path.cwd()\np=Path(tempfile.mkdtemp(prefix='.story64-validation-', dir=root))\nshutil.copytree('/dev/shm/story64-owner-label/artifacts/bin/Hexalith.Conversations.Contracts.Tests/debug',p/'contracts',dirs_exist_ok=True)\nPath('/dev/shm/story64-owner-label/contracts-scratch-path.txt').write_text(str(p))\nprint(p)\n",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "exit_code_basis": "This setup was its own exec_command invocation, which returned exit code 0.",
+      "created_path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/.story64-validation-rzcsyeks",
+      "retained_path_record": {
+        "path": "/dev/shm/story64-owner-label/contracts-scratch-path.txt",
+        "sha256": "cf046982677501e705e3bcaf663bb1ec3fc2a6510462e06cc7a8e6135474d3fd"
+      }
+    },
+    {
+      "id": "copy-core-at-initial-two-component-depth",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "python3",
+        "-"
+      ],
+      "stdin": "from pathlib import Path\nimport shutil\np=Path('/dev/shm/story64-owner-label/contracts-scratch-path.txt').read_text()\nshutil.copytree('/dev/shm/story64-owner-label/artifacts/bin/Hexalith.Conversations.Tests/debug',Path(p)/'core',dirs_exist_ok=True)\n",
+      "environment_overrides": {},
+      "exit_code": null,
+      "exit_code_basis": "No separate Python exit code was captured: setup and the following core-final-source test shared a shell. That test returned 1 with 187/189 passing; the remaining two source-path checks required five parents.",
+      "following_test": {
+        "argv": [
+          "dotnet",
+          ".story64-validation-rzcsyeks/core/Hexalith.Conversations.Tests.dll",
+          "-result-xml",
+          "/dev/shm/story64-owner-label/core-final-source.xml"
+        ],
+        "environment_overrides": {
+          "TMPDIR": "/dev/shm/story64-owner-label/tmp"
+        },
+        "exit_code": 1,
+        "stdout_and_stderr": {
+          "path": "/dev/shm/story64-owner-label/core-final-source.log",
+          "sha256": "1193ef50907832e8b07acc07d3e81cf18d1b9f860a53617af4300a9c950faca5"
+        },
+        "native_result": {
+          "path": "/dev/shm/story64-owner-label/core-final-source.xml",
+          "sha256": "e9c6069acc6761cf08ac11041ac10ba75dd77f0a86a0aa262a5c58f94f6eebd3"
+        }
+      }
+    },
+    {
+      "id": "copy-core-at-required-five-component-depth",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "python3",
+        "-"
+      ],
+      "stdin": "from pathlib import Path\nimport shutil\np=Path('/dev/shm/story64-owner-label/contracts-scratch-path.txt').read_text()\nshutil.copytree('/dev/shm/story64-owner-label/artifacts/bin/Hexalith.Conversations.Tests/debug',Path(p)/'core/bin/Debug/net10.0',dirs_exist_ok=True)\n",
+      "environment_overrides": {},
+      "exit_code": null,
+      "exit_code_basis": "No separate Python exit code was captured: setup and core-final-source-2 shared a shell. That shell returned 0 and the test XML confirms 189/189 passing.",
+      "following_test_id": "core-final-source-2"
+    }
+  ],
+  "final_invocations": [
+    {
+      "id": "contracts-build-final-2",
+      "kind": "build",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Conversations.Contracts.Tests/Hexalith.Conversations.Contracts.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--artifacts-path",
+        "/dev/shm/story64-owner-label/artifacts",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:NuGetAudit=false",
+        "-m:1",
+        "-v:minimal"
+      ],
+      "environment_overrides": {
+        "TMPDIR": "/dev/shm/story64-owner-label/tmp"
+      },
+      "stdout_and_stderr": {
+        "path": "/dev/shm/story64-owner-label/contracts-build-final-2.log",
+        "sha256": "95a03f082a5e5a67fced9470881c78548be9028e8070b4a14500c25a1b79e6d0"
+      },
+      "exit_code": 0,
+      "exit_code_basis": "Captured exec session completion for the shell whose last command was this dotnet build.",
+      "note": "Build succeeded with one existing MSB9008 warning: the test csproj directly references absent nested references/Hexalith.Commons. No nested submodule was initialized."
+    },
+    {
+      "id": "contracts-final-2",
+      "kind": "test",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "dotnet",
+        "/dev/shm/story64-owner-label/artifacts/bin/Hexalith.Conversations.Contracts.Tests/debug/Hexalith.Conversations.Contracts.Tests.dll",
+        "-class",
+        "*ConversationResolution*",
+        "-class",
+        "*ContractSerializationTest",
+        "-class",
+        "*ConversationPublicationContractTest",
+        "-class",
+        "*ContractValidationTest",
+        "-class",
+        "*CallerMetadataContractsTest",
+        "-class",
+        "*SchemaVersionCompatibilityTest",
+        "-class",
+        "*ContractCompatibilityMetadataTest",
+        "-class",
+        "*ForbiddenPublicSurfaceTest",
+        "-result-xml",
+        "/dev/shm/story64-owner-label/contracts-final-2.xml"
+      ],
+      "environment_overrides": {
+        "TMPDIR": "/dev/shm/story64-owner-label/tmp"
+      },
+      "stdout_and_stderr": {
+        "path": "/dev/shm/story64-owner-label/contracts-final-2.log",
+        "sha256": "d704c3a13c086251f639c0e5b642245afe1e15f434d2392f5f711add5db53f4d"
+      },
+      "native_result": {
+        "path": "/dev/shm/story64-owner-label/contracts-final-2.xml",
+        "sha256": "4aab23cf0f98886c0126348b9a76badd0432af5235fe4c633e1718cd0cae1873"
+      },
+      "exit_code": 0,
+      "exit_code_basis": "Captured exec session completion; XML independently confirms the nonzero test count and zero failures.",
+      "test_counts": {
+        "total": 122,
+        "passed": 122,
+        "failed": 0,
+        "skipped": 0,
+        "not-run": 0
+      }
+    },
+    {
+      "id": "core-build-final",
+      "kind": "build",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Conversations.Tests/Hexalith.Conversations.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--artifacts-path",
+        "/dev/shm/story64-owner-label/artifacts",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:NuGetAudit=false",
+        "-m:1",
+        "-v:minimal"
+      ],
+      "environment_overrides": {
+        "TMPDIR": "/dev/shm/story64-owner-label/tmp"
+      },
+      "stdout_and_stderr": {
+        "path": "/dev/shm/story64-owner-label/core-build-final.log",
+        "sha256": "33d1a8915d3c393d6c143d8463a6e795d05ce2197236309e7d689c04f9add807"
+      },
+      "exit_code": 0,
+      "exit_code_basis": "Captured exec session completion for the shell whose last command was this dotnet build."
+    },
+    {
+      "id": "contracts-source-boundary",
+      "kind": "test",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "dotnet",
+        ".story64-validation-rzcsyeks/contracts/Hexalith.Conversations.Contracts.Tests.dll",
+        "-class",
+        "*ContractsAssemblyBoundaryTest",
+        "-result-xml",
+        "/dev/shm/story64-owner-label/contracts-source-boundary.xml"
+      ],
+      "environment_overrides": {
+        "TMPDIR": "/dev/shm/story64-owner-label/tmp"
+      },
+      "stdout_and_stderr": {
+        "path": "/dev/shm/story64-owner-label/contracts-source-boundary.log",
+        "sha256": "9b9a842fd615890a751872a45e4bc71037397dd87f0c5e83fa57cac80e458058"
+      },
+      "native_result": {
+        "path": "/dev/shm/story64-owner-label/contracts-source-boundary.xml",
+        "sha256": "bf14d6dcbcd5c925f5e816d82fa62e39eccf869fe041c0b5527dc6338d8e7d2c"
+      },
+      "exit_code": 0,
+      "exit_code_basis": "Captured exec session completion; XML independently confirms the nonzero test count and zero failures.",
+      "test_counts": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "note": "Binaries copied into task-owned owner-repository scratch; unchanged tests discover the repository by walking parents."
+    },
+    {
+      "id": "contracts-source-metadata",
+      "kind": "test",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "dotnet",
+        ".story64-validation-rzcsyeks/contracts/Hexalith.Conversations.Contracts.Tests.dll",
+        "-method",
+        "*ContractsProjectShouldDeclareAdopterPackageMetadata",
+        "-method",
+        "*ClientProjectShouldDeclareAlignedAdopterPackageMetadataAndSupportedClientSurface",
+        "-result-xml",
+        "/dev/shm/story64-owner-label/contracts-source-metadata.xml"
+      ],
+      "environment_overrides": {
+        "TMPDIR": "/dev/shm/story64-owner-label/tmp"
+      },
+      "stdout_and_stderr": {
+        "path": "/dev/shm/story64-owner-label/contracts-source-metadata.log",
+        "sha256": "bc172874cb3798949c6f49a7fb959ac0031a2db37a8afcbabacd12fe917f96c2"
+      },
+      "native_result": {
+        "path": "/dev/shm/story64-owner-label/contracts-source-metadata.xml",
+        "sha256": "085c990c3277a52cd205a376f3494dcd853d9923e05bec384a780530cd7f3e67"
+      },
+      "exit_code": 0,
+      "exit_code_basis": "Captured exec session completion; XML independently confirms the nonzero test count and zero failures.",
+      "test_counts": {
+        "total": 2,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "note": "Only the two static package metadata checks ran. The separate test that executes Release packing was not run successfully and no Release pack was executed."
+    },
+    {
+      "id": "core-final-source-2",
+      "kind": "test",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "dotnet",
+        ".story64-validation-rzcsyeks/core/bin/Debug/net10.0/Hexalith.Conversations.Tests.dll",
+        "-result-xml",
+        "/dev/shm/story64-owner-label/core-final-source-2.xml"
+      ],
+      "environment_overrides": {
+        "TMPDIR": "/dev/shm/story64-owner-label/tmp"
+      },
+      "stdout_and_stderr": {
+        "path": "/dev/shm/story64-owner-label/core-final-source-2.log",
+        "sha256": "c1fd96720955ba7073ec5b416748b85ddfa92fa2f91fddaf78a2ec63621d122c"
+      },
+      "native_result": {
+        "path": "/dev/shm/story64-owner-label/core-final-source-2.xml",
+        "sha256": "e295e47a7404836aa5990bc3e844f2b99266abb6e44d60a505eb1354b7806211"
+      },
+      "exit_code": 0,
+      "exit_code_basis": "Captured exec session completion; XML independently confirms the nonzero test count and zero failures.",
+      "test_counts": {
+        "total": 189,
+        "passed": 189,
+        "failed": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "note": "Full core suite. Five scratch path components below the owner repository satisfy the unchanged DomainProjectBoundaryTest hard-coded five-parent source lookup."
+    },
+    {
+      "id": "server-build-final",
+      "kind": "build",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+        "--configuration",
+        "Debug",
+        "--artifacts-path",
+        "/dev/shm/story64-owner-label/artifacts",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:NuGetAudit=false",
+        "-m:1",
+        "-v:minimal"
+      ],
+      "environment_overrides": {
+        "TMPDIR": "/dev/shm/story64-owner-label/tmp"
+      },
+      "stdout_and_stderr": {
+        "path": "/dev/shm/story64-owner-label/server-build-final.log",
+        "sha256": "2e6f8d91470e165af32d4eed7d90df0ce87ea5ed5fe2b5ab0720640a67d74504"
+      },
+      "exit_code": 0,
+      "exit_code_basis": "Captured exec session completion for the shell whose last command was this dotnet build.",
+      "note": "Last build after final using-directive cleanup. Zero warnings and zero errors."
+    },
+    {
+      "id": "server-final",
+      "kind": "test",
+      "working_directory": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "dotnet",
+        "/dev/shm/story64-owner-label/artifacts/bin/Hexalith.Conversations.Server.Tests/debug/Hexalith.Conversations.Server.Tests.dll",
+        "-class",
+        "*ConversationResolutionScoringLabelProjectionTest",
+        "-class",
+        "*ConversationResolutionMetadataQueryHandlerTest",
+        "-class",
+        "*ConversationResolutionMetadataProjectionTest",
+        "-class",
+        "*ConversationResolutionMetadataRecoveryTest",
+        "-result-xml",
+        "/dev/shm/story64-owner-label/server-final.xml"
+      ],
+      "environment_overrides": {
+        "TMPDIR": "/dev/shm/story64-owner-label/tmp"
+      },
+      "stdout_and_stderr": {
+        "path": "/dev/shm/story64-owner-label/server-final.log",
+        "sha256": "72c5d3faac086c9dd5f0bbb7c9fa424cb77c05d39627351f8e222fbe26bbe387"
+      },
+      "native_result": {
+        "path": "/dev/shm/story64-owner-label/server-final.xml",
+        "sha256": "c1733b51803aea55f4db47cb6b9c156c947d0965b58045829c61c2c48c7cfbbe"
+      },
+      "exit_code": 0,
+      "exit_code_basis": "Captured exec session completion; XML independently confirms the nonzero test count and zero failures.",
+      "test_counts": {
+        "total": 159,
+        "passed": 159,
+        "failed": 0,
+        "skipped": 0,
+        "not-run": 0
+      },
+      "note": "Focused 159-test metadata, authorization and recovery suite; this is not a full server-suite run."
+    }
+  ],
+  "server_suite_scope": {
+    "full_server_suite_planned": true,
+    "full_server_suite_executed": false,
+    "actual_final_run_id": "server-final",
+    "actual_final_test_count": 159,
+    "explanation": "The announced full server run was not executed. Final validation stayed at the parent-requested focused metadata/authorization/recovery scope; no full server-suite result is claimed."
+  },
+  "cleanup": {
+    "removed_path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/.story64-validation-rzcsyeks",
+    "operation": "shutil.rmtree(scratch), guarded by scratch.parent == owner repository and scratch.name.startswith(\".story64-validation-\")",
+    "status": "Executed successfully after final validation; only the invocation-owned scratch was removed. Logs, native XML and manifests remain under /dev/shm/story64-owner-label.",
+    "separate_exit_code": null,
+    "note": "Cleanup and final XML/status reporting shared an exec_command invocation that returned 0; no separate Python process exit status was captured."
+  }
+}

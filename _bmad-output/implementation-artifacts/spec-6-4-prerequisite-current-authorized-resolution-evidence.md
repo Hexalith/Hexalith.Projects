@@ -75,6 +75,19 @@ Closing Debug source builds pass for SDK, Tenants, Conversations, Folders and Pr
 
 Review fixes B1/B2/B3/B5/B6/B11/E1/E2/E3/V1/V2/V3/V4 and B4's exact-target correction are implemented and tested. B7 remains deferred cold-activation/G-4 work. B8/B9/B10 remain open production/source contracts: native Folder/Organization generation binding, legacy-compatible native Conversation enrollment and aggregate content-free post-rebuild promotion. Accepted workspace mutation identities do not establish a committed File catalog, commit/abort/reset/branch lifecycle or authoritative whole-Tenant Projects reference registry. Certified installation/all-writer enrollment is absent from the inspected Platform source/metadata. These are incomplete prerequisites, so this spec stays **in-progress** and RTI/parent implementation remains unauthorized.
 
+### Native scoring-label source follow-up — 2026-10-20
+
+The resumed source inspection found that isolated metadata automatically classified ordinary legacy Label text. The Conversations owner now requires explicit bounded native scoring-label purpose/classification, binds it to creation/metadata command idempotency, and carries it through native creation, serialized event/state replay, publication and isolated generations. Ordinary label edits revoke classification; unrelated metadata edits preserve it. Positional constructors and legacy JSON omission are unchanged.
+
+- [x] Deliver the explicit scoring-label source contract and native creation/event/state/projection propagation.
+- [x] Correct duplicate creation, durable wrapper verification and old implicit-generation redelivery; preserve old bytes without migration or fabricated authority.
+- [x] Verify classification, safe denial, malformed input, replay/rebuild/recovery, unrelated updates, serialization compatibility and retained generation time.
+- [ ] Deliver and qualify existing production metadata mutation dispatch/adoption and the remaining native authority, guard, rebuild, installation, File binding and G-4 prerequisites.
+
+Three independent reviewers produced eleven findings: ten corrected and one pre-existing production mutation-adoption gap deferred. Parent final validation passed 1358 tests (131 contract behavior/boundaries, 2 static package metadata, 189 full core, 1036 full server), zero failures/skips, with three successful Debug source builds. The existing Contracts.Tests missing nested Commons project warning remains; Release package execution was not run. Source bytes were unchanged throughout final validation. Actual commands, full revisions, reviewed patch/source hashes, failed/superseded runs and preservation proof are retained in the [native scoring-label evidence](evidence/6-4-native-scoring-label-20261020/README.md).
+
+The native update event/replay path is source behavior, not a deployed metadata-mutation route. Production authority and G-4 remain unqualified; the prerequisite stays in-progress and RTI/parent implementation remains unauthorized. The required runtime baseline failed first on mixed source/package selection, then with child exit 255 while disk space was exhausted; no healthy AppHost or live acceptance is claimed.
+
 ## Implementation Evidence Required
 
 D1–D6 directions are selected. Readiness still needs named File/feed APIs, native revision mappings, production binding/enrollment, full-result/performance/compatibility proof, and exact-current G-4 and shared prerequisite acceptance. Missing source contracts remain blockers; no provider or passing result is inferred.
@@ -114,6 +127,8 @@ D1–D6 directions are selected. Readiness still needs named File/feed APIs, nat
 
 ## Spec Change Log
 
+- 2026-10-20 native scoring-label follow-up — Removed automatic legacy-label classification; added explicit native source/replay provenance and bounded review fixes. KEEP frozen parent decisions, legacy constructors/JSON, prior generation bytes, immutable proof identity, current-authority refusals, all dependency/gitlink pins and consumer gates. Final source validation and exact remaining blockers are recorded in evidence/6-4-native-scoring-label-20261020/.
+
 - 2026-10-20 review 1 — Clarified complete native prefix binding, original constructor/anchor compatibility, byte-bound pagination, exact workspace/path mutation identity independent of display/classification, pre-effect lifetime bounds and current negative lookups. KEEP isolated content-free generations, original rebuild barriers, source message identity, native codec, signed SDK transport, all refusal gates, dependency pins and concurrent changes. Apply scoped corrections without reverting preserved owner work. Native guard enrollment and content-free post-rebuild promotion remain explicit source dependencies.
 
 - 2026-10-20 — Recorded D1–D6 selections; corrected transport/raw-count assumptions and simplified receipt/ingestion scope. Preserve parent gates and scoring.
@@ -140,6 +155,26 @@ D1–D6 directions are selected. Readiness still needs named File/feed APIs, nat
 | V2 | medium | patch | Reviewer verified native Tenant Read tests omit disabled Tenants retaining membership. Add native disabled-prefix denial cases for existing roles. |
 | V3 | medium | patch | Reviewer verified native prefix accumulator tests do not cross 100-event boundary. Add an authenticated 101-event multi-page native case and exact final proof assertions. |
 | V4 | medium | patch | Registration theory expects metadata and legacy access counts without native enrollment. Preserve production fail-closed behavior and separately test executable positive native transport; include full host suite. |
+
+### Native scoring-label source review — 2026-10-20
+
+This review covers the delivered scoring-label source slice only. The prerequisite remains in-progress; no RTI, production mutation adoption, owner qualification or parent readiness is accepted.
+
+| Finding | Verdict | Route | Verified evidence / action |
+| --- | --- | --- | --- |
+| SL-B1 | medium | defer | The metadata-update contract pre-exists without a production native mutation dispatcher; the change adds no dispatcher or deployment claim. Retain that existing adoption blocker; event/replay fixtures are not a production mutation pass. |
+| SL-B2 | medium | patch | An older implicitly classified subset and proof use the same stable dispatch while the corrected materializer produces a different digest. MergePending rejects that identity change. Add explicit safe old-format refusal/recovery coverage that preserves original bytes; no automatic migration or grant. |
+| SL-B3 | medium | patch | A distinct second ConversationCreated reaches the materializer and overwrites classification, whereas native state rejects duplicate creation. Reject the duplicate before changing creation state and verify no completed generation is replaced. |
+| SL-B4 | medium | patch | GenerationIsDurableAsync compares Summary/Detail but omits the new persisted wrapper classification. A missing or altered wrapper field can be reported durable; include exact classification equality and exercise corrupted-wrapper redelivery. |
+| SL-B5 | medium | patch | New classification decoder/mismatch branches lack end-state negative tests. Cover unsafe/unknown policy and mismatched native creation/update events, preserving the prior completed generation and rejected-input barrier. |
+| SL-B6 | low | patch | Source-generated classified round trips and null omission are exercised only on creation commands. Extend direct compatibility coverage to the metadata command and both public events, preserving their positional constructors. |
+| SL-B7 | low | patch | The new rebuild test names generation-time preservation but asserts only source event time with an unchanged clock. Distinguish source observation time from a new rebuild generation and verify stable retry time with clock movement. |
+| SL-B8 | low | patch | Public consumer documentation does not explain the new explicit scoring opt-in, bounds and invalidation. Document source behavior and retained production/adoption gates without claiming an available mutation route. |
+| SL-V1 | medium | patch | Pre-verified regression gap: an unrelated attribute/business-reference update has no classified-creation coverage. Assert retained classification and successful metadata disclosure when Label is omitted. |
+| SL-V2 | medium | patch | Pre-verified regression gap: command mismatch tests do not execute the projection mismatch guards. Add decodable mismatched creation/update events and durable prior-generation/barrier assertions. Shared negative-input coverage with SL-B5. |
+| SL-E1 | medium | patch | A second distinct creation can classify a legacy label despite native replay rejecting that stream. Same verified duplicate-creation defect as SL-B3. |
+
+Review correction closure: SL-B2 through SL-B8, SL-V1, SL-V2 and SL-E1 are patched and covered by the final corrected-tree checks. SL-B1 remains a pre-existing adoption prerequisite recorded in deferred-work.md. The evidence bundle preserves initial versus corrected source/results; no full prerequisite or parent acceptance is claimed.
 
 ## Design Notes
 

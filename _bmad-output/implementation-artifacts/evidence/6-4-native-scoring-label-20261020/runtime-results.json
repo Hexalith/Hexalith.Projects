@@ -1,0 +1,17 @@
+{
+  "initial_disk_failure": "OSError: [Errno 28] No space left on device while retaining start output; no Projects AppHost running",
+  "default_start": {
+    "command": "aspire start --non-interactive --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj --format Json",
+    "exit_code": 2,
+    "reason": "CS0246 NativeSourceProof unavailable because Tenants.Contracts restored published EventStore.Contracts/3.126.0 while other projects used source"
+  },
+  "source_retry": {
+    "command": "UseHexalithProjectReferences=true aspire start --non-interactive --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj --format Json",
+    "exit_code": 2,
+    "apphost_exit_code": 255,
+    "reason": "Child CLI exited 255 during build while disk was exhausted; output retention failed with Errno 28. The exact cause of child exit 255 was not established."
+  },
+  "final_describe": "No AppHost is currently running for src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+  "deleted_existing_files": false,
+  "acceptance": false
+}

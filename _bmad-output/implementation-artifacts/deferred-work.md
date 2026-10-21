@@ -1058,3 +1058,7 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Qualify or repair cold native source inspection before Story 6.4 G-4 consumption.
   evidence: AggregateActor.OnActivateAsync can perform recovery/reminder writes before InspectSourceProofAsync; stable warm-turn tests do not prove cold zero-write behavior. Owner evidence and parent gates remain blocked.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
+  summary: Deliver and qualify the existing Conversations metadata mutation dispatcher before claiming production scoring-label reclassification.
+  evidence: SL-B1; UpdateConversationMetadataCommand pre-exists without a native production command/boundary/aggregate dispatch path; this source slice verifies contracts and event replay only.
