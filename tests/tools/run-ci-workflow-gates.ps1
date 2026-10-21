@@ -795,7 +795,7 @@ Require-Match $ci 'npm --prefix tests/e2e ci --ignore-scripts' 'E2E must use the
 Require-Match $ci 'npm --prefix tests/e2e run install:browsers' 'E2E browser installation must be explicit.'
 Require-Match $ci 'uses:\s*\./references/Hexalith\.Builds/Github/dapr-init' 'Scheduled E2E must initialize Dapr through the reviewed root dependency.'
 Require-Match $ci "runtime-version:\s*'1\.18\.2'" 'Scheduled E2E must initialize the approved Dapr 1.18.2 runtime.'
-Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.6\.0' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
+Require-Match $ci 'dotnet tool install --global Aspire\.Cli --version 13\.6\.1' 'Scheduled E2E must install the repository-supported Aspire CLI version.'
 Require-Match $ci 'npm --prefix tests/e2e run test:live:managed' 'Scheduled E2E must use the managed AppHost lifecycle runner.'
 Require-Match $ci '^\s*TEST_USER_PASSWORD:\s*\$\{\{ secrets\.[A-Z0-9_]+ \}\}\s*$' 'Scheduled E2E credentials must come from a GitHub secret.'
 Require-Match $ci '^\s*if:\s*always\(\)\s*$' 'Scheduled E2E must unconditionally run exact-AppHost teardown.'
@@ -942,10 +942,15 @@ foreach ($projectFile in $projectFiles) {
         $isAppHostExecutable = $projectFile.Name -eq 'Hexalith.Projects.AppHost.csproj' -and
             $normalizedInclude -in @('$(HexalithEventStoreRoot)/src/Hexalith.EventStore/Hexalith.EventStore.csproj', '$(HexalithTenantsRoot)/src/Hexalith.Tenants/Hexalith.Tenants.csproj')
         $condition = if (-not [string]::IsNullOrWhiteSpace($reference.Condition)) { $reference.Condition } else { $reference.ParentNode.Condition }
-        # Folders.Server is an unpackable web host. Server tests reference it only in
-        # source mode, and the consuming fixtures compile only under HEXALITH_SOURCE_FIXTURE.
+        # Folders.Server and Conversations.Server are unpackable web hosts. Server
+        # tests reference them only in source mode, and the consuming fixtures
+        # compile only under HEXALITH_SOURCE_FIXTURE.
+        $sourceOnlyUnpackableHosts = @(
+            '$(HexalithFoldersRoot)/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj',
+            '$(HexalithConversationsRoot)/src/Hexalith.Conversations.Server/Hexalith.Conversations.Server.csproj'
+        )
         $isSourceOnlyUnpackableHost = $projectFile.Name -eq 'Hexalith.Projects.Server.Tests.csproj' -and
-            $normalizedInclude -eq '$(HexalithFoldersRoot)/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj' -and
+            $sourceOnlyUnpackableHosts -contains $normalizedInclude -and
             $condition -eq "'`$(UseHexalithProjectReferences)' == 'true'"
         if (-not $isAppHostExecutable -and -not $isSourceOnlyUnpackableHost -and $condition -ne "'`$(UseHexalithProjectReferences)' == 'true'") {
             $failures.Add("$($projectFile.FullName.Substring($repositoryRoot.Length + 1)) has an unconditional sibling library ProjectReference: $($reference.Include)")
