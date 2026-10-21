@@ -1,0 +1,63 @@
+{
+  "command": "UseHexalithProjectReferences=true aspire start --non-interactive --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj --format Json",
+  "start_exit_code": 0,
+  "describe_command": "aspire describe --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj --format Json",
+  "describe_exit_code": 0,
+  "resources": [
+    {
+      "name": "eventstore-dapr-cli-mxpuxmsg",
+      "state": "Waiting"
+    },
+    {
+      "name": "eventstore-japtzkva",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-dapr-cli-nkcbjbed",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-dbjeemzz",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-ui-uszeydxe",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-workers-dapr-cli-ypjgsrxy",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-workers-ejukyfwx",
+      "state": "Waiting"
+    },
+    {
+      "name": "security-custdxcm",
+      "state": "Running",
+      "healthStatus": "Unhealthy"
+    },
+    {
+      "name": "security-eventstore-client-password",
+      "state": "Running",
+      "healthStatus": "Healthy"
+    },
+    {
+      "name": "security-eventstore-client-username",
+      "state": "Running",
+      "healthStatus": "Healthy"
+    },
+    {
+      "name": "tenants-dapr-cli-vgssqhxc",
+      "state": "Waiting"
+    },
+    {
+      "name": "tenants-rbbmdhhc",
+      "state": "Waiting"
+    }
+  ],
+  "stop_command": "aspire stop --non-interactive --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+  "stop_exit_code": 0,
+  "live_acceptance": false,
+  "unrelated_apphost": "Pre-existing platform AppHost under /mnt/wsl/story49-qualification-20261021T072935Z was not stopped."
+}

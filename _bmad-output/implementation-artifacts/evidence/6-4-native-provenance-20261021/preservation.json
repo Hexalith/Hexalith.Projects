@@ -1,0 +1,52 @@
+{
+  "protected_files_checked": 3085,
+  "unchanged": 3082,
+  "intentional_changes": [
+    "./_bmad-output/implementation-artifacts/deferred-work.md",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs"
+  ],
+  "frozen_block_sha256": "f1ee12baf4c9ecc8365c04790215dd54d9ceb8c5500ee1e100b2a371cf8961e9",
+  "frozen_block_unchanged": true,
+  "deferred_ledger_original_prefix_unchanged": true,
+  "parent_story_and_sprint": "Unchanged; both remain blocked. Selected D1-D6 and dependency/configuration hashes unchanged.",
+  "prior_native_head_work": "Preserved. Controller and its tests extended only to retain exact native UserId; five other original changed source/test files retain initial hashes. The entire prior evidence bundle is unchanged.",
+  "git_states": {
+    ".": {
+      "initial_head": "4adca9ace85827d08fdb4b401879ebf2435e58b5",
+      "closing_head": "1c4d814bc0ae3cebabe853bac30e2cdd50f80af2",
+      "status": "M _bmad-output/implementation-artifacts/deferred-work.md\n M _bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md\n M references/Hexalith.Conversations\n M references/Hexalith.EventStore\n?? _bmad-output/implementation-artifacts/evidence/6-4-native-provenance-20261021/",
+      "staged_changes": "",
+      "logical_index_sha256": "b8f1cbf6e71086209cdefcea94be67e42ff9ee5d6304d19007cf112304ff2772"
+    },
+    "references/Hexalith.EventStore": {
+      "initial_head": "ae917d3e4dbab20b8982c5222a13611c3e3faf35",
+      "closing_head": "efae564708d48cdd9affdb293d0375d9b5b1dc47",
+      "status": "M src/Hexalith.EventStore.Contracts/Projections/ProjectionRequest.cs\n M src/Hexalith.EventStore.DomainService/DomainProjectionDispatcher.cs\n M src/Hexalith.EventStore.Server/Projections/DaprProjectionDeliveryRetryScheduler.cs\n M src/Hexalith.EventStore.Server/Projections/INamedProjectionDispatchCoordinator.cs\n M src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.Compatibility.cs\n M src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.ReplayRecovery.cs\n M src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.cs\n M src/Hexalith.EventStore.Server/Projections/ProjectionDeliveryRetryWorkItem.cs\n M src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDelivery.cs\n M src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardTailDelivery.Replay.cs\n M src/Hexalith.EventStore/Controllers/StreamsController.cs\n M tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs\n M tests/Hexalith.EventStore.Server.Tests/Projections/DaprProjectionDeliveryRetrySchedulerTests.cs\n M tests/Hexalith.EventStore.Server.Tests/Projections/GuardedTailProductionHarness.cs\n M tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryCoordinatorFixture.cs\n M tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryProductionHttpHandler.cs\n?? src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs\n?? src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.NativeSource.cs\n?? tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs\n?? tests/Hexalith.EventStore.Server.Tests/Projections/NamedProjectionDispatchCoordinatorTests.NativeProvenance.cs",
+      "staged_changes": "",
+      "logical_index_sha256": "7eaf74337411b598f2fd9e8520d592ab7829e059069d383fa86e2cab6605d785"
+    },
+    "references/Hexalith.Conversations": {
+      "initial_head": "e3560aa0f68a37a27bd0f8e39e6386e08e938d18",
+      "closing_head": "339b2df001eaea651a17c8c01ea006d3e7eb16ca",
+      "status": "M src/Hexalith.Conversations.Server/Projections/ConversationAsyncProjectionHandler.cs\n M src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs\n M src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs\n M src/Hexalith.Conversations.Server/Projections/ConversationResolutionGeneration.cs\n M src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs\n M src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeSelection.cs\n M src/Hexalith.Conversations.Server/Queries/ConversationResolutionNativeEvidence.cs\n M src/Hexalith.Conversations.Server/Queries/GetConversationResolutionMetadataDomainQueryHandler.cs\n M tests/Hexalith.Conversations.Server.Tests/Projections/ConversationAsyncProjectionHandlerTest.cs\n M tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataProjectionTest.cs\n M tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs\n M tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionScoringLabelProjectionTest.cs\n M tests/Hexalith.Conversations.Server.Tests/Queries/ConversationNativeCurrentQueryTests.cs\n M tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs\n M tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs\n M tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadStore.cs\n?? tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionNativeProvenanceTest.cs\n?? tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionDelegatedEvidenceHandler.cs\n?? tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionDelegatedTransport.cs\n?? tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionProjectionCapture.cs\n?? tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionProjectionGateway.cs",
+      "staged_changes": "",
+      "logical_index_sha256": "7da9a806fd886d4be7fd8399b02962cb277b059d6bb9375bb420cd125179d1c9"
+    },
+    "references/Hexalith.Folders": {
+      "initial_head": "34f25c477d0497ebf5c115e7c7a58afb2f88245a",
+      "closing_head": "12ed2391955960efe696078bd0c56e79c88edf9e",
+      "status": "",
+      "staged_changes": "",
+      "logical_index_sha256": "4b4e678456c540cda308dc61348e7ad3c7ff1b86d37d01b47c15d1060858c432"
+    },
+    "references/Hexalith.Tenants": {
+      "initial_head": "ec10b2575c836d650a68ffcbe14a16ccc9257528",
+      "closing_head": "73e4cbee3c3d429ee90a81562ceb9060f8a82ce5",
+      "status": "",
+      "staged_changes": "",
+      "logical_index_sha256": "4cd6275ae30c0b92139dbcc618f14e0dfca0e7629b0332051cb372e429346bfe"
+    }
+  },
+  "concurrent_git_activity": "External activity advanced Projects from first observed 99977941d69827675ef710157655b9f84fda4a43 through snapshot 4adca9ace85827d08fdb4b401879ebf2435e58b5 to 1c4d814bc0ae3cebabe853bac30e2cdd50f80af2, and advanced several owner heads/gitlinks during inspection. This run performed no Git mutations; byte-identical head/index preservation is not claimed across that external activity. See archived concurrent-state and initial/handoff snapshots."
+}

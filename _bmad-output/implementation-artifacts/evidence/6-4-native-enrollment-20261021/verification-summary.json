@@ -1,0 +1,344 @@
+[
+  {
+    "label": "final-conversation-full",
+    "total": 1077,
+    "passed": 1077,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "final-conversation-full.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": true,
+    "disposition": "final-pass"
+  },
+  {
+    "label": "final-sdk-client-focused",
+    "total": 108,
+    "passed": 108,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "final-sdk-client-focused.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": true,
+    "disposition": "final-pass"
+  },
+  {
+    "label": "final-sdk-domain-focused",
+    "total": 201,
+    "passed": 201,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "final-sdk-domain-focused.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": true,
+    "disposition": "final-pass"
+  },
+  {
+    "label": "final-sdk-domain-full",
+    "total": 1127,
+    "passed": 1126,
+    "failed": 1,
+    "skipped": 0,
+    "failures": [
+      {
+        "name": "Hexalith.EventStore.DomainService.Tests.DomainModuleAuthoringGuardrailTests.TenantsDomainService_DoesNotReferenceGeneratedApiHostOrDeclarePerMessageControllers",
+        "message": "Shouldly.ShouldAssertException : File.Exists(csproj)\n    should be\nTrue\n    but was\nFalse\n\nAdditional Info:\n    Expected the root-declared Tenants submodule project at /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj; boundary verification must not pass without its subject."
+      }
+    ],
+    "xml": "final-sdk-domain-full.xml",
+    "exit_code": 1,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": true,
+    "disposition": "blocked-existing-nested-layout"
+  },
+  {
+    "label": "final-sdk-server-focused",
+    "total": 543,
+    "passed": 543,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "final-sdk-server-focused.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": true,
+    "disposition": "final-pass"
+  },
+  {
+    "label": "fix-conv-focused-1",
+    "total": 143,
+    "passed": 141,
+    "failed": 2,
+    "skipped": 0,
+    "failures": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationAsyncProjectionHandlerTest.ReconcileShouldCompensateTerminalIndexButKeepUnfencedMetadataUnavailable",
+        "message": "Shouldly.ShouldAssertException : reconciled.Status\n    should be\nProjectionDispatchStatus.Retryable\n    but was\nProjectionDispatchStatus.Failed"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationAsyncProjectionHandlerTest.ReconcileShouldRemainRetryableWhenPendingMarkerMayDescribeDurableDetail",
+        "message": "Shouldly.ShouldAssertException : reconciled.Status\n    should be\nProjectionDispatchStatus.Retryable\n    but was\nProjectionDispatchStatus.Failed"
+      }
+    ],
+    "xml": "fix-conv-focused-1.xml",
+    "exit_code": 1,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": false,
+    "disposition": "superseded-failed"
+  },
+  {
+    "label": "fix-conv-focused-2",
+    "total": 147,
+    "passed": 147,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "fix-conv-focused-2.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": false,
+    "disposition": "superseded-pass"
+  },
+  {
+    "label": "fix-conv-focused-3",
+    "total": 147,
+    "passed": 147,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "fix-conv-focused-3.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": false,
+    "disposition": "superseded-pass"
+  },
+  {
+    "label": "fix-sdk-focused-1",
+    "total": 62,
+    "passed": 62,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "fix-sdk-focused-1.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": false,
+    "disposition": "superseded-pass"
+  },
+  {
+    "label": "fix-sdk-focused-2",
+    "total": 62,
+    "passed": 62,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "fix-sdk-focused-2.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": false,
+    "disposition": "superseded-pass"
+  },
+  {
+    "label": "fix-server-focused-1",
+    "total": 18,
+    "passed": 17,
+    "failed": 1,
+    "skipped": 0,
+    "failures": [
+      {
+        "name": "Hexalith.EventStore.Server.Tests.Projections.ProjectionRebuildProductionPathTests.CompatibleOrchestratorFreezesValidatedNativeAnchorOrAbsenceInNamedRetry(activeLegacyLease: True, anchored: False)",
+        "message": "Shouldly.ShouldAssertException : await fixture.NamedScheduler!.ReadAsync(workId)\n    should not be null but was"
+      }
+    ],
+    "xml": "fix-server-focused-1.xml",
+    "exit_code": 1,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": false,
+    "disposition": "superseded-failed"
+  },
+  {
+    "label": "fix-server-focused-2",
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "fix-server-focused-2.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": false,
+    "disposition": "superseded-pass"
+  },
+  {
+    "label": "fix-server-focused-3",
+    "total": 47,
+    "passed": 47,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "fix-server-focused-3.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": false,
+    "disposition": "superseded-pass"
+  },
+  {
+    "label": "fix-server-focused-4",
+    "total": 23,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "fix-server-focused-4.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": false,
+    "disposition": "superseded-pass"
+  },
+  {
+    "label": "fix-server-focused-5",
+    "total": 24,
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "fix-server-focused-5.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": true,
+    "final_verification": false,
+    "disposition": "superseded-pass"
+  },
+  {
+    "label": "impl-conv-enrollment-1",
+    "total": 6,
+    "passed": 0,
+    "failed": 6,
+    "skipped": 0,
+    "failures": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"event\\\")",
+        "message": "System.InvalidOperationException : Unable to resolve service for type 'Hexalith.Conversations.Server.TenantAccess.IConversationTenantAccessService' while attempting to activate 'Hexalith.Conversations.Server.Queries.ConversationQueryHandler'."
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"proof\\\")",
+        "message": "System.InvalidOperationException : Unable to resolve service for type 'Hexalith.Conversations.Server.TenantAccess.IConversationTenantAccessService' while attempting to activate 'Hexalith.Conversations.Server.Queries.ConversationQueryHandler'."
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"replacement\\\")",
+        "message": "System.InvalidOperationException : Unable to resolve service for type 'Hexalith.Conversations.Server.TenantAccess.IConversationTenantAccessService' while attempting to activate 'Hexalith.Conversations.Server.Queries.ConversationQueryHandler'."
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.DefaultLegacyAndCompatibilityDeliveryPreserveRoutesWithoutGuardCertificate",
+        "message": "System.InvalidOperationException : Unable to resolve service for type 'Hexalith.Conversations.Server.TenantAccess.IConversationTenantAccessService' while attempting to activate 'Hexalith.Conversations.Server.Queries.ConversationQueryHandler'."
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.ReconciliationPreservesOriginalGenerationAndSelectionTamperingRefusesProof",
+        "message": "System.InvalidOperationException : Unable to resolve service for type 'Hexalith.Conversations.Server.TenantAccess.IConversationTenantAccessService' while attempting to activate 'Hexalith.Conversations.Server.Queries.ConversationQueryHandler'."
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.ExplicitEnrollmentNegotiatesAndReadsActualPersistedSdkOwnerProofWithoutContentOrWrites",
+        "message": "System.InvalidOperationException : Unable to resolve service for type 'Hexalith.Conversations.Server.TenantAccess.IConversationTenantAccessService' while attempting to activate 'Hexalith.Conversations.Server.Queries.ConversationQueryHandler'."
+      }
+    ],
+    "xml": "impl-conv-enrollment-1.xml",
+    "exit_code": 1,
+    "source_unchanged": true,
+    "binary_unchanged": null,
+    "final_verification": false,
+    "disposition": "superseded-failed"
+  },
+  {
+    "label": "impl-conv-enrollment-2",
+    "total": 6,
+    "passed": 3,
+    "failed": 3,
+    "skipped": 0,
+    "failures": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"event\\\")",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n400"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"proof\\\")",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n400"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"replacement\\\")",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n400"
+      }
+    ],
+    "xml": "impl-conv-enrollment-2.xml",
+    "exit_code": 1,
+    "source_unchanged": true,
+    "binary_unchanged": null,
+    "final_verification": false,
+    "disposition": "superseded-failed"
+  },
+  {
+    "label": "impl-conv-enrollment-3",
+    "total": 10,
+    "passed": 9,
+    "failed": 1,
+    "skipped": 0,
+    "failures": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedRebuildRetainsOriginalEvidenceAndKeepsContentFreePromotionGated",
+        "message": "Shouldly.ShouldAssertException : (await fixture.OwnerAsync(catalog.CatalogFingerprint!)).Proof\n    should be null but was\nProjectionOwnerProof { Selection = ProjectionOwnerSelection { Version = 1, TenantId = tenant-resolution, Domain = conversation, AggregateId = conversation-resolution, ProjectionName = conversation-read-model, OwnerIdentity = conversation-resolution, OwnerGeneration = 0dc42700c06e41a5462cec101fd4c056159cf82e0b98301be4e4647d4adfc1fe, AppliedSequence = 1, MessageId = source-message-1, BatchId = source-message-1, FreshnessVersion = pos:0000000001, ReceiptProjectionName = rebuild }, ReceiptIdentity = LaBkgrS8LXJxxyPJe8ft1uDl9hmvARu--DnBNWcexp4, ReceiptFingerprint = v1:HDKf2wqdOA1_lGXzUbMVSpo1xBYcWS6XGvFKdMFBQHo }"
+      }
+    ],
+    "xml": "impl-conv-enrollment-3.xml",
+    "exit_code": 1,
+    "source_unchanged": true,
+    "binary_unchanged": null,
+    "final_verification": false,
+    "disposition": "superseded-failed"
+  },
+  {
+    "label": "impl-conv-enrollment-4",
+    "total": 153,
+    "passed": 153,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "impl-conv-enrollment-4.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": null,
+    "final_verification": false,
+    "disposition": "superseded-pass"
+  },
+  {
+    "label": "impl-sdk-coexistence-1",
+    "total": 23,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "failures": [],
+    "xml": "impl-sdk-coexistence-1.xml",
+    "exit_code": 0,
+    "source_unchanged": true,
+    "binary_unchanged": null,
+    "final_verification": false,
+    "disposition": "superseded-pass"
+  }
+]

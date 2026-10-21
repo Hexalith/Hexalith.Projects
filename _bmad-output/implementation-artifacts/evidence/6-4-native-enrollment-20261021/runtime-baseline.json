@@ -1,0 +1,126 @@
+{
+  "commands": [
+    {
+      "label": "runtime-ps",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "aspire",
+        "ps",
+        "--format",
+        "Json"
+      ],
+      "exit_code": 0,
+      "start_utc": "2026-10-21T12:38:41.927130+00:00",
+      "seconds": 0.351
+    },
+    {
+      "label": "runtime-start",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "env",
+        "UseHexalithProjectReferences=true",
+        "aspire",
+        "start",
+        "--non-interactive",
+        "--apphost",
+        "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+        "--format",
+        "Json"
+      ],
+      "exit_code": 0,
+      "start_utc": "2026-10-21T12:38:47.643135+00:00",
+      "seconds": 24.53
+    },
+    {
+      "label": "runtime-describe",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "aspire",
+        "describe",
+        "--apphost",
+        "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+        "--format",
+        "Json"
+      ],
+      "exit_code": 0,
+      "start_utc": "2026-10-21T12:39:25.892911+00:00",
+      "seconds": 0.342
+    },
+    {
+      "label": "runtime-stop",
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "argv": [
+        "aspire",
+        "stop",
+        "--non-interactive",
+        "--apphost",
+        "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
+      ],
+      "exit_code": 0,
+      "start_utc": "2026-10-21T12:39:36.108114+00:00",
+      "seconds": 0.646
+    }
+  ],
+  "resources": [
+    {
+      "name": "eventstore-dapr-cli-guwhnkda",
+      "state": "Waiting"
+    },
+    {
+      "name": "eventstore-jawxucwd",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-dapr-cli-mgqptdrg",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-pncnrxhj",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-ui-kvgxadte",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-workers-dapr-cli-dwxxutxh",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-workers-mcquykcf",
+      "state": "Waiting"
+    },
+    {
+      "name": "security-eventstore-client-password",
+      "state": "Running",
+      "healthStatus": "Healthy"
+    },
+    {
+      "name": "security-eventstore-client-username",
+      "state": "Running",
+      "healthStatus": "Healthy"
+    },
+    {
+      "name": "security-xgjnnrqe",
+      "state": "Running",
+      "healthStatus": "Unhealthy"
+    },
+    {
+      "name": "tenants-dapr-cli-yfqfddhw",
+      "state": "Waiting"
+    },
+    {
+      "name": "tenants-kvknspwt",
+      "state": "Waiting"
+    }
+  ],
+  "live_acceptance": false,
+  "other_apphosts": "Pre-existing Tenants, EventStore and story49 qualification AppHosts were left untouched.",
+  "output_handling": "Resource/state summary retained. Raw discovery output containing dashboard session grants or environment values is excluded from the archive.",
+  "raw_log_sha256": {
+    "runtime-start.log": "5043ae8c3de7da8c3128518cb2f7fe844d488d048769f1d5d6cd6272b927b13e",
+    "runtime-ps.log": "4d3185ce81351b70933871945d716ebdee164220572d6709cabad277b9ca6a34",
+    "runtime-describe.log": "a960189ba2c63a18b264812d2557ba6c21737e6ca06751fa3020422e03a223ff",
+    "runtime-stop.log": "effe5120215f4d6d1055a596925de931cb5dee3ffc793d1233f1b348790ec1a2"
+  }
+}

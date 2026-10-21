@@ -1078,3 +1078,7 @@ status: open
 - source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Add behavioral verification of G-6 placement and scheduler immutable image identities.
   evidence: NH-V1; the independent verification-gap reviewer traced all three runner tests to exits before image selection and found the retained validator checks roles/IDs but not image values. Add a launch-path regression and mutable-tag negative control in the existing G-6 work; the source pin change predates this resume.
+
+- source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
+  summary: Reconcile the EventStore authoring guardrail's nested Tenants path with supported umbrella source layout.
+  evidence: Independent full SDK DomainService source run on 2026-10-21 executed 1091 tests (1090 passed, 1 failed, no skips); DomainModuleAuthoringGuardrailTests.TenantsDomainService_DoesNotReferenceGeneratedApiHostOrDeclarePerMessageControllers requires references/Hexalith.EventStore/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj. Only root-declared dependencies may be initialized, so this run preserves the guard and layout. Exact command, native XML and failure log are retained in the native provenance evidence bundle; focused source results are separate.

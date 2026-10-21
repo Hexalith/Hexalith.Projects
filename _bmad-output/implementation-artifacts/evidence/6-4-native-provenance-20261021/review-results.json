@@ -1,0 +1,143 @@
+{
+  "reviewers": 3,
+  "separate_claims": 15,
+  "additional_parent_findings": 3,
+  "findings": [
+    {
+      "finding": "NP-B1",
+      "verdict": "medium",
+      "route": "bad_spec",
+      "evidence": "Producer resamples proof before every dispatch; retry work has no original proof. Persist the original proof or absence in existing retry metadata and test interruption plus source advance/inspection failure.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-B2",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "Admission requires latest native head equality, so an append after original capture rejects ordinary delivery. Verify the original supplied cut within the authenticated complete native prefix; never substitute the new head for original evidence.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-B3",
+      "verdict": "medium",
+      "route": "bad_spec",
+      "evidence": "Compatible, recovery-bound and terminal reconciliation requests construct separate requests without the original proof. Carry the same durable retry evidence through every applicable full-prefix path and retain unsupported-route refusal. Same frozen-evidence correction as NP-B1.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-B4",
+      "verdict": "high",
+      "route": "patch",
+      "evidence": "Producer attaches native proof to protected envelopes, but admission rejects their readable Protected representation before ordinary handler dispatch. Omit unsupported provenance without disabling existing protected delivery.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-B5",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "Optional actor inspection waits only on caller cancellation and can block ordinary retry scheduling indefinitely. Bound the whole optional inspection and test stalled-provider fallback/caller cancellation.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-B6",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "Snapshot cloning copies private admission state; no-gateway/unavailable returns can retain prior admission. Clear private admission in the snapshot and verify both fallback branches.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-B7",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "Existing mutation test does not dispatch through a registered SDK upcaster. Execute actual evolution dispatch and assert the defined unproven result for changed effective bytes.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-B8",
+      "verdict": "low",
+      "route": "patch",
+      "evidence": "Conversation gateway fixture truncates at PageSize but always reports false continuation. Correct paging metadata and execute a prefix exceeding 100 events.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-B9",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "New fixtures use payload-only digest while producer tests use the native raw-envelope codec. Add producer/native-reader/SDK-dispatch interoperability with actual raw digests and persisted exact evidence; preserve technical/domain layering.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-B10",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "Every proof getter allocates a complete serialized payload and is called repeatedly during projection. Preserve mutation detection while streaming the digest instead of allocating the full encoded request; retain substantial-prefix measurement, without claiming performance qualification.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-E1",
+      "verdict": "high",
+      "route": "patch",
+      "evidence": "Independent protected-input trace confirms NP-B4: readable Protected metadata reaches the new rejection before ordinary handlers. Same correction as NP-B4.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-E2",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "StreamsController normalizes blank UserId to null while projection producer retains it; exact comparison rejects valid native input. Preserve original UserId only for authenticated native event reads and retain ordinary stream compatibility.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-V1",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "Pre-verified gap: production ConversationResolutionNativeEvidence only has an early rebuild-refusal test; query positives use a fake. Exercise matching and changed source/selection proofs through existing delegated transport and isolated storage.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-V2",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "Pre-verified gap: rebuild/reconciliation tests supply no proof or already-admitted in-memory input. Exercise untrusted JSON requests plus supported native gateway at both real entry points and verify persisted proof/tampering refusal.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-V3",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "Independent full Conversation run confirms BenignRedeliveryPreservesTheOriginalPersistedHeadIdentityAndNativeReceipt now loses admitted proof but expects Completed. Preserve explicitly legacy benign retry coverage and separately reject altered proven input.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-P1",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "Parent full Conversation run also finds SecondWriteFailureShouldBeRetryableAndRetryShouldConverge reading an unproven legacy generation as available. Retain recovery end-state checks and assert strict metadata refusal unless test input is actually admitted.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    },
+    {
+      "finding": "NP-P2",
+      "verdict": "medium",
+      "route": "defer",
+      "evidence": "Full SDK run is 1090/1091: existing DomainModuleAuthoringGuardrailTests expects EventStore/references/Hexalith.Tenants, absent under the authorized umbrella layout. Do not initialize nested submodules or weaken the guard. Retain exact command/XML and focused results separately.",
+      "resolution": "deferred existing layout blocker"
+    },
+    {
+      "finding": "NP-P3",
+      "verdict": "medium",
+      "route": "patch",
+      "evidence": "Final independent Conversation run exposes 28 rebuild fault-injection cases whose shared helper omits the supported gateway and relies on copied private admission. Re-admit an untrusted original JSON request through the existing native fixture gateway, preserving every six-operation boundary and refusal assertion.",
+      "resolution": "corrected; final execution and review confirmation retained"
+    }
+  ],
+  "follow_up": "Blind reviewer confirmed NP-B1..B10 resolved; edge reviewer confirmed NP-E1/E2 resolved; verification reviewer confirmed NP-V1..V3 and the final NP-P3 helper correction. All confirmations were independent source inspection; parent execution is authoritative.",
+  "deferred": [
+    "NP-P2: full SDK authoring guardrail requires absent nested Tenants checkout."
+  ],
+  "allocation_measurement": {
+    "payload_bytes": 8388608,
+    "checks": 5,
+    "allocated_bytes": 8720,
+    "scope": "Proof mutation hashing only; not full-result or production performance qualification."
+  }
+}

@@ -1,0 +1,128 @@
+[
+  {
+    "id": "NE-B1",
+    "reviewer": "blind",
+    "claim": "Production EventStoreGatewayException escapes optional native admission fallback.",
+    "verdict": "medium",
+    "route": "patch",
+    "evidence": "EventStoreGatewayClient translates HTTP/transport failures into EventStoreGatewayException; AuthoritativeEventStreamReader only catches other expected provider exception types. Preserve ordinary delivery while withholding native authority.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  },
+  {
+    "id": "NE-B2",
+    "reviewer": "blind",
+    "claim": "Verifier availability can change a stable dispatch fingerprint and strand a partial generation.",
+    "verdict": "medium",
+    "route": "patch",
+    "evidence": "Conversation fingerprint uses transient VerifiedNativeSourceProof. Freeze original admission proof or absence in first durable evidence; bind the producer hint separately so verification recovery cannot upgrade an old generation or strand ordinary retry.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  },
+  {
+    "id": "NE-B3",
+    "reviewer": "blind",
+    "claim": "Canonical compatible replay drops available original native evidence.",
+    "verdict": "medium",
+    "route": "patch",
+    "evidence": "ProjectionUpdateOrchestrator.LegacyReplay validates an anchored raw complete prefix, then TryDispatchHeadAsync drops that anchor. Carry only that exact verified cut through the existing durable scheduler, preserving absence.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  },
+  {
+    "id": "NE-B4",
+    "reviewer": "blind",
+    "claim": "Operator rebuilds without native proof remain unproven.",
+    "verdict": "false",
+    "route": "reject",
+    "evidence": "This source path has no admitted original native hint and must remain unavailable. User explicitly preserves missing/unproven writer coverage and separate post-rebuild promotion. The new opt-in does not advertise proof for every rebuild operation; supported guarded replay is tested separately. Record unsupported operator rebuild coverage explicitly.",
+    "resolution": "Independent correction review accepted the documented source limit or separate authority boundary."
+  },
+  {
+    "id": "NE-B5",
+    "reviewer": "blind",
+    "claim": "Original cut verification depends on the bounded complete current stream.",
+    "verdict": "false",
+    "route": "reject",
+    "evidence": "The existing authoritative reader deliberately requires a complete current prefix within 10000 events/16 MiB. Beyond that supported bound the input stays unproven; no newer head is substituted or old generation certified. Preserve these capacities and record the availability limit. Frozen-admission retry correction prevents verifier availability from changing an existing generation.",
+    "resolution": "Independent correction review accepted the documented source limit or separate authority boundary."
+  },
+  {
+    "id": "NE-B6",
+    "reviewer": "blind",
+    "claim": "Null payload with a native hint causes an untyped pre-handler failure.",
+    "verdict": "medium",
+    "route": "patch",
+    "evidence": "Native admission clones Payload before validation; reject malformed native input through ProjectionDispatchValidationException before any clone or handler effects.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  },
+  {
+    "id": "NE-B7",
+    "reviewer": "blind",
+    "claim": "Admission clones payloads before cheap proof validation and cancellation.",
+    "verdict": "medium",
+    "route": "patch",
+    "evidence": "Move caller cancellation/cheap shape checks before snapshot allocation, and observe cancellation through copying. Same admission validation correction as B6; test invalid/cancelled input without source effects.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  },
+  {
+    "id": "NE-B8",
+    "reviewer": "blind",
+    "claim": "Direct rich writers leave the historical SDK selected-owner proof readable.",
+    "verdict": "false",
+    "route": "reject",
+    "evidence": "The generic proof authenticates the unchanged isolated selected row and terminal receipt. Direct writers invalidate the separate outer metadata gate; ConversationProjectionReadStore and the production metadata handler must pass that gate before using owner evidence. A readable historical owner receipt alone is not metadata authority or source-guard installation acceptance.",
+    "resolution": "Independent correction review accepted the documented source limit or separate authority boundary."
+  },
+  {
+    "id": "NE-B9",
+    "reviewer": "blind",
+    "claim": "New shared Dapr test transport does not atomically compare and replace ETags.",
+    "verdict": "medium",
+    "route": "patch",
+    "evidence": "Dictionary check/replacement is unsynchronized. Make fake state transitions atomic and add a competing-writer assertion; existing end-to-end fixtures alone use sequential operations.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  },
+  {
+    "id": "NE-B10",
+    "reviewer": "blind",
+    "claim": "Explicit integration/enrollment requirements need documentation.",
+    "verdict": "low",
+    "route": "patch",
+    "evidence": "Add exact opt-in usage, authenticated native-reader prerequisites, legacy/unproven behavior, protected/evolved restrictions and installation separation to the new source/evidence guide.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  },
+  {
+    "id": "NE-E1",
+    "reviewer": "edge",
+    "claim": "Optional producer capture can retain unbounded abandoned actor inspections.",
+    "verdict": "medium",
+    "route": "patch",
+    "evidence": "CaptureNativePrefixAsync uses deadline.ReadAsync; use existing ReadWithAdmissionAsync so a stuck inspection retains one of 16 shared slots until actual completion, while ordinary delivery remains eligible.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  },
+  {
+    "id": "NE-E2",
+    "reviewer": "edge",
+    "claim": "Coexistence admits an owner with Incremental rebuild semantics.",
+    "verdict": "medium",
+    "route": "patch",
+    "evidence": "Exact type/interface checks omit the declared RebuildSemantics property. Require FullReplay to match the full-replay capability and add a refusing vector.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  },
+  {
+    "id": "NE-V1",
+    "reviewer": "verification",
+    "claim": "Transported mixed streamed/full rebuild has no consumer assertion of exact private native admission.",
+    "verdict": "medium",
+    "route": "patch",
+    "evidence": "Existing mixed production harness persists counts/owners but never VerifiedNativeSourceProof. Extend the real harness with supported native reads and exact persisted proof before/after interruption recovery.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  },
+  {
+    "id": "NE-P1",
+    "reviewer": "parent",
+    "claim": "Rebuild transport header matching omits NativeSourceProof.",
+    "verdict": "medium",
+    "route": "patch",
+    "evidence": "DomainProjectionRebuildTransport.HeaderMatches compares source head, owner context and scope but not the newly added native hint. Bind original proof or absence across every uploaded part and first preparation; reject gain/loss/replacement.",
+    "resolution": "Confirmed by independent correction review; final parent verification recorded separately."
+  }
+]

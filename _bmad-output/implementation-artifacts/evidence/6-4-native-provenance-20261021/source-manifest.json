@@ -1,0 +1,69 @@
+{
+  "captured_utc": "2026-10-21T12:33:46.686190+00:00",
+  "projects_head": "1c4d814bc0ae3cebabe853bac30e2cdd50f80af2",
+  "owners": {
+    "Hexalith.EventStore": {
+      "baseline": "efae564708d48cdd9affdb293d0375d9b5b1dc47",
+      "head": "efae564708d48cdd9affdb293d0375d9b5b1dc47",
+      "files": {
+        "src/Hexalith.EventStore.Contracts/Projections/ProjectionRequest.cs": "d65dd20582242c095f3b1be4e6a0850ce655d03d10278488c78f9e6593dc47ac",
+        "src/Hexalith.EventStore.DomainService/DomainProjectionDispatcher.cs": "4c100b4726e61a5e40eb04a64aad6e1736458a3bd441bb091d612a412e93ecc5",
+        "src/Hexalith.EventStore.Server/Projections/DaprProjectionDeliveryRetryScheduler.cs": "6a9ed08a8da0575d8c8cd064781f93609a43402105b3fe2276a4544063943cb1",
+        "src/Hexalith.EventStore.Server/Projections/INamedProjectionDispatchCoordinator.cs": "df51eb8871b5596f38a37354876ec9c0cb1490e0b428f2f6d73059906df1dfac",
+        "src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.Compatibility.cs": "3280a7a8e398b9e71a3cc0c8be1e88a0c9b53333e7fe9b7fa637beac70967f70",
+        "src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.ReplayRecovery.cs": "1ac2b808fab6840aba1e238f08787374dda89c99322bfe4fd8ec75a7d0ddd6c9",
+        "src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.cs": "9db8018d2c98fb9a193e1f8f52acda3116a0b40114baae6b8ca29db6644eaf8d",
+        "src/Hexalith.EventStore.Server/Projections/ProjectionDeliveryRetryWorkItem.cs": "60d7ac41801711bb6499c2d52c02f8bd784a0a7ef1adc8c73d65b6d3937a35cc",
+        "src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDelivery.cs": "11c32495f2d2d0d8f9180645dc30affb79073e67ee55b907501691c344f5ff9e",
+        "src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardTailDelivery.Replay.cs": "518086ae20feb37fd01108339e776d9a22a83636087a67db301f98decb748d50",
+        "src/Hexalith.EventStore/Controllers/StreamsController.cs": "f8c3c70c9396a4d55369acedaf3afe26864e2db8390869709c94bc478aecef62",
+        "tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs": "142d78d0e77cc1c749fc3fe9bd8b8c27d87027cd78e46140d14812a62f35ce0a",
+        "tests/Hexalith.EventStore.Server.Tests/Projections/DaprProjectionDeliveryRetrySchedulerTests.cs": "6674631c142c096f76e2ee24667d233cfcda55258d97e364ee8cdecb6133991c",
+        "tests/Hexalith.EventStore.Server.Tests/Projections/GuardedTailProductionHarness.cs": "7d6eabde81ffd013a00bedaf839d96da4cda0c9c1342d3fbe1ecdc0a261b08e7",
+        "tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryCoordinatorFixture.cs": "67c8a6d24c4ba91cdbe86c07f132561c0528b962343e85cb4e39b7cd4522cf03",
+        "tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryProductionHttpHandler.cs": "84e3ca953191692d425f45b74b0dad49d3d12822d966a9062d4b11823063c746",
+        "src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs": "c9e37049606f462ef6bab3e44c8c50cbfcc3cf49f5bb3a850fa632cfb30af7a3",
+        "src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.NativeSource.cs": "b2b4ed5776422572d66751312d9f69771d034524c10fa9e32c75fa03ebb0d8ba",
+        "tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs": "95eca72bf8575708f95ed69072167cedba20d10c7dc9177f87fc7c8005a25bcd",
+        "tests/Hexalith.EventStore.Server.Tests/Projections/NamedProjectionDispatchCoordinatorTests.NativeProvenance.cs": "e9f5c925f434237390f53ae9e344b52281a4f76f0f2a2797e36bcac416b9d2f4"
+      }
+    },
+    "Hexalith.Conversations": {
+      "baseline": "339b2df001eaea651a17c8c01ea006d3e7eb16ca",
+      "head": "339b2df001eaea651a17c8c01ea006d3e7eb16ca",
+      "files": {
+        "src/Hexalith.Conversations.Server/Projections/ConversationAsyncProjectionHandler.cs": "aa70c87994be0baeb64918f6d94fc6352722f2fd3ff2daa5ff356b64f1b037ca",
+        "src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs": "831264d3ed6c3f2cb73d20d85ba7d46e6e8c5482509c4e9668a451baddb4b616",
+        "src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs": "c864394dcce607ad6cc27153e1aa127c230e33a7ef5b1563ecd1158b2d972500",
+        "src/Hexalith.Conversations.Server/Projections/ConversationResolutionGeneration.cs": "7775432b0bb15302329af4506bd465cda1c13b4552aad54701259b4447ec18ad",
+        "src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs": "a1af79041e9eefd99ac8b66c3dbf2325d56dbefa3f9598ef70d00f48bd3d3b04",
+        "src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeSelection.cs": "e552312f48fe3635cb267677bc1e348308339d3afea1d5a653e15656c686295c",
+        "src/Hexalith.Conversations.Server/Queries/ConversationResolutionNativeEvidence.cs": "0c4a3595554d8c947cd01bf5e9fe07aa29801c6242b44c126fd94f89011b81a7",
+        "src/Hexalith.Conversations.Server/Queries/GetConversationResolutionMetadataDomainQueryHandler.cs": "e9d0cf631d5ecc8434b5d1352dd3d5f18ca5dc9db88ffb0bd812b974fce1c3c5",
+        "tests/Hexalith.Conversations.Server.Tests/Projections/ConversationAsyncProjectionHandlerTest.cs": "627032500ac94600c02fea0bd6a6249de5fd93fdb82240a44e096a854b6b76f2",
+        "tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataProjectionTest.cs": "39d09f6a72d9184d079244403d111505713a3415c74796e2e196dec39a1b5c2b",
+        "tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs": "7a90069e81be57e66e8cca2e89eb8ab19d0fc6c3fb423d1e26f602bb4998cafd",
+        "tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionScoringLabelProjectionTest.cs": "40eff6fe0eb1e9cbff5a243cd7037be81237edc0d30b830d323f826b415076fb",
+        "tests/Hexalith.Conversations.Server.Tests/Queries/ConversationNativeCurrentQueryTests.cs": "41ef9bf3589b9566ea4096af3e580a9115db07e3fe27a4a4e4bc8c46006c4e00",
+        "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs": "c0d3bf26181b5eb0e24382d8d74be20e31e75ac4d6ac78a7ab3de85b4facbac4",
+        "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs": "e3cb4a2491511b6eadcf61aa6fbf730f68abc1a3b54c68dee8c0aefb496c90ff",
+        "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadStore.cs": "f3d0846b3f8865bb81fd9ca6e4de476692cf0a18c22f892627885dcc963e36fe",
+        "tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionNativeProvenanceTest.cs": "720946bbf6da06d04f3ecb6589ab01128a09376bcd727822149b6f0749492d15",
+        "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionDelegatedEvidenceHandler.cs": "1f5c5a06f2073ef35b504c1f53c7b36278b71c343aea9fd77f538cd164b1ec1a",
+        "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionDelegatedTransport.cs": "8d6e0e81126ed06727a1ad1ef462bd23b758f42f1b3693ab549299cb4d8e0816",
+        "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionProjectionCapture.cs": "055adf5342f7e988843a469e09505729cc22c0eea89b1bd308d5106903f676b9",
+        "tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionProjectionGateway.cs": "27dadbc4bf4f7cd91d24bdf8b69a6aa7261fadb3a0ecd511e776f317682fe3b9"
+      }
+    }
+  },
+  "binaries": {
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/bin/Debug/net10.0/Hexalith.EventStore.DomainService.Tests.dll": "5ec02da12017b839f4c1bc05cdc51de4c90267d84460a9a4d6123c8433fb1d38",
+    "references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll": "933bde3a366fc5581e4262966fc76621df63b362d25003a418bad624ace27af9",
+    "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll": "f0f68dfd873e3bf410b10a8a61cc72876119a7aa2904daf4de1dbd1bb6a5c704",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/bin/Debug/net10.0/Hexalith.EventStore.Contracts.dll": "6860171c354cedcb5077e645c8a7963f528815bde2b3f134a65c73779c4af0f5",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/bin/Debug/net10.0/Hexalith.EventStore.DomainService.dll": "f808aa332c4c980c0080584a218f81be5ce640bacf3c01305506fd9010813c87",
+    "references/Hexalith.EventStore/src/Hexalith.EventStore.Server/bin/Debug/net10.0/Hexalith.EventStore.Server.dll": "31e168e80e72310f268abfa6edacc495f6f70677022bcfcb414ca0d6647f0df2",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/bin/Debug/net10.0/Hexalith.Conversations.Server.dll": "203588e6f7ed6b9a6500993b46ee6a8412f3d77161f92ea3d7406f69fcf083e7"
+  },
+  "note": "All production sources remained unchanged across final checks. One subsequent Conversation rebuild-fixture correction was rebuilt and followed by the final full Conversation run; earlier runs retain their exact source hashes."
+}

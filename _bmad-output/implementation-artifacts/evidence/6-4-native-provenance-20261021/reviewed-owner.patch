@@ -1,0 +1,2000 @@
+Owner: Hexalith.EventStore; baseline efae564708d48cdd9affdb293d0375d9b5b1dc47
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Projections/ProjectionRequest.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Projections/ProjectionRequest.cs
+index f1a3b6a72..dcfc63574 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Projections/ProjectionRequest.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Projections/ProjectionRequest.cs
+@@ -2,6 +2,7 @@
+ using System.Text.Json.Serialization;
+ 
+ using Hexalith.EventStore.Contracts.Events;
++using Hexalith.EventStore.Contracts.Streams;
+ 
+ namespace Hexalith.EventStore.Contracts.Projections;
+ 
+@@ -18,6 +19,61 @@ public record ProjectionRequest(
+     string Domain,
+     string AggregateId,
+     ProjectionEventDto[] Events) {
++    private NativeSourceProof? _verifiedNativeSourceProof;
++    private byte[]? _verifiedNativeRequestDigest;
++
++    /// <summary>Gets the producer's original native prefix hint; transport binding alone supplies no authority.</summary>
++    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
++    public NativeSourceProof? NativeSourceProof { get; init; }
++
++    /// <summary>Gets native evidence only while this exact request still matches SDK verification before evolution.</summary>
++    [JsonIgnore]
++    public NativeSourceProof? VerifiedNativeSourceProof => _verifiedNativeRequestDigest is not null
++        && System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(_verifiedNativeRequestDigest, NativeRequestDigest())
++            ? _verifiedNativeSourceProof : null;
++
++    /// <summary>Binds verified evidence to this exact immutable input snapshot.</summary>
++    internal void AdmitNativeSourceProof(NativeSourceProof proof)
++    {
++        _verifiedNativeSourceProof = proof;
++        _verifiedNativeRequestDigest = NativeRequestDigest();
++    }
++
++    /// <summary>Removes all inherited private admission before a new verification attempt.</summary>
++    internal void ClearNativeSourceAdmission()
++    {
++        _verifiedNativeSourceProof = null;
++        _verifiedNativeRequestDigest = null;
++    }
++
++    private byte[] NativeRequestDigest()
++    {
++        // Hash bounded metadata and raw payload segments separately. Encoding the whole request
++        // as JSON would allocate another complete base64 prefix on every mutation check.
++        using var hash = System.Security.Cryptography.IncrementalHash.CreateHash(System.Security.Cryptography.HashAlgorithmName.SHA256);
++        void Append(byte[]? bytes)
++        {
++            Span<byte> length = stackalloc byte[4];
++            System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(length, bytes?.Length ?? -1);
++            hash.AppendData(length);
++            if (bytes is not null) hash.AppendData(bytes);
++        }
++        Append(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(this with
++        { Events = [], EventEvolutionProof = null, VerifiedEffectiveEvents = null }, System.Text.Json.JsonSerializerOptions.Web));
++        Append(EventEvolutionProof);
++        // Evolution hints cannot acquire native admission; mutation still changes the digest.
++        if (VerifiedEffectiveEvents is not null) Append([1]);
++        foreach (ProjectionEventDto item in Events)
++        {
++            Append(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(item with
++            { Payload = [], EffectivePayload = null, StoredDigest = null }, System.Text.Json.JsonSerializerOptions.Web));
++            Append(item.Payload);
++            Append(item.EffectivePayload);
++            Append(item.StoredDigest);
++        }
++        return hash.GetHashAndReset();
++    }
++
+     /// <summary>Gets untrusted effective-view transport hints that require verification before handler dispatch.</summary>
+     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+     public VerifiedEffectiveEventView[]? VerifiedEffectiveEvents { get; init; }
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainProjectionDispatcher.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainProjectionDispatcher.cs
+index f6ebbc492..dc3212910 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainProjectionDispatcher.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainProjectionDispatcher.cs
+@@ -156,7 +156,8 @@ public static class DomainProjectionDispatcher {
+             throw new ProjectionDispatchValidationException(ProjectionDispatchReasonCodes.UnsupportedRoute);
+         }
+ 
+-        ProjectionRequest effectiveRequest = UpcastRequest(serviceProvider, dispatchRequest.Request);
++        ProjectionRequest effectiveRequest = UpcastRequest(serviceProvider, await DomainProjectionNativeSourceAdmission
++            .VerifyAsync(serviceProvider, dispatchRequest.Request, cancellationToken).ConfigureAwait(false));
+         var outcomes = new List<ProjectionDispatchOutcome>(handlers.Length);
+         foreach (IAsyncDomainProjectionHandler handler in handlers) {
+             cancellationToken.ThrowIfCancellationRequested();
+@@ -530,7 +531,8 @@ public static class DomainProjectionDispatcher {
+                             header, options, identity, cancellationToken).ConfigureAwait(false);
+                         ValidateRequest(complete, options);
+                         ValidateRebuildEventHistory(complete.Request, options.MaxRebuildEventCount);
+-                        fullReplayRequest = UpcastRequest(services, complete.Request);
++                        fullReplayRequest = UpcastRequest(services, await DomainProjectionNativeSourceAdmission
++                            .VerifyAsync(services, complete.Request, cancellationToken).ConfigureAwait(false));
+                     }
+                     plan = await MeasureHandler(fullHandler).PrepareRebuildAsync(fullReplayRequest,
+                         header.DispatchId, cancellationToken).ConfigureAwait(false);
+@@ -607,7 +609,8 @@ public static class DomainProjectionDispatcher {
+             throw new ProjectionDispatchValidationException(ProjectionDispatchReasonCodes.UnsupportedRoute);
+         }
+ 
+-        ProjectionRequest effectiveRequest = UpcastRequest(serviceProvider, dispatchRequest.Request);
++        ProjectionRequest effectiveRequest = UpcastRequest(serviceProvider, await DomainProjectionNativeSourceAdmission
++            .VerifyAsync(serviceProvider, dispatchRequest.Request, cancellationToken).ConfigureAwait(false));
+         var outcomes = new Dictionary<string, ProjectionDispatchOutcome>(StringComparer.Ordinal);
+         var operations = new List<ReadModelBatchOperation>();
+         string? storeName = null;
+@@ -723,7 +726,8 @@ public static class DomainProjectionDispatcher {
+         if (handlers.Any(handler => !handler.OrdinaryDeliveryEnabled))
+             throw new ProjectionDispatchValidationException(ProjectionDispatchReasonCodes.UnsupportedCapability);
+ 
+-        ProjectionRequest effectiveRequest = UpcastRequest(serviceProvider, dispatchRequest.Request);
++        ProjectionRequest effectiveRequest = UpcastRequest(serviceProvider, await DomainProjectionNativeSourceAdmission
++            .VerifyAsync(serviceProvider, dispatchRequest.Request, cancellationToken).ConfigureAwait(false));
+ 
+         var outcomes = new List<ProjectionDispatchOutcome>(handlers.Length);
+         foreach (IAsyncDomainProjectionHandler handler in handlers) {
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/DaprProjectionDeliveryRetryScheduler.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/DaprProjectionDeliveryRetryScheduler.cs
+index 733e1863d..35d937428 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/DaprProjectionDeliveryRetryScheduler.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/DaprProjectionDeliveryRetryScheduler.cs
+@@ -142,7 +142,7 @@ public sealed class DaprProjectionDeliveryRetryScheduler(
+                 }
+ 
+                 ProjectionDeliveryRetryWorkItem current = items[index];
+-                if (current.Revision != workItem.Revision
++                if (current.Revision != workItem.Revision || current.NativeSourceProof != workItem.NativeSourceProof
+                     || !string.Equals(current.LeaseOwner, workItem.LeaseOwner, StringComparison.Ordinal)) {
+                     return false;
+                 }
+@@ -537,6 +537,11 @@ public sealed class DaprProjectionDeliveryRetryScheduler(
+         ArgumentNullException.ThrowIfNull(workItem.PendingRoutes);
+         ArgumentNullException.ThrowIfNull(workItem.TerminalRoutes);
+         ArgumentNullException.ThrowIfNull(workItem.ReservationFencingTokens);
++        if (workItem.NativeSourceProof is { } proof && (proof.Erased || proof.RetainedFloor != 1
++            || proof.HeadMessageId != workItem.HeadMessageId
++            || !Hexalith.EventStore.Client.Streams.NativeSourceProofCodec.IsValid(proof,
++                new(workItem.TenantId, workItem.Domain, workItem.AggregateId), workItem.HeadSequence, 1)))
++            throw new ArgumentException("Invalid original native source binding.", nameof(workItem));
+         if (workItem.ReplayRecoveryBindings is { } bindings && bindings.Any(pair => string.IsNullOrWhiteSpace(pair.Key)
+             || pair.Value is not { Length: 64 } || !pair.Value.All(static item => item is >= '0' and <= '9' or >= 'a' and <= 'f')))
+             throw new ArgumentException("Invalid frozen replay recovery binding.", nameof(workItem));
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/INamedProjectionDispatchCoordinator.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/INamedProjectionDispatchCoordinator.cs
+index 4830a35fd..4adec99bc 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/INamedProjectionDispatchCoordinator.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/INamedProjectionDispatchCoordinator.cs
+@@ -16,6 +16,13 @@ internal interface INamedProjectionDispatchCoordinator {
+         long headSequence, string headMessageId, ProjectionEventDto[] events, IReadOnlyList<string> routes,
+         CancellationToken cancellationToken);
+ 
++    /// <summary>Preserves an originally verified native cut through compatible full-prefix delivery.</summary>
++    Task<bool> TryDispatchCompatibleAsync(AggregateIdentity identity, NamedProjectionRouteCatalogEntry catalog,
++        long headSequence, string headMessageId, ProjectionEventDto[] events, IReadOnlyList<string> routes,
++        Hexalith.EventStore.Contracts.Streams.NativeSourceProof nativeSourceProof, CancellationToken cancellationToken)
++        => TryDispatchCompatibleAsync(identity, catalog, headSequence, headMessageId, events, routes, cancellationToken);
++
++
+     /// <summary>Checks whether every named route is either streamed full replay or fenced shared epoch delivery.</summary>
+     Task<bool> SupportsMappedOnlyStreamedDeliveryAsync(
+         AggregateIdentity identity, DomainServiceRegistration registration, CancellationToken cancellationToken);
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.Compatibility.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.Compatibility.cs
+index 0d1634f6f..f4bc5eae9 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.Compatibility.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.Compatibility.cs
+@@ -22,7 +22,7 @@ internal sealed partial class NamedProjectionDispatchCoordinator
+             foreach (ProjectionEventDto[] call in calls)
+             {
+                 cancellationToken.ThrowIfCancellationRequested();
+-                var request = new ProjectionDispatchRequest(new(identity.TenantId, identity.Domain, identity.AggregateId, call),
++                var request = new ProjectionDispatchRequest(new(identity.TenantId, identity.Domain, identity.AggregateId, call) { NativeSourceProof = perEvent ? null : work.NativeSourceProof },
+                     [route], work.DispatchId, catalog.CatalogFingerprint);
+                 ProjectionDispatchResponse? response = await InvokeAsync(catalog.AppId, "project/v2", request,
+                     options.Value, cancellationToken).ConfigureAwait(false);
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.ReplayRecovery.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.ReplayRecovery.cs
+index b86bb1594..f82bed60d 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.ReplayRecovery.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.ReplayRecovery.cs
+@@ -31,7 +31,7 @@ internal sealed partial class NamedProjectionDispatchCoordinator
+             string header = RecoveryHeader(work);
+             if (System.Text.Encoding.UTF8.GetByteCount(header) > 4096) return null;
+             var request = new ProjectionDispatchRequest(new(identity.TenantId, identity.Domain, identity.AggregateId, events)
+-            { RebuildSourceHeadSequence = work.HeadSequence, RebuildSourceHeadMessageId = work.HeadMessageId },
++            { NativeSourceProof = work.NativeSourceProof, RebuildSourceHeadSequence = work.HeadSequence, RebuildSourceHeadMessageId = work.HeadMessageId },
+                 bound, work.DispatchId, work.CatalogFingerprint);
+             foreach (string method in new[] { "project/rebuild/stage/v1", "project/rebuild/commit/v1", "project/rebuild/verify/v1" })
+             {
+@@ -69,7 +69,7 @@ internal sealed partial class NamedProjectionDispatchCoordinator
+         if (group.All(completedRoutes.Contains))
+         {
+             var request = new ProjectionDispatchRequest(new(identity.TenantId, identity.Domain, identity.AggregateId, [])
+-                { RebuildSourceHeadSequence = work.HeadSequence, RebuildSourceHeadMessageId = work.HeadMessageId },
++                { NativeSourceProof = work.NativeSourceProof, RebuildSourceHeadSequence = work.HeadSequence, RebuildSourceHeadMessageId = work.HeadMessageId },
+                 group, work.DispatchId, work.CatalogFingerprint);
+             ProjectionDispatchResponse? response = await InvokeAsync(catalog.AppId, "project/rebuild/reclaim-recovery/v1",
+                 request, options.Value, cancellationToken, RecoveryHeader(work)).ConfigureAwait(false);
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.cs
+index abe8f584f..e43ec5bbd 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.cs
+@@ -48,6 +48,13 @@ internal sealed partial class NamedProjectionDispatchCoordinator(
+         => TryDispatchCoreAsync(identity, new(catalog.AppId, "project/v2", identity.TenantId, identity.Domain, catalog.ServiceVersion),
+             headSequence, headMessageId, events, false, cancellationToken, routes, catalog.CatalogFingerprint);
+ 
++    /// <inheritdoc/>
++    public Task<bool> TryDispatchCompatibleAsync(AggregateIdentity identity, NamedProjectionRouteCatalogEntry catalog,
++        long headSequence, string headMessageId, ProjectionEventDto[] events, IReadOnlyList<string> routes,
++        NativeSourceProof nativeSourceProof, CancellationToken cancellationToken)
++        => TryDispatchCoreAsync(identity, new(catalog.AppId, "project/v2", identity.TenantId, identity.Domain, catalog.ServiceVersion),
++            headSequence, headMessageId, events, false, cancellationToken, routes, catalog.CatalogFingerprint, nativeSourceProof);
++
+     public async Task<bool> SupportsMappedOnlyStreamedDeliveryAsync(
+         AggregateIdentity identity, DomainServiceRegistration registration, CancellationToken cancellationToken) {
+         NamedProjectionRouteCatalogEntry? entry = await ResolveCatalogEntryAsync(identity, registration,
+@@ -398,7 +405,7 @@ internal sealed partial class NamedProjectionDispatchCoordinator(
+         => TryDispatchCoreAsync(identity, registration, headSequence, headMessageId, events, false, cancellationToken);
+ 
+     /// <inheritdoc/>
+-    public Task<bool> TryDispatchAsync(
++    public async Task<bool> TryDispatchAsync(
+         AggregateIdentity identity,
+         DomainServiceRegistration registration,
+         EventEnvelope[] events,
+@@ -413,8 +420,9 @@ internal sealed partial class NamedProjectionDispatchCoordinator(
+         }
+ 
+         EventEnvelope head = events.OrderBy(static item => item.SequenceNumber).Last();
+-        return TryDispatchCoreAsync(identity, registration, head.SequenceNumber, head.MessageId,
+-            projectionEvents, mappedOnly: false, cancellationToken);
++        NativeSourceProof? proof = await CaptureNativePrefixAsync(identity, events, cancellationToken).ConfigureAwait(false);
++        return await TryDispatchCoreAsync(identity, registration, head.SequenceNumber, head.MessageId,
++            projectionEvents, mappedOnly: false, cancellationToken, nativeSourceProof: proof).ConfigureAwait(false);
+     }
+ 
+     /// <inheritdoc/>
+@@ -433,7 +441,7 @@ internal sealed partial class NamedProjectionDispatchCoordinator(
+         AggregateIdentity identity, DomainServiceRegistration registration,
+         long highestSequence, string headMessageId, ProjectionEventDto[] projectionEvents,
+         bool mappedOnly, CancellationToken cancellationToken, IReadOnlyList<string>? compatibleRoutes = null,
+-        string? expectedCatalogFingerprint = null) {
++        string? expectedCatalogFingerprint = null, NativeSourceProof? nativeSourceProof = null) {
+ 
+         ProjectionDispatchOptions dispatchOptions = options.Value;
+         dispatchOptions.Validate();
+@@ -498,7 +506,7 @@ internal sealed partial class NamedProjectionDispatchCoordinator(
+             catalogEntry.CatalogFingerprint,
+             0,
+             now + dispatchOptions.RetryWorkerInterval,
+-            null) { MappedOnlyStreamed = mappedOnly,
++            null) { NativeSourceProof = nativeSourceProof, MappedOnlyStreamed = mappedOnly,
+                 ReplayRecoveryBindings = ProjectionReplayRecoveryContext.Freeze(catalogEntry) };
+         ProjectionDeliveryRetryWorkItem scheduledWork;
+         if (retryScheduler is null) {
+@@ -760,7 +768,7 @@ internal sealed partial class NamedProjectionDispatchCoordinator(
+                     identity.TenantId,
+                     identity.Domain,
+                     identity.AggregateId,
+-                    projectionEvents);
++                    projectionEvents) { NativeSourceProof = scheduledWork.NativeSourceProof };
+                 var dispatchRequest = new ProjectionDispatchRequest(
+                     projectionRequest,
+                     admittedRoutes,
+@@ -1160,7 +1168,7 @@ internal sealed partial class NamedProjectionDispatchCoordinator(
+                 identity.TenantId,
+                 identity.Domain,
+                 identity.AggregateId,
+-                projectionEvents),
++                projectionEvents) { NativeSourceProof = scheduledWork.NativeSourceProof },
+             orderedRoutes,
+             scheduledWork.DispatchId,
+             scheduledWork.CatalogFingerprint);
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionDeliveryRetryWorkItem.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionDeliveryRetryWorkItem.cs
+index e580cee7c..c610b82e8 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionDeliveryRetryWorkItem.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionDeliveryRetryWorkItem.cs
+@@ -35,6 +35,10 @@ public sealed record ProjectionDeliveryRetryWorkItem(
+     int Attempt,
+     DateTimeOffset NextDueUtc,
+     string? LastReasonCode) {
++    /// <summary>Gets the original native cut or original absence frozen by the first scheduler admission.</summary>
++    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
++    public Hexalith.EventStore.Contracts.Streams.NativeSourceProof? NativeSourceProof { get; init; }
++
+     /// <summary>Gets the optimistic revision of this retry transition.</summary>
+     public long Revision { get; init; }
+ 
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDelivery.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDelivery.cs
+index f5a0603d7..ce006744e 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDelivery.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDelivery.cs
+@@ -375,7 +375,7 @@ internal sealed partial class ProjectionSourceGuardDelivery(INamedProjectionRout
+             Events.SourceProofCodec.CreateSeed(identity, head.SourceIncarnation), head, 1, cancellationToken).ConfigureAwait(false))
+             events.AddRange(page.Readable);
+         _ = await compatibleDelivery.TryDispatchCompatibleAsync(identity, catalog, head.HeadSequence, head.HeadMessageId!,
+-            [.. events], routes, cancellationToken).ConfigureAwait(false);
++            [.. events], routes, Events.SourceProofCodec.ToNative(head), cancellationToken).ConfigureAwait(false);
+     }
+ 
+     private async Task<ProjectionSourceGuardDeliveryResult> RecoverPendingAsync(AggregateIdentity identity,
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardTailDelivery.Replay.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardTailDelivery.Replay.cs
+index 81d682bfe..c81847005 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardTailDelivery.Replay.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardTailDelivery.Replay.cs
+@@ -16,6 +16,7 @@ internal sealed partial class ProjectionSourceGuardTailDelivery
+         // no partial page or application reread is substituted for this immutable prefix.
+         var request = new ProjectionDispatchRequest(new(identity.TenantId, identity.Domain, identity.AggregateId, events)
+         {
++            NativeSourceProof = Hexalith.EventStore.Server.Events.SourceProofCodec.ToNative(replays[0].Binding.AdmittedSource),
+             RebuildSourceHeadSequence = replays[0].Binding.AdmittedSource.HeadSequence,
+             RebuildSourceHeadMessageId = replays[0].Binding.AdmittedSource.HeadMessageId,
+             RebuildOwnerGenerations = replays.ToDictionary(static plan => plan.Projection,
+diff --git a/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs b/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs
+index ae18a8be3..31c690f0b 100644
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore/Controllers/StreamsController.cs
+@@ -275,7 +275,7 @@ public sealed partial class StreamsController(
+                 identity.TenantId,
+                 identity.Domain,
+                 identity.AggregateId,
+-                [.. readableEvents.Select((item, index) => ToStreamReadEvent(item) with
++                [.. readableEvents.Select((item, index) => ToStreamReadEvent(item, native is not null) with
+                 { NativeEventDigest = native is null ? null : SourceProofCodec.ComputeEventHash(orderedEvents[index]) })],
+                 new StreamReadMetadata(
+                     request.FromSequence,
+@@ -474,7 +474,7 @@ public sealed partial class StreamsController(
+         return value.All(c => char.IsAsciiLetterOrDigit(c) || c is '.' or '_' or '-');
+     }
+ 
+-    private static StreamReadEvent ToStreamReadEvent(ServerEventEnvelope envelope)
++    private static StreamReadEvent ToStreamReadEvent(ServerEventEnvelope envelope, bool preserveNativeUserId = false)
+                             => new(
+             envelope.SequenceNumber,
+             envelope.EventTypeName,
+@@ -485,7 +485,7 @@ public sealed partial class StreamsController(
+             envelope.CorrelationId,
+             envelope.CausationId,
+             envelope.Timestamp,
+-            string.IsNullOrWhiteSpace(envelope.UserId) ? null : envelope.UserId,
++            preserveNativeUserId ? envelope.UserId : string.IsNullOrWhiteSpace(envelope.UserId) ? null : envelope.UserId,
+             EventStorePayloadProtectionMetadataCarrier.Read(envelope.Extensions))
+                             { GlobalPosition = envelope.GlobalPosition, PayloadVersion = envelope.PayloadVersion };
+ 
+diff --git a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs
+index 373705670..bb6a88581 100644
+--- a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs
++++ b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs
+@@ -343,6 +343,30 @@ public class StreamsControllerTests {
+         proxies.ReceivedCalls().ShouldBeEmpty();
+     }
+ 
++    [Theory]
++    [InlineData("")]
++    [InlineData("   ")]
++    public async Task NativeEventReadsPreserveBlankUserIdentityWhileOrdinaryReadsNormalizeIt(string user)
++    {
++        var envelope = BuildEnvelope(1) with { UserId = user };
++        var identity = new AggregateIdentity(Tenant, Domain, AggregateId);
++        var proof = SourceProofCodec.Extend(SourceProofCodec.CreateSeed(identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV"), envelope);
++        IAggregateActor actor = Substitute.For<IAggregateActor>();
++        actor.InspectSourceProofAsync().Returns(new SourceProofInspection(SourceProofInspectionStatus.Available, true, 1, false, proof));
++        actor.ReadNativeEventsBoundedRangeAsync(0, 1, 101, 2_097_152).Returns(new SourceEventRange([envelope], 1));
++        actor.GetStreamMetadataAsync().Returns(new AggregateStreamMetadata(true, 1));
++        actor.ReadEventsRangeAsync(0, null, 101).Returns([envelope]);
++        var (native, _, _, _) = CreateController(actor);
++        BindWorkload(native);
++        var page = (await native.ReadWorkloadStreamAsync(HeadRequest() with { ToSequence = null }))
++            .ShouldBeOfType<OkObjectResult>().Value.ShouldBeOfType<StreamReadPage>();
++        page.Events.Single().UserId.ShouldBe(user);
++        var (ordinary, _, _, _) = CreateController(actor);
++        var ordinaryPage = (await ordinary.ReadStreamAsync(new(Tenant, Domain, AggregateId, 0)))
++            .ShouldBeOfType<OkObjectResult>().Value.ShouldBeOfType<StreamReadPage>();
++        ordinaryPage.Events.Single().UserId.ShouldBeNull();
++    }
++
+     [Fact]
+     public async Task OrdinaryNativeEventPageStillReadsRangeAndRechecksProof()
+     {
+diff --git a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/DaprProjectionDeliveryRetrySchedulerTests.cs b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/DaprProjectionDeliveryRetrySchedulerTests.cs
+index aab349411..03ca99529 100644
+--- a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/DaprProjectionDeliveryRetrySchedulerTests.cs
++++ b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/DaprProjectionDeliveryRetrySchedulerTests.cs
+@@ -13,6 +13,36 @@ using Shouldly;
+ namespace Hexalith.EventStore.Server.Tests.Projections;
+ 
+ public sealed partial class DaprProjectionDeliveryRetrySchedulerTests {
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task OriginalNativeProofOrAbsenceSurvivesSerializationAndReplacementScheduling(bool originalProof)
++    {
++        var state = new Dictionary<string, ProjectionDeliveryRetryLedger>(StringComparer.Ordinal);
++        var scheduler = CreateScheduler(CreateStatefulDaprClient(state));
++        var original = CreateWorkItem("work-native", "aggregate-a");
++        var identity = new Hexalith.EventStore.Contracts.Identity.AggregateIdentity(original.TenantId, original.Domain, original.AggregateId);
++        var proof = Hexalith.EventStore.Client.Streams.NativeSourceProofCodec.ExtendDigest(
++            Hexalith.EventStore.Client.Streams.NativeSourceProofCodec.CreateSeed(identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV"),
++            identity, 1, original.HeadMessageId, new('a', 64));
++        original = original with { NativeSourceProof = originalProof ? proof : null };
++        await scheduler.ScheduleAsync(original);
++        foreach (string key in state.Keys.ToArray()) state[key] = System.Text.Json.JsonSerializer.Deserialize<ProjectionDeliveryRetryLedger>(
++            System.Text.Json.JsonSerializer.Serialize(state[key]))!;
++        var replacement = original with { NativeSourceProof = originalProof ? null : proof };
++        (await scheduler.ScheduleAsync(replacement)).NativeSourceProof.ShouldBe(original.NativeSourceProof);
++        state.Values.SelectMany(item => item.Items).Single().NativeSourceProof.ShouldBe(original.NativeSourceProof);
++        (await scheduler.ReadAsync(original.WorkId)).ShouldNotBeNull().NativeSourceProof.ShouldBe(original.NativeSourceProof);
++        var malformed = original with { WorkId = "invalid-work", NativeSourceProof = proof with { AggregateId = "foreign" } };
++        await Should.ThrowAsync<ArgumentException>(() => scheduler.ScheduleAsync(malformed));
++        state.Values.SelectMany(item => item.Items).Count().ShouldBe(1);
++        var persisted = (await scheduler.ReadAsync(original.WorkId))!;
++        var claimed = (await scheduler.TryAcquireAsync(persisted, "native-owner", DateTimeOffset.UtcNow, TimeSpan.FromMinutes(1)))!;
++        var changed = claimed with { NativeSourceProof = originalProof ? proof with { SourceIncarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAW" } : proof };
++        (await scheduler.TryUpdateAsync(changed)).ShouldBeFalse();
++        (await scheduler.ReadAsync(original.WorkId))!.NativeSourceProof.ShouldBe(original.NativeSourceProof);
++    }
++
+     [Fact]
+     public async Task ReadAsync_OriginalNotDueReservedWorkIsReadWithoutMutationOrLeaseChanges()
+     {
+diff --git a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/GuardedTailProductionHarness.cs b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/GuardedTailProductionHarness.cs
+index 22b052af8..cd3f9b926 100644
+--- a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/GuardedTailProductionHarness.cs
++++ b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/GuardedTailProductionHarness.cs
+@@ -432,7 +432,8 @@ internal sealed partial class GuardedTailProductionHarness : IDisposable
+             Identity, Events, CancellationToken.None).ConfigureAwait(false)).Events!;
+         if (changedInput) events[^1] = events[^1] with { Payload = "{\"changed\":true}"u8.ToArray() };
+         var request = new ProjectionDispatchRequest(new(Identity.TenantId, Identity.Domain, Identity.AggregateId, events)
+-            { RebuildSourceHeadSequence = Head.HeadSequence, RebuildSourceHeadMessageId = Head.HeadMessageId,
++            { NativeSourceProof = SourceProofCodec.ToNative(Head),
++                RebuildSourceHeadSequence = Head.HeadSequence, RebuildSourceHeadMessageId = Head.HeadMessageId,
+                 RebuildOwnerGenerations = Catalog.ProjectionTypes.ToDictionary(static route => route,
+                     _ => ownerGeneration, StringComparer.Ordinal),
+                 RebuildOwnerIdentities = Catalog.ProjectionTypes.ToDictionary(static route => route,
+diff --git a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryCoordinatorFixture.cs b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryCoordinatorFixture.cs
+index eb884488a..b755165ae 100644
+--- a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryCoordinatorFixture.cs
++++ b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryCoordinatorFixture.cs
+@@ -80,6 +80,10 @@ internal sealed class ReplayRecoveryCoordinatorFixture : IDisposable
+     internal Task<bool> DispatchAsync() => _coordinator.TryDispatchCompatibleAsync(Identity, Catalog, Host.Request.Request.Events.Length,
+         Host.Request.DispatchId, Host.Request.Request.Events, Host.Request.ProjectionTypes, CancellationToken.None);
+ 
++    internal Task<bool> DispatchNativeAsync(Hexalith.EventStore.Contracts.Streams.NativeSourceProof proof)
++        => _coordinator.TryDispatchCompatibleAsync(Identity, Catalog, Host.Request.Request.Events.Length,
++            Host.Request.DispatchId, Host.Request.Request.Events, Host.Request.ProjectionTypes, proof, CancellationToken.None);
++
+     public void Dispose()
+     {
+         _http.Dispose();
+diff --git a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryProductionHttpHandler.cs b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryProductionHttpHandler.cs
+index ee9b44c7b..5bb25b525 100644
+--- a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryProductionHttpHandler.cs
++++ b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/ReplayRecoveryProductionHttpHandler.cs
+@@ -14,6 +14,7 @@ internal sealed class ReplayRecoveryProductionHttpHandler(ReplayRecoveryProducti
+     internal string? LoseAfterAction { get; set; }
+     internal bool RejectCleanup { get; set; }
+     internal string? StoreBinding { get; set; } = ReplayRecoveryProductionFixture.StoreName;
++    internal List<ProjectionDispatchRequest> Inputs { get; } = [];
+     internal List<(string Action, string DispatchId, string Header)> Calls { get; } = [];
+ 
+     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+@@ -28,6 +29,7 @@ internal sealed class ReplayRecoveryProductionHttpHandler(ReplayRecoveryProducti
+             await request.Content!.ReadAsByteArrayAsync(cancellationToken), JsonSerializerOptions.Web)!;
+         input = ProjectionReplayTransportContext.Bind(input, request.Headers.TryGetValues(ProjectionReplayTransportContext.HeaderName,
+             out IEnumerable<string>? context) ? context.Single() : null);
++        Inputs.Add(input);
+         Calls.Add((action, input.DispatchId, header));
+         DomainProjectionRebuildBatchAction operation = action switch
+         {
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/DomainProjectionNativeSourceAdmission.cs
+@@ -0,0 +1,73 @@
++using System.Text.Json;
++
++using Hexalith.EventStore.Client.Gateway;
++using Hexalith.EventStore.Client.Streams;
++using Hexalith.EventStore.Contracts.Identity;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Streams;
++
++using Microsoft.Extensions.DependencyInjection;
++
++namespace Hexalith.EventStore.DomainService;
++
++/// <summary>Verifies producer-frozen native evidence against the original complete input before evolution.</summary>
++internal static class DomainProjectionNativeSourceAdmission
++{
++    /// <summary>Admits only the original supplied native cut, leaving unsupported input unproven.</summary>
++    internal static async Task<ProjectionRequest> VerifyAsync(IServiceProvider services, ProjectionRequest request,
++        CancellationToken cancellationToken)
++    {
++        if (request.NativeSourceProof is null)
++        {
++            ProjectionRequest legacy = request with { };
++            legacy.ClearNativeSourceAdmission();
++            return legacy;
++        }
++        // Copy mutable payloads without allocating a complete base64 request, and never inherit
++        // an earlier private admission through a record copy or an unavailable verification path.
++        ProjectionRequest original = request with { Events = request.Events.Select(item => item with
++        { Payload = item.Payload.ToArray(), EffectivePayload = item.EffectivePayload?.ToArray(), StoredDigest = item.StoredDigest?.ToArray() }).ToArray() };
++        original.ClearNativeSourceAdmission();
++        var identity = new AggregateIdentity(original.TenantId, original.Domain, original.AggregateId);
++        NativeSourceProof proof = original.NativeSourceProof!;
++        if (proof.Erased || proof.RetainedFloor != 1 || proof.HeadSequence != original.Events.LongLength
++            || !NativeSourceProofCodec.IsValid(proof, identity, original.Events.LongLength, 1))
++            throw new ProjectionDispatchValidationException(ProjectionDispatchReasonCodes.DeliveryIdentityConflict);
++        // Hosts without the supported authenticated transport retain unproven generations. No new
++        // registration or owner authority is inferred from a producer hint or a local cursor.
++        IEventStoreGatewayClient? gateway = services.GetService<IEventStoreGatewayClient>();
++        if (gateway is null) return original;
++        var reader = new AuthoritativeEventStreamReader(gateway,
++            services.GetService<TimeProvider>() ?? TimeProvider.System, requireNativeProof: true);
++        AuthoritativeStreamReadResult read = await reader.ReadAsync(identity, cancellationToken).ConfigureAwait(false);
++        // Native read enrollment is independently gated. Its absence must not disable ordinary
++        // projections: the delivered generation remains unproven and cannot authorize metadata.
++        if (!read.IsAuthoritative || read.Stream is null) return original;
++        AuthoritativeEventStream source = read.Stream;
++        if (source.NativeProof?.SourceIncarnation != proof.SourceIncarnation || source.Events.Count < original.Events.Length)
++            throw new ProjectionDispatchValidationException(ProjectionDispatchReasonCodes.DeliveryIdentityConflict);
++        // A legitimate append does not change the original cut. Recompute that exact native cut
++        // from the authenticated complete stream's raw digests instead of substituting its new head.
++        NativeSourceProof cut = NativeSourceProofCodec.CreateSeed(identity, proof.SourceIncarnation);
++        foreach (StreamReadEvent item in source.Events.Take(original.Events.Length))
++            cut = NativeSourceProofCodec.ExtendDigest(cut, identity, item.SequenceNumber, item.MessageId, item.NativeEventDigest!);
++        if (cut != proof) throw new ProjectionDispatchValidationException(ProjectionDispatchReasonCodes.DeliveryIdentityConflict);
++        if (source.Events.Take(original.Events.Length).Any(item => item.ProtectionMetadata is
++            { State: not Hexalith.EventStore.Contracts.Security.PayloadProtectionState.Unprotected })) return original;
++        for (int index = 0; index < original.Events.Length; index++)
++        {
++            ProjectionEventDto item = original.Events[index];
++            StreamReadEvent native = source.Events[index];
++            if (item.SequenceNumber != index + 1L || item.SequenceNumber != native.SequenceNumber
++                || item.MessageId != native.MessageId || item.EventTypeName != native.EventTypeName
++                || item.SerializationFormat != native.SerializationFormat || !item.Timestamp.EqualsExact(native.Timestamp)
++                || item.CorrelationId != native.CorrelationId || item.UserId != native.UserId
++                || item.GlobalPosition != native.GlobalPosition || !item.Payload.AsSpan().SequenceEqual(native.Payload)
++                || item.StoredPayloadVersion != native.PayloadVersion
++                || item.MetadataVersion is not (null or 1) || native.MetadataVersion != 1)
++                throw new ProjectionDispatchValidationException(ProjectionDispatchReasonCodes.DeliveryIdentityConflict);
++        }
++        original.AdmitNativeSourceProof(proof);
++        return original;
++    }
++}
+--- a/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.NativeSource.cs
++++ b/references/Hexalith.EventStore/src/Hexalith.EventStore.Server/Projections/NamedProjectionDispatchCoordinator.NativeSource.cs
+@@ -0,0 +1,47 @@
++using Dapr.Actors;
++
++using Hexalith.EventStore.Contracts.Identity;
++using Hexalith.EventStore.Contracts.Streams;
++using Hexalith.EventStore.Server.Actors;
++using Hexalith.EventStore.Server.Events;
++
++namespace Hexalith.EventStore.Server.Projections;
++
++internal sealed partial class NamedProjectionDispatchCoordinator
++{
++    private async Task<NativeSourceProof?> CaptureNativePrefixAsync(AggregateIdentity identity,
++        EventEnvelope[] events, CancellationToken cancellationToken)
++    {
++        // These are the producer's original persisted envelopes, before payload evolution or
++        // materialization. A later native head can never certify a different/older input.
++        using var deadline = new Hexalith.EventStore.Client.Streams.AuthoritativeStreamReadDeadline(
++            TimeSpan.FromSeconds(2), _timeProvider, cancellationToken, _timeProvider.GetTimestamp());
++        try
++        {
++            return await deadline.ReadAsync<NativeSourceProof?>(async captureToken =>
++            {
++                if (events.Any(item => Hexalith.EventStore.Contracts.Security.EventStorePayloadProtectionMetadataCarrier
++                    .Read(item.Extensions).State != Hexalith.EventStore.Contracts.Security.PayloadProtectionState.Unprotected)) return null;
++                captureToken.ThrowIfCancellationRequested();
++                IAggregateActor actor = actorProxyFactory.CreateActorProxy<IAggregateActor>(
++                    new ActorId(identity.ActorId), AggregateActorTypeName);
++                var before = await actor.InspectSourceProofAsync().ConfigureAwait(false);
++                if (before is null || before.Status != SourceProofInspectionStatus.Available || !before.Exists || before.Erased || before.Proof is not { RetainedFloor: 1, Erased: false } proof
++                    || proof.HeadSequence != events.LongLength
++                    || !SourceProofCodec.IsValid(proof, identity, events.LongLength, 1)) return null;
++                SourceProof chain = SourceProofCodec.CreateSeed(identity, proof.SourceIncarnation);
++                foreach (EventEnvelope item in events)
++                {
++                    captureToken.ThrowIfCancellationRequested();
++                    chain = SourceProofCodec.Extend(chain, item);
++                }
++                if (chain != proof) return null;
++                captureToken.ThrowIfCancellationRequested();
++                var after = await actor.InspectSourceProofAsync().ConfigureAwait(false);
++                return before == after ? SourceProofCodec.ToNative(proof) : null;
++            }).ConfigureAwait(false);
++        }
++        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
++        catch (Exception) { return null; } // optional proof never changes ordinary legacy delivery
++    }
++}
+--- a/references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs
++++ b/references/Hexalith.EventStore/tests/Hexalith.EventStore.DomainService.Tests/DomainProjectionNativeSourceAdmissionTests.cs
+@@ -0,0 +1,274 @@
++using System.Security.Cryptography;
++using System.Text.Json;
++
++using Hexalith.EventStore.Client.Gateway;
++using Hexalith.EventStore.Client.Streams;
++using Hexalith.EventStore.Contracts.Identity;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Streams;
++
++using Microsoft.Extensions.DependencyInjection;
++using NSubstitute;
++using Shouldly;
++
++namespace Hexalith.EventStore.DomainService.Tests;
++
++public sealed class DomainProjectionNativeSourceAdmissionTests
++{
++    private static CancellationToken Token => TestContext.Current.CancellationToken;
++    private static readonly AggregateIdentity Identity = new("tenant-a", "conversation", "conversation-a");
++
++    [Fact]
++    public async Task ExactOriginalNativePrefixIsAdmittedBeforeDispatchAndCannotBeCopiedToChangedInput()
++    {
++        var (request, gateway) = Fixture();
++        using var services = new ServiceCollection().AddSingleton(gateway).BuildServiceProvider();
++        ProjectionRequest admitted = await DomainProjectionNativeSourceAdmission.VerifyAsync(services, request, Token);
++        admitted.VerifiedNativeSourceProof.ShouldBe(request.NativeSourceProof);
++        request.VerifiedNativeSourceProof.ShouldBeNull();
++        JsonSerializer.Deserialize<ProjectionRequest>(JsonSerializer.Serialize(admitted))!.VerifiedNativeSourceProof.ShouldBeNull();
++        (admitted with { AggregateId = "replacement" }).VerifiedNativeSourceProof.ShouldBeNull();
++        (admitted with { Events = [admitted.Events[0] with { MessageId = "different" }] }).VerifiedNativeSourceProof.ShouldBeNull();
++        admitted.Events[0].Payload[0] ^= 1;
++        admitted.VerifiedNativeSourceProof.ShouldBeNull();
++        request.Events[0].Payload[0].ShouldBe((byte)'{');
++    }
++
++    [Theory]
++    [InlineData("payload")]
++    [InlineData("message")]
++    [InlineData("timestamp")]
++    [InlineData("timestamp-offset")]
++    [InlineData("position")]
++    [InlineData("user")]
++    [InlineData("correlation")]
++    [InlineData("type")]
++    [InlineData("format")]
++    [InlineData("sequence")]
++    [InlineData("incarnation")]
++    [InlineData("digest")]
++    [InlineData("tenant")]
++    [InlineData("erased")]
++    [InlineData("retained")]
++    public async Task TamperedOriginalInputOrNativePrefixIsRejectedBeforeMaterialization(string mutation)
++    {
++        var (request, gateway) = Fixture();
++        ProjectionEventDto item = request.Events[0];
++        request = mutation switch
++        {
++            "payload" => request with { Events = [item with { Payload = "{}"u8.ToArray() }] },
++            "message" => request with { Events = [item with { MessageId = "forged" }] },
++            "timestamp" => request with { Events = [item with { Timestamp = item.Timestamp.AddSeconds(1) }] },
++            "timestamp-offset" => request with { Events = [item with { Timestamp = item.Timestamp.ToOffset(TimeSpan.FromHours(1)) }] },
++            "position" => request with { Events = [item with { GlobalPosition = 2 }] },
++            "user" => request with { Events = [item with { UserId = "another" }] },
++            "correlation" => request with { Events = [item with { CorrelationId = "another" }] },
++            "type" => request with { Events = [item with { EventTypeName = "another" }] },
++            "format" => request with { Events = [item with { SerializationFormat = "another" }] },
++            "sequence" => request with { Events = [item with { SequenceNumber = 2 }] },
++            "incarnation" => request with { NativeSourceProof = request.NativeSourceProof! with { SourceIncarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAW" } },
++            "digest" => request with { NativeSourceProof = request.NativeSourceProof! with { CumulativeDigest = new('a', 64) } },
++            "tenant" => request with { TenantId = "tenant-b" },
++            "erased" => request with { NativeSourceProof = request.NativeSourceProof! with { Erased = true } },
++            "retained" => request with { NativeSourceProof = request.NativeSourceProof! with { RetainedFloor = 2 } },
++            _ => throw new InvalidOperationException(),
++        };
++        using var services = new ServiceCollection().AddSingleton(gateway).BuildServiceProvider();
++        await Should.ThrowAsync<ProjectionDispatchValidationException>(() =>
++            DomainProjectionNativeSourceAdmission.VerifyAsync(services, request, Token));
++    }
++
++    [Fact]
++    public async Task MissingOriginalProofOrSupportedTransportRemainsUnprovenAndDoesNotFetchSource()
++    {
++        var (request, gateway) = Fixture();
++        using var noGateway = new ServiceCollection().BuildServiceProvider();
++        (await DomainProjectionNativeSourceAdmission.VerifyAsync(noGateway, request, Token)).VerifiedNativeSourceProof.ShouldBeNull();
++        using var services = new ServiceCollection().AddSingleton(gateway).BuildServiceProvider();
++        (await DomainProjectionNativeSourceAdmission.VerifyAsync(services, request with { NativeSourceProof = null }, Token))
++            .VerifiedNativeSourceProof.ShouldBeNull();
++        await gateway.DidNotReceive().ReadStreamAsync(Arg.Any<StreamReadRequest>(), Arg.Any<CancellationToken>());
++        string legacy = JsonSerializer.Serialize(request with { NativeSourceProof = null }, JsonSerializerOptions.Web);
++        legacy.ShouldNotContain("nativeSourceProof");
++        legacy.ShouldNotContain("verifiedNativeSourceProof");
++    }
++
++    [Fact]
++    public async Task AdmittedSourceSurvivesIdenticalRetryButDoesNotCertifyEvolvedBytes()
++    {
++        var (request, gateway) = Fixture();
++        using var services = new ServiceCollection().AddSingleton(gateway).BuildServiceProvider();
++        ProjectionRequest first = await DomainProjectionNativeSourceAdmission.VerifyAsync(services, request, Token);
++        ProjectionRequest retry = await DomainProjectionNativeSourceAdmission.VerifyAsync(services, request, Token);
++        retry.VerifiedNativeSourceProof.ShouldBe(first.VerifiedNativeSourceProof);
++        (first with { Events = [first.Events[0] with { EventTypeName = "effective-renamed-event" }] }).VerifiedNativeSourceProof.ShouldBeNull();
++    }
++
++    [Fact]
++    public async Task UnenrolledNativeReadAuthorityDoesNotDisableOrdinaryDeliveryOrAdmitProof()
++    {
++        var (request, gateway) = Fixture();
++        gateway.ReadStreamAsync(Arg.Any<StreamReadRequest>(), Arg.Any<CancellationToken>())
++            .Returns(Task.FromException<StreamReadPage>(new HttpRequestException("not-enrolled")));
++        using var services = new ServiceCollection().AddSingleton(gateway).BuildServiceProvider();
++        ProjectionRequest unproven = await DomainProjectionNativeSourceAdmission.VerifyAsync(services, request, Token);
++        unproven.NativeSourceProof.ShouldBe(request.NativeSourceProof);
++        unproven.VerifiedNativeSourceProof.ShouldBeNull();
++        unproven.Events[0].Payload.ShouldBe(request.Events[0].Payload);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task PreviouslyAdmittedInputLosesPrivateAdmissionWhenVerificationIsUnavailable(bool noGateway)
++    {
++        var (request, gateway) = Fixture();
++        using var available = new ServiceCollection().AddSingleton(gateway).BuildServiceProvider();
++        ProjectionRequest admitted = await DomainProjectionNativeSourceAdmission.VerifyAsync(available, request, Token);
++        admitted.VerifiedNativeSourceProof.ShouldNotBeNull();
++        gateway.ReadStreamAsync(Arg.Any<StreamReadRequest>(), Arg.Any<CancellationToken>())
++            .Returns(Task.FromException<StreamReadPage>(new HttpRequestException("unavailable")));
++        using var unavailable = noGateway ? new ServiceCollection().BuildServiceProvider()
++            : new ServiceCollection().AddSingleton(gateway).BuildServiceProvider();
++        (await DomainProjectionNativeSourceAdmission.VerifyAsync(unavailable, admitted, Token)).VerifiedNativeSourceProof.ShouldBeNull();
++        admitted.VerifiedNativeSourceProof.ShouldNotBeNull();
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task OriginalCutSurvivesAppendButNeverSourceReplacement(bool replacement)
++    {
++        var (request, gateway) = Fixture();
++        StreamReadEvent first = (await gateway.ReadStreamAsync(new(Identity.TenantId, Identity.Domain, Identity.AggregateId, 0, 1), Token)).Events[0];
++        StreamReadEvent second = first with { SequenceNumber = 2, MessageId = "message-2", NativeEventDigest = new('b', 64), GlobalPosition = 2 };
++        NativeSourceProof current = NativeSourceProofCodec.CreateSeed(Identity, replacement ? "01ARZ3NDEKTSV4RRFFQ69G5FAW" : request.NativeSourceProof!.SourceIncarnation);
++        foreach (StreamReadEvent item in new[] { first, second })
++            current = NativeSourceProofCodec.ExtendDigest(current, Identity, item.SequenceNumber, item.MessageId, item.NativeEventDigest!);
++        gateway.ReadStreamAsync(Arg.Any<StreamReadRequest>(), Arg.Any<CancellationToken>()).Returns(call =>
++        {
++            var query = call.Arg<StreamReadRequest>();
++            StreamReadEvent[] events = query.ToSequence == 0 ? [] : [first, second];
++            return new StreamReadPage(Identity.TenantId, Identity.Domain, Identity.AggregateId, events,
++                new(query.FromSequence, query.ToSequence, events.LastOrDefault()?.SequenceNumber, 2, events.Length, false, null) { NativeProof = current });
++        });
++        using var services = new ServiceCollection().AddSingleton(gateway).BuildServiceProvider();
++        if (replacement) await Should.ThrowAsync<ProjectionDispatchValidationException>(() =>
++            DomainProjectionNativeSourceAdmission.VerifyAsync(services, request, Token));
++        else (await DomainProjectionNativeSourceAdmission.VerifyAsync(services, request, Token)).VerifiedNativeSourceProof.ShouldBe(request.NativeSourceProof);
++    }
++
++    [Fact]
++    public async Task SubstantialPrefixMutationChecksDoNotAllocateAnotherEncodedPayload()
++    {
++        var (request, gateway) = Fixture();
++        byte[] payload = new byte[8 * 1024 * 1024];
++        request = request with { Events = [request.Events[0] with { Payload = payload }] };
++        string digest = Convert.ToHexStringLower(SHA256.HashData(payload));
++        NativeSourceProof proof = NativeSourceProofCodec.ExtendDigest(NativeSourceProofCodec.CreateSeed(Identity,
++            request.NativeSourceProof!.SourceIncarnation), Identity, 1, "message-1", digest);
++        request = request with { NativeSourceProof = proof };
++        gateway.ReadStreamAsync(Arg.Any<StreamReadRequest>(), Arg.Any<CancellationToken>()).Returns(call =>
++        {
++            var query = call.Arg<StreamReadRequest>();
++            StreamReadEvent[] events = query.ToSequence == 0 ? [] : [new(1, "ConversationCreated", payload, "json", 1,
++                "message-1", "correlation", null, DateTimeOffset.UnixEpoch, "actor") { GlobalPosition = 1, NativeEventDigest = digest }];
++            return new StreamReadPage(Identity.TenantId, Identity.Domain, Identity.AggregateId, events,
++                new(query.FromSequence, query.ToSequence, events.LastOrDefault()?.SequenceNumber, 1, events.Length, false, null) { NativeProof = proof });
++        });
++        using var services = new ServiceCollection().AddSingleton(gateway).BuildServiceProvider();
++        ProjectionRequest admitted = await DomainProjectionNativeSourceAdmission.VerifyAsync(services, request, Token);
++        admitted.VerifiedNativeSourceProof.ShouldBe(proof);
++        long started = GC.GetAllocatedBytesForCurrentThread();
++        for (int index = 0; index < 5; index++) admitted.VerifiedNativeSourceProof.ShouldBe(proof);
++        long allocated = GC.GetAllocatedBytesForCurrentThread() - started;
++        TestContext.Current.TestOutputHelper!.WriteLine($"payloadBytes={payload.Length}; checks=5; allocatedBytes={allocated}");
++        allocated.ShouldBeLessThan(1_048_576);
++        admitted.Events[0].Payload[0] = 1;
++        admitted.VerifiedNativeSourceProof.ShouldBeNull();
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task RealRebuildAndReconciliationAdmitUntrustedJsonAndPersistOnlyOriginalProof(bool reconcile)
++    {
++        var (request, gateway) = Fixture();
++        request = JsonSerializer.Deserialize<ProjectionRequest>(JsonSerializer.Serialize(request))!;
++        request.VerifiedNativeSourceProof.ShouldBeNull();
++        var handler = Substitute.For<IAsyncDomainProjectionRebuildHandler, IAsyncDomainProjectionReconciliationHandler>();
++        handler.Domain.Returns(Identity.Domain); handler.ProjectionType.Returns("native-proof");
++        handler.OrdinaryDeliveryEnabled.Returns(true); handler.RebuildSemantics.Returns(DomainProjectionRebuildSemantics.FullReplay);
++        var store = new Hexalith.EventStore.Testing.Fakes.InMemoryReadModelStore();
++        handler.PrepareRebuildAsync(Arg.Any<ProjectionRequest>(), Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(call =>
++            new DomainProjectionRebuildPlan("models", [Hexalith.EventStore.Client.Projections.ReadModelBatchOperation.Write("original-proof",
++                call.Arg<ProjectionRequest>().VerifiedNativeSourceProof.ShouldNotBeNull(),
++                Hexalith.EventStore.Client.Projections.ReadModelBatchConcurrency.LastWrite)]));
++        ((IAsyncDomainProjectionReconciliationHandler)handler).ReconcileAsync(Arg.Any<ProjectionRequest>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
++            .Returns(async call =>
++            {
++                await store.SaveAsync("models", "original-proof", call.Arg<ProjectionRequest>().VerifiedNativeSourceProof.ShouldNotBeNull(), Token);
++                return DomainProjectionHandlerResult.Completed();
++            });
++        using var services = new ServiceCollection().AddSingleton<IAsyncDomainProjectionHandler>(handler).AddSingleton(gateway)
++            .AddSingleton<Hexalith.EventStore.Client.Projections.IReadModelStore>(store)
++            .AddSingleton<Hexalith.EventStore.Client.Projections.IReadModelBatchStore>(store).BuildServiceProvider();
++        string fingerprint = Hexalith.EventStore.Client.Projections.ProjectionRouteCatalogFingerprint.Compute("native-service", "v1", [new(Identity.Domain, "native-proof")]);
++        var dispatch = new ProjectionDispatchRequest(request, ["native-proof"], "original-operation", fingerprint);
++        var identity = new DomainProjectionIdentityOptions { AppId = "native-service", ServiceVersion = "v1" };
++        async Task<ProjectionDispatchResponse> Invoke(ProjectionDispatchRequest item) => reconcile
++            ? await DomainProjectionDispatcher.ReconcileAsync(services, item, new(), identity, Token)
++            : await DomainProjectionDispatcher.RebuildAsync(services, item, new(), identity, Token);
++        (await Invoke(dispatch)).Outcomes.Single().Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        store.Snapshot<NativeSourceProof>("models", "original-proof").ShouldBe(request.NativeSourceProof);
++        var changed = dispatch with { Request = request with { Events = [request.Events[0] with { Payload = "{}"u8.ToArray() }] } };
++        await Should.ThrowAsync<ProjectionDispatchValidationException>(() => Invoke(changed));
++        store.Snapshot<NativeSourceProof>("models", "original-proof").ShouldBe(request.NativeSourceProof);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task RealOrdinaryDispatchPreservesDeliveryButWithholdsUnsupportedProtectedOrEvolvedProvenance(bool evolved)
++    {
++        var (request, gateway) = evolved ? Fixture("Old.Contracts.CounterRaised", "{\"Amount\":5}"u8.ToArray()) : Fixture(protectedPayload: true);
++        request = JsonSerializer.Deserialize<ProjectionRequest>(JsonSerializer.Serialize(request))!;
++        var handler = Substitute.For<IAsyncDomainProjectionHandler>();
++        handler.Domain.Returns(Identity.Domain); handler.ProjectionType.Returns("native-proof"); handler.OrdinaryDeliveryEnabled.Returns(true);
++        ProjectionRequest? received = null;
++        handler.ProjectAsync(Arg.Any<ProjectionRequest>(), Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(call =>
++        { received = call.Arg<ProjectionRequest>(); return DomainProjectionHandlerResult.Completed(); });
++        var registrations = new ServiceCollection().AddSingleton(gateway).AddSingleton(handler);
++        if (evolved) registrations.AddSingleton(new Hexalith.EventStore.Client.Events.EventPayloadEvolutionRegistry(
++            [typeof(VersionedProjectionDispatchTests.RenamedEvent)], [new VersionedProjectionDispatchTests.RenameStep()]));
++        using var services = registrations.BuildServiceProvider();
++        var registry = new DomainProjectionCatalogRegistry(); registry.Register("native-proof", [new(Identity.Domain, "native-proof")]);
++        (await DomainProjectionDispatcher.DispatchAsync(services, new(request, ["native-proof"], "original", "native-proof"), new(), registry, Token))
++            .Outcomes.Single().Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        received.ShouldNotBeNull().VerifiedNativeSourceProof.ShouldBeNull();
++        if (evolved) received.Events[0].EventTypeName.ShouldBe(typeof(VersionedProjectionDispatchTests.RenamedEvent).FullName);
++        else received.Events[0].Payload.ShouldBe(request.Events[0].Payload);
++    }
++
++    private static (ProjectionRequest, IEventStoreGatewayClient) Fixture(string eventType = "ConversationCreated", byte[]? payload = null, bool protectedPayload = false)
++    {
++        var item = new ProjectionEventDto(eventType, payload ?? "{\"value\":1}"u8.ToArray(), "json", 1,
++            DateTimeOffset.UnixEpoch, "correlation", "message-1", "actor", 1);
++        string digest = Convert.ToHexStringLower(SHA256.HashData(item.Payload));
++        NativeSourceProof proof = NativeSourceProofCodec.ExtendDigest(
++            NativeSourceProofCodec.CreateSeed(Identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV"), Identity, 1, item.MessageId!, digest);
++        var native = new StreamReadEvent(1, item.EventTypeName, item.Payload.ToArray(), item.SerializationFormat,
++            1, item.MessageId!, item.CorrelationId, null, item.Timestamp, item.UserId, protectedPayload
++                ? new(Hexalith.EventStore.Contracts.Security.PayloadProtectionState.Protected, 1, "test", "key", "json", null) : null) { NativeEventDigest = digest, GlobalPosition = 1 };
++        IEventStoreGatewayClient gateway = Substitute.For<IEventStoreGatewayClient>();
++        gateway.ReadStreamAsync(Arg.Any<StreamReadRequest>(), Arg.Any<CancellationToken>()).Returns(call =>
++        {
++            StreamReadRequest request = call.Arg<StreamReadRequest>();
++            StreamReadEvent[] events = request.ToSequence == 0 ? [] : [native];
++            return new StreamReadPage(Identity.TenantId, Identity.Domain, Identity.AggregateId, events,
++                new(request.FromSequence, request.ToSequence, events.LastOrDefault()?.SequenceNumber, 1,
++                    events.Length, false, null) { NativeProof = proof });
++        });
++        return (new(Identity.TenantId, Identity.Domain, Identity.AggregateId, [item]) { NativeSourceProof = proof }, gateway);
++    }
++}
+--- a/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/NamedProjectionDispatchCoordinatorTests.NativeProvenance.cs
++++ b/references/Hexalith.EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/NamedProjectionDispatchCoordinatorTests.NativeProvenance.cs
+@@ -0,0 +1,221 @@
++using Microsoft.Extensions.DependencyInjection;
++using System.Text.Json;
++
++using Dapr.Actors.Client;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Server.Actors;
++using Hexalith.EventStore.Server.Events;
++using NSubstitute;
++using Shouldly;
++
++namespace Hexalith.EventStore.Server.Tests.Projections;
++
++public sealed partial class NamedProjectionDispatchCoordinatorTests
++{
++    [Theory]
++    [InlineData("protected")]
++    [InlineData("exact")]
++    [InlineData("missing")]
++    [InlineData("unsupported")]
++    [InlineData("fault")]
++    [InlineData("tampered-prefix")]
++    [InlineData("replacement")]
++    public async Task OriginalNativePrefixIsCarriedOnlyWhenExactAndLegacyDeliverySurvivesUnavailableProof(string scenario)
++    {
++        EventEnvelope[] events = [Envelope(1), Envelope(2)];
++        if (scenario == "protected") events[0] = events[0] with { Extensions = new Dictionary<string, string>(
++            Hexalith.EventStore.Contracts.Security.EventStorePayloadProtectionMetadataCarrier.Write((IReadOnlyDictionary<string, string>?)null,
++                new(Hexalith.EventStore.Contracts.Security.PayloadProtectionState.Protected, 1, "test-protection", "test-key", "application/json", null))) };
++        SourceProof proof = SourceProofCodec.CreateSeed(Identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV");
++        foreach (EventEnvelope item in events) proof = SourceProofCodec.Extend(proof, item);
++        if (scenario == "tampered-prefix") proof = proof with { CumulativeDigest = new('a', 64) };
++        var before = new SourceProofInspection(SourceProofInspectionStatus.Available, true, 2, false, proof);
++        IAggregateActor actor = Substitute.For<IAggregateActor>();
++        if (scenario == "fault") actor.InspectSourceProofAsync().Returns(Task.FromException<SourceProofInspection>(new IOException("unavailable")));
++        else if (scenario == "missing") actor.InspectSourceProofAsync().Returns(Task.FromResult<SourceProofInspection>(null!));
++        else if (scenario == "unsupported") actor.InspectSourceProofAsync().Returns(before with { Status = SourceProofInspectionStatus.Unsupported });
++        else actor.InspectSourceProofAsync().Returns(before, scenario == "replacement"
++            ? before with { Proof = proof with { SourceIncarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAW" } } : before);
++        IActorProxyFactory proxies = Substitute.For<IActorProxyFactory>();
++        proxies.CreateActorProxy<IAggregateActor>(Arg.Any<Dapr.Actors.ActorId>(), nameof(AggregateActor)).Returns(actor);
++        var http = new ProjectionDispatchHttpMessageHandler(JsonSerializer.Serialize(new ProjectionDispatchResponse(
++            ProjectionDispatchProtocol.Version, [new("widget-detail", ProjectionDispatchStatus.Completed, null, null)])));
++        var coordinator = CreateCoordinator(Snapshot("native-fixture", "widget-detail"), http, out var checkpoints,
++            out _, actorProxyFactory: proxies);
++        checkpoints.SaveDeliveredSequenceAsync(Identity, "widget-detail", 2, Arg.Any<CancellationToken>()).Returns(true);
++        (await coordinator.TryDispatchAsync(Identity, Registration(), events,
++            [ProjectionEvent(1), ProjectionEvent(2)], TestContext.Current.CancellationToken)).ShouldBeTrue();
++        ProjectionRequest delivered = JsonSerializer.Deserialize<ProjectionDispatchRequest>(http.RequestJson!, JsonSerializerOptions.Web)!.Request;
++        if (scenario == "exact") delivered.NativeSourceProof.ShouldBe(SourceProofCodec.ToNative(proof));
++        else delivered.NativeSourceProof.ShouldBeNull();
++        delivered.VerifiedNativeSourceProof.ShouldBeNull();
++        await actor.DidNotReceive().GetEventsAsync(Arg.Any<long>());
++    }
++    [Theory]
++    [InlineData(false, false)]
++    [InlineData(true, false)]
++    [InlineData(false, true)]
++    [InlineData(true, true)]
++    public async Task OptionalCaptureDeadlineBoundsBothInspectionsAndPreservesCallerCancellation(bool afterFirst, bool cancel)
++    {
++        EventEnvelope[] events = [Envelope(1)];
++        SourceProof proof = SourceProofCodec.Extend(SourceProofCodec.CreateSeed(Identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV"), events[0]);
++        var inspection = new SourceProofInspection(SourceProofInspectionStatus.Available, true, 1, false, proof);
++        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
++        var stalled = new TaskCompletionSource<SourceProofInspection>(TaskCreationOptions.RunContinuationsAsynchronously);
++        IAggregateActor actor = Substitute.For<IAggregateActor>();
++        int reads = 0;
++        actor.InspectSourceProofAsync().Returns(_ =>
++        {
++            if (++reads == (afterFirst ? 2 : 1)) { entered.TrySetResult(); return stalled.Task; }
++            return Task.FromResult(inspection);
++        });
++        IActorProxyFactory proxies = Substitute.For<IActorProxyFactory>();
++        proxies.CreateActorProxy<IAggregateActor>(Arg.Any<Dapr.Actors.ActorId>(), nameof(AggregateActor)).Returns(actor);
++        var clock = new Microsoft.Extensions.Time.Testing.FakeTimeProvider();
++        var http = new ProjectionDispatchHttpMessageHandler(JsonSerializer.Serialize(new ProjectionDispatchResponse(2,
++            [new("widget-detail", ProjectionDispatchStatus.Retryable, null, "partial_retry")])));
++        var coordinator = CreateCoordinator(Snapshot("bounded-native", "widget-detail"), http, out _, out _, timeProvider: clock, actorProxyFactory: proxies);
++        using var caller = new CancellationTokenSource();
++        Task<bool> delivery = coordinator.TryDispatchAsync(Identity, Registration(), events, [ProjectionEvent(1)], caller.Token);
++        await entered.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
++        try
++        {
++            if (cancel)
++            {
++                caller.Cancel();
++                await Should.ThrowAsync<OperationCanceledException>(() => delivery.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
++                http.Requests.ShouldBeEmpty();
++            }
++            else
++            {
++                clock.Advance(TimeSpan.FromSeconds(2));
++                (await delivery.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken)).ShouldBeTrue();
++                JsonSerializer.Deserialize<ProjectionDispatchRequest>(http.RequestJson!, JsonSerializerOptions.Web)!.Request.NativeSourceProof.ShouldBeNull();
++            }
++        }
++        finally { stalled.TrySetResult(inspection); }
++    }
++
++    [Theory]
++    [InlineData("append", true)]
++    [InlineData("failure", true)]
++    [InlineData("later-native", false)]
++    public async Task OrdinaryAndCompatibleRetriesKeepSchedulerFrozenOriginalProofOrAbsence(string change, bool proven)
++    {
++        EventEnvelope[] events = [Envelope(1), Envelope(2)];
++        SourceProof proof = SourceProofCodec.CreateSeed(Identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV");
++        foreach (EventEnvelope item in events) proof = SourceProofCodec.Extend(proof, item);
++        var inspection = new SourceProofInspection(SourceProofInspectionStatus.Available, true, 2, false, proof);
++        IAggregateActor actor = Substitute.For<IAggregateActor>();
++        actor.InspectSourceProofAsync().Returns(proven ? inspection : inspection with { Status = SourceProofInspectionStatus.Unsupported });
++        IActorProxyFactory proxies = Substitute.For<IActorProxyFactory>();
++        proxies.CreateActorProxy<IAggregateActor>(Arg.Any<Dapr.Actors.ActorId>(), nameof(AggregateActor)).Returns(actor);
++        var http = new ProjectionDispatchHttpMessageHandler(JsonSerializer.Serialize(new ProjectionDispatchResponse(2,
++            [new("widget-detail", ProjectionDispatchStatus.Retryable, null, "partial_retry")])));
++        var scheduler = new MemoryRetryScheduler();
++        var snapshot = Snapshot("frozen-native", "widget-detail");
++        var coordinator = CreateCoordinator(snapshot, http, out _, out _, scheduler: scheduler, actorProxyFactory: proxies);
++        await coordinator.TryDispatchAsync(Identity, Registration(), events, [ProjectionEvent(1), ProjectionEvent(2)], TestContext.Current.CancellationToken);
++        var frozen = scheduler.Work!.NativeSourceProof;
++        frozen.ShouldBe(proven ? SourceProofCodec.ToNative(proof) : null);
++        if (change == "failure") actor.InspectSourceProofAsync().Returns(Task.FromException<SourceProofInspection>(new IOException()));
++        else if (change == "append") actor.InspectSourceProofAsync().Returns(inspection with { CurrentSequence = 3, Proof = SourceProofCodec.Extend(proof, Envelope(3)) });
++        else actor.InspectSourceProofAsync().Returns(inspection);
++        await coordinator.TryDispatchAsync(Identity, Registration(), events, [ProjectionEvent(1), ProjectionEvent(2)], TestContext.Current.CancellationToken);
++        JsonSerializer.Deserialize<ProjectionDispatchRequest>(http.RequestJson!, JsonSerializerOptions.Web)!.Request.NativeSourceProof.ShouldBe(frozen);
++        await coordinator.TryDispatchCompatibleAsync(Identity, snapshot.Entries.Single(), 2, events[^1].MessageId,
++            [ProjectionEvent(1), ProjectionEvent(2)], ["widget-detail"], SourceProofCodec.ToNative(proof), TestContext.Current.CancellationToken);
++        JsonSerializer.Deserialize<ProjectionDispatchRequest>(http.RequestJson!, JsonSerializerOptions.Web)!.Request.NativeSourceProof.ShouldBe(frozen);
++        scheduler.Work!.NativeSourceProof.ShouldBe(frozen);
++    }
++
++    [Fact]
++    public async Task ActualRawEnvelopeCodecInteroperatesWithProducerJsonNativeReaderAndPersistedSdkDispatch()
++    {
++        EventEnvelope[] raw = [Envelope(1) with { MessageId = "01ARZ3NDEKTSV4RRFFQ69G5FAV", CorrelationId = new('a', 32), CausationId = "01ARZ3NDEKTSV4RRFFQ69G5FAV" },
++            Envelope(2) with { MessageId = "01ARZ3NDEKTSV4RRFFQ69G5FAW", CorrelationId = new('a', 32), CausationId = "01ARZ3NDEKTSV4RRFFQ69G5FAV" }];
++        SourceProof proof = SourceProofCodec.CreateSeed(Identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV");
++        foreach (EventEnvelope item in raw) proof = SourceProofCodec.Extend(proof, item);
++        IAggregateActor actor = Substitute.For<IAggregateActor>();
++        actor.InspectSourceProofAsync().Returns(new SourceProofInspection(SourceProofInspectionStatus.Available, true, 2, false, proof));
++        IActorProxyFactory proxies = Substitute.For<IActorProxyFactory>();
++        proxies.CreateActorProxy<IAggregateActor>(Arg.Any<Dapr.Actors.ActorId>(), nameof(AggregateActor)).Returns(actor);
++        var wire = (await Hexalith.EventStore.Server.Projections.ProjectionEventWireBuilder.BuildAsync(
++            Substitute.For<Hexalith.EventStore.Contracts.Security.IEventPayloadProtectionService>(), Identity, raw, TestContext.Current.CancellationToken)).Events!;
++        var http = new ProjectionDispatchHttpMessageHandler(JsonSerializer.Serialize(new ProjectionDispatchResponse(2,
++            [new("widget-detail", ProjectionDispatchStatus.Completed, null, null)])));
++        var coordinator = CreateCoordinator(Snapshot("raw-native", "widget-detail"), http, out var checkpoints, out _, actorProxyFactory: proxies);
++        checkpoints.SaveDeliveredSequenceAsync(Identity, "widget-detail", 2, Arg.Any<CancellationToken>()).Returns(true);
++        await coordinator.TryDispatchAsync(Identity, Registration(), raw, wire, TestContext.Current.CancellationToken);
++        var transported = JsonSerializer.Deserialize<ProjectionDispatchRequest>(http.RequestJson!, JsonSerializerOptions.Web)!;
++        transported.Request.VerifiedNativeSourceProof.ShouldBeNull();
++        var gateway = Substitute.For<Hexalith.EventStore.Client.Gateway.IEventStoreGatewayClient>();
++        gateway.ReadStreamAsync(Arg.Any<Hexalith.EventStore.Contracts.Streams.StreamReadRequest>(), Arg.Any<CancellationToken>()).Returns(call =>
++        {
++            var query = call.Arg<Hexalith.EventStore.Contracts.Streams.StreamReadRequest>();
++            Hexalith.EventStore.Contracts.Streams.StreamReadEvent[] values = query.ToSequence == 0 ? [] : raw.Select(item =>
++                new Hexalith.EventStore.Contracts.Streams.StreamReadEvent(item.SequenceNumber, item.EventTypeName, item.Payload,
++                    item.SerializationFormat, item.MetadataVersion, item.MessageId, item.CorrelationId, item.CausationId, item.Timestamp, item.UserId)
++                { GlobalPosition = item.GlobalPosition, PayloadVersion = item.PayloadVersion, NativeEventDigest = SourceProofCodec.ComputeEventHash(item) }).ToArray();
++            return new Hexalith.EventStore.Contracts.Streams.StreamReadPage(Identity.TenantId, Identity.Domain, Identity.AggregateId, values,
++                new(query.FromSequence, query.ToSequence, values.LastOrDefault()?.SequenceNumber, 2, values.Length, false, null) { NativeProof = SourceProofCodec.ToNative(proof) });
++        });
++        var store = new Hexalith.EventStore.Testing.Fakes.InMemoryReadModelStore();
++        var handler = Substitute.For<Hexalith.EventStore.DomainService.IAsyncDomainProjectionHandler>();
++        handler.Domain.Returns(Identity.Domain); handler.ProjectionType.Returns("widget-detail"); handler.OrdinaryDeliveryEnabled.Returns(true);
++        handler.ProjectAsync(Arg.Any<ProjectionRequest>(), Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(async call =>
++        {
++            var admitted = call.Arg<ProjectionRequest>().VerifiedNativeSourceProof.ShouldNotBeNull();
++            await store.SaveAsync("models", "original-native-proof", admitted, TestContext.Current.CancellationToken);
++            return Hexalith.EventStore.DomainService.DomainProjectionHandlerResult.Completed();
++        });
++        using var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection()
++            .AddSingleton(gateway).AddSingleton(handler).BuildServiceProvider();
++        var catalog = new Hexalith.EventStore.DomainService.DomainProjectionCatalogRegistry(); catalog.Register("raw-native", [new(Identity.Domain, "widget-detail")]);
++        var response = await Hexalith.EventStore.DomainService.DomainProjectionDispatcher.DispatchAsync(services, transported,
++            new(), catalog, TestContext.Current.CancellationToken);
++        response.Outcomes.Single().Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        store.Snapshot<Hexalith.EventStore.Contracts.Streams.NativeSourceProof>("models", "original-native-proof").ShouldBe(SourceProofCodec.ToNative(proof));
++    }
++
++    [Fact]
++    public async Task TerminalReconciliationUsesOriginalSchedulerProofAfterInspectionFailure()
++    {
++        EventEnvelope[] events = [Envelope(1)];
++        SourceProof proof = SourceProofCodec.Extend(SourceProofCodec.CreateSeed(Identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV"), events[0]);
++        IAggregateActor actor = Substitute.For<IAggregateActor>();
++        actor.InspectSourceProofAsync().Returns(new SourceProofInspection(SourceProofInspectionStatus.Available, true, 1, false, proof));
++        IActorProxyFactory proxies = Substitute.For<IActorProxyFactory>();
++        proxies.CreateActorProxy<IAggregateActor>(Arg.Any<Dapr.Actors.ActorId>(), nameof(AggregateActor)).Returns(actor);
++        string failed = JsonSerializer.Serialize(new ProjectionDispatchResponse(2, [new("widget-detail", ProjectionDispatchStatus.Failed, null, "handler_failure")]));
++        var http = new ProjectionDispatchHttpMessageHandler(failed);
++        var scheduler = new MemoryRetryScheduler();
++        var coordinator = CreateCoordinator(Snapshot("terminal-native", "widget-detail"), http, out _, out _, scheduler: scheduler, actorProxyFactory: proxies);
++        await coordinator.TryDispatchAsync(Identity, Registration(), events, [ProjectionEvent(1)], TestContext.Current.CancellationToken);
++        actor.InspectSourceProofAsync().Returns(Task.FromException<SourceProofInspection>(new IOException()));
++        await coordinator.TryDispatchAsync(Identity, Registration(), events, [ProjectionEvent(1)], TestContext.Current.CancellationToken);
++        http.Requests.ShouldContain(item => item.Path.EndsWith("project/v2/reconcile", StringComparison.Ordinal));
++        http.Requests.ShouldAllBe(item => JsonSerializer.Deserialize<ProjectionDispatchRequest>(item.Body!, JsonSerializerOptions.Web)!.Request.NativeSourceProof == SourceProofCodec.ToNative(proof));
++        scheduler.Work!.NativeSourceProof.ShouldBe(SourceProofCodec.ToNative(proof));
++    }
++
++    [Fact]
++    public async Task RecoveryRequestsReuseFrozenProofAcrossInterruptedPreparationAndChangedProposal()
++    {
++        using var fixture = new ReplayRecoveryCoordinatorFixture();
++        await fixture.ActivateFixtureWriterAsync();
++        var proof = Hexalith.EventStore.Client.Streams.NativeSourceProofCodec.CreateSeed(fixture.Identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV");
++        foreach (var item in fixture.Host.Request.Request.Events)
++            proof = Hexalith.EventStore.Client.Streams.NativeSourceProofCodec.ExtendDigest(proof, fixture.Identity, item.SequenceNumber, item.MessageId!,
++                Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(item.Payload)));
++        fixture.Http.LoseAfterAction = "stage";
++        await fixture.DispatchNativeAsync(proof);
++        fixture.Work!.NativeSourceProof.ShouldBe(proof);
++        await fixture.DispatchNativeAsync(proof with { SourceIncarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAW" });
++        fixture.Http.Inputs.ShouldNotBeEmpty();
++        fixture.Http.Inputs.ShouldAllBe(item => item.Request.NativeSourceProof == proof);
++        fixture.Work.ShouldBeNull();
++    }
++
++}
+
+Owner: Hexalith.Conversations; baseline 339b2df001eaea651a17c8c01ea006d3e7eb16ca
+diff --git a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationAsyncProjectionHandler.cs b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationAsyncProjectionHandler.cs
+index ea7d1b8..5405593 100644
+--- a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationAsyncProjectionHandler.cs
++++ b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationAsyncProjectionHandler.cs
+@@ -495,6 +495,7 @@ public sealed class ConversationAsyncProjectionHandler :
+             isRebuilding: false,
+             metadataWriteFailed: false) with
+         {
++            NativeSourceProof = request.VerifiedNativeSourceProof,
+             SourceHeadSequence = request.Events.LastOrDefault()?.SequenceNumber,
+             SourceHeadMessageId = request.Events.LastOrDefault()?.MessageId,
+         };
+@@ -707,6 +708,11 @@ public sealed class ConversationAsyncProjectionHandler :
+             hash.AppendData(FingerprintSeparator);
+         }
+ 
++        if (request.VerifiedNativeSourceProof is { } nativeProof)
++        {
++            AppendFingerprintSegment(hash, "sdk-native-source-v1");
++            hash.AppendData(JsonSerializer.SerializeToUtf8Bytes(nativeProof, JsonSerializerOptions.Web));
++        }
+         return Convert.ToHexStringLower(hash.GetHashAndReset());
+     }
+ 
+@@ -788,6 +794,7 @@ public sealed class ConversationAsyncProjectionHandler :
+             || detail.Value.Summary.ConversationId != conversationId
+             || detail.Value.Detail.ConversationId != conversationId
+             || detail.Value.Summary.Freshness != detail.Value.Detail.Freshness
++            || detail.Value.NativeSourceProof != expected.NativeSourceProof
+             || detail.Value.ResolutionScoringLabel != expected.ResolutionScoringLabel
+             || detail.Value.Summary.Freshness.ProjectionGeneratedAt.UtcTicks != ledger.ProjectionGeneratedAt.UtcTicks
+             || !JsonElement.DeepEquals(
+diff --git a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs
+index 4f824e1..70f1110 100644
+--- a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs
++++ b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectedReadModels.cs
+@@ -17,6 +17,10 @@ public sealed record ConversationProjectedReadModels(
+     ConversationSummaryProjectionV1 Summary,
+     ConversationDetailProjectionV1 Detail)
+ {
++    /// <summary>Gets the original SDK-verified native incarnation and complete prefix; absent for legacy input.</summary>
++    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
++    public Hexalith.EventStore.Contracts.Streams.NativeSourceProof? NativeSourceProof { get; init; }
++
+     /// <summary>
+     /// Gets the projected conversation summary.
+     /// </summary>
+diff --git a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs
+index b0d5f2d..ee3136d 100644
+--- a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs
++++ b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs
+@@ -85,7 +85,7 @@ public sealed class ConversationProjectionReadStore : IConversationProjectionRea
+             throw new ConversationProjectionConsistencyException();
+         }
+ 
+-        if (generation is null || generation.IsPending || metadata.Value is null || string.IsNullOrEmpty(metadata.ETag)
++        if (generation is null || generation.NativeSourceProof is null || generation.IsPending || metadata.Value is null || string.IsNullOrEmpty(metadata.ETag)
+             || generation.TenantId != tenantId || generation.ConversationId != conversationId
+             || !generation.Matches(metadata.Value))
+         {
+diff --git a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionGeneration.cs b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionGeneration.cs
+index d919030..f814a4a 100644
+--- a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionGeneration.cs
++++ b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionGeneration.cs
+@@ -15,6 +15,10 @@ public sealed record ConversationResolutionGeneration(
+     TenantId TenantId, ConversationId ConversationId, string DispatchId,
+     string RequestFingerprint, ProjectionFreshnessV1 Freshness, string SubsetDigest, bool IsPending)
+ {
++    /// <summary>Gets the original SDK-verified native incarnation and complete prefix; absent for legacy input.</summary>
++    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
++    public Hexalith.EventStore.Contracts.Streams.NativeSourceProof? NativeSourceProof { get; init; }
++
+     /// <summary>Gets the original named producer's source-local head, absent for legacy generations.</summary>
+     public long? SourceHeadSequence { get; init; }
+ 
+@@ -25,7 +29,7 @@ public sealed record ConversationResolutionGeneration(
+     internal static ConversationResolutionGeneration From(ConversationResolutionMetadataReadModel model, bool pending)
+         => new(model.TenantId, model.ConversationId, model.DispatchId, model.RequestFingerprint,
+             model.Freshness, model.Digest(), pending)
+-        { SourceHeadSequence = model.SourceHeadSequence, SourceHeadMessageId = model.SourceHeadMessageId };
++        { NativeSourceProof = model.NativeSourceProof, SourceHeadSequence = model.SourceHeadSequence, SourceHeadMessageId = model.SourceHeadMessageId };
+ 
+     /// <summary>Compares using native position then ordinal dispatch identity.</summary>
+     internal int CompareTo(ConversationResolutionGeneration other)
+@@ -39,5 +43,6 @@ public sealed record ConversationResolutionGeneration(
+         => model.IsWellFormed() && TenantId == model.TenantId && ConversationId == model.ConversationId
+             && DispatchId == model.DispatchId && RequestFingerprint == model.RequestFingerprint
+             && Freshness == model.Freshness && SubsetDigest == model.Digest()
++            && NativeSourceProof == model.NativeSourceProof
+             && SourceHeadSequence == model.SourceHeadSequence && SourceHeadMessageId == model.SourceHeadMessageId;
+ }
+diff --git a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs
+index 95f8f06..4074dd6 100644
+--- a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs
++++ b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs
+@@ -27,6 +27,10 @@ public sealed record ConversationResolutionMetadataReadModel(
+     bool IsLabelComplete,
+     string? LabelClassification = null)
+ {
++    /// <summary>Gets the original SDK-verified native incarnation and complete prefix; absent for legacy input.</summary>
++    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
++    public Hexalith.EventStore.Contracts.Streams.NativeSourceProof? NativeSourceProof { get; init; }
++
+     /// <summary>Gets the exact native source-local sequence admitted by the named producer.</summary>
+     public long? SourceHeadSequence { get; init; }
+ 
+@@ -55,7 +59,7 @@ public sealed record ConversationResolutionMetadataReadModel(
+                 complete ? summary.Label : null, summary.LifecycleState),
+             summary.Freshness, models.DispatchId, fingerprint, complete,
+             complete ? ConversationResolutionScoringPolicy.Classification : null)
+-        { SourceHeadSequence = models.SourceHeadSequence, SourceHeadMessageId = models.SourceHeadMessageId,
++        { NativeSourceProof = models.NativeSourceProof, SourceHeadSequence = models.SourceHeadSequence, SourceHeadMessageId = models.SourceHeadMessageId,
+             LabelPurpose = complete ? scoring!.Purpose : null };
+     }
+ 
+@@ -76,5 +80,10 @@ public sealed record ConversationResolutionMetadataReadModel(
+                 && ConversationResolutionScoringPolicy.CanClassify(Metadata.SafeLabel, ConversationResolutionScoringPolicy.Purpose)
+             : Metadata.SafeLabel is null && LabelClassification is null && LabelPurpose is null)
+         && !string.IsNullOrWhiteSpace(DispatchId)
++        && (NativeSourceProof is null || NativeSourceProof is { Erased: false } proof
++            && proof.HeadSequence == SourceHeadSequence && proof.HeadMessageId == SourceHeadMessageId
++            && Hexalith.EventStore.Client.Streams.NativeSourceProofCodec.IsValid(proof,
++                new(TenantId.Value, ConversationProjectionHandler.ConversationDomain, ConversationId.Value),
++                proof.HeadSequence, proof.RetainedFloor))
+         && RequestFingerprint is { Length: 64 } && RequestFingerprint.All(Uri.IsHexDigit);
+ }
+diff --git a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeSelection.cs b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeSelection.cs
+index 06e8115..0f3ab12 100644
+--- a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeSelection.cs
++++ b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeSelection.cs
+@@ -8,16 +8,20 @@ namespace Hexalith.Conversations.Server.Projections;
+ /// <param name="ProjectionOwner">The exact source identity, actual head message and immutable subset generation.</param>
+ public sealed record ConversationResolutionNativeSelection(string ProjectionVersion, ProjectionOwnerSelection ProjectionOwner)
+ {
++    /// <summary>Gets the original proof committed in the same content-free batch as this selection.</summary>
++    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
++    public Hexalith.EventStore.Contracts.Streams.NativeSourceProof? NativeSourceProof { get; init; }
++
+     /// <summary>Builds evidence only when the named producer supplied an actual persisted event identity.</summary>
+     internal static ConversationResolutionNativeSelection? From(ConversationResolutionMetadataReadModel model, string batchId,
+         bool rebuild = false)
+     {
+         try { _ = new AggregateIdentity(model.TenantId.Value, ConversationProjectionHandler.ConversationDomain, model.ConversationId.Value); }
+         catch (ArgumentException) { return null; }
+-        return model.SourceHeadSequence is > 0 && !string.IsNullOrWhiteSpace(model.SourceHeadMessageId)
++        return model.NativeSourceProof is not null && model.SourceHeadSequence is > 0 && !string.IsNullOrWhiteSpace(model.SourceHeadMessageId)
+             ? new(model.Freshness.ProjectionCursor, new(1, model.TenantId.Value, ConversationProjectionHandler.ConversationDomain,
+                 model.ConversationId.Value, ConversationAsyncProjectionHandler.ConversationReadModelProjectionType,
+                 model.ConversationId.Value, model.Digest(), model.SourceHeadSequence.Value, model.SourceHeadMessageId,
+-                batchId, model.Freshness.ProjectionCursor) { ReceiptProjectionName = rebuild ? "rebuild" : null }) : null;
++                batchId, model.Freshness.ProjectionCursor) { ReceiptProjectionName = rebuild ? "rebuild" : null }) { NativeSourceProof = model.NativeSourceProof } : null;
+     }
+ }
+diff --git a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionNativeEvidence.cs b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionNativeEvidence.cs
+index 75ec87e..265abdc 100644
+--- a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionNativeEvidence.cs
++++ b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionNativeEvidence.cs
+@@ -35,7 +35,8 @@ public sealed class ConversationResolutionNativeEvidence(DelegatedOwnerQueryClie
+         var selected = await store.GetAsync<ConversationResolutionNativeSelection>(ConversationProjectionReadModelKeys.StateStoreName,
+             ConversationProjectionReadModelKeys.ResolutionSelectionKey(metadata.TenantId, metadata.ConversationId), cancellationToken).ConfigureAwait(false);
+         ProjectionOwnerSelection? selection = selected.Value?.ProjectionOwner;
+-        if (string.IsNullOrEmpty(selected.ETag) || selection is null || selection.OwnerGeneration != metadata.Digest()
++        if (metadata.NativeSourceProof is null || selected.Value?.NativeSourceProof != metadata.NativeSourceProof
++            || string.IsNullOrEmpty(selected.ETag) || selection is null || selection.OwnerGeneration != metadata.Digest()
+             || selection.TenantId != metadata.TenantId.Value || selection.AggregateId != metadata.ConversationId.Value
+             || selection.Domain != ConversationProjectionHandler.ConversationDomain
+             || selection.ProjectionName != ConversationAsyncProjectionHandler.ConversationReadModelProjectionType
+@@ -49,7 +50,7 @@ public sealed class ConversationResolutionNativeEvidence(DelegatedOwnerQueryClie
+             cancellationToken).ConfigureAwait(false);
+         if (!result.Success) return null;
+         ProjectionCurrentProof? proof = result.GetPayload().Deserialize<ProjectionCurrentProof>(JsonSerializerOptions.Web);
+-        return proof?.Owner.Selection == selection && proof.Source.TenantId == selection.TenantId
++        return proof?.Source == metadata.NativeSourceProof && proof.Owner.Selection == selection && proof.Source.TenantId == selection.TenantId
+             && proof.Source.Domain == selection.Domain && proof.Source.AggregateId == selection.AggregateId
+             && proof.Source.HeadSequence == selection.AppliedSequence && proof.Source.HeadMessageId == selection.MessageId ? proof : null;
+     }
+diff --git a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationResolutionMetadataDomainQueryHandler.cs b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationResolutionMetadataDomainQueryHandler.cs
+index 2cf7ba2..b6cb431 100644
+--- a/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationResolutionMetadataDomainQueryHandler.cs
++++ b/references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationResolutionMetadataDomainQueryHandler.cs
+@@ -67,7 +67,7 @@ public sealed class GetConversationResolutionMetadataDomainQueryHandler(
+             }
+ 
+             var resourceBefore = await native!.ReadProjectionAsync(metadata, cancellationToken).ConfigureAwait(false);
+-            if (resourceBefore is null) return Unavailable();
++            if (resourceBefore is null || metadata.NativeSourceProof is null || resourceBefore.Source != metadata.NativeSourceProof) return Unavailable();
+             var final = await authorization.CheckAsync(tenant, resource, query.UserId, ConversationResolutionMetadataAuthorization.ScoringPurpose, cancellationToken).ConfigureAwait(false);
+             if (final.Denied)
+             {
+diff --git a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationAsyncProjectionHandlerTest.cs b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationAsyncProjectionHandlerTest.cs
+index 73406b7..d6da8c3 100644
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationAsyncProjectionHandlerTest.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationAsyncProjectionHandlerTest.cs
+@@ -148,8 +148,11 @@ public sealed class ConversationAsyncProjectionHandlerTest
+         DomainProjectionHandlerResult retried = await handler.ProjectAsync(request, "dispatch-partial", TestContext.Current.CancellationToken);
+ 
+         retried.Status.ShouldBe(ProjectionDispatchStatus.Completed);
+-        (await readStore.ReadResolutionMetadataAsync(Tenant, Conversation, TestContext.Current.CancellationToken))
+-            .ShouldNotBeNull();
++        // Recovery converges legacy state but cannot manufacture original native provenance.
++        inner.Snapshot<ConversationResolutionMetadataReadModel>(ConversationProjectionReadModelKeys.StateStoreName,
++            ConversationProjectionReadModelKeys.ResolutionMetadataKey(Tenant, Conversation))!.NativeSourceProof.ShouldBeNull();
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await readStore.ReadResolutionMetadataAsync(Tenant, Conversation, TestContext.Current.CancellationToken));
+         inner.Snapshot<ConversationProjectionIndexReadModel>(
+             ConversationProjectionReadModelKeys.StateStoreName,
+             ConversationProjectionReadModelKeys.TenantIndexKey(Tenant))!
+diff --git a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataProjectionTest.cs b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataProjectionTest.cs
+index 5ad36bc..868fa67 100644
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataProjectionTest.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataProjectionTest.cs
+@@ -41,7 +41,10 @@ public sealed class ConversationResolutionMetadataProjectionTest
+         ConversationId conversation = new(" conversation: /日本 ");
+         (await fixture.Handler().ProjectAsync(ResolutionMetadataFixture.Request(tenantId: tenant, conversationId: conversation),
+             "dispatch-opaque", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+-        (await fixture.Reader().ReadResolutionMetadataAsync(tenant, conversation, Token))!.Metadata.ConversationId.ShouldBe(conversation.Value);
++        fixture.Store.Snapshot<ConversationResolutionMetadataReadModel>("statestore",
++            ConversationProjectionReadModelKeys.ResolutionMetadataKey(tenant, conversation))!.Metadata.ConversationId.ShouldBe(conversation.Value);
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await fixture.Reader().ReadResolutionMetadataAsync(tenant, conversation, Token));
+         (await fixture.Reader().ReadResolutionMetadataAsync(tenant, new(conversation.Value.Trim()), Token)).ShouldBeNull();
+     }
+ 
+diff --git a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs
+index a365a54..56ff68e 100644
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs
+@@ -8,6 +8,7 @@ using Hexalith.Conversations.Contracts.Projections;
+ using Hexalith.Conversations.Contracts.Versioning;
+ using Hexalith.Conversations.Server.Projections;
+ using Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++using Hexalith.EventStore.Client.Gateway;
+ using Hexalith.EventStore.Client.Projections;
+ using Hexalith.EventStore.Contracts.Projections;
+ using Hexalith.EventStore.DomainService;
+@@ -199,6 +200,7 @@ public sealed class ConversationResolutionMetadataRecoveryTest
+         var next = request with { Events = [.. request.Events, new(nameof(ConversationMetadataUpdated),
+             JsonSerializer.SerializeToUtf8Bytes(classified, JsonSerializerOptions.Web), "json", 2,
+             ResolutionMetadataFixture.Started.AddSeconds(1), "correlation", "source-message-2")] };
++        next = await ResolutionMetadataFixture.AdmitNativeAsync(next);
+         (await fixture.Handler().ProjectAsync(next, "dispatch-native", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+         fixture.Metadata.LabelPurpose.ShouldBe(ConversationResolutionScoringPolicy.Purpose);
+         fixture.Metadata.Metadata.SafeLabel.ShouldBe("Scoring label");
+@@ -275,7 +277,8 @@ public sealed class ConversationResolutionMetadataRecoveryTest
+             ConversationProjectionReadModelKeys.ConversationKey(Tenant, Conversation))!;
+         JsonSerializer.SerializeToUtf8Bytes(detail).Length.ShouldBeGreaterThan(1_048_576);
+         JsonSerializer.Serialize(detail).ShouldContain(transcript);
+-        (await fixture.Reader().ReadResolutionMetadataAsync(Tenant, Conversation, Token))!.Metadata.SafeLabel.ShouldBe("Scoring label");
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await fixture.Reader().ReadResolutionMetadataAsync(Tenant, Conversation, Token));
+     }
+ 
+     [Fact]
+@@ -359,7 +362,8 @@ public sealed class ConversationResolutionMetadataRecoveryTest
+                 EventType = ConversationEventType.ConversationMetadataUpdated, OccurredAt = ResolutionMetadataFixture.Started.AddSeconds(2) }, "Scoring label");
+             valid = valid with { Events = [.. valid.Events, new(nameof(ConversationMetadataUpdated),
+                 JsonSerializer.SerializeToUtf8Bytes(updated, JsonSerializerOptions.Web), "json", 3,
+-                ResolutionMetadataFixture.Started.AddSeconds(2), "correlation")] };
++                ResolutionMetadataFixture.Started.AddSeconds(2), "correlation", "source-message-3")] };
++            valid = await ResolutionMetadataFixture.AdmitNativeAsync(valid);
+         }
+         (await fixture.Handler().ProjectAsync(valid, "dispatch-z-winner", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+         var winner = fixture.Metadata;
+@@ -657,14 +661,20 @@ public sealed class ConversationResolutionMetadataRecoveryTest
+         interrupted.ShouldBeTrue();
+         fixture.Store.BatchFaultHook = null;
+         (await fixture.Handler(fixture.Guard).ProjectAsync(request, "dispatch-long", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+-        var model = (await fixture.Reader().ReadResolutionMetadataAsync(tenant, conversation, Token))!;
++        var model = fixture.Store.Snapshot<ConversationResolutionMetadataReadModel>("statestore",
++            ConversationProjectionReadModelKeys.ResolutionMetadataKey(tenant, conversation))!;
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await fixture.Reader().ReadResolutionMetadataAsync(tenant, conversation, Token));
+         model.TenantId.ShouldBe(tenant);
+         model.ConversationId.ShouldBe(conversation);
+         model.Metadata.ConversationId.ShouldBe(conversation.Value);
+         ConversationId adjacent = new(conversation.Value + "other");
+         (await fixture.Handler().ProjectAsync(ResolutionMetadataFixture.Request(tenantId: tenant, conversationId: adjacent),
+             "dispatch-adjacent", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+-        (await fixture.Reader().ReadResolutionMetadataAsync(tenant, adjacent, Token))!.ConversationId.ShouldBe(adjacent);
++        fixture.Store.Snapshot<ConversationResolutionMetadataReadModel>("statestore",
++            ConversationProjectionReadModelKeys.ResolutionMetadataKey(tenant, adjacent))!.ConversationId.ShouldBe(adjacent);
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await fixture.Reader().ReadResolutionMetadataAsync(tenant, adjacent, Token));
+         (await fixture.Reader().ReadResolutionMetadataAsync(new(tenant.Value + "other"), conversation, Token)).ShouldBeNull();
+         ConversationProjectionReadModelKeys.ResolutionMetadataKey(tenant, adjacent)
+             .ShouldNotBe(ConversationProjectionReadModelKeys.ResolutionMetadataKey(tenant, conversation));
+@@ -790,7 +800,8 @@ public sealed class ConversationResolutionMetadataRecoveryTest
+                 ConversationResolutionScoringPolicy.Classification),
+         };
+         live = live with { Events = [.. live.Events, new(nameof(ConversationMetadataUpdated), JsonSerializer.SerializeToUtf8Bytes(updated, JsonSerializerOptions.Web),
+-            "json", 3, ResolutionMetadataFixture.Started.AddSeconds(2), "correlation")] };
++            "json", 3, ResolutionMetadataFixture.Started.AddSeconds(2), "correlation", "source-message-3")] };
++        live = await ResolutionMetadataFixture.AdmitNativeAsync(live);
+         var first = await fixture.Handler().ProjectAsync(live, "dispatch-live-winner", Token);
+         try
+         {
+@@ -901,13 +912,20 @@ public sealed class ConversationResolutionMetadataRecoveryTest
+ 
+     private static async Task<ProjectionDispatchResponse> RebuildAsync(ResolutionMetadataFixture fixture)
+     {
++        ProjectionRequest original = ResolutionMetadataFixture.Request(changedProject: true);
++        var gateway = new ResolutionProjectionGateway(original);
++        ProjectionRequest request = JsonSerializer.Deserialize<ProjectionRequest>(
++            JsonSerializer.Serialize(original, JsonSerializerOptions.Web), JsonSerializerOptions.Web)!;
++        request.VerifiedNativeSourceProof.ShouldBeNull();
++        request.NativeSourceProof.ShouldBe(gateway.Proof);
+         await using ServiceProvider provider = new ServiceCollection().AddSingleton<IReadModelBatchStore>(fixture.Guard)
++            .AddSingleton<IEventStoreGatewayClient>(gateway)
+             .AddSingleton<IDomainProjectionHandler>(new ConversationProjectionHandler(new(), fixture.Time))
+             .AddSingleton<IAsyncDomainProjectionHandler>(fixture.Handler()).BuildServiceProvider();
+         string fingerprint = ProjectionRouteCatalogFingerprint.Compute("conversations-service", "v1",
+             [new ProjectionDispatchRoute(ConversationProjectionHandler.ConversationDomain, ConversationAsyncProjectionHandler.ConversationReadModelProjectionType)]);
+         return await DomainProjectionDispatcher.RebuildAsync(provider,
+-            new(ResolutionMetadataFixture.Request(changedProject: true), [ConversationAsyncProjectionHandler.ConversationReadModelProjectionType],
++            new(request, [ConversationAsyncProjectionHandler.ConversationReadModelProjectionType],
+                 "rebuild-all-boundaries", fingerprint), new ProjectionDispatchOptions(),
+             new DomainProjectionIdentityOptions { AppId = "conversations-service", ServiceVersion = "v1" }, Token);
+     }
+diff --git a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionScoringLabelProjectionTest.cs b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionScoringLabelProjectionTest.cs
+index 2ec97f3..e45e429 100644
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionScoringLabelProjectionTest.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionScoringLabelProjectionTest.cs
+@@ -55,6 +55,7 @@ public sealed class ConversationResolutionScoringLabelProjectionTest
+         ProjectionRequest next = original with { Events = [.. original.Events,
+             new(nameof(ConversationMetadataUpdated), JsonSerializer.SerializeToUtf8Bytes(classified, JsonSerializerOptions.Web),
+                 "json", 2, ResolutionMetadataFixture.Started.AddSeconds(1), "correlation", "source-message-2")] };
++        next = await ResolutionMetadataFixture.AdmitNativeAsync(next);
+         (await fixture.Handler().ProjectAsync(next, "native-reclassified", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+         fixture.Metadata.IsLabelComplete.ShouldBeTrue();
+         fixture.Metadata.Metadata.SafeLabel.ShouldBe(created.Label);
+@@ -80,6 +81,7 @@ public sealed class ConversationResolutionScoringLabelProjectionTest
+         ProjectionRequest request = initial with { Events = [.. initial.Events,
+             new(nameof(ConversationMetadataUpdated), JsonSerializer.SerializeToUtf8Bytes(updated, JsonSerializerOptions.Web),
+                 "json", 2, ResolutionMetadataFixture.Started.AddSeconds(1), "correlation", "source-message-2")] };
++        request = await ResolutionMetadataFixture.AdmitNativeAsync(request);
+         (await fixture.Handler().ProjectAsync(request, "updated-label", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+         fixture.Metadata.IsLabelComplete.ShouldBeFalse();
+         fixture.Metadata.LabelPurpose.ShouldBeNull();
+@@ -104,6 +106,7 @@ public sealed class ConversationResolutionScoringLabelProjectionTest
+         ProjectionRequest next = original with { Events = [.. original.Events, new(nameof(ConversationMetadataUpdated),
+             JsonSerializer.SerializeToUtf8Bytes(updated, JsonSerializerOptions.Web), "json", 2,
+             ResolutionMetadataFixture.Started.AddSeconds(1), "correlation", "source-message-2")] };
++        next = await ResolutionMetadataFixture.AdmitNativeAsync(next);
+         (await fixture.Handler().ProjectAsync(next, "unrelated-metadata", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+         fixture.Metadata.Metadata.SafeLabel.ShouldBe(created.Label);
+         fixture.Metadata.LabelPurpose.ShouldBe(created.ResolutionScoringLabel!.Purpose);
+diff --git a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationNativeCurrentQueryTests.cs b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationNativeCurrentQueryTests.cs
+index 95b064a..52ecebd 100644
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationNativeCurrentQueryTests.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationNativeCurrentQueryTests.cs
+@@ -1,3 +1,5 @@
++using Microsoft.Extensions.Configuration;
++using Microsoft.Extensions.DependencyInjection;
+ using System.Text.Json;
+ using Hexalith.Conversations.Contracts.Queries;
+ using Hexalith.Conversations.Server.Projections;
+@@ -35,15 +37,79 @@ public sealed class ConversationNativeCurrentQueryTests
+         fixture.Guard.ForbiddenAttempts.ShouldBe(0);
+     }
+ 
+-    [Fact]
+-    public async Task BenignRedeliveryPreservesTheOriginalPersistedHeadIdentityAndNativeReceipt()
++    [Theory]
++    [InlineData("matching")]
++    [InlineData("selection")]
++    [InlineData("incarnation")]
++    [InlineData("prefix")]
++    [InlineData("head")]
++    [InlineData("retention")]
++    [InlineData("erased")]
++    public async Task ProductionAdapterChecksExactProofThroughDelegatedSignedTransportAndIsolatedSelection(string change)
+     {
+         var fixture = new ResolutionMetadataFixture();
+         await fixture.ProjectAsync();
++        var metadata = fixture.Metadata;
++        string selectedKey = ConversationProjectionReadModelKeys.ResolutionSelectionKey(metadata.TenantId, metadata.ConversationId);
++        var selected = fixture.Store.Snapshot<ConversationResolutionNativeSelection>("statestore", selectedKey)!;
++        var source = metadata.NativeSourceProof!;
++        source = change switch
++        {
++            "incarnation" => source with { SourceIncarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAW" },
++            "prefix" => source with { CumulativeDigest = new('c', 64) },
++            "head" => source with { HeadMessageId = "replaced" },
++            "retention" => source with { RetainedFloor = 2 },
++            "erased" => source with { Erased = true },
++            _ => source,
++        };
++        var proof = new Hexalith.EventStore.Contracts.Projections.ProjectionCurrentProof(source,
++            new(selected.ProjectionOwner, "receipt", metadata.RequestFingerprint), "catalog");
++        if (change == "selection") fixture.Store.SeedRaw("statestore", selectedKey,
++            selected with { ProjectionOwner = selected.ProjectionOwner with { OwnerGeneration = new('d', 64) } });
++        using var key = System.Security.Cryptography.RSA.Create(2048);
++        var configuration = new Microsoft.Extensions.Configuration.ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
++        {
++            ["Authentication:WorkloadIssuer:Workload"] = "conversations",
++            ["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(key.ExportPkcs8PrivateKey()),
++        }).Build();
++        using var transport = new ResolutionDelegatedTransport(proof, Convert.ToBase64String(key.ExportSubjectPublicKeyInfo()), fixture.Time.Now);
++        var query = ResolutionMetadataFixture.Query();
++        var http = new Microsoft.AspNetCore.Http.DefaultHttpContext();
++        http.Request.Headers[Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName] = "original-verified-assertion";
++        var claims = Hexalith.EventStore.ServiceDefaults.Authentication.QueryCallerAuthorityBinding.Bind(query)
++            .Select(pair => new System.Security.Claims.Claim(pair.Key, pair.Value)).ToList();
++        claims.Add(new(Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreWorkloadAuthenticationDefaults.WorkloadClaimType, "eventstore"));
++        claims.Add(new(Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreWorkloadAuthenticationDefaults.OperationClaimType,
++            Hexalith.EventStore.ServiceDefaults.Authentication.EventStoreWorkloadOperations.DomainServiceQuery));
++        http.User = new(new System.Security.Claims.ClaimsIdentity(claims, "Workload"));
++        var accessor = new Microsoft.AspNetCore.Http.HttpContextAccessor { HttpContext = http };
++        using var dapr = new Dapr.Client.DaprClientBuilder().Build();
++        var client = new Hexalith.EventStore.DomainService.DelegatedOwnerQueryClient(dapr, transport, transport, accessor, configuration, fixture.Time);
++        var guard = new ResolutionGuardedStore(fixture.Store) { ForbidLegacyReads = true, ForbidWrites = true };
++        var evidence = new ConversationResolutionNativeEvidence(client, guard);
++        using var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection().AddSingleton<Microsoft.AspNetCore.Http.IHttpContextAccessor>(accessor)
++            .AddSingleton<Hexalith.EventStore.DomainService.IDomainQueryHandler>(new ResolutionDelegatedEvidenceHandler(evidence, metadata)).BuildServiceProvider();
++        var result = await Hexalith.EventStore.DomainService.DomainQueryDispatcher.ExecuteAsync(services, query, TestContext.Current.CancellationToken);
++        result.Success.ShouldBeTrue();
++        if (change == "matching") result.GetPayload().Deserialize<Hexalith.EventStore.Contracts.Projections.ProjectionCurrentProof>()!.ShouldBe(proof);
++        else result.GetPayload().ValueKind.ShouldBe(JsonValueKind.Null);
++        transport.Calls.ShouldBe(change == "selection" ? 0 : 1);
++        guard.ForbiddenAttempts.ShouldBe(0);
++        guard.ReadKeys.ShouldAllBe(value => value == selectedKey);
++    }
++
++    [Fact]
++    public async Task LegacyBenignRedeliveryPreservesOriginalHeadAndRemainsUnproven()
++    {
++        var fixture = new ResolutionMetadataFixture();
++        var legacy = JsonSerializer.Deserialize<Hexalith.EventStore.Contracts.Projections.ProjectionRequest>(
++            JsonSerializer.Serialize(ResolutionMetadataFixture.Request() with { NativeSourceProof = null }))!;
++        (await fixture.Handler().ProjectAsync(legacy, "dispatch-a", TestContext.Current.CancellationToken)).Status
++            .ShouldBe(Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus.Completed);
+         var original = fixture.Metadata;
+         var selected = fixture.Store.Snapshot<ConversationResolutionNativeSelection>("statestore",
+             ConversationProjectionReadModelKeys.ResolutionSelectionKey(original.TenantId, original.ConversationId));
+-        var redelivery = ResolutionMetadataFixture.Request();
++        var redelivery = legacy;
+         redelivery = redelivery with { Events = [.. redelivery.Events.Select(item => item with { MessageId = "redelivery-transport-id" })] };
+         (await fixture.Handler().ProjectAsync(redelivery, "dispatch-a", TestContext.Current.CancellationToken)).Status
+             .ShouldBe(Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus.Completed);
+@@ -51,6 +117,24 @@ public sealed class ConversationNativeCurrentQueryTests
+         fixture.Store.Snapshot<ConversationResolutionNativeSelection>("statestore",
+             ConversationProjectionReadModelKeys.ResolutionSelectionKey(original.TenantId, original.ConversationId)).ShouldBe(selected);
+         fixture.Metadata.SourceHeadMessageId.ShouldBe("source-message-1");
++        fixture.Metadata.NativeSourceProof.ShouldBeNull();
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await fixture.Reader().ReadResolutionMetadataAsync(original.TenantId, original.ConversationId, TestContext.Current.CancellationToken));
++    }
++
++    [Fact]
++    public async Task ProvenRedeliveryRejectsAlteredHeadIdentityAndPreservesOriginalGeneration()
++    {
++        var fixture = new ResolutionMetadataFixture();
++        await fixture.ProjectAsync();
++        var original = fixture.Metadata;
++        var request = ResolutionMetadataFixture.Request();
++        var changed = request with { Events = [request.Events[0] with { MessageId = "different-message" }] };
++        changed.VerifiedNativeSourceProof.ShouldBeNull();
++        (await fixture.Handler().ProjectAsync(changed, "dispatch-a", TestContext.Current.CancellationToken)).Status
++            .ShouldBe(Hexalith.EventStore.Contracts.Projections.ProjectionDispatchStatus.Failed);
++        fixture.Metadata.ShouldBe(original);
++        fixture.Proof.Current!.NativeSourceProof.ShouldBe(original.NativeSourceProof);
+     }
+ 
+     [Fact]
+diff --git a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs
+index c46b76c..de08113 100644
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs
+@@ -9,6 +9,7 @@ using Hexalith.Conversations.Server.Projections;
+ using Hexalith.Conversations.Server.Queries;
+ using Hexalith.Conversations.Server.TenantAccess;
+ using Hexalith.EventStore.Client.Projections;
++using Hexalith.EventStore.Client.Gateway;
+ using Hexalith.EventStore.Contracts.Projections;
+ using Hexalith.EventStore.Contracts.Queries;
+ using Hexalith.EventStore.DomainService;
+@@ -53,7 +54,25 @@ internal sealed class ResolutionMetadataFixture
+             events.Add(new(nameof(ConversationProjectChanged), JsonSerializer.SerializeToUtf8Bytes(changed, JsonSerializerOptions.Web), "json", 2, Started.AddSeconds(1), "correlation", "source-message-2"));
+         }
+ 
+-        return new(tenantId.Value, ConversationProjectionHandler.ConversationDomain, conversationId.Value, [.. events]);
++        ProjectionRequest request = new(tenantId.Value, ConversationProjectionHandler.ConversationDomain, conversationId.Value, [.. events]);
++        try { return AdmitNativeAsync(request).GetAwaiter().GetResult(); }
++        catch (ArgumentException) { return request; } // opaque legacy-only fixture identity
++    }
++
++    internal static async Task<ProjectionRequest> AdmitNativeAsync(ProjectionRequest request,
++        string incarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAV")
++    {
++        var gateway = new ResolutionProjectionGateway(request, incarnation);
++        var capture = new ResolutionProjectionCapture();
++        using ServiceProvider services = new ServiceCollection().AddSingleton<IAsyncDomainProjectionHandler>(capture)
++            .AddSingleton<IEventStoreGatewayClient>(gateway).BuildServiceProvider();
++        var catalog = new DomainProjectionCatalogRegistry();
++        const string fingerprint = "fixture-native-provenance";
++        catalog.Register(fingerprint, [new(capture.Domain, capture.ProjectionType)]);
++        await DomainProjectionDispatcher.DispatchAsync(services,
++            new(request with { NativeSourceProof = gateway.Proof }, [capture.ProjectionType], "fixture-admission", fingerprint),
++            new(), catalog, TestContext.Current.CancellationToken);
++        return capture.Request!;
+     }
+ 
+     public async Task ProjectAsync(string dispatch = "dispatch-a", string? label = "Scoring label", bool changedProject = false)
+diff --git a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs
+index 8b57545..b96ebe1 100644
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs
+@@ -45,11 +45,9 @@ internal sealed class ResolutionNativeEvidence(ResolutionMetadataFixture fixture
+             ConversationProjectionReadModelKeys.ResolutionSelectionKey(metadata.TenantId, metadata.ConversationId));
+         if (!Available || selection?.ProjectionOwner.OwnerGeneration != metadata.Digest())
+             return Task.FromResult<ProjectionCurrentProof?>(null);
+-        var identity = new AggregateIdentity(metadata.TenantId.Value, ConversationProjectionHandler.ConversationDomain, metadata.ConversationId.Value);
+-        var proof = NativeSourceProofCodec.CreateSeed(identity, Incarnation);
+-        for (int index = 1; index <= metadata.SourceHeadSequence!.Value; index++)
+-            proof = NativeSourceProofCodec.ExtendDigest(proof, identity, index, index == metadata.SourceHeadSequence.Value
+-                ? metadata.SourceHeadMessageId! : "message-" + index, metadata.RequestFingerprint);
++        NativeSourceProof? proof = metadata.NativeSourceProof;
++        if (proof is null) return Task.FromResult<ProjectionCurrentProof?>(null);
++        proof = proof with { SourceIncarnation = Incarnation };
+         LastResource = proof;
+         return Task.FromResult<ProjectionCurrentProof?>(new(proof, new(selection.ProjectionOwner, "fixture-receipt", Receipt ?? metadata.RequestFingerprint), Catalog));
+     }
+diff --git a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadStore.cs b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadStore.cs
+index eaff66e..4f3b491 100644
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadStore.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadStore.cs
+@@ -23,7 +23,7 @@ internal sealed class ResolutionRawReadStore(InMemoryReadModelStore inner) : IRe
+         Observer.AfterRead = AfterRawRead;
+         Type protocol = typeof(IReadModelStore).Assembly.GetType("Hexalith.EventStore.Client.Projections.ReadModelBatchProtocol")!;
+         Task resolution = (Task)protocol.GetMethod("ResolveVisibleAsync", BindingFlags.Public | BindingFlags.Static)!
+-            .Invoke(null, [Observer, key, cancellationToken])!;
++            .Invoke(null, [Observer, key, cancellationToken, null])!;
+         await resolution;
+         object entry = resolution.GetType().GetProperty("Result")!.GetValue(resolution)!;
+         Type entryType = entry.GetType();
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionNativeProvenanceTest.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionNativeProvenanceTest.cs
+@@ -0,0 +1,159 @@
++using System.Text.Json;
++
++using Hexalith.Conversations.Server.Projections;
++using Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++using Hexalith.EventStore.Contracts.Projections;
++
++namespace Hexalith.Conversations.Server.Tests.Projections;
++
++public sealed class ConversationResolutionNativeProvenanceTest
++{
++    private static CancellationToken Token => TestContext.Current.CancellationToken;
++
++    [Fact]
++    public async Task NativeFixturePagesMoreThanOneHundredEventsWithoutTruncatingProof()
++    {
++        var initial = ResolutionMetadataFixture.Request();
++        var original = System.Text.Json.JsonSerializer.Deserialize<Hexalith.Conversations.Contracts.Events.ConversationCreated>(initial.Events[0].Payload, JsonSerializerOptions.Web)!;
++        var events = initial.Events.ToList();
++        for (int sequence = 2; sequence <= 101; sequence++)
++        {
++            var updated = new Hexalith.Conversations.Contracts.Events.ConversationMetadataUpdated(original.Metadata with
++            { EventId = "metadata-" + sequence, EventType = Hexalith.Conversations.Contracts.Events.ConversationEventType.ConversationMetadataUpdated,
++                OccurredAt = ResolutionMetadataFixture.Started.AddSeconds(sequence) }, Attributes: new Dictionary<string, string> { ["category"] = "stable" });
++            events.Add(new(nameof(Hexalith.Conversations.Contracts.Events.ConversationMetadataUpdated),
++                JsonSerializer.SerializeToUtf8Bytes(updated, JsonSerializerOptions.Web), "json", sequence,
++                updated.Metadata.OccurredAt, "correlation", "source-message-" + sequence));
++        }
++        var request = await ResolutionMetadataFixture.AdmitNativeAsync(initial with { Events = events.ToArray() });
++        request.VerifiedNativeSourceProof.ShouldNotBeNull().HeadSequence.ShouldBe(101);
++        var fixture = new ResolutionMetadataFixture();
++        fixture.Time.Now = ResolutionMetadataFixture.Started.AddSeconds(200);
++        (await fixture.Handler().ProjectAsync(request, "native-101", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        fixture.Metadata.NativeSourceProof.ShouldBe(request.VerifiedNativeSourceProof);
++        (await fixture.Reader().ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation, Token))!
++            .NativeSourceProof.ShouldBe(request.VerifiedNativeSourceProof);
++    }
++
++    [Fact]
++    public async Task OriginalVerifiedProofIsCommittedWithSubsetGenerationAndSelectionAndSurvivesRetry()
++    {
++        ResolutionMetadataFixture fixture = new();
++        ProjectionRequest request = ResolutionMetadataFixture.Request();
++        var native = request.VerifiedNativeSourceProof.ShouldNotBeNull();
++        (await fixture.Handler().ProjectAsync(request, "native-original", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        fixture.Metadata.NativeSourceProof.ShouldBe(native);
++        fixture.Proof.Current!.NativeSourceProof.ShouldBe(native);
++        var selected = fixture.Store.Snapshot<ConversationResolutionNativeSelection>("statestore",
++            ConversationProjectionReadModelKeys.ResolutionSelectionKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation))!;
++        selected.NativeSourceProof.ShouldBe(native);
++        selected.ProjectionOwner.OwnerGeneration.ShouldBe(fixture.Metadata.Digest());
++        byte[] before = JsonSerializer.SerializeToUtf8Bytes(fixture.Metadata);
++        fixture.Time.Now = fixture.Time.Now.AddDays(1);
++        (await fixture.Handler().ProjectAsync(ResolutionMetadataFixture.Request(), "native-original", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        JsonSerializer.SerializeToUtf8Bytes(fixture.Metadata).ShouldBe(before);
++        var guard = new ResolutionGuardedStore(fixture.Store) { ForbidLegacyReads = true, ForbidWrites = true };
++        (await fixture.Reader(guard).ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant,
++            ResolutionMetadataFixture.Conversation, Token))!.NativeSourceProof.ShouldBe(native);
++        guard.ForbiddenAttempts.ShouldBe(0);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task StableDispatchCannotGainLoseOrReplaceItsOriginalNativeEvidence(bool initiallyProven)
++    {
++        ResolutionMetadataFixture fixture = new();
++        ProjectionRequest native = ResolutionMetadataFixture.Request();
++        ProjectionRequest legacy = JsonSerializer.Deserialize<ProjectionRequest>(JsonSerializer.Serialize(native with { NativeSourceProof = null }))!;
++        ProjectionRequest first = initiallyProven ? native : legacy;
++        (await fixture.Handler().ProjectAsync(first, "stable-dispatch", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        byte[] originalMetadata = JsonSerializer.SerializeToUtf8Bytes(fixture.Metadata);
++        byte[] originalGeneration = JsonSerializer.SerializeToUtf8Bytes(fixture.Proof);
++        (await fixture.Handler().ProjectAsync(initiallyProven ? legacy : native, "stable-dispatch", Token)).Status.ShouldBe(ProjectionDispatchStatus.Failed);
++        ProjectionRequest replacement = await ResolutionMetadataFixture.AdmitNativeAsync(native, "01ARZ3NDEKTSV4RRFFQ69G5FAW");
++        (await fixture.Handler().ProjectAsync(replacement, "stable-dispatch", Token)).Status.ShouldBe(ProjectionDispatchStatus.Failed);
++        JsonSerializer.SerializeToUtf8Bytes(fixture.Metadata).ShouldBe(originalMetadata);
++        JsonSerializer.SerializeToUtf8Bytes(fixture.Proof).ShouldBe(originalGeneration);
++        if (!initiallyProven)
++        {
++            fixture.Metadata.NativeSourceProof.ShouldBeNull();
++            await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++                await fixture.Reader().ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation, Token));
++            (await fixture.DispatchAsync()).GetPayload().GetProperty("metadata").ValueKind.ShouldBe(JsonValueKind.Null);
++        }
++    }
++
++    [Fact]
++    public async Task UntrustedWireProofDoesNotCertifyLegacyGenerationAndReadsCannotRepairIt()
++    {
++        ResolutionMetadataFixture fixture = new();
++        ProjectionRequest native = ResolutionMetadataFixture.Request();
++        ProjectionRequest transport = JsonSerializer.Deserialize<ProjectionRequest>(JsonSerializer.Serialize(native))!;
++        transport.NativeSourceProof.ShouldNotBeNull();
++        transport.VerifiedNativeSourceProof.ShouldBeNull();
++        (await fixture.Handler().ProjectAsync(transport, "legacy-wire", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        fixture.Metadata.NativeSourceProof.ShouldBeNull();
++        var guard = new ResolutionGuardedStore(fixture.Store) { ForbidLegacyReads = true, ForbidWrites = true };
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await fixture.Reader(guard).ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation, Token));
++        guard.ForbiddenAttempts.ShouldBe(0);
++    }
++
++    [Fact]
++    public async Task InterruptedNativeMetadataBatchRecoversOnlyItsOriginalVerifiedEvidence()
++    {
++        ResolutionMetadataFixture fixture = new();
++        ProjectionRequest request = ResolutionMetadataFixture.Request();
++        bool interrupted = false;
++        fixture.Store.BatchFaultHook = (phase, ordinal, _) =>
++        {
++            if (!interrupted && phase == Hexalith.EventStore.Client.Projections.ReadModelBatchPhase.AfterInstallOperation && ordinal == 1)
++            {
++                interrupted = true;
++                throw new InvalidOperationException("interrupted original native metadata batch");
++            }
++            return Task.CompletedTask;
++        };
++        (await fixture.Handler().ProjectAsync(request, "native-interrupted", Token)).Status.ShouldNotBe(ProjectionDispatchStatus.Completed);
++        interrupted.ShouldBeTrue();
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await fixture.Reader().ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation, Token));
++        fixture.Store.BatchFaultHook = null;
++        fixture.Time.Now = fixture.Time.Now.AddHours(1);
++        (await fixture.Handler().ProjectAsync(request, "native-interrupted", Token)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        fixture.Metadata.NativeSourceProof.ShouldBe(request.VerifiedNativeSourceProof);
++        fixture.Proof.Current!.NativeSourceProof.ShouldBe(request.VerifiedNativeSourceProof);
++        fixture.Proof.Current.IsPending.ShouldBeFalse();
++        (await fixture.Reader().ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant,
++            ResolutionMetadataFixture.Conversation, Token))!.NativeSourceProof.ShouldBe(request.VerifiedNativeSourceProof);
++    }
++
++    [Theory]
++    [InlineData("incarnation")]
++    [InlineData("prefix")]
++    [InlineData("head")]
++    [InlineData("retention")]
++    [InlineData("erased")]
++    public async Task AlteredPersistedNativeEvidenceCannotBeDisclosed(string field)
++    {
++        ResolutionMetadataFixture fixture = new();
++        await fixture.ProjectAsync();
++        var original = fixture.Metadata;
++        var proof = original.NativeSourceProof!;
++        proof = field switch
++        {
++            "incarnation" => proof with { SourceIncarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAW" },
++            "prefix" => proof with { CumulativeDigest = new('a', 64) },
++            "head" => proof with { HeadMessageId = "replacement" },
++            "retention" => proof with { RetainedFloor = 2 },
++            _ => proof with { Erased = true },
++        };
++        fixture.Store.SeedRaw("statestore", ConversationProjectionReadModelKeys.ResolutionMetadataKey(
++            ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation), original with { NativeSourceProof = proof });
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await fixture.Reader().ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation, Token));
++        (await fixture.DispatchAsync()).GetPayload().GetProperty("metadata").ValueKind.ShouldBe(JsonValueKind.Null);
++        fixture.Proof.Current!.NativeSourceProof.ShouldBe(original.NativeSourceProof);
++    }
++}
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionDelegatedEvidenceHandler.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionDelegatedEvidenceHandler.cs
+@@ -0,0 +1,17 @@
++using System.Text.Json;
++using Hexalith.Conversations.Contracts.Queries;
++using Hexalith.Conversations.Server.Projections;
++using Hexalith.Conversations.Server.Queries;
++using Hexalith.EventStore.Contracts.Queries;
++using Hexalith.EventStore.DomainService;
++
++namespace Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++
++internal sealed class ResolutionDelegatedEvidenceHandler(ConversationResolutionNativeEvidence evidence,
++    ConversationResolutionMetadataReadModel metadata) : IDomainQueryHandler
++{
++    public string Domain => "conversations";
++    public string QueryType => GetConversationResolutionMetadataQuery.QueryType;
++    public async Task<QueryResult> ExecuteAsync(QueryEnvelope query, CancellationToken cancellationToken)
++        => QueryResult.FromPayload(JsonSerializer.SerializeToElement(await evidence.ReadProjectionAsync(metadata, cancellationToken)), QueryType);
++}
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionDelegatedTransport.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionDelegatedTransport.cs
+@@ -0,0 +1,31 @@
++using System.Net;
++using System.Net.Http.Json;
++using System.Text.Json;
++using Hexalith.EventStore.Client.Gateway;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Queries;
++using Hexalith.EventStore.ServiceDefaults.Authentication;
++
++namespace Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++
++internal sealed class ResolutionDelegatedTransport(ProjectionCurrentProof proof, string publicKey, DateTimeOffset now)
++    : HttpMessageHandler, IHttpClientFactory, IWorkloadAssertionIssuer
++{
++    public bool CanBindResources => true;
++    public int Calls { get; private set; }
++    public HttpClient CreateClient(string name) => new(this, disposeHandler: false);
++    public ValueTask<string?> IssueAsync(WorkloadAssertionRequest request, CancellationToken cancellationToken = default)
++        => ValueTask.FromResult<string?>("source-fixture-workload-assertion");
++    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
++    {
++        Calls++;
++        BoundOwnerQueryRequest body = (await request.Content!.ReadFromJsonAsync<BoundOwnerQueryRequest>(cancellationToken))!;
++        BoundOwnerQueryProof.Verify(body, request.Headers.GetValues(BoundOwnerQueryProof.HeaderName).Single(),
++            "conversations", publicKey, now).ShouldBeTrue();
++        body.PrincipalId.ShouldBe("actor");
++        body.Query.QueryType.ShouldBe(InspectProjectionCurrentQuery.QueryType);
++        body.Query.AggregateId.ShouldBe(proof.Owner.Selection.AggregateId);
++        return new(HttpStatusCode.OK) { Content = JsonContent.Create(new SubmitQueryResponse("correlation",
++            JsonSerializer.SerializeToElement(proof, JsonSerializerOptions.Web))) };
++    }
++}
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionProjectionCapture.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionProjectionCapture.cs
+@@ -0,0 +1,16 @@
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.DomainService;
++
++namespace Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++
++internal sealed class ResolutionProjectionCapture : IAsyncDomainProjectionHandler
++{
++    public string Domain => Hexalith.Conversations.Server.Projections.ConversationProjectionHandler.ConversationDomain;
++    public string ProjectionType => "native-fixture";
++    public ProjectionRequest? Request { get; private set; }
++    public Task<DomainProjectionHandlerResult> ProjectAsync(ProjectionRequest request, string dispatchId, CancellationToken cancellationToken)
++    {
++        Request = request;
++        return Task.FromResult(DomainProjectionHandlerResult.Completed());
++    }
++}
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionProjectionGateway.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionProjectionGateway.cs
+@@ -0,0 +1,46 @@
++using System.Security.Cryptography;
++using Hexalith.EventStore.Client.Gateway;
++using Hexalith.EventStore.Client.Streams;
++using Hexalith.EventStore.Contracts.Commands;
++using Hexalith.EventStore.Contracts.Identity;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Queries;
++using Hexalith.EventStore.Contracts.Streams;
++
++namespace Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++
++// Source fixture only: payload-derived digest stand-ins exercise native paging and admission.
++// Actual raw-envelope codec interoperability is covered in SDK Server.Tests. This fixture
++// establishes neither production native provenance nor installation authority.
++internal sealed class ResolutionProjectionGateway : IEventStoreGatewayClient
++{
++    private readonly StreamReadEvent[] _events;
++    public NativeSourceProof Proof { get; }
++    public ResolutionProjectionGateway(ProjectionRequest request, string incarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAV")
++    {
++        var identity = new AggregateIdentity(request.TenantId, request.Domain, request.AggregateId);
++        NativeSourceProof proof = NativeSourceProofCodec.CreateSeed(identity, incarnation);
++        _events = request.Events.Select(item => new StreamReadEvent(item.SequenceNumber, item.EventTypeName,
++            item.Payload.ToArray(), item.SerializationFormat, item.MetadataVersion ?? 1, item.MessageId!,
++            item.CorrelationId, null, item.Timestamp, item.UserId)
++        {
++            NativeEventDigest = Convert.ToHexStringLower(SHA256.HashData(item.Payload)),
++            GlobalPosition = item.GlobalPosition, PayloadVersion = item.StoredPayloadVersion,
++        }).ToArray();
++        foreach (StreamReadEvent item in _events)
++            proof = NativeSourceProofCodec.ExtendDigest(proof, identity, item.SequenceNumber, item.MessageId, item.NativeEventDigest!);
++        Proof = proof;
++    }
++    public Task<StreamReadPage> ReadStreamAsync(StreamReadRequest request, CancellationToken cancellationToken = default)
++    {
++        cancellationToken.ThrowIfCancellationRequested();
++        StreamReadEvent[] events = request.ToSequence == 0 ? [] : _events.Where(item => item.SequenceNumber > request.FromSequence
++            && item.SequenceNumber <= request.ToSequence).Take(request.PageSize).ToArray();
++        return Task.FromResult(new StreamReadPage(request.Tenant, request.Domain, request.AggregateId, events,
++            new(request.FromSequence, request.ToSequence, events.LastOrDefault()?.SequenceNumber, Proof.HeadSequence,
++                events.Length, events.Length > 0 && events[^1].SequenceNumber < Math.Min(request.ToSequence ?? Proof.HeadSequence, Proof.HeadSequence), null) { NativeProof = Proof }));
++    }
++    public Task<SubmitCommandResponse> SubmitCommandAsync(SubmitCommandRequest request, CancellationToken cancellationToken = default) => throw new NotSupportedException();
++    public Task<EventStoreQueryResult> SubmitQueryAsync(SubmitQueryRequest request, string? ifNoneMatch = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
++    public Task<EventStoreQueryResult<T>> SubmitQueryAsync<T>(SubmitQueryRequest request, string? ifNoneMatch = null, CancellationToken cancellationToken = default) => throw new NotSupportedException();
++}
+
+diff --git a/_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md b/_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md
+index 100ab33..b96ac1e 100644
+--- a/_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md
++++ b/_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md
+@@ -11,8 +11,9 @@ design_decisions: 'selected'
+ implementation_authorized: false
+ owner_prerequisite_implementation_authorized: true
+ native_head_source_status: 'reviewed-source-complete'
++native_generation_source_status: 'reviewed-source-complete'
+ baseline_commit: 'b0caf2b5c25a1f761abed685c7c9ef811732c6fb'
+-review_loop_iteration: 1
++review_loop_iteration: 2
+ context:
+   - '_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md'
+   - '_bmad-output/implementation-artifacts/6-4-resolution-evidence-contracts.md'
+@@ -104,6 +105,24 @@ Final source slice: seven EventStore source/test files deliver the authenticated
+ 
+ The overall prerequisite remains **in-progress** because the other owner source, deployment/installation, qualification and G-4 conditions above are incomplete. RTI and parent handlers remain unauthorized. Parent story/spec, sprint status, frozen intent, dependency configuration, repository heads and indices are preserved; no commit or push is performed.
+ 
++### Native Conversation generation provenance source follow-up — 2026-10-21
++
++This resume is limited to native source provenance for isolated Conversation metadata generations. The user authorizes continuing the existing uncommitted work; preserve it. Read [the latest native-head evidence](evidence/6-4-native-head-inspection-20261021/README.md) first. Keep selected D1–D6, the frozen block, all parent gates, and `status: in-progress`; do not mark Story 6.4 complete, alter sprint/parent/qualification files, stage, commit, push, change dependency configuration or gitlinks, initialize submodules, or load skills under `references/`. Earlier unchecked owner tasks remain blockers beyond this source slice. Execute owner changes sequentially. The parent has captured preservation hashes and run/stopped the exact Projects AppHost for this resume; sanitized resource state still shows security Unhealthy and dependents Waiting, with no live acceptance.
++
++- [x] Trace EventStore `Contracts/Projections/ProjectionRequest.cs`, `Server/Projections/ProjectionUpdateOrchestrator*`, guarded dispatch/replay producers and `DomainService/DomainProjectionDispatcher*`/endpoint verification. Record the actual trust boundary and bind native incarnation, complete prefix and head to the original input before any evolution/materialization; never trust caller hints or attach a newly read head to older input.
++- [x] Implement the smallest compatible SDK producer/verified-dispatch contract needed for the above evidence. Preserve legacy constructors/JSON, existing native codecs, exact Tenant/domain/aggregate bindings, complete-prefix verification, replay/rebuild barriers and source guards. Unsupported/legacy/unproven input must remain unavailable; do not fabricate production enrollment, installation or owner authority.
++- [x] Conversations `Server/Projections/{ConversationAsyncProjectionHandler,ConversationResolutionMetadataReadModel,ConversationResolutionGeneration,ConversationResolutionMetadataPersistence,ConversationResolutionNativeSelection,ConversationProjectionReadStore}.cs` and native query evidence: persist the actual SDK-verified proof with the isolated metadata and selected generation in its original atomic SDK batch. Bind retry/fingerprint/digest identity and compare actual native proof on the content-free read path. No read-time certification, repair, event/detail/index hydration or extra owner protocol. A legacy generation remains unproven after redelivery; changed proof cannot reuse a stable generation. Rebuild/recovery may promote only with original verified evidence and existing supported content-free completion; otherwise retain refusal and record the precise blocker.
++- [x] Focused SDK/Conversation source tests: execute tampering, source replacement/incarnation changes, replay/redelivery identity, legacy refusal, rebuild and interrupted-batch recovery, stable original proof, exact native prefix/head binding, and content-free reads with persisted end-state assertions/strict content spies. Build local Debug source references, no dependency updates. Keep every actual command/log/native XML in `/tmp/hexalith-native-provenance-20261021-root/implementation/`, including failures and superseded attempts.
++- [x] Parent verification: inspect the actual owner diff, independently run focused tests, obtain independent review and correct in-scope findings. Retain exact revisions/source hashes, commands/results, review dispositions, preservation checks and remaining blockers in a new Projects evidence bundle. Leave broader owner/production/G-4, RTI and parent resolution gates unchanged.
++
++Acceptance for this slice: Given original native projection input, when SDK verification and metadata persistence complete, then the selected generation contains the exact verified incarnation/prefix/head bound to that input. Given tampering, replacement, an old/unproven generation, replay or incomplete rebuild/recovery, when metadata is read, then it remains unavailable unless the same original evidence and existing gates verify. Given an eligible proven generation, when a content-free read executes, then no event/content/detail/index hydration or query repair occurs and native proof equality is checked. Source fixture success does not establish deployment, installation, G-4 or Story 6.4 acceptance.
++
++Final independent Debug source verification: SDK projection/native/delegation 86/86, producer/scheduler/native/controller 393/393, full Conversation Server 1055/1055; **1534 passed, zero failures/skips**. Independent builds have zero warnings/errors. Three independent reviewers confirmed all fifteen source claims corrected; three parent execution findings are separately recorded below. Earlier failed full Conversation runs are superseded by the corrected full pass. The full SDK run retains one existing nested-Tenants authoring-guardrail failure (1090/1091), separately from the focused pass; no nested dependency was initialized and no gate was weakened.
++
++Frozen original retry proof/absence, exact-prefix admission after append, protected/evolved fallback, actor metadata compatibility, native codec interoperability, real dispatcher/delegated-adapter tests, 101-event paging, rebuild and pending-batch recovery, and content-free reads are executed. Mutation hashing measured 8720 allocated bytes for five checks over 8 MiB; no production performance qualification is claimed. The final rebuild helper explicitly re-admits untrusted JSON through the exact original native fixture gateway. See [native provenance evidence, exact commands and remaining blockers](evidence/6-4-native-provenance-20261021/README.md).
++
++All in-scope source corrections are complete. Production native read enrollment, legacy-compatible guarded composition, content-free post-rebuild promotion, installation/all-writer and cold-activation evidence, native Folder/Organization generations, committed File/Projects reference mapping, production metadata mutation adoption, qualification and G-4 remain incomplete. Legacy/unproven generations receive no migration or retrospective certificate. RTI and parent resolution handlers remain unauthorized; the prerequisite remains in-progress and parent story/sprint remain blocked. Concurrent external Git activity and the unchanged parent/frozen/dependency evidence are recorded explicitly; this run performed no Git mutations.
++
+ ## Implementation Evidence Required
+ 
+ D1–D6 directions are selected. Readiness still needs named File/feed APIs, native revision mappings, production binding/enrollment, full-result/performance/compatibility proof, and exact-current G-4 and shared prerequisite acceptance. Missing source contracts remain blockers; no provider or passing result is inferred.
+@@ -143,6 +162,8 @@ D1–D6 directions are selected. Readiness still needs named File/feed APIs, nat
+ 
+ ## Spec Change Log
+ 
++- 2026-10-21 native provenance review — Require frozen durable retry proof/absence and complete propagation; admit original cuts within later verified prefixes, preserve protected/blank-actor legacy behavior, bound optional capture, clear copied admission, stream proof hashing, and close real adapter/dispatch/paging/codec test gaps. KEEP exact original generation evidence, SDK verification before evolution, isolated atomic metadata, old constructors/JSON, unavailable legacy and rebuild gates, all dependency pins and concurrent work.
++
+ - 2026-10-20 native scoring-label follow-up — Removed automatic legacy-label classification; added explicit native source/replay provenance and bounded review fixes. KEEP frozen parent decisions, legacy constructors/JSON, prior generation bytes, immutable proof identity, current-authority refusals, all dependency/gitlink pins and consumer gates. Final source validation and exact remaining blockers are recorded in evidence/6-4-native-scoring-label-20261020/.
+ 
+ - 2026-10-20 review 1 — Clarified complete native prefix binding, original constructor/anchor compatibility, byte-bound pagination, exact workspace/path mutation identity independent of display/classification, pre-effect lifetime bounds and current negative lookups. KEEP isolated content-free generations, original rebuild barriers, source message identity, native codec, signed SDK transport, all refusal gates, dependency pins and concurrent changes. Apply scoped corrections without reverting preserved owner work. Native guard enrollment and content-free post-rebuild promotion remain explicit source dependencies.
+@@ -212,6 +233,33 @@ Three independent reviewers examined the canonical historical-baseline diff plus
+ 
+ Grouped corrections: explicit erasure field presence (NH-B1); native signed HTTP authentication path (NH-B2/NH-B3); retained-floor success coverage (NH-B5); full invocation deadline coverage (NH-B6); admitted-worker saturation/recovery coverage (NH-B7). These use existing protocols, native proof shape, source host and deadline policy. Preserve the current content-free controller branch, exact proof comparison, compatibility, all dependency pins and every parent gate.
+ 
++### Native provenance source review — 2026-10-21
++
++Three independent source reviewers examined the captured owner diff. Each claim is retained below before grouping. Corrections preserve original input binding, legacy JSON/constructors, current owner authorization, isolated atomic generations, legacy/unproven refusal, all earlier uncommitted work and parent gates. No whole-worktree reversion or Git mutation is authorized. Add original native proof (or its original absence) to the existing durable retry item and use that frozen value for every compatible/recovery/reconciliation request; old retry records remain unproven. Verification may validate an originally supplied frozen cut against an authenticated later complete prefix without replacing that cut. Bound optional inspection, leave unsupported protected/evolved provenance unavailable while preserving ordinary delivery, clear stale in-memory admission, and preserve exact native actor metadata on the authenticated native event path. Address test gaps at real dispatch and delegated adapter boundaries; keep production guard/rebuild/G-4 gates.
++
++| Finding | Verdict | Route | Verified evidence / action |
++| --- | --- | --- | --- |
++| NP-B1 | medium | bad_spec | Producer resamples proof before every dispatch; retry work has no original proof. Persist the original proof or absence in existing retry metadata and test interruption plus source advance/inspection failure. |
++| NP-B2 | medium | patch | Admission requires latest native head equality, so an append after original capture rejects ordinary delivery. Verify the original supplied cut within the authenticated complete native prefix; never substitute the new head for original evidence. |
++| NP-B3 | medium | bad_spec | Compatible, recovery-bound and terminal reconciliation requests construct separate requests without the original proof. Carry the same durable retry evidence through every applicable full-prefix path and retain unsupported-route refusal. Same frozen-evidence correction as NP-B1. |
++| NP-B4 | high | patch | Producer attaches native proof to protected envelopes, but admission rejects their readable Protected representation before ordinary handler dispatch. Omit unsupported provenance without disabling existing protected delivery. |
++| NP-B5 | medium | patch | Optional actor inspection waits only on caller cancellation and can block ordinary retry scheduling indefinitely. Bound the whole optional inspection and test stalled-provider fallback/caller cancellation. |
++| NP-B6 | medium | patch | Snapshot cloning copies private admission state; no-gateway/unavailable returns can retain prior admission. Clear private admission in the snapshot and verify both fallback branches. |
++| NP-B7 | medium | patch | Existing mutation test does not dispatch through a registered SDK upcaster. Execute actual evolution dispatch and assert the defined unproven result for changed effective bytes. |
++| NP-B8 | low | patch | Conversation gateway fixture truncates at PageSize but always reports false continuation. Correct paging metadata and execute a prefix exceeding 100 events. |
++| NP-B9 | medium | patch | New fixtures use payload-only digest while producer tests use the native raw-envelope codec. Add producer/native-reader/SDK-dispatch interoperability with actual raw digests and persisted exact evidence; preserve technical/domain layering. |
++| NP-B10 | medium | patch | Every proof getter allocates a complete serialized payload and is called repeatedly during projection. Preserve mutation detection while streaming the digest instead of allocating the full encoded request; retain substantial-prefix measurement, without claiming performance qualification. |
++| NP-E1 | high | patch | Independent protected-input trace confirms NP-B4: readable Protected metadata reaches the new rejection before ordinary handlers. Same correction as NP-B4. |
++| NP-E2 | medium | patch | StreamsController normalizes blank UserId to null while projection producer retains it; exact comparison rejects valid native input. Preserve original UserId only for authenticated native event reads and retain ordinary stream compatibility. |
++| NP-V1 | medium | patch | Pre-verified gap: production ConversationResolutionNativeEvidence only has an early rebuild-refusal test; query positives use a fake. Exercise matching and changed source/selection proofs through existing delegated transport and isolated storage. |
++| NP-V2 | medium | patch | Pre-verified gap: rebuild/reconciliation tests supply no proof or already-admitted in-memory input. Exercise untrusted JSON requests plus supported native gateway at both real entry points and verify persisted proof/tampering refusal. |
++| NP-V3 | medium | patch | Independent full Conversation run confirms BenignRedeliveryPreservesTheOriginalPersistedHeadIdentityAndNativeReceipt now loses admitted proof but expects Completed. Preserve explicitly legacy benign retry coverage and separately reject altered proven input. |
++| NP-P1 | medium | patch | Parent full Conversation run also finds SecondWriteFailureShouldBeRetryableAndRetryShouldConverge reading an unproven legacy generation as available. Retain recovery end-state checks and assert strict metadata refusal unless test input is actually admitted. |
++| NP-P2 | medium | defer | Full SDK run is 1090/1091: existing DomainModuleAuthoringGuardrailTests expects EventStore/references/Hexalith.Tenants, absent under the authorized umbrella layout. Do not initialize nested submodules or weaken the guard. Retain exact command/XML and focused results separately. |
++| NP-P3 | medium | patch | Final independent Conversation run exposes 28 rebuild fault-injection cases whose shared helper omits the supported gateway and relies on copied private admission. Re-admit an untrusted original JSON request through the existing native fixture gateway, preserving every six-operation boundary and refusal assertion. |
++
++Review correction closure: NP-B1–B10, NP-E1/E2, NP-V1–V3 and NP-P1/P3 are corrected and independently verified. The original reviewers confirmed source resolution; the verification reviewer additionally inspected the final rebuild helper. NP-P2 remains the pre-existing nested-layout validation blocker in deferred-work.md. Every failed/superseded run is retained; no overall prerequisite or parent acceptance is recorded.
++
+ ## Design Notes
+ 
+ One evidence prerequisite spans owner repositories. The annex carries detailed contracts so the execution summary stays short. Unknown storage/identity authority is a blocking decision, never a permanent unavailable stub presented as delivery.
