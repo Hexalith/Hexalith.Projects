@@ -1,0 +1,46 @@
+{
+  "scope": "Final independent Debug source verification; no full-suite, package, deployed owner, G-4 or Story 6.4 acceptance claim.",
+  "runs": [
+    {
+      "label": "reviewed-client-tests",
+      "report": "reviewed-client-tests.xml",
+      "total": 117,
+      "passed": 117,
+      "failed": 0,
+      "skipped": 0,
+      "not-run": 0,
+      "errors": 0,
+      "classes": [
+        "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayClientStreamTests",
+        "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests",
+        "Hexalith.EventStore.Client.Tests.Streams.AuthoritativeEventStreamReaderTests",
+        "Hexalith.EventStore.Client.Tests.Streams.GatewayNativeSourceMetadataAdmissionTests",
+        "Hexalith.EventStore.Client.Tests.Streams.GatewayNativeSourceMetadataReaderTests"
+      ]
+    },
+    {
+      "label": "reviewed-server-tests",
+      "report": "reviewed-server-tests.xml",
+      "total": 137,
+      "passed": 137,
+      "failed": 0,
+      "skipped": 0,
+      "not-run": 0,
+      "errors": 0,
+      "classes": [
+        "Hexalith.EventStore.Server.Tests.Actors.AggregateActorGetEventsTests",
+        "Hexalith.EventStore.Server.Tests.Controllers.StreamsControllerTests",
+        "Hexalith.EventStore.Server.Tests.Streams.NativeSourceMetadataReaderTests",
+        "Hexalith.EventStore.Server.Tests.Streams.NativeSourcePrefixTests"
+      ]
+    }
+  ],
+  "totals": {
+    "total": 254,
+    "passed": 254,
+    "failed": 0,
+    "skipped": 0,
+    "not-run": 0,
+    "errors": 0
+  }
+}

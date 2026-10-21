@@ -1,0 +1,158 @@
+[
+  {
+    "label": "reviewed-client-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-p:UseHexalithProjectReferences=true",
+      "-p:NuGetAudit=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "started_utc": "2026-10-21T09:59:32.531330+00:00",
+    "elapsed_seconds": 8.881,
+    "exit_code": 0,
+    "source_before": {
+      "src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs": "9c7fab948df8ff3ecd7c49468bc8daedd5a1017e6ea74979020b4d5542cf4a79",
+      "src/Hexalith.EventStore.Contracts/Streams/NativeSourceProof.cs": "0cbea4ccb1d32eee5509b06fb1523f7f983e97ac7db7ada8ae9e751889a85810",
+      "src/Hexalith.EventStore/Controllers/StreamsController.cs": "d7b7ab0e39d13507b61074be814ef6bc57558132f99af8fe8ac9a171275fb168",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionCollection.cs": "33e5f8f4ad4e1a22760815fc6b58187ce0f2aaa03045847bb93393422538f11d",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionTests.cs": "ae35e4154273f629a964984ad5030be10e38afdd0fcc344086365dc835521e4e",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataReaderTests.cs": "2647e855b39e27f92d2926351383d42cf6b1a31b585149c1beaaa460dd574005",
+      "tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs": "d3efbdc16f3e7c514e17a687915c9c51eb3bc9bd93f8fd89a99241c002052f78"
+    },
+    "source_after": {
+      "src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs": "9c7fab948df8ff3ecd7c49468bc8daedd5a1017e6ea74979020b4d5542cf4a79",
+      "src/Hexalith.EventStore.Contracts/Streams/NativeSourceProof.cs": "0cbea4ccb1d32eee5509b06fb1523f7f983e97ac7db7ada8ae9e751889a85810",
+      "src/Hexalith.EventStore/Controllers/StreamsController.cs": "d7b7ab0e39d13507b61074be814ef6bc57558132f99af8fe8ac9a171275fb168",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionCollection.cs": "33e5f8f4ad4e1a22760815fc6b58187ce0f2aaa03045847bb93393422538f11d",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionTests.cs": "ae35e4154273f629a964984ad5030be10e38afdd0fcc344086365dc835521e4e",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataReaderTests.cs": "2647e855b39e27f92d2926351383d42cf6b1a31b585149c1beaaa460dd574005",
+      "tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs": "d3efbdc16f3e7c514e17a687915c9c51eb3bc9bd93f8fd89a99241c002052f78"
+    },
+    "source_unchanged": true
+  },
+  {
+    "label": "reviewed-server-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+      "--configuration",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-p:UseHexalithProjectReferences=true",
+      "-p:NuGetAudit=false"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "started_utc": "2026-10-21T10:00:27.257914+00:00",
+    "elapsed_seconds": 11.183,
+    "exit_code": 0,
+    "source_before": {
+      "src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs": "9c7fab948df8ff3ecd7c49468bc8daedd5a1017e6ea74979020b4d5542cf4a79",
+      "src/Hexalith.EventStore.Contracts/Streams/NativeSourceProof.cs": "0cbea4ccb1d32eee5509b06fb1523f7f983e97ac7db7ada8ae9e751889a85810",
+      "src/Hexalith.EventStore/Controllers/StreamsController.cs": "d7b7ab0e39d13507b61074be814ef6bc57558132f99af8fe8ac9a171275fb168",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionCollection.cs": "33e5f8f4ad4e1a22760815fc6b58187ce0f2aaa03045847bb93393422538f11d",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionTests.cs": "ae35e4154273f629a964984ad5030be10e38afdd0fcc344086365dc835521e4e",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataReaderTests.cs": "2647e855b39e27f92d2926351383d42cf6b1a31b585149c1beaaa460dd574005",
+      "tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs": "d3efbdc16f3e7c514e17a687915c9c51eb3bc9bd93f8fd89a99241c002052f78"
+    },
+    "source_after": {
+      "src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs": "9c7fab948df8ff3ecd7c49468bc8daedd5a1017e6ea74979020b4d5542cf4a79",
+      "src/Hexalith.EventStore.Contracts/Streams/NativeSourceProof.cs": "0cbea4ccb1d32eee5509b06fb1523f7f983e97ac7db7ada8ae9e751889a85810",
+      "src/Hexalith.EventStore/Controllers/StreamsController.cs": "d7b7ab0e39d13507b61074be814ef6bc57558132f99af8fe8ac9a171275fb168",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionCollection.cs": "33e5f8f4ad4e1a22760815fc6b58187ce0f2aaa03045847bb93393422538f11d",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionTests.cs": "ae35e4154273f629a964984ad5030be10e38afdd0fcc344086365dc835521e4e",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataReaderTests.cs": "2647e855b39e27f92d2926351383d42cf6b1a31b585149c1beaaa460dd574005",
+      "tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs": "d3efbdc16f3e7c514e17a687915c9c51eb3bc9bd93f8fd89a99241c002052f78"
+    },
+    "source_unchanged": true
+  },
+  {
+    "label": "reviewed-client-tests",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.EventStore.Client.Tests/bin/Debug/net10.0/Hexalith.EventStore.Client.Tests.dll",
+      "-class",
+      "Hexalith.EventStore.Client.Tests.Streams.GatewayNativeSourceMetadataReaderTests",
+      "-class",
+      "Hexalith.EventStore.Client.Tests.Streams.GatewayNativeSourceMetadataAdmissionTests",
+      "-class",
+      "Hexalith.EventStore.Client.Tests.Streams.AuthoritativeEventStreamReaderTests",
+      "-class",
+      "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayClientStreamTests",
+      "-class",
+      "Hexalith.EventStore.Client.Tests.Gateway.EventStoreGatewayWorkloadClientTests",
+      "-result-xml",
+      "/tmp/story64-native-inspection-independent/reviewed-client-tests.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "started_utc": "2026-10-21T10:01:21.168125+00:00",
+    "elapsed_seconds": 0.611,
+    "exit_code": 0,
+    "source_before": {
+      "src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs": "9c7fab948df8ff3ecd7c49468bc8daedd5a1017e6ea74979020b4d5542cf4a79",
+      "src/Hexalith.EventStore.Contracts/Streams/NativeSourceProof.cs": "0cbea4ccb1d32eee5509b06fb1523f7f983e97ac7db7ada8ae9e751889a85810",
+      "src/Hexalith.EventStore/Controllers/StreamsController.cs": "d7b7ab0e39d13507b61074be814ef6bc57558132f99af8fe8ac9a171275fb168",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionCollection.cs": "33e5f8f4ad4e1a22760815fc6b58187ce0f2aaa03045847bb93393422538f11d",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionTests.cs": "ae35e4154273f629a964984ad5030be10e38afdd0fcc344086365dc835521e4e",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataReaderTests.cs": "2647e855b39e27f92d2926351383d42cf6b1a31b585149c1beaaa460dd574005",
+      "tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs": "d3efbdc16f3e7c514e17a687915c9c51eb3bc9bd93f8fd89a99241c002052f78"
+    },
+    "source_after": {
+      "src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs": "9c7fab948df8ff3ecd7c49468bc8daedd5a1017e6ea74979020b4d5542cf4a79",
+      "src/Hexalith.EventStore.Contracts/Streams/NativeSourceProof.cs": "0cbea4ccb1d32eee5509b06fb1523f7f983e97ac7db7ada8ae9e751889a85810",
+      "src/Hexalith.EventStore/Controllers/StreamsController.cs": "d7b7ab0e39d13507b61074be814ef6bc57558132f99af8fe8ac9a171275fb168",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionCollection.cs": "33e5f8f4ad4e1a22760815fc6b58187ce0f2aaa03045847bb93393422538f11d",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionTests.cs": "ae35e4154273f629a964984ad5030be10e38afdd0fcc344086365dc835521e4e",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataReaderTests.cs": "2647e855b39e27f92d2926351383d42cf6b1a31b585149c1beaaa460dd574005",
+      "tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs": "d3efbdc16f3e7c514e17a687915c9c51eb3bc9bd93f8fd89a99241c002052f78"
+    },
+    "source_unchanged": true
+  },
+  {
+    "label": "reviewed-server-tests",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/Hexalith.EventStore.Server.Tests.dll",
+      "-class",
+      "Hexalith.EventStore.Server.Tests.Controllers.StreamsControllerTests",
+      "-class",
+      "Hexalith.EventStore.Server.Tests.Streams.NativeSourceMetadataReaderTests",
+      "-class",
+      "Hexalith.EventStore.Server.Tests.Actors.AggregateActorGetEventsTests",
+      "-class",
+      "Hexalith.EventStore.Server.Tests.Streams.NativeSourcePrefixTests",
+      "-result-xml",
+      "/tmp/story64-native-inspection-independent/reviewed-server-tests.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "started_utc": "2026-10-21T10:01:52.651550+00:00",
+    "elapsed_seconds": 2.914,
+    "exit_code": 0,
+    "source_before": {
+      "src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs": "9c7fab948df8ff3ecd7c49468bc8daedd5a1017e6ea74979020b4d5542cf4a79",
+      "src/Hexalith.EventStore.Contracts/Streams/NativeSourceProof.cs": "0cbea4ccb1d32eee5509b06fb1523f7f983e97ac7db7ada8ae9e751889a85810",
+      "src/Hexalith.EventStore/Controllers/StreamsController.cs": "d7b7ab0e39d13507b61074be814ef6bc57558132f99af8fe8ac9a171275fb168",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionCollection.cs": "33e5f8f4ad4e1a22760815fc6b58187ce0f2aaa03045847bb93393422538f11d",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionTests.cs": "ae35e4154273f629a964984ad5030be10e38afdd0fcc344086365dc835521e4e",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataReaderTests.cs": "2647e855b39e27f92d2926351383d42cf6b1a31b585149c1beaaa460dd574005",
+      "tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs": "d3efbdc16f3e7c514e17a687915c9c51eb3bc9bd93f8fd89a99241c002052f78"
+    },
+    "source_after": {
+      "src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs": "9c7fab948df8ff3ecd7c49468bc8daedd5a1017e6ea74979020b4d5542cf4a79",
+      "src/Hexalith.EventStore.Contracts/Streams/NativeSourceProof.cs": "0cbea4ccb1d32eee5509b06fb1523f7f983e97ac7db7ada8ae9e751889a85810",
+      "src/Hexalith.EventStore/Controllers/StreamsController.cs": "d7b7ab0e39d13507b61074be814ef6bc57558132f99af8fe8ac9a171275fb168",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionCollection.cs": "33e5f8f4ad4e1a22760815fc6b58187ce0f2aaa03045847bb93393422538f11d",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataAdmissionTests.cs": "ae35e4154273f629a964984ad5030be10e38afdd0fcc344086365dc835521e4e",
+      "tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataReaderTests.cs": "2647e855b39e27f92d2926351383d42cf6b1a31b585149c1beaaa460dd574005",
+      "tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs": "d3efbdc16f3e7c514e17a687915c9c51eb3bc9bd93f8fd89a99241c002052f78"
+    },
+    "source_unchanged": true
+  }
+]

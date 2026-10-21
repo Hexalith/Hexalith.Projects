@@ -1,0 +1,60 @@
+{
+  "command": "UseHexalithProjectReferences=true aspire start --non-interactive --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj --format Json",
+  "start_exit_code": 0,
+  "resources": [
+    {
+      "name": "eventstore-dapr-cli-jvxxqacz",
+      "state": "Waiting"
+    },
+    {
+      "name": "eventstore-jtpvxrce",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-dapr-cli-ebzyahej",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-hkvzvquf",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-ui-yrznprpj",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-workers-dapr-cli-dkmvanqu",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-workers-fqnujwsk",
+      "state": "Waiting"
+    },
+    {
+      "name": "security-eventstore-client-password",
+      "state": "Running",
+      "healthStatus": "Healthy"
+    },
+    {
+      "name": "security-eventstore-client-username",
+      "state": "Running",
+      "healthStatus": "Healthy"
+    },
+    {
+      "name": "security-tsyqtxsn",
+      "state": "Running",
+      "healthStatus": "Unhealthy"
+    },
+    {
+      "name": "tenants-dapr-cli-cxygumdc",
+      "state": "Waiting"
+    },
+    {
+      "name": "tenants-wcyhhcbq",
+      "state": "Waiting"
+    }
+  ],
+  "stop_command": "aspire stop --non-interactive --apphost src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+  "stop_exit_code": 0,
+  "live_acceptance": false
+}

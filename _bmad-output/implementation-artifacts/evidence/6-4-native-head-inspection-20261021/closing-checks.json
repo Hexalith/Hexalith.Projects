@@ -1,0 +1,54 @@
+[
+  {
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6.4"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "output": "PASS: Story 6.4 is within production authority\n"
+  },
+  {
+    "command": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "output": "PASS: production-authority index is [6, 7, 8]\n"
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "exit_code": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "aspire",
+      "ps",
+      "--format",
+      "Json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "output": "[]\n"
+  }
+]

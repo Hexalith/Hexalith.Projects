@@ -1062,3 +1062,19 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Deliver and qualify the existing Conversations metadata mutation dispatcher before claiming production scoring-label reclassification.
   evidence: SL-B1; UpdateConversationMetadataCommand pre-exists without a native production command/boundary/aggregate dispatch path; this source slice verifies contracts and event replay only.
+
+- source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
+  summary: Reconcile G-6 CLI default policy with the approved current workflow selection.
+  evidence: NH-B8; runner and CI gate defaults still use g6-current-policy.json while the workflows explicitly select the dated policy. Preflight fails closed, but the historical default path targets the older tuple; this predates the native metadata source slice.
+
+- source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
+  summary: Reconcile the P0 handoff's approved continuation with its older missing-approval paragraph.
+  evidence: NH-B9; the existing P0 handoff records the approved current-catalog tuple near its start but its measured continuation still says no replacement approval was located. P0 owners must retain historical evidence while identifying the current execution boundary.
+
+- source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
+  summary: Bind portable immutable references for P0 receipts currently named only by external absolute checkout paths.
+  evidence: NH-B10; the existing owner proposal and continuation receipt paths resolve outside this Projects checkout. A reviewer or CI consumer needs owner-controlled repository/artifact identities and hashes; no P0 acceptance or receipt is fabricated by this source change.
+
+- source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
+  summary: Add behavioral verification of G-6 placement and scheduler immutable image identities.
+  evidence: NH-V1; the independent verification-gap reviewer traced all three runner tests to exits before image selection and found the retained validator checks roles/IDs but not image values. Add a launch-path regression and mutable-tag negative control in the existing G-6 work; the source pin change predates this resume.

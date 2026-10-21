@@ -2,7 +2,7 @@
 title: 'Story 6.4 prerequisite: current authorized resolution evidence'
 type: 'feature'
 created: '2026-10-19'
-updated: '2026-10-20'
+updated: '2026-10-21'
 status: 'in-progress'
 route: 'dispatch'
 artifact_kind: 'selected-prerequisite-design'
@@ -10,6 +10,7 @@ related_story: '6-4-resolve-projects-with-transient-current-explanations'
 design_decisions: 'selected'
 implementation_authorized: false
 owner_prerequisite_implementation_authorized: true
+native_head_source_status: 'reviewed-source-complete'
 baseline_commit: 'b0caf2b5c25a1f761abed685c7c9ef811732c6fb'
 review_loop_iteration: 1
 context:
@@ -87,6 +88,21 @@ The resumed source inspection found that isolated metadata automatically classif
 Three independent reviewers produced eleven findings: ten corrected and one pre-existing production mutation-adoption gap deferred. Parent final validation passed 1358 tests (131 contract behavior/boundaries, 2 static package metadata, 189 full core, 1036 full server), zero failures/skips, with three successful Debug source builds. The existing Contracts.Tests missing nested Commons project warning remains; Release package execution was not run. Source bytes were unchanged throughout final validation. Actual commands, full revisions, reviewed patch/source hashes, failed/superseded runs and preservation proof are retained in the [native scoring-label evidence](evidence/6-4-native-scoring-label-20261020/README.md).
 
 The native update event/replay path is source behavior, not a deployed metadata-mutation route. Production authority and G-4 remain unqualified; the prerequisite stays in-progress and RTI/parent implementation remains unauthorized. The required runtime baseline failed first on mixed source/package selection, then with child exit 255 while disk space was exhausted; no healthy AppHost or live acceptance is claimed.
+
+### Native metadata inspection source follow-up — 2026-10-21
+
+The current resume executes the next bounded owner prerequisite below. Earlier unchecked owner delivery tasks remain tracked dependencies; this run does not claim to implement them or promote RTI/parent readiness. Preserve the existing baseline and frozen block. Tenant Read authority already exists in source and must be reused, not duplicated.
+
+- [x] EventStore `src/Hexalith.EventStore/Controllers/StreamsController.cs` — for the existing authenticated workload stream request `RequireNativeProof=true`, `FromSequence=0`, `ToSequence=0`, return only an empty page plus valid native proof after two equal `InspectSourceProofAsync` observations. Reuse exact existing authentication and validation. Execute no event-range, payload/readability, content or state-store calls. Preserve all ordinary/legacy stream behavior, missing/erased/invalid-source refusal, cancellation and native input bounds.
+- [x] EventStore `src/Hexalith.EventStore.Client/Streams/GatewayNativeSourceMetadataReader.cs` — implement existing `INativeSourceMetadataReader` over `IEventStoreGatewayClient.ReadStreamAsync` using exactly that head-only request. Validate response identity, empty events, exact head-only bounds/count/continuation metadata and `NativeSourceProofCodec`; fail closed on malformed/unavailable/erased or mismatched evidence. Enforce the existing two-second interactive deadline, no retries, caller-first cancellation, and return `NativeSourceObservation` with the injected clock. Preserve `DaprNativeSourceMetadataReader` and public constructors; no new owner protocol, registration, dependency or deployment configuration.
+- [x] EventStore `tests/Hexalith.EventStore.Server.Tests/Controllers/StreamsControllerTests.cs` and `tests/Hexalith.EventStore.Client.Tests/Streams/GatewayNativeSourceMetadataReaderTests.cs` — test successful nonempty and initialized-empty native heads, exact workload/target denial, replaced/regressed/revoked/erased proof between observations, missing/invalid source, malformed gateway responses, failure/timeout/cancellation and ordinary event-page compatibility. Use throwing/strict spies to prove head inspection calls no event-range or payload APIs; preserve end-state where supported. Do not claim cold activation is zero-write.
+- [x] Projects evidence — retain actual Debug source build/test commands and native results, exact source revisions/patch hashes, sanitized runtime resource state and remaining blockers. Parent independently inspect the implementation diff, run focused tests and obtain independent review before closing this source slice.
+
+This adapter is infrastructure capability only and is not installed into Conversation queries in this slice. A freshly read native head cannot certify an old metadata generation. Projection write-time native prefix certification, guarded legacy enrollment, content-free rebuild promotion, native Folder evidence, File binding, installation coverage, production mutation adoption and G-4 remain explicit incomplete prerequisites. The required runtime baseline now starts with `UseHexalithProjectReferences=true`; security is Unhealthy and dependents Waiting. The exact Projects AppHost was stopped before source changes; no live acceptance is claimed.
+
+Final source slice: seven EventStore source/test files deliver the authenticated head-only branch, gateway adapter and explicit JSON erasure field requirement. Three independent reviews yielded eleven findings: six patched in five correction groups, one rejected with executed existing persisted-boundary evidence, and four historical G-6/P0 issues appended to deferred-work.md. Parent independent final Debug builds have zero warnings/errors; 254 tests pass with zero failures/skips, including real workload HTTP authentication, exact signed resource proof, fully retained-away heads, missing erasure field, synchronous/asynchronous/validation deadlines and admitted-worker recovery. All final checks use the corrected unchanged source hashes. NH-B1/B2/B3/B5/B6/B7 are closed for this source slice; no overall prerequisite acceptance is implied. See [source evidence and remaining gates](evidence/6-4-native-head-inspection-20261021/README.md).
+
+The overall prerequisite remains **in-progress** because the other owner source, deployment/installation, qualification and G-4 conditions above are incomplete. RTI and parent handlers remain unauthorized. Parent story/spec, sprint status, frozen intent, dependency configuration, repository heads and indices are preserved; no commit or push is performed.
 
 ## Implementation Evidence Required
 
@@ -175,6 +191,26 @@ This review covers the delivered scoring-label source slice only. The prerequisi
 | SL-E1 | medium | patch | A second distinct creation can classify a legacy label despite native replay rejecting that stream. Same verified duplicate-creation defect as SL-B3. |
 
 Review correction closure: SL-B2 through SL-B8, SL-V1, SL-V2 and SL-E1 are patched and covered by the final corrected-tree checks. SL-B1 remains a pre-existing adoption prerequisite recorded in deferred-work.md. The evidence bundle preserves initial versus corrected source/results; no full prerequisite or parent acceptance is claimed.
+
+### Native metadata inspection review — 2026-10-21
+
+Three independent reviewers examined the canonical historical-baseline diff plus the current owner worktree. Edge-case review returned no findings. The following rows retain each blind-hunter and verification-gap claim before grouping; earlier committed G-6/P0 changes are distinguished from this source slice.
+
+| Finding | Verdict | Route | Verified evidence / action |
+| --- | --- | --- | --- |
+| NH-B1 | medium | patch | `NativeSourceProof.Erased` is a positional bool; the gateway's ordinary JSON deserializer supplies false when the property is absent. Require explicit wire presence without changing constructors or valid v1 JSON, and exercise a raw HTTP response missing that field. |
+| NH-B2 | medium | patch | New transport and controller behavior is separately tested, but the head-only response is not exercised through the real workload authentication middleware. Add one source-host HTTP integration path using existing test infrastructure, not a deployed authority claim. |
+| NH-B3 | medium | patch | Existing `WorkloadGatewayControllerTests.Stream_read_accepts_only_signed_exact_second_proof_when_oidc_cannot_bind_resources` proves the shared signed-proof branch for ordinary reads; head-only success without JWT resource bindings is absent. Add the native success case with exact signed resource proof. |
+| NH-B4 | false | reject | Executed `NativeSourcePrefixTests.AuthenticatedNativePagingPreservesExactFinalProofAcrossCountAndActorByteBounds` runs the changed zero-head request against a real actor/state manager, asserts no committed snapshots and no Set/Add/Save operations. Actor tests additionally compare actual committed contents. Warm persisted inspection already has source evidence; cold activation remains explicitly unqualified. |
+| NH-B5 | medium | patch | Both new success matrices currently use retained floor 1. Add advanced-floor/head-plus-one success cases to prove content-free inspection does not require retained event bytes. |
+| NH-B6 | low | patch | Existing executed `AuthoritativeEventStreamReaderTests.SynchronousGatewayInvocation_CannotRetainReadPastDeadline` proves the shared worker primitive, but the new adapter has only pending-task and blocking-validation cases. Extend its existing deadline theory to synchronous invocation. |
+| NH-B7 | medium | patch | New adapter invokes shared admitted workers without a saturation/release regression. Prove refusal does not invoke a seventeenth blocked provider, abandonment retains admission until provider completion, and released capacity accepts a fresh request. Isolate any shared-capacity test from unrelated tests. |
+| NH-B8 | medium | defer | Historical committed G-6 CLI defaults still select the older policy while current workflows explicitly select the dated policy. Preflight refuses mismatched tuples, but the default command needs owner reconciliation. No qualification/policy selection is changed by this slice. |
+| NH-B9 | medium | defer | Historical P0 handoff contains a selected approved continuation near the top and an older measured-continuation paragraph still saying no replacement approval was located. Record owner documentation reconciliation; do not edit P0 authority as part of this native source slice. |
+| NH-B10 | medium | defer | Historical P0 owner receipts are referenced by absolute paths in a separate Builds checkout, so another checkout cannot reproduce those references alone. Owner handoff should bind portable immutable receipt references; no unavailable receipt or acceptance is invented here. |
+| NH-V1 | medium | defer | Pre-verified gap: existing G-6 runner tests stop before container image selection, and retained-evidence validation does not assert image values. Add launch-path checks for exact placement/scheduler manifest identities under the existing G-6 work. The pin change predates this resume. |
+
+Grouped corrections: explicit erasure field presence (NH-B1); native signed HTTP authentication path (NH-B2/NH-B3); retained-floor success coverage (NH-B5); full invocation deadline coverage (NH-B6); admitted-worker saturation/recovery coverage (NH-B7). These use existing protocols, native proof shape, source host and deadline policy. Preserve the current content-free controller branch, exact proof comparison, compatibility, all dependency pins and every parent gate.
 
 ## Design Notes
 
