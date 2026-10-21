@@ -190,11 +190,20 @@ class ReleasePackageToolTests(unittest.TestCase):
     def test_external_dependency_may_equal_candidate_version(self) -> None:
         for candidate in self.directory.glob("*.nupkg"):
             candidate.unlink()
-        write_candidates(self.directory, version="1.0.0")
-        packages, version, _ = validate_packages(self.directory, "1.0.0", SOURCE_SHA)
+        manifest = load_manifest()
+        contracts_manifest = next(
+            item for item in manifest.packages if item.package_id.endswith("Contracts")
+        )
+        external_version = contracts_manifest.dependencies["Hexalith.Conversations.Contracts"]
+        self.assertNotIn("{", external_version)
+        write_candidates(self.directory, version=external_version)
+        packages, version, _ = validate_packages(self.directory, external_version, SOURCE_SHA)
         contracts = next(item for item in packages if item.package_id.endswith("Contracts"))
-        self.assertEqual("1.0.0", contracts.dependencies["Hexalith.Conversations.Contracts"])
-        self.assertEqual("1.0.0", version)
+        self.assertEqual(
+            external_version,
+            contracts.dependencies["Hexalith.Conversations.Contracts"],
+        )
+        self.assertEqual(external_version, version)
 
     def test_missing_and_stale_packages_fail(self) -> None:
         self.candidate("Hexalith.Projects.Client").unlink()
