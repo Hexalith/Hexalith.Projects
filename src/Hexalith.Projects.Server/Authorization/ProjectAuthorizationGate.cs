@@ -39,6 +39,13 @@ public sealed class ProjectAuthorizationGate(
             projectId: null, correlationId, taskId: null, allowBoundedStaleTenantProjection: false,
             requireProjectDetail: false, cancellationToken);
 
+    /// <summary>Authorizes an exact Project before advisory metadata is loaded, with fresh Tenant access.</summary>
+    public Task<ProjectAuthorizationResult> AuthorizeSupportedResourceAsync(
+        string projectId, IProjectTenantContextAccessor tenantContext, HttpContext httpContext,
+        string correlationId, CancellationToken cancellationToken = default)
+        => AuthorizeAsync(tenantContext, httpContext, ReadProjectAction, projectId, correlationId,
+            taskId: null, allowBoundedStaleTenantProjection: false, requireProjectDetail: false, cancellationToken);
+
     /// <summary>The action token required to update project setup.</summary>
     public const string UpdateProjectSetupAction = "projects:update_setup";
 

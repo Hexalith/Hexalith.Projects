@@ -8,6 +8,9 @@ implementation_authorized: false
 baseline_commit: '16886b7d9c15b5356fad860b0d7b0f97eb9f32b3'
 ---
 
+**Authority update — approved 2026-10-21:** This is the historical strict-current design. The approved advisory scope reset supersedes its D3-D6 native-proof, complete-result and qualification prerequisites for Story 6.4. Retain D1 authenticated owner checks, D2 real identity mapping, safe metadata purpose, request bounds and zero writes. Do not infer context or confirmation authority from suggestions. See `../planning-artifacts/sprint-change-proposal-2026-10-21-simplify-story-6-4.md` and the rewritten parent story/spec for current implementation scope.
+
+
 # Story 6.4: selected prerequisite decisions
 
 The user selected the pragmatic recommendations for D1–D6 after their mechanisms, tradeoffs and alternatives were explained. This records those selections in the [prerequisite specification](spec-6-4-prerequisite-current-authorized-resolution-evidence.md) and [contract annex](6-4-resolution-evidence-contracts.md). It does not record implementation, owner qualification or production acceptance. Missing source contracts and exact-current gates remain dependencies rather than unanswered design choices.

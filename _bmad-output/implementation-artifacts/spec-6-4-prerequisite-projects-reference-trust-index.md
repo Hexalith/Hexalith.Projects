@@ -2,7 +2,7 @@
 title: 'Projects RTI prerequisite: complete current candidate evidence'
 type: 'feature'
 created: '2026-10-20'
-status: 'draft'
+status: 'superseded'
 route: 'dispatch'
 artifact_kind: 'separately-scoped-rti-prerequisite'
 readiness: 'blocked-owner-source-contracts'
@@ -13,6 +13,9 @@ context:
   - '_bmad-output/implementation-artifacts/6-4-prerequisite-decisions-2026-10-20.md'
   - '_bmad-output/implementation-artifacts/6-4-resolution-evidence-contracts.md'
 ---
+
+**Superseded for Story 6.4 on 2026-10-21:** The user approved `../planning-artifacts/sprint-change-proposal-2026-10-21-simplify-story-6-4.md`. Existing source fixes and historical evidence are retained. Strict native provenance, complete-current RTI and installation/qualification tasks below are no longer advisory-resolution prerequisites. D1 authenticated resource authorization and D2 real File identity remain required. Resume none of the old proof tasks without a separately justified scope decision. The active parent story/spec now defines advisory implementation.
+
 
 <frozen-after-approval reason="user-directed separate RTI scope; development readiness not established">
 

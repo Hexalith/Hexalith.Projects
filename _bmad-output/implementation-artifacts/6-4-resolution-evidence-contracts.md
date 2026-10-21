@@ -1,3 +1,6 @@
+
+
+**Authority update — approved 2026-10-21:** This is the historical strict-current design. The approved advisory scope reset supersedes its D3-D6 native-proof, complete-result and qualification prerequisites for Story 6.4. Retain D1 authenticated owner checks, D2 real identity mapping, safe metadata purpose, request bounds and zero writes. Do not infer context or confirmation authority from suggestions. See `../planning-artifacts/sprint-change-proposal-2026-10-21-simplify-story-6-4.md` and the rewritten parent story/spec for current implementation scope.
 # Story 6.4 prerequisite contract annex
 
 This annex belongs to [the prerequisite specification](spec-6-4-prerequisite-current-authorized-resolution-evidence.md). The user selected D1–D6 on 2026-10-20 with “apply recommended”; the [decision record](6-4-prerequisite-decisions-2026-10-20.md) defines that selection. APIs marked **proposed** remain unimplemented contract candidates until their native source mappings and owner execution evidence exist. Design selection does not establish G-2 delivery, an implemented RTI or development readiness.

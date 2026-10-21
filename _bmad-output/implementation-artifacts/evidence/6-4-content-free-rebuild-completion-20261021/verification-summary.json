@@ -1,0 +1,124 @@
+{
+  "status": "bounded source subtask complete; overall prerequisite in-progress; Story 6.4 blocked",
+  "final_source_sha256": "6f2eb41395a9b14cb162b95e221dffcdfb3c70ea9314acbb4edcdda21649ab3d",
+  "independent_builds": [
+    {
+      "label": "final-client-build",
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.EventStore.Client.Tests/Hexalith.EventStore.Client.Tests.csproj",
+        "-c",
+        "Debug",
+        "-p:UseHexalithProjectReferences=true",
+        "-m:1",
+        "--no-restore"
+      ],
+      "start_utc": "2026-10-21T15:38:10.464683+00:00",
+      "seconds": 10.494,
+      "exit_code": 0,
+      "source_before_sha256": "6f2eb41395a9b14cb162b95e221dffcdfb3c70ea9314acbb4edcdda21649ab3d",
+      "source_after_sha256": "6f2eb41395a9b14cb162b95e221dffcdfb3c70ea9314acbb4edcdda21649ab3d",
+      "source_unchanged": true,
+      "binary_before": {},
+      "binary_after": {},
+      "binary_unchanged": true
+    },
+    {
+      "label": "final-server-build",
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.EventStore.Server.Tests/Hexalith.EventStore.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-p:UseHexalithProjectReferences=true",
+        "-m:1",
+        "--no-restore"
+      ],
+      "start_utc": "2026-10-21T15:38:21.599145+00:00",
+      "seconds": 12.798,
+      "exit_code": 0,
+      "source_before_sha256": "6f2eb41395a9b14cb162b95e221dffcdfb3c70ea9314acbb4edcdda21649ab3d",
+      "source_after_sha256": "6f2eb41395a9b14cb162b95e221dffcdfb3c70ea9314acbb4edcdda21649ab3d",
+      "source_unchanged": true,
+      "binary_before": {},
+      "binary_after": {},
+      "binary_unchanged": true
+    },
+    {
+      "label": "final-conversation-build",
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-p:UseHexalithProjectReferences=true",
+        "-m:1",
+        "--no-restore"
+      ],
+      "start_utc": "2026-10-21T15:38:35.054974+00:00",
+      "seconds": 12.283,
+      "exit_code": 0,
+      "source_before_sha256": "6f2eb41395a9b14cb162b95e221dffcdfb3c70ea9314acbb4edcdda21649ab3d",
+      "source_after_sha256": "6f2eb41395a9b14cb162b95e221dffcdfb3c70ea9314acbb4edcdda21649ab3d",
+      "source_unchanged": true,
+      "binary_before": {},
+      "binary_after": {},
+      "binary_unchanged": true
+    }
+  ],
+  "independent_test_runs": [
+    {
+      "label": "final-client-tests",
+      "scope": "Focused SDK Client batch classes",
+      "xml_sha256": "71735ba96975ff7c8a8912c073d8f3225aa7a1226b508f521e5523503aba8525",
+      "total": 195,
+      "passed": 195,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0
+    },
+    {
+      "label": "final-server-tests",
+      "scope": "Focused SDK Server dispatch/reconciliation/idempotency classes",
+      "xml_sha256": "ccdf209f7e63c93c0c2901291d30cb5cd80b41787fe99d314d965f55f935b88e",
+      "total": 297,
+      "passed": 297,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0
+    },
+    {
+      "label": "final-conversation-full",
+      "scope": "Full Conversation Server assembly",
+      "xml_sha256": "6344da7336c6d13f0ef2363339f8e256b7299466bb7a80f371f4fa1de1882901",
+      "total": 1111,
+      "passed": 1111,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0
+    }
+  ],
+  "passed": 1603,
+  "failed": 0,
+  "skipped": 0,
+  "errors": 0,
+  "not_run": 0,
+  "all_source_and_test_binaries_unchanged_during_final_runs": true,
+  "implementer_focused_corrections": {
+    "Client": 49,
+    "Server": 5,
+    "Conversations": 34,
+    "total": 88,
+    "role": "additional evidence; included in the independent final runs, not added to their total"
+  },
+  "unexecuted_acceptance": "No deployed, installation/all-writer, cold-activation or G-4 acceptance lane was established. Earlier nested-layout broad-suite blocker is retained in the prerequisite; these SDK runs are filtered."
+}

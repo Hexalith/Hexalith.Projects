@@ -250,28 +250,28 @@ rows:
   - key: fr-12
     category: fr
     ids: [FR-12]
-    description: "Resolve Project From Conversation — Inferred Association; ConversationLinked exemption; ReadOnlyCandidate; Denied vs NoMatch; transient non-persisted trace"
+    description: "Approved advisory observed-data semantics; explicit incomplete coverage; request-time owner authorization. Resolve Project From Conversation — Inferred Association; advisory ConversationLinked hint without confirmation exemption; confirmation surface determines ReadOnlyCandidate capability; Denied vs NoMatch; transient non-persisted trace"
     architecture_decisions: [AD-7, AD-10, AD-14, AD-32]
     user_journeys: [UJ-3]
     primary_story: "6.4"
     supporting_stories: []
-    entry_gates: [Epic-6-gate, G-2]
+    entry_gates: [G-2] # 2026-10-21: request-time owner access and real identity only; advisory exception
     fixture: epic6/6.4-resolution-reads
-    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.4"
-    evidence_artifact: evidence/epic6/6.4-resolution-reads.trx
+    verification_command: "dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class '*ProjectAdvisoryQueryTests' -result-xml _bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-matrix.xml"
+    evidence_artifact: _bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-matrix.xml
     estimate: L
   - key: fr-13
     category: fr
     ids: [FR-13]
-    description: "Resolve Project From Attachments — foreign/unauthorized/unknown attachment indistinguishable from authorized no-match; fail-closed on stale auth; no raw file content as data"
+    description: "Approved advisory observed-data semantics; explicit incomplete coverage; request-time owner authorization. Resolve Project From Attachments — foreign/unauthorized/unknown attachment indistinguishable from authorized no-match; fail-closed on stale auth; no raw file content as data"
     architecture_decisions: [AD-7, AD-11, AD-14, AD-32]
     user_journeys: [UJ-2]
     primary_story: "6.4"
     supporting_stories: []
-    entry_gates: [Epic-6-gate, G-2]
+    entry_gates: [G-2] # 2026-10-21: request-time owner access and real identity only; advisory exception
     fixture: epic6/6.4-resolution-reads
-    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.4"
-    evidence_artifact: evidence/epic6/6.4-resolution-reads.trx
+    verification_command: "dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class '*ProjectAdvisoryQueryTests' -result-xml _bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-matrix.xml"
+    evidence_artifact: _bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-matrix.xml
     estimate: L
   - key: fr-14
     category: fr
@@ -319,7 +319,7 @@ rows:
   - key: fr-17
     category: fr
     ids: [FR-17]
-    description: "Explain Context Selection — current transient inclusion/exclusion evidence; no secrets/payloads; no persisted trace"
+    description: "Explain Context Selection — current context evidence; advisory observed-data explanations for 6.4 under the 2026-10-21 exception; no secrets/payloads or persisted trace"
     architecture_decisions: [AD-7, AD-14]
     user_journeys: [UJ-4]
     primary_story: "6.3"

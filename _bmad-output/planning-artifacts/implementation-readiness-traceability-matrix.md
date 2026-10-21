@@ -29,12 +29,12 @@
 | `fr-9` | FR-9 | Link File Reference — durable task; Selection Evidence or confirmation; foreign-Folder Preview; no Folder change; no content copy | 7.7 | — | AD-5, AD-11, AD-12, AD-15 | 🔒 blocked-external | G-2 Folders owner contract |
 | `fr-10` | FR-10 | Link Memory — durable task; Selection Evidence or confirmation; metadata-only; auth delegated to Memories; Case-vs-Unit per pinned G-2 contract | 7.9 | — | AD-5, AD-11, AD-12, AD-15 | 🔒 blocked-external | G-2 Memories owner contract (Case/Unit granularity) |
 | `fr-11` | FR-11 | Unlink Context Reference — Preview + confirmation + durable task; prior-membership record retained; Folder replace-only | 7.5 / 7.8 / 7.10 | 7.6 | AD-5, AD-11, AD-13 | 🔒 blocked-external | G-1 confirmation record + G-2 owner contracts |
-| `fr-12` | FR-12 | Resolve Project From Conversation — Inferred Association; ConversationLinked exemption; ReadOnlyCandidate; Denied vs NoMatch; transient non-persisted trace | 6.4 | — | AD-7, AD-10, AD-14, AD-32 | 🟡 pending | — |
-| `fr-13` | FR-13 | Resolve Project From Attachments — foreign/unauthorized/unknown attachment indistinguishable from authorized no-match; fail-closed on stale auth; no raw file content as data | 6.4 | — | AD-7, AD-11, AD-14, AD-32 | 🟡 pending | — |
+| `fr-12` | FR-12 | Approved advisory observed-data semantics; explicit incomplete coverage; request-time owner authorization. Resolve Project From Conversation — Inferred Association; advisory ConversationLinked hint without confirmation exemption; confirmation surface determines ReadOnlyCandidate capability; Denied vs NoMatch; transient non-persisted trace | 6.4 | — | AD-7, AD-10, AD-14, AD-32 | 🟡 pending | — |
+| `fr-13` | FR-13 | Approved advisory observed-data semantics; explicit incomplete coverage; request-time owner authorization. Resolve Project From Attachments — foreign/unauthorized/unknown attachment indistinguishable from authorized no-match; fail-closed on stale auth; no raw file content as data | 6.4 | — | AD-7, AD-11, AD-14, AD-32 | 🟡 pending | — |
 | `fr-14` | FR-14 | Confirm Ambiguous Project — MultipleCandidates and Inferred SingleCandidate; ReadOnlyCandidate has no accept; no preselection; rejected candidates not linked | 7.11 | 6.4 | AD-5, AD-13, AD-32 | 🔒 blocked-external | G-1 confirmation record |
 | `fr-15` | FR-15 | Propose New Project — durable confirmed Folder-first creation from a bound Preview; no Project before confirmation | 7.12 | 7.1, 6.4 | AD-5, AD-8, AD-13, AD-31 | 🔒 blocked-external | G-1 confirmation record + G-2 owners |
 | `fr-16` | FR-16 | Get Project Context — request names the Conversation; allowlist-assembled setup + included refs with exclusion reasons; metadata-only | 6.3 | — | AD-11, AD-14, AD-32 | 🟡 pending | — |
-| `fr-17` | FR-17 | Explain Context Selection — current transient inclusion/exclusion evidence; no secrets/payloads; no persisted trace | 6.3 | 6.4 | AD-7, AD-14 | 🟡 pending | — |
+| `fr-17` | FR-17 | Explain Context Selection — current context evidence; advisory observed-data explanations for 6.4 under the 2026-10-21 exception; no secrets/payloads or persisted trace | 6.3 | 6.4 | AD-7, AD-14 | 🟡 pending | — |
 | `fr-18` | FR-18 | Refresh Project Context — read-only recompute; surfaces stale/unavailable refs; never mutates | 6.3 | — | AD-7, AD-14, AD-32 | 🟡 pending | — |
 | `fr-19` | FR-19 | Validate Setup & Metadata Classification — four-value metadataClass, shared SensitiveMetadataTierValidator, auth-before-parse, 400 rejectedField, name-only compatibility | 7.1 | 6.7 | AD-31, AD-16 | 🔒 blocked-external | 7.1-P1 contract/validator acceptance; 7.1-P2 capability acceptance; E-9 remediation gate |
 | `fr-20` | FR-20 | Retrieve Conversation-Start Setup — request names the Conversation; bounded start subset with admission truth; excludes audit metadata | 6.2 | — | AD-14, AD-32 | 🟡 pending | — |
@@ -115,8 +115,8 @@ _Every row’s exact verification command and expected evidence artifact (full d
 | `fr-9` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.7` | `evidence/epic7/7.7-link-file.trx` | M |
 | `fr-10` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.9` | `evidence/epic7/7.9-link-memory.trx` | M |
 | `fr-11` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.5\|7.8\|7.10` | `evidence/epic7/unlink-suite.trx` | M |
-| `fr-12` | `dotnet tool run hexalith-module test --profile reads --filter Story=6.4` | `evidence/epic6/6.4-resolution-reads.trx` | L |
-| `fr-13` | `dotnet tool run hexalith-module test --profile reads --filter Story=6.4` | `evidence/epic6/6.4-resolution-reads.trx` | L |
+| `fr-12` | `dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class '*ProjectAdvisoryQueryTests' -result-xml _bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-matrix.xml` | `_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-matrix.xml` | L |
+| `fr-13` | `dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class '*ProjectAdvisoryQueryTests' -result-xml _bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-matrix.xml` | `_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-matrix.xml` | L |
 | `fr-14` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.11` | `evidence/epic7/7.11-confirm-ambiguous.trx` | L |
 | `fr-15` | `dotnet tool run hexalith-module test --profile durable --filter Story=7.12` | `evidence/epic7/7.12-confirm-proposed.trx` | L |
 | `fr-16` | `dotnet tool run hexalith-module test --profile reads --filter Story=6.3` | `evidence/epic6/6.3-project-context.trx` | L |
@@ -192,3 +192,7 @@ _Every row’s exact verification command and expected evidence artifact (full d
 
 ---
 _Reconciled mechanically from the canonical YAML on 2026-08-02. Do not hand-edit divergently; edit the YAML and regenerate._
+
+### Approved Story 6.4 scope — 2026-10-21
+
+Rows fr-12/fr-13 use advisory observed-data matching, explicit incomplete coverage and request-time owner authorization. The fr-17 share of 6.4 explains observed inputs, not a context certificate. G-2 applicability is owner access and real File identity; native completeness, all-writer certification and G-4 runner rollout are not feature-development gates. Native XML from the actual test runner replaces the unavailable common-runner command for this feature. No passing result or production acceptance is inferred by this planning amendment.

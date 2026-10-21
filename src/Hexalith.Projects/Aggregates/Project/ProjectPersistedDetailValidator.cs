@@ -83,6 +83,23 @@ public static class ProjectPersistedDetailValidator
             && (detail.ProjectFolder is null || IsValidFolder(detail.ProjectFolder, detail.CreatedAt, detail.UpdatedAt));
     }
 
+    /// <summary>Validates only the identity, scoring name, lifecycle, and accepted Folder binding used by advisory queries.</summary>
+    /// <param name="detail">The persisted Project detail.</param>
+    /// <returns>Whether the consumed advisory fields are structurally valid and metadata-safe.</returns>
+    public static bool IsAdvisoryHeaderValid(ProjectDetailItem detail)
+    {
+        ArgumentNullException.ThrowIfNull(detail);
+
+        return ProjectCommandValidator.IsSafePersistedEnvelopeIdentifier(detail.TenantId)
+            && ProjectCommandValidator.IsSafePersistedEnvelopeIdentifier(detail.ProjectId)
+            && !string.IsNullOrWhiteSpace(detail.Name)
+            && ProjectCommandValidator.IsSafePersistedMetadata(detail.Name, ProjectCommandValidator.MaxNameLength)
+            && detail.Sequence > 0
+            && Enum.IsDefined(detail.Lifecycle)
+            && detail.ProjectFolder is { ReferenceState: ReferenceState.Included } folder
+            && ProjectCommandValidator.IsSafePersistedReferenceIdentifier(folder.FolderId);
+    }
+
     private static bool IsValidFolder(
         ProjectFolderReference folder,
         DateTimeOffset createdAt,

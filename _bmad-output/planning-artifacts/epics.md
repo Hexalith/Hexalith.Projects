@@ -84,7 +84,7 @@ _Source: final PRD §6–§8 + addendum (FR-1–FR-25). Each FR has testable con
 
 **Context References**
 
-- **FR-6: Link Conversation** — Project User with Folder manage and current Conversations read links a Conversation (same-Tenant; at most one Project). Actor-selected (valid FR-25 Selection Evidence) is task-only; an Inferred Association, including `SingleCandidate` without `ConversationLinked`, requires Preview and confirmation (`RequestPreview`). Current or prior confirmed membership is an FR-7 move; unlink-then-link cannot bypass. (UJ-1, UJ-3)
+- **FR-6: Link Conversation** — Project User with Folder manage and current Conversations read links a Conversation (same-Tenant; at most one Project). Actor-selected (valid FR-25 Selection Evidence) is task-only; an Inferred Association, including any advisory `SingleCandidate`, requires Preview and confirmation (`RequestPreview`). Current or prior confirmed membership is an FR-7 move; unlink-then-link cannot bypass. (UJ-1, UJ-3)
 - **FR-7: Move Conversation Between Projects** — Project User (Folder manage) or Tenant Project Administrator moves a Conversation through Preview, confirmation, and a Durable Task. After confirmed unlink, authority is target + Conversation only; the prior Project is disclosed only to a permitted actor, otherwise `PriorMembershipRecorded`. Same-Tenant; atomic; fail-closed. (UJ-3)
 - **FR-8: Set Project Folder** — Exclusive Folder anchor (at most one Active Project per Folder). Project User replacement requires manage on both Folders and fails closed on any reader loss (Preview delta as counts). Tenant Project Administrator replacement or quarantined-legacy binding is rejected when the Administrator is in the target Folder's reader set; may reduce the permitted set only when the current Folder is invalid or missing; Preview discloses `NoLoss` or `Loss` only. Administrator same-name creation names a designated Project User as sole manager. Binding a quarantined folderless Project is this path, not reconciliation. (UJ-2)
 - **FR-9: Link File Reference** — Project User with Folder manage and current Folders read. Actor-selected is task-only; inferred requires confirmation. Durable Task with Read-Model-Confirmed Completion; `PollTask` / Idempotency Key recovery before evidence re-validation. File outside the bound Project Folder requires confirmation naming the foreign Folder and, when permitted, its Active Project. Re-home is two audited actions. (UJ-2)
@@ -94,8 +94,8 @@ _Source: final PRD §6–§8 + addendum (FR-1–FR-25). Each FR has testable con
 
 **Project Resolution**
 
-- **FR-12: Resolve Project From Conversation** — `NoMatch` / `SingleCandidate` / `MultipleCandidates` with current reason codes. `ConversationLinked` short-circuits to an existing membership and is not a resolution episode. `SingleCandidate` without `ConversationLinked` is an Inferred Association. `ReadOnlyCandidate` is excluded from FR-14 accept and from SM-7. Unauthorized / cross-Tenant / nonexistent Conversation → one indistinguishable `Denied`. Authorization filtering never manufactures certainty. (UJ-3)
-- **FR-13: Resolve Project From Attachments** — Folder/File identity and metadata only. A sole match is an Inferred Association (FR-14). Foreign-Tenant, unauthorized, or unknown attachments are indistinguishable from an authorized attachment with no match (request not denied). (UJ-2)
+- **FR-12: Resolve Project From Conversation** — Advisory observed-data matching under the approved 2026-10-21 exception; request-time owner authorization.  `NoMatch` / `SingleCandidate` / `MultipleCandidates` describe evaluated observations; an incomplete empty result has no exhaustive outcome. `ConversationLinked` is an observed hint, never confirmed membership authority. Every advisory suggestion requires independent confirmation before binding. The confirmation surface obtains current manage capability separately; its `ReadOnlyCandidate` state is excluded from FR-14 accept and SM-7. Advisory reasons grant no capability. Unauthorized / cross-Tenant / nonexistent Conversation → one indistinguishable `Denied`. Authorization filtering never manufactures certainty. (UJ-3)
+- **FR-13: Resolve Project From Attachments** — Advisory observed-data matching, real owner identities and explicit incomplete coverage under the approved 2026-10-21 exception.  Folder/File identity and metadata only. A sole match is an Inferred Association (FR-14). Foreign-Tenant, unauthorized, or unknown attachments are indistinguishable from an authorized attachment with no match (request not denied). (UJ-2)
 - **FR-14: Confirm Ambiguous Project** — Applies to `MultipleCandidates` and to any Inferred Association `SingleCandidate`. No preselection; sole candidate has accept and decline. Chatbot-only Confirmation Artifact bound to session/surface/authorization evidence; dual-principal adapter cannot self-confirm. Manage on the chosen Folder plus Conversations read; existing membership is an FR-7 move. (UJ-3)
 - **FR-15: Propose New Project** — When no suitable Project is found, propose creating one from the current Conversation, attachments, and setup metadata. Includes a suggested name + initial setup; no Project is created from inference until authorized confirmation; the created Project links the initiating Conversation and authorized attachments through AR-G1 Conversations-owned reassignment ACLs.
 
@@ -1499,35 +1499,23 @@ So that **Chatbot grounds that Conversation in current, authorized, metadata-onl
 - **Verification:** `dotnet tool run hexalith-module test --profile reads --filter Story=6.3`. **Evidence:** `evidence/epic6/6.3-project-context.{trx,json}` + `NoPayloadLeakage` scan. **Estimate:** L. **Completion boundary:** assembled context + refresh + explanation served read-only with allowlist + leakage evidence.
 - **Specification-readiness condition:** Story 6.3 remains one story only if its implementation specification proves one cohesive read-only slice with no forward dependencies, shared implementation fixtures, and separately testable evidence for retrieval, refresh/freshness, explanation, authorization, and payload leakage. If the specification cannot meet that condition, a separate approved correction must split retrieval from refresh/explanation before either slice becomes `ready-for-dev`, while preserving FR/NFR/evidence coverage and prior-only sequencing.
 
-### Story 6.4: Resolve Projects with transient current explanations
+### Story 6.4: Resolve authorized advisory Project suggestions
 
-As a **Project User on Chatbot**,
-I want **to resolve Candidate Projects from a Conversation's metadata and from attached Folder/File references, with a request-scoped, current-only explanation**,
-So that **Chatbot can identify the right Project (FR-12, FR-13) without persisted inference history and without silently attaching**.
+As a **Project User on Chatbot**, I want unselected Project suggestions from Conversation metadata or Folder/File references, so that I can choose a useful Project without persisting inference or silently attaching.
 
-- **Traceability:** FR-12, FR-13, FR-17 (transient trace); NFR-1, NFR-8; AD-7, AD-10, AD-11, AD-14, AD-32; UJ-3; evidence rows `fr-12`, `fr-13`.
+**Approved scope reset — 2026-10-21:** Matching uses observed committed metadata and may lag. Request-time owner authorization remains mandatory. Native-head/rebuild proofs, complete-current RTI, host migration and G-4 rollout are not prerequisites for this bounded feature. Keep the existing tracking key for continuity. The approved advisory exception governs this story over general Epic 6 entry-gate wording.
 
-**Acceptance Criteria:**
+**Acceptance criteria:**
 
-**Given** a Conversation with no explicit Project, **When** `ResolveProjectFromConversation`/`ResolveProjectFromAttachments` runs, **Then** it returns `NoMatch`/`SingleCandidate`/`MultipleCandidates` with reason codes, excludes Archived unless explicitly requested, never accesses unauthorized resources, and returns a request-scoped Resolution Trace that is **not persisted** (AD-7). Same-Tenant is evaluated before authorization on every input.
+- Given authorized Conversation or supported Folder/File input, when the query completes, then existing weights, threshold, deduplication and deterministic ordering produce disclosable IDs/scores/reasons, with evaluation time and explicit incomplete coverage. Names remain omitted; archived Projects require opt-in.
+- Given denied, unknown, cross-Tenant or unverifiable authorization, when evidence is collected, then no protected candidate or exclusion detail is disclosed. Owner checks bind Tenant, original actor, workload and delegation; discovery rows never grant access.
+- Given limits, timeout, missing mapping, unavailable metadata or interrupted/rebuilding state, then the result is explicitly incomplete/unavailable and never exhaustive NoMatch. Ordinary projection lag alone does not require a native proof. File identity is never guessed.
+- Given any suggestion, including a sole candidate, then nothing is selected or persisted. In advisory output, ConversationLinked records an observed link only; confirmed membership must be independently established. Advisory output cannot act as context/first-response authority. Confirmation rechecks permissions, lifecycle and relationships independently.
+- Given either query, then the real query/owner/store path passes the access and degradation matrix with unchanged persisted state and content-free responses/logs.
 
-**Given** a Conversation with an existing confirmed membership, **When** resolve-from-conversation runs, **Then** it short-circuits to `SingleCandidate` with `ConversationLinked` and is not a resolution episode (SM-7).
+**Verification:** individual Debug project builds and built xUnit test assemblies; retain native XML plus an actual authenticated composition test. Existing common-runner and deployed release gates remain separate and unclaimed. **Completion boundary:** advisory reads and transient reasons; unsupported File identity remains explicitly partial until real mapping exists.
 
-**Given** a `SingleCandidate` whose reasons do not include `ConversationLinked`, **When** the response returns, **Then** it is an Inferred Association and **selects nothing** — confirmation is Story 7.11.
-
-**Given** a Project on whose Folder the actor holds only read, **When** it would otherwise be a candidate, **Then** it is returned as `ReadOnlyCandidate`, is excluded from FR-14 accept, and does not count in SM-7.
-
-**Given** unauthorized siblings were hidden by authorization filtering, **When** a sole remaining candidate is returned, **Then** authorization filtering never manufactures certainty: the result remains an Inferred Association.
-
-**Given** an unauthorized, cross-Tenant, or nonexistent Conversation, **When** resolve-from-conversation runs, **Then** the outcome is one indistinguishable `Denied`. `NoMatch` is returned only for an authorized Conversation.
-
-**Given** a foreign-Tenant, unauthorized, or unknown attachment, **When** resolve-from-attachments runs, **Then** that input is indistinguishable from an authorized attachment with no match (the request is not denied).
-
-**Given** missing/stale authorization on a candidate or attachment, **When** resolution runs, **Then** it fails closed on that candidate and never treats raw file content as Project data.
-
-**Given** a `MultipleCandidates`/`SingleCandidate` outcome, **When** the response returns, **Then** it **selects nothing** — confirmation is the durable Epic 7 step (7.11/7.12).
-
-- **Verification:** `dotnet tool run hexalith-module test --profile reads --filter Story=6.4`. **Evidence:** `evidence/epic6/6.4-resolution-reads.{trx,json}` (asserts no persisted trace). **Estimate:** L. **Completion boundary:** compute-on-demand resolution + transient explanation; no persistence, no attachment.
+**Consumer impact:** Stories 6.5, 6.6 and 8.5 display advisory/incomplete coverage without preselection. Stories 7.11/7.12 never accept suggestions as authority. Story 6.7 migration and 8.9/8.11 production gates remain independent.
 
 ### Story 6.5: Inspect Projects through an authenticated FrontComposer read surface
 
@@ -1997,7 +1985,7 @@ So that **the confirmed Project-to-Conversation association is recorded (FR-14) 
 
 **Acceptance Criteria** (plus shared invariants 1–8; confirmation-required):
 
-**Given** a `MultipleCandidates` outcome from 6.4, or any `SingleCandidate` that is an Inferred Association, **When** confirmation is presented, **Then** the sole candidate is unselected, with reason metadata and explicit accept and decline; `ConversationLinked` is not a confirmation episode; `ReadOnlyCandidate` has no accept action.
+**Given** a `MultipleCandidates` outcome from 6.4, or any `SingleCandidate` that is an Inferred Association, **When** confirmation is presented, **Then** the sole candidate is unselected, with reason metadata and explicit accept and decline; independently verified existing membership is not a confirmation episode, while an advisory `ConversationLinked` hint grants no exemption; `ReadOnlyCandidate` has no accept action.
 
 **Given** accessible candidates with no preselection, **When** the user confirms one via its bound artifact, **Then** the durable task records the choice (linking/associating via the Conversations owner), and rejected candidates are not linked.
 

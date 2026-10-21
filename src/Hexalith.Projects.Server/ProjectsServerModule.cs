@@ -44,6 +44,12 @@ public static class ProjectsServerModule
     /// <summary>The supported Explain Context Selection query type.</summary>
     public const string ExplainContextSelectionQueryType = "Hexalith.Projects.Queries.ExplainContextSelection.v1";
 
+    /// <summary>The supported advisory Conversation resolution query.</summary>
+    public const string ResolveProjectFromConversationQueryType = Contracts.Queries.ResolveProjectFromConversationQuery.QueryType;
+
+    /// <summary>The supported advisory attachment resolution query.</summary>
+    public const string ResolveProjectFromAttachmentsQueryType = Contracts.Queries.ResolveProjectFromAttachmentsQuery.QueryType;
+
     /// <summary>The fully qualified <c>SetProjectFolder</c> command type discriminator on the wire.</summary>
     public const string SetProjectFolderCommandType = "Hexalith.Projects.Commands.SetProjectFolder";
 

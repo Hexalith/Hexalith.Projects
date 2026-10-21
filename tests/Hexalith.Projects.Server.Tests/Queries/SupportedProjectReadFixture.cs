@@ -35,6 +35,8 @@ internal sealed class SupportedProjectReadFixture
     public InMemoryProjectTenantAccessProjectionStore Tenants { get; } = new();
     public ProjectReadTestAuditStore AuditStore { get; private set; } = null!;
     public ProjectReadQueryExecutor Executor { get; private set; } = null!;
+    public ProjectQueryEnvelopePrincipalBinding Binding { get; private set; } = null!;
+    public ProjectAuthorizationGate Gate { get; private set; } = null!;
     public ProjectReadProjectionHandler Projection => new(Store, Store);
     public string Workload { get; private set; } = "operator-web";
     public ClaimsIdentity Identity => (ClaimsIdentity)Http.User.Identity!;
@@ -69,6 +71,7 @@ internal sealed class SupportedProjectReadFixture
         await fixture.Tenants.SaveAsync(tenant, TestContext.Current.CancellationToken).ConfigureAwait(false);
         ProjectAuthorizationGate gate = new(new TenantAccessAuthorizer(fixture.Tenants, fixture.Clock, new TenantAccessOptions()),
             fixture.Authorization, new AllowingProjectDaprPolicyEvidenceProvider(), new InMemoryProjectDetailReadModel());
+        fixture.Binding = binding; fixture.Gate = gate;
         fixture.AuditStore = new(fixture.Store);
         fixture.Executor = new(fixture.Store, gate, binding, fixture.Folders,
             new QueryCursorCodec(fixture.DataProtection, "story61-tests"), new ProjectReadAudit(fixture.AuditStore, fixture.Clock), fixture.Clock);

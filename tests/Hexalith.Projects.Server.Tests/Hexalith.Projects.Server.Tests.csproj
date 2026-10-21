@@ -17,6 +17,7 @@
   </PropertyGroup>
   <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
     <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Server\Hexalith.Folders.Server.csproj" />
+    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Server\Hexalith.Conversations.Server.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hexalith.Conversations.Client" Condition="'$(UseHexalithProjectReferences)' != 'true'" />

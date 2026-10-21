@@ -11,6 +11,14 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Dapr.Client;
+using Hexalith.Conversations.Contracts.Queries;
+using Hexalith.Conversations.Server.Projections;
+using Hexalith.Conversations.Server.Queries;
+using Hexalith.Conversations.Server.TenantAccess;
+using Hexalith.Tenants.Client.Projections;
+using Hexalith.Tenants.Contracts.Enums;
+using Hexalith.Projects.Server.Projections.ProjectReads;
+using Microsoft.AspNetCore.Http;
 using Hexalith.EventStore.Authentication;
 using Hexalith.EventStore.Authorization;
 using Hexalith.EventStore.Client.Gateway;
@@ -69,6 +77,9 @@ public sealed class SupportedProjectGatewayHttpTests
         WebApplication folders = await StartFoldersAsync(http!, grpc!, transport, heads, now).ConfigureAwait(true);
         await using var foldersLifetime = folders.ConfigureAwait(true);
         transport.Add("folders", folders);
+        WebApplication conversations = await StartConversationsAsync(http!, grpc!, transport).ConfigureAwait(true);
+        await using var conversationsLifetime = conversations.ConfigureAwait(true);
+        transport.Add("conversations", conversations);
         WebApplication projects = await StartProjectsAsync(http!, grpc!, transport, ownerKey, now).ConfigureAwait(true);
         await using var projectsLifetime = projects.ConfigureAwait(true);
         transport.Add("projects", projects);
@@ -86,12 +97,16 @@ public sealed class SupportedProjectGatewayHttpTests
         IWorkloadAssertionIssuer producer = gateway.Services.GetRequiredService<IWorkloadAssertionIssuer>();
         using HttpClient platform = gateway.Services.GetRequiredService<IHttpClientFactory>().CreateClient();
         using DaprClient dapr = new DaprClientBuilder().UseHttpEndpoint(http!).UseGrpcEndpoint(grpc!).Build();
-        foreach (string domain in new[] { "projects", "folders" })
+        string[] folderQueries = folders.Services.GetServices<IDomainQueryHandler>().Where(handler => handler.Domain == "folders")
+            .Select(handler => handler.QueryType).Distinct(StringComparer.Ordinal).ToArray();
+        folderQueries.ShouldContain(FolderOwnerReadQuery.QueryType);
+        await dapr.SaveStateAsync("statestore", "admin:query-types:folders", folderQueries, cancellationToken: TestContext.Current.CancellationToken);
+        foreach (string domain in new[] { "projects" })
         {
             using HttpRequestMessage metadataRequest = dapr.CreateInvokeMethodRequest(domain, "admin/operational-index-metadata",
                 new AdminOperationalIndexMetadata.Request([domain]) { AppId = domain, ServiceVersion = "v1" });
             using HttpResponseMessage metadataResponse = await platform.SendAsync(metadataRequest, TestContext.Current.CancellationToken);
-            metadataResponse.EnsureSuccessStatusCode();
+            metadataResponse.StatusCode.ShouldBe(HttpStatusCode.OK, domain + ": " + await metadataResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
             AdminOperationalIndexMetadata.Response metadata = (await metadataResponse.Content.ReadFromJsonAsync<AdminOperationalIndexMetadata.Response>(TestContext.Current.CancellationToken))!;
             var declared = metadata.Domains.Single(item => item.Domain == domain);
             await dapr.SaveStateAsync("statestore", "admin:query-types:" + domain, declared.QueryTypes, cancellationToken: TestContext.Current.CancellationToken);
@@ -124,6 +139,52 @@ public sealed class SupportedProjectGatewayHttpTests
         client.DefaultRequestHeaders.Authorization = new("Bearer", HumanToken(tenant, inspection: false));
         SubmitQueryRequest Open(object payload, string id = "project-a") => new(tenant, "projects", id, GetProjectQuery.QueryType, Payload: JsonSerializer.SerializeToElement(payload, JsonSerializerOptions.Web));
         SubmitQueryRequest List(ListProjectsQuery payload) => new(tenant, "projects", "projects", ListProjectsQuery.QueryType, Payload: JsonSerializer.SerializeToElement(payload, JsonSerializerOptions.Web));
+        // The advisory lane exercises the real owner handler, ordinary owner evaluator and SDK/Dapr store.
+        var conversationTenants = conversations.Services.GetRequiredService<ITenantProjectionStore>();
+        var conversationTenant = new TenantLocalState { TenantId = tenant, Status = TenantStatus.Active };
+        conversationTenant.Members["actor-1"] = TenantRole.TenantReader;
+        await conversationTenants.SaveAsync(conversationTenant, TestContext.Current.CancellationToken);
+        // Verify the production access facade carries the configured signal into its permission decision.
+        var conversationPermission = await conversations.Services.GetRequiredService<IConversationTenantAccessService>().CheckAccessAsync(
+            ConversationTenantAccessRequirement.Read, new(tenant), "actor-1", cancellationToken: TestContext.Current.CancellationToken);
+        conversationPermission.IsAllowed.ShouldBeTrue(); conversationPermission.ProjectionVersion.ShouldBe(1);
+        conversationPermission.ProjectionWatermark.ShouldBe(tenant + ":1");
+        await dapr.SaveStateAsync("statestore", "admin:query-types:conversations", new[] { GetConversationAdvisoryMetadataQuery.QueryType }, cancellationToken: TestContext.Current.CancellationToken);
+        string metadataKey = "projection:conversations-resolution:" + Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(tenant)))
+            + ":" + Convert.ToHexStringLower(SHA256.HashData("conversation-a"u8));
+        ConversationResolutionMetadataReadModel advisoryMetadata = new(new(tenant), new("conversation-a"),
+            new("conversation-a", "project-a", "Project project-b", "Open"),
+            new(Hexalith.Conversations.Contracts.Versioning.SchemaVersion.Current, "observed", 1, now.AddMinutes(-5), now.AddMinutes(-4),
+                TimeSpan.FromMinutes(1), true, Hexalith.Conversations.Contracts.TrustStates.ProjectionTrustState.Stale,
+                Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessReasonCode.StaleThresholdExceeded),
+            "committed-advisory-fixture", new string('a', 64), true, ConversationResolutionScoringLabel.OwnerClassification)
+            { LabelPurpose = ConversationResolutionScoringLabel.SupportedPurpose };
+        await ReadModelWritePolicy.UpdateAsync<ConversationResolutionMetadataReadModel>(conversations.Services.GetRequiredService<IReadModelStore>(),
+            "statestore", metadataKey, _ => advisoryMetadata, cancellationToken: TestContext.Current.CancellationToken);
+        string[] observedKeys = [metadataKey, GatewayFixtureConversationTenants.Key(tenant), ProjectReadModelKeys.Index(tenant),
+            ProjectReadModelKeys.Detail(tenant, "project-a"), ProjectReadModelKeys.Detail(tenant, "project-b")];
+        using HttpClient stateClient = new() { BaseAddress = new Uri(http!) };
+        async Task<byte[][]> StoreBytesAsync() => await Task.WhenAll(observedKeys.Select(key =>
+            stateClient.GetByteArrayAsync("/v1.0/state/statestore/" + Uri.EscapeDataString(key), TestContext.Current.CancellationToken))).ConfigureAwait(false);
+        byte[][] beforeAdvisory = await StoreBytesAsync();
+        SubmitQueryRequest SuggestConversation(string id) => new(tenant, "projects", "projects", ResolveProjectFromConversationQuery.QueryType,
+            Payload: JsonSerializer.SerializeToElement(new ResolveProjectFromConversationQuery(id), JsonSerializerOptions.Web));
+        SubmitQueryRequest SuggestAttachments(params ProjectAdvisoryAttachment[] inputs) => new(tenant, "projects", "projects", ResolveProjectFromAttachmentsQuery.QueryType,
+            Payload: JsonSerializer.SerializeToElement(new ResolveProjectFromAttachmentsQuery(inputs), JsonSerializerOptions.Web));
+        var conversationSuggestions = await ReadAsync<ProjectAdvisoryResolutionResponse>(client, SuggestConversation("conversation-a"));
+        conversationSuggestions.Candidates.Select(item => item.ProjectId).ShouldBe(["project-a", "project-b"]);
+        conversationSuggestions.Candidates.Select(item => item.Score).ShouldBe([50, 20]); conversationSuggestions.Incomplete.ShouldBeFalse();
+        var folderSuggestions = await ReadAsync<ProjectAdvisoryResolutionResponse>(client, SuggestAttachments(new ProjectAdvisoryAttachment("folder", "folder-project-b")));
+        folderSuggestions.Candidates.Single().ProjectId.ShouldBe("project-b"); folderSuggestions.Candidates.Single().Score.ShouldBe(45);
+        var files = await ReadAsync<ProjectAdvisoryResolutionResponse>(client, SuggestAttachments(new ProjectAdvisoryAttachment("file", "opaque-file")));
+        files.Incomplete.ShouldBeTrue(); files.Result.ShouldBeNull(); files.UnsupportedInputKinds.ShouldBe(["file"]);
+        byte[][] afterAdvisory = await StoreBytesAsync();
+        for (int i = 0; i < observedKeys.Length; i++) afterAdvisory[i].ShouldBe(beforeAdvisory[i]);
+        string absentConversation = await StatusAsync(client, SuggestConversation("missing"), HttpStatusCode.NotFound);
+        conversationTenant.Members.Clear(); await conversationTenants.SaveAsync(conversationTenant, TestContext.Current.CancellationToken);
+        string deniedConversation = await StatusAsync(client, SuggestConversation("conversation-a"), HttpStatusCode.NotFound);
+        JsonDocument.Parse(absentConversation).RootElement.GetProperty("detail").GetString().ShouldBe(
+            JsonDocument.Parse(deniedConversation).RootElement.GetProperty("detail").GetString());
         GetProjectResponse opened = await ReadAsync<GetProjectResponse>(client, Open(new GetProjectQuery()));
         opened.Name.ShouldBeNull();
         ProjectListPage first = await ReadAsync<ProjectListPage>(client, List(new(PageSize: 1)));
@@ -173,7 +234,7 @@ public sealed class SupportedProjectGatewayHttpTests
         await StatusAsync(client, Open(new GetProjectQuery(), "project-b"), HttpStatusCode.NotFound);
         transport.HumanBearerForwarded.ShouldBeFalse();
         transport.OwnerQueries.ShouldBeGreaterThan(0);
-        await gateway.StopAsync(TestContext.Current.CancellationToken); await projects.StopAsync(TestContext.Current.CancellationToken); await folders.StopAsync(TestContext.Current.CancellationToken);
+        await conversations.StopAsync(TestContext.Current.CancellationToken); await gateway.StopAsync(TestContext.Current.CancellationToken); await projects.StopAsync(TestContext.Current.CancellationToken); await folders.StopAsync(TestContext.Current.CancellationToken);
     }
 
     private static WebApplicationBuilder Builder(string workload, string http, string grpc, GatewayFixtureLocalRoutes routes)
@@ -226,13 +287,37 @@ public sealed class SupportedProjectGatewayHttpTests
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
     }
 
+    private static async Task<WebApplication> StartConversationsAsync(string http, string grpc, GatewayFixtureLocalRoutes routes)
+    {
+        var builder = Builder("conversations", http, grpc, routes);
+        builder.Services.AddEventStoreReadModelStore();
+        builder.Services.AddSingleton<GatewayFixtureConversationTenants>();
+        builder.Services.AddSingleton<ITenantProjectionStore>(sp => sp.GetRequiredService<GatewayFixtureConversationTenants>());
+        builder.Services.AddSingleton<IConversationTenantProjectionSignal>(sp => sp.GetRequiredService<GatewayFixtureConversationTenants>());
+        builder.Services.AddSingleton<IConversationTenantAccessService, ConversationTenantAccessService>();
+        builder.Services.AddSingleton<IDomainQueryHandler, GetConversationAdvisoryMetadataDomainQueryHandler>();
+        builder.Services.AddAuthentication().AddEventStoreWorkloadScheme(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme, "Authentication:Workload",
+            (options, _) => { options.Audience = "conversations"; options.AllowedCallers.Add("eventstore"); });
+        builder.Services.AddEventStoreWorkloadPolicies(EventStoreWorkloadAuthenticationDefaults.WorkloadScheme,
+            [EventStoreWorkloadOperations.DomainServiceQuery]);
+        WebApplication app = builder.Build(); app.UseAuthentication(); app.UseAuthorization();
+        app.MapPost("/query", async (QueryEnvelope query, IServiceProvider services, CancellationToken token) =>
+        {
+            QueryResult result = await DomainQueryDispatcher.ExecuteAsync(services, query, token).ConfigureAwait(false);
+            return result.Success ? Results.Ok(result) : Results.NotFound(result);
+        }).RequireAuthorization(EventStoreDomainServicePolicies.Query);
+        await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
+    }
+
     private static async Task<WebApplication> StartGatewayAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key)
     {
         var builder = Builder("eventstore", http, grpc, routes);
         builder.Configuration["Authentication:BoundStreamRead:PublicKeys:projects"] = Convert.ToBase64String(key.ExportSubjectPublicKeyInfo());
-        builder.Configuration["Authentication:BoundOwnerQuery:AllowedQueries:projects"] = FolderOwnerReadQuery.QueryType;
+         builder.Configuration["Authentication:BoundOwnerQuery:AllowedQueries:projects"] = FolderOwnerReadQuery.QueryType + "," + GetConversationAdvisoryMetadataQuery.QueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:0"] = ListProjectsQuery.QueryType;
         builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:1"] = GetProjectQuery.QueryType;
+        builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:2"] = ResolveProjectFromConversationQuery.QueryType;
+        builder.Configuration["Authentication:QueryAuthority:RequiredQueries:projects:3"] = ResolveProjectFromAttachmentsQuery.QueryType;
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
             options.MapInboundClaims = false;

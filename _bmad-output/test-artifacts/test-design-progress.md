@@ -293,3 +293,7 @@ _Estimates are test-engineering effort and assume reuse of EventStore/Tenants Te
 - **No score-9 risk OPEN** (currently none).
 - **NFR validation evidence identified** for each in-scope category (4.2); final PASS/CONCERNS/FAIL deferred to `nfr-assess` once implementation evidence exists.
 - **Clarifications CL-1..CL-5** resolved before the tests they block (esp. CL-1 before PERF gate, CL-2 before E5 precise resolution assertions).
+
+## Historical design note — approved 2026-10-21 scope
+
+These original progress notes describe the earlier strict resolution design. Story 6.4 now follows the approved advisory exception in `test-design-epic-6.md` and its build specification: observed metadata may lag, owner authorization remains mandatory, archive opt-in is supported, and incomplete File coverage is explicit. These historical notes add no obsolete native-proof or common-runner prerequisite to that scoped feature.

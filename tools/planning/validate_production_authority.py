@@ -22,6 +22,10 @@ EXPECTED_HISTORICAL_STATUS_SHA256 = (
     "ce120516809be4a3814565f67c7a1e648650b3b9f0547ed9a4135a78eba0bbaf"
 )
 STORY_6_1_KEY = "6-1-list-and-open-projects-through-supported-authenticated-paths"
+STORY_6_4_KEY = "6-4-resolve-projects-with-transient-current-explanations"
+# User-approved advisory scope reset, 2026-10-21: ordinary story progress is allowed.
+# This exception grants no P1R, other-story or production-release acceptance.
+STORY_6_4_STATUSES = {"blocked", "backlog", "ready-for-dev", "in-progress", "review", "done"}
 ACCEPTANCE_SCHEMA = "hexalith.projects.p1r-acceptance.v1"
 ACCEPTANCE_RECORD_RELATIVE_PATH = Path(
     "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
@@ -270,6 +274,10 @@ def _validate_scheduling(sprint: dict[str, Any]) -> list[tuple[str, str]]:
         if tracking_key_epic(key) in EXPECTED_PRODUCTION_EPICS
     }
     expected = {**EPIC6_DEVELOPMENT_STATUSES, **TRANSITIVE_EPIC_STATUSES}
+    advisory_status = production.get(STORY_6_4_KEY)
+    if advisory_status not in STORY_6_4_STATUSES:
+        raise GuardViolation("Story 6.4 advisory status is missing or invalid")
+    expected[STORY_6_4_KEY] = advisory_status
     if production != expected:
         raise GuardViolation("Epic 6-8 development statuses exceed the open boundary")
 

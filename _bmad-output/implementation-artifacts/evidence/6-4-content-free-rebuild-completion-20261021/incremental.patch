@@ -1,0 +1,1922 @@
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/DaprReadModelStore.Compacted.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/DaprReadModelStore.Compacted.cs
+@@ -0,0 +1,20 @@
++using System.Text.Json;
++
++namespace Hexalith.EventStore.Client.Projections;
++
++public sealed partial class DaprReadModelStore
++{
++    /// <inheritdoc/>
++    public async Task<ReadModelEntry<TValue>> GetCompactedAsync<TValue>(string storeName, string key,
++        CancellationToken cancellationToken = default) where TValue : class
++    {
++        ArgumentException.ThrowIfNullOrWhiteSpace(storeName);
++        ArgumentException.ThrowIfNullOrWhiteSpace(key);
++        var accessor = new DaprReadModelBatchStateAccessor(_daprClient, storeName);
++        RawStateEntry entry = await ReadModelBatchProtocol.ReadCompactedAsync(accessor, key,
++            cancellationToken, _options.TimeProvider).ConfigureAwait(false);
++        return entry.Exists
++            ? new(JsonSerializer.Deserialize<TValue>(entry.Value.Span, _daprClient.JsonSerializerOptions), entry.ETag) { ExpiresAtUtc = entry.ExpiresAtUtc }
++            : new(null, null) { ExpiresAtUtc = entry.ExpiresAtUtc };
++    }
++}
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/DaprReadModelStore.OwnerProof.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/DaprReadModelStore.OwnerProof.cs
+@@ -36,14 +36,22 @@
+             if (selection is null || selection.TenantId != identity.TenantId || selection.Domain != identity.Domain
+                 || selection.AggregateId != identity.AggregateId || selection.ProjectionName != request.ProjectionName)
+                 return new(null, "delivery_reconciliation_required", reads, bytes);
++            bool completionOnly = selection.ReceiptProjectionName == ReadModelRebuildCompletion.ReceiptProjectionName;
++            if (selection.ReceiptProjectionName is not null && !ReadModelOwnerSelectionMetadata.IsRebuildReceipt(selection.ReceiptProjectionName))
++                return new(null, "delivery_reconciliation_required", reads, bytes);
+             var scope = new ReadModelBatchScope(binding.StoreName, identity.TenantId, identity.Domain,
+-                identity.AggregateId, selection.ReceiptProjectionName ?? request.ProjectionName, selection.BatchId);
++                identity.AggregateId, completionOnly ? "rebuild" : selection.ReceiptProjectionName ?? request.ProjectionName, selection.BatchId);
+             reads++;
+-            RawStateEntry receiptRow = await accessor.ReadAsync(scope.ComputeMarkerKey(), cancellationToken).ConfigureAwait(false);
++            // The completion discriminator never falls back to the potentially rich marker, even when
++            // evidence is absent or corrupt. Old readers hash the discriminator as a different scope.
++            RawStateEntry receiptRow = await accessor.ReadAsync(completionOnly
++                ? ReadModelBatchKeys.CompletionKey(scope.ComputeScopeHash()) : scope.ComputeMarkerKey(), cancellationToken).ConfigureAwait(false);
+             bytes += receiptRow.Value.Length;
+             if (!receiptRow.Exists)
+                 return new(null, "delivery_reconciliation_required", reads, bytes);
+-            ReadModelBatchMarker? receipt = ReadModelBatchMarker.ReadBoundedProof(receiptRow.Value);
++            ReadModelBatchMarker? receipt = completionOnly
++                ? ReadModelBatchCompletionProof.Read(receiptRow.Value)?.ToReceipt()
++                : ReadModelBatchMarker.ReadBoundedProof(receiptRow.Value);
+             if (receipt is null || receipt.Version != 1 || receipt.Status != ReadModelBatchMarkerStatus.Completed
+                 || receipt.ScopeHash != scope.ComputeScopeHash() || receipt.BatchId != selection.BatchId
+                 || !ReadModelOwnerSelectionMetadata.ReceiptContains(receipt, selection) || receipt.Operations is not null
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/IReadModelStore.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/IReadModelStore.cs
+@@ -35,6 +35,21 @@
+         CancellationToken cancellationToken = default)
+         where TValue : class;
+ 
++    /// <summary>Reads only a physically compacted value, without reading any batch marker or manifest.</summary>
++    /// <typeparam name="TValue">The isolated content-free read-model type.</typeparam>
++    /// <param name="storeName">The DAPR state-store component.</param>
++    /// <param name="key">The isolated read-model key.</param>
++    /// <param name="cancellationToken">The caller cancellation token.</param>
++    /// <returns>The compacted value or an absent entry.</returns>
++    /// <exception cref="InvalidOperationException">The key contains an incomplete envelope.</exception>
++    /// <exception cref="NotSupportedException">The store has not implemented this strict read capability.</exception>
++    Task<ReadModelEntry<TValue>> GetCompactedAsync<TValue>(string storeName, string key,
++        CancellationToken cancellationToken = default) where TValue : class
++    {
++        cancellationToken.ThrowIfCancellationRequested();
++        throw new NotSupportedException("Content-free compacted reads require explicit store support.");
++    }
++
+     /// <summary>
+     /// Saves a read-model value unconditionally (last-write-wins).
+     /// </summary>
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchCompletionProof.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchCompletionProof.cs
+@@ -0,0 +1,62 @@
++using System.Security.Cryptography;
++using System.Text.Json;
++using System.Text.Json.Serialization;
++
++using Hexalith.EventStore.Contracts.Projections;
++
++namespace Hexalith.EventStore.Client.Projections;
++
++/// <summary>SDK-only immutable content-free completion evidence; never carries recovery operations or manifests.</summary>
++/// <param name="Version">The completion proof protocol.</param>
++/// <param name="ScopeHash">The original coordinated batch scope.</param>
++/// <param name="BatchId">The original batch identity.</param>
++/// <param name="Fingerprint">The original immutable manifest fingerprint.</param>
++/// <param name="TerminalTimeUtc">The original durable receipt time.</param>
++/// <param name="Owners">The exact coordinated selections.</param>
++/// <param name="Digest">The canonical content integrity digest.</param>
++[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
++internal sealed record ReadModelBatchCompletionProof(
++    [property: JsonRequired] int Version,
++    [property: JsonRequired] string ScopeHash,
++    [property: JsonRequired] string BatchId,
++    [property: JsonRequired] string Fingerprint,
++    [property: JsonRequired] string TerminalTimeUtc,
++    [property: JsonRequired] IReadOnlyList<ProjectionOwnerSelection> Owners,
++    [property: JsonRequired] string Digest)
++{
++    private static readonly JsonSerializerOptions s_strictJson = new(JsonSerializerDefaults.Web)
++    {
++        UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
++    };
++
++    /// <summary>Copies only terminal metadata from the actual SDK receipt.</summary>
++    internal static ReadModelBatchCompletionProof From(ReadModelBatchMarker receipt)
++    {
++        var proof = new ReadModelBatchCompletionProof(1, receipt.ScopeHash, receipt.BatchId,
++            receipt.Fingerprint, receipt.TerminalTimeUtc!, receipt.OwnerSelections!, string.Empty);
++        return proof with { Digest = proof.ComputeDigest() };
++    }
++
++    /// <summary>Parses only the bounded exact completion format and detects altered fields.</summary>
++    internal static ReadModelBatchCompletionProof? Read(ReadOnlyMemory<byte> bytes)
++    {
++        if (bytes.Length > ReadModelBatchMarker.MaxControlBytes) return null;
++        using JsonDocument document = JsonDocument.Parse(bytes);
++        if (document.RootElement.ValueKind != JsonValueKind.Object
++            || ReadModelBatchMarker.HasDuplicateProperties(document.RootElement)) return null;
++        ReadModelBatchCompletionProof? proof = document.RootElement.Deserialize<ReadModelBatchCompletionProof>(s_strictJson);
++        return proof is { Version: 1, Owners.Count: > 0 } && ReadModelBatchFingerprint.IsCanonical(proof.Fingerprint)
++            && ReadModelBatchMarker.IsUtcTerminalTime(proof.TerminalTimeUtc)
++            && proof.Digest == proof.ComputeDigest() ? proof : null;
++    }
++
++    /// <summary>Adapts the isolated proof to the existing exact owner/receipt validation.</summary>
++    internal ReadModelBatchMarker ToReceipt() => new()
++    {
++        ScopeHash = ScopeHash, BatchId = BatchId, Fingerprint = Fingerprint,
++        Status = ReadModelBatchMarkerStatus.Completed, TerminalTimeUtc = TerminalTimeUtc, OwnerSelections = Owners,
++    };
++
++    private string ComputeDigest() => Convert.ToHexStringLower(SHA256.HashData(
++        ReadModelBatchCanonicalJson.Canonicalize(JsonSerializer.SerializeToUtf8Bytes(this with { Digest = string.Empty }, JsonSerializerOptions.Web))));
++}
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchKeys.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchKeys.cs
+@@ -13,6 +13,9 @@
+     /// <returns>The marker key.</returns>
+     public static string MarkerKey(string scopeHash) => MarkerPrefix + scopeHash;
+ 
++    /// <summary>Builds the isolated namespace that can contain terminal metadata only.</summary>
++    internal static string CompletionKey(string scopeHash) => "hxrmb:v1:completion:" + scopeHash;
++
+     /// <summary>Builds the private immutable legacy compensation evidence key in the owning batch namespace.</summary>
+     internal static string ScratchCompensationKey(string scopeHash) => MarkerKey(scopeHash) + ":scratch-compensation";
+ 
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchMarker.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchMarker.cs
+@@ -59,7 +59,7 @@
+             || IsUtcTerminalTime(marker.TerminalTimeUtc)) ? marker : null;
+     }
+ 
+-    private static bool IsUtcTerminalTime(string? value)
++    internal static bool IsUtcTerminalTime(string? value)
+         => value is not null && (value.EndsWith('Z') || value.EndsWith("+00:00", StringComparison.Ordinal))
+             && DateTimeOffset.TryParseExact(value,
+                 ["yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss.FFFFFFF'Z'",
+@@ -67,7 +67,7 @@
+                 CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTimeOffset timestamp)
+             && timestamp.Offset == TimeSpan.Zero;
+ 
+-    private static bool HasDuplicateProperties(JsonElement value)
++    internal static bool HasDuplicateProperties(JsonElement value)
+     {
+         if (value.ValueKind == JsonValueKind.Object)
+         {
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchPhase.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchPhase.cs
+@@ -42,4 +42,8 @@
+     RecoveryManifestReclaimed,
+     /// <summary>After the final opted-in envelope is compacted/restored.</summary>
+     RecoveryAnchorCompacted,
++    /// <summary>After verified compaction and manifest reclamation, before isolated completion publication.</summary>
++    BeforeCompletionProof,
++    /// <summary>After isolated completion publication and exact read-back.</summary>
++    AfterCompletionProof,
+ }
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchProtocol.Completion.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchProtocol.Completion.cs
+@@ -0,0 +1,63 @@
++using System.Globalization;
++using System.Text.Json;
++
++namespace Hexalith.EventStore.Client.Projections;
++
++internal sealed partial class ReadModelBatchProtocol
++{
++    /// <summary>Reads a physically compacted value only, refusing every old/new envelope before marker access.</summary>
++    internal static async Task<RawStateEntry> ReadCompactedAsync(IReadModelBatchStateAccessor accessor,
++        string key, CancellationToken cancellationToken, TimeProvider? timeProvider = null)
++    {
++        RawStateEntry entry = await accessor.ReadAsync(key, cancellationToken).ConfigureAwait(false);
++        if (entry.Exists && ReadModelBatchEnvelope.IsEnvelope(entry.Value.Span))
++            throw new InvalidOperationException("The read-model generation is not physically complete.");
++        return ReadModelBatchExpiringValue.Resolve(entry, timeProvider ?? TimeProvider.System);
++    }
++
++    private void ValidateCompletionProofBudget()
++    {
++        if (_ownerSelections is null || !_ownerSelections.Any(static owner =>
++            owner.ReceiptProjectionName == ReadModelRebuildCompletion.ReceiptProjectionName)) return;
++        // The existing UTC round-trip receipt format has a fixed encoded width, including its offset.
++        // Budget its complete private representation before any state access; never reserve a different
++        // generation, fingerprint or terminal time. Actual publication still copies the durable receipt.
++        var receipt = new ReadModelBatchMarker
++        {
++            ScopeHash = _scopeHash, BatchId = _batch.Scope.BatchId, Fingerprint = _fingerprint,
++            Status = ReadModelBatchMarkerStatus.Completed, OwnerSelections = _ownerSelections,
++            TerminalTimeUtc = DateTimeOffset.MaxValue.ToString("O", CultureInfo.InvariantCulture),
++        };
++        if (JsonSerializer.SerializeToUtf8Bytes(ReadModelBatchCompletionProof.From(receipt), JsonSerializerOptions.Web).Length
++            > ReadModelBatchMarker.MaxControlBytes)
++            throw new ArgumentException("Guarded read-model completion evidence exceeds its 16384-byte limit.");
++    }
++
++    private async Task<bool> PublishCompletionProofAsync(CancellationToken cancellationToken)
++    {
++        // Enrollment is immutable manifest material. Old/direct rebuilds are never certified on retry.
++        if (_ownerSelections is null || !_ownerSelections.Any(static owner =>
++            owner.ReceiptProjectionName == ReadModelRebuildCompletion.ReceiptProjectionName)) return true;
++        (ReadModelBatchMarker? receipt, _, _) = await ReadMarkerAsync(cancellationToken).ConfigureAwait(false);
++        if (receipt is not { Status: ReadModelBatchMarkerStatus.Completed, Operations: null,
++                OriginalManifest: null, OriginalManifestKey: null, RecoveryAnchor: null }
++            || receipt.ScopeHash != _scopeHash || receipt.BatchId != _batch.Scope.BatchId
++            || receipt.Fingerprint != _fingerprint || receipt.OwnerSelection is not null
++            || receipt.OwnerSelections is null || !receipt.OwnerSelections.SequenceEqual(_ownerSelections)
++            || !ReadModelBatchMarker.IsUtcTerminalTime(receipt.TerminalTimeUtc)) return false;
++        var proof = ReadModelBatchCompletionProof.From(receipt);
++        byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(proof, JsonSerializerOptions.Web);
++        if (bytes.Length > ReadModelBatchMarker.MaxControlBytes) return false;
++        string key = ReadModelBatchKeys.CompletionKey(_scopeHash);
++        RawStateEntry prior = await _accessor.ReadAsync(key, cancellationToken).ConfigureAwait(false);
++        if (prior.Exists) return prior.Value.Span.SequenceEqual(bytes);
++        // Publication follows the full physical end-state check for both store profiles. In particular,
++        // a transaction receipt from a mis-qualified partial transaction cannot grant this proof.
++        if (!await VerifyOperationKeysAsync(cancellationToken).ConfigureAwait(false)) return false;
++        if (_injector is not null) await _injector.InjectAsync(ReadModelBatchPhase.BeforeCompletionProof, -1, cancellationToken).ConfigureAwait(false);
++        _ = await _accessor.TryWriteAsync(key, bytes, string.Empty, cancellationToken).ConfigureAwait(false);
++        RawStateEntry stored = await _accessor.ReadAsync(key, cancellationToken).ConfigureAwait(false);
++        if (_injector is not null) await _injector.InjectAsync(ReadModelBatchPhase.AfterCompletionProof, -1, cancellationToken).ConfigureAwait(false);
++        return stored.Exists && stored.Value.Span.SequenceEqual(bytes);
++    }
++}
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchProtocol.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelBatchProtocol.cs
+@@ -231,6 +231,7 @@
+         _fingerprint = ReadModelBatchFingerprint.ComputeFromManifest(manifest);
+         _scopeHash = batch.Scope.ComputeScopeHash();
+         _markerKey = ReadModelBatchKeys.MarkerKey(_scopeHash);
++        ValidateCompletionProofBudget();
+         ReadModelBatchStoreProfile profile = _options.GetProfile(batch.Scope.StoreName);
+         _profileName = profile.ToString();
+         return profile;
+@@ -1326,8 +1327,9 @@
+             if (marker?.RecoveryAnchor is not null)
+                 return await FinishRecoveryAnchorAsync(_accessor, marker, _batch.Scope, _injector, cancellationToken, _options.TimeProvider).ConfigureAwait(false);
+         }
+-        return _ownerSelection is null && _ownerSelections is null && !_batch.RetainManifestForRecovery
++        bool reclaimed = _ownerSelection is null && _ownerSelections is null && !_batch.RetainManifestForRecovery
+             || await ReclaimOriginalManifestAsync(_accessor, _scopeHash, _fingerprint, cancellationToken).ConfigureAwait(false);
++        return reclaimed && await PublishCompletionProofAsync(cancellationToken).ConfigureAwait(false);
+     }
+ 
+     /// <summary>Reclaims only the same terminal receipt's original immutable manifest; uncertainty retains owned retry work.</summary>
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelOwnerSelectionMetadata.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelOwnerSelectionMetadata.cs
+@@ -75,7 +75,7 @@
+             if (candidate is null) continue;
+             if (candidate.TenantId != batch.Scope.TenantId || candidate.Domain != batch.Scope.Domain
+                 || candidate.AggregateId != batch.Scope.AggregateId || candidate.BatchId != batch.Scope.BatchId
+-                || candidate.ReceiptProjectionName != batch.Scope.ProjectionType
++                || !IsRebuildReceipt(candidate.ReceiptProjectionName)
+                 || selected.TryGetValue(candidate.ProjectionName, out ProjectionOwnerSelection? prior) && prior != candidate)
+                 throw new ArgumentException("Selected owner does not match the immutable coordinated batch scope.");
+             selected[candidate.ProjectionName] = candidate;
+@@ -87,15 +87,19 @@
+         return result;
+     }
+ 
++    /// <summary>Accepts only the existing rebuild receipt or the explicit content-free protocol.</summary>
++    internal static bool IsRebuildReceipt(string? name)
++        => name is "rebuild" or ReadModelRebuildCompletion.ReceiptProjectionName;
++
+     /// <summary>Finds one exact selection in either existing receipt representation, rejecting ambiguous bindings.</summary>
+     internal static bool ReceiptContains(ReadModelBatchMarker receipt, ProjectionOwnerSelection selected)
+         => selected.ReceiptProjectionName is null
+             ? receipt.OwnerSelection == selected && receipt.OwnerSelections is null
+-            : selected.ReceiptProjectionName == "rebuild" && receipt.OwnerSelection is null
++            : IsRebuildReceipt(selected.ReceiptProjectionName) && receipt.OwnerSelection is null
+                 && receipt.OwnerSelections is { Count: > 0 } owners
+                 && owners.Select(static item => item.ProjectionName).Distinct(StringComparer.Ordinal).Count() == owners.Count
+                 && owners.All(item => item.TenantId == selected.TenantId && item.Domain == selected.Domain
+                     && item.AggregateId == selected.AggregateId && item.BatchId == selected.BatchId
+-                    && item.ReceiptProjectionName == selected.ReceiptProjectionName)
++                    && IsRebuildReceipt(item.ReceiptProjectionName))
+                 && owners.Count(item => item == selected) == 1;
+ }
+--- a/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelRebuildCompletion.cs
++++ b/EventStore/src/Hexalith.EventStore.Client/Projections/ReadModelRebuildCompletion.cs
+@@ -0,0 +1,12 @@
++namespace Hexalith.EventStore.Client.Projections;
++
++/// <summary>Identifies newly prepared coordinated selections that require isolated SDK completion evidence.</summary>
++public static class ReadModelRebuildCompletion
++{
++    /// <summary>
++    /// The versioned content-free receipt discriminator. It is deliberately different from the rich
++    /// rebuild scope: older readers derive a different marker key and cannot hydrate the rebuild marker.
++    /// This discriminator must be present in the original fingerprint-bound model operations.
++    /// </summary>
++    public const string ReceiptProjectionName = "rebuild-completion-v1";
++}
+--- a/EventStore/src/Hexalith.EventStore.DomainService/DomainProjectionGuardedReplay.cs
++++ b/EventStore/src/Hexalith.EventStore.DomainService/DomainProjectionGuardedReplay.cs
+@@ -98,7 +98,7 @@
+                 if (recovered.OwnerSelections is not { Count: > 0 } owners || owners.Count != request.ProjectionTypes.Count
+                     || owners.Any(owner => !request.ProjectionTypes.Contains(owner.ProjectionName, StringComparer.Ordinal)
+                         || owner.AppliedSequence != request.Request.RebuildSourceHeadSequence || owner.MessageId != request.DispatchId
+-                        || owner.BatchId != request.DispatchId || owner.ReceiptProjectionName != "rebuild")
++                        || owner.BatchId != request.DispatchId || !ReadModelOwnerSelectionMetadata.IsRebuildReceipt(owner.ReceiptProjectionName))
+                     || !ProjectionReplayTransportContext.MatchesOwners(request.Request, owners))
+                     throw new ArgumentException("The original plan does not match its admitted owners.");
+             }
+@@ -208,7 +208,7 @@
+         {
+             if (!completed.ProjectionTypes.Contains(owner.ProjectionName, StringComparer.Ordinal)
+                 || owner.AppliedSequence != completed.Request.RebuildSourceHeadSequence || owner.MessageId != completed.DispatchId
+-                || owner.BatchId != completed.DispatchId || owner.ReceiptProjectionName != "rebuild") return false;
++                || owner.BatchId != completed.DispatchId || !ReadModelOwnerSelectionMetadata.IsRebuildReceipt(owner.ReceiptProjectionName)) return false;
+             DomainProjectionOwnerProofRegistration enrolled = services.GetServices<DomainProjectionOwnerProofRegistration>()
+                 .Single(item => item.Domain == completed.Request.Domain && item.ProjectionType == owner.ProjectionName);
+             ProjectionOwnerProofResult selected = await proofs.ReadOwnerProofAsync(new(completed.Request.TenantId, completed.Request.Domain,
+--- a/EventStore/src/Hexalith.EventStore.DomainService/DomainProjectionOwnerProof.cs
++++ b/EventStore/src/Hexalith.EventStore.DomainService/DomainProjectionOwnerProof.cs
+@@ -31,7 +31,7 @@
+             || enrolled.Any(registration => selections.Count(selection => selection.ProjectionName == registration.ProjectionType) != 1)
+             || selections.Any(selection => selection.AppliedSequence != head || selection.BatchId != request.DispatchId
+                 || headMessageId is not null && selection.MessageId != headMessageId
+-                || selection.ReceiptProjectionName != "rebuild" || !request.ProjectionTypes.Contains(selection.ProjectionName, StringComparer.Ordinal)))
++                || !ReadModelOwnerSelectionMetadata.IsRebuildReceipt(selection.ReceiptProjectionName) || !request.ProjectionTypes.Contains(selection.ProjectionName, StringComparer.Ordinal)))
+         {
+             if (!ProjectionReplayTransportContext.HasOwners(request.Request)) return batch;
+             throw new ArgumentException("A replay selection is missing from the complete immutable manifest.");
+--- a/EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDelivery.cs
++++ b/EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardDelivery.cs
+@@ -73,7 +73,7 @@
+             ProjectionOwnerProofResult selected = await ownerProof.ReadAsync(identity, catalog, projection, idle, cancellationToken).ConfigureAwait(false);
+             if (selected.Proof != binding.OwnerProof || !ProjectionDeliveryIdempotencyCoordinator.ValidOwnerProof(binding.OwnerProof, identity, projection)
+                 || await source.InspectSourceProofAsync().WaitAsync(cancellationToken).ConfigureAwait(false) != first) return false;
+-            if (binding.OwnerProof.Selection.ReceiptProjectionName == "rebuild") owners.Add(binding.OwnerProof);
++            if (ReadModelOwnerSelectionMetadata.IsRebuildReceipt(binding.OwnerProof.Selection.ReceiptProjectionName)) owners.Add(binding.OwnerProof);
+         }
+         foreach (IGrouping<string, ProjectionOwnerProof> group in owners.GroupBy(static owner => owner.Selection.BatchId, StringComparer.Ordinal))
+             if (transport is null || !await transport.ReclaimReplayAsync(catalog,
+--- a/EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardQualification.cs
++++ b/EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardQualification.cs
+@@ -4,6 +4,7 @@
+ using Dapr.Actors;
+ using Dapr.Actors.Client;
+ 
++using Hexalith.EventStore.Client.Projections;
+ using Hexalith.EventStore.Contracts.Identity;
+ using Hexalith.EventStore.Contracts.Projections;
+ using Hexalith.EventStore.Server.Actors;
+@@ -131,7 +132,7 @@
+             if (original.SchemaVersion == 2 && (original.GuardEvidenceVersion != 1
+                 || original.GuardEvidence is not { } previous || previous.Source != evidence.Source
+                 || previous.CatalogFingerprint != evidence.CatalogFingerprint || previous.HandlerSemantics != evidence.HandlerSemantics
+-                || previous != evidence && (owner.Selection.ReceiptProjectionName != "rebuild"
++                || previous != evidence && (!ReadModelOwnerSelectionMetadata.IsRebuildReceipt(owner.Selection.ReceiptProjectionName)
+                     || owner.Selection.OwnerIdentity != previous.OwnerProof.Selection.OwnerIdentity
+                     || idle.Revision <= previous.IdleLifecycleRevision)))
+                 return new(false, false, "source_conflict", preserved);
+--- a/EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardTailDelivery.cs
++++ b/EventStore/src/Hexalith.EventStore.Server/Projections/ProjectionSourceGuardTailDelivery.cs
+@@ -41,7 +41,8 @@
+             string originalId = ProjectionDeliveryRetryWorkItem.CreateWorkId(identity.TenantId, identity.Domain, identity.AggregateId, completed);
+             if (await scheduler.ReadAsync(originalId, cancellationToken).ConfigureAwait(false) is { } retained
+                 && (retained.ReservationFencingTokens.Count > 0 || observations.Any(item => item.State.LastDeliveredSequence == completed
+-                    && item.State.GuardEvidence?.OwnerProof.Selection is { ReceiptProjectionName: "rebuild" } selection
++                    && item.State.GuardEvidence?.OwnerProof.Selection is { } selection
++                    && ReadModelOwnerSelectionMetadata.IsRebuildReceipt(selection.ReceiptProjectionName)
+                     && selection.BatchId == retained.DispatchId)))
+             {
+                 var completedOwners = observations.Where(item => item.State.ActiveReservation is null
+@@ -60,7 +61,7 @@
+             && binding.CatalogFingerprint == catalog.CatalogFingerprint && binding.Source == head
+             && binding.OwnerProof == item.Selected.Proof && item.Lifecycle.Phase == ProjectionLifecyclePhase.Idle
+             && item.Lifecycle.Revision == binding.IdleLifecycleRevision && binding.OwnerProof.Selection.BatchId == head.HeadMessageId
+-            && binding.OwnerProof.Selection.ReceiptProjectionName == "rebuild")
++            && ReadModelOwnerSelectionMetadata.IsRebuildReceipt(binding.OwnerProof.Selection.ReceiptProjectionName))
+             .Select(static item => item.Selected.Proof!).ToArray();
+         foreach (ProjectionSourceGuardRouteObservation item in observations)
+         {
+@@ -192,7 +193,7 @@
+                     || plan.ReplayEvents is null && plan.State.ActiveReservation is null && selected != plan.Binding.BaseOwnerProof
+                     || plan.ReplayEvents is not null && selected is not null && selected != plan.Binding.BaseOwnerProof
+                         && (plan.State.ActiveReservation is null || selected.Selection.AppliedSequence != head.HeadSequence
+-                            || selected.Selection.BatchId != work.DispatchId || selected.Selection.ReceiptProjectionName != "rebuild"))
++                            || selected.Selection.BatchId != work.DispatchId || !ReadModelOwnerSelectionMetadata.IsRebuildReceipt(selected.Selection.ReceiptProjectionName)))
+                     return new(true, false, reason = progress.ReasonCode ?? "delivery_reconciliation_required");
+                 long k = selected?.Selection.AppliedSequence ?? plan.Binding.BaseSource.HeadSequence;
+                 if (k < plan.Binding.BaseSource.HeadSequence || k > head.HeadSequence)
+@@ -280,7 +281,7 @@
+             // original coordinated manifest. Already-proven tail siblings stay intact.
+             if (plans.Any(static plan => plan.ReplayEvents is not null) && (completedReplayOwners.Length == 0
+                 || plans.Any(plan => plan.ReplayEvents is not null && (plan.ObservedOwner?.Selection.AppliedSequence != head.HeadSequence
+-                    || plan.ObservedOwner.Selection.BatchId != work.DispatchId || plan.ObservedOwner.Selection.ReceiptProjectionName != "rebuild"))))
++                    || plan.ObservedOwner.Selection.BatchId != work.DispatchId || !ReadModelOwnerSelectionMetadata.IsRebuildReceipt(plan.ObservedOwner.Selection.ReceiptProjectionName)))))
+             {
+                 string? replayFailure = await ApplyCanonicalReplayAsync(identity, catalog, plans, snapshots,
+                     work.DispatchId, cancellationToken).ConfigureAwait(false);
+@@ -309,7 +310,7 @@
+                     snapshots[plan.Projection], cancellationToken).ConfigureAwait(false);
+                 if (output.Proof is not { } selected || !ValidProgress(identity, plan, selected, head.HeadSequence)
+                     || selected.Selection.MessageId != head.HeadMessageId || selected.Selection.BatchId != head.HeadMessageId
+-                    || plan.ReplayEvents is not null && selected.Selection.ReceiptProjectionName != "rebuild")
++                    || plan.ReplayEvents is not null && !ReadModelOwnerSelectionMetadata.IsRebuildReceipt(selected.Selection.ReceiptProjectionName))
+                     return new(true, false, reason = output.ReasonCode ?? "delivery_reconciliation_required");
+                 verifiedOwners.Add(plan.Projection, selected);
+             }
+--- a/EventStore/src/Hexalith.EventStore.Testing/Fakes/InMemoryReadModelStore.cs
++++ b/EventStore/src/Hexalith.EventStore.Testing/Fakes/InMemoryReadModelStore.cs
+@@ -86,6 +86,19 @@
+     }
+ 
+     /// <inheritdoc/>
++    public async Task<ReadModelEntry<TValue>> GetCompactedAsync<TValue>(string storeName, string key,
++        CancellationToken cancellationToken = default) where TValue : class
++    {
++        ArgumentException.ThrowIfNullOrWhiteSpace(storeName);
++        ArgumentException.ThrowIfNullOrWhiteSpace(key);
++        var accessor = new InMemoryBatchAccessor(this, storeName);
++        RawStateEntry entry = await ReadModelBatchProtocol.ReadCompactedAsync(accessor, key,
++            cancellationToken, BatchOptions.TimeProvider).ConfigureAwait(false);
++        return entry.Exists ? new(Deserialize<TValue>(entry.Value), entry.ETag) { ExpiresAtUtc = entry.ExpiresAtUtc }
++            : new(null, null) { ExpiresAtUtc = entry.ExpiresAtUtc };
++    }
++
++    /// <inheritdoc/>
+     public async Task<IReadOnlyList<ReadModelBulkEntry<TValue>>> GetManyAsync<TValue>(
+         string storeName,
+         IReadOnlyList<string> keys,
+--- a/EventStore/tests/Hexalith.EventStore.Client.Tests/Projections/DaprReadModelBatchTests.CompletionReview.cs
++++ b/EventStore/tests/Hexalith.EventStore.Client.Tests/Projections/DaprReadModelBatchTests.CompletionReview.cs
+@@ -0,0 +1,247 @@
++using System.Globalization;
++using System.Text.Json;
++using System.Text.Json.Nodes;
++
++using Hexalith.EventStore.Client.Projections;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Testing.Fakes;
++
++using Microsoft.Extensions.Logging.Abstractions;
++using Microsoft.Extensions.Options;
++
++using Shouldly;
++
++namespace Hexalith.EventStore.Client.Tests.Projections;
++
++public partial class DaprReadModelBatchTests
++{
++    [Theory]
++    [InlineData(ReadModelBatchStoreProfile.Resumable)]
++    [InlineData(ReadModelBatchStoreProfile.TransactionQualified)]
++    public async Task ContentFreeCompletion_MixedRoutesRetainEachOriginalReceiptDiscriminator(ReadModelBatchStoreProfile profile)
++    {
++        using var backend = new RecordingDaprClient();
++        var store = CreateStore(backend, profile);
++        var scope = Scope() with { ProjectionType = "rebuild" };
++        var modern = CompletionBatch().OwnerSelections![0];
++        var legacy = modern with { ProjectionName = "index", ReceiptProjectionName = "rebuild" };
++        var owners = new[] { modern, legacy };
++        var batch = new ReadModelBatch(scope, owners.Select(owner => ReadModelBatchOperation.Write(
++            "tenant-1:counter:agg-1:" + owner.ProjectionName,
++            new { ProjectionVersion = owner.FreshnessVersion, ProjectionOwner = owner }, ReadModelBatchConcurrency.CreateOnly)))
++            { OwnerSelections = owners };
++        (await store.ExecuteAsync(batch)).IsSuccess.ShouldBeTrue();
++        int writes = backend.TrySaveByteOperations.Count;
++        foreach (var owner in owners)
++        {
++            var proof = await store.ReadOwnerProofAsync(new(scope.TenantId, scope.Domain, scope.AggregateId, owner.ProjectionName, "catalog"), new(Store, owner.ProjectionName));
++            proof.Proof.ShouldNotBeNull().Selection.ShouldBe(owner);
++            proof.Proof.ReceiptFingerprint.ShouldBe(ReadModelBatchFingerprint.Compute(batch));
++        }
++        backend.TrySaveByteOperations.Count.ShouldBe(writes);
++    }
++
++    [Theory]
++    [InlineData("scope")]
++    [InlineData("batch")]
++    [InlineData("owner-identity")]
++    [InlineData("owner-generation")]
++    [InlineData("owner-route")]
++    public async Task ContentFreeCompletion_ValidDigestCannotAuthorizeAChangedOriginalIdentity(string change)
++    {
++        using var backend = new RecordingDaprClient();
++        var store = CreateStore(backend);
++        var batch = CompletionBatch();
++        (await store.ExecuteAsync(batch)).IsSuccess.ShouldBeTrue();
++        string key = ReadModelBatchKeys.CompletionKey(batch.Scope.ComputeScopeHash());
++        var receipt = ReadModelBatchCompletionProof.Read(backend.ByteStoreValue(key)).ShouldNotBeNull().ToReceipt();
++        if (change == "scope") receipt.ScopeHash = Scope().ComputeScopeHash();
++        if (change == "batch") receipt.BatchId = "other-original-batch";
++        var owner = receipt.OwnerSelections![0];
++        owner = change switch
++        {
++            "owner-identity" => owner with { OwnerIdentity = "other-owner" },
++            "owner-generation" => owner with { OwnerGeneration = "other-generation" },
++            "owner-route" => owner with { ProjectionName = "other-route" },
++            _ => owner,
++        };
++        receipt.OwnerSelections = [owner];
++        byte[] replaced = JsonSerializer.SerializeToUtf8Bytes(ReadModelBatchCompletionProof.From(receipt), JsonSerializerOptions.Web);
++        ReadModelBatchCompletionProof.Read(replaced).ShouldNotBeNull();
++        backend.SeedByteStore(key, replaced);
++        int writes = backend.TrySaveByteOperations.Count;
++        backend.BeforeReadByteState = read => (read == "tenant-1:counter:agg-1:detail" || read == key).ShouldBeTrue();
++        (await CompletionOwnerAsync(store, batch)).Proof.ShouldBeNull();
++        backend.ByteStoreValue(key).ShouldBe(replaced);
++        backend.TrySaveByteOperations.Count.ShouldBe(writes);
++    }
++
++    [Theory]
++    [InlineData(ReadModelBatchStoreProfile.Resumable)]
++    [InlineData(ReadModelBatchStoreProfile.TransactionQualified)]
++    public async Task ContentFreeCompletion_CompletionBudgetRefusesAReachableNearLimitControlRecordBeforeAnyEffects(ReadModelBatchStoreProfile profile)
++    {
++        using var backend = new RecordingDaprClient();
++        var scope = Scope() with { ProjectionType = "rebuild" };
++        ReadModelBatch Build(int padding)
++        {
++            var selected = CompletionBatch().OwnerSelections![0] with { OwnerGeneration = new string('g', padding) };
++            return new(scope, [ReadModelBatchOperation.Write("x", new
++                { ProjectionVersion = selected.FreshnessVersion, ProjectionOwner = selected }, ReadModelBatchConcurrency.CreateOnly)])
++                { OwnerSelections = [selected] };
++        }
++        ReadModelBatchMarker Prepared(ReadModelBatch batch) => new()
++        {
++            ScopeHash = scope.ComputeScopeHash(), BatchId = scope.BatchId, Fingerprint = ReadModelBatchFingerprint.Compute(batch),
++            Status = ReadModelBatchMarkerStatus.Prepared, OwnerSelections = batch.OwnerSelections,
++            Operations = [new() { Ordinal = 0, Key = "x", IsDelete = false }],
++            OriginalManifestKey = ReadModelBatchKeys.ManifestKey(scope.ComputeScopeHash()),
++        };
++        int baseSize = JsonSerializer.SerializeToUtf8Bytes(Prepared(Build(1)), JsonSerializerOptions.Web).Length;
++        var batch = Build(ReadModelBatchMarker.MaxControlBytes - baseSize + 1);
++        var prepared = Prepared(batch);
++        JsonSerializer.SerializeToUtf8Bytes(prepared, JsonSerializerOptions.Web).Length.ShouldBe(ReadModelBatchMarker.MaxControlBytes);
++        prepared.Status = ReadModelBatchMarkerStatus.Completed;
++        prepared.Operations = null; prepared.OriginalManifestKey = null;
++        prepared.TerminalTimeUtc = DateTimeOffset.MaxValue.ToString("O", CultureInfo.InvariantCulture);
++        JsonSerializer.SerializeToUtf8Bytes(ReadModelBatchCompletionProof.From(prepared), JsonSerializerOptions.Web).Length
++            .ShouldBeGreaterThan(ReadModelBatchMarker.MaxControlBytes);
++        backend.BeforeReadByteState = _ => throw new Xunit.Sdk.XunitException("Oversized completion touched storage.");
++        var error = await Should.ThrowAsync<ArgumentException>(() => CreateStore(backend, profile).ExecuteAsync(batch));
++        error.Message.ShouldContain("completion evidence");
++        backend.TrySaveByteOperations.ShouldBeEmpty();
++        backend.TryDeleteByteOperations.ShouldBeEmpty();
++        backend.ExecuteStateTransactionCallCount.ShouldBe(0);
++    }
++
++    [Theory]
++    [InlineData(ReadModelBatchStoreProfile.Resumable)]
++    [InlineData(ReadModelBatchStoreProfile.TransactionQualified)]
++    public async Task ContentFreeCompletion_PublicationRechecksOutputsAfterEarlierVerification(ReadModelBatchStoreProfile profile)
++    {
++        using var backend = new RecordingDaprClient();
++        var store = CreateStore(backend, profile);
++        var batch = CompletionBatch();
++        string completion = ReadModelBatchKeys.CompletionKey(batch.Scope.ComputeScopeHash());
++        int verifiedOutputReads = 0;
++        bool lost = false;
++        backend.BeforeReadByteState = key =>
++        {
++            if (key == "rich-output" && backend.ByteStoreContains(batch.Scope.ComputeMarkerKey())
++                && JsonNode.Parse(backend.ByteStoreValue(batch.Scope.ComputeMarkerKey()))!["st"]!.GetValue<int>() == (int)ReadModelBatchMarkerStatus.Completed)
++                verifiedOutputReads++;
++            if (key == completion && !lost)
++            {
++                verifiedOutputReads.ShouldBeGreaterThan(0);
++                lost = true;
++                backend.SeedByteStore("rich-output", "{\"lost\":true}"u8.ToArray());
++            }
++        };
++        (await store.ExecuteAsync(batch)).IsSuccess.ShouldBeFalse();
++        lost.ShouldBeTrue();
++        JsonNode.Parse(backend.ByteStoreValue(batch.Scope.ComputeMarkerKey()))!["st"]!.GetValue<int>().ShouldBe((int)ReadModelBatchMarkerStatus.Completed);
++        backend.ByteStoreContains(completion).ShouldBeFalse();
++        backend.BeforeReadByteState = key => (key == "tenant-1:counter:agg-1:detail" || key == completion).ShouldBeTrue();
++        int writes = backend.TrySaveByteOperations.Count;
++        (await CompletionOwnerAsync(store, batch)).Proof.ShouldBeNull();
++        backend.TrySaveByteOperations.Count.ShouldBe(writes);
++    }
++
++    [Theory]
++    [InlineData(ReadModelBatchStoreProfile.Resumable, false, false)]
++    [InlineData(ReadModelBatchStoreProfile.Resumable, false, true)]
++    [InlineData(ReadModelBatchStoreProfile.Resumable, true, false)]
++    [InlineData(ReadModelBatchStoreProfile.Resumable, true, true)]
++    [InlineData(ReadModelBatchStoreProfile.TransactionQualified, false, false)]
++    [InlineData(ReadModelBatchStoreProfile.TransactionQualified, false, true)]
++    [InlineData(ReadModelBatchStoreProfile.TransactionQualified, true, false)]
++    [InlineData(ReadModelBatchStoreProfile.TransactionQualified, true, true)]
++    public async Task ContentFreeCompletion_PublicationTransportAndCancellationReconcileTheSameOriginalReceipt(
++        ReadModelBatchStoreProfile profile, bool cancellation, bool afterPersistence)
++    {
++        using var backend = new RecordingDaprClient();
++        using var cancelled = new CancellationTokenSource();
++        var batch = CompletionBatch();
++        string key = ReadModelBatchKeys.CompletionKey(batch.Scope.ComputeScopeHash());
++        bool faulted = false;
++        void Fail(string write, ReadOnlyMemory<byte> _)
++        {
++            if (write != key || afterPersistence && faulted) return;
++            faulted = true;
++            if (cancellation) { cancelled.Cancel(); throw new OperationCanceledException(cancelled.Token); }
++            throw new Dapr.DaprException("Completion publication response lost.");
++        }
++        if (afterPersistence) backend.AfterTrySaveByteState = Fail; else backend.BeforeTrySaveByteState = Fail;
++        var result = await CreateStore(backend, profile).ExecuteAsync(batch, cancelled.Token);
++        faulted.ShouldBeTrue();
++        result.IsSuccess.ShouldBe(afterPersistence);
++        string originalTime = JsonNode.Parse(backend.ByteStoreValue(batch.Scope.ComputeMarkerKey()))!["time"]!.GetValue<string>();
++        byte[]? original = backend.ByteStoreValue(key)?.ToArray();
++        backend.BeforeReadByteState = read => (read == "tenant-1:counter:agg-1:detail" || read == key).ShouldBeTrue();
++        int writes = backend.TrySaveByteOperations.Count;
++        ((await CompletionOwnerAsync(CreateStore(backend, profile), batch)).Proof is not null).ShouldBe(afterPersistence);
++        backend.TrySaveByteOperations.Count.ShouldBe(writes);
++        backend.BeforeReadByteState = null; backend.BeforeTrySaveByteState = null; backend.AfterTrySaveByteState = null;
++        (await CreateStore(backend, profile).ExecuteAsync(batch)).IsSuccess.ShouldBeTrue();
++        var proof = ReadModelBatchCompletionProof.Read(backend.ByteStoreValue(key)).ShouldNotBeNull();
++        proof.TerminalTimeUtc.ShouldBe(originalTime);
++        proof.Owners.ShouldBe(batch.OwnerSelections!);
++        if (original is not null) backend.ByteStoreValue(key).ShouldBe(original);
++        byte[] completed = backend.ByteStoreValue(key).ToArray();
++        (await CreateStore(backend, profile).ExecuteAsync(batch)).IsSuccess.ShouldBeTrue();
++        backend.ByteStoreValue(key).ShouldBe(completed);
++    }
++
++    [Theory]
++    [InlineData(false, "live")]
++    [InlineData(false, "expired")]
++    [InlineData(false, "malformed")]
++    [InlineData(false, "pending")]
++    [InlineData(true, "live")]
++    [InlineData(true, "expired")]
++    [InlineData(true, "malformed")]
++    [InlineData(true, "pending")]
++    public async Task CompactedRead_ExpiryWrappersAndEnvelopeRefusalRemainReadOnly(bool inMemory, string state)
++    {
++        using var backend = new RecordingDaprClient();
++        var clock = new ProjectionDeadlineTimeProvider(new(2026, 10, 21, 12, 0, 0, TimeSpan.Zero));
++        DateTimeOffset deadline = clock.UtcNow.AddSeconds(1);
++        var fake = new InMemoryReadModelStore(); fake.BatchOptions.TimeProvider = clock;
++        IReadModelStore store = inMemory ? fake : new DaprReadModelStore(backend, Options.Create(new ReadModelBatchOptions { TimeProvider = clock }));
++        string marker = Scope().ComputeMarkerKey();
++        void Seed(string key, ReadOnlyMemory<byte> bytes)
++        {
++            if (inMemory) { using var document = JsonDocument.Parse(bytes); fake.SeedRaw(Store, key, document); }
++            else backend.SeedByteStore(key, bytes);
++        }
++        byte[]? Raw(string key) => inMemory ? fake.SnapshotRaw(Store, key) : backend.ByteStoreValue(key)?.ToArray();
++        if (state == "pending")
++        {
++            var batch = new ReadModelBatch(Scope(), [ReadModelBatchOperation.Write("expiry-model", new { Count = 1 }, ReadModelBatchConcurrency.CreateOnly)]);
++            (await ((IReadModelBatchStagingStore)store).StageAsync(batch)).Status.ShouldBe(ReadModelBatchStagingStatus.Prepared);
++        }
++        else
++        {
++            var wrapper = JsonNode.Parse(ReadModelBatchExpiringValue.Encode("{\"count\":1}"u8.ToArray(), deadline).Span)!.AsObject();
++            if (state == "malformed") wrapper["val"] = "not-base64!";
++            Seed("expiry-model", JsonSerializer.SerializeToUtf8Bytes(wrapper));
++        }
++        Seed(marker, "{\"mustNotRead\":true}"u8.ToArray());
++        byte[] before = Raw("expiry-model")!; byte[] markerBefore = Raw(marker)!;
++        int writes = backend.TrySaveByteOperations.Count, deletes = backend.TryDeleteByteOperations.Count, count = fake.Count;
++        backend.BeforeReadByteState = key => key.ShouldBe("expiry-model");
++        fake.ConcurrentWriteBeforeTrySave = () => throw new Xunit.Sdk.XunitException("Compacted read attempted a write.");
++        fake.ConcurrentWriteBeforeTryErase = () => throw new Xunit.Sdk.XunitException("Compacted read attempted an erase.");
++        if (state == "expired") clock.UtcNow = deadline;
++        if (state == "malformed") await Should.ThrowAsync<JsonException>(() => store.GetCompactedAsync<JsonObject>(Store, "expiry-model"));
++        else if (state == "pending") await Should.ThrowAsync<InvalidOperationException>(() => store.GetCompactedAsync<JsonObject>(Store, "expiry-model"));
++        else
++        {
++            var read = await store.GetCompactedAsync<JsonObject>(Store, "expiry-model");
++            if (state == "live") { read.Value!["count"]!.GetValue<int>().ShouldBe(1); read.ETag.ShouldNotBeNullOrWhiteSpace(); }
++            else { read.Value.ShouldBeNull(); read.ETag.ShouldBeNull(); }
++        }
++        Raw("expiry-model").ShouldBe(before); Raw(marker).ShouldBe(markerBefore);
++        backend.TrySaveByteOperations.Count.ShouldBe(writes); backend.TryDeleteByteOperations.Count.ShouldBe(deletes); fake.Count.ShouldBe(count);
++    }
++}
+--- a/EventStore/tests/Hexalith.EventStore.Client.Tests/Projections/DaprReadModelBatchTests.ContentFreeCompletion.cs
++++ b/EventStore/tests/Hexalith.EventStore.Client.Tests/Projections/DaprReadModelBatchTests.ContentFreeCompletion.cs
+@@ -0,0 +1,181 @@
++using System.Text;
++using System.Text.Json;
++using System.Text.Json.Nodes;
++
++using Hexalith.EventStore.Client.Projections;
++using Hexalith.EventStore.Contracts.Projections;
++
++using Microsoft.Extensions.Logging.Abstractions;
++
++using Shouldly;
++
++namespace Hexalith.EventStore.Client.Tests.Projections;
++
++public partial class DaprReadModelBatchTests
++{
++    private static ReadModelBatch CompletionBatch(string receipt = ReadModelRebuildCompletion.ReceiptProjectionName)
++    {
++        ReadModelBatchScope scope = Scope() with { ProjectionType = "rebuild" };
++        var selected = new ProjectionOwnerSelection(1, scope.TenantId, scope.Domain, scope.AggregateId,
++            "detail", "owner-1", "generation-1", 771, "event-771", scope.BatchId, "freshness-771")
++            { ReceiptProjectionName = receipt };
++        return new(scope,
++        [
++            ReadModelBatchOperation.Write("tenant-1:counter:agg-1:detail", new
++            { ProjectionVersion = selected.FreshnessVersion, ProjectionOwner = selected }, ReadModelBatchConcurrency.CreateOnly),
++            ReadModelBatchOperation.Write("rich-output", new { Messages = new string('x', 20_000) }, ReadModelBatchConcurrency.CreateOnly),
++        ]) { OwnerSelections = [selected] };
++    }
++
++    private static Task<ProjectionOwnerProofResult> CompletionOwnerAsync(DaprReadModelStore store, ReadModelBatch batch)
++        => store.ReadOwnerProofAsync(new(batch.Scope.TenantId, batch.Scope.Domain, batch.Scope.AggregateId,
++            "detail", "catalog"), new(Store, "detail"));
++
++    [Theory]
++    [InlineData(ReadModelBatchStoreProfile.Resumable)]
++    [InlineData(ReadModelBatchStoreProfile.TransactionQualified)]
++    public async Task ContentFreeCompletion_ActualSdkCompletionPublishesOnlyBoundedMetadata(ReadModelBatchStoreProfile profile)
++    {
++        using var client = new RecordingDaprClient();
++        var store = CreateStore(client, profile);
++        var batch = CompletionBatch();
++        (await store.ExecuteAsync(batch)).IsSuccess.ShouldBeTrue();
++        string key = ReadModelBatchKeys.CompletionKey(batch.Scope.ComputeScopeHash());
++        byte[] completion = client.ByteStoreValue(key);
++        var proof = ReadModelBatchCompletionProof.Read(completion).ShouldNotBeNull();
++        proof.Fingerprint.ShouldBe(ReadModelBatchFingerprint.Compute(batch));
++        proof.Owners.ShouldBe(batch.OwnerSelections!);
++        Encoding.UTF8.GetString(completion).ShouldNotContain("messages");
++        client.ByteStoreContains(ReadModelBatchKeys.ManifestKey(batch.Scope.ComputeScopeHash())).ShouldBeFalse();
++        int writes = client.TrySaveByteOperations.Count;
++        client.BeforeReadByteState = read => (read == "tenant-1:counter:agg-1:detail" || read == key).ShouldBeTrue(read);
++        var result = await CompletionOwnerAsync(store, batch);
++        result.Proof.ShouldNotBeNull().ReceiptFingerprint.ShouldBe(proof.Fingerprint);
++        result.MetadataKeyReads.ShouldBe(2);
++        client.TrySaveByteOperations.Count.ShouldBe(writes);
++    }
++
++    [Theory]
++    [InlineData(ReadModelBatchPhase.MarkerPrepared, -1)]
++    [InlineData(ReadModelBatchPhase.AfterInstallOperation, 0)]
++    [InlineData(ReadModelBatchPhase.BeforeCommit, -1)]
++    [InlineData(ReadModelBatchPhase.AfterCommit, -1)]
++    [InlineData(ReadModelBatchPhase.AfterCompaction, 0)]
++    [InlineData(ReadModelBatchPhase.AfterCompaction, 1)]
++    [InlineData(ReadModelBatchPhase.BeforeReceipt, -1)]
++    [InlineData(ReadModelBatchPhase.BeforeCompletionProof, -1)]
++    [InlineData(ReadModelBatchPhase.AfterCompletionProof, -1)]
++    public async Task ContentFreeCompletion_EveryInterruptionRefusesWithoutRichReadsAndOriginalRetryConverges(ReadModelBatchPhase phase, int ordinal)
++    {
++        using var client = new RecordingDaprClient();
++        var batch = CompletionBatch();
++        var protocol = new ReadModelBatchProtocol(new DaprReadModelBatchStateAccessor(client, Store), new(), NullLogger.Instance);
++        var fault = new NativeOwnerRecoveryFault(phase, ordinal);
++        await Should.ThrowAsync<InvalidOperationException>(() => protocol.ExecuteAsync(batch, fault, default));
++        fault.Fired.ShouldBeTrue();
++        string completionKey = ReadModelBatchKeys.CompletionKey(batch.Scope.ComputeScopeHash());
++        bool completed = phase == ReadModelBatchPhase.AfterCompletionProof;
++        client.ByteStoreContains(completionKey).ShouldBe(completed);
++        byte[]? originalReceipt = client.ByteStoreValue(batch.Scope.ComputeMarkerKey());
++        string? originalTime = JsonNode.Parse(originalReceipt!)!["time"]?.GetValue<string>();
++        int writes = client.TrySaveByteOperations.Count;
++        client.BeforeReadByteState = key => (key == "tenant-1:counter:agg-1:detail" || key == completionKey).ShouldBeTrue(key);
++        var store = CreateStore(client);
++        ((await CompletionOwnerAsync(store, batch)).Proof is not null).ShouldBe(completed);
++        // A pending content-free selection must refuse visibility without loading its rich marker.
++        if (client.ByteStoreValue("tenant-1:counter:agg-1:detail") is { } selectedBytes && ReadModelBatchEnvelope.IsEnvelope(selectedBytes))
++            await Should.ThrowAsync<InvalidOperationException>(() => store.GetCompactedAsync<JsonDocument>(Store, "tenant-1:counter:agg-1:detail"));
++        else _ = await store.GetCompactedAsync<JsonDocument>(Store, "tenant-1:counter:agg-1:detail");
++        client.TrySaveByteOperations.Count.ShouldBe(writes);
++        client.BeforeReadByteState = null;
++        (await CreateStore(client).ExecuteAsync(batch)).IsSuccess.ShouldBeTrue();
++        byte[] proofBytes = client.ByteStoreValue(completionKey);
++        var recovered = ReadModelBatchCompletionProof.Read(proofBytes).ShouldNotBeNull();
++        recovered.Fingerprint.ShouldBe(ReadModelBatchFingerprint.Compute(batch));
++        if (originalTime is not null) recovered.TerminalTimeUtc.ShouldBe(originalTime);
++        (await CreateStore(client).ExecuteAsync(batch)).IsSuccess.ShouldBeTrue();
++        client.ByteStoreValue(completionKey).ShouldBe(proofBytes);
++    }
++
++    [Theory]
++    [InlineData("missing")]
++    [InlineData("malformed")]
++    [InlineData("scope")]
++    [InlineData("batch")]
++    [InlineData("fingerprint")]
++    [InlineData("owner")]
++    [InlineData("unknown-rich-field")]
++    [InlineData("unknown-nested-rich-field")]
++    [InlineData("duplicate")]
++    public async Task ContentFreeCompletion_ChangedEvidenceNeverFallsBackToTheRichReceipt(string change)
++    {
++        using var client = new RecordingDaprClient();
++        var store = CreateStore(client);
++        var batch = CompletionBatch();
++        (await store.ExecuteAsync(batch)).IsSuccess.ShouldBeTrue();
++        string key = ReadModelBatchKeys.CompletionKey(batch.Scope.ComputeScopeHash());
++        JsonObject proof = JsonNode.Parse(client.ByteStoreValue(key))!.AsObject();
++        if (change == "missing")
++            await store.TryEraseAsync(Store, key, (await store.GetAsync<JsonDocument>(Store, key)).ETag!);
++        else
++        {
++            if (change == "scope") proof["scopeHash"] = "different-scope";
++            if (change == "batch") proof["batchId"] = "different-batch";
++            if (change == "fingerprint") proof["fingerprint"] = "v1:" + new string('A', 43);
++            if (change == "owner") proof["owners"]![0]!["ownerGeneration"] = "different-owner";
++            if (change == "unknown-rich-field") proof["messages"] = "forbidden";
++            if (change == "unknown-nested-rich-field") proof["owners"]![0]!["messages"] = "forbidden";
++            string text = change == "malformed" ? "{" : proof.ToJsonString();
++            if (change == "duplicate") text = text.Insert(1, "\"version\":1,");
++            client.SeedByteStore(key, Encoding.UTF8.GetBytes(text));
++        }
++        int writes = client.TrySaveByteOperations.Count;
++        client.BeforeReadByteState = read => (read == "tenant-1:counter:agg-1:detail" || read == key).ShouldBeTrue(read);
++        (await CompletionOwnerAsync(store, batch)).Proof.ShouldBeNull();
++        client.TrySaveByteOperations.Count.ShouldBe(writes);
++    }
++
++    [Fact]
++    public async Task ContentFreeCompletion_LegacyRetryDoesNotAcquireNewAuthorityAndOldReaderCannotReachRichMarker()
++    {
++        using var client = new RecordingDaprClient();
++        var store = CreateStore(client);
++        var old = CompletionBatch("rebuild");
++        (await store.ExecuteAsync(old)).IsSuccess.ShouldBeTrue();
++        (await store.ExecuteAsync(old)).IsSuccess.ShouldBeTrue();
++        client.ByteStoreContains(ReadModelBatchKeys.CompletionKey(old.Scope.ComputeScopeHash())).ShouldBeFalse();
++        using var optedInBackend = new RecordingDaprClient();
++        var optedInStore = CreateStore(optedInBackend);
++        var current = CompletionBatch();
++        (await optedInStore.ExecuteAsync(current)).IsSuccess.ShouldBeTrue();
++        var actual = (await optedInStore.GetCompactedAsync<JsonDocument>(Store, "tenant-1:counter:agg-1:detail")).Value!;
++        var selected = ReadModelOwnerSelectionMetadata.Read(System.Text.Encoding.UTF8.GetBytes(actual.RootElement.GetRawText())).ShouldNotBeNull();
++        optedInBackend.ByteStoreContains(ReadModelBatchKeys.CompletionKey(current.Scope.ComputeScopeHash())).ShouldBeTrue();
++        optedInBackend.ByteStoreContains(current.Scope.ComputeMarkerKey()).ShouldBeTrue();
++        // Execute the old lookup algorithm with the actual newly persisted discriminator. It hashes a
++        // different scope, reads only that missing key and has no fallback to the real rebuild marker.
++        var oldScope = new ReadModelBatchScope(Store, selected.TenantId, selected.Domain, selected.AggregateId,
++            selected.ReceiptProjectionName!, selected.BatchId);
++        string oldReaderKey = oldScope.ComputeMarkerKey();
++        oldReaderKey.ShouldNotBe(current.Scope.ComputeMarkerKey());
++        int reads = 0, writes = optedInBackend.TrySaveByteOperations.Count;
++        optedInBackend.BeforeReadByteState = key => { key.ShouldBe(oldReaderKey); reads++; };
++        var missing = await new DaprReadModelBatchStateAccessor(optedInBackend, Store).ReadAsync(oldReaderKey, default);
++        missing.Exists.ShouldBeFalse();
++        reads.ShouldBe(1);
++        optedInBackend.TrySaveByteOperations.Count.ShouldBe(writes);
++    }
++
++    [Fact]
++    public async Task ContentFreeCompletion_MisqualifiedPartialTransactionCannotPublishProof()
++    {
++        using var client = new RecordingDaprClient { TransactionOperationApplyFilter = operation => operation.Key != "rich-output" };
++        var store = CreateStore(client, ReadModelBatchStoreProfile.TransactionQualified);
++        var batch = CompletionBatch();
++        (await store.ExecuteAsync(batch)).IsSuccess.ShouldBeFalse();
++        client.ByteStoreContains(batch.Scope.ComputeMarkerKey()).ShouldBeTrue();
++        client.ByteStoreContains(ReadModelBatchKeys.CompletionKey(batch.Scope.ComputeScopeHash())).ShouldBeFalse();
++        (await CompletionOwnerAsync(store, batch)).Proof.ShouldBeNull();
++        (await store.ExecuteAsync(batch)).IsSuccess.ShouldBeFalse();
++    }
++}
+--- a/EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/GuardedTailProjectionHandler.cs
++++ b/EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/GuardedTailProjectionHandler.cs
+@@ -17,6 +17,7 @@
+     public string? ReplayOwnerIdentityOverride { get; set; }
+     public string? ReplayMessageIdOverride { get; set; }
+     public bool UnconditionalReplay { get; set; }
++    public bool ContentFreeRebuildCompletion { get; set; }
+     public bool RequireRebuildBeforeEffects { get; set; }
+     public int RebuildPaddingBytes { get; set; }
+     public List<string> Dispatches { get; } = [];
+@@ -35,7 +36,7 @@
+         var selected = new ProjectionOwnerSelection(1, identity.TenantId, identity.Domain, identity.AggregateId,
+             projection, ReplayOwnerIdentityOverride ?? "owner-1", ReplayGenerationOverride ?? request.RebuildOwnerGenerations?.GetValueOrDefault(projection) ?? "generation-1",
+             last.SequenceNumber, ReplayMessageIdOverride ?? last.MessageId!, operationId, "replay-version-" + last.SequenceNumber)
+-        { ReceiptProjectionName = "rebuild" };
++        { ReceiptProjectionName = ContentFreeRebuildCompletion ? ReadModelRebuildCompletion.ReceiptProjectionName : "rebuild" };
+         var model = new GuardedTailModel(request.Events.Length, selected.FreshnessVersion, selected)
+             { Padding = RebuildPaddingBytes == 0 ? null : new string('p', RebuildPaddingBytes), NativeSourceProof = request.VerifiedNativeSourceProof };
+         return new DomainProjectionRebuildPlan("models",
+--- a/EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/NamedProjectionDispatchCoordinatorTests.ContentFreeCompletion.cs
++++ b/EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/NamedProjectionDispatchCoordinatorTests.ContentFreeCompletion.cs
+@@ -0,0 +1,115 @@
++using System.Text.Json;
++
++using Hexalith.EventStore.Client.Projections;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Server.Events;
++
++using Shouldly;
++
++namespace Hexalith.EventStore.Server.Tests.Projections;
++
++public partial class NamedProjectionDispatchCoordinatorTests
++{
++    [Theory]
++    [InlineData(false, false)]
++    [InlineData(true, false)]
++    [InlineData(false, true)]
++    [InlineData(true, true)]
++    public async Task ContentFreeRebuild_ActualGuardReplayFinalizationRecoveryAndCurrentInspectionPreserveTheOriginalCompletion(bool interrupt, bool mixed)
++    {
++        using var fixture = await GuardedTailProductionHarness.CreateAsync(3, 1, 2, handlerSemantics: "full-replay-v1");
++        for (int index = 0; index < fixture.Handlers.Count; index++)
++            fixture.Handlers[index].ContentFreeRebuildCompletion = !mixed || index == 0;
++        await fixture.UseProductionOwnersAsync();
++        string[] routes = fixture.Catalog.OrdinaryProjectionTypes.ToArray();
++        if (interrupt) fixture.InterruptBeforePendingRoute = routes[1];
++        var delivered = await fixture.DeliverAsync(256);
++        if (interrupt)
++        {
++            delivered.AlreadyCurrent.ShouldBeFalse();
++            fixture.Work.ShouldNotBeNull();
++            fixture.InterruptBeforePendingRoute = null;
++            fixture.ReconstructGuardedDelivery();
++            await fixture.RunGuardedRetryAsync();
++        }
++        else delivered.AlreadyCurrent.ShouldBeTrue();
++        fixture.Work.ShouldBeNull();
++        fixture.Rows.Values.ShouldAllBe(row => row.LastDeliveredSequence == 3 && row.ActiveReservation == null
++            && row.IdleBindingPending == null);
++        foreach (string route in routes)
++            fixture.Rows[route].GuardEvidence!.OwnerProof.Selection.ReceiptProjectionName.ShouldBe(
++                fixture.Handlers.Single(handler => handler.ProjectionType == route).ContentFreeRebuildCompletion
++                    ? ReadModelRebuildCompletion.ReceiptProjectionName : "rebuild");
++        var original = SourceProofCodec.ToNative(fixture.Head);
++        foreach (string route in routes)
++        {
++            var model = (await fixture.Models.GetAsync<GuardedTailModel>("models", fixture.Identity.ActorId + ":" + route)).Value!;
++            model.NativeSourceProof.ShouldBe(original);
++            fixture.Handlers.Single(handler => handler.ProjectionType == route).RebuildCalls.ShouldBe(1);
++        }
++        int writes = fixture.Backend.TrySaveByteOperations.Count, rowWrites = fixture.RowWrites;
++        int forbidden = 0;
++        fixture.Backend.BeforeReadByteState = key =>
++        {
++            if (!mixed && key.StartsWith("hxrmb:v1:marker:", StringComparison.Ordinal)
++                || key.StartsWith("projection:rebuild", StringComparison.Ordinal)
++                || key.EndsWith("-index", StringComparison.Ordinal))
++            { forbidden++; throw new Xunit.Sdk.XunitException("Current inspection attempted a rich read: " + key); }
++        };
++        fixture.Events.Length.ShouldBe(3);
++        fixture.ReturnedSequences.Clear();
++        var inspected = await fixture.Probe.InspectCurrentAsync(fixture.Identity, CancellationToken.None);
++        inspected.AlreadyCurrent.ShouldBeTrue();
++        inspected.ProvenSource.ShouldNotBeNull();
++        SourceProofCodec.ToNative(inspected.ProvenSource).ShouldBe(original);
++        inspected.CatalogFingerprint.ShouldBe(fixture.Catalog.CatalogFingerprint);
++        inspected.ProvenOwners.Count.ShouldBe(routes.Length);
++        foreach (ProjectionOwnerProof proof in inspected.ProvenOwners.Values)
++        {
++            proof.ShouldBe(fixture.Rows[proof.Selection.ProjectionName].GuardEvidence!.OwnerProof);
++            proof.Selection.ReceiptProjectionName.ShouldBe(fixture.Handlers.Single(handler =>
++                handler.ProjectionType == proof.Selection.ProjectionName).ContentFreeRebuildCompletion
++                    ? ReadModelRebuildCompletion.ReceiptProjectionName : "rebuild");
++        }
++        fixture.ReturnedSequences.ShouldBeEmpty();
++        fixture.Backend.TrySaveByteOperations.Count.ShouldBe(writes);
++        fixture.RowWrites.ShouldBe(rowWrites);
++        forbidden.ShouldBe(0);
++    }
++    [Fact]
++    public async Task ContentFreeRebuild_ValidDigestFingerprintReplacementCannotBypassTheProductionCurrentBinding()
++    {
++        using var fixture = await GuardedTailProductionHarness.CreateAsync(3, 1, handlerSemantics: "full-replay-v1");
++        string route = fixture.Catalog.OrdinaryProjectionTypes.Single();
++        string earlierFingerprint = fixture.Rows[route].GuardEvidence!.OwnerProof.ReceiptFingerprint;
++        fixture.Handlers.Single().ContentFreeRebuildCompletion = true;
++        await fixture.UseProductionOwnersAsync();
++        (await fixture.DeliverAsync(256)).AlreadyCurrent.ShouldBeTrue();
++        var currentOwner = fixture.Rows[route].GuardEvidence!.OwnerProof;
++        currentOwner.ReceiptFingerprint.ShouldNotBe(earlierFingerprint);
++        var scope = new ReadModelBatchScope("models", fixture.Identity.TenantId, fixture.Identity.Domain,
++            fixture.Identity.AggregateId, "rebuild", currentOwner.Selection.BatchId);
++        string key = ReadModelBatchKeys.CompletionKey(scope.ComputeScopeHash());
++        var receipt = ReadModelBatchCompletionProof.Read(fixture.Backend.ByteStoreValue(key)).ShouldNotBeNull().ToReceipt();
++        receipt.Fingerprint = earlierFingerprint;
++        byte[] replacement = JsonSerializer.SerializeToUtf8Bytes(ReadModelBatchCompletionProof.From(receipt), JsonSerializerOptions.Web);
++        ReadModelBatchCompletionProof.Read(replacement).ShouldNotBeNull();
++        fixture.Backend.SeedByteStore(key, replacement);
++        // The low-level reader has no invented expected fingerprint. Actual source-guard currentness
++        // compares this validly encoded owner evidence with its original persisted binding.
++        var lowLevel = await fixture.Models.ReadOwnerProofAsync(new(fixture.Identity.TenantId, fixture.Identity.Domain,
++            fixture.Identity.AggregateId, route, fixture.Catalog.CatalogFingerprint), new("models", route));
++        lowLevel.Proof.ShouldNotBeNull().ReceiptFingerprint.ShouldBe(earlierFingerprint);
++        int writes = fixture.Backend.TrySaveByteOperations.Count, rowWrites = fixture.RowWrites;
++        fixture.Backend.BeforeReadByteState = read => read.StartsWith("hxrmb:v1:marker:", StringComparison.Ordinal).ShouldBeFalse();
++        fixture.ReturnedSequences.Clear();
++        var refused = await fixture.Probe.InspectCurrentAsync(fixture.Identity, CancellationToken.None);
++        refused.AlreadyCurrent.ShouldBeFalse();
++        refused.ProvenOwners.ShouldBeEmpty();
++        fixture.ReturnedSequences.ShouldBeEmpty();
++        fixture.Backend.TrySaveByteOperations.Count.ShouldBe(writes);
++        fixture.RowWrites.ShouldBe(rowWrites);
++        fixture.Backend.ByteStoreValue(key).ShouldBe(replacement);
++    }
++
++}
+--- a/EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/ProjectionDeliveryReconcilerTests.SourceGuard.cs
++++ b/EventStore/tests/Hexalith.EventStore.Server.Tests/Projections/ProjectionDeliveryReconcilerTests.SourceGuard.cs
+@@ -13,8 +13,10 @@
+ 
+ public partial class ProjectionDeliveryReconcilerTests
+ {
+-    [Fact]
+-    public async Task SourceGuardQualification_CompletedSameCheckpointRebuildRehydratesOnlyTheNewSelectedReceiptAndIdleBinding()
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task SourceGuardQualification_CompletedSameCheckpointRebuildRehydratesOnlyTheNewSelectedReceiptAndIdleBinding(bool contentFree)
+     {
+         using GuardedTailProductionHarness fixture = await GuardedTailProductionHarness.CreateAsync(3, 3,
+             handlerSemantics: "full-replay-v1").ConfigureAwait(true);
+@@ -26,6 +28,7 @@
+         byte[] writer = fixture.Backend.ByteStoreValue(ProjectionDeliveryStateKeys.WriterProtocol);
+         fixture.Clock.SetUtcNow(original.UpdatedAt.AddMinutes(1));
+ 
++        fixture.Handlers.Single().ContentFreeRebuildCompletion = contentFree;
+         await fixture.CompleteOperatorRebuildAsync("rebuilt-generation-2").ConfigureAwait(true);
+         using ProjectionDeliveryCostScope cost = ProjectionDeliveryCostDiagnostics.BeginScope();
+         ProjectionSourceGuardQualificationResult result = await fixture.CreateQualification(store).QualifyAsync(fixture.Identity,
+@@ -43,7 +46,7 @@
+         hydrated.IdleBindingPending.ShouldBeNull();
+         hydrated.GuardEvidence.ShouldNotBeNull().Source.ShouldBe(original.GuardEvidence!.Source);
+         hydrated.GuardEvidence.OwnerProof.Selection.OwnerGeneration.ShouldBe("rebuilt-generation-2");
+-        hydrated.GuardEvidence.OwnerProof.Selection.ReceiptProjectionName.ShouldBe("rebuild");
++        hydrated.GuardEvidence.OwnerProof.Selection.ReceiptProjectionName.ShouldBe(contentFree ? ReadModelRebuildCompletion.ReceiptProjectionName : "rebuild");
+         hydrated.GuardEvidence.IdleLifecycleRevision.ShouldBeGreaterThan(original.GuardEvidence.IdleLifecycleRevision);
+         hydrated.UpdatedAt.ShouldBeGreaterThan(original.UpdatedAt);
+         fixture.Backend.ByteStoreValue(ProjectionDeliveryStateKeys.GetSourceGuardKey(fixture.Identity, route)).ShouldBe(marker);
+--- a/Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs
++++ b/Conversations/src/Hexalith.Conversations.Server/Projections/ConversationProjectionReadStore.cs
+@@ -53,11 +53,24 @@
+     public async ValueTask<ConversationResolutionMetadataReadModel?> ReadResolutionMetadataAsync(
+         TenantId tenantId, ConversationId conversationId, CancellationToken cancellationToken = default)
+     {
++        try
++        {
++            return await ReadResolutionMetadataCoreAsync(tenantId, conversationId, cancellationToken).ConfigureAwait(false);
++        }
++        catch (Exception exception) when (exception is InvalidOperationException or NotSupportedException)
++        {
++            throw new ConversationProjectionConsistencyException();
++        }
++    }
++
++    private async ValueTask<ConversationResolutionMetadataReadModel?> ReadResolutionMetadataCoreAsync(
++        TenantId tenantId, ConversationId conversationId, CancellationToken cancellationToken = default)
++    {
+         ArgumentNullException.ThrowIfNull(tenantId);
+         ArgumentNullException.ThrowIfNull(conversationId);
+         string proofKey = ConversationProjectionReadModelKeys.ResolutionProofKey(tenantId, conversationId);
+         ReadModelEntry<ConversationResolutionMetadataProof> before = await _store
+-            .GetAsync<ConversationResolutionMetadataProof>(ConversationProjectionReadModelKeys.StateStoreName,
++            .GetCompactedAsync<ConversationResolutionMetadataProof>(ConversationProjectionReadModelKeys.StateStoreName,
+                 proofKey, cancellationToken).ConfigureAwait(false);
+         // The outer proof rejects pending/invalidated observations before touching an envelope-wrapped
+         // metadata key. Retained live manifests contain only this bounded subset and a content-free fence.
+@@ -68,14 +81,14 @@
+         }
+ 
+         ReadModelEntry<ConversationResolutionMetadataReadModel> metadata = await _store
+-            .GetAsync<ConversationResolutionMetadataReadModel>(ConversationProjectionReadModelKeys.StateStoreName,
++            .GetCompactedAsync<ConversationResolutionMetadataReadModel>(ConversationProjectionReadModelKeys.StateStoreName,
+                 ConversationProjectionReadModelKeys.ResolutionMetadataKey(tenantId, conversationId), cancellationToken)
+             .ConfigureAwait(false);
+         ReadModelEntry<ConversationResolutionMetadataProof> after;
+         ConversationResolutionGeneration? generation = before.Value?.Current;
+         if (generation is null && metadata.Value is null)
+         {
+-            after = await _store.GetAsync<ConversationResolutionMetadataProof>(
++            after = await _store.GetCompactedAsync<ConversationResolutionMetadataProof>(
+                 ConversationProjectionReadModelKeys.StateStoreName, proofKey, cancellationToken).ConfigureAwait(false);
+             if (after.Value is null && after.ETag == before.ETag)
+             {
+@@ -93,7 +106,7 @@
+         }
+ 
+         ReadModelEntry<ConversationProjectionDispatchLedger> ledger = await _store
+-            .GetAsync<ConversationProjectionDispatchLedger>(ConversationProjectionReadModelKeys.StateStoreName,
++            .GetCompactedAsync<ConversationProjectionDispatchLedger>(ConversationProjectionReadModelKeys.StateStoreName,
+                 ConversationProjectionReadModelKeys.DispatchLedgerKey(generation.DispatchId), cancellationToken)
+             .ConfigureAwait(false);
+         if (ledger.Value is not null && (ledger.Value.Status != ConversationProjectionDispatchStatus.Completed
+@@ -105,7 +118,7 @@
+             throw new ConversationProjectionConsistencyException();
+         }
+ 
+-        after = await _store.GetAsync<ConversationResolutionMetadataProof>(
++        after = await _store.GetCompactedAsync<ConversationResolutionMetadataProof>(
+             ConversationProjectionReadModelKeys.StateStoreName, proofKey, cancellationToken).ConfigureAwait(false);
+         if (string.IsNullOrEmpty(after.ETag) || before.ETag != after.ETag || before.Value != after.Value)
+         {
+--- a/Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeSelection.cs
++++ b/Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionNativeSelection.cs
+@@ -1,3 +1,4 @@
++using Hexalith.EventStore.Client.Projections;
+ using Hexalith.EventStore.Contracts.Projections;
+ using Hexalith.EventStore.Contracts.Identity;
+ 
+@@ -22,6 +23,6 @@
+             ? new(model.Freshness.ProjectionCursor, new(1, model.TenantId.Value, ConversationProjectionHandler.ConversationDomain,
+                 model.ConversationId.Value, ConversationAsyncProjectionHandler.ConversationReadModelProjectionType,
+                 model.ConversationId.Value, model.Digest(), model.SourceHeadSequence.Value, model.SourceHeadMessageId,
+-                batchId, model.Freshness.ProjectionCursor) { ReceiptProjectionName = rebuild ? "rebuild" : null }) { NativeSourceProof = model.NativeSourceProof } : null;
++                batchId, model.Freshness.ProjectionCursor) { ReceiptProjectionName = rebuild ? ReadModelRebuildCompletion.ReceiptProjectionName : null }) { NativeSourceProof = model.NativeSourceProof } : null;
+     }
+ }
+--- a/Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionNativeEvidence.cs
++++ b/Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionNativeEvidence.cs
+@@ -32,8 +32,16 @@
+     public async Task<ProjectionCurrentProof?> ReadProjectionAsync(ConversationResolutionMetadataReadModel metadata, CancellationToken cancellationToken)
+     {
+         ArgumentNullException.ThrowIfNull(metadata);
+-        var selected = await store.GetAsync<ConversationResolutionNativeSelection>(ConversationProjectionReadModelKeys.StateStoreName,
+-            ConversationProjectionReadModelKeys.ResolutionSelectionKey(metadata.TenantId, metadata.ConversationId), cancellationToken).ConfigureAwait(false);
++        ReadModelEntry<ConversationResolutionNativeSelection> selected;
++        try
++        {
++            selected = await store.GetCompactedAsync<ConversationResolutionNativeSelection>(ConversationProjectionReadModelKeys.StateStoreName,
++                ConversationProjectionReadModelKeys.ResolutionSelectionKey(metadata.TenantId, metadata.ConversationId), cancellationToken).ConfigureAwait(false);
++        }
++        catch (Exception exception) when (exception is InvalidOperationException or NotSupportedException)
++        {
++            return null;
++        }
+         ProjectionOwnerSelection? selection = selected.Value?.ProjectionOwner;
+         if (metadata.NativeSourceProof is null || selected.Value?.NativeSourceProof != metadata.NativeSourceProof
+             || string.IsNullOrEmpty(selected.ETag) || selection is null || selection.OwnerGeneration != metadata.Digest()
+@@ -42,9 +50,10 @@
+             || selection.ProjectionName != ConversationAsyncProjectionHandler.ConversationReadModelProjectionType
+             || selection.AppliedSequence != metadata.SourceHeadSequence || selection.MessageId != metadata.SourceHeadMessageId
+             || selection.FreshnessVersion != metadata.Freshness.ProjectionCursor
+-            // A coordinated legacy rebuild receipt can carry a rich original manifest before terminal
+-            // compaction. This strict query must refuse before asking any proof reader to load that row.
+-            || selection.ReceiptProjectionName is not null) return null;
++            // Only the SDK's original content-free completion discriminator is safe. Legacy rebuild
++            // markers and arbitrary receipt names can carry rich input and refuse before transport.
++            || selection.ReceiptProjectionName is not null
++                && selection.ReceiptProjectionName != ReadModelRebuildCompletion.ReceiptProjectionName) return null;
+         QueryResult result = await client.InvokeAsync(new(selection.TenantId, selection.Domain, selection.AggregateId,
+             InspectProjectionCurrentQuery.QueryType, Payload: JsonSerializer.SerializeToElement(new InspectProjectionCurrentQuery(selection), JsonSerializerOptions.Web)),
+             cancellationToken).ConfigureAwait(false);
+--- a/Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs
++++ b/Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionMetadataRecoveryTest.cs
+@@ -611,15 +611,12 @@
+         retry.Outcomes.ShouldAllBe(outcome => outcome.Status == ProjectionDispatchStatus.Failed
+             && outcome.ReasonCode == ProjectionDispatchReasonCodes.HandlerFailure);
+         var query = await fixture.DispatchAsync();
+-        if (previous is null)
+-        {
+-            query.Success.ShouldBeFalse();
+-            query.ErrorMessage.ShouldBe("safe-denial");
+-        }
+-        else
+-        {
+-            query.Success.ShouldBeTrue();
+-            query.GetPayload().GetProperty("metadata").ValueKind.ShouldBe(JsonValueKind.Null);
++        // A physical pending envelope is known incomplete evidence even for an initially empty
++        // read model. The strict SDK read reports Unavailable before any legacy marker hydration.
++        query.Success.ShouldBeTrue();
++        query.GetPayload().GetProperty("metadata").ValueKind.ShouldBe(JsonValueKind.Null);
++        if (previous is not null)
++        {
+             fixture.Metadata.ShouldBe(previous);
+             var proof = await fixture.Store.GetAsync<ConversationResolutionMetadataProof>("statestore",
+                 ConversationProjectionReadModelKeys.ResolutionProofKey(Tenant, Conversation), Token);
+@@ -830,7 +827,7 @@
+     [Theory]
+     [InlineData(false)]
+     [InlineData(true)]
+-    public async Task ActualNativeRawEnvelopeAndMarkerReadsRemainContentFreeWithoutWrites(bool rebuild)
++    public async Task ActualNativeCompactedReadsRefuseEnvelopesBeforeAnyMarkerAndWithoutWrites(bool rebuild)
+     {
+         ResolutionMetadataFixture fixture = new();
+         await fixture.ProjectAsync();
+@@ -861,9 +858,8 @@
+         {
+             await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
+                 await fixture.Reader(raw).ReadResolutionMetadataAsync(Tenant, Conversation, Token));
+-            raw.Observer.Reads.ShouldContain(read => read.Key.StartsWith("hxrmb:v1:marker:", StringComparison.Ordinal));
+-            raw.Observer.Reads.ShouldAllBe(read => read.Key.StartsWith("hxrmb:v1:marker:", StringComparison.Ordinal)
+-                || read.Key.StartsWith("projection:conversations-resolution:", StringComparison.Ordinal)
++            raw.Observer.Reads.ShouldNotContain(read => read.Key.StartsWith("hxrmb:v1:marker:", StringComparison.Ordinal));
++            raw.Observer.Reads.ShouldAllBe(read => read.Key.StartsWith("projection:conversations-resolution:", StringComparison.Ordinal)
+                 || read.Key.StartsWith("projection:conversations-resolution-proof:", StringComparison.Ordinal)
+                 || read.Key.StartsWith("projection:conversations-dispatch:", StringComparison.Ordinal));
+             foreach (var read in raw.Observer.Reads)
+--- a/Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionNativeEnrollmentTest.cs
++++ b/Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionNativeEnrollmentTest.cs
+@@ -269,7 +269,7 @@
+     }
+ 
+     [Fact]
+-    public async Task GuardedRebuildRetainsOriginalEvidenceAndKeepsContentFreePromotionGated()
++    public async Task GuardedRebuildRetainsOriginalEvidenceAndPublishesContentFreeSdkCompletion()
+     {
+         await using var fixture = new ResolutionEnrollmentFixture();
+         var catalog = await fixture.CatalogAsync();
+@@ -285,15 +285,13 @@
+         var selected = (await fixture.Store.GetAsync<ConversationResolutionNativeSelection>("statestore",
+             ConversationProjectionReadModelKeys.ResolutionSelectionKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation), Token)).Value!;
+         selected.NativeSourceProof.ShouldBe(fixture.Input.NativeSourceProof);
+-        selected.ProjectionOwner.ReceiptProjectionName.ShouldBe("rebuild");
++        selected.ProjectionOwner.ReceiptProjectionName.ShouldBe(ReadModelRebuildCompletion.ReceiptProjectionName);
+         (await fixture.OwnerAsync(catalog.CatalogFingerprint!)).Proof.ShouldNotBeNull().Selection.ShouldBe(selected.ProjectionOwner);
+-        // An SDK receipt alone does not qualify content-free post-rebuild promotion. The existing
+-        // owner query refuses the coordinated generation before invoking delegated transport.
+-        fixture.Backend.ReadKeys.Clear();
+-        fixture.Backend.BeforeRead = key => key.ShouldBe(ConversationProjectionReadModelKeys.ResolutionSelectionKey(
+-            ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation));
++        int writes = fixture.Backend.WrittenKeys.Count;
++        fixture.Backend.BeforeRead = key => key.StartsWith("hxrmb:v1:marker:", StringComparison.Ordinal).ShouldBeFalse();
+         fixture.Backend.BeforeWrite = _ => throw new Xunit.Sdk.XunitException("Rebuild read attempted mutation.");
+-        (await new ConversationResolutionNativeEvidence(null!, fixture.Store).ReadProjectionAsync(metadata, Token)).ShouldBeNull();
+-        fixture.Backend.ReadKeys.ShouldHaveSingleItem();
++        (await new ConversationProjectionReadStore(fixture.Store).ReadResolutionMetadataAsync(
++            ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation, Token)).ShouldBe(metadata);
++        fixture.Backend.WrittenKeys.Count.ShouldBe(writes);
+     }
+ }
+--- a/Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionRebuildCompletionTest.cs
++++ b/Conversations/tests/Hexalith.Conversations.Server.Tests/Projections/ConversationResolutionRebuildCompletionTest.cs
+@@ -0,0 +1,378 @@
++using System.Security.Cryptography;
++using System.Text.Json;
++using System.Text.Json.Nodes;
++
++using Hexalith.Conversations.Contracts.Queries;
++using Hexalith.Conversations.Server.Projections;
++using Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++using Hexalith.EventStore.Client.Projections;
++using Hexalith.EventStore.Contracts.Projections;
++
++namespace Hexalith.Conversations.Server.Tests.Projections;
++
++public sealed class ConversationResolutionRebuildCompletionTest
++{
++    private static CancellationToken Token => TestContext.Current.CancellationToken;
++    private static string SelectionKey => ConversationProjectionReadModelKeys.ResolutionSelectionKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation);
++    private static string ProofKey => ConversationProjectionReadModelKeys.ResolutionProofKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation);
++    private static string MetadataKey => ConversationProjectionReadModelKeys.ResolutionMetadataKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation);
++
++    private static ProjectionDispatchRequest Rebuild(ResolutionEnrollmentFixture fixture, string catalog)
++        => fixture.Dispatch(catalog, fixture.Input.Events[^1].MessageId!, fixture.Input with
++            { RebuildSourceHeadSequence = fixture.Input.Events[^1].SequenceNumber });
++
++    private static async Task<Dictionary<string, string>> SnapshotAsync(ResolutionEnrollmentFixture fixture)
++    {
++        var values = new Dictionary<string, string>();
++        foreach (string key in fixture.Backend.WrittenKeys.Distinct().Order(StringComparer.Ordinal))
++        {
++            var (value, etag) = await fixture.Backend.GetByteStateAndETagAsync("statestore", key, null, null!, Token);
++            values[key] = etag + ":" + Convert.ToHexStringLower(SHA256.HashData(value.Span));
++        }
++        return values;
++    }
++
++    private static bool AllowedRead(string key) => key == ProofKey || key == MetadataKey || key == SelectionKey
++        || key == ConversationProjectionReadModelKeys.ResolutionFenceKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation)
++        || key.StartsWith("projection:conversations-dispatch:", StringComparison.Ordinal)
++        || key.StartsWith("hxrmb:v1:completion:", StringComparison.Ordinal);
++
++    [Fact]
++    public async Task CompletedOriginalRebuildIsReadThroughActualSdkOwnerEndpointAndSignedDelegatedAdapter()
++    {
++        await using var fixture = new ResolutionEnrollmentFixture();
++        var catalog = (await fixture.CatalogAsync()).CatalogFingerprint!;
++        var request = Rebuild(fixture, catalog);
++        (await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/stage/v1", request)).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        (await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/commit/v1", request)).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        var metadata = await fixture.MetadataAsync();
++        string completion = fixture.Backend.WrittenKeys.Distinct().Single(key => key.StartsWith("hxrmb:v1:completion:", StringComparison.Ordinal));
++        var completionValue = (await fixture.Store.GetAsync<JsonDocument>("statestore", completion, Token)).Value!;
++        completionValue.RootElement.GetProperty("owners")[0].GetProperty("ownerGeneration").GetString().ShouldBe(metadata.Digest());
++        completionValue.RootElement.GetRawText().ShouldNotContain("messages");
++        var before = await SnapshotAsync(fixture);
++        int mutations = fixture.Backend.WrittenKeys.Count, forbidden = 0;
++        fixture.Backend.BeforeRead = key => { if (!AllowedRead(key)) { forbidden++; throw new Xunit.Sdk.XunitException("Forbidden rich read: " + key); } };
++        fixture.Backend.BeforeWrite = _ => throw new Xunit.Sdk.XunitException("Query attempted mutation.");
++        using var session = new ResolutionRebuildQuerySession(fixture, catalog);
++        (await new ConversationProjectionReadStore(fixture.Store).ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant,
++            ResolutionMetadataFixture.Conversation, Token)).ShouldBe(metadata);
++        var proof = (await session.ReadAsync(metadata)).ShouldNotBeNull();
++        proof.Source.ShouldBe(fixture.Input.NativeSourceProof);
++        proof.Owner.Selection.OwnerGeneration.ShouldBe(metadata.Digest());
++        proof.Owner.Selection.ReceiptProjectionName.ShouldBe(ReadModelRebuildCompletion.ReceiptProjectionName);
++        session.Transport.Calls.ShouldBe(1);
++        forbidden.ShouldBe(0);
++        fixture.Backend.WrittenKeys.Count.ShouldBe(mutations);
++        fixture.Backend.BeforeRead = null; fixture.Backend.BeforeWrite = null;
++        (await SnapshotAsync(fixture)).ShouldBe(before);
++        // Re-running the original operation after a clock change cannot produce a new generation/cut.
++        fixture.Time.Now = fixture.Time.Now.AddHours(1);
++        (await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/commit/v1", request)).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        (await fixture.MetadataAsync()).ShouldBe(metadata);
++        (await SnapshotAsync(fixture)).ShouldBe(before);
++    }
++
++    [Theory]
++    [InlineData("prepared")]
++    [InlineData("installed")]
++    [InlineData("proof")]
++    [InlineData("metadata")]
++    [InlineData("detail")]
++    [InlineData("index")]
++    [InlineData("ledger")]
++    [InlineData("fence")]
++    [InlineData("selection")]
++    [InlineData("receipt")]
++    [InlineData("completion")]
++    public async Task InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(string boundary)
++    {
++        await using var fixture = new ResolutionEnrollmentFixture();
++        var catalog = (await fixture.CatalogAsync()).CatalogFingerprint!;
++        var request = Rebuild(fixture, catalog);
++        string target = boundary switch
++        {
++            "prepared" => ProofKey, "proof" => ProofKey, "metadata" => MetadataKey,
++            "detail" => ConversationProjectionReadModelKeys.ConversationKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation),
++            "index" => ConversationProjectionReadModelKeys.TenantIndexKey(ResolutionMetadataFixture.Tenant),
++            "ledger" => ConversationProjectionReadModelKeys.DispatchLedgerKey(request.DispatchId),
++            "fence" => ConversationProjectionReadModelKeys.ResolutionFenceKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation),
++            "selection" => SelectionKey, _ => string.Empty,
++        };
++        int markerWrites = 0;
++        void Stop(string key)
++        {
++            if (key == target || boundary == "completion" && key.StartsWith("hxrmb:v1:completion:", StringComparison.Ordinal)
++                || boundary == "receipt" && key.StartsWith("hxrmb:v1:marker:", StringComparison.Ordinal)
++                    && !key.EndsWith(":manifest", StringComparison.Ordinal) && ++markerWrites == 2)
++                throw new InvalidOperationException("Interrupted rebuild at " + boundary);
++        }
++        if (boundary == "prepared") fixture.Backend.BeforeWrite = Stop;
++        var staged = await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/stage/v1", request);
++        if (boundary == "prepared") staged.Outcomes[0].Status.ShouldNotBe(ProjectionDispatchStatus.Completed);
++        else
++        {
++            staged.Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++            if (boundary != "installed")
++            {
++                fixture.Backend.BeforeWrite = Stop;
++                (await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/commit/v1", request))
++                    .Outcomes[0].Status.ShouldNotBe(ProjectionDispatchStatus.Completed);
++            }
++        }
++        fixture.Backend.BeforeWrite = null;
++        var before = await SnapshotAsync(fixture);
++        int forbidden = 0, mutations = fixture.Backend.WrittenKeys.Count;
++        fixture.Backend.BeforeRead = key => { if (!AllowedRead(key)) { forbidden++; throw new Xunit.Sdk.XunitException("Forbidden rich read: " + key); } };
++        fixture.Backend.BeforeWrite = _ => throw new Xunit.Sdk.XunitException("Query attempted mutation.");
++        (await fixture.OwnerAsync(catalog)).Proof.ShouldBeNull();
++        try
++        {
++            // The local subset may already be compacted, but cannot disclose without the owner gate.
++            var metadata = await new ConversationProjectionReadStore(fixture.Store).ReadResolutionMetadataAsync(
++                ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation, Token);
++            if (metadata is not null)
++            {
++                using var session = new ResolutionRebuildQuerySession(fixture, catalog);
++                (await session.ReadAsync(metadata)).ShouldBeNull();
++            }
++        }
++        catch (ConversationProjectionConsistencyException) { }
++        forbidden.ShouldBe(0);
++        fixture.Backend.WrittenKeys.Count.ShouldBe(mutations);
++        fixture.Backend.BeforeRead = null; fixture.Backend.BeforeWrite = null;
++        (await SnapshotAsync(fixture)).ShouldBe(before);
++        var originalProof = fixture.Input.NativeSourceProof;
++        await using var restarted = await fixture.RestartAsync(fixture.Time.Now.AddHours(1));
++        restarted.App.ShouldNotBeSameAs(fixture.App);
++        restarted.App.Services.ShouldNotBeSameAs(fixture.App.Services);
++        restarted.Store.ShouldNotBeSameAs(fixture.Store);
++        restarted.Time.ShouldNotBeSameAs(fixture.Time);
++        restarted.Backend.ShouldBeSameAs(fixture.Backend);
++        restarted.Input.NativeSourceProof.ShouldBe(originalProof);
++        (await restarted.CatalogAsync()).CatalogFingerprint.ShouldBe(catalog);
++        (await SnapshotAsync(restarted)).ShouldBe(before);
++        // The original public request crosses a fresh host/container and is deserialized again. Only
++        // retained SDK storage can recover the original immutable operation/time/generation.
++        (await restarted.PostAsync<ProjectionDispatchResponse>("/project/rebuild/stage/v1", request)).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        (await restarted.PostAsync<ProjectionDispatchResponse>("/project/rebuild/commit/v1", request)).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        var recovered = await restarted.MetadataAsync();
++        recovered.NativeSourceProof.ShouldBe(originalProof);
++        recovered.Freshness.ProjectionGeneratedAt.ShouldBe(ResolutionMetadataFixture.Started.AddSeconds(10));
++        var completed = await SnapshotAsync(restarted);
++        (await restarted.PostAsync<ProjectionDispatchResponse>("/project/rebuild/commit/v1", request)).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        (await SnapshotAsync(restarted)).ShouldBe(completed);
++        restarted.Backend.BeforeRead = key => AllowedRead(key).ShouldBeTrue(key);
++        restarted.Backend.BeforeWrite = _ => throw new Xunit.Sdk.XunitException("Recovered query attempted mutation.");
++        using var recoveredSession = new ResolutionRebuildQuerySession(restarted, catalog);
++        (await recoveredSession.ReadAsync(recovered)).ShouldNotBeNull().Source.ShouldBe(originalProof);
++        restarted.Backend.BeforeRead = null; restarted.Backend.BeforeWrite = null;
++        (await SnapshotAsync(restarted)).ShouldBe(completed);
++    }
++
++    [Theory]
++    [InlineData("missing")]
++    [InlineData("malformed")]
++    [InlineData("fingerprint")]
++    [InlineData("scope")]
++    [InlineData("batch")]
++    [InlineData("owner")]
++    [InlineData("selection")]
++    [InlineData("native")]
++    [InlineData("catalog")]
++    [InlineData("source")]
++    [InlineData("legacy")]
++    [InlineData("arbitrary")]
++    public async Task AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(string change)
++    {
++        await using var fixture = new ResolutionEnrollmentFixture();
++        var catalog = (await fixture.CatalogAsync()).CatalogFingerprint!;
++        var request = Rebuild(fixture, catalog);
++        await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/stage/v1", request);
++        (await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/commit/v1", request)).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        var metadata = await fixture.MetadataAsync();
++        string key = fixture.Backend.WrittenKeys.Distinct().Single(value => value.StartsWith("hxrmb:v1:completion:", StringComparison.Ordinal));
++        var selected = (await fixture.Store.GetAsync<ConversationResolutionNativeSelection>("statestore", SelectionKey, Token)).Value!;
++        if (change == "missing")
++            (await fixture.Store.TryEraseAsync("statestore", key, (await fixture.Store.GetAsync<JsonDocument>("statestore", key, Token)).ETag!, Token)).ShouldBeTrue();
++        else if (change is "fingerprint" or "scope" or "batch" or "owner" or "malformed")
++        {
++            var raw = (await fixture.Store.GetAsync<JsonObject>("statestore", key, Token)).Value!;
++            if (change == "fingerprint") raw["fingerprint"] = "v1:" + new string('A', 43);
++            if (change == "scope") raw["scopeHash"] = "wrong-scope";
++            if (change == "batch") raw["batchId"] = "wrong-batch";
++            if (change == "owner") raw["owners"]![0]!["ownerIdentity"] = "wrong-owner";
++            if (change == "malformed") raw.Remove("version");
++            await fixture.Store.SaveAsync("statestore", key, raw, Token);
++        }
++        else if (change is "selection" or "native" or "legacy" or "arbitrary")
++        {
++            selected = change switch
++            {
++                "selection" => selected with { ProjectionOwner = selected.ProjectionOwner with { OwnerGeneration = "wrong-generation" } },
++                "native" => selected with { NativeSourceProof = selected.NativeSourceProof! with { SourceIncarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAW" } },
++                "legacy" => selected with { ProjectionOwner = selected.ProjectionOwner with { ReceiptProjectionName = "rebuild" } },
++                _ => selected with { ProjectionOwner = selected.ProjectionOwner with { ReceiptProjectionName = "arbitrary-receipt" } },
++            };
++            await fixture.Store.SaveAsync("statestore", SelectionKey, selected, Token);
++        }
++        var before = await SnapshotAsync(fixture);
++        int forbidden = 0;
++        fixture.Backend.BeforeRead = value => { if (!AllowedRead(value)) { forbidden++; throw new Xunit.Sdk.XunitException("Forbidden rich read: " + value); } };
++        fixture.Backend.BeforeWrite = _ => throw new Xunit.Sdk.XunitException("Query attempted mutation.");
++        using var session = new ResolutionRebuildQuerySession(fixture, catalog);
++        if (change == "catalog") session.Transport.Catalog = "changed-catalog";
++        if (change == "source") session.Transport.SourceOverride = fixture.Gateway.Proof with { SourceIncarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAW" };
++        (await session.ReadAsync(metadata)).ShouldBeNull();
++        if (change is "selection" or "native" or "legacy" or "arbitrary") session.Transport.Calls.ShouldBe(0);
++        forbidden.ShouldBe(0);
++        fixture.Backend.BeforeRead = null; fixture.Backend.BeforeWrite = null;
++        (await SnapshotAsync(fixture)).ShouldBe(before);
++    }
++
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task DirectRichWriterBarrierStillWithholdsACompletedRebuild(bool pending)
++    {
++        await using var fixture = new ResolutionEnrollmentFixture();
++        var catalog = (await fixture.CatalogAsync()).CatalogFingerprint!;
++        var request = Rebuild(fixture, catalog);
++        await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/stage/v1", request);
++        await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/commit/v1", request);
++        var models = (await fixture.Store.GetAsync<ConversationProjectedReadModels>("statestore",
++            ConversationProjectionReadModelKeys.ConversationKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation), Token)).Value!;
++        var writer = new ConversationProjectionReadModelWriter(fixture.Store);
++        if (pending) await writer.MarkPendingAsync(models, Token); else await writer.PersistAsync(models, Token);
++        var before = await SnapshotAsync(fixture);
++        fixture.Backend.BeforeRead = key => key.ShouldBe(ProofKey);
++        fixture.Backend.BeforeWrite = _ => throw new Xunit.Sdk.XunitException("Query attempted mutation.");
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await new ConversationProjectionReadStore(fixture.Store).ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation, Token));
++        fixture.Backend.BeforeRead = null; fixture.Backend.BeforeWrite = null;
++        (await SnapshotAsync(fixture)).ShouldBe(before);
++    }
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task HistoricalV1PreparedRebuildRefusesBeforeMarkerReadWithVirginOrPreviousMetadata(bool previous)
++    {
++        await using var template = new ResolutionEnrollmentFixture();
++        var catalog = (await template.CatalogAsync()).CatalogFingerprint!;
++        (await template.PostAsync<ProjectionDispatchResponse>("/project/v2", template.Dispatch(catalog))).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        var metadata = await template.MetadataAsync();
++        await using var fixture = new ResolutionEnrollmentFixture();
++        if (previous)
++        {
++            await fixture.CatalogAsync();
++            (await fixture.PostAsync<ProjectionDispatchResponse>("/project/v2", fixture.Dispatch(catalog))).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        }
++        var selection = ConversationResolutionNativeSelection.From(metadata, "historical-rebuild", rebuild: true)!;
++        selection = selection with { ProjectionOwner = selection.ProjectionOwner with { ReceiptProjectionName = "rebuild" } };
++        var batch = new ReadModelBatch(new("statestore", fixture.Input.TenantId, fixture.Input.Domain,
++            fixture.Input.AggregateId, "rebuild", "historical-rebuild"),
++        [
++            ReadModelBatchOperation.Write(ProofKey, new ConversationResolutionMetadataProof(ConversationResolutionGeneration.From(metadata, false)), ReadModelBatchConcurrency.LastWrite),
++            ReadModelBatchOperation.Write(MetadataKey, metadata, ReadModelBatchConcurrency.LastWrite),
++            ReadModelBatchOperation.Write(SelectionKey, selection, ReadModelBatchConcurrency.LastWrite),
++            ReadModelBatchOperation.Write("historical-rich-output", new { Messages = "legacy-rich-input" }, ReadModelBatchConcurrency.LastWrite),
++        ]) { OwnerSelections = [selection.ProjectionOwner] };
++        (await fixture.Store.StageAsync(batch, Token)).Status.ShouldBe(ReadModelBatchStagingStatus.Prepared);
++        var (raw, _) = await fixture.Backend.GetByteStateAndETagAsync("statestore", ProofKey, null, null!, Token);
++        using (var envelope = JsonDocument.Parse(raw))
++        {
++            envelope.RootElement.GetProperty("$hxrmb").GetInt32().ShouldBe(1);
++            (envelope.RootElement.GetProperty("prev").ValueKind != JsonValueKind.Null).ShouldBe(previous);
++        }
++        var before = await SnapshotAsync(fixture);
++        int forbidden = 0;
++        fixture.Backend.BeforeRead = key => { if (!AllowedRead(key)) { forbidden++; throw new Xunit.Sdk.XunitException("Historical read attempted rich hydration."); } };
++        fixture.Backend.BeforeWrite = _ => throw new Xunit.Sdk.XunitException("Historical read attempted mutation.");
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await new ConversationProjectionReadStore(fixture.Store).ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation, Token));
++        (await new Hexalith.Conversations.Server.Queries.ConversationResolutionNativeEvidence(null!, fixture.Store)
++            .ReadProjectionAsync(metadata, Token)).ShouldBeNull();
++        forbidden.ShouldBe(0);
++        fixture.Backend.BeforeRead = null; fixture.Backend.BeforeWrite = null;
++        (await SnapshotAsync(fixture)).ShouldBe(before);
++    }
++
++    [Fact]
++    public async Task UnsupportedStoreCannotFallBackToResolvingReadsOrObtainNativeEvidence()
++    {
++        var original = new ResolutionMetadataFixture();
++        await original.ProjectAsync();
++        var store = new ResolutionUnsupportedCompactedStore();
++        await Should.ThrowAsync<ConversationProjectionConsistencyException>(async () =>
++            await new ConversationProjectionReadStore(store).ReadResolutionMetadataAsync(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation, Token));
++        (await new Hexalith.Conversations.Server.Queries.ConversationResolutionNativeEvidence(null!, store)
++            .ReadProjectionAsync(original.Metadata, Token)).ShouldBeNull();
++        store.ForbiddenAttempts.ShouldBe(0);
++    }
++
++    [Theory]
++    [InlineData("matching")]
++    [InlineData("completion")]
++    [InlineData("source")]
++    [InlineData("catalog")]
++    [InlineData("permission")]
++    public async Task CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(string change)
++    {
++        await using var fixture = new ResolutionEnrollmentFixture();
++        var catalog = (await fixture.CatalogAsync()).CatalogFingerprint!;
++        var request = Rebuild(fixture, catalog);
++        (await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/stage/v1", request)).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        (await fixture.PostAsync<ProjectionDispatchResponse>("/project/rebuild/commit/v1", request)).Outcomes[0].Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        var metadata = await fixture.MetadataAsync();
++        if (change == "completion")
++        {
++            string key = fixture.Backend.WrittenKeys.Distinct().Single(value => value.StartsWith("hxrmb:v1:completion:", StringComparison.Ordinal));
++            var proof = (await fixture.Store.GetAsync<JsonObject>("statestore", key, Token)).Value!;
++            proof["owners"]![0]!["messages"] = "unknown-nested-evidence";
++            await fixture.Store.SaveAsync("statestore", key, proof, Token);
++        }
++        var before = await SnapshotAsync(fixture);
++        int writes = fixture.Backend.WrittenKeys.Count, forbidden = 0;
++        fixture.Backend.BeforeRead = key => { if (!AllowedRead(key)) { forbidden++; throw new Xunit.Sdk.XunitException("Metadata query attempted rich retrieval."); } };
++        fixture.Backend.BeforeWrite = _ => throw new Xunit.Sdk.XunitException("Metadata query attempted mutation.");
++        using var session = new ResolutionRebuildQuerySession(fixture, catalog);
++        session.Transport.OnProjection = count =>
++        {
++            if (count != 2) return;
++            if (change == "source") session.Transport.SourceOverride = fixture.Gateway.Proof with { SourceIncarnation = "01ARZ3NDEKTSV4RRFFQ69G5FAW" };
++            if (change == "catalog") session.Transport.Catalog = "changed-catalog";
++            if (change == "permission") session.Transport.TenantAllowed = false;
++        };
++        var query = await session.ReadMetadataAsync();
++        if (change == "permission")
++        {
++            query.Success.ShouldBeFalse();
++            query.ErrorMessage.ShouldBe("safe-denial");
++        }
++        else
++        {
++            query.Success.ShouldBeTrue();
++            var result = query.GetPayload().Deserialize<ConversationResolutionMetadataResultV1>(JsonSerializerOptions.Web)!;
++            if (change == "matching")
++            {
++                result.Metadata.ShouldBe(metadata.Metadata);
++                result.Freshness.ShouldBe(metadata.Freshness);
++                result.ResourceVersion.ShouldBe(JsonSerializer.Serialize(fixture.Input.NativeSourceProof, JsonSerializerOptions.Web));
++                result.PermissionVersion.ShouldNotBeNullOrWhiteSpace();
++                result.AuthorizedAt.ShouldBe(fixture.Time.Now);
++            }
++            else
++            {
++                result.Metadata.ShouldBeNull(); result.Freshness.ShouldBeNull();
++                result.ResourceVersion.ShouldBeNull(); result.PermissionVersion.ShouldBeNull();
++            }
++        }
++        session.Transport.Calls.ShouldBe(change == "completion" ? 1 : 2);
++        session.Transport.TenantCalls.ShouldBeGreaterThanOrEqualTo(2);
++        forbidden.ShouldBe(0);
++        fixture.Backend.WrittenKeys.Count.ShouldBe(writes);
++        fixture.Backend.BeforeRead = null; fixture.Backend.BeforeWrite = null;
++        (await SnapshotAsync(fixture)).ShouldBe(before);
++    }
++
++}
+--- a/Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationNativeCurrentQueryTests.cs
++++ b/Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationNativeCurrentQueryTests.cs
+@@ -155,6 +155,7 @@
+         await fixture.ProjectAsync();
+         var model = fixture.Metadata;
+         var selection = ConversationResolutionNativeSelection.From(model, "actual-rebuild", rebuild: true)!;
++        selection = selection with { ProjectionOwner = selection.ProjectionOwner with { ReceiptProjectionName = "rebuild" } };
+         fixture.Store.SeedRaw("statestore", ConversationProjectionReadModelKeys.ResolutionSelectionKey(model.TenantId, model.ConversationId), selection);
+         var evidence = new ConversationResolutionNativeEvidence(null!, fixture.Guard);
+         fixture.Guard.ForbidLegacyReads = true; fixture.Guard.ForbidWrites = true;
+--- a/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionEnrollmentFixture.cs
++++ b/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionEnrollmentFixture.cs
+@@ -26,16 +26,23 @@
+ {
+     public const string Route = ConversationAsyncProjectionHandler.ConversationReadModelProjectionType;
+     public WebApplication App { get; }
+-    public InMemoryDaprStateClient Backend { get; } = new();
++    public InMemoryDaprStateClient Backend { get; }
+     public DaprReadModelStore Store { get; }
+-    public ResolutionTestTimeProvider Time { get; } = new(ResolutionMetadataFixture.Started.AddSeconds(10));
++    public ResolutionTestTimeProvider Time { get; }
+     public ProjectionRequest Input { get; }
+     public ResolutionProjectionGateway Gateway { get; }
+     public bool CanHaveBody => true;
++    private readonly bool _enroll;
++    private readonly Action<IServiceCollection>? _configure;
++    private bool _disposed;
+ 
+-    public ResolutionEnrollmentFixture(bool enroll = true, Action<IServiceCollection>? configure = null)
++    public ResolutionEnrollmentFixture(bool enroll = true, Action<IServiceCollection>? configure = null,
++        InMemoryDaprStateClient? backend = null, ResolutionTestTimeProvider? time = null, ProjectionRequest? originalInput = null)
+     {
+-        ProjectionRequest original = ResolutionMetadataFixture.Request();
++        _enroll = enroll; _configure = configure;
++        Backend = backend ?? new();
++        Time = time ?? new(ResolutionMetadataFixture.Started.AddSeconds(10));
++        ProjectionRequest original = originalInput ?? ResolutionMetadataFixture.Request();
+         var gateway = Gateway = new ResolutionProjectionGateway(original);
+         Input = JsonSerializer.Deserialize<ProjectionRequest>(JsonSerializer.Serialize(original with
+             { NativeSourceProof = gateway.Proof }, JsonSerializerOptions.Web), JsonSerializerOptions.Web)!;
+@@ -100,5 +107,18 @@
+             ConversationProjectionReadModelKeys.ResolutionMetadataKey(ResolutionMetadataFixture.Tenant,
+                 ResolutionMetadataFixture.Conversation), TestContext.Current.CancellationToken)).Value!;
+ 
+-    public ValueTask DisposeAsync() => App.DisposeAsync();
++    public async Task<ResolutionEnrollmentFixture> RestartAsync(DateTimeOffset now)
++    {
++        await DisposeAsync();
++        // Only durable storage and original public input survive. Build a new container, handlers,
++        // read-model adapter, gateway and clock; no admitted request or scoped service is retained.
++        return new(_enroll, _configure, Backend, new(now), Input);
++    }
++
++    public async ValueTask DisposeAsync()
++    {
++        if (_disposed) return;
++        _disposed = true;
++        await App.DisposeAsync();
++    }
+ }
+--- a/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs
++++ b/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs
+@@ -18,7 +18,13 @@
+     public List<Type> Reads { get; } = [];
+     public List<string> ReadKeys { get; } = [];
+ 
+-    public async Task<ReadModelEntry<T>> GetAsync<T>(string storeName, string key, CancellationToken cancellationToken = default) where T : class
++    public Task<ReadModelEntry<T>> GetAsync<T>(string storeName, string key, CancellationToken cancellationToken = default) where T : class
++        => ReadAsync<T>(storeName, key, false, cancellationToken);
++
++    public Task<ReadModelEntry<T>> GetCompactedAsync<T>(string storeName, string key, CancellationToken cancellationToken = default) where T : class
++        => ReadAsync<T>(storeName, key, true, cancellationToken);
++
++    private async Task<ReadModelEntry<T>> ReadAsync<T>(string storeName, string key, bool compacted, CancellationToken cancellationToken) where T : class
+     {
+         Reads.Add(typeof(T));
+         ReadKeys.Add(key);
+@@ -32,7 +38,8 @@
+             throw new Xunit.Sdk.XunitException("Forbidden detail/index/hydration read.");
+         }
+ 
+-        var result = await inner.GetAsync<T>(storeName, key, cancellationToken);
++        var result = compacted ? await inner.GetCompactedAsync<T>(storeName, key, cancellationToken)
++            : await inner.GetAsync<T>(storeName, key, cancellationToken);
+         if (AfterRead is not null) await AfterRead(typeof(T), key);
+         return result;
+     }
+--- a/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadStore.cs
++++ b/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRawReadStore.cs
+@@ -13,7 +13,13 @@
+     internal int Writes { get; private set; }
+     internal Func<string, Task>? AfterRawRead { get; set; }
+ 
+-    public async Task<ReadModelEntry<T>> GetAsync<T>(string storeName, string key, CancellationToken cancellationToken = default) where T : class
++    public Task<ReadModelEntry<T>> GetAsync<T>(string storeName, string key, CancellationToken cancellationToken = default) where T : class
++        => ReadAsync<T>(storeName, key, false, cancellationToken);
++
++    public Task<ReadModelEntry<T>> GetCompactedAsync<T>(string storeName, string key, CancellationToken cancellationToken = default) where T : class
++        => ReadAsync<T>(storeName, key, true, cancellationToken);
++
++    private async Task<ReadModelEntry<T>> ReadAsync<T>(string storeName, string key, bool compacted, CancellationToken cancellationToken) where T : class
+     {
+         Type accessorType = typeof(InMemoryReadModelStore).GetNestedType("InMemoryBatchAccessor", BindingFlags.NonPublic)!;
+         Type contract = typeof(IReadModelStore).Assembly.GetType("Hexalith.EventStore.Client.Projections.IReadModelBatchStateAccessor")!;
+@@ -22,9 +28,18 @@
+             binder: null, args: [inner, storeName], culture: null)!;
+         Observer.AfterRead = AfterRawRead;
+         Type protocol = typeof(IReadModelStore).Assembly.GetType("Hexalith.EventStore.Client.Projections.ReadModelBatchProtocol")!;
+-        Task resolution = (Task)protocol.GetMethod("ResolveVisibleAsync", BindingFlags.Public | BindingFlags.Static)!
+-            .Invoke(null, [Observer, key, cancellationToken, null])!;
+-        await resolution;
++        Task resolution;
++        try
++        {
++            resolution = (Task)protocol.GetMethod(compacted ? "ReadCompactedAsync" : "ResolveVisibleAsync",
++                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)!
++                .Invoke(null, [Observer, key, cancellationToken, null])!;
++            await resolution;
++        }
++        catch (TargetInvocationException exception) when (exception.InnerException is InvalidOperationException)
++        {
++            throw exception.InnerException;
++        }
+         object entry = resolution.GetType().GetProperty("Result")!.GetValue(resolution)!;
+         Type entryType = entry.GetType();
+         bool exists = (bool)entryType.GetProperty("Exists")!.GetValue(entry)!;
+--- a/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRebuildDelegatedTransport.cs
++++ b/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRebuildDelegatedTransport.cs
+@@ -0,0 +1,69 @@
++using System.Net;
++using System.Net.Http.Json;
++using System.Security.Cryptography;
++using System.Text.Json;
++
++using Hexalith.EventStore.Client.Gateway;
++using Hexalith.EventStore.Client.Streams;
++using Hexalith.EventStore.Contracts.Identity;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Queries;
++using Hexalith.EventStore.Contracts.Streams;
++using Hexalith.EventStore.ServiceDefaults.Authentication;
++using Hexalith.Tenants.Contracts.Queries;
++
++namespace Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++
++// The transport executes the actual enrolled SDK owner endpoint for every delegated read. Only the
++// native gateway and authenticated HTTP boundary are fixture authorities, never seeded completion rows.
++internal sealed class ResolutionRebuildDelegatedTransport(ResolutionEnrollmentFixture fixture,
++    string catalog, string publicKey) : HttpMessageHandler, IHttpClientFactory, IWorkloadAssertionIssuer
++{
++    public bool CanBindResources => true;
++    public int Calls { get; private set; }
++    public int TenantCalls { get; private set; }
++    public bool TenantAllowed { get; set; } = true;
++    public Action<int>? OnProjection { get; set; }
++    public string Catalog { get; set; } = catalog;
++    public NativeSourceProof? SourceOverride { get; set; }
++    public HttpClient CreateClient(string name) => new(this, disposeHandler: false);
++    public ValueTask<string?> IssueAsync(WorkloadAssertionRequest request, CancellationToken cancellationToken = default)
++        => ValueTask.FromResult<string?>("source-fixture-workload-assertion");
++
++    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
++    {
++        var body = (await request.Content!.ReadFromJsonAsync<BoundOwnerQueryRequest>(cancellationToken))!;
++        BoundOwnerQueryProof.Verify(body, request.Headers.GetValues(BoundOwnerQueryProof.HeaderName).Single(),
++            "conversations", publicKey, fixture.Time.Now).ShouldBeTrue();
++        body.PrincipalId.ShouldBe("actor");
++        if (body.Query.QueryType == ResolveTenantReadAuthority.QueryType)
++        {
++            // Native Tenant authority is a fixture transport authority, never deployment/G-4 evidence.
++            // The production SDK delegated client, native evidence adapter, authorization and metadata
++            // handler below still execute their actual before/after authority checks.
++            TenantCalls++;
++            body.Query.Tenant.ShouldBe(fixture.Input.TenantId);
++            body.Query.AggregateId.ShouldBe(fixture.Input.TenantId);
++            var identity = new AggregateIdentity("system", "tenants", fixture.Input.TenantId);
++            var source = NativeSourceProofCodec.CreateSeed(identity, "01ARZ3NDEKTSV4RRFFQ69G5FAV");
++            source = NativeSourceProofCodec.ExtendDigest(source, identity, 1, "fixture-tenant-read-1",
++                Convert.ToHexStringLower(SHA256.HashData("fixture-native-tenant-read"u8)));
++            var authority = new TenantReadAuthorityResult(fixture.Input.TenantId, body.PrincipalId,
++                TenantAllowed, source, fixture.Time.Now);
++            return new(HttpStatusCode.OK) { Content = JsonContent.Create(new SubmitQueryResponse("correlation",
++                JsonSerializer.SerializeToElement(authority, JsonSerializerOptions.Web))) };
++        }
++        Calls++;
++        OnProjection?.Invoke(Calls);
++        body.Query.QueryType.ShouldBe(InspectProjectionCurrentQuery.QueryType);
++        body.Query.Tenant.ShouldBe(fixture.Input.TenantId);
++        body.Query.AggregateId.ShouldBe(fixture.Input.AggregateId);
++        var expected = body.Query.Payload!.Value.Deserialize<InspectProjectionCurrentQuery>(JsonSerializerOptions.Web)!;
++        var owner = await fixture.OwnerAsync(Catalog);
++        if (owner.Proof is null || owner.Proof.Selection != expected.Selection)
++            return new(HttpStatusCode.ServiceUnavailable);
++        var current = new ProjectionCurrentProof(SourceOverride ?? fixture.Gateway.Proof, owner.Proof, Catalog);
++        return new(HttpStatusCode.OK) { Content = JsonContent.Create(new SubmitQueryResponse("correlation",
++            JsonSerializer.SerializeToElement(current, JsonSerializerOptions.Web))) };
++    }
++}
+--- a/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRebuildQuerySession.cs
++++ b/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionRebuildQuerySession.cs
+@@ -0,0 +1,76 @@
++using System.Security.Claims;
++using System.Security.Cryptography;
++using System.Text.Json;
++
++using Hexalith.Conversations.Server.Projections;
++using Hexalith.Conversations.Server.Queries;
++using Hexalith.EventStore.Contracts.Projections;
++using Hexalith.EventStore.Contracts.Queries;
++using Hexalith.EventStore.DomainService;
++using Hexalith.EventStore.ServiceDefaults.Authentication;
++
++using Microsoft.AspNetCore.Http;
++using Microsoft.Extensions.Configuration;
++using Microsoft.Extensions.DependencyInjection;
++
++namespace Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++
++internal sealed class ResolutionRebuildQuerySession : IDisposable
++{
++    private readonly Dapr.Client.DaprClient _invocation = new Dapr.Client.DaprClientBuilder().Build();
++    private readonly RSA _key = RSA.Create(2048);
++    private readonly ResolutionEnrollmentFixture _fixture;
++    private readonly HttpContextAccessor _accessor;
++    private readonly DelegatedOwnerQueryClient _client;
++    public ResolutionRebuildDelegatedTransport Transport { get; }
++
++    public ResolutionRebuildQuerySession(ResolutionEnrollmentFixture fixture, string catalog)
++    {
++        _fixture = fixture;
++        var configuration = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
++        {
++            ["Authentication:WorkloadIssuer:Workload"] = "conversations",
++            ["Authentication:BoundStreamRead:PrivateKey"] = Convert.ToBase64String(_key.ExportPkcs8PrivateKey()),
++        }).Build();
++        Transport = new(fixture, catalog, Convert.ToBase64String(_key.ExportSubjectPublicKeyInfo()));
++        var query = ResolutionMetadataFixture.Query();
++        var http = new DefaultHttpContext();
++        http.Request.Headers[EventStoreWorkloadAuthenticationDefaults.AssertionHeaderName] = "original-verified-assertion";
++        var claims = QueryCallerAuthorityBinding.Bind(query).Select(pair => new Claim(pair.Key, pair.Value)).ToList();
++        claims.Add(new(EventStoreWorkloadAuthenticationDefaults.WorkloadClaimType, "eventstore"));
++        claims.Add(new(EventStoreWorkloadAuthenticationDefaults.OperationClaimType, EventStoreWorkloadOperations.DomainServiceQuery));
++        http.User = new(new ClaimsIdentity(claims, "Workload"));
++        _accessor = new() { HttpContext = http };
++        _client = new(_invocation, Transport, Transport, _accessor, configuration, fixture.Time);
++    }
++
++    public async Task<ProjectionCurrentProof?> ReadAsync(ConversationResolutionMetadataReadModel metadata)
++    {
++        var evidence = new ConversationResolutionNativeEvidence(_client, _fixture.Store);
++        using var services = new ServiceCollection().AddSingleton<IHttpContextAccessor>(_accessor)
++            .AddSingleton<IDomainQueryHandler>(new ResolutionDelegatedEvidenceHandler(evidence, metadata)).BuildServiceProvider();
++        var result = await DomainQueryDispatcher.ExecuteAsync(services, ResolutionMetadataFixture.Query(), TestContext.Current.CancellationToken);
++        result.Success.ShouldBeTrue();
++        return result.GetPayload().ValueKind == JsonValueKind.Null ? null
++            : result.GetPayload().Deserialize<ProjectionCurrentProof>(JsonSerializerOptions.Web);
++    }
++
++    public async Task<QueryResult> ReadMetadataAsync()
++    {
++        var evidence = new ConversationResolutionNativeEvidence(_client, _fixture.Store);
++        var authorization = new ConversationResolutionMetadataAuthorization(new ResolutionMetadataAccess(),
++            _accessor, timeProvider: _fixture.Time, native: evidence);
++        var handler = new GetConversationResolutionMetadataDomainQueryHandler(authorization,
++            new ConversationProjectionReadStore(_fixture.Store), evidence);
++        using var services = new ServiceCollection().AddSingleton<IHttpContextAccessor>(_accessor)
++            .AddSingleton<IDomainQueryHandler>(handler).BuildServiceProvider();
++        return await DomainQueryDispatcher.ExecuteAsync(services, ResolutionMetadataFixture.Query(), TestContext.Current.CancellationToken);
++    }
++
++    public void Dispose()
++    {
++        Transport.Dispose();
++        _invocation.Dispose();
++        _key.Dispose();
++    }
++}
+--- a/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionUnsupportedCompactedStore.cs
++++ b/Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionUnsupportedCompactedStore.cs
+@@ -0,0 +1,18 @@
++using Hexalith.EventStore.Client.Projections;
++
++namespace Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++
++// Emulates an older implementation: it intentionally relies on the new interface's refusing default.
++internal sealed class ResolutionUnsupportedCompactedStore : IReadModelStore
++{
++    public int ForbiddenAttempts { get; private set; }
++    public Task<ReadModelEntry<T>> GetAsync<T>(string storeName, string key, CancellationToken cancellationToken = default) where T : class
++    {
++        ForbiddenAttempts++;
++        throw new Xunit.Sdk.XunitException("Strict read fell back to a resolving legacy store.");
++    }
++    public Task SaveAsync<T>(string storeName, string key, T value, CancellationToken cancellationToken = default) where T : class
++        => throw new Xunit.Sdk.XunitException("Strict read attempted mutation.");
++    public Task<bool> TrySaveAsync<T>(string storeName, string key, T value, string etag, CancellationToken cancellationToken = default) where T : class
++        => throw new Xunit.Sdk.XunitException("Strict read attempted mutation.");
++}

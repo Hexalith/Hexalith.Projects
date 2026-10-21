@@ -3,7 +3,7 @@ title: 'Story 6.4 prerequisite: current authorized resolution evidence'
 type: 'feature'
 created: '2026-10-19'
 updated: '2026-10-21'
-status: 'in-progress'
+status: 'superseded'
 route: 'dispatch'
 artifact_kind: 'selected-prerequisite-design'
 related_story: '6-4-resolve-projects-with-transient-current-explanations'
@@ -18,6 +18,9 @@ context:
   - '_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md'
   - '_bmad-output/implementation-artifacts/6-4-resolution-evidence-contracts.md'
 ---
+
+**Superseded for Story 6.4 on 2026-10-21:** The user approved `../planning-artifacts/sprint-change-proposal-2026-10-21-simplify-story-6-4.md`. Existing source fixes and historical evidence are retained. Strict native provenance, complete-current RTI and installation/qualification tasks below are no longer advisory-resolution prerequisites. D1 authenticated resource authorization and D2 real File identity remain required. Resume none of the old proof tasks without a separately justified scope decision. The active parent story/spec now defines advisory implementation.
+
 
 <frozen-after-approval reason="human-selected recommendations; implementation evidence remains incomplete">
 
@@ -338,3 +341,14 @@ Final independent Debug test-project builds succeeded with zero warnings/errors.
 Three context-free reviewers filed thirteen claims; parent inspection added one transport-header claim. Eleven were addressed, and three existing safe source limits/authority boundaries were retained and accepted by independent correction review. No concrete defects remained in the corrected paths. Exact full revisions, cumulative and incremental owner patches, individual review dispositions/confirmations, executed test names, commands/cwd/argv/results, before/after hashes, original dirty snapshots and all failed/superseded attempts are in the [native enrollment evidence](evidence/6-4-native-enrollment-20261021/README.md). The previous native provenance bundle, frozen block, selected D1–D6, parent story/sprint, dependency/configuration bytes, Git indexes and heads are preserved.
 
 This is local supported source behavior, not deployed/installed guard acceptance. Unsupported/unproven operator or mapped rebuilds, protected/evolved or retained-away input, complete-read bounds and older hinted retry formats without sufficient immutable admission evidence remain unavailable. Content-free post-rebuild promotion, native-read and installation/all-writer acceptance, cold-activation zero-write qualification, deployed owner authority, other owner/File/mutation prerequisites, exact-current qualification and accepted Projects G-4 remain separate blockers. The required AppHost baseline again observed security Unhealthy and dependents Waiting, then stopped normally. No healthy live acceptance is claimed. This prerequisite stays **in-progress**, Story 6.4 remains **blocked**, and RTI/resolution handlers remain gated. No staging, commits, pushes, dependency/gitlink changes, nested initialization or deployment occurred.
+
+
+### Content-free rebuild completion source checkpoint — 2026-10-21
+
+The next bounded owner source subtask is complete and reviewed: [content-free rebuild completion](spec-6-4-prerequisite-content-free-rebuild-completion.md). A newly prepared native-backed Conversation rebuild opts into the immutable SDK `rebuild-completion-v1` receipt discriminator before fingerprinting. The SDK publishes a separate bounded content-free proof only after actual terminal compaction, manifest reclamation and physical output verification. Strict Conversation proof/metadata/ledger/selection reads refuse pending envelopes before marker access. Exact original identity, native generation, ETag, current source/catalog, owner authorization and outer direct-writer invalidation remain mandatory; old or unproven rebuilds gain no authority.
+
+Three independent review layers produced thirteen separate claims. All are corrected and verified, including mixed-route discriminators, nested private proof fields, pre-effect size admission, valid-digest identity/current binding, publication read-back, both-profile transport/cancellation recovery, actual host restart and production metadata-handler coverage. Final parent Debug builds passed with zero warnings/errors. Final unchanged source/binary runs passed **195** focused SDK Client, **297** focused SDK Server and **1111** full Conversation Server cases (**1603**, zero failures/skips/errors/not-run). Exact source/revision/binary hashes, executed matrix names, commands and native XML, incremental/cumulative patches, original dirty files, review closure and every failed/superseded attempt are retained in [the completion evidence](evidence/6-4-content-free-rebuild-completion-20261021/README.md). This source slice uses fixture native/Tenant authority and is not a deployed acceptance lane.
+
+Parent Story/spec/sprint, frozen intent, decisions and dependency/build/style bytes are unchanged. Concurrent external `/pushall` commits moved Projects and Conversations heads and root pins during this shared-workspace run; preservation evidence records the exact before/after state. This run performed no staging, commits, pushes, dependency/gitlink changes, nested initialization or deployment. The AppHost baseline remained security Unhealthy with dependents Waiting, then stopped normally. Default Conversation whitespace checking flags preserved CRLF; the explicit CRLF-aware check passes with unchanged configuration. Planning authority validation passes without implementation readiness.
+
+Content-free post-rebuild promotion is now available for the explicitly supported original proven source path. Production native-read enrollment, installed/all-writer and cold-activation zero-write acceptance, deployed owner authority, native Folder/Organization generations, committed File/Projects reference mapping, metadata mutation adoption, exact-current qualification and accepted Projects G-4 remain incomplete. Unsupported/unproven historical/operator/mapped/protected/evolved paths remain unavailable under the prior source limits. This prerequisite remains **in-progress**, Story 6.4 **blocked**, and RTI/resolution handlers remain gated.

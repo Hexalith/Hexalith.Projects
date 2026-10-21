@@ -1,0 +1,111 @@
+{
+  "initial_diff_bytes": 95543,
+  "finding_floor": "min(floor(sqrt(95.543)+1),10) = 10",
+  "claims": [
+    {
+      "reviewer": "blind-hunter",
+      "id": "RC-B1",
+      "claim": "Mixed admitted receipt discriminators make both owner proof reads unavailable.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "blind-hunter",
+      "id": "RC-B2",
+      "claim": "Unknown nested owner properties are ignored by typed digest calculation.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "blind-hunter",
+      "id": "RC-B3",
+      "claim": "Completion proof overhead can exceed an admitted near-limit prepared control record after commit.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "blind-hunter",
+      "id": "RC-B4",
+      "claim": "Stale digests mask exact identity mismatch checks.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "blind-hunter",
+      "id": "RC-B5",
+      "claim": "The existing partial-transaction case does not reach the new publication read-back guard.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "blind-hunter",
+      "id": "RC-B6",
+      "claim": "New-receipt adapter integration does not execute the production metadata query handler; its current proof transport is a fixture.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "blind-hunter",
+      "id": "RC-B7",
+      "claim": "Restart matrix retains the application host and dependency container.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "blind-hunter",
+      "id": "RC-B8",
+      "claim": "Old-reader test never executes the newly constructed opted-in batch.",
+      "severity": "low",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "blind-hunter",
+      "id": "RC-B9",
+      "claim": "Strict compacted getter lacks focused live/expired/malformed expiry-wrapper tests.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "blind-hunter",
+      "id": "RC-B10",
+      "claim": "Publication lacks lost-response/cancellation cases in both profiles.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "edge-case-hunter",
+      "id": "RC-E1",
+      "claim": "Mixed owners complete but cannot produce owner proofs; independently reproduced.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "edge-case-hunter",
+      "id": "RC-E2",
+      "claim": "Nested owners[0].messages remains accepted with original digest; independently reproduced.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    },
+    {
+      "reviewer": "verification-gap",
+      "id": "RC-V1",
+      "claim": "Normal binding accepts mixed owners; uniform-mode tests omit partial per-route adoption.",
+      "severity": "medium",
+      "route": "patch",
+      "status": "corrected and verified"
+    }
+  ],
+  "status": "All thirteen individual claims corrected; duplicate observations remain individual records. Original reviewers confirmed source closure; final parent tests passed on the corrected source."
+}

@@ -4,14 +4,14 @@
 
 ## Goal
 
-Give Chatbot and operators current, authorization-filtered Project list, open, Conversation-start, context, and resolution reads through supported DomainService read models. Expose the same safe truth through authenticated FrontComposer and CLI surfaces, then switch read routing after shadow-read equivalence with a reversible cutover. This establishes the read-side contract and package boundary needed by later work while preserving event history.
+Give Chatbot and operators authorized Project reads and advisory suggestions. Context and first-response admission retain current-evidence guarantees; suggestions use observed committed metadata with request-time owner authorization and honest coverage. Authenticated presentation and reversible read cutover establish the later workflow boundary without consequential writes or event-history changes.
 
 ## Stories
 
 - Story 6.1: List and open Projects through supported authenticated paths
 - Story 6.2: Retrieve Conversation-start setup with admission truth
 - Story 6.3: Retrieve assembled Project Context through supported read models
-- Story 6.4: Resolve Projects with transient current explanations
+- Story 6.4: Resolve authorized advisory Project suggestions
 - Story 6.5: Inspect Projects through an authenticated FrontComposer read surface
 - Story 6.6: Inspect Projects through an authenticated CLI read surface
 - Story 6.7: Cut over supported reads while preserving compatibility and rollback
@@ -19,26 +19,28 @@ Give Chatbot and operators current, authorization-filtered Project list, open, C
 
 ## Requirements & Constraints
 
-- Read authorization binds the server-derived Tenant, original actor, workload, action, and current owner-system evidence. Chatbot lists only Projects whose Folder the actor can read; Tenant-role operator reads require their own permission. Denied, cross-Tenant, and nonexistent targets have indistinguishable safe responses. A foreign or unauthorized attachment behaves as no match.
-- Operator results contain Safe Metadata by default. Project names, Setup bodies, titles, paths, and other descriptive fields require separate inspection authorization and a metadata-only audit. Context and diagnostics never copy foreign payloads, secrets, transcripts, or file contents.
-- Applicable results share one snapshot: `responseState`, `asOf`, disclosable `projectVersion`, component freshness and safe reasons, conditional resolution result, and recovery actions. `Partial` is usable only with current Project, Folder, Setup, and first-response authority evidence, with every optional omission shown. `Unavailable` blocks context and Chatbot first-response use; only `Complete` or `Partial` can admit that response.
-- List cursors default to 50 and cap at 200. Pre-activation tasks are not Projects. Active/context-usable Projects have exactly one authorized Folder; quarantined folderless legacy records cannot enter Chatbot list, resolution, or context. Conversation-named reads use its member Project, or a Project explicitly opened in that session if membership is absent.
-- Context includes only current authorized reference metadata; owner reads are checked at assembly. Setup-marked references are required, other omissions are explained, and refresh is read-only. Resolution returns `NoMatch`, `SingleCandidate`, or `MultipleCandidates` with a transient trace; an inferred candidate never selects or attaches a Project.
-- Read contracts remain compatible with historical events and opaque foreign identifiers. Supported read routing needs deterministic equivalence and rollback evidence; no event history rewrite or dual command writer. Web reads require WCAG 2.2 AA evidence. Metadata-read targets are p95 below 500 ms at 1,000 Projects/500 references and below one second at supported maximum size.
+- Authorization binds Tenant, original actor, workload/delegation, action, and exact resource access. Check same-Tenant before owner authorization. Cached views never grant permission. Denied/foreign/nonexistent Conversation inputs are indistinguishable; unauthorized or unknown attachments behave as an authorized input with no match.
+- Responses and logs remain metadata-only. Suggestions disclose authorized IDs, scores, and safe reasons without names or protected exclusion details. Other descriptive metadata retains inspection authorization and audit. Never expose transcripts, file contents, secrets, or foreign payloads.
+- Context and Conversation-start retain their snapshot/recovery contract. Usable `Complete`/`Partial` requires current Project, Folder, Setup, and first-response authority; required references pass owner checks. `Unavailable` blocks context and first-response admission. Refresh stays read-only.
+- The approved October 21 reset applies only to Story 6.4: matching metadata may lag. Suggestions carry evaluation time and explicit incompleteness; time is not a source watermark. `NoMatch` covers successfully evaluated observations; `SingleCandidate` means one visible suggestion, never exclusivity or selection. Incomplete evaluation cannot claim exhaustive emptiness.
+- Preserve deterministic scoring, ordering, reasons, and the archive option. Bound requests to 32 raw attachments, initially four concurrent dependency calls, cancellation, a two-second dependency deadline, and bounded candidate enumeration. Known denied/deleted inputs never score.
+- Folder/File identity must be real and owner-backed. Missing File mapping or safe owner reads remain capability gaps. Name partial Folder/Conversation scope and incomplete/unsupported coverage. Never guess File identity from paths or unrelated IDs or claim unsupported attachment coverage.
+- Suggestions grant no context or association authority, select nothing, persist no inference history, and perform no query repair or Project writes. Confirmation independently rechecks permissions, lifecycle, and relationships. Existing confirmed Conversation membership remains distinct from inference.
+- Preserve opaque identifiers, historical events, pagination default 50/cap 200, latency objectives, and accessibility. Runtime, deployment, and release acceptance retain separate evidence boundaries.
 
 ## Technical Decisions
 
-- Projects owns query policy, contracts, incremental projections, and a rebuildable Tenant-scoped Reference Trust Index. DomainService supplies runtime, persistence, and scoped opaque cursors. Conversations owns Conversation membership; Folders and Memories retain resource authority. Queries reauthorize against the owner instead of treating cached index evidence as permission.
-- Packable `Hexalith.Projects.Contracts` owns wire vocabulary and excludes FrontComposer, Fluxor, Fluent UI, ASP.NET Core, Dapr, and Aspire dependencies. Non-packable `Hexalith.Projects.UI.Contracts` depends inward and owns presentation descriptors only. Generated OpenAPI, clients, and adapter schemas derive from the versioned contracts.
-- Shadow reads compare results, keys, watermarks, cursors, and Tenant isolation before a reversible read-route switch. Legacy read routing remains available through cutover; command cutover belongs to Epic 7.
+- Projects owns domain query policy and contracts; platform infrastructure owns runtime/persistence. Conversations owns membership; resource owners retain lifecycle and permission authority. Context retains rebuildable reference trust and current-evidence requirements.
+- Story 6.4 may finish existing query composition over committed views and authenticated owner reads, adding only a missing narrow metadata-only owner seam. Native-head equality, global discovery, rebuild certification, all-writer enrollment, and supported-host migration are not advisory prerequisites. Preserve strict owner semantics and completed proof work; generic platform expansion requires separate scope.
+- Packable Contracts stays free of presentation/runtime dependencies. Presentation descriptors belong in the non-packable UI.Contracts layer. Supported-route cutover still requires semantic equivalence and rollback evidence; command cutover remains separate.
 
 ## UX & Interaction Patterns
 
-- Chatbot presents the shared snapshot and visible omission/recovery states. A sole inferred candidate stays unselected; `ConversationLinked` reflects existing membership.
-- FrontComposer provides read-only inventory, detail, reference health, and current resolution trace views. Status and recovery are conveyed in text as well as visual cues; denied and unavailable states do not expose protected detail.
-- CLI read commands return deterministic machine-readable output and stable exit codes. Web and CLI use the same lifecycle, freshness, reason, timestamp, and warning meanings.
+- Show incomplete coverage and unselected suggestions. A sole inferred candidate still needs confirmation; read-only candidates have no accept action. Adapters cannot reinterpret suggestions as context or first-response authorization.
+- Preserve context freshness/recovery meanings, accessible status text, safe denial, and deterministic machine output. Hexalith.McpCli remains the eligible CLI/MCP target; human confirmation remains on approved confidential interactive surfaces.
 
 ## Cross-Story Dependencies
 
-- Story 6.1 remains blocked: the accepted October 1 EventStore 3.110.0 / Builds 4.29.1 decision does not make current P1R usable; the October 6 remediation is open. It still needs accepted P0/P1R/P2/P3 capabilities, same-baseline Solution Architect sign-off, P4 clean-checkout acceptance, specification readiness, and an independent result of exactly `READY`. G-6 runtime qualification applies separately to each affected source/runtime tuple.
-- Each read story needs its applicable sibling-owner read contracts; Web needs the approved FrontComposer adapter, and CLI needs its approved adapter plus Story 6.8. Story 6.7 waits for equivalence across Epic 6 reads and aligned identity/generated contracts. Epic 7 durable decisions depend on the supported read boundary; operator audit and mutation journeys come later.
+- Story 6.1 retains baseline remediation, prerequisite acceptance, architecture sign-off, clean-checkout/specification readiness, and independent readiness. The Story 6.4 exception advances no other gate or release decision.
+- Advisory acceptance uses the existing test-project runner, focused regressions, and one real authenticated query/owner/store integration case. It accepts neither the missing common runner nor deployment; owner authorization and context/confirmation boundary checks remain mandatory.
+- Presentation still needs approved adapters; CLI needs the Contracts split. Read cutover requires equivalence/rollback. Epic 7 retains consequential workflow authority; Epic 8 retains terminal release acceptance.

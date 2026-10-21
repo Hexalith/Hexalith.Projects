@@ -32,6 +32,18 @@ companions: []
 **Approved McpCli course correction (2026-09-27):** `Hexalith.McpCli` is the target for Hexalith-owned CLI/MCP access to eligible Projects operations. Projects owns the domain contracts and behavior; its FrontComposer-hosted MCP plug-in and module CLI are obsolete migration sources. UI-only and human-confirmation actions remain on confidential interactive UI under Platform AD-14; McpCli must refuse them. Existing machine-adapter descriptions below are compatibility and historical requirements until owner-approved inventory and parity gates pass.
 
 
+## Approved Story 6.4 advisory exception — 2026-10-21
+
+The user approved authorized advisory suggestions in `sprint-change-proposal-2026-10-21-simplify-story-6-4.md`. This exception governs resolution only and supersedes contrary 6.4 prerequisite wording below:
+
+- AD-1/AD-17: finish the existing read/query composition; runtime migration and broad cutover are separate work. Reuse the existing SDK transport and persistence where available; create no custom runtime or journal.
+- AD-7/AD-11/AD-14: matching uses observed committed metadata and can lag. Reuse bounded Project views and metadata-only owner reads. Every owner independently authorizes the exact request; candidate discovery never grants access. Native-head equality, global completeness, RTI installation and rebuild/all-writer certification are not suggestion admission gates.
+- AD-32: advisory output carries evaluation time, an incomplete indicator and disclosable unselected candidates/reasons. Evaluation time is not a source watermark. An incomplete result never asserts exhaustive NoMatch. This is not a context-usability certificate and cannot authorize a Conversation first response.
+- AD-19/AD-20/AD-33 remain: preserve authenticated Tenant, original actor, workload/delegation, safe denial and resource-specific permissions. Real File identity mapping remains required; unavailable mappings are explicit incomplete capability.
+- Development acceptance uses the actual test-project runner and real authenticated owner/query/store composition with persisted zero-write evidence. G-4 tooling, exact package qualification and deployed release acceptance remain their owners' work and are not falsely marked passed.
+
+This does not relax 6.2/6.3 context assembly, Epic 7 confirmation, or terminal production acceptance. Confirmation independently validates the selected association. No suggestions, traces or read repairs are persisted.
+
 ## Design Paradigm
 
 Hexalith.Projects is a domain-centric, CQRS/event-sourced vertical slice hosted by `Hexalith.EventStore.DomainService`. One Project aggregate owns Project invariants; incremental read models own query shape; platform Durable Tasks orchestrate cross-context work as forward-recovery sagas. Runtime, topology, identity, persistence, telemetry, and presentation adapters remain outside the domain module.

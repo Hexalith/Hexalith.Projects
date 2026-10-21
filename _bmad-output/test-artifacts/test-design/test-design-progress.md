@@ -358,3 +358,7 @@ Expected test-engineering timeline: approximately **5–8 weeks for one engineer
 - Remote Pact broker evidence is not claimed; local Pact coverage is conditional on confirmation of an independent HTTP consumer/provider boundary.
 
 **Workflow result:** Completed and checklist-validated at `2026-07-17T08:24:47+02:00`.
+
+## Historical design note — approved 2026-10-21 scope
+
+These original progress notes describe the earlier strict resolution design. Story 6.4 now follows the approved advisory exception in `test-design-epic-6.md` and its build specification: observed metadata may lag, owner authorization remains mandatory, archive opt-in is supported, and incomplete File coverage is explicit. These historical notes add no obsolete native-proof or common-runner prerequisite to that scoped feature.

@@ -1,0 +1,98 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "aspire",
+        "start",
+        "--non-interactive",
+        "--apphost",
+        "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+        "--format",
+        "Json"
+      ],
+      "exit_code": 0,
+      "seconds": 28.185
+    },
+    {
+      "action": "describe",
+      "argv": [
+        "aspire",
+        "describe",
+        "--apphost",
+        "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+        "--format",
+        "Json"
+      ],
+      "exit_code": 0,
+      "seconds": 0.312
+    },
+    {
+      "action": "stop",
+      "argv": [
+        "aspire",
+        "stop",
+        "--non-interactive",
+        "--apphost",
+        "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
+      ],
+      "exit_code": 0,
+      "seconds": 0.543
+    }
+  ],
+  "resources": [
+    {
+      "name": "eventstore-dapr-cli-xfkfxfyd",
+      "state": "Waiting"
+    },
+    {
+      "name": "eventstore-tajptxhj",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-dapr-cli-zzddfxtr",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-nssmnrgr",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-ui-msnfgztb",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-workers-dapr-cli-auksjptz",
+      "state": "Waiting"
+    },
+    {
+      "name": "projects-workers-hkphrzuf",
+      "state": "Waiting"
+    },
+    {
+      "name": "security-eventstore-client-password",
+      "state": "Running",
+      "healthStatus": "Healthy"
+    },
+    {
+      "name": "security-eventstore-client-username",
+      "state": "Running",
+      "healthStatus": "Healthy"
+    },
+    {
+      "name": "security-ggtwjffq",
+      "state": "Running",
+      "healthStatus": "Unhealthy"
+    },
+    {
+      "name": "tenants-dapr-cli-bgpegtra",
+      "state": "Waiting"
+    },
+    {
+      "name": "tenants-usfungkh",
+      "state": "Waiting"
+    }
+  ],
+  "healthy_live_topology": false,
+  "other_apphosts": "Untouched; exact Projects AppHost stopped normally before source edits.",
+  "raw_runtime_logs": "Excluded because discovery/start output can contain dashboard session grants or environment values."
+}

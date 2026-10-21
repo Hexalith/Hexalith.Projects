@@ -3,7 +3,7 @@ title: 'Story 6.4 owner prerequisite: content-free rebuild completion proof'
 type: 'feature'
 created: '2026-10-21'
 updated: '2026-10-21'
-status: 'in-progress'
+status: 'done'
 route: 'dispatch'
 artifact_kind: 'authorized-owner-source-subtask'
 related_story: '6-4-resolve-projects-with-transient-current-explanations'
@@ -59,12 +59,12 @@ The parent has captured baseline patches, original dirty bytes, full revisions/i
 
 ## Tasks & Acceptance
 
-- [ ] Trace existing SDK terminal/current-proof APIs and document the exact safe completion boundary. Implement SDK-owned content-free evidence only if no existing seam can satisfy it.
-- [ ] Publish/verify exact completion evidence from actual successful SDK compaction/recovery, preserving crash safety, immutable scope/fingerprint/owner binding, legacy constructors/JSON and ordinary behavior. Pending, absent, historical or malformed evidence refuses before rich retrieval.
-- [ ] Consume the supported completion in Conversation native evidence without removing its outer generation/native/current-authority gates or adding a query write.
-- [ ] Execute matrix coverage through actual SDK storage and dispatch/delegated adapter boundaries: success, each relevant fault/compaction boundary, retry/restart, altered/missing proof, legacy/direct-writer refusal and zero writes/rich reads. Do not replace production execution with hand-seeded successful receipts.
-- [ ] Run focused SDK source tests and full Conversation Server source suite, retaining every command, exit code, logs and native XML under `/tmp/hexalith-content-free-rebuild-20261021-root/implementation/`. Record exact broad blockers separately and use the required focused fallback; no nested initialization or dependency changes.
-- [ ] Parent independently inspect incremental diff, verify tests, obtain independent review/corrections, capture final source-bound evidence, and update only this subtask and the parent prerequisite implementation notes. Do not mark the overall prerequisite or parent complete.
+- [x] Trace existing SDK terminal/current-proof APIs and document the exact safe completion boundary. Implement SDK-owned content-free evidence only if no existing seam can satisfy it.
+- [x] Publish/verify exact completion evidence from actual successful SDK compaction/recovery, preserving crash safety, immutable scope/fingerprint/owner binding, legacy constructors/JSON and ordinary behavior. Pending, absent, historical or malformed evidence refuses before rich retrieval.
+- [x] Consume the supported completion in Conversation native evidence without removing its outer generation/native/current-authority gates or adding a query write.
+- [x] Execute matrix coverage through actual SDK storage and dispatch/delegated adapter boundaries: success, each relevant fault/compaction boundary, retry/restart, altered/missing proof, legacy/direct-writer refusal and zero writes/rich reads. Do not replace production execution with hand-seeded successful receipts.
+- [x] Run focused SDK source tests and full Conversation Server source suite, retaining every command, exit code, logs and native XML under `/tmp/hexalith-content-free-rebuild-20261021-root/implementation/`. Record exact broad blockers separately and use the required focused fallback; no nested initialization or dependency changes.
+- [x] Parent independently inspect incremental diff, verify tests, obtain independent review/corrections, capture final source-bound evidence, and update only this subtask and the parent prerequisite implementation notes. Do not mark the overall prerequisite or parent complete.
 
 **Acceptance Criteria:**
 - Given a coherent original proven rebuild has actually completed, when strict metadata/current-proof reads run, then the same original source and selected generation are returned using only content-free storage/transport.
@@ -73,9 +73,27 @@ The parent has captured baseline patches, original dirty bytes, full revisions/i
 
 ## Implementation Notes
 
+The initial implementation and parent independent checks both passed 1567 tests (Client 167, Server 294, full Conversation 1106) on source hash `85580258e90828f4bbe339b93ef0b607b63520b328b607b6f8d6f341ec97677a`. Three independent review layers returned thirteen individual claims, retained below before grouping. Corrections remain within the existing private protocol, public wire compatibility, source boundaries and test matrix; no frozen intent or parent gate changes are needed. The intermediate envelope-version approach was superseded by an explicit compacted-only SDK read and is not delivered.
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+| Finding | Verdict | Route | Evidence / required correction |
+| --- | --- | --- | --- |
+| RC-B1 | medium | patch | Per-route enrollment admits mixed receipt names; ReceiptContains rejects both owners after a successful write. Confirmed by normal binding and independent executed probe; preserve each exact owner and support the admitted mixture. |
+| RC-B2 | medium | patch | Nested ProjectionOwnerSelection fields are skipped during deserialization, so appending owners[0].messages leaves the typed digest unchanged. Independent probe accepted the changed proof. Validate complete nested encoded evidence locally without changing the public owner JSON contract. |
+| RC-B3 | medium | patch | Completion size is first checked after terminal mutation. Prepared control and terminal proof have different overhead, so reject an over-budget opted-in completion before effects and execute the boundary in both storage profiles. |
+| RC-B4 | medium | patch | Identity-mutation tests leave stale digests and therefore do not execute the exact scope/batch/selection checks. Add valid-digest mismatches for independently checked identities; fingerprint currentness remains bound by the existing source-guard evidence, not a newly invented reader authority. |
+| RC-B5 | medium | patch | Existing partial-transaction test fails in the earlier general verifier. Exercise the publication read-back guard against persisted output loss after initial verification, retaining actual SDK receipt/storage execution. |
+| RC-B6 | medium | patch | The new delegated adapter fixture constructs current proof from the actual owner endpoint; the separate Server production harness executes native current inspection. Add the missing new-receipt positive/refusal through the production Conversation metadata query handler, preserving the explicit fixture authority and G-4 limitation. |
+| RC-B7 | medium | patch | The Conversation interruption matrix redispatches JSON but keeps its host/provider. Recreate the host over retained storage and clock for retry; preserve original proof, terminal time and persisted generation. |
+| RC-B8 | low | patch | The legacy-reader namespace assertion uses a new batch that was not executed. Execute a separate new batch and read its actual stored selection before simulating the old lookup; no older package or dependency update. |
+| RC-B9 | medium | patch | The strict getter adds an expiry-wrapper entry path without focused Dapr/in-memory boundary cases. Execute live, inclusive-expired and malformed wrappers with marker refusal and no writes. |
+| RC-B10 | medium | patch | Publication interruption coverage uses only resumable InvalidOperationException. Add lost-response and cancellation reconciliation in both existing profiles with exact original proof/time/end-state assertions. |
+| RC-E1 | medium | patch | Same verified mixed-owner defect as RC-B1; independent reflection probe rejects both owners for an admitted mixed receipt. |
+| RC-E2 | medium | patch | Same verified nested-field integrity defect as RC-B2; independent reflection probe accepts the appended rich property. |
+| RC-V1 | medium | patch | Normal BindRebuildBatch and publication admit mixed owners, while ReceiptContains rejects both. Existing tests uniformly opt all routes in or keep all legacy; preserve the existing positive cases and add partial adoption. |
 
 ## Design Notes
 
@@ -84,3 +102,13 @@ This source capability does not establish installed/all-writer coverage, product
 ## Verification
 
 Use individual Debug source test-project builds and built xUnit assemblies with single-dash `-class`/`-method` filters where appropriate. Bind results to unchanged final source/binary hashes; retain failures and superseded attempts. Check owner incremental diffs and `git diff --check`; compare protected files and indexes to the baseline. Evidence archives exclude raw runtime logs containing session grants or environment values.
+
+## Final source checkpoint — 2026-10-21
+
+This bounded source subtask is done. All thirteen review claims were individually triaged, corrected and independently verified. The original blind and edge reviewers confirmed corrected source closure. Final parent Debug builds passed with zero warnings/errors; the exact final unchanged source passed Client batch **195/195**, Server dispatch/reconciliation/idempotency **297/297**, and full Conversation Server **1111/1111**, with zero failures/skips/errors/not-run. These are **1603** tests, not a full SDK suite. Implementer correction checks (88) are additional evidence included within those final runs. Native XML, complete commands/results, source/binary hashes, failed/superseded attempts, baseline dirty bytes, source snapshots and review records are retained in [the completion evidence](evidence/6-4-content-free-rebuild-completion-20261021/README.md).
+
+Final source SHA-256: `6f2eb41395a9b14cb162b95e221dffcdfb3c70ea9314acbb4edcdda21649ab3d`. Private nested proof decoding is strict, mixed-route receipt membership is exact, and proof size is checked before effects. Recovery tests recreate the host over retained storage; the production metadata handler is exercised across success and final completion/source/catalog/permission changes. Fixtures are not deployed authority. The final matrix audit binds every row to executed passing names in coverage-map.json.
+
+Parent protected files, its frozen block, owner dependency/build/style configuration and original dirty bytes are preserved. Concurrent external `/pushall` committed Projects and Conversations while this run remained uncommitted; exact revisions, root pins and index observations are recorded without attributing those Git mutations to this run. Default Conversation whitespace checking reports preserved CRLF as trailing whitespace; the explicit CRLF-aware check passes without changing configuration or line endings. Planning authority validation passes; it does not grant readiness.
+
+The overall prerequisite stays in-progress and Story 6.4 stays blocked. Native-read/installed all-writer authority, cold-activation zero-write, other native owner generations, File/Projects mapping, metadata mutation adoption, exact-current qualification and accepted G-4 remain separate gates. No RTI/parent handler, production composition, deployment or Git mutation was performed by this run. The bounded subtask has no sprint key to synchronize, and its explicit no-Git scope overrides the workflow's generic commit step.

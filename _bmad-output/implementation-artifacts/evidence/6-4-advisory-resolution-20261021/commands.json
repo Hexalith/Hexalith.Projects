@@ -1,0 +1,90 @@
+[
+  {
+    "command": "dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Debug -m:1 -p:UseHexalithProjectReferences=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons -p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "build-projects.log"
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj -c Debug -m:1 -p:UseHexalithProjectReferences=true",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "log": "build-conversations.log"
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj -c Debug -m:1 -p:UseHexalithProjectReferences=true",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "build-engine.log"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class '*ProjectAdvisoryQueryTests' -result-xml /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-matrix.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "projects-matrix.log"
+  },
+  {
+    "command": "dotnet references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll -class '*ConversationAdvisoryMetadataQueryHandlerTest' -result-xml /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/conversations-matrix.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "conversations-matrix.log"
+  },
+  {
+    "command": "STORY61_DAPR_HTTP_ENDPOINT=http://127.0.0.1:35164 STORY61_DAPR_GRPC_ENDPOINT=http://127.0.0.1:50164 dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class '*SupportedProjectGatewayHttpTests' -result-xml /tmp/story64-advisory-20261021/gateway-after-fix.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "gateway.log",
+    "retained_xml": "gateway.xml"
+  },
+  {
+    "command": "STORY61_DAPR_HTTP_ENDPOINT=http://127.0.0.1:35164 STORY61_DAPR_GRPC_ENDPOINT=http://127.0.0.1:50164 dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -result-xml /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-full.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "projects-full.log"
+  },
+  {
+    "command": "dotnet references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll -result-xml /tmp/story64-advisory-20261021/conversations-after-strict-expectation.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "conversations-full.log",
+    "retained_xml": "conversations-full.xml"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Projects.Tests/bin/Debug/net10.0/Hexalith.Projects.Tests.dll -class '*Resolution*' -result-xml /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/engine.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "engine.log"
+  },
+  {
+    "command": "python3 -m unittest discover -s tests/tools -p test_production_authority_guard.py",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "planning-guard.log"
+  },
+  {
+    "command": "python3 tools/planning/validate_production_authority.py --story-id 6.4",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "production-authority.log"
+  },
+  {
+    "command": "python3 tools/planning/validate_production_authority.py --validate-index",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "production-authority-index.log"
+  },
+  {
+    "command": "dotnet references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll -class '*ConversationTenantAccessServiceTest' -class '*ConversationTenantAccessSharedParityTest' -class '*ConversationAdvisoryMetadataQueryHandlerTest' -result-xml /tmp/story64-advisory-20261021/gateway-fix-conversations-focused.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "owner-access.log",
+    "retained_xml": "owner-access.xml"
+  },
+  {
+    "command": "dotnet references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll -class '*ConversationResolutionMetadataQueryHandlerTest' -result-xml /tmp/story64-advisory-20261021/strict-expectation-focused.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "log": "strict-owner.log",
+    "retained_xml": "strict-owner.xml"
+  }
+]

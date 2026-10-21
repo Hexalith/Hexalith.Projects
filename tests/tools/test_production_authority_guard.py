@@ -505,6 +505,30 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                 record=self.acceptance_record(),
             )
 
+    def test_approved_advisory_story_can_progress_without_opening_other_gates(self) -> None:
+        sprint = GUARD.yaml.safe_load(self.sprint)
+        for status in ("blocked", "backlog", "ready-for-dev", "in-progress", "review", "done"):
+            with self.subTest(status=status):
+                sprint["development_status"][GUARD.STORY_6_4_KEY] = status
+                GUARD._validate_scheduling(sprint)
+                self.assertEqual("blocked", sprint["development_status"][GUARD.STORY_6_1_KEY])
+                self.assertEqual("NOT_READY", sprint["readiness_provenance"]["current_result"])
+
+    def test_advisory_exception_rejects_missing_invalid_or_renamed_story(self) -> None:
+        for value in (None, "released", "ready", "accepted"):
+            with self.subTest(value=value):
+                sprint = GUARD.yaml.safe_load(self.sprint)
+                if value is None:
+                    sprint["development_status"].pop(GUARD.STORY_6_4_KEY)
+                else:
+                    sprint["development_status"][GUARD.STORY_6_4_KEY] = value
+                with self.assertRaisesRegex(GUARD.GuardViolation, "6.4 advisory status"):
+                    GUARD._validate_scheduling(sprint)
+        sprint = GUARD.yaml.safe_load(self.sprint)
+        sprint["development_status"]["6-4-advisory-renamed"] = sprint["development_status"].pop(GUARD.STORY_6_4_KEY)
+        with self.assertRaisesRegex(GUARD.GuardViolation, "6.4 advisory status"):
+            GUARD._validate_scheduling(sprint)
+
     def test_each_downstream_category_remains_closed(self) -> None:
         accepted = self.accepted_sprint()
         story_6_5 = "  6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface"
@@ -561,15 +585,6 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             (
                 "Epic 6 regression",
                 self.replace_once(accepted, "  epic-6: in-progress", "  epic-6: backlog"),
-                "open boundary",
-            ),
-            (
-                "Story 6.4 dispatch",
-                self.replace_once(
-                    accepted,
-                    "  6-4-resolve-projects-with-transient-current-explanations: blocked",
-                    "  6-4-resolve-projects-with-transient-current-explanations: ready-for-dev",
-                ),
                 "open boundary",
             ),
             (

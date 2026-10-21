@@ -150,6 +150,11 @@ public static class ProjectsServerServiceCollectionExtensions
         services.AddEventStoreQueryCursorCodec("Hexalith.Projects.ReadCursor.v1");
         services.AddSingleton<ProjectReadAudit>();
         services.AddSingleton<ProjectReadQueryExecutor>();
+        services.AddSingleton<ProjectAdvisoryQueryExecutor>();
+        services.TryAddSingleton<IProjectAdvisoryConversationDirectory>(sp => new DelegatedProjectAdvisoryConversationDirectory(
+            () => sp.GetRequiredService<DelegatedOwnerQueryClient>()));
+        services.AddSingleton<IDomainQueryHandler, ResolveProjectFromConversationQueryHandler>();
+        services.AddSingleton<IDomainQueryHandler, ResolveProjectFromAttachmentsQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, ListProjectsQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, GetProjectQueryHandler>();
 
@@ -269,7 +274,8 @@ public static class ProjectsServerServiceCollectionExtensions
             async (QueryEnvelope query, IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
             {
                 QueryResult result = await DomainQueryDispatcher.ExecuteAsync(serviceProvider, query, cancellationToken).ConfigureAwait(false);
-                if (query.QueryType is not (ListProjectsQuery.QueryType or GetProjectQuery.QueryType))
+                if (query.QueryType is not (ListProjectsQuery.QueryType or GetProjectQuery.QueryType
+                    or ResolveProjectFromConversationQuery.QueryType or ResolveProjectFromAttachmentsQuery.QueryType))
                 {
                     return result.Success ? Results.Ok(result) : Results.NotFound(result);
                 }
@@ -340,6 +346,8 @@ public static class ProjectsServerServiceCollectionExtensions
                     ResolveProjectChatBotAuthority.QueryType,
                     ListProjectsQuery.QueryType,
                     GetProjectQuery.QueryType,
+                    ProjectsServerModule.ResolveProjectFromConversationQueryType,
+                    ProjectsServerModule.ResolveProjectFromAttachmentsQueryType,
                 ]),
         ]);
     }

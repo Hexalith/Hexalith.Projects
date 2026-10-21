@@ -599,7 +599,7 @@ flowchart TD
     G -- Unavailable --> H[Show bounded dependency guidance]
     G -- Complete or Partial --> I{resolutionResult}
     I -- NoMatch --> J[Show no-match reason codes]
-    I -- SingleCandidate --> K[Show candidate and reason codes; do not treat as a selection; sole candidate shows accept/decline unless ConversationLinked resumption]
+    I -- SingleCandidate --> K[Show candidate and reason codes; do not treat as a selection; sole candidate shows accept/decline unless membership is independently confirmed for resumption]
     I -- MultipleCandidates --> L[Show candidate comparison and reason codes]
     J --> M[Show Included or Excluded component evidence and safe next actions]
     K --> M
@@ -1018,7 +1018,7 @@ pin; they do not manufacture or assume authority over the companion artifact.
 The companion artifact must specify and verify:
 
 - candidate presentation without preselection, proposal presentation, the FR-25 selection step,
-  sole-candidate accept/decline, `ConversationLinked` exemption, `ReadOnlyCandidate`, Folder-read
+  sole-candidate accept/decline, independently confirmed membership exemption, `ReadOnlyCandidate`, Folder-read
   versus Folder-manage capability states, explicit confirm/cancel, and safe handling of expired,
   stale, replayed, tampered, actor-, tenant-, target-, session-, and surface-mismatched
   Confirmation Artifacts and a non-interactive credential;
@@ -1170,3 +1170,7 @@ Cross-surface testing should verify:
 - Avoid fixed-width layouts that truncate long identifiers without accessible full-value access.
 - Avoid mobile layouts that hide tenant scope, warnings, reason codes, or action impact.
 - Ensure CLI and MCP schemas remain independent of visual formatting.
+
+## Approved advisory resolution behavior — 2026-10-21
+
+Story 6.4 suggestions may reflect lagging metadata. Present IDs/reasons and the response evaluation time, label incomplete searches, and keep every candidate unselected. Do not describe a sole suggestion as the exclusive correct Project. Do not reveal protected exclusions or names. An incomplete empty response is not evidence that no suitable Project exists. An advisory `ConversationLinked` reason is an observed hint and cannot waive confirmation. Confirmation obtains fresh authority; suggestion output never authorizes context loading or a first response. This applies to Web, CLI, MCP and Chatbot rendering of 6.4; other context-currentness and confirmation rules remain unchanged.

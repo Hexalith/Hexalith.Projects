@@ -1,0 +1,646 @@
+{
+  "Advisory": [
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DuplicateAndPermutedAttachmentsHaveIdenticalScoresReasonsAndOrdering",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-matrix.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.CommittedMetadataWithoutNativeProofUsesTwoReadChecksAndLeavesBytesUnchanged",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryHeaderDoesNotRequireUnconsumedSetupOrContextEvidence",
+      "result": "Pass"
+    }
+  ],
+  "Protected": [
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: False)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: True)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationAndIdentityMismatchCannotBecomeSuggestions",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ExactProjectAuthorizationPrecedesMetadataAndIsRepeatedBeforeDisclosure",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-matrix.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.DeniedMissingAndForeignInputsShareSafeDenialAndInitialDenialAvoidsReads",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-matrix.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MissingVerifiedCallerAndTamperedWorkloadReadNoMetadata",
+      "result": "Pass"
+    }
+  ],
+  "Order/archive": [
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: False)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: True)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DuplicateAndPermutedAttachmentsHaveIdenticalScoresReasonsAndOrdering",
+      "result": "Pass"
+    }
+  ],
+  "Bounded": [
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationAndIdentityMismatchCannotBecomeSuggestions",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SharedDeadlineIsNotRestartedBetweenDependentReads",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AuthorizedConversationHintReservesOneOfThe200DetailSlots",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawOversizeIsRejectedBeforeDeduplication",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.BoundScanUsesAtMost200DetailsInOrdinalOrderAndReportsTruncation",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CancellationDuringIndexScanStopsBeforeAdvancingToAnotherIdentity",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LargeDuplicateIndexKeepsOrdinalSelectionAndLinkedHintWithin200Slots",
+      "result": "Pass"
+    }
+  ],
+  "Degraded": [
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Stale, candidate: True)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Rebuilding, candidate: False)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Unavailable, candidate: False)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{}\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"[]\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{\\\\\\\"metadata\\\\\\\":null,\\\\\\\"incomplete\\\\\\\":false}\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{\\\\\\\"metadata\\\\\\\":{\\\\\\\"conversationId\\\\\\\":\\\\\\\"wrong\\\\\\\",\\\\\\\"projectId\\\\\\\":\\\"\u00b7\u00b7\u00b7)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnsupportedFilesAreExplicitAndEmptyIncompleteCannotClaimNoMatch",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingViewAndUnavailableOwnerReturnIncomplete",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-matrix.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"tenant\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-matrix.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"resource\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-matrix.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"pending\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-matrix.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"schema\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-matrix.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnclassifiedLabelIsOmittedWithoutLosingAuthorizedLinkHint",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnacceptedCommittedFolderBindingCannotBecomeACandidate(state: Pending)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnacceptedCommittedFolderBindingCannotBecomeACandidate(state: Conflict)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnacceptedCommittedFolderBindingCannotBecomeACandidate(state: 999)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FailedFinalCandidateReadRetainsSuccessfullyFinalizedPeer",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"missing-name\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"blank-name\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"untrimmed-name\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"unsafe-name\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"oversized-name\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"folder-id\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.DefaultNonsignalStorePermissionCannotDiscloseWithoutProjectionEvidence",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalPermissionRequiresUsableProjectionEvidence(mutation: \\\"missing\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalPermissionRequiresUsableProjectionEvidence(mutation: \\\"negative\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalPermissionRequiresUsableProjectionEvidence(mutation: \\\"blank\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalPermissionRequiresUsableProjectionEvidence(mutation: \\\"oversized\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.KnownErasedNativeSourceWithholdsMetadata",
+      "result": "Pass"
+    }
+  ],
+  "Revoked": [
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationRevocationAndCandidateFolderRevocationDoNotDisclose",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ExactProjectAuthorizationPrecedesMetadataAndIsRepeatedBeforeDisclosure",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RevokedInputIsFilteredBeforeMappingEvenWhenCandidateFolderLaterAllows",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FinalDisclosureUsesTheNewCommittedFolderAnchorAndLifecycle",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-matrix.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.RevocationBeforeDisclosureWithholdsTheReadMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FinalConversationObservationReplacesInitialScoringEvidence",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FenceChangedDuringAdvisoryReadWithholdsMetadata",
+      "result": "Pass"
+    }
+  ],
+  "Effects": [
+    {
+      "xml": "projects-matrix.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-matrix.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.CommittedMetadataWithoutNativeProofUsesTwoReadChecksAndLeavesBytesUnchanged",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_DisclosureSafeOptionalOmission_ReturnsPartial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_PersistedMemory_IsIncluded",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_PreCreationReferenceTimestamp_ReturnsMinimalUnavailable",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_UnsafePersistedReferenceLabel_ReturnsMinimalUnavailable(referenceKind: \\\"folder\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_UnsafePersistedReferenceLabel_ReturnsMinimalUnavailable(referenceKind: \\\"file\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_UnsafePersistedReferenceLabel_ReturnsMinimalUnavailable(referenceKind: \\\"memory\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_PostAuthorityStoreFaultAfterTenantWatermarkChanges_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ContradictoryAggregateAndEntityTargets_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ArchivedProject_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_StoreFaultAfterReauthorizationDenied_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_EventStoreValidatorEvidenceChangesAcrossPasses_ReturnsSafeDenial(changeWatermark: True)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_EventStoreValidatorEvidenceChangesAcrossPasses_ReturnsSafeDenial(changeWatermark: False)",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_BlankAuthorizedProjectionWatermark_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_StoreFaultBeforeProjectAuthority_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ActiveProjectWithFolder_ReturnsCompleteCurrentEmptySetup",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_TargetMismatch_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_CorruptPersistedSetup_ReturnsMinimalUnavailable(setupText: \\\"unsafe token value\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_CorruptPersistedSetup_ReturnsMinimalUnavailable(setupText: \\\"../../foreign-path\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_CorruptPersistedSetup_ReturnsMinimalUnavailable(setupText: \\\" padded \\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_UnknownTenant_ReturnsSafeDenialWithoutReadingProjection",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_MismatchedScopes_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_MultipleOptionalOmissions_OrderAndDeduplicateRecoveryActions",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_PopulatedPersistedSetup_SurvivesSerialization",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ScopeAndAudienceCasingMismatch_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_FileOutsideCurrentFolder_ReturnsMinimalUnavailable",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_PostAuthorityStoreFault_ReturnsIdentityFreeUnavailableWithRetry",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_FinalPersistedHeaderIsCorrupt_ReturnsMinimalUnavailable",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_InvalidLinkedSourcePolicy_ReturnsMinimalUnavailableWithoutSerializationFailure",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_StaleTenant_ReturnsUnavailable",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ProductionDualPrincipalClaims_ReturnsComplete",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ExactlyMaximumCandidates_ReturnsCompleteWithoutTruncation",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_CorruptPersistedStructure_ReturnsMinimalUnavailable(corruption: \\\"sequence\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_CorruptPersistedStructure_ReturnsMinimalUnavailable(corruption: \\\"lifecycle\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_CorruptPersistedStructure_ReturnsMinimalUnavailable(corruption: \\\"timestamps\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_CorruptPersistedStructure_ReturnsMinimalUnavailable(corruption: \\\"included-folder-id\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_MismatchedAudience_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_MalformedPayload_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_PostReadWatermarkMismatch_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_UnauthorizedFile_ReturnsMinimalUnavailable",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ReferenceOverflow_IsRejectedBeforePerItemValidation",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ZeroWrite_DoesNotSaveReadModel",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_AppHostRealmAudience_ReturnsComplete",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_DisclosureSafeOptionalOmission_MapsRecoveryAction(state: Pending, expectedAction: \\\"PollTask\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_DisclosureSafeOptionalOmission_MapsRecoveryAction(state: Stale, expectedAction: \\\"RefreshContext\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_DisclosureSafeOptionalOmission_MapsRecoveryAction(state: Unavailable, expectedAction: \\\"RefreshContext\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_DisclosureSafeOptionalOmission_MapsRecoveryAction(state: Archived, expectedAction: \\\"SelectAlternative\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_DisclosureSafeOptionalOmission_MapsRecoveryAction(state: Ambiguous, expectedAction: \\\"SelectAlternative\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_DisclosureSafeOptionalOmission_MapsRecoveryAction(state: Conflict, expectedAction: \\\"ResolveNeedsAttention\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_DisclosureSafeOptionalOmission_MapsRecoveryAction(state: InvalidReference, expectedAction: \\\"ResolveNeedsAttention\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ProjectAuthorityChangesDuringRead_ReturnsSafeDenial(change: \\\"sequence\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ProjectAuthorityChangesDuringRead_ReturnsSafeDenial(change: \\\"project-id\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ProjectAuthorityChangesDuringRead_ReturnsSafeDenial(change: \\\"lifecycle\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ProjectAuthorityChangesDuringRead_ReturnsSafeDenial(change: \\\"folder-payload\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ProjectAuthorityChangesDuringRead_ReturnsSafeDenial(change: \\\"setup-payload\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ProjectAuthorityChangesDuringRead_ReturnsSafeDenial(change: \\\"file-reference-payload\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_ProjectAuthorityChangesDuringRead_ReturnsSafeDenial(change: \\\"reference-payload\\\")",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_SameWatermarkOlderTenantTimestampWithNonRegressingAge_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_MissingFolder_ReturnsUnavailable",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_Cancellation_Propagates",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.GetProjectContextQueryHandlerTests.ExecuteAsync_PostReadReauthorizationDenied_ReturnsSafeDenial",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.ProjectConversationAssignmentEndpointTests.ConfirmProjectResolution_ArchivedTarget_Returns404BeforeAssignment",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.ProjectConversationAssignmentEndpointTests.ConfirmProjectResolution_ArchivedSource_Returns404BeforeAssignment",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full.xml",
+      "test": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "test": "Hexalith.Conversations.Server.Tests.TenantAccess.ConversationTenantAccessServiceTest.AllowedDecisionsPreserveTheirOwnEvaluatedProjectionEvidence",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "test": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.RealAccessServicePreservesOnlyCheckedHealthAndStillRequiresNativeEvidence",
+      "result": "Pass"
+    }
+  ]
+}
