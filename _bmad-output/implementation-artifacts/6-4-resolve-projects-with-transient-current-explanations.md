@@ -1,7 +1,7 @@
 ---
 story_id: '6.4'
 title: 'Resolve authorized advisory Project suggestions'
-status: review
+status: in-progress
 scope_approval: 'User yes on 2026-10-21 to the advisory scope-reset proposal'
 ---
 

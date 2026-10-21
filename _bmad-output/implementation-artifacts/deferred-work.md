@@ -1082,3 +1082,9 @@ status: open
 - source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Reconcile the EventStore authoring guardrail's nested Tenants path with supported umbrella source layout.
   evidence: Independent full SDK DomainService source run on 2026-10-21 executed 1091 tests (1090 passed, 1 failed, no skips); DomainModuleAuthoringGuardrailTests.TenantsDomainService_DoesNotReferenceGeneratedApiHostOrDeclarePerMessageControllers requires references/Hexalith.EventStore/references/Hexalith.Tenants/src/Hexalith.Tenants/Hexalith.Tenants.csproj. Only root-declared dependencies may be initialized, so this run preserves the guard and layout. Exact command, native XML and failure log are retained in the native provenance evidence bundle; focused source results are separate.
+
+## Deferred from: code review of spec-6-4-resolve-projects-with-transient-current-explanations.md (2026-10-21)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
+  summary: Run the delegated Conversation advisory owner hop (`DelegatedProjectAdvisoryConversationDirectory` → `GetConversationAdvisoryMetadata.v1`) in a routinely executed lane.
+  evidence: The only test that exercises this hop is `SupportedProjectGatewayHttpTests`. That file is wrapped in `#if HEXALITH_SOURCE_FIXTURE`, a symbol defined only when `UseHexalithProjectReferences=true`, and CI forces `UseHexalithProjectReferences=false`. The test also skips unless `STORY61_DAPR_HTTP_ENDPOINT`/`STORY61_DAPR_GRPC_ENDPOINT` are set, and no CI workflow sets them. Every always-run test substitutes `AdvisoryTestConversationDirectory`, and no unit harness exists for `DelegatedOwnerQueryClient`. A change to the request's domain, aggregate or payload would therefore break every Conversation suggestion while CI stays green (medium; Verification Gap finding 2).

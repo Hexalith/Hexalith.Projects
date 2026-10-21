@@ -3,7 +3,7 @@ title: 'Story 6.4: Authorized advisory Project suggestions'
 type: 'feature'
 created: '2026-10-17'
 updated: '2026-10-21'
-status: 'done'
+status: 'in-progress'
 route: 'dispatch'
 story_key: '6-4-resolve-projects-with-transient-current-explanations'
 baseline_commit: '83781b31e06214ad6da788c6535f9044df06ed5e'
@@ -62,6 +62,86 @@ Paths below are repository-relative. Inspect owning repository guidance/build co
 - [x] Evidence under `_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/` — exact commands, logs, XML and matrix-to-executed-tests mapping; name controlled authority/storage fixtures, File gap and deployment limitations. Do not archive credentials or runtime private logs.
 
 **Acceptance:** Given authenticated eligible callers, when either query runs, then useful authorized advisory suggestions satisfy every matrix row. Given File attachments, when evaluated, then incomplete unsupported coverage is explicit and no full File acceptance is claimed. Given unchanged context/confirmation routes, when suggestions are consumed, then their independent authorization boundary remains intact.
+
+### Review Findings
+
+Code review 2026-10-21, second pass. Reviewers: Blind Hunter (BH), Edge Case Hunter (EC), Verification Gap (VG) and Acceptance Auditor (AA); all four reported. Scope: Projects `4a4640b..f7c9951` (`src`, `tests`, `tools`, `docs/supported-project-reads.md`) plus the Conversations advisory files, since committed locally as `d390692`. Of 56 findings, 30 survived and were grouped into 20 entries; 26 were rejected. The five decisions were resolved on 2026-10-21 with the recommended options and became patches.
+
+- [ ] [Review][Patch] Harden the legacy resolution REST endpoints in place (decision 2026-10-21: option 2) — check each candidate with `ProjectAuthorizationGate.AuthorizeReadAsync` and drop denied ones; if any check is retryable, return the existing read-model-unavailable response instead of NoMatch. In `/from-attachments`, check each presented Folder with `IProjectFolderDirectory.RefreshFolderReferenceAsync`, score only Accepted Folders, and stop scoring File IDs. Reuse the 32-input, four-concurrent-call and two-second bounds. No contract, client or OpenAPI change; retiring the endpoints stays a follow-up for when the CLI and UI move to `/query`. [src/Hexalith.Projects.Server/Queries/ResolveProjectFromAttachmentsEndpoint.cs:32, src/Hexalith.Projects.Server/Queries/ResolveProjectFromConversationEndpoint.cs:58]
+- [ ] [Review][Patch] Return Unavailable, not safe-denial, for an existing Conversation without metadata (decision 2026-10-21: option 2) — the metadata model was added in `beacc09` and is in no release, so every pre-existing Conversation currently gets a whole-request 404. When the metadata entry is missing after the first Read check, look the ID up in the tenant summary index (`TenantIndexKey`, `Summaries`): present gives `Unavailable()`, absent keeps `safe-denial`. Never read `ConversationKey`, which holds rich detail. Add present and absent tests. [references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs:52]
+- [ ] [Review][Patch] Lag is not incompleteness (decision 2026-10-21: option 1) — remove the Stale `omitted()` call, matching the Conversation owner and the spec's "possibly lagging" Advisory row, and extend `LagCanSuggestWhileUnusableProjectionStatesCannot` to assert `Incomplete == false` for Stale. [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:216]
+- [ ] [Review][Patch] Log swallowed executor exceptions (decision 2026-10-21: option 1) — add an optional trailing `ILogger<ProjectAdvisoryQueryExecutor>? logger = null` (the repo idiom, so existing constructions compile unchanged) and log one Warning per catch-all with only the exception type and correlation ID. No tenant, Project, Conversation or Folder IDs, labels or exception messages; no metrics. [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:204]
+- [ ] [Review][Patch] Advisory admission bypasses the 6.1 supported-read admission (BH+EC) — `ProjectReadQueryExecutor.AuthorizeScopeAsync` enforces checks that `Bound()` skips:
+  - `Bound()` uses `MatchesPresented`, which admits omitted Scopes and Audience;
+  - it falls back to `hexalith-eventstore` when `ExpectedAudience` is unset;
+  - it skips the role gate (TenantOperator, TenantProjectAdministrator, or delegated-chatbot `ProjectUser`);
+  - it skips the Fresh tenant + watermark check.
+
+  Reuse that admission (`projects.read`) for both the initial and final scope checks, and add negative tests for a missing scope, audience and role. [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:220]
+- [ ] [Review][Patch] Evidence preservation revives the strict non-native local-health path (BH+AA) — allowed `ConversationTenantAccessService` decisions now carry `ProjectionVersion`/`ProjectionWatermark` (`ConversationTenantAccessService.cs:77`). As a result, the non-native branch of `ConversationResolutionMetadataAuthorization` (:105), which always failed closed before, can now authorize the strict handler from local health alone whenever native evidence is not registered. That contradicts its "local health is insufficient" contract. Make that branch fail closed explicitly and add a regression test. [references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs:105]
+- [ ] [Review][Patch] Fan-out spends the two-second budget on calls that cannot score (BH+EC) — every request authorizes, reads and Folder-checks up to 200 Projects, twice, even when nothing can match:
+  - attachments that are empty, file-only or all denied;
+  - Conversation metadata with neither ProjectId nor SafeLabel.
+
+  In attachment mode, a candidate whose committed Folder is not an accepted input can never score, because `AttachmentResolutionEvidenceMapper` skips candidates with no signal; it still gets a Folder-owner call. When the deadline fires, every candidate is dropped.
+
+  Fix: short-circuit the no-signal cases, still running the final Conversation and scope rechecks before returning NoMatch, and skip the owner calls for attachment candidates that cannot match. Tests that drive fan-out with `ResolveProjectFromAttachmentsQuery([])` must switch to a matching Folder input. [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:117]
+- [ ] [Review][Patch] No always-run test covers the advisory `/query` wiring (VG+BH) — only the gated gateway lane exercises:
+  - handler registration;
+  - routing attachment queries to `FromAttachmentsAsync`;
+  - the status mapping (InvalidEnvelope→400, other failures→404);
+  - the fallback catalog entries.
+
+  Add advisory envelopes to `SupportedProjectReadHttpTests` (200 file-only, 400 for 33 attachments, 404 safe-denial), and add `ShouldContain` checks to `ProjectsServerModuleTests`. [src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs:278]
+- [ ] [Review][Patch] How the first Conversation read classifies failures is untested (VG) — add first-read cases: `safe-denial` must produce a denial, and `ActorException` must produce incomplete with a null result. [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:275]
+- [ ] [Review][Patch] A degraded index (`UnavailableProjectIds`) is untested (VG) — seed an unavailable Project and assert the result is incomplete and not an exhaustive NoMatch. [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:125]
+- [ ] [Review][Patch] A retryable per-Project authorization result is untested (VG) — use `UnavailableProject` and assert incomplete with a null result. [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:237]
+- [ ] [Review][Patch] Tenant scope ordering, late revocation and unavailability are untested (VG) — add three cases:
+  - removed membership gives safe-denial with zero owner and Folder reads;
+  - revocation before disclosure gives a denial;
+  - a stale or unavailable tenant projection gives incomplete.
+
+  [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:228]
+- [ ] [Review][Patch] Envelope and input validation is untested beyond the 33-attachment cap (VG) — add a Theory covering an unknown `referenceKind`, unknown or duplicate fields, a non-`projects` aggregate, Paging, IsGlobalAdmin, and blank or untrimmed IDs. [src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs:83]
+- [ ] [Review][Patch] The owner's freshness-state gate is untested (VG) — add Rebuilding, Unavailable and Forbidden cases to `MalformedOrPendingMetadataWithholdsObservations`. [references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs:57]
+- [ ] [Review][Patch] A retryable owner denial is untested (VG) — it should yield Unavailable. Add a retryable denial to `ResolutionMetadataAccess` and assert null metadata and incomplete. [references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs:85]
+- [ ] [Review][Patch] The `IsAdvisoryHeaderValid` lifecycle check is untested (VG) — add an undefined-lifecycle case. [src/Hexalith.Projects/Aggregates/Project/ProjectPersistedDetailValidator.cs:89]
+- [ ] [Review][Patch] The concurrency test asserts exactly four overlapping reads (BH) — that depends on timing under load; the bound under test is `<= 4`. [tests/Hexalith.Projects.Server.Tests/Queries/ProjectAdvisoryQueryTests.cs:163]
+- [ ] [Review][Patch] The advisory consumer docs omit the admission and limits contract (BH) — document:
+  - the required scope, audience and roles (after the admission patch);
+  - the 16 KiB payload limit and the 400 conditions;
+  - ordinal-first selection of the 200 Projects;
+  - the Conversation outcomes: 404 for a missing or denied Conversation, and an incomplete result for an existing Conversation whose metadata is not projected yet.
+
+  [docs/supported-project-reads.md:75]
+- [ ] [Review][Patch] Release Conversations 1.3.0 and raise the pin (decision 2026-10-21: option 1, an approved exception to "no dependency version update") — run last, after every other patch including the Conversations-side ones, so Conversations is released once. Sync Conversations `main` (2 ahead, 9 behind origin), push, wait for green CI, dispatch `release.yml` with `version=1.3.0`, then set `HexalithConversationsVersion` to 1.3.0 in `references/Hexalith.Builds/Props/Directory.Packages.props` and move the root submodule pointers. Push and release each need an explicit go-ahead at that time; the story stays `in-progress` until the pin lands. Note: `main` CI is currently red on the unrelated `test_external_dependency_may_equal_candidate_version` workflow-policy test, which skips the build job and hides this break. [src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj:35]
+- [x] [Review][Defer] The delegated Conversation owner hop is verified only by the gated source lane (VG+BH) [src/Hexalith.Projects.Server/Queries/DelegatedProjectAdvisoryConversationDirectory.cs:9] — deferred (medium): `SupportedProjectGatewayHttpTests` is wrapped in `#if HEXALITH_SOURCE_FIXTURE` and requires the `STORY61_DAPR_*` variables; CI sets neither, and there is no unit harness for `DelegatedOwnerQueryClient`. Running that lane routinely belongs to the CI/G-4 lane work.
+
+#### Rejected
+
+- BH-3 false — the final ordinary Read check governs disclosure, and advisory results accept lag. The strict `IsVerifiedScoringQuery` pins the strict query type, so it cannot be reused.
+- BH-4 / AA-8 low — the owner's hard-coded `projects` workload and its tolerance of omitted scopes follow the strict sibling's `Compatible(...)` pattern. The Projects-side admission patch closes the empty-scope path.
+- BH-6 false — `Bound()` requires `TryBind` against the SDK-verified caller, so the envelope tenant is authoritative. The engine logger and `PresentedInputIds` only affect logging.
+- BH-7 / AA-7 / EC-11 low — the delegated Folder path ignores `projectId`. The direct fallback needs an unverified caller, which `Bound()` excludes. A Folder-only seam would be new surface.
+- BH-10 low — truncation must set Incomplete, and the ordinal 200-ID bound is required by the spec. The approved proposal defers a Folder→Project index.
+- BH-11 / EC-10 low — unknown nested fields are ignored and never read (see prior triage item Blind6).
+- BH-12 (magic-strings part) false — the wire values match the `AttachmentResolutionEvidenceMapper` constants, and no harm was identified. The endpoint-collision part is kept as a decision above.
+- BH-13 (Folders metadata endpoint and leftovers) false — Folders source no longer has an `operational-index-metadata` route, and the one-element loop and indentation cause no harm. The gated-coverage part is kept under the wiring patch and the defer.
+- BH-15 / EC-7 low — `ScopeAsync` makes the same HttpContext reads sequentially before any fan-out, and the parallel workers only read.
+- BH-16 (ObservedHealth, changelog, diff headers) false — the health provider is created per invocation; semantic-release owns changelogs; the header mismatch comes from how the review diff was assembled. The strict-path part is kept as a patch.
+- BH-17 (CRLF) false — `.editorconfig` sets `[*] end_of_line = crlf`, so the conversion conforms. The documentation gaps are kept as a patch.
+- BH-18 false — letting 6.4 progress is the approved exception. The guard tests assert that 6.1 stays blocked and readiness stays NOT_READY.
+- AA-3 false — the advisory response carries no capability that any confirmation route accepts. Existing confirmation reauthorization tests cover the Effects row.
+- AA-4 / EC-3 false — the spec defines SingleCandidate as one visible, unselected suggestion. Only empty incomplete results are null.
+- AA-5 false — the real Folders owner returns `safe-denial` both for unknown folders and for non-retryable denials (`FolderOwnerReadQueryHandler.cs:21,29,43`); both map to Denied, i.e. no match.
+- AA-9 false — CRLF is the repository baseline, and the README records the per-command whitespace check.
+- VG-O2 false — the removed Folders metadata route no longer exists, and the test enrolls queries from the registered handlers, as the README documents.
+- EC-4 low — the only non-retryable denial outside the ACL is the validator's `Malformed` result; Unavailable and tenant Stale/Unavailable are retryable. Integrity faults are rare, and the fix would add a branch.
+- EC-5 / EC-17 false — `Bound()` guarantees the owner client's preconditions. Gateway 401/403 responses map to ActorException, which gives incomplete; only an actual owner 404 is a denial.
+- EC-6 low — production dependencies honor cancellation, and any orphaned work is read-only and its results are discarded.
+- EC-9 maybe-false (would be low) — this depends on the Folders File-ID grammar; Files are unsupported either way.
+- EC-12 false — the spec reuses the existing mappers unchanged, and Conversation lifecycle is not a scoring input.
+- EC-15 low — checking scope before validation is deliberate, so it cannot become a validation oracle. It only matters during outages and discloses nothing.
 
 ## Implementation Notes
 
