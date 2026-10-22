@@ -1092,3 +1092,12 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
   summary: Align the default G-6 runner, CI wrapper and topology runbook with the current October 20 qualification policy.
   evidence: Final BH2 verified that tools/qualification/run_g6_current.py and docs/runbooks/projects-topology.md default to g6-current-policy.json (SDK 10.0.401/Aspire 13.6.0), while the checkout uses SDK 10.0.402 and CI explicitly selects g6-current-policy-2026-10-20.json. The same runner default exists at the original Story 6.4 baseline; this is independent qualification-tooling work.
+
+## Deferred from: code review of spec-6-4-resolve-projects-with-transient-current-explanations.md (2026-10-22)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
+  summary: Decide whether local `DelegatedOwnerQueryClient` precondition failures may surface as a Conversation 404 in the advisory query.
+  evidence: Fourth-pass chunk-1 BH11, maybe-false (medium if true). `ProjectQueryEnvelopePrincipalBinding.TryBind` admits a JWT principal without a `VerifiedQueryCaller`. `DelegatedOwnerQueryClient.InvokeAsync` then returns the same `safe-denial` string it uses for an owner 404, and `ProjectAdvisoryQueryExecutor.ConversationAsync` maps that to Denied, so every Conversation query would look missing. To settle it, confirm whether a direct, non-gateway `/query` composition is a supported deployment; if it is, check `VerifiedQueryCaller` before the owner hop and report Incomplete.
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
+  summary: Report Conversation-owner unavailability on the retained `GET /api/v1/projects/resolution/from-conversation` route instead of NoMatch.
+  evidence: Fourth-pass chunk-1 AA4b. This is pre-existing, documented fail-closed behavior: the legacy `IProjectConversationResolutionDirectory` returns degraded metadata, and the endpoint maps it to NoMatch (200). The legacy `ProjectResolution` response has no coverage field. Address it when the CLI and UI move to `/query` and the legacy routes are retired.
