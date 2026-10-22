@@ -207,34 +207,12 @@ public sealed class ProjectReadQueryExecutor(
 
     private async Task<ProjectAuthorizationResult?> AuthorizeScopeAsync(QueryEnvelope query, bool list, CancellationToken cancellationToken)
     {
-        if (query.Domain != ProjectsServerModule.DomainName
-            || query.QueryType != (list ? ListProjectsQuery.QueryType : GetProjectQuery.QueryType)
-            || string.IsNullOrWhiteSpace(query.OriginalActorId) || string.IsNullOrWhiteSpace(query.AuthenticatedWorkloadId)
-            || query.IsDelegated && string.IsNullOrWhiteSpace(query.DelegationId)
-            || !query.IsDelegated && query.DelegationId is not null
-            || query.Scopes?.Contains(list ? "projects.list" : "projects.read", StringComparer.Ordinal) != true
-            || string.IsNullOrWhiteSpace(binding.ExpectedAudience)
-            || query.Audience?.Contains(binding.ExpectedAudience, StringComparer.Ordinal) != true
-            || !binding.TryBind(query, out IProjectTenantContextAccessor tenantContext) || binding.HttpContext is not { } http)
-        {
-            return null;
-        }
-
-        ClaimsPrincipal principal = http.User;
-        if (query.AuthenticatedWorkloadId == "chatbot" && !IsChatbot(query)) { return null; }
-        if (!IsChatbot(query) && !HasRole(principal, "TenantOperator") && !HasRole(principal, "TenantProjectAdministrator")) { return null; }
-        ProjectAuthorizationResult result = await gate.AuthorizeSupportedScopeAsync(list, tenantContext, http,
-            query.CorrelationId, cancellationToken).ConfigureAwait(false);
-        return result.IsAllowed && result.TenantAccessResult is { IsAllowed: true, FreshnessStatus: TenantProjectionFreshnessStatus.Fresh } tenant
-            && tenant.TenantId == query.TenantId && !string.IsNullOrWhiteSpace(tenant.ProjectionWatermark) ? result : null;
+        ProjectAuthorizationResult? result = await ProjectReadQueryAdmission.AuthorizeAsync(query,
+            list ? ListProjectsQuery.QueryType : GetProjectQuery.QueryType, list, gate, binding, cancellationToken).ConfigureAwait(false);
+        return result?.IsAllowed == true ? result : null;
     }
 
-    private bool IsChatbot(QueryEnvelope query)
-        => query.AuthenticatedWorkloadId == "chatbot" && query.IsDelegated && !string.IsNullOrWhiteSpace(query.DelegationId)
-            && binding.HttpContext is { } http && HasRole(http.User, "ProjectUser");
-
-    private static bool HasRole(ClaimsPrincipal principal, string role)
-        => principal.IsInRole(role) || principal.HasClaim("role", role) || principal.HasClaim("projects:role", role);
+    private bool IsChatbot(QueryEnvelope query) => ProjectReadQueryAdmission.IsChatbot(query, binding);
 
     private bool MayInspect(bool requested, bool chatbot)
         => !requested || chatbot || binding.HttpContext?.User.HasClaim("eventstore:permission", InspectionPermission) == true;

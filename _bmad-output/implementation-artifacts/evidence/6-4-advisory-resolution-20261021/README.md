@@ -1,5 +1,7 @@
 # Story 6.4 advisory resolution evidence — 2026-10-21
 
+The [final workflow review and verification](review-3/README.md) passed **2,609 unique tests**, zero failures/skips, and all affected builds with zero warnings/errors. All nine final patch groups are resolved; one pre-existing G-6 tooling issue is deferred. [Conversations 1.3.0 is published and verified](publication-handoff/verified-publication.json), and the [matching consumer pin has landed](publication-handoff/consumer-pin-landed.json) and is recorded by Projects. The earlier packets below are historical and their test totals must not be added to the final total.
+
 The approved Conversation/Folder advisory scope is implemented through the existing authenticated `/query`. Exact query names are `Hexalith.Projects.Queries.ResolveProjectFromConversation.v1` and `Hexalith.Projects.Queries.ResolveProjectFromAttachments.v1`. Both target the Projects envelope aggregate `projects`; payloads contain `conversationId` or `attachments`, plus optional `includeArchived`. Attachments contain `referenceKind` (`folder` or `file`) and opaque `referenceId`.
 
 The response contains authorized IDs, deterministic ranks/scores/reason codes, `evaluatedAt`, `incomplete`, and `unsupportedInputKinds`. Evaluation time is not a watermark. Empty incomplete evaluation has a null result; a single suggestion remains unselected. The engine, mappers, strict owner queries, context contracts and confirmation route were preserved.

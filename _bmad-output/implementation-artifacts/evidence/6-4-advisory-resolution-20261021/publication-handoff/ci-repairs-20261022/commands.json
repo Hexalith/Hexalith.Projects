@@ -1,0 +1,118 @@
+[
+  {
+    "command": "dotnet build tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj -c Debug -m:1 -p:UseHexalithProjectReferences=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons -p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "log": "build-server.log"
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Conversations.Conformance.Portable.Tests/Hexalith.Conversations.Conformance.Portable.Tests.csproj -c Debug -m:1 -p:UseHexalithProjectReferences=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons -p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "log": "build-portable-source.log"
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Conversations.Conformance.Tests/Hexalith.Conversations.Conformance.Tests.csproj -c Debug -m:1 -p:UseHexalithProjectReferences=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons -p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "log": "build-internal.log"
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Conversations.Contracts.Tests/Hexalith.Conversations.Contracts.Tests.csproj -c Debug -m:1 -p:UseHexalithProjectReferences=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons -p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "log": "build-contracts.log"
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Conversations.Conformance.Portable.Tests/Hexalith.Conversations.Conformance.Portable.Tests.csproj -c Debug -m:1 -p:UseHexalithProjectReferences=false -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons -p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "log": "build-portable-package.log"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Conversations.Conformance.Portable.Tests/bin/Debug/net10.0/Hexalith.Conversations.Conformance.Portable.Tests.dll -failSkips -class- Hexalith.Conversations.Conformance.Tests.ArchitecturePlanningAuthorityValidationTest -class- Hexalith.Conversations.Conformance.Tests.PlanningAuthorityV8ValidationTest -class- Hexalith.Conversations.Conformance.Tests.PlanningAuthorityV9ValidationTest -class- Hexalith.Conversations.Conformance.Tests.PlanningToolingEnvironmentAuthorityV15ValidationTest -class- Hexalith.Conversations.Conformance.Tests.PlanningToolingLifecycleAuthorityV16ValidationTest -class- Hexalith.Conversations.Conformance.Tests.PackageEnvironmentAuthorityV18ValidationTest -class- Hexalith.Conversations.Conformance.Tests.StoryFinalRecordGenerationValidationTest -class- Hexalith.Conversations.Conformance.Tests.ConformanceOracleTieringValidationTest -method- Hexalith.Conversations.Conformance.Tests.PreservationTraceabilityManifestValidationTest.BindingsClosuresAndFrozenV1BytesShouldValidateIndependently -method- Hexalith.Conversations.Conformance.Tests.PreservationTraceabilityManifestValidationTest.CurrentControlsAndTierPrerequisiteShouldStayTruthful -method- Hexalith.Conversations.Conformance.Tests.PreservationTraceabilityManifestValidationTest.PublicSurfacesAndConformanceAssertionsShouldHaveZeroGap -method- Hexalith.Conversations.Conformance.Tests.SmC2BaselineReconstructionValidationTest.BaselineShouldRecordAnAuditableReconstructionMethod -parallelMode none -result-xml /tmp/story64-publication-portable.xml -noLogo",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "source_exclusions": ".github/workflows/ci.yml current conformance checks",
+    "log": "/tmp/story64-publication-portable.log",
+    "environment": {
+      "UseHexalithProjectReferences": "false"
+    },
+    "mode": "Debug packages, matching CI dependency policy",
+    "retained_xml": "portable-package-mode.xml"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Conversations.Conformance.Portable.Tests/bin/Debug/net10.0/Hexalith.Conversations.Conformance.Portable.Tests.dll -failSkips -class- Hexalith.Conversations.Conformance.Tests.ArchitecturePlanningAuthorityValidationTest -class- Hexalith.Conversations.Conformance.Tests.PlanningAuthorityV8ValidationTest -class- Hexalith.Conversations.Conformance.Tests.PlanningAuthorityV9ValidationTest -class- Hexalith.Conversations.Conformance.Tests.PlanningToolingEnvironmentAuthorityV15ValidationTest -class- Hexalith.Conversations.Conformance.Tests.PlanningToolingLifecycleAuthorityV16ValidationTest -class- Hexalith.Conversations.Conformance.Tests.PackageEnvironmentAuthorityV18ValidationTest -class- Hexalith.Conversations.Conformance.Tests.StoryFinalRecordGenerationValidationTest -class- Hexalith.Conversations.Conformance.Tests.ConformanceOracleTieringValidationTest -method- Hexalith.Conversations.Conformance.Tests.PreservationTraceabilityManifestValidationTest.BindingsClosuresAndFrozenV1BytesShouldValidateIndependently -method- Hexalith.Conversations.Conformance.Tests.PreservationTraceabilityManifestValidationTest.CurrentControlsAndTierPrerequisiteShouldStayTruthful -method- Hexalith.Conversations.Conformance.Tests.PreservationTraceabilityManifestValidationTest.PublicSurfacesAndConformanceAssertionsShouldHaveZeroGap -method- Hexalith.Conversations.Conformance.Tests.SmC2BaselineReconstructionValidationTest.BaselineShouldRecordAnAuditableReconstructionMethod -parallelMode none -result-xml /tmp/story64-publication-portable.xml -noLogo",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 1,
+    "source_exclusions": ".github/workflows/ci.yml current conformance checks",
+    "log": "/tmp/story64-publication-portable.log",
+    "environment": {
+      "UseHexalithProjectReferences": "true via Debug default/evaluated source graph"
+    },
+    "retained_xml": "portable-source-mode-failed.xml"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Conversations.Conformance.Tests/bin/Debug/net10.0/Hexalith.Conversations.Conformance.Tests.dll -failSkips -class- Hexalith.Conversations.Conformance.Tests.ConformanceOracleTieringValidationTest -class- Hexalith.Conversations.Conformance.Tests.EvidenceBoundaryAdoptionValidationTest -parallelMode none -result-xml /tmp/story64-publication-internal.xml -noLogo",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "source_exclusions": ".github/workflows/ci.yml current conformance checks",
+    "log": "/tmp/story64-publication-internal.log",
+    "retained_xml": "internal.xml"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Conversations.Conformance.Portable.Tests/bin/Debug/net10.0/Hexalith.Conversations.Conformance.Portable.Tests.dll -method '*.CurrentSnapshotShouldMatchCommittedBaselineWithoutWriting' -method '*.CommittedSnapshotTypeCountShouldMatchTheLiveExportedContractSurface' -method '*.BaselineReportedTypeCountShouldAgreeWithTheCommittedSnapshotAndLiveSurface' -method '*.Ac5AndAc6ClaimsShouldBeBoundToPassingMachineReadableRuns' -method '*.NoInModuleEventStoreGatewayClientDuplicateShouldExist' -result-xml /tmp/story64-publication-five-failed.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 1,
+    "retained_xml": "original-five-failed.xml"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Conversations.Conformance.Portable.Tests/bin/Debug/net10.0/Hexalith.Conversations.Conformance.Portable.Tests.dll -method '*.CurrentSnapshotShouldMatchCommittedBaselineWithoutWriting' -method '*.CommittedSnapshotTypeCountShouldMatchTheLiveExportedContractSurface' -method '*.BaselineReportedTypeCountShouldAgreeWithTheCommittedSnapshotAndLiveSurface' -method '*.Ac5AndAc6ClaimsShouldBeBoundToPassingMachineReadableRuns' -method '*.NoInModuleEventStoreGatewayClientDuplicateShouldExist' -method '*.CurrentSuccessorShouldPreserveEveryPriorTypeAndMemberOutsideTheApprovedAdditions' -result-xml /tmp/story64-publication-focused.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "retained_xml": "focused.xml"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll -result-xml /tmp/story64-publication-server-full.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "retained_xml": "server.xml"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Conversations.Contracts.Tests/bin/Debug/net10.0/Hexalith.Conversations.Contracts.Tests.dll -result-xml /tmp/story64-publication-contracts-full.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "retained_xml": "contracts.xml"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll -method '*.CrossTenantEventShouldFailWithOnlyAnAcceptedRoutePositionBarrier' -result-xml /tmp/story64-publication-cross-tenant.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "retained_xml": "current-cross-tenant.xml"
+  },
+  {
+    "command": "git diff --check",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 2,
+    "log": "diff-check-raw.log"
+  },
+  {
+    "command": "git -c core.whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol diff --check",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "log": "diff-check-compatible.log"
+  },
+  {
+    "command": "git check-attr text eol -- docs/release-evidence/projection-read-store-population-story-6.4-v3-cross-tenant.xunit.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "log": "xml-git-attributes.log"
+  },
+  {
+    "command": "dotnet run --project /tmp/story64-contract-capture/capture.csproj -- /home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Portable.Tests/bin/Debug/net10.0 /tmp/story64-live-contract-shape.json",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "helper_source": "capture-contract-shape.cs.txt",
+    "helper_project": "capture-contract-shape.csproj.txt"
+  }
+]

@@ -23,9 +23,10 @@ using Hexalith.Projects.Server.Projections.ProjectReads;
 /// <param name="folders">The actual Folder owner's authorization boundary.</param>
 /// <param name="conversations">The narrow signed Conversation owner read.</param>
 /// <param name="clock">The evaluation clock, unrelated to source currentness.</param>
-public sealed class ProjectAdvisoryQueryExecutor(IReadModelStore store, ProjectAuthorizationGate gate,
+/// <param name="logger">The optional metadata-only dependency failure logger.</param>
+public sealed partial class ProjectAdvisoryQueryExecutor(IReadModelStore store, ProjectAuthorizationGate gate,
     ProjectQueryEnvelopePrincipalBinding binding, IProjectFolderDirectory folders,
-    IProjectAdvisoryConversationDirectory conversations, TimeProvider clock)
+    IProjectAdvisoryConversationDirectory conversations, TimeProvider clock, ILogger<ProjectAdvisoryQueryExecutor>? logger = null)
 {
     /// <summary>The maximum distinct Project details examined per query.</summary>
     public const int MaximumCandidates = 200;
@@ -52,7 +53,7 @@ public sealed class ProjectAdvisoryQueryExecutor(IReadModelStore store, ProjectA
     private async Task<QueryResult> ExecuteAsync(QueryEnvelope query, bool conversation, CancellationToken callerToken)
     {
         callerToken.ThrowIfCancellationRequested();
-        if (!Bound(query)) return Denied();
+        if (query.QueryType != (conversation ? ResolveProjectFromConversationQuery.QueryType : ResolveProjectFromAttachmentsQuery.QueryType)) return Denied();
         // One linked dependency budget begins with scope authorization, before validating caller input.
         using CancellationTokenSource deadline = CancellationTokenSource.CreateLinkedTokenSource(callerToken);
         deadline.CancelAfter(TimeSpan.FromSeconds(2));
@@ -62,8 +63,9 @@ public sealed class ProjectAdvisoryQueryExecutor(IReadModelStore store, ProjectA
             if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();
         }
         catch (OperationCanceledException) when (callerToken.IsCancellationRequested) { throw; }
-        catch (Exception)
+        catch (Exception exception)
         {
+            LogFailure(query, exception);
             return QueryResult.FromPayload(JsonSerializer.SerializeToElement(
                 new ProjectAdvisoryResolutionResponse(null, [], clock.GetUtcNow(), true, []), Json), query.QueryType);
         }
@@ -109,6 +111,7 @@ public sealed class ProjectAdvisoryQueryExecutor(IReadModelStore store, ProjectA
             if (conversationId is not null)
             {
                 var read = await ConversationAsync(query, conversationId, token).WaitAsync(token).ConfigureAwait(false);
+                callerToken.ThrowIfCancellationRequested();
                 if (read.Denied) return Denied();
                 observed = read.Metadata;
                 if (observed?.Incomplete != false) Omitted();
@@ -116,54 +119,63 @@ public sealed class ProjectAdvisoryQueryExecutor(IReadModelStore store, ProjectA
             }
             string[] acceptedInputs = await FilterInputsAsync(inputs.Where(item => item.ReferenceKind == "folder")
                 .Select(item => item.ReferenceId).ToArray(), query, Omitted, token).WaitAsync(token).ConfigureAwait(false);
-            var index = await store.GetAsync<ProjectReadIndex>(ProjectReadModelKeys.StoreName,
-                ProjectReadModelKeys.Index(query.TenantId), token).WaitAsync(token).ConfigureAwait(false);
-            IEnumerable<string> ids = [];
-            if (index.Value is { ProjectIds: not null, UnavailableProjectIds: not null } view && view.TenantId == query.TenantId && !string.IsNullOrEmpty(index.ETag))
-            {
-                ids = view.ProjectIds;
-                if (view.UnavailableProjectIds.Count != 0) Omitted();
-            }
-            else Omitted();
-            // The existing index is monolithic. This caps detail fanout, not index bytes.
-            string? linked = observed?.Metadata?.ProjectId;
-            if (linked is not null && !Identity(query.TenantId, linked)) { Omitted(); linked = null; }
-            int capacity = MaximumCandidates - (linked is null ? 0 : 1);
-            SortedSet<string> selected = new(StringComparer.Ordinal);
-            foreach (string id in ids)
-            {
-                token.ThrowIfCancellationRequested();
-                if (!Identity(query.TenantId, id)) { Omitted(); continue; }
-                if (id == linked || selected.Contains(id)) continue;
-                if (selected.Count < capacity) { selected.Add(id); continue; }
-                Omitted();
-                if (StringComparer.Ordinal.Compare(id, selected.Max) < 0)
-                {
-                    selected.Remove(selected.Max!);
-                    selected.Add(id);
-                }
-            }
-            token.ThrowIfCancellationRequested();
-            if (linked is not null) selected.Add(linked);
             ConcurrentDictionary<string, ProjectDetailItem> candidates = new(StringComparer.Ordinal);
-            await Parallel.ForEachAsync(selected, new ParallelOptions { MaxDegreeOfParallelism = MaximumConcurrency, CancellationToken = token }, async (id, ct) =>
+            bool hasSignal = conversationId is not null
+                ? observed?.Metadata is { } initial && (initial.ProjectId is not null || initial.SafeLabel is not null)
+                : acceptedInputs.Length != 0;
+            if (hasSignal)
             {
-                try
+                var index = await store.GetAsync<ProjectReadIndex>(ProjectReadModelKeys.StoreName,
+                    ProjectReadModelKeys.Index(query.TenantId), token).WaitAsync(token).ConfigureAwait(false);
+                IEnumerable<string> ids = [];
+                if (index.Value is { ProjectIds: not null, UnavailableProjectIds: not null } view && view.TenantId == query.TenantId && view.GlobalPosition > 0 && view.LastVerifiedAt != default
+                    && !string.IsNullOrEmpty(index.ETag))
                 {
-                    if (!await ProjectAllowedAsync(query, id, Omitted, ct).ConfigureAwait(false)) return;
-                    var detail = await DetailAsync(query, id, includeArchived, Omitted, ct).ConfigureAwait(false);
-                    if (detail is null) return;
-                    if (await FolderAllowedAsync(query, id, detail.ProjectFolder?.FolderId, Omitted, ct).ConfigureAwait(false))
-                        candidates[id] = detail;
+                    ids = view.ProjectIds;
+                    if (view.UnavailableProjectIds.Count != 0) Omitted();
                 }
-                catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-                catch (Exception) { Omitted(); }
-            }).WaitAsync(token).ConfigureAwait(false);
+                else Omitted();
+                // The existing index is monolithic. This caps detail fanout, not index bytes.
+                string? linked = observed?.Metadata?.ProjectId;
+                if (linked is not null && !Identity(query.TenantId, linked)) { Omitted(); linked = null; }
+                int capacity = MaximumCandidates - (linked is null ? 0 : 1);
+                SortedSet<string> selected = new(StringComparer.Ordinal);
+                foreach (string id in ids)
+                {
+                    token.ThrowIfCancellationRequested();
+                    if (!Identity(query.TenantId, id)) { Omitted(); continue; }
+                    if (id == linked || selected.Contains(id)) continue;
+                    if (selected.Count < capacity) { selected.Add(id); continue; }
+                    Omitted();
+                    if (StringComparer.Ordinal.Compare(id, selected.Max) < 0)
+                    {
+                        selected.Remove(selected.Max!);
+                        selected.Add(id);
+                    }
+                }
+                token.ThrowIfCancellationRequested();
+                if (linked is not null) selected.Add(linked);
+                await Parallel.ForEachAsync(selected, new ParallelOptions { MaxDegreeOfParallelism = MaximumConcurrency, CancellationToken = token }, async (id, ct) =>
+                {
+                    try
+                    {
+                        if (!await ProjectAllowedAsync(query, id, Omitted, ct).ConfigureAwait(false)) return;
+                        var detail = await DetailAsync(query, id, includeArchived, Omitted, ct).ConfigureAwait(false);
+                        if (detail is null || !conversation && !acceptedInputs.Contains(detail.ProjectFolder?.FolderId, StringComparer.Ordinal)) return;
+                        if (await FolderAllowedAsync(query, id, detail.ProjectFolder?.FolderId, Omitted, ct).ConfigureAwait(false))
+                            candidates[id] = detail;
+                    }
+                    catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                    catch (Exception exception) { LogFailure(query, exception); Omitted(); }
+                }).WaitAsync(token).ConfigureAwait(false);
+
+            }
 
             // Re-read owner permission; none of the initial permission decisions is cached for disclosure.
             if (conversationId is not null)
             {
                 var final = await ConversationAsync(query, conversationId, token).WaitAsync(token).ConfigureAwait(false);
+                callerToken.ThrowIfCancellationRequested();
                 if (final.Denied) return Denied();
                 if (final.Metadata?.Metadata is null) { Omitted(); return Response([]); }
                 if (final.Metadata != observed || final.Metadata.Incomplete) Omitted();
@@ -179,12 +191,13 @@ public sealed class ProjectAdvisoryQueryExecutor(IReadModelStore store, ProjectA
                     ProjectDetailItem? detail = null;
                     if (await ProjectAllowedAsync(query, pair.Key, Omitted, ct).ConfigureAwait(false))
                         detail = await DetailAsync(query, pair.Key, includeArchived, Omitted, ct).ConfigureAwait(false);
-                    if (detail is null || !await FolderAllowedAsync(query, pair.Key, detail.ProjectFolder?.FolderId, Omitted, ct).ConfigureAwait(false))
+                    if (detail is null || !conversation && !acceptedInputs.Contains(detail.ProjectFolder?.FolderId, StringComparer.Ordinal)
+                        || !await FolderAllowedAsync(query, pair.Key, detail.ProjectFolder?.FolderId, Omitted, ct).ConfigureAwait(false))
                         candidates.TryRemove(pair.Key, out _);
                     else candidates[pair.Key] = detail;
                 }
                 catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-                catch (Exception) { candidates.TryRemove(pair.Key, out _); Omitted(); }
+                catch (Exception exception) { LogFailure(query, exception); candidates.TryRemove(pair.Key, out _); Omitted(); }
             }).WaitAsync(token).ConfigureAwait(false);
             if (!await ScopeAsync(query, token).WaitAsync(token).ConfigureAwait(false)) return Denied();
             callerToken.ThrowIfCancellationRequested();
@@ -201,7 +214,7 @@ public sealed class ProjectAdvisoryQueryExecutor(IReadModelStore store, ProjectA
                     item.ProjectId, null, item.Lifecycle, [new("folder", item.ProjectFolder!.FolderId!, ReferenceState.Included)], [])).ToArray(), evaluatedAt));
         }
         catch (OperationCanceledException) when (callerToken.IsCancellationRequested) { throw; }
-        catch (Exception) { Omitted(); return Response([]); }
+        catch (Exception exception) { LogFailure(query, exception); Omitted(); return Response([]); }
     }
 
     private async Task<ProjectDetailItem?> DetailAsync(QueryEnvelope query, string id, bool includeArchived, Action omitted, CancellationToken token)
@@ -213,26 +226,24 @@ public sealed class ProjectAdvisoryQueryExecutor(IReadModelStore store, ProjectA
             || !ProjectPersistedDetailValidator.IsAdvisoryHeaderValid(detail) || model.Sequence <= 0 || detail.Sequence != model.Sequence
             || !Enum.IsDefined(model.Freshness) || model.Freshness is EvidenceFreshnessState.Unavailable or EvidenceFreshnessState.Rebuilding)
         { omitted(); return null; }
-        if (model.Freshness == EvidenceFreshnessState.Stale) omitted();
         return detail.Lifecycle == ProjectLifecycle.Archived && !includeArchived ? null : detail;
     }
-
-    private bool Bound(QueryEnvelope query)
-        => query.Domain == ProjectsServerModule.DomainName && binding.TryBind(query, out _)
-            && !string.IsNullOrWhiteSpace(query.AuthenticatedWorkloadId)
-            && (!query.IsDelegated || !string.IsNullOrWhiteSpace(query.DelegationId))
-            && (query.IsDelegated || query.DelegationId is null)
-            && ProjectContextQueryAuthority.MatchesPresented(query.Scopes, ["projects.read"])
-            && ProjectContextQueryAuthority.MatchesPresented(query.Audience, [binding.ExpectedAudience ?? "hexalith-eventstore"]);
 
     private async Task<bool> ScopeAsync(QueryEnvelope query, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
-        if (!binding.TryBind(query, out var context) || binding.HttpContext is not { } http) return false;
-        var result = await gate.AuthorizeSupportedScopeAsync(false, context, http, query.CorrelationId, token).ConfigureAwait(false);
-        if (result.Retryable) throw new InvalidOperationException("Scope authorization unavailable.");
-        return result.IsAllowed;
+        var result = await ProjectReadQueryAdmission.AuthorizeAsync(query, query.QueryType, false, gate, binding, token).ConfigureAwait(false);
+        if (result?.Retryable == true) throw new InvalidOperationException("Scope authorization unavailable.");
+        return result?.IsAllowed == true;
     }
+
+    private void LogFailure(QueryEnvelope query, Exception exception)
+    {
+        if (logger is not null) LogDependencyFailure(logger, exception.GetType().Name, query.CorrelationId);
+    }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Advisory dependency failed with {ExceptionType}; correlation {CorrelationId}.")]
+    private static partial void LogDependencyFailure(ILogger logger, string exceptionType, string correlationId);
 
     private async Task<bool> ProjectAllowedAsync(QueryEnvelope query, string id, Action omitted, CancellationToken token)
     {
@@ -255,7 +266,7 @@ public sealed class ProjectAdvisoryQueryExecutor(IReadModelStore store, ProjectA
             return false;
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
-        catch (Exception) { omitted(); return false; }
+        catch (Exception exception) { LogFailure(query, exception); omitted(); return false; }
     }
 
     private async Task<string[]> FilterInputsAsync(string[] ids, QueryEnvelope query, Action omitted, CancellationToken token)

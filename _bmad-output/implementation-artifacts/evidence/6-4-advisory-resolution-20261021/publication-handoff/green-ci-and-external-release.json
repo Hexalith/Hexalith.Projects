@@ -1,0 +1,131 @@
+{
+  "candidate_revision": "71fab44b7dd664699cedbbfc17ed0d7822e8bdb9",
+  "workflows": [
+    {
+      "id": 39759753465,
+      "name": "CodeQL",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39759753465",
+      "head_sha": "71fab44b7dd664699cedbbfc17ed0d7822e8bdb9",
+      "referenced_workflows": [
+        {
+          "path": "Hexalith/Hexalith.Builds/.github/workflows/codeql.yml@main",
+          "sha": "5e54e892e69c31f346d69cb79f19f04bce8b79cc",
+          "ref": "refs/heads/main"
+        }
+      ]
+    },
+    {
+      "id": 39759753031,
+      "name": "Commit message policy",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39759753031",
+      "head_sha": "71fab44b7dd664699cedbbfc17ed0d7822e8bdb9",
+      "referenced_workflows": []
+    },
+    {
+      "id": 39759753386,
+      "name": "CI",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39759753386",
+      "head_sha": "71fab44b7dd664699cedbbfc17ed0d7822e8bdb9",
+      "referenced_workflows": [
+        {
+          "path": "Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@main",
+          "sha": "5e54e892e69c31f346d69cb79f19f04bce8b79cc",
+          "ref": "refs/heads/main"
+        }
+      ]
+    }
+  ],
+  "ci_jobs": [
+    {
+      "id": 119760843690,
+      "name": "ci / admin-web",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119760843869,
+      "name": "ci / conformance",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119760843937,
+      "name": "ci / minimal-module platform compatibility",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119760843966,
+      "name": "ci / release-tooling",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119760844091,
+      "name": "ci / TestSupport Windows descendant cleanup",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119760844147,
+      "name": "ci / repository",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119760844200,
+      "name": "ci / build-and-test",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119765239545,
+      "name": "ci / aspire-tests",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119765241386,
+      "name": "ci / performance-tests",
+      "status": "completed",
+      "conclusion": "skipped"
+    }
+  ],
+  "source_preflight": {
+    "command": "python3 scripts/verify-release-source.py --publish-enabled true --repository Hexalith/Hexalith.Conversations --dispatch-ref refs/heads/main --dispatch-sha 71fab44b7dd664699cedbbfc17ed0d7822e8bdb9 --workflow ci.yml --release-version 1.3.0",
+    "exit_code": 0,
+    "live_main": true,
+    "exact_latest_push_ci_success": true,
+    "all_release_destinations_absent_at_preflight": true
+  },
+  "semantic_plan": {
+    "version": "1.3.0",
+    "dry_run": true,
+    "publishing_plugins_enabled": false,
+    "exit_code": 0,
+    "log": "final-release-plan.log.gz"
+  },
+  "external_release": {
+    "id": 39764388610,
+    "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39764388610",
+    "status": "in_progress",
+    "conclusion": null,
+    "actor": "jpiquot",
+    "triggering_actor": "jpiquot",
+    "event": "workflow_dispatch",
+    "created_at": "2026-10-22T10:36:38Z",
+    "head_sha": "71fab44b7dd664699cedbbfc17ed0d7822e8bdb9",
+    "version": "1.3.0",
+    "source_preflight": "success",
+    "version_plan": "exactly 1.3.0",
+    "dispatched_by_this_session": false,
+    "chat_release_approval_received": false
+  },
+  "consumer_pin": "Prepared, not applied; waiting for official publication verification."
+}

@@ -1,0 +1,10 @@
+using System.Reflection;
+using System.Runtime.Loader;
+using System.Text.Json;
+string directory = args[0];
+AssemblyLoadContext.Default.Resolving += (_, name) => File.Exists(Path.Combine(directory, name.Name + ".dll")) ? AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(directory, name.Name + ".dll")) : null;
+Assembly assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(directory, "Hexalith.Conversations.Conformance.Portable.Tests.dll"));
+Type type = assembly.GetType("Hexalith.Conversations.Conformance.Tests.PublicContractShapeSnapshotGenerationTest")!;
+object snapshot = type.GetMethod("BuildSnapshot", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, null)!;
+JsonSerializerOptions options = (JsonSerializerOptions)type.GetField("SnapshotOptions", BindingFlags.Static | BindingFlags.NonPublic)!.GetValue(null)!;
+File.WriteAllText(args[1], JsonSerializer.Serialize(snapshot, snapshot.GetType(), options));

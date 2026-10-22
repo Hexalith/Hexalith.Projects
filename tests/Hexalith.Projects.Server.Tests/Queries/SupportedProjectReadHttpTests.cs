@@ -45,7 +45,7 @@ public sealed class SupportedProjectReadHttpTests
     {
         using RSA rsa = RSA.Create(2048);
         RsaSecurityKey key = new(rsa) { KeyId = "story61-always-http" };
-        WebApplication app = await StartAsync(null, null, key);
+        WebApplication app = await StartAsync(null, null, key, conversations: new AdvisoryTestConversationDirectory());
         await using (app.ConfigureAwait(true))
         {
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.Single()) };
@@ -78,6 +78,31 @@ public sealed class SupportedProjectReadHttpTests
             using HttpResponseMessage denied = await client.PostAsJsonAsync("/query", open with { OriginalActorId = "other" }, TestContext.Current.CancellationToken);
             absent.StatusCode.ShouldBe(HttpStatusCode.NotFound); denied.StatusCode.ShouldBe(HttpStatusCode.NotFound);
             (await absent.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldBe(await denied.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+            QueryEnvelope advisory = list with { QueryType = ResolveProjectFromAttachmentsQuery.QueryType,
+                Payload = JsonSerializer.SerializeToUtf8Bytes(new ResolveProjectFromAttachmentsQuery([new("file", "file-id")]), JsonSerializerOptions.Web) };
+            using HttpResponseMessage suggestions = await client.PostAsJsonAsync("/query", advisory, TestContext.Current.CancellationToken);
+            suggestions.StatusCode.ShouldBe(HttpStatusCode.OK);
+            var advisoryResult = SupportedProjectReadFixture.Payload<ProjectAdvisoryResolutionResponse>((await suggestions.Content.ReadFromJsonAsync<QueryResult>(TestContext.Current.CancellationToken))!);
+            advisoryResult.Incomplete.ShouldBeTrue(); advisoryResult.Result.ShouldBeNull(); advisoryResult.UnsupportedInputKinds.ShouldBe(["file"]);
+            using HttpResponseMessage oversize = await client.PostAsJsonAsync("/query", advisory with
+            { Payload = JsonSerializer.SerializeToUtf8Bytes(new ResolveProjectFromAttachmentsQuery(Enumerable.Repeat(new ProjectAdvisoryAttachment("folder", "same"), 33).ToArray()), JsonSerializerOptions.Web) }, TestContext.Current.CancellationToken);
+            oversize.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            using HttpResponseMessage advisoryDenied = await client.PostAsJsonAsync("/query", advisory with { OriginalActorId = "other" }, TestContext.Current.CancellationToken);
+            advisoryDenied.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+            QueryEnvelope conversation = advisory with { QueryType = ResolveProjectFromConversationQuery.QueryType,
+                Payload = "{\"conversationId\":\"conversation\"}"u8.ToArray() };
+            using HttpResponseMessage conversationAllowed = await client.PostAsJsonAsync("/query", conversation, TestContext.Current.CancellationToken);
+            conversationAllowed.StatusCode.ShouldBe(HttpStatusCode.OK);
+            var conversationResult = SupportedProjectReadFixture.Payload<ProjectAdvisoryResolutionResponse>(
+                (await conversationAllowed.Content.ReadFromJsonAsync<QueryResult>(TestContext.Current.CancellationToken))!);
+            conversationResult.Incomplete.ShouldBeFalse(); conversationResult.Candidates.Single().ProjectId.ShouldBe("project-a");
+            conversationResult.Candidates.Single().Score.ShouldBe(50);
+            conversationResult.Candidates.Single().ReasonCodes.ShouldBe([Hexalith.Projects.Contracts.Ui.ProjectReasonCode.ConversationLinked]);
+            using HttpResponseMessage conversationMalformed = await client.PostAsJsonAsync("/query", conversation with { Payload = "{}"u8.ToArray() }, TestContext.Current.CancellationToken);
+            conversationMalformed.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            using HttpResponseMessage conversationDenied = await client.PostAsJsonAsync("/query", advisory with
+            { QueryType = ResolveProjectFromConversationQuery.QueryType, OriginalActorId = "other", Payload = "{\"conversationId\":\"unknown\"}"u8.ToArray() }, TestContext.Current.CancellationToken);
+            conversationDenied.StatusCode.ShouldBe(HttpStatusCode.NotFound);
             await app.StopAsync(TestContext.Current.CancellationToken);
         }
     }
@@ -222,7 +247,7 @@ public sealed class SupportedProjectReadHttpTests
         });
     }
 
-    private static async Task<WebApplication> StartAsync(string? httpEndpoint, string? grpcEndpoint, SecurityKey key, bool workload = false)
+    private static async Task<WebApplication> StartAsync(string? httpEndpoint, string? grpcEndpoint, SecurityKey key, bool workload = false, IProjectAdvisoryConversationDirectory? conversations = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = "Production" });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
@@ -234,6 +259,11 @@ public sealed class SupportedProjectReadHttpTests
             ["Authentication:JwtBearer:Audience"] = Audience, ["Authentication:JwtBearer:RequireHttpsMetadata"] = "true",
         });
         builder.Services.AddProjectsServer();
+        if (conversations is not null)
+        {
+            builder.Services.RemoveAll<IProjectAdvisoryConversationDirectory>();
+            builder.Services.AddSingleton(conversations);
+        }
         if (workload) { builder.Services.AddProjectsServerRuntimeInfrastructure(); }
         builder.Services.RemoveAll<IProjectTenantAccessProjectionStore>();
         builder.Services.AddSingleton<IProjectTenantAccessProjectionStore, InMemoryProjectTenantAccessProjectionStore>();

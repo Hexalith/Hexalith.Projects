@@ -17,6 +17,10 @@ using System.Threading.Tasks;
 
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Contracts.Models;
+using Hexalith.Projects.Projections.ProjectDetail;
+using Hexalith.Projects.Server.Folders;
 using Hexalith.Projects.Projections.ProjectReferenceIndex;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Resolution;
@@ -65,7 +69,7 @@ public sealed class ResolveProjectFromAttachmentsTests
     }
 
     [Fact]
-    public async Task Resolve_FileHappyPath_SingleCandidate_Returns200()
+    public async Task Resolve_FileInputCannotScoreWithoutOwnerMapping()
     {
         EndpointResponse response = await SendAsync(
             url: $"/api/v1/projects/resolution/from-attachments?fileId={FileId}",
@@ -73,19 +77,19 @@ public sealed class ResolveProjectFromAttachmentsTests
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         using JsonDocument document = JsonDocument.Parse(response.Body);
-        document.RootElement.GetProperty("result").GetString().ShouldBe("SingleCandidate");
-        document.RootElement.GetProperty("candidates")[0].GetProperty("reasonCodes")[0].GetString().ShouldBe("FileReferenceMatched");
+        document.RootElement.GetProperty("result").GetString().ShouldBe("NoMatch");
+        document.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(0);
     }
 
     [Fact]
     public async Task Resolve_TwoQualifyingProjects_ReturnsMultipleCandidates()
     {
         EndpointResponse response = await SendAsync(
-            url: $"/api/v1/projects/resolution/from-attachments?folderId={FolderId}&fileId={FileId}",
+            url: $"/api/v1/projects/resolution/from-attachments?folderId={FolderId}",
             rows:
             [
                 Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId)),
-                Row(ProjectBId, Reference(AttachmentKind.File, FileId, projectId: ProjectBId)),
+                Row(ProjectBId, Reference(AttachmentKind.Folder, FolderId, projectId: ProjectBId)),
             ]).ConfigureAwait(true);
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -366,6 +370,90 @@ public sealed class ResolveProjectFromAttachmentsTests
         document.RootElement.TryGetProperty("taskId", out _).ShouldBeFalse();
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ExactProjectReadDenialIsFilteredAndRetryableIsUnavailable(bool retryable)
+    {
+        var validator = new ProjectReadTestAuthorization { Decision = request => request.ProjectId == ProjectAId
+            ? retryable ? EventStoreAuthorizationValidationResult.Unavailable() : EventStoreAuthorizationValidationResult.Denied()
+            : EventStoreAuthorizationValidationResult.Allowed("test") };
+        var result = await SendAsync(rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))], projectAuthorization: validator);
+        result.StatusCode.ShouldBe(retryable ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.OK);
+        result.Body.ShouldNotContain(ProjectAId);
+    }
+
+    [Theory]
+    [InlineData(ProjectFolderValidationOutcome.Denied)]
+    [InlineData(ProjectFolderValidationOutcome.Unavailable)]
+    public async Task PresentedFoldersRequireOwnerAcceptance(ProjectFolderValidationOutcome outcome)
+    {
+        var folders = new ProjectReadTestFolders(); folders.Outcomes[FolderId] = outcome;
+        var result = await SendAsync(rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))], folderDirectory: folders);
+        result.StatusCode.ShouldBe(outcome == ProjectFolderValidationOutcome.Denied ? HttpStatusCode.OK : HttpStatusCode.ServiceUnavailable);
+        result.Body.ShouldNotContain(ProjectAId);
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    public async Task LateProjectOrScopeRevocationCannotSurviveFinalFolderWork(bool scope, bool retryable)
+    {
+        bool revoked = false;
+        int projectReads = 0, scopeReads = 0;
+        var validator = new ProjectReadTestAuthorization { Decision = request =>
+        {
+            if (request.ProjectId is null) Interlocked.Increment(ref scopeReads); else Interlocked.Increment(ref projectReads);
+            return revoked && (scope ? request.ProjectId is null : request.ProjectId == ProjectAId)
+                ? retryable ? EventStoreAuthorizationValidationResult.Unavailable() : EventStoreAuthorizationValidationResult.Denied()
+                : EventStoreAuthorizationValidationResult.Allowed("test");
+        } };
+        var folders = new ProjectReadTestFolders();
+        folders.OnRead = _ => { if (folders.Reads == 2) revoked = true; return Task.CompletedTask; };
+        var result = await SendAsync(rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))],
+            projectAuthorization: validator, folderDirectory: folders);
+        result.StatusCode.ShouldBe(retryable ? HttpStatusCode.ServiceUnavailable : scope ? HttpStatusCode.NotFound : HttpStatusCode.OK);
+        result.Body.ShouldNotContain(ProjectAId); projectReads.ShouldBe(2);
+        if (!retryable) scopeReads.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task DuplicateRawAttachmentsCannotBypassThe32InputLimit()
+    {
+        var result = await SendAsync(url: "/api/v1/projects/resolution/from-attachments?" + string.Join("&", Enumerable.Repeat("folderId=" + FolderId, 33)));
+        result.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task FolderOwnerCallsShareFourWorkersAndOneDeadline()
+    {
+        int active = 0, maximum = 0;
+        var folders = new ProjectReadTestFolders { OnRead = async _ =>
+        {
+            int now = Interlocked.Increment(ref active);
+            int seen; do { seen = Volatile.Read(ref maximum); if (seen >= now) break; } while (Interlocked.CompareExchange(ref maximum, now, seen) != seen);
+            await Task.Delay(20, TestContext.Current.CancellationToken).ConfigureAwait(false); Interlocked.Decrement(ref active);
+        } };
+        string url = "/api/v1/projects/resolution/from-attachments?" + string.Join("&", Enumerable.Range(0, 8).Select(n => "folderId=folder-" + n));
+        (await SendAsync(url: url, folderDirectory: folders)).StatusCode.ShouldBe(HttpStatusCode.OK); maximum.ShouldBeInRange(1, 4);
+        folders.OnRead = _ => Task.Delay(TimeSpan.FromSeconds(8), TestContext.Current.CancellationToken);
+        var elapsed = System.Diagnostics.Stopwatch.StartNew();
+        (await SendAsync(folderDirectory: folders)).StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+        elapsed.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(4));
+    }
+
+    [Fact]
+    public async Task OptionalCorrelationHeaderIsNotRequiredForOwnerAuthorization()
+    {
+        var folders = new ProjectReadTestFolders { RequireCorrelation = true };
+        var response = await SendAsync(rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))], folderDirectory: folders, correlationHeader: false);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK); response.Header("X-Correlation-Id").ShouldBeNull();
+        using JsonDocument document = JsonDocument.Parse(response.Body);
+        document.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(1);
+    }
+
     private static async Task<EndpointResponse> SendAsync(
         string? url = null,
         IReadOnlyList<ProjectReferenceIndexCandidateRow>? rows = null,
@@ -373,7 +461,8 @@ public sealed class ResolveProjectFromAttachmentsTests
         string? principalId = PrincipalA,
         bool seedTenantAccess = true,
         bool referenceIndexThrows = false,
-        IReadOnlyDictionary<string, string>? headers = null)
+        IReadOnlyDictionary<string, string>? headers = null,
+        ProjectReadTestAuthorization? projectAuthorization = null, ProjectReadTestFolders? folderDirectory = null, bool correlationHeader = true)
     {
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
         FixedProjectTenantContext tenantContext = new(tenantId, principalId);
@@ -384,13 +473,19 @@ public sealed class ResolveProjectFromAttachmentsTests
         services.AddLogging();
         services.AddProjectsServer();
         services.RemoveAll<IProjectEventStoreAuthorizationValidator>();
-        services.AddSingleton<IProjectEventStoreAuthorizationValidator, AllowingProjectEventStoreAuthorizationValidator>();
+        services.AddSingleton<IProjectEventStoreAuthorizationValidator>(projectAuthorization ?? new ProjectReadTestAuthorization());
         services.RemoveAll<IProjectDaprPolicyEvidenceProvider>();
         services.AddSingleton<IProjectDaprPolicyEvidenceProvider, AllowingProjectDaprPolicyEvidenceProvider>();
         services.RemoveAll<IProjectTenantContextAccessor>();
         services.AddSingleton<IProjectTenantContextAccessor>(tenantContext);
         services.RemoveAll<IProjectReferenceIndexReadModel>();
         services.AddSingleton<IProjectReferenceIndexReadModel>(readModel);
+        services.RemoveAll<IProjectFolderDirectory>();
+        services.AddSingleton<IProjectFolderDirectory>(folderDirectory ?? new ProjectReadTestFolders());
+        InMemoryProjectDetailReadModel details = new();
+        foreach (var row in rows ?? []) details.Project(row.TenantId, new ProjectCreated(row.TenantId, row.ProjectId,
+            "Project", null, null, row.Lifecycle, PrincipalA, "create", "task", "create", "create", DateTimeOffset.UtcNow));
+        services.RemoveAll<IProjectDetailReadModel>(); services.AddSingleton<IProjectDetailReadModel>(details);
 
         using ServiceProvider provider = services.BuildServiceProvider();
         if (seedTenantAccess && !string.IsNullOrWhiteSpace(tenantId) && !string.IsNullOrWhiteSpace(principalId))
@@ -417,7 +512,7 @@ public sealed class ResolveProjectFromAttachmentsTests
         int queryIndex = requestUrl.IndexOf('?', StringComparison.Ordinal);
         httpContext.Request.Path = queryIndex < 0 ? requestUrl : requestUrl[..queryIndex];
         httpContext.Request.QueryString = queryIndex < 0 ? QueryString.Empty : new QueryString(requestUrl[queryIndex..]);
-        httpContext.Request.Headers["X-Correlation-Id"] = CorrelationIdValue;
+        if (correlationHeader) httpContext.Request.Headers["X-Correlation-Id"] = CorrelationIdValue;
         if (headers is not null)
         {
             foreach ((string name, string value) in headers)
@@ -436,6 +531,7 @@ public sealed class ResolveProjectFromAttachmentsTests
                 tenantContext,
                 provider.GetRequiredService<ProjectAuthorizationGate>(),
                 readModel,
+                provider.GetRequiredService<IProjectFolderDirectory>(),
                 provider.GetRequiredService<ProjectResolutionEngine>(),
                 provider.GetRequiredService<TimeProvider>(),
                 cancellationToken,

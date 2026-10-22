@@ -18,12 +18,16 @@ using ConversationId = Hexalith.Conversations.Contracts.Identifiers.Conversation
 using ConversationTenantId = Hexalith.Conversations.Contracts.Identifiers.TenantId;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Identifiers;
+using Hexalith.Projects.Contracts.Models;
 using Hexalith.Projects.Contracts.Ui;
+using Hexalith.Projects.Contracts.Events;
+using Hexalith.Projects.Projections.ProjectDetail;
 using Hexalith.Projects.Projections.ProjectList;
 using Hexalith.Projects.Projections.TenantAccess;
 using Hexalith.Projects.Resolution;
 using Hexalith.Projects.Server;
 using Hexalith.Projects.Server.Conversations;
+using Hexalith.Projects.Server.Folders;
 using Hexalith.Projects.Testing.Leakage;
 using Hexalith.Projects.Testing.TenantIsolation;
 
@@ -415,6 +419,91 @@ public sealed class ResolveProjectFromConversationTests
         }
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ExactProjectReadDenialIsFilteredAndRetryableIsUnavailable(bool retryable)
+    {
+        var validator = new ProjectReadTestAuthorization { Decision = request => request.ProjectId == ProjectAId
+            ? retryable ? EventStoreAuthorizationValidationResult.Unavailable() : EventStoreAuthorizationValidationResult.Denied()
+            : EventStoreAuthorizationValidationResult.Allowed("test") };
+        WebApplication app = await StartAppAsync(Linked(ProjectAId), [Row(ProjectAId, "Project Alpha")], projectAuthorization: validator);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpResponseMessage response = await client.SendAsync(Request(), TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(retryable ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.OK);
+            (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldNotContain(ProjectAId);
+        }
+        finally { await StopAsync(app); }
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    public async Task LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld(bool scope, bool retryable)
+    {
+        bool revoked = false;
+        int projectReads = 0, scopeReads = 0;
+        var validator = new ProjectReadTestAuthorization { Decision = request =>
+        {
+            if (request.ProjectId is null) Interlocked.Increment(ref scopeReads); else Interlocked.Increment(ref projectReads);
+            return revoked && (scope ? request.ProjectId is null : request.ProjectId == ProjectAId)
+                ? retryable ? EventStoreAuthorizationValidationResult.Unavailable() : EventStoreAuthorizationValidationResult.Denied()
+                : EventStoreAuthorizationValidationResult.Allowed("test");
+        } };
+        var folders = new ProjectReadTestFolders { OnRead = _ => { revoked = true; return Task.CompletedTask; } };
+        WebApplication app = await StartAppAsync(Linked(ProjectAId), [Row(ProjectAId, "Project Alpha")],
+            projectAuthorization: validator, folderDirectory: folders);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpResponseMessage response = await client.SendAsync(Request(), TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(retryable ? HttpStatusCode.ServiceUnavailable : scope ? HttpStatusCode.NotFound : HttpStatusCode.OK);
+            (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldNotContain(ProjectAId);
+            projectReads.ShouldBe(2); if (!retryable) scopeReads.ShouldBe(2);
+        }
+        finally { await StopAsync(app); }
+    }
+
+    [Theory]
+    [InlineData(ProjectFolderValidationOutcome.Denied)]
+    [InlineData(ProjectFolderValidationOutcome.Unavailable)]
+    public async Task CandidateCommittedFolderRequiresActualOwnerAcceptance(ProjectFolderValidationOutcome outcome)
+    {
+        var folders = new ProjectReadTestFolders { RequireCorrelation = true };
+        folders.Outcomes["folder-" + ProjectAId] = outcome;
+        WebApplication app = await StartAppAsync(Linked(ProjectAId), [Row(ProjectAId, "Project Alpha")], folderDirectory: folders);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpRequestMessage request = Request(); request.Headers.Remove("X-Correlation-Id");
+            using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(outcome == ProjectFolderValidationOutcome.Denied ? HttpStatusCode.OK : HttpStatusCode.ServiceUnavailable);
+            (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldNotContain(ProjectAId);
+            folders.Reads.ShouldBe(1);
+        }
+        finally { await StopAsync(app); }
+    }
+
+    [Fact]
+    public async Task MissingCommittedFolderBindingCannotBecomeACandidate()
+    {
+        var folders = new ProjectReadTestFolders();
+        WebApplication app = await StartAppAsync(Linked(ProjectAId), [Row(ProjectAId, "Project Alpha")], folderDirectory: folders, seedFolder: false);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using HttpResponseMessage response = await client.SendAsync(Request(), TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            using JsonDocument body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+            body.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(0); folders.Reads.ShouldBe(0);
+        }
+        finally { await StopAsync(app); }
+    }
+
     private static ConversationResolutionMetadata Linked(string projectId)
         => new(ConversationIdValue, projectId, SafeLabel: null, ReferenceState.Included);
 
@@ -440,13 +529,16 @@ public sealed class ResolveProjectFromConversationTests
         string? tenantId = TenantA,
         string? principalId = PrincipalA,
         bool seedTenantAccess = true,
-        bool listThrows = false)
+        bool listThrows = false, ProjectReadTestAuthorization? projectAuthorization = null,
+        ProjectReadTestFolders? folderDirectory = null, bool seedFolder = true)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
         builder.Services.AddProjectsServer();
+        builder.Services.RemoveAll<IProjectFolderDirectory>();
+        builder.Services.AddSingleton<IProjectFolderDirectory>(folderDirectory ?? new ProjectReadTestFolders());
         builder.Services.RemoveAll<IProjectEventStoreAuthorizationValidator>();
-        builder.Services.AddSingleton<IProjectEventStoreAuthorizationValidator, AllowingProjectEventStoreAuthorizationValidator>();
+        builder.Services.AddSingleton<IProjectEventStoreAuthorizationValidator>(projectAuthorization ?? new ProjectReadTestAuthorization());
         builder.Services.RemoveAll<IProjectDaprPolicyEvidenceProvider>();
         builder.Services.AddSingleton<IProjectDaprPolicyEvidenceProvider, AllowingProjectDaprPolicyEvidenceProvider>();
         builder.Services.RemoveAll<IProjectTenantContextAccessor>();
@@ -456,6 +548,15 @@ public sealed class ResolveProjectFromConversationTests
         builder.Services.RemoveAll<IProjectListReadModel>();
         builder.Services.AddSingleton<IProjectListReadModel>(new StubProjectListReadModel(rows, listThrows));
 
+        InMemoryProjectDetailReadModel details = new();
+        foreach (var row in rows)
+        {
+            details.Project(row.TenantId, new ProjectCreated(row.TenantId, row.ProjectId,
+                row.Name, null, null, row.Lifecycle, PrincipalA, "create", "task", "create", "create", DateTimeOffset.UtcNow));
+            if (seedFolder) details.Project(row.TenantId, new ProjectFolderSet(row.TenantId, row.ProjectId,
+                "folder-" + row.ProjectId, new ProjectFolderMetadata("Folder"), PrincipalA, "folder", "task", "folder", "folder", DateTimeOffset.UtcNow));
+        }
+        builder.Services.RemoveAll<IProjectDetailReadModel>(); builder.Services.AddSingleton<IProjectDetailReadModel>(details);
         WebApplication app = builder.Build();
         if (seedTenantAccess && !string.IsNullOrWhiteSpace(tenantId) && !string.IsNullOrWhiteSpace(principalId))
         {

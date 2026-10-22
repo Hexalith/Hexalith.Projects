@@ -1,0 +1,62 @@
+{
+  "repository": "Hexalith/Hexalith.Conversations",
+  "base_revision": "17dfc440c9d4e208879f3c121cb97ffe3460a2c7",
+  "pushed_revision": "feddda1f6a26aef1ebdffb92c9cd81037eeac300",
+  "user_commit_push_authorization_retained": true,
+  "changed_files": 1,
+  "production_changes": false,
+  "parent_audited_source_manifest": true,
+  "parent_audited_passing_test_cases": 77,
+  "commitlint": {
+    "problems": 0,
+    "warnings": 0,
+    "log": "commitlint.log.gz"
+  },
+  "commit_hooks_enabled": true,
+  "whitespace_check": "passed",
+  "nested_submodules_initialized": false,
+  "root_staged_or_committed": false,
+  "workflow_runs": [
+    {
+      "id": 39759111058,
+      "name": "CodeQL",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39759111058",
+      "head_sha": "feddda1f6a26aef1ebdffb92c9cd81037eeac300",
+      "referenced_workflows": [
+        {
+          "path": "Hexalith/Hexalith.Builds/.github/workflows/codeql.yml@main",
+          "sha": "5e54e892e69c31f346d69cb79f19f04bce8b79cc",
+          "ref": "refs/heads/main"
+        }
+      ]
+    },
+    {
+      "id": 39759111047,
+      "name": "CI",
+      "status": "in_progress",
+      "conclusion": null,
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39759111047",
+      "head_sha": "feddda1f6a26aef1ebdffb92c9cd81037eeac300",
+      "referenced_workflows": [
+        {
+          "path": "Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@main",
+          "sha": "5e54e892e69c31f346d69cb79f19f04bce8b79cc",
+          "ref": "refs/heads/main"
+        }
+      ]
+    },
+    {
+      "id": 39759110640,
+      "name": "Commit message policy",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39759110640",
+      "head_sha": "feddda1f6a26aef1ebdffb92c9cd81037eeac300",
+      "referenced_workflows": []
+    }
+  ],
+  "release_dispatched": false,
+  "pending": "Full exact-source successful CI, separate publication go-ahead, verified release and consumer pin."
+}

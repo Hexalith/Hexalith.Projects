@@ -1,0 +1,44 @@
+<assemblies schema-version="3" id="fd682003-d940-4940-b04e-60899b7c0dc3" computer="DESKTOP-VIOG240" user="administrator" start-rtf="2026-10-21T21:07:38.2439006+00:00" finish-rtf="2026-10-21T21:07:38.7515178+00:00" timestamp="10/21/2026 23:07:38"><assembly environment="64-bit (x64) .NET 10.0.13 [collection-per-class, parallel (collections, 14 threads)]" id="3c8c9705-5a77-4aa7-b3e1-c0691719c529" name="/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll" run-date="2026-10-21" run-time="21:07:38" start-rtf="2026-10-21T21:07:38.2439006+00:00" test-framework="xUnit.net v3 4.0.2+0c7aa4991f" target-framework=".NETCoreApp,Version=v10.0" errors="0" failed="1" finish-rtf="2026-10-21T21:07:38.7515178+00:00" not-run="0" passed="1" skipped="0" time="0.508" time-rtf="00:00:00.5080000" total="2"><collection name="Test collection for Hexalith.Projects.Server.Tests.WorkersSubscriptionHostingTests (id: 733ed7b38f3243821bbebe02223e6afe0265e940367e6913cfa116fb76e16e0b)" id="ddd3202a-d7f5-489b-b7fd-21268c66e173" failed="1" not-run="0" passed="1" skipped="0" time="0.399" time-rtf="00:00:00.3990000" total="2"><test id="efc6139a-d0c2-4d29-882e-64982ad4a70f" name="Hexalith.Projects.Server.Tests.WorkersSubscriptionHostingTests.ProjectEventsRouteShouldBindTheFlatPublisherPayloadAndAcknowledgeSuccess" result="Pass" time="0.325" time-rtf="00:00:00.3250000" start-rtf="2026-10-21T21:07:38.3176546+00:00" finish-rtf="2026-10-21T21:07:38.6534552+00:00" type="Hexalith.Projects.Server.Tests.WorkersSubscriptionHostingTests" method="ProjectEventsRouteShouldBindTheFlatPublisherPayloadAndAcknowledgeSuccess" source-file="/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/WorkersSubscriptionHostingTests.cs" source-line="37" /><test id="3ac8838d-dd81-4fb8-a990-461c9930d4e9" name="Hexalith.Projects.Server.Tests.WorkersSubscriptionHostingTests.TenantEventsRouteShouldProcessTheDomainEventEnvelopeAndAcknowledgeSuccess" result="Fail" time="0.074" time-rtf="00:00:00.0740000" start-rtf="2026-10-21T21:07:38.6624402+00:00" finish-rtf="2026-10-21T21:07:38.7419814+00:00" type="Hexalith.Projects.Server.Tests.WorkersSubscriptionHostingTests" method="TenantEventsRouteShouldProcessTheDomainEventEnvelopeAndAcknowledgeSuccess" source-file="/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/WorkersSubscriptionHostingTests.cs" source-line="97"><failure exception-type="Shouldly.ShouldAssertException"><message>Shouldly.ShouldAssertException : response.StatusCode
+    should be
+HttpStatusCode.OK
+    but was
+HttpStatusCode.InternalServerError
+
+Additional Info:
+    System.IO.FileNotFoundException: Could not load file or assembly 'Hexalith.Commons.UniqueIds, Version=3.126.0.0, Culture=neutral, PublicKeyToken=null'. The system cannot find the file specified.
+
+File name: 'Hexalith.Commons.UniqueIds, Version=3.126.0.0, Culture=neutral, PublicKeyToken=null'
+   at Hexalith.EventStore.Contracts.Events.EventIdentityValidator.IsUlid(String value) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Events/EventIdentityValidator.cs:line 93
+   at Hexalith.EventStore.Contracts.Events.EventIdentityValidator.Validate(String tenantId, String domain, String aggregateId, String aggregateType, String eventTypeName, String messageId, String correlationId, String causationId, Int64 sequenceNumber, Boolean allowLegacyGuid, Boolean optionalDomain, Boolean optionalAggregateType, Boolean optionalCausation) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Events/EventIdentityValidator.cs:line 61
+   at Hexalith.EventStore.Contracts.Events.EventIdentityValidator.ValidateSubscription(String tenantId, String domain, String aggregateId, String aggregateType, String eventTypeName, String messageId, String correlationId, String causationId, Int64 sequenceNumber) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Events/EventIdentityValidator.cs:line 38
+   at Hexalith.EventStore.Client.Subscriptions.EventStoreDomainEventProcessor.ProcessAsync(EventStoreDomainEventEnvelope envelope, CancellationToken cancellationToken) in /home/administrator/projects/hexalith/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Client/Subscriptions/EventStoreDomainEventProcessor.cs:line 124
+   at Hexalith.Projects.Workers.ProjectsWorkersModule.&lt;&gt;c.&lt;&lt;MapProjectsTenantEventSubscription&gt;b__15_0&gt;d.MoveNext() in /home/administrator/projects/hexalith/projects/src/Hexalith.Projects.Workers/ProjectsWorkersModule.cs:line 110
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Dapr.CloudEventsMiddleware.ProcessBodyAsync(HttpContext httpContext, String charSet)
+   at Dapr.CloudEventsMiddleware.InvokeAsync(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+
+HEADERS
+=======
+Host: 127.0.0.1:42153
+Content-Type: application/cloudevents+json; charset=utf-8
+Content-Length: 605
+</message><stack-trace>   at Hexalith.Projects.Server.Tests.WorkersSubscriptionHostingTests.PostCloudEventAsync(WebApplication app, String route, String data) in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/WorkersSubscriptionHostingTests.cs:line 164
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+   at System.Runtime.CompilerServices.ConfiguredTaskAwaitable`1.ConfiguredTaskAwaiter.GetResult()
+   at Hexalith.Projects.Server.Tests.WorkersSubscriptionHostingTests.TenantEventsRouteShouldProcessTheDomainEventEnvelopeAndAcknowledgeSuccess() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/WorkersSubscriptionHostingTests.cs:line 122
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.WorkersSubscriptionHostingTests.TenantEventsRouteShouldProcessTheDomainEventEnvelopeAndAcknowledgeSuccess() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/WorkersSubscriptionHostingTests.cs:line 130
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+--- End of stack trace from previous location ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)</stack-trace></failure></test></collection></assembly></assemblies>

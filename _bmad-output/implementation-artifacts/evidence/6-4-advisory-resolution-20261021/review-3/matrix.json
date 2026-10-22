@@ -1,0 +1,1123 @@
+{
+  "spec_rows": {
+    "Advisory": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Stale, candidate: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "LagCanSuggestWhileUnusableProjectionStatesCannot",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Rebuilding, candidate: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "LagCanSuggestWhileUnusableProjectionStatesCannot",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Unavailable, candidate: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "LagCanSuggestWhileUnusableProjectionStatesCannot",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.CommittedMetadataWithoutNativeProofUsesTwoReadChecksAndLeavesBytesUnchanged",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "CommittedMetadataWithoutNativeProofUsesTwoReadChecksAndLeavesBytesUnchanged",
+        "result": "Pass"
+      }
+    ],
+    "Protected": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "DeniedAndUnknownFoldersNeverScore",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "DeniedAndUnknownFoldersNeverScore",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"scope\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MissingSupportedReadAdmissionNeverCallsOwners",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"audience\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MissingSupportedReadAdmissionNeverCallsOwners",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"role\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MissingSupportedReadAdmissionNeverCallsOwners",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InitialConversationFailureSeparatesDenialFromUnavailable(error: \\\"safe-denial\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InitialConversationFailureSeparatesDenialFromUnavailable",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InitialConversationFailureSeparatesDenialFromUnavailable(error: \\\"ActorException\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InitialConversationFailureSeparatesDenialFromUnavailable",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.DeniedMissingAndForeignInputsShareSafeDenialAndInitialDenialAvoidsReads",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "DeniedMissingAndForeignInputsShareSafeDenialAndInitialDenialAvoidsReads",
+        "result": "Pass"
+      }
+    ],
+    "Order/archive": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "ArchivedCandidatesRequireExplicitOptInAndOwnerAccess",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "ArchivedCandidatesRequireExplicitOptInAndOwnerAccess",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DuplicateAndPermutedAttachmentsHaveIdenticalScoresReasonsAndOrdering",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "DuplicateAndPermutedAttachmentsHaveIdenticalScoresReasonsAndOrdering",
+        "result": "Pass"
+      }
+    ],
+    "Bounded": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationAndIdentityMismatchCannotBecomeSuggestions",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "CallerCancellationAndIdentityMismatchCannotBecomeSuggestions",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SharedDeadlineIsNotRestartedBetweenDependentReads",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "SharedDeadlineIsNotRestartedBetweenDependentReads",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawOversizeIsRejectedBeforeDeduplication",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "RawOversizeIsRejectedBeforeDeduplication",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CancellationDuringIndexScanStopsBeforeAdvancingToAnotherIdentity",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "CancellationDuringIndexScanStopsBeforeAdvancingToAnotherIdentity",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LargeDuplicateIndexKeepsOrdinalSelectionAndLinkedHintWithin200Slots",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "LargeDuplicateIndexKeepsOrdinalSelectionAndLinkedHintWithin200Slots",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.BoundScanUsesAtMost200DetailsInOrdinalOrderAndReportsTruncation",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "BoundScanUsesAtMost200DetailsInOrdinalOrderAndReportsTruncation",
+        "result": "Pass"
+      }
+    ],
+    "Degraded": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DegradedIndexAndRetryableProjectAuthorizationCannotClaimExhaustiveNoMatch",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "DegradedIndexAndRetryableProjectAuthorizationCannotClaimExhaustiveNoMatch",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{}\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"[]\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{\\\\\\\"metadata\\\\\\\":null,\\\\\\\"incomplete\\\\\\\":false}\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{\\\\\\\"metadata\\\\\\\":{\\\\\\\"conversationId\\\\\\\":\\\\\\\"wrong\\\\\\\",\\\\\\\"projectId\\\\\\\":\\\"\u00b7\u00b7\u00b7)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnsupportedFilesAreExplicitAndEmptyIncompleteCannotClaimNoMatch",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "UnsupportedFilesAreExplicitAndEmptyIncompleteCannotClaimNoMatch",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingViewAndUnavailableOwnerReturnIncomplete",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MissingViewAndUnavailableOwnerReturnIncomplete",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.RetryableOwnerDenialReturnsUnavailableWithoutMetadataReads",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "RetryableOwnerDenialReturnsUnavailableWithoutMetadataReads",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"tenant\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"resource\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"pending\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"schema\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Rebuilding\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Unavailable\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Forbidden\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.ExistingSummaryWithoutIsolatedMetadataIsIncompleteWhileAbsentSummaryIsDenied",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "ExistingSummaryWithoutIsolatedMetadataIsIncompleteWhileAbsentSummaryIsDenied",
+        "result": "Pass"
+      }
+    ],
+    "Revoked": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationRevocationAndCandidateFolderRevocationDoNotDisclose",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "ConversationRevocationAndCandidateFolderRevocationDoNotDisclose",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"removed\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"revoked\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"stale\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"unavailable\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RevokedInputIsFilteredBeforeMappingEvenWhenCandidateFolderLaterAllows",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "RevokedInputIsFilteredBeforeMappingEvenWhenCandidateFolderLaterAllows",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FinalDisclosureUsesTheNewCommittedFolderAnchorAndLifecycle",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "FinalDisclosureUsesTheNewCommittedFolderAnchorAndLifecycle",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.RevocationBeforeDisclosureWithholdsTheReadMetadata",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "RevocationBeforeDisclosureWithholdsTheReadMetadata",
+        "result": "Pass"
+      }
+    ],
+    "Effects": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.ProjectConversationAssignmentEndpointTests.ConfirmProjectResolution_ArchivedTarget_Returns404BeforeAssignment",
+        "type": "Hexalith.Projects.Server.Tests.ProjectConversationAssignmentEndpointTests",
+        "method": "ConfirmProjectResolution_ArchivedTarget_Returns404BeforeAssignment",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.ProjectConversationAssignmentEndpointTests.ConfirmProjectResolution_SourceProjectHidden_Returns404BeforeAssignment",
+        "type": "Hexalith.Projects.Server.Tests.ProjectConversationAssignmentEndpointTests",
+        "method": "ConfirmProjectResolution_SourceProjectHidden_Returns404BeforeAssignment",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "type": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests",
+        "method": "GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.CommittedMetadataWithoutNativeProofUsesTwoReadChecksAndLeavesBytesUnchanged",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "CommittedMetadataWithoutNativeProofUsesTwoReadChecksAndLeavesBytesUnchanged",
+        "result": "Pass"
+      }
+    ]
+  },
+  "review_patches": {
+    "Legacy endpoint hardening": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.Resolve_FileInputCannotScoreWithoutOwnerMapping",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "Resolve_FileInputCannotScoreWithoutOwnerMapping",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.FolderOwnerCallsShareFourWorkersAndOneDeadline",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "FolderOwnerCallsShareFourWorkersAndOneDeadline",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.OptionalCorrelationHeaderIsNotRequiredForOwnerAuthorization",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "OptionalCorrelationHeaderIsNotRequiredForOwnerAuthorization",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.DuplicateRawAttachmentsCannotBypassThe32InputLimit",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "DuplicateRawAttachmentsCannotBypassThe32InputLimit",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.ExactProjectReadDenialIsFilteredAndRetryableIsUnavailable(retryable: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "ExactProjectReadDenialIsFilteredAndRetryableIsUnavailable",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.ExactProjectReadDenialIsFilteredAndRetryableIsUnavailable(retryable: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "ExactProjectReadDenialIsFilteredAndRetryableIsUnavailable",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.PresentedFoldersRequireOwnerAcceptance(outcome: Denied)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "PresentedFoldersRequireOwnerAcceptance",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.PresentedFoldersRequireOwnerAcceptance(outcome: Unavailable)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "PresentedFoldersRequireOwnerAcceptance",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.ExactProjectReadDenialIsFilteredAndRetryableIsUnavailable(retryable: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+        "method": "ExactProjectReadDenialIsFilteredAndRetryableIsUnavailable",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.ExactProjectReadDenialIsFilteredAndRetryableIsUnavailable(retryable: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+        "method": "ExactProjectReadDenialIsFilteredAndRetryableIsUnavailable",
+        "result": "Pass"
+      }
+    ],
+    "Existing Conversation without metadata": [
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.ExistingSummaryWithoutIsolatedMetadataIsIncompleteWhileAbsentSummaryIsDenied",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "ExistingSummaryWithoutIsolatedMetadataIsIncompleteWhileAbsentSummaryIsDenied",
+        "result": "Pass"
+      }
+    ],
+    "Lag is not incompleteness": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Stale, candidate: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "LagCanSuggestWhileUnusableProjectionStatesCannot",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Rebuilding, candidate: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "LagCanSuggestWhileUnusableProjectionStatesCannot",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Unavailable, candidate: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "LagCanSuggestWhileUnusableProjectionStatesCannot",
+        "result": "Pass"
+      }
+    ],
+    "Safe exception logging": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SwallowedDependencyFailureLogsOnlyTypeAndCorrelation",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "SwallowedDependencyFailureLogsOnlyTypeAndCorrelation",
+        "result": "Pass"
+      }
+    ],
+    "Supported read admission": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"scope\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MissingSupportedReadAdmissionNeverCallsOwners",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"audience\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MissingSupportedReadAdmissionNeverCallsOwners",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"role\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MissingSupportedReadAdmissionNeverCallsOwners",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"removed\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"revoked\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"stale\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"unavailable\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      }
+    ],
+    "Strict non-native fail closed": [
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.LocalHealthWithPreservedPermissionEvidenceCannotReplaceNativeAuthorization",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest",
+        "method": "LocalHealthWithPreservedPermissionEvidenceCannotReplaceNativeAuthorization",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.RealAccessServicePreservesOnlyCheckedHealthAndStillRequiresNativeEvidence",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest",
+        "method": "RealAccessServicePreservesOnlyCheckedHealthAndStillRequiresNativeEvidence",
+        "result": "Pass"
+      }
+    ],
+    "No-signal fanout": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnmatchedCandidateFolderDoesNotCallItsOwner",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "UnmatchedCandidateFolderDoesNotCallItsOwner",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"empty\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"file\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"denied\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"conversation\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+        "result": "Pass"
+      }
+    ],
+    "Always-run wiring": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.ProjectsServerModuleTests.OperationalIndexMetadataAdvertisesTheBoundProjectQueryHandlers",
+        "type": "Hexalith.Projects.Server.Tests.ProjectsServerModuleTests",
+        "method": "OperationalIndexMetadataAdvertisesTheBoundProjectQueryHandlers",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests.AuthenticatedRegisteredReadsAlwaysExerciseHttpStatusAndSafeDenialContracts",
+        "type": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests",
+        "method": "AuthenticatedRegisteredReadsAlwaysExerciseHttpStatusAndSafeDenialContracts",
+        "result": "Pass"
+      }
+    ],
+    "Initial Conversation failures": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InitialConversationFailureSeparatesDenialFromUnavailable(error: \\\"safe-denial\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InitialConversationFailureSeparatesDenialFromUnavailable",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InitialConversationFailureSeparatesDenialFromUnavailable(error: \\\"ActorException\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InitialConversationFailureSeparatesDenialFromUnavailable",
+        "result": "Pass"
+      }
+    ],
+    "Degraded index": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DegradedIndexAndRetryableProjectAuthorizationCannotClaimExhaustiveNoMatch",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "DegradedIndexAndRetryableProjectAuthorizationCannotClaimExhaustiveNoMatch",
+        "result": "Pass"
+      }
+    ],
+    "Retryable Project authorization": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DegradedIndexAndRetryableProjectAuthorizationCannotClaimExhaustiveNoMatch",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "DegradedIndexAndRetryableProjectAuthorizationCannotClaimExhaustiveNoMatch",
+        "result": "Pass"
+      }
+    ],
+    "Tenant scope ordering/revocation/unavailable": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"removed\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"revoked\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"stale\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"unavailable\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+        "result": "Pass"
+      }
+    ],
+    "Envelope/input validation": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"referenceKind\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"unknown\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"duplicate\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"aggregate\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"paging\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"globalAdmin\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"blank\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"untrimmed\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidEnvelopesAndInputsAreRejectedBeforeMetadata(mutation: \\\"payload-size\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "InvalidEnvelopesAndInputsAreRejectedBeforeMetadata",
+        "result": "Pass"
+      }
+    ],
+    "Owner freshness states": [
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"tenant\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"resource\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"pending\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"schema\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Rebuilding\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Unavailable\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Forbidden\\\")",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "MalformedOrPendingMetadataWithholdsObservations",
+        "result": "Pass"
+      }
+    ],
+    "Retryable owner denial": [
+      {
+        "xml": "conversations-full.xml",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.RetryableOwnerDenialReturnsUnavailableWithoutMetadataReads",
+        "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+        "method": "RetryableOwnerDenialReturnsUnavailableWithoutMetadataReads",
+        "result": "Pass"
+      }
+    ],
+    "Undefined lifecycle": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"missing-name\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"blank-name\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"untrimmed-name\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"unsafe-name\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"oversized-name\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"folder-id\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedScoringHeaderCannotBecomeACandidate(mutation: \\\"lifecycle\\\")",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedConsumedScoringHeaderCannotBecomeACandidate",
+        "result": "Pass"
+      }
+    ],
+    "Concurrency assertion bound": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads",
+        "result": "Pass"
+      }
+    ],
+    "Consumer documentation": {
+      "source_sha256": "683ae0804cf9f73859d8494e886e34fae4bc4d0e7bbadf52a36b2ea239938a4b",
+      "status": "Current documentation, exact generated client/fingerprint checks and legacy File regression passed."
+    },
+    "Release/pin": {
+      "status": "Conversations 1.3.0 verified; Builds pin on remote main and recorded by Projects HEAD.",
+      "receipt": "../publication-handoff/consumer-pin-landed.json"
+    },
+    "Final legacy authorization": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.LateProjectOrScopeRevocationCannotSurviveFinalFolderWork(scope: False, retryable: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "LateProjectOrScopeRevocationCannotSurviveFinalFolderWork",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.LateProjectOrScopeRevocationCannotSurviveFinalFolderWork(scope: True, retryable: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "LateProjectOrScopeRevocationCannotSurviveFinalFolderWork",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.LateProjectOrScopeRevocationCannotSurviveFinalFolderWork(scope: False, retryable: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "LateProjectOrScopeRevocationCannotSurviveFinalFolderWork",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.LateProjectOrScopeRevocationCannotSurviveFinalFolderWork(scope: True, retryable: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "LateProjectOrScopeRevocationCannotSurviveFinalFolderWork",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld(scope: False, retryable: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+        "method": "LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld(scope: True, retryable: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+        "method": "LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld(scope: False, retryable: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+        "method": "LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld(scope: True, retryable: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+        "method": "LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld",
+        "result": "Pass"
+      }
+    ],
+    "Final Conversation Folder owner": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.CandidateCommittedFolderRequiresActualOwnerAcceptance(outcome: Denied)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+        "method": "CandidateCommittedFolderRequiresActualOwnerAcceptance",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.CandidateCommittedFolderRequiresActualOwnerAcceptance(outcome: Unavailable)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+        "method": "CandidateCommittedFolderRequiresActualOwnerAcceptance",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.MissingCommittedFolderBindingCannotBecomeACandidate",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+        "method": "MissingCommittedFolderBindingCannotBecomeACandidate",
+        "result": "Pass"
+      }
+    ],
+    "Final malformed index": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexReceiptsCannotProduceCompleteNoMatch(position: 0, missingObservation: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedIndexReceiptsCannotProduceCompleteNoMatch",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexReceiptsCannotProduceCompleteNoMatch(position: -1, missingObservation: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedIndexReceiptsCannotProduceCompleteNoMatch",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexReceiptsCannotProduceCompleteNoMatch(position: 1, missingObservation: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "MalformedIndexReceiptsCannotProduceCompleteNoMatch",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.OldButValidIndexReceiptRemainsUsable",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "OldButValidIndexReceiptRemainsUsable",
+        "result": "Pass"
+      }
+    ],
+    "Final cancellation": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationDuringNormallyCompletedMissingOwnerMetadataPropagates(pass: 1)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "CallerCancellationDuringNormallyCompletedMissingOwnerMetadataPropagates",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationDuringNormallyCompletedMissingOwnerMetadataPropagates(pass: 2)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "CallerCancellationDuringNormallyCompletedMissingOwnerMetadataPropagates",
+        "result": "Pass"
+      }
+    ],
+    "Final authorized HTTP": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests.AuthenticatedRegisteredReadsAlwaysExerciseHttpStatusAndSafeDenialContracts",
+        "type": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests",
+        "method": "AuthenticatedRegisteredReadsAlwaysExerciseHttpStatusAndSafeDenialContracts",
+        "result": "Pass"
+      }
+    ],
+    "Final payload bytes": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidJsonPayloadHasAnInclusive16384ByteLimit(size: 16384)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "ValidJsonPayloadHasAnInclusive16384ByteLimit",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidJsonPayloadHasAnInclusive16384ByteLimit(size: 16385)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "ValidJsonPayloadHasAnInclusive16384ByteLimit",
+        "result": "Pass"
+      }
+    ],
+    "Final read-only admission": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: False, listOnly: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: True, listOnly: False)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: False, listOnly: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: True, listOnly: True)",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+        "method": "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+        "result": "Pass"
+      }
+    ],
+    "Final wire contracts": [
+      {
+        "xml": "contracts-full.xml",
+        "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.AttachmentAndAttachmentQueryUseLiteralFieldsAndOptionalArchiveFlag(kind: \\\"folder\\\")",
+        "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+        "method": "AttachmentAndAttachmentQueryUseLiteralFieldsAndOptionalArchiveFlag",
+        "result": "Pass"
+      },
+      {
+        "xml": "contracts-full.xml",
+        "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.AttachmentAndAttachmentQueryUseLiteralFieldsAndOptionalArchiveFlag(kind: \\\"file\\\")",
+        "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+        "method": "AttachmentAndAttachmentQueryUseLiteralFieldsAndOptionalArchiveFlag",
+        "result": "Pass"
+      },
+      {
+        "xml": "contracts-full.xml",
+        "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.CandidateUsesLiteralFieldsAndNameBasedReasons",
+        "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+        "method": "CandidateUsesLiteralFieldsAndNameBasedReasons",
+        "result": "Pass"
+      },
+      {
+        "xml": "contracts-full.xml",
+        "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.ConversationQueryUsesLiteralFieldsAndOptionalArchiveFlag",
+        "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+        "method": "ConversationQueryUsesLiteralFieldsAndOptionalArchiveFlag",
+        "result": "Pass"
+      },
+      {
+        "xml": "contracts-full.xml",
+        "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.ResponseHasOnlyLiteralSafeFieldsAndNameBasedOutcome(outcome: NoMatch, name: \\\"NoMatch\\\")",
+        "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+        "method": "ResponseHasOnlyLiteralSafeFieldsAndNameBasedOutcome",
+        "result": "Pass"
+      },
+      {
+        "xml": "contracts-full.xml",
+        "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.ResponseHasOnlyLiteralSafeFieldsAndNameBasedOutcome(outcome: SingleCandidate, name: \\\"SingleCandidate\\\")",
+        "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+        "method": "ResponseHasOnlyLiteralSafeFieldsAndNameBasedOutcome",
+        "result": "Pass"
+      },
+      {
+        "xml": "contracts-full.xml",
+        "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.ResponseHasOnlyLiteralSafeFieldsAndNameBasedOutcome(outcome: MultipleCandidates, name: \\\"MultipleCandidates\\\")",
+        "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+        "method": "ResponseHasOnlyLiteralSafeFieldsAndNameBasedOutcome",
+        "result": "Pass"
+      },
+      {
+        "xml": "contracts-full.xml",
+        "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.EmptyIncompleteResponseRetainsLiteralNullResultAndUnsupportedKinds",
+        "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+        "method": "EmptyIncompleteResponseRetainsLiteralNullResultAndUnsupportedKinds",
+        "result": "Pass"
+      }
+    ],
+    "Final legacy File documentation": [
+      {
+        "xml": "projects-full.xml",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.Resolve_FileInputCannotScoreWithoutOwnerMapping",
+        "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+        "method": "Resolve_FileInputCannotScoreWithoutOwnerMapping",
+        "result": "Pass"
+      }
+    ]
+  }
+}

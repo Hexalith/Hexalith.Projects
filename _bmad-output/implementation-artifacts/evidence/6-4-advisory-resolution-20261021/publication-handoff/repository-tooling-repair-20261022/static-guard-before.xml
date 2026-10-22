@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.491" timestamp="2026-10-22T11:51:58.954481+02:00" hostname="DESKTOP-VIOG240"><testcase classname="_bmad.scripts.tests.test_static_anti_skip_guard" name="test_python_tooling_lane_has_no_ambient_skip_constructs" time="0.468"><failure message="AssertionError: Prohibited ambient-skip constructs:&#10;  _bmad/scripts/tests/test_authoring_outputs.py:261: skipif expression&#10;assert [('_bmad/scri... expression')] == []&#10;  &#10;  Left contains one more item: ('_bmad/scripts/tests/test_authoring_outputs.py', 261, 'skipif expression')&#10;  Use -v to get more diff">def test_python_tooling_lane_has_no_ambient_skip_constructs() -&gt; None:
+        prohibited_fixtures = {
+            "fixtures/ambient-dirt.py": "verifier.worktree_dirt(ROOT)\n",
+            "fixtures/direct-skip.py": "pytest.skip('ambient state')\n",
+            "fixtures/skipif-call.py": "skipif(condition)\n",
+            "fixtures/skipif-decorator.py": "@pytest.mark.skipif(condition, reason='ambient')\ndef check():\n    pass\n",
+            "fixtures/skipif-marker.py": "pytestmark = pytest.mark.skipif(condition, reason='ambient')\n",
+        }
+        fixture_diagnostics = sorted(
+            diagnostic
+            for relative_path, source in prohibited_fixtures.items()
+            for diagnostic in _source_diagnostics(relative_path, source)
+        )
+        assert fixture_diagnostics == [
+            ("fixtures/ambient-dirt.py", 1, "verifier.worktree_dirt(ROOT) call"),
+            ("fixtures/direct-skip.py", 1, "pytest.skip call"),
+            ("fixtures/skipif-call.py", 1, "skipif expression"),
+            ("fixtures/skipif-decorator.py", 1, "skipif expression"),
+            ("fixtures/skipif-marker.py", 1, "skipif expression"),
+        ]
+    
+        allowed_source = """
+    # pytest.skip('comment only') and pytest.mark.skipif(True, reason='comment only')
+    EXPLANATION = "pytest.skip('string only'); skipif(True); verifier.worktree_dirt(ROOT)"
+    verifier.worktree_dirt(tmp_path)
+    """
+        assert _source_diagnostics("fixtures/allowed.py", allowed_source) == []
+    
+        diagnostics = sorted(
+            diagnostic
+            for path in TEST_ROOT.rglob("*.py")
+            for diagnostic in _source_diagnostics(path.relative_to(ROOT).as_posix(), path.read_text(encoding="utf-8"))
+        )
+&gt;       assert diagnostics == [], "Prohibited ambient-skip constructs:\n" + "\n".join(
+            f"{path}:{line}: {message}" for path, line, message in diagnostics
+        )
+E       AssertionError: Prohibited ambient-skip constructs:
+E         _bmad/scripts/tests/test_authoring_outputs.py:261: skipif expression
+E       assert [('_bmad/scri... expression')] == []
+E         
+E         Left contains one more item: ('_bmad/scripts/tests/test_authoring_outputs.py', 261, 'skipif expression')
+E         Use -v to get more diff
+
+_bmad/scripts/tests/test_static_anti_skip_guard.py:85: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,39 @@
+{
+  "spec_status": "done",
+  "story_status": "review",
+  "sprint_status": "review",
+  "source_hashes_verified_after_all_builds": 70,
+  "final_passed": 2609,
+  "failures": 0,
+  "skips": 0,
+  "post_status_checks": [
+    {
+      "command": "python3 -m unittest discover -s tests/tools -p test_production_authority_guard.py",
+      "exit_code": 0,
+      "tests": 29
+    },
+    {
+      "command": "python3 tools/planning/validate_production_authority.py --story-id 6.4",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 tools/planning/validate_production_authority.py --validate-index",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "metadata_sha256": {
+    "_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md": "3859078f7c79e3685a5ba5fcf8ddcd095eff7e6944017caf580a4e1bf0da6994",
+    "_bmad-output/implementation-artifacts/6-4-resolve-projects-with-transient-current-explanations.md": "46ce2f623ea349a8a4a68f7cc84e07ba62af3e229b3f04e9925f634205b45fad",
+    "_bmad-output/implementation-artifacts/sprint-status.yaml": "5732b5a3a33b988677ea50009e82b4b13390ca730f5ca78efaceddd31eb8dfcb",
+    "_bmad-output/implementation-artifacts/deferred-work.md": "3cb333f5ec4951e819a4265fa6ac33e53a82fd74aeeb7e291321d9a82a0f1011"
+  },
+  "root_commit_created": false,
+  "root_push_performed": false,
+  "commit_boundary": "The approved frozen scope excludes root Git staging/commits; later explicit go-aheads covered Conversations and Builds.",
+  "publication_receipt": "../publication-handoff/verified-publication.json",
+  "pin_receipt": "../publication-handoff/consumer-pin-landed.json"
+}

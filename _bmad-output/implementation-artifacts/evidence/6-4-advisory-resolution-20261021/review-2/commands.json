@@ -1,0 +1,153 @@
+[
+  {
+    "command": "dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Debug -m:1 -p:UseHexalithProjectReferences=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons -p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "build-projects.log"
+  },
+  {
+    "command": "dotnet build references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj -c Debug -p:UseHexalithProjectReferences=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -m:1",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "build-conversations.log"
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj -c Debug -m:1 -p:UseHexalithProjectReferences=true",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "build-engine.log"
+  },
+  {
+    "command": "STORY61_DAPR_HTTP_ENDPOINT=http://127.0.0.1:35164 STORY61_DAPR_GRPC_ENDPOINT=http://127.0.0.1:50164 dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests -class Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests -class Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests -class Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests -class Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests -class Hexalith.Projects.Server.Tests.ProjectsServerModuleTests -result-xml /tmp/story64-projects-focused-final.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "projects-focused.runner.log"
+  },
+  {
+    "command": "STORY61_DAPR_HTTP_ENDPOINT=http://127.0.0.1:35164 STORY61_DAPR_GRPC_ENDPOINT=http://127.0.0.1:50164 dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -result-xml /tmp/story64-projects-full-final.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "projects-full.runner.log"
+  },
+  {
+    "command": "dotnet references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll -class Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest -class Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest -result-xml /tmp/story64-conversations-focused.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "conversations-focused.runner.log"
+  },
+  {
+    "command": "dotnet references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll -result-xml /tmp/story64-conversations-full.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "conversations-full.runner.log"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Projects.Tests/bin/Debug/net10.0/Hexalith.Projects.Tests.dll -class '*Resolution*' -result-xml /tmp/story64-engine.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "engine.runner.log"
+  },
+  {
+    "command": "python3 -m unittest discover -s tests/tools -p test_production_authority_guard.py",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "planning-guard.log"
+  },
+  {
+    "command": "python3 tools/planning/validate_production_authority.py --validate-index",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "production-authority-index.log"
+  },
+  {
+    "command": "python3 tools/planning/validate_production_authority.py --story-id 6-4-resolve-projects-with-transient-current-explanations",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "production-authority-story.log"
+  },
+  {
+    "command": "git diff --check",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "root-diff-check.log"
+  },
+  {
+    "command": "git -C references/Hexalith.Conversations diff --check",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 2,
+    "evidence": "conversations-diff-check-raw.log"
+  },
+  {
+    "command": "git -C references/Hexalith.Conversations -c core.whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol diff --check",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "conversations-diff-check-crlf.log"
+  },
+  {
+    "command": "STORY61_DAPR_HTTP_ENDPOINT=http://127.0.0.1:35164 STORY61_DAPR_GRPC_ENDPOINT=http://127.0.0.1:50164 dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -result-xml /tmp/story64-projects-full.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "evidence": "projects-mixed-graph-failed.xml"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class Hexalith.Projects.Server.Tests.WorkersSubscriptionHostingTests -result-xml /tmp/story64-workers-pinned.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "evidence": "workers-minver-only-failed.xml"
+  },
+  {
+    "command": "dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class Hexalith.Projects.Server.Tests.WorkersSubscriptionHostingTests -result-xml /tmp/story64-workers-roots.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "workers-source-roots.xml"
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Debug -p:UseHexalithProjectReferences=true -m:1",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "evidence": "build-projects-initial-failed.log",
+    "superseded": true
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Debug -p:UseHexalithProjectReferences=true -p:HexalithEventStoreFromSource=true -m:1",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "evidence": "build-projects-source-flag-only-failed.log",
+    "superseded": true
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Debug -p:UseHexalithProjectReferences=true -p:HexalithEventStoreFromSource=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -m:1",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "evidence": "build-projects-route-argument-failed.log",
+    "superseded": true
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Debug -p:UseHexalithProjectReferences=true -p:HexalithEventStoreFromSource=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -m:1",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "evidence": "build-projects-test-await-failed.log",
+    "superseded": true
+  },
+  {
+    "command": "dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Debug -p:UseHexalithProjectReferences=true -p:HexalithEventStoreFromSource=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -p:MinVerVersionOverride=1.0.0 -m:1",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "evidence": "build-projects-minver-only.log",
+    "superseded": true
+  },
+  {
+    "command": "dotnet build references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj -c Debug -p:UseHexalithProjectReferences=true -p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore -m:1",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "evidence": "build-conversations-test-null-check-failed.log",
+    "superseded": true
+  },
+  {
+    "command": "STORY61_DAPR_HTTP_ENDPOINT=http://127.0.0.1:35164 STORY61_DAPR_GRPC_ENDPOINT=http://127.0.0.1:50164 dotnet tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll -class Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests -class Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests -class Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests -class Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests -class Hexalith.Projects.Server.Tests.ProjectsServerModuleTests -result-xml /tmp/story64-projects-focused.xml",
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "evidence": "projects-focused-failed.xml",
+    "superseded": true
+  }
+]

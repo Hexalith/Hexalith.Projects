@@ -1,0 +1,49 @@
+{
+  "release": {
+    "id": 39764388610,
+    "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39764388610",
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "71fab44b7dd664699cedbbfc17ed0d7822e8bdb9",
+    "actor": "jpiquot",
+    "event": "workflow_dispatch"
+  },
+  "github_release": {
+    "id": 420595605,
+    "url": "https://github.com/Hexalith/Hexalith.Conversations/releases/tag/v1.3.0",
+    "tag_name": "v1.3.0",
+    "target_commitish": "main",
+    "published_at": "2026-10-22T10:41:34Z",
+    "draft": false,
+    "prerelease": false
+  },
+  "jobs": [
+    {
+      "id": 119776108080,
+      "name": "Verify exact green main and requested release destinations",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119776269129,
+      "name": "Publish Conversations packages",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 119778270971,
+      "name": "Verify exact packages, symbols, tag, and source",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "version": "1.3.0",
+  "source_revision": "71fab44b7dd664699cedbbfc17ed0d7822e8bdb9",
+  "dispatched_by_this_session": false,
+  "independent_verification": {
+    "command": "python3 scripts/verify-release-state.py present 1.3.0 --repository Hexalith/Hexalith.Conversations --source-sha 71fab44b7dd664699cedbbfc17ed0d7822e8bdb9 --attempts 61 --delay-seconds 15",
+    "exit_code": 0,
+    "log": "publication-verification.log.gz",
+    "checks": "All four package destinations, symbols, GitHub tag/release and source identity passed the repository's exact verification contract."
+  }
+}

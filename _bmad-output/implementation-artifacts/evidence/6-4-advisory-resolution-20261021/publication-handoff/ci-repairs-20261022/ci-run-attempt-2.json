@@ -1,0 +1,89 @@
+{
+  "id": 39744196218,
+  "name": "CI",
+  "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39744196218",
+  "head_sha": "17dfc440c9d4e208879f3c121cb97ffe3460a2c7",
+  "status": "completed",
+  "conclusion": "failure",
+  "run_attempt": 2,
+  "referenced_workflows": [
+    {
+      "path": "Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@main",
+      "sha": "4248b8c70cb35ba79fdd7e4dd63049d4c73211a0",
+      "ref": "refs/heads/main"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 119755246205,
+      "name": "ci / minimal-module platform compatibility",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "id": 119755247909,
+      "name": "ci / repository",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Test BMAD repository tooling"
+      ]
+    },
+    {
+      "id": 119755248294,
+      "name": "ci / release-tooling",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "id": 119755248970,
+      "name": "ci / conformance",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "id": 119755249429,
+      "name": "ci / aspire-tests",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "id": 119755250113,
+      "name": "ci / performance-tests",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 119755293966,
+      "name": "ci / admin-web",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "id": 119755294271,
+      "name": "ci / TestSupport Windows descendant cleanup",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "id": 119755296201,
+      "name": "ci / build-and-test",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    }
+  ],
+  "assessment": "All feature/conformance/build/integration/Aspire and compatibility jobs passed. One existing repository anti-skip guard failure remains in the POSIX FIFO authoring test. Performance lane remains skipped by existing workflow policy.",
+  "compatibility_retry": {
+    "first_failed_job": 119708802994,
+    "retry_job": 119755246205,
+    "retry_conclusion": "success",
+    "source_or_workflow_changed": false
+  }
+}

@@ -1,0 +1,99 @@
+[
+  {
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "command": [
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "python3",
+      "-m",
+      "pytest",
+      "-q",
+      "-ra",
+      "-p",
+      "no:cacheprovider",
+      "_bmad/scripts/tests/test_static_anti_skip_guard.py",
+      "--junitxml=/tmp/story64-repository-tooling-repair-20261022/static-guard-before.xml"
+    ],
+    "exitCode": 1,
+    "elapsedSeconds": 0.771
+  },
+  {
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "command": [
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "python3",
+      "-m",
+      "pytest",
+      "-q",
+      "-ra",
+      "-p",
+      "no:cacheprovider",
+      "_bmad/scripts/tests/test_authoring_outputs.py",
+      "_bmad/scripts/tests/test_static_anti_skip_guard.py",
+      "--junitxml=/tmp/story64-repository-tooling-repair-20261022/authoring-and-static-after.xml"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 69.052
+  },
+  {
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "command": [
+      "uv",
+      "--version"
+    ],
+    "exitCode": 0,
+    "log": "uv-version.log"
+  },
+  {
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "command": [
+      "uv",
+      "sync",
+      "--locked",
+      "--python",
+      "3.11"
+    ],
+    "exitCode": 0,
+    "log": "locked-sync.log"
+  },
+  {
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "command": [
+      "uv",
+      "run",
+      "--frozen",
+      "--no-sync",
+      "python3",
+      "-c",
+      "import importlib.metadata,json,platform; print(json.dumps({\"python\":platform.python_version(),\"pytest\":importlib.metadata.version(\"pytest\"),\"jsonschema\":importlib.metadata.version(\"jsonschema\")},indent=2))"
+    ],
+    "exitCode": 0,
+    "log": "tooling-versions.log"
+  },
+  {
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "command": [
+      "git",
+      "diff",
+      "--",
+      "_bmad/scripts/tests/test_authoring_outputs.py"
+    ],
+    "exitCode": 0,
+    "log": "source-diff.log"
+  },
+  {
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "whitespace-check.log"
+  }
+]

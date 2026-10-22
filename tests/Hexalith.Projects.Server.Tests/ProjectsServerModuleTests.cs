@@ -95,6 +95,8 @@ public sealed class ProjectsServerModuleTests
         AdminOperationalIndexMetadata.DomainMetadata domain = response.Domains.ShouldHaveSingleItem();
         domain.Domain.ShouldBe(ProjectsServerModule.DomainName);
         domain.QueryTypes.ShouldContain(ResolveProjectChatBotAuthority.QueryType);
+        domain.QueryTypes.ShouldContain(ResolveProjectFromConversationQuery.QueryType);
+        domain.QueryTypes.ShouldContain(ResolveProjectFromAttachmentsQuery.QueryType);
         domain.QueryTypes.ShouldContain(ProjectsServerModule.GetConversationStartSetupQueryType);
         domain.QueryTypes.ShouldContain(ProjectsServerModule.GetProjectContextQueryType);
         domain.QueryTypes.ShouldContain(ProjectsServerModule.ExplainContextSelectionQueryType);

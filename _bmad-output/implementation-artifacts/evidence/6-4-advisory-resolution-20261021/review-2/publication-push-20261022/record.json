@@ -1,0 +1,193 @@
+{
+  "scope": "Story 6.4 Conversations commit/push handoff",
+  "approved_by": "User replied yes to committing and pushing the Conversations fixes for CI",
+  "repository": "Hexalith/Hexalith.Conversations",
+  "branch": "main",
+  "original_baseline_revision": "20e67c96427652d35abf53fd8299825f191cf02a",
+  "pre_rebase_local_revision": "1bab53707a4c0bf5aaf299f2dbd86e4ff715d075",
+  "integrated_remote_revision": "6c3cb6d574364eb8c971bf8c92c5c0df967c5246",
+  "pushed_revision": "591ee3b3fa09cee761f6d56b7f82fa0d16cd04ed",
+  "commit_url": "https://github.com/Hexalith/Hexalith.Conversations/commit/591ee3b3fa09cee761f6d56b7f82fa0d16cd04ed",
+  "verified_files": 8,
+  "verified_files_byte_identical_after_rebase": true,
+  "commitlint": {
+    "exit_code": 0,
+    "problems": 0,
+    "warnings": 0,
+    "log": "commitlint.log"
+  },
+  "commit_hooks": {
+    "enabled": true,
+    "pre_commit": "CRLF-compatible staged whitespace check passed",
+    "commit_msg": "Repository-pinned commitlint passed"
+  },
+  "nested_submodules_initialized": false,
+  "root_changes_staged_or_committed": false,
+  "release_plan": {
+    "version": "1.3.0",
+    "dry_run": true,
+    "exit_code": 0,
+    "log": "release-plan.log"
+  },
+  "release_destinations": {
+    "version": "1.3.0",
+    "absent": true,
+    "command": "python3 scripts/verify-release-state.py absent 1.3.0 --repository Hexalith/Hexalith.Conversations",
+    "exit_code": 0
+  },
+  "workflow_runs": [
+    {
+      "id": 39739114750,
+      "name": "CI",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39739114750",
+      "head_sha": "591ee3b3fa09cee761f6d56b7f82fa0d16cd04ed",
+      "referenced_workflows": [
+        {
+          "path": "Hexalith/Hexalith.Builds/.github/workflows/domain-ci.yml@main",
+          "sha": "4248b8c70cb35ba79fdd7e4dd63049d4c73211a0",
+          "ref": "refs/heads/main"
+        }
+      ],
+      "jobs": [
+        {
+          "id": 119691779085,
+          "name": "ci / conformance",
+          "status": "completed",
+          "conclusion": "failure",
+          "steps": [
+            {
+              "name": "Run current conformance checks",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 119691779290,
+          "name": "ci / admin-web",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 119691779381,
+          "name": "ci / minimal-module platform compatibility",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 119691779422,
+          "name": "ci / build-and-test",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Integration tests (Tier 2, Microsoft.Testing.Platform)",
+              "conclusion": "cancelled"
+            },
+            {
+              "name": "Fail on blocking test failures",
+              "conclusion": "failure"
+            }
+          ]
+        },
+        {
+          "id": 119691779495,
+          "name": "ci / repository",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "steps": [
+            {
+              "name": "Test BMAD repository tooling",
+              "conclusion": "cancelled"
+            }
+          ]
+        },
+        {
+          "id": 119691779568,
+          "name": "ci / TestSupport Windows descendant cleanup",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 119691779657,
+          "name": "ci / release-tooling",
+          "status": "completed",
+          "conclusion": "success",
+          "steps": []
+        },
+        {
+          "id": 119698115438,
+          "name": "ci / aspire-tests",
+          "status": "completed",
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 119698116066,
+          "name": "ci / performance-tests",
+          "status": "completed",
+          "conclusion": "cancelled"
+        }
+      ]
+    },
+    {
+      "id": 39739114388,
+      "name": "Commit message policy",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39739114388",
+      "head_sha": "591ee3b3fa09cee761f6d56b7f82fa0d16cd04ed",
+      "referenced_workflows": []
+    },
+    {
+      "id": 39739114684,
+      "name": "CodeQL",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39739114684",
+      "head_sha": "591ee3b3fa09cee761f6d56b7f82fa0d16cd04ed",
+      "referenced_workflows": [
+        {
+          "path": "Hexalith/Hexalith.Builds/.github/workflows/codeql.yml@main",
+          "sha": "4248b8c70cb35ba79fdd7e4dd63049d4c73211a0",
+          "ref": "refs/heads/main"
+        }
+      ]
+    }
+  ],
+  "publication_authorized": false,
+  "publication_dispatched": false,
+  "pending": "Green exact-commit CI, separate release approval, publication, then consumer pin",
+  "followup": {
+    "upstream_revision": "fd4035f2d3eda3d4da83576d56dfaf9a36cd503c",
+    "upstream_changes": "Documentation-only Story 12.1 addition cancelled the earlier run during later suites; conformance and Contracts failures were independently observed before cancellation.",
+    "observed_failures": [
+      {
+        "suite": "Portable conformance",
+        "tests": 326,
+        "failed": 5,
+        "causes": [
+          "Current contract baseline records 219 exported types; current approved surface contains 225 types and four additive optional scoring-label properties.",
+          "Historical projection proof refers to a renamed cross-Tenant test and old zero-write behavior.",
+          "ResolutionProjectionGateway duplicates an SDK technical gateway fake."
+        ]
+      },
+      {
+        "suite": "Contracts",
+        "failed": 1,
+        "causes": [
+          "AllContracts serialization fixture inventory omits the two advisory DTOs; verify complete coverage of all six approved query DTOs."
+        ]
+      }
+    ],
+    "server_suite": {
+      "passed": 1135,
+      "failed": 0
+    },
+    "repair_spec": "../../../../spec-6-4-resolve-projects-with-transient-current-explanations.md#publication-ci-repairs",
+    "repair_evidence": "Pending separate follow-up records; original review results remain historical for their original source hashes."
+  }
+}

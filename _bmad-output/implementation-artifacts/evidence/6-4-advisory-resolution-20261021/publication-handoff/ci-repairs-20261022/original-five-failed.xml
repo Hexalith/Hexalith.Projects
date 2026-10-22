@@ -1,0 +1,348 @@
+<assemblies schema-version="3" id="ff18548d-1c22-4dea-872f-3346d859fa7e" computer="DESKTOP-VIOG240" user="administrator" start-rtf="2026-10-22T07:34:00.9594347+00:00" finish-rtf="2026-10-22T07:34:01.5457978+00:00" timestamp="10/22/2026 09:34:01"><assembly environment="64-bit (x64) .NET 10.0.13 [collection-per-class, parallel (collections, 14 threads)]" id="30b6ea52-0088-4901-8ef9-795307102361" name="/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Portable.Tests/bin/Debug/net10.0/Hexalith.Conversations.Conformance.Portable.Tests.dll" run-date="2026-10-22" run-time="07:34:00" start-rtf="2026-10-22T07:34:00.9594347+00:00" test-framework="xUnit.net v3 4.0.2+0c7aa4991f" target-framework=".NETCoreApp,Version=v10.0" errors="0" failed="5" finish-rtf="2026-10-22T07:34:01.5457978+00:00" not-run="0" passed="0" skipped="0" time="0.586" time-rtf="00:00:00.5860000" total="5"><collection name="ReleaseEvidenceArtifacts" id="b37099ba-1b17-4ff3-8eda-08f09c7fde1f" failed="4" not-run="0" passed="0" skipped="0" time="0.178" time-rtf="00:00:00.1780000" total="4"><test id="8920454e-96c7-426b-867b-2cb811090645" name="Hexalith.Conversations.Conformance.Tests.ProjectionReadStorePopulationProofValidationTest.Ac5AndAc6ClaimsShouldBeBoundToPassingMachineReadableRuns" result="Fail" time="0.11" time-rtf="00:00:00.1100000" start-rtf="2026-10-22T07:34:01.3596056+00:00" finish-rtf="2026-10-22T07:34:01.4706517+00:00" type="Hexalith.Conversations.Conformance.Tests.ProjectionReadStorePopulationProofValidationTest" method="Ac5AndAc6ClaimsShouldBeBoundToPassingMachineReadableRuns" source-file="/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/ProjectionReadStorePopulationProofValidationTest.cs" source-line="406"><failure exception-type="Shouldly.ShouldAssertException"><message>Shouldly.ShouldAssertException : declared
+    should be
+True
+    but was
+False
+
+Additional Info:
+    the bound run artifact names Hexalith.Conversations.Server.Tests.Projections.ConversationAsyncProjectionHandlerTest.CrossTenantEventShouldFailWithoutWritingEitherTenantScope, but no test source declares CrossTenantEventShouldFailWithoutWritingEitherTenantScope; a renamed or deleted bound test must not leave the committed artifact silently authoritative</message><stack-trace>   at Hexalith.Conversations.Conformance.Tests.ProjectionReadStorePopulationProofValidationTest.AssertBoundTestStillExists(String testCase) in /home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/ProjectionReadStorePopulationProofValidationTest.cs:line 1152
+   at Hexalith.Conversations.Conformance.Tests.ProjectionReadStorePopulationProofValidationTest.AssertScenarioRunPassed(JsonElement scenario, IReadOnlyDictionary`2 runs) in /home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/ProjectionReadStorePopulationProofValidationTest.cs:line 1131
+   at Hexalith.Conversations.Conformance.Tests.ProjectionReadStorePopulationProofValidationTest.Ac5AndAc6ClaimsShouldBeBoundToPassingMachineReadableRuns() in /home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/ProjectionReadStorePopulationProofValidationTest.cs:line 415
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</stack-trace></failure></test><test id="3ce5877e-55a2-4f5d-bd22-ab75e0233d14" name="Hexalith.Conversations.Conformance.Tests.PublicContractShapeSnapshotGenerationTest.CurrentSnapshotShouldMatchCommittedBaselineWithoutWriting" result="Fail" time="0.05" time-rtf="00:00:00.0500000" start-rtf="2026-10-22T07:34:01.4718688+00:00" finish-rtf="2026-10-22T07:34:01.5224278+00:00" type="Hexalith.Conversations.Conformance.Tests.PublicContractShapeSnapshotGenerationTest" method="CurrentSnapshotShouldMatchCommittedBaselineWithoutWriting" source-file="/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/PublicContractShapeSnapshotGenerationTest.cs" source-line="98"><failure exception-type="Shouldly.ShouldAssertException"><message>Shouldly.ShouldAssertException : currentSnapshot
+    should be
+\"{
+  \"artifactKind\": \"public-contract-shape-baseline\",
+  \"version\": \"v1\",
+  \"assembly\": \"Hexalith.Conversations.Contracts\",
+  \"description\": \"Deterministic snapshot of every exported public type and member of the Hexalith.Conversations.Contracts assembly. FR-20 / Story 5.1 behavior-preservation baseline: Story 5.1 re-runs the generator and diffs its output against this committed file. Regenerate with: dotnet test tests/Hexalith.Conversations.Conformance.Tests --filter \\\"FullyQualifiedName~PublicContractShapeSnapshotGenerationTest\\\". Captured by reflection over the built assembly; types and members are sorted for byte-stable diffing. Note: the Conversations closed vocabularies (e.g. ConversationErrorCode) use the smart-enum record pattern, so their members appear as static properties rather than CLR enum members.\",
+  \"generatedBy\": \"PublicContractShapeSnapshotGenerationTest.GenerateAndSaveContractShapeSnapshotFile\",
+  \"releaseGateAreaCoverage\": [
+    {
+      \"area\": \"tenant-isolation\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Identifiers\",
+        \"Hexalith.Conversations.Contracts.Errors\"
+      ],
+      \"note\": \"TenantId plus tenant-scoped command/query fields and tenant-denial error codes.\"
+    },
+    {
+      \"area\": \"governance-audit\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Governance\"
+      ],
+      \"note\": \"Governance commands/results and audit evidence envelopes.\"
+    },
+    {
+      \"area\": \"idempotency\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Commands\",
+        \"Hexalith.Conversations.Contracts.Results\"
+      ],
+      \"note\": \"Command metadata, command-accepted results, and idempotency error codes.\"
+    },
+    {
+      \"area\": \"redaction\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Events\",
+        \"Hexalith.Conversations.Contracts.Governance\"
+      ],
+      \"note\": \"Redaction domain events plus redaction command/result and projection envelopes.\"
+    },
+    {
+      \"area\": \"projection-freshness\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Projections\",
+        \"Hexalith.Conversations.Contracts.TrustStates\"
+      ],
+      \"note\": \"Projection freshness shapes and projection trust state.\"
+    },
+    {
+      \"area\": \"contract-validation\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Versioning\",
+        \"Hexalith.Conversations.Contracts.Conformance\",
+        \"Hexalith.Conversations.Contracts.Errors\"
+      ],
+      \"note\": \"Schema versioning, conformance contract types, and the closed error-code vocabulary.\"
+    }
+  ],
+  \"typeCount\": 219,
+  \"types\": [
+    {
+      \"namespace\": \"Hexalith.Conversations.Contracts\",
+      \"name\": \"ContractsAssemblyMarker\",
+      \"kind\": \"class\",
+      \"isAbstract\": false,
+      \"isSealed\": true
+    },
+    {
+      \"namespace\": \"Hexalith.Conversations.Contracts.Agents\",
+      \"name\": \"AgentMessageProvenance\",
+      \"kind\": \"record\",
+      \"isAbstract\": false,
+      \"isSealed\": true,
+      \"interfaces\": [
+        \"System.IEquatable&lt;Hexalith.Conversations.Contracts.Agents.AgentMessageProvenance&gt;\"
+      ],
+      \"properties\": [
+        {
+          \"name\": \"AgentCallTraceReference\",
+          \"type\": \"System.String\",
+          \"canRead\": true,
+          \"canWrite\": true,
+          \"isStatic\": false
+        },
+        {
+          \"name\": \"AiGenerated\",
+          \"type\": \"System.Boolean\",
+          \"canRead\": true,
+          \"canWrite\": true,
+          \"isStatic\": false
+        },
+        {
+          \"name\": \"EditedByPartyId\",
+          \"type\": \"Hexalith.Conversations.Contracts.Identifiers.PartyId\",
+          \"canRead\": true,
+          \"canWrite\": true,
+          \"isStatic\": false
+        },
+        {
+          \"name\": \"HumanEdited\",
+          \"type\": \"System.Boolean\",
+          \"canRead\": true,
+          \"canWrite\": true,
+          \"isStatic\": false
+        }
+      ],
+      \"constructors\": [
+        {
+          \"name\": \"(ctor)\",
+          \"parameters\": [
+            {
+              \"name\": \"AgentCallTraceReference\",
+              \"type\": \"System.String\"
+            },
+            {
+              \"name\": \"AiGenerated\",
+              \"type\": \"System.Boolean\"
+            },
+            {
+              \"name\": \"HumanEdited\",
+              \"type\": \"System.Boolean\"
+            },
+            {
+              \"name\": \"EditedByPartyId\",
+              \"type\": \"Hexalith.Conversations.Contracts.Identifiers.PartyId\"
+            }
+          ]
+        }
+      ],
+      \"methods\": [
+        {
+          \"name\": \"Deconstruct\",
+          \"returnType\": \"System.Void\",
+          \"parameters\": [
+            {
+              \"name\": \"AgentCallTraceReference\",
+              \"type\": \"System.String&amp;\"
+            },
+            {
+              \"name\": \"AiGenerated\",
+              \"type\": \"System.Boolean&amp;\"
+            },
+            {
+              \"name\": \"HumanEdited\",
+              \"type\": \"System.Boolean&amp;\"
+            },
+            {
+              \"name\": \"EditedByPartyId\",
+       \"
+    but was
+\"{
+  \"artifactKind\": \"public-contract-shape-baseline\",
+  \"version\": \"v1\",
+  \"assembly\": \"Hexalith.Conversations.Contracts\",
+  \"description\": \"Deterministic snapshot of every exported public type and member of the Hexalith.Conversations.Contracts assembly. FR-20 / Story 5.1 behavior-preservation baseline: Story 5.1 re-runs the generator and diffs its output against this committed file. Regenerate with: dotnet test tests/Hexalith.Conversations.Conformance.Tests --filter \\\"FullyQualifiedName~PublicContractShapeSnapshotGenerationTest\\\". Captured by reflection over the built assembly; types and members are sorted for byte-stable diffing. Note: the Conversations closed vocabularies (e.g. ConversationErrorCode) use the smart-enum record pattern, so their members appear as static properties rather than CLR enum members.\",
+  \"generatedBy\": \"PublicContractShapeSnapshotGenerationTest.GenerateAndSaveContractShapeSnapshotFile\",
+  \"releaseGateAreaCoverage\": [
+    {
+      \"area\": \"tenant-isolation\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Identifiers\",
+        \"Hexalith.Conversations.Contracts.Errors\"
+      ],
+      \"note\": \"TenantId plus tenant-scoped command/query fields and tenant-denial error codes.\"
+    },
+    {
+      \"area\": \"governance-audit\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Governance\"
+      ],
+      \"note\": \"Governance commands/results and audit evidence envelopes.\"
+    },
+    {
+      \"area\": \"idempotency\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Commands\",
+        \"Hexalith.Conversations.Contracts.Results\"
+      ],
+      \"note\": \"Command metadata, command-accepted results, and idempotency error codes.\"
+    },
+    {
+      \"area\": \"redaction\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Events\",
+        \"Hexalith.Conversations.Contracts.Governance\"
+      ],
+      \"note\": \"Redaction domain events plus redaction command/result and projection envelopes.\"
+    },
+    {
+      \"area\": \"projection-freshness\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Projections\",
+        \"Hexalith.Conversations.Contracts.TrustStates\"
+      ],
+      \"note\": \"Projection freshness shapes and projection trust state.\"
+    },
+    {
+      \"area\": \"contract-validation\",
+      \"namespaces\": [
+        \"Hexalith.Conversations.Contracts.Versioning\",
+        \"Hexalith.Conversations.Contracts.Conformance\",
+        \"Hexalith.Conversations.Contracts.Errors\"
+      ],
+      \"note\": \"Schema versioning, conformance contract types, and the closed error-code vocabulary.\"
+    }
+  ],
+  \"typeCount\": 225,
+  \"types\": [
+    {
+      \"namespace\": \"Hexalith.Conversations.Contracts\",
+      \"name\": \"ContractsAssemblyMarker\",
+      \"kind\": \"class\",
+      \"isAbstract\": false,
+      \"isSealed\": true
+    },
+    {
+      \"namespace\": \"Hexalith.Conversations.Contracts.Agents\",
+      \"name\": \"AgentMessageProvenance\",
+      \"kind\": \"record\",
+      \"isAbstract\": false,
+      \"isSealed\": true,
+      \"interfaces\": [
+        \"System.IEquatable&lt;Hexalith.Conversations.Contracts.Agents.AgentMessageProvenance&gt;\"
+      ],
+      \"properties\": [
+        {
+          \"name\": \"AgentCallTraceReference\",
+          \"type\": \"System.String\",
+          \"canRead\": true,
+          \"canWrite\": true,
+          \"isStatic\": false
+        },
+        {
+          \"name\": \"AiGenerated\",
+          \"type\": \"System.Boolean\",
+          \"canRead\": true,
+          \"canWrite\": true,
+          \"isStatic\": false
+        },
+        {
+          \"name\": \"EditedByPartyId\",
+          \"type\": \"Hexalith.Conversations.Contracts.Identifiers.PartyId\",
+          \"canRead\": true,
+          \"canWrite\": true,
+          \"isStatic\": false
+        },
+        {
+          \"name\": \"HumanEdited\",
+          \"type\": \"System.Boolean\",
+          \"canRead\": true,
+          \"canWrite\": true,
+          \"isStatic\": false
+        }
+      ],
+      \"constructors\": [
+        {
+          \"name\": \"(ctor)\",
+          \"parameters\": [
+            {
+              \"name\": \"AgentCallTraceReference\",
+              \"type\": \"System.String\"
+            },
+            {
+              \"name\": \"AiGenerated\",
+              \"type\": \"System.Boolean\"
+            },
+            {
+              \"name\": \"HumanEdited\",
+              \"type\": \"System.Boolean\"
+            },
+            {
+              \"name\": \"EditedByPartyId\",
+              \"type\": \"Hexalith.Conversations.Contracts.Identifiers.PartyId\"
+            }
+          ]
+        }
+      ],
+      \"methods\": [
+        {
+          \"name\": \"Deconstruct\",
+          \"returnType\": \"System.Void\",
+          \"parameters\": [
+            {
+              \"name\": \"AgentCallTraceReference\",
+              \"type\": \"System.String&amp;\"
+            },
+            {
+              \"name\": \"AiGenerated\",
+              \"type\": \"System.Boolean&amp;\"
+            },
+            {
+              \"name\": \"HumanEdited\",
+              \"type\": \"System.Boolean&amp;\"
+            },
+            {
+              \"name\": \"EditedByPartyId\",
+       \"
+    difference
+Difference     |                                                    |    |                                                          
+               |                                                   \\|/  \\|/                                                         
+Index          | ...  2602 2603 2604 2605 2606 2607 2608 2609 2610 2611 2612 2613 2614 2615 2616 2617 2618 2619 2620 2621 2622 ...  
+Expected Value | ...  C    o    u    n    t    \"    :    \\s   2    1    9    ,    \\n   \\s   \\s   \"    t    y    p    e    s    ...  
+Actual Value   | ...  C    o    u    n    t    \"    :    \\s   2    2    5    ,    \\n   \\s   \\s   \"    t    y    p    e    s    ...  
+Expected Code  | ...  67   111  117  110  116  34   58   32   50   49   57   44   10   32   32   34   116  121  112  101  115  ...  
+Actual Code    | ...  67   111  117  110  116  34   58   32   50   50   53   44   10   32   32   34   116  121  112  101  115  ...  
+
+Additional Info:
+    The full live public contract shape differs from the additive Story 9.2 successor. Review the member-level diff and obtain explicit approval instead of regenerating the baseline.</message><stack-trace>   at Hexalith.Conversations.Conformance.Tests.PublicContractShapeSnapshotGenerationTest.CurrentSnapshotShouldMatchCommittedBaselineWithoutWriting() in /home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/PublicContractShapeSnapshotGenerationTest.cs:line 106
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</stack-trace></failure></test><test id="f1e2558f-1808-4f6f-bddf-36e730d1d90f" name="Hexalith.Conversations.Conformance.Tests.ReleaseBaselineValidationTest.CommittedSnapshotTypeCountShouldMatchTheLiveExportedContractSurface" result="Fail" time="0.008" time-rtf="00:00:00.0080000" start-rtf="2026-10-22T07:34:01.5234662+00:00" finish-rtf="2026-10-22T07:34:01.5317910+00:00" type="Hexalith.Conversations.Conformance.Tests.ReleaseBaselineValidationTest" method="CommittedSnapshotTypeCountShouldMatchTheLiveExportedContractSurface" source-file="/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/ReleaseBaselineValidationTest.cs" source-line="177"><failure exception-type="Shouldly.ShouldAssertException"><message>Shouldly.ShouldAssertException : committedTypeCount
+    should be
+225
+    but was
+219
+
+Additional Info:
+    The additive current contract-shape evidence differs from the live public surface.</message><stack-trace>   at Hexalith.Conversations.Conformance.Tests.ReleaseBaselineValidationTest.CommittedSnapshotTypeCountShouldMatchTheLiveExportedContractSurface() in /home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/ReleaseBaselineValidationTest.cs:line 187
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</stack-trace></failure></test><test id="24ac2ef5-4f5f-4bb1-9be2-8eb808b4ad6e" name="Hexalith.Conversations.Conformance.Tests.ReleaseBaselineValidationTest.BaselineReportedTypeCountShouldAgreeWithTheCommittedSnapshotAndLiveSurface" result="Fail" time="0.01" time-rtf="00:00:00.0100000" start-rtf="2026-10-22T07:34:01.5324374+00:00" finish-rtf="2026-10-22T07:34:01.5433921+00:00" type="Hexalith.Conversations.Conformance.Tests.ReleaseBaselineValidationTest" method="BaselineReportedTypeCountShouldAgreeWithTheCommittedSnapshotAndLiveSurface" source-file="/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/ReleaseBaselineValidationTest.cs" source-line="208"><failure exception-type="Shouldly.ShouldAssertException"><message>Shouldly.ShouldAssertException : currentSnapshotDoc.RootElement.GetProperty(\"typeCount\").GetInt32()
+    should be
+225
+    but was
+219
+
+Additional Info:
+    Successor-reported type count disagrees with the live exported contract surface.</message><stack-trace>   at Hexalith.Conversations.Conformance.Tests.ReleaseBaselineValidationTest.BaselineReportedTypeCountShouldAgreeWithTheCommittedSnapshotAndLiveSurface() in /home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/ReleaseBaselineValidationTest.cs:line 226
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</stack-trace></failure></test></collection><collection name="Test collection for Hexalith.Conversations.Conformance.Tests.NoInModuleSharedFakeDuplicateConformanceTest (id: 52ebec4160ccfea18ab5eee316f704b8ae6e5fbea1ebad2b66ebef85f59f7b19)" id="4c128903-6f0f-4147-81ed-198584daac33" failed="1" not-run="0" passed="0" skipped="0" time="0.304" time-rtf="00:00:00.3040000" total="1"><test id="6ce3f5fb-a3d5-4890-86dc-b12398f54a79" name="Hexalith.Conversations.Conformance.Tests.NoInModuleSharedFakeDuplicateConformanceTest.NoInModuleEventStoreGatewayClientDuplicateShouldExist" result="Fail" time="0.304" time-rtf="00:00:00.3040000" start-rtf="2026-10-22T07:34:01.0322977+00:00" finish-rtf="2026-10-22T07:34:01.3482553+00:00" type="Hexalith.Conversations.Conformance.Tests.NoInModuleSharedFakeDuplicateConformanceTest" method="NoInModuleEventStoreGatewayClientDuplicateShouldExist" source-file="/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/NoInModuleSharedFakeDuplicateConformanceTest.cs" source-line="71"><failure exception-type="Shouldly.ShouldAssertException"><message>Shouldly.ShouldAssertException : hits
+    should be empty but had
+1
+    item and was
+[\"tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionProjectionGateway.cs [\\bclass\\s+[A-Za-z_]\\w*\\b[^{}();]*:[^{}();]*\\bIEventStoreGatewayClient\\b]\"]
+
+Additional Info:
+    FR-9 / AC-1: no in-module gateway-client fake may exist (the module's tests never operate at the gateway-transport level). Re-introduced duplicate(s) found at: tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionProjectionGateway.cs [\\bclass\\s+[A-Za-z_]\\w*\\b[^{}();]*:[^{}();]*\\bIEventStoreGatewayClient\\b]</message><stack-trace>   at Hexalith.Conversations.Conformance.Tests.NoInModuleSharedFakeDuplicateConformanceTest.NoInModuleEventStoreGatewayClientDuplicateShouldExist() in /home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Conformance.Tests/NoInModuleSharedFakeDuplicateConformanceTest.cs:line 76
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</stack-trace></failure></test></collection></assembly></assemblies>

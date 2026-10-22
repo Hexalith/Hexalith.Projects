@@ -219,6 +219,7 @@ public static partial class ProjectsDomainServiceEndpoints
             ProjectAuthorizationGate authorizationGate,
             Hexalith.Projects.Server.Conversations.IProjectConversationResolutionDirectory conversationResolutionDirectory,
             IProjectListReadModel listReadModel,
+            Hexalith.Projects.Server.Folders.IProjectFolderDirectory folderDirectory,
             Hexalith.Projects.Resolution.ProjectResolutionEngine resolutionEngine,
             TimeProvider timeProvider,
             CancellationToken cancellationToken)
@@ -228,6 +229,7 @@ public static partial class ProjectsDomainServiceEndpoints
                 authorizationGate,
                 conversationResolutionDirectory,
                 listReadModel,
+                folderDirectory,
                 resolutionEngine,
                 timeProvider,
                 cancellationToken).ConfigureAwait(false))
@@ -238,6 +240,7 @@ public static partial class ProjectsDomainServiceEndpoints
             IProjectTenantContextAccessor tenantContext,
             ProjectAuthorizationGate authorizationGate,
             IProjectReferenceIndexReadModel referenceIndexReadModel,
+            Hexalith.Projects.Server.Folders.IProjectFolderDirectory folderDirectory,
             Hexalith.Projects.Resolution.ProjectResolutionEngine resolutionEngine,
             TimeProvider timeProvider,
             CancellationToken cancellationToken)
@@ -246,6 +249,7 @@ public static partial class ProjectsDomainServiceEndpoints
                 tenantContext,
                 authorizationGate,
                 referenceIndexReadModel,
+                folderDirectory,
                 resolutionEngine,
                 timeProvider,
                 cancellationToken).ConfigureAwait(false))

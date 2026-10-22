@@ -1,0 +1,1331 @@
+{
+  "retained_type_count": 219,
+  "current_type_count": 225,
+  "added": {
+    "Hexalith.Conversations.Contracts.Queries.ConversationResolutionMetadataResultV1": {
+      "namespace": "Hexalith.Conversations.Contracts.Queries",
+      "name": "ConversationResolutionMetadataResultV1",
+      "kind": "record",
+      "isAbstract": false,
+      "isSealed": true,
+      "interfaces": [
+        "System.IEquatable<Hexalith.Conversations.Contracts.Queries.ConversationResolutionMetadataResultV1>"
+      ],
+      "properties": [
+        {
+          "name": "AuthorizedAt",
+          "type": "System.DateTimeOffset?",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        },
+        {
+          "name": "Freshness",
+          "type": "Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessV1",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        },
+        {
+          "name": "Metadata",
+          "type": "Hexalith.Conversations.Contracts.Queries.ConversationResolutionMetadataV1",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        },
+        {
+          "name": "PermissionVersion",
+          "type": "System.String",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        },
+        {
+          "name": "ResourceVersion",
+          "type": "System.String",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        }
+      ],
+      "constructors": [
+        {
+          "name": "(ctor)",
+          "parameters": [
+            {
+              "name": "Metadata",
+              "type": "Hexalith.Conversations.Contracts.Queries.ConversationResolutionMetadataV1"
+            },
+            {
+              "name": "Freshness",
+              "type": "Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessV1"
+            },
+            {
+              "name": "ResourceVersion",
+              "type": "System.String"
+            },
+            {
+              "name": "PermissionVersion",
+              "type": "System.String"
+            },
+            {
+              "name": "AuthorizedAt",
+              "type": "System.DateTimeOffset?"
+            }
+          ]
+        }
+      ],
+      "methods": [
+        {
+          "name": "Deconstruct",
+          "returnType": "System.Void",
+          "parameters": [
+            {
+              "name": "Metadata",
+              "type": "Hexalith.Conversations.Contracts.Queries.ConversationResolutionMetadataV1&"
+            },
+            {
+              "name": "Freshness",
+              "type": "Hexalith.Conversations.Contracts.Projections.ProjectionFreshnessV1&"
+            },
+            {
+              "name": "ResourceVersion",
+              "type": "System.String&"
+            },
+            {
+              "name": "PermissionVersion",
+              "type": "System.String&"
+            },
+            {
+              "name": "AuthorizedAt",
+              "type": "System.Nullable`1[[System.DateTimeOffset, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]&"
+            }
+          ]
+        }
+      ]
+    },
+    "Hexalith.Conversations.Contracts.Queries.ConversationResolutionMetadataV1": {
+      "namespace": "Hexalith.Conversations.Contracts.Queries",
+      "name": "ConversationResolutionMetadataV1",
+      "kind": "record",
+      "isAbstract": false,
+      "isSealed": true,
+      "interfaces": [
+        "System.IEquatable<Hexalith.Conversations.Contracts.Queries.ConversationResolutionMetadataV1>"
+      ],
+      "properties": [
+        {
+          "name": "ConversationId",
+          "type": "System.String",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        },
+        {
+          "name": "LifecycleState",
+          "type": "System.String",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        },
+        {
+          "name": "ProjectId",
+          "type": "System.String",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        },
+        {
+          "name": "SafeLabel",
+          "type": "System.String",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        }
+      ],
+      "constructors": [
+        {
+          "name": "(ctor)",
+          "parameters": [
+            {
+              "name": "ConversationId",
+              "type": "System.String"
+            },
+            {
+              "name": "ProjectId",
+              "type": "System.String"
+            },
+            {
+              "name": "SafeLabel",
+              "type": "System.String"
+            },
+            {
+              "name": "LifecycleState",
+              "type": "System.String"
+            }
+          ]
+        }
+      ],
+      "methods": [
+        {
+          "name": "Deconstruct",
+          "returnType": "System.Void",
+          "parameters": [
+            {
+              "name": "ConversationId",
+              "type": "System.String&"
+            },
+            {
+              "name": "ProjectId",
+              "type": "System.String&"
+            },
+            {
+              "name": "SafeLabel",
+              "type": "System.String&"
+            },
+            {
+              "name": "LifecycleState",
+              "type": "System.String&"
+            }
+          ]
+        }
+      ]
+    },
+    "Hexalith.Conversations.Contracts.Queries.GetConversationAdvisoryMetadataQuery": {
+      "namespace": "Hexalith.Conversations.Contracts.Queries",
+      "name": "GetConversationAdvisoryMetadataQuery",
+      "kind": "record",
+      "isAbstract": false,
+      "isSealed": true,
+      "interfaces": [
+        "System.IEquatable<Hexalith.Conversations.Contracts.Queries.GetConversationAdvisoryMetadataQuery>"
+      ],
+      "fields": [
+        {
+          "name": "QueryType",
+          "type": "System.String",
+          "isConstant": true,
+          "isStatic": true
+        }
+      ],
+      "constructors": [
+        {
+          "name": "(ctor)",
+          "parameters": []
+        }
+      ]
+    },
+    "Hexalith.Conversations.Contracts.Queries.GetConversationResolutionMetadataQuery": {
+      "namespace": "Hexalith.Conversations.Contracts.Queries",
+      "name": "GetConversationResolutionMetadataQuery",
+      "kind": "record",
+      "isAbstract": false,
+      "isSealed": true,
+      "interfaces": [
+        "System.IEquatable<Hexalith.Conversations.Contracts.Queries.GetConversationResolutionMetadataQuery>"
+      ],
+      "fields": [
+        {
+          "name": "QueryType",
+          "type": "System.String",
+          "isConstant": true,
+          "isStatic": true
+        }
+      ],
+      "constructors": [
+        {
+          "name": "(ctor)",
+          "parameters": []
+        }
+      ]
+    },
+    "Hexalith.Conversations.Contracts.Queries.ConversationResolutionScoringLabel": {
+      "namespace": "Hexalith.Conversations.Contracts.Queries",
+      "name": "ConversationResolutionScoringLabel",
+      "kind": "record",
+      "isAbstract": false,
+      "isSealed": true,
+      "interfaces": [
+        "System.IEquatable<Hexalith.Conversations.Contracts.Queries.ConversationResolutionScoringLabel>"
+      ],
+      "properties": [
+        {
+          "name": "Classification",
+          "type": "System.String",
+          "canRead": true,
+          "canWrite": false,
+          "isStatic": false
+        },
+        {
+          "name": "Purpose",
+          "type": "System.String",
+          "canRead": true,
+          "canWrite": false,
+          "isStatic": false
+        },
+        {
+          "name": "Value",
+          "type": "System.String",
+          "canRead": true,
+          "canWrite": false,
+          "isStatic": false
+        }
+      ],
+      "fields": [
+        {
+          "name": "MaximumLength",
+          "type": "System.Int32",
+          "isConstant": true,
+          "isStatic": true
+        },
+        {
+          "name": "OwnerClassification",
+          "type": "System.String",
+          "isConstant": true,
+          "isStatic": true
+        },
+        {
+          "name": "SupportedPurpose",
+          "type": "System.String",
+          "isConstant": true,
+          "isStatic": true
+        }
+      ],
+      "constructors": [
+        {
+          "name": "(ctor)",
+          "parameters": [
+            {
+              "name": "value",
+              "type": "System.String"
+            },
+            {
+              "name": "purpose",
+              "type": "System.String"
+            },
+            {
+              "name": "classification",
+              "type": "System.String"
+            }
+          ]
+        }
+      ]
+    },
+    "Hexalith.Conversations.Contracts.Queries.ConversationAdvisoryMetadataResult": {
+      "namespace": "Hexalith.Conversations.Contracts.Queries",
+      "name": "ConversationAdvisoryMetadataResult",
+      "kind": "record",
+      "isAbstract": false,
+      "isSealed": true,
+      "interfaces": [
+        "System.IEquatable<Hexalith.Conversations.Contracts.Queries.ConversationAdvisoryMetadataResult>"
+      ],
+      "properties": [
+        {
+          "name": "Incomplete",
+          "type": "System.Boolean",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        },
+        {
+          "name": "Metadata",
+          "type": "Hexalith.Conversations.Contracts.Queries.ConversationResolutionMetadataV1",
+          "canRead": true,
+          "canWrite": true,
+          "isStatic": false
+        }
+      ],
+      "constructors": [
+        {
+          "name": "(ctor)",
+          "parameters": [
+            {
+              "name": "Metadata",
+              "type": "Hexalith.Conversations.Contracts.Queries.ConversationResolutionMetadataV1"
+            },
+            {
+              "name": "Incomplete",
+              "type": "System.Boolean"
+            }
+          ]
+        }
+      ],
+      "methods": [
+        {
+          "name": "Deconstruct",
+          "returnType": "System.Void",
+          "parameters": [
+            {
+              "name": "Metadata",
+              "type": "Hexalith.Conversations.Contracts.Queries.ConversationResolutionMetadataV1&"
+            },
+            {
+              "name": "Incomplete",
+              "type": "System.Boolean&"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "removed": [],
+  "changed": {
+    "Hexalith.Conversations.Contracts.Events.ConversationMetadataUpdated": {
+      "before": {
+        "namespace": "Hexalith.Conversations.Contracts.Events",
+        "name": "ConversationMetadataUpdated",
+        "kind": "record",
+        "isAbstract": false,
+        "isSealed": true,
+        "interfaces": [
+          "System.IEquatable<Hexalith.Conversations.Contracts.Events.ConversationMetadataUpdated>"
+        ],
+        "properties": [
+          {
+            "name": "Attributes",
+            "type": "System.Collections.Generic.IReadOnlyDictionary<System.String, System.String>",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "BusinessReference",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Label",
+            "type": "System.String",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Metadata",
+            "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          }
+        ],
+        "constructors": [
+          {
+            "name": "(ctor)",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata"
+              },
+              {
+                "name": "Label",
+                "type": "System.String"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference"
+              },
+              {
+                "name": "Attributes",
+                "type": "System.Collections.Generic.IReadOnlyDictionary<System.String, System.String>"
+              }
+            ]
+          }
+        ],
+        "methods": [
+          {
+            "name": "Deconstruct",
+            "returnType": "System.Void",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata&"
+              },
+              {
+                "name": "Label",
+                "type": "System.String&"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference&"
+              },
+              {
+                "name": "Attributes",
+                "type": "System.Collections.Generic.IReadOnlyDictionary`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]&"
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "namespace": "Hexalith.Conversations.Contracts.Events",
+        "name": "ConversationMetadataUpdated",
+        "kind": "record",
+        "isAbstract": false,
+        "isSealed": true,
+        "interfaces": [
+          "System.IEquatable<Hexalith.Conversations.Contracts.Events.ConversationMetadataUpdated>"
+        ],
+        "properties": [
+          {
+            "name": "Attributes",
+            "type": "System.Collections.Generic.IReadOnlyDictionary<System.String, System.String>",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "BusinessReference",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Label",
+            "type": "System.String",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Metadata",
+            "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ResolutionScoringLabel",
+            "type": "Hexalith.Conversations.Contracts.Queries.ConversationResolutionScoringLabel",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          }
+        ],
+        "constructors": [
+          {
+            "name": "(ctor)",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata"
+              },
+              {
+                "name": "Label",
+                "type": "System.String"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference"
+              },
+              {
+                "name": "Attributes",
+                "type": "System.Collections.Generic.IReadOnlyDictionary<System.String, System.String>"
+              }
+            ]
+          }
+        ],
+        "methods": [
+          {
+            "name": "Deconstruct",
+            "returnType": "System.Void",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata&"
+              },
+              {
+                "name": "Label",
+                "type": "System.String&"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference&"
+              },
+              {
+                "name": "Attributes",
+                "type": "System.Collections.Generic.IReadOnlyDictionary`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]&"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "Hexalith.Conversations.Contracts.Commands.CreateConversationCommand": {
+      "before": {
+        "namespace": "Hexalith.Conversations.Contracts.Commands",
+        "name": "CreateConversationCommand",
+        "kind": "record",
+        "isAbstract": false,
+        "isSealed": true,
+        "interfaces": [
+          "System.IEquatable<Hexalith.Conversations.Contracts.Commands.CreateConversationCommand>"
+        ],
+        "properties": [
+          {
+            "name": "BusinessReference",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "CallerMetadata",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "FolderId",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Label",
+            "type": "System.String",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Metadata",
+            "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ProjectId",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ProviderCorrelation",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          }
+        ],
+        "constructors": [
+          {
+            "name": "(ctor)",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference"
+              },
+              {
+                "name": "ProjectId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId"
+              },
+              {
+                "name": "FolderId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId"
+              },
+              {
+                "name": "Label",
+                "type": "System.String"
+              },
+              {
+                "name": "ProviderCorrelation",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata"
+              },
+              {
+                "name": "CallerMetadata",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata"
+              }
+            ]
+          }
+        ],
+        "methods": [
+          {
+            "name": "Deconstruct",
+            "returnType": "System.Void",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata&"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference&"
+              },
+              {
+                "name": "ProjectId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId&"
+              },
+              {
+                "name": "FolderId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId&"
+              },
+              {
+                "name": "Label",
+                "type": "System.String&"
+              },
+              {
+                "name": "ProviderCorrelation",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata&"
+              },
+              {
+                "name": "CallerMetadata",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata&"
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "namespace": "Hexalith.Conversations.Contracts.Commands",
+        "name": "CreateConversationCommand",
+        "kind": "record",
+        "isAbstract": false,
+        "isSealed": true,
+        "interfaces": [
+          "System.IEquatable<Hexalith.Conversations.Contracts.Commands.CreateConversationCommand>"
+        ],
+        "properties": [
+          {
+            "name": "BusinessReference",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "CallerMetadata",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "FolderId",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Label",
+            "type": "System.String",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Metadata",
+            "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ProjectId",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ProviderCorrelation",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ResolutionScoringLabel",
+            "type": "Hexalith.Conversations.Contracts.Queries.ConversationResolutionScoringLabel",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          }
+        ],
+        "constructors": [
+          {
+            "name": "(ctor)",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference"
+              },
+              {
+                "name": "ProjectId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId"
+              },
+              {
+                "name": "FolderId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId"
+              },
+              {
+                "name": "Label",
+                "type": "System.String"
+              },
+              {
+                "name": "ProviderCorrelation",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata"
+              },
+              {
+                "name": "CallerMetadata",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata"
+              }
+            ]
+          }
+        ],
+        "methods": [
+          {
+            "name": "Deconstruct",
+            "returnType": "System.Void",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata&"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference&"
+              },
+              {
+                "name": "ProjectId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId&"
+              },
+              {
+                "name": "FolderId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId&"
+              },
+              {
+                "name": "Label",
+                "type": "System.String&"
+              },
+              {
+                "name": "ProviderCorrelation",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata&"
+              },
+              {
+                "name": "CallerMetadata",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata&"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "Hexalith.Conversations.Contracts.Events.ConversationCreated": {
+      "before": {
+        "namespace": "Hexalith.Conversations.Contracts.Events",
+        "name": "ConversationCreated",
+        "kind": "record",
+        "isAbstract": false,
+        "isSealed": true,
+        "interfaces": [
+          "System.IEquatable<Hexalith.Conversations.Contracts.Events.ConversationCreated>"
+        ],
+        "properties": [
+          {
+            "name": "BusinessReference",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "CreatedAt",
+            "type": "System.DateTimeOffset",
+            "canRead": true,
+            "canWrite": false,
+            "isStatic": false
+          },
+          {
+            "name": "FolderId",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Label",
+            "type": "System.String",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Metadata",
+            "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ProjectId",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ProviderCorrelation",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          }
+        ],
+        "constructors": [
+          {
+            "name": "(ctor)",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference"
+              },
+              {
+                "name": "ProjectId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId"
+              },
+              {
+                "name": "FolderId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId"
+              },
+              {
+                "name": "Label",
+                "type": "System.String"
+              },
+              {
+                "name": "ProviderCorrelation",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata"
+              }
+            ]
+          }
+        ],
+        "methods": [
+          {
+            "name": "Deconstruct",
+            "returnType": "System.Void",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata&"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference&"
+              },
+              {
+                "name": "ProjectId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId&"
+              },
+              {
+                "name": "FolderId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId&"
+              },
+              {
+                "name": "Label",
+                "type": "System.String&"
+              },
+              {
+                "name": "ProviderCorrelation",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata&"
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "namespace": "Hexalith.Conversations.Contracts.Events",
+        "name": "ConversationCreated",
+        "kind": "record",
+        "isAbstract": false,
+        "isSealed": true,
+        "interfaces": [
+          "System.IEquatable<Hexalith.Conversations.Contracts.Events.ConversationCreated>"
+        ],
+        "properties": [
+          {
+            "name": "BusinessReference",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "CreatedAt",
+            "type": "System.DateTimeOffset",
+            "canRead": true,
+            "canWrite": false,
+            "isStatic": false
+          },
+          {
+            "name": "FolderId",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Label",
+            "type": "System.String",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Metadata",
+            "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ProjectId",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ProviderCorrelation",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ResolutionScoringLabel",
+            "type": "Hexalith.Conversations.Contracts.Queries.ConversationResolutionScoringLabel",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          }
+        ],
+        "constructors": [
+          {
+            "name": "(ctor)",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference"
+              },
+              {
+                "name": "ProjectId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId"
+              },
+              {
+                "name": "FolderId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId"
+              },
+              {
+                "name": "Label",
+                "type": "System.String"
+              },
+              {
+                "name": "ProviderCorrelation",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata"
+              }
+            ]
+          }
+        ],
+        "methods": [
+          {
+            "name": "Deconstruct",
+            "returnType": "System.Void",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Events.ConversationEventMetadata&"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference&"
+              },
+              {
+                "name": "ProjectId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProjectId&"
+              },
+              {
+                "name": "FolderId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.FolderId&"
+              },
+              {
+                "name": "Label",
+                "type": "System.String&"
+              },
+              {
+                "name": "ProviderCorrelation",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ProviderCorrelationMetadata&"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "Hexalith.Conversations.Contracts.Commands.UpdateConversationMetadataCommand": {
+      "before": {
+        "namespace": "Hexalith.Conversations.Contracts.Commands",
+        "name": "UpdateConversationMetadataCommand",
+        "kind": "record",
+        "isAbstract": false,
+        "isSealed": true,
+        "interfaces": [
+          "System.IEquatable<Hexalith.Conversations.Contracts.Commands.UpdateConversationMetadataCommand>"
+        ],
+        "properties": [
+          {
+            "name": "Attributes",
+            "type": "System.Collections.Generic.IReadOnlyDictionary<System.String, System.String>",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "BusinessReference",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "CallerMetadata",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ConversationId",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.ConversationId",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Label",
+            "type": "System.String",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Metadata",
+            "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          }
+        ],
+        "constructors": [
+          {
+            "name": "(ctor)",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata"
+              },
+              {
+                "name": "ConversationId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ConversationId"
+              },
+              {
+                "name": "Label",
+                "type": "System.String"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference"
+              },
+              {
+                "name": "Attributes",
+                "type": "System.Collections.Generic.IReadOnlyDictionary<System.String, System.String>"
+              },
+              {
+                "name": "CallerMetadata",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata"
+              }
+            ]
+          }
+        ],
+        "methods": [
+          {
+            "name": "Deconstruct",
+            "returnType": "System.Void",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata&"
+              },
+              {
+                "name": "ConversationId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ConversationId&"
+              },
+              {
+                "name": "Label",
+                "type": "System.String&"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference&"
+              },
+              {
+                "name": "Attributes",
+                "type": "System.Collections.Generic.IReadOnlyDictionary`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]&"
+              },
+              {
+                "name": "CallerMetadata",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata&"
+              }
+            ]
+          }
+        ]
+      },
+      "after": {
+        "namespace": "Hexalith.Conversations.Contracts.Commands",
+        "name": "UpdateConversationMetadataCommand",
+        "kind": "record",
+        "isAbstract": false,
+        "isSealed": true,
+        "interfaces": [
+          "System.IEquatable<Hexalith.Conversations.Contracts.Commands.UpdateConversationMetadataCommand>"
+        ],
+        "properties": [
+          {
+            "name": "Attributes",
+            "type": "System.Collections.Generic.IReadOnlyDictionary<System.String, System.String>",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "BusinessReference",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "CallerMetadata",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ConversationId",
+            "type": "Hexalith.Conversations.Contracts.Identifiers.ConversationId",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Label",
+            "type": "System.String",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "Metadata",
+            "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          },
+          {
+            "name": "ResolutionScoringLabel",
+            "type": "Hexalith.Conversations.Contracts.Queries.ConversationResolutionScoringLabel",
+            "canRead": true,
+            "canWrite": true,
+            "isStatic": false
+          }
+        ],
+        "constructors": [
+          {
+            "name": "(ctor)",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata"
+              },
+              {
+                "name": "ConversationId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ConversationId"
+              },
+              {
+                "name": "Label",
+                "type": "System.String"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference"
+              },
+              {
+                "name": "Attributes",
+                "type": "System.Collections.Generic.IReadOnlyDictionary<System.String, System.String>"
+              },
+              {
+                "name": "CallerMetadata",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata"
+              }
+            ]
+          }
+        ],
+        "methods": [
+          {
+            "name": "Deconstruct",
+            "returnType": "System.Void",
+            "parameters": [
+              {
+                "name": "Metadata",
+                "type": "Hexalith.Conversations.Contracts.Commands.ConversationCommandMetadata&"
+              },
+              {
+                "name": "ConversationId",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.ConversationId&"
+              },
+              {
+                "name": "Label",
+                "type": "System.String&"
+              },
+              {
+                "name": "BusinessReference",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.BusinessReference&"
+              },
+              {
+                "name": "Attributes",
+                "type": "System.Collections.Generic.IReadOnlyDictionary`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]&"
+              },
+              {
+                "name": "CallerMetadata",
+                "type": "Hexalith.Conversations.Contracts.Identifiers.CallerMetadata&"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

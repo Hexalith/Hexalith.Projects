@@ -1,0 +1,11 @@
+CI run: https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39744196218
+Source: 17dfc440c9d4e208879f3c121cb97ffe3460a2c7
+Repository job: 119755247909
+Observed repository tooling failure retained independently of the passing conformance/build jobs.
+
+2026-10-22T09:00:55.6593126Z E       AssertionError: Prohibited ambient-skip constructs:
+2026-10-22T09:00:55.6593597Z E         _bmad/scripts/tests/test_authoring_outputs.py:261: skipif expression
+2026-10-22T09:00:55.6598045Z _bmad/scripts/tests/test_static_anti_skip_guard.py:85: AssertionError
+2026-10-22T09:00:55.7166745Z FAILED _bmad/scripts/tests/test_static_anti_skip_guard.py::test_python_tooling_lane_has_no_ambient_skip_constructs - AssertionError: Prohibited ambient-skip constructs:
+2026-10-22T09:00:55.7167816Z   _bmad/scripts/tests/test_authoring_outputs.py:261: skipif expression
+2026-10-22T09:00:55.7172948Z 1 failed, 2218 passed, 17 deselected, 295 warnings in 3741.27s (1:02:21)
