@@ -188,9 +188,12 @@ def main(arguments: list[str] | None = None) -> int:
             code = run.run("AppHost build " + project.parent.name, ["dotnet", "build", str(project), *build], project.parent)
             apphosts.append({"path": item["path"], "exitCode": code, "dependencyMode": "source"})
         platform = ROOT / "references/Hexalith.Platform/apphost.cs"
+        # A shared BaseIntermediateOutputPath collapses every project onto one assets
+        # file and stops excluding each project's obj tree. Artifacts output keeps a
+        # directory per project outside the repository.
         code = run.run("AppHost build Hexalith.Platform", ["dotnet", "build", str(platform),
             "--configuration", "Debug", "--no-incremental", "-v:minimal",
-            f"-p:BaseIntermediateOutputPath={scratch / 'platform-obj'}/"], platform.parent)
+            f"--artifacts-path={scratch / 'platform-artifacts'}"], platform.parent)
         apphosts.append({"path": platform.relative_to(ROOT).as_posix(), "exitCode": code, "dependencyMode": "packages"})
         mcp = ROOT / "references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj"
         run.run("McpCli transitive Dapr consumer", ["dotnet", "build", str(mcp), *build], mcp.parent)
