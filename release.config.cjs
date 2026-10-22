@@ -19,6 +19,7 @@ module.exports = {
       '@semantic-release/exec',
       {
         prepareCmd: [
+          'dotnet restore Hexalith.Projects.CI.slnx',
           'rm -rf ./nupkgs',
           'mkdir -p ./nupkgs',
           ...packCommands,
