@@ -14,6 +14,7 @@ public sealed class ProjectAdvisoryContractTests
     [InlineData("file")]
     public void AttachmentAndAttachmentQueryUseLiteralFieldsAndOptionalArchiveFlag(string kind)
     {
+        ResolveProjectFromAttachmentsQuery.QueryType.ShouldBe("Hexalith.Projects.Queries.ResolveProjectFromAttachments.v1");
         var attachment = new ProjectAdvisoryAttachment(kind, "opaque-id");
         var item = JsonSerializer.SerializeToElement(attachment, JsonSerializerOptions.Web);
         Properties(item).ShouldBe(["referenceId", "referenceKind"]);
@@ -32,6 +33,7 @@ public sealed class ProjectAdvisoryContractTests
     [Fact]
     public void ConversationQueryUsesLiteralFieldsAndOptionalArchiveFlag()
     {
+        ResolveProjectFromConversationQuery.QueryType.ShouldBe("Hexalith.Projects.Queries.ResolveProjectFromConversation.v1");
         var query = JsonSerializer.SerializeToElement(new ResolveProjectFromConversationQuery("conversation-id"), JsonSerializerOptions.Web);
         Properties(query).ShouldBe(["conversationId", "includeArchived"]);
         query.GetProperty("conversationId").GetString().ShouldBe("conversation-id");

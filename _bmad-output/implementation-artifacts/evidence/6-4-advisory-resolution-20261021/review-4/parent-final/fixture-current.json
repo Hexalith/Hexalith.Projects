@@ -1,0 +1,53 @@
+{
+  "root": "/tmp/story64-parent-final-jkv295f3",
+  "app_id": "story64-parent-final-jkv295f3",
+  "redis_name": "story64-parent-final-jkv295f3-redis",
+  "shared_resources_touched": false,
+  "docker_command": [
+    "docker",
+    "run",
+    "--detach",
+    "--rm",
+    "--name",
+    "story64-parent-final-jkv295f3-redis",
+    "--publish",
+    "127.0.0.1::6379",
+    "redis:7.4-alpine",
+    "redis-server",
+    "--save",
+    "",
+    "--appendonly",
+    "no"
+  ],
+  "redis_container_id": "2542a8268f6cb45f3bfe100ceede857039f8accd7411b215c78238ffeecbf3a8",
+  "redis_address": "127.0.0.1:60297",
+  "http_port": 36197,
+  "grpc_port": 56513,
+  "dapr_command": [
+    "dapr",
+    "run",
+    "--app-id",
+    "story64-parent-final-jkv295f3",
+    "--dapr-http-port",
+    "36197",
+    "--dapr-grpc-port",
+    "56513",
+    "--dapr-listen-addresses",
+    "127.0.0.1",
+    "--resources-path",
+    "/tmp/story64-parent-final-jkv295f3/components",
+    "--placement-host-address",
+    "",
+    "--scheduler-host-address",
+    "",
+    "--enable-api-logging=false",
+    "--log-level",
+    "warn"
+  ],
+  "outbound_health_status": 204,
+  "cleanup": {
+    "dapr_stop_exit_code": 0,
+    "docker_stop_exit_code": 0,
+    "completed_at_utc": "2026-10-22T21:44:09.399651+00:00"
+  }
+}

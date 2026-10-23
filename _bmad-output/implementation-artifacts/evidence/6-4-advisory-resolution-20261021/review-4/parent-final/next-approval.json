@@ -1,0 +1,76 @@
+{
+  "action": "Create local Conversations commit only",
+  "repository": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+  "baseline_commit": "71fab44b7dd664699cedbbfc17ed0d7822e8bdb9",
+  "proposed_message": "fix: correct advisory metadata authorization and label absence",
+  "files": [
+    {
+      "path": "references/Hexalith.Conversations/docs/release-notes-1.3.1.md",
+      "sha256": "ee0dd8e7a04bdf3eaff3da80862df364418bbdbf47fef8c6c0877c36741eecf0",
+      "bytes": 710
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/README.md",
+      "sha256": "3f094bd308cb6d967b60e0aba3b5731dbc706cf08657e64443f40a918230c9d4",
+      "bytes": 20861
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs",
+      "sha256": "8bd7e576e29568c9346e981bc217ba4c5fb30fc2cd150b30252ed5fd1f7d6ab6",
+      "bytes": 6215
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs",
+      "sha256": "adb853e0793374aa848e72f35ecf42ca00f615965cfba9d0e92a1dd51bc5611b",
+      "bytes": 7146
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs",
+      "sha256": "9526ca7beb9647abe4f02cd0f3bb5da4e8901b4c2c2e14f304adc9574dabd8c4",
+      "bytes": 8502
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.Review4.cs",
+      "sha256": "61b1b4c9bd6b2c466b2449445eed7acb291e81577bb54c5b8b60fb98ffc9f0f0",
+      "bytes": 5781
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.cs",
+      "sha256": "921b63259a508f1c381bf2298b8a250b20f8a868add6e9f046161a5f9b6b91eb",
+      "bytes": 13058
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationQueryRegistrationTest.cs",
+      "sha256": "16c923431f9839ede13a6ac66fa6eba5ec34f8bd427b509089aaadea5118aae1",
+      "bytes": 8803
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs",
+      "sha256": "e6f451e0781d4246eeb171969317593bdf16a2490620fbcf72263dc5353f2218",
+      "bytes": 23824
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs",
+      "sha256": "de963e3530d5e752ea091ca4f63a9e8ffc9623805220cc24424775d5d07cd5cf",
+      "bytes": 5594
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataAccess.cs",
+      "sha256": "bac655e17acb1e801c5858737e5bc87ea67bc1cc2e90abdba1334da61685718e",
+      "bytes": 2907
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs",
+      "sha256": "24980b832b33e69513fb638dade690195dea204cccab0193b24f3bdebdc554e9",
+      "bytes": 10911
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs",
+      "sha256": "bdc19e4ce25f806b15fe4a5ad090a45d295669e7daf205e035e4650532348bfe",
+      "bytes": 3249
+    }
+  ],
+  "patch": "conversations-candidate.patch",
+  "patch_sha256": "4d03258f2278140f6a2d1f3ca847875c34260b1cb2c33003adb5d79bc982377b",
+  "push_and_release_and_consumer_pin": "Not authorized; each requires its own approval"
+}

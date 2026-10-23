@@ -1,0 +1,1873 @@
+{
+  "chunk1-folderless": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls(pending: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls(pending: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.CandidateCommittedFolderRequiresActualOwnerAcceptance(outcome: Archived)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "CandidateCommittedFolderRequiresActualOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.CandidateCommittedFolderRequiresActualOwnerAcceptance(outcome: ValidationFailed)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "CandidateCommittedFolderRequiresActualOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.CandidateCommittedFolderRequiresActualOwnerAcceptance(outcome: Denied)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "CandidateCommittedFolderRequiresActualOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.CandidateCommittedFolderRequiresActualOwnerAcceptance(outcome: Unavailable)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "CandidateCommittedFolderRequiresActualOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.MissingCommittedFolderBindingUsesExactProjectAuthority",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "MissingCommittedFolderBindingUsesExactProjectAuthority",
+      "result": "Pass"
+    }
+  ],
+  "chunk1-conversation-signal-filter": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FinalConversationObservationReplacesInitialScoringEvidence",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "FinalConversationObservationReplacesInitialScoringEvidence",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationOnlyChecksOwnersForProjectsWithAnObservedSignal",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ConversationOnlyChecksOwnersForProjectsWithAnObservedSignal",
+      "result": "Pass"
+    }
+  ],
+  "chunk1-legacy-signal-filter-and-chunk2-bound": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.OnlySignaledLegacyProjectsSpendTheFourWorkerOwnerBudget",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "OnlySignaledLegacyProjectsSpendTheFourWorkerOwnerBudget",
+      "result": "Pass"
+    }
+  ],
+  "chunk1-definitive-folder-exclusions": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.PresentedFoldersRequireOwnerAcceptance(outcome: Archived)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "method": "PresentedFoldersRequireOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.PresentedFoldersRequireOwnerAcceptance(outcome: ValidationFailed)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "method": "PresentedFoldersRequireOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.PresentedFoldersRequireOwnerAcceptance(outcome: Denied)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "method": "PresentedFoldersRequireOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.PresentedFoldersRequireOwnerAcceptance(outcome: Unavailable)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "method": "PresentedFoldersRequireOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.CandidateCommittedFolderRequiresActualOwnerAcceptance(outcome: Archived)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "CandidateCommittedFolderRequiresActualOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.CandidateCommittedFolderRequiresActualOwnerAcceptance(outcome: ValidationFailed)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "CandidateCommittedFolderRequiresActualOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.CandidateCommittedFolderRequiresActualOwnerAcceptance(outcome: Denied)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "CandidateCommittedFolderRequiresActualOwnerAcceptance",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.CandidateCommittedFolderRequiresActualOwnerAcceptance(outcome: Unavailable)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "CandidateCommittedFolderRequiresActualOwnerAcceptance",
+      "result": "Pass"
+    }
+  ],
+  "chunk1-incomplete-owner-result": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion(linked: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion(linked: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion",
+      "result": "Pass"
+    }
+  ],
+  "chunk1-final-scope-mapping": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.LateProjectOrScopeRevocationCannotSurviveFinalFolderWork(scope: False, retryable: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "method": "LateProjectOrScopeRevocationCannotSurviveFinalFolderWork",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.LateProjectOrScopeRevocationCannotSurviveFinalFolderWork(scope: True, retryable: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "method": "LateProjectOrScopeRevocationCannotSurviveFinalFolderWork",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.LateProjectOrScopeRevocationCannotSurviveFinalFolderWork(scope: False, retryable: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "method": "LateProjectOrScopeRevocationCannotSurviveFinalFolderWork",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.LateProjectOrScopeRevocationCannotSurviveFinalFolderWork(scope: True, retryable: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "method": "LateProjectOrScopeRevocationCannotSurviveFinalFolderWork",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld(scope: False, retryable: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld(scope: True, retryable: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld(scope: False, retryable: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld(scope: True, retryable: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-truncation": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: False, count: 200)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ValidNonmatchingRowsProveTheEnumerationTruncationBoundary",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: False, count: 201)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ValidNonmatchingRowsProveTheEnumerationTruncationBoundary",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: True, count: 199)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ValidNonmatchingRowsProveTheEnumerationTruncationBoundary",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: True, count: 200)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ValidNonmatchingRowsProveTheEnumerationTruncationBoundary",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-incomplete-nonnull-result": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MixedFolderAndFileInputsRetainSuggestionsWithExplicitIncompleteCoverage",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MixedFolderAndFileInputsRetainSuggestionsWithExplicitIncompleteCoverage",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FailedFinalCandidateReadRetainsSuccessfullyFinalizedPeer",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "FailedFinalCandidateReadRetainsSuccessfullyFinalizedPeer",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion(linked: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion(linked: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-integrity": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"model-tenant\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"model-project\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"detail-tenant\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"detail-project\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"sequence\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"freshness-default\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"freshness-undefined\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedReadIdentityAndSequenceNeverDiscloseForeignIds",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"tenant\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedIndexStructureCannotClaimCompleteNoMatch",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"etag\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedIndexStructureCannotClaimCompleteNoMatch",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"projects\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedIndexStructureCannotClaimCompleteNoMatch",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"unavailable\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedIndexStructureCannotClaimCompleteNoMatch",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-final-folder-recheck": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.FinalPresentedFolderRevocationIsUsedBeforeLegacyDisclosure",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "method": "FinalPresentedFolderRevocationIsUsedBeforeLegacyDisclosure",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests.FinalCandidateFolderRevocationIsUsedBeforeLegacyDisclosure",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "method": "FinalCandidateFolderRevocationIsUsedBeforeLegacyDisclosure",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-malformed-owner": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"lifecycle\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedConsumedOwnerMetadataIsIncomplete",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"label\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedConsumedOwnerMetadataIsIncomplete",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"blank-project\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedConsumedOwnerMetadataIsIncomplete",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"untrimmed-project\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedConsumedOwnerMetadataIsIncomplete",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"invalid-project\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedConsumedOwnerMetadataIsIncomplete",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"incomplete\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MalformedConsumedOwnerMetadataIsIncomplete",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-envelope-and-32-boundary": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MismatchedQueryTypeAndEntityAreRejectedBeforeOwnerReads(wrongType: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MismatchedQueryTypeAndEntityAreRejectedBeforeOwnerReads",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MismatchedQueryTypeAndEntityAreRejectedBeforeOwnerReads(wrongType: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MismatchedQueryTypeAndEntityAreRejectedBeforeOwnerReads",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidAttachmentPayloadsNeverReadMetadata(payload: \\\"{\\\\\\\"attachments\\\\\\\":null}\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InvalidAttachmentPayloadsNeverReadMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidAttachmentPayloadsNeverReadMetadata(payload: \\\"{\\\\\\\"attachments\\\\\\\":[null]}\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InvalidAttachmentPayloadsNeverReadMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidAttachmentPayloadsNeverReadMetadata(payload: \\\"{\\\\\\\"attachments\\\\\\\":[],\\\\\\\"includeArchived\\\\\\\":\\\\\\\"true\\\\\\\"}\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InvalidAttachmentPayloadsNeverReadMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidAttachmentPayloadsNeverReadMetadata(payload: \\\"{\\\\\\\"Attachments\\\\\\\":[]}\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InvalidAttachmentPayloadsNeverReadMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawAttachmentLimitIncludes32(count: 32)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "RawAttachmentLimitIncludes32",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawAttachmentLimitIncludes32(count: 33)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "RawAttachmentLimitIncludes32",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"conversationId\\\\\\\":\\\\\\\"\\\\\\\"}\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"conversationId\\\\\\\":\\\\\\\" conversation \\\\\\\"}\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"conversationId\\\\\\\":null}\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"conversationId\\\\\\\":\\\\\\\"conversation\\\\\\\",\\\\\\\"extra\\\\\\\":1}\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"conversationId\\\\\\\":\\\\\\\"conversation\\\\\\\",\\\\\\\"conversationId\\\\\\\":\\\"\u00b7\u00b7\u00b7)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InvalidConversationPayloadsNeverReadOwnerMetadata(payload: \\\"{\\\\\\\"ConversationId\\\\\\\":\\\\\\\"conversation\\\\\\\"}\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InvalidConversationPayloadsNeverReadOwnerMetadata",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-hop-arguments": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationOnlyChecksOwnersForProjectsWithAnObservedSignal",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ConversationOnlyChecksOwnersForProjectsWithAnObservedSignal",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-nonvacuous-gateway-snapshot": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+      "type": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests",
+      "method": "GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-mixed-files": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MixedFolderAndFileInputsRetainSuggestionsWithExplicitIncompleteCoverage",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "MixedFolderAndFileInputsRetainSuggestionsWithExplicitIncompleteCoverage",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests.MixedLegacyInputsNeverIncludeAFileOnlyMatchedProject",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "method": "MixedLegacyInputsNeverIncludeAFileOnlyMatchedProject",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-final-no-signal-scope": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"empty\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"file\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"denied\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority(kind: \\\"conversation\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "InputsWithoutScoringSignalsSkipProjectReadsAndStillRecheckAuthority",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-denial-order": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationAndIdentityMismatchCannotBecomeSuggestions",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "CallerCancellationAndIdentityMismatchCannotBecomeSuggestions",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"removed\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"revoked\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"stale\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure(state: \\\"unavailable\\\")",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "TenantAdmissionOrdersOwnerReadsAndRechecksBeforeDisclosure",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: False, listOnly: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: True, listOnly: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: False, listOnly: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: True, listOnly: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnauthorizedMalformedRequestDeniesBeforeValidationOrOwnerReads",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "UnauthorizedMalformedRequestDeniesBeforeValidationOrOwnerReads",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-new-folder-anchor": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FinalDisclosureUsesTheNewCommittedFolderAnchorAndLifecycle",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "FinalDisclosureUsesTheNewCommittedFolderAnchorAndLifecycle",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-unknown-and-archive": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "DeniedAndUnknownFoldersNeverScore",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "DeniedAndUnknownFoldersNeverScore",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: False)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ArchivedCandidatesRequireExplicitOptInAndOwnerAccess",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: True)",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ArchivedCandidatesRequireExplicitOptInAndOwnerAccess",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-clock": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.OldButValidIndexReceiptRemainsUsable",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "OldButValidIndexReceiptRemainsUsable",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-concurrent-doubles": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SwallowedDependencyFailureLogsOnlyTypeAndCorrelation",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "SwallowedDependencyFailureLogsOnlyTypeAndCorrelation",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationOnlyChecksOwnersForProjectsWithAnObservedSignal",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ConversationOnlyChecksOwnersForProjectsWithAnObservedSignal",
+      "result": "Pass"
+    },
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-wire-literals": [
+    {
+      "xml": "contracts-full.xml",
+      "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.AttachmentAndAttachmentQueryUseLiteralFieldsAndOptionalArchiveFlag(kind: \\\"folder\\\")",
+      "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+      "method": "AttachmentAndAttachmentQueryUseLiteralFieldsAndOptionalArchiveFlag",
+      "result": "Pass"
+    },
+    {
+      "xml": "contracts-full.xml",
+      "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.AttachmentAndAttachmentQueryUseLiteralFieldsAndOptionalArchiveFlag(kind: \\\"file\\\")",
+      "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+      "method": "AttachmentAndAttachmentQueryUseLiteralFieldsAndOptionalArchiveFlag",
+      "result": "Pass"
+    },
+    {
+      "xml": "contracts-full.xml",
+      "name": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests.ConversationQueryUsesLiteralFieldsAndOptionalArchiveFlag",
+      "type": "Hexalith.Projects.Contracts.Tests.Queries.ProjectAdvisoryContractTests",
+      "method": "ConversationQueryUsesLiteralFieldsAndOptionalArchiveFlag",
+      "result": "Pass"
+    }
+  ],
+  "chunk2-tautological-predicate": [
+    {
+      "xml": "projects-full-current.xml",
+      "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ExactProjectAuthorizationPrecedesMetadataAndIsRepeatedBeforeDisclosure",
+      "type": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "method": "ExactProjectAuthorizationPrecedesMetadataAndIsRepeatedBeforeDisclosure",
+      "result": "Pass"
+    }
+  ],
+  "chunk3-ordinary-allowed-decision": [
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess(mutation: \\\"requirement\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess(mutation: \\\"tenant\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess(mutation: \\\"actor\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess(mutation: \\\"retryable\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.DefaultNonsignalStorePermissionDisclosesCommittedMetadata",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "DefaultNonsignalStorePermissionDisclosesCommittedMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.OrdinaryFinalPermissionDoesNotRequireProjectionEvidence(mutation: \\\"missing\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "OrdinaryFinalPermissionDoesNotRequireProjectionEvidence",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.OrdinaryFinalPermissionDoesNotRequireProjectionEvidence(mutation: \\\"negative\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "OrdinaryFinalPermissionDoesNotRequireProjectionEvidence",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.OrdinaryFinalPermissionDoesNotRequireProjectionEvidence(mutation: \\\"blank\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "OrdinaryFinalPermissionDoesNotRequireProjectionEvidence",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.OrdinaryFinalPermissionDoesNotRequireProjectionEvidence(mutation: \\\"oversized\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "OrdinaryFinalPermissionDoesNotRequireProjectionEvidence",
+      "result": "Pass"
+    }
+  ],
+  "chunk3-label-absence": [
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.AbsenceOfBothLabelsIsCompleteWhileUnclassifiedTextIsIncomplete(label: null, complete: True)",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "AbsenceOfBothLabelsIsCompleteWhileUnclassifiedTextIsIncomplete",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.AbsenceOfBothLabelsIsCompleteWhileUnclassifiedTextIsIncomplete(label: \\\"Unclassified label\\\", complete: False)",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "AbsenceOfBothLabelsIsCompleteWhileUnclassifiedTextIsIncomplete",
+      "result": "Pass"
+    }
+  ],
+  "chunk3-guarded-fixture": [
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.RetryableOwnerDenialReturnsUnavailableWithoutMetadataReads",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "RetryableOwnerDenialReturnsUnavailableWithoutMetadataReads",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"missing-etag\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"dispatch\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"lifecycle\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"tenant\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"resource\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"pending\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"schema\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Rebuilding\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Unavailable\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Forbidden\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    }
+  ],
+  "chunk3-verified-guards": [
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"missing-etag\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"dispatch\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"lifecycle\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"tenant\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"resource\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"pending\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"schema\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Rebuilding\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Unavailable\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Forbidden\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "MalformedOrPendingMetadataWithholdsObservations",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"origin-context\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"origin-kind\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"actor\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"delegation\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"scopes\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"array\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"nonempty\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"null-payload\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"oversize\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"entity\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"paging\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"admin\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"domain-case\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage",
+      "result": "Pass"
+    }
+  ],
+  "chunk3-proof-fences": [
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FenceChangedDuringAdvisoryReadWithholdsMetadata(mutation: \\\"null-current\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "FenceChangedDuringAdvisoryReadWithholdsMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FenceChangedDuringAdvisoryReadWithholdsMetadata(mutation: \\\"completed-replacement\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "FenceChangedDuringAdvisoryReadWithholdsMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FenceChangedDuringAdvisoryReadWithholdsMetadata(mutation: \\\"pending-current\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "FenceChangedDuringAdvisoryReadWithholdsMetadata",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FenceChangedDuringAdvisoryReadWithholdsMetadata(mutation: \\\"barrier\\\")",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "FenceChangedDuringAdvisoryReadWithholdsMetadata",
+      "result": "Pass"
+    }
+  ],
+  "chunk3-stale": [
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.LaggingCommittedOwnerMetadataRemainsACompleteObservation",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "LaggingCommittedOwnerMetadataRemainsACompleteObservation",
+      "result": "Pass"
+    }
+  ],
+  "chunk3-foreign-tenant": [
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.DeniedMissingAndForeignInputsShareSafeDenialAndInitialDenialAvoidsReads",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "method": "DeniedMissingAndForeignInputsShareSafeDenialAndInitialDenialAvoidsReads",
+      "result": "Pass"
+    }
+  ],
+  "chunk3-real-sdk-registration": [
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationQueryRegistrationTest.NativeSdkDiscoveryEnrollsAndDispatchesAllHandlersInBothCompositionOrders(queriesFirst: True)",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationQueryRegistrationTest",
+      "method": "NativeSdkDiscoveryEnrollsAndDispatchesAllHandlersInBothCompositionOrders",
+      "result": "Pass"
+    },
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationQueryRegistrationTest.NativeSdkDiscoveryEnrollsAndDispatchesAllHandlersInBothCompositionOrders(queriesFirst: False)",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationQueryRegistrationTest",
+      "method": "NativeSdkDiscoveryEnrollsAndDispatchesAllHandlersInBothCompositionOrders",
+      "result": "Pass"
+    }
+  ],
+  "chunk3-future-native-tenant": [
+    {
+      "xml": "conversations-full.xml",
+      "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.FutureNativeTenantEvidenceIsUnavailableBeforeMetadataReads",
+      "type": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest",
+      "method": "FutureNativeTenantEvidenceIsUnavailableBeforeMetadataReads",
+      "result": "Pass"
+    }
+  ],
+  "chunk1-openapi-and-client": [
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.CanonicalHasherRejectsDuplicateField",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "CanonicalHasherRejectsDuplicateField",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.CanonicalHasherEnforcesDeclaredOrder",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "CanonicalHasherEnforcesDeclaredOrder",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedClientExposesSetProjectFolderWithExpectedIdempotencyShape",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedClientExposesSetProjectFolderWithExpectedIdempotencyShape",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.NullAndOmittedMetadataProduceDifferentCanonicalHashes",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "NullAndOmittedMetadataProduceDifferentCanonicalHashes",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.UnannotatedArrayEquivalenceFieldPreservesCallerOrder",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "UnannotatedArrayEquivalenceFieldPreservesCallerOrder",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedClientExposesConfirmProjectResolutionMutationWithoutFreshnessParameter",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedClientExposesConfirmProjectResolutionMutationWithoutFreshnessParameter",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.RestoreProjectHelperUsesDeclaredIntentAndSchemaVersion",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "RestoreProjectHelperUsesDeclaredIntentAndSchemaVersion",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.CreateProjectSeparatorFingerprints_ArePinnedAndDifferFromLegacyRawSeparators",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "CreateProjectSeparatorFingerprints_ArePinnedAndDifferFromLegacyRawSeparators",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedClientExposesProjectConversationOperationsWithExpectedIdempotencyShape",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedClientExposesProjectConversationOperationsWithExpectedIdempotencyShape",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.MutatingRequestExposesIdempotencyHelperAndQueryTypesDoNot",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "MutatingRequestExposesIdempotencyHelperAndQueryTypesDoNot",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct(operation: \\\"CreateProject\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct(operation: \\\"UpdateProjectSetupGoals\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct(operation: \\\"UpdateProjectSetupInstructions\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct(operation: \\\"SetProjectFolder\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct(operation: \\\"LinkFileReference\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct(operation: \\\"LinkMemory\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "MutationHelpers_KeepSeparatorsLfLiteralEscapesAndBaselineDistinct",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.CanonicalHasherEnforcesUtcDates",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "CanonicalHasherEnforcesUtcDates",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.FingerprintDetectsDriftInEachInput",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "FingerprintDetectsDriftInEachInput",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.UnlinkProjectConversationHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "UnlinkProjectConversationHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.LinkMemoryHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "LinkMemoryHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.ArchiveProjectHelperUsesDeclaredIntentAndSchemaVersion",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "ArchiveProjectHelperUsesDeclaredIntentAndSchemaVersion",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.CanonicalHasherRejectsControlCharacters",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "CanonicalHasherRejectsControlCharacters",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.UpdateProjectSetupHelperTreatsOmittedConversationDefaultsAsOmitted",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "UpdateProjectSetupHelperTreatsOmittedConversationDefaultsAsOmitted",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedClientExposesListProjectsQueryWithoutIdempotencyParameter",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedClientExposesListProjectsQueryWithoutIdempotencyParameter",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.UpdateProjectSetupHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "UpdateProjectSetupHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedHelpersCarryStableSafeProvenance",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedHelpersCarryStableSafeProvenance",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.CanonicalHasherIsDeterministic",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "CanonicalHasherIsDeterministic",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.ConfirmNewProjectProposalHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "ConfirmNewProjectProposalHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SetProjectFolderHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SetProjectFolderHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.NswagConfigurationUsesContractSpineAsOnlyInput",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "NswagConfigurationUsesContractSpineAsOnlyInput",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedClientExposesAttachmentResolutionQueryWithoutIdempotencyParameter",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedClientExposesAttachmentResolutionQueryWithoutIdempotencyParameter",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"CreateProject\\\", separatorCodePoint: 8232)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"CreateProject\\\", separatorCodePoint: 8233)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"UpdateProjectSetupGoals\\\", separatorCodePoint: 8232)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"UpdateProjectSetupGoals\\\", separatorCodePoint: 8233)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"UpdateProjectSetupInstructions\\\", separatorCodePoint: 8232)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"UpdateProjectSetupInstructions\\\", separatorCodePoint: 8233)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"SetProjectFolder\\\", separatorCodePoint: 8232)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"SetProjectFolder\\\", separatorCodePoint: 8233)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"LinkFileReference\\\", separatorCodePoint: 8232)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"LinkFileReference\\\", separatorCodePoint: 8233)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"LinkMemory\\\", separatorCodePoint: 8232)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator(operation: \\\"LinkMemory\\\", separatorCodePoint: 8233)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_ExactRawMaximumMatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.LinkProjectConversationHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "LinkProjectConversationHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"CreateProject\\\", separatorCodePoint: 8232, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"SetProjectFolder\\\", separatorCodePoint: 8232, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"SetProjectFolder\\\", separatorCodePoint: 8233, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"SetProjectFolder\\\", separatorCodePoint: 8233, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"SetProjectFolder\\\", separatorCodePoint: 8233, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkFileReference\\\", separatorCodePoint: 8232, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkFileReference\\\", separatorCodePoint: 8232, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"SetProjectFolder\\\", separatorCodePoint: 8232, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkFileReference\\\", separatorCodePoint: 8232, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkFileReference\\\", separatorCodePoint: 8233, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkFileReference\\\", separatorCodePoint: 8233, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkMemory\\\", separatorCodePoint: 8232, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkMemory\\\", separatorCodePoint: 8232, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkMemory\\\", separatorCodePoint: 8232, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkMemory\\\", separatorCodePoint: 8233, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkFileReference\\\", separatorCodePoint: 8233, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"SetProjectFolder\\\", separatorCodePoint: 8232, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupInstructions\\\", separatorCodePoint: 8233, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupInstructions\\\", separatorCodePoint: 8233, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"CreateProject\\\", separatorCodePoint: 8232, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"CreateProject\\\", separatorCodePoint: 8232, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"CreateProject\\\", separatorCodePoint: 8233, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"CreateProject\\\", separatorCodePoint: 8233, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"CreateProject\\\", separatorCodePoint: 8233, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupGoals\\\", separatorCodePoint: 8232, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupGoals\\\", separatorCodePoint: 8232, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupGoals\\\", separatorCodePoint: 8232, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupGoals\\\", separatorCodePoint: 8233, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupGoals\\\", separatorCodePoint: 8233, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupGoals\\\", separatorCodePoint: 8233, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupInstructions\\\", separatorCodePoint: 8232, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupInstructions\\\", separatorCodePoint: 8232, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupInstructions\\\", separatorCodePoint: 8232, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"UpdateProjectSetupInstructions\\\", separatorCodePoint: 8233, position: \\\"leading\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkMemory\\\", separatorCodePoint: 8233, position: \\\"embedded\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorMetadata_MatchesRealDomainValidator(operation: \\\"LinkMemory\\\", separatorCodePoint: 8233, position: \\\"trailing\\\")",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.CreateProjectHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "CreateProjectHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.CanonicalHasherDistinguishesPresentFromOmitted",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "CanonicalHasherDistinguishesPresentFromOmitted",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedClientExposesFileReferenceOperationsWithExpectedIdempotencyShape",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedClientExposesFileReferenceOperationsWithExpectedIdempotencyShape",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.UnlinkFileReferenceHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "UnlinkFileReferenceHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.UnlinkMemoryHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "UnlinkMemoryHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.ConfirmProjectResolutionHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "ConfirmProjectResolutionHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedClientExposesNewProjectProposalPreviewAndConfirmShapes",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedClientExposesNewProjectProposalPreviewAndConfirmShapes",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedClientCarriesAutoGeneratedHeaderAndIsSafe",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedClientCarriesAutoGeneratedHeaderAndIsSafe",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.FingerprintVerifiesCurrentForCheckedInArtifacts",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "FingerprintVerifiesCurrentForCheckedInArtifacts",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedClientExposesOperatorDiagnosticsQueryWithoutIdempotencyParameter",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedClientExposesOperatorDiagnosticsQueryWithoutIdempotencyParameter",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.LinkFileReferenceHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "LinkFileReferenceHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator(operation: \\\"SetProjectFolder\\\", separatorCodePoint: 8232)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator(operation: \\\"SetProjectFolder\\\", separatorCodePoint: 8233)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator(operation: \\\"LinkFileReference\\\", separatorCodePoint: 8232)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator(operation: \\\"LinkFileReference\\\", separatorCodePoint: 8233)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator(operation: \\\"LinkMemory\\\", separatorCodePoint: 8232)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator(operation: \\\"LinkMemory\\\", separatorCodePoint: 8233)",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "SeparatorOnlyOptionalDisplayMetadata_MatchesRealDomainValidator",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.GeneratedArtifactsAreLfOnly",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "GeneratedArtifactsAreLfOnly",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.MoveProjectConversationHelperUsesDeclaredLexicographicFields",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "MoveProjectConversationHelperUsesDeclaredLexicographicFields",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.VerifyCurrentDetailedDoesNotLeakAbsolutePaths",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "VerifyCurrentDetailedDoesNotLeakAbsolutePaths",
+      "result": "Pass"
+    },
+    {
+      "xml": "client-generation.xml",
+      "name": "Hexalith.Projects.Client.Tests.ClientGenerationTests.ConfirmNewProjectProposalHelperCanonicalizesFileReferenceIdCollection",
+      "type": "Hexalith.Projects.Client.Tests.ClientGenerationTests",
+      "method": "ConfirmNewProjectProposalHelperCanonicalizesFileReferenceIdCollection",
+      "result": "Pass"
+    }
+  ],
+  "chunk1-e2e-file-expectations": {
+    "validation": "e2e-typecheck-final.log",
+    "live_apphost_executed": false
+  },
+  "chunk1-static-status-table": {
+    "validation": "planning-guard.log",
+    "tests": 29,
+    "result": "Pass"
+  },
+  "chunk3-signal-xml-docs": {
+    "validation": "conversations-build-final.log",
+    "source": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs"
+  }
+}

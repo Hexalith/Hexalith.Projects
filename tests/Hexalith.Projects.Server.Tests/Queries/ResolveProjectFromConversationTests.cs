@@ -445,16 +445,16 @@ public sealed class ResolveProjectFromConversationTests
     [InlineData(true, true)]
     public async Task LateProjectOrScopeRevocationDuringCandidateOwnerReadIsWithheld(bool scope, bool retryable)
     {
-        bool revoked = false;
+        int revoked = 0;
         int projectReads = 0, scopeReads = 0;
         var validator = new ProjectReadTestAuthorization { Decision = request =>
         {
             if (request.ProjectId is null) Interlocked.Increment(ref scopeReads); else Interlocked.Increment(ref projectReads);
-            return revoked && (scope ? request.ProjectId is null : request.ProjectId == ProjectAId)
+            return Volatile.Read(ref revoked) != 0 && (scope ? request.ProjectId is null : request.ProjectId == ProjectAId)
                 ? retryable ? EventStoreAuthorizationValidationResult.Unavailable() : EventStoreAuthorizationValidationResult.Denied()
                 : EventStoreAuthorizationValidationResult.Allowed("test");
         } };
-        var folders = new ProjectReadTestFolders { OnRead = _ => { revoked = true; return Task.CompletedTask; } };
+        var folders = new ProjectReadTestFolders { OnRead = _ => { Interlocked.Exchange(ref revoked, 1); return Task.CompletedTask; } };
         WebApplication app = await StartAppAsync(Linked(ProjectAId), [Row(ProjectAId, "Project Alpha")],
             projectAuthorization: validator, folderDirectory: folders);
         try
@@ -469,6 +469,8 @@ public sealed class ResolveProjectFromConversationTests
     }
 
     [Theory]
+    [InlineData(ProjectFolderValidationOutcome.Archived)]
+    [InlineData(ProjectFolderValidationOutcome.ValidationFailed)]
     [InlineData(ProjectFolderValidationOutcome.Denied)]
     [InlineData(ProjectFolderValidationOutcome.Unavailable)]
     public async Task CandidateCommittedFolderRequiresActualOwnerAcceptance(ProjectFolderValidationOutcome outcome)
@@ -481,7 +483,7 @@ public sealed class ResolveProjectFromConversationTests
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
             using HttpRequestMessage request = Request(); request.Headers.Remove("X-Correlation-Id");
             using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken);
-            response.StatusCode.ShouldBe(outcome == ProjectFolderValidationOutcome.Denied ? HttpStatusCode.OK : HttpStatusCode.ServiceUnavailable);
+            response.StatusCode.ShouldBe(outcome == ProjectFolderValidationOutcome.Unavailable ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.OK);
             (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldNotContain(ProjectAId);
             folders.Reads.ShouldBe(1);
         }
@@ -489,7 +491,7 @@ public sealed class ResolveProjectFromConversationTests
     }
 
     [Fact]
-    public async Task MissingCommittedFolderBindingCannotBecomeACandidate()
+    public async Task MissingCommittedFolderBindingUsesExactProjectAuthority()
     {
         var folders = new ProjectReadTestFolders();
         WebApplication app = await StartAppAsync(Linked(ProjectAId), [Row(ProjectAId, "Project Alpha")], folderDirectory: folders, seedFolder: false);
@@ -499,7 +501,66 @@ public sealed class ResolveProjectFromConversationTests
             using HttpResponseMessage response = await client.SendAsync(Request(), TestContext.Current.CancellationToken);
             response.StatusCode.ShouldBe(HttpStatusCode.OK);
             using JsonDocument body = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
-            body.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(0); folders.Reads.ShouldBe(0);
+            body.RootElement.GetProperty("result").GetString().ShouldBe("SingleCandidate");
+            body.RootElement.GetProperty("candidates")[0].GetProperty("projectId").GetString().ShouldBe(ProjectAId); folders.Reads.ShouldBe(0);
+        }
+        finally { await StopAsync(app); }
+    }
+
+    [Fact]
+    public async Task FinalCandidateFolderRevocationIsUsedBeforeLegacyDisclosure()
+    {
+        var folders = new ProjectReadTestFolders();
+        folders.OnRead = id => { if (folders.Reads == 2) folders.Deny(id); return Task.CompletedTask; };
+        WebApplication app = await StartAppAsync(Linked(ProjectAId), [Row(ProjectAId, "Project Alpha")], folderDirectory: folders);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            using var response = await client.SendAsync(Request(), TestContext.Current.CancellationToken);
+            response.StatusCode.ShouldBe(HttpStatusCode.OK);
+            (await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).ShouldNotContain(ProjectAId);
+            folders.Reads.ShouldBe(2);
+        }
+        finally { await StopAsync(app); }
+    }
+
+    [Fact]
+    public async Task OnlySignaledLegacyProjectsSpendTheFourWorkerOwnerBudget()
+    {
+        int active = 0, maximum = 0, exact = 0;
+        var rows = Enumerable.Range(0, 8).Select(n => Row($"p{n}", "Matching name")).ToArray();
+        var folders = new ProjectReadTestFolders { OnRead = async _ =>
+        {
+            int current = Interlocked.Increment(ref active);
+            int seen; do { seen = Volatile.Read(ref maximum); if (seen >= current) break; } while (Interlocked.CompareExchange(ref maximum, current, seen) != seen);
+            await Task.Delay(20, TestContext.Current.CancellationToken).ConfigureAwait(false); Interlocked.Decrement(ref active);
+        } };
+        var validator = new ProjectReadTestAuthorization { Decision = request =>
+        {
+            if (request.ProjectId is not null) Interlocked.Increment(ref exact);
+            return EventStoreAuthorizationValidationResult.Allowed("test");
+        } };
+        WebApplication app = await StartAppAsync(new(ConversationIdValue, null, "Matching name", ReferenceState.Included), rows,
+            projectAuthorization: validator, folderDirectory: folders);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            (await client.SendAsync(Request(), TestContext.Current.CancellationToken)).StatusCode.ShouldBe(HttpStatusCode.OK);
+            maximum.ShouldBeInRange(1, 4); folders.Reads.ShouldBe(16); exact.ShouldBe(16);
+            folders.OnRead = _ => Task.Delay(TimeSpan.FromSeconds(8), TestContext.Current.CancellationToken);
+            var elapsed = System.Diagnostics.Stopwatch.StartNew();
+            (await client.SendAsync(Request(), TestContext.Current.CancellationToken)).StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            elapsed.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(4));
+        }
+        finally { await StopAsync(app); }
+        exact = 0;
+        app = await StartAppAsync(new(ConversationIdValue, null, null, ReferenceState.Included), rows,
+            projectAuthorization: validator, folderDirectory: folders);
+        try
+        {
+            using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
+            (await client.SendAsync(Request(), TestContext.Current.CancellationToken)).StatusCode.ShouldBe(HttpStatusCode.OK);
+            exact.ShouldBe(0);
         }
         finally { await StopAsync(app); }
     }

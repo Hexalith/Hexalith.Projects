@@ -384,13 +384,15 @@ public sealed class ResolveProjectFromAttachmentsTests
     }
 
     [Theory]
+    [InlineData(ProjectFolderValidationOutcome.Archived)]
+    [InlineData(ProjectFolderValidationOutcome.ValidationFailed)]
     [InlineData(ProjectFolderValidationOutcome.Denied)]
     [InlineData(ProjectFolderValidationOutcome.Unavailable)]
     public async Task PresentedFoldersRequireOwnerAcceptance(ProjectFolderValidationOutcome outcome)
     {
         var folders = new ProjectReadTestFolders(); folders.Outcomes[FolderId] = outcome;
         var result = await SendAsync(rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))], folderDirectory: folders);
-        result.StatusCode.ShouldBe(outcome == ProjectFolderValidationOutcome.Denied ? HttpStatusCode.OK : HttpStatusCode.ServiceUnavailable);
+        result.StatusCode.ShouldBe(outcome == ProjectFolderValidationOutcome.Unavailable ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.OK);
         result.Body.ShouldNotContain(ProjectAId);
     }
 
@@ -401,17 +403,17 @@ public sealed class ResolveProjectFromAttachmentsTests
     [InlineData(true, true)]
     public async Task LateProjectOrScopeRevocationCannotSurviveFinalFolderWork(bool scope, bool retryable)
     {
-        bool revoked = false;
+        int revoked = 0;
         int projectReads = 0, scopeReads = 0;
         var validator = new ProjectReadTestAuthorization { Decision = request =>
         {
             if (request.ProjectId is null) Interlocked.Increment(ref scopeReads); else Interlocked.Increment(ref projectReads);
-            return revoked && (scope ? request.ProjectId is null : request.ProjectId == ProjectAId)
+            return Volatile.Read(ref revoked) != 0 && (scope ? request.ProjectId is null : request.ProjectId == ProjectAId)
                 ? retryable ? EventStoreAuthorizationValidationResult.Unavailable() : EventStoreAuthorizationValidationResult.Denied()
                 : EventStoreAuthorizationValidationResult.Allowed("test");
         } };
         var folders = new ProjectReadTestFolders();
-        folders.OnRead = _ => { if (folders.Reads == 2) revoked = true; return Task.CompletedTask; };
+        folders.OnRead = _ => { if (folders.Reads == 2) Interlocked.Exchange(ref revoked, 1); return Task.CompletedTask; };
         var result = await SendAsync(rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))],
             projectAuthorization: validator, folderDirectory: folders);
         result.StatusCode.ShouldBe(retryable ? HttpStatusCode.ServiceUnavailable : scope ? HttpStatusCode.NotFound : HttpStatusCode.OK);
@@ -452,6 +454,25 @@ public sealed class ResolveProjectFromAttachmentsTests
         response.StatusCode.ShouldBe(HttpStatusCode.OK); response.Header("X-Correlation-Id").ShouldBeNull();
         using JsonDocument document = JsonDocument.Parse(response.Body);
         document.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task FinalPresentedFolderRevocationIsUsedBeforeLegacyDisclosure()
+    {
+        var folders = new ProjectReadTestFolders();
+        folders.OnRead = id => { if (folders.Reads == 2) folders.Deny(id); return Task.CompletedTask; };
+        var result = await SendAsync(rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))], folderDirectory: folders);
+        result.StatusCode.ShouldBe(HttpStatusCode.OK); result.Body.ShouldNotContain(ProjectAId); folders.Reads.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task MixedLegacyInputsNeverIncludeAFileOnlyMatchedProject()
+    {
+        var result = await SendAsync(url: $"/api/v1/projects/resolution/from-attachments?folderId={FolderId}&fileId={FileId}",
+            rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId)), Row(ProjectBId, Reference(AttachmentKind.File, FileId, projectId: ProjectBId))]);
+        result.StatusCode.ShouldBe(HttpStatusCode.OK); result.Body.ShouldNotContain(ProjectBId);
+        using var body = JsonDocument.Parse(result.Body);
+        body.RootElement.GetProperty("result").GetString().ShouldBe("SingleCandidate");
     }
 
     private static async Task<EndpointResponse> SendAsync(

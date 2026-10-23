@@ -119,7 +119,7 @@ public static partial class ProjectsDomainServiceEndpoints
             authorization = await authorizationGate.AuthorizeListAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
                 .WaitAsync(cancellationToken).ConfigureAwait(false);
             callerToken.ThrowIfCancellationRequested();
-            if (!authorization.IsAllowed) return authorization.Retryable
+            if (!authorization.IsAllowed) return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
                 ? ReadModelUnavailable(correlationId, taskId) : SafeDenial(correlationId, taskId, authorization);
             List<AttachmentResolutionProjectCandidate> candidateProjects = new(projectedRows.Count);
             foreach (ProjectReferenceIndexCandidateRow row in projectedRows)

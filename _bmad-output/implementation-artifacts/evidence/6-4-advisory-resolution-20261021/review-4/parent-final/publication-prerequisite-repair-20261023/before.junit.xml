@@ -1,0 +1,1837 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="36" failures="0" skipped="0" tests="37" time="0.778" timestamp="2026-10-23T10:39:06.168082+02:00" hostname="DESKTOP-VIOG240"><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_consistent_preparation_never_authorizes_or_executes" time="0.005"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_consistent_preparation_ne0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088ad87b10&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_consistent_preparation_ne0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_platform_selection_cannot_drift_or_claim_qualification[owner-Conversations-owned infrastructure]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_platform_selection_cannot0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088abac7d0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_platform_selection_cannot0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_platform_selection_cannot_drift_or_claim_qualification[platformRevision-0000000000000000000000000000000000000000]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_platform_selection_cannot1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a9cf590&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_platform_selection_cannot1/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_platform_selection_cannot_drift_or_claim_qualification[selectedBy-invented approver]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_platform_selection_cannot2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a64ebd0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_platform_selection_cannot2/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_platform_selection_cannot_drift_or_claim_qualification[productionQualificationClaimed-True]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_platform_selection_cannot3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6b1290&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_platform_selection_cannot3/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_fabricated_authority_is_rejected[executionAllowed]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_fabricated_authority_is_r0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a663550&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_fabricated_authority_is_r0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_fabricated_authority_is_rejected[ownerApprovalClaimed]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_fabricated_authority_is_r1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6bc690&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_fabricated_authority_is_r1/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_fabricated_authority_is_rejected[releaseAuthorized]" time="0.003"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_fabricated_authority_is_r2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a7240d0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_fabricated_authority_is_r2/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_fabricated_authority_is_rejected[pushAuthorized]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_fabricated_authority_is_r3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6627d0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_fabricated_authority_is_r3/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_package_cannot_hide_pending_decisions[&lt;lambda&gt;0]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_package_cannot_hide_pendi0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a696850&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_package_cannot_hide_pendi0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_package_cannot_hide_pending_decisions[&lt;lambda&gt;1]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_package_cannot_hide_pendi1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a73e690&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_package_cannot_hide_pendi1/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_package_cannot_hide_pending_decisions[&lt;lambda&gt;2]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_package_cannot_hide_pendi2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088ab555d0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_package_cannot_hide_pendi2/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_package_cannot_hide_pending_decisions[&lt;lambda&gt;3]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_package_cannot_hide_pendi3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a673590&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_package_cannot_hide_pendi3/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_rehashed_story_drift_is_rejected[&lt;lambda&gt;0]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088ad96010&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_rehashed_story_drift_is_rejected[&lt;lambda&gt;1]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a69bf50&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r1/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_rehashed_story_drift_is_rejected[&lt;lambda&gt;2]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088ad96c10&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r2/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_rehashed_story_drift_is_rejected[&lt;lambda&gt;3]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6e74d0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r3/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_rehashed_story_drift_is_rejected[&lt;lambda&gt;4]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r4')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a695990&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r4/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_rehashed_story_drift_is_rejected[&lt;lambda&gt;5]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r5')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6bd850&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_rehashed_story_drift_is_r5/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_inventory_identity_and_coverage_survive_rehashing[&lt;lambda&gt;0]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_inventory_identity_and_co0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a73f810&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_inventory_identity_and_co0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_inventory_identity_and_coverage_survive_rehashing[&lt;lambda&gt;1]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_inventory_identity_and_co1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6bb9d0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_inventory_identity_and_co1/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_inventory_identity_and_coverage_survive_rehashing[&lt;lambda&gt;2]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_inventory_identity_and_co2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088abad990&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_inventory_identity_and_co2/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_inventory_identity_and_coverage_survive_rehashing[&lt;lambda&gt;3]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_inventory_identity_and_co3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6df290&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_inventory_identity_and_co3/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_inventory_identity_and_coverage_survive_rehashing[&lt;lambda&gt;4]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_inventory_identity_and_co4')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6e6a90&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_inventory_identity_and_co4/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_graph_must_preserve_predecessors_and_derived_edges[&lt;lambda&gt;0]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_graph_must_preserve_prede0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a7225d0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_graph_must_preserve_prede0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_graph_must_preserve_predecessors_and_derived_edges[&lt;lambda&gt;1]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_graph_must_preserve_prede1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6bc090&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_graph_must_preserve_prede1/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_graph_must_preserve_predecessors_and_derived_edges[&lt;lambda&gt;2]" time="0.003"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_graph_must_preserve_prede2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6e8150&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_graph_must_preserve_prede2/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_graph_must_preserve_predecessors_and_derived_edges[&lt;lambda&gt;3]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_graph_must_preserve_prede3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6b1ad0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_graph_must_preserve_prede3/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_changed_source_cannot_redefine_its_trust_root" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_changed_source_cannot_red0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a9cf110&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_changed_source_cannot_red0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_schema_cannot_weaken_itself_even_with_recomputed_hash" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_schema_cannot_weaken_itse0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a73a9d0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_schema_cannot_weaken_itse0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_manifest_paths_are_inventoried_and_never_followed[/tmp/outside]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_manifest_paths_are_invent0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6b3e10&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_manifest_paths_are_invent0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_manifest_paths_are_inventoried_and_never_followed[../../outside]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_manifest_paths_are_invent1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6b9c10&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_manifest_paths_are_invent1/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_manifest_paths_are_inventoried_and_never_followed[.git/config]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_manifest_paths_are_invent2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a695510&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_manifest_paths_are_invent2/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_manifest_paths_are_inventoried_and_never_followed[references/Hexalith.Tenants/a.json]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_manifest_paths_are_invent3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a672bd0&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_manifest_paths_are_invent3/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_fixed_input_symlink_escape_blocks" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_fixed_input_symlink_escap0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a6e8c10&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_fixed_input_symlink_escap0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_duplicate_json_keys_fail" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'&quot;">tmp_path = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_duplicate_json_keys_fail0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x78088a62ef90&gt;
+
+    @pytest.fixture()
+    def repository(tmp_path: Path, monkeypatch) -&gt; Path:
+        for relative in {*checker.SOURCE_PINS, *checker.ARTIFACTS, PACKAGE}:
+            target = tmp_path / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+&gt;           shutil.copyfile(ROOT / relative, target)
+
+_bmad/scripts/tests/test_verify_epic_16_prerequisites.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+dst = PosixPath('/tmp/pytest-of-administrator/pytest-5/test_duplicate_json_keys_fail0/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/references/Hexalith.Platform/_bmad-output/planning-artifacts/architecture/architecture-platform-2026-09-27/ARCHITECTURE-SPINE.md'
+
+../../../../../.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/shutil.py:256: FileNotFoundError</error></testcase><testcase classname="_bmad.scripts.tests.test_verify_epic_16_prerequisites" name="test_cli_missing_inputs_has_blocked_exit_and_no_authority" time="0.076" /></testsuite></testsuites>

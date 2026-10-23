@@ -162,7 +162,11 @@ public sealed partial class ProjectAdvisoryQueryExecutor(IReadModelStore store, 
                         if (!await ProjectAllowedAsync(query, id, Omitted, ct).ConfigureAwait(false)) return;
                         var detail = await DetailAsync(query, id, includeArchived, Omitted, ct).ConfigureAwait(false);
                         if (detail is null || !conversation && !acceptedInputs.Contains(detail.ProjectFolder?.FolderId, StringComparer.Ordinal)) return;
-                        if (await FolderAllowedAsync(query, id, detail.ProjectFolder?.FolderId, Omitted, ct).ConfigureAwait(false))
+                        if (conversation && observed?.Metadata is { } metadata
+                            && ConversationResolutionEvidenceMapper.Map(new(metadata.ConversationId, metadata.ProjectId,
+                                metadata.SafeLabel, ReferenceState.Included), [new(id, detail.Name, detail.Lifecycle)], evaluatedAt).Count == 0) return;
+                        if (detail.ProjectFolder?.FolderId is null
+                            || await FolderAllowedAsync(query, id, detail.ProjectFolder.FolderId, Omitted, ct).ConfigureAwait(false))
                             candidates[id] = detail;
                     }
                     catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
@@ -192,7 +196,8 @@ public sealed partial class ProjectAdvisoryQueryExecutor(IReadModelStore store, 
                     if (await ProjectAllowedAsync(query, pair.Key, Omitted, ct).ConfigureAwait(false))
                         detail = await DetailAsync(query, pair.Key, includeArchived, Omitted, ct).ConfigureAwait(false);
                     if (detail is null || !conversation && !acceptedInputs.Contains(detail.ProjectFolder?.FolderId, StringComparer.Ordinal)
-                        || !await FolderAllowedAsync(query, pair.Key, detail.ProjectFolder?.FolderId, Omitted, ct).ConfigureAwait(false))
+                        || detail.ProjectFolder?.FolderId is { } folderId
+                            && !await FolderAllowedAsync(query, pair.Key, folderId, Omitted, ct).ConfigureAwait(false))
                         candidates.TryRemove(pair.Key, out _);
                     else candidates[pair.Key] = detail;
                 }

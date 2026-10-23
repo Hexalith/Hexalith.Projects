@@ -1,0 +1,594 @@
+{
+  "conclusion": "",
+  "headSha": "91eae8f21dd80157824e7d71d4b7a6d64f02ed5c",
+  "jobs": [
+    {
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "databaseId": 120257947962,
+      "name": "ci / admin-web",
+      "startedAt": "2026-10-23T05:29:04Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Check out source",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize root-declared submodules",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize .NET",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "",
+          "name": "Build tests and install Playwright Chromium",
+          "number": 5,
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "",
+          "name": "Run Admin Web tests",
+          "number": 6,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Upload Admin Web test evidence",
+          "number": 7,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Initialize .NET",
+          "number": 13,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Check out source",
+          "number": 14,
+          "status": "pending"
+        }
+      ],
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39905869749/job/120257947962"
+    },
+    {
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "databaseId": 120257948147,
+      "name": "ci / release-tooling",
+      "startedAt": "2026-10-23T05:29:10Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Check out source",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize root-declared submodules",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Set up supported Node",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize .NET",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Set up Python for tooling discovery",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install locked Python tooling",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install locked release tooling",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify npm dependency provenance and signatures",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Enforce pinned commit and pull-request title policy",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "",
+          "name": "Run fail-closed tooling tests",
+          "number": 11,
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Set up Python for tooling discovery",
+          "number": 19,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Initialize .NET",
+          "number": 20,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Set up supported Node",
+          "number": 21,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Check out source",
+          "number": 22,
+          "status": "pending"
+        }
+      ],
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39905869749/job/120257948147"
+    },
+    {
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "databaseId": 120257948195,
+      "name": "ci / TestSupport Windows descendant cleanup",
+      "startedAt": "2026-10-23T05:30:38Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Check out source",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize root-declared build dependency",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize .NET",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Set up Python for the process fixture",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build TestSupport tests",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Check TestSupport project pack and publish properties",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "",
+          "name": "Run TestSupport tests on Windows",
+          "number": 8,
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Set up Python for the process fixture",
+          "number": 14,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Initialize .NET",
+          "number": 15,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Check out source",
+          "number": 16,
+          "status": "pending"
+        }
+      ],
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39905869749/job/120257948195"
+    },
+    {
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "databaseId": 120257948294,
+      "name": "ci / minimal-module platform compatibility",
+      "startedAt": "2026-10-23T05:28:55Z",
+      "status": "queued",
+      "steps": [],
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39905869749/job/120257948294"
+    },
+    {
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "databaseId": 120257948309,
+      "name": "ci / conformance",
+      "startedAt": "2026-10-23T05:31:33Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Check out complete source history",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "",
+          "name": "Initialize root-declared submodules",
+          "number": 3,
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "",
+          "name": "Initialize .NET",
+          "number": 4,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Set up Python for live tier controls",
+          "number": 5,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Install locked tier verification tooling",
+          "number": 6,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Build portable conformance project",
+          "number": 7,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Build conformance project",
+          "number": 8,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Run current conformance checks",
+          "number": 9,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Upload conformance evidence",
+          "number": 10,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Check out complete source history",
+          "number": 20,
+          "status": "pending"
+        }
+      ],
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39905869749/job/120257948309"
+    },
+    {
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "databaseId": 120257948366,
+      "name": "ci / repository",
+      "startedAt": "2026-10-23T05:31:23Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Check out source",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Check root submodule declarations and gitlinks",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test root submodule check",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Set up Python",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install locked Python tooling",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Verify story completion gate surfaces",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize .NET for the package-free evidence bridge",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "",
+          "name": "Test BMAD repository tooling",
+          "number": 9,
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "",
+          "name": "Test Conversations owner qualification guards",
+          "number": 10,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Upload repository tooling evidence",
+          "number": 11,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Initialize .NET for the package-free evidence bridge",
+          "number": 20,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Set up Python",
+          "number": 21,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Check out source",
+          "number": 22,
+          "status": "pending"
+        }
+      ],
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39905869749/job/120257948366"
+    },
+    {
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "databaseId": 120257948409,
+      "name": "ci / build-and-test",
+      "startedAt": "2026-10-23T05:29:05Z",
+      "status": "in_progress",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Validate governed CI contract",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Checkout approved Builds actions",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Evaluate governed workflow provenance",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Initialize root-declared submodules (governed)",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize root-declared submodules",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Initialize .NET",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Cache NuGet packages",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Validate test platform input",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Restore",
+          "number": 11,
+          "status": "completed"
+        },
+        {
+          "conclusion": "",
+          "name": "Build",
+          "number": 12,
+          "status": "in_progress"
+        },
+        {
+          "conclusion": "",
+          "name": "Validate package consumer references",
+          "number": 13,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Unit tests (Tier 1, VSTest)",
+          "number": 14,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Unit tests (Tier 1, Microsoft.Testing.Platform)",
+          "number": 15,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Install and initialize Dapr (governed)",
+          "number": 16,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Install and initialize Dapr",
+          "number": 17,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Integration tests (Tier 2, VSTest)",
+          "number": 18,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Integration tests (Tier 2, Microsoft.Testing.Platform)",
+          "number": 19,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Validate coverage gates",
+          "number": 20,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Fail on blocking test failures",
+          "number": 21,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Upload test and coverage evidence",
+          "number": 22,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Cache NuGet packages",
+          "number": 42,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Initialize .NET",
+          "number": 43,
+          "status": "pending"
+        },
+        {
+          "conclusion": "",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "number": 44,
+          "status": "pending"
+        }
+      ],
+      "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39905869749/job/120257948409"
+    }
+  ],
+  "status": "queued",
+  "url": "https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39905869749"
+}

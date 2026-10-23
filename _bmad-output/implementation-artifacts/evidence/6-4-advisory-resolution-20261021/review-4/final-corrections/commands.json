@@ -1,0 +1,55 @@
+[
+  {
+    "name": "server-build",
+    "command": [
+      "dotnet",
+      "build",
+      "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-p:BuildProjectReferences=false",
+      "-p:UseHexalithProjectReferences=true",
+      "-p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "-p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "-p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants"
+    ],
+    "exit_code": 0,
+    "cwd": "/home/administrator/projects/hexalith/projects"
+  },
+  {
+    "name": "tests-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-p:BuildProjectReferences=false",
+      "-p:UseHexalithProjectReferences=true",
+      "-p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "-p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "-p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants"
+    ],
+    "exit_code": 0,
+    "cwd": "/home/administrator/projects/hexalith/projects"
+  },
+  {
+    "name": "registration",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "Hexalith.Projects.Server.Tests.DelegatedProjectDirectoryRegistrationTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.ProjectsServerModuleTests",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/review-4/final-corrections/registration.xml"
+    ],
+    "exit_code": 0,
+    "cwd": "/home/administrator/projects/hexalith/projects"
+  }
+]

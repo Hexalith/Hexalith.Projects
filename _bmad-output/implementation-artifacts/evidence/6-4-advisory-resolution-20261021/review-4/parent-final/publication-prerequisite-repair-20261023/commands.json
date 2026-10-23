@@ -1,0 +1,39 @@
+[
+  {
+    "purpose": "Reproduce fixture setup errors",
+    "command": "uv run --frozen --no-sync python3 -m pytest -q _bmad/scripts/tests/test_verify_epic_16_prerequisites.py --junitxml=/tmp/story64-epic16-tooling-20261023/before.junit.xml",
+    "exitCode": 1,
+    "summary": "1 passed, 36 errors in 0.79s"
+  },
+  {
+    "purpose": "Verify complete fault suite and unchanged anti-skip guard",
+    "command": "uv run --frozen --no-sync python3 -m pytest -q -ra -p no:cacheprovider _bmad/scripts/tests/test_verify_epic_16_prerequisites.py _bmad/scripts/tests/test_static_anti_skip_guard.py --junitxml=/tmp/story64-epic16-tooling-20261023/focused.junit.xml",
+    "exitCode": 0,
+    "summary": "38 passed in 1.52s"
+  },
+  {
+    "purpose": "Verify real checker remains blocked without external source inputs",
+    "command": "uv run --frozen --no-sync python3 _bmad/scripts/verify_epic_16_prerequisites.py --repository .",
+    "exitCode": 2,
+    "summary": "BLOCKED/INPUT_UNAVAILABLE; implementation hold ACTIVE, all four authority flags false"
+  },
+  {
+    "purpose": "Validate exact proposed commit message with pinned commitlint 21.2.3",
+    "command": "node node_modules/@commitlint/cli/cli.js --config commitlint.config.mjs --edit /tmp/story64-epic16-tooling-20261023/commit-message.txt --verbose",
+    "exitCode": 0,
+    "summary": "0 problems, 0 warnings"
+  },
+  {
+    "purpose": "Whitespace check",
+    "command": "git diff --check",
+    "exitCode": 0,
+    "summary": "no output"
+  },
+  {
+    "purpose": "Optional exact CI repository-tooling reproduction; interrupted at parent request to avoid delaying the already-approved commit",
+    "command": "uv run --frozen --no-sync python3 -m pytest -q -ra -p no:cacheprovider _bmad/scripts/tests tests/tooling/test_evidence_boundary_current.py --ignore=_bmad/scripts/tests/test_verify_epic_6_completion_supersession.py --junitxml=/tmp/story64-epic16-tooling-20261023/repository.junit.xml",
+    "exitCode": 2,
+    "outcome": "interrupted-optional-not-a-pass",
+    "summary": "1821 passed, 17 deselected, 56 warnings in 2053.84s (0:34:13); KeyboardInterrupt; zero failures/errors/skips among completed cases"
+  }
+]

@@ -45,12 +45,11 @@ test.describe('Projects resolution', () => {
     assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
   });
 
-  liveAppHostTest('file attachment resolves with FileReferenceMatched and does not read raw content (FR-13 / AC1,2)', async ({
+  liveAppHostTest('unsupported file attachment returns legacy NoMatch without reading raw content (FR-13 / AC1,2)', async ({
     apiRequest,
     authToken,
     requestIdentity,
     tenantContext,
-    resolutionProjects,
     liveFixtureGraph,
   }) => {
     const { status, body } = await resolveProjectFromAttachments(
@@ -61,17 +60,12 @@ test.describe('Projects resolution', () => {
     );
 
     expect(status).toBe(200);
-    expect(body.result).toBe('SingleCandidate');
-    expect(body.candidates).toContainEqual(
-      expect.objectContaining({
-        projectId: resolutionProjects.secondary.projectId,
-        reasonCodes: expect.arrayContaining(['FileReferenceMatched']),
-      }),
-    );
+    expect(body.result).toBe('NoMatch');
+    expect(body.candidates).toEqual([]);
     assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
   });
 
-  liveAppHostTest('folder and file attachments can produce multiple candidates and never auto-attach (FR-13 / NFR-9)', async ({
+  liveAppHostTest('mixed attachments suggest only the Folder candidate and never auto-attach (FR-13 / NFR-9)', async ({
     apiRequest,
     authToken,
     requestIdentity,
@@ -87,10 +81,9 @@ test.describe('Projects resolution', () => {
     );
 
     expect(status).toBe(200);
-    expect(body.result).toBe('MultipleCandidates');
-    expect(body.candidates.map((candidate) => candidate.projectId)).toEqual(
-      expect.arrayContaining([resolutionProjects.primary.projectId, resolutionProjects.secondary.projectId]),
-    );
+    expect(body.result).toBe('SingleCandidate');
+    expect(body.candidates.map((candidate) => candidate.projectId)).toEqual([resolutionProjects.primary.projectId]);
+    expect(body.candidates.flatMap((candidate) => candidate.reasonCodes)).not.toContain('FileReferenceMatched');
     expect(JSON.stringify(body)).not.toContain('attached');
     assertNoResolutionPayloadLeakage(JSON.stringify(body), tenantContext.tenantId);
   });

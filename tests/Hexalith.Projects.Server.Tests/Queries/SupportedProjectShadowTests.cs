@@ -32,8 +32,8 @@ public sealed class SupportedProjectShadowTests
         ProjectListProjection legacyList = ProjectListProjection.Rebuild(source);
         ProjectDetailProjection legacyDetails = ProjectDetailProjection.Rebuild(source);
         foreach (ProjectionRequest request in requests) { await fixture.Projection.ProjectAsync(request, "shadow-" + request.AggregateId, TestContext.Current.CancellationToken); }
-        fixture.Folders.Denied.Add("folder-project-a");
-        ProjectReadTestFolders legacyOwner = new(); legacyOwner.Denied.Add("folder-project-a");
+        fixture.Folders.Deny("folder-project-a");
+        ProjectReadTestFolders legacyOwner = new(); legacyOwner.Deny("folder-project-a");
         ProjectReadTestAuthorization legacyAuthority = new();
         QueryCursorScope legacyVisibility = QueryCursorScope.Create();
         List<ProjectListItem> legacyVisible = [];

@@ -96,8 +96,10 @@ public static class ProjectPersistedDetailValidator
             && ProjectCommandValidator.IsSafePersistedMetadata(detail.Name, ProjectCommandValidator.MaxNameLength)
             && detail.Sequence > 0
             && Enum.IsDefined(detail.Lifecycle)
-            && detail.ProjectFolder is { ReferenceState: ReferenceState.Included } folder
-            && ProjectCommandValidator.IsSafePersistedReferenceIdentifier(folder.FolderId);
+            && (detail.ProjectFolder is null
+                || detail.ProjectFolder is { ReferenceState: ReferenceState.Pending, FolderId: null }
+                || detail.ProjectFolder is { ReferenceState: ReferenceState.Included } folder
+                    && ProjectCommandValidator.IsSafePersistedReferenceIdentifier(folder.FolderId));
     }
 
     private static bool IsValidFolder(

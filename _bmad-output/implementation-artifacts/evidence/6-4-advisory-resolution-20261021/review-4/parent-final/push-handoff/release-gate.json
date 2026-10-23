@@ -1,0 +1,29 @@
+{
+  "command": [
+    "python3",
+    "scripts/verify-release-source.py",
+    "--publish-enabled",
+    "true",
+    "--repository",
+    "Hexalith/Hexalith.Conversations",
+    "--dispatch-ref",
+    "refs/heads/main",
+    "--dispatch-sha",
+    "91eae8f21dd80157824e7d71d4b7a6d64f02ed5c",
+    "--workflow",
+    "ci.yml",
+    "--release-version",
+    "1.3.1"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+  "exit_code": 1,
+  "output": "Release-source verification failed: EXACT_CI_ABSENT: newest push CI run/attempt for the current main SHA is not successful\n",
+  "latest_main": "91eae8f21dd80157824e7d71d4b7a6d64f02ed5c",
+  "latest_ci_run_id": 39905869749,
+  "latest_ci_status": "queued",
+  "latest_ci_conclusion": "",
+  "pushed_commit_is_ancestor_of_current_main": true,
+  "previous_ci_run_cancelled_after_subsequent_push": true,
+  "release_dispatched": false,
+  "recorded_at_utc": "2026-10-23T05:32:04.539260+00:00"
+}

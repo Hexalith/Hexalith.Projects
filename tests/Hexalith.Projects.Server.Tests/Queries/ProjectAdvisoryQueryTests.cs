@@ -16,7 +16,7 @@ using Hexalith.Projects.Server.Queries;
 using Shouldly;
 using Xunit;
 
-public sealed class ProjectAdvisoryQueryTests
+public sealed partial class ProjectAdvisoryQueryTests
 {
     [Fact]
     public async Task ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites()
@@ -30,7 +30,7 @@ public sealed class ProjectAdvisoryQueryTests
         result.Result.ShouldBe(ResolutionResult.MultipleCandidates); result.Incomplete.ShouldBeFalse();
         result.Candidates.Select(x => x.ProjectId).ShouldBe(["project-a", "project-b"]);
         result.Candidates.Select(x => x.Score).ShouldBe([50, 20]); result.Candidates.Select(x => x.Rank).ShouldBe([1, 2]);
-        owner.Calls.ShouldBe(2); f.Store.Count.ShouldBe(count); f.Store.SnapshotRaw("statestore", ProjectReadModelKeys.Detail("tenant-a", "project-a")).ShouldBe(before);
+        owner.Calls.ShouldBe(2); owner.Arguments.ShouldAllBe(argument => argument.TenantId == "tenant-a" && argument.ConversationId == "conversation"); f.Store.Count.ShouldBe(count); f.Store.SnapshotRaw("statestore", ProjectReadModelKeys.Detail("tenant-a", "project-a")).ShouldBe(before);
         string json = JsonSerializer.Serialize(result, JsonSerializerOptions.Web);
         foreach (string field in new[] { "displayName", "excluded", "selected", "snapshot", "safeLabel" }) json.ShouldNotContain(field);
     }
@@ -71,7 +71,10 @@ public sealed class ProjectAdvisoryQueryTests
     public async Task DeniedAndUnknownFoldersNeverScore(bool unknown)
     {
         var f = await SupportedProjectReadFixture.CreateAsync(); await f.SeedAsync("project-a");
-        string id = unknown ? "missing" : "folder-project-a"; f.Folders.Denied.Add(id);
+        string id = unknown ? "missing" : "folder-project-a"; f.Folders.Deny(id);
+        string key = ProjectReadModelKeys.Detail("tenant-a", "project-a");
+        var model = f.Store.Snapshot<ProjectReadModel>("statestore", key)!;
+        f.Store.SeedRaw("statestore", key, model with { Detail = model.Detail! with { ProjectFolder = model.Detail.ProjectFolder! with { FolderId = id } } });
         var result = Read(await Executor(f).FromAttachmentsAsync(Query(f, new ResolveProjectFromAttachmentsQuery([new("folder", id)])), TestContext.Current.CancellationToken));
         result.Candidates.ShouldBeEmpty(); result.Result.ShouldBe(ResolutionResult.NoMatch); result.Incomplete.ShouldBeFalse();
     }
@@ -86,7 +89,7 @@ public sealed class ProjectAdvisoryQueryTests
         f.Store.SeedRaw("statestore", key, model with { Detail = model.Detail! with { Lifecycle = ProjectLifecycle.Archived } });
         var result = Read(await Executor(f).FromAttachmentsAsync(Query(f, new ResolveProjectFromAttachmentsQuery([new("folder", "folder-project-a")], include)), TestContext.Current.CancellationToken));
         result.Candidates.Count.ShouldBe(include ? 1 : 0);
-        f.Folders.Denied.Add("folder-project-a");
+        int reads = 0; f.Folders.OnRead = id => { if (Interlocked.Increment(ref reads) == 2) f.Folders.Deny(id); return Task.CompletedTask; };
         Read(await Executor(f).FromAttachmentsAsync(Query(f, new ResolveProjectFromAttachmentsQuery([new("folder", "folder-project-a")], true)), TestContext.Current.CancellationToken)).Candidates.ShouldBeEmpty();
     }
 
@@ -118,7 +121,7 @@ public sealed class ProjectAdvisoryQueryTests
     public async Task RevokedInputIsFilteredBeforeMappingEvenWhenCandidateFolderLaterAllows()
     {
         var f = await SupportedProjectReadFixture.CreateAsync(); await f.SeedAsync("project-a"); int reads = 0;
-        f.Folders.OnRead = id => { int n = Interlocked.Increment(ref reads); if (n == 3) f.Folders.Denied.Add(id); if (n == 4) f.Folders.Denied.Remove(id); return Task.CompletedTask; };
+        f.Folders.OnRead = id => { int n = Interlocked.Increment(ref reads); if (n == 3) f.Folders.Deny(id); if (n == 4) f.Folders.Allow(id); return Task.CompletedTask; };
         var result = Read(await Executor(f).FromAttachmentsAsync(Query(f, new ResolveProjectFromAttachmentsQuery([new("folder", "folder-project-a")])), TestContext.Current.CancellationToken));
         result.Candidates.ShouldBeEmpty(); reads.ShouldBe(3);
     }
@@ -131,7 +134,7 @@ public sealed class ProjectAdvisoryQueryTests
             : AdvisoryTestConversationDirectory.Result(new(new("conversation", "project-a", null, "Open"), false)) };
         var executor = new ProjectAdvisoryQueryExecutor(f.Store, f.Gate, f.Binding, f.Folders, owner, f.Clock);
         (await executor.FromConversationAsync(Query(f, new ResolveProjectFromConversationQuery("conversation")), TestContext.Current.CancellationToken)).ErrorMessage.ShouldBe("safe-denial");
-        int reads = 0; f.Folders.OnRead = id => { if (Interlocked.Increment(ref reads) == 2) f.Folders.Denied.Add(id); return Task.CompletedTask; };
+        int reads = 0; f.Folders.OnRead = id => { if (Interlocked.Increment(ref reads) == 2) f.Folders.Deny(id); return Task.CompletedTask; };
         Read(await Executor(f).FromConversationAsync(Query(f, new ResolveProjectFromConversationQuery("conversation")), TestContext.Current.CancellationToken)).Candidates.ShouldBeEmpty();
     }
 
@@ -172,10 +175,13 @@ public sealed class ProjectAdvisoryQueryTests
     public async Task CallerCancellationAndIdentityMismatchCannotBecomeSuggestions()
     {
         var f = await SupportedProjectReadFixture.CreateAsync(); using var cancelled = new CancellationTokenSource(); cancelled.Cancel();
+        var owner = new AdvisoryTestConversationDirectory();
+        var executor = Executor(f, owner: owner);
         var query = Query(f, new ResolveProjectFromAttachmentsQuery([]));
-        await Should.ThrowAsync<OperationCanceledException>(() => Executor(f).FromAttachmentsAsync(query, cancelled.Token));
+        await Should.ThrowAsync<OperationCanceledException>(() => executor.FromAttachmentsAsync(query, cancelled.Token));
         foreach (var malformed in new[] { query with { TenantId = "foreign" }, query with { OriginalActorId = "other" }, query with { AuthenticatedWorkloadId = null }, query with { DelegationId = "other" } })
-            (await Executor(f).FromAttachmentsAsync(malformed, TestContext.Current.CancellationToken)).ErrorMessage.ShouldBe("safe-denial");
+            (await executor.FromAttachmentsAsync(malformed, TestContext.Current.CancellationToken)).ErrorMessage.ShouldBe("safe-denial");
+        owner.Calls.ShouldBe(0); f.Folders.Reads.ShouldBe(0);
     }
 
     [Fact]
@@ -183,12 +189,13 @@ public sealed class ProjectAdvisoryQueryTests
     {
         var f = await SupportedProjectReadFixture.CreateAsync(); await f.SeedAsync("project-a");
         int calls = 0;
-        f.Authorization.Decision = request => request.ProjectId == "project-a" && Interlocked.Increment(ref calls) >= 1
+        f.Authorization.Decision = request => request.ProjectId == "project-a"
             ? EventStoreAuthorizationValidationResult.Denied() : EventStoreAuthorizationValidationResult.Allowed("test-current");
         var guard = new AdvisoryGuardedReadStore(f.Store);
         var query = Query(f, new ResolveProjectFromConversationQuery("conversation"));
         Read(await Executor(f, guard).FromConversationAsync(query, TestContext.Current.CancellationToken)).Candidates.ShouldBeEmpty();
         guard.Reads.ShouldNotContain(ProjectReadModelKeys.Detail("tenant-a", "project-a"));
+        f.Folders.Reads.ShouldBe(0);
         calls = 0;
         f.Authorization.Decision = request => request.ProjectId == "project-a" && Interlocked.Increment(ref calls) == 2
             ? EventStoreAuthorizationValidationResult.Denied() : EventStoreAuthorizationValidationResult.Allowed("test-current");
@@ -218,7 +225,7 @@ public sealed class ProjectAdvisoryQueryTests
             Enumerable.Range(0, 205).Select(n => $"p{n:000}").ToArray(), 1, f.Clock.GetUtcNow()));
         var guard = new AdvisoryGuardedReadStore(f.Store);
         var result = Read(await Executor(f, guard).FromConversationAsync(Query(f, new ResolveProjectFromConversationQuery("conversation")), TestContext.Current.CancellationToken));
-        result.Candidates.Single().ProjectId.ShouldBe("project-a"); result.Incomplete.ShouldBeTrue();
+        result.Candidates.Single().ProjectId.ShouldBe("project-a"); result.Incomplete.ShouldBeTrue(); result.Result.ShouldBe(ResolutionResult.SingleCandidate);
         guard.Reads.Where(key => !key.EndsWith(":index", StringComparison.Ordinal)).Distinct(StringComparer.Ordinal).Count().ShouldBe(200);
     }
 
@@ -238,7 +245,7 @@ public sealed class ProjectAdvisoryQueryTests
         var f = await SupportedProjectReadFixture.CreateAsync(); await f.SeedAsync("project-a");
         string key = ProjectReadModelKeys.Detail("tenant-a", "project-a");
         var before = f.Store.Snapshot<ProjectReadModel>("statestore", key)!;
-        f.Folders.Denied.Add("new-denied-folder");
+        f.Folders.Deny("new-denied-folder");
         f.Folders.OnRead = _ =>
         {
             f.Store.SeedRaw("statestore", key, before with { Detail = before.Detail! with
@@ -246,7 +253,9 @@ public sealed class ProjectAdvisoryQueryTests
             return Task.CompletedTask;
         };
         var query = Query(f, new ResolveProjectFromConversationQuery("conversation"));
-        Read(await Executor(f).FromConversationAsync(query, TestContext.Current.CancellationToken)).Candidates.ShouldBeEmpty();
+        var denied = Read(await Executor(f).FromConversationAsync(query, TestContext.Current.CancellationToken));
+        denied.Candidates.ShouldBeEmpty(); denied.Incomplete.ShouldBeFalse();
+        f.Folders.Arguments.ShouldContain(argument => argument.FolderId == "new-denied-folder");
         f.Store.SeedRaw("statestore", key, before);
         f.Folders.OnRead = _ =>
         {
@@ -326,7 +335,7 @@ public sealed class ProjectAdvisoryQueryTests
         } };
         var result = Read(await Executor(f, guard).FromAttachmentsAsync(Query(f,
             new ResolveProjectFromAttachmentsQuery([new("folder", "folder-project-a"), new("folder", "folder-project-b")])), TestContext.Current.CancellationToken));
-        result.Incomplete.ShouldBeTrue(); result.Candidates.Single().ProjectId.ShouldBe("project-b");
+        result.Incomplete.ShouldBeTrue(); result.Result.ShouldBe(ResolutionResult.SingleCandidate); result.Candidates.Single().ProjectId.ShouldBe("project-b");
         result.Candidates.Single().Score.ShouldBe(45); result.Candidates.Single().Rank.ShouldBe(1);
         reads[failedKey].ShouldBe(2); reads[ProjectReadModelKeys.Detail("tenant-a", "project-b")].ShouldBe(2);
     }
@@ -341,10 +350,11 @@ public sealed class ProjectAdvisoryQueryTests
                 : new(new("conversation", "project-b", "Project project-c", "Open"), false)) };
         var executor = new ProjectAdvisoryQueryExecutor(f.Store, f.Gate, f.Binding, f.Folders, owner, f.Clock);
         var result = Read(await executor.FromConversationAsync(Query(f, new ResolveProjectFromConversationQuery("conversation")), TestContext.Current.CancellationToken));
-        result.Incomplete.ShouldBeTrue(); result.Candidates.Select(candidate => candidate.ProjectId).ShouldBe(["project-b", "project-c"]);
-        result.Candidates.Select(candidate => candidate.Score).ShouldBe([50, 20]);
+        result.Incomplete.ShouldBeTrue(); result.Result.ShouldBe(ResolutionResult.SingleCandidate);
+        result.Candidates.Select(candidate => candidate.ProjectId).ShouldBe(["project-b"]);
+        result.Candidates.Select(candidate => candidate.Score).ShouldBe([50]);
         result.Candidates[0].ReasonCodes.ShouldBe([ProjectReasonCode.ConversationLinked]);
-        result.Candidates[1].ReasonCodes.ShouldBe([ProjectReasonCode.MetadataMatched]); owner.Calls.ShouldBe(2);
+        owner.Calls.ShouldBe(2);
     }
 
     [Fact]
@@ -451,7 +461,7 @@ public sealed class ProjectAdvisoryQueryTests
         var result = await executor.FromConversationAsync(Query(f, new ResolveProjectFromConversationQuery("conversation")), TestContext.Current.CancellationToken);
         if (state is "removed" or "revoked") result.ErrorMessage.ShouldBe("safe-denial");
         else { var payload = Read(result); payload.Incomplete.ShouldBeTrue(); payload.Result.ShouldBeNull(); }
-        if (state == "removed") { owner.Calls.ShouldBe(0); f.Folders.Reads.ShouldBe(0); }
+        if (state != "revoked") { owner.Calls.ShouldBe(0); f.Folders.Reads.ShouldBe(0); }
     }
 
     [Theory]
@@ -494,14 +504,17 @@ public sealed class ProjectAdvisoryQueryTests
         var f = await SupportedProjectReadFixture.CreateAsync(); await f.SeedAsync("project-a");
         var guard = new AdvisoryGuardedReadStore(f.Store) { BeforeRead = (_, _) => throw new InvalidOperationException("Must not scan Projects.") };
         var owner = new AdvisoryTestConversationDirectory { OnRead = _ => AdvisoryTestConversationDirectory.Result(new(new("conversation", null, null, "Open"), false)) };
+        int scopeChecks = 0;
+        f.Authorization.Decision = request => { if (request.ProjectId is null) Interlocked.Increment(ref scopeChecks); return EventStoreAuthorizationValidationResult.Allowed("test"); };
         var executor = new ProjectAdvisoryQueryExecutor(guard, f.Gate, f.Binding, f.Folders, owner, f.Clock);
-        if (kind == "denied") f.Folders.Denied.Add("folder-project-a");
+        if (kind == "denied") f.Folders.Deny("folder-project-a");
         var result = kind == "conversation"
             ? await executor.FromConversationAsync(Query(f, new ResolveProjectFromConversationQuery("conversation")), TestContext.Current.CancellationToken)
             : await executor.FromAttachmentsAsync(Query(f, new ResolveProjectFromAttachmentsQuery(kind == "empty" ? [] : [new(kind == "file" ? "file" : "folder", "folder-project-a")])), TestContext.Current.CancellationToken);
         var payload = Read(result); payload.Incomplete.ShouldBe(kind == "file");
         payload.Result.ShouldBe(kind == "file" ? null : ResolutionResult.NoMatch); guard.Reads.ShouldBeEmpty();
         if (kind == "conversation") owner.Calls.ShouldBe(2);
+        scopeChecks.ShouldBe(2);
     }
 
     [Fact]
@@ -551,6 +564,7 @@ public sealed class ProjectAdvisoryQueryTests
         var result = Read(await Executor(f).FromAttachmentsAsync(Query(f,
             new ResolveProjectFromAttachmentsQuery([new("folder", "folder-project-a")])), TestContext.Current.CancellationToken));
         result.Candidates.Single().ProjectId.ShouldBe("project-a"); result.Incomplete.ShouldBeFalse();
+        result.EvaluatedAt.ShouldBe(f.Clock.GetUtcNow());
     }
 
     [Theory]
@@ -602,9 +616,11 @@ public sealed class ProjectAdvisoryQueryTests
         f.Identity.AddClaim(new Claim("eventstore:permission", listOnly ? ProjectAuthorizationGate.ListProjectsAction : ProjectAuthorizationGate.ReadProjectAction));
         var query = Query(f, conversation ? new ResolveProjectFromConversationQuery("conversation")
             : new ResolveProjectFromAttachmentsQuery([new("folder", "folder-project-a")])) with { Scopes = [scope] };
-        var result = conversation ? await Executor(f).FromConversationAsync(query, TestContext.Current.CancellationToken)
-            : await Executor(f).FromAttachmentsAsync(query, TestContext.Current.CancellationToken);
-        if (listOnly) { result.Success.ShouldBeFalse(); result.ErrorMessage.ShouldBe("safe-denial"); f.Folders.Reads.ShouldBe(0); }
+        var owner = new AdvisoryTestConversationDirectory();
+        var executor = Executor(f, owner: owner);
+        var result = conversation ? await executor.FromConversationAsync(query, TestContext.Current.CancellationToken)
+            : await executor.FromAttachmentsAsync(query, TestContext.Current.CancellationToken);
+        if (listOnly) { result.Success.ShouldBeFalse(); result.ErrorMessage.ShouldBe("safe-denial"); f.Folders.Reads.ShouldBe(0); owner.Calls.ShouldBe(0); }
         else
         {
             var response = Read(result); response.Incomplete.ShouldBeFalse(); response.Result.ShouldBe(ResolutionResult.SingleCandidate);
@@ -616,8 +632,8 @@ public sealed class ProjectAdvisoryQueryTests
     {
         int current; do { current = Volatile.Read(ref target); if (value <= current) return; } while (Interlocked.CompareExchange(ref target, value, current) != current);
     }
-    private static ProjectAdvisoryQueryExecutor Executor(SupportedProjectReadFixture f, AdvisoryGuardedReadStore? guard = null)
-        => new(guard ?? new(f.Store), f.Gate, f.Binding, f.Folders, new AdvisoryTestConversationDirectory(), f.Clock);
+    private static ProjectAdvisoryQueryExecutor Executor(SupportedProjectReadFixture f, AdvisoryGuardedReadStore? guard = null, AdvisoryTestConversationDirectory? owner = null)
+        => new(guard ?? new(f.Store), f.Gate, f.Binding, f.Folders, owner ?? new AdvisoryTestConversationDirectory(), f.Clock);
     private static QueryEnvelope Query(SupportedProjectReadFixture f, object input)
         => f.Query(input) with { QueryType = input is ResolveProjectFromConversationQuery ? ResolveProjectFromConversationQuery.QueryType : ResolveProjectFromAttachmentsQuery.QueryType };
     private static ProjectAdvisoryResolutionResponse Read(QueryResult result)

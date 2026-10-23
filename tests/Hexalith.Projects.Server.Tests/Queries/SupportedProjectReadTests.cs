@@ -38,7 +38,7 @@ public sealed partial class SupportedProjectReadTests
     {
         SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync(chatbot: true);
         for (int index = 0; index < 6; index++) { await fixture.SeedAsync($"project-{index}", index * 10 + 100); }
-        fixture.Folders.Denied.UnionWith(["folder-project-0", "folder-project-2"]);
+        fixture.Folders.Deny("folder-project-0"); fixture.Folders.Deny("folder-project-2");
         ProjectListPage first = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery(PageSize: 2)), TestContext.Current.CancellationToken));
         first.Items.Select(row => row.ProjectId).ShouldBe(["project-1", "project-3"]);
         first.Items.ShouldAllBe(row => row.Name != null);
@@ -284,7 +284,7 @@ public sealed partial class SupportedProjectReadTests
     {
         SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync(chatbot: true);
         await fixture.SeedAsync("project-a", 100); await fixture.SeedAsync("project-b", 1000); await fixture.SeedAsync("project-c", 2000);
-        if (change == "folder-grant-before-boundary") { fixture.Folders.Denied.Add("folder-project-a"); }
+        if (change == "folder-grant-before-boundary") { fixture.Folders.Deny("folder-project-a"); }
         ProjectListPage page = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery(PageSize: 1)), TestContext.Current.CancellationToken));
         page.Cursor.ShouldNotBeNull();
         switch (change)
@@ -300,7 +300,7 @@ public sealed partial class SupportedProjectReadTests
                 tenant.ProjectionWatermark = "tenant-a:2";
                 await fixture.Tenants.SaveAsync(tenant, TestContext.Current.CancellationToken); break;
             case "eventstore-authority": fixture.Authorization.Watermark = "new-eventstore-authority"; break;
-            default: fixture.Folders.Denied.Clear(); break;
+            default: fixture.Folders.Allow("folder-project-a"); break;
         }
         (await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery(Cursor: page.Cursor, PageSize: 1), correlation: "next-page"), TestContext.Current.CancellationToken)).ErrorMessage.ShouldBe(QueryAdapterFailureReason.InvalidCursor);
     }
@@ -362,7 +362,7 @@ public sealed partial class SupportedProjectReadTests
     {
         SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync(chatbot: chatbot, inspection: !chatbot);
         await fixture.SeedAsync("project-a"); await fixture.SeedAsync("project-b", 200); await fixture.SeedAsync("project-c", 300);
-        fixture.Folders.Denied.Add("folder-project-a");
+        fixture.Folders.Deny("folder-project-a");
         QueryEnvelope query = fixture.Query(new ListProjectsQuery(PageSize: 2, InspectDescriptiveMetadata: !chatbot));
         int count = fixture.Store.Count;
         ProjectListPage page = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(query, TestContext.Current.CancellationToken));

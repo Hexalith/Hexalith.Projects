@@ -112,8 +112,10 @@ public static class ProjectsServerServiceCollectionExtensions
         {
             FoldersClient? client = sp.GetService<FoldersClient>();
             IProjectFolderDirectory direct = client is null ? new UnavailableProjectFolderDirectory() : new FoldersProjectFolderDirectory(client);
-            return new DelegatedProjectFolderDirectory(() => sp.GetRequiredService<DelegatedOwnerQueryClient>(),
-                sp.GetRequiredService<IHttpContextAccessor>(), direct);
+            IHttpContextAccessor accessor = sp.GetRequiredService<IHttpContextAccessor>();
+            return new DelegatedProjectFolderDirectory(() =>
+                (accessor.HttpContext ?? throw new InvalidOperationException("Owner queries require an active request."))
+                    .RequestServices.GetRequiredService<DelegatedOwnerQueryClient>(), accessor, direct);
         });
         services.TryAddTransient<IProjectFileReferenceDirectory>(sp =>
         {
@@ -151,8 +153,13 @@ public static class ProjectsServerServiceCollectionExtensions
         services.AddSingleton<ProjectReadAudit>();
         services.AddSingleton<ProjectReadQueryExecutor>();
         services.AddSingleton<ProjectAdvisoryQueryExecutor>();
-        services.TryAddSingleton<IProjectAdvisoryConversationDirectory>(sp => new DelegatedProjectAdvisoryConversationDirectory(
-            () => sp.GetRequiredService<DelegatedOwnerQueryClient>()));
+        services.TryAddSingleton<IProjectAdvisoryConversationDirectory>(sp =>
+        {
+            IHttpContextAccessor accessor = sp.GetRequiredService<IHttpContextAccessor>();
+            return new DelegatedProjectAdvisoryConversationDirectory(() =>
+                (accessor.HttpContext ?? throw new InvalidOperationException("Owner queries require an active request."))
+                    .RequestServices.GetRequiredService<DelegatedOwnerQueryClient>());
+        });
         services.AddSingleton<IDomainQueryHandler, ResolveProjectFromConversationQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, ResolveProjectFromAttachmentsQueryHandler>();
         services.AddSingleton<IDomainQueryHandler, ListProjectsQueryHandler>();

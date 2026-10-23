@@ -167,6 +167,7 @@ public sealed class SupportedProjectGatewayHttpTests
         async Task<byte[][]> StoreBytesAsync() => await Task.WhenAll(observedKeys.Select(key =>
             stateClient.GetByteArrayAsync("/v1.0/state/statestore/" + Uri.EscapeDataString(key), TestContext.Current.CancellationToken))).ConfigureAwait(false);
         byte[][] beforeAdvisory = await StoreBytesAsync();
+        beforeAdvisory.ShouldAllBe(bytes => bytes.Length > 0);
         SubmitQueryRequest SuggestConversation(string id) => new(tenant, "projects", "projects", ResolveProjectFromConversationQuery.QueryType,
             Payload: JsonSerializer.SerializeToElement(new ResolveProjectFromConversationQuery(id), JsonSerializerOptions.Web));
         SubmitQueryRequest SuggestAttachments(params ProjectAdvisoryAttachment[] inputs) => new(tenant, "projects", "projects", ResolveProjectFromAttachmentsQuery.QueryType,

@@ -1,0 +1,33 @@
+[
+  {
+    "name": "release-plan",
+    "command": [
+      "npm",
+      "run",
+      "verify:release-plan",
+      "--",
+      "1.3.1"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "version": "1.3.1",
+    "read_only_preparation": true,
+    "recorded_at_utc": "2026-10-23T05:10:59.654877+00:00"
+  },
+  {
+    "name": "release-destinations",
+    "command": [
+      "python3",
+      "scripts/verify-release-state.py",
+      "absent",
+      "1.3.1",
+      "--repository",
+      "Hexalith/Hexalith.Conversations"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "version": "1.3.1",
+    "read_only_preparation": true,
+    "recorded_at_utc": "2026-10-23T05:11:01.832375+00:00"
+  }
+]

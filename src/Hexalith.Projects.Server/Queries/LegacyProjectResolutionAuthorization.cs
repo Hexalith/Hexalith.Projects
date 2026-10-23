@@ -23,13 +23,19 @@ public static partial class ProjectsDomainServiceEndpoints
             if (!decision.IsAllowed) return;
             if (folders is not null)
             {
-                if (decision.ProjectDetail?.ProjectFolder is not { ReferenceState: ReferenceState.Included, FolderId: { } folderId }
+                var binding = decision.ProjectDetail?.ProjectFolder;
+                if (binding is null || binding is { ReferenceState: ReferenceState.Pending, FolderId: null })
+                {
+                    allowed.Add(id);
+                    return;
+                }
+                if (binding is not { ReferenceState: ReferenceState.Included, FolderId: { } folderId }
                     || !IsCanonicalIdentifier(folderId)) return;
                 var folder = await folders.RefreshFolderReferenceAsync(new ProjectId(id), folderId,
                     correlationId ?? http.TraceIdentifier, ct).ConfigureAwait(false);
                 if (folder.Outcome != ProjectFolderValidationOutcome.Accepted)
                 {
-                    if (folder.Outcome != ProjectFolderValidationOutcome.Denied) Interlocked.Exchange(ref unavailable, 1);
+                    if (folder.Outcome is not (ProjectFolderValidationOutcome.Denied or ProjectFolderValidationOutcome.Archived or ProjectFolderValidationOutcome.ValidationFailed)) Interlocked.Exchange(ref unavailable, 1);
                     return;
                 }
             }
@@ -48,7 +54,7 @@ public static partial class ProjectsDomainServiceEndpoints
         {
             var decision = await folders.RefreshFolderReferenceAsync(new ProjectId("projects"), id, correlationId ?? string.Empty, ct).ConfigureAwait(false);
             if (decision.Outcome == ProjectFolderValidationOutcome.Accepted) allowed.Add(id);
-            else if (decision.Outcome != ProjectFolderValidationOutcome.Denied) Interlocked.Exchange(ref unavailable, 1);
+            else if (decision.Outcome is not (ProjectFolderValidationOutcome.Denied or ProjectFolderValidationOutcome.Archived or ProjectFolderValidationOutcome.ValidationFailed)) Interlocked.Exchange(ref unavailable, 1);
         }).ConfigureAwait(false);
         return unavailable == 0 ? allowed.Order(StringComparer.Ordinal).ToArray() : null;
     }

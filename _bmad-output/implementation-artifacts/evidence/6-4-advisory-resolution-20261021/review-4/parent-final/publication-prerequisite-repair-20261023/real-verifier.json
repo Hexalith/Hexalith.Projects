@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "hexalith.conversations.epic16-prerequisite-check.v1",
+  "validationScope": "draft-consistency-only",
+  "result": "BLOCKED",
+  "entryReadiness": "BLOCKED",
+  "authority": {
+    "implementationHold": "ACTIVE",
+    "executionAllowed": false,
+    "ownerApprovalClaimed": false,
+    "releaseAuthorized": false,
+    "pushAuthorized": false
+  },
+  "infrastructureDecision": {
+    "owner": "Hexalith.Platform",
+    "platformRevision": "10c50afc3cab41506fbb260e9fbc48a1804e0b61",
+    "selectedBy": "user",
+    "instruction": "stick to Hexalith.Platform",
+    "productionQualificationClaimed": false
+  },
+  "assertionLedger": [
+    {
+      "id": "schema-root",
+      "state": "PASS"
+    },
+    {
+      "id": "draft-authority",
+      "state": "PASS"
+    },
+    {
+      "id": "infrastructure-decision",
+      "state": "PASS"
+    },
+    {
+      "id": "pending-decisions",
+      "state": "PASS"
+    },
+    {
+      "id": "source-inventory",
+      "state": "PASS"
+    },
+    {
+      "id": "source:_bmad-output/planning-artifacts/architecture.md",
+      "state": "PASS"
+    },
+    {
+      "id": "source:_bmad-output/planning-artifacts/epics.md",
+      "state": "PASS"
+    },
+    {
+      "id": "source:_bmad-output/planning-artifacts/prds/prd-Conversations-2026-06-02/epics.md",
+      "state": "PASS"
+    },
+    {
+      "id": "source:_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-18.md",
+      "state": "PASS"
+    },
+    {
+      "id": "source:_bmad-output/planning-artifacts/v9-execution-graph-v1.json",
+      "state": "PASS"
+    },
+    {
+      "id": "source:_bmad-output/planning-artifacts/v9/story-contracts/16.1.json",
+      "state": "PASS"
+    },
+    {
+      "id": "source:_bmad-output/planning-artifacts/v9/story-contracts/16.2.json",
+      "state": "PASS"
+    },
+    {
+      "id": "source:_bmad-output/planning-artifacts/v9/story-contracts/16.3.json",
+      "state": "PASS"
+    },
+    {
+      "id": "source:_bmad-output/planning-artifacts/implementation-hold-v1.json",
+      "state": "PASS"
+    },
+    {
+      "id": "source:_bmad-output/implementation-artifacts/sprint-status.yaml",
+      "state": "PASS"
+    },
+    {
+      "id": "source:docs/runbooks/current-change-validation.md",
+      "state": "PASS"
+    },
+    {
+      "id": "source:.gitmodules",
+      "state": "PASS"
+    },
+    {
+      "id": "inputs",
+      "state": "BLOCKED"
+    }
+  ],
+  "blockers": [
+    "INPUT_UNAVAILABLE"
+  ],
+  "pendingDecisions": [],
+  "detail": "draft input must resolve to a file inside the repository: references/Hexalith.Platform/README.md"
+}

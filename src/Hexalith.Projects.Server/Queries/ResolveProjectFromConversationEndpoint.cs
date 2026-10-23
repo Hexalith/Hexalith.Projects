@@ -142,7 +142,10 @@ public static partial class ProjectsDomainServiceEndpoints
             }
 
             IReadOnlyList<ProjectListItem> rows = ProjectQueryTenantFilter.FilterList(authoritativeTenantId, projectedRows);
-            HashSet<string>? allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(rows.Select(row => row.ProjectId),
+            DateTimeOffset now = timeProvider.GetUtcNow();
+            IReadOnlyList<ProjectResolutionCandidateEvidence> observedCandidates = ConversationResolutionEvidenceMapper.Map(
+                conversationMetadata, rows.Select(row => new ConversationResolutionProjectCandidate(row.ProjectId, row.Name, row.Lifecycle)).ToArray(), now);
+            HashSet<string>? allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(observedCandidates.Select(row => row.ProjectId),
                 authorizationGate, tenantContext, httpContext, correlationId, taskId, cancellationToken, folderDirectory).WaitAsync(cancellationToken).ConfigureAwait(false);
             if (allowedProjects is null) return ReadModelUnavailable(correlationId, taskId);
             allowedProjects = await AuthorizeLegacyResolutionCandidatesAsync(allowedProjects, authorizationGate,
@@ -151,15 +154,13 @@ public static partial class ProjectsDomainServiceEndpoints
             authorization = await authorizationGate.AuthorizeListAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
                 .WaitAsync(cancellationToken).ConfigureAwait(false);
             callerToken.ThrowIfCancellationRequested();
-            if (!authorization.IsAllowed) return authorization.Retryable
+            if (!authorization.IsAllowed) return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
                 ? ReadModelUnavailable(correlationId, taskId) : SafeDenial(correlationId, taskId, authorization);
             List<ConversationResolutionProjectCandidate> candidateProjects = new(rows.Count);
             foreach (ProjectListItem row in rows.Where(row => allowedProjects.Contains(row.ProjectId)))
             {
                 candidateProjects.Add(new ConversationResolutionProjectCandidate(row.ProjectId, row.Name, row.Lifecycle));
             }
-
-            DateTimeOffset now = timeProvider.GetUtcNow();
 
             IReadOnlyList<ProjectResolutionCandidateEvidence> candidates = ConversationResolutionEvidenceMapper.Map(
                 conversationMetadata,

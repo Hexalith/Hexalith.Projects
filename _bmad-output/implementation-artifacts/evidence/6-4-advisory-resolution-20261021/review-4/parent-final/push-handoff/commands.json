@@ -1,0 +1,91 @@
+[
+  {
+    "name": "rebased-commitlint",
+    "command": [
+      "node_modules/.bin/commitlint",
+      "--config",
+      "commitlint.config.mjs",
+      "--from",
+      "26a269a5a73992d4df79d55460a04d1ab81dbfcc",
+      "--to",
+      "7322ada8193583c0fcaba409b8e13f190a9b30b6",
+      "--verbose"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "started_at": "2026-10-23T05:05:08.715219+00:00",
+    "exit_code": 0,
+    "private_log": "/tmp/story64-push-check-mlz7ceci/rebased-commitlint.log"
+  },
+  {
+    "name": "owner-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:UseHexalithProjectReferences=true",
+      "-p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "-p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "-p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "started_at": "2026-10-23T05:05:09.401320+00:00",
+    "exit_code": 0,
+    "private_log": "/tmp/story64-push-check-mlz7ceci/owner-build.log"
+  },
+  {
+    "name": "owner-full",
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/review-4/parent-final/push-handoff/owner-full.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "started_at": "2026-10-23T05:05:47.227855+00:00",
+    "exit_code": 0,
+    "private_log": "/tmp/story64-push-check-mlz7ceci/owner-full.log"
+  },
+  {
+    "name": "projects-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:UseHexalithProjectReferences=true",
+      "-p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "-p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+      "-p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "started_at": "2026-10-23T05:06:17.017881+00:00",
+    "exit_code": 0,
+    "private_log": "/tmp/story64-push-check-mlz7ceci/projects-build.log"
+  },
+  {
+    "name": "projects-focused",
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromConversationTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.Queries.ResolveProjectFromAttachmentsTests",
+      "-class",
+      "Hexalith.Projects.Server.Tests.DelegatedProjectDirectoryRegistrationTests",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/review-4/parent-final/push-handoff/projects-focused.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "started_at": "2026-10-23T05:07:05.304686+00:00",
+    "exit_code": 0,
+    "private_log": "/tmp/story64-push-check-mlz7ceci/projects-focused.log"
+  }
+]

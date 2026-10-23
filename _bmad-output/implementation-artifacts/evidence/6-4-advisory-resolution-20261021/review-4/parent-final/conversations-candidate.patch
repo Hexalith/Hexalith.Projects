@@ -1,0 +1,473 @@
+diff --git a/src/Hexalith.Conversations.Contracts/README.md b/src/Hexalith.Conversations.Contracts/README.md
+index 44a9a7c..3c4c79e 100644
+--- a/src/Hexalith.Conversations.Contracts/README.md
++++ b/src/Hexalith.Conversations.Contracts/README.md
+@@ -42,7 +42,11 @@ A metadata event with a non-null `Label` and no classification invalidates prior
+ 
+ Older isolated metadata may contain an implicit classification but no persisted purpose. It remains unavailable for scoring. Redelivery of that original dispatch, including rebuild preparation, returns an unsupported-capability refusal before recovery, ledger or proof writes; its stored bytes are retained. Recovery requires a later supported native generation with explicit classification. Query execution does not migrate, repair or classify historical data.
+ 
+-These are source contracts and replay behavior. This change adds no deployed metadata-mutation route or production writer enrollment. Mutation dispatch/adoption, current native owner authorization, Conversation guard enrollment, rebuild completion, installation coverage and qualification remain separate gates. The internal resolution metadata read additionally requires its existing verified delegation and current resource/Tenant proofs. Scoring classification grants no inspection or resource permission, and Projects RTI and parent resolution implementation remain gated.
++These are source contracts and replay behavior. This change adds no deployed metadata-mutation route or production writer enrollment. Mutation dispatch/adoption, Conversation guard enrollment, rebuild completion, installation coverage and qualification remain separate gates.
++
++The strict `GetConversationResolutionMetadataQuery` retains verified delegation and current native resource/Tenant proof requirements. Its proof and qualification gates do not apply to the explicit `GetConversationAdvisoryMetadataQuery`, which reads isolated committed metadata between two ordinary owner Read authorization checks bound to the verified Tenant, actor and resource. Advisory matching may use lagging metadata; missing classification, unusable metadata or unavailable dependencies produce omitted observations and explicit incomplete coverage. Unclassified labels remain omitted, and query execution performs no migration or repair.
++
++Advisory metadata supports unselected Project suggestions without requiring Projects RTI or the strict parent-resolution prerequisites. It supplies no context, first-response, inspection, resource or confirmation authority. Scoring classification grants no permission; confirmation independently reauthorizes the association and context reads retain their own stronger guarantees.
+ 
+ ## Typed Errors
+ 
+diff --git a/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs b/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs
+index 35a3efc..fc587ac 100644
+--- a/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs
++++ b/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs
+@@ -54,7 +54,7 @@ public sealed record ConversationResolutionMetadataReadModel(
+     {
+         var summary = models.Summary;
+         ConversationResolutionScoringLabel? scoring = models.ResolutionScoringLabel;
+-        bool complete = scoring is not null && scoring.Value == summary.Label
++        bool complete = scoring is null ? summary.Label is null : scoring.Value == summary.Label
+             && scoring.Purpose == ConversationResolutionScoringPolicy.Purpose
+             && scoring.Classification == ConversationResolutionScoringPolicy.Classification
+             && ConversationResolutionScoringPolicy.CanClassify(scoring.Value, scoring.Purpose);
+@@ -64,7 +64,7 @@ public sealed record ConversationResolutionMetadataReadModel(
+             summary.Freshness, models.DispatchId, fingerprint, complete,
+             complete ? ConversationResolutionScoringPolicy.Classification : null)
+         { NativeAdmission = models.NativeAdmission, NativeSourceProof = models.NativeSourceProof, SourceHeadSequence = models.SourceHeadSequence, SourceHeadMessageId = models.SourceHeadMessageId,
+-            LabelPurpose = complete ? scoring!.Purpose : null };
++            LabelPurpose = complete ? ConversationResolutionScoringPolicy.Purpose : null };
+     }
+ 
+     /// <summary>Computes a content-free consistency binding over the entire isolated generation.</summary>
+diff --git a/src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs b/src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs
+index d84bc6c..d8210b3 100644
+--- a/src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs
++++ b/src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs
+@@ -14,9 +14,9 @@ namespace Hexalith.Conversations.Server.Queries;
+ /// <summary>Classifies the narrow scoring purpose and binds current Read decisions to the exact target.</summary>
+ /// <param name="access">The existing owner Read authorization service.</param>
+ /// <param name="accessor">The SDK-verified request context.</param>
+-/// <param name="signal">Native permission health; absence conservatively prevents disclosure.</param>
+-/// <param name="native">The production native Tenant Read evidence transport; local health is insufficient for the strict handler.</param>
++/// <param name="signal">The retained compatibility parameter; local health does not certify strict native authority.</param>
+ /// <param name="timeProvider">The clock for actual owner-check instants.</param>
++/// <param name="native">The production native Tenant Read evidence transport; local health is insufficient for the strict handler.</param>
+ public sealed class ConversationResolutionMetadataAuthorization(
+     IConversationTenantAccessService access,
+     IHttpContextAccessor accessor,
+diff --git a/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs b/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs
+index 2542041..d1c4b62 100644
+--- a/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs
++++ b/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs
+@@ -90,9 +90,6 @@ public sealed class GetConversationAdvisoryMetadataDomainQueryHandler(
+         var decision = await access.CheckAccessAsync(ConversationTenantAccessRequirement.Read, tenant, actor,
+             routeTenantId: tenant, aggregateTenantId: tenant, projectionTenantId: tenant, cancellationToken: token).ConfigureAwait(false);
+         if (!decision.IsAllowed && decision.IsRetryable) throw new InvalidOperationException("Owner authorization unavailable.");
+-        if (decision.IsAllowed && (decision.ProjectionVersion is not >= 0
+-            || string.IsNullOrWhiteSpace(decision.ProjectionWatermark) || decision.ProjectionWatermark.Length > 1024))
+-            throw new InvalidOperationException("Owner authorization evidence unavailable.");
+         return decision.IsAllowed && decision.Requirement == ConversationTenantAccessRequirement.Read
+             && decision.TenantId == tenant && decision.CallerPrincipalId == actor;
+     }
+diff --git a/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.cs b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.cs
+index 0c816a8..d6b6c6f 100644
+--- a/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.cs
+@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
+ 
+ namespace Hexalith.Conversations.Server.Tests.Queries;
+ 
+-public sealed class ConversationAdvisoryMetadataQueryHandlerTest
++public sealed partial class ConversationAdvisoryMetadataQueryHandlerTest
+ {
+     [Fact]
+     public async Task CommittedMetadataWithoutNativeProofUsesTwoReadChecksAndLeavesBytesUnchanged()
+@@ -50,12 +50,17 @@ public sealed class ConversationAdvisoryMetadataQueryHandlerTest
+         var denied = new ResolutionMetadataFixture(); await denied.ProjectAsync(); denied.Access.Denied = true;
+         var rejected = await denied.DispatchAdvisoryAsync();
+         rejected.ErrorMessage.ShouldBe(absent.ErrorMessage); rejected.Success.ShouldBeFalse(); denied.Guard.Reads.ShouldBeEmpty();
+-        var foreign = await missing.DispatchAdvisoryAsync(ResolutionMetadataFixture.Query() with
++        denied.Access.Denied = false; denied.Access.AllowedTenant = ResolutionMetadataFixture.Tenant.Value;
++        var foreign = await denied.DispatchAdvisoryAsync(ResolutionMetadataFixture.Query() with
+             { QueryType = GetConversationAdvisoryMetadataQuery.QueryType, TenantId = "foreign" });
+         foreign.ErrorMessage.ShouldBe(absent.ErrorMessage);
++        denied.Guard.ReadKeys.ShouldBeEmpty();
+     }
+ 
+     [Theory]
++    [InlineData("missing-etag")]
++    [InlineData("dispatch")]
++    [InlineData("lifecycle")]
+     [InlineData("tenant")]
+     [InlineData("resource")]
+     [InlineData("pending")]
+@@ -69,6 +74,9 @@ public sealed class ConversationAdvisoryMetadataQueryHandlerTest
+         var f = new ResolutionMetadataFixture(); await f.ProjectAsync();
+         string key = ConversationProjectionReadModelKeys.ResolutionMetadataKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation);
+         var value = f.Metadata;
++        if (mutation == "missing-etag") f.Guard.EmptyMetadataETag = true;
++        if (mutation == "dispatch") value = value with { DispatchId = " dispatch " };
++        if (mutation == "lifecycle") value = value with { Metadata = value.Metadata with { LifecycleState = "Purged" } };
+         if (mutation == "tenant") value = value with { TenantId = new TenantId("foreign") };
+         if (mutation == "resource") value = value with { Metadata = value.Metadata with { ConversationId = "other" } };
+         if (mutation == "schema") value = value with { Freshness = new(new(2), value.Freshness.ProjectionCursor, value.Freshness.LastAppliedEventPosition, value.Freshness.LastAppliedEventTimestamp, value.Freshness.ProjectionGeneratedAt, value.Freshness.LagDuration, value.Freshness.IsStale, value.Freshness.FreshnessState, value.Freshness.ReasonCode) };
+@@ -110,7 +118,7 @@ public sealed class ConversationAdvisoryMetadataQueryHandlerTest
+     }
+ 
+     [Fact]
+-    public async Task DefaultNonsignalStorePermissionCannotDiscloseWithoutProjectionEvidence()
++    public async Task DefaultNonsignalStorePermissionDisclosesCommittedMetadata()
+     {
+         var f = new ResolutionMetadataFixture(); await f.ProjectAsync();
+         var services = new ServiceCollection(); services.AddLogging(); services.AddConversationTenantAccess();
+@@ -127,7 +135,7 @@ public sealed class ConversationAdvisoryMetadataQueryHandlerTest
+             ResolutionMetadataFixture.Tenant, "actor", cancellationToken: TestContext.Current.CancellationToken);
+         decision.IsAllowed.ShouldBeTrue(); decision.ProjectionVersion.ShouldBeNull(); decision.ProjectionWatermark.ShouldBeNull();
+         var result = Payload(await f.DispatchAdvisoryAsync(access: access));
+-        result.Metadata.ShouldBeNull(); result.Incomplete.ShouldBeTrue(); f.Guard.Reads.ShouldBeEmpty();
++        result.Metadata.ShouldNotBeNull(); result.Incomplete.ShouldBeFalse();
+     }
+ 
+     [Theory]
+@@ -135,7 +143,7 @@ public sealed class ConversationAdvisoryMetadataQueryHandlerTest
+     [InlineData("negative")]
+     [InlineData("blank")]
+     [InlineData("oversized")]
+-    public async Task FinalPermissionRequiresUsableProjectionEvidence(string mutation)
++    public async Task OrdinaryFinalPermissionDoesNotRequireProjectionEvidence(string mutation)
+     {
+         var f = new ResolutionMetadataFixture(); await f.ProjectAsync();
+         f.Access.OnCheck = n =>
+@@ -147,7 +155,7 @@ public sealed class ConversationAdvisoryMetadataQueryHandlerTest
+             if (mutation == "oversized") f.Access.DecisionWatermarkOverride = new string('w', 1025);
+         };
+         var result = Payload(await f.DispatchAdvisoryAsync());
+-        result.Metadata.ShouldBeNull(); result.Incomplete.ShouldBeTrue(); f.Access.Checks.ShouldBe(2);
++        result.Metadata.ShouldNotBeNull(); result.Incomplete.ShouldBeFalse(); f.Access.Checks.ShouldBe(2);
+     }
+ 
+     [Fact]
+@@ -160,15 +168,26 @@ public sealed class ConversationAdvisoryMetadataQueryHandlerTest
+         result.Metadata.ShouldBeNull(); result.Incomplete.ShouldBeTrue();
+     }
+ 
+-    [Fact]
+-    public async Task FenceChangedDuringAdvisoryReadWithholdsMetadata()
++    [Theory]
++    [InlineData("null-current")]
++    [InlineData("completed-replacement")]
++    [InlineData("pending-current")]
++    [InlineData("barrier")]
++    public async Task FenceChangedDuringAdvisoryReadWithholdsMetadata(string mutation)
+     {
+         var f = new ResolutionMetadataFixture(); await f.ProjectAsync();
+         string proofKey = ConversationProjectionReadModelKeys.ResolutionProofKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation);
++        var proof = f.Proof;
+         f.Guard.AfterRead = (type, _) =>
+         {
+             if (type == typeof(ConversationResolutionMetadataReadModel))
+-                f.Store.SeedRaw("statestore", proofKey, new ConversationResolutionMetadataProof(null));
++                f.Store.SeedRaw("statestore", proofKey, mutation switch
++                {
++                    "completed-replacement" => proof with { Current = proof.Current! with { DispatchId = "replacement" } },
++                    "pending-current" => proof with { Current = proof.Current! with { IsPending = true } },
++                    "barrier" => proof with { Barrier = new(99, "barrier") },
++                    _ => new ConversationResolutionMetadataProof(null),
++                });
+             return Task.CompletedTask;
+         };
+         var result = Payload(await f.DispatchAdvisoryAsync());
+diff --git a/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationQueryRegistrationTest.cs b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationQueryRegistrationTest.cs
+index 0fddeef..1878780 100644
+--- a/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationQueryRegistrationTest.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationQueryRegistrationTest.cs
+@@ -4,6 +4,7 @@
+ // </copyright>
+ 
+ using Hexalith.Conversations.Contracts.Identifiers;
++using Hexalith.Conversations.Contracts.Queries;
+ using Hexalith.Conversations.Contracts.Projections;
+ using Hexalith.Conversations.Server.Projections;
+ using Hexalith.Conversations.Server.Queries;
+@@ -77,8 +78,20 @@ public sealed class ConversationQueryRegistrationTest
+         fixture.Access.Checks.ShouldBe(0);
+         fixture.Guard.ReadKeys.ShouldBeEmpty();
+         fixture.Guard.ForbiddenAttempts.ShouldBe(0);
+-        fixture.Guard.ReadKeys.ShouldAllBe(key => key.StartsWith("projection:conversations-resolution", StringComparison.Ordinal)
+-            || key.StartsWith("projection:conversations-dispatch:", StringComparison.Ordinal));
++        QueryEnvelope advisory = query with { QueryType = GetConversationAdvisoryMetadataQuery.QueryType };
++        claims = [
++            new(EventStoreWorkloadAuthenticationDefaults.WorkloadClaimType, "eventstore"),
++            new(EventStoreWorkloadAuthenticationDefaults.OperationClaimType, EventStoreWorkloadOperations.DomainServiceQuery),
++            .. QueryCallerAuthorityBinding.Bind(advisory).Select(pair => new Claim(pair.Key, pair.Value)),
++        ];
++        accessor.HttpContext.User = new(new ClaimsIdentity(claims, "Workload"));
++        var advisoryResult = await DomainQueryDispatcher.ExecuteAsync(scope.ServiceProvider, advisory, TestContext.Current.CancellationToken);
++        advisoryResult.Success.ShouldBeTrue();
++        advisoryResult.GetPayload().GetProperty("metadata").GetProperty("projectId").GetString().ShouldBe("project-original");
++        advisoryResult.GetPayload().GetProperty("incomplete").GetBoolean().ShouldBeFalse();
++        fixture.Access.Checks.ShouldBe(2);
++        fixture.Guard.ReadKeys.ShouldNotBeEmpty();
++        fixture.Guard.ForbiddenAttempts.ShouldBe(0);
+     }
+ 
+     [Fact]
+diff --git a/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs
+index 54f0f3a..b645eb4 100644
+--- a/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs
+@@ -12,6 +12,17 @@ namespace Hexalith.Conversations.Server.Tests.Queries;
+ 
+ public sealed class ConversationResolutionMetadataQueryHandlerTest
+ {
++    [Fact]
++    public async Task FutureNativeTenantEvidenceIsUnavailableBeforeMetadataReads()
++    {
++        var fixture = new ResolutionMetadataFixture(); await fixture.ProjectAsync();
++        fixture.Native.TenantVerifiedAtOffset = TimeSpan.FromSeconds(1);
++        var result = await fixture.DispatchAsync();
++        result.Success.ShouldBeTrue(); result.GetPayload().GetProperty("metadata").ValueKind.ShouldBe(JsonValueKind.Null);
++        fixture.Guard.Reads.ShouldBeEmpty();
++    }
++
++
+     [Theory]
+     [InlineData(null)]
+     [InlineData("inspection")]
+diff --git a/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs b/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs
+index 6620095..307f534 100644
+--- a/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs
+@@ -6,6 +6,7 @@ namespace Hexalith.Conversations.Server.Tests.ResolutionMetadata;
+ 
+ internal sealed class ResolutionGuardedStore(InMemoryReadModelStore inner) : IReadModelStore, IReadModelBatchStore, IReadModelExpiringStore, IReadModelPendingBatchRecoveryStore
+ {
++    public bool EmptyMetadataETag { get; set; }
+     public bool AllowSummaryIndexReads { get; set; }
+     public bool ForbidLegacyReads { get; set; }
+     public bool ForbidWrites { get; set; }
+@@ -43,7 +44,7 @@ internal sealed class ResolutionGuardedStore(InMemoryReadModelStore inner) : IRe
+         var result = compacted ? await inner.GetCompactedAsync<T>(storeName, key, cancellationToken)
+             : await inner.GetAsync<T>(storeName, key, cancellationToken);
+         if (AfterRead is not null) await AfterRead(typeof(T), key);
+-        return result;
++        return EmptyMetadataETag && typeof(T) == typeof(ConversationResolutionMetadataReadModel) ? new(result.Value, string.Empty) : result;
+     }
+ 
+     public Task SaveAsync<T>(string storeName, string key, T value, CancellationToken cancellationToken = default) where T : class
+diff --git a/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataAccess.cs b/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataAccess.cs
+index 42dd6d3..c91fc62 100644
+--- a/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataAccess.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataAccess.cs
+@@ -6,6 +6,9 @@ namespace Hexalith.Conversations.Server.Tests.ResolutionMetadata;
+ internal sealed class ResolutionMetadataAccess : IConversationTenantAccessService, IConversationTenantProjectionSignal
+ {
+     public ConversationTenantProjectionHealth Health { get; set; } = new(Version: 7, Watermark: "native-watermark-7");
++    public List<(ConversationTenantAccessRequirement Requirement, TenantId? Tenant, string? Actor, TenantId? Route, TenantId? Aggregate, TenantId? Projection)> Arguments { get; } = [];
++    public Func<ConversationTenantAccessDecision, ConversationTenantAccessDecision>? MutateDecision { get; set; }
++    public string? AllowedTenant { get; set; }
+     public int Checks { get; private set; }
+     public Action<int>? OnCheck { get; set; }
+     public Func<int, Task>? BeforeDecision { get; set; }
+@@ -22,19 +25,17 @@ internal sealed class ResolutionMetadataAccess : IConversationTenantAccessServic
+         TenantId? aggregateTenantId = null, TenantId? projectionTenantId = null, TenantId? idempotencyTenantId = null,
+         CancellationToken cancellationToken = default)
+     {
+-        requirement.ShouldBe(ConversationTenantAccessRequirement.Read);
+-        trustedTenantId.ShouldBe(routeTenantId);
+-        aggregateTenantId.ShouldBe(trustedTenantId);
+-        projectionTenantId.ShouldBe(trustedTenantId);
++        Arguments.Add((requirement, trustedTenantId, callerPrincipalId, routeTenantId, aggregateTenantId, projectionTenantId));
+         Checks++;
+         OnCheck?.Invoke(Checks);
+         if (BeforeDecision is not null) await BeforeDecision(Checks);
+         if (RetryableDenial) return ConversationTenantAccessDecision.Denied(requirement, trustedTenantId, callerPrincipalId,
+             ConversationTenantAccessDenialReason.TenantAccessUnavailable, isRetryable: true);
+-        return Denied
++        var decision = Denied || AllowedTenant is not null && trustedTenantId?.Value != AllowedTenant
+             ? ConversationTenantAccessDecision.Denied(requirement, trustedTenantId, callerPrincipalId, ConversationTenantAccessDenialReason.MissingMember)
+             : ConversationTenantAccessDecision.Allowed(requirement, trustedTenantId!, callerPrincipalId!,
+                 MissingDecisionEvidence ? null : DecisionVersionOverride ?? Health.Version,
+                 MissingDecisionEvidence ? null : DecisionWatermarkOverride ?? Health.Watermark);
++        return MutateDecision?.Invoke(decision) ?? decision;
+     }
+ }
+diff --git a/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs b/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs
+index d532320..1cffc6b 100644
+--- a/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs
+@@ -129,6 +129,7 @@ internal sealed class ResolutionMetadataFixture
+         CancellationToken? cancellationToken = null, IConversationTenantAccessService? access = null)
+     {
+         query ??= Query() with { QueryType = GetConversationAdvisoryMetadataQuery.QueryType };
++        int priorArguments = Access.Arguments.Count;
+         Guard.AllowSummaryIndexReads = true;
+         Guard.ForbidLegacyReads = true;
+         Guard.ForbidWrites = true;
+@@ -142,7 +143,23 @@ internal sealed class ResolutionMetadataFixture
+         accessor.HttpContext!.User = new(new ClaimsIdentity(claims, "Workload"));
+         await using ServiceProvider provider = new ServiceCollection().AddSingleton(accessor)
+             .AddSingleton<IDomainQueryHandler>(new GetConversationAdvisoryMetadataDomainQueryHandler(access ?? Access, accessor, Guard)).BuildServiceProvider();
+-        return await DomainQueryDispatcher.ExecuteAsync(provider, query, cancellationToken ?? TestContext.Current.CancellationToken);
++        try
++        {
++            return await DomainQueryDispatcher.ExecuteAsync(provider, query, cancellationToken ?? TestContext.Current.CancellationToken);
++        }
++        finally
++        {
++            Guard.ForbiddenAttempts.ShouldBe(0);
++            Guard.ReadKeys.ShouldAllBe(key => key.StartsWith("projection:conversations-resolution:", StringComparison.Ordinal)
++                || key.StartsWith("projection:conversations-resolution-proof:", StringComparison.Ordinal)
++                || key.StartsWith("projection:conversations-index:", StringComparison.Ordinal));
++            if (access is null)
++            {
++                Access.Arguments.Skip(priorArguments).ShouldAllBe(argument => argument.Requirement == ConversationTenantAccessRequirement.Read
++                    && argument.Tenant != null && argument.Tenant.Value == query.TenantId && argument.Actor == query.UserId
++                    && argument.Route == argument.Tenant && argument.Aggregate == argument.Tenant && argument.Projection == argument.Tenant);
++            }
++        }
+     }
+ 
+     public async Task EraseAsync(string key)
+diff --git a/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs b/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs
+index b96ebe1..36e3c30 100644
+--- a/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs
+@@ -13,6 +13,7 @@ namespace Hexalith.Conversations.Server.Tests.ResolutionMetadata;
+ 
+ internal sealed class ResolutionNativeEvidence(ResolutionMetadataFixture fixture) : IConversationResolutionNativeEvidence
+ {
++    public TimeSpan TenantVerifiedAtOffset { get; set; }
+     public bool Available { get; set; } = true;
+     public string? Receipt { get; set; }
+     public string Catalog { get; set; } = "fixture-catalog";
+@@ -34,7 +35,7 @@ internal sealed class ResolutionNativeEvidence(ResolutionMetadataFixture fixture
+         for (int index = 1; index <= health.Version.Value; index++)
+             proof = NativeSourceProofCodec.ExtendDigest(proof, identity, index, "tenant-message-" + index, digest);
+         LastTenant = proof;
+-        return Task.FromResult<TenantReadAuthorityResult?>(new(query.TenantId, query.UserId, !fixture.Access.Denied, proof, fixture.Time.Now));
++        return Task.FromResult<TenantReadAuthorityResult?>(new(query.TenantId, query.UserId, !fixture.Access.Denied, proof, fixture.Time.Now + TenantVerifiedAtOffset));
+     }
+ 
+     public Task<ProjectionCurrentProof?> ReadProjectionAsync(ConversationResolutionMetadataReadModel metadata, CancellationToken cancellationToken)
+diff --git a/docs/release-notes-1.3.1.md b/docs/release-notes-1.3.1.md
+new file mode 100644
+index 0000000..60ac96f
+--- /dev/null
++++ b/docs/release-notes-1.3.1.md
+@@ -0,0 +1,7 @@
++# Conversations 1.3.1 candidate notes
++
++Advisory metadata queries accept the ordinary allowed Tenant Read decision when its requirement, Tenant and actor match the verified request. Native permission evidence remains required by the strict metadata query.
++
++A Conversation with neither a stored label nor a scoring label now projects complete label absence, with a null safe label. A stored label without scoring classification remains incomplete. Existing rows receive this correction on reprojection or their next update; this release does not repair stored rows during reads.
++
++These are local candidate notes. Publication and the Projects consumer pin require separate approval and verified release evidence.
+diff --git a/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.Review4.cs b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.Review4.cs
+new file mode 100644
+index 0000000..d14ff3f
+--- /dev/null
++++ b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.Review4.cs
+@@ -0,0 +1,104 @@
++using Hexalith.Conversations.Contracts.Queries;
++using Hexalith.Conversations.Contracts.Projections;
++using Hexalith.Conversations.Server.TenantAccess;
++using Hexalith.Conversations.Contracts.TrustStates;
++using Hexalith.Conversations.Server.Projections;
++using Hexalith.Conversations.Server.Tests.ResolutionMetadata;
++using Hexalith.EventStore.Contracts.Queries;
++using Hexalith.EventStore.Contracts.Projections;
++
++namespace Hexalith.Conversations.Server.Tests.Queries;
++
++public sealed partial class ConversationAdvisoryMetadataQueryHandlerTest
++{
++    [Theory]
++    [InlineData("requirement")]
++    [InlineData("tenant")]
++    [InlineData("actor")]
++    [InlineData("retryable")]
++    public async Task FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess(string mutation)
++    {
++        var f = new ResolutionMetadataFixture(); await f.ProjectAsync();
++        f.Access.OnCheck = n =>
++        {
++            if (n != 2) return;
++            if (mutation == "retryable") { f.Access.RetryableDenial = true; return; }
++            f.Access.MutateDecision = decision => mutation switch
++            {
++                "requirement" => decision with { Requirement = (ConversationTenantAccessRequirement)999 },
++                "tenant" => decision with { TenantId = new("foreign") },
++                _ => decision with { CallerPrincipalId = "other" },
++            };
++        };
++        var result = await f.DispatchAdvisoryAsync();
++        if (mutation == "retryable") { Payload(result).Metadata.ShouldBeNull(); Payload(result).Incomplete.ShouldBeTrue(); }
++        else result.ErrorMessage.ShouldBe("safe-denial");
++        f.Access.Checks.ShouldBe(2);
++    }
++
++    [Theory]
++    [InlineData("origin-context")]
++    [InlineData("origin-kind")]
++    [InlineData("actor")]
++    [InlineData("delegation")]
++    [InlineData("scopes")]
++    [InlineData("array")]
++    [InlineData("nonempty")]
++    [InlineData("null-payload")]
++    [InlineData("oversize")]
++    [InlineData("entity")]
++    [InlineData("paging")]
++    [InlineData("admin")]
++    [InlineData("domain-case")]
++    public async Task UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(string mutation)
++    {
++        var f = new ResolutionMetadataFixture(); await f.ProjectAsync();
++        var query = ResolutionMetadataFixture.Query() with { QueryType = GetConversationAdvisoryMetadataQuery.QueryType };
++        var origin = query.CallerAuthority!.OriginatingContext!;
++        query = mutation switch
++        {
++            "origin-context" => query with { CallerAuthority = query.CallerAuthority with { OriginatingContext = null } },
++            "origin-kind" => query with { CallerAuthority = query.CallerAuthority with { Origin = "authenticated-caller", OriginatingContext = null } },
++            "actor" => query with { OriginalActorId = "other" },
++            "delegation" => query with { CallerAuthority = query.CallerAuthority with { OriginatingContext = origin with { IsDelegated = true, DelegationId = null } } },
++            "scopes" => query with { CallerAuthority = query.CallerAuthority with { OriginatingContext = origin with { Scopes = ["projects.write"] } } },
++            "array" => query with { Payload = "[]"u8.ToArray() },
++            "nonempty" => query with { Payload = "{\"purpose\":\"inspect\"}"u8.ToArray() },
++            "null-payload" => query with { Payload = null! },
++            "oversize" => query with { Payload = "{}"u8.ToArray().Concat(Enumerable.Repeat((byte)' ', 8191)).ToArray() },
++            "entity" => query with { EntityId = "other" },
++            "paging" => query with { Paging = new(10) },
++            "admin" => query with { IsGlobalAdmin = true },
++            _ => query with { Domain = "Conversations" },
++        };
++        (await f.DispatchAdvisoryAsync(query)).ErrorMessage.ShouldBe("safe-denial");
++        f.Access.Checks.ShouldBe(0); f.Guard.Reads.ShouldBeEmpty();
++    }
++
++    [Theory]
++    [InlineData(null, true)]
++    [InlineData("Unclassified label", false)]
++    public async Task AbsenceOfBothLabelsIsCompleteWhileUnclassifiedTextIsIncomplete(string? label, bool complete)
++    {
++        var f = new ResolutionMetadataFixture();
++        (await f.Handler().ProjectAsync(ResolutionMetadataFixture.Request(label: label, classifyLabel: false), "label-absence", TestContext.Current.CancellationToken))
++            .Status.ShouldBe(ProjectionDispatchStatus.Completed);
++        f.Metadata.IsLabelComplete.ShouldBe(complete); f.Metadata.Metadata.SafeLabel.ShouldBeNull();
++        f.Metadata.LabelPurpose.ShouldBe(complete ? ConversationResolutionScoringPolicy.Purpose : null);
++        var result = Payload(await f.DispatchAdvisoryAsync());
++        result.Metadata.ShouldNotBeNull(); result.Metadata.SafeLabel.ShouldBeNull(); result.Incomplete.ShouldBe(!complete);
++    }
++
++    [Fact]
++    public async Task LaggingCommittedOwnerMetadataRemainsACompleteObservation()
++    {
++        var f = new ResolutionMetadataFixture(); await f.ProjectAsync();
++        string key = ConversationProjectionReadModelKeys.ResolutionMetadataKey(ResolutionMetadataFixture.Tenant, ResolutionMetadataFixture.Conversation);
++        var model = f.Metadata; var old = model.Freshness;
++        f.Store.SeedRaw("statestore", key, model with { Freshness = new(old.ProjectionContractSchemaVersion, old.ProjectionCursor,
++            old.LastAppliedEventPosition, old.LastAppliedEventTimestamp, old.ProjectionGeneratedAt, TimeSpan.FromMinutes(1), true,
++            ProjectionTrustState.Stale, ProjectionFreshnessReasonCode.StaleThresholdExceeded) });
++        var result = Payload(await f.DispatchAdvisoryAsync());
++        result.Metadata.ShouldNotBeNull(); result.Incomplete.ShouldBeFalse(); f.Access.Checks.ShouldBe(2);
++    }
++}
