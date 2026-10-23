@@ -696,6 +696,8 @@ status: open
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md`
   summary: Hermetically execute the release exact-green-source preflight across its accepted and rejected source states.
   evidence: The release workflow has source-text checks but no execution coverage for a green SHA, stale main, malformed API data, or missing successful push CI; this is a real release-verification gap unrelated to Story 6.3.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-verification-items.md; The real workflow shell now has green and stale-main controls plus isolated run SHA, branch, event, completion, conclusion, missing/malformed API data, wrong dispatch ref and API-failure cases.
 
 ## Deferred from: code review of spec-6-3-retrieve-assembled-project-context-through-supported-read-models.md (2026-09-20)
 
@@ -706,6 +708,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-minimal-acceptance-gate.md`
   summary: Document all companion-path and workspace-root arguments required to validate an atomic P1R candidate set in the repository agent context.
   evidence: The current `_bmad-output/project-context.md` candidate command names only `--sprint-status`, while accepted closure spans sprint status, deferred work, the P0 artifact, and the acceptance record under a candidate workspace root; review policy defers agent-context edits.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-verification-items.md; The project context names all four candidate arguments and the fixed workspace-relative acceptance-record path; the documented explicit command passes the real production-authority validator without changing index or acceptance state.
 - source_spec: `references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md`
   summary: Add a CI job that runs the G-4 live composition lane (HEXALITH_G4_LIVE=1) with Docker and a verified Dapr 1.18.0/1.18.2 home.
   evidence: No workflow sets HEXALITH_G4_LIVE or HEXALITH_DAPR_HOME; ci.yml runs the IntegrationTests project where every live test reports skipped (Stage 3 review R15).
@@ -730,6 +734,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Stop the accepted-only G-6 step from masking the FrontComposer inspect and OpenAPI fingerprint gates and the scheduled E2E lane in Projects CI.
   evidence: `project-gates` runs the G-6 validator first and it exits 1 while the packet is pending (already true for the historical packet at baseline), so later gates never run (review BH-19/EC-04/VG-06).
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-verification-items.md; The independent CI layout is retained. Real PowerShell gate fixtures reject an inserted accepted-only check, coupled G-6 dependencies on project/E2E lanes and reversal of G-6 independence. Explicit dependency guards prevent regression.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Record approval provenance for the 2026-09-27 "Approved McpCli course correction" notes in the Spine, PRD, and epics, and reconcile Spine line 342 with AD-29 (unverified, would be medium).
   evidence: Commit `b42beb3` added the notes but no `sprint-change-proposal-2026-09-27*` exists; settle by locating the approval record and comparing AD-29 with line 342 (review BH-29/EC-24).
@@ -899,6 +905,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-g-6-qualify-current-toolkit-preview-tuple.md`
   summary: Medium stale-gate issue: `tests/tools/test_g6_packet_references.py` fails 17 subtests and no workflow runs it.
   evidence: It fails at HEAD and already failed at baseline `53c6f29` on packet-bound gitlink and Builds execution-SHA differences (for example `51af786…` vs. the Builds gitlink). Its only reference is a `Forbid-Match` in `tests/tools/run-ci-workflow-gates.ps1:690`. Retire it or rebase it on the accepted attempt-16 provenance so it is not mistaken for live coverage.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-verification-items.md; Rebased the suite on archived attempt-16 packet/README provenance, removing comparisons with current gitlinks and current planning documents. Exact full bindings, changed-packet and accepted-normalization controls pass; the suite now runs in the blocking workflow fixture lane.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-compatibility-replay-and-rollback-verification.md`
   summary: Parent gitlinks other than the EventStore verification commit, and later EventStore commits after that verification commit, need their own provenance check.
@@ -1047,6 +1055,8 @@ status: open
 - source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Add behavioral verification of G-6 placement and scheduler immutable image identities.
   evidence: NH-V1; the independent verification-gap reviewer traced all three runner tests to exits before image selection and found the retained validator checks roles/IDs but not image values. Add a launch-path regression and mutable-tag negative control in the existing G-6 work; the source pin change predates this resume.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-verification-items.md; A controlled run_g6_current.main execution reaches both real launch calls and verifies the exact approved Dapr manifest for each role; an in-memory mutable-tag mutation demonstrates the same observations distinguish a substituted tag. This closes launch verification only and grants no live qualification or imported-receipt acceptance.
 
 - source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Reconcile the EventStore authoring guardrail's nested Tenants path with supported umbrella source layout.

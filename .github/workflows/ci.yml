@@ -86,7 +86,7 @@ jobs:
         # Historical packet fixtures remain regression coverage; current G-6 runs in g6-current.
         env:
           PYTHONDONTWRITEBYTECODE: '1'
-        run: python3 -m unittest tests/tools/test_check_g6_packet_gitlinks.py -v
+        run: python3 -m unittest tests/tools/test_check_g6_packet_gitlinks.py tests/tools/test_g6_packet_references.py -v
 
       - name: Validate status-aware G-6 gate fixtures
         env:

@@ -85,6 +85,53 @@ class WorkflowGateTests(unittest.TestCase):
                     self.assert_rejected(f"{package_id} version must be owned")
                     path.write_text(original)
 
+    def test_g6_checks_cannot_mask_generated_artifact_gates(self) -> None:
+        self.replace(".github/workflows/ci.yml", "      - name: FrontComposer inspect gate",
+                     "      - name: Accepted-only G-6 check\n"
+                     "        run: python3 references/Hexalith.Builds/Tools/validate-runtime-toolchain-evidence.py\n\n"
+                     "      - name: FrontComposer inspect gate")
+        self.assert_rejected("project-gates must not run any G-6 check")
+
+    def test_current_g6_job_must_remain_independent(self) -> None:
+        self.replace(".github/workflows/ci.yml",
+                     "timeout-minutes: 90\n    needs: workflow-gates",
+                     "timeout-minutes: 90\n    needs: project-gates")
+        self.assert_rejected("G-6 current must run independently")
+
+    def test_generated_artifact_steps_cannot_be_conditional_or_run_g6(self) -> None:
+        path = self.root / ".github/workflows/ci.yml"
+        original = path.read_text()
+        for name, script in (("FrontComposer inspect gate", "run-frontcomposer-inspect-gate.ps1"),
+                             ("OpenAPI fingerprint / compatibility gate", "run-openapi-fingerprint-gate.ps1")):
+            marker = "      - name: " + name + "\n"
+            for mutation in (
+                original.replace(marker, marker + "        if: ${{ needs.g6-current.result == 'success' }}\n"),
+                original.replace(marker, marker + "        continue-on-error: true\n"),
+                original.replace("        run: ./tests/tools/" + script,
+                                 "        run: |\n          python3 tests/tools/run_g6_ci_gate.py --output .g6-current-evidence/project\n"
+                                 "          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }\n          ./tests/tools/" + script),
+            ):
+                with self.subTest(step=name, mutation=mutation):
+                    path.write_text(mutation)
+                    self.assert_rejected(name + " must be an unconditional exact blocking command")
+
+    def test_g6_dependency_cannot_suppress_project_gates(self) -> None:
+        self.replace(".github/workflows/ci.yml", "    needs: ci\n",
+                     "    needs: [ci, g6-current]\n")
+        self.assert_rejected("Project gates must depend only on CI")
+
+    def test_g6_dependency_cannot_suppress_scheduled_e2e(self) -> None:
+        self.replace(".github/workflows/ci.yml", "      - project-gates\n    steps:",
+                     "      - project-gates\n      - g6-current\n    steps:")
+        self.assert_rejected("Scheduled E2E must depend only on CI")
+
+    def test_duplicate_e2e_job_cannot_bypass_dependency_validation(self) -> None:
+        path = self.root / ".github/workflows/ci.yml"
+        text = path.read_text()
+        e2e = text[text.index("  e2e:\n"):]
+        path.write_text(text + "\n" + e2e)
+        self.assert_rejected("CI must define exactly one e2e job")
+
     def test_case_variant_semicolon_and_choose_entries_are_rejected(self) -> None:
         self.replace("Directory.Packages.props", "</Project>", """
   <Choose><When Condition="'true' == 'true'"><ItemGroup>

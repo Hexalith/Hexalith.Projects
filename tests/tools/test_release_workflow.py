@@ -81,48 +81,44 @@ class ReleaseWorkflowShellTests(unittest.TestCase):
         self,
         *,
         run_conclusion: str = "success",
-        job_conclusions: dict[str, str] | None = None,
         dispatch_sha: str = VALID_SHA,
         live_sha: str = VALID_SHA,
+        dispatch_ref: str = "refs/heads/main",
+        run_overrides: dict | None = None,
+        runs_response: str | None = None,
+        api_failure: str = "",
     ) -> subprocess.CompletedProcess[str]:
         with tempfile.TemporaryDirectory(prefix="projects-release-preflight-") as temporary:
             directory = Path(temporary)
-            names = (
-                "Validate workflow policy",
-                "ci / build-and-test",
-                "Projects generated-artifact gates",
-                "P1R candidate evidence replay",
-                "G-6 current runtime qualification",
-            )
-            conclusions = job_conclusions or {name: "success" for name in names}
-            jobs = [
-                {"name": name, "status": "completed", "conclusion": conclusion}
-                for name, conclusion in conclusions.items()
-            ]
             (directory / "live-sha").write_text(live_sha + "\n", encoding="utf-8")
-            (directory / "runs.json").write_text(json.dumps({"workflow_runs": [{
+            run = {
                 "id": 123,
                 "head_sha": dispatch_sha,
                 "head_branch": "main",
                 "event": "push",
                 "status": "completed",
                 "conclusion": run_conclusion,
-            }]}), encoding="utf-8")
-            (directory / "jobs.json").write_text(json.dumps({
-                "total_count": len(jobs), "jobs": jobs,
-            }), encoding="utf-8")
+            }
+            run.update(run_overrides or {})
+            response = json.dumps({"workflow_runs": [run]}) if runs_response is None else runs_response
+            (directory / "runs.json").write_text(response, encoding="utf-8")
             write_executable(directory, "gh", """#!/usr/bin/env bash
+if [ -n "$API_FAILURE" ] && [[ "$*" == *"$API_FAILURE"* ]]; then
+  exit 91
+fi
 case "$*" in
-  *git/ref/heads/main*) cat "$FIXTURE_DIR/live-sha" ;;
+  *git/ref/heads/main*)
+    [ "$#" -eq 4 ] && [ "$1" = api ] && [ "$3" = --jq ] && [ "$4" = .object.sha ] || exit 96
+    cat "$FIXTURE_DIR/live-sha" ;;
   *actions/workflows/ci.yml/runs*) cat "$FIXTURE_DIR/runs.json" ;;
-  *actions/runs/123/jobs?per_page=100*) cat "$FIXTURE_DIR/jobs.json" ;;
   *) exit 97 ;;
 esac
 """)
             environment = os.environ.copy()
             environment.update({
-                "DISPATCH_REF": "refs/heads/main",
+                "DISPATCH_REF": dispatch_ref,
                 "DISPATCH_SHA": dispatch_sha,
+                "API_FAILURE": api_failure,
                 "FIXTURE_DIR": str(directory),
                 "GH_TOKEN": "fixture-token",
                 "PATH": f"{directory}{os.pathsep}{environment['PATH']}",
@@ -146,32 +142,46 @@ esac
         self.assertNotEqual(0, result.returncode)
         self.assertIn("No successful push CI run", result.stderr)
 
-    def test_preflight_rejects_g6_failure(self) -> None:
-        conclusions = {
-            "Validate workflow policy": "success",
-            "ci / build-and-test": "success",
-            "Projects generated-artifact gates": "success",
-            "P1R candidate evidence replay": "success",
-            "G-6 current runtime qualification": "failure",
-            "Scheduled managed AppHost E2E": "skipped",
-        }
-        result = self.run_verify(run_conclusion="failure", job_conclusions=conclusions)
-        self.assertNotEqual(0, result.returncode)
-        self.assertIn("No successful push CI run", result.stderr)
-
-    def test_preflight_rejects_missing_current_g6_job(self) -> None:
-        conclusions = {
-            "Validate workflow policy": "success",
-            "ci / build-and-test": "success",
-            "P1R candidate evidence replay": "success",
-        }
-        result = self.run_verify(run_conclusion="failure", job_conclusions=conclusions)
-        self.assertNotEqual(0, result.returncode)
-
     def test_preflight_rejects_stale_main(self) -> None:
         result = self.run_verify(live_sha=OTHER_SHA)
         self.assertNotEqual(0, result.returncode)
         self.assertIn("no longer the live main tip", result.stderr)
+
+    def test_preflight_requires_exact_push_run_identity_and_completion(self) -> None:
+        for field, value in (("head_sha", OTHER_SHA), ("head_branch", "next"),
+                             ("event", "pull_request"), ("status", "in_progress"),
+                             ("conclusion", "skipped")):
+            with self.subTest(field=field):
+                result = self.run_verify(run_overrides={field: value})
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn("No successful push CI run", result.stderr)
+
+    def test_preflight_rejects_absent_or_malformed_api_data(self) -> None:
+        for response in ('{"workflow_runs": []}', '{}', 'null', 'not-json'):
+            with self.subTest(response=response):
+                self.assertNotEqual(0, self.run_verify(runs_response=response).returncode)
+
+    def test_preflight_propagates_api_failures(self) -> None:
+        for endpoint in ("git/ref/heads/main", "actions/workflows/ci.yml/runs"):
+            with self.subTest(endpoint=endpoint):
+                self.assertEqual(91, self.run_verify(api_failure=endpoint).returncode)
+
+    def test_preflight_rejects_wrong_ref_and_malformed_shas(self) -> None:
+        for arguments, diagnostic in (
+            ({"dispatch_ref": "refs/heads/next"}, "dispatched from refs/heads/main"),
+            ({"dispatch_sha": "not-a-sha"}, "exact lowercase commit SHA"),
+            ({"live_sha": "null"}, "could not be resolved safely"),
+        ):
+            with self.subTest(arguments=arguments):
+                result = self.run_verify(**arguments)
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn(diagnostic, result.stderr)
+
+    def test_preflight_fixture_detects_a_broken_live_sha_selector(self) -> None:
+        selector = "--jq '.object.sha'"
+        self.assertEqual(1, self.verify_script.count(selector))
+        self.verify_script = self.verify_script.replace(selector, "--jq '.object.nonexistent'")
+        self.assertEqual(96, self.run_verify().returncode)
 
     def run_freeze(self, value: str | None) -> tuple[subprocess.CompletedProcess[str], str]:
         with tempfile.TemporaryDirectory(prefix="projects-release-freeze-") as temporary:

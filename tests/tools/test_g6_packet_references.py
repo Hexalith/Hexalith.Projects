@@ -1,177 +1,137 @@
-"""Require the G-6 and P1R documents to quote the reviewed G-6 packet hash and the current gitlinks.
+"""Check archived attempt-16 provenance without comparing it to today's checkout.
 
-Hermetic: it reads only local files and the root Git index, never the network. The G-6 README,
-the current P1R owner packet, the Architecture Spine and sprint-status.yaml must quote the full SHA-256
-of the reviewed packet and the full root Builds and EventStore gitlinks; the README must quote every
-packet-bound submodule gitlink; the current sprint-status keys must carry exactly those values; and
-a replaced pending packet hash may appear only on a line that marks it replaced or superseded.
-
-The reviewed current v2 packet is canonical pending JSON with null acceptance and false usability.
-Historical acceptance and the separate P1R record do not approve this packet.
-
-It runs in the g6-candidate job, so a stale document fails only the G-6 jobs. When a new packet is
-captured, the same change must update every quoted hash and gitlink.
+Current qualification is governed by g6_current.py and the selected current policy.
+The archive keeps its own packet/README bindings; fixtures exercise rejection paths
+without consulting current gitlinks, sprint status or owner decisions.
 """
 
 from __future__ import annotations
 
-import hashlib
 import copy
+import hashlib
 import json
 import re
-import subprocess
 import unittest
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-ARTIFACTS = PROJECT_ROOT / "_bmad-output/implementation-artifacts"
-PACKET_PATH = ARTIFACTS / "qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
-README_PATH = PACKET_PATH.with_name("README.md")
-OWNER_PACKET_PATH = ARTIFACTS / "6-1-p1r-current-exact-baseline-candidate.md"
-SPRINT_STATUS_PATH = ARTIFACTS / "sprint-status.yaml"
-SPINE_PATH = PROJECT_ROOT / "_bmad-output/planning-artifacts/architecture/architecture-projects-2026-07-15/ARCHITECTURE-SPINE.md"
-DOCUMENTS = (README_PATH, OWNER_PACKET_PATH, SPINE_PATH, SPRINT_STATUS_PATH)
-PENDING_STATUS = b'"status": "pending"'
-ACCEPTED_STATUS = b'"status": "accepted"'
-REPLACED_MARKERS = ("supersed", "replac")
+ROOT = Path(__file__).resolve().parents[2]
+PACKET_PATH = ROOT / "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
 
 
-def reviewed_packet_sha256(packet: dict | None = None) -> str:
-    """Normalized-LF SHA-256 of the packet as the owner reviews it (status pending)."""
-    packet = json.loads(PACKET_PATH.read_text(encoding="utf-8")) if packet is None else copy.deepcopy(packet)
+def reviewed_packet_sha256(packet: dict) -> str:
+    """Hash the canonical pending form, preserving the supplied acceptance record."""
+    pending = copy.deepcopy(packet)
+    if pending["status"] == "accepted":
+        pending.update(status="pending", acceptance=None, usableAsPrerequisite=False)
+    elif pending["status"] != "pending":
+        raise AssertionError("archived packet status must be pending or accepted")
+    return hashlib.sha256((json.dumps(pending, ensure_ascii=False, indent=2) + "\n").encode()).hexdigest()
+
+
+def assert_archived_references(packet: dict, readme: str, packet_bytes: bytes | None = None) -> None:
+    """Require the archive's full reviewed hash and every full repository binding."""
+    reviewed = reviewed_packet_sha256(packet)
     if packet["status"] == "accepted":
-        packet.update(status="pending", acceptance=None, usableAsPrerequisite=False)
-    elif packet["status"] != "pending":
-        raise AssertionError("current packet status must be pending or accepted")
-    return hashlib.sha256((json.dumps(packet, ensure_ascii=False, indent=2) + "\n").encode()).hexdigest()
+        acceptance = packet.get("acceptance")
+        if (packet.get("usableAsPrerequisite") is not True or not isinstance(acceptance, dict)
+                or acceptance.get("decision") != "accept" or acceptance.get("reviewedPacketSha256") != reviewed):
+            raise AssertionError("Accepted archive must carry consistent acceptance and usability")
+        raw = packet_bytes if packet_bytes is not None else (json.dumps(packet, ensure_ascii=False, indent=2) + "\n").encode()
+        accepted_hash = hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()
+        if f"normalized-LF file SHA-256 `{accepted_hash}`" not in readme:
+            raise AssertionError("Archive README omits the accepted packet file hash")
+    elif packet.get("acceptance") is not None or packet.get("usableAsPrerequisite") is not False:
+        raise AssertionError("Pending archive cannot claim acceptance or usability")
+    expected = [reviewed]
+    for binding in packet["repositories"]:
+        expected.append(binding["revision"])
+        if binding["path"] != ".":
+            expected.append(binding["rootGitlink"])
+        name = re.escape(binding["name"])
+        rows = re.findall(r"(?m)^\| " + name + r" \|[^\n]+$", readme)
+        link = "none" if binding["path"] == "." else "`" + binding["rootGitlink"] + "`"
+        row = f"| {binding['name']} | `{binding['revision']}` | {link} | false |"
+        if rows != [row]:
+            raise AssertionError(f"Archive repository row differs: {binding['name']}")
+    for value in expected:
+        if not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", value):
+            raise AssertionError(f"Invalid full archive identifier: {value!r}")
+        if not re.search(r"(?<![0-9a-fA-F])" + value + r"(?![0-9a-fA-F])", readme):
+            raise AssertionError(f"Archive README omits full binding {value}")
 
 
-def root_gitlink(path: str) -> str:
-    entry = subprocess.run(
-        ["git", "-C", str(PROJECT_ROOT), "ls-files", "--stage", "--", path],
-        capture_output=True, text=True, check=True, timeout=60).stdout.strip()
-    match = re.fullmatch(r"160000 ([0-9a-f]{40}) 0\t" + re.escape(path), entry)
-    if match is None:
-        raise AssertionError(f"{path} is not a root gitlink: {entry!r}")
-    return match.group(1)
+class ArchivedPacketReferenceTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.packet = {
+            "status": "pending", "acceptance": None, "usableAsPrerequisite": False,
+            "repositories": [
+                {"name": "Hexalith.Projects", "path": ".", "revision": "1" * 40},
+                {"name": "Hexalith.Builds", "path": "references/Hexalith.Builds", "revision": "2" * 40, "rootGitlink": "3" * 40},
+            ],
+        }
+        self.readme = (reviewed_packet_sha256(self.packet) + "\n"
+                       + f"| Hexalith.Projects | `{'1' * 40}` | none | false |\n"
+                       + f"| Hexalith.Builds | `{'2' * 40}` | `{'3' * 40}` | false |")
 
+    def test_archived_packet_readme_keeps_its_own_bindings(self) -> None:
+        raw = PACKET_PATH.read_bytes()
+        packet = json.loads(raw)
+        assert_archived_references(packet, PACKET_PATH.with_name("README.md").read_text(encoding="utf-8"), raw)
 
-def read(path: Path) -> str:
-    return path.read_text(encoding="utf-8")
+    def test_fixture_accepts_exact_full_bindings(self) -> None:
+        assert_archived_references(self.packet, self.readme)
 
+    def test_missing_truncated_or_embedded_identifiers_are_rejected(self) -> None:
+        for value in (reviewed_packet_sha256(self.packet), "1" * 40, "2" * 40, "3" * 40):
+            for replacement in ("", value[:8], "a" + value, value + "F"):
+                with self.subTest(value=value, replacement=replacement), self.assertRaises(AssertionError):
+                    assert_archived_references(self.packet, self.readme.replace(value, replacement))
 
-def yaml_block(text: str, key: str, indent: int) -> str:
-    """Return the lines nested under one `key:` line at the given indentation (plain line scan)."""
-    match = re.search(rf"(?m)^{' ' * indent}{re.escape(key)}:[ \t]*\n((?:(?:{' ' * (indent + 1)}.*)?\n)*)", text)
-    if match is None:
-        raise AssertionError(f"sprint-status.yaml has no '{key}' block at indentation {indent}")
-    return match.group(1)
-
-
-def yaml_value(block: str, key: str, indent: int) -> str:
-    match = re.search(rf"(?m)^{' ' * indent}{re.escape(key)}:[ \t]*(.+?)[ \t]*$", block)
-    if match is None:
-        raise AssertionError(f"sprint-status.yaml block has no '{key}' key at indentation {indent}")
-    return match.group(1).strip('"')
-
-
-def load_selected_inputs() -> None:
-    global PACKET, SUBMODULE_BINDINGS, PROJECTS_REVISION, SPRINT_STATUS, P1R_BLOCK, G6_BLOCK
-    PACKET = json.loads(PACKET_PATH.read_text(encoding="utf-8"))
-    SUBMODULE_BINDINGS = [binding for binding in PACKET["repositories"] if binding["path"] != "."]
-    PROJECTS_REVISION = next(binding["revision"] for binding in PACKET["repositories"] if binding["path"] == ".")
-    SPRINT_STATUS = read(SPRINT_STATUS_PATH)
-    P1R_BLOCK = yaml_block(SPRINT_STATUS, "p1r_current_revalidation", 0)
-    G6_BLOCK = yaml_block(yaml_block(SPRINT_STATUS, "qualification_gates", 0), "G-6", 2)
-
-
-def assert_packet_usability(packet: dict) -> None:
-    if packet["status"] not in {"pending", "accepted"} or packet["usableAsPrerequisite"] is not (packet["status"] == "accepted"):
-        raise AssertionError("Packet usability must follow pending/accepted status")
-
-
-class G6PacketReferenceTests(unittest.TestCase):
-    """The documents index exactly the selected pending packet and the gitlinks it binds."""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        load_selected_inputs()
-
-    def test_documents_quote_the_reviewed_packet_hash(self) -> None:
-        packet_hash = reviewed_packet_sha256()
-        for document in DOCUMENTS:
-            with self.subTest(document=document.name):
-                self.assertIn(packet_hash, read(document))
-
-    def test_documents_quote_the_current_builds_and_eventstore_gitlinks(self) -> None:
-        for path in ("references/Hexalith.Builds", "references/Hexalith.EventStore"):
-            gitlink = root_gitlink(path)
-            for document in DOCUMENTS:
-                with self.subTest(document=document.name, gitlink=path):
-                    self.assertIn(gitlink, read(document))
-
-    def test_readme_quotes_every_bound_submodule_gitlink(self) -> None:
-        readme = read(README_PATH)
-        self.assertTrue(SUBMODULE_BINDINGS, "the packet must bind submodule repositories")
-        for binding in SUBMODULE_BINDINGS:
-            with self.subTest(repository=binding["name"]):
-                gitlink = root_gitlink(binding["path"])
-                self.assertEqual(binding["rootGitlink"], gitlink)
-                self.assertIn(gitlink, readme)
-                self.assertIn(binding["revision"], readme)
-        self.assertIn(PROJECTS_REVISION, readme)
-
-    def test_sprint_status_current_keys_carry_the_packet_and_gitlinks(self) -> None:
-        packet_hash = reviewed_packet_sha256()
-        builds = root_gitlink("references/Hexalith.Builds")
-        eventstore = root_gitlink("references/Hexalith.EventStore")
-        candidate = yaml_block(P1R_BLOCK, "candidate", 2)
-        self.assertEqual(yaml_value(P1R_BLOCK, "g6_builds_source_revision", 2), builds)
-        # Published P1R acceptance keeps its exact package/source coordinate when
-        # the current G-6 checkout advances to committed qualification tooling.
-        accepted = yaml_block(yaml_block(SPRINT_STATUS, "p1r_acceptance_gate", 0), "selected", 2)
-        self.assertEqual(yaml_value(candidate, "builds_revision", 4), yaml_value(accepted, "builds_revision", 4))
-        self.assertEqual(yaml_value(P1R_BLOCK, "eventstore_checkout_gitlink", 2), eventstore)
-        self.assertEqual(yaml_value(P1R_BLOCK, "projects_baseline_commit", 2), PROJECTS_REVISION)
-        self.assertEqual(yaml_value(P1R_BLOCK, "g6_fresh_candidate_sha256", 2), packet_hash)
-        self.assertEqual(yaml_value(P1R_BLOCK, "usable_as_prerequisite", 2), "false")
-        assert_packet_usability(PACKET)
-        self.assertEqual(yaml_value(G6_BLOCK, "current_candidate_sha256", 4), packet_hash)
-        self.assertEqual(yaml_value(G6_BLOCK, "current_candidate_builds_source_revision", 4), builds)
-
-    def test_replaced_packet_hashes_appear_only_as_replaced(self) -> None:
-        replaced = {value for key, value in re.findall(r"(?m)^\s*(\w*(?:superseded|replaced)\w*sha256): ([0-9a-f]{64})\s*$",
-                                                        SPRINT_STATUS)}
-        self.assertTrue(replaced, "sprint-status.yaml must record the replaced pending packet hashes")
-        self.assertNotIn(reviewed_packet_sha256(), replaced)
-        for document in DOCUMENTS:
-            for number, line in enumerate(read(document).splitlines(), start=1):
-                for value in replaced:
-                    if value[:8] in line:
-                        with self.subTest(document=document.name, line=number, hash=value[:8]):
-                            self.assertTrue(any(marker in line.lower() for marker in REPLACED_MARKERS), line)
-
-
-class PacketUsabilityStateTests(unittest.TestCase):
-    def test_pending_packet_is_unusable_and_preserves_downstream_state(self):
-        downstream = {"p1r": False, "downstream": "blocked"}
-        assert_packet_usability({"status": "pending", "usableAsPrerequisite": False})
-        self.assertEqual(downstream, {"p1r": False, "downstream": "blocked"})
+    def test_changed_packet_requires_a_new_reviewed_hash(self) -> None:
+        self.packet["newEvidence"] = "changed"
         with self.assertRaises(AssertionError):
-            assert_packet_usability({"status": "pending", "usableAsPrerequisite": True})
+            assert_archived_references(self.packet, self.readme)
 
-    def test_accepted_packet_is_usable_without_accepting_p1r(self):
-        downstream = {"p1r": False, "downstream": "blocked"}
-        assert_packet_usability({"status": "accepted", "usableAsPrerequisite": True})
-        self.assertFalse(downstream["p1r"])
-        self.assertEqual(downstream["downstream"], "blocked")
-        with self.assertRaises(AssertionError):
-            assert_packet_usability({"status": "accepted", "usableAsPrerequisite": False})
-        accepted = {"status": "accepted", "usableAsPrerequisite": True, "acceptance": {"decision": "accept"}}
-        pending = {"status": "pending", "usableAsPrerequisite": False, "acceptance": None}
-        self.assertEqual(reviewed_packet_sha256(accepted), reviewed_packet_sha256(pending))
-        self.assertTrue(accepted["usableAsPrerequisite"])
+    def test_acceptance_normalizes_to_reviewed_pending_bytes_without_mutation(self) -> None:
+        accepted = copy.deepcopy(self.packet)
+        accepted.update(status="accepted", acceptance={"decision": "accept", "reviewedPacketSha256": reviewed_packet_sha256(self.packet)},
+                        usableAsPrerequisite=True)
+        before = copy.deepcopy(accepted)
+        self.assertEqual(reviewed_packet_sha256(self.packet), reviewed_packet_sha256(accepted))
+        raw = (json.dumps(accepted, ensure_ascii=False, indent=2) + "\n").encode()
+        readme = self.readme + f"\nnormalized-LF file SHA-256 `{hashlib.sha256(raw).hexdigest()}`"
+        assert_archived_references(accepted, readme, raw)
+        self.assertEqual(before, accepted)
+
+    def test_repository_bindings_cannot_be_swapped_between_rows(self) -> None:
+        swapped = self.readme.replace("1" * 40, "x" * 40).replace("2" * 40, "1" * 40).replace("x" * 40, "2" * 40)
+        with self.assertRaisesRegex(AssertionError, "repository row differs"):
+            assert_archived_references(self.packet, swapped)
+
+    def test_acceptance_metadata_and_accepted_bytes_cannot_drift(self) -> None:
+        raw = PACKET_PATH.read_bytes()
+        original = json.loads(raw)
+        readme = PACKET_PATH.with_name("README.md").read_text()
+        for field, value, diagnostic in (("decision", "reject", "consistent acceptance"),
+                                         ("reviewedPacketSha256", "a" * 64, "consistent acceptance"),
+                                         ("extraMetadata", "changed", "accepted packet file hash")):
+            with self.subTest(field=field):
+                changed = copy.deepcopy(original)
+                changed["acceptance"][field] = value
+                with self.assertRaisesRegex(AssertionError, diagnostic):
+                    assert_archived_references(changed, readme)
+        with self.assertRaisesRegex(AssertionError, "consistent acceptance"):
+            assert_archived_references(dict(original, usableAsPrerequisite=False), readme)
+        with self.assertRaisesRegex(AssertionError, "accepted packet file hash"):
+            assert_archived_references(original, readme, raw + b"\n")
+        with self.assertRaisesRegex(AssertionError, "Pending archive"):
+            assert_archived_references(dict(self.packet, usableAsPrerequisite=True), self.readme)
+
+    def test_unknown_status_is_rejected(self) -> None:
+        for status in ("rejected", None, "Pending"):
+            with self.subTest(status=status), self.assertRaises(AssertionError):
+                reviewed_packet_sha256(dict(self.packet, status=status))
 
 
 if __name__ == "__main__":

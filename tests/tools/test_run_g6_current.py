@@ -6,6 +6,7 @@ import importlib.util
 import json
 import sys
 import tempfile
+import types
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -103,6 +104,58 @@ class CurrentRunnerPreflightTests(unittest.TestCase):
                  patch.object(RUNNER.historical, "Qualification", side_effect=RuntimeError("live setup reached")):
                 with self.assertRaisesRegex(RuntimeError, "live setup reached"):
                     RUNNER.main(["--policy", str(policy), "--output", str(root / "result")])
+
+
+class CurrentRunnerImageTests(unittest.TestCase):
+    IMAGE = "daprio/dapr@sha256:1146cf75f6a900f098489f995bcb2145bf9b040f87ab70eb0de2db21000d01bb"
+
+    def control_plane_launches(self, runner=RUNNER):
+        """Reach both real launch call sites without downloading tools or starting Docker."""
+        (ROOT / ".g6-current-evidence").mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=ROOT / ".g6-current-evidence") as temporary:
+            root = Path(temporary)
+            scratch = root / "scratch"
+            (scratch / "runtime").mkdir(parents=True)
+            (scratch / "runtime/daprd").touch()
+            policy = root / "policy.json"
+            policy.write_text(json.dumps({"tuple": {"daprRuntime": "1.18.2"},
+                                          "approval": {"decision": "approved"}}))
+            audit = {"issues": [], "tupleApproved": True, "source": {},
+                     "materialInputs": {"fingerprint": "a" * 64}}
+            with patch.object(runner, "audit", return_value=audit), \
+                 patch.object(runner.CURRENT_API, "builds_execution_sha", return_value="b" * 40), \
+                 patch.object(runner.tempfile, "mkdtemp", return_value=str(scratch)), \
+                 patch.object(runner.historical, "install"), \
+                 patch.object(runner.historical, "Qualification") as qualification:
+                run = qualification.return_value
+                run.env = {"PATH": "/controlled-tools"}
+                run.commands = []
+                run.run.return_value = 1
+                run.sanitize.side_effect = str
+                run.cleanup.return_value = {}
+                run.build_controls.return_value = {}
+                run.start_container.side_effect = [("placement-id", 15005), ("scheduler-id", 15006),
+                                                   RuntimeError("controlled stop after control-plane launches")]
+                self.assertEqual(1, runner.main(["--policy", str(policy), "--output", str(root / "output")]))
+                self.assertEqual(3, run.start_container.call_count)
+                calls = [call.args for call in run.start_container.call_args_list[:2]]
+            self.assertEqual(["./placement", "./scheduler"], [call[2][0] for call in calls])
+            self.assertEqual([50005, 50006], [call[3] for call in calls])
+            self.assertTrue(calls[0][0].endswith("-placement"))
+            self.assertTrue(calls[1][0].endswith("-scheduler"))
+            return [call[1] for call in calls]
+
+    def test_both_control_plane_launches_use_the_approved_manifest(self) -> None:
+        self.assertEqual([self.IMAGE, self.IMAGE], self.control_plane_launches())
+
+    def test_mutable_tag_substitution_is_detected_at_the_launch_call_sites(self) -> None:
+        source = SCRIPT.read_text(encoding="utf-8")
+        self.assertEqual(1, source.count(self.IMAGE))
+        mutated = types.ModuleType("g6_mutable_image_negative_control")
+        exec(compile(source.replace(self.IMAGE, "daprio/dapr:1.18.2"), str(SCRIPT), "exec"), mutated.__dict__)
+        images = self.control_plane_launches(mutated)
+        self.assertEqual(["daprio/dapr:1.18.2"] * 2, images)
+        self.assertNotEqual([self.IMAGE] * 2, images)
 
 
 if __name__ == "__main__":

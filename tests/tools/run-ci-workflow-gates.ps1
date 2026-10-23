@@ -660,7 +660,7 @@ $expectedWorkflowGatesJob = (@'
         # Historical packet fixtures remain regression coverage; current G-6 runs in g6-current.
         env:
           PYTHONDONTWRITEBYTECODE: '1'
-        run: python3 -m unittest tests/tools/test_check_g6_packet_gitlinks.py -v
+        run: python3 -m unittest tests/tools/test_check_g6_packet_gitlinks.py tests/tools/test_g6_packet_references.py -v
 
       - name: Validate status-aware G-6 gate fixtures
         env:
@@ -730,9 +730,29 @@ $projectGatesStepNames = @(Get-NamedStepBlocks -JobText $projectGatesJob | ForEa
 if (($projectGatesStepNames -join "`n") -cne ($expectedProjectGatesStepNames -join "`n")) {
     $failures.Add("project-gates must run exactly these steps in order: $($expectedProjectGatesStepNames -join '; '). Current G-6 runs in g6-current.")
 }
-Forbid-Match (Get-ActiveWorkflowText -Text $projectGatesJob) '(validate-runtime-toolchain-evidence|check_g6_packet_gitlinks|run_g6_candidate_gate|test_g6_packet_references)' 'project-gates must not run any G-6 check, so G-6 drift never skips the FrontComposer and OpenAPI gates.'
+Forbid-Match (Get-ActiveWorkflowText -Text $projectGatesJob) '(validate-runtime-toolchain-evidence|check_g6_packet_gitlinks|run_g6_candidate_gate|run_g6_ci_gate|run_g6_current|test_g6_packet_references)' 'project-gates must not run any G-6 check, so G-6 drift never skips the FrontComposer and OpenAPI gates.'
 Forbid-Match $projectGatesJob '^\s*continue-on-error:' 'project-gates must not tolerate failures with continue-on-error.'
 Forbid-Match $projectGatesJob '^    if:' 'project-gates must not be conditional.'
+Require-Match $projectGatesJob '(?m)^    needs: ci\r?$' 'Project gates must depend only on CI, independently of G-6 qualification.'
+$projectSteps = @(Get-NamedStepBlocks -JobText $projectGatesJob)
+foreach ($gate in @(
+    @{ Name = 'FrontComposer inspect gate'; Script = 'run-frontcomposer-inspect-gate.ps1' },
+    @{ Name = 'OpenAPI fingerprint / compatibility gate'; Script = 'run-openapi-fingerprint-gate.ps1' }
+)) {
+    $step = Get-RequiredNamedStep -Steps $projectSteps -Name $gate.Name -Owner 'project-gates'
+    $expected = "      - name: $($gate.Name)`n        shell: pwsh`n        timeout-minutes: 15`n        run: ./tests/tools/$($gate.Script)"
+    if ($null -ne $step -and (Get-TrimmedBlockText -Text $step.Text) -cne $expected) {
+        $failures.Add("$($gate.Name) must be an unconditional exact blocking command, independent of G-6.")
+    }
+}
+
+$e2eJobCandidates = @($ciJobBlocks | Where-Object { $_.Name -ceq 'e2e' })
+if ($e2eJobCandidates.Count -ne 1) {
+    $failures.Add("CI must define exactly one e2e job; found $($e2eJobCandidates.Count).")
+}
+else {
+    Require-Match $e2eJobCandidates[0].Text '(?m)^    needs:\r?\n      - ci\r?\n      - workflow-gates\r?\n      - project-gates\r?\n    steps:' 'Scheduled E2E must depend only on CI, workflow and project gates, independently of G-6 qualification.'
+}
 
 # The current result may fail without suppressing ordinary build and project gates.
 $g6CurrentJobCandidates = @($ciJobBlocks | Where-Object { $_.Name -ceq 'g6-current' })
