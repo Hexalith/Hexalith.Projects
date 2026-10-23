@@ -1,0 +1,11 @@
+# Approved fixture push — 2026-10-23
+
+The user explicitly approved rebasing the one-file Conversations repair onto current main and pushing normally. A nonrecursive fetch found live main `bb6ae6e6574377e8fc628266f16b51a301f9736e`, two commits beyond the original parent. Its 16 changed files do not overlap the fixture. The exact reviewed patch was rebased from `94fcefbf0aa6744c0c4033fc904a22aae72e11b2` to `9911b4c9ad26f125a5271fc38f070297e4a9713f`; complete patch bytes and the full commit message match, and the approved file SHA-256 remains unchanged. The owning repository's pinned commitlint passed. The focused prerequisite/anti-skip lane passed **38 tests, zero failures/errors/skips** after the rebase.
+
+The ordinary push succeeded without force or recursive submodule operations. An independent `git ls-remote` read verified remote main at `9911b4c9ad26f125a5271fc38f070297e4a9713f`; the owner working tree is clean. Root work remains unstaged. [push.json](push.json), [rebase.json](rebase.json), [rebased.patch](rebased.patch) and [post-rebase tests](focused-after-rebase.junit.xml) preserve the exact result.
+
+[CI run 39932499668](https://github.com/Hexalith/Hexalith.Conversations/actions/runs/39932499668) covers the pushed source and is currently **queued**. CodeQL and commit-policy push runs were also created. The read-only source guard exits **1** with `EXACT_CI_ABSENT: newest push CI run/attempt for the current main SHA is not successful`; [release-gate.json](release-gate.json) records the command/result. This is the required CI prerequisite. Publication has not been dispatched.
+
+The read-only semantic plan confirms exactly **1.3.1**, and the official NuGet/package/symbol/tag/release destination verifier passes its absent-state check. [release-plan.json](release-plan.json) and [release-destinations.json](release-destinations.json) record those results. Semantic Release's retained output is from a dry-run against a disposable local bare repository with only its analyzer enabled; it does not publish externally.
+
+Story 6.4 remains **in-progress** pending successful exact-source CI, the separately required release approval, publication verification and consumer pins. The earlier interrupted optional local broad run is retained honestly; it is not a full-suite pass. No package pin, root Git commit or deployment was performed.

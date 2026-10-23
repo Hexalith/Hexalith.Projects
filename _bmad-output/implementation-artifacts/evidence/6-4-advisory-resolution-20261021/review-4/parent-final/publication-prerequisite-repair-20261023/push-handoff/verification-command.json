@@ -1,0 +1,21 @@
+{
+  "command": [
+    "uv",
+    "run",
+    "--frozen",
+    "--no-sync",
+    "python3",
+    "-m",
+    "pytest",
+    "-q",
+    "-ra",
+    "-p",
+    "no:cacheprovider",
+    "_bmad/scripts/tests/test_verify_epic_16_prerequisites.py",
+    "_bmad/scripts/tests/test_static_anti_skip_guard.py",
+    "--junitxml=/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/review-4/parent-final/publication-prerequisite-repair-20261023/push-handoff/focused-after-rebase.junit.xml"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+  "exit_code": 0,
+  "output": "......................................                                   [100%]\n38 passed in 69.76s (0:01:09)\n"
+}
