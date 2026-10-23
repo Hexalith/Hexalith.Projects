@@ -228,8 +228,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-  # Replays the pending P1R candidate's release-bypass and checkout-drift claims against the
-  # public EventStore Actions runs and the EventStore history at the root gitlink.
+  # Replays the selected P1R tuple; historical 3.109.0 checks remain manually executable.
   p1r-candidate-evidence:
     name: P1R candidate evidence replay
     runs-on: ubuntu-latest
@@ -247,15 +246,16 @@ jobs:
       - name: Fetch EventStore tags read by the P1R evidence replay
         run: >-
           git -C references/Hexalith.EventStore fetch --no-tags origin
-          +refs/tags/v3.70.1:refs/tags/v3.70.1
-          +refs/tags/v3.109.0:refs/tags/v3.109.0
           +refs/tags/v3.110.0:refs/tags/v3.110.0
 
       - name: Replay P1R candidate evidence
         env:
           GITHUB_TOKEN: ${{ github.token }}
           PYTHONDONTWRITEBYTECODE: '1'
-        run: python3 -m unittest tests/tools/test_p1r_candidate_evidence.py -v
+        run: >-
+          python3 -m unittest
+          tests.tools.test_p1r_candidate_evidence.SelectedPublishedEvidenceTests
+          tests.tools.test_p1r_candidate_evidence.SelectedEvidenceMutationTests -v
 
   e2e:
     name: Scheduled managed AppHost E2E

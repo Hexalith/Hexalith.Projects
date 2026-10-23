@@ -205,6 +205,33 @@ public sealed class ProjectFileReferenceDirectoryTests
             .ConfigureAwait(true)).ConfigureAwait(true);
     }
 
+    /// <summary>Separates invalid success responses, permanent failures and transient failures.</summary>
+    /// <param name="statusCode">The HTTP status observed by the generated client.</param>
+    /// <param name="expectedOutcome">The safe adapter classification.</param>
+    [Theory]
+    [InlineData((HttpStatusCode)201, ProjectFileReferenceValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)204, ProjectFileReferenceValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)206, ProjectFileReferenceValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)299, ProjectFileReferenceValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)300, ProjectFileReferenceValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)302, ProjectFileReferenceValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)307, ProjectFileReferenceValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)405, ProjectFileReferenceValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)418, ProjectFileReferenceValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)429, ProjectFileReferenceValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)499, ProjectFileReferenceValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)500, ProjectFileReferenceValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)599, ProjectFileReferenceValidationOutcome.Unavailable)]
+    public async Task ValidateLink_UnexpectedStatus_MapsSafeOutcome(HttpStatusCode statusCode, ProjectFileReferenceValidationOutcome expectedOutcome)
+    {
+        FoldersProjectFileReferenceDirectory directory = Directory(
+            new RecordingHandler(JsonResponse(statusCode, "{}")));
+
+        ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(expectedOutcome);
+    }
+
     [Theory]
     [InlineData(HttpStatusCode.Unauthorized, ProjectFileReferenceValidationOutcome.Denied)]
     [InlineData(HttpStatusCode.NotFound, ProjectFileReferenceValidationOutcome.Denied)]
@@ -221,11 +248,15 @@ public sealed class ProjectFileReferenceDirectoryTests
         result.Outcome.ShouldBe(expectedOutcome);
     }
 
-    [Fact]
-    public async Task ValidateLink_MalformedSuccess_IsUnavailable()
+    /// <summary>Exercises malformed JSON and incomplete evidence through the generated client.</summary>
+    /// <param name="json">The invalid success body returned by Folders.</param>
+    [Theory]
+    [InlineData("{")]
+    [InlineData("{}")]
+    public async Task ValidateLink_MalformedSuccess_IsUnavailable(string json)
     {
         FoldersProjectFileReferenceDirectory directory = Directory(
-            new RecordingHandler(JsonResponse(HttpStatusCode.OK, "{}")));
+            new RecordingHandler(JsonResponse(HttpStatusCode.OK, json)));
 
         ProjectFileReferenceValidationResult result = await ValidateAsync(directory).ConfigureAwait(true);
 

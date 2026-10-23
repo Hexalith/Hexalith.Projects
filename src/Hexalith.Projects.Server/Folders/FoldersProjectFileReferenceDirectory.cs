@@ -182,6 +182,7 @@ public sealed class FoldersProjectFileReferenceDirectory(FoldersClient foldersCl
             >= 500 and < 600 => ProjectFileReferenceValidationOutcome.Unavailable,
             // A successful status wrapped as an API exception indicates an invalid response.
             // Report unavailable rather than presenting a deserialization failure as denial.
-            _ => ProjectFileReferenceValidationOutcome.Unavailable,
+            >= 200 and < 300 => ProjectFileReferenceValidationOutcome.Unavailable,
+            _ => ProjectFileReferenceValidationOutcome.Denied,
         };
 }

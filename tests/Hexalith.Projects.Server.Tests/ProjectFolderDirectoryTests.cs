@@ -154,6 +154,64 @@ public sealed class ProjectFolderDirectoryTests
         result.Outcome.ShouldBe(ProjectFolderValidationOutcome.Denied);
     }
 
+    /// <summary>Separates invalid success responses, permanent failures and transient failures.</summary>
+    /// <param name="statusCode">The HTTP status observed by the generated client.</param>
+    /// <param name="expectedOutcome">The safe adapter classification.</param>
+    [Theory]
+    [InlineData((HttpStatusCode)201, ProjectFolderValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)204, ProjectFolderValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)206, ProjectFolderValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)299, ProjectFolderValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)300, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)302, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)307, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)405, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)418, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)429, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)499, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)500, ProjectFolderValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)599, ProjectFolderValidationOutcome.Unavailable)]
+    public async Task ValidateSetProjectFolder_UnexpectedStatus_MapsSafeOutcome(HttpStatusCode statusCode, ProjectFolderValidationOutcome expectedOutcome)
+    {
+        FoldersProjectFolderDirectory directory = Directory(JsonResponse(statusCode, "{}"));
+
+        ProjectFolderValidationResult result = await directory
+            .ValidateSetProjectFolderAsync(ProjectId(), FolderId, "corr-a", TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(expectedOutcome);
+    }
+
+    /// <summary>Separates invalid success responses, permanent failures and transient failures.</summary>
+    /// <param name="statusCode">The HTTP status observed by the generated client.</param>
+    /// <param name="expectedOutcome">The safe adapter classification.</param>
+    [Theory]
+    [InlineData((HttpStatusCode)201, ProjectFolderValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)204, ProjectFolderValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)206, ProjectFolderValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)299, ProjectFolderValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)300, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)302, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)307, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)405, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)418, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)429, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)499, ProjectFolderValidationOutcome.Denied)]
+    [InlineData((HttpStatusCode)500, ProjectFolderValidationOutcome.Unavailable)]
+    [InlineData((HttpStatusCode)599, ProjectFolderValidationOutcome.Unavailable)]
+    public async Task RefreshFolderReference_UnexpectedPermissionStatus_MapsSafeOutcome(HttpStatusCode statusCode, ProjectFolderValidationOutcome expectedOutcome)
+    {
+        FoldersProjectFolderDirectory directory = Directory(
+            JsonResponse(HttpStatusCode.OK, LifecycleJson(archived: false, stale: false)),
+            JsonResponse(statusCode, "{}"));
+
+        ProjectFolderValidationResult result = await directory
+            .RefreshFolderReferenceAsync(ProjectId(), FolderId, "corr-a", TestContext.Current.CancellationToken)
+            .ConfigureAwait(true);
+
+        result.Outcome.ShouldBe(expectedOutcome);
+    }
+
     [Theory]
     [InlineData(HttpStatusCode.Unauthorized, ProjectFolderValidationOutcome.Denied)]
     [InlineData(HttpStatusCode.NotFound, ProjectFolderValidationOutcome.Denied)]
@@ -190,12 +248,16 @@ public sealed class ProjectFolderDirectoryTests
         result.Outcome.ShouldBe(expectedOutcome);
     }
 
-    [Fact]
-    public async Task RefreshFolderReference_MalformedPermissions_IsUnavailable()
+    /// <summary>Rejects both invalid JSON and missing permission evidence after a valid lifecycle read.</summary>
+    /// <param name="json">The invalid permission response body.</param>
+    [Theory]
+    [InlineData("{")]
+    [InlineData("{}")]
+    public async Task RefreshFolderReference_MalformedPermissions_IsUnavailable(string json)
     {
         FoldersProjectFolderDirectory directory = Directory(
             JsonResponse(HttpStatusCode.OK, LifecycleJson(archived: false, stale: false)),
-            JsonResponse(HttpStatusCode.OK, "{}"));
+            JsonResponse(HttpStatusCode.OK, json));
 
         ProjectFolderValidationResult result = await directory
             .RefreshFolderReferenceAsync(ProjectId(), FolderId, "corr-a", TestContext.Current.CancellationToken)
@@ -204,10 +266,14 @@ public sealed class ProjectFolderDirectoryTests
         result.Outcome.ShouldBe(ProjectFolderValidationOutcome.Unavailable);
     }
 
-    [Fact]
-    public async Task ValidateSetProjectFolder_MalformedSuccess_IsUnavailable()
+    /// <summary>Exercises malformed JSON and incomplete evidence through the generated client.</summary>
+    /// <param name="json">The invalid success body returned by Folders.</param>
+    [Theory]
+    [InlineData("{")]
+    [InlineData("{}")]
+    public async Task ValidateSetProjectFolder_MalformedSuccess_IsUnavailable(string json)
     {
-        FoldersProjectFolderDirectory directory = Directory(JsonResponse(HttpStatusCode.OK, "{}"));
+        FoldersProjectFolderDirectory directory = Directory(JsonResponse(HttpStatusCode.OK, json));
 
         ProjectFolderValidationResult result = await directory
             .ValidateSetProjectFolderAsync(ProjectId(), FolderId, "corr-a", TestContext.Current.CancellationToken)

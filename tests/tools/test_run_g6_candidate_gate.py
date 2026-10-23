@@ -112,7 +112,10 @@ class StatusAwareGateTests(unittest.TestCase):
         self.assertEqual(0, exit_code, stderr)
         calls = self.validator_calls()
         self.assertEqual(1, len(calls))
-        self.assertEqual("--candidate", calls[0][-1])
+        self.assertEqual([
+            "--workspace", str(self.workspace), "--baseline", str(self.tools / "baseline.json"),
+            "--packet", str(self.workspace / "packet.json"), "--candidate",
+        ], calls[0])
         self.assertIn("packet status pending; candidate mode exited 0: G6-EVIDENCE-CANDIDATE-VALID", stdout)
         self.assertIn("G6-PACKET-GITLINKS-EXACT: 2 submodule revisions equal their root gitlinks", stdout)
         self.assertIn(f"G6-BUILDS-EXECUTION-SHA-EXACT: direct references in {self.workspace / GATE.WORKFLOW} select Hexalith.Builds at the root gitlink {BUILDS_REVISION}", stdout)
@@ -126,7 +129,10 @@ class StatusAwareGateTests(unittest.TestCase):
         self.assertEqual(0, exit_code, stderr)
         calls = self.validator_calls()
         self.assertEqual(1, len(calls))
-        self.assertNotIn("--candidate", calls[0])
+        self.assertEqual([
+            "--workspace", str(self.workspace), "--baseline", str(self.tools / "baseline.json"),
+            "--packet", str(self.workspace / "packet.json"),
+        ], calls[0])
         self.assertIn("packet status accepted; accepted-only mode exited 0: G6-EVIDENCE-VALID", stdout)
 
     def test_failing_validator_fails_the_gate_and_the_other_checks_still_report(self) -> None:
@@ -167,6 +173,18 @@ class StatusAwareGateTests(unittest.TestCase):
 
         self.assertEqual(1, exit_code)
         self.assertIn(f"Hexalith.EventStore is bound at '{'3' * 40}' but the root gitlink is '{EVENTSTORE_REVISION}'", stderr)
+
+    def test_missing_duplicate_or_extra_repositories_fail_the_gate(self) -> None:
+        original = json.loads((self.workspace / "packet.json").read_text())
+        bindings = original["repositories"]
+        cases = (bindings[:2], bindings + [bindings[1]], bindings[1:],
+                 bindings + [{"name": "Other", "path": "references/Other", "revision": "4" * 40}])
+        for repositories in cases:
+            with self.subTest(repositories=repositories):
+                self.write_packet(None, document=dict(original, repositories=repositories))
+                code, _, error = self.run_gate()
+                self.assertEqual(1, code)
+                self.assertIn("G6-PACKET-GITLINK-DRIFT", error)
 
     def test_builds_execution_sha_that_differs_from_the_gitlink_fails(self) -> None:
         self.write_workflow("4" * 40, "4" * 40)

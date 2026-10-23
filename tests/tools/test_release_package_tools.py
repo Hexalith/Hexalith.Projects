@@ -187,6 +187,24 @@ class ReleasePackageToolTests(unittest.TestCase):
         self.assertEqual(VERSION, version)
         self.assertEqual(SOURCE_SHA, source)
 
+    def test_service_defaults_rejects_stale_opentelemetry_dependency_versions(self) -> None:
+        package = next(item for item in load_manifest().packages
+                       if item.package_id == "Hexalith.Projects.ServiceDefaults")
+        telemetry = {name: version for name, version in package.dependencies.items()
+                     if name.startswith("OpenTelemetry")}
+        self.assertEqual(6, len(telemetry))
+        for name, current in telemetry.items():
+            with self.subTest(dependency=name):
+                self.assertNotEqual("1.19.0", current)
+                write_candidates(self.directory)
+
+                def stale_version(root: ET.Element) -> None:
+                    dependency = next(item for item in root.iter("dependency") if item.get("id") == name)
+                    dependency.set("version", "1.19.0")
+
+                rewrite_candidate(self.candidate(package.package_id), stale_version)
+                self.assert_invalid("dependency graph differs")
+
     def test_external_dependency_may_equal_candidate_version(self) -> None:
         for candidate in self.directory.glob("*.nupkg"):
             candidate.unlink()

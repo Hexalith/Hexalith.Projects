@@ -74,6 +74,19 @@ class WorkflowGateTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn("PASSED", result.stdout)
 
+    def test_p1r_replay_cannot_restore_the_superseded_live_suite_or_omit_mutations(self) -> None:
+        path = self.root / ".github/workflows/ci.yml"
+        original = path.read_text()
+        selected = ("        run: >-\n          python3 -m unittest\n"
+                    "          tests.tools.test_p1r_candidate_evidence.SelectedPublishedEvidenceTests\n"
+                    "          tests.tools.test_p1r_candidate_evidence.SelectedEvidenceMutationTests -v")
+        self.assertIn(selected, original)
+        for replacement in ("        run: python3 -m unittest tests/tools/test_p1r_candidate_evidence.py -v",
+                            selected.replace("          tests.tools.test_p1r_candidate_evidence.SelectedEvidenceMutationTests -v", "          -v")):
+            with self.subTest(replacement=replacement):
+                path.write_text(original.replace(selected, replacement))
+                self.assert_rejected("run only SelectedPublishedEvidenceTests and SelectedEvidenceMutationTests")
+
     def test_catalog_package_versions_cannot_be_redeclared(self) -> None:
         for operation in ("Include", "Update", "Remove"):
             for package_id in PACKAGE_IDS:

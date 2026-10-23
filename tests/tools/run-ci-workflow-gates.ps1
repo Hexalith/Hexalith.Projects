@@ -699,15 +699,16 @@ $expectedP1rEvidenceJob = @(
     '      - name: Fetch EventStore tags read by the P1R evidence replay'
     '        run: >-'
     '          git -C references/Hexalith.EventStore fetch --no-tags origin'
-    '          +refs/tags/v3.70.1:refs/tags/v3.70.1'
-    '          +refs/tags/v3.109.0:refs/tags/v3.109.0'
     '          +refs/tags/v3.110.0:refs/tags/v3.110.0'
     ''
     '      - name: Replay P1R candidate evidence'
     '        env:'
     '          GITHUB_TOKEN: ${{ github.token }}'
     '          PYTHONDONTWRITEBYTECODE: ''1'''
-    '        run: python3 -m unittest tests/tools/test_p1r_candidate_evidence.py -v'
+    '        run: >-'
+    '          python3 -m unittest'
+    '          tests.tools.test_p1r_candidate_evidence.SelectedPublishedEvidenceTests'
+    '          tests.tools.test_p1r_candidate_evidence.SelectedEvidenceMutationTests -v'
 ) -join "`n"
 $expectedProjectGatesStepNames = @(
     'Checkout repository',
@@ -719,7 +720,7 @@ $expectedProjectGatesStepNames = @(
 
 $ciJobBlocks = @(Get-WorkflowJobBlocks -Text $ci)
 Require-ExactJob -JobBlocks $ciJobBlocks -Name 'workflow-gates' -Expected $expectedWorkflowGatesJob -Message 'workflow-gates must be the exact job: every hermetic fixture step, including both G-6 fixture steps, is an exact blocking name/env/run block in its fixed order before the CI/CD invariants; extra steps or lines, || true, if: and continue-on-error are forbidden.'
-Require-ExactJob -JobBlocks $ciJobBlocks -Name 'p1r-candidate-evidence' -Expected $expectedP1rEvidenceJob -Message 'p1r-candidate-evidence must initialize root submodules, fetch the EventStore tags it reads, and run tests/tools/test_p1r_candidate_evidence.py as an exact blocking step.'
+Require-ExactJob -JobBlocks $ciJobBlocks -Name 'p1r-candidate-evidence' -Expected $expectedP1rEvidenceJob -Message 'p1r-candidate-evidence must initialize root submodules, fetch the selected EventStore tags, and run only SelectedPublishedEvidenceTests and SelectedEvidenceMutationTests as an exact blocking step.'
 
 $projectGatesJobCandidates = @($ciJobBlocks | Where-Object { $_.Name -ceq 'project-gates' })
 if ($projectGatesJobCandidates.Count -ne 1) {

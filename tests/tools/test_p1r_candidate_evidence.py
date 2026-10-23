@@ -1,5 +1,16 @@
 """Replay the selected 3.110.0 P1R evidence and preserve the historical 3.109.0 claims.
 
+Routine CI selects SelectedPublishedEvidenceTests and SelectedEvidenceMutationTests.
+Run this full module explicitly to investigate the historical 3.109.0 claims too;
+those records and checks remain historical and do not qualify the selected tuple.
+Prepare complete EventStore history first: for a shallow clone, run
+`git -C references/Hexalith.EventStore fetch --unshallow --no-tags origin`.
+Fetch the historical and selected tags with
+`git -C references/Hexalith.EventStore fetch --no-tags origin
+ +refs/tags/v3.70.1:refs/tags/v3.70.1 +refs/tags/v3.109.0:refs/tags/v3.109.0
+ +refs/tags/v3.110.0:refs/tags/v3.110.0` (join these lines as one shell command).
+Then run `python3 -m unittest tests/tools/test_p1r_candidate_evidence.py -v`.
+
 Replayed against public GitHub Actions resources: the release run's event, head, workflow and
 conclusion and its Commitlint source-proof run; the absence of any successful push CI run for the
 tag; and the job conclusions of the recorded tag-CI attempt. Replayed against EventStore Git: the

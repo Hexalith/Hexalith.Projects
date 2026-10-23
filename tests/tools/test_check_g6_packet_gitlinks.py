@@ -78,6 +78,31 @@ class PacketGitlinkCheckTests(unittest.TestCase):
         self.assertIn(f"Hexalith.EventStore is bound at '{'3' * 40}' but the root gitlink is '{EVENTSTORE_REVISION}'", stderr)
         self.assertNotIn("Hexalith.Builds", stderr)
 
+    def test_omitting_a_root_gitlink_fails(self) -> None:
+        code, _, error = self.run_check(self.bindings()[:2])
+        self.assertEqual(1, code)
+        self.assertIn("missing=['references/Hexalith.EventStore']", error)
+
+    def test_root_and_binding_identities_are_unique_and_complete(self) -> None:
+        bindings = self.bindings()
+        for repositories in (bindings[1:], bindings + [bindings[0]], bindings + [bindings[1]],
+                             bindings + [dict(bindings[1], name="DistinctName")],
+                             [bindings[0], bindings[1], dict(bindings[2], name=bindings[1]["name"])],
+                             [bindings[0], bindings[1], dict(bindings[2], name=None)],
+                             [bindings[0], bindings[1], dict(bindings[2], name="   ")]):
+            with self.subTest(repositories=repositories):
+                code, _, _ = self.run_check(repositories)
+                self.assertEqual(1, code)
+
+    def test_root_revision_must_be_a_full_canonical_commit(self) -> None:
+        for revision in (None, "", "a" * 8, "A" * 40, []):
+            bindings = self.bindings()
+            bindings[0]["revision"] = revision
+            with self.subTest(revision=revision):
+                code, _, error = self.run_check(bindings)
+                self.assertEqual(1, code)
+                self.assertIn("root repository revision must be a full lowercase commit SHA", error)
+
     def test_binding_that_is_not_a_gitlink_fails(self) -> None:
         repositories = self.bindings() + [{"name": "Notes", "path": "notes.txt", "revision": "4" * 40}]
 

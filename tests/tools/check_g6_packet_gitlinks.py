@@ -59,6 +59,34 @@ def packet_gitlink_drift(workspace: Path, packet_path: Path) -> tuple[list[str],
     if not bindings:
         return ["the packet binds no submodule repositories"], 0
     drift = []
+    roots = [item for item in repositories if item.get("path") == "."]
+    if len(roots) != 1:
+        drift.append("the packet must bind exactly one root repository")
+    elif not isinstance(roots[0].get("revision"), str) or not re.fullmatch(r"[0-9a-f]{40}", roots[0]["revision"]):
+        drift.append("the root repository revision must be a full lowercase commit SHA")
+    paths = [item.get("path") for item in repositories]
+    names = [item.get("name") for item in repositories]
+    if any(not isinstance(name, str) or not name.strip() for name in names) or len(set(
+        name for name in names if isinstance(name, str)
+    )) != len(names):
+        drift.append("repository names must be nonempty and unique")
+    if len(set(path for path in paths if isinstance(path, str))) != len(paths):
+        drift.append("repository paths must be nonempty and unique")
+    try:
+        index = subprocess.run(
+            ["git", "-C", str(workspace), "ls-files", "--stage", "-z"],
+            capture_output=True, text=True, check=False,
+        )
+    except OSError as error:
+        raise GitUnavailableError(f"git is not available: {error}") from error
+    if index.returncode != 0:
+        raise GitUnavailableError(f"git cannot read the root index of {workspace}: {index.stderr.strip()}")
+    expected_paths = {record.split("\t", 1)[1] for record in index.stdout.split("\0")
+                      if record.startswith("160000 ") and "\t" in record}
+    actual_paths = {item.get("path") for item in bindings if isinstance(item.get("path"), str)}
+    if actual_paths != expected_paths:
+        drift.append(f"repository set differs from root gitlinks: missing={sorted(expected_paths - actual_paths)}, "
+                     f"extra={sorted(actual_paths - expected_paths)}")
     for binding in bindings:
         name, path, revision = binding.get("name"), binding.get("path"), binding.get("revision")
         if not isinstance(path, str) or not path:

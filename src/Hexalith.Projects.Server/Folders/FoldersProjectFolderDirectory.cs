@@ -150,6 +150,7 @@ public sealed class FoldersProjectFolderDirectory(FoldersClient foldersClient) :
             >= 500 and < 600 => ProjectFolderValidationOutcome.Unavailable,
             // An unexpected success here means the generated client could not deserialize its
             // response. Treat it as unavailable, never as an authorization denial.
-            _ => ProjectFolderValidationOutcome.Unavailable,
+            >= 200 and < 300 => ProjectFolderValidationOutcome.Unavailable,
+            _ => ProjectFolderValidationOutcome.Denied,
         };
 }

@@ -728,9 +728,13 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Fix the Folders malformed-success tests so they reach the changed fallback under the published `Hexalith.Folders.Client` 1.0.0; `ValidateLink_MalformedSuccess_IsUnavailable` currently fails in CI package mode.
   evidence: Commit `6bc5155` (not P1R); under `CI=true` a 200 `{}` body deserializes and `Evaluate` returns Denied, while the folder test passes through `ValidateLifecycle` instead of `MapFoldersStatus` (review VG-01/BH-28/EC-20).
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-boundary-checks.md; The current catalog uses Folders.Client 1.3.0. Added invalid-JSON bodies that reach generated-client status-200 exception mapping, retained incomplete-body evidence controls, and verified metadata, lifecycle and permission responses in Debug/source and Release/package modes (81 cases each). The original 1.0.0 diagnosis is retained as history; no pin was changed.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Restrict the Folders `MapFoldersStatus` Unavailable fallback to unexpected 2xx and restore a deliberate fail-closed default for unlisted 3xx/4xx statuses.
   evidence: Commit `6bc5155` changed `_ => Denied` to `_ => Unavailable` in both adapters, so 405/410/412/429 and folder-side 413/422 become retryable (review BH-27/EC-08/EC-09/VG-07).
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-boundary-checks.md; Both adapters now limit the unexpected-success Unavailable mapping to 2xx and use Denied for otherwise unlisted failures. HTTP-driven tests cover both adapters and both Folder hops, including 201/204/206/299, redirects, 405/418/429/499 and server failures; existing explicit status mappings remain intact.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Stop the accepted-only G-6 step from masking the FrontComposer inspect and OpenAPI fingerprint gates and the scheduled E2E lane in Projects CI.
   evidence: `project-gates` runs the G-6 validator first and it exits 1 while the packet is pending (already true for the historical packet at baseline), so later gates never run (review BH-19/EC-04/VG-06).
@@ -795,6 +799,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: At the next G-6 recapture, tighten `test_g6_packet_references.py` (exact replaced-hash and gitlink matches, fixtures, an accepted-status case) and add expected-repository-set and argument assertions to the G-6 gate tests.
   evidence: These packet-bound files accept loose matches and never exercise the accepted branch (review R5-BH-09/11, R5-VG-02).
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-boundary-checks.md; The preceding verification spec supplied exact archived hashes, repository rows, accepted-state and mutation fixtures. This change completes the remaining repository-set and argv obligations: gate fixtures assert exact workspace/baseline/packet/mode arguments, and binding checks reject omitted, extra, duplicate or malformed repository identities against the root index. Historical evidence is unchanged; archived reference tests pass.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: At the next G-6 recapture, build the Builds self-test catalog fixture from a test-owned package table and add a drift control per catalog package.
   evidence: Removing entries from `CATALOG_TUPLE_FIELDS` leaves the self-test green and lets a `daprDotnetPackages` 1.18.8 baseline validate (review R5-VG-01).
@@ -804,6 +810,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-update-eventstore-package-version.md`
   summary: Projects package validation still fails because ServiceDefaults packs OpenTelemetry 1.19.1 while `tools/release-packages.json` says 1.19.0.
   evidence: `python3 scripts/pack-release-packages.py ./nupkgs 0.0.0-ci-test` and `scripts/validate-nuget-packages.py` exit 1 with `wrong_versions` for `OpenTelemetry`, `OpenTelemetry.Exporter.OpenTelemetryProtocol`, and `OpenTelemetry.Extensions.Hosting`. The four `Hexalith.EventStore.Contracts` nuspecs are `3.110.0`. The OpenTelemetry mismatch was already in the catalog.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-boundary-checks.md; The current catalog and manifest already agree on OpenTelemetry 1.20.0. A freshly packed Debug ServiceDefaults archive passed the real manifest validator for every dependency (with four synthetic sibling archives only to satisfy inventory). Added six independent stale-1.19.0 dependency mutations, all rejected by the existing validator. No dependency version update was required.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-3.md`
   summary: Prove shadow equivalence of supported list/open against legacy GET.
   evidence: Split from the Story 6.1 spec because the 2142-token draft mixed the read with its legacy comparison harness. Routing cutover stays in Story 6.7; this slice keeps the equivalence proof.
@@ -860,6 +868,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Pre-existing medium CI issue: update or retire the obsolete 3.109.0 P1R candidate replay and its matching CI invariants.
   evidence: test_p1r_candidate_evidence.py documents retirement on changed checkout src or a superseding accepted record. The source had already drifted at the initial 6dededde EventStore gitlink, and P1R now accepts 3.110.0. The old CI job and exact-job invariants remain active; it is historical evidence, not current qualification.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-boundary-checks.md; Routine P1R CI now explicitly runs only SelectedPublishedEvidenceTests and SelectedEvidenceMutationTests (8 passing tests), and no longer fetches v3.109.0. Exact workflow invariants and mutation controls enforce that selection. Historical classes, records and full-module manual invocation remain available; owner acceptance and qualification do not advance.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Pre-existing medium verification gap: isolate duplicate-sub rejection from conflicting-alias rejection in the signed middleware fixture.
