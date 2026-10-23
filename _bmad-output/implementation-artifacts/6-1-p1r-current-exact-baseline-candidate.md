@@ -38,6 +38,17 @@ The rollback remains EventStore `3.70.1` / `v3.70.1` / `f13f9925fdca53efa2ab8c90
 - **Metadata rollback is unverified.** `EventEnvelope` and `SnapshotRecord` source blobs match between `v3.70.1` and `v3.110.0`, but `AggregateMetadata` does not: rollback blob `8c55205276890385d3725a18f78671b78871b4c6`, selected tag blob `8d694d6617da42217cc3962eb757207f1b3fb0e2`. The selected tag carries `RetainedFloor`, a preserved three-argument constructor, and a three-member deconstruction overload. Source compatibility accommodations do not prove that `3.70.1` safely reads and replays metadata or streams written by `3.110.0`, particularly retained/trimmed streams. The old envelope/snapshot probe never exercised this metadata shape.
 - **Actor/domain replay and operational rollback are unverified.** No `3.110.0` to `3.70.1` actor/domain replay, mixed-version call, API downgrade, or stop-writers/full-backup/restore rehearsal is presented. The old disposable probe used Dapr `state.redis` on runtime `1.18.4`, not the G-6 PostgreSQL/runtime `1.18.2` topology.
 - **CI evidence coverage is stale.** The existing `p1r-candidate-evidence` lane still fetches `v3.109.0` and replays its historical package record; it supplies no current `3.110.0` evidence. That lane remains historical and is not changed by this P1R acceptance. The separate [3.110.0 archive replay](../../references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/README.md) supplies the current archive proof.
+
+**CI coverage clarification — 2026-10-23:** The preceding bullet is a historical
+observation, already superseded by the correction under
+[Approved remediation handoff (2026-10-06)](#approved-remediation-handoff-2026-10-06).
+The [current CI lane](../../.github/workflows/ci.yml) fetches `v3.110.0` and runs
+`SelectedPublishedEvidenceTests` and `SelectedEvidenceMutationTests` for the
+selected archive record. Historical `3.109.0` checks remain manually executable
+through the full `tests/tools/test_p1r_candidate_evidence.py` module; they are
+not part of the routine CI selection. Archive verification
+does not close runtime, rollback, owner-acceptance or prerequisite-usability
+requirements; no new acceptance is recorded here.
 - **Checkout compatibility is unverified.** The 28-commit, 44-source-path difference is measured between the tagged source and the committed EventStore gitlink. Neither successful tag CI nor older checkout-source test binaries proves interchangeability with the current checkout or runtime behavior of the tagged packages. The G-6 fixture changes are now committed; checkout proof still does not qualify the published archives.
 
 ## Current G-6 run — committed source accepted
@@ -128,6 +139,11 @@ owner decisions are required for any future candidate/rollback transition.
 The existing CI lane now includes the selected 3.110.0 archive replay alongside
 the historical 3.109.0 replay. The earlier CI-only-3.109.0 observation above is
 historical; neither archive lane closes runtime/rollback qualification.
+
+**2026-10-23 selection clarification:** The preceding paragraph records the
+earlier combined replay. Routine CI now selects only the `3.110.0` test classes;
+the historical checks remain available manually, as detailed in the
+[CI coverage clarification above](#existing-evidence-and-its-limits).
 
 This approved planning update changes sprint-status bytes intentionally.
 Attempt 21's captured protected sprint hash is

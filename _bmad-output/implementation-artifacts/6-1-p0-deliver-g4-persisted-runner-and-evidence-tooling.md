@@ -226,6 +226,8 @@ audit completed at exit `0` but reports **`tupleApproved: false`, 56 issues**;
 its missing graphs and SDK/Toolkit/Fluent UI/Aspire drift supply no runtime
 qualification or owner acceptance.
 
+**Historical observation before the approved preparation continuation:**
+
 The historical selected P0 target is tools `4.29.1` / EventStore `3.110.0` /
 Builds `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`; current P1R usability is
 false. The newer EventStore-local
@@ -239,14 +241,27 @@ is newer than the draft Projects handoff, but does not select P0 tools or a
 matching G-6 tuple. No replacement P0 approval record was located; current
 catalog observations (`3.126.0`) do not supply that selection.
 
-Projects tool/manifest adoption and live qualification stay blocked pending an
-approved exact tool/runtime tuple, usable P1R and matching G-6/runtime evidence.
+**Current preparation boundary — clarified 2026-10-23:** The
+[approved October 20 continuation](#approved-preparation-continuation--2026-10-20)
+above supersedes that missing-approval observation. Its local tools
+`4.33.2-p0.20261020.1`, Builds producer
+`e40ed9c7110d56a2f38c9291627728aea2f205cb`, embedded EventStore `3.126.0` and
+FrontComposer `4.7.0` are the approved preparation target, with the exact
+source G-6 decision recorded there. The later `4.35.0` producer remains a
+separate pending selection. Preparation approval and the accepted local G-6
+result do not supply P0 publication, Projects consumer adoption, usable P1R,
+or final P0 acceptance.
+
+Projects tool/manifest adoption and live qualification stay blocked pending
+accepted delivery, usable P1R and matching qualification/runtime evidence for
+the adopted artifacts.
 Full P0 Stages 6–7, package/source parity, all required profile classes,
 rollback, the acceptance record and dated Builds/Platform/Test approvals stay
 open. Existing Projects runtime/routing and Story 6.4 prerequisites are
-preserved. Runner capability qualification can proceed once its own tuple is
-authorized; final Story 6.4 persisted scenarios additionally require its
-missing handlers. P0 does not self-accept P4 or Story 6.1.
+preserved. Runner capability qualification can proceed for the approved local
+tuple; any replacement tuple still needs approval. Final Story 6.4 persisted
+scenarios additionally require its missing handlers. P0 does not self-accept
+P4 or Story 6.1.
 
 ### 2026-08-01 Correct Course Rebaseline
 

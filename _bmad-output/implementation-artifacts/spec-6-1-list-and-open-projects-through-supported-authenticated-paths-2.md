@@ -78,6 +78,16 @@ context:
 
 On 2026-09-30 Story 6.1 is `blocked`. Accepted P1R is EventStore 3.106.0; the pin is 3.110.0. P0, P2, P3, P4, architect sign-off, and independent `READY` are open. `asOf` is computation time. Tenant-role open of a quarantined folderless Project returns Safe Metadata. The FR-21 inspection event belongs to Story 8.1.
 
+**Historical-note clarification — 2026-10-23:** The preceding paragraph records
+the September 30 state, not the current baseline. This spec is superseded by
+[the successor recorded in frontmatter](spec-6-1-list-and-open-projects-through-supported-authenticated-paths-5.md).
+The [fixed acceptance record](6-1-p1r-acceptance.json) now selects EventStore
+`3.110.0` with Builds `21ce044ab465ccb2adab58b3d66e394ffbecf3c2`; the
+[current owner packet](6-1-p1r-current-exact-baseline-candidate.md) records its
+separate verification and remediation limitations. Current prerequisite
+usability remains false and Story 6.1 remains blocked. This clarification does
+not reopen the superseded spec or alter its frozen intent or dated evidence.
+
 ## Verification
 
 **Commands:**

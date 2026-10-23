@@ -480,7 +480,6 @@ severity: medium
 reason: ConversationStartSetup.FromContext aliases the caller-owned collections held by ProjectContext.Setup rather than copying them, so the bounded subset is a live view of caller state when the source is a mutable list. The obvious fix was attempted during the 2026-08-26 review and reverted: ConversationStartSetup is a record in a packable assembly and record equality compares IReadOnlyList<T> members by reference, so defensive copying makes two projections of the same context unequal and breaks Project_IsPureFunction_SameInputProducesSameOutput. Copying therefore changes public DTO equality semantics for every consumer and must not be done to the legacy type in isolation. Resolve it on the Story 6.2 supported response wrapper by using a collection type with structural equality (for example ImmutableArray<T> with an explicit equality contract) from the start, then align the legacy type at the Story 6.7 cutover.
 status: open
 decision: 2026-09-06 Dedicated supported value — Keep the legacy DTO unchanged and introduce a supported setup value that defensively copies bounded collections and explicitly implements structural equality and hashing, then update the supported response, serialization, and contract tests.
-decision: 2026-09-06 Dedicated supported value — Keep the legacy DTO unchanged and introduce a supported setup value that defensively copies bounded collections and explicitly implements structural equality and hashing, then update the supported response, serialization, and contract tests.
 gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
 
 ### DW-57: Make the conversation-start freshness response header reflect actual freshness.
@@ -572,6 +571,8 @@ archived: 2026-10-23
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-g-6-runtime-toolchain-baseline.md`
   summary: Remove the duplicate DW-56 decision line introduced by concurrent ledger work.
   evidence: The same dated decision appears twice consecutively; this is unrelated to G-6 and should be corrected by the ledger-owning work.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-planning-consistency-items.md; Removed only the repeated 2026-09-06 DW-56 decision; the original dedicated-supported-value decision and open implementation obligation remain.
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-g-6-runtime-toolchain-baseline.md`
   summary: Constrain legacy cleanup targets to safe descendants of the selected `_bmad` directory.
   evidence: Absolute and parent-traversal directory names are joined without containment validation, so concurrent cleanup code can relocate and delete paths outside `_bmad`.
@@ -770,6 +771,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Refresh the Story 6.1 draft spec's Design Notes, which still call 3.108.1 the current Builds baseline.
   evidence: `spec-6-1-list-and-open-projects-through-supported-authenticated-paths-2.md` Design Notes predate the 3.109.0 retarget (review R2-EC-17).
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-planning-consistency-items.md; Reconciled prior fix: the -2 spec is already superseded and no longer contains the reported 3.108.1 claim. Added a dated Design Notes clarification linking its successor, fixed 3.110.0 acceptance and current owner packet while preserving the September 30 historical paragraph and blocked Story 6.1.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Archive the EventStore 3.109.0 release bypass log excerpts, failing tag-CI test output, and `release-evidence-36238526310-1` `publication-identity.json` before GitHub retention expires (about 2026-12-25).
   evidence: The bypass and release-time Builds claims are only replayable from Actions logs and artifacts (review R3-BH-07).
@@ -847,6 +850,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Pre-existing medium guard consistency gap: optional current usability flags and accepted revalidation metadata can drift while the minimal acceptance/index guard still passes.
   evidence: Disposable fixtures flipping p1r_current_revalidation.usable_as_prerequisite and both current_candidate_usable fields to true, or changing the optional candidate to 9.0.0, returned (6, 7, 8). The authoritative fixed record/gate remain strict and the actual transition preserves false flags. Add a separate consistency policy that still allows pending future candidates to differ from historical acceptance.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-planning-consistency-items.md; Added optional consistency validation to the real atomic index guard: present P1R/remediation and preserved-pending G-6 usability flags must be literal false; accepted P1R candidate, timestamp and role summaries must match the fixed record. Pending future candidates may differ, optional summaries may be absent, and historical G-6 checkout/accepted usability remains independent. Temporary-workspace regressions cover open and accepted gates, independent flag/value mutations, metadata mismatch and pending/absent positive controls.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Pre-existing medium authentication issue: a validly signed raw numeric sub is normalized to a string subject and passes the current callback.
@@ -892,6 +897,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-run-all-tests-and-fix-failures.md`
   summary: Low owner-packet documentation drift: append a dated clarification that the Projects P1R CI lane now includes the selected EventStore 3.110.0 replay.
   evidence: `6-1-p1r-current-exact-baseline-candidate.md:40` says the lane still fetches only v3.109.0, while `.github/workflows/ci.yml`, its exact policy fixture, and the 16-test selected replay now include v3.110.0. Preserve the historical owner decision and remaining rollback/runtime limitations; this correction grants no new acceptance.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-planning-consistency-items.md; Reconciled prior correction and subsequent CI selection: added dated reading notes beside the stale claim and earlier combined-replay paragraph. Routine CI fetches v3.110.0 and runs the selected evidence/mutation classes; historical 3.109.0 checks remain manually executable. No runtime/rollback qualification or acceptance changes.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-run-all-tests-and-fix-failures.md`
   summary: Medium pinned-package parity blocker: qualify a Folders client that implements the current metadata v2 route before changing the dependency pin.
@@ -1078,6 +1085,8 @@ status: open
 - source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Reconcile the P0 handoff's approved continuation with its older missing-approval paragraph.
   evidence: NH-B9; the existing P0 handoff records the approved current-catalog tuple near its start but its measured continuation still says no replacement approval was located. P0 owners must retain historical evidence while identifying the current execution boundary.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-planning-consistency-items.md; Labeled the missing-approval observation as historical and linked the later approved October 20 local preparation target and exact source G-6 boundary. The separate 4.35.0 selection remains pending; P0 delivery/adoption, usable P1R and final acceptance remain blocked.
 
 - source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Bind portable immutable references for P0 receipts currently named only by external absolute checkout paths.

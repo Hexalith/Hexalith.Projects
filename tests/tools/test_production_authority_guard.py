@@ -86,6 +86,25 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             "  - epic:",
             "      stage_1_p1r_baseline",
         )
+        cls.accepted_revalidation_status = GUARD._load_yaml_text(
+            cls.sprint, "fixture"
+        )["p1r_current_revalidation"]["status"]
+        cls.sprint = cls.sprint.replace(
+            f"  status: {cls.accepted_revalidation_status}\n",
+            "  status: pending-candidate\n",
+            1,
+        )
+        revalidation_lines = cls.sprint.split("p1r_current_revalidation:\n", 1)[1]
+        role_lines = revalidation_lines.split("  role_decisions:\n", 1)[1].split(
+            "  owner_decisions:", 1
+        )[0]
+        timestamp_line = next(
+            line for line in revalidation_lines.splitlines(keepends=True)
+            if line.startswith("  accepted_at_utc:")
+        )
+        cls.accepted_summary = "  role_decisions:\n" + role_lines + timestamp_line
+        cls.sprint = cls.sprint.replace("  role_decisions:\n" + role_lines, "", 1)
+        cls.sprint = cls.sprint.replace(timestamp_line, "", 1)
 
         deferred = GUARD.DEFAULT_DEFERRED_WORK.read_text(encoding="utf-8")
         deferred_sections = (
@@ -127,10 +146,15 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             "    status: open",
             "    status: done",
         )
-        return self.replace_once(
+        result = self.replace_once(
             result,
             "      stage_1_p1r_baseline: open",
             "      stage_1_p1r_baseline: done",
+        )
+        return self.replace_once(
+            result,
+            "  status: pending-candidate\n",
+            f"  status: {self.accepted_revalidation_status}\n" + self.accepted_summary,
         )
 
     def accepted_deferred(self) -> str:
@@ -156,7 +180,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             "schema": GUARD.ACCEPTANCE_SCHEMA,
             "selected": dict(GUARD.SELECTED_TUPLE),
             "rollback": dict(GUARD.ROLLBACK_TUPLE),
-            "timestamp_utc": "2026-09-22T12:00:00Z",
+            "timestamp_utc": "2026-10-01T06:17:01Z",
             "decisions": {
                 role: {
                     "decision": "accept",
@@ -271,6 +295,144 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
         self.assertIs(action["current_candidate_usable"], False)
         self.assertEqual("NOT_READY", index["readiness_provenance"]["current_result"])
         self.assertEqual("blocked", index["development_status"][GUARD.STORY_6_1_KEY])
+
+    def test_optional_usability_flags_cannot_grant_prerequisite_readiness(self) -> None:
+        for accepted in (False, True):
+            baseline = self.accepted_sprint() if accepted else self.sprint
+            for field_path in (
+                ("p1r_current_revalidation", "usable_as_prerequisite"),
+                ("qualification_gates", "G-6", "current_candidate_usable"),
+                ("action_items", "6.1-P1R", "current_candidate_usable"),
+                ("action_items", "6.1-P1R-remediation", "current_candidate_usable"),
+            ):
+                for value in (True, 1, "false", None):
+                    with self.subTest(accepted=accepted, path=field_path, value=value):
+                        index = GUARD._load_yaml_text(baseline, "fixture")
+                        parent = index
+                        for key in field_path[:-1]:
+                            parent = (next(item for item in parent if item.get("id") == key)
+                                      if isinstance(parent, list) else parent[key])
+                        parent[field_path[-1]] = value
+                        with self.assertRaisesRegex(GUARD.GuardViolation, field_path[-1]):
+                            self.validate_boundary(
+                                sprint=GUARD.yaml.safe_dump(index, sort_keys=False),
+                                deferred=self.accepted_deferred() if accepted else None,
+                                p0=self.accepted_p0() if accepted else None,
+                                record=self.acceptance_record() if accepted else None,
+                            )
+
+    def test_accepted_revalidation_metadata_must_match_the_fixed_record(self) -> None:
+        for status in ("accepted", self.accepted_revalidation_status):
+            for field in ("candidate", "accepted_at_utc", "role_decisions"):
+                with self.subTest(status=status, field=field):
+                    index = GUARD._load_yaml_text(self.accepted_sprint(), "fixture")
+                    metadata = index["p1r_current_revalidation"]
+                    metadata["status"] = status
+                    if field == "candidate":
+                        metadata[field]["eventstore_version"] = "9.0.0"
+                    elif field == "accepted_at_utc":
+                        metadata[field] = "2026-10-02T06:17:01Z"
+                    else:
+                        metadata[field]["EventStore Owner"] = "accept; unrelated owner"
+                    with self.assertRaisesRegex(GUARD.GuardViolation, field):
+                        self.validate_boundary(
+                            sprint=GUARD.yaml.safe_dump(index, sort_keys=False),
+                            deferred=self.accepted_deferred(), p0=self.accepted_p0(),
+                            record=self.acceptance_record(),
+                        )
+
+    def test_present_revalidation_requires_an_explicit_supported_status(self) -> None:
+        for status in (None, "", "done", "approved", "Accepted", "accepted-", 1):
+            with self.subTest(status=status):
+                index = GUARD._load_yaml_text(self.accepted_sprint(), "fixture")
+                metadata = index["p1r_current_revalidation"]
+                if status is None:
+                    del metadata["status"]
+                else:
+                    metadata["status"] = status
+                metadata["candidate"]["eventstore_version"] = "9.0.0"
+                with self.assertRaisesRegex(GUARD.GuardViolation, "revalidation.status"):
+                    self.validate_boundary(
+                        sprint=GUARD.yaml.safe_dump(index, sort_keys=False),
+                        deferred=self.accepted_deferred(), p0=self.accepted_p0(),
+                        record=self.acceptance_record(),
+                    )
+
+    def test_pending_candidate_requires_a_complete_string_coordinate_mapping(self) -> None:
+        cases = [None, ["not a candidate"], {}, {**GUARD.SELECTED_TUPLE, "extra": "value"}]
+        for key in GUARD.SELECTED_TUPLE:
+            cases.append({k: v for k, v in GUARD.SELECTED_TUPLE.items() if k != key})
+            cases.extend({**GUARD.SELECTED_TUPLE, key: value} for value in (None, 1, False, "", " "))
+        for candidate in cases:
+            with self.subTest(candidate=candidate):
+                index = GUARD._load_yaml_text(self.sprint, "fixture")
+                index["p1r_current_revalidation"]["candidate"] = candidate
+                with self.assertRaisesRegex(GUARD.GuardViolation, "revalidation.candidate"):
+                    self.validate_boundary(sprint=GUARD.yaml.safe_dump(index, sort_keys=False))
+
+    def test_pending_candidate_cannot_fabricate_historical_acceptance_summaries(self) -> None:
+        for accepted in (False, True):
+            for field in ("accepted_at_utc", "role_decisions"):
+                with self.subTest(accepted=accepted, field=field):
+                    index = GUARD._load_yaml_text(
+                        self.accepted_sprint() if accepted else self.sprint, "fixture"
+                    )
+                    metadata = index["p1r_current_revalidation"]
+                    metadata["status"] = "pending"
+                    metadata[field] = ("2099-01-01T00:00:00Z" if field == "accepted_at_utc"
+                                       else {"EventStore Owner": "accept; unrelated owner"})
+                    with self.assertRaisesRegex(
+                        GUARD.GuardViolation, field if accepted else "fixed acceptance record"
+                    ):
+                        self.validate_boundary(
+                            sprint=GUARD.yaml.safe_dump(index, sort_keys=False),
+                            deferred=self.accepted_deferred() if accepted else None,
+                            p0=self.accepted_p0() if accepted else None,
+                            record=self.acceptance_record() if accepted else None,
+                        )
+
+    def test_pending_future_candidate_can_differ_from_historical_acceptance(self) -> None:
+        for accepted in (False, True):
+            with self.subTest(accepted=accepted):
+                index = GUARD._load_yaml_text(
+                    self.accepted_sprint() if accepted else self.sprint, "fixture"
+                )
+                metadata = index["p1r_current_revalidation"]
+                metadata["status"] = "pending-candidate"
+                metadata["candidate"] = {
+                    "eventstore_version": "9.0.0", "eventstore_tag": "v9.0.0",
+                    "eventstore_revision": "a" * 40, "builds_revision": "b" * 40,
+                }
+                self.assertEqual(
+                    GUARD.EXPECTED_PRODUCTION_EPICS,
+                    self.validate_boundary(
+                        sprint=GUARD.yaml.safe_dump(index, sort_keys=False),
+                        deferred=self.accepted_deferred() if accepted else None,
+                        p0=self.accepted_p0() if accepted else None,
+                        record=self.acceptance_record() if accepted else None,
+                    ),
+                )
+
+    def test_accepted_revalidation_requires_the_fixed_acceptance_record(self) -> None:
+        index = GUARD._load_yaml_text(self.sprint, "fixture")
+        index["p1r_current_revalidation"]["status"] = "accepted"
+        with self.assertRaisesRegex(GUARD.GuardViolation, "accepted P1R revalidation"):
+            self.validate_boundary(sprint=GUARD.yaml.safe_dump(index, sort_keys=False))
+
+    def test_optional_readiness_metadata_can_be_absent(self) -> None:
+        index = GUARD._load_yaml_text(self.accepted_sprint(), "fixture")
+        del index["p1r_current_revalidation"]
+        del index["qualification_gates"]
+        for action in index["action_items"]:
+            action.pop("current_candidate_usable", None)
+        self.assertEqual(
+            GUARD.EXPECTED_PRODUCTION_EPICS,
+            self.validate_boundary(
+                sprint=GUARD.yaml.safe_dump(index, sort_keys=False),
+                deferred=self.accepted_deferred(), p0=self.accepted_p0(),
+                record=self.acceptance_record(),
+            ),
+        )
 
     def test_remediation_cannot_advance_or_replace_accepted_p1r(self) -> None:
         sprint = self.accepted_sprint()
@@ -805,7 +967,11 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             PROJECT_ROOT / "_bmad-output" / "project-context.md"
         ).read_text(encoding="utf-8")
         self.assertIn("validate_production_authority.py --story-id <epic.story>", project_context)
-        self.assertIn("--validate-index --sprint-status <candidate>", project_context)
+        self.assertIn(
+            "--validate-index --sprint-status <candidate-workspace>/"
+            "_bmad-output/implementation-artifacts/sprint-status.yaml",
+            project_context,
+        )
 
         ci = (PROJECT_ROOT / ".github" / "workflows" / "ci.yml").read_text(
             encoding="utf-8"

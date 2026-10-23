@@ -561,6 +561,67 @@ def _validate_closure_boundary(
             raise GuardViolation(f"DW-{entry_id} must be {expected_gate_status}; found {actual}")
 
 
+def _validate_optional_readiness_metadata(
+    sprint: dict[str, Any], record: dict[str, Any] | None
+) -> None:
+    """Keep optional planning summaries consistent without accepting future candidates."""
+
+    def require_false(metadata: dict[str, Any], field: str, context: str) -> None:
+        if field in metadata and metadata[field] is not False:
+            raise GuardViolation(f"{context}.{field} must remain false")
+
+    actions = _action_map(sprint)
+    for action_id in ("6.1-P1R", "6.1-P1R-remediation"):
+        require_false(actions[action_id], "current_candidate_usable", action_id)
+
+    if "qualification_gates" in sprint:
+        gates = _mapping(sprint["qualification_gates"], "qualification_gates")
+        if "G-6" in gates:
+            g6 = _mapping(gates["G-6"], "qualification_gates.G-6")
+            require_false(g6, "current_candidate_usable", "qualification_gates.G-6")
+
+    if "p1r_current_revalidation" not in sprint:
+        return
+    metadata = _mapping(sprint["p1r_current_revalidation"], "p1r_current_revalidation")
+    require_false(metadata, "usable_as_prerequisite", "p1r_current_revalidation")
+    status = metadata.get("status")
+    if not isinstance(status, str) or not re.fullmatch(
+        r"(?:accepted|pending)(?:-[a-z0-9]+)*", status
+    ):
+        raise GuardViolation("p1r_current_revalidation.status must explicitly be accepted or pending")
+    accepted = status == "accepted" or status.startswith("accepted-")
+    candidate = None
+    if "candidate" in metadata:
+        candidate = _mapping(metadata["candidate"], "p1r_current_revalidation.candidate")
+        _exact_keys(candidate, tuple(SELECTED_TUPLE), "p1r_current_revalidation.candidate")
+        for coordinate, value in candidate.items():
+            if not isinstance(value, str) or not value.strip():
+                raise GuardViolation(f"p1r_current_revalidation.candidate.{coordinate} must be a non-empty string")
+
+    # Pending successor coordinates are independent; any acceptance summaries
+    # still describe the historical fixed record and cannot invent approvals.
+    if record is None:
+        if accepted or "accepted_at_utc" in metadata or "role_decisions" in metadata:
+            raise GuardViolation("accepted P1R revalidation metadata requires the fixed acceptance record")
+        return
+    if accepted and candidate is not None and candidate != record["selected"]:
+        raise GuardViolation("accepted P1R revalidation candidate differs from the fixed record")
+    if "accepted_at_utc" in metadata:
+        timestamp = metadata["accepted_at_utc"]
+        if isinstance(timestamp, datetime):
+            timestamp = timestamp.isoformat().replace("+00:00", "Z")
+        if timestamp != record["timestamp_utc"]:
+            raise GuardViolation("accepted P1R revalidation accepted_at_utc differs from the fixed record")
+    if "role_decisions" in metadata:
+        expected = {
+            role: "; ".join((decision["decision"], decision["approver"],
+                             record["timestamp_utc"], decision["record"] + decision["selected"]))
+            for role, decision in record["decisions"].items()
+        }
+        if metadata["role_decisions"] != expected:
+            raise GuardViolation("accepted P1R revalidation role_decisions differ from the fixed record")
+
+
 def _validated_index_entries(
     sprint_status_path: Path = DEFAULT_SPRINT_STATUS,
     deferred_work_path: Path = DEFAULT_DEFERRED_WORK,
@@ -583,6 +644,7 @@ def _validated_index_entries(
     if record is not None:
         _validate_acceptance_record(record)
     _validate_closure_boundary(sprint, deferred, p0_frontmatter, record is not None)
+    _validate_optional_readiness_metadata(sprint, record)
     return entries
 
 
