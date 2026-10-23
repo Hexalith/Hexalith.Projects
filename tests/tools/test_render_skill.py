@@ -41,12 +41,6 @@ def _sha256(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def _canonical_json(value: object) -> bytes:
-    return json.dumps(
-        value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
-    ).encode("utf-8")
-
-
 def _tree_bytes(root: Path) -> dict[str, bytes]:
     return {
         path.relative_to(root).as_posix(): path.read_bytes()
@@ -156,9 +150,12 @@ class RenderSkillFixtureTests(unittest.TestCase):
         self.assertEqual(1, manifest["schema_version"])
         self.assertEqual(fixture.skill_root.name, manifest["skill"])
         self.assertEqual(str(fixture.project_root), manifest["project_root"])
-        self.assertEqual("project-fixture-with-spaces", manifest["project_slug"])
+        renderer = _load_renderer_module()
+        self.assertEqual(
+            renderer._project_slug(fixture.project_root), manifest["project_slug"]
+        )
 
-        root_hash = _sha256(str(fixture.project_root).encode("utf-8"))[:12]
+        root_hash = renderer._root_hash(fixture.project_root)
         self.assertEqual(root_hash, manifest["root_hash"])
         self.assertEqual(
             f"{manifest['project_slug']}-{root_hash}", destination.parent.name
@@ -167,7 +164,7 @@ class RenderSkillFixtureTests(unittest.TestCase):
 
         inputs = manifest["inputs"]
         self.assertIsInstance(inputs, dict)
-        generation_hash = _sha256(_canonical_json(inputs))[:20]
+        generation_hash = renderer._generation_hash(inputs)
         self.assertEqual(generation_hash, manifest["generation_hash"])
         self.assertEqual(generation_hash, destination.name)
         self.assertEqual(str(fixture.project_root), inputs["project_root"])
@@ -188,6 +185,18 @@ class RenderSkillFixtureTests(unittest.TestCase):
         for name, expected_hash in manifest["outputs"].items():
             self.assertEqual(expected_hash, _sha256((destination / name).read_bytes()))
         return manifest
+
+    def test_identity_helpers_preserve_fixed_vectors(self) -> None:
+        renderer = _load_renderer_module()
+        project = Path("Project Fixture With Spaces")
+        self.assertEqual("project-fixture-with-spaces", renderer._project_slug(project))
+        self.assertEqual("3d3bdc19974a", renderer._root_hash(project))
+        self.assertEqual("project", renderer._project_slug(Path("---")))
+        self.assertEqual("a" * 79, renderer._project_slug(Path("a" * 79 + " b")))
+        self.assertEqual(
+            "c5c0c21621d614e4d01d",
+            renderer._generation_hash({"number": 1, "example": "雪"}),
+        )
 
     def test_layer_precedence_lists_and_keyed_review_replacement(self) -> None:
         workflow = """Central winner: {{config.settings.winner}}
@@ -333,6 +342,114 @@ instruction = "user final instruction"
                 review_layers[0],
             )
 
+    def test_surviving_review_layer_renders_its_condition(self) -> None:
+        defaults = """[workflow]
+[[workflow.review_layers]]
+id = "security"
+name = "Security"
+instruction = "Check authorization."
+when = "authorization changes"
+"""
+        with tempfile.TemporaryDirectory(prefix="render skill fixtures ") as directory:
+            fixture = self.make_fixture(
+                Path(directory),
+                workflow="Review:\n{workflow.review_layers}\n",
+                customization=defaults,
+            )
+            entry = self.assert_success(self.run_renderer(fixture))
+            self.assertEqual(
+                "Review:\n#### Security (`security`)\n\n"
+                "Run only when: authorization changes\n\nCheck authorization.\n",
+                entry.read_text(encoding="utf-8"),
+            )
+            manifest = self.assert_manifest_integrity(
+                fixture, entry, {"workflow.md", "guide.md"}
+            )
+            self.assertEqual(
+                "authorization changes",
+                manifest["inputs"]["resolved_values"][
+                    "customization.workflow.review_layers"
+                ][0]["when"],
+            )
+
+    def test_empty_open_spec_override_preserves_the_named_exception(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="render skill fixtures ") as directory:
+            fixture = self.make_fixture(
+                Path(directory),
+                workflow="Before\n{workflow.open_spec}\nAfter\n",
+                customization='[workflow]\nopen_spec = "Open the spec."\n',
+            )
+            original_entry = self.assert_success(self.run_renderer(fixture))
+            original_bytes = _tree_bytes(original_entry.parent)
+            self.assertEqual(
+                "Before\nOpen the spec.\nAfter\n",
+                original_entry.read_text(encoding="utf-8"),
+            )
+            _write_text(
+                fixture.project_root / "_bmad" / "custom"
+                / f"{fixture.skill_root.name}.user.toml",
+                '[workflow]\nopen_spec = ""\n',
+            )
+            entry = self.assert_success(self.run_renderer(fixture))
+            self.assertNotEqual(original_entry, entry)
+            self.assertEqual("Before\n\nAfter\n", entry.read_text(encoding="utf-8"))
+            manifest = self.assert_manifest_integrity(
+                fixture, entry, {"workflow.md", "guide.md"}
+            )
+            self.assertEqual(
+                "", manifest["inputs"]["resolved_values"]["customization.workflow.open_spec"]
+            )
+            self.assertEqual(original_bytes, _tree_bytes(original_entry.parent))
+
+    def test_other_nonempty_string_defaults_reject_empty_overrides(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="render skill fixtures ") as directory:
+            fixture = self.make_fixture(
+                Path(directory),
+                workflow="{workflow.headline}\n",
+                customization='[workflow]\nheadline = "Required headline"\n',
+            )
+            _write_text(
+                fixture.project_root / "_bmad" / "custom"
+                / f"{fixture.skill_root.name}.user.toml",
+                '[workflow]\nheadline = ""\n',
+            )
+            self.assert_halt(
+                self.run_renderer(fixture),
+                "HALT: customization.workflow.headline must not be empty",
+            )
+            self.assertFalse((fixture.project_root / "_bmad" / "render").exists())
+
+    def test_external_source_link_halts_without_publication(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="render skill fixtures ") as directory:
+            root = Path(directory)
+            fixture = self.make_fixture(root)
+            external = root / "external.md"
+            _write_text(external, "External source.\n")
+            source = fixture.skill_root / "guide.md"
+            source.unlink()
+            source.symlink_to(external)
+            self.assert_halt(
+                self.run_renderer(fixture),
+                "HALT: render source escapes skill directory: guide.md",
+            )
+            self.assertEqual(b"External source.\n", external.read_bytes())
+            self.assertTrue(source.is_symlink())
+            self.assertFalse((fixture.project_root / "_bmad" / "render").exists())
+
+    def test_internal_source_link_remains_supported(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="render skill fixtures ") as directory:
+            fixture = self.make_fixture(Path(directory))
+            alias = fixture.skill_root / "alias.md"
+            alias.symlink_to("guide.md")
+            entry = self.assert_success(self.run_renderer(fixture))
+            self.assertEqual(
+                b"Fixture guide.\n", (entry.parent / "alias.md").read_bytes()
+            )
+            self.assertFalse((entry.parent / "alias.md").is_symlink())
+            self.assert_manifest_integrity(
+                fixture, entry, {"workflow.md", "guide.md", "alias.md"}
+            )
+
     def test_inserted_tokens_are_opaque_and_source_snapshots_bind_to_generation(self) -> None:
         opaque = (
             "config={{config.fixture.value}}; short={{.value}}; "
@@ -461,6 +578,32 @@ Nested snapshot: [[bmad-snapshot:nested/target.md]]
                     renderer._publish(destination, outputs, manifest)
 
             self.assertFalse(destination.exists())
+            self.assertEqual([], list(parent.glob(".staging-*")))
+
+    def test_rename_collision_with_dangling_link_halts_and_cleans_staging(self) -> None:
+        renderer = _load_renderer_module()
+        with tempfile.TemporaryDirectory(prefix="render skill fixtures ") as directory:
+            parent = Path(directory) / "publication with spaces"
+            destination = parent / "generation"
+            missing = parent / "missing generation"
+            outputs = {"workflow.md": b"fixture output\n"}
+            manifest = {"outputs": {"workflow.md": _sha256(outputs["workflow.md"])}}
+
+            def competing_link(source: Path, target: Path) -> None:
+                self.assertEqual(destination, Path(target))
+                self.assertTrue((Path(source) / "manifest.json").is_file())
+                destination.symlink_to(missing, target_is_directory=True)
+                raise OSError("competing publisher installed a dangling link")
+
+            with mock.patch.object(renderer.os, "rename", side_effect=competing_link):
+                with self.assertRaisesRegex(
+                    renderer.RenderError, "generation is not an unlinked directory:"
+                ):
+                    renderer._publish(destination, outputs, manifest)
+
+            self.assertTrue(destination.is_symlink())
+            self.assertEqual(missing, destination.readlink())
+            self.assertFalse(missing.exists())
             self.assertEqual([], list(parent.glob(".staging-*")))
 
     def test_invalid_inputs_halt_and_publish_nothing(self) -> None:
@@ -596,6 +739,77 @@ instruction = "second"
                     self.assert_halt(self.run_renderer(fixture), expected)
                     self.assertEqual(damaged_evidence, _tree_bytes(destination))
                     self.assertEqual([], list(destination.parent.glob(".staging-*")))
+
+    def test_linked_generations_halt_without_changing_links_or_targets(self) -> None:
+        cases = (
+            "workflow.md", "manifest.json", "nested/details.md", "nested",
+            "generation", "dangling-generation", "unexpected-link",
+        )
+        with tempfile.TemporaryDirectory(prefix="render skill fixtures ") as directory:
+            root = Path(directory)
+            for index, case in enumerate(cases):
+                with self.subTest(case=case):
+                    case_root = root / f"case {index}"
+                    fixture = self.make_fixture(case_root)
+                    _write_text(fixture.skill_root / "nested" / "details.md", "Nested.\n")
+                    entry = self.assert_success(self.run_renderer(fixture))
+                    destination = entry.parent
+                    external = case_root / "external target"
+                    if case in ("generation", "dangling-generation"):
+                        link = destination
+                        link.rename(external)
+                        target = (
+                            case_root / "missing generation"
+                            if case == "dangling-generation" else external
+                        )
+                        link.symlink_to(target, target_is_directory=True)
+                        expected = "HALT: generation is not an unlinked directory:"
+                    elif case == "unexpected-link":
+                        link = destination / "unexpected.md"
+                        target = case_root / "missing file"
+                        _write_text(external, "External sentinel.\n")
+                        link.symlink_to(target)
+                        expected = "HALT: generation contains linked or nonregular entry:"
+                    else:
+                        link = destination / case
+                        is_directory = link.is_dir()
+                        link.rename(external)
+                        target = external
+                        link.symlink_to(target, target_is_directory=is_directory)
+                        expected = "HALT: generation contains linked or nonregular entry:"
+                    external_before = (
+                        _tree_bytes(external) if external.is_dir() else external.read_bytes()
+                    )
+
+                    self.assert_halt(self.run_renderer(fixture), expected)
+
+                    self.assertTrue(link.is_symlink())
+                    self.assertEqual(target, link.readlink())
+                    self.assertEqual(
+                        external_before,
+                        _tree_bytes(external) if external.is_dir() else external.read_bytes(),
+                    )
+                    if case in ("dangling-generation", "unexpected-link"):
+                        self.assertFalse(target.exists())
+                    self.assertEqual([], list(destination.parent.glob(".staging-*")))
+
+    @unittest.skipUnless(hasattr(os, "mkfifo"), "POSIX FIFO fixture")
+    def test_nonregular_entries_halt_before_manifest_or_output_reads(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="render skill fixtures ") as directory:
+            for name in ("guide.md", "manifest.json"):
+                with self.subTest(name=name):
+                    fixture = self.make_fixture(Path(directory) / name)
+                    entry = self.assert_success(self.run_renderer(fixture))
+                    fifo = entry.parent / name
+                    fifo.unlink()
+                    os.mkfifo(fifo)
+                    before = fifo.lstat()
+                    self.assert_halt(
+                        self.run_renderer(fixture),
+                        "HALT: generation contains linked or nonregular entry:",
+                    )
+                    self.assertEqual(before, fifo.lstat())
+                    self.assertEqual([], list(entry.parent.parent.glob(".staging-*")))
 
     def test_ci_runs_this_suite_as_a_blocking_no_bytecode_gate(self) -> None:
         workflow = CI_PATH.read_text(encoding="utf-8")

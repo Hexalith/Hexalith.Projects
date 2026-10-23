@@ -374,7 +374,8 @@ location: _bmad/scripts/render_skill.py:279
 source_spec: `spec-render-skill-fixture-coverage.md`
 severity: high
 reason: `_verify_existing` builds its file set with `Path.is_file()` and hashes outputs with `Path.read_bytes()`; both follow symlinks. A symlink to external bytes matching the manifest therefore verifies successfully, while the external target can change after verification without changing the generation directory or manifest.
-status: open
+status: done 2026-10-23
+resolution: Reject unlinked-directory violations, symlinks and nonregular entries before reading an existing snapshot. Hermetic CLI cases cover linked outputs, manifest, nested directory, whole generation, dangling links and FIFO while preserving links and external bytes. Evidence: spec-dw-39-43-renderer-snapshot-hardening.md; tests/tools/test_render_skill.py (17/17 passing, no skips).
 
 ### DW-40: The fixture suite's `assert_manifest_integrity` helper re-derives root_hash, generation_hash, and project_slug with its own copy of the renderer's hashing/slugging formulas instead of importing the re
 origin: spec-deferred c023fdd6d1ee
@@ -382,7 +383,8 @@ location: tests/tools/test_render_skill.py:316-358
 source_spec: `spec-render-skill-fixture-coverage.md`
 severity: medium
 reason: `tests/tools/test_render_skill.py` recomputes `_sha256(str(project_root).encode())[:12]` and `_sha256(_canonical_json(inputs))[:20]` inline rather than calling into `render_skill.py` (already loadable via the file's own `_load_renderer_module()` helper). A regression in the real hashing/slugging algorithm would be mirrored by the test's parallel implementation and pass silently.
-status: open
+status: done 2026-10-23
+resolution: Extract shared root-hash, project-slug and generation-hash helpers used by render() and assert_manifest_integrity(). Retain independent byte hashes and add literal fixed vectors for path identity, slug fallback/truncation and Unicode canonical input. Evidence: spec-dw-39-43-renderer-snapshot-hardening.md; tests/tools/test_render_skill.py (17/17 passing, no skips).
 
 ### DW-41: The keyed review layer's `when` clause is only ever asserted absent from rendered output, never asserted present for a layer whose `when` clause survives to the final resolution.
 origin: spec-deferred f63e08052e13
@@ -390,7 +392,8 @@ location: _bmad/scripts/render_skill.py:171-172
 source_spec: `spec-render-skill-fixture-coverage.md`
 severity: low
 reason: `test_layer_precedence_lists_and_keyed_review_replacement` only exercises the negative case (`assertNotIn("Run only when: always", rendered)`) for a layer whose `when` field is dropped by a whole-table override. No fixture keeps a `when` clause on a surviving layer through to final render, so a regression in the `Run only when: {value}` formatting at `render_skill.py:172` would go undetected.
-status: open
+status: done 2026-10-23
+resolution: Add a surviving review-layer condition fixture asserting the exact rendered Run only when line and the resolved manifest value; retain whole-table replacement coverage that removes a condition. Evidence: spec-dw-39-43-renderer-snapshot-hardening.md; tests/tools/test_render_skill.py (17/17 passing, no skips).
 
 ### DW-42: The `customization.workflow.open_spec` field's special-cased empty-string allowance has no fixture coverage.
 origin: spec-deferred 8b5c84060986
@@ -398,7 +401,8 @@ location: _bmad/scripts/render_skill.py:180
 source_spec: `spec-render-skill-fixture-coverage.md`
 severity: low
 reason: `_resolve_customization_value` at `render_skill.py:180` hardcodes `label == "customization.workflow.open_spec"` as an exception permitting an empty override even when the default is non-empty. No fixture defines an `open_spec` customization key, so this named carve-out ships with zero coverage.
-status: open
+status: done 2026-10-23
+resolution: Add a nonempty-default open_spec fixture with an empty user override, immutable prior generation and empty manifest value, plus a control that rejects an empty override for another required string. Evidence: spec-dw-39-43-renderer-snapshot-hardening.md; tests/tools/test_render_skill.py (17/17 passing, no skips).
 
 ### DW-43: No fixture demonstrates the existing render-source escape guard, so a regression there would ship undetected.
 origin: spec-deferred e5621d164d42
@@ -406,7 +410,8 @@ location: _bmad/scripts/render_skill.py:105-106
 source_spec: `spec-render-skill-fixture-coverage.md`
 severity: low
 reason: `_load_sources` at `_bmad/scripts/render_skill.py:105-106` resolves each candidate source and raises `RenderError(f"render source escapes skill directory: {name}")` when the resolved path is not relative to `skill_dir` (guarding against a symlinked or otherwise escaping source file). `tests/tools/test_render_skill.py` has no fixture that creates such a source and asserts this HALT message, so a regression that weakens or removes the check would pass the current suite silently.
-status: open
+status: done 2026-10-23
+resolution: Add a CLI source-escape fixture proving external Markdown symlinks halt without publication or target mutation, plus an internal-source-link positive control. Evidence: spec-dw-39-43-renderer-snapshot-hardening.md; tests/tools/test_render_skill.py (17/17 passing, no skips).
 
 ### DW-44: Introduce an admission state (responseState, components, recoveryActions) for the Conversation-start read.
 
@@ -1101,3 +1106,13 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
   summary: Report Conversation-owner unavailability on the retained `GET /api/v1/projects/resolution/from-conversation` route instead of NoMatch.
   evidence: Fourth-pass chunk-1 AA4b. This is pre-existing, documented fail-closed behavior: the legacy `IProjectConversationResolutionDirectory` returns degraded metadata, and the endpoint maps it to NoMatch (200). The legacy `ProjectResolution` response has no coverage field. Address it when the CLI and UI move to `/query` and the legacy routes are retired.
+
+## Deferred from: renderer snapshot hardening review (2026-10-23)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-dw-39-43-renderer-snapshot-hardening.md`
+  summary: Constrain renderer publication and reuse beneath trusted render-tree ancestors.
+  evidence: Independent review and a temporary CLI-equivalent reproduction moved destination.parent outside the render tree and replaced it with a symlink; rendering still succeeded. Ancestor containment is a pre-existing limitation outside DW-39's generation-directory and descendant checks; qualify the trusted boundary before changing publication paths.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-dw-39-43-renderer-snapshot-hardening.md`
+  summary: Make existing-snapshot verification resistant to concurrent substitutions between structural checks and byte reads.
+  evidence: Independent review and a deterministic temporary reproduction replaced guide.md with a matching external symlink during manifest.read_text, after rglob/lstat; _verify_existing still succeeded. This pre-existing concurrent-writer limitation requires separately scoped descriptor-based traversal and reads, while DW-39 rejects links already present at verification preflight.

@@ -12,6 +12,7 @@ import json
 import os
 import re
 import shutil
+import stat
 import sys
 import tempfile
 from pathlib import Path
@@ -41,6 +42,19 @@ def _canonical_json(value: Any) -> bytes:
     return json.dumps(
         value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
     ).encode("utf-8")
+
+
+def _root_hash(project_root: Path) -> str:
+    return _hash_bytes(str(project_root).encode("utf-8"))[:12]
+
+
+def _project_slug(project_root: Path) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", project_root.name.lower()).strip("-") or "project"
+    return slug[:80].rstrip("-") or "project"
+
+
+def _generation_hash(identity: dict[str, Any]) -> str:
+    return _hash_bytes(_canonical_json(identity))[:20]
 
 
 def _lookup(data: dict[str, Any], dotted_path: str, label: str) -> Any:
@@ -268,6 +282,16 @@ def _render_sources(
 
 
 def _verify_existing(destination: Path, manifest: dict[str, Any]) -> None:
+    if not stat.S_ISDIR(destination.lstat().st_mode):
+        raise RenderError(f"generation is not an unlinked directory: {destination}")
+    actual_files: set[str] = set()
+    for path in destination.rglob("*"):
+        mode = path.lstat().st_mode
+        if stat.S_ISDIR(mode):
+            continue
+        if not stat.S_ISREG(mode):
+            raise RenderError(f"generation contains linked or nonregular entry: {path}")
+        actual_files.add(path.relative_to(destination).as_posix())
     manifest_path = destination / "manifest.json"
     try:
         existing = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -276,11 +300,6 @@ def _verify_existing(destination: Path, manifest: dict[str, Any]) -> None:
     if existing != manifest:
         raise RenderError(f"generation collision or corruption at {destination}")
     expected_files = set(manifest["outputs"]) | {"manifest.json"}
-    actual_files = {
-        path.relative_to(destination).as_posix()
-        for path in destination.rglob("*")
-        if path.is_file()
-    }
     if actual_files != expected_files:
         raise RenderError(f"generation contains unexpected or missing files: {destination}")
     for name, expected_hash in manifest["outputs"].items():
@@ -294,7 +313,7 @@ def _verify_existing(destination: Path, manifest: dict[str, Any]) -> None:
 
 def _publish(destination: Path, outputs: dict[str, bytes], manifest: dict[str, Any]) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
-    if destination.exists():
+    if destination.exists() or destination.is_symlink():
         _verify_existing(destination, manifest)
         return
     staging = Path(tempfile.mkdtemp(prefix=".staging-", dir=destination.parent))
@@ -310,7 +329,7 @@ def _publish(destination: Path, outputs: dict[str, bytes], manifest: dict[str, A
         try:
             os.rename(staging, destination)
         except OSError:
-            if destination.exists():
+            if destination.exists() or destination.is_symlink():
                 _verify_existing(destination, manifest)
             else:
                 raise
@@ -344,9 +363,8 @@ def render(project_root: Path, skill_dir: Path) -> Path:
     source_hashes = {
         name: _hash_bytes(content.encode("utf-8")) for name, content in sources.items()
     }
-    root_hash = _hash_bytes(str(project_root).encode("utf-8"))[:12]
-    slug = re.sub(r"[^a-z0-9]+", "-", project_root.name.lower()).strip("-") or "project"
-    slug = slug[:80].rstrip("-") or "project"
+    root_hash = _root_hash(project_root)
+    slug = _project_slug(project_root)
     renderer_hash = _hash_bytes(Path(__file__).read_bytes())
     identity = {
         "project_root": str(project_root),
@@ -354,7 +372,7 @@ def render(project_root: Path, skill_dir: Path) -> Path:
         "resolved_values": input_values,
         "source_sha256": source_hashes,
     }
-    generation_hash = _hash_bytes(_canonical_json(identity))[:20]
+    generation_hash = _generation_hash(identity)
     destination = (
         project_root
         / "_bmad"
