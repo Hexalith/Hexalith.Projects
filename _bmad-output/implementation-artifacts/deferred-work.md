@@ -1026,22 +1026,32 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
   summary: Specify the server-owned action for future Story 6.4 resolution authorization.
   evidence: The existing blocked Story 6.4 draft names Tenant, actor, workload and delegation but omits the action required by Epic 6; this EventStore prerequisite explicitly excludes resolution handlers.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-advisory-policy-items.md; Implemented by supported advisory admission: projects.read scope and literal projects:read permission bind Tenant, original actor and exact candidate Project, with final reauthorization. ProjectAdvisoryQueryTests.Policy.cs adds both query kinds with successful and revoked controls and unchanged persisted state.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
   summary: Distinguish unauthorized or foreign attachment no-match behavior from safe denial of a protected Project target in Story 6.4.
   evidence: The existing draft has one protected-target row; Epic 6 requires unauthorized attachment evidence to behave as no match. Resolution implementation remains gated.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-advisory-policy-items.md; Implemented for approved Folder/Conversation advisory coverage: Folder owner outcome Denied behaves like empty NoMatch and cannot contribute scores; other non-Accepted outcomes are incomplete. Advisory requests target the projects collection, so protected Project candidates are omitted rather than exposing a target; direct protected Project reads retain their independent safe-denial contract (SupportedProjectReadHttpTests). Protected Conversation owner outcomes safely deny. Policy regression compares denied matching input versus empty input and an authorized mixed-input control; exact candidate-denial tests remain. File mapping is explicitly unsupported/incomplete, not accepted here.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
   summary: Specify Conversation membership and explicitly opened session Project fallback for Story 6.4.
   evidence: Epic 6 names the precedence rule, while the pre-existing blocked draft does not; owner metadata contracts remain absent.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-advisory-policy-items.md; Superseded by approved 2026-10-21 advisory scope reset: ConversationLinked is an observed unselected hint, not membership authority. Supported input has no session Project fallback. Policy regressions cover link/no-link observations, reject injected fallback fields before owner reads, and assert the closed unselected response. Independent context and confirmation behavior remains outside this closure.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
   summary: Enumerate current Project, Folder, Setup and first-response authority evidence required for usable Partial resolution.
   evidence: The pre-existing Story 6.4 draft uses a generic current-required-evidence phrase; the prerequisite package cannot set future query policy.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-advisory-policy-items.md; Superseded for advisory queries by approved 2026-10-21 scope reset and Architecture Spine advisory exception. They return no AD-32 Complete/Partial context certificate. Policy regressions retain suggestions with Stale metadata and missing Setup while asserting exact advisory-only wire fields, evaluation time and unchanged persisted state. Stronger context/first-response gates retain their independent requirements.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
   summary: Enforce exactly one authorized Folder and quarantine folderless legacy Projects in Story 6.4 candidate admission.
   evidence: Epic 6 states the Folder invariant, while the pre-existing blocked draft does not make it an explicit candidate test.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-advisory-policy-items.md; Replaced for advisory resolution by approved Story 6.4 fourth-pass option 3 on 2026-10-22. Null and Pending-null Folder bindings may suggest under exact Project Read authorization; final revocation removes them. Attachment matching skips them; bound Folder IDs still require Included and owner Accepted. New policy controls cover both folderless forms and final revocation; existing FolderlessProjectsUseExactProjectAuthorityWithoutOwnerCalls and UnacceptedCommittedFolderBindingCannotBecomeACandidate preserve the complementary cases. No context readiness is inferred.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-prerequisite-p1r-source-readiness.md`
   summary: Spell out AD-32 snapshot fields in Story 6.4 acceptance before the draft becomes ready.
