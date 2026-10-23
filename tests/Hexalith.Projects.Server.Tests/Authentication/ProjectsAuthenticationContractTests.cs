@@ -8,12 +8,12 @@ namespace Hexalith.Projects.Server.Tests.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.Json;
 
 using Hexalith.EventStore.Authorization;
+using Hexalith.EventStore.Client.Gateway;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.Controllers;
 using Hexalith.EventStore.Server.Queries;
@@ -643,6 +643,7 @@ public sealed class ProjectsAuthenticationContractTests
     [InlineData("Production", "wrong-audience")]
     [InlineData("Production", "audience-trailing-slash")]
     [InlineData("Production", "expired")]
+    [InlineData("Production", "missing-expiration")]
     [InlineData("Production", "invalid-signature")]
     [InlineData("Production", "unsigned")]
     [InlineData("Staging", "wrong-issuer")]
@@ -650,6 +651,7 @@ public sealed class ProjectsAuthenticationContractTests
     [InlineData("Staging", "wrong-audience")]
     [InlineData("Staging", "audience-trailing-slash")]
     [InlineData("Staging", "expired")]
+    [InlineData("Staging", "missing-expiration")]
     [InlineData("Staging", "invalid-signature")]
     [InlineData("Staging", "unsigned")]
     public async Task JwtMiddleware_InvalidCredentials_AreRejectedWithoutDisclosingProtectedMetadata(
@@ -670,10 +672,16 @@ public sealed class ProjectsAuthenticationContractTests
                 "wrong-audience" => CreateToken(CreateSigningKey(), TestIssuer, "wrong-audience", DateTime.UtcNow.AddMinutes(5)),
                 "audience-trailing-slash" => CreateToken(CreateSigningKey(), TestIssuer, TestAudience + "/", DateTime.UtcNow.AddMinutes(5)),
                 "expired" => CreateToken(CreateSigningKey(), TestIssuer, TestAudience, DateTime.UtcNow.AddMinutes(-5)),
+                "missing-expiration" => CreateToken(CreateSigningKey(), TestIssuer, TestAudience, expires: null),
                 "invalid-signature" => CreateToken(new RsaSecurityKey(CreateSigningKeyParameters()) { KeyId = "projects-fixture" }, TestIssuer, TestAudience, DateTime.UtcNow.AddMinutes(5)),
                 "unsigned" => CreateToken(null, TestIssuer, TestAudience, DateTime.UtcNow.AddMinutes(5)),
                 _ => throw new ArgumentOutOfRangeException(nameof(invalidCase)),
             };
+            if (invalidCase == "missing-expiration")
+            {
+                new JwtSecurityTokenHandler().ReadJwtToken(token).Payload.ContainsKey("exp").ShouldBeFalse();
+            }
+
             using HttpClient client = CreateClient(app, token);
             using HttpResponseMessage response = await client
                 .GetAsync("/authentication-contract", TestContext.Current.CancellationToken)
@@ -711,9 +719,11 @@ public sealed class ProjectsAuthenticationContractTests
     [InlineData("Staging", "conflicting-alias", true)]
     [InlineData("Production", "missing-sub", false)]
     [InlineData("Production", "blank-sub", false)]
+    [InlineData("Production", "multiple-sub", false)]
     [InlineData("Production", "numeric-sub", false)]
     [InlineData("Staging", "missing-sub", false)]
     [InlineData("Staging", "blank-sub", false)]
+    [InlineData("Staging", "multiple-sub", false)]
     [InlineData("Staging", "numeric-sub", false)]
     public async Task JwtMiddleware_InvalidSubjectIdentity_FailsAuthenticationAndDeniesProtectedRead(
         string environmentName,
@@ -749,6 +759,22 @@ public sealed class ProjectsAuthenticationContractTests
             }
 
             string token = CreateToken(CreateSigningKey(), TestIssuer, TestAudience, DateTime.UtcNow.AddMinutes(5), claims);
+            if (invalidCase is "numeric-sub" or "multiple-sub")
+            {
+                using JsonDocument payload = JsonDocument.Parse(Base64UrlEncoder.Decode(token.Split('.')[1]));
+                JsonElement subject = payload.RootElement.GetProperty("sub");
+                if (invalidCase == "numeric-sub")
+                {
+                    subject.ValueKind.ShouldBe(JsonValueKind.Number);
+                }
+                else
+                {
+                    subject.ValueKind.ShouldBe(JsonValueKind.Array);
+                    subject.EnumerateArray().Select(static value => value.GetString()).ShouldBe(["actor-b", "actor-a"]);
+                    payload.RootElement.TryGetProperty(ClaimTypes.NameIdentifier, out _).ShouldBe(includeAlias);
+                }
+            }
+
             using HttpClient client = CreateClient(app, token);
             using HttpResponseMessage response = await client
                 .GetAsync("/authentication-contract", TestContext.Current.CancellationToken)
@@ -1016,6 +1042,61 @@ public sealed class ProjectsAuthenticationContractTests
         }
     }
 
+    /// <summary>Verifies signed Tenant authority cannot disclose another Tenant's existing Project.</summary>
+    /// <param name="environmentName">The host environment using strict bearer authentication.</param>
+    [Theory]
+    [InlineData("Production")]
+    [InlineData("Staging")]
+    public async Task ProtectedRead_SignedForeignTenant_ReturnsSameSafeDenial(string environmentName)
+    {
+        const string tenantBProjectId = "01HZ9K8YQ3W6V2N4R7T5P0X1AC";
+        const string tenantBProjectName = "Tenant B fixture project";
+        const string missingProjectId = "01HZ9K8YQ3W6V2N4R7T5P0X1AD";
+        WebApplication app = await StartAuthenticatedProjectsHostAsync(environmentName: environmentName).ConfigureAwait(true);
+        try
+        {
+            await SeedAccessibleProjectAsync(app.Services, "tenant-b", "actor-b", tenantBProjectId, tenantBProjectName).ConfigureAwait(true);
+            await AssertAccessibleProjectAsync(app).ConfigureAwait(true);
+            string token = CreateToken(
+                CreateSigningKey(), TestIssuer, TestAudience, DateTime.UtcNow.AddMinutes(5),
+                [
+                    new Claim("sub", "actor-b"),
+                    new Claim("tenant_id", "tenant-b"),
+                    new Claim("permissions", "[\"projects:read\"]"),
+                ]);
+            await AssertAccessibleProjectAsync(app, token, tenantBProjectId, tenantBProjectName).ConfigureAwait(true);
+            using HttpClient client = CreateClient(app, token);
+            string? baselineDenial = null;
+            foreach (bool includeConflictingHint in new[] { false, true })
+            {
+                using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{TestProjectId}");
+                using HttpRequestMessage missingRequest = new(HttpMethod.Get, $"/api/v1/projects/{missingProjectId}");
+                if (includeConflictingHint)
+                {
+                    request.Headers.Add("X-Hexalith-Tenant-Id", "tenant-a");
+                    missingRequest.Headers.Add("X-Hexalith-Tenant-Id", "tenant-a");
+                }
+
+                using HttpResponseMessage response = await client
+                    .SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
+                using HttpResponseMessage missing = await client
+                    .SendAsync(missingRequest, TestContext.Current.CancellationToken).ConfigureAwait(true);
+                await AssertSafeDenialAsync(response).ConfigureAwait(true);
+                await AssertSafeDenialAsync(missing).ConfigureAwait(true);
+                string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+                string missingBody = await missing.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+                baselineDenial ??= body;
+                body.ShouldBe(missingBody);
+                body.ShouldBe(baselineDenial);
+                body.ShouldNotContain(tenantBProjectName);
+            }
+        }
+        finally
+        {
+            await StopAsync(app).ConfigureAwait(true);
+        }
+    }
+
     [Fact]
     public void TenantContext_CurrentTenantClaimWinsOverMembershipClaimOrder()
     {
@@ -1066,55 +1147,54 @@ public sealed class ProjectsAuthenticationContractTests
     [InlineData(true, "scope")]
     [InlineData(false, "scp")]
     [InlineData(true, "scp")]
-    public async Task ForwardedJwt_RealQueryControllerPreservesDualPrincipalClaims(bool delegated, string scopeClaimType)
+    public async Task RegisteredGateway_RealQueryControllerPreservesDualPrincipalClaims(bool delegated, string scopeClaimType)
     {
-        WebApplication app = await StartAuthenticatedProjectsHostAsync(includeQueryGateway: true).ConfigureAwait(true);
+        string? forwardedAuthorization = null;
+        WebApplication app = await StartAuthenticatedProjectsHostAsync(
+            includeQueryGateway: true,
+            observeGatewayRequest: context => forwardedAuthorization = context.Request.Headers.Authorization.ToString()).ConfigureAwait(true);
         try
         {
-            List<Claim> claims =
-            [
-                new Claim("sub", "actor-a"),
-                new Claim("tenant_id", "tenant-a"),
-                new Claim("permissions", "[\"projects:read\",\"query:read\"]"),
-                new Claim("azp", "projects-gateway"),
-                new Claim(scopeClaimType, "projects.read projects.list"),
-            ];
-            if (delegated)
+            await AssertAccessibleProjectAsync(app).ConfigureAwait(true);
+            // Use one host and its pooled handler chain for both authenticated callers.
+            foreach (string actor in new[] { "actor-a", "actor-b" })
             {
-                claims.Add(new Claim("act", "{\"sub\":\"delegation-a\"}"));
+                string workload = $"projects-gateway-{actor}";
+                string delegationId = $"delegation-{actor}";
+                List<Claim> claims =
+                [
+                    new Claim("sub", actor),
+                    new Claim("tenant_id", "tenant-a"),
+                    new Claim("permissions", "[\"projects:read\",\"query:read\"]"),
+                    new Claim("azp", workload),
+                    new Claim(scopeClaimType, "projects.read projects.list"),
+                ];
+                if (delegated)
+                {
+                    claims.Add(new Claim("act", JsonSerializer.Serialize(new { sub = delegationId })));
+                }
+
+                string token = CreateToken(CreateSigningKey(), TestIssuer, TestAudience, DateTime.UtcNow.AddMinutes(5), claims);
+                using HttpClient client = CreateClient(app, token);
+                using HttpResponseMessage response = await client
+                    .GetAsync("/registered-gateway-query", TestContext.Current.CancellationToken).ConfigureAwait(true);
+
+                response.StatusCode.ShouldBe(HttpStatusCode.OK);
+                forwardedAuthorization.ShouldBe($"Bearer {token}");
+                using JsonDocument document = JsonDocument.Parse(
+                    await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
+                JsonElement payload = document.RootElement.GetProperty("payload");
+                payload.GetProperty("actor").GetString().ShouldBe(actor);
+                payload.GetProperty("userId").GetString().ShouldBe(actor);
+                payload.GetProperty("tenant").GetString().ShouldBe("tenant-a");
+                payload.GetProperty("workload").GetString().ShouldBe(workload);
+                payload.GetProperty("delegated").GetBoolean().ShouldBe(delegated);
+                payload.GetProperty("delegationId").GetString().ShouldBe(delegated ? delegationId : null);
+                payload.GetProperty("scopes").EnumerateArray().Select(static scope => scope.GetString())
+                    .ShouldBe(["projects.read", "projects.list"]);
+                payload.GetProperty("audience").EnumerateArray().Select(static audience => audience.GetString())
+                    .ShouldBe([TestAudience]);
             }
-
-            string token = CreateToken(CreateSigningKey(), TestIssuer, TestAudience, DateTime.UtcNow.AddMinutes(5), claims);
-            await AssertAccessibleProjectAsync(app, token).ConfigureAwait(true);
-            DefaultHttpContext context = new();
-            context.Request.Headers.Authorization = $"Bearer {token}";
-            using EventStoreGatewayTokenForwardingHandler forwarding = new(new HttpContextAccessor { HttpContext = context })
-            {
-                InnerHandler = new HttpClientHandler(),
-            };
-            using HttpMessageInvoker invoker = new(forwarding);
-            using HttpRequestMessage request = new(HttpMethod.Post, new Uri(new Uri(app.Urls.First()), "/api/v1/queries"))
-            {
-                Content = JsonContent.Create(new SubmitQueryRequest("tenant-a", "projects", TestProjectId, "GetProject", null)),
-            };
-
-            using HttpResponseMessage response = await invoker.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
-
-            response.StatusCode.ShouldBe(HttpStatusCode.OK);
-            request.Headers.Authorization?.Parameter.ShouldBe(token);
-            using JsonDocument document = JsonDocument.Parse(
-                await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
-            JsonElement payload = document.RootElement.GetProperty("payload");
-            payload.GetProperty("actor").GetString().ShouldBe("actor-a");
-            payload.GetProperty("userId").GetString().ShouldBe("actor-a");
-            payload.GetProperty("tenant").GetString().ShouldBe("tenant-a");
-            payload.GetProperty("workload").GetString().ShouldBe("projects-gateway");
-            payload.GetProperty("delegated").GetBoolean().ShouldBe(delegated);
-            payload.GetProperty("delegationId").GetString().ShouldBe(delegated ? "delegation-a" : null);
-            payload.GetProperty("scopes").EnumerateArray().Select(static scope => scope.GetString())
-                .ShouldBe(["projects.read", "projects.list"]);
-            payload.GetProperty("audience").EnumerateArray().Select(static audience => audience.GetString())
-                .ShouldBe([TestAudience]);
         }
         finally
         {
@@ -1149,7 +1229,8 @@ public sealed class ProjectsAuthenticationContractTests
         SecurityKey? metadataSigningKey = null,
         string metadataIssuer = TestIssuer,
         string environmentName = "Production",
-        bool includeQueryGateway = false)
+        bool includeQueryGateway = false,
+        Action<HttpContext>? observeGatewayRequest = null)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(
             new WebApplicationOptions { EnvironmentName = environmentName });
@@ -1187,6 +1268,19 @@ public sealed class ProjectsAuthenticationContractTests
 
         WebApplication app = builder.Build();
         await SeedAccessibleProjectAsync(app.Services).ConfigureAwait(true);
+        if (observeGatewayRequest is not null)
+        {
+            _ = app.Use(async (context, next) =>
+            {
+                if (context.Request.Path == "/api/v1/queries")
+                {
+                    observeGatewayRequest(context);
+                }
+
+                await next(context).ConfigureAwait(false);
+            });
+        }
+
         _ = app.UseAuthentication();
         _ = app.UseAuthorization();
         _ = app.MapGet(
@@ -1217,9 +1311,24 @@ public sealed class ProjectsAuthenticationContractTests
         if (includeQueryGateway)
         {
             _ = app.MapControllers();
+            _ = app.MapGet(
+                "/registered-gateway-query",
+                async (IEventStoreGatewayClient gateway, CancellationToken cancellationToken) =>
+                {
+                    EventStoreQueryResult result = await gateway.SubmitQueryAsync(
+                        new SubmitQueryRequest("tenant-a", "projects", TestProjectId, "GetProject", null),
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
+                    return Results.Json(result);
+                }).RequireAuthorization();
         }
 
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
+        if (includeQueryGateway)
+        {
+            // Redirect only the destination; the production typed-client and forwarding registrations remain intact.
+            app.Services.GetRequiredService<IOptions<EventStoreGatewayClientOptions>>().Value.BaseAddress = new Uri(app.Urls.First());
+        }
+
         return app;
     }
 
@@ -1248,40 +1357,49 @@ public sealed class ProjectsAuthenticationContractTests
         return client;
     }
 
-    private static async Task SeedAccessibleProjectAsync(IServiceProvider services)
+    private static async Task SeedAccessibleProjectAsync(
+        IServiceProvider services,
+        string tenantId = "tenant-a",
+        string actorId = "actor-a",
+        string projectId = TestProjectId,
+        string projectName = TestProjectName)
     {
         services.GetRequiredService<InMemoryProjectDetailReadModel>().Project(
-            "tenant-a",
+            tenantId,
             new ProjectCreated(
-                "tenant-a", TestProjectId, TestProjectName, "Fixture metadata", "fixture-setup", ProjectLifecycle.Active,
-                "actor-a", "correlation-fixture", "task-fixture", "idempotency-fixture", "sha256:fixture", DateTimeOffset.UtcNow));
+                tenantId, projectId, projectName, "Fixture metadata", "fixture-setup", ProjectLifecycle.Active,
+                actorId, "correlation-fixture", "task-fixture", "idempotency-fixture", "sha256:fixture", DateTimeOffset.UtcNow));
         ProjectTenantAccessProjection projection = new()
         {
-            TenantId = "tenant-a",
+            TenantId = tenantId,
             Enabled = true,
             Watermark = 1,
-            ProjectionWatermark = "tenant-a:1",
+            ProjectionWatermark = $"{tenantId}:1",
             LastEventTimestamp = DateTimeOffset.UtcNow,
         };
-        projection.Principals["actor-a"] = new ProjectTenantPrincipalEvidence("actor-a", "TenantOwner");
+        projection.Principals[actorId] = new ProjectTenantPrincipalEvidence(actorId, "TenantOwner");
         await services.GetRequiredService<IProjectTenantAccessProjectionStore>()
             .SaveAsync(projection, TestContext.Current.CancellationToken).ConfigureAwait(true);
     }
 
-    private static async Task AssertAccessibleProjectAsync(WebApplication app, string? token = null)
+    private static async Task AssertAccessibleProjectAsync(
+        WebApplication app,
+        string? token = null,
+        string projectId = TestProjectId,
+        string projectName = TestProjectName)
     {
         using HttpClient client = CreateClient(
             app,
             token ?? CreateToken(CreateSigningKey(), TestIssuer, TestAudience, DateTime.UtcNow.AddMinutes(5)));
         using HttpResponseMessage response = await client
-            .GetAsync($"/api/v1/projects/{TestProjectId}", TestContext.Current.CancellationToken)
+            .GetAsync($"/api/v1/projects/{projectId}", TestContext.Current.CancellationToken)
             .ConfigureAwait(true);
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
         using JsonDocument document = JsonDocument.Parse(
             await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true));
-        document.RootElement.GetProperty("projectId").GetString().ShouldBe(TestProjectId);
-        document.RootElement.GetProperty("name").GetString().ShouldBe(TestProjectName);
+        document.RootElement.GetProperty("projectId").GetString().ShouldBe(projectId);
+        document.RootElement.GetProperty("name").GetString().ShouldBe(projectName);
         document.RootElement.GetProperty("setupMetadata").GetString().ShouldBe("fixture-setup");
     }
 
@@ -1350,7 +1468,7 @@ public sealed class ProjectsAuthenticationContractTests
         SecurityKey? signingKey,
         string issuer,
         string audience,
-        DateTime expires,
+        DateTime? expires,
         IEnumerable<Claim>? claims = null,
         string algorithm = SecurityAlgorithms.RsaSha256,
         IDictionary<string, object>? additionalClaims = null)
@@ -1361,7 +1479,7 @@ public sealed class ProjectsAuthenticationContractTests
             new Claim("tenant_id", "tenant-a"),
             new Claim("permissions", "[\"projects:read\"]"),
         ];
-        JwtSecurityTokenHandler handler = new();
+        JwtSecurityTokenHandler handler = new() { SetDefaultTimesOnTokenCreation = expires is not null };
         handler.OutboundClaimTypeMap.Clear();
         return handler.CreateEncodedJwt(
             new SecurityTokenDescriptor

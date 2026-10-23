@@ -882,18 +882,26 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Pre-existing medium authentication issue: a validly signed raw numeric sub is normalized to a string subject and passes the current callback.
   evidence: The raw-JSON scratch reproduction signed sub=42 with RS256; JsonWebTokenHandler accepted it as string 42 and OnTokenValidated reported no failure. RFC 7519 section 4.1.2 defines a string subject (https://www.rfc-editor.org/rfc/rfc7519#section-4.1.2). Authentication files are concurrent P3 work untouched by P1R; add raw-type rejection and middleware fixtures there.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-authentication-items.md; Verified existing HasStringSubject guard and Production/Staging signed middleware rejection; the fixture now asserts that the signed payload sub is a JSON number, independently of identity aliases. No new authentication policy or production acceptance is claimed.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Pre-existing medium coverage gap: verify bearer forwarding through the registered outbound gateway pipeline.
   evidence: Both forwarding controls construct EventStoreGatewayTokenForwardingHandler directly, so removal of AddHttpMessageHandler registration in ProjectsServerServiceCollectionExtensions.cs would escape those tests. Exercise the actual registered client in the owner authentication verification.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-authentication-items.md; RegisteredGateway_RealQueryControllerPreservesDualPrincipalClaims now invokes the production-registered IEventStoreGatewayClient from an authenticated HTTP request through the real downstream QueriesController. The destination alone is redirected; the fixture asserts exact forwarded bearer bytes plus actor, Tenant, workload, delegation, scope/scp and audience for all four combinations.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Pre-existing medium coverage gap: use a signed tenant-b token against existing tenant-a Project data with authorized controls in both tenants.
   evidence: ProtectedRead_CrossTenantHint_ReturnsSameSafeDenial changes only a hint while its token remains tenant-a. Separate principal-binding controls use constructed principals, leaving the complete JWT-to-tenant read composition without this negative control.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-authentication-items.md; ProtectedRead_SignedForeignTenant_ReturnsSameSafeDenial proves each signed Tenant principal reads its own seeded Project, then compares the foreign existing Project with a nonexistent Project. Production and Staging cover requests without a hint and with a conflicting tenant-a hint; both return identical redacted safe-404 bodies.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Pre-existing medium coverage gap: reject a signed middleware token with no expiration.
   evidence: CreateToken always sets Expires; no no-exp middleware fixture was found. RequireExpirationTime currently protects the host, but disabling it would not be detected by the existing expired-token control.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-authentication-items.md; Production/Staging InvalidCredentials controls create signed tokens with automatic timestamp insertion disabled and assert exp is absent. Real authentication returns an empty Bearer 401 and the protected Project read returns safe 404 after a valid-token control.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Unverified medium concern: bind the concurrent no-build Aspire health observation to retained command output and executed AppHost/service binary hashes.
@@ -906,6 +914,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-current-baseline-acceptance.md`
   summary: Pre-existing medium verification gap: isolate duplicate-sub rejection from conflicting-alias rejection in the signed middleware fixture.
   evidence: The multiple-sub fixture supplies NameIdentifier=actor-a and first sub=actor-b, so choosing the first subject would still reject on the alias rule and pass the fixture. Add multiple subjects with no conflicting alias and assert authentication failure plus safe protected-read denial in the concurrent P3 suite.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-authentication-items.md; Production/Staging InvalidSubjectIdentity controls now include multiple-sub,false, which supplies no name-identifier alias. Real middleware rejects authentication and protected Project reads return safe denial independently of the alias rule.
 
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-run-all-tests-and-fix-failures.md`
