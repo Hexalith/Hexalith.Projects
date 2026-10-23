@@ -35,7 +35,7 @@ using Shouldly;
 using Xunit;
 
 /// <summary>Always-run authenticated routing plus opt-in isolated Dapr persistence; not production acceptance.</summary>
-public sealed class SupportedProjectReadHttpTests
+public sealed partial class SupportedProjectReadHttpTests
 {
     private const string Issuer = "https://story61.example/identity";
     private const string Audience = "configured-read-audience";

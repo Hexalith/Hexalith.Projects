@@ -815,15 +815,26 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-3.md`
   summary: Prove shadow equivalence of supported list/open against legacy GET.
   evidence: Split from the Story 6.1 spec because the 2142-token draft mixed the read with its legacy comparison harness. Routing cutover stays in Story 6.7; this slice keeps the equivalence proof.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-supported-read-verification.md; Actual signed legacy list/open GET responses are compared with supported inspected /query pages and opens over identical Project events in SupportedProjectReadHttpTests.Shadow.cs. Common authorized/current metadata, populated setup, update timestamps, Active/Archived filters, ordered page coverage and Folder fields agree with explicit setup/reference-kind normalization; raw supported payloads also match their closed DTOs; persisted read bytes remain unchanged. Existing SupportedProjectShadowTests retain key, watermark, cursor and authority controls. This is local regression evidence, not live owner or cutover acceptance.
+
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-3.md`
   summary: Inspect a quarantined folderless Project on the Tenant-role open path.
   evidence: Split from the Story 6.1 spec because operator inspection of Safe Metadata, the Project name, and any pre-v1 Folder or creation receipt is a separate edge from authorization-filtered list/open. Chatbot still omits these Projects.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-supported-read-verification.md; TenantCanInspectFolderlessHistoryWithoutChangingProjectState covers authorized safe and descriptive inspection of folderless history with and without a retained creation-progress event. Name/description are inspection-gated, Folder evidence remains Unavailable/Pending, historical state and ETag remain unchanged, and only a dedicated inspection audit is added. No repair or activation is inferred.
+
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-4.md`
   summary: Limit Chatbot list and open to Projects whose Folder that actor can currently read.
   evidence: Split from the Story 6.1 spec because Chatbot Folder-read visibility, Unavailable non-current Folder rows, and hiding pre-activation work are a separate disclosure goal from the supported Safe Metadata list/open path.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-supported-read-verification.md; Chatbot list/open controls cover current owner denial, archive, stale and unavailable evidence, followed by an authorized owner-read control. Two real delegated Folder client cases bind the same Folder to different original actors and distinguish Allowed from Denied at the controlled owner boundary. Folderless and pending-creation history are omitted before pagination and denied on open. Owner outages make enumeration Unavailable rather than an exhaustive empty list.
+
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths-4.md`
   summary: Return the Project name on Tenant-role list and open only when inspection is authorized, and write no FR-21 event.
   evidence: Split from the Story 6.1 spec because inspection-gated name disclosure is a separate goal from the supported Safe Metadata list/open path. Story 8.1 records that inspection.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-supported-read-verification.md; TenantNamesRequireInspectionAndPreservePersistedProjectState exercises both list/open with and without independent inspection permission: safe reads omit names, protected inspection denies, and authorized inspection returns names. Persisted Project/index bytes and ETags are unchanged; key growth is exactly the dedicated metadata-only audit inventory, and equivalent retry adds no key. The executor has no command/event writer dependency; AD-26 inspection audit remains separate from domain mutation history. This fixture measures read-model persistence, not a live event stream.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p3-approve-production-identity-authentication-contract.md`
   summary: Unverified medium concern: determine whether a reachable additional-identity producer can feed unauthenticated authority claims into the pre-existing Projects tenant-context accessor.
@@ -1077,6 +1088,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
   summary: Run the delegated Conversation advisory owner hop (`DelegatedProjectAdvisoryConversationDirectory` → `GetConversationAdvisoryMetadata.v1`) in a routinely executed lane.
   evidence: The only test that exercises this hop is `SupportedProjectGatewayHttpTests`. That file is wrapped in `#if HEXALITH_SOURCE_FIXTURE`, a symbol defined only when `UseHexalithProjectReferences=true`, and CI forces `UseHexalithProjectReferences=false`. The test also skips unless `STORY61_DAPR_HTTP_ENDPOINT`/`STORY61_DAPR_GRPC_ENDPOINT` are set, and no CI workflow sets them. Every always-run test substitutes `AdvisoryTestConversationDirectory`, and no unit harness exists for `DelegatedOwnerQueryClient`. A change to the request's domain, aggregate or payload would therefore break every Conversation suggestion while CI stays green (medium; Verification Gap finding 2).
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-supported-read-verification.md; Eleven unconditional Conversation cases in DelegatedProjectAdvisoryConversationDirectoryTests run the registered Projects directory through the real published DelegatedOwnerQueryClient and SDK VerifiedQueryCaller with controlled HTTP transport. Exact owner route/query/payload, actor and originating authority, workload assertion, signed bound proof, typed complete/incomplete metadata, failure mapping and no-transport trust failures are checked. Existing blocking CI server project includes these tests in package mode; no live owner qualification is claimed.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
   summary: Align the default G-6 runner, CI wrapper and topology runbook with the current October 20 qualification policy.
