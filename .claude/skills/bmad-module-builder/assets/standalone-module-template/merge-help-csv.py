@@ -37,8 +37,8 @@ HEADER = [
     "action",
     "args",
     "phase",
-    "after",
-    "before",
+    "preceded-by",
+    "followed-by",
     "required",
     "output-location",
     "outputs",
@@ -79,7 +79,7 @@ def read_csv_rows(path: str) -> tuple[list[str], list[list[str]]]:
         return [], []
     try:
         with open(file_path, "r", encoding="utf-8", newline="") as stream:
-            rows = list(csv.reader(StringIO(stream.read())))
+            rows = list(csv.reader(StringIO(stream.read()), strict=True))
     except (UnicodeDecodeError, csv.Error) as error:
         raise ValidationError(f"Could not parse CSV from {path}: {error}") from error
     if not rows:
@@ -90,6 +90,23 @@ def read_csv_rows(path: str) -> tuple[list[str], list[list[str]]]:
 def extract_module_codes(rows: list[list[str]]) -> set[str]:
     """Extract the distinct values in the CSV module column."""
     return {row[0].strip() for row in rows if row and row[0].strip()}
+
+
+def normalize_csv(header: list[str], rows: list[list[str]], name: str) -> list[list[str]]:
+    """Validate a supported schema and align its rows with the production header."""
+    aliases = {"after": "preceded-by", "before": "followed-by"}
+    columns = [aliases.get(column, column) for column in header]
+    if len(set(columns)) != len(columns) or set(columns) != set(HEADER):
+        raise ValidationError(f"{name} must have each supported CSV column exactly once")
+    positions = [columns.index(column) for column in HEADER]
+    aligned = []
+    for number, row in enumerate(rows, start=2):
+        if not row:
+            continue
+        if len(row) != len(columns):
+            raise ValidationError(f"{name} row {number} has {len(row)} fields; expected {len(columns)}")
+        aligned.append([row[position] for position in positions])
+    return aligned
 
 
 def filter_rows(rows: list[list[str]], module_code: str) -> list[list[str]]:
@@ -391,6 +408,7 @@ def run(args) -> dict:
             reject_alias("--source", source, "legacy cleanup target", candidate)
 
     source_header, source_rows = read_csv_rows(args.source)
+    source_rows = normalize_csv(source_header, source_rows, "source")
     if not source_rows:
         raise ValidationError(f"No data rows found in source {args.source}")
     source_codes = extract_module_codes(source_rows)
@@ -413,13 +431,15 @@ def run(args) -> dict:
         print(f"Source rows: {len(source_rows)}", file=sys.stderr)
 
     target_header, target_rows = read_csv_rows(str(target))
+    if target_header or target_rows:
+        target_rows = normalize_csv(target_header, target_rows, "target")
     target_existed = target.exists()
     if args.verbose:
         print(f"Target exists: {target_existed}", file=sys.stderr)
         if target_existed:
             print(f"Existing target rows: {len(target_rows)}", file=sys.stderr)
 
-    header = target_header if target_header else (source_header if source_header else HEADER)
+    header = HEADER
     filtered_rows = target_rows
     removed_count = 0
     for code in source_codes:

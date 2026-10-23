@@ -186,6 +186,30 @@ class RenderSkillFixtureTests(unittest.TestCase):
             self.assertEqual(expected_hash, _sha256((destination / name).read_bytes()))
         return manifest
 
+    def test_root_planning_context_excludes_sibling_contexts(self) -> None:
+        for skill_name in ("bmad-spec", "bmad-sprint-planning"):
+            with self.subTest(skill=skill_name), tempfile.TemporaryDirectory() as temporary:
+                fixture = self.make_fixture(
+                    Path(temporary),
+                    workflow="Facts:\n{workflow.persistent_facts}\n",
+                    customization='[workflow]\npersistent_facts = []\n',
+                )
+                skill_root = fixture.skill_root.with_name(skill_name)
+                fixture.skill_root.rename(skill_root)
+                fixture = RendererFixture(fixture.project_root, skill_root, fixture.caller_root)
+                _write_text(
+                    fixture.project_root / "_bmad" / "custom" / f"{skill_name}.toml",
+                    (PROJECT_ROOT / "_bmad" / "custom" / f"{skill_name}.toml").read_text(encoding="utf-8"),
+                )
+                root_context = fixture.project_root / "_bmad-output" / "project-context.md"
+                sibling_context = fixture.project_root / "references" / "Sibling" / "project-context.md"
+                _write_text(root_context, "Root context.\n")
+                _write_text(sibling_context, "Contradictory sibling context.\n")
+                entry = self.assert_success(self.run_renderer(fixture))
+                facts = [line.removeprefix("- file:") for line in entry.read_text().splitlines() if line.startswith("- file:")]
+                matched = [path for fact in facts for path in fixture.project_root.glob(fact.removeprefix("{project-root}/"))]
+                self.assertEqual([root_context], matched)
+
     def test_identity_helpers_preserve_fixed_vectors(self) -> None:
         renderer = _load_renderer_module()
         project = Path("Project Fixture With Spaces")

@@ -97,6 +97,9 @@ def load_json_file(path: str) -> dict:
     for section in ("core", "module"):
         if section in content and not isinstance(content[section], dict):
             raise ValidationError(f"answers.{section} must contain a JSON object")
+    unknown_core = set(content.get("core", {})) - _CORE_KEYS
+    if unknown_core:
+        raise ValidationError(f"Unknown answers.core keys: {', '.join(sorted(unknown_core))}")
     return content
 
 
@@ -216,7 +219,10 @@ def merge_config(existing_config: dict, module_yaml: dict, answers: dict, verbos
 
     core_answers = answers.get("core")
     if core_answers:
-        shared_core = {key: value for key, value in core_answers.items() if key not in _CORE_USER_KEYS}
+        shared_core = {
+            key: value for key, value in core_answers.items()
+            if key in _CORE_KEYS and key not in _CORE_USER_KEYS
+        }
         if shared_core:
             if verbose:
                 print(f"Writing core config at root: {list(shared_core.keys())}", file=sys.stderr)
@@ -594,6 +600,7 @@ def run(args) -> dict:
             reject_alias("--answers", answers_path, "legacy cleanup target", candidate)
 
     answers = load_json_file(args.answers)
+    explicit_core = answers.get("core", {})
     existing_config = load_yaml_file(str(config_path), "config.yaml")
     existing_user_config = load_yaml_file(str(user_config_path), "config.user.yaml")
 
@@ -614,6 +621,13 @@ def run(args) -> dict:
 
     updated_config = merge_config(existing_config, module_yaml, answers, args.verbose)
     user_settings = extract_user_settings(module_yaml, answers)
+    shared_fallbacks = dict(existing_config)
+    if isinstance(existing_config.get("core"), dict):
+        shared_fallbacks.update(existing_config["core"])
+    for key in _CORE_USER_KEYS:
+        for source in (shared_fallbacks, answers.get("core", {}), existing_user_config, explicit_core):
+            if key in source:
+                user_settings[key] = source[key]
     updated_user_config = dict(existing_user_config)
     updated_user_config.update(user_settings)
 

@@ -1209,6 +1209,205 @@ def test_transient_artifact_cleanup_failures_are_retried_for_every_copy():
             assert_no_artifacts(root)
 
 
+def test_live_core_answers_cannot_overwrite_module_sections():
+    """Unknown live core keys fail before targets or migration inputs change."""
+    for script in CONFIG_SCRIPTS:
+        for key in ("untouched", "demo", "core", "USER_NAME"):
+            with tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                paths = prepare_config(root)
+                answers = json.loads(paths["answers"].read_text(encoding="utf-8"))
+                answers["core"][key] = {"injected": True}
+                paths["answers"].write_text(json.dumps(answers), encoding="utf-8")
+                watched = [paths["config"], paths["user"], *legacy_files(paths, "config.yaml")]
+                before = [snapshot(path) for path in watched]
+                code, _, stderr = run_cli(script, config_arguments(paths))
+                assert code == 1, (script, key, stderr)
+                assert "answers.core" in stderr, stderr
+                for path, expected in zip(watched, before):
+                    assert_snapshot(path, expected)
+                assert_no_artifacts(root)
+
+
+def test_shared_user_preferences_migrate_with_explicit_answer_precedence():
+    """Shared fallbacks survive migration; existing user values and answers win."""
+    for script in CONFIG_SCRIPTS:
+        for existing_user, imported_legacy in ((False, False), (True, False), (False, True), (True, True)):
+            for explicit in (False, True):
+                with tempfile.TemporaryDirectory() as temporary:
+                    root = Path(temporary)
+                    paths = prepare_config(root, legacy=imported_legacy)
+                    paths["config"].write_text(
+                        "user_name: Root User\ncommunication_language: French\n"
+                        "core:\n  user_name: Nested User\nuntouched:\n  value: keep\n",
+                        encoding="utf-8",
+                    )
+                    if existing_user:
+                        paths["user"].write_text(
+                            "user_name: Personal User\ncommunication_language: Spanish\nretained: keep\n",
+                            encoding="utf-8",
+                        )
+                    else:
+                        paths["user"].unlink()
+                    if imported_legacy:
+                        (paths["legacy"] / "core" / "config.yaml").write_text(
+                            "user_name: Legacy User\ncommunication_language: German\n",
+                            encoding="utf-8",
+                        )
+                    answers = {"module": {}}
+                    if explicit:
+                        answers["core"] = {"user_name": "Explicit User", "communication_language": "English"}
+                    paths["answers"].write_text(json.dumps(answers), encoding="utf-8")
+                    code, stdout, stderr = run_cli(script, config_arguments(paths))
+                    assert code == 0, (script, stdout, stderr)
+                    config = yaml.safe_load(paths["config"].read_text(encoding="utf-8"))
+                    user = yaml.safe_load(paths["user"].read_text(encoding="utf-8"))
+                    fallback_name = "Legacy User" if imported_legacy else "Nested User"
+                    expected_name = "Explicit User" if explicit else ("Personal User" if existing_user else fallback_name)
+                    assert user["user_name"] == expected_name, (script, user)
+                    fallback_language = "German" if imported_legacy else "French"
+                    expected_language = "English" if explicit else ("Spanish" if existing_user else fallback_language)
+                    assert user["communication_language"] == expected_language, user
+                    assert "user_name" not in config and "communication_language" not in config
+                    assert "core" not in config
+                    assert config["untouched"] == {"value": "keep"}
+                    if existing_user:
+                        assert user["retained"] == "keep"
+                    assert_no_artifacts(root)
+
+
+def test_help_columns_are_normalized_and_aligned_by_name():
+    """Legacy and production schemas merge by meaning even when reordered."""
+    canonical = CSV_HEADER.strip().split(",")
+    canonical[8:10] = ["preceded-by", "followed-by"]
+    for script in HELP_SCRIPTS:
+        for source_legacy, target_legacy in ((False, True), (True, False), (True, True), (False, False)):
+            with tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                paths = prepare_help(root)
+                expected_rows = {}
+                for name, legacy, reverse in (("source", source_legacy, True), ("target", target_legacy, True)):
+                    rows = list(csv.reader(paths[name].read_text(encoding="utf-8").splitlines()))
+                    header = canonical.copy()
+                    if legacy:
+                        header[8:10] = ["after", "before"]
+                    for row in rows[1:]:
+                        row[2:] = [row[1] + ":" + column for column in canonical[2:]]
+                        row[8:10] = [row[1] + ":prerequisite", row[1] + ":successor"]
+                        expected_rows[row[1]] = dict(zip(canonical, row))
+                    if reverse:
+                        header.reverse()
+                        rows[1:] = [list(reversed(row)) for row in rows[1:]]
+                    paths[name].write_text(render_fixture_csv(header, rows[1:]), encoding="utf-8")
+                code, stdout, stderr = run_cli(script, help_arguments(paths))
+                assert code == 0, (script, stdout, stderr)
+                with paths["target"].open(newline="", encoding="utf-8") as stream:
+                    reader = csv.DictReader(stream)
+                    merged = list(reader)
+                    assert reader.fieldnames == canonical, (script, reader.fieldnames)
+                assert [row["skill"] for row in merged] == ["other", "demo-setup"]
+                for row in merged:
+                    assert row == expected_rows[row["skill"]], (script, row)
+                    assert row["preceded-by"] == row["skill"] + ":prerequisite", row
+                    assert row["followed-by"] == row["skill"] + ":successor", row
+                assert all(not path.exists() for path in legacy_files(paths, "module-help.csv"))
+                assert_no_artifacts(root)
+
+
+def test_migrated_user_preferences_roll_back_when_user_publication_fails():
+    """Root-only preferences stay in the shared file if the pair cannot commit."""
+    for script in CONFIG_SCRIPTS:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            paths = prepare_config(root, legacy=False)
+            paths["answers"].write_text('{"module": {}}', encoding="utf-8")
+            paths["user"].unlink()
+            shared_before = snapshot(paths["config"])
+            module = load_module(script)
+            real_replace = module.os.replace
+            injected = False
+
+            def fail_user_replace(source, destination):
+                nonlocal injected
+                if not injected and Path(destination) == paths["user"]:
+                    injected = True
+                    raise OSError("injected user migration publication failure")
+                return real_replace(source, destination)
+
+            module.os.replace = fail_user_replace
+            try:
+                code, _, _ = invoke_main(module, config_arguments(paths))
+            finally:
+                module.os.replace = real_replace
+            assert injected, script
+            assert code == 2, script
+            assert_snapshot(paths["config"], shared_before)
+            assert not paths["user"].exists()
+            assert_no_artifacts(root)
+
+
+def render_fixture_csv(header: list[str], rows: list[list[str]]) -> str:
+    """Serialize fixture rows without treating quoted commas as delimiters."""
+    stream = io.StringIO(newline="")
+    writer = csv.writer(stream)
+    writer.writerow(header)
+    writer.writerows(rows)
+    return stream.getvalue()
+
+
+def test_malformed_csv_quoting_preserves_output_and_legacy_inputs():
+    """Unclosed quotes and trailing text after a closing quote fail before writes."""
+    for script in HELP_SCRIPTS:
+        for name in ("source", "target"):
+            for outputs in ('"unclosed', '"quoted"garbage'):
+                with tempfile.TemporaryDirectory() as temporary:
+                    root = Path(temporary)
+                    paths = prepare_help(root)
+                    paths[name].write_text(
+                        CSV_HEADER + 'demo,demo-setup,Setup Demo,SD,Setup,configure,,anytime,,,false,out,' + outputs + '\n',
+                        encoding="utf-8",
+                    )
+                    watched = [paths["target"], *legacy_files(paths, "module-help.csv")]
+                    before = [snapshot(path) for path in watched]
+                    code, _, stderr = run_cli(script, help_arguments(paths))
+                    assert code == 1, (script, name, outputs, stderr)
+                    assert "Could not parse CSV" in stderr
+                    for path, expected in zip(watched, before):
+                        assert_snapshot(path, expected)
+                    assert_no_artifacts(root)
+
+
+def test_malformed_help_schemas_fail_before_publication_or_cleanup():
+    """Ambiguous columns, missing fields and malformed rows never mutate state."""
+    for script in HELP_SCRIPTS:
+        for name in ("source", "target"):
+            for defect in ("duplicate", "alias-collision", "missing", "unknown", "short-row", "long-row"):
+                with tempfile.TemporaryDirectory() as temporary:
+                    root = Path(temporary)
+                    paths = prepare_help(root)
+                    rows = list(csv.reader(paths[name].read_text(encoding="utf-8").splitlines()))
+                    if defect == "duplicate":
+                        rows[0][9] = "after"
+                    elif defect == "alias-collision":
+                        rows[0][9] = "preceded-by"
+                    elif defect == "missing":
+                        rows = [row[:-1] for row in rows]
+                    elif defect == "unknown":
+                        rows[0][-1] = "unknown"
+                    elif defect == "short-row":
+                        rows[1] = rows[1][:-1]
+                    else:
+                        rows[1].append("extra")
+                    paths[name].write_text(render_fixture_csv(rows[0], rows[1:]), encoding="utf-8")
+                    watched = [paths["target"], *legacy_files(paths, "module-help.csv")]
+                    before = [snapshot(path) for path in watched]
+                    code, _, stderr = run_cli(script, help_arguments(paths))
+                    assert code == 1, (script, name, defect, stderr)
+                    for path, expected in zip(watched, before):
+                        assert_snapshot(path, expected)
+                    assert_no_artifacts(root)
+
+
 def test_all_entry_points_and_manifest_rows_are_exact_and_unique():
     """All scripts/tests stay byte-identical and the manifest hashes every logical asset once."""
     synchronized_groups = [CONFIG_SCRIPTS, HELP_SCRIPTS, TEST_COPIES]
@@ -1281,6 +1480,12 @@ if __name__ == "__main__":
         test_injected_publication_failures_restore_absent_targets_for_every_copy,
         test_one_shot_rollback_failures_are_retried_and_verified_for_every_copy,
         test_transient_artifact_cleanup_failures_are_retried_for_every_copy,
+        test_live_core_answers_cannot_overwrite_module_sections,
+        test_shared_user_preferences_migrate_with_explicit_answer_precedence,
+        test_migrated_user_preferences_roll_back_when_user_publication_fails,
+        test_help_columns_are_normalized_and_aligned_by_name,
+        test_malformed_csv_quoting_preserves_output_and_legacy_inputs,
+        test_malformed_help_schemas_fail_before_publication_or_cleanup,
         test_all_entry_points_and_manifest_rows_are_exact_and_unique,
         test_ci_runs_canonical_suite_as_blocking_no_bytecode_gate,
     ]

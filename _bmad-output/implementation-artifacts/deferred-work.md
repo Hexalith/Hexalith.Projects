@@ -365,8 +365,10 @@ location: n/a
 source_spec: `spec-legacy-cleanup-path-safety.md`
 severity: low
 reason: The follow-up-review damping cap (limits.max_followup_reviews = 1) was spent with the story finalized (status: done, verify green) while the review pass still recommended an independent follow-up. The work was committed by bmad-loop run 20260825-081747-f4a1; this entry preserves the lingering recommendation for a deliberate later review.
-status: open
+status: done 2026-10-23
 decision: 2026-08-27 Run bounded follow-up — Run exactly one independent review over the synchronized cleanup scripts and tests, patch only newly substantiated in-scope defects, and preserve DW-36 as separately tracked work.
+resolution: spec-five-deferred-bmad-integrity-items.md; Exactly one dedicated independent follow-up identified four vendor-update regressions. Restored direct-child target validation, live migration protection, mandatory safe external SKILL.md replacements, and guarded JSON/exit-2 inspection failures across all six scripts. Restored eleven safety tests alongside eleven existing quarantine/CI/synchronization tests and added low-level filesystem-error preservation controls; final canonical suite passed 23/23. Explicit stat/lstat and scandir operations prevent Python predicate/traversal error suppression from bypassing guards. Current quarantine transaction behavior is preserved; DW-36 remains separately open.
+
 
 ### DW-39: Existing-generation verification follows symlinked output files, so matching external bytes can satisfy an immutable snapshot check.
 origin: spec-deferred bfaafa1248ab
@@ -731,18 +733,30 @@ status: open
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Allowlist live `answers.core` keys the same way legacy import allowlists `_CORE_KEYS`.
   evidence: `merge_config` still writes every non-user core answer onto the shared root, so a crafted answers file can overwrite another module section. This is preserved vendor success behavior, not an atomicity regression.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-bmad-integrity-items.md; Live answers are validated against the established core key set before publication, and shared-core merging also filters that set. Across all nine script copies, unknown/module-shaped keys return exit 1 with byte/mode preservation of both outputs and legacy inputs.
+
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Reconcile help-CSV `HEADER` (`after`/`before`) with production `preceded-by`/`followed-by` columns.
   evidence: `render_csv` keeps the target header and appends source rows, so a real asset merge can produce mixed column shapes. The vendor document shape was preserved by this story.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-bmad-integrity-items.md; All nine help merger copies normalize legacy aliases to the production header, align reordered rows by column name before identity/filtering, and reject missing, duplicate, alias-colliding, unknown or malformed schemas before publication and cleanup. The blocking merge suite covers both schema generations and preservation controls.
+
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Copy root `user_name` / `communication_language` into `config.user.yaml` when they are stripped from `config.yaml`.
   evidence: `extract_user_settings` only reads answers, so an existing shared file can lose those values on a successful pair publish. Same vendor behavior as before this story.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-bmad-integrity-items.md; Existing shared root/nested core user preferences migrate through coordinated pair publication. Explicit answers override existing user config, which overrides legacy/shared fallbacks; unrelated user settings survive. All nine copies have absent/existing-user, explicit-answer and failed-user-publication rollback controls.
+
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-ci-cd-2.md`
   summary: Harden manual release publication and exact GitHub/NuGet post-publication verification.
   evidence: Split at human request because release planning, frozen/no-op routing, duplicate preflight, strict publication, and public verification are independently shippable after package-only CI and candidate validation; exact-green-source gating keeps release blocked meanwhile.
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-fix-ci-cd-2.md`
   summary: Narrow the BMad spec and sprint-planning persistent-context overrides to the Projects root context file.
   evidence: The current `**/project-context.md` glob also matches eight sibling contexts under `references/`, which can inject contradictory planning facts; review policy defers fixes to agent-context configuration.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-bmad-integrity-items.md; Both overrides now select only file:{project-root}/_bmad-output/project-context.md. A real renderer fixture uses each checked-in override with synthetic root and sibling contexts and proves that only the root context is selected.
+
 - source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-cd-run-release-verify-nuget-publication.md`
   summary: Make the Folders generated redaction contract distinguish an omitted member from the explicit `Not_redacted` value in source-reference builds.
   evidence: Both the current source client and official `Hexalith.Folders.Client` `1.0.0` package generate a non-nullable enum whose zero value is `Not_redacted`, so omitted JSON defaults to an accepted value and presence cannot be recovered after deserialization. An explicit `redacted` wire value fails generated-client deserialization and the Projects adapter denies it; the remaining omission ambiguity requires an owning Folders contract change.
