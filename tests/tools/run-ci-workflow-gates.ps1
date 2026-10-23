@@ -228,6 +228,23 @@ if (-not $workflowGatesMatch.Success) {
 }
 else {
     $workflowGates = $workflowGatesMatch.Value
+    $workflowGateSteps = @(Get-NamedStepBlocks -JobText $workflowGates)
+    $workflowFixtureStep = Get-RequiredNamedStep -Steps $workflowGateSteps -Name 'Validate workflow policy regression fixtures' -Owner 'workflow-gates'
+    if ($null -ne $workflowFixtureStep) {
+        $expectedWorkflowFixtureStep = @(
+            '      - name: Validate workflow policy regression fixtures'
+            '        env:'
+            '          PYTHONDONTWRITEBYTECODE: ''1'''
+            '        run: python3 -m unittest tests/tools/test_run_ci_workflow_gates.py -v'
+        ) -join "`n"
+        if ((Get-TrimmedBlockText -Text $workflowFixtureStep.Text) -cne $expectedWorkflowFixtureStep) {
+            $failures.Add('The workflow policy regression fixtures must be an exact blocking name/env/run step with bytecode disabled.')
+        }
+        $ciInvariantStep = Get-RequiredNamedStep -Steps $workflowGateSteps -Name 'Validate CI/CD invariants' -Owner 'workflow-gates'
+        if ($null -ne $ciInvariantStep -and $workflowFixtureStep.Index -ge $ciInvariantStep.Index) {
+            $failures.Add('The workflow policy regression fixtures must run before CI/CD invariant validation.')
+        }
+    }
     $rendererStepMatches = [regex]::Matches(
         $workflowGates,
         '(?ms)^      - name: Validate shared skill renderer\r?\n.*?(?=^      - |\z)'
@@ -655,6 +672,11 @@ $expectedWorkflowGatesJob = (@'
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest tests/tools/test_run_g6_ci_gate.py -v
 
+      - name: Validate workflow policy regression fixtures
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest tests/tools/test_run_ci_workflow_gates.py -v
+
       - name: Validate CI/CD invariants
         shell: pwsh
         run: ./tests/tools/run-ci-workflow-gates.ps1
@@ -752,12 +774,13 @@ else {
 Forbid-Match $ci '(?m)^  g6-(?:candidate|acceptance):' 'Historical G-6 packet jobs must not gate current CI.'
 Forbid-Match $ci 'allow_stale_g6|ALLOW_STALE_G6' 'CI must not contain a stale G-6 bypass.'
 
-Require-Match $ci ('uses:\s*Hexalith/Hexalith\.Builds/\.github/workflows/domain-ci\.yml@' + $buildsExecutionSha) 'CI must call the accepted package-aware domain-ci workflow SHA.'
+# This checks direct ci.yml references only; it does not traverse Builds callees.
+Require-Match $ci ('uses:\s*Hexalith/Hexalith\.Builds/\.github/workflows/domain-ci\.yml@' + $buildsExecutionSha) 'The direct ci.yml domain-ci reference must use the accepted package-aware workflow SHA.'
 Require-Match $ci '(?ms)^  ci:\r?\n\s+needs:\s*workflow-gates\r?\n\s+uses:' 'The reusable restore/build job must wait for independent workflow and package fixtures.'
-Forbid-Match $ci 'uses:\s*Hexalith/Hexalith\.Builds/.+@main' 'CI must not execute mutable Hexalith.Builds actions or workflows.'
+Forbid-Match $ci 'uses:\s*Hexalith/Hexalith\.Builds/.+@main' 'Direct ci.yml references must not select mutable Hexalith.Builds actions or workflows.'
 foreach ($buildsCall in [regex]::Matches($ci, 'uses:\s*Hexalith/Hexalith\.Builds/[^\s]+@([^\s#]+)')) {
     if ($buildsCall.Groups[1].Value -cne $buildsExecutionSha) {
-        $failures.Add("CI executes Hexalith.Builds at '$($buildsCall.Groups[1].Value)' instead of '$buildsExecutionSha'.")
+        $failures.Add("Direct ci.yml reference executes Hexalith.Builds at '$($buildsCall.Groups[1].Value)' instead of '$buildsExecutionSha'.")
     }
 }
 Require-Match $ci '^\s*test-platform:\s*microsoft-testing-platform\s*$' 'CI must explicitly select Microsoft.Testing.Platform.'
@@ -929,6 +952,43 @@ foreach ($packageId in @('Hexalith.Conversations.Client', 'Hexalith.Conversation
     }
 }
 
+# MSBuild property names and environment imports are case-insensitive. Reject
+# declarations even under conditions so catalog ownership cannot vary by lane.
+foreach ($versionProperty in @('HexalithConversationsVersion', 'HexalithFoldersVersion')) {
+    foreach ($props in @(
+        @{ Name = 'Directory.Build.props'; Xml = $directoryBuildPropsXml },
+        @{ Name = 'Directory.Packages.props'; Xml = $directoryPackagesXml }
+    )) {
+        $declarations = @($props.Xml.SelectNodes('//*[local-name()="PropertyGroup"]/*') |
+            Where-Object { $_.LocalName -ieq $versionProperty })
+        if ($declarations.Count -gt 0) {
+            $failures.Add("$versionProperty must remain owned by the Hexalith.Builds package catalog; $($props.Name) declares it.")
+        }
+    }
+    $propertyPattern = [regex]::Escape($versionProperty)
+    $assignmentPatterns = @(
+        # YAML environment keys, including quoted and inline mapping keys.
+        ('(?im)^(?:\s*|[^\r\n#]*[,{]\s*)[''"]?' + $propertyPattern + '[''"]?\s*:'),
+        # Literal MSBuild switches and semicolon-separated property lists.
+        ('(?im)^[^\r\n#]*(?:--property:|[-/](?:p|property):)[^\r\n#]*\b' + $propertyPattern + '\s*='),
+        # Shell assignment commands and PowerShell environment drives.
+        ('(?im)^\s*(?:run:\s*)?(?:export\s+|env\s+)?[''"]?' + $propertyPattern + '='),
+        ('(?im)^\s*(?:run:\s*)?\$env:' + $propertyPattern + '\s*='),
+        ('(?im)^\s*(?:run:\s*)?(?:Set-Item|New-Item|Set-Content)\s+(?:(?:-Path|-LiteralPath)\s+)?[''"]?Env:' + $propertyPattern + '(?:[''"]|\s)'),
+        ('(?im)^\s*(?:run:\s*)?\[(?:System\.)?Environment\]::SetEnvironmentVariable\(\s*[''"]' + $propertyPattern + '[''"]'),
+        # GitHub's environment-file protocol accepts both NAME=value and NAME<<delimiter.
+        ('(?im)^[^\r\n#]*\b' + $propertyPattern + '[''"]?\s*(?:=|<<)[^\r\n#]*\bGITHUB_ENV\b')
+    )
+    if (@($assignmentPatterns | Where-Object { [regex]::IsMatch($activeWorkflowText, $_) }).Count -gt 0) {
+        $failures.Add("$versionProperty must remain owned by the Hexalith.Builds package catalog; an active workflow assigns it.")
+    }
+    foreach ($entry in [Environment]::GetEnvironmentVariables().GetEnumerator()) {
+        if ($entry.Key -ieq $versionProperty -and -not [string]::IsNullOrEmpty($entry.Value)) {
+            $failures.Add("$versionProperty must remain owned by the Hexalith.Builds package catalog; the inherited environment overrides it.")
+        }
+    }
+}
+
 $projectFiles = Get-ChildItem -Path $repositoryRoot -Recurse -Filter '*.csproj' -File |
     Where-Object { $_.FullName -notmatch '[\\/]references[\\/]' }
 foreach ($projectFile in $projectFiles) {
@@ -1001,7 +1061,7 @@ foreach ($workflowFile in $workflowFiles) {
 
 if ($failures.Count -gt 0) {
     foreach ($failure in $failures) {
-        Write-Error "ci-workflow-gate: $failure"
+        [Console]::Error.WriteLine("ci-workflow-gate: $failure")
     }
 
     exit 1

@@ -25,7 +25,7 @@ import run_g6_qualification as historical
 ROOT = historical.ROOT
 EVENTSTORE = historical.EVENTSTORE
 BUILDS = historical.BUILDS
-POLICY = BUILDS / "Tools/g6-current-policy.json"
+POLICY = BUILDS / "Tools/g6-current-policy-2026-10-20.json"
 AUDITOR = BUILDS / "Tools/g6_current.py"
 DEFAULT_OUTPUT = ROOT / ".g6-current-evidence/current"
 CURRENT_API = historical.module("g6_compact_validator", AUDITOR)

@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-POLICY = Path("references/Hexalith.Builds/Tools/g6-current-policy.json")
+POLICY = Path("references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json")
 AUDITOR = Path("references/Hexalith.Builds/Tools/g6_current.py")
 RUNNER = Path("tools/qualification/run_g6_current.py")
 import re
@@ -29,7 +29,7 @@ def builds_execution_pins() -> list[str]:
                        if not line.lstrip().startswith("#"))
     pins = sorted({entry["sha"] for entry in BUILDS_REFERENCE.finditer(active)})
     if len(pins) != 1 or not SHA.fullmatch(pins[0]):
-        raise RuntimeError("CI must use one immutable Builds execution SHA")
+        raise RuntimeError("Direct ci.yml references must use one immutable Builds execution SHA")
     return pins
 
 

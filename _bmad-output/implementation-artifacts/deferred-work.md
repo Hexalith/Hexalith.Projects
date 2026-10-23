@@ -840,6 +840,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Make the Builds execution-SHA check follow nested Builds action refs, or narrow its message to direct `ci.yml` references.
   evidence: `domain-ci.yml` pins `dapr-init@410bd595…`, which is neither the gitlink nor bound; latent while byte-identical (review R5-BH-06).
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-ci-qualification-items.md; The historical candidate gate, PowerShell gate and CI wrapper now explicitly limit their Builds execution-SHA diagnostics to direct workflow references; a mismatched direct immutable SHA is rejected by the executable fixture. No transitive identity claim is made.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: At the next G-6 recapture, tighten `test_g6_packet_references.py` (exact replaced-hash and gitlink matches, fixtures, an accepted-status case) and add expected-repository-set and argument assertions to the G-6 gate tests.
   evidence: These packet-bound files accept loose matches and never exercise the accepted branch (review R5-BH-09/11, R5-VG-02).
@@ -961,14 +963,20 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-gate-catalog-pins.md`
   summary: The CI workflow gate does not stop the root from overriding the catalog's `HexalithConversationsVersion`/`HexalithFoldersVersion` version-set properties.
   evidence: `references/Hexalith.Builds/Props/Directory.Packages.props` sets both properties to `1.0.0` only when they are empty. Setting either one in root `Directory.Packages.props`, in `Directory.Build.props`, through a CI `-p:` switch, or through an environment variable changes the whole set without touching any `PackageVersion`, and `run-ci-workflow-gates.ps1` passes. This predates the fix, which deliberately scoped itself to root `PackageVersion` declarations.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-ci-qualification-items.md; The gate rejects case-insensitive declarations directly in both root props files (including namespaced MSBuild XML), literal workflow environment/MSBuild assignments, and inherited environment overrides. Imported props closure and dynamic script evaluation are outside this static check. Hermetic positive and negative fixtures execute the real gate without initialized submodules.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-gate-catalog-pins.md`
   summary: `run-ci-workflow-gates.ps1` reports only its first collected failure.
   evidence: The script sets `$ErrorActionPreference = 'Stop'`, and its final reporting loop calls `Write-Error` once per failure. The first `Write-Error` therefore ends the script, and the CI log shows one failure even when several exist. On 2026-10-06, a copy that printed every failure listed 4 Conversations/Folders pin failures, while CI printed only the first. Fix: print every failure, then `exit 1`.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-ci-qualification-items.md; Console stderr reporting prints every collected diagnostic before exit 1; a four-package simultaneous-violation fixture verifies all four messages.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-fix-ci-gate-catalog-pins.md`
   summary: `run-ci-workflow-gates.ps1` has no regression test; its negative cases are checked by hand in scratch copies.
   evidence: No `tests/tools/test_*.py` drives this gate, although `test_release_package_tools.py` shows the pwsh-from-unittest pattern. The 10 Directory.Packages.props mutation cases from the catalog-pin fix, and every other gate invariant, can regress silently on the next gate edit. The live-apphost spec already plans gate edits.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-ci-qualification-items.md; tests/tools/test_run_ci_workflow_gates.py runs the actual PowerShell gate against temporary checkout fixtures for catalog imports/items/properties, workflow and environment overrides, complete reporting, direct SHA drift and existing safety invariants. CI runs it as a blocking step, guarded against removal and weakening.
 
 - source_spec: `references/Hexalith.EventStore/_bmad-output/implementation-artifacts/spec-6-1-p1r-31190-requalification.md`
   summary: P1R published-executor restore receipts bind recovery steps to `self.commands[-1]`, so the `create-database` and `backup` steps cite the wrong command.
@@ -1071,6 +1079,8 @@ status: open
 - source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Reconcile G-6 CLI default policy with the approved current workflow selection.
   evidence: NH-B8; runner and CI gate defaults still use g6-current-policy.json while the workflows explicitly select the dated policy. Preflight fails closed, but the historical default path targets the older tuple; this predates the native metadata source slice.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-ci-qualification-items.md; Both Python entry points now default to g6-current-policy-2026-10-20.json; the runbook agrees. Behavioral fixtures prove default and explicit policy forwarding. This is the same obligation as the later October 20 defaults entry and grants no qualification acceptance.
 
 - source_spec: `spec-6-4-prerequisite-current-authorized-resolution-evidence.md`
   summary: Reconcile the P0 handoff's approved continuation with its older missing-approval paragraph.
@@ -1097,6 +1107,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
   summary: Align the default G-6 runner, CI wrapper and topology runbook with the current October 20 qualification policy.
   evidence: Final BH2 verified that tools/qualification/run_g6_current.py and docs/runbooks/projects-topology.md default to g6-current-policy.json (SDK 10.0.401/Aspire 13.6.0), while the checkout uses SDK 10.0.402 and CI explicitly selects g6-current-policy-2026-10-20.json. The same runner default exists at the original Story 6.4 baseline; this is independent qualification-tooling work.
+  status: resolved
+  resolution: 2026-10-23; spec-five-deferred-ci-qualification-items.md; Both runner defaults and documented validation commands select g6-current-policy-2026-10-20.json, matching CI/release. Behavioral fixtures cover default and explicit policy forwarding; historical evidence and acceptance state remain unchanged. Also closes the earlier NH-B8 description of this same defect.
 
 ## Deferred from: code review of spec-6-4-resolve-projects-with-transient-current-explanations.md (2026-10-22)
 
@@ -1116,3 +1128,7 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-dw-39-43-renderer-snapshot-hardening.md`
   summary: Make existing-snapshot verification resistant to concurrent substitutions between structural checks and byte reads.
   evidence: Independent review and a deterministic temporary reproduction replaced guide.md with a matching external symlink during manifest.read_text, after rglob/lstat; _verify_existing still succeeded. This pre-existing concurrent-writer limitation requires separately scoped descriptor-based traversal and reads, while DW-39 rejects links already present at verification preflight.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-five-deferred-ci-qualification-items.md`
+  summary: Extend catalog property ownership validation to the effective local props import closure.
+  evidence: Independent review reproduced a pre-existing bypass: root Directory.Build.props imports override.props, which declares HexalithFoldersVersion=9.9.9; the static direct-file gate passes while dotnet msbuild reports 9.9.9. This slice checks direct root declarations and literal workflow/environment inputs without initializing submodules; import evaluation needs a separately bounded resolver or an effective-MSBuild gate.

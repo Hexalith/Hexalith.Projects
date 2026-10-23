@@ -24,6 +24,47 @@ POLICY = {"materialFiles": ["global.json", "references/Hexalith.Builds/Props/Dir
 
 
 class G6ChangeSelectionTests(unittest.TestCase):
+    def test_default_and_explicit_policy_reach_audit_runner_and_validation(self) -> None:
+        project_root = GATE.ROOT
+        policy_relative = Path("references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json")
+        with tempfile.TemporaryDirectory() as temporary, patch.object(GATE, "ROOT", Path(temporary)):
+            root = Path(temporary)
+            selected_policy = root / policy_relative
+            selected_policy.parent.mkdir(parents=True)
+            selected_policy.write_text(json.dumps(POLICY), encoding="utf-8")
+            custom_policy = root / "policy.json"
+            custom_policy.write_text(json.dumps(POLICY), encoding="utf-8")
+            for name, arguments, expected in (
+                ("default", [], selected_policy),
+                ("explicit", ["--policy", str(custom_policy.relative_to(GATE.ROOT))], custom_policy),
+            ):
+                with self.subTest(name=name):
+                    calls = []
+
+                    def fake_run(command, **_kwargs):
+                        calls.append(command)
+                        if "audit" in command:
+                            Path(command[command.index("--out") + 1]).write_text(json.dumps({
+                                "source": {}, "materialInputs": {"fingerprint": "a" * 64},
+                                "tupleApproved": True, "issues": [],
+                            }), encoding="utf-8")
+                        return subprocess.CompletedProcess(command, 0)
+
+                    with patch.object(GATE, "builds_execution_pins", return_value=["b" * 40]), \
+                         patch.object(GATE, "selection", return_value=(True, "controlled material change")), \
+                         patch.object(GATE.subprocess, "run", side_effect=fake_run):
+                        result = GATE.main(["--event", "push", "--output", str(root / name), *arguments])
+                    self.assertEqual(0, result)
+                    self.assertEqual(3, len(calls))
+                    self.assertEqual("audit", calls[0][2])
+                    self.assertEqual(str(GATE.ROOT / GATE.RUNNER), calls[1][1])
+                    self.assertEqual("validate", calls[2][2])
+                    for command in calls:
+                        self.assertEqual(str(expected), command[command.index("--policy") + 1])
+            for workflow_name in ("ci.yml", "release.yml"):
+                workflow = (project_root / ".github/workflows" / workflow_name).read_text()
+                self.assertIn("--policy " + policy_relative.as_posix(), workflow)
+
     def select(self, changed: str, event: str = "push", base: str = BASE) -> tuple[bool, str]:
         def fake_git(*arguments):
             if arguments[0] == "cat-file":

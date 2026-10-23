@@ -115,7 +115,7 @@ class StatusAwareGateTests(unittest.TestCase):
         self.assertEqual("--candidate", calls[0][-1])
         self.assertIn("packet status pending; candidate mode exited 0: G6-EVIDENCE-CANDIDATE-VALID", stdout)
         self.assertIn("G6-PACKET-GITLINKS-EXACT: 2 submodule revisions equal their root gitlinks", stdout)
-        self.assertIn(f"G6-BUILDS-EXECUTION-SHA-EXACT: CI executes Hexalith.Builds at the root gitlink {BUILDS_REVISION}", stdout)
+        self.assertIn(f"G6-BUILDS-EXECUTION-SHA-EXACT: direct references in {self.workspace / GATE.WORKFLOW} select Hexalith.Builds at the root gitlink {BUILDS_REVISION}", stdout)
         self.assertIn("G6-GATE-PASSED", stdout)
 
     def test_accepted_packet_runs_the_accepted_only_validator(self) -> None:
@@ -174,7 +174,7 @@ class StatusAwareGateTests(unittest.TestCase):
         exit_code, _, stderr = self.run_gate()
 
         self.assertEqual(1, exit_code)
-        self.assertIn(f"CI executes Hexalith.Builds '{'4' * 40}' but the root Hexalith.Builds gitlink is '{BUILDS_REVISION}'", stderr)
+        self.assertIn(f"direct references in {self.workspace / GATE.WORKFLOW} select Hexalith.Builds '{'4' * 40}' but the root Hexalith.Builds gitlink is '{BUILDS_REVISION}'", stderr)
 
     def test_two_builds_execution_shas_fail(self) -> None:
         self.write_workflow(BUILDS_REVISION, "5" * 40)
@@ -182,7 +182,7 @@ class StatusAwareGateTests(unittest.TestCase):
         exit_code, _, stderr = self.run_gate()
 
         self.assertEqual(1, exit_code)
-        self.assertIn("must execute Hexalith.Builds at exactly one SHA", stderr)
+        self.assertIn("must select Hexalith.Builds at exactly one SHA", stderr)
 
     def test_commented_builds_reference_is_ignored(self) -> None:
         self.write_workflow(BUILDS_REVISION, BUILDS_REVISION,
@@ -198,7 +198,17 @@ class StatusAwareGateTests(unittest.TestCase):
         exit_code, _, stderr = self.run_gate()
 
         self.assertEqual(1, exit_code)
-        self.assertIn("must execute Hexalith.Builds at exactly one SHA; found []", stderr)
+        self.assertIn("must select Hexalith.Builds at exactly one SHA; found []", stderr)
+
+    def test_nested_reference_is_outside_the_reported_direct_reference_scope(self) -> None:
+        action = self.workspace / "references/Hexalith.Builds/Github/initialize-build/action.yml"
+        action.parent.mkdir(parents=True)
+        action.write_text("runs:\n  using: composite\n  steps:\n"
+                          "    - uses: Hexalith/Hexalith.Builds/Github/dapr-init@" + "9" * 40 + "\n")
+        exit_code, stdout, stderr = self.run_gate()
+        self.assertEqual(0, exit_code, stderr)
+        self.assertIn(f"direct references in {self.workspace / GATE.WORKFLOW}", stdout)
+        self.assertIn("direct-workflow Builds execution SHA", stdout)
 
 
 if __name__ == "__main__":

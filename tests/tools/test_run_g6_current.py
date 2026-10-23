@@ -21,6 +21,25 @@ SPEC.loader.exec_module(RUNNER)
 
 
 class CurrentRunnerPreflightTests(unittest.TestCase):
+    def test_default_policy_matches_ci_and_explicit_override_is_preserved(self) -> None:
+        selected_policy = ROOT / "references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json"
+        (ROOT / ".g6-current-evidence").mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=ROOT / ".g6-current-evidence") as temporary:
+            root = Path(temporary)
+            custom_policy = root / "custom-policy.json"
+            custom_policy.write_text("{}", encoding="utf-8")
+            for name, policy_arguments, expected in (
+                ("default", [], selected_policy),
+                ("explicit", ["--policy", str(custom_policy)], custom_policy),
+            ):
+                with self.subTest(name=name), \
+                     patch.object(RUNNER, "audit", side_effect=RuntimeError("controlled audit stop")) as audit, \
+                     patch.object(RUNNER.historical, "Qualification") as qualification:
+                    with self.assertRaisesRegex(RuntimeError, "controlled audit stop"):
+                        RUNNER.main(["--output", str(root / name), *policy_arguments])
+                    self.assertEqual(expected.resolve(), audit.call_args.args[1])
+                    qualification.assert_not_called()
+
     def test_mismatched_tuple_retains_not_verified_without_starting_resources(self) -> None:
         (ROOT / ".g6-current-evidence").mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(dir=ROOT / ".g6-current-evidence") as temporary:

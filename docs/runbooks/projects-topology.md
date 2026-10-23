@@ -50,9 +50,11 @@ missing, fetch only the required root-level submodule or repository according to
 ## Current G-6 qualification
 
 G-6 now audits the effective versions and resolved consumer packages against
-`references/Hexalith.Builds/Tools/g6-current-policy.json`. The current Toolkit
-preview `13.6.0-preview.1.261001-0243` needs its own named tuple decision and
-live qualification. Historical attempt 16 accepted Toolkit
+`references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json`. Both the
+local runner and CI wrapper default to this October 20 policy: SDK `10.0.402`,
+Aspire `13.6.1` and Toolkit `13.6.1-beta.935`. Its approval covers tuple selection
+and execution preparation; qualification-result acceptance is a separate decision.
+Historical attempt 16 accepted Toolkit
 `13.6.0-beta.910` at `2026-10-01T14:58:12Z` on reviewed packet SHA-256
 `b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139`;
 that acceptance remains valid only for its recorded scope.
@@ -62,7 +64,7 @@ run `python3 tools/qualification/run_g6_current.py --output .g6-current-evidence
 The runner writes a compact `result.json`, the current tuple/material audit,
 sanitized OQ8 capture files, command logs, and isolated cleanup receipt. It
 never overwrites an existing result. Check the result with
-`python3 references/Hexalith.Builds/Tools/g6_current.py validate --workspace . --policy references/Hexalith.Builds/Tools/g6-current-policy.json --evidence .g6-current-evidence/<new-run>/result.json`.
+`python3 references/Hexalith.Builds/Tools/g6_current.py validate --workspace . --policy references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json --evidence .g6-current-evidence/<new-run>/result.json`.
 Pass `--release` to require the exact root SHA and gitlinks. Release itself
 runs this focused proof anew on its checked-out source. CI audits the tuple and
 resolved graph on every event. It runs the live proof for changed material

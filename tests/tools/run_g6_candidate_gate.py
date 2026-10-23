@@ -6,8 +6,9 @@
    script, ci.yml, the workflow gate, the validator or the baseline) changes.
 2. Every submodule revision the packet binds must equal its root gitlink
    (check_g6_packet_gitlinks.py).
-3. Every Hexalith.Builds workflow or action that ci.yml executes must be pinned to one SHA, and that
-   SHA must equal the root Builds gitlink whose catalog, baseline and validator the packet binds.
+3. Direct Hexalith.Builds references declared in ci.yml must be pinned to one SHA, and that SHA
+   must equal the root Builds gitlink whose catalog, baseline and validator the packet binds.
+   This check does not traverse actions or workflows called by those references.
 
 All three checks run and report, and the gate exits 1 when any of them fails. It runs only in the
 g6-candidate job, which no other job needs, so G-6 drift (a bound file, a submodule gitlink or the
@@ -78,7 +79,7 @@ def check_gitlinks(workspace: Path, packet: Path) -> list[str]:
 
 
 def check_builds_execution_sha(workspace: Path, workflow: Path) -> list[str]:
-    """Require the one executed Hexalith.Builds SHA in the workflow to equal the root Builds gitlink."""
+    """Require direct Builds references in the selected workflow to match the root gitlink."""
     try:
         text = workflow.read_text(encoding="utf-8")
     except OSError as error:
@@ -86,7 +87,7 @@ def check_builds_execution_sha(workspace: Path, workflow: Path) -> list[str]:
     active = "\n".join(line for line in text.splitlines() if not line.lstrip().startswith("#"))
     executed = sorted({match["sha"] for match in BUILDS_REFERENCE.finditer(active)})
     if len(executed) != 1:
-        return [f"G6-BUILDS-EXECUTION-SHA: {workflow} must execute Hexalith.Builds at exactly one SHA; found {executed}"]
+        return [f"G6-BUILDS-EXECUTION-SHA: direct references in {workflow} must select Hexalith.Builds at exactly one SHA; found {executed}"]
     try:
         gitlink = GITLINK_CHECK.root_gitlink(workspace, BUILDS_PATH)
     except GITLINK_CHECK.GitUnavailableError as error:
@@ -94,8 +95,8 @@ def check_builds_execution_sha(workspace: Path, workflow: Path) -> list[str]:
     if gitlink is None:
         return [f"G6-BUILDS-EXECUTION-SHA: {BUILDS_PATH} is not a root gitlink"]
     if executed[0] != gitlink:
-        return [f"G6-BUILDS-EXECUTION-SHA: CI executes Hexalith.Builds '{executed[0]}' but the root Hexalith.Builds gitlink is '{gitlink}'"]
-    print(f"G6-BUILDS-EXECUTION-SHA-EXACT: CI executes Hexalith.Builds at the root gitlink {gitlink}")
+        return [f"G6-BUILDS-EXECUTION-SHA: direct references in {workflow} select Hexalith.Builds '{executed[0]}' but the root Hexalith.Builds gitlink is '{gitlink}'"]
+    print(f"G6-BUILDS-EXECUTION-SHA-EXACT: direct references in {workflow} select Hexalith.Builds at the root gitlink {gitlink}")
     return []
 
 
@@ -121,7 +122,7 @@ def main(arguments: list[str] | None = None) -> int:
     if failures:
         print(f"G6-GATE-FAILED: {len(failures)} G-6 check(s) failed", file=sys.stderr)
         return 1
-    print("G6-GATE-PASSED: validator, packet gitlinks and Builds execution SHA")
+    print("G6-GATE-PASSED: validator, packet gitlinks and direct-workflow Builds execution SHA")
     return 0
 
 
