@@ -757,15 +757,21 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Bind the G-6 limitation files (source closure, AppHost builds, Toolkit resolution, pin audit, control-plane restoration) into the packet hash.
   evidence: The validator's fixed `EXPECTED_ARTIFACT_KINDS` leaves them unbound, so owner acceptance of a packet hash does not cover them (review R2-BH-01).
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-g6-contract-closures.md; Superseded by the existing v2 packet contract: source-state, consumer-audit, apphost-outcomes, resolved-packages, limitations and cleanup artifacts are individually hash-bound; the bound baseline contains pinAudit. New root regression controls reject omitted bindings and changed bytes. Original v1 rules and historical packet bytes remain unchanged; no current qualification is granted.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Let the G-6 command contract record a real managed restart smoke instead of requiring the credential preflight to exit 1.
   evidence: `REQUIRED_COMMAND_EXIT_CODES` forces exit 1, so the 2026-09-29 run unset `TEST_USER_PASSWORD` to comply (review R2-BH-03b).
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-g6-contract-closures.md; Superseded by the existing v2 command contract: the real PostgreSQL two-sidecar stop/restart qualifier must succeed; the old credential preflight is not mandatory. Root controls admit its optional successful record and reject its failure, and reject missing/failed real qualifier records. This verifies contract behavior only; no live smoke or new qualification is claimed.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Record EventStore container image digests, per-platform manifests and signatures in the P1R package evidence.
   evidence: Neither the 3.108.1 nor the 3.109.0 evidence verifies `registry.hexalith.com/eventstore` images (review R2-BH-05).
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Extend G-6 catalog and pin audit to Dapr actor/AspNetCore packages, `Aspire.Hosting` and `HexalithEventStoreVersion`.
   evidence: Only `Dapr.Client`/`Dapr.Workflow` and four other packages are checked; the P1R coordinate itself can drift unnoticed (review R2-BH-09).
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-g6-contract-closures.md; The existing v2 controlled-family inventory covers Dapr.*, Aspire.Hosting* and Hexalith.EventStore*, resolving the EventStore catalog property against the selected baseline coordinate. Independent temporary catalog/project controls now exercise the requested families and reject drift in each. No package pin or Builds source changed.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Align or explicitly exempt the Projects `release.yml` Builds execution SHA from the root Builds gitlink.
   evidence: `release.yml` runs Builds `a07078ad…` while the gitlink and G-6 bindings use another revision (review R2-BH-11/R2-EC-04).
@@ -786,6 +792,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Let the G-6 command contract accept a clean package-exception inventory and check the reason for any required exit-1 preflight.
   evidence: `REQUIRED_COMMAND_EXIT_CODES` requires the inventory to exit 1, so fixing its 14 drifts would invalidate a packet (review R3-BH-10).
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-g6-contract-closures.md; Superseded by the existing v2 all-success command contract: the old failing inventory/preflight requirement is absent. Root controls admit a clean optional inventory and reject exit 1; no tolerated exit-1 preflight remains that would require a reason. Original v1 historical validation stays immutable.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Compile the APIs changed in 3.109.0 (`CommandStatusQueryResponse.EventCount`/`TenantId`, `Contracts.Effects`, `IAggregateActor.ProcessTrustedEffectAsync`) in the EventStore P1R consumer smoke.
   evidence: The consumer compiles only types unchanged since 3.106.0 (review R3-BH-17).
@@ -795,6 +803,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Require a named G-6 decision record (reviewed hash, allowlisted approver, owner roles, date on or after capture) whenever the packet status is `accepted`, and define its `sprint-status.yaml` keys and follow-up fields.
   evidence: A bare status flip turns both G-6 jobs green today; the validator has never checked a decision record (review R5-BH-01/02, R5-EC-10).
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-g6-contract-closures.md; The existing v2 accepted-only validator requires a named allowed accept decision, reviewed pending-packet hash, capture-ordered timestamp, committed closure and usability; packet approval binds baseline owner roles. Root negative controls verify decision and role tampering. The topology runbook defines current_candidate_*, current_accepted_* and current_checkout_* index scopes and supersedes the historical status-flip-only note. Active compact execution qualification is separate. No sprint state, decision or acceptance changed.
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: Audit and bind the Builds `Github/dapr-init/action.yml` defaults, whose runtime falls back to 1.18.0 when callers omit `runtime-version`.
   evidence: The action is outside the 2026-09-29 `pinAudit` and source-state (review R5-BH-05).

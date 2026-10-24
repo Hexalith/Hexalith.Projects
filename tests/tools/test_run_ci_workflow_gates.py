@@ -105,6 +105,26 @@ class WorkflowGateTests(unittest.TestCase):
                      "      - name: FrontComposer inspect gate")
         self.assert_rejected("project-gates must not run any G-6 check")
 
+    def test_deferred_g6_contract_controls_cannot_be_omitted_or_ignored(self) -> None:
+        path = self.root / ".github/workflows/ci.yml"
+        original = path.read_text()
+        command = "          python3 -m unittest tests/tools/test_g6_deferred_contracts.py -v"
+        self.assertEqual(1, original.count(command))
+        replacements = (
+            "", command.replace("python3", "# python3"), command + " || true",
+            "          set +e\n" + command,
+            "          if false; then\n" + command + "\n          fi",
+        )
+        mutations = [original.replace(command, replacement) for replacement in replacements]
+        mutations.append(original.replace(
+            "      - name: Validate current G-6 preflight\n        shell: bash\n",
+            "      - name: Validate current G-6 preflight\n        shell: bash {0}\n"))
+        for mutation in mutations:
+            with self.subTest(mutation=mutation):
+                self.assertNotEqual(original, mutation)
+                path.write_text(mutation)
+                self.assert_rejected("must exercise deferred contract controls as a blocking command")
+
     def test_current_g6_job_must_remain_independent(self) -> None:
         self.replace(".github/workflows/ci.yml",
                      "timeout-minutes: 90\n    needs: workflow-gates",

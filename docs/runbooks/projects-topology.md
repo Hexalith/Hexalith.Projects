@@ -90,6 +90,81 @@ unselected and unqualified; Dapr.Workflow remains unselected. Attempt 16 has
 accepted committed-source closure and exact gitlinks in its retained checkout.
 Current P1R usability and downstream readiness remain unchanged.
 
+### Deferred historical contract closures
+
+The v2 packet contract supersedes five restrictions in the retained v1 validator:
+
+- Every limitation, source-state, consumer-audit, AppHost-outcome, resolved-package
+  and cleanup artifact is hash-bound. The bound baseline contains the pin audit.
+- The real PostgreSQL two-sidecar restart qualifier must pass. The old credential
+  preflight is no longer a required failing command.
+- The package audit covers Dapr actor/AspNetCore packages, Aspire.Hosting packages
+  and the EventStore package coordinate as well as the original package families.
+- An additional clean inventory command may succeed. Every recorded command must
+  succeed; an expected failure cannot qualify a packet.
+- Accepted v2 packets require the allowed named approver's `accept` decision,
+  timestamp on or after capture, and SHA-256 of the reviewed pending representation
+  described below. The baseline approval binds the Builds, Platform and FrontComposer/Web owner
+  roles. A status flip alone cannot grant acceptance or usability.
+
+Run `python3 -m unittest tests/tools/test_g6_deferred_contracts.py -v` after
+initializing the root-declared Builds dependency. It reuses hash-pinned synthetic
+packet fixtures and the actual validators, with independent tampering and drift
+controls. CI runs it in the blocking current G-6 preflight. These fixture results
+verify validation behavior; they grant no live qualification or new acceptance.
+The original v1 rules and historical evidence remain unchanged.
+
+The v2 reviewed hash uses UTF-8 bytes from
+`json.dumps(packet, ensure_ascii=False, indent=2) + "\n"` after setting
+`status="pending"`, `acceptance=None` and `usableAsPrerequisite=False`. Preserve
+field order and the final LF; hashing a minified or CRLF file is different. For
+example, calculate the validator's reviewed hash from a candidate or accepted
+packet without changing it:
+
+```bash
+python3 - /path/to/packet.json <<'PYHASH'
+import hashlib, json, sys
+from pathlib import Path
+packet = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+packet.update(status="pending", acceptance=None, usableAsPrerequisite=False)
+reviewed = (json.dumps(packet, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+print(hashlib.sha256(reviewed).hexdigest())
+PYHASH
+```
+
+For retained v2 acceptance, `qualification_gates.G-6.current_candidate_*` indexes
+its reviewed pending copy; `current_candidate_usable` stays false. The existing
+`current_accepted_packet`, `current_accepted_reviewed_sha256`,
+`current_accepted_packet_sha256`, `current_accepted_at_utc`, `current_accepted_by`
+and `current_accepted_acceptance_record` keys describe the separately accepted
+historical packet and its exact scope. The `current_checkout_*` fields describe
+separate execution evidence. An older `g6_acceptance_procedure` in historical
+follow-up notes is superseded by this named, hash-bound contract. Future
+qualification must retain its own exact source, tuple/material fingerprint,
+result and owner decision; do not reuse attempt 16 or change the sprint index
+based on these regression results. The current compact execution result and its
+tuple-selection approval remain separate from v2 packet acceptance.
+
+`qualification_gates.G-6.accepted_scope` limits the accepted source, tuple and
+excluded capabilities; `owner_roles` and `approved_by` identify the baseline's
+responsible roles and approver. `current_accepted_usable` applies only within the
+recorded historical scope. `current_checkout_usable` describes only the source
+named by `current_checkout_source_revision`, not the present checkout. These
+summaries may change only with independently validated evidence and the relevant
+named owner decision; a passing fixture never changes them.
+
+`p1r_current_revalidation.owner_decisions`, `role_decisions`, `accepted_at_utc`
+and `usable_as_prerequisite` govern P1R's separate four-role decision. Its
+`superseded_candidate.g6_*` follow-up fields retain dated observations: packet
+and SHA fields identify that candidate; `g6_current_qualification` describes its
+measured result; `g6_ci_jobs` and `g6_acceptance_procedure` record the then-current
+workflow and procedure. They are historical context, not new decision records.
+Preserve these observations and record a successor under its own source/evidence
+identity. A future sprint-index update must use the candidate-workspace
+validation procedure in `_bmad-output/project-context.md` before publication,
+then rerun `python3 tools/planning/validate_production_authority.py --validate-index`.
+This task changes no index fields.
+
 ## Expected Resources
 
 The AppHost resource graph should include:

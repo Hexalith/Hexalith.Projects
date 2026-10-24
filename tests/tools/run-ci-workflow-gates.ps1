@@ -782,6 +782,17 @@ else {
         $failures.Add('Current G-6 build-property and packing controls must run after .NET initialization.')
     }
     Require-Match $g6PreflightStep.Text 'python3 -m unittest tests/tools/test_run_g6_current.py tests/tools/test_g6_qualification_runner.py -v' 'Current G-6 preflight must exercise runner environment and retention controls.'
+    $expectedG6PreflightStep = @(
+        '      - name: Validate current G-6 preflight'
+        '        shell: bash'
+        '        run: |'
+        '          python3 -m unittest tests/tools/test_run_g6_current.py tests/tools/test_g6_qualification_runner.py -v'
+        '          python3 -m unittest tests/tools/test_g6_deferred_contracts.py -v'
+        '          python3 references/Hexalith.Builds/Tools/test_package_readme.py -v'
+    ) -join "`n"
+    if ($null -ne $g6PreflightStep -and (Get-TrimmedBlockText -Text $g6PreflightStep.Text) -cne $expectedG6PreflightStep) {
+        $failures.Add('Current G-6 preflight must exercise deferred contract controls as a blocking command in the exact name/shell/run step.')
+    }
     Require-Match $g6PreflightStep.Text 'python3 references/Hexalith.Builds/Tools/test_package_readme.py -v' 'Current G-6 preflight must exercise real package README controls.'
 
     if ($null -ne $g6InitializeStep -and $null -ne $g6PreflightStep -and $g6PreflightStep.Index -le $g6InitializeStep.Index) {
