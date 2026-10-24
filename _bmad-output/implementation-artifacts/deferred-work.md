@@ -387,7 +387,8 @@ location: src/Hexalith.Projects.Server/Authorization/ProjectAuthorizationGate.cs
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: high
 reason: HttpContextProjectTenantContextAccessor resolves only a tenant claim and a NameIdentifier/sub principal; no delegation, scope or audience is derived anywhere in Hexalith.Projects.Server. A delegated Chatbot workload is authorized as if it were the original actor, which is the exact distinction first-response admission rests on.
-status: open
+status: done 2026-10-24
+resolution: spec-five-deferred-conversation-start-safety.md; The supported query already binds actor, user, Tenant, workload, delegation, scopes and audience and reauthorizes exact projects:read authority. Eight new Conversation-start mutations deny without payload while the matching control succeeds. Missing-primary-permission controls reject supplementary grants before protected reads; a validator-bound final-pass revocation proves exact Tenant, actor, Project and literal projects:read authority with unchanged persisted state. This closes the supported-path obligation; legacy route cutover and production qualification are unchanged.
 gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
 
 ### DW-48: Source freshness from the projection that supplies the Conversation-start data.
@@ -425,7 +426,8 @@ location: tests/Hexalith.Projects.Server.Tests/Queries/GetConversationStartSetup
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: The strongest existing assertion is sibling-scoped call counts in GetConversationStartSetup_DoesNotCallSiblingAcls. The path does appear write-free, but no state-store end-state assertion exists, so there is no evidence artifact to carry into AC4.
-status: open
+status: done 2026-10-24
+resolution: spec-five-deferred-conversation-start-safety.md; Five Conversation-start end-state controls now compare serialized persisted bytes, ETags and total key count across two repeated successful, unavailable, Archived, foreign-Tenant and wrong-workload reads. A second Tenant sentinel is preserved as well. The actual Tenant-access projection, including its concurrency Version, is also serialized before/after. Evidence uses the SDK serialized InMemoryReadModelStore, not only mock call counts; live persisted-runner qualification and Story acceptance remain separate.
 gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
 
 ### DW-52: Close or explicitly accept the denial-depth timing channel.
@@ -478,7 +480,8 @@ location: src/Hexalith.Projects.Contracts/Models/ConversationStartSetup.cs
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: ConversationStartSetup.FromContext aliases the caller-owned collections held by ProjectContext.Setup rather than copying them, so the bounded subset is a live view of caller state when the source is a mutable list. The obvious fix was attempted during the 2026-08-26 review and reverted: ConversationStartSetup is a record in a packable assembly and record equality compares IReadOnlyList<T> members by reference, so defensive copying makes two projections of the same context unequal and breaks Project_IsPureFunction_SameInputProducesSameOutput. Copying therefore changes public DTO equality semantics for every consumer and must not be done to the legacy type in isolation. Resolve it on the Story 6.2 supported response wrapper by using a collection type with structural equality (for example ImmutableArray<T> with an explicit equality contract) from the start, then align the legacy type at the Story 6.7 cutover.
-status: open
+status: done 2026-10-24
+resolution: spec-five-deferred-conversation-start-safety.md; The dedicated supported ConversationStartSetupResponse value boundary now owns read-only copies of all four setup collections and both snapshot collections, including with-expression assignments, and implements structural equality and hashing across every scalar and ordered collection. Legacy ConversationStartSetup, its constructor and its equality semantics remain unchanged. New contract tests cover mutation, hash membership, independent instances, JSON round trips, null setup and every unequal field; the existing constructor/wire compatibility tests remain.
 decision: 2026-09-06 Dedicated supported value — Keep the legacy DTO unchanged and introduce a supported setup value that defensively copies bounded collections and explicitly implements structural equality and hashing, then update the supported response, serialization, and contract tests.
 gate: 6-2-retrieve-conversation-start-setup-with-admission-truth
 
@@ -600,7 +603,8 @@ location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupQueryHan
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth-2.md
 severity: medium
 reason: hasFolder = detail.ProjectFolder?.ReferenceState == ReferenceState.Included treats Pending, Excluded, Unauthorized, Unavailable, Stale, Archived, Ambiguous, TenantMismatch, Conflict, and InvalidReference identically. An authorization-denied folder reference (Unauthorized, fail-closed) receives the same RefreshContext/ContactAdministrator recovery guidance as a folder simply never linked, masking a genuine access denial as a transient/recoverable condition. Deferred: same admission-matrix design work as DW-66 (Partial); resolve together in Story 6.7.
-status: open
+status: done 2026-10-24
+resolution: spec-five-deferred-conversation-start-safety.md; The supported shared admission assembler already maps Folder causes to distinct recovery actions. Ten new Conversation-start state controls verify Pending/PollTask, Stale or Unavailable/RefreshContext, Archived or Ambiguous/SelectAlternative, and protected or invalid states/ContactAdministrator, with null Setup and no Folder identifier. Missing-Folder and Included controls remain. Legacy comparison routes and the separate DW-66 Partial cutover remain unchanged.
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
 ### DW-68: Keep the P1R coordinate qualification open until the minimal record is accepted.
@@ -842,6 +846,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p3-approve-production-identity-authentication-contract.md`
   summary: Unverified medium concern: determine whether a reachable additional-identity producer can feed unauthenticated authority claims into the pre-existing Projects tenant-context accessor.
   evidence: Resumed Blind B4 found principal-wide accessor reads while the P3 transformer isolates its authenticated identity; the current bearer host produces a single identity. A concrete secondary-identity producer or explicit accessor contract is needed to settle the HTTP-path claim. No platform or accessor policy was changed.
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-conversation-start-safety.md; Established the explicit accessor contract requested by this concern: only the primary authenticated identity supplies Tenant, actor, permissions and callback dual-principal claims, matching the existing claims transformer. Supplementary authenticated and unauthenticated identities cannot fill missing authority or expand it. Accessor and binding regressions cover both forms, missing primary identity fields, canonical precedence, and attempted scope/audience/delegation injection. This is a preventative contract correction; no production additional-identity producer or exploit is claimed.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p3-approve-production-identity-authentication-contract.md`
   summary: Unverified medium concern: bind the eventual production deployment graph to managed identity configuration instead of the local AppHost UI fixture credential.

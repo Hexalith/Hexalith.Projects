@@ -27,6 +27,13 @@ ECDSA (`ES256`, `ES384`, `ES512`); HMAC and unsigned tokens are rejected even
 when discovery metadata contains a matching key. Authentication challenges omit
 token-validation details outside Development. Existing authorization gates
 continue to enforce the `projects:*` action claims and safe-denial behavior.
+HTTP-derived Projects tenant, actor and permission evidence comes only from the
+primary authenticated identity, matching the claims transformer. The callback
+envelope binding derives workload, delegation, scopes and audience from that same
+identity. Supplementary identities do not fill missing authority or expand it,
+regardless of their authentication type. An unauthenticated primary identity
+provides no Projects authority. SDK-verified query callers retain their separate
+verified-envelope authority path.
 The EventStore platform owns the P2 query-envelope mapping: `sub` remains the
 original actor, workload and delegation evidence remain separate, and `scope`,
 `scp`, and `aud` are preserved only when present and valid. The platform uses

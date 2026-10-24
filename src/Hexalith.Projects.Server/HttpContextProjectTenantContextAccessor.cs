@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Http;
 /// principal from the authenticated <see cref="ClaimsPrincipal"/> on the current request (Story 1.4).
 /// The tenant comes from a claim only — never from a request payload, header, or query parameter. The
 /// full EventStore claim-transform / <c>TenantAccessProjection</c> chain is Story 1.6.
+/// Only the primary authenticated identity supplies authority, matching the claims transformer;
+/// supplementary identities cannot contribute tenant, principal, or permission claims.
 /// </summary>
 public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor httpContextAccessor) : IProjectTenantContextAccessor
 {
@@ -35,15 +37,15 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
     {
         get
         {
-            ClaimsPrincipal? user = _httpContextAccessor.HttpContext?.User;
-            if (user?.Identity?.IsAuthenticated != true)
+            ClaimsIdentity? identity = _httpContextAccessor.HttpContext?.User.Identity as ClaimsIdentity;
+            if (identity?.IsAuthenticated != true)
             {
                 return null;
             }
 
-            string? tenant = user.FindFirstValue(EventStoreCurrentTenantClaimType)
-                ?? user.FindFirstValue(EventStoreTenantClaimType)
-                ?? user.FindFirstValue(TenantClaimType);
+            string? tenant = identity.FindFirst(EventStoreCurrentTenantClaimType)?.Value
+                ?? identity.FindFirst(EventStoreTenantClaimType)?.Value
+                ?? identity.FindFirst(TenantClaimType)?.Value;
             return string.IsNullOrWhiteSpace(tenant) ? null : tenant;
         }
     }
@@ -53,13 +55,13 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
     {
         get
         {
-            ClaimsPrincipal? user = _httpContextAccessor.HttpContext?.User;
-            if (user?.Identity?.IsAuthenticated != true)
+            ClaimsIdentity? identity = _httpContextAccessor.HttpContext?.User.Identity as ClaimsIdentity;
+            if (identity?.IsAuthenticated != true)
             {
                 return null;
             }
 
-            string? principal = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
+            string? principal = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? identity.FindFirst("sub")?.Value;
             return string.IsNullOrWhiteSpace(principal) ? null : principal;
         }
     }
@@ -69,22 +71,22 @@ public sealed class HttpContextProjectTenantContextAccessor(IHttpContextAccessor
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(actionToken);
 
-        ClaimsPrincipal? user = _httpContextAccessor.HttpContext?.User;
-        if (user?.Identity?.IsAuthenticated != true)
+        ClaimsIdentity? identity = _httpContextAccessor.HttpContext?.User.Identity as ClaimsIdentity;
+        if (identity?.IsAuthenticated != true)
         {
             return EventStoreClaimTransformEvidence.Missing();
         }
 
-        string? tenant = user.FindFirstValue(EventStoreCurrentTenantClaimType)
-            ?? user.FindFirstValue(EventStoreTenantClaimType)
-            ?? user.FindFirstValue(TenantClaimType);
-        string? principal = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue("sub");
+        string? tenant = identity.FindFirst(EventStoreCurrentTenantClaimType)?.Value
+            ?? identity.FindFirst(EventStoreTenantClaimType)?.Value
+            ?? identity.FindFirst(TenantClaimType)?.Value;
+        string? principal = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? identity.FindFirst("sub")?.Value;
         if (string.IsNullOrWhiteSpace(tenant) || string.IsNullOrWhiteSpace(principal))
         {
             return EventStoreClaimTransformEvidence.MalformedEvidence();
         }
 
-        IEnumerable<string> permissions = user.FindAll(EventStorePermissionClaimType).Select(static claim => claim.Value);
+        IEnumerable<string> permissions = identity.FindAll(EventStorePermissionClaimType).Select(static claim => claim.Value);
         return EventStoreClaimTransformEvidence.Allowed(tenant, principal, permissions);
     }
 }

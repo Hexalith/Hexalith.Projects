@@ -35,8 +35,19 @@ public sealed class ProjectQueryEnvelopePrincipalBinding(
         {
             HttpContext? original = _httpContextAccessor.HttpContext;
             VerifiedQueryCaller? caller = VerifiedQueryCaller.Get(original);
-            if (caller is null) { return original; }
-            DefaultHttpContext effective = new() { User = caller.Principal, TraceIdentifier = original!.TraceIdentifier, RequestServices = original.RequestServices };
+            ClaimsPrincipal? authority = caller?.Principal;
+            if (authority is null)
+            {
+                if (original?.User.Identity is not ClaimsIdentity { IsAuthenticated: true } primary
+                    || original.User.Identities.Count() == 1)
+                {
+                    return original;
+                }
+
+                authority = new ClaimsPrincipal(primary);
+            }
+
+            DefaultHttpContext effective = new() { User = authority, TraceIdentifier = original!.TraceIdentifier, RequestServices = original.RequestServices };
             foreach (var header in original.Request.Headers) { effective.Request.Headers[header.Key] = header.Value; }
             effective.Request.QueryString = original.Request.QueryString;
             return effective;
@@ -71,12 +82,12 @@ public sealed class ProjectQueryEnvelopePrincipalBinding(
 
         tenantContext = _tenantContextAccessor;
         ClaimsPrincipal? principal = HttpContext?.User;
-        if (principal?.Identity?.IsAuthenticated != true)
+        if (principal?.Identity is not ClaimsIdentity { IsAuthenticated: true } authenticatedIdentity)
         {
             return false;
         }
 
-        Claim[] subjectClaims = principal.FindAll("sub").ToArray();
+        Claim[] subjectClaims = authenticatedIdentity.FindAll("sub").ToArray();
         if (subjectClaims.Length != 1 || string.IsNullOrWhiteSpace(subjectClaims[0].Value))
         {
             return false;
@@ -92,7 +103,7 @@ public sealed class ProjectQueryEnvelopePrincipalBinding(
             return false;
         }
 
-        DualPrincipalIdentity identity = DualPrincipalClaimsHelper.Extract(principal, subject);
+        DualPrincipalIdentity identity = DualPrincipalClaimsHelper.Extract(new ClaimsPrincipal(authenticatedIdentity), subject);
         return string.Equals(identity.AuthenticatedWorkloadId, query.AuthenticatedWorkloadId, StringComparison.Ordinal)
             && identity.IsDelegated == query.IsDelegated
             && string.Equals(identity.DelegationId, query.DelegationId, StringComparison.Ordinal)

@@ -54,6 +54,35 @@ public sealed class ProjectQueryEnvelopePrincipalBindingTests
         binding.TryBind(Query(), out _).ShouldBeFalse();
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("supplementary")]
+    public void TryBind_SupplementaryIdentityCannotContributeDelegationScopeOrAudience(string? authenticationType)
+    {
+        ClaimsPrincipal principal = Principal();
+        ((ClaimsIdentity)principal.Identity!).AddClaim(new Claim(ClaimTypes.Role, "primary-role"));
+        principal.AddIdentity(new ClaimsIdentity(
+        [
+            new Claim("sub", "foreign-actor"),
+            new Claim("tenantId", "foreign-tenant"),
+            new Claim("azp", "foreign-workload"),
+            new Claim("act", "{\"sub\":\"foreign-delegation\"}"),
+            new Claim("scope", "injected.scope"),
+            new Claim("aud", "injected-audience"),
+            new Claim(ClaimTypes.Role, "injected-role"),
+        ], authenticationType));
+        ProjectQueryEnvelopePrincipalBinding binding = CreateProductionBinding(principal);
+
+        binding.TryBind(Query(), out _).ShouldBeTrue();
+        principal.IsInRole("injected-role").ShouldBeTrue();
+        binding.HttpContext!.User.IsInRole("injected-role").ShouldBeFalse();
+        binding.HttpContext.User.IsInRole("primary-role").ShouldBeTrue();
+        binding.TryBind(Query() with { Scopes = [.. Query().Scopes!, "injected.scope"] }, out _).ShouldBeFalse();
+        binding.TryBind(Query() with { Audience = [.. Query().Audience!, "injected-audience"] }, out _).ShouldBeFalse();
+        binding.TryBind(Query() with { AuthenticatedWorkloadId = "foreign-workload" }, out _).ShouldBeFalse();
+        binding.TryBind(Query() with { DelegationId = "foreign-delegation" }, out _).ShouldBeFalse();
+    }
+
     [Fact]
     public void TryBind_ConflictingNameIdentifierAndSubject_FailsClosed()
     {
@@ -61,6 +90,38 @@ public sealed class ProjectQueryEnvelopePrincipalBindingTests
         ((ClaimsIdentity)principal.Identity!).AddClaim(new Claim(ClaimTypes.NameIdentifier, "other-actor"));
 
         CreateProductionBinding(principal).TryBind(Query(), out _).ShouldBeFalse();
+    }
+
+    [Theory]
+    [InlineData("azp")]
+    [InlineData("act")]
+    [InlineData("scope")]
+    [InlineData("aud")]
+    public void TryBind_SupplementaryClaimsCannotFillMissingPrimaryEvidence(string claimType)
+    {
+        ClaimsPrincipal principal = Principal();
+        ClaimsIdentity primary = (ClaimsIdentity)principal.Identity!;
+        Claim[] removed = primary.FindAll(claimType).ToArray();
+        foreach (Claim claim in removed) primary.RemoveClaim(claim);
+        if (claimType == "azp")
+        {
+            primary.RemoveClaim(primary.FindFirst("client_id")!);
+        }
+
+        principal.AddIdentity(new ClaimsIdentity(removed));
+        ProjectQueryEnvelopePrincipalBinding binding = CreateProductionBinding(principal);
+        binding.TryBind(Query(), out _).ShouldBeFalse();
+        DualPrincipalIdentity remaining = DualPrincipalClaimsHelper.Extract(new ClaimsPrincipal(primary), ActorId);
+        QueryEnvelope withoutEvidence = Query() with
+        {
+            AuthenticatedWorkloadId = remaining.AuthenticatedWorkloadId,
+            IsDelegated = remaining.IsDelegated,
+            DelegationId = remaining.DelegationId,
+            Scopes = remaining.Scopes,
+            Audience = remaining.Audience,
+        };
+        // Existing omission semantics come from the platform helper, never the extra identity.
+        binding.TryBind(withoutEvidence, out _).ShouldBeTrue();
     }
 
     [Fact]

@@ -26,9 +26,10 @@ internal static class ProjectContextQueryTestFactory
         IReadModelStore readModelStore,
         TenantAccessAuthorizer tenantAccessAuthorizer,
         IReadOnlyList<string>? callbackAudience = null,
-        IProjectEventStoreAuthorizationValidator? eventStoreAuthorizationValidator = null)
+        IProjectEventStoreAuthorizationValidator? eventStoreAuthorizationValidator = null,
+        Action<ClaimsPrincipal>? configurePrincipal = null)
     {
-        ProjectQueryEnvelopePrincipalBinding principalBinding = CreatePrincipalBinding(callbackAudience);
+        ProjectQueryEnvelopePrincipalBinding principalBinding = CreatePrincipalBinding(callbackAudience, configurePrincipal);
         ProjectAuthorizationGate authorizationGate = new(
             tenantAccessAuthorizer,
             eventStoreAuthorizationValidator ?? new AllowingProjectEventStoreAuthorizationValidator(),
@@ -44,7 +45,8 @@ internal static class ProjectContextQueryTestFactory
 
     /// <summary>Creates a production-shaped callback principal binding for query-handler tests.</summary>
     public static ProjectQueryEnvelopePrincipalBinding CreatePrincipalBinding(
-        IReadOnlyList<string>? callbackAudience = null)
+        IReadOnlyList<string>? callbackAudience = null,
+        Action<ClaimsPrincipal>? configurePrincipal = null)
     {
         callbackAudience ??= ["hexalith-projects", "hexalith-eventstore"];
         List<Claim> claims =
@@ -63,6 +65,7 @@ internal static class ProjectContextQueryTestFactory
         {
             User = new ClaimsPrincipal(new ClaimsIdentity(claims, "test")),
         };
+        configurePrincipal?.Invoke(httpContext.User);
         FixedProjectQueryHttpContextAccessor httpContextAccessor = new(httpContext);
         IConfiguration configuration = new ConfigurationBuilder().Build();
         IHostEnvironment environment = WebApplication.CreateSlimBuilder(
