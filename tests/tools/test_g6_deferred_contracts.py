@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import re
 import subprocess
 import tempfile
 import unittest
@@ -42,6 +43,17 @@ PACKAGE_VERSIONS = {
 }
 
 
+# Keep this independent from the historical validator's CATALOG_TUPLE_FIELDS.
+HISTORICAL_CATALOG = {
+    "CommunityToolkit.Aspire.Hosting.Dapr": "communityToolkitAspireDapr",
+    "Dapr.Client": "daprDotnetPackages",
+    "Dapr.Workflow": "daprDotnetPackages",
+    "Microsoft.FluentUI.AspNetCore.Components": "fluentUi",
+    "NSubstitute": "nSubstitute",
+    "Fluxor": "fluxor",
+}
+
+
 @contextmanager
 def restored_files(workspace: Path, packet_path: Path, packet: dict):
     """Restore exact fixture bytes even when a subtest fails unexpectedly."""
@@ -64,6 +76,48 @@ def edit_artifact(workspace: Path, packet: dict, kind: str, edit) -> None:
 
 
 class DeferredG6ContractTests(unittest.TestCase):
+    def test_historical_catalog_rejects_drift_in_every_independent_coordinate(self) -> None:
+        specification = importlib.util.spec_from_file_location(
+            "historical_catalog_fixture", TOOLS / "test-runtime-toolchain-evidence-validator.py")
+        assert specification is not None and specification.loader is not None
+        fixture = importlib.util.module_from_spec(specification)
+        specification.loader.exec_module(fixture)
+        fixture.assert_historical_baseline_bytes()
+        validator = fixture.VALIDATOR
+        for source in fixture.BASELINES:
+            with self.subTest(baseline=source.name), tempfile.TemporaryDirectory() as temporary:
+                workspace = Path(temporary)
+                baseline = validator.read_json(source)
+                self.assertEqual("hexalith.runtime-toolchain-baseline.v1", baseline["schema"])
+                baseline_path = workspace / "baseline.json"
+                fixture.write_json(baseline_path, baseline)
+                versions = baseline["tuple"]
+                for relative in baseline["pinAudit"]["globalJson"]:
+                    fixture.write_json(workspace / relative, {"sdk": {"version": versions["dotnetSdk"]}})
+                for item in baseline["pinAudit"]["appHostProjects"]:
+                    fixture.write_text(workspace / item["path"],
+                                       f'<Project Sdk="Aspire.AppHost.Sdk/{item["version"]}" />')
+                pins = baseline["pinAudit"]["literalPins"]
+                fixture.write_literal_pins(workspace, pins, fixture.fixture_pin_contexts(pins, versions))
+                catalog = workspace / "references/Hexalith.Builds/Props/Directory.Packages.props"
+                packages = {package: versions[field] for package, field in HISTORICAL_CATALOG.items()}
+
+                def write_catalog(values):
+                    fixture.write_text(catalog, "<Project><ItemGroup>" + "".join(
+                        f'<PackageVersion Include="{package}" Version="{version}" />'
+                        for package, version in values.items()) + "</ItemGroup></Project>\n")
+
+                write_catalog(packages)
+                self.assertEqual(baseline, validator.validate_baseline(workspace, baseline_path))
+                for package in packages:
+                    with self.subTest(package=package):
+                        write_catalog(dict(packages, **{package: "0.0.0-drift"}))
+                        with self.assertRaisesRegex(validator.ValidationError,
+                                                    "Central package pin drift: " + re.escape(package)):
+                            validator.validate_baseline(workspace, baseline_path)
+                        write_catalog(packages)
+                        self.assertEqual(baseline, validator.validate_baseline(workspace, baseline_path))
+
     def test_packet_obligations_reach_real_candidate_and_accepted_validation(self) -> None:
         real_validate = CURRENT.validate_packet
         observed = set()

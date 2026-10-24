@@ -125,6 +125,22 @@ class WorkflowGateTests(unittest.TestCase):
                 path.write_text(mutation)
                 self.assert_rejected("must exercise deferred contract controls as a blocking command")
 
+    def test_cleanup_suite_cannot_be_omitted_or_made_nonblocking(self) -> None:
+        path = self.root / ".github/workflows/ci.yml"
+        original = path.read_text()
+        step = ("      - name: Validate BMAD legacy cleanup atomicity\n"
+                "        env:\n          PYTHONDONTWRITEBYTECODE: '1'\n"
+                "        run: python3 .agents/skills/bmad-module-builder/scripts/tests/test-cleanup-legacy.py")
+        self.assertEqual(1, original.count(step))
+        for replacement in (
+            "", step.replace("run: python3", "run: '# python3") + "'",
+            step + " || true", step.replace("        env:", "        if: false\n        env:"),
+            step.replace("        env:", "        continue-on-error: true\n        env:"),
+        ):
+            with self.subTest(replacement=replacement):
+                path.write_text(original.replace(step, replacement))
+                self.assert_rejected("workflow-gates must be the exact job")
+
     def test_current_g6_job_must_remain_independent(self) -> None:
         self.replace(".github/workflows/ci.yml",
                      "timeout-minutes: 90\n    needs: workflow-gates",

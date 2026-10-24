@@ -587,9 +587,10 @@ Nested snapshot: [[bmad-snapshot:nested/target.md]]
                 "outputs": {"nested/workflow.md": _sha256(outputs["nested/workflow.md"])}
             }
 
-            def fail_rename(source: Path, target: Path) -> None:
-                staging = Path(source)
-                self.assertEqual(destination, Path(target))
+            def fail_rename(source: str, target: str, **kwargs) -> None:
+                staging = parent / source
+                self.assertEqual(destination.name, target)
+                self.assertEqual(kwargs["src_dir_fd"], kwargs["dst_dir_fd"])
                 self.assertEqual(
                     outputs["nested/workflow.md"],
                     (staging / "nested" / "workflow.md").read_bytes(),
@@ -599,7 +600,7 @@ Nested snapshot: [[bmad-snapshot:nested/target.md]]
 
             with mock.patch.object(renderer.os, "rename", side_effect=fail_rename):
                 with self.assertRaisesRegex(OSError, "forced rename failure"):
-                    renderer._publish(destination, outputs, manifest)
+                    renderer._publish(destination, outputs, manifest, trusted_root=Path(directory))
 
             self.assertFalse(destination.exists())
             self.assertEqual([], list(parent.glob(".staging-*")))
@@ -613,9 +614,10 @@ Nested snapshot: [[bmad-snapshot:nested/target.md]]
             outputs = {"workflow.md": b"fixture output\n"}
             manifest = {"outputs": {"workflow.md": _sha256(outputs["workflow.md"])}}
 
-            def competing_link(source: Path, target: Path) -> None:
-                self.assertEqual(destination, Path(target))
-                self.assertTrue((Path(source) / "manifest.json").is_file())
+            def competing_link(source: str, target: str, **kwargs) -> None:
+                self.assertEqual(destination.name, target)
+                self.assertEqual(kwargs["src_dir_fd"], kwargs["dst_dir_fd"])
+                self.assertTrue((parent / source / "manifest.json").is_file())
                 destination.symlink_to(missing, target_is_directory=True)
                 raise OSError("competing publisher installed a dangling link")
 
@@ -623,12 +625,297 @@ Nested snapshot: [[bmad-snapshot:nested/target.md]]
                 with self.assertRaisesRegex(
                     renderer.RenderError, "generation is not an unlinked directory:"
                 ):
-                    renderer._publish(destination, outputs, manifest)
+                    renderer._publish(destination, outputs, manifest, trusted_root=Path(directory))
 
             self.assertTrue(destination.is_symlink())
             self.assertEqual(missing, destination.readlink())
             self.assertFalse(missing.exists())
             self.assertEqual([], list(parent.glob(".staging-*")))
+
+    def test_render_ancestors_refuse_links_for_reuse_and_new_publication(self) -> None:
+        for ancestor in ("_bmad", "render", "skill", "workspace"):
+            for new_generation in (False, True):
+                with self.subTest(ancestor=ancestor, new=new_generation), tempfile.TemporaryDirectory() as temporary:
+                    fixture = self.make_fixture(Path(temporary), workflow="Value: {{config.fixture.value}}\n")
+                    entry = self.assert_success(self.run_renderer(fixture))
+                    selected = {"_bmad": fixture.project_root / "_bmad",
+                                "render": fixture.project_root / "_bmad/render",
+                                "skill": entry.parent.parent.parent,
+                                "workspace": entry.parent.parent}[ancestor]
+                    outside = Path(temporary) / "outside"
+                    selected.rename(outside)
+                    selected.symlink_to(outside, target_is_directory=True)
+                    if new_generation:
+                        _write_text(fixture.project_root / "_bmad/config.user.toml", '[fixture]\nvalue = "changed"\n')
+                    before = _tree_bytes(outside)
+                    self.assert_halt(self.run_renderer(fixture), "HALT: render ancestor is not an unlinked directory:")
+                    self.assertEqual(before, _tree_bytes(outside))
+                    self.assertTrue(selected.is_symlink())
+
+    def test_concurrent_snapshot_links_are_rejected_without_reading_external_files(self) -> None:
+        for selected in ("guide.md", "manifest.json", "nested", "details.md"):
+            with self.subTest(selected=selected), tempfile.TemporaryDirectory() as temporary:
+                fixture = self.make_fixture(Path(temporary))
+                _write_text(fixture.skill_root / "nested/details.md", "Nested.\n")
+                entry = self.assert_success(self.run_renderer(fixture))
+                renderer = _load_renderer_module()
+                relative = "nested/details.md" if selected == "details.md" else selected
+                target = entry.parent / relative
+                outside = Path(temporary) / "outside"
+                real_open = os.open
+                swapped = False
+
+                def substitute(name, flags, *args, **kwargs):
+                    nonlocal swapped
+                    if name == selected and kwargs.get("dir_fd") is not None and not swapped:
+                        swapped = True
+                        directory = target.is_dir()
+                        target.rename(outside)
+                        target.symlink_to(outside, target_is_directory=directory)
+                    return real_open(name, flags, *args, **kwargs)
+
+                expected = _tree_bytes(target) if target.is_dir() else target.read_bytes()
+                with mock.patch.object(renderer.os, "open", side_effect=substitute):
+                    with self.assertRaises((renderer.RenderError, OSError)):
+                        renderer.render(fixture.project_root, fixture.skill_root)
+                self.assertTrue(swapped)
+                self.assertTrue(target.is_symlink())
+                self.assertEqual(expected, _tree_bytes(outside) if outside.is_dir() else outside.read_bytes())
+
+    def test_substitution_after_an_output_read_is_still_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            fixture = self.make_fixture(Path(temporary))
+            entry = self.assert_success(self.run_renderer(fixture))
+            renderer = _load_renderer_module()
+            target = entry.parent / "guide.md"
+            outside = Path(temporary) / "outside"
+            original = target.read_bytes()
+            real_open = os.open
+            swapped = False
+
+            def substitute(name, flags, *args, **kwargs):
+                nonlocal swapped
+                if name == "manifest.json" and kwargs.get("dir_fd") is not None and not swapped:
+                    swapped = True
+                    target.rename(outside)
+                    target.symlink_to(outside)
+                return real_open(name, flags, *args, **kwargs)
+
+            real_listdir = os.listdir
+            def manifest_last(directory):
+                return sorted(real_listdir(directory), key=lambda name: (name == "manifest.json", name))
+
+            with (mock.patch.object(renderer.os, "open", side_effect=substitute),
+                  mock.patch.object(renderer.os, "listdir", side_effect=manifest_last)):
+                with self.assertRaisesRegex(renderer.RenderError, "generation changed during verification"):
+                    renderer.render(fixture.project_root, fixture.skill_root)
+            self.assertTrue(swapped)
+            self.assertEqual(original, outside.read_bytes())
+
+    def test_unsupported_descriptor_platform_halts_before_publication(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            fixture = self.make_fixture(Path(temporary))
+            renderer = _load_renderer_module()
+            with mock.patch.object(renderer, "_DESCRIPTOR_IO", False):
+                with self.assertRaisesRegex(renderer.RenderError, "requires no-follow directory descriptor support"):
+                    renderer.render(fixture.project_root, fixture.skill_root)
+            self.assertFalse((fixture.project_root / "_bmad/render").exists())
+
+    def test_staging_name_swap_cannot_publish_a_link(self) -> None:
+        renderer = _load_renderer_module()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            destination = root / "renders/generation"
+            outside = root / "outside"
+            _write_text(outside / "sentinel", "External.\n")
+            before = _tree_bytes(outside)
+            outputs = {"workflow.md": b"Fixture.\n"}
+            manifest = {"outputs": {"workflow.md": _sha256(outputs["workflow.md"])}}
+            real_rename = os.rename
+
+            def substitute(source, target, **kwargs):
+                real_rename(source, "displaced", **kwargs)
+                os.symlink(str(outside), source, dir_fd=kwargs["src_dir_fd"], target_is_directory=True)
+                return real_rename(source, target, **kwargs)
+
+            with mock.patch.object(renderer.os, "rename", side_effect=substitute):
+                with self.assertRaisesRegex(renderer.RenderError, "published generation differs"):
+                    renderer._publish(destination, outputs, manifest, trusted_root=root)
+            self.assertTrue(destination.is_symlink())
+            self.assertEqual(before, _tree_bytes(outside))
+            self.assertEqual(outputs["workflow.md"], (destination.parent / "displaced/workflow.md").read_bytes())
+
+    def test_staging_output_substitution_is_verified_before_publication(self) -> None:
+        renderer = _load_renderer_module()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            destination = root / "renders/generation"
+            outside = root / "outside.md"
+            outside.write_bytes(b"Fixture.\n")
+            outputs = {"workflow.md": outside.read_bytes()}
+            manifest = {"outputs": {"workflow.md": _sha256(outputs["workflow.md"])}}
+            real_open = os.open
+            substituted = False
+
+            def substitute(name, flags, *args, **kwargs):
+                nonlocal substituted
+                if name == "manifest.json" and flags & os.O_CREAT:
+                    substituted = True
+                    os.unlink("workflow.md", dir_fd=kwargs["dir_fd"])
+                    os.symlink(str(outside), "workflow.md", dir_fd=kwargs["dir_fd"])
+                return real_open(name, flags, *args, **kwargs)
+
+            with mock.patch.object(renderer.os, "open", side_effect=substitute):
+                with self.assertRaisesRegex(renderer.RenderError, "linked or nonregular entry"):
+                    renderer._publish(destination, outputs, manifest, trusted_root=root)
+            self.assertTrue(substituted)
+            self.assertFalse(destination.exists())
+            self.assertEqual(b"Fixture.\n", outside.read_bytes())
+            self.assertEqual([], list(destination.parent.glob(".staging-*")))
+
+    def test_cleanup_preserves_foreign_trees_at_vacated_or_replaced_staging_names(self) -> None:
+        for replaced in (False, True):
+            with self.subTest(replaced=replaced), tempfile.TemporaryDirectory() as temporary:
+                renderer = _load_renderer_module()
+                root = Path(temporary)
+                destination = root / "renders/generation"
+                foreign = root / "foreign"
+                _write_text(foreign / "sentinel", "Foreign bytes.\n")
+                outputs = {"workflow.md": b"Fixture.\n"}
+                manifest = {"outputs": {"workflow.md": _sha256(outputs["workflow.md"])}}
+                real_rename = os.rename
+                occupied = None
+
+                def substitute(source, target, **kwargs):
+                    nonlocal occupied
+                    occupied = destination.parent / source
+                    if replaced:
+                        real_rename(source, "displaced", **kwargs)
+                    else:
+                        real_rename(source, target, **kwargs)
+                    real_rename(foreign, occupied)
+                    if replaced:
+                        raise OSError("injected renamed staging failure")
+
+                with mock.patch.object(renderer.os, "rename", side_effect=substitute):
+                    if replaced:
+                        with self.assertRaisesRegex(OSError, "injected renamed staging failure"):
+                            renderer._publish(destination, outputs, manifest, trusted_root=root)
+                    else:
+                        renderer._publish(destination, outputs, manifest, trusted_root=root)
+                self.assertIsNotNone(occupied)
+                self.assertEqual({"sentinel": b"Foreign bytes.\n"}, _tree_bytes(occupied))
+                self.assertEqual(not replaced, destination.exists())
+
+    def test_cleanup_name_substitution_cannot_redirect_recursive_deletion(self) -> None:
+        renderer = _load_renderer_module()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            destination = root / "renders/generation"
+            foreign = root / "foreign"
+            _write_text(foreign / "nested/sentinel", "Foreign bytes.\n")
+            outputs = {"nested/workflow.md": b"Fixture.\n"}
+            manifest = {"outputs": {"nested/workflow.md": _sha256(outputs["nested/workflow.md"])}}
+            real_rename = os.rename
+            real_clear = renderer._clear_owned_directory
+            replaced = False
+            occupied = None
+            displaced = destination.parent / "displaced"
+
+            def substitute(directory):
+                nonlocal replaced, occupied
+                if not replaced:
+                    replaced = True
+                    occupied = next(destination.parent.glob(".staging-*"))
+                    real_rename(occupied, displaced)
+                    real_rename(foreign, occupied)
+                    self.assertEqual(displaced.stat().st_ino, os.fstat(directory).st_ino)
+                return real_clear(directory)
+
+            with (mock.patch.object(renderer.os, "rename", side_effect=OSError("injected publication failure")),
+                  mock.patch.object(renderer, "_clear_owned_directory", side_effect=substitute),
+                  mock.patch.object(shutil, "rmtree", side_effect=AssertionError("pathname cleanup is forbidden"))):
+                with self.assertRaisesRegex(OSError, "injected publication failure"):
+                    renderer._publish(destination, outputs, manifest, trusted_root=root)
+            self.assertTrue(replaced)
+            self.assertEqual({"nested/sentinel": b"Foreign bytes.\n"}, _tree_bytes(occupied))
+            self.assertEqual({}, _tree_bytes(displaced))
+            self.assertFalse(destination.exists())
+
+    def test_reuse_rechecks_identity_after_hashing(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            fixture = self.make_fixture(Path(temporary))
+            entry = self.assert_success(self.run_renderer(fixture))
+            renderer = _load_renderer_module()
+            manifest = json.loads((entry.parent / "manifest.json").read_text())
+            target = entry.parent / "guide.md"
+            outside = Path(temporary) / "outside"
+            original = target.read_bytes()
+            real_hash = renderer._hash_bytes
+            substituted = False
+
+            def substitute(content):
+                nonlocal substituted
+                if content == original and not substituted:
+                    substituted = True
+                    target.rename(outside)
+                    target.symlink_to(outside)
+                return real_hash(content)
+
+            parent = os.open(entry.parent.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                with mock.patch.object(renderer, "_hash_bytes", side_effect=substitute):
+                    with self.assertRaisesRegex(renderer.RenderError, "generation changed during verification"):
+                        renderer._verify_existing(entry.parent, manifest, parent)
+            finally:
+                os.close(parent)
+            self.assertTrue(substituted)
+            self.assertEqual(original, outside.read_bytes())
+
+    def test_ancestor_movement_during_open_halts_before_writing(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            fixture = self.make_fixture(Path(temporary), workflow="Value: {{config.fixture.value}}\n")
+            entry = self.assert_success(self.run_renderer(fixture))
+            _write_text(fixture.project_root / "_bmad/config.user.toml", '[fixture]\nvalue = "changed"\n')
+            renderer = _load_renderer_module()
+            ancestor = entry.parent.parent
+            outside = Path(temporary) / "outside"
+            before = _tree_bytes(ancestor)
+            real_open = os.open
+            substituted = False
+
+            def substitute(name, flags, *args, **kwargs):
+                nonlocal substituted
+                descriptor = real_open(name, flags, *args, **kwargs)
+                if name == ancestor.name and not substituted:
+                    substituted = True
+                    ancestor.rename(outside)
+                    ancestor.symlink_to(outside, target_is_directory=True)
+                return descriptor
+
+            with mock.patch.object(renderer.os, "open", side_effect=substitute):
+                with self.assertRaisesRegex(renderer.RenderError, "directory changed during rendering"):
+                    renderer.render(fixture.project_root, fixture.skill_root)
+            self.assertTrue(substituted)
+            self.assertEqual(before, _tree_bytes(outside))
+
+    @unittest.skipUnless(os.name == "posix", "POSIX descriptor-limit fixture")
+    def test_many_outputs_publish_and_reuse_under_a_reduced_descriptor_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            fixture = self.make_fixture(Path(temporary))
+            for index in range(70):
+                _write_text(fixture.skill_root / f"section-{index}/details.md", f"Section {index}.\n")
+            arguments = [str(RENDERER_PATH), "--project-root", str(fixture.project_root), "--skill", str(fixture.skill_root)]
+            code = ("import resource, runpy, sys; resource.setrlimit(resource.RLIMIT_NOFILE, (48, 48)); "
+                    + "sys.path.insert(0, " + repr(str(RENDERER_PATH.parent)) + "); sys.argv = "
+                    + repr(arguments) + "; runpy.run_path(sys.argv[0], run_name='__main__')")
+            environment = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+            entries = []
+            for _ in range(2):
+                completed = subprocess.run([sys.executable, "-c", code], env=environment,
+                                           capture_output=True, text=True, timeout=30)
+                entries.append(self.assert_success(completed))
+            self.assertEqual(entries[0], entries[1])
 
     def test_invalid_inputs_halt_and_publish_nothing(self) -> None:
         valid_customization = '[workflow]\nmessage = "configured"\n'

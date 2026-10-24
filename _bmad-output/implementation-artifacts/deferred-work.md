@@ -579,12 +579,16 @@ archived: 2026-10-23
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-g-6-runtime-toolchain-baseline.md`
   summary: Constrain legacy cleanup targets to safe descendants of the selected `_bmad` directory.
   evidence: Absolute and parent-traversal directory names are joined without containment validation, so concurrent cleanup code can relocate and delete paths outside `_bmad`.
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-tooling-safety-items.md; Existing installed cleanup copies already reject absolute, traversal, nested, linked and duplicate targets before mutation. The canonical 23-case cleanup suite passed, including preserved target bytes and installed-copy/manifest identity. This closure does not cover abrupt termination or partial final deletion; DW-36 and the durable-recovery entry remain open.
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-g-6-runtime-toolchain-baseline.md`
   summary: Make legacy cleanup recovery durable across abrupt process termination and partial final deletion.
   evidence: Staging has no persistent original-to-staged journal, and a partially failed `rmtree` reports remaining paths without proving byte-complete recovery.
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-g-6-runtime-toolchain-baseline.md`
   summary: Run the failure-atomic legacy cleanup suite in a blocking root CI job.
   evidence: The seven cleanup tests pass locally but no workflow invokes them, so rollback regressions can merge unnoticed.
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-tooling-safety-items.md; The existing workflow-gates job runs the canonical cleanup suite unconditionally with bytecode disabled. New executable workflow-policy controls reject omission, commented invocation, tolerated exit, false condition and continue-on-error. Canonical cleanup suite: 23 passed. This establishes blocking coverage, not crash-safe deletion.
 
 ### DW-66: Implement the `Partial` branch of the AD-32 admission matrix for Conversation-start setup.
 
@@ -821,6 +825,8 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-1-p1r-3108-evidence-and-qualification.md`
   summary: At the next G-6 recapture, build the Builds self-test catalog fixture from a test-owned package table and add a drift control per catalog package.
   evidence: Removing entries from `CATALOG_TUPLE_FIELDS` leaves the self-test green and lets a `daprDotnetPackages` 1.18.8 baseline validate (review R5-VG-01).
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-tooling-safety-items.md; Added an independent six-package table in the root blocking G-6 contract suite. The actual historical baseline validator accepts each of three retained v1 baseline fixtures and rejects every individually drifted coordinate (18 controls), with restored positive validation after each case. The table never reads CATALOG_TUPLE_FIELDS, so removing a validator mapping fails CI. Historical Builds self-test/validator/evidence bytes and current qualification acceptance remain unchanged; this supplies independent coverage without re-sealing retained packets.
 - source_spec: `_bmad-output/implementation-artifacts/spec-update-eventstore-package-version.md`
   summary: The Builds package audit still has a duplicate xunit consumer, so an incremental refresh of one family fails closed.
   evidence: `package-version-audit.json` lists `P0Fixture.NativeTests.VsTest.csproj` twice under family `xunit` (6 rows, 5 unique). `audit-central-package-versions.ps1 -Family hexalith-eventstore` stopped on that prior-family check. This pin used a complete refresh instead. The duplicate predates the EventStore `3.110.0` pin.
@@ -1146,10 +1152,14 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-dw-39-43-renderer-snapshot-hardening.md`
   summary: Constrain renderer publication and reuse beneath trusted render-tree ancestors.
   evidence: Independent review and a temporary CLI-equivalent reproduction moved destination.parent outside the render tree and replaced it with a symlink; rendering still succeeded. Ancestor containment is a pre-existing limitation outside DW-39's generation-directory and descendant checks; qualify the trusted boundary before changing publication paths.
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-tooling-safety-items.md; Renderer publication/reuse now walks from the trusted resolved project root using held no-follow directory descriptors and performs staging writes/rename/cleanup relative to those handles. Tests reject links at all four render ancestors for both reuse and new generations while preserving outside bytes. Ancestor ownership must remain exclusive during rendering; same-permission processes can relocate opened directories, which the renderer cannot atomically prohibit. Initial binding and pre-write checks reject detected movement. Safe descriptor primitives are required; unsupported platforms halt before publication. Paths modified after return are outside this operational guarantee.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-dw-39-43-renderer-snapshot-hardening.md`
   summary: Make existing-snapshot verification resistant to concurrent substitutions between structural checks and byte reads.
   evidence: Independent review and a deterministic temporary reproduction replaced guide.md with a matching external symlink during manifest.read_text, after rglob/lstat; _verify_existing still succeeded. This pre-existing concurrent-writer limitation requires separately scoped descriptor-based traversal and reads, while DW-39 rejects links already present at verification preflight.
+  status: resolved
+  resolution: 2026-10-24; spec-five-deferred-tooling-safety-items.md; Snapshot verification now traverses and reads through held no-follow directory/file descriptors, checks regular-file identity/content metadata and directory-entry sets, and rechecks bindings before release. Deterministic file, manifest, nested-file/directory and after-read substitution controls reject matching external symlinks and preserve external bytes. Required descriptor support fails closed when unavailable; no guarantee is made against path mutation after return.
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-five-deferred-ci-qualification-items.md`
   summary: Extend catalog property ownership validation to the effective local props import closure.
