@@ -1071,6 +1071,9 @@ public sealed class ProjectsAuthenticationContractTests
             {
                 using HttpRequestMessage request = new(HttpMethod.Get, $"/api/v1/projects/{TestProjectId}");
                 using HttpRequestMessage missingRequest = new(HttpMethod.Get, $"/api/v1/projects/{missingProjectId}");
+                // Equal caller tracing input keeps the exact safe-denial comparison meaningful.
+                request.Headers.Add("X-Correlation-Id", "same-safe-denial-correlation");
+                missingRequest.Headers.Add("X-Correlation-Id", "same-safe-denial-correlation");
                 if (includeConflictingHint)
                 {
                     request.Headers.Add("X-Hexalith-Tenant-Id", "tenant-a");

@@ -10,6 +10,8 @@ internal sealed class ProjectReadTestFolders : IProjectFolderDirectory
     public void Deny(string id) => _denied[id] = 0;
     public void Allow(string id) => _denied.TryRemove(id, out _);
     public ConcurrentBag<(string ProjectId, string FolderId)> Arguments { get; } = [];
+    /// <summary>Gets the correlation IDs observed by actual owner-read calls.</summary>
+    public ConcurrentBag<string> CorrelationIds { get; } = [];
     public bool RequireCorrelation { get; set; }
     private int _reads;
     public int Reads => Volatile.Read(ref _reads);
@@ -22,6 +24,7 @@ internal sealed class ProjectReadTestFolders : IProjectFolderDirectory
         if (RequireCorrelation) ArgumentException.ThrowIfNullOrWhiteSpace(correlationId);
         Interlocked.Increment(ref _reads);
         Arguments.Add((projectId.Value, folderId));
+        CorrelationIds.Add(correlationId);
         if (OnRead is not null) { await OnRead(folderId).ConfigureAwait(false); }
         return new ProjectFolderValidationResult(Outcomes.TryGetValue(folderId, out ProjectFolderValidationOutcome outcome) ? outcome : _denied.ContainsKey(folderId)
             ? ProjectFolderValidationOutcome.Denied : ProjectFolderValidationOutcome.Accepted, correlationId);

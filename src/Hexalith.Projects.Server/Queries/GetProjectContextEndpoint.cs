@@ -59,46 +59,18 @@ public static partial class ProjectsDomainServiceEndpoints
         TimeProvider timeProvider,
         CancellationToken cancellationToken)
     {
-        string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
-        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : null;
-        string? taskId = ReadHeader(httpContext, "X-Hexalith-Task-Id");
-        taskId = IsCanonicalIdentifier(taskId) ? taskId : null;
+        string correlationId = BeginQueryRequest(httpContext, out string? taskId);
 
-        if (string.IsNullOrWhiteSpace(projectId) || !IsCanonicalIdentifier(projectId))
-        {
-            // Malformed and missing project ids are indistinguishable at the safe-denial edge.
-            return SafeDenial(correlationId, null);
-        }
-
-        ProjectAuthorizationResult authorization = await authorizationGate
-            .AuthorizeReadAsync(projectId, tenantContext, httpContext, correlationId, taskId, cancellationToken)
+        var prepared = await AuthorizeContextQueryAsync(
+            projectId, httpContext, tenantContext, authorizationGate, correlationId, taskId, cancellationToken)
             .ConfigureAwait(false);
-        if (!authorization.IsAllowed || authorization.ProjectDetail is null)
+        if (prepared.Rejection is { } rejection)
         {
-            return authorization.Retryable && authorization.Reason == ReferenceState.Unavailable
-                ? ReadModelUnavailable(correlationId, null)
-                : SafeDenial(correlationId, null, authorization);
+            return rejection;
         }
 
-        if (HasHeader(httpContext, "Idempotency-Key"))
-        {
-            return ValidationProblem(correlationId, null, "idempotency_key");
-        }
-
-        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
-        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
-        {
-            return ValidationProblem(correlationId, null, "freshness");
-        }
-
-        if (authorization.TenantAccessResult is not { } tenantAccessResult)
-        {
-            // Defensive: AuthorizeReadAsync should populate the result on every Allowed path. A
-            // missing result is an upstream regression — collapse to safe-denial.
-            return SafeDenial(correlationId, null);
-        }
-
-        ProjectDetailItem detail = authorization.ProjectDetail;
+        ProjectDetailItem detail = prepared.Detail!;
+        var tenantAccessResult = prepared.TenantAccess!;
         DateTimeOffset now = timeProvider.GetUtcNow();
 
         ProjectConversationsPage conversations = await conversationDirectory
@@ -129,11 +101,6 @@ public static partial class ProjectsDomainServiceEndpoints
                 FileReferences: detail.FileReferences,
                 MemoryReferences: detail.MemoryReferences,
                 Conversations: conversationEvidence));
-
-        if (!string.IsNullOrWhiteSpace(correlationId))
-        {
-            httpContext.Response.Headers["X-Correlation-Id"] = correlationId;
-        }
 
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
         return Results.Json(assembled.Context, ResponseJsonOptions);

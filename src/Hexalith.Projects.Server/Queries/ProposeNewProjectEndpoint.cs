@@ -44,10 +44,7 @@ public static partial class ProjectsDomainServiceEndpoints
         TimeProvider timeProvider,
         CancellationToken cancellationToken)
     {
-        string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
-        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : null;
-        string? taskId = ReadHeader(httpContext, "X-Hexalith-Task-Id");
-        taskId = IsCanonicalIdentifier(taskId) ? taskId : null;
+        string correlationId = BeginQueryRequest(httpContext, out string? taskId);
 
         ProjectAuthorizationResult authorization = await authorizationGate
             .AuthorizeListAsync(tenantContext, httpContext, correlationId, taskId, cancellationToken)
@@ -59,15 +56,9 @@ public static partial class ProjectsDomainServiceEndpoints
                 : SafeDenial(correlationId, taskId, authorization);
         }
 
-        if (HasHeader(httpContext, "Idempotency-Key"))
+        if (ValidateQueryRequest(httpContext, correlationId, taskId) is { } validationProblem)
         {
-            return ValidationProblem(correlationId, taskId, "idempotency_key");
-        }
-
-        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
-        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
-        {
-            return ValidationProblem(correlationId, taskId, "freshness");
+            return validationProblem;
         }
 
         ProjectCreationProposalHttpRequest? body;
@@ -166,11 +157,6 @@ public static partial class ProjectsDomainServiceEndpoints
         if (proposal is null)
         {
             return ValidationProblem(correlationId, taskId, "metadata");
-        }
-
-        if (!string.IsNullOrWhiteSpace(correlationId))
-        {
-            httpContext.Response.Headers["X-Correlation-Id"] = correlationId;
         }
 
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;

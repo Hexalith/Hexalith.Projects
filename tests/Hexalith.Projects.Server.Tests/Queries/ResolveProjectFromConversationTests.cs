@@ -264,18 +264,29 @@ public sealed class ResolveProjectFromConversationTests
         }
     }
 
-    [Fact]
-    public async Task Resolve_ListReadModelUnavailable_Returns503()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Resolve_ListReadModelUnavailable_Returns503(bool includeCorrelation)
     {
         WebApplication app = await StartAppAsync(metadata: Linked(ProjectAId), rows: [], listThrows: true).ConfigureAwait(true);
         try
         {
             using HttpClient client = new() { BaseAddress = new Uri(app.Urls.First()) };
-            HttpResponseMessage response = await client.SendAsync(Request(), TestContext.Current.CancellationToken).ConfigureAwait(true);
+            using HttpRequestMessage request = Request();
+            if (!includeCorrelation) request.Headers.Remove("X-Correlation-Id");
+            using HttpResponseMessage response = await client.SendAsync(request, TestContext.Current.CancellationToken).ConfigureAwait(true);
             string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
 
             response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            string correlationId = response.Headers.GetValues("X-Correlation-Id").Single();
+            if (includeCorrelation) correlationId.ShouldBe(CorrelationIdValue);
+            else ByteAether.Ulid.Ulid.IsValid(correlationId).ShouldBeTrue();
+            response.Headers.CacheControl.ShouldNotBeNull().NoStore.ShouldBeTrue();
+            response.Headers.Vary.ShouldContain("Authorization");
+            response.Headers.Vary.ShouldContain("Cookie");
             using JsonDocument document = JsonDocument.Parse(body);
+            document.RootElement.GetProperty("correlationId").GetString().ShouldBe(correlationId);
             document.RootElement.GetProperty("category").GetString().ShouldBe("read_model_unavailable");
             document.RootElement.GetProperty("retryable").GetBoolean().ShouldBeTrue();
         }
@@ -549,7 +560,14 @@ public sealed class ResolveProjectFromConversationTests
             maximum.ShouldBeInRange(1, 4); folders.Reads.ShouldBe(16); exact.ShouldBe(16);
             folders.OnRead = _ => Task.Delay(TimeSpan.FromSeconds(8), TestContext.Current.CancellationToken);
             var elapsed = System.Diagnostics.Stopwatch.StartNew();
-            (await client.SendAsync(Request(), TestContext.Current.CancellationToken)).StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            using HttpResponseMessage timedOut = await client.SendAsync(Request(), TestContext.Current.CancellationToken);
+            timedOut.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+            timedOut.Headers.GetValues("X-Correlation-Id").Single().ShouldBe(CorrelationIdValue);
+            timedOut.Headers.CacheControl.ShouldNotBeNull().NoStore.ShouldBeTrue();
+            timedOut.Headers.Vary.ShouldContain("Authorization");
+            timedOut.Headers.Vary.ShouldContain("Cookie");
+            using JsonDocument timeoutBody = JsonDocument.Parse(await timedOut.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+            timeoutBody.RootElement.GetProperty("correlationId").GetString().ShouldBe(CorrelationIdValue);
             elapsed.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(4));
         }
         finally { await StopAsync(app); }

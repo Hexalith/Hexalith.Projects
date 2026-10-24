@@ -1,6 +1,6 @@
 # Supported Project list/open implementation (Story 6.1)
 
-This is local implementation and technical verification, not production acceptance or P4 approval. The unchanged legacy public `/api/v1/projects` routes remain available. The new handlers are `Hexalith.Projects.Queries.ListProjects.v1` and `Hexalith.Projects.Queries.GetProject.v1` at the existing DomainService query dispatcher. List defaults to 50, caps at 200, orders by ordinal Project ID, and accepts `Active`/`Archived` lifecycle filters. The separate conversation page default remains 25.
+This is local implementation and technical verification, not production acceptance or P4 approval. The retained legacy public `/api/v1/projects` routes remain available. The new handlers are `Hexalith.Projects.Queries.ListProjects.v1` and `Hexalith.Projects.Queries.GetProject.v1` at the existing DomainService query dispatcher. List defaults to 50, caps at 200, orders by ordinal Project ID, and accepts `Active`/`Archived` lifecycle filters. The separate conversation page default remains 25.
 
 ## Persisted projection and dispatch
 
@@ -103,3 +103,11 @@ The [approved October 21 scope reset](../_bmad-output/planning-artifacts/sprint-
 | Require exactly one authorized Folder for every candidate | Replaced by the approved Folder rule: null/Pending-null bindings can suggest from Conversation observations under Project authorization and its final recheck; they cannot match attachments. An actual Folder ID still requires an Included binding and owner acceptance. |
 
 `ProjectAdvisoryQueryTests.Policy.cs` exercises these boundaries with controlled authorization and owner outcomes, closed wire-field assertions, and unchanged persisted Project/index bytes and ETags. Existing advisory tests cover bound Folder denial, attachment exclusion and unusable projection states. This reconciliation does not accept live owner qualification, context readiness, confirmation authority or deployment gates.
+
+## Legacy read request safety and the cutover baseline
+
+The 2026-10-24 request-boundary repair covers all eleven retained legacy reads, including the read-only proposal preview. A valid canonical `X-Correlation-Id` is echoed; missing or malformed values receive a generated ULID. The same response header is present on handler-generated validation, safe-denial and dependency-failure responses, and matches the correlation in Problem Details. Optional task IDs retain the existing canonical validation and error-disclosure conventions. Mutation admission keeps its own envelope contract.
+
+Every retained read response sets `Cache-Control: no-store` and adds `Authorization` and `Cookie` to `Vary`, preserving existing values. Tenant authority still comes exclusively from authenticated server context. After authorization, read operations reject `Idempotency-Key` in either headers or the query string, including empty, repeated and case-varied query keys. Other unknown query parameters remain ignored. Requested freshness retains the existing exact `eventually_consistent` comparison and response semantics.
+
+These validation and header differences close DW-49, DW-50, DW-53, DW-58 and DW-62 locally. DW-58 and DW-62 previously named Story 6.7 because they affect the legacy shadow baseline: future cutover comparisons must use this repaired baseline and explicitly account for the new correlation/cache headers and query-key rejection. Existing retained comparison evidence is historical. This repair does not approve a normalization rule, accept Story 6.7, qualify a live topology, or advance any supported-read prerequisite gate.

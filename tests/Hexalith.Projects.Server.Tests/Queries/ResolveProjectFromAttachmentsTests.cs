@@ -165,13 +165,22 @@ public sealed class ResolveProjectFromAttachmentsTests
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    [Fact]
-    public async Task Resolve_ReadModelUnavailable_Returns503()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Resolve_ReadModelUnavailable_Returns503(bool includeCorrelation)
     {
-        EndpointResponse response = await SendAsync(rows: [], referenceIndexThrows: true).ConfigureAwait(true);
+        EndpointResponse response = await SendAsync(rows: [], referenceIndexThrows: true, correlationHeader: includeCorrelation).ConfigureAwait(true);
 
         response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+        string correlationId = response.Header("X-Correlation-Id").ShouldNotBeNull();
+        if (includeCorrelation) correlationId.ShouldBe(CorrelationIdValue);
+        else ByteAether.Ulid.Ulid.IsValid(correlationId).ShouldBeTrue();
+        response.Header("Cache-Control").ShouldBe("no-store");
+        response.Header("Vary").ShouldNotBeNull().ShouldContain("Authorization");
+        response.Header("Vary").ShouldNotBeNull().ShouldContain("Cookie");
         using JsonDocument document = JsonDocument.Parse(response.Body);
+        document.RootElement.GetProperty("correlationId").GetString().ShouldBe(correlationId);
         document.RootElement.GetProperty("category").GetString().ShouldBe("read_model_unavailable");
         document.RootElement.GetProperty("retryable").GetBoolean().ShouldBeTrue();
     }
@@ -442,7 +451,14 @@ public sealed class ResolveProjectFromAttachmentsTests
         (await SendAsync(url: url, folderDirectory: folders)).StatusCode.ShouldBe(HttpStatusCode.OK); maximum.ShouldBeInRange(1, 4);
         folders.OnRead = _ => Task.Delay(TimeSpan.FromSeconds(8), TestContext.Current.CancellationToken);
         var elapsed = System.Diagnostics.Stopwatch.StartNew();
-        (await SendAsync(folderDirectory: folders)).StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+        var timedOut = await SendAsync(folderDirectory: folders);
+        timedOut.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+        timedOut.Header("X-Correlation-Id").ShouldBe(CorrelationIdValue);
+        timedOut.Header("Cache-Control").ShouldBe("no-store");
+        timedOut.Header("Vary").ShouldNotBeNull().ShouldContain("Authorization");
+        timedOut.Header("Vary").ShouldNotBeNull().ShouldContain("Cookie");
+        using JsonDocument timeoutBody = JsonDocument.Parse(timedOut.Body);
+        timeoutBody.RootElement.GetProperty("correlationId").GetString().ShouldBe(CorrelationIdValue);
         elapsed.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(4));
     }
 
@@ -451,7 +467,12 @@ public sealed class ResolveProjectFromAttachmentsTests
     {
         var folders = new ProjectReadTestFolders { RequireCorrelation = true };
         var response = await SendAsync(rows: [Row(ProjectAId, Reference(AttachmentKind.Folder, FolderId))], folderDirectory: folders, correlationHeader: false);
-        response.StatusCode.ShouldBe(HttpStatusCode.OK); response.Header("X-Correlation-Id").ShouldBeNull();
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        string correlationId = response.Header("X-Correlation-Id").ShouldNotBeNull();
+        ByteAether.Ulid.Ulid.IsValid(correlationId).ShouldBeTrue();
+        folders.CorrelationIds.Count.ShouldBe(folders.Reads);
+        folders.CorrelationIds.ShouldNotBeEmpty();
+        folders.CorrelationIds.ShouldAllBe(value => value == correlationId);
         using JsonDocument document = JsonDocument.Parse(response.Body);
         document.RootElement.GetProperty("candidates").GetArrayLength().ShouldBe(1);
     }

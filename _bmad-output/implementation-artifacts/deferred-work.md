@@ -408,7 +408,8 @@ location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: OpenAPI declares caller-provided-or-generated-correlation but nothing in the module generates one; a caller that omits or malforms the header gets no X-Correlation-Id back. Systemic across ResolveProjectFromAttachments, ResolveProjectFromConversation, GetProjectContextExplanation and eight sites in ProjectsDomainServiceEndpoints, so fixing one endpoint alone would be inconsistent.
-status: open
+status: done 2026-10-24
+resolution: 2026-10-24; spec-five-deferred-read-request-safety.md; The shared legacy query preamble preserves canonical caller correlation IDs and generates a platform ULID for absent or malformed values across all eleven read operations. HTTP and owner-hop regressions verify generation, preservation, uniqueness and matching owner-call identity.
 
 ### DW-50: Echo X-Correlation-Id on error responses, not only on 200.
 
@@ -417,7 +418,8 @@ location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: The correlation header assignment sits after every SafeDenial, ReadModelUnavailable and ValidationProblem return, so 400/404/503 carry no correlation id — the exact responses where a caller most needs one. Systemic across the module, and no test asserts headers on any error response.
-status: open
+status: done 2026-10-24
+resolution: 2026-10-24; spec-five-deferred-read-request-safety.md; Correlation response headers are set before route validation and authorization, so handler-generated 400/404/503 responses carry the same ID as Problem Details. HTTP outcome coverage and both resolution dependency/deadline branches plus proposal failures verify the contract.
 
 ### DW-51: Produce persisted before/after zero-write evidence for the Conversation-start read.
 
@@ -449,7 +451,8 @@ location: src/Hexalith.Projects.Server/Queries/
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: Correlation and task id reads, the IsCanonicalIdentifier guard, the Idempotency-Key check, the X-Hexalith-Freshness strict-equality check and the TenantAccessResult defensive collapse are duplicated across at least four query handlers, so any fix to them must be applied N times. The Story 3.5 handler documents itself as a port of Story 3.2.
-status: open
+status: done 2026-10-24
+resolution: 2026-10-24; spec-five-deferred-read-request-safety.md; Extracted private helpers for correlation/task normalization, post-authorization idempotency/freshness validation, and the four context/setup handlers' canonical Project ID, authorization, detail and TenantAccessResult preamble. All eleven read operations reuse the appropriate boundary; mutation admission and existing task-disclosure rules are preserved.
 
 ### DW-54: Resolve OpenAPI spine inconsistencies surfaced by the Story 3.5 audit.
 
@@ -502,7 +505,8 @@ location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: The operation description states that Idempotency-Key is not a query parameter and is rejected if present, but only HasHeader is checked, and GetConversationStartSetup_ExtraQueryParameters_AreIgnoredNotFailed makes the query form pass silently. Deferred to Story 6.7 because it changes legacy request-validation behavior.
-status: open
+status: done 2026-10-24
+resolution: 2026-10-24; spec-five-deferred-read-request-safety.md; All retained reads reject Idempotency-Key supplied in headers or query strings only after authorization, including empty, repeated, encoded and case-varied query keys. Unknown query parameters remain compatible. The intentional legacy-baseline change is documented for Story 6.7; cutover acceptance and normalization approval remain gated.
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
 ### DW-59: Reconcile the declared 401 and 403 responses with the safe-denial collapse.
@@ -543,7 +547,8 @@ location: src/Hexalith.Projects.Server/Queries/GetConversationStartSetupEndpoint
 source_spec: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-6-2-retrieve-conversation-start-setup-with-admission-truth.md
 severity: medium
 reason: goals and userInstructions are tagged x-hexalith-sensitive-metadata-tier tenant_sensitive, yet the response is emitted with no Cache-Control no-store and no Vary handling. This is the fast-path endpoint called at every conversation start, so it is the one intermediaries are most likely to cache. Deferred to Story 6.7 because it changes legacy response headers and therefore the shadow baseline.
-status: open
+status: done 2026-10-24
+resolution: 2026-10-24; spec-five-deferred-read-request-safety.md; All retained reads set Cache-Control no-store and preserve Vary while adding missing Authorization/Cookie fields case-insensitively; wildcard Vary is preserved. Success, denial, validation, dependency and deadline controls pass. The repaired legacy baseline is documented without accepting Story 6.7 or claiming live qualification.
 gate: 6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback
 
 ### DW-63: Migrate the Projects Server hand-rolled `/process`, `/project`, and `/query` endpoints onto the SDK's `AddEventStoreDomainService()`/`UseEventStoreDomainService()` host.

@@ -59,15 +59,23 @@ public sealed class ProposeNewProjectEndpointTests
     private const string TaskIdValue = "task-001";
     private const string IdempotencyKeyValue = "proposal-001";
 
-    [Fact]
-    public async Task Preview_NoMatch_ReturnsMetadataOnlyProposal()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Preview_NoMatch_ReturnsMetadataOnlyProposal(bool includeCorrelation)
     {
         using ServiceProvider provider = await BuildProviderAsync().ConfigureAwait(true);
 
-        EndpointResponse response = await SendPreviewAsync(provider, PreviewBody()).ConfigureAwait(true);
+        EndpointResponse response = await SendPreviewAsync(provider, PreviewBody(),
+            headers: includeCorrelation ? null : new Dictionary<string, string> { ["X-Correlation-Id"] = string.Empty }).ConfigureAwait(true);
 
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
-        response.Header("X-Correlation-Id").ShouldBe(CorrelationIdValue);
+        string correlationId = response.Header("X-Correlation-Id").ShouldNotBeNull();
+        if (includeCorrelation) correlationId.ShouldBe(CorrelationIdValue);
+        else ByteAether.Ulid.Ulid.IsValid(correlationId).ShouldBeTrue();
+        response.Header("Cache-Control").ShouldBe("no-store");
+        response.Header("Vary").ShouldNotBeNull().ShouldContain("Authorization");
+        response.Header("Vary").ShouldNotBeNull().ShouldContain("Cookie");
         response.Header("X-Hexalith-Freshness").ShouldBe("eventually_consistent");
 
         using JsonDocument document = JsonDocument.Parse(response.Body);
@@ -155,14 +163,25 @@ public sealed class ProposeNewProjectEndpointTests
         response.Body.ShouldNotContain("Conversation Project");
     }
 
-    [Fact]
-    public async Task Preview_ReferenceIndexUnavailable_Returns503()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Preview_ReferenceIndexUnavailable_Returns503(bool includeCorrelation)
     {
         using ServiceProvider provider = await BuildProviderAsync(referenceIndexThrows: true).ConfigureAwait(true);
 
-        EndpointResponse response = await SendPreviewAsync(provider, PreviewBody()).ConfigureAwait(true);
+        EndpointResponse response = await SendPreviewAsync(provider, PreviewBody(),
+            headers: includeCorrelation ? null : new Dictionary<string, string> { ["X-Correlation-Id"] = string.Empty }).ConfigureAwait(true);
 
         response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+        string correlationId = response.Header("X-Correlation-Id").ShouldNotBeNull();
+        if (includeCorrelation) correlationId.ShouldBe(CorrelationIdValue);
+        else ByteAether.Ulid.Ulid.IsValid(correlationId).ShouldBeTrue();
+        response.Header("Cache-Control").ShouldBe("no-store");
+        response.Header("Vary").ShouldNotBeNull().ShouldContain("Authorization");
+        response.Header("Vary").ShouldNotBeNull().ShouldContain("Cookie");
+        using JsonDocument body = JsonDocument.Parse(response.Body);
+        body.RootElement.GetProperty("correlationId").GetString().ShouldBe(correlationId);
     }
 
     [Fact]

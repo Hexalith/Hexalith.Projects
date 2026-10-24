@@ -48,7 +48,7 @@ using Xunit;
 /// cells, the AC 9 Story-3.5-specific contract (wire-shape invariants + the by-construction
 /// no-sibling-ACL assertion), AC 10 cross-tenant isolation, and the AC 17 negative-path matrix.
 /// </summary>
-public sealed class GetConversationStartSetupTests
+public sealed partial class GetConversationStartSetupTests
 {
     private const string ProjectIdValue = "01HZ9K8YQ3W6V2N4R7T5P0X1AB";
     private const string CorrelationIdValue = "corr_01HZ9K8YQ3W6V2N4R7T5P0X1XX";
@@ -675,7 +675,9 @@ public sealed class GetConversationStartSetupTests
         IProjectFolderDirectory? folderDirectoryOverride = null,
         IProjectFileReferenceDirectory? fileReferenceDirectoryOverride = null,
         IProjectMemoryDirectory? memoryDirectoryOverride = null,
-        TimeProvider? timeProvider = null)
+        TimeProvider? timeProvider = null,
+        string? existingVary = null,
+        bool allowList = false)
     {
         WebApplicationBuilder builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Configuration["urls"] = "http://127.0.0.1:0";
@@ -685,7 +687,7 @@ public sealed class GetConversationStartSetupTests
         builder.Services.RemoveAll<IProjectDaprPolicyEvidenceProvider>();
         builder.Services.AddSingleton<IProjectDaprPolicyEvidenceProvider, AllowingProjectDaprPolicyEvidenceProvider>();
         builder.Services.RemoveAll<IProjectTenantContextAccessor>();
-        builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContext(tenantId, principalId));
+        builder.Services.AddSingleton<IProjectTenantContextAccessor>(new FixedProjectTenantContext(tenantId, principalId, allowList));
         builder.Services.AddSingleton<IProjectCommandSubmitter>(new NoopProjectCommandSubmitter());
         if (timeProvider is not null)
         {
@@ -759,6 +761,15 @@ public sealed class GetConversationStartSetupTests
             await app.Services.GetRequiredService<IProjectTenantAccessProjectionStore>().SaveAsync(projection, TestContext.Current.CancellationToken).ConfigureAwait(true);
         }
 
+        if (existingVary is not null)
+        {
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Vary = existingVary;
+                await next(context).ConfigureAwait(false);
+            });
+        }
+
         app.MapProjectsServerEndpoints();
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(true);
         return app;
@@ -775,7 +786,7 @@ public sealed class GetConversationStartSetupTests
         await app.DisposeAsync().ConfigureAwait(true);
     }
 
-    private sealed class FixedProjectTenantContext(string? tenantId, string? principalId) : IProjectTenantContextAccessor
+    private sealed class FixedProjectTenantContext(string? tenantId, string? principalId, bool allowList = false) : IProjectTenantContextAccessor
     {
         public string? AuthoritativeTenantId { get; } = tenantId;
 
@@ -787,9 +798,9 @@ public sealed class GetConversationStartSetupTests
                 : EventStoreClaimTransformEvidence.Allowed(
                     AuthoritativeTenantId,
                     PrincipalId,
-                    [
-                        ProjectAuthorizationGate.ReadProjectAction,
-                    ]);
+                    allowList
+                        ? [ProjectAuthorizationGate.ReadProjectAction, ProjectAuthorizationGate.ListProjectsAction]
+                        : [ProjectAuthorizationGate.ReadProjectAction]);
     }
 
     private sealed class NoopProjectCommandSubmitter : IProjectCommandSubmitter

@@ -668,8 +668,7 @@ public static partial class ProjectsDomainServiceEndpoints
         ProjectAuthorizationGate authorizationGate,
         CancellationToken cancellationToken)
     {
-        string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
-        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : null;
+        string correlationId = BeginQueryRequest(httpContext, out _);
 
         if (string.IsNullOrWhiteSpace(projectId) || !IsCanonicalIdentifier(projectId))
         {
@@ -687,25 +686,12 @@ public static partial class ProjectsDomainServiceEndpoints
                 : SafeDenial(correlationId, null, authorization);
         }
 
-        if (HasHeader(httpContext, "Idempotency-Key"))
+        if (ValidateQueryRequest(httpContext, correlationId, null) is { } validationProblem)
         {
-            return ValidationProblem(correlationId, null, "idempotency_key");
-        }
-
-        // A stricter caller-requested freshness class is invalid for an eventually-consistent query,
-        // but only an authorized caller receives validation feedback.
-        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
-        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
-        {
-            return ValidationProblem(correlationId, null, "freshness");
+            return validationProblem;
         }
 
         ProjectDetailItem detail = authorization.ProjectDetail;
-
-        if (!string.IsNullOrWhiteSpace(correlationId))
-        {
-            httpContext.Response.Headers["X-Correlation-Id"] = correlationId;
-        }
 
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
 
@@ -735,8 +721,7 @@ public static partial class ProjectsDomainServiceEndpoints
         IProjectAuditTimelineReadModel auditTimelineReadModel,
         CancellationToken cancellationToken)
     {
-        string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
-        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : null;
+        string correlationId = BeginQueryRequest(httpContext, out _);
 
         if (string.IsNullOrWhiteSpace(projectId) || !IsCanonicalIdentifier(projectId))
         {
@@ -753,15 +738,9 @@ public static partial class ProjectsDomainServiceEndpoints
                 : SafeDenial(correlationId, null, authorization);
         }
 
-        if (HasHeader(httpContext, "Idempotency-Key"))
+        if (ValidateQueryRequest(httpContext, correlationId, null) is { } validationProblem)
         {
-            return ValidationProblem(correlationId, null, "idempotency_key");
-        }
-
-        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
-        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
-        {
-            return ValidationProblem(correlationId, null, "freshness");
+            return validationProblem;
         }
 
         if (!TryReadOperatorAuditLimit(httpContext, out int auditLimit))
@@ -788,11 +767,6 @@ public static partial class ProjectsDomainServiceEndpoints
                 && string.Equals(row.ProjectId, projectId, StringComparison.Ordinal))
             .Take(auditLimit)
             .ToArray();
-
-        if (!string.IsNullOrWhiteSpace(correlationId))
-        {
-            httpContext.Response.Headers["X-Correlation-Id"] = correlationId;
-        }
 
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
 
@@ -823,8 +797,7 @@ public static partial class ProjectsDomainServiceEndpoints
         IProjectConversationDirectory conversationDirectory,
         CancellationToken cancellationToken)
     {
-        string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
-        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : null;
+        string correlationId = BeginQueryRequest(httpContext, out _);
 
         if (string.IsNullOrWhiteSpace(projectId) || !IsCanonicalIdentifier(projectId))
         {
@@ -841,15 +814,9 @@ public static partial class ProjectsDomainServiceEndpoints
                 : SafeDenial(correlationId, null, authorization);
         }
 
-        if (HasHeader(httpContext, "Idempotency-Key"))
+        if (ValidateQueryRequest(httpContext, correlationId, null) is { } validationProblem)
         {
-            return ValidationProblem(correlationId, null, "idempotency_key");
-        }
-
-        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
-        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
-        {
-            return ValidationProblem(correlationId, null, "freshness");
+            return validationProblem;
         }
 
         if (!TryReadPageRequest(httpContext, out PageRequest? page))
@@ -865,11 +832,6 @@ public static partial class ProjectsDomainServiceEndpoints
                 page!,
                 cancellationToken)
             .ConfigureAwait(false);
-
-        if (!string.IsNullOrWhiteSpace(correlationId))
-        {
-            httpContext.Response.Headers["X-Correlation-Id"] = correlationId;
-        }
 
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
         return Results.Json(conversations, ResponseJsonOptions);
@@ -1779,8 +1741,7 @@ public static partial class ProjectsDomainServiceEndpoints
         IProjectListReadModel listReadModel,
         CancellationToken cancellationToken)
     {
-        string? correlationId = ReadHeader(httpContext, "X-Correlation-Id");
-        correlationId = IsCanonicalIdentifier(correlationId) ? correlationId : null;
+        string correlationId = BeginQueryRequest(httpContext, out _);
 
         ProjectAuthorizationResult authorization = await authorizationGate
             .AuthorizeListAsync(tenantContext, httpContext, correlationId, null, cancellationToken)
@@ -1790,15 +1751,9 @@ public static partial class ProjectsDomainServiceEndpoints
             return SafeDenial(correlationId, null, authorization);
         }
 
-        if (HasHeader(httpContext, "Idempotency-Key"))
+        if (ValidateQueryRequest(httpContext, correlationId, null) is { } validationProblem)
         {
-            return ValidationProblem(correlationId, null, "idempotency_key");
-        }
-
-        string? requestedFreshness = ReadHeader(httpContext, FreshnessHeaderName);
-        if (requestedFreshness is not null && !string.Equals(requestedFreshness, EventuallyConsistent, StringComparison.Ordinal))
-        {
-            return ValidationProblem(correlationId, null, "freshness");
+            return validationProblem;
         }
 
         if (!TryReadLifecycleFilter(httpContext, out ProjectLifecycle? lifecycleFilter))
@@ -1819,11 +1774,6 @@ public static partial class ProjectsDomainServiceEndpoints
             return ReadModelUnavailable(correlationId, null);
         }
         IReadOnlyList<ProjectListItem> rows = ProjectQueryTenantFilter.FilterList(authoritativeTenantId, projectedRows);
-
-        if (!string.IsNullOrWhiteSpace(correlationId))
-        {
-            httpContext.Response.Headers["X-Correlation-Id"] = correlationId;
-        }
 
         httpContext.Response.Headers[FreshnessHeaderName] = EventuallyConsistent;
 
