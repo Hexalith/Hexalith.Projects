@@ -40,7 +40,7 @@
     <HexalithProjectsGeneratedClient>$(MSBuildProjectDirectory)/Generated/HexalithProjectsClient.g.cs</HexalithProjectsGeneratedClient>
     <HexalithProjectsGeneratedHelpers>$(MSBuildProjectDirectory)/Generated/HexalithProjectsIdempotencyHelpers.g.cs</HexalithProjectsGeneratedHelpers>
     <HexalithProjectsHelperGeneratorProject>$(MSBuildProjectDirectory)/Generation/Hexalith.Projects.Client.Generation.csproj</HexalithProjectsHelperGeneratorProject>
-    <HexalithProjectsRepositoryRoot>$(MSBuildProjectDirectory)/../..</HexalithProjectsRepositoryRoot>
+    <ProjectsRepositoryDirectory>$(MSBuildProjectDirectory)/../..</ProjectsRepositoryDirectory>
     <HexalithProjectsDotnetHostFile Condition="'$(OS)' == 'Windows_NT'">dotnet.exe</HexalithProjectsDotnetHostFile>
     <HexalithProjectsDotnetHostFile Condition="'$(OS)' != 'Windows_NT'">dotnet</HexalithProjectsDotnetHostFile>
     <HexalithProjectsDotnetHostPath>$([System.IO.Path]::GetFullPath('$(MSBuildToolsPath)/../../$(HexalithProjectsDotnetHostFile)'))</HexalithProjectsDotnetHostPath>
@@ -62,7 +62,7 @@
           Outputs="$(HexalithProjectsGeneratedHelpers)"
           Condition="'$(DesignTimeBuild)' != 'true'">
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
-          Command="&quot;$(HexalithProjectsDotnetHostPath)&quot; run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; -- --repository-root &quot;$(HexalithProjectsRepositoryRoot)&quot; --contract &quot;$(HexalithProjectsContractSpine)&quot; --configuration &quot;$(MSBuildProjectDirectory)/nswag.json&quot; --output &quot;$(HexalithProjectsGeneratedHelpers)&quot;" />
+          Command="&quot;$(HexalithProjectsDotnetHostPath)&quot; run --project &quot;$(HexalithProjectsHelperGeneratorProject)&quot; -- --repository-root &quot;$(ProjectsRepositoryDirectory)&quot; --contract &quot;$(HexalithProjectsContractSpine)&quot; --configuration &quot;$(MSBuildProjectDirectory)/nswag.json&quot; --output &quot;$(HexalithProjectsGeneratedHelpers)&quot;" />
   </Target>
   <Target Name="VerifyHexalithProjectsGeneratedArtifacts"
           BeforeTargets="CoreCompile"
