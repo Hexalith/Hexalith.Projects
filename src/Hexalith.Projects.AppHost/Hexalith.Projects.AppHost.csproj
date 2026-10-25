@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
     <IsPublishable>true</IsPublishable>
     <UserSecretsId>hexalith-projects</UserSecretsId>
+    <DefineConstants Condition="'$(UseHexalithProjectReferences)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_SOURCE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hexalith.Projects.Aspire\Hexalith.Projects.Aspire.csproj" IsAspireProjectResource="false" />
@@ -12,10 +13,13 @@
     <ProjectReference Include="..\Hexalith.Projects.UI\Hexalith.Projects.UI.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.Workers\Hexalith.Projects.Workers.csproj" />
     <ProjectReference Include="..\..\tests\Hexalith.Projects.E2E.Fixtures\Hexalith.Projects.E2E.Fixtures.csproj" IsAspireProjectResource="false" />
+    <ProjectReference Include="..\..\tests\Hexalith.Projects.ReadAuthority\Hexalith.Projects.ReadAuthority.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Aspire\Hexalith.EventStore.Aspire.csproj" IsAspireProjectResource="false" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <!-- The two executable references below remain Aspire resources in every mode. -->
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore\Hexalith.EventStore.csproj" />
     <ProjectReference Include="$(HexalithTenantsRoot)\src\Hexalith.Tenants\Hexalith.Tenants.csproj" />
+    <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Server\Hexalith.Folders.Server.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
+    <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Workers\Hexalith.Folders.Workers.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" />

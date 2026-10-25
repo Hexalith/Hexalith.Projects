@@ -95,7 +95,7 @@ public sealed class DelegatedProjectAdvisoryConversationDirectoryTests
         {
             result.Success.ShouldBeFalse();
             result.ErrorMessage.ShouldBe(status == HttpStatusCode.NotFound ? "safe-denial"
-                : status == HttpStatusCode.OK ? QueryAdapterFailureReason.ActorResponseMismatch : QueryAdapterFailureReason.ActorException);
+                : status == HttpStatusCode.OK ? "actor-response-mismatch" : "actor-exception");
             result.PayloadBytes.ShouldBeNull();
         }
     }
@@ -165,7 +165,7 @@ public sealed class DelegatedProjectAdvisoryConversationDirectoryTests
         QueryResult result = await ExecuteAsync(OriginalQuery(), signingKey, SupportedProjectReadFixture.EventTime, handler, issuer, failure).ConfigureAwait(true);
         result.Success.ShouldBeFalse();
         result.ErrorMessage.ShouldBe(failure is "missing-key" or "issuer-unavailable"
-            ? QueryAdapterFailureReason.ActorException : "safe-denial");
+            ? "actor-exception" : "safe-denial");
         result.PayloadBytes.ShouldBeNull();
         sends.ShouldBe(0);
         issuer.Requests.Count.ShouldBe(failure == "issuer-unavailable" ? 1 : 0);

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <DefineConstants Condition="'$(SupportedProjectReadDistributed)' == 'true'">$(DefineConstants);SUPPORTED_PROJECT_READ_DISTRIBUTED</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Hexalith.Projects.AppHost\Hexalith.Projects.AppHost.csproj" />

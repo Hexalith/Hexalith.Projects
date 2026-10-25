@@ -5,6 +5,7 @@ using Hexalith.Projects.AppHost;
 using Hexalith.Projects.Aspire;
 
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
+SupportedProjectReadFixtureProfile.Configure(builder);
 const string projectsUiOidcClientId = "hexalith-projects-ui";
 const string projectsUiOidcClientSecret = "projects-ui-local-e2e";
 
@@ -60,16 +61,24 @@ IResourceBuilder<ProjectResource> projectsWorkers = builder.AddProject<Projects.
 
 _ = ProjectsLiveE2EFixtureProfile.AddResources(builder, projects);
 
-_ = builder.AddHexalithProjects(
-    eventStore,
-    tenants,
-    projects,
-    projectsWorkers,
-    redisHost,
-    accessControlConfigPath,
-    daprComponentsPath,
-    daprPlacementHostAddress,
-    daprSchedulerHostAddress);
+if (SupportedProjectReadFixtureProfile.IsEnabled(builder.Configuration))
+{
+    _ = projectsUi.WithExplicitStart();
+    SupportedProjectReadFixtureProfile.AddResources(builder, eventStore, tenants, projects, projectsWorkers, daprComponentsPath);
+}
+else
+{
+    _ = builder.AddHexalithProjects(
+        eventStore,
+        tenants,
+        projects,
+        projectsWorkers,
+        redisHost,
+        accessControlConfigPath,
+        daprComponentsPath,
+        daprPlacementHostAddress,
+        daprSchedulerHostAddress);
+}
 
 if (security is not null)
 {

@@ -56,7 +56,7 @@ public sealed class DelegatedProjectDirectoryRegistrationTests
             folder.Outcome.ShouldBe(ProjectFolderValidationOutcome.Unavailable);
             int folderTransportCount = transportScopes.Count;
             var conversation = await conversations!.ReadAsync("tenant-a", "conversation-a", token).ConfigureAwait(false);
-            conversation.ErrorMessage.ShouldBe(QueryAdapterFailureReason.ActorException);
+            conversation.ErrorMessage.ShouldBe("actor-exception");
             return QueryResult.FromPayload(System.Text.Json.JsonSerializer.SerializeToElement(new { folderTransportCount }));
         }));
         await using ServiceProvider provider = builder.Services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });

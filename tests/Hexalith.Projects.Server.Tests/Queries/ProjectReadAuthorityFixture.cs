@@ -199,7 +199,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
         bool dependency = expected == HttpStatusCode.InternalServerError;
         problem.GetProperty("type").GetString().ShouldBe(dependency ? ProblemTypeUris.InternalServerError : ProblemTypeUris.NotFound);
         problem.GetProperty("title").GetString().ShouldBe(dependency ? "Query Failed" : "Not Found");
-        problem.GetProperty("detail").GetString().ShouldBe(dependency ? QueryAdapterFailureReason.ActorException : "The requested resource was not found.");
+        problem.GetProperty("detail").GetString().ShouldBe(dependency ? "actor-exception" : "The requested resource was not found.");
         problem.GetProperty("reasonCode").GetString().ShouldBe(dependency ? QueryProblemReasonCodes.InternalError : QueryProblemReasonCodes.ProjectionMissing);
         if (dependency)
         {
