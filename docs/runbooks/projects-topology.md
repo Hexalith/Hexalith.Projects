@@ -17,6 +17,15 @@ Prerequisites:
   with `Dapr:RedisHost` when your local Dapr Redis is exposed elsewhere.
 - Root-level sibling repositories already available through the workspace layout.
 
+Before upgrading an existing `KeycloakPersistent=true` instance, export/back up its realm and verify
+that the backup can be restored. This workload-credential change adds a container environment variable;
+[Aspire can recreate persistent containers when configuration changes](https://aspire.dev/app-host/resource-lifetimes/).
+The current Keycloak helper has no data volume, so the old container's identity data would be lost on
+recreation. Do not restart that instance with the upgraded AppHost until its data has been preserved.
+For validation, use a separate isolated session with persistence explicitly disabled:
+`KeycloakPersistent=false aspire start --apphost "$PWD/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj" --isolated --non-interactive`.
+This is validation of a fresh realm, not migration of the existing identity data.
+
 From the repository root, start the topology through the Aspire CLI. The explicit Commons root keeps
 nested sibling project resolution on the root-declared checkout:
 
@@ -46,6 +55,64 @@ Do not use `aspire stop --all` when other workspaces may have active AppHosts.
 
 Do not run recursive submodule initialization for this topology. If a root-level sibling project is
 missing, fetch only the required root-level submodule or repository according to the workspace setup.
+
+### WSL: security stays Starting and dependent services stay Waiting
+
+Check the container runtime from the same WSL terminal that launches Aspire:
+
+```bash
+docker version
+aspire doctor --format Json --non-interactive
+aspire describe --apphost "$APPHOST" --format Json --non-interactive
+aspire logs security --apphost "$APPHOST" --non-interactive
+```
+
+`docker version` must report both client and server information. A successful `docker.exe version`
+only proves Windows can reach Docker Desktop. If `docker` reports missing WSL integration while
+`docker.exe` works, Aspire cannot create Keycloak: security can remain Starting with no container ID,
+endpoints, or logs. Check the AppHost log named by `aspire start` for an unhealthy container runtime
+and failed Docker `Version` calls. Increasing the readiness timeout does not repair this condition.
+
+In Docker Desktop, verify **Settings > Resources > WSL Integration** enables the current distribution
+and apply the settings, as described in the [Docker WSL integration guide](https://docs.docker.com/desktop/features/wsl/).
+If integration is already enabled but its CLI mount/socket is stale, stop the exact Projects AppHost
+before restarting Docker Desktop. A Desktop restart briefly interrupts **all** its containers;
+coordinate shared workloads, record their identities and restart policies, and verify their recovery.
+Do not remove containers or volumes, reset Docker, or shut down WSL as part of this repair.
+
+```bash
+aspire stop --apphost "$APPHOST" --non-interactive
+docker.exe desktop restart --timeout 180
+docker version
+```
+
+Proceed only after Linux `docker version` succeeds and the shared containers have recovered. Restart
+the topology with the normal command above, then use `aspire wait security` and `aspire wait projects-ui`
+with `--apphost "$APPHOST" --timeout 180 --non-interactive`. Preserve Keycloak authentication and the
+existing dependency waits; disabling security does not verify recovery of the authenticated topology.
+
+### EventStore exits with missing workload credentials
+
+Once Keycloak is healthy, EventStore requires `Authentication:WorkloadIssuer:ClientId` and
+`ClientSecret` to obtain assertions for its internal domain-service calls. The AppHost supplies a
+generated secret parameter to both Keycloak's `eventstore` service-account client and EventStore through
+the platform's `WithEventStoreWorkloadClientCredentials` helper. The secret follows `KeycloakPersistent`:
+ephemeral by default, persisted with an explicitly persistent local Keycloak container.
+
+The local realm grants no audience or operation by default. Its optional scopes cover the `projects`
+and `tenants` audiences and the five domain-service operations; each acquisition requests one audience
+and one operation. These ordinary local assertions do not establish Story 6.1 resource-binding or
+production enrollment acceptance. A reused container does not re-import a changed realm, but the new
+environment variable can instead force container recreation. Follow the backup/restore requirement
+before the startup commands above; a fresh isolated validation instance does not migrate old data.
+
+After readiness waits, inspect `aspire describe` every five seconds for 30 seconds and require the
+long-running services to remain Running and Healthy with unchanged names and start timestamps.
+Fail the check on an exit or restart. This is a bounded startup check, not a guarantee of future health.
+A successful wait can precede a subsequent process exit; `eventstore` Finished
+with exit code 134 is a failure even when its dependents already started. Inspect `aspire logs eventstore`
+with the exact AppHost selector for the options-validation error; do not bypass validation or inject
+dummy credentials merely to make the process start.
 
 ## Current G-6 qualification
 
