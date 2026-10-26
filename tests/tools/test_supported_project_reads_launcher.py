@@ -357,6 +357,213 @@ class SupportedReadLauncherOwnershipTests(unittest.TestCase):
             LAUNCHER.stop_owned_apphost(owned, lambda *_args, **_kwargs: self.fail("Replacement session stop"))
 
 
+class SupportedReadProjectsRestartControls(unittest.TestCase):
+    def identity(self, pid=301, wrapper=201, started="100"):
+        return {"resourceName": "projects-owned", "launcherPid": wrapper, "launcherStartTicks": started,
+                "pid": pid, "startTicks": started, "binarySha256": "a" * 64, "assemblySha256": "b" * 64}
+
+    def restart(self, commands, observation, *, identities=None, gone=True, guards=True, fail=None):
+        before, after = self.identity(), self.identity(302, 202, "200")
+        def run(command, **kwargs):
+            commands.append(command)
+            self.assertLessEqual(kwargs["timeout"], 135)
+            if command[:4] == ["aspire", "resource", "projects", fail] or fail == "wait" and command[:2] == ["aspire", "wait"]:
+                raise RuntimeError("controlled failure")
+            return ""
+        with contextlib.ExitStack() as stack:
+            stack.enter_context(patch.object(LAUNCHER, "owns_current_apphost", side_effect=guards if isinstance(guards, list) else None, return_value=guards))
+            stack.enter_context(patch.object(LAUNCHER, "resource_graph", return_value={"resources": []}))
+            stack.enter_context(patch.object(LAUNCHER, "projects_process_identity", side_effect=identities or [before, before, after, after]))
+            stack.enter_context(patch.object(LAUNCHER, "projects_processes_gone", return_value=gone))
+            stack.enter_context(patch.object(LAUNCHER, "refresh_owned_endpoints", return_value={"resolver": "sqlite"},
+                                             side_effect=RuntimeError("rediscovery failed") if fail == "rediscovery" else None))
+            stack.enter_context(patch.object(LAUNCHER.time, "sleep"))
+            LAUNCHER.mutate_owned_resource({"appHostPid": 101, "appHostStartTicks": "50", "configurationSha256": "c" * 64}, "projects", "restart", run, observation)
+
+    def test_allowlist_rejects_other_resources_and_actions_without_mutation(self):
+        for resource, action in (("eventstore", "restart"), ("projects-workers", "stop"), ("projects", "rebuild"),
+                                 ("projects", "stop"), ("projects", "start"), ("folders", "restart"), ("foreign", "start")):
+            with self.subTest(resource=resource, action=action), self.assertRaises(RuntimeError):
+                LAUNCHER.mutate_owned_resource({}, resource, action, lambda *_args, **_kwargs: self.fail("Disallowed mutation"), {})
+
+    def test_folder_compatibility_keeps_guarded_stop_start(self):
+        for action in ("stop", "start"):
+            with self.subTest(action=action), patch.object(LAUNCHER, "mutate_owned_folder") as folder:
+                LAUNCHER.mutate_owned_resource({"identity": True}, "folders", action, None, {})
+                folder.assert_called_once_with({"identity": True}, action, None)
+
+    def test_restart_observes_distinct_server_and_wrapper_then_rediscovers(self):
+        commands, observation = [], {}
+        self.restart(commands, observation)
+        self.assertEqual([command[:4] for command in commands], [["aspire", "resource", "projects", "stop"],
+            ["aspire", "resource", "projects", "start"], ["aspire", "wait", "projects", "--apphost"]])
+        self.assertTrue(observation["completed"] and observation["oldProcessExited"] and observation["endpointsRediscovered"])
+        self.assertNotEqual(observation["before"]["pid"], observation["after"]["pid"])
+        self.assertNotIn("_configuration", json.dumps(observation))
+
+    def test_replaced_apphost_before_stop_or_start_cannot_be_mutated(self):
+        for guards, expected in (([False], []), ([True, False], []), ([True, True, False], []),
+                                 ([True, True, True, False], ["stop"])):
+            commands, observation = [], {}
+            with self.subTest(guards=guards), self.assertRaises(RuntimeError):
+                self.restart(commands, observation, guards=guards)
+            self.assertEqual([command[3] for command in commands], expected)
+            self.assertFalse(observation["completed"])
+
+    def test_unobservable_or_replaced_query_process_refuses_stop(self):
+        before = self.identity()
+        for identities in ([PermissionError("unobservable")], [before, PermissionError("unobservable")], [before, self.identity(999)]):
+            commands, observation = [], {}
+            with self.subTest(identities=identities), self.assertRaises((RuntimeError, PermissionError)):
+                self.restart(commands, observation, identities=identities)
+            self.assertEqual(commands, [])
+            self.assertFalse(observation["completed"])
+
+    def test_stop_failure_or_original_server_remaining_never_attempts_start(self):
+        for fail, gone in (("stop", True), (None, False)):
+            commands, observation = [], {}
+            with self.subTest(fail=fail), self.assertRaises(RuntimeError):
+                self.restart(commands, observation, fail=fail, gone=gone)
+            self.assertEqual([command[3] for command in commands], ["stop"])
+            self.assertFalse(observation["completed"])
+            self.assertNotIn("oldProcessExited", observation)
+
+    def test_start_failure_cannot_produce_passing_restart_evidence(self):
+        commands, observation = [], {}
+        with self.assertRaises(RuntimeError):
+            self.restart(commands, observation, fail="start")
+        self.assertTrue(observation["oldProcessExited"])
+        self.assertFalse(observation["completed"])
+        self.assertEqual(observation["stage"], "start")
+
+    def test_readiness_or_rediscovery_failure_cannot_pass(self):
+        for failure in ("wait", "rediscovery"):
+            observation = {}
+            with self.subTest(failure=failure), self.assertRaises(RuntimeError):
+                self.restart([], observation, fail=failure)
+            self.assertTrue(observation["oldProcessExited"])
+            self.assertFalse(observation["completed"])
+
+    def test_unobservable_apphost_after_stop_refuses_start(self):
+        commands, observation = [], {}
+        with self.assertRaises(PermissionError):
+            self.restart(commands, observation, guards=[True, True, True, PermissionError("unobservable")])
+        self.assertEqual([command[3] for command in commands], ["stop"])
+        self.assertFalse(observation["completed"])
+
+    def test_actual_server_identity_requires_namespace_private_storage_and_development(self):
+        project = LAUNCHER.ROOT / "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
+        binary = project.parent / "bin/Debug/net10.0/Hexalith.Projects.Server"
+        resource = {"displayName": "projects", "resourceType": "Project", "name": "projects-owned",
+                    "properties": {"project.path": str(project), "executable.pid": 201}}
+        expected = {"NAMESPACE": "scope", "EventStore__DomainService__AppId": "projects", "XDG_DATA_HOME": "/private/data-projects",
+                    "ASPNETCORE_ENVIRONMENT": "Development"}
+        for changed in (None, *expected):
+            environment = {**expected, **({changed: "foreign"} if changed else {})}
+            def contents(path):
+                if path.name == "environ":
+                    return b"\0".join((key + "=" + value).encode() for key, value in environment.items())
+                if path.name == "cmdline":
+                    return b"dotnet\0run\0" if path.parts[2] == "201" else str(binary).encode()
+                return b"synthetic-binary"
+            with self.subTest(changed=changed), contextlib.ExitStack() as stack:
+                stack.enter_context(patch.object(LAUNCHER, "process_start", return_value="100"))
+                stack.enter_context(patch.object(Path, "readlink", autospec=True, side_effect=lambda path: Path("/tools/dotnet") if path.parts[2] == "201" else binary))
+                stack.enter_context(patch.object(Path, "read_text", autospec=True, side_effect=lambda path: "301" if path.parts[2] == "201" else ""))
+                stack.enter_context(patch.object(Path, "read_bytes", autospec=True, side_effect=contents))
+                if changed:
+                    with self.assertRaises(RuntimeError):
+                        LAUNCHER.projects_process_identity({"_configuration": "/private/fixture.json", "_isolation": "scope"}, {"resources": [resource]})
+                else:
+                    identity = LAUNCHER.projects_process_identity({"_configuration": "/private/fixture.json", "_isolation": "scope"}, {"resources": [resource]})
+                    self.assertEqual((identity["pid"], identity["launcherPid"]), (301, 201))
+
+    def test_unchanged_process_or_wrapper_and_changed_binary_are_refused(self):
+        before = self.identity()
+        after = self.identity(302, 202, "200")
+        for unchanged in (before, {**after, "pid": before["pid"], "startTicks": before["startTicks"]},
+                          {**after, "launcherPid": before["launcherPid"], "launcherStartTicks": before["launcherStartTicks"]},
+                          {**after, "assemblySha256": "c" * 64}, {**after, "resourceName": "replacement"}):
+            observation = {}
+            with self.subTest(unchanged=unchanged), self.assertRaises(RuntimeError):
+                self.restart([], observation, identities=[before, before, unchanged])
+            self.assertFalse(observation["completed"])
+
+    def test_old_process_observation_error_is_not_exit(self):
+        with patch.object(LAUNCHER, "process_start", side_effect=PermissionError("unobservable")), self.assertRaises(PermissionError):
+            LAUNCHER.projects_processes_gone(self.identity())
+        with patch.object(LAUNCHER, "process_start", side_effect=[None, "100"]):
+            self.assertFalse(LAUNCHER.projects_processes_gone(self.identity()))
+
+    def test_process_identity_requires_exact_source_and_observable_actual_server(self):
+        project = LAUNCHER.ROOT / "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
+        resource = {"displayName": "projects", "resourceType": "Project", "name": "projects-owned",
+                    "properties": {"project.path": str(project), "executable.pid": 201}}
+        for graph in ({"resources": []}, {"resources": [resource, resource]},
+                      {"resources": [{**resource, "properties": {"project.path": "/foreign/Server.csproj", "executable.pid": 201}}]}):
+            with self.subTest(graph=graph), self.assertRaises(RuntimeError):
+                LAUNCHER.projects_process_identity({}, graph)
+        with patch.object(LAUNCHER, "process_start", return_value="100"), patch.object(Path, "readlink", side_effect=PermissionError()), self.assertRaises(PermissionError):
+            LAUNCHER.projects_process_identity({}, {"resources": [resource]})
+
+
+class SupportedReadRestartDeadlineControls(unittest.TestCase):
+    def test_stalled_ownership_guard_is_bounded_before_mutation(self):
+        observation, started = {}, time.monotonic()
+        with patch.object(LAUNCHER, "owns_current_apphost", side_effect=lambda _owned: time.sleep(30)), self.assertRaises(TimeoutError):
+            LAUNCHER.mutate_owned_resource({}, "projects", "restart", lambda *_args, **_kwargs: self.fail("Mutation after stalled guard"), observation, budget_seconds=.05)
+        self.assertLess(time.monotonic() - started, 1)
+        self.assertFalse(observation["completed"])
+        self.assertIsNone(LAUNCHER._command_deadline)
+
+    def test_guard_command_uses_remaining_budget_and_reaps_its_child(self):
+        with tempfile.TemporaryDirectory() as directory:
+            ready = Path(directory) / "ready"
+            code = "import os,sys,time;open(sys.argv[1],'w').write(str(os.getpid()));time.sleep(30)"
+            started = time.monotonic()
+            with self.assertRaises((TimeoutError, subprocess.TimeoutExpired)), LAUNCHER.restart_budget(.5):
+                LAUNCHER.execute([sys.executable, "-c", code, str(ready)])
+            self.assertLess(time.monotonic() - started, 2)
+            self.assertIsNone(LAUNCHER.process_start(int(ready.read_text())))
+
+    def test_runner_timeout_and_cancellation_reap_helpers_and_preserve_unrelated_process(self):
+        code = "import os,subprocess,sys,time; child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(30)']);open(sys.argv[1],'w').write(str(os.getpid())+' '+str(child.pid));time.sleep(30)"
+        outsider = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(30)"])
+        try:
+            for cancelled in (False, True):
+                with self.subTest(cancelled=cancelled), tempfile.TemporaryDirectory() as directory:
+                    ready, cleanup = Path(directory) / "ready", []
+                    def interrupt(_process, **_kwargs):
+                        deadline = time.monotonic() + 3
+                        while not ready.exists() and time.monotonic() < deadline:
+                            time.sleep(.01)
+                        self.assertTrue(ready.exists())
+                        raise KeyboardInterrupt
+                    with contextlib.ExitStack() as stack:
+                        if cancelled:
+                            stack.enter_context(patch.object(subprocess.Popen, "communicate", autospec=True, side_effect=interrupt))
+                        with self.assertRaises(KeyboardInterrupt if cancelled else subprocess.TimeoutExpired):
+                            LAUNCHER.run_test_process([sys.executable, "-c", code, str(ready)], env=os.environ.copy(), timeout=1, cleanup=cleanup)
+                    self.assertTrue(cleanup[0]["descendantsAbsent"])
+                    for pid in map(int, ready.read_text().split()):
+                        self.assertIsNone(LAUNCHER.process_start(pid))
+                    self.assertIsNone(outsider.poll())
+        finally:
+            outsider.kill()
+            outsider.wait(timeout=5)
+
+    def test_regressions_use_the_refreshed_endpoint_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "endpoints.json"
+            path.write_text(json.dumps({"eventstore-dapr-cli": "http://localhost:1111", "state-grpc": "http://localhost:2222"}))
+            original = LAUNCHER.regression_environment({"preserved": "value"}, path)
+            path.write_text(json.dumps({"eventstore-dapr-cli": "http://localhost:3333", "state-grpc": "http://localhost:4444"}))
+            refreshed = LAUNCHER.regression_environment(original, path)
+            self.assertEqual(refreshed["STORY61_DAPR_HTTP_ENDPOINT"], "http://localhost:3333")
+            self.assertEqual(refreshed["STORY61_DAPR_GRPC_ENDPOINT"], "http://localhost:4444")
+            self.assertEqual(refreshed["preserved"], "value")
+
+
 class SupportedReadLauncherReviewControls(unittest.TestCase):
     def test_renamed_owned_container_is_removed_by_retained_creation_id(self):
         identity = container_id("creation")
@@ -391,9 +598,9 @@ class SupportedReadLauncherReviewControls(unittest.TestCase):
             self.assertTrue(report["cleanup"][0]["absenceVerified"])
 
     def test_cmdline_observation_failure_is_not_disappearance(self):
-        with patch.object(LAUNCHER.subprocess, "check_output", return_value="123 daprd"), patch.object(Path, "read_bytes", side_effect=PermissionError("unobservable")), self.assertRaises(PermissionError):
+        with patch.object(LAUNCHER, "execute", return_value="123 daprd"), patch.object(Path, "read_bytes", side_effect=PermissionError("unobservable")), self.assertRaises(PermissionError):
             list(LAUNCHER.sidecar_processes())
-        with patch.object(LAUNCHER.subprocess, "check_output", return_value="123 daprd"), patch.object(Path, "read_bytes", side_effect=FileNotFoundError()):
+        with patch.object(LAUNCHER, "execute", return_value="123 daprd"), patch.object(Path, "read_bytes", side_effect=FileNotFoundError()):
             self.assertEqual(list(LAUNCHER.sidecar_processes()), [])
 
     def test_inner_environ_and_post_cmdline_failures_still_attempt_cleanup(self):

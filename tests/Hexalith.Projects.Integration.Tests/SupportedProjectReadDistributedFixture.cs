@@ -228,7 +228,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     }
 
     /// <summary>Reads actual persisted domain evidence from both tenants.</summary>
-    internal async Task<SupportedProjectReadStateSnapshot[]> SnapshotAsync()
+    internal async Task<SupportedProjectReadStateSnapshot[]> SnapshotAsync(bool allowIncomplete = false)
     {
         List<SupportedProjectReadStateSnapshot> result = [];
         foreach (string tenant in new[] { Tenant, ForeignTenant })
@@ -238,7 +238,7 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
                 "projection:folders:folder-permissions:" + tenant + ":folder-project-a", "projection:folders:folder-permissions:" + tenant + ":folder-project-b" })
             {
                 SupportedProjectReadStateSnapshot snapshot = await StateAsync(key).ConfigureAwait(false);
-                Require(snapshot.Bytes.Length > 0 && snapshot.ETag.Length > 0, "Required persisted domain evidence is absent.");
+                if (!allowIncomplete) Require(snapshot.Bytes.Length > 0 && snapshot.ETag.Length > 0, "Required persisted domain evidence is absent.");
                 result.Add(snapshot);
             }
         }
@@ -246,25 +246,148 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
             .Where(key => IsOwnedDomainKey(key, Tenant, ForeignTenant)).Order(StringComparer.Ordinal).ToArray();
         foreach (string tenant in new[] { Tenant, ForeignTenant })
             foreach (string domain in new[] { "projects", "folders" })
-                Require(domainKeys.Any(key => key.Contains("AggregateActor", StringComparison.Ordinal)
+                if (!allowIncomplete) Require(domainKeys.Any(key => key.Contains("AggregateActor", StringComparison.Ordinal)
                     && key.Contains(tenant + ":" + domain + ":", StringComparison.Ordinal)), "Required persisted aggregate journal evidence is absent.");
         foreach (SupportedProjectReadStateSnapshot snapshot in await StatesAsync(domainKeys.Except(result.Select(item => item.Key), StringComparer.Ordinal)).ConfigureAwait(false))
         {
-            Require(snapshot.Bytes.Length > 0 && snapshot.ETag.Length > 0, "A persisted domain observation is absent.");
+            if (!allowIncomplete) Require(snapshot.Bytes.Length > 0 && snapshot.ETag.Length > 0, "A persisted domain observation is absent.");
             result.Add(snapshot);
         }
         return [.. result];
     }
 
     /// <summary>Requires exact domain bytes and ETags after read-only operations.</summary>
-    internal async Task AssertUnchangedAsync(SupportedProjectReadStateSnapshot[] before)
+    internal async Task<SupportedProjectReadStateSnapshot[]> AssertUnchangedAsync(SupportedProjectReadStateSnapshot[] before)
     {
         SupportedProjectReadStateSnapshot[] observed = await SnapshotAsync().ConfigureAwait(false);
-        Require(before.Select(item => item.Key).SequenceEqual(observed.Select(item => item.Key)), "A read changed the persisted domain key set.");
-        foreach ((SupportedProjectReadStateSnapshot snapshot, SupportedProjectReadStateSnapshot after) in before.Zip(observed))
+        Require(SameDomainState(before, observed), "A read changed the persisted domain key set, bytes or ETags.");
+        return observed;
+    }
+
+    /// <summary>Restarts only the owned Projects process and requires real authenticated recovery.</summary>
+    internal async Task RestartProjectsAsync()
+    {
+        await ResourceAsync("restart", "projects").ConfigureAwait(false);
+        using JsonDocument process = JsonDocument.Parse(await File.ReadAllBytesAsync(Path.Combine(Evidence, "projects-restart-process.json"), Cancellation).ConfigureAwait(false));
+        Require(IsRestartProcessEvidence(process.RootElement), "Projects restart lacks distinct observed owned process identities.");
+        await WaitForAuthorizedRecoveryAsync("projects-process").ConfigureAwait(false);
+    }
+
+    /// <summary>Rejects missing exit/start observations, unchanged processes, or a replaced Debug application.</summary>
+    internal static bool IsRestartProcessEvidence(JsonElement evidence)
+    {
+        if (evidence.ValueKind != JsonValueKind.Object) return false;
+        bool Flag(string name) => evidence.TryGetProperty(name, out JsonElement value) && value.ValueKind == JsonValueKind.True;
+        if (!Flag("completed") || !Flag("oldProcessExited") || !Flag("endpointsRediscovered")
+            || !evidence.TryGetProperty("resource", out JsonElement resource) || resource.ValueKind != JsonValueKind.String || resource.GetString() != "projects"
+            || !evidence.TryGetProperty("action", out JsonElement action) || action.ValueKind != JsonValueKind.String || action.GetString() != "restart"
+            || !evidence.TryGetProperty("before", out JsonElement before) || before.ValueKind != JsonValueKind.Object
+            || !evidence.TryGetProperty("after", out JsonElement after) || after.ValueKind != JsonValueKind.Object) return false;
+        foreach ((string pid, string started) in new[] { ("pid", "startTicks"), ("launcherPid", "launcherStartTicks") })
         {
-            Require(after.Bytes.AsSpan().SequenceEqual(snapshot.Bytes) && after.ETag == snapshot.ETag, "A read changed persisted domain bytes or ETags.");
+            if (!before.TryGetProperty(pid, out JsonElement oldPid) || oldPid.ValueKind != JsonValueKind.Number || !oldPid.TryGetInt32(out int oldId) || oldId <= 0
+                || !after.TryGetProperty(pid, out JsonElement newPid) || newPid.ValueKind != JsonValueKind.Number || !newPid.TryGetInt32(out int newId) || newId <= 0
+                || !before.TryGetProperty(started, out JsonElement oldStart) || oldStart.ValueKind != JsonValueKind.String || !long.TryParse(oldStart.GetString(), out long oldTicks) || oldTicks <= 0
+                || !after.TryGetProperty(started, out JsonElement newStart) || newStart.ValueKind != JsonValueKind.String || !long.TryParse(newStart.GetString(), out long newTicks) || newTicks <= 0
+                || oldId == newId && oldTicks == newTicks) return false;
         }
+        foreach (string field in new[] { "resourceName", "binarySha256", "assemblySha256" })
+            if (!before.TryGetProperty(field, out JsonElement previous) || previous.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(previous.GetString())
+                || !after.TryGetProperty(field, out JsonElement current) || current.ValueKind != JsonValueKind.String || current.GetString() != previous.GetString()) return false;
+        return true;
+    }
+
+    /// <summary>Compares metadata, version, freshness, order and cursor presence, excluding only volatile observations and opaque token bytes.</summary>
+    internal static bool SameStableReadMetadata(object expected, object actual)
+    {
+        if (expected.GetType() != actual.GetType()) return false;
+        static bool Valid(AdmissionSnapshot snapshot) => snapshot.AsOf != default && snapshot.Components.All(component =>
+            component.Name is not ("Folder" or "Authorization") || component.LastVerifiedAt is { } verified && verified != default);
+        static bool ValidRead(object value) => value switch
+        {
+            ProjectListPage page => Valid(page.Snapshot) && page.Items.All(row => Valid(row.Snapshot)),
+            GetProjectResponse opened => Valid(opened.Snapshot),
+            _ => false,
+        };
+        static AdmissionSnapshot Stable(AdmissionSnapshot snapshot) => snapshot with
+        {
+            AsOf = default,
+            Components = snapshot.Components.Select(component => component.Name is "Folder" or "Authorization"
+                ? component with { LastVerifiedAt = default(DateTimeOffset) } : component).ToArray(),
+        };
+        static object Normalize(object value) => value switch
+        {
+            ProjectListPage page => page with { Cursor = page.Cursor is null ? null : "present", Snapshot = Stable(page.Snapshot),
+                Items = page.Items.Select(row => row with { Snapshot = Stable(row.Snapshot) }).ToArray() },
+            GetProjectResponse opened => opened with { Snapshot = Stable(opened.Snapshot) },
+            _ => throw new ArgumentException("Unsupported restart observation."),
+        };
+        return ValidRead(expected) && ValidRead(actual) && JsonSerializer.Serialize(Normalize(expected), Json) == JsonSerializer.Serialize(Normalize(actual), Json);
+    }
+
+    /// <summary>Requires exactly the same domain key set, bytes (including exact watermarks) and concurrency identities.</summary>
+    internal static bool SameDomainState(SupportedProjectReadStateSnapshot[] before, SupportedProjectReadStateSnapshot[] after)
+    {
+        if (before.Length == 0 || before.Length != after.Length || before.Select(item => item.Key).Distinct(StringComparer.Ordinal).Count() != before.Length
+            || after.Select(item => item.Key).Distinct(StringComparer.Ordinal).Count() != after.Length) return false;
+        return before.OrderBy(item => item.Key, StringComparer.Ordinal).Zip(after.OrderBy(item => item.Key, StringComparer.Ordinal))
+            .All(pair => pair.First.Key == pair.Second.Key && pair.First.ETag == pair.Second.ETag
+                && pair.First.Bytes.AsSpan().SequenceEqual(pair.Second.Bytes));
+    }
+
+    /// <summary>Records sanitized success or failure observations before asserting the restart invariant.</summary>
+    internal Task VerifyRestartStateAsync(SupportedProjectReadStateSnapshot[] before)
+        => CaptureRestartStateEvidenceAsync(Path.Combine(Evidence, "projects-restart-state.json"), before,
+            () => SnapshotAsync(allowIncomplete: true), [Tenant, ForeignTenant]);
+
+    /// <summary>Persists explicit missing/unreadable observations without retaining protected state or exception messages.</summary>
+    internal static async Task CaptureRestartStateEvidenceAsync(string path, SupportedProjectReadStateSnapshot[] before,
+        Func<Task<SupportedProjectReadStateSnapshot[]>> observe, string[] tenants)
+    {
+        SupportedProjectReadStateSnapshot[]? after = null;
+        Exception? failure = null;
+        try { after = await observe().ConfigureAwait(false); }
+        catch (Exception exception) { failure = exception; }
+        static string Hash(string value) => Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(value)));
+        bool watermarksUsable = true;
+        object[] Watermarks(SupportedProjectReadStateSnapshot[]? values) => tenants.SelectMany(tenant =>
+            new[] { ProjectReadModelKeys.Index(tenant), ProjectReadModelKeys.Detail(tenant, "project-a"), ProjectReadModelKeys.Detail(tenant, "project-b") }
+                .Select(key =>
+                {
+                    long? position = null;
+                    string status = values is null ? "unreadable" : "missing";
+                    SupportedProjectReadStateSnapshot[]? matches = values?.Where(item => item.Key == key).ToArray();
+                    SupportedProjectReadStateSnapshot? item = matches?.Length == 1 ? matches[0] : null;
+                    if (item is { Bytes.Length: > 0 })
+                    {
+                        status = "unreadable";
+                        try
+                        {
+                            using JsonDocument model = JsonDocument.Parse(item.Bytes);
+                            if (model.RootElement.ValueKind == JsonValueKind.Object && model.RootElement.TryGetProperty("globalPosition", out JsonElement value)
+                                && value.ValueKind == JsonValueKind.Number && value.TryGetInt64(out long observed) && observed > 0)
+                            { position = observed; status = "observed"; }
+                        }
+                        catch (JsonException) { }
+                    }
+                    watermarksUsable &= status == "observed";
+                    return (object)new { tenantSha256 = Hash(tenant), keySha256 = Hash(key), globalPosition = position, status };
+                })).ToArray();
+        object[]? Fingerprints(SupportedProjectReadStateSnapshot[]? values) => values?.OrderBy(item => item.Key, StringComparer.Ordinal).Select(item =>
+            (object)new { keySha256 = Hash(item.Key), bytesSha256 = Convert.ToHexString(SHA256.HashData(item.Bytes)), etagSha256 = Hash(item.ETag),
+                status = item.Bytes.Length > 0 && item.ETag.Length > 0 ? "observed" : "missing" }).ToArray();
+        object[] beforeWatermarks = Watermarks(before), afterWatermarks = Watermarks(after);
+        bool unchanged = after is not null && watermarksUsable && SameDomainState(before, after);
+        string[]? missingKeys = after is null ? null : before.Select(item => item.Key)
+            .Except(after.Where(item => item.Bytes.Length > 0 && item.ETag.Length > 0).Select(item => item.Key), StringComparer.Ordinal).Select(Hash).ToArray();
+        await File.WriteAllTextAsync(path, JsonSerializer.Serialize(new
+        {
+            bothTenantsCompared = after is not null && tenants.Length == 2, domainKeysBytesEtagsAndWatermarksUnchanged = unchanged,
+            domainKeyCount = before.Length, afterObservation = after is null ? "unreadable" : missingKeys!.Length > 0 ? "missing" : !watermarksUsable ? "unreadable" : "observed",
+            failureType = failure?.GetType().Name, missingKeys, before = Fingerprints(before), after = Fingerprints(after), beforeWatermarks, afterWatermarks,
+        }, new JsonSerializerOptions { WriteIndented = true }), CancellationToken.None).ConfigureAwait(false);
+        if (failure is OperationCanceledException) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failure).Throw();
+        Require(unchanged, "Restart or recovered reads changed or could not observe persisted domain evidence.");
     }
 
     /// <summary>Enumerates owned domain families; audit and operational catalogs are observed separately.</summary>
@@ -437,37 +560,69 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     internal Task RestoreAuditStorageAsync() => RedisAsync("ACL", "SETUSER", "default", "~*");
 
     /// <summary>Requires an actual authorized response after a restored dependency has recovered.</summary>
-    internal async Task WaitForAuthorizedRecoveryAsync(string fault)
+    internal Task WaitForAuthorizedRecoveryAsync(string fault)
+        => ObserveAuthorizedRecoveryAsync(fault, token => QueryAsync(open: true, cancellationToken: token),
+            Path.Combine(Evidence, "recovery-probes.log"), TimeSpan.FromSeconds(90), TimeSpan.FromSeconds(1), Cancellation);
+
+    /// <summary>Exercises the same recovery path with injectable request and timing seams for bounded failure controls.</summary>
+    internal static async Task ObserveAuthorizedRecoveryAsync(string fault, Func<CancellationToken, Task<HttpResponseMessage>> query,
+        string diagnostics, TimeSpan recoveryBudget, TimeSpan retryDelay, CancellationToken cancellation)
     {
-        Stopwatch elapsed = Stopwatch.StartNew();
+        using CancellationTokenSource budget = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+        budget.CancelAfter(recoveryBudget);
         HashSet<int> statuses = [];
-        for (int attempt = 1; elapsed.Elapsed < TimeSpan.FromSeconds(90); attempt++)
+        int attempts = 0, transportFailures = 0;
+        bool recovered = false;
+        try
         {
-            using HttpResponseMessage response = await QueryAsync(open: true).ConfigureAwait(false);
-            statuses.Add((int)response.StatusCode);
-            if (response.StatusCode == HttpStatusCode.OK)
+            while (true)
             {
-                SubmitQueryResponse? result = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, Cancellation).ConfigureAwait(false);
-                GetProjectResponse? opened = result!.Payload.Deserialize<GetProjectResponse>(Json);
-                if (opened?.Name is not null && opened.Snapshot.ResponseState == AdmissionResponseState.Complete)
+                attempts++;
+                try
                 {
-                    await File.AppendAllTextAsync(Path.Combine(Evidence, "recovery-probes.log"), fault + ": attempts=" + attempt
-                        + ", statuses=" + string.Join(',', statuses.Order()) + Environment.NewLine, Cancellation).ConfigureAwait(false);
-                    return;
+                    using HttpResponseMessage response = await query(budget.Token).WaitAsync(budget.Token).ConfigureAwait(false);
+                    statuses.Add((int)response.StatusCode);
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        SubmitQueryResponse? result = await response.Content.ReadFromJsonAsync<SubmitQueryResponse>(Json, budget.Token).WaitAsync(budget.Token).ConfigureAwait(false);
+                        GetProjectResponse? opened = result is { Success: true } ? result.Payload.Deserialize<GetProjectResponse>(Json) : null;
+                        if (opened?.ProjectId == "project-a" && opened.Name is not null && opened.Snapshot.ResponseState == AdmissionResponseState.Complete)
+                        {
+                            recovered = true;
+                            return;
+                        }
+                    }
+                    else if (response.StatusCode is not (HttpStatusCode.NotFound or HttpStatusCode.InternalServerError or HttpStatusCode.ServiceUnavailable))
+                        throw new InvalidOperationException("Dependency recovery encountered an unexpected authentication or request failure.");
                 }
+                catch (HttpRequestException) { transportFailures++; }
+                catch (OperationCanceledException) when (!budget.IsCancellationRequested) { transportFailures++; }
+                await Task.Delay(retryDelay, budget.Token).ConfigureAwait(false);
             }
-            else Require(response.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.InternalServerError or HttpStatusCode.ServiceUnavailable,
-                "Dependency recovery encountered an unexpected authentication or request failure.");
-            await Task.Delay(1000, Cancellation).ConfigureAwait(false);
         }
-        throw new InvalidOperationException("The restored " + fault + " dependency did not recover an actual authorized read.");
+        catch (OperationCanceledException) when (budget.IsCancellationRequested && !cancellation.IsCancellationRequested)
+        {
+            throw new InvalidOperationException("The restored " + fault + " dependency did not recover an actual authorized read within its recovery budget.");
+        }
+        finally
+        {
+            await File.AppendAllTextAsync(diagnostics, fault + ": attempts=" + attempts
+                + ", statuses=" + string.Join(',', statuses.Order()) + ", transportFailures=" + transportFailures + ", authorizedRecovery=" + recovered
+                + Environment.NewLine, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 
-    /// <summary>Stops or starts the exact owned Folder resource through Aspire.</summary>
-    internal async Task ResourceAsync(string command)
+    /// <summary>Mutates only an allowlisted resource of the exact owned AppHost through Aspire.</summary>
+    internal async Task ResourceAsync(string command, string resource = "folders")
     {
         string launcher = Path.Combine(TestRepositoryRoot.Find(), "tools", "qualification", "run_supported_project_reads.py");
-        await ProcessAsync("python3", launcher, "--resource-action", command, "--ownership", _endpoints["ownership"]).ConfigureAwait(false);
+        await ProcessAsync("python3", launcher, "--resource-action", command, "--resource", resource, "--ownership", _endpoints["ownership"]).ConfigureAwait(false);
+        if (resource == "projects")
+        {
+            Dictionary<string, string> refreshed = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                await File.ReadAllBytesAsync(Environment.GetEnvironmentVariable("SUPPORTED_PROJECT_READ_ENDPOINTS")!, Cancellation).ConfigureAwait(false))!;
+            foreach ((string key, string value) in refreshed) _endpoints[key] = value;
+        }
     }
 
     /// <summary>Reads the actual AggregateActor sequence through the owned Folder sidecar.</summary>
@@ -652,20 +807,67 @@ internal sealed class SupportedProjectReadDistributedFixture : IDisposable
     private static async Task<string> ProcessAsync(string file, params string[] arguments)
         => System.Text.Encoding.UTF8.GetString(await ProcessBytesAsync(file, arguments).ConfigureAwait(false));
 
-    private static async Task<byte[]> ProcessBytesAsync(string file, params string[] arguments)
+    private static Task<byte[]> ProcessBytesAsync(string file, params string[] arguments)
+        => RunOwnedProcessAsync(file, arguments, Cancellation);
+
+    /// <summary>Terminates and observes only this helper and its descendants if the caller cancels.</summary>
+    internal static async Task<byte[]> RunOwnedProcessAsync(string file, string[] arguments, CancellationToken cancellation)
     {
         using Process process = new() { StartInfo = new(file) { RedirectStandardOutput = true, RedirectStandardError = true } };
         foreach (string argument in arguments) process.StartInfo.ArgumentList.Add(argument);
         process.Start();
         using MemoryStream output = new();
-        Task stdout = process.StandardOutput.BaseStream.CopyToAsync(output, Cancellation);
-        Task<string> stderr = process.StandardError.ReadToEndAsync(Cancellation);
-        await process.WaitForExitAsync(Cancellation).ConfigureAwait(false);
-        Require(process.ExitCode == 0, "Owned fixture operation failed: " + file);
-        _ = await stderr.ConfigureAwait(false);
-        await stdout.ConfigureAwait(false);
-        return output.ToArray();
+        Task stdout = process.StandardOutput.BaseStream.CopyToAsync(output);
+        Task<string> stderr = process.StandardError.ReadToEndAsync();
+        try
+        {
+            await process.WaitForExitAsync(cancellation).ConfigureAwait(false);
+            await Task.WhenAll(stdout, stderr).WaitAsync(cancellation).ConfigureAwait(false);
+            Require(process.ExitCode == 0, "Owned fixture operation failed: " + file);
+            return output.ToArray();
+        }
+        catch
+        {
+            List<Process> descendants = [];
+            void ObserveChildren(int parent)
+            {
+                string children;
+                try { children = File.ReadAllText($"/proc/{parent}/task/{parent}/children"); }
+                catch (FileNotFoundException) { return; }
+                catch (DirectoryNotFoundException) { return; }
+                foreach (string child in children.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    int pid = int.Parse(child, System.Globalization.CultureInfo.InvariantCulture);
+                    try
+                    {
+                        Process owned = Process.GetProcessById(pid);
+                        _ = owned.Handle;
+                        descendants.Add(owned);
+                        ObserveChildren(pid);
+                    }
+                    catch (ArgumentException) { }
+                }
+            }
+            try
+            {
+                Exception? observationFailure = null;
+                try { ObserveChildren(process.Id); }
+                catch (Exception failure) when (failure is IOException or UnauthorizedAccessException) { observationFailure = failure; }
+                if (!process.HasExited) process.Kill(entireProcessTree: true);
+                await process.WaitForExitAsync(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+                foreach (Process child in descendants)
+                    await child.WaitForExitAsync(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+                await Task.WhenAll(stdout, stderr).WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+                if (observationFailure is not null) throw new InvalidOperationException("Owned helper child observation failed during cancellation cleanup.");
+            }
+            finally { foreach (Process child in descendants) child.Dispose(); }
+            throw;
+        }
     }
+
+    /// <summary>Uses the request-start lower bound to exclude expiry of the existing fifteen-minute cursor.</summary>
+    internal static bool CursorIsWithinObservedLifetime(DateTimeOffset requestedAt, DateTimeOffset observedAt)
+        => observedAt >= requestedAt && observedAt < requestedAt.AddMinutes(15);
 
     private string Dapr(string app, string method) => _endpoints["eventstore-dapr-cli"] + "/v1.0/invoke/" + app + "/method/" + method;
     private string Setting(string key) => _configuration.GetProperty(key).GetString()!;

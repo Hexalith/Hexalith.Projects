@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import contextlib
 import hashlib
 import http.server
 import ipaddress
@@ -27,6 +28,114 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[2]
 APPHOST = ROOT / "src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj"
 TEST_PROJECT = ROOT / "tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj"
+_command_deadline = None
+
+
+@contextlib.contextmanager
+def restart_budget(seconds: float = 180):
+    """One wall-clock budget covers guards, discovery and resource commands in this Linux-only lane."""
+    global _command_deadline
+    previous_deadline = _command_deadline
+    deadline = min(time.monotonic() + seconds, float(os.environ.get("SUPPORTED_PROJECT_READ_DEADLINE", "inf")))
+    _command_deadline = min(deadline, previous_deadline or float("inf"))
+    previous_handler = signal.getsignal(signal.SIGALRM)
+    previous_timer = signal.getitimer(signal.ITIMER_REAL)
+    def expired(_signal, _frame):
+        raise TimeoutError("Owned restart exceeded its complete operation budget.")
+    signal.signal(signal.SIGALRM, expired)
+    signal.setitimer(signal.ITIMER_REAL, max(.001, _command_deadline - time.monotonic()))
+    try:
+        yield
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous_handler)
+        if previous_timer[0]:
+            signal.setitimer(signal.ITIMER_REAL, *previous_timer)
+        _command_deadline = previous_deadline
+
+
+def helper_descendants(pid: int) -> dict[int, str]:
+    result, pending = {}, [pid]
+    while pending:
+        current = pending.pop()
+        started = process_start(current)
+        if started is None:
+            continue
+        result[current] = started
+        try:
+            pending.extend(int(child) for child in Path("/proc", str(current), "task", str(current), "children").read_text().split())
+        except FileNotFoundError:
+            pass
+    return result
+
+
+def stop_helper_tree(process) -> None:
+    observed = helper_descendants(process.pid)
+    for pid, started in reversed(list(observed.items())):
+        if process_start(pid) == started:
+            try:
+                os.kill(pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+    process.wait(timeout=10)
+    deadline = time.monotonic() + 10
+    while any(process_start(pid) == started for pid, started in observed.items()):
+        if time.monotonic() >= deadline:
+            raise RuntimeError("Owned helper descendants remain after termination.")
+        time.sleep(.01)
+
+
+def test_group_members(group: int) -> dict[int, str]:
+    members = {}
+    for path in Path("/proc").iterdir():
+        if not path.name.isdigit():
+            continue
+        try:
+            fields = (path / "stat").read_text().rsplit(")", 1)[1].split()
+        except FileNotFoundError:
+            continue
+        if int(fields[2]) == group and fields[0] != "Z":
+            members[int(path.name)] = fields[19]
+    return members
+
+
+def run_test_process(command, *, env, timeout, cleanup) -> subprocess.CompletedProcess:
+    """A test runner owns a fresh process group; reap its helpers before any topology teardown."""
+    environment = env.copy()
+    environment["SUPPORTED_PROJECT_READ_DEADLINE"] = str(time.monotonic() + timeout)
+    process = subprocess.Popen(command, cwd=ROOT, env=environment, text=True, stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT, start_new_session=True)
+    try:
+        output, _ = process.communicate(timeout=timeout)
+        return subprocess.CompletedProcess(command, process.returncode, output)
+    finally:
+        # The new session/group was created for this runner alone. Runtime services were
+        # started before it, so they and unrelated processes are never members.
+        observed = test_group_members(process.pid)
+        if observed:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        process.wait(timeout=10)
+        deadline = time.monotonic() + 10
+        while test_group_members(process.pid):
+            if time.monotonic() >= deadline:
+                cleanup.append({"groupId": process.pid, "descendantsAbsent": False})
+                raise RuntimeError("Owned test helpers remain; resource teardown is not yet safe.")
+            time.sleep(.01)
+        cleanup.append({"groupId": process.pid, "descendantsAbsent": True})
+        if process.stdout:
+            process.stdout.close()
+
+
+def regression_environment(env: dict, endpoints_path: Path) -> dict:
+    endpoints = json.loads(endpoints_path.read_text())
+    result = env.copy()
+    result["Projects__SupportedReads__Enabled"] = "false"
+    result["STORY61_DAPR_HTTP_ENDPOINT"] = endpoints["eventstore-dapr-cli"]
+    result["STORY61_DAPR_GRPC_ENDPOINT"] = endpoints["state-grpc"]
+    return result
 
 
 def free_port() -> int:
@@ -36,8 +145,18 @@ def free_port() -> int:
 
 
 def execute(command: list[str], *, env: dict[str, str] | None = None, timeout: int = 600) -> str:
-    result = subprocess.run(command, cwd=ROOT, env=env, text=True, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE, timeout=timeout)
+    if _command_deadline is not None:
+        timeout = min(timeout, _command_deadline - time.monotonic())
+        if timeout <= 0:
+            raise TimeoutError("Owned operation deadline elapsed before command dispatch.")
+    process = subprocess.Popen(command, cwd=ROOT, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        stdout, stderr = process.communicate(timeout=timeout)
+    except BaseException:
+        stop_helper_tree(process)
+        process.communicate(timeout=10)
+        raise
+    result = subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
     if result.returncode:
         # Output can contain credentials, request bodies or dashboard tokens. Keep it private.
         failure = RuntimeError(f"Command failed ({result.returncode}): {' '.join(command[:3])}")
@@ -70,7 +189,7 @@ def source_manifest() -> dict[str, str]:
 
 
 def sidecar_processes():
-    for line in subprocess.check_output(["ps", "-eo", "pid=,comm="], text=True).splitlines():
+    for line in execute(["ps", "-eo", "pid=,comm="], timeout=10).splitlines():
         pid, name = line.strip().split(None, 1)
         if name != "daprd":
             continue
@@ -143,7 +262,7 @@ def sidecar_listens_at(pid: int, port: int, address: str) -> bool:
     target = ipaddress.ip_address(host.strip("[]"))
     if int(raw_port) != port or target.is_unspecified or target.is_multicast:
         return False
-    local = {ipaddress.ip_address(item["local"]) for interface in json.loads(execute(["ip", "-json", "address", "show"]))
+    local = {ipaddress.ip_address(item["local"]) for interface in json.loads(execute(["ip", "-json", "address", "show"], timeout=10))
              for item in interface.get("addr_info", [])}
     if target not in local and not target.is_loopback:
         return False
@@ -179,7 +298,7 @@ def apphost_running(description: str) -> bool:
 
 
 def exact_apphost_sessions() -> list[dict]:
-    sessions = json.loads(execute(["aspire", "ps", "--format", "Json", "--non-interactive"]))
+    sessions = json.loads(execute(["aspire", "ps", "--format", "Json", "--non-interactive"], timeout=15))
     if not isinstance(sessions, list) or any(not isinstance(item, dict) or not isinstance(item.get("appHostPath"), str) for item in sessions):
         raise RuntimeError("Unrecognized Aspire sessions; ownership is not proven.")
     return [item for item in sessions if Path(item["appHostPath"]).resolve() == APPHOST]
@@ -264,6 +383,143 @@ def mutate_owned_folder(owned: dict, action: str, run) -> None:
     run(["aspire", "resource", "folders", action, "--apphost", str(APPHOST), "--non-interactive"])
     if action == "start":
         run(["aspire", "wait", "folders", "--apphost", str(APPHOST), "--timeout", "120", "--non-interactive"])
+
+
+def resource_graph(run) -> dict:
+    graph = json.loads(run(["aspire", "describe", "--apphost", str(APPHOST), "--format", "Json", "--non-interactive"], timeout=30))
+    if not isinstance(graph, dict) or not isinstance(graph.get("resources"), list):
+        raise RuntimeError("Resource identity is unobservable.")
+    return graph
+
+
+def resource_endpoint(graph: dict, resource: str, name: str = "http") -> str:
+    matches = [url["url"] for item in graph["resources"] if item.get("displayName") == resource
+               for url in item.get("urls", []) if url.get("name") == name]
+    if len(matches) != 1:
+        raise RuntimeError("Required owned endpoint is missing or ambiguous.")
+    return matches[0]
+
+
+def projects_process_identity(owned: dict, graph: dict) -> dict:
+    """Bind the actual Debug server, not merely Aspire's dotnet run wrapper, to this fixture."""
+    matches = [item for item in graph["resources"] if item.get("displayName") == "projects"]
+    project = ROOT / "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj"
+    binary = project.parent / "bin/Debug/net10.0/Hexalith.Projects.Server"
+    if len(matches) != 1 or matches[0].get("resourceType") != "Project":
+        raise RuntimeError("Projects resource identity is missing or ambiguous.")
+    resource = matches[0]
+    properties = resource.get("properties", {})
+    wrapper = properties.get("executable.pid")
+    if properties.get("project.path") != str(project) or type(wrapper) is not int or wrapper <= 0:
+        raise RuntimeError("Projects resource is not the owned source project.")
+    wrapper_start = process_start(wrapper)
+    if wrapper_start is None:
+        raise RuntimeError("Projects resource launcher is absent.")
+    pending, candidates, seen = [wrapper], [], set()
+    while pending:
+        pid = pending.pop()
+        if pid in seen:
+            raise RuntimeError("Projects process ancestry is ambiguous.")
+        seen.add(pid)
+        process = Path("/proc", str(pid))
+        executable = process.joinpath("exe").readlink()
+        arguments = process.joinpath("cmdline").read_bytes().split(b"\0")
+        if executable == binary or executable.name == "dotnet" and str(Path(str(binary) + ".dll")).encode() in arguments:
+            candidates.append(pid)
+        pending.extend(int(child) for child in process.joinpath("task", str(pid), "children").read_text().split())
+    if len(candidates) != 1:
+        raise RuntimeError("The actual Projects server process is missing or ambiguous.")
+    pid = candidates[0]
+    started = process_start(pid)
+    environment = dict(item.split(b"=", 1) for item in Path("/proc", str(pid), "environ").read_bytes().split(b"\0") if b"=" in item)
+    expected = {b"NAMESPACE": owned["_isolation"].encode(), b"EventStore__DomainService__AppId": b"projects",
+                b"XDG_DATA_HOME": str(Path(owned["_configuration"]).parent / "data-projects").encode(),
+                b"ASPNETCORE_ENVIRONMENT": b"Development"}
+    if started is None or any(environment.get(key) != value for key, value in expected.items()):
+        raise RuntimeError("Projects server does not belong to this isolated Development fixture.")
+    if process_start(wrapper) != wrapper_start or process_start(pid) != started:
+        raise RuntimeError("Projects process identity changed during observation.")
+    return {"resourceName": resource["name"], "launcherPid": wrapper, "launcherStartTicks": wrapper_start,
+            "pid": pid, "startTicks": started,
+            "binarySha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
+            "assemblySha256": hashlib.sha256(Path(str(binary) + ".dll").read_bytes()).hexdigest()}
+
+
+def projects_processes_gone(identity: dict) -> bool:
+    return all(process_start(identity[pid]) != identity[start] for pid, start in
+               (("pid", "startTicks"), ("launcherPid", "launcherStartTicks")))
+
+
+def refresh_owned_endpoints(owned: dict, graph: dict) -> dict:
+    private = Path(owned["_configuration"]).parent
+    endpoints_path = private / "endpoints.json"
+    endpoints = json.loads(endpoints_path.read_text())
+    for name in ("eventstore", "projects", "folders", "eventstore-dapr-cli", "projects-dapr-cli", "folders-dapr-cli"):
+        endpoints[name] = resource_endpoint(graph, name)
+    endpoints["broker"] = resource_endpoint(graph, "supported-read-authority", "https") + "/workload-authority"
+    endpoints["state-grpc"] = resource_endpoint(graph, "eventstore-dapr-cli", "grpc")
+    discovery = verify_discovery(private / "discovery.json", private / "discovery.sqlite", owned["_isolation"])
+    endpoints_path.write_text(json.dumps(endpoints))
+    os.chmod(endpoints_path, 0o600)
+    return discovery
+
+
+def mutate_owned_resource(owned: dict, resource: str, action: str, run, observation: dict, *, budget_seconds: float = 180) -> None:
+    with restart_budget(budget_seconds):
+        _mutate_owned_resource(owned, resource, action, run, observation)
+
+
+def _mutate_owned_resource(owned: dict, resource: str, action: str, run, observation: dict) -> None:
+    """The only additional mutation is an owned Projects stop/start without build or seed."""
+    if resource == "folders" and action in ("stop", "start"):
+        mutate_owned_folder(owned, action, run)
+        return
+    if resource != "projects" or action != "restart":
+        raise RuntimeError("Only owned Folder stop/start or Projects restart is allowed.")
+    observation.update({"resource": resource, "action": action, "completed": False, "stage": "ownership"})
+    def guard():
+        if not owns_current_apphost(owned):
+            raise RuntimeError("Projects restart requires the original owned AppHost session.")
+    guard()
+    before = projects_process_identity(owned, resource_graph(run))
+    observation["before"] = before
+    observation["appHostPid"] = owned["appHostPid"]
+    observation["appHostStartTicks"] = owned["appHostStartTicks"]
+    observation["configurationSha256"] = owned["configurationSha256"]
+    observation["stage"] = "stop"
+    guard()
+    # Re-observe immediately before mutation, refusing an independently replaced server.
+    if projects_process_identity(owned, resource_graph(run)) != before:
+        raise RuntimeError("Projects process changed before the owned stop.")
+    guard()
+    run(["aspire", "resource", "projects", "stop", "--apphost", str(APPHOST), "--non-interactive"], timeout=60)
+    for _ in range(100):
+        if projects_processes_gone(before):
+            break
+        time.sleep(.1)
+    else:
+        raise RuntimeError("The original Projects process did not exit; restart is unproven.")
+    observation["oldProcessExited"] = True
+    observation["stage"] = "start"
+    guard()
+    run(["aspire", "resource", "projects", "start", "--apphost", str(APPHOST), "--non-interactive"], timeout=60)
+    run(["aspire", "wait", "projects", "--apphost", str(APPHOST), "--timeout", "120", "--non-interactive"], timeout=135)
+    guard()
+    graph = resource_graph(run)
+    after = projects_process_identity(owned, graph)
+    observation["after"] = after
+    if any((before[pid], before[start]) == (after[pid], after[start]) for pid, start in
+           (("pid", "startTicks"), ("launcherPid", "launcherStartTicks"))):
+        raise RuntimeError("Projects start retained an original process identity.")
+    if any(before[key] != after[key] for key in ("resourceName", "binarySha256", "assemblySha256")):
+        raise RuntimeError("Projects resource or Debug binary changed during restart.")
+    observation["stage"] = "rediscovery"
+    guard()
+    observation["discovery"] = refresh_owned_endpoints(owned, graph)
+    guard()
+    if projects_process_identity(owned, resource_graph(run)) != after:
+        raise RuntimeError("Projects process changed during endpoint rediscovery.")
+    observation.update({"endpointsRediscovered": True, "completed": True, "stage": "completed"})
 
 
 def container_listing() -> dict[str, set[str]]:
@@ -363,7 +619,7 @@ def cleanup_resources(owned_apphost: dict | None, owned: list[dict], isolation: 
 
 def preexisting_resources() -> dict:
     """Observe external process/container identities without retaining URLs, credentials or payloads."""
-    apphosts = json.loads(execute(["aspire", "ps", "--format", "Json", "--non-interactive"]))
+    apphosts = json.loads(execute(["aspire", "ps", "--format", "Json", "--non-interactive"], timeout=15))
     containers = set(execute(["docker", "ps", "--format", "{{.ID}}"]).splitlines())
     sidecars = {}
     for parts in sidecar_processes():
@@ -519,23 +775,34 @@ def main() -> int:
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--artifacts", type=Path, help="Private reusable Debug artifacts for iterative triage; omitted for fresh final verification.")
     parser.add_argument("--regressions", action="store_true", help="Also run the complete Projects Integration and Server test projects before teardown.")
-    parser.add_argument("--resource-action", choices=("stop", "start"), help=argparse.SUPPRESS)
+    parser.add_argument("--resource-action", choices=("stop", "start", "restart"), help=argparse.SUPPRESS)
+    parser.add_argument("--resource", choices=("folders", "projects"), default="folders", help=argparse.SUPPRESS)
     parser.add_argument("--ownership", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.resource_action is not None:
         if args.ownership is None:
             parser.error("A private ownership identity is required for resource mutation.")
+        observation, observation_path = {}, None
         try:
+            if args.resource == "projects":
+                evidence_path = Path(os.environ["SUPPORTED_PROJECT_READ_EVIDENCE"])
+                if not evidence_path.is_dir():
+                    raise RuntimeError("Restart evidence destination is missing.")
+                observation_path = evidence_path / "projects-restart-process.json"
             if args.ownership.stat().st_mode & 0o077:
                 raise RuntimeError("Ownership identity must be private.")
             owned = json.loads(args.ownership.read_text())
             if args.ownership.parent != Path(owned["_configuration"]).parent:
                 raise RuntimeError("Ownership identity must belong to the private fixture directory.")
-            mutate_owned_folder(owned, args.resource_action, execute)
+            mutate_owned_resource(owned, args.resource, args.resource_action, execute, observation)
             return 0
         except BaseException as failure:
-            print("Owned Folder mutation refused: " + type(failure).__name__)
+            observation.update({"completed": False, "failureType": type(failure).__name__})
+            print("Owned resource mutation refused: " + type(failure).__name__)
             return 1
+        finally:
+            if observation_path is not None:
+                observation_path.write_text(json.dumps(observation, indent=2) + "\n")
     for program in ("aspire", "docker", "dotnet", "openssl", "ip"):
         if not shutil.which(program):
             parser.error(f"{program} is required")
@@ -731,8 +998,7 @@ def main() -> int:
         test_command = ["dotnet", str(assembly), "-class", "*SupportedProjectReadDistributedTests", "-xml", str(evidence / "distributed.xml")]
         report["commands"].append(test_command)
         report["testAssemblySha256"] = hashlib.sha256(assembly.read_bytes()).hexdigest()
-        result = subprocess.run(test_command,
-                                cwd=ROOT, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=args.timeout)
+        result = run_test_process(test_command, env=env, timeout=args.timeout, cleanup=report.setdefault("testProcessCleanup", []))
         # xUnit success/failure diagnostics use assertions containing statuses and closed reason codes only.
         (evidence / "distributed.log").write_text(result.stdout)
         assemblies = ET.parse(evidence / "distributed.xml").getroot().findall("assembly")
@@ -740,14 +1006,12 @@ def main() -> int:
         if result.returncode:
             raise RuntimeError("Distributed assertions failed; inspect distributed.xml and the sanitized test log.")
         matrix = json.loads((evidence / "matrix.json").read_text())
-        if not matrix.get("allCasesExecuted"):
+        report["projectsRestart"] = json.loads((evidence / "projects-restart-process.json").read_text())
+        if not matrix.get("allCasesExecuted") or len(set(matrix.get("cases", []))) != 9 or not matrix.get("projectsProcessRestartVerified") or not report["projectsRestart"].get("completed"):
             raise RuntimeError("The full distributed matrix did not execute.")
         report["discoveryAfterReads"] = verify_discovery(discovery_configuration, discovery_registry, isolation)
         if args.regressions:
-            regression_env = env.copy()
-            regression_env["Projects__SupportedReads__Enabled"] = "false"
-            regression_env["STORY61_DAPR_HTTP_ENDPOINT"] = endpoints["eventstore-dapr-cli"]
-            regression_env["STORY61_DAPR_GRPC_ENDPOINT"] = endpoints["state-grpc"]
+            regression_env = regression_environment(env, private / "endpoints.json")
             report["regressions"] = {}
             for lane in ("Integration", "Server"):
                 if lane == "Server":
@@ -758,8 +1022,8 @@ def main() -> int:
                 if lane == "Integration":
                     regression_command.extend(["-class-", "*SupportedProjectReadDistributedTests"])
                 report["commands"].append(regression_command)
-                regression = subprocess.run(regression_command, cwd=ROOT, env=regression_env, text=True,
-                                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=args.timeout)
+                regression = run_test_process(regression_command, env=regression_env, timeout=args.timeout,
+                                              cleanup=report.setdefault("testProcessCleanup", []))
                 (evidence / (lane.lower() + ".log")).write_text(regression.stdout)
                 lane_results = ET.parse(evidence / (lane.lower() + ".xml")).getroot().findall("assembly")
                 report["regressions"][lane] = require_test_results(lane_results)

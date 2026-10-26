@@ -24,6 +24,7 @@ public sealed class SupportedProjectReadDistributedTests
             await File.AppendAllTextAsync(Path.Combine(fixture.Evidence, "read-progress.log"), row + Environment.NewLine, TestContext.Current.CancellationToken).ConfigureAwait(false);
         }
         var before = await fixture.SnapshotAsync();
+        DateTimeOffset cursorRequestedAt = DateTimeOffset.UtcNow;
         ProjectListPage first = await fixture.ReadAsync<ProjectListPage>(list: new(PageSize: 1));
         Assert.True(first.Items.Select(item => item.ProjectId).SequenceEqual(["project-a"]), "Authorized first page differs from its owned fixture; count=" + first.Items.Count + ", state=" + first.Snapshot.ResponseState);
         first.Cursor.ShouldNotBeNullOrWhiteSpace();
@@ -44,6 +45,27 @@ public sealed class SupportedProjectReadDistributedTests
         (await fixture.SafeDenialAsync(tenant: fixture.ForeignTenant, open: false, list: new(Cursor: first.Cursor, PageSize: 1))).ShouldBe(absent);
         await fixture.AssertUnchangedAsync(before);
         await CompleteAsync("populated-foreign-tenant-and-absent-safe-denial");
+
+        await fixture.RestartProjectsAsync();
+        ProjectListPage resumed = await fixture.ReadAsync<ProjectListPage>(list: new(Cursor: first.Cursor, PageSize: 1));
+        Assert.True(resumed.Items.Select(item => item.ProjectId).SequenceEqual(["project-b"]) && !resumed.HasMore && resumed.Cursor is null,
+            "The pre-restart cursor did not resume at the next expected row.");
+        Assert.True(SupportedProjectReadDistributedFixture.SameStableReadMetadata(continuation, resumed), "Pre-restart continuation metadata changed after restart.");
+        ProjectListPage freshFirst = await fixture.ReadAsync<ProjectListPage>(list: new(PageSize: 1));
+        Assert.True(SupportedProjectReadDistributedFixture.SameStableReadMetadata(first, freshFirst), "First-page metadata changed after restart.");
+        freshFirst.Cursor.ShouldNotBeNullOrWhiteSpace();
+        ProjectListPage freshNext = await fixture.ReadAsync<ProjectListPage>(list: new(Cursor: freshFirst.Cursor, PageSize: 1));
+        Assert.True(SupportedProjectReadDistributedFixture.SameStableReadMetadata(resumed, freshNext), "Fresh paging differs from the retained continuation.");
+        Assert.True(freshFirst.Items.Concat(freshNext.Items).Select(item => item.ProjectId).SequenceEqual(["project-a", "project-b"]),
+            "Recovered paging duplicated or omitted a fixture row.");
+        GetProjectResponse reopened = await fixture.ReadAsync<GetProjectResponse>(open: true);
+        Assert.True(SupportedProjectReadDistributedFixture.SameStableReadMetadata(opened, reopened), "Open metadata, version or freshness changed after restart.");
+        (await fixture.SafeDenialAsync(project: "absent")).ShouldBe(absent);
+        (await fixture.SafeDenialAsync(tenant: fixture.ForeignTenant)).ShouldBe(absent);
+        (await fixture.SafeDenialAsync(tenant: fixture.ForeignTenant, open: false)).ShouldBe(absent);
+        (await fixture.SafeDenialAsync(tenant: fixture.ForeignTenant, open: false, list: new(Cursor: first.Cursor, PageSize: 1))).ShouldBe(absent);
+        await fixture.VerifyRestartStateAsync(before);
+        await CompleteAsync("owned-projects-process-restart-retains-reads-continuation-and-state");
 
         GetProjectResponse safeOperator = await fixture.ReadAsync<GetProjectResponse>(open: true, chatbot: false);
         Assert.True(safeOperator.Name is null && safeOperator.Description is null, "Uninspected operator metadata was disclosed.");
@@ -73,13 +95,23 @@ public sealed class SupportedProjectReadDistributedTests
         await CompleteAsync("audit-storage-unavailable-blocks-disclosure");
 
         long priorHead = await fixture.HeadAsync(fixture.Tenant, "folder-project-a");
+        ProjectListPage immediatelyBeforeRevocation = await fixture.ReadAsync<ProjectListPage>(list: new(Cursor: first.Cursor, PageSize: 1));
+        Assert.True(SupportedProjectReadDistributedFixture.SameStableReadMetadata(resumed, immediatelyBeforeRevocation),
+            "The retained pre-restart cursor was not valid immediately before revocation.");
+        Assert.True(SupportedProjectReadDistributedFixture.CursorIsWithinObservedLifetime(cursorRequestedAt, DateTimeOffset.UtcNow),
+            "The retained cursor has reached its lifetime bound before revocation.");
         await fixture.ChangeFolderAccessAsync(fixture.Tenant, "folder-project-a", revoke: true);
         (await fixture.HeadAsync(fixture.Tenant, "folder-project-a")).ShouldBeGreaterThan(priorHead);
         before = await fixture.SnapshotAsync();
         (await fixture.SafeDenialAsync()).ShouldBe(absent);
         ProjectListPage revoked = await fixture.ReadAsync<ProjectListPage>();
         Assert.True(revoked.Items.Select(item => item.ProjectId).SequenceEqual(["project-b"]), "Revoked Folder authority retained visibility.");
-        using (var oldCursor = await fixture.QueryAsync(list: new(Cursor: first.Cursor, PageSize: 1))) oldCursor.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        using (var oldCursor = await fixture.QueryAsync(list: new(Cursor: first.Cursor, PageSize: 1)))
+        {
+            Assert.True(SupportedProjectReadDistributedFixture.CursorIsWithinObservedLifetime(cursorRequestedAt, DateTimeOffset.UtcNow),
+                "Cursor expiry cannot qualify as authority invalidation.");
+            oldCursor.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        }
         await fixture.AssertUnchangedAsync(before);
         await CompleteAsync("revocation-observes-real-head-and-invalidates-old-continuation");
 
@@ -102,7 +134,10 @@ public sealed class SupportedProjectReadDistributedTests
         await CompleteAsync("authenticated-command-and-projection-compatibility");
         await File.WriteAllTextAsync(Path.Combine(fixture.Evidence, "matrix.json"), JsonSerializer.Serialize(new
         {
-            allCasesExecuted = completed.Count == 8, cases = completed, domainBytesAndEtagsUnchanged = true,
+            allCasesExecuted = completed.Count == 9, cases = completed, domainBytesAndEtagsUnchanged = true,
+            projectsProcessRestartVerified = true, preRestartContinuationAcceptedAfterRestart = true, freshPagingAgrees = true,
+            retainedCursorAcceptedImmediatelyBeforeRevocation = true, cursorRejectionWithinLifetime = true,
+            postRestartForeignAndAbsentDenialsVerified = true, bothTenantDomainWatermarksUnchanged = true,
             actualDaprDiscovery = true, actualOwnerActorHeads = true, acceptedEquivalence = false, productionReadiness = false,
         }, new JsonSerializerOptions { WriteIndented = true }), TestContext.Current.CancellationToken);
     }
