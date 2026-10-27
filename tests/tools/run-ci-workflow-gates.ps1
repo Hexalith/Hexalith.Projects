@@ -1034,14 +1034,19 @@ foreach ($projectFile in $projectFiles) {
         $isAppHostExecutable = $projectFile.Name -eq 'Hexalith.Projects.AppHost.csproj' -and
             $normalizedInclude -in @('$(HexalithEventStoreRoot)/src/Hexalith.EventStore/Hexalith.EventStore.csproj', '$(HexalithTenantsRoot)/src/Hexalith.Tenants/Hexalith.Tenants.csproj')
         $condition = if (-not [string]::IsNullOrWhiteSpace($reference.Condition)) { $reference.Condition } else { $reference.ParentNode.Condition }
-        # Folders.Server and Conversations.Server are unpackable web hosts. Server
-        # tests reference them only in source mode, and the consuming fixtures
-        # compile only under HEXALITH_SOURCE_FIXTURE.
+        # Folders.Server, Folders.Workers, and Conversations.Server are unpackable
+        # web hosts. AppHost and server tests reference them only in source mode,
+        # and the consuming fixtures compile only under HEXALITH_SOURCE_FIXTURE.
         $sourceOnlyUnpackableHosts = @(
             '$(HexalithFoldersRoot)/src/Hexalith.Folders.Server/Hexalith.Folders.Server.csproj',
+            '$(HexalithFoldersRoot)/src/Hexalith.Folders.Workers/Hexalith.Folders.Workers.csproj',
             '$(HexalithConversationsRoot)/src/Hexalith.Conversations.Server/Hexalith.Conversations.Server.csproj'
         )
-        $isSourceOnlyUnpackableHost = $projectFile.Name -eq 'Hexalith.Projects.Server.Tests.csproj' -and
+        $sourceOnlyUnpackableConsumers = @(
+            'Hexalith.Projects.AppHost.csproj',
+            'Hexalith.Projects.Server.Tests.csproj'
+        )
+        $isSourceOnlyUnpackableHost = $sourceOnlyUnpackableConsumers -contains $projectFile.Name -and
             $sourceOnlyUnpackableHosts -contains $normalizedInclude -and
             $condition -eq "'`$(UseHexalithProjectReferences)' == 'true'"
         if (-not $isAppHostExecutable -and -not $isSourceOnlyUnpackableHost -and $condition -ne "'`$(UseHexalithProjectReferences)' == 'true'") {
