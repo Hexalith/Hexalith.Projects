@@ -241,7 +241,9 @@ jobs:
             if [[ "$project" == references/Hexalith.Conversations/* ]]; then
               env -u CI "${mapping_args[@]}" dotnet restore "$project" -p:UseHexalithProjectReferences=true
             else
-              env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true
+              # Conversations source projects require their own mapping. Keep that module on
+              # packages while the rest of this source graph is restored.
+              env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true -p:HexalithConversationsFromSource=false
             fi
           done < <(jq -r '.resolvedProjects[]' references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json)
 

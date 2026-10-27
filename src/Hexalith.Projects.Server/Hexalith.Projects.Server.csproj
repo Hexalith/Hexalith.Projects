@@ -15,8 +15,8 @@
     <ProjectReference Include="..\Hexalith.Projects.Contracts\Hexalith.Projects.Contracts.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.Infrastructure\Hexalith.Projects.Infrastructure.csproj" />
     <ProjectReference Include="..\Hexalith.Projects.ServiceDefaults\Hexalith.Projects.ServiceDefaults.csproj" />
-    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Client\Hexalith.Conversations.Client.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
-    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
+    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Client\Hexalith.Conversations.Client.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true' and '$(HexalithConversationsFromSource)' != 'false'" />
+    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true' and '$(HexalithConversationsFromSource)' != 'false'" />
     <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Client\Hexalith.Folders.Client.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <ProjectReference Include="$(HexalithFoldersRoot)\src\Hexalith.Folders.Contracts\Hexalith.Folders.Contracts.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <ProjectReference Include="$(HexalithMemoriesRoot)\src\Hexalith.Memories.Client.Rest\Hexalith.Memories.Client.Rest.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
@@ -30,9 +30,11 @@
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.DomainService\Hexalith.EventStore.DomainService.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Gateway\Hexalith.EventStore.Gateway.csproj" Condition="'$(UseHexalithProjectReferences)' == 'true'" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true' or '$(HexalithConversationsFromSource)' == 'false'">
     <PackageReference Include="Hexalith.Conversations.Client" />
     <PackageReference Include="Hexalith.Conversations.Contracts" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
     <PackageReference Include="Hexalith.EventStore.Client" />
     <PackageReference Include="Hexalith.EventStore.Contracts" />
     <PackageReference Include="Hexalith.EventStore.DomainService" />

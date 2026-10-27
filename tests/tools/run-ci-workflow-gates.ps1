@@ -1049,7 +1049,9 @@ foreach ($projectFile in $projectFiles) {
         $isSourceOnlyUnpackableHost = $sourceOnlyUnpackableConsumers -contains $projectFile.Name -and
             $sourceOnlyUnpackableHosts -contains $normalizedInclude -and
             $condition -eq "'`$(UseHexalithProjectReferences)' == 'true'"
-        if (-not $isAppHostExecutable -and -not $isSourceOnlyUnpackableHost -and $condition -ne "'`$(UseHexalithProjectReferences)' == 'true'") {
+        $isConditionalSourceReference = $condition -eq "'`$(UseHexalithProjectReferences)' == 'true'" -or
+            $condition -eq "'`$(UseHexalithProjectReferences)' == 'true' and '`$(HexalithConversationsFromSource)' != 'false'"
+        if (-not $isAppHostExecutable -and -not $isSourceOnlyUnpackableHost -and -not $isConditionalSourceReference) {
             $failures.Add("$($projectFile.FullName.Substring($repositoryRoot.Length + 1)) has an unconditional sibling library ProjectReference: $($reference.Include)")
         }
 
@@ -1059,7 +1061,8 @@ foreach ($projectFile in $projectFiles) {
             $hasPackageModeReference = $false
             foreach ($packageReference in $matchingPackageReferences) {
                 $packageCondition = if (-not [string]::IsNullOrWhiteSpace($packageReference.Condition)) { $packageReference.Condition } else { $packageReference.ParentNode.Condition }
-                if ($packageCondition -eq "'`$(UseHexalithProjectReferences)' != 'true'") {
+                if ($packageCondition -eq "'`$(UseHexalithProjectReferences)' != 'true'" -or
+                    $packageCondition -eq "'`$(UseHexalithProjectReferences)' != 'true' or '`$(HexalithConversationsFromSource)' == 'false'") {
                     $hasPackageModeReference = $true
                 }
             }

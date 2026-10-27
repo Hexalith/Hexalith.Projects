@@ -13,8 +13,6 @@
   <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true'">
     <ProjectReference Include="$(HexalithEventStoreRoot)\src\Hexalith.EventStore.Contracts\Hexalith.EventStore.Contracts.csproj"
                       GlobalPropertiesToRemove="Version;PackageVersion" />
-    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj"
-                      GlobalPropertiesToRemove="Version;PackageVersion" />
     <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Contracts\Hexalith.FrontComposer.Contracts.csproj"
                       GlobalPropertiesToRemove="Version;PackageVersion" />
     <ProjectReference Include="$(HexalithFrontComposerRoot)\src\Hexalith.FrontComposer.Shell\Hexalith.FrontComposer.Shell.csproj"
@@ -25,9 +23,15 @@
                       GlobalPropertiesToRemove="Version;PackageVersion"
                       SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' == 'true' and '$(HexalithConversationsFromSource)' != 'false'">
+    <ProjectReference Include="$(HexalithConversationsRoot)\src\Hexalith.Conversations.Contracts\Hexalith.Conversations.Contracts.csproj"
+                      GlobalPropertiesToRemove="Version;PackageVersion" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true' or '$(HexalithConversationsFromSource)' == 'false'">
+    <PackageReference Include="Hexalith.Conversations.Contracts" />
+  </ItemGroup>
   <ItemGroup Condition="'$(UseHexalithProjectReferences)' != 'true'">
     <PackageReference Include="Hexalith.EventStore.Contracts" />
-    <PackageReference Include="Hexalith.Conversations.Contracts" />
     <PackageReference Include="Hexalith.FrontComposer.Contracts" />
     <PackageReference Include="Hexalith.FrontComposer.Shell" />
     <PackageReference Include="Hexalith.FrontComposer.SourceTools"
