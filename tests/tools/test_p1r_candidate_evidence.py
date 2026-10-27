@@ -49,8 +49,9 @@ from unittest import mock
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EVENTSTORE_ROOT = PROJECT_ROOT / "references" / "Hexalith.EventStore"
-RECORD_PATH = EVENTSTORE_ROOT / "_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/public-packages.json"
-SELECTED_RECORD_PATH = EVENTSTORE_ROOT / "_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/public-packages.json"
+# EventStore removed these committed archives. Projects keeps the selected replay bytes.
+RECORD_PATH = PROJECT_ROOT / "tests/tools/fixtures/6-1-p1r-3109/public-packages.json"
+SELECTED_RECORD_PATH = PROJECT_ROOT / "tests/tools/fixtures/6-1-p1r-3110/public-packages.json"
 ACCEPTANCE_PATH = PROJECT_ROOT / "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
 CURRENT_OWNER_PACKET_PATH = PROJECT_ROOT / "_bmad-output/implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md"
 SPRINT_STATUS_PATH = PROJECT_ROOT / "_bmad-output/implementation-artifacts/sprint-status.yaml"

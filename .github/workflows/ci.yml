@@ -204,10 +204,45 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mapping_workspace="${RUNNER_TEMP}/conversations-source-mapping"
+          mapping_json="${RUNNER_TEMP}/conversations-source-mapping.json"
+          mapping_env="${RUNNER_TEMP}/conversations-source-mapping.env"
+          rm -rf "$mapping_workspace"
+          (
+            cd references/Hexalith.Conversations
+            dotnet run --project ../Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj -- \
+              prepare-build \
+              --manifest module/hexalith.module-manifest.v2.json \
+              --mode source \
+              --workspace "$mapping_workspace" \
+              --output json
+          ) > "$mapping_json"
+          python3 - "$mapping_json" "$mapping_env" <<'PY'
+          import json
+          import sys
+          data = json.load(open(sys.argv[1], encoding="utf-8"))
+          if data.get("status") != "prepared":
+              raise SystemExit("Conversations source mapping was not prepared")
+          environment = data["buildPreparation"]["environment"]
+          with open(sys.argv[2], "w", encoding="utf-8", newline="\n") as handle:
+              for key in sorted(environment):
+                  value = environment[key]
+                  if not isinstance(value, str) or any(ord(character) < 32 for character in value):
+                      raise SystemExit(f"invalid mapping environment value for {key}")
+                  handle.write(f"{key}={value}\n")
+          PY
+          mapping_args=()
+          while IFS= read -r assignment || [ -n "$assignment" ]; do
+            mapping_args+=("$assignment")
+          done < "$mapping_env"
           while IFS= read -r project; do
             # Jérôme Piquot, 2026-10-03: “Unset CI in restore (Recommended)”.
             # This dedicated Debug source proof retains the normal package-only CI guard.
-            env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true
+            if [[ "$project" == references/Hexalith.Conversations/* ]]; then
+              env -u CI "${mapping_args[@]}" dotnet restore "$project" -p:UseHexalithProjectReferences=true
+            else
+              env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true
+            fi
           done < <(jq -r '.resolvedProjects[]' references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json)
 
       - name: Audit and qualify current G-6 when required
