@@ -1,0 +1,76 @@
+[
+  {
+    "name": "ordinary",
+    "argv": [
+      "dotnet",
+      "msbuild",
+      "src/Hexalith.Tenants.Client/Hexalith.Tenants.Client.csproj",
+      "-p:Configuration=Debug",
+      "-p:UseHexalithProjectReferences=true",
+      "-getItem:ProjectReference"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "mapped": false,
+    "exit_code": 0,
+    "additional_properties": [
+      ";HexalithEventStoreVersion=3.128.0",
+      "Version=3.128.0;HexalithEventStoreVersion=3.128.0"
+    ]
+  },
+  {
+    "name": "hash-only",
+    "argv": [
+      "dotnet",
+      "msbuild",
+      "src/Hexalith.Tenants.Client/Hexalith.Tenants.Client.csproj",
+      "-p:Configuration=Debug",
+      "-p:UseHexalithProjectReferences=true",
+      "-getItem:ProjectReference",
+      "-p:HexalithSourceMappingHash=unverified"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "mapped": false,
+    "exit_code": 0,
+    "additional_properties": [
+      ";HexalithEventStoreVersion=3.128.0",
+      "Version=3.128.0;HexalithEventStoreVersion=3.128.0"
+    ]
+  },
+  {
+    "name": "applies-only",
+    "argv": [
+      "dotnet",
+      "msbuild",
+      "src/Hexalith.Tenants.Client/Hexalith.Tenants.Client.csproj",
+      "-p:Configuration=Debug",
+      "-p:UseHexalithProjectReferences=true",
+      "-getItem:ProjectReference",
+      "-p:HexalithSourceMappingApplies=true"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "mapped": false,
+    "exit_code": 0,
+    "additional_properties": [
+      ";HexalithEventStoreVersion=3.128.0",
+      "Version=3.128.0;HexalithEventStoreVersion=3.128.0"
+    ]
+  },
+  {
+    "name": "mapped",
+    "argv": [
+      "dotnet",
+      "msbuild",
+      "src/Hexalith.Tenants.Client/Hexalith.Tenants.Client.csproj",
+      "-p:Configuration=Debug",
+      "-p:UseHexalithProjectReferences=true",
+      "-getItem:ProjectReference"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "mapped": true,
+    "exit_code": 0,
+    "additional_properties": [
+      "",
+      "Version=3.128.0"
+    ]
+  }
+]

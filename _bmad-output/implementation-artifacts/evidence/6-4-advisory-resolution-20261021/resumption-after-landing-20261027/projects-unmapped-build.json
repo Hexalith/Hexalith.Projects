@@ -1,0 +1,19 @@
+{
+  "name": "projects-unmapped-source-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:UseHexalithProjectReferences=true",
+    "-p:NuGetAudit=false",
+    "-p:MinVerVersionOverride=1.0.0",
+    "-v:minimal"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "exit_code": 1,
+  "seconds": 1.359,
+  "output_file": "projects-unmapped-source-build.log"
+}

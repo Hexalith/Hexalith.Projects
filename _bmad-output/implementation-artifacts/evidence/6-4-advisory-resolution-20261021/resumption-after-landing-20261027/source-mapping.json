@@ -1,0 +1,100 @@
+{
+  "Mode": "source",
+  "Root": "/home/administrator/projects/hexalith/projects",
+  "ActiveModule": "Hexalith.Conversations",
+  "Entries": [
+    {
+      "Identity": "Hexalith.AI.Tools",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.AI.Tools"
+    },
+    {
+      "Identity": "Hexalith.Builds",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds"
+    },
+    {
+      "Identity": "Hexalith.Commons",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons"
+    },
+    {
+      "Identity": "Hexalith.Conversations",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations"
+    },
+    {
+      "Identity": "Hexalith.EventStore",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore"
+    },
+    {
+      "Identity": "Hexalith.Folders",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders"
+    },
+    {
+      "Identity": "Hexalith.FrontComposer",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer"
+    },
+    {
+      "Identity": "Hexalith.McpCli",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli"
+    },
+    {
+      "Identity": "Hexalith.Memories",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories"
+    },
+    {
+      "Identity": "Hexalith.Parties",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties"
+    },
+    {
+      "Identity": "Hexalith.Platform",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform"
+    },
+    {
+      "Identity": "Hexalith.Tenants",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants"
+    }
+  ],
+  "HasGit": true,
+  "PlatformIdentity": {
+    "Commit": "73903003acd33ba341e12aa3c495992bab8b0eda",
+    "CompositionCommit": "73903003acd33ba341e12aa3c495992bab8b0eda",
+    "CheckoutCommit": "73903003acd33ba341e12aa3c495992bab8b0eda",
+    "PlatformPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "ReleaseTag": null,
+    "CatalogCommit": "0902fd6c527750ee3fc6832824f42b5b9bfdcfa6",
+    "ToolVersionRange": "[4.35.2, 5.0.0-0)",
+    "RecordPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json",
+    "IsPlatformRepository": false
+  },
+  "IdentityFindings": [
+    {
+      "RuleId": "HXW011",
+      "Message": "Platform identity 73903003acd33ba341e12aa3c495992bab8b0eda has no local v\u003CSemVer\u003E release tag.",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "Hint": "Fetch Platform tags, then retry."
+    },
+    {
+      "RuleId": "HXW009",
+      "Message": "Builds catalog \u0027/home/administrator/projects/hexalith/projects/references/Hexalith.Builds\u0027 is staged 22569245259c70f212e3073b5241c660b5d01487, checked out 22569245259c70f212e3073b5241c660b5d01487; Platform 73903003acd33ba341e12aa3c495992bab8b0eda pins 0902fd6c527750ee3fc6832824f42b5b9bfdcfa6.",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "Hint": null
+    },
+    {
+      "RuleId": "HXW010",
+      "Message": "Tool version 1.0.0-20261027181425 is outside Platform range [4.35.2, 5.0.0-0) at \u0027/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json\u0027.",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json",
+      "Hint": null
+    }
+  ],
+  "ContentHash": "162bcbb45ca899333bdf62ebe3df12e3ded3fe6c1b03afd9bbacf285cbcc10d7"
+}

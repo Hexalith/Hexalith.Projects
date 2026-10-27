@@ -1,0 +1,30 @@
+diff --git a/references/Hexalith.Tenants/Directory.Build.targets b/references/Hexalith.Tenants/Directory.Build.targets
+index 1c4e7948..f0d0c6aa 100644
+--- a/references/Hexalith.Tenants/Directory.Build.targets
++++ b/references/Hexalith.Tenants/Directory.Build.targets
+@@ -1,8 +1,9 @@
+ <Project>
+ 
+-  <!-- Carry the owning EventStore source identity through every local project edge, including
+-       indirect source graphs. Published package versions remain pinned in Directory.Build.props. -->
+-  <ItemGroup Condition="'$(HexalithEventStoreFromSource)' == 'true'">
++  <!-- Carry the owning EventStore source identity through ordinary local project edges.
++       An active producer mapping owns dependency versions without per-edge overrides.
++       Published package versions remain pinned in Directory.Build.props. -->
++  <ItemGroup Condition="'$(HexalithEventStoreFromSource)' == 'true' and ('$(HexalithSourceMappingHash)' == '' or '$(HexalithSourceMappingApplies)' != 'true')">
+     <ProjectReference Update="@(ProjectReference)">
+       <AdditionalProperties>%(ProjectReference.AdditionalProperties);HexalithEventStoreVersion=$(HexalithEventStoreVersion)</AdditionalProperties>
+     </ProjectReference>
+
+diff --git a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/TenantAccess/ConversationTenantAccessRegistrationTest.cs b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/TenantAccess/ConversationTenantAccessRegistrationTest.cs
+index 9d09ac94..b7811e84 100644
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/TenantAccess/ConversationTenantAccessRegistrationTest.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/TenantAccess/ConversationTenantAccessRegistrationTest.cs
+@@ -108,6 +108,7 @@ public sealed class ConversationTenantAccessRegistrationTest
+     [InlineData("Dapr:DeclarativeSubscriptions", "false")]
+     public void MissingEnrolledDeliveryInputsFailBeforeConsumerRegistration(string key, string? value)
+     {
++        ArgumentNullException.ThrowIfNull(key);
+         ServiceCollection services = new();
+         Should.Throw<InvalidOperationException>(() => services.AddConversationTenantAccess(EnrolledConfiguration(key, value)))
+             .Message.ShouldContain(key.Split(':')[0]);

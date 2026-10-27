@@ -1,0 +1,38 @@
+[
+  {
+    "name": "contracts-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "seconds": 0.815,
+    "output_file": "contracts-build.log"
+  },
+  {
+    "name": "engine-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "seconds": 0.784,
+    "output_file": "engine-build.log"
+  }
+]

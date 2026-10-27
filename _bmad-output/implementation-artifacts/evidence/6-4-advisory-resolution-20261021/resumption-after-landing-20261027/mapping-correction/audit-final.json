@@ -1,0 +1,66 @@
+{
+  "recorded_at_utc": "2026-10-27T18:50:01.129902+00:00",
+  "owning_baselines": {
+    "Hexalith.Projects": "c978a5e86c8134ba09a166e093a1a4d6b4db77a8",
+    "Hexalith.Tenants": "2cf3a9660f71f6877923772cd145aa6856907945",
+    "Hexalith.Conversations": "cec9a1e1bbdf7e8efb2cb3aa299add7f52c2a6ef",
+    "Hexalith.Builds": "22569245259c70f212e3073b5241c660b5d01487",
+    "Hexalith.EventStore": "4dc256c4db7a0ba88efdbbe0f6bcbcf047c09d34"
+  },
+  "source_files": [
+    {
+      "owner": "Hexalith.Tenants",
+      "path": "Directory.Build.targets",
+      "sha256": "39f7e2c9dbd170a40a5b43c9578d3d5ffee3d68c06591095084ba38ed3a86680",
+      "bytes": 3305
+    },
+    {
+      "owner": "Hexalith.Tenants",
+      "path": "tests/Hexalith.Tenants.Contracts.Tests/PackageGovernanceTests.cs",
+      "sha256": "38568a18bd8a8759ce6cd4277beb57e5da53dde6e4b473662d5261221ccd151b",
+      "bytes": 164322
+    },
+    {
+      "owner": "Hexalith.Conversations",
+      "path": "tests/Hexalith.Conversations.Server.Tests/TenantAccess/ConversationTenantAccessRegistrationTest.cs",
+      "sha256": "60073fd7c880fbf41d46e1f9aa1916293d46f129805e6697a8aa6d76295a98dd",
+      "bytes": 7400
+    }
+  ],
+  "final_current_source_tests": [
+    {
+      "name": "tenants-regression",
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "conversations-focused",
+      "total": 243,
+      "passed": 243,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "planning_guard": {
+    "passed": 37,
+    "failed": 0
+  },
+  "authority_checks": "story and index pass",
+  "current_mapped_conversations_debug_build": "pass; zero warnings/errors",
+  "metadata_controls": 4,
+  "source_review": {
+    "layers": 3,
+    "findings": 3,
+    "patch_groups": 1,
+    "patch_groups_resolved": 1,
+    "deferred_preexisting_issues": 1
+  },
+  "frozen_scope_sha256": "78e8a29557f949b064db4111f8d487ff4c4d15f3f7d57284e72905f797b9a7df",
+  "indices_empty": true,
+  "commit_push_publication": "not performed",
+  "accepted_dependency_tool_pins": "unchanged",
+  "story_status": "in-progress",
+  "delivery_gates": "qualified producer/tool/Platform/catalog tuple, successful exact-source CI, separately approved Conversations 1.3.1 publication and verified consumer pins"
+}

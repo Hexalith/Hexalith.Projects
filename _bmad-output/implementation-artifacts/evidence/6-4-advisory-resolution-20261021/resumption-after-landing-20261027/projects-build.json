@@ -1,0 +1,27 @@
+{
+  "name": "projects-source-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "-p:MinVerVersionOverride=1.0.0",
+    "-v:minimal"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "162bcbb45ca899333bdf62ebe3df12e3ded3fe6c1b03afd9bbacf285cbcc10d7",
+    "Configuration": "Debug"
+  },
+  "exit_code": 1,
+  "seconds": 0.436,
+  "output_file": "projects-source-build.log"
+}

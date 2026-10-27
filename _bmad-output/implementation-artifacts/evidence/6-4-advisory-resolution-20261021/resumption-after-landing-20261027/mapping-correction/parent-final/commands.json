@@ -1,0 +1,110 @@
+[
+  {
+    "name": "tenants-regression",
+    "argv": [
+      "dotnet",
+      "tests/Hexalith.Tenants.Contracts.Tests/bin/Debug/net10.0/Hexalith.Tenants.Contracts.Tests.dll",
+      "-method",
+      "*EventStore_source_version_forwarding_defers_only_to_an_active_producer_mapping",
+      "-result-xml",
+      "/tmp/story64-resumption-current-20261027-g898653z/parent-verification/tenants-regression.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+    "exit_code": 0,
+    "seconds": 1.693,
+    "output_file": "tenants-regression.log"
+  },
+  {
+    "name": "conversations-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "seconds": 12.526,
+    "output_file": "conversations-build.log",
+    "generated_environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "162bcbb45ca899333bdf62ebe3df12e3ded3fe6c1b03afd9bbacf285cbcc10d7",
+      "Configuration": "Debug"
+    }
+  },
+  {
+    "name": "conversations-focused",
+    "argv": [
+      "dotnet",
+      "tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll",
+      "-class",
+      "*ConversationAdvisoryMetadataQueryHandlerTest",
+      "-class",
+      "*ConversationResolutionMetadataQueryHandlerTest",
+      "-class",
+      "*ConversationQueryRegistrationTest",
+      "-class",
+      "*ConversationTenantAccessRegistrationTest",
+      "-class",
+      "*ConversationResolutionMetadataProjectionTest",
+      "-class",
+      "*ConversationResolutionMetadataRecoveryTest",
+      "-result-xml",
+      "/tmp/story64-resumption-current-20261027-g898653z/parent-verification/conversations-focused.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit_code": 0,
+    "seconds": 1.872,
+    "output_file": "conversations-focused.log"
+  },
+  {
+    "name": "planning-guard",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_production_authority_guard.py"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "output_file": "planning-guard.log"
+  },
+  {
+    "name": "story-authority",
+    "argv": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6.4"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "output_file": "story-authority.log"
+  },
+  {
+    "name": "index-authority",
+    "argv": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "output_file": "index-authority.log"
+  }
+]

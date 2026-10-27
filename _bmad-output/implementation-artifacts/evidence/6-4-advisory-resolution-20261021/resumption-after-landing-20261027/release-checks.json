@@ -1,0 +1,93 @@
+{
+  "recorded_at_utc": "2026-10-27T18:37:12.875035+00:00",
+  "heads": {
+    "Hexalith.Builds": "cbe58fa72f92327752fe0d75617ae91fe18da5d9",
+    "Hexalith.Conversations": "26298b31eb4d362f88e008246ac3acb160128330"
+  },
+  "commands": [
+    {
+      "name": "Hexalith.Builds-head",
+      "argv": [
+        "gh",
+        "api",
+        "repos/Hexalith/Hexalith.Builds/commits/main",
+        "--jq",
+        ".sha"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "output_file": "Hexalith.Builds-head.log"
+    },
+    {
+      "name": "Hexalith.Builds-runs",
+      "argv": [
+        "gh",
+        "api",
+        "repos/Hexalith/Hexalith.Builds/actions/runs?head_sha=cbe58fa72f92327752fe0d75617ae91fe18da5d9&per_page=20",
+        "--jq",
+        ".workflow_runs[] | {id, name, status, conclusion, head_sha, html_url}"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "output_file": "Hexalith.Builds-runs.log"
+    },
+    {
+      "name": "Hexalith.Conversations-head",
+      "argv": [
+        "gh",
+        "api",
+        "repos/Hexalith/Hexalith.Conversations/commits/main",
+        "--jq",
+        ".sha"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "output_file": "Hexalith.Conversations-head.log"
+    },
+    {
+      "name": "Hexalith.Conversations-runs",
+      "argv": [
+        "gh",
+        "api",
+        "repos/Hexalith/Hexalith.Conversations/actions/runs?head_sha=26298b31eb4d362f88e008246ac3acb160128330&per_page=20",
+        "--jq",
+        ".workflow_runs[] | {id, name, status, conclusion, head_sha, html_url}"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "output_file": "Hexalith.Conversations-runs.log"
+    },
+    {
+      "name": "conversations-release-source",
+      "argv": [
+        "python3",
+        "scripts/verify-release-source.py",
+        "--publish-enabled",
+        "true",
+        "--repository",
+        "Hexalith/Hexalith.Conversations",
+        "--dispatch-ref",
+        "refs/heads/main",
+        "--dispatch-sha",
+        "26298b31eb4d362f88e008246ac3acb160128330",
+        "--release-version",
+        "1.3.1"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "exit_code": 1,
+      "output_file": "conversations-release-source.log"
+    },
+    {
+      "name": "conversations-release-destinations",
+      "argv": [
+        "python3",
+        "scripts/verify-release-state.py",
+        "absent",
+        "1.3.1"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "exit_code": 0,
+      "output_file": "conversations-release-destinations.log"
+    }
+  ]
+}

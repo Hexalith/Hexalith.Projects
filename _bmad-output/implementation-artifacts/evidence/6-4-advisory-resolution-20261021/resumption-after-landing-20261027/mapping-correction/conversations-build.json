@@ -1,0 +1,27 @@
+{
+  "name": "conversations-source-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "-p:MinVerVersionOverride=1.0.0",
+    "-v:minimal"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+  "environment": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story64-resumption-current-20261027-g898653z/source/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "162bcbb45ca899333bdf62ebe3df12e3ded3fe6c1b03afd9bbacf285cbcc10d7",
+    "Configuration": "Debug"
+  },
+  "exit_code": 0,
+  "seconds": 16.366,
+  "output_file": "conversations-build.log"
+}

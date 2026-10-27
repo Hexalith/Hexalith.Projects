@@ -1,0 +1,115 @@
+diff --git a/references/Hexalith.Tenants/Directory.Build.targets b/references/Hexalith.Tenants/Directory.Build.targets
+index 1c4e7948..f0d0c6aa 100644
+--- a/references/Hexalith.Tenants/Directory.Build.targets
++++ b/references/Hexalith.Tenants/Directory.Build.targets
+@@ -1,8 +1,9 @@
+ <Project>
+ 
+-  <!-- Carry the owning EventStore source identity through every local project edge, including
+-       indirect source graphs. Published package versions remain pinned in Directory.Build.props. -->
+-  <ItemGroup Condition="'$(HexalithEventStoreFromSource)' == 'true'">
++  <!-- Carry the owning EventStore source identity through ordinary local project edges.
++       An active producer mapping owns dependency versions without per-edge overrides.
++       Published package versions remain pinned in Directory.Build.props. -->
++  <ItemGroup Condition="'$(HexalithEventStoreFromSource)' == 'true' and ('$(HexalithSourceMappingHash)' == '' or '$(HexalithSourceMappingApplies)' != 'true')">
+     <ProjectReference Update="@(ProjectReference)">
+       <AdditionalProperties>%(ProjectReference.AdditionalProperties);HexalithEventStoreVersion=$(HexalithEventStoreVersion)</AdditionalProperties>
+     </ProjectReference>
+diff --git a/references/Hexalith.Tenants/tests/Hexalith.Tenants.Contracts.Tests/PackageGovernanceTests.cs b/references/Hexalith.Tenants/tests/Hexalith.Tenants.Contracts.Tests/PackageGovernanceTests.cs
+index 45b53ad8..8b06030b 100644
+--- a/references/Hexalith.Tenants/tests/Hexalith.Tenants.Contracts.Tests/PackageGovernanceTests.cs
++++ b/references/Hexalith.Tenants/tests/Hexalith.Tenants.Contracts.Tests/PackageGovernanceTests.cs
+@@ -675,6 +675,80 @@ public class PackageGovernanceTests {
+         }
+     }
+ 
++    [Theory]
++    [InlineData("true", "", "", true)]
++    [InlineData("true", "mapping-hash", "", true)]
++    [InlineData("true", "", "true", true)]
++    [InlineData("true", "mapping-hash", "true", false)]
++    [InlineData("false", "", "", false)]
++    [InlineData("false", "mapping-hash", "true", false)]
++    [InlineData("", "", "", false)]
++    public void EventStore_source_version_forwarding_defers_only_to_an_active_producer_mapping(
++        string fromSource,
++        string mappingHash,
++        string mappingApplies,
++        bool forwardsSourceVersion) {
++        string repoRoot = FindRepoRoot();
++        string fixtureRoot = Path.Combine(Path.GetTempPath(), $"hexalith-tenants-source-version-{Guid.NewGuid():N}");
++        _ = Directory.CreateDirectory(fixtureRoot);
++
++        try {
++            string projectPath = Path.Combine(fixtureRoot, "SourceVersion.proj");
++            new XDocument(new XElement("Project",
++                new XElement("ItemGroup",
++                    new XElement("ProjectReference",
++                        new XAttribute("Include", "existing.csproj"),
++                        new XAttribute("AdditionalProperties", "ExistingProperty=kept"),
++                        new XAttribute("Private", "false")),
++                    new XElement("ProjectReference", new XAttribute("Include", "empty.csproj"))),
++                new XElement("Import", new XAttribute("Project", Path.Combine(repoRoot, "Directory.Build.targets")))))
++                .Save(projectPath);
++
++            var startInfo = new ProcessStartInfo("dotnet") {
++                WorkingDirectory = repoRoot,
++                RedirectStandardOutput = true,
++                RedirectStandardError = true,
++                UseShellExecute = false,
++            };
++            foreach (string property in new[] {
++                "CustomBeforeDirectoryBuildProps", "CustomAfterMicrosoftCommonProps", "CustomBeforeDirectoryBuildTargets",
++                "CustomAfterDirectoryBuildTargets", "AfterMicrosoftNETSdkTargets", "HEXALITH_SOURCE_MAPPING_HASH",
++            }) {
++                _ = startInfo.Environment.Remove(property);
++            }
++            foreach (string argument in new[] {
++                "msbuild", projectPath, "-nologo", "-getItem:ProjectReference",
++                $"-property:HexalithEventStoreFromSource={fromSource}",
++                "-property:HexalithEventStoreVersion=test-source-version",
++                $"-property:HexalithSourceMappingHash={mappingHash}",
++                $"-property:HexalithSourceMappingApplies={mappingApplies}",
++            }) {
++                startInfo.ArgumentList.Add(argument);
++            }
++
++            using Process process = Process.Start(startInfo)
++                ?? throw new InvalidOperationException("Could not start dotnet msbuild for source version forwarding evaluation.");
++            string standardOutput = process.StandardOutput.ReadToEnd();
++            string standardError = process.StandardError.ReadToEnd();
++            process.WaitForExit();
++            process.ExitCode.ShouldBe(0, $"Source version forwarding evaluation failed. stdout: {standardOutput}{Environment.NewLine}stderr: {standardError}");
++
++            using JsonDocument evaluation = JsonDocument.Parse(standardOutput);
++            Dictionary<string, JsonElement> references = evaluation.RootElement.GetProperty("Items").GetProperty("ProjectReference")
++                .EnumerateArray().ToDictionary(item => item.GetProperty("Identity").GetString()!, StringComparer.Ordinal);
++            references.Count.ShouldBe(2);
++            string forwarded = forwardsSourceVersion ? ";HexalithEventStoreVersion=test-source-version" : string.Empty;
++            references["existing.csproj"].GetProperty("AdditionalProperties").GetString().ShouldBe("ExistingProperty=kept" + forwarded);
++            references["existing.csproj"].GetProperty("Private").GetString().ShouldBe("false");
++            string emptyProperties = references["empty.csproj"].TryGetProperty("AdditionalProperties", out JsonElement additional)
++                ? additional.GetString() ?? string.Empty : string.Empty;
++            emptyProperties.ShouldBe(forwarded);
++        }
++        finally {
++            Directory.Delete(fixtureRoot, recursive: true);
++        }
++    }
++
+     /// <summary>
+     /// Collects the <c>Hexalith.EventStore*</c> references of the requested item type, keyed by
+     /// package id. A <c>ProjectReference</c> id is derived from its project file name so the rule is
+
+diff --git a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/TenantAccess/ConversationTenantAccessRegistrationTest.cs b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/TenantAccess/ConversationTenantAccessRegistrationTest.cs
+index 9d09ac94..b7811e84 100644
+--- a/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/TenantAccess/ConversationTenantAccessRegistrationTest.cs
++++ b/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/TenantAccess/ConversationTenantAccessRegistrationTest.cs
+@@ -108,6 +108,7 @@ public sealed class ConversationTenantAccessRegistrationTest
+     [InlineData("Dapr:DeclarativeSubscriptions", "false")]
+     public void MissingEnrolledDeliveryInputsFailBeforeConsumerRegistration(string key, string? value)
+     {
++        ArgumentNullException.ThrowIfNull(key);
+         ServiceCollection services = new();
+         Should.Throw<InvalidOperationException>(() => services.AddConversationTenantAccess(EnrolledConfiguration(key, value)))
+             .Message.ShouldContain(key.Split(':')[0]);

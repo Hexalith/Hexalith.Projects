@@ -1,0 +1,51 @@
+<Project>
+
+  <!-- Carry the owning EventStore source identity through ordinary local project edges.
+       An active producer mapping owns dependency versions without per-edge overrides.
+       Published package versions remain pinned in Directory.Build.props. -->
+  <ItemGroup Condition="'$(HexalithEventStoreFromSource)' == 'true' and ('$(HexalithSourceMappingHash)' == '' or '$(HexalithSourceMappingApplies)' != 'true')">
+    <ProjectReference Update="@(ProjectReference)">
+      <AdditionalProperties>%(ProjectReference.AdditionalProperties);HexalithEventStoreVersion=$(HexalithEventStoreVersion)</AdditionalProperties>
+    </ProjectReference>
+  </ItemGroup>
+
+  <!--
+    Container image defaults (.NET SDK container support).
+    Opt-in per project with:
+      <EnableContainer>true</EnableContainer>
+      <ContainerRepository>image-name</ContainerRepository>
+    CI/CD may override ContainerRegistry and ContainerImageTags via env or -p:.
+    Loaded as .targets (post-project) so EnableContainer set in the project is visible.
+  -->
+  <PropertyGroup Condition="'$(EnableContainer)' == 'true'">
+    <IsPackable Condition="'$(EnableContainerPackable)' != 'true'">false</IsPackable>
+    <IsPublishable>true</IsPublishable>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:10.0-alpine</ContainerBaseImage>
+    <ContainerFamily>alpine</ContainerFamily>
+    <ContainerRegistry Condition="'$(ContainerRegistry)' == ''">registry.hexalith.com</ContainerRegistry>
+    <ContainerImageTag Condition="'$(ContainerImageTags)' == '' and '$(ContainerImageTag)' == ''">staging-latest</ContainerImageTag>
+    <ContainerUser>app</ContainerUser>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(EnableContainer)' == 'true'">
+    <ContainerPort Include="8080" Type="tcp" />
+    <ContainerLabel Include="org.opencontainers.image.source" Value="https://github.com/Hexalith/Hexalith.Tenants" />
+    <ContainerLabel Include="org.opencontainers.image.licenses" Value="MIT" />
+    <ContainerLabel Include="org.opencontainers.image.vendor" Value="Hexalith" />
+  </ItemGroup>
+
+  <Target Name="RemoveOpenApiSourceGenerator" AfterTargets="ResolveLockFileAnalyzers">
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer)" Condition="'%(Analyzer.NuGetPackageId)' == 'Microsoft.AspNetCore.OpenApi'" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Reuse the shared SDK provenance repair from the centrally pinned Builds checkout. -->
+  <PropertyGroup>
+    <HexalithContainerProvenanceTargets>$(MSBuildThisFileDirectory)references/Hexalith.Builds/Props/ContainerProvenance.targets</HexalithContainerProvenanceTargets>
+    <HexalithContainerProvenanceTargets Condition="!Exists('$(HexalithContainerProvenanceTargets)') and Exists('$(MSBuildThisFileDirectory)../Hexalith.Builds/Props/ContainerProvenance.targets')">$(MSBuildThisFileDirectory)../Hexalith.Builds/Props/ContainerProvenance.targets</HexalithContainerProvenanceTargets>
+    <HexalithContainerProvenanceTargets Condition="!Exists('$(HexalithContainerProvenanceTargets)') and Exists('$(MSBuildThisFileDirectory)../../Hexalith.Builds/Props/ContainerProvenance.targets')">$(MSBuildThisFileDirectory)../../Hexalith.Builds/Props/ContainerProvenance.targets</HexalithContainerProvenanceTargets>
+  </PropertyGroup>
+  <Import Project="$(HexalithContainerProvenanceTargets)" />
+
+</Project>
