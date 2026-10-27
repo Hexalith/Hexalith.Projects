@@ -99,17 +99,71 @@ class SupportedReadLauncherCleanupTests(unittest.TestCase):
         report = {"result": "passed", "cleanup": []}
         owned = {"123": {"start": "original", "arguments": ["/test/daprd"], "appId": "folders"}}
         with patch.object(LAUNCHER, "owned_sidecar_census", return_value=owned), patch.object(Path, "read_bytes", return_value=b"/test/daprd\0"), patch.object(LAUNCHER, "process_start", return_value="original"):
-            LAUNCHER.cleanup_resources(True, [], "scope", lambda *_args, **_kwargs: None, report)
+            started = time.monotonic()
+            LAUNCHER.cleanup_resources(True, [], "scope", lambda *_args, **_kwargs: None, report, sidecar_wait_seconds=.03)
+        self.assertLess(time.monotonic() - started, 1)
         self.assertEqual(report["result"], "failed")
         self.assertEqual(report["ownedSidecarsObservedBeforeStop"], 1)
         self.assertFalse(report["ownedSidecarsAbsent"])
         self.assertEqual(report["remainingOwnedSidecars"], ["folders"])
 
+    def test_cleanup_waits_for_late_owned_sidecar_exit_by_namespace_and_original_identity(self):
+        original = {"123": {"start": "original", "arguments": ["/test/daprd"], "appId": "folders"}}
+        for first_post_stop in (original, {}):
+            report, stopped = {"result": "passed", "cleanup": []}, []
+            with self.subTest(namespace_still_visible=bool(first_post_stop)), contextlib.ExitStack() as stack:
+                census = stack.enter_context(patch.object(LAUNCHER, "owned_sidecar_census", side_effect=[original, first_post_stop, {}]))
+                stack.enter_context(patch.object(Path, "read_bytes", side_effect=[b"", FileNotFoundError()]))
+                identity = stack.enter_context(patch.object(LAUNCHER, "process_start", return_value="original"))
+                pause = stack.enter_context(patch.object(LAUNCHER.time, "sleep"))
+                LAUNCHER.cleanup_resources(True, [], "scope", lambda command, **_kwargs: stopped.append(command), report)
+            self.assertEqual(len(stopped), 1)
+            self.assertEqual(stopped[0][:4], ["aspire", "stop", "--apphost", str(LAUNCHER.APPHOST)])
+            self.assertEqual(census.call_args_list, [unittest.mock.call("scope")] * 3)
+            identity.assert_called_once_with(123)
+            pause.assert_called_once_with(.1)
+            self.assertTrue(report["ownedSidecarsAbsent"])
+            self.assertEqual(report["result"], "passed")
+            self.assertNotIn("remainingOwnedSidecars", report)
+
+    def test_post_stop_unreadable_census_cmdline_and_start_fail_at_deadline(self):
+        original = {"123": {"start": "original", "arguments": ["/test/daprd"], "appId": "folders"}}
+        for observation in ("census", "cmdline", "start"):
+            report, stopped = {"result": "passed", "cleanup": []}, []
+            calls = 0
+            def census(_scope):
+                nonlocal calls
+                calls += 1
+                if calls == 1:
+                    return original
+                if observation == "census":
+                    raise PermissionError("unobservable")
+                return {}
+            with self.subTest(observation=observation), contextlib.ExitStack() as stack:
+                stack.enter_context(patch.object(LAUNCHER, "owned_sidecar_census", side_effect=census))
+                stack.enter_context(patch.object(Path, "read_bytes", side_effect=PermissionError("unobservable") if observation == "cmdline" else None, return_value=b"/test/daprd"))
+                stack.enter_context(patch.object(LAUNCHER, "process_start", side_effect=PermissionError("unobservable") if observation == "start" else None, return_value="original"))
+                started = time.monotonic()
+                LAUNCHER.cleanup_resources(True, [], "scope", lambda command, **_kwargs: stopped.append(command), report, sidecar_wait_seconds=.03)
+            self.assertLess(time.monotonic() - started, 1)
+            self.assertEqual(len(stopped), 1)
+            self.assertEqual(report["result"], "failed")
+            self.assertFalse(report["ownedSidecarsAbsent"])
+            self.assertTrue(report["sidecarObservationFailed"])
+
+    def test_sidecar_absence_wait_bounds_stalled_observation(self):
+        started = time.monotonic()
+        with patch.object(LAUNCHER, "owned_sidecar_census", side_effect=lambda _scope: time.sleep(30)):
+            remaining, observable = LAUNCHER.wait_for_owned_sidecar_absence("scope", {}, seconds=.03)
+        self.assertLess(time.monotonic() - started, 1)
+        self.assertEqual(remaining, {})
+        self.assertFalse(observable)
+
     def test_sidecar_observation_failure_still_stops_the_exact_host(self):
         report = {"result": "passed", "cleanup": []}
         stopped = []
         with patch.object(LAUNCHER, "sidecar_processes", side_effect=OSError("process observation unavailable")), patch.object(LAUNCHER, "execute", return_value='{"resources": []}'):
-            LAUNCHER.cleanup_resources(True, [], "scope", lambda command, **_kwargs: stopped.append(command), report)
+            LAUNCHER.cleanup_resources(True, [], "scope", lambda command, **_kwargs: stopped.append(command), report, sidecar_wait_seconds=.03)
         self.assertEqual(stopped[0][:2], ["aspire", "stop"])
         self.assertEqual(report["result"], "failed")
         self.assertFalse(report["ownedSidecarsAbsent"])
@@ -614,8 +668,9 @@ class SupportedReadLauncherReviewControls(unittest.TestCase):
                     if path == "environ":
                         stack.enter_context(patch.object(LAUNCHER, "sidecar_processes", return_value=[["123", "/test/daprd", "--app-id", "folders"]]))
                     else:
-                        stack.enter_context(patch.object(LAUNCHER, "owned_sidecar_census", side_effect=[original, {}]))
-                    LAUNCHER.cleanup_resources({"owned": True}, [], "scope", None, report)
+                        calls = iter([original])
+                        stack.enter_context(patch.object(LAUNCHER, "owned_sidecar_census", side_effect=lambda _scope: next(calls, {})))
+                    LAUNCHER.cleanup_resources({"owned": True}, [], "scope", None, report, sidecar_wait_seconds=.03)
                 self.assertEqual(stopped, [True])
                 self.assertEqual(report["result"], "failed")
                 self.assertFalse(report["ownedSidecarsAbsent"])
@@ -623,8 +678,9 @@ class SupportedReadLauncherReviewControls(unittest.TestCase):
     def test_fresh_post_stop_census_detects_new_owned_sidecar(self):
         report = {"result": "passed", "cleanup": []}
         replacement = {"456": {"start": "replacement", "appId": "folders", "arguments": []}}
-        with patch.object(LAUNCHER, "owned_sidecar_census", side_effect=[{}, replacement]), patch.object(LAUNCHER, "stop_owned_apphost"):
-            LAUNCHER.cleanup_resources({"owned": True}, [], "scope", None, report)
+        calls = iter([{}])
+        with patch.object(LAUNCHER, "owned_sidecar_census", side_effect=lambda _scope: next(calls, replacement)), patch.object(LAUNCHER, "stop_owned_apphost"):
+            LAUNCHER.cleanup_resources({"owned": True}, [], "scope", None, report, sidecar_wait_seconds=.03)
         self.assertFalse(report["ownedSidecarsAbsent"])
         self.assertEqual(report["remainingOwnedSidecars"], ["folders"])
 
@@ -677,6 +733,304 @@ class SupportedReadLauncherReviewControls(unittest.TestCase):
                 self.assertEqual(LAUNCHER.main(), 1)
             execute.assert_not_called()
             allocate.assert_not_called()
+
+
+class SupportedReadReplayEvidenceTests(unittest.TestCase):
+    def valid_evidence(self):
+        def digest(value):
+            return hashlib.sha256(value.encode()).hexdigest().upper()
+        sources, observations, fingerprints, watermarks = [], [], {}, []
+        for tenant_number, tenant in enumerate(("primary", "foreign")):
+            index_key = digest(tenant + ":index")
+            maximum = tenant_number * 10 + 6
+            watermarks.append({"tenantSha256": digest(tenant), "keySha256": index_key, "globalPosition": maximum, "status": "observed"})
+            fingerprints[index_key] = {"keySha256": index_key, "bytesSha256": digest(tenant + ":index-bytes"), "etagSha256": digest(tenant + ":index-etag"), "status": "observed"}
+            for project_number, project in enumerate(("a", "b")):
+                detail_key = digest(tenant + ":" + project)
+                last_position = tenant_number * 10 + (project_number + 2) * 2
+                source = {"kind": "source", "tenantSha256": digest(tenant), "projectSha256": digest(project),
+                          "sourceSha256": digest(tenant + project + "source"), "requestEventsSha256": digest(tenant + project + "events"),
+                          "catalogSha256": digest("catalog"), "retainedDispatchIdSha256": digest(tenant + project + "seed"),
+                          "detailKeySha256": detail_key, "indexKeySha256": index_key,
+                          "observedHead": 2, "eventCount": 2, "complete": True,
+                          "events": [{"sequence": sequence, "globalPosition": last_position - 2 + sequence, "timestamp": "2026-10-26T12:00:00+00:00",
+                                      "sourceEventSha256": digest(tenant + project + str(sequence) + "source"),
+                                      "projectionEventSha256": digest(tenant + project + str(sequence) + "projection")} for sequence in (1, 2)]}
+                sources.append(source)
+                watermarks.append({"tenantSha256": digest(tenant), "keySha256": detail_key, "globalPosition": last_position, "status": "observed"})
+                fingerprints[detail_key] = {"keySha256": detail_key, "bytesSha256": digest(tenant + project + "bytes"), "etagSha256": digest(tenant + project + "etag"), "status": "observed"}
+        for family in ("journal", "folder-acl", "tenant-access"):
+            key = digest("non-projection:" + family)
+            fingerprints[key] = {"keySha256": key, "bytesSha256": digest(family + "bytes"), "etagSha256": digest(family + "etag"), "status": "observed"}
+        def attempt(kind, scenario, source):
+            return {"kind": kind, "scenario": scenario, "route": "project/v2" if kind == "duplicate" else "project/rebuild/v1",
+                    **{field: source[field] for field in ("tenantSha256", "projectSha256", "sourceSha256", "catalogSha256", "retainedDispatchIdSha256", "observedHead")},
+                    "requestEventsSha256": source["requestEventsSha256"], "requestSha256": digest(kind + scenario + source["sourceSha256"]),
+                    "dispatchIdSha256": source["retainedDispatchIdSha256"] if scenario == "retained" else digest(kind + scenario + source["sourceSha256"] + "dispatch"),
+                    "eventCount": 2, "requestHead": None if kind == "duplicate" else 2, "httpStatus": 200, "protocolVersion": 2, "failureType": None,
+                    "outcomes": [{"projectionType": "project-reads", "status": {"duplicate": "AlreadyCompleted", "invalid": "Failed", "rebuild": "Completed"}[kind]}]}
+        for source in sources:
+            observations.append(source)
+            observations.extend(attempt("duplicate", scenario, source) for scenario in ("retained", "fresh"))
+            for scenario in ("truncated", "mismatched-head"):
+                value = attempt("invalid", scenario, source)
+                if scenario == "truncated":
+                    value.update(eventCount=1, requestEventsSha256=digest("truncated"))
+                else:
+                    value["requestHead"] = 1
+                observations.append(value)
+        for route in ("project/v2", "project/rebuild/v1"):
+            for scenario in ("anonymous", "human-bearer", "public-user-workload", "wrong-operation"):
+                observations.append({"kind": "authentication", "route": route, "scenario": scenario,
+                                     **{field: sources[0][field] for field in ("tenantSha256", "projectSha256", "sourceSha256", "requestEventsSha256", "catalogSha256", "retainedDispatchIdSha256", "observedHead", "eventCount")},
+                                     "requestSha256": digest(route + scenario + "request"), "dispatchIdSha256": digest(route + scenario + "dispatch"),
+                                     "requestHead": sources[0]["observedHead"], "protocolVersion": None, "failureType": None, "httpStatus": 403 if scenario == "wrong-operation" else 401, "outcomes": None})
+        def ordered(values):
+            return [values[key].copy() for key in sorted(values)]
+        def state(phase, before, after, changed):
+            observations.append({"kind": "state", "phase": phase, "comparison": {
+                "valid": True, "bothTenantsCompared": True, "domainKeysAndBytesUnchanged": True, "exactWatermarksUnchanged": True, "onlyExpectedETagsChanged": True,
+                "expectedChangedETagKeys": sorted(changed), "changedETagKeys": sorted(changed), "before": ordered(before), "after": ordered(after),
+                "beforeWatermarks": json.loads(json.dumps(watermarks)), "afterWatermarks": json.loads(json.dumps(watermarks))}})
+        for phase in ("duplicate", "duplicate-reads", "invalid", "authentication", "refusal-reads"):
+            state(phase, fingerprints, fingerprints, set())
+        previous = {key: value.copy() for key, value in fingerprints.items()}
+        for source in sources:
+            observations.append(attempt("rebuild", "full-prefix", source))
+            changed = {source["detailKeySha256"], source["indexKeySha256"]}
+            after = {key: value.copy() for key, value in previous.items()}
+            for key in changed:
+                after[key]["etagSha256"] = digest(after[key]["etagSha256"] + "rebuilt")
+            state("rebuild:" + source["tenantSha256"] + ":" + source["projectSha256"], previous, after, changed)
+            previous = after
+        projection_keys = {source[field] for source in sources for field in ("detailKeySha256", "indexKeySha256")}
+        state("full-rebuild", fingerprints, previous, projection_keys)
+        state("post-rebuild-reads", previous, previous, set())
+        for phase in ("duplicate", "invalid", "authentication", "rebuild"):
+            observations.append({"kind": "reads", "phase": phase, "readCount": 8, "bothTenantsCompared": True, "stableMetadataAgrees": True,
+                                 "freshPagingWithoutGapsOrDuplicates": True, "listOpenAgree": True, "foreignAndAbsentDenials": True, "retainedContinuationsAccepted": phase != "rebuild"})
+        observations.append({"kind": "cursor-control", "observation": {"httpStatus": 200, "responseState": "Complete", "itemCount": 1, "hasMore": True, "cursorPresent": True}})
+        observations.append({"kind": "cursor-probe", "observation": {"attempt": 1, "httpStatus": 400, "failureType": None, "withinLifetime": True,
+                             "observedAt": "2026-10-26T12:00:59+00:00",
+                             "observerStartedAt": "2026-10-26T12:00:50+00:00", "observerDeadline": "2026-10-26T12:02:20+00:00",
+                             "problem": {"status": 400, "reasonCode": "query_invalid_page", "reason": "invalid-cursor"}}})
+        observations.append({"kind": "cursor", "acceptedHttpStatus": 200, "rejectedHttpStatus": 400, "withinLifetime": True,
+                             "tenantSha256": sources[0]["tenantSha256"], "indexKeySha256": sources[0]["indexKeySha256"],
+                             "beforeIndexETagSha256": fingerprints[sources[0]["indexKeySha256"]]["etagSha256"],
+                             "afterIndexETagSha256": previous[sources[0]["indexKeySha256"]]["etagSha256"],
+                             "observerStartedAt": "2026-10-26T12:00:50+00:00", "observerDeadline": "2026-10-26T12:02:20+00:00",
+                             "rejectionProblem": {"status": 400, "reasonCode": "query_invalid_page", "reason": "invalid-cursor"},
+                             "requestedAt": "2026-10-26T12:00:00+00:00", "acceptedAt": "2026-10-26T12:00:01+00:00", "rejectedAt": "2026-10-26T12:01:00+00:00"})
+        matrix = {"cases": list(LAUNCHER.MATRIX_CASES), "allCasesExecuted": True, "projectsProcessRestartVerified": True,
+                  "duplicateDeliveryVerified": True, "fullReplayVerified": True, "readOnlyDomainBytesAndEtagsUnchanged": True,
+                  "acceptedEquivalence": False, "productionReadiness": False}
+        def only(kind, phase=None):
+            return next(value for value in observations if value["kind"] == kind and (phase is None or value.get("phase") == phase))
+        ordered_observations = []
+        for source in sources:
+            ordered_observations.append(source)
+            ordered_observations.extend(value for value in observations if value["kind"] == "duplicate" and value["sourceSha256"] == source["sourceSha256"])
+        ordered_observations.extend((only("state", "duplicate"), only("reads", "duplicate"), only("state", "duplicate-reads")))
+        ordered_observations.extend(value for value in observations if value["kind"] == "invalid")
+        ordered_observations.extend((only("state", "invalid"), only("reads", "invalid")))
+        ordered_observations.extend(value for value in observations if value["kind"] == "authentication")
+        ordered_observations.extend((only("state", "authentication"), only("reads", "authentication"), only("state", "refusal-reads"), only("cursor-control")))
+        for source in sources:
+            ordered_observations.append(next(value for value in observations if value["kind"] == "rebuild" and value["sourceSha256"] == source["sourceSha256"]))
+            ordered_observations.append(only("state", "rebuild:" + source["tenantSha256"] + ":" + source["projectSha256"]))
+        ordered_observations.extend((only("state", "full-rebuild"), only("cursor-probe"), only("cursor"), only("reads", "rebuild"), only("state", "post-rebuild-reads")))
+        return matrix, {"version": 1, "duplicateVerified": True, "replayVerified": True,
+                        "ownedDomainKeyCensus": sorted(fingerprints), "observations": ordered_observations}
+
+    def test_provider_observer_requires_live_exact_binary_and_version_control(self):
+        observations = [{"keySha256": hashlib.sha256(str(index).encode()).hexdigest().upper(), "bytesSha256": "A" * 64, "etagSha256": "B" * 64} for index in range(6)]
+        valid = {"verified": True, "binaryAndEscapingBoundariesExact": True, "domainKeyCount": 2, "controlKeyCount": 4, "individual": observations, "batched": observations}
+        LAUNCHER.require_provider_observer_control(valid)
+        for field in valid:
+            missing = valid.copy()
+            del missing[field]
+            with self.subTest(missing=field), self.assertRaises(RuntimeError):
+                LAUNCHER.require_provider_observer_control(missing)
+        changed = json.loads(json.dumps(valid))
+        changed["batched"][0]["etagSha256"] = "C" * 64
+        with self.assertRaises(RuntimeError):
+            LAUNCHER.require_provider_observer_control(changed)
+
+    def test_complete_replay_evidence_requires_all_eleven_exact_rows(self):
+        matrix, replay = self.valid_evidence()
+        result = LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+        self.assertEqual(result, {"sources": 4, "duplicateAttempts": 8, "rebuildAttempts": 4, "invalidReplayAttempts": 8, "authenticationRefusals": 8, "persistedComparisons": 11})
+        for cases in (matrix["cases"][:-1], [*matrix["cases"][:-1], "unrelated-row"], [*matrix["cases"][:-1], matrix["cases"][0]], list(reversed(matrix["cases"]))):
+            with self.subTest(cases=cases), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence({**matrix, "cases": cases}, replay)
+
+    def test_missing_and_failed_replay_observations_never_qualify(self):
+        matrix, valid = self.valid_evidence()
+        for index in range(len(valid["observations"])):
+            replay = json.loads(json.dumps(valid))
+            replay["observations"].pop(index)
+            with self.subTest(index=index), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+        for kind, field, value in (("source", "complete", False), ("source", "observedHead", 3), ("duplicate", "httpStatus", 503),
+                                   ("duplicate", "outcomes", []), ("rebuild", "sourceSha256", "0" * 64), ("rebuild", "requestHead", 1),
+                                   ("invalid", "outcomes", [{"projectionType": "project-reads", "status": "Completed"}]),
+                                   ("authentication", "httpStatus", 200), ("reads", "stableMetadataAgrees", False),
+                                   ("cursor", "rejectedAt", "2026-10-26T12:16:00+00:00")):
+            replay = json.loads(json.dumps(valid))
+            next(item for item in replay["observations"] if item["kind"] == kind)[field] = value
+            with self.subTest(kind=kind, field=field), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+        for field, value in (("responseState", "Unavailable"), ("itemCount", 0), ("hasMore", False), ("cursorPresent", False)):
+            replay = json.loads(json.dumps(valid))
+            next(item for item in replay["observations"] if item["kind"] == "cursor-control")["observation"][field] = value
+            with self.subTest(cursor_control=field), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+        for flag in ("duplicateVerified", "replayVerified"):
+            with self.subTest(flag=flag), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, {**valid, flag: False})
+
+    def test_cursor_probes_accept_only_honest_unavailable_before_definitive_refusal(self):
+        matrix, replay = self.valid_evidence()
+        final = next(item for item in replay["observations"] if item["kind"] == "cursor-probe")
+        final["observation"]["attempt"] = 2
+        retry = {"kind": "cursor-probe", "observation": {"attempt": 1, "httpStatus": 200, "failureType": None, "withinLifetime": True,
+                 "observedAt": "2026-10-26T12:00:58+00:00", "honestEmptyUnavailable": True,
+                 "observerStartedAt": final["observation"]["observerStartedAt"], "observerDeadline": final["observation"]["observerDeadline"],
+                 "admission": {"responseState": "Unavailable", "itemCount": 0, "hasMore": False, "cursorPresent": False,
+                               "asOfPresent": True, "projectVersion": 0, "components": [{"included": False, "freshness": "Unavailable"}]}}}
+        replay["observations"].insert(replay["observations"].index(final), retry)
+        LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+        for field, value in (("responseState", "Complete"), ("responseState", "Partial"), ("itemCount", 1), ("cursorPresent", True), ("hasMore", True)):
+            invalid = json.loads(json.dumps(replay))
+            next(item for item in invalid["observations"] if item["kind"] == "cursor-probe")["observation"]["admission"][field] = value
+            with self.subTest(field=field, value=value), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, invalid)
+        invalid = json.loads(json.dumps(replay))
+        invalid["observations"].remove(next(item for item in invalid["observations"] if item["kind"] == "cursor-probe" and item["observation"]["httpStatus"] == 400))
+        with self.assertRaises(RuntimeError):
+            LAUNCHER.require_distributed_replay_evidence(matrix, invalid)
+
+    def test_complete_domain_census_prevents_consistent_non_projection_omission(self):
+        matrix, replay = self.valid_evidence()
+        projection_keys = {value[field] for value in replay["observations"] if value["kind"] == "source" for field in ("detailKeySha256", "indexKeySha256")}
+        self.assertGreater(len(replay["ownedDomainKeyCensus"]), len(projection_keys))
+        for state in (value["comparison"] for value in replay["observations"] if value["kind"] == "state"):
+            for phase in ("before", "after"):
+                state[phase] = [value for value in state[phase] if value["keySha256"] in projection_keys]
+        with self.assertRaises(RuntimeError):
+            LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+
+    def test_every_watermark_tuple_is_bound_to_actual_sources(self):
+        matrix, valid = self.valid_evidence()
+        for corruption in ("position-pair", "tenant-swap"):
+            replay = json.loads(json.dumps(valid))
+            tenants = list({value["tenantSha256"] for value in replay["observations"] if value["kind"] == "source"})
+            for value in replay["observations"]:
+                if value["kind"] != "state" or corruption == "position-pair" and value["phase"] in ("duplicate", "duplicate-reads"):
+                    continue
+                for phase in ("beforeWatermarks", "afterWatermarks"):
+                    for watermark in value["comparison"][phase]:
+                        if corruption == "position-pair":
+                            watermark["globalPosition"] += 100
+                        else:
+                            watermark["tenantSha256"] = tenants[1 - tenants.index(watermark["tenantSha256"])]
+            with self.subTest(corruption=corruption), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+
+    def test_source_timestamps_require_timezone_and_non_default_value(self):
+        matrix, valid = self.valid_evidence()
+        for timestamp in ("garbage", "2026-10-26T12:00:00", "0001-01-01T00:00:00+00:00", "0001-01-01T01:00:00+01:00", "", None):
+            replay = json.loads(json.dumps(valid))
+            next(value for value in replay["observations"] if value["kind"] == "source")["events"][0]["timestamp"] = timestamp
+            with self.subTest(timestamp=timestamp), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+
+    def test_authentication_requires_all_emitted_bindings_and_fresh_dispatch(self):
+        matrix, valid = self.valid_evidence()
+        fields = ("tenantSha256", "projectSha256", "sourceSha256", "requestSha256", "requestEventsSha256", "catalogSha256", "dispatchIdSha256", "retainedDispatchIdSha256", "observedHead", "requestHead", "eventCount")
+        for field in fields:
+            for corruption in ("missing", "wrong"):
+                replay = json.loads(json.dumps(valid))
+                attempt = next(value for value in replay["observations"] if value["kind"] == "authentication")
+                if corruption == "missing":
+                    del attempt[field]
+                else:
+                    attempt[field] = 999 if type(attempt[field]) is int else "invalid"
+                with self.subTest(field=field, corruption=corruption), self.assertRaises(RuntimeError):
+                    LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+        for other_kind in ("source", "authentication", "rebuild", "duplicate"):
+            replay = json.loads(json.dumps(valid))
+            attempts = [value for value in replay["observations"] if value["kind"] == "authentication"]
+            other = next(value for value in replay["observations"] if value["kind"] == other_kind)
+            attempts[-1]["dispatchIdSha256"] = other["retainedDispatchIdSha256"] if other_kind == "source" else other["dispatchIdSha256"]
+            with self.subTest(reused_from=other_kind), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+
+    def test_cursor_refusal_requires_platform_problem_and_separate_observer_bound(self):
+        matrix, valid = self.valid_evidence()
+        for problem in (None, {}, {"status": 400, "reasonCode": "query_invalid_page", "reason": "invalid-page"},
+                        {"status": 400, "reasonCode": "query_malformed_request", "reason": "invalid-cursor"}, "malformed"):
+            for kind, field in (("cursor-probe", "problem"), ("cursor", "rejectionProblem")):
+                replay = json.loads(json.dumps(valid))
+                observation = next(value for value in replay["observations"] if value["kind"] == kind)
+                if kind == "cursor-probe":
+                    observation = observation["observation"]
+                observation[field] = problem
+                with self.subTest(problem=problem, kind=kind), self.assertRaises(RuntimeError):
+                    LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+        for scenario in ("ten-minute", "late-success", "missing-start", "missing-deadline", "inconsistent-probe"):
+            replay = json.loads(json.dumps(valid))
+            cursor = next(value for value in replay["observations"] if value["kind"] == "cursor")
+            probe = next(value for value in replay["observations"] if value["kind"] == "cursor-probe")["observation"]
+            if scenario == "ten-minute":
+                cursor["observerDeadline"] = probe["observerDeadline"] = "2026-10-26T12:10:50+00:00"
+            elif scenario == "late-success":
+                cursor["rejectedAt"] = "2026-10-26T12:02:21+00:00"
+            elif scenario == "inconsistent-probe":
+                probe["observerStartedAt"] = "2026-10-26T12:00:49+00:00"
+            else:
+                del cursor["observerStartedAt" if scenario == "missing-start" else "observerDeadline"]
+            with self.subTest(scenario=scenario), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+
+    def test_evidence_preserves_causal_order_between_operations_and_comparisons(self):
+        matrix, valid = self.valid_evidence()
+        for index, value in enumerate(valid["observations"]):
+            if value["kind"] not in ("state", "reads", "cursor-control", "cursor-probe", "cursor"):
+                continue
+            replay = json.loads(json.dumps(valid))
+            replay["observations"].insert(0, replay["observations"].pop(index))
+            with self.subTest(kind=value["kind"], phase=value.get("phase")), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+
+    def test_matrix_requires_read_only_and_explicit_local_proof_flags(self):
+        matrix, replay = self.valid_evidence()
+        for field in ("readOnlyDomainBytesAndEtagsUnchanged", "acceptedEquivalence", "productionReadiness"):
+            for missing in (False, True):
+                invalid = matrix.copy()
+                if missing:
+                    del invalid[field]
+                else:
+                    invalid[field] = not invalid[field]
+                with self.subTest(field=field, missing=missing), self.assertRaises(RuntimeError):
+                    LAUNCHER.require_distributed_replay_evidence(invalid, replay)
+
+    def test_replay_comparisons_recompute_bytes_etags_watermarks_and_baseline_chain(self):
+        matrix, valid = self.valid_evidence()
+        for phase, section, field, value in (("duplicate", "after", "bytesSha256", "0" * 64),
+                                             ("duplicate", "after", "etagSha256", "0" * 64),
+                                             ("full-rebuild", "afterWatermarks", "globalPosition", 999),
+                                             ("post-rebuild-reads", "before", "etagSha256", "0" * 64)):
+            replay = json.loads(json.dumps(valid))
+            state = next(item["comparison"] for item in replay["observations"] if item["kind"] == "state" and item["phase"] == phase)
+            state[section][0][field] = value
+            with self.subTest(phase=phase, section=section, field=field), self.assertRaises(RuntimeError):
+                LAUNCHER.require_distributed_replay_evidence(matrix, replay)
+        replay = json.loads(json.dumps(valid))
+        source = next(item for item in replay["observations"] if item["kind"] == "source")
+        source["events"][-1]["globalPosition"] += 1
+        with self.assertRaises(RuntimeError):
+            LAUNCHER.require_distributed_replay_evidence(matrix, replay)
 
 
 if __name__ == "__main__":

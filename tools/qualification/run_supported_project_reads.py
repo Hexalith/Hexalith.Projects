@@ -549,7 +549,37 @@ def owned_sidecar_census(isolation: str) -> dict[str, dict]:
     return owned
 
 
-def cleanup_resources(owned_apphost: dict | None, owned: list[dict], isolation: str, run, report: dict) -> None:
+def wait_for_owned_sidecar_absence(isolation: str, before: dict, *, seconds: float = 10) -> tuple[dict, bool]:
+    """Bound all observations while awaiting namespace and original PID/start disappearance."""
+    remaining, observation_ok = {}, False
+    try:
+        with restart_budget(seconds):
+            while True:
+                remaining, observation_ok = {}, False
+                try:
+                    remaining = owned_sidecar_census(isolation)
+                    for pid, previous in before.items():
+                        try:
+                            Path("/proc", pid, "cmdline").read_bytes()
+                            if process_start(int(pid)) == previous["start"]:
+                                remaining[pid] = previous
+                        except FileNotFoundError:
+                            pass
+                    observation_ok = True
+                except TimeoutError:
+                    raise
+                except OSError:
+                    pass
+                if observation_ok and not remaining:
+                    return remaining, True
+                time.sleep(.1)
+    except TimeoutError:
+        return remaining, observation_ok
+    except BaseException:
+        return remaining, False
+
+
+def cleanup_resources(owned_apphost: dict | None, owned: list[dict], isolation: str, run, report: dict, *, sidecar_wait_seconds: float = 10) -> None:
     """Attempt every owned cleanup, verifying immutable IDs and fresh process absence."""
     if owned_apphost:
         before, remaining = {}, {}
@@ -564,19 +594,8 @@ def cleanup_resources(owned_apphost: dict | None, owned: list[dict], isolation: 
         except BaseException:
             report["cleanup"].append({"resource": "exact-apphost", "removed": False})
             report["result"] = "failed"
-        try:
-            remaining = owned_sidecar_census(isolation)
-        except BaseException:
-            observation_ok = False
-        for pid, previous in before.items():
-            try:
-                current = Path("/proc", pid, "cmdline").read_bytes()
-                if current and process_start(int(pid)) == previous["start"]:
-                    remaining[pid] = previous
-            except FileNotFoundError:
-                pass
-            except OSError:
-                observation_ok = False
+        remaining, after_observation_ok = wait_for_owned_sidecar_absence(isolation, before, seconds=sidecar_wait_seconds)
+        observation_ok = observation_ok and after_observation_ok
         report["ownedSidecarsObservedBeforeStop"] = len(before)
         report["ownedSidecarsAbsent"] = observation_ok and not remaining
         if not observation_ok:
@@ -740,6 +759,283 @@ def run_launcher_controls(evidence: Path) -> dict:
     if result.returncode or summary is None or int(summary[1]) < 1 or not re.search(r"^OK$", result.stdout, re.MULTILINE):
         raise RuntimeError("Launcher ownership controls did not execute successfully.")
     return {"command": command, "total": int(summary[1]), "passed": int(summary[1]), "failed": 0, "skipped": 0}
+
+
+MATRIX_CASES = (
+    "authorized-list-continuation-open",
+    "public-user-and-workload-trust-remain-separate",
+    "populated-foreign-tenant-and-absent-safe-denial",
+    "owned-projects-process-restart-retains-reads-continuation-and-state",
+    "inspection-permission-and-durable-metadata-only-audit",
+    "audit-storage-unavailable-blocks-disclosure",
+    "revocation-observes-real-head-and-invalidates-old-continuation",
+    "owned-folder-outage-honest-unavailability-and-recovery",
+    "authenticated-command-and-projection-compatibility",
+    "duplicate-project-delivery-retains-supported-reads-and-state",
+    "full-project-replay-retains-truth-and-invalidates-old-continuation",
+)
+
+
+def require_provider_observer_control(evidence: dict) -> None:
+    if not isinstance(evidence, dict) or evidence.get("verified") is not True or evidence.get("binaryAndEscapingBoundariesExact") is not True:
+        raise RuntimeError("The provider observer lacks its live byte/version comparison control.")
+    count = evidence.get("domainKeyCount")
+    if type(count) is not int or count < 1 or evidence.get("controlKeyCount") != 4:
+        raise RuntimeError("The provider observer controls are incomplete.")
+    individual, batched = evidence.get("individual"), evidence.get("batched")
+    if not isinstance(individual, list) or len(individual) != count + 4 or individual != batched:
+        raise RuntimeError("The provider batch differs from individual observations.")
+    keys = set()
+    for observation in individual:
+        if not isinstance(observation, dict) or any(not isinstance(observation.get(field), str) or not re.fullmatch(r"[0-9A-F]{64}", observation[field])
+                for field in ("keySha256", "bytesSha256", "etagSha256")) or observation["keySha256"] in keys:
+            raise RuntimeError("The provider comparison contains missing or malformed fingerprints.")
+        keys.add(observation["keySha256"])
+
+
+def require_replay_comparison(comparison: dict, expected_changed: set[str], domain_keys: set[str], expected_watermarks: dict) -> None:
+    """Recompute the invariant from sanitized physical observations, including every exact watermark."""
+    def require(value):
+        if not value:
+            raise RuntimeError("Incomplete or inconsistent persisted replay comparison.")
+    require(isinstance(comparison, dict))
+    for field in ("valid", "bothTenantsCompared", "domainKeysAndBytesUnchanged", "exactWatermarksUnchanged", "onlyExpectedETagsChanged"):
+        require(comparison.get(field) is True)
+    def fingerprint_map(name):
+        values = comparison.get(name)
+        require(isinstance(values, list) and len(values) >= 6)
+        result = {}
+        for value in values:
+            require(isinstance(value, dict) and value.get("status") == "observed")
+            require(all(isinstance(value.get(field), str) and re.fullmatch(r"[0-9A-F]{64}", value[field]) for field in ("keySha256", "bytesSha256", "etagSha256")))
+            require(value["keySha256"] not in result)
+            result[value["keySha256"]] = value
+        return result
+    before, after = fingerprint_map("before"), fingerprint_map("after")
+    require(before.keys() == after.keys() == domain_keys)
+    require(all(before[key]["bytesSha256"] == after[key]["bytesSha256"] for key in before))
+    changed = {key for key in before if before[key]["etagSha256"] != after[key]["etagSha256"]}
+    require(changed == expected_changed)
+    require(comparison.get("expectedChangedETagKeys") == sorted(expected_changed) and comparison.get("changedETagKeys") == sorted(changed))
+    def watermarks(name):
+        values = comparison.get(name)
+        require(isinstance(values, list) and len(values) == 6)
+        result, tenants = {}, {}
+        for value in values:
+            require(isinstance(value, dict) and value.get("status") == "observed")
+            key, tenant = value.get("keySha256"), value.get("tenantSha256")
+            require(key in before and key not in result and isinstance(tenant, str) and re.fullmatch(r"[0-9A-F]{64}", tenant))
+            require(type(value.get("globalPosition")) is int and value["globalPosition"] > 0)
+            result[key] = (tenant, value["globalPosition"])
+            tenants[tenant] = tenants.get(tenant, 0) + 1
+        require(len(tenants) == 2 and set(tenants.values()) == {3})
+        return result
+    require(watermarks("beforeWatermarks") == watermarks("afterWatermarks") == expected_watermarks)
+
+
+def observed_timestamp(value):
+    """Require a real timezone-aware non-default observation, rather than arbitrary text."""
+    from datetime import datetime, timezone
+    try:
+        if not isinstance(value, str):
+            raise ValueError("Missing timestamp")
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if parsed.tzinfo is None or parsed.utcoffset() is None or parsed.astimezone(timezone.utc) <= datetime.min.replace(tzinfo=timezone.utc):
+            raise ValueError("Unbounded or default timestamp")
+        return parsed
+    except (TypeError, ValueError, OverflowError) as failure:
+        raise RuntimeError("Evidence requires an aware non-default timestamp.") from failure
+
+
+def require_distributed_replay_evidence(matrix: dict, replay: dict) -> dict:
+    """Eleven exact rows and complete source/HTTP/state evidence are mandatory; summaries alone cannot pass."""
+    def require(value):
+        if not value:
+            raise RuntimeError("The complete distributed replay evidence did not qualify.")
+    require(isinstance(matrix, dict) and matrix.get("cases") == list(MATRIX_CASES))
+    for flag in ("allCasesExecuted", "projectsProcessRestartVerified", "duplicateDeliveryVerified", "fullReplayVerified", "readOnlyDomainBytesAndEtagsUnchanged"):
+        require(matrix.get(flag) is True)
+    require(matrix.get("acceptedEquivalence") is False and matrix.get("productionReadiness") is False)
+    require(isinstance(replay, dict) and replay.get("version") == 1 and replay.get("duplicateVerified") is True and replay.get("replayVerified") is True)
+    census = replay.get("ownedDomainKeyCensus")
+    require(isinstance(census, list) and len(census) > 6 and all(isinstance(key, str) and re.fullmatch(r"[0-9A-F]{64}", key) for key in census)
+            and census == sorted(set(census)))
+    domain_keys = set(census)
+    observations = replay.get("observations")
+    require(isinstance(observations, list) and all(isinstance(value, dict) for value in observations))
+    kinds = {kind: [value for value in observations if value.get("kind") == kind]
+             for kind in ("source", "duplicate", "invalid", "authentication", "rebuild", "state", "reads", "cursor", "cursor-control", "cursor-probe")}
+    require(len(observations) == sum(len(values) for values in kinds.values()))
+    sources = {}
+    for source in kinds["source"]:
+        for field in ("tenantSha256", "projectSha256", "sourceSha256", "requestEventsSha256", "catalogSha256", "retainedDispatchIdSha256", "detailKeySha256", "indexKeySha256"):
+            require(isinstance(source.get(field), str) and re.fullmatch(r"[0-9A-F]{64}", source[field]))
+        scope = (source["tenantSha256"], source["projectSha256"])
+        require(scope not in sources and source.get("complete") is True)
+        head = source.get("observedHead")
+        require(type(head) is int and head >= 2 and source.get("eventCount") == head)
+        events = source.get("events")
+        require(isinstance(events, list) and len(events) == head)
+        previous_position = 0
+        for sequence, event in enumerate(events, 1):
+            require(event.get("sequence") == sequence and type(event.get("globalPosition")) is int and event["globalPosition"] > previous_position)
+            previous_position = event["globalPosition"]
+            observed_timestamp(event.get("timestamp"))
+            for field in ("sourceEventSha256", "projectionEventSha256"):
+                require(isinstance(event.get(field), str) and re.fullmatch(r"[0-9A-F]{64}", event[field]))
+        sources[scope] = source
+    require(len(sources) == 4 and len({scope[0] for scope in sources}) == 2 and len({scope[1] for scope in sources}) == 2)
+    require(len({source["detailKeySha256"] for source in sources.values()}) == 4 and len({source["indexKeySha256"] for source in sources.values()}) == 2)
+    retained_ids = {source["retainedDispatchIdSha256"] for source in sources.values()}
+    require(len(retained_ids) == 4)
+    attempts, ids = {}, set(retained_ids)
+    for kind, scenarios in (("duplicate", {"retained", "fresh"}), ("invalid", {"truncated", "mismatched-head"}), ("rebuild", {"full-prefix"})):
+        require(len(kinds[kind]) == len(sources) * len(scenarios))
+        seen = set()
+        for attempt in kinds[kind]:
+            scope = (attempt.get("tenantSha256"), attempt.get("projectSha256"))
+            require(scope in sources)
+            source = sources[scope]
+            scenario = attempt.get("scenario")
+            require(scenario in scenarios and (scope, scenario) not in seen)
+            seen.add((scope, scenario))
+            for field in ("sourceSha256", "catalogSha256", "retainedDispatchIdSha256", "observedHead"):
+                require(attempt.get(field) == source[field])
+            for field in ("dispatchIdSha256", "requestSha256", "requestEventsSha256"):
+                require(isinstance(attempt.get(field), str) and re.fullmatch(r"[0-9A-F]{64}", attempt[field]))
+            require(attempt.get("failureType") is None and attempt.get("httpStatus") == 200 and attempt.get("protocolVersion") == 2)
+            status = {"duplicate": "AlreadyCompleted", "invalid": "Failed", "rebuild": "Completed"}[kind]
+            require(attempt.get("outcomes") == [{"projectionType": "project-reads", "status": status}])
+            require(attempt.get("route") == ("project/v2" if kind == "duplicate" else "project/rebuild/v1"))
+            if scenario == "truncated":
+                require(attempt.get("eventCount") == source["observedHead"] - 1 and attempt.get("requestHead") == source["observedHead"]
+                        and attempt["requestEventsSha256"] != source["requestEventsSha256"])
+            else:
+                require(attempt.get("eventCount") == source["eventCount"] and attempt["requestEventsSha256"] == source["requestEventsSha256"])
+                require(attempt.get("requestHead") == (None if kind == "duplicate" else source["observedHead"] - 1 if kind == "invalid" else source["observedHead"]))
+            if kind == "duplicate" and scenario == "retained":
+                require(attempt["dispatchIdSha256"] == source["retainedDispatchIdSha256"])
+            else:
+                require(attempt["dispatchIdSha256"] != source["retainedDispatchIdSha256"] and attempt["dispatchIdSha256"] not in ids)
+                ids.add(attempt["dispatchIdSha256"])
+            attempts[(kind, scope, scenario)] = attempt
+    authentication = kinds["authentication"]
+    require(len(authentication) == 8)
+    required_auth = {(route, scenario) for route in ("project/v2", "project/rebuild/v1")
+                     for scenario in ("anonymous", "human-bearer", "public-user-workload", "wrong-operation")}
+    require({(value.get("route"), value.get("scenario")) for value in authentication} == required_auth)
+    for attempt in authentication:
+        require(attempt.get("failureType") is None and attempt.get("httpStatus") == (403 if attempt["scenario"] == "wrong-operation" else 401)
+                and attempt.get("outcomes") is None)
+        scope = (attempt.get("tenantSha256"), attempt.get("projectSha256"))
+        require(scope in sources)
+        source = sources[scope]
+        for field in ("sourceSha256", "requestEventsSha256", "catalogSha256", "retainedDispatchIdSha256", "observedHead", "eventCount"):
+            require(attempt.get(field) == source[field])
+        require(attempt.get("requestHead") == source["observedHead"] and attempt.get("protocolVersion") is None)
+        for field in ("requestSha256", "dispatchIdSha256"):
+            require(isinstance(attempt.get(field), str) and re.fullmatch(r"[0-9A-F]{64}", attempt[field]))
+        require(attempt["dispatchIdSha256"] not in ids)
+        ids.add(attempt["dispatchIdSha256"])
+    states = {value.get("phase"): value for value in kinds["state"]}
+    phases = {"duplicate", "duplicate-reads", "invalid", "authentication", "refusal-reads", "full-rebuild", "post-rebuild-reads"}
+    phases.update("rebuild:" + tenant + ":" + project for tenant, project in sources)
+    require(len(states) == len(kinds["state"]) == len(phases) and states.keys() == phases)
+    projection_keys = {source[field] for source in sources.values() for field in ("detailKeySha256", "indexKeySha256")}
+    expected_watermarks = {}
+    for scope, source in sources.items():
+        tenant = scope[0]
+        detail, index = source["detailKeySha256"], source["indexKeySha256"]
+        require(detail != index and detail not in expected_watermarks)
+        expected_watermarks[detail] = (tenant, source["events"][-1]["globalPosition"])
+        tenant_max = max(value["events"][-1]["globalPosition"] for key, value in sources.items() if key[0] == tenant)
+        require(index not in expected_watermarks or expected_watermarks[index] == (tenant, tenant_max))
+        expected_watermarks[index] = (tenant, tenant_max)
+    require(len(expected_watermarks) == 6 and projection_keys < domain_keys)
+    for phase, state in states.items():
+        require(state.get("failureType") is None)
+        expected = projection_keys if phase == "full-rebuild" else set()
+        if phase.startswith("rebuild:"):
+            _, tenant, project = phase.split(":")
+            expected = {sources[(tenant, project)][field] for field in ("detailKeySha256", "indexKeySha256")}
+        require_replay_comparison(state.get("comparison"), expected, domain_keys, expected_watermarks)
+    original = states["duplicate"]["comparison"]["before"]
+    for phase in ("duplicate", "duplicate-reads", "invalid", "authentication", "refusal-reads"):
+        comparison = states[phase]["comparison"]
+        require(comparison["before"] == original and comparison["after"] == original)
+    previous = original
+    for tenant, project in sources:
+        comparison = states["rebuild:" + tenant + ":" + project]["comparison"]
+        require(comparison["before"] == previous)
+        previous = comparison["after"]
+    require(states["full-rebuild"]["comparison"]["before"] == original and states["full-rebuild"]["comparison"]["after"] == previous)
+    require(states["post-rebuild-reads"]["comparison"]["before"] == previous and states["post-rebuild-reads"]["comparison"]["after"] == previous)
+    require(len(kinds["reads"]) == 4 and {value.get("phase") for value in kinds["reads"]} == {"duplicate", "invalid", "authentication", "rebuild"})
+    for read in kinds["reads"]:
+        require(read.get("readCount") == 8 and all(read.get(field) is True for field in
+                ("bothTenantsCompared", "stableMetadataAgrees", "freshPagingWithoutGapsOrDuplicates", "listOpenAgree", "foreignAndAbsentDenials")))
+        if read["phase"] != "rebuild":
+            require(read.get("retainedContinuationsAccepted") is True)
+    require(len(kinds["cursor-control"]) == 1)
+    control = kinds["cursor-control"][0].get("observation")
+    require(isinstance(control, dict) and control.get("httpStatus") == 200 and control.get("responseState") == "Complete"
+            and control.get("itemCount") == 1 and control.get("hasMore") is True and control.get("cursorPresent") is True)
+    probes = kinds["cursor-probe"]
+    require(len(probes) >= 1)
+    for number, probe in enumerate(probes, 1):
+        observed = probe.get("observation")
+        require(isinstance(observed, dict) and observed.get("attempt") == number and observed.get("failureType") is None and observed.get("withinLifetime") is True)
+        if number == len(probes):
+            require(observed.get("httpStatus") == 400 and observed.get("problem") == {"status": 400, "reasonCode": "query_invalid_page", "reason": "invalid-cursor"})
+        else:
+            admission = observed.get("admission")
+            require(observed.get("httpStatus") == 200 and observed.get("honestEmptyUnavailable") is True and isinstance(admission, dict))
+            require(admission.get("responseState") == "Unavailable" and admission.get("itemCount") == 0 and admission.get("hasMore") is False
+                    and admission.get("cursorPresent") is False and admission.get("asOfPresent") is True and admission.get("projectVersion") == 0)
+            require(any(component.get("included") is False and component.get("freshness") in ("Unavailable", "Stale") for component in admission.get("components", [])))
+    require(len(kinds["cursor"]) == 1)
+    cursor = kinds["cursor"][0]
+    require(cursor.get("acceptedHttpStatus") == 200 and cursor.get("rejectedHttpStatus") == 400 and cursor.get("withinLifetime") is True
+            and cursor.get("beforeIndexETagSha256") != cursor.get("afterIndexETagSha256")
+            and cursor.get("rejectionProblem") == {"status": 400, "reasonCode": "query_invalid_page", "reason": "invalid-cursor"})
+    index_key = cursor.get("indexKeySha256")
+    require(any(source["tenantSha256"] == cursor.get("tenantSha256") and source["indexKeySha256"] == index_key for source in sources.values()))
+    initial_fingerprints = {value["keySha256"]: value for value in original}
+    final_fingerprints = {value["keySha256"]: value for value in previous}
+    require(cursor.get("beforeIndexETagSha256") == initial_fingerprints[index_key]["etagSha256"]
+            and cursor.get("afterIndexETagSha256") == final_fingerprints[index_key]["etagSha256"])
+    from datetime import timedelta
+    try:
+        requested, accepted, rejected = (observed_timestamp(cursor[name]) for name in ("requestedAt", "acceptedAt", "rejectedAt"))
+        started, deadline = (observed_timestamp(cursor[name]) for name in ("observerStartedAt", "observerDeadline"))
+        require(requested <= accepted <= started < rejected < requested + timedelta(minutes=15))
+        require(started < deadline <= started + timedelta(seconds=90) and rejected < deadline)
+        previous_probe = started
+        for probe in probes:
+            value = probe["observation"]
+            require(observed_timestamp(value["observerStartedAt"]) == started and observed_timestamp(value["observerDeadline"]) == deadline)
+            at = observed_timestamp(value["observedAt"])
+            require(previous_probe <= at <= rejected and at < deadline and at < requested + timedelta(minutes=15))
+            previous_probe = at
+    except (KeyError, TypeError, ValueError) as failure:
+        raise RuntimeError("Cursor rejection lacks separate observer and lifetime bounds.") from failure
+    # Keep the causal order emitted by the fixture: summaries cannot precede the operations they prove.
+    ordered = []
+    for scope, source in sources.items():
+        ordered.extend((source, attempts[("duplicate", scope, "retained")], attempts[("duplicate", scope, "fresh")]))
+    reads = {value["phase"]: value for value in kinds["reads"]}
+    ordered.extend((states["duplicate"], reads["duplicate"], states["duplicate-reads"]))
+    for scope in sources:
+        ordered.extend((attempts[("invalid", scope, "truncated")], attempts[("invalid", scope, "mismatched-head")]))
+    ordered.extend((states["invalid"], reads["invalid"]))
+    ordered.extend(authentication)
+    ordered.extend((states["authentication"], reads["authentication"], states["refusal-reads"], kinds["cursor-control"][0]))
+    for scope in sources:
+        ordered.extend((attempts[("rebuild", scope, "full-prefix")], states["rebuild:" + scope[0] + ":" + scope[1]]))
+    ordered.extend((states["full-rebuild"], *probes, cursor, reads["rebuild"], states["post-rebuild-reads"]))
+    require(observations == ordered)
+    return {"sources": len(sources), "duplicateAttempts": len(kinds["duplicate"]), "rebuildAttempts": len(kinds["rebuild"]),
+            "invalidReplayAttempts": len(kinds["invalid"]), "authenticationRefusals": len(authentication), "persistedComparisons": len(states)}
 
 
 def issuer_server(directory: Path, issuer: str) -> tuple[http.server.HTTPServer, threading.Thread]:
@@ -1007,7 +1303,12 @@ def main() -> int:
             raise RuntimeError("Distributed assertions failed; inspect distributed.xml and the sanitized test log.")
         matrix = json.loads((evidence / "matrix.json").read_text())
         report["projectsRestart"] = json.loads((evidence / "projects-restart-process.json").read_text())
-        if not matrix.get("allCasesExecuted") or len(set(matrix.get("cases", []))) != 9 or not matrix.get("projectsProcessRestartVerified") or not report["projectsRestart"].get("completed"):
+        observer_control = json.loads((evidence / "provider-observer-control.json").read_text())
+        require_provider_observer_control(observer_control)
+        report["providerObserverControl"] = {key: observer_control[key] for key in ("verified", "domainKeyCount", "controlKeyCount", "binaryAndEscapingBoundariesExact")}
+        replay = json.loads((evidence / "projection-replay.json").read_text())
+        report["projectionReplay"] = require_distributed_replay_evidence(matrix, replay)
+        if not report["projectsRestart"].get("completed"):
             raise RuntimeError("The full distributed matrix did not execute.")
         report["discoveryAfterReads"] = verify_discovery(discovery_configuration, discovery_registry, isolation)
         if args.regressions:

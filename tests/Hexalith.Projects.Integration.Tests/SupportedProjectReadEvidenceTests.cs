@@ -379,6 +379,310 @@ public sealed class SupportedProjectReadEvidenceTests
         Assert.False(SupportedProjectReadDistributedFixture.CursorIsWithinObservedLifetime(requested, requested.AddSeconds(-1)));
     }
 
+    /// <summary>Replay cannot use an incomplete prefix, a substituted identity or inconsistent source metadata.</summary>
+    [Fact]
+    public void CompleteReplaySourceRejectsMissingTruncatedAndInconsistentHistory()
+    {
+        DateTimeOffset timestamp = DateTimeOffset.UtcNow;
+        Hexalith.EventStore.Contracts.Streams.StreamReadEvent first = new(1, "Created", "{}"u8.ToArray(), "json", 1, "first", "correlation", null, timestamp, "actor") { GlobalPosition = 11 };
+        Hexalith.EventStore.Contracts.Streams.StreamReadEvent second = first with { SequenceNumber = 2, MessageId = "second", GlobalPosition = 15, Timestamp = timestamp.AddSeconds(1) };
+        Hexalith.EventStore.Contracts.Streams.StreamReadRequest request = new("owned", "projects", "project-a");
+        Hexalith.EventStore.Contracts.Streams.StreamReadPage source = new("owned", "projects", "project-a", [first, second], new(0, null, 2, 2, 2, false, null));
+        Assert.True(SupportedProjectReadDistributedFixture.IsCompleteProjectStream(request, source));
+        foreach (Hexalith.EventStore.Contracts.Streams.StreamReadPage invalid in new[]
+        {
+            source with { Tenant = "foreign" }, source with { Domain = "folders" }, source with { AggregateId = "project-b" },
+            source with { Events = [] }, source with { Events = [first] }, source with { Events = [second] },
+            source with { Events = [first, second with { SequenceNumber = 3 }] },
+            source with { Events = [first, second with { GlobalPosition = 0 }] }, source with { Events = [first, second with { GlobalPosition = 11 }] },
+            source with { Events = [first, second with { Timestamp = default }] }, source with { Events = [first, second with { MessageId = first.MessageId }] },
+            source with { Metadata = source.Metadata with { FromSequence = 1 } }, source with { Metadata = source.Metadata with { ToSequence = 2 } },
+            source with { Metadata = source.Metadata with { LastSequenceReturned = 1 } }, source with { Metadata = source.Metadata with { LatestSequence = 3 } },
+            source with { Metadata = source.Metadata with { LatestSequence = 1 } }, source with { Metadata = source.Metadata with { EventCount = 1 } },
+            source with { Metadata = source.Metadata with { IsTruncated = true } },
+        }) Assert.False(SupportedProjectReadDistributedFixture.IsCompleteProjectStream(request, invalid), "Incomplete or inconsistent source evidence qualified.");
+        Assert.False(SupportedProjectReadDistributedFixture.IsCompleteProjectStream(request with { FromSequence = 1 }, source));
+    }
+
+    /// <summary>Only the named target detail and tenant index ETags may change; both tenants' bytes and watermarks remain exact.</summary>
+    [Fact]
+    public void ReplayComparisonRejectsForbiddenWritesAndAlteredWatermarksInBothTenants()
+    {
+        string[] tenants = ["primary-secret", "foreign-secret"];
+        SupportedProjectReadStateSnapshot[] before = ReplayState(tenants);
+        string[] expected = [before[0].Key, before[1].Key];
+        SupportedProjectReadStateSnapshot[] after = before.Select((item, index) => index < 2 ? item with { ETag = "new-secret-etag" } : item).ToArray();
+        bool Valid(SupportedProjectReadStateSnapshot[]? values, string[]? allowed = null) => SupportedProjectReadDistributedFixture.CreateReplayStateEvidence(before, values, tenants, allowed ?? expected, before.Select(item => item.Key).ToArray()).GetProperty("valid").GetBoolean();
+        Assert.True(Valid(after));
+        Assert.True(SupportedProjectReadDistributedFixture.CreateReplayStateEvidence(before, before, tenants, [], before.Select(item => item.Key).ToArray()).GetProperty("valid").GetBoolean());
+        Assert.False(Valid(before), "A rebuild with no ETag change qualified.");
+        Assert.False(Valid(null));
+        Assert.False(Valid([]));
+        Assert.False(Valid(after.Skip(1).ToArray()));
+        Assert.False(Valid([.. after, new("new-secret-key", [1], "secret-etag")]));
+        Assert.False(Valid([.. after.Skip(1), after[1]]), "Duplicate state observations qualified.");
+        Assert.False(Valid(after, [before[0].Key]));
+        SupportedProjectReadStateSnapshot[] projectionsOnly = before.Take(6).ToArray();
+        Assert.False(SupportedProjectReadDistributedFixture.CreateReplayStateEvidence(projectionsOnly, projectionsOnly, tenants, [],
+            before.Select(item => item.Key).ToArray()).GetProperty("valid").GetBoolean(), "Consistently omitted non-projection domain keys qualified.");
+        for (int index = 0; index < before.Length; index++)
+            foreach (SupportedProjectReadStateSnapshot changed in new[]
+            {
+                after[index] with { Bytes = "{\"globalPosition\":999,\"description\":\"protected-secret\"}"u8.ToArray() },
+                after[index] with { Bytes = "{\"globalPosition\":0}"u8.ToArray() }, after[index] with { Bytes = "["u8.ToArray() },
+                after[index] with { Bytes = [] }, after[index] with { ETag = "" }, after[index] with { Key = "replaced-secret-key" },
+            })
+            {
+                SupportedProjectReadStateSnapshot[] invalid = after.ToArray();
+                invalid[index] = changed;
+                Assert.False(Valid(invalid), "Forbidden state changes or missing watermarks qualified.");
+            }
+        foreach (int index in Enumerable.Range(2, before.Length - 2))
+        {
+            SupportedProjectReadStateSnapshot[] invalid = after.ToArray();
+            invalid[index] = invalid[index] with { ETag = "unexpected-secret-etag" };
+            Assert.False(Valid(invalid), "A sibling or foreign tenant ETag write qualified.");
+        }
+        Assert.False(SupportedProjectReadDistributedFixture.CreateReplayStateEvidence(before, after, [tenants[0]], expected, before.Select(item => item.Key).ToArray()).GetProperty("valid").GetBoolean());
+        Assert.False(SupportedProjectReadDistributedFixture.CreateReplayStateEvidence(before, after, [tenants[0], tenants[0]], expected, before.Select(item => item.Key).ToArray()).GetProperty("valid").GetBoolean());
+    }
+
+    /// <summary>Incomplete replay evidence remains explicit and sanitized without retaining keys, ETags, metadata or error bodies.</summary>
+    [Fact]
+    public void ReplayStateEvidenceRetainsExactWatermarksAndSanitizedFailureObservations()
+    {
+        string[] tenants = ["primary-secret", "foreign-secret"];
+        SupportedProjectReadStateSnapshot[] before = ReplayState(tenants);
+        foreach (SupportedProjectReadStateSnapshot[]? after in new SupportedProjectReadStateSnapshot[]?[] { before, null, before.Skip(1).ToArray() })
+        {
+            JsonElement evidence = SupportedProjectReadDistributedFixture.CreateReplayStateEvidence(before, after, tenants, [], before.Select(item => item.Key).ToArray());
+            Assert.DoesNotContain("secret", evidence.GetRawText(), StringComparison.Ordinal);
+            Assert.Equal(after == before, evidence.GetProperty("valid").GetBoolean());
+            Assert.Equal(6, evidence.GetProperty("beforeWatermarks").GetArrayLength());
+            Assert.Equal(6, evidence.GetProperty("afterWatermarks").GetArrayLength());
+            Assert.Equal(Enumerable.Range(1, 6).Select(value => (long)value), evidence.GetProperty("beforeWatermarks").EnumerateArray().Select(value => value.GetProperty("globalPosition").GetInt64()));
+        }
+    }
+
+    /// <summary>A failed cursor page retains AD-32 diagnostics without payloads, identifiers, token bytes or unrecognized metadata.</summary>
+    [Fact]
+    public void CursorControlDiagnosticsRetainUnavailableStateWithoutProtectedPayloads()
+    {
+        AdmissionSnapshot snapshot = new(AdmissionResponseState.Unavailable, DateTimeOffset.UtcNow, 0,
+            [new("FolderVisibility", false, EvidenceFreshnessState.Unavailable, "FolderUnavailable"),
+             new("secret-component", false, EvidenceFreshnessState.Unavailable, "secret-reason")], []);
+        ProjectListPage page = new([new("secret-project", "secret-name", ProjectLifecycle.Active, ReferenceState.Included, snapshot)], "secret-token", false, snapshot);
+        JsonElement evidence = SupportedProjectReadDistributedFixture.CreateCursorControlEvidence(page);
+        Assert.DoesNotContain("secret", evidence.GetRawText(), StringComparison.Ordinal);
+        Assert.Equal("Unavailable", evidence.GetProperty("responseState").GetString());
+        Assert.False(evidence.GetProperty("hasMore").GetBoolean());
+        Assert.True(evidence.GetProperty("cursorPresent").GetBoolean());
+        Assert.Equal("FolderVisibility", evidence.GetProperty("components")[0].GetProperty("name").GetString());
+        Assert.Equal("FolderUnavailable", evidence.GetProperty("components")[0].GetProperty("reason").GetString());
+        Assert.Equal("Other", evidence.GetProperty("components")[1].GetProperty("name").GetString());
+        Assert.Equal("Other", evidence.GetProperty("components")[1].GetProperty("reason").GetString());
+    }
+
+    /// <summary>Honest empty Unavailable observations are retained until a definitive refusal; they never establish acceptance.</summary>
+    [Fact]
+    public async Task CursorObserverRetainsUnavailableAttemptsBeforeDefinitiveRefusalAsync()
+    {
+        List<JsonElement> observations = [];
+        int calls = 0;
+        await SupportedProjectReadDistributedFixture.ObserveRebuildCursorInvalidationAsync(_ => Task.FromResult(++calls < 3
+            ? CursorResponse(AdmissionResponseState.Unavailable)
+            : InvalidCursorResponse()),
+            (value, _) => { observations.Add(value); return Task.CompletedTask; }, DateTimeOffset.UtcNow, TimeSpan.FromSeconds(2), TestContext.Current.CancellationToken);
+        Assert.Equal(3, calls);
+        Assert.Equal("query_invalid_page", observations[^1].GetProperty("problem").GetProperty("reasonCode").GetString());
+        Assert.Equal("invalid-cursor", observations[^1].GetProperty("problem").GetProperty("reason").GetString());
+        Assert.True(observations[^1].GetProperty("observerDeadline").GetDateTimeOffset()
+            - observations[^1].GetProperty("observerStartedAt").GetDateTimeOffset() <= TimeSpan.FromSeconds(90));
+        Assert.Equal(new[] { 200, 200, 400 }, observations.Select(value => value.GetProperty("httpStatus").GetInt32()));
+        Assert.All(observations.Take(2), value => Assert.True(value.GetProperty("honestEmptyUnavailable").GetBoolean()));
+        Assert.DoesNotContain("secret", JsonSerializer.Serialize(observations), StringComparison.Ordinal);
+    }
+
+    /// <summary>Complete/Partial continuations and populated or cursor-bearing Unavailable pages fail immediately.</summary>
+    [Theory]
+    [InlineData("complete")]
+    [InlineData("partial")]
+    [InlineData("populated")]
+    [InlineData("cursor")]
+    [InlineData("has-more")]
+    [InlineData("transport")]
+    public async Task CursorObserverNeverRetriesAcceptedOrDishonestResponsesAsync(string scenario)
+    {
+        List<JsonElement> observations = [];
+        int calls = 0;
+        Task<System.Net.Http.HttpResponseMessage> Query(CancellationToken _)
+        {
+            calls++;
+            return scenario == "transport" ? Task.FromException<System.Net.Http.HttpResponseMessage>(new HttpRequestException("secret-error"))
+                : Task.FromResult(CursorResponse(scenario == "complete" ? AdmissionResponseState.Complete : scenario == "partial" ? AdmissionResponseState.Partial : AdmissionResponseState.Unavailable,
+                    scenario == "populated", scenario == "cursor", scenario == "has-more"));
+        }
+        await Assert.ThrowsAnyAsync<Exception>(() => SupportedProjectReadDistributedFixture.ObserveRebuildCursorInvalidationAsync(Query,
+            (value, _) => { observations.Add(value); return Task.CompletedTask; }, DateTimeOffset.UtcNow, TimeSpan.FromSeconds(2), TestContext.Current.CancellationToken));
+        Assert.Equal(1, calls);
+        Assert.Single(observations);
+        Assert.False(observations[0].GetProperty("honestEmptyUnavailable").GetBoolean());
+        Assert.DoesNotContain("secret", JsonSerializer.Serialize(observations), StringComparison.Ordinal);
+    }
+
+    /// <summary>Unavailable-only observations cannot pass on deadline or after the original cursor lifetime.</summary>
+    [Fact]
+    public async Task CursorObserverRequiresRefusalWithinBothBudgetsAsync()
+    {
+        foreach (bool expired in new[] { false, true })
+        {
+            List<JsonElement> observations = [];
+            await Assert.ThrowsAnyAsync<Exception>(() => SupportedProjectReadDistributedFixture.ObserveRebuildCursorInvalidationAsync(
+                _ => Task.FromResult(expired ? InvalidCursorResponse() : CursorResponse(AdmissionResponseState.Unavailable)),
+                (value, _) => { observations.Add(value); return Task.CompletedTask; }, DateTimeOffset.UtcNow.AddMinutes(expired ? -16 : 0),
+                TimeSpan.FromMilliseconds(30), TestContext.Current.CancellationToken));
+            Assert.NotEmpty(observations);
+        }
+    }
+
+    /// <summary>The new observer propagates caller cancellation and retains the failed attempt without error payloads.</summary>
+    [Fact]
+    public async Task CursorObserverPreservesCallerCancellationAsync()
+    {
+        List<JsonElement> observations = [];
+        using CancellationTokenSource cancellation = new(TimeSpan.FromMilliseconds(50));
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => SupportedProjectReadDistributedFixture.ObserveRebuildCursorInvalidationAsync(
+            async token => { await Task.Delay(Timeout.InfiniteTimeSpan, token).ConfigureAwait(false); return CursorResponse(AdmissionResponseState.Unavailable); },
+            (value, _) => { observations.Add(value); return Task.CompletedTask; }, DateTimeOffset.UtcNow, TimeSpan.FromSeconds(5), cancellation.Token));
+        Assert.Single(observations);
+        Assert.Equal(JsonValueKind.Null, observations[0].GetProperty("httpStatus").ValueKind);
+        Assert.NotEqual(JsonValueKind.Null, observations[0].GetProperty("failureType").ValueKind);
+    }
+
+    /// <summary>A stalled query which ignores cancellation cannot extend the observer's whole-operation budget.</summary>
+    [Fact]
+    public async Task CursorObserverBoundsAStalledQueryAsync()
+    {
+        List<JsonElement> observations = [];
+        TaskCompletionSource<System.Net.Http.HttpResponseMessage> stalled = new();
+        System.Diagnostics.Stopwatch timer = System.Diagnostics.Stopwatch.StartNew();
+        await Assert.ThrowsAsync<InvalidOperationException>(() => SupportedProjectReadDistributedFixture.ObserveRebuildCursorInvalidationAsync(
+            _ => stalled.Task, (value, _) => { observations.Add(value); return Task.CompletedTask; }, DateTimeOffset.UtcNow,
+            TimeSpan.FromMilliseconds(50), TestContext.Current.CancellationToken));
+        Assert.True(timer.Elapsed < TimeSpan.FromSeconds(2), "The stalled cursor query exceeded its short control budget.");
+        Assert.Single(observations);
+        Assert.Equal(JsonValueKind.Null, observations[0].GetProperty("httpStatus").ValueKind);
+        Assert.NotEqual(JsonValueKind.Null, observations[0].GetProperty("failureType").ValueKind);
+    }
+
+    /// <summary>Only the actual safe platform Problem Details classification proves cursor invalidation.</summary>
+    [Theory]
+    [InlineData("")]
+    [InlineData("[")]
+    [InlineData("{}")]
+    [InlineData("{\"status\":400,\"reasonCode\":\"query_invalid_page\",\"reason\":\"invalid-page\"}")]
+    [InlineData("{\"status\":400,\"reasonCode\":\"query_malformed_request\",\"reason\":\"invalid-cursor\"}")]
+    [InlineData("{\"status\":\"400\",\"reasonCode\":\"query_invalid_page\",\"reason\":\"invalid-cursor\"}")]
+    public async Task CursorObserverRejectsUnclassifiedAndMalformedBadRequestsAsync(string body)
+    {
+        List<JsonElement> observations = [];
+        await Assert.ThrowsAsync<InvalidOperationException>(() => SupportedProjectReadDistributedFixture.ObserveRebuildCursorInvalidationAsync(
+            _ => Task.FromResult(InvalidCursorResponse(body)), (value, _) => { observations.Add(value); return Task.CompletedTask; },
+            DateTimeOffset.UtcNow, TimeSpan.FromSeconds(2), TestContext.Current.CancellationToken));
+        Assert.Single(observations);
+        Assert.Equal(JsonValueKind.Null, observations[0].GetProperty("problem").ValueKind);
+        Assert.NotEqual(JsonValueKind.Null, observations[0].GetProperty("failureType").ValueKind);
+    }
+
+    /// <summary>Even a valid refusal cannot qualify when asynchronous evidence recording stalls beyond the observer budget.</summary>
+    [Fact]
+    public async Task CursorObserverBoundsStalledEvidenceRecordingAsync()
+    {
+        TaskCompletionSource stalled = new();
+        System.Diagnostics.Stopwatch timer = System.Diagnostics.Stopwatch.StartNew();
+        await Assert.ThrowsAsync<InvalidOperationException>(() => SupportedProjectReadDistributedFixture.ObserveRebuildCursorInvalidationAsync(
+            _ => Task.FromResult(InvalidCursorResponse()), (_, token) => { Assert.True(token.CanBeCanceled); return stalled.Task; },
+            DateTimeOffset.UtcNow, TimeSpan.FromMilliseconds(50), TestContext.Current.CancellationToken));
+        Assert.True(timer.Elapsed < TimeSpan.FromSeconds(2), "Stalled evidence recording extended the observer budget.");
+    }
+
+    /// <summary>Cancellation or elapsed observer time during recording is rechecked before reporting success.</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CursorObserverRejectsLateOrCancelledSuccessAsync(bool cancelled)
+    {
+        using CancellationTokenSource cancellation = new();
+        Task Observe() => SupportedProjectReadDistributedFixture.ObserveRebuildCursorInvalidationAsync(
+            _ => Task.FromResult(InvalidCursorResponse()), (_, _) =>
+            {
+                if (cancelled) cancellation.Cancel();
+                else Thread.Sleep(100);
+                return Task.CompletedTask;
+            }, DateTimeOffset.UtcNow, TimeSpan.FromMilliseconds(50), cancellation.Token);
+        if (cancelled) await Assert.ThrowsAnyAsync<OperationCanceledException>(Observe);
+        else await Assert.ThrowsAsync<InvalidOperationException>(Observe);
+    }
+
+    private static System.Net.Http.HttpResponseMessage InvalidCursorResponse(string body = "{\"status\":400,\"reasonCode\":\"query_invalid_page\",\"reason\":\"invalid-cursor\",\"detail\":\"secret-not-retained\"}")
+        => new(System.Net.HttpStatusCode.BadRequest) { Content = new StringContent(body, System.Text.Encoding.UTF8, "application/problem+json") };
+
+    private static System.Net.Http.HttpResponseMessage CursorResponse(AdmissionResponseState state, bool populated = false, bool cursor = false, bool hasMore = false)
+    {
+        AdmissionSnapshot snapshot = new(state, DateTimeOffset.UtcNow, 0,
+            [new("FolderVisibility", false, EvidenceFreshnessState.Unavailable, "FolderUnavailable")], []);
+        ProjectListPage page = new(populated ? [new("secret-project", "secret-name", ProjectLifecycle.Active, ReferenceState.Included, snapshot)] : [],
+            cursor ? "secret-cursor" : null, hasMore, snapshot);
+        return new(System.Net.HttpStatusCode.OK) { Content = System.Net.Http.Json.JsonContent.Create(
+            new Hexalith.EventStore.Contracts.Queries.SubmitQueryResponse("correlation", JsonSerializer.SerializeToElement(page, JsonSerializerOptions.Web))) };
+    }
+
+    /// <summary>Batch decoding preserves binary/escaping boundaries and refuses missing, duplicate or malformed provider observations.</summary>
+    [Fact]
+    public void ProviderBatchDecodingPreservesExactBytesAndVersionsAndRejectsMissingEvidence()
+    {
+        string[] keys = ["owned||first", "owned||second"];
+        byte[] binary = Enumerable.Range(0, 256).Select(value => (byte)value).ToArray();
+        JsonArray rows = JsonSerializer.SerializeToNode(new[]
+        {
+            new { key = keys[0], exists = true, dataHex = Convert.ToHexString(binary), version = "9223372036854775807" },
+            new { key = keys[1], exists = true, dataHex = "", version = "0002" },
+        })!.AsArray();
+        SupportedProjectReadStateSnapshot[] Parse(JsonNode value) => SupportedProjectReadDistributedFixture.ParseRawStateBatch(JsonSerializer.SerializeToUtf8Bytes(value), keys);
+        SupportedProjectReadStateSnapshot[] actual = Parse(rows);
+        Assert.Equal(binary, actual[0].Bytes);
+        Assert.Equal("9223372036854775807", actual[0].ETag);
+        Assert.Empty(actual[1].Bytes);
+        Assert.Equal("0002", actual[1].ETag);
+        foreach ((string field, object value) in new (string, object)[]
+        {
+            ("key", "foreign||key"), ("key", keys[1]), ("exists", false), ("dataHex", false), ("dataHex", "0"),
+            ("dataHex", "GG"), ("version", false), ("version", "0"), ("version", "-1"), ("version", "1.5"), ("version", "9223372036854775808"),
+        })
+        {
+            JsonArray invalid = rows.DeepClone().AsArray();
+            invalid[0]![field] = JsonSerializer.SerializeToNode(value);
+            Assert.ThrowsAny<Exception>(() => Parse(invalid));
+        }
+        foreach (string field in new[] { "key", "exists", "dataHex", "version" })
+        {
+            JsonArray invalid = rows.DeepClone().AsArray();
+            invalid[0]!.AsObject().Remove(field);
+            Assert.ThrowsAny<Exception>(() => Parse(invalid));
+        }
+        Assert.ThrowsAny<Exception>(() => Parse(new JsonArray(rows[0]!.DeepClone())));
+    }
+
+    private static SupportedProjectReadStateSnapshot[] ReplayState(string[] tenants)
+        => tenants.SelectMany(tenant => new[]
+        {
+            Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Index(tenant),
+            Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Detail(tenant, "project-a"),
+            Hexalith.Projects.Server.Projections.ProjectReads.ProjectReadModelKeys.Detail(tenant, "project-b"),
+        }).Select((key, index) => new SupportedProjectReadStateSnapshot(key,
+            JsonSerializer.SerializeToUtf8Bytes(new { globalPosition = index + 1, description = "protected-secret-payload" }), "secret-etag"))
+            .Concat(tenants.Select(tenant => new SupportedProjectReadStateSnapshot("journal:" + tenant, "protected-secret-journal"u8.ToArray(), "secret-etag"))).ToArray();
+
     private static System.Net.Http.HttpResponseMessage AuthorizedRecoveryResponse()
     {
         AdmissionSnapshot snapshot = new(AdmissionResponseState.Complete, DateTimeOffset.UtcNow, 2, [], []);

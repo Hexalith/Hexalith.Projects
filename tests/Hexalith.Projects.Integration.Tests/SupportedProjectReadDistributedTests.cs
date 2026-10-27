@@ -132,10 +132,14 @@ public sealed class SupportedProjectReadDistributedTests
         await fixture.ReadAsync<GetProjectResponse>(open: true);
         await CompleteAsync("owned-folder-outage-honest-unavailability-and-recovery");
         await CompleteAsync("authenticated-command-and-projection-compatibility");
+        await fixture.VerifyDuplicateDeliveryAsync();
+        await CompleteAsync("duplicate-project-delivery-retains-supported-reads-and-state");
+        await fixture.VerifyFullReplayAsync();
+        await CompleteAsync("full-project-replay-retains-truth-and-invalidates-old-continuation");
         await File.WriteAllTextAsync(Path.Combine(fixture.Evidence, "matrix.json"), JsonSerializer.Serialize(new
         {
-            allCasesExecuted = completed.Count == 9, cases = completed, domainBytesAndEtagsUnchanged = true,
-            projectsProcessRestartVerified = true, preRestartContinuationAcceptedAfterRestart = true, freshPagingAgrees = true,
+            allCasesExecuted = completed.Count == 11, cases = completed, readOnlyDomainBytesAndEtagsUnchanged = true,
+            projectsProcessRestartVerified = true, duplicateDeliveryVerified = true, fullReplayVerified = true, preRestartContinuationAcceptedAfterRestart = true, freshPagingAgrees = true,
             retainedCursorAcceptedImmediatelyBeforeRevocation = true, cursorRejectionWithinLifetime = true,
             postRestartForeignAndAbsentDenialsVerified = true, bothTenantDomainWatermarksUnchanged = true,
             actualDaprDiscovery = true, actualOwnerActorHeads = true, acceptedEquivalence = false, productionReadiness = false,
