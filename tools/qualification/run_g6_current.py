@@ -173,7 +173,8 @@ def main(arguments: list[str] | None = None) -> int:
                 "-result-ctrf", str(scratch / "support-ctrf.json")], EVENTSTORE)
         else:
             errors.append("Fresh support build failed; old binaries were not executed")
-        if (scratch / "qualifier-ctrf.json").is_file() and (scratch / "support-ctrf.json").is_file():
+        validator = EVENTSTORE / "tools/validate-oq8-platform-evidence.py"
+        if (scratch / "qualifier-ctrf.json").is_file() and (scratch / "support-ctrf.json").is_file() and validator.is_file():
             run.run("strict EventStore capture validation", ["python3", "tools/validate-oq8-platform-evidence.py",
                 "--capture-directory", str(capture), "--ctrf", str(scratch / "qualifier-ctrf.json"),
                 "--support-ctrf", str(scratch / "support-ctrf.json"), "--expected-runtime-version",
