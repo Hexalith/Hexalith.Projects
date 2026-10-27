@@ -1,0 +1,25 @@
+<Project InitialTargets="MinimalModuleCompatibilitySelectPackages">
+  <!-- Explicit compatibility overlay only. The measured fixture and its original locks stay frozen. -->
+  <PropertyGroup Condition="'$(MinimalModuleCompatibilityUseSuccessorLocks)' == 'true' and $([System.String]::Copy('$(MSBuildProjectName)').StartsWith('Hexalith.Conversations.MinimalModule.'))">
+    <NuGetLockFilePath>$(MSBuildThisFileDirectory)locks/$(MinimalModuleCompatibilityMode)/$(MSBuildProjectName).packages.lock.json</NuGetLockFilePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(MinimalModuleCompatibilityMode)' == 'package'">
+    <!-- Qualified dependency selection for this external compatibility graph, independent of product imports. -->
+    <MinimalModuleCompatibilityEventStoreVersion>3.128.0</MinimalModuleCompatibilityEventStoreVersion>
+  </PropertyGroup>
+  <Target Name="MinimalModuleCompatibilitySelectPackages" BeforeTargets="CollectPackageReferences;_GenerateRestoreGraphProjectEntry;_GetProjectReferenceTargetFrameworkProperties;AssignProjectConfiguration" Condition="'$(MinimalModuleCompatibilityMode)' == 'package'">
+    <MSBuild Projects="$(MSBuildThisFileDirectory)CatalogVersion.proj" Targets="ReadMinimalModuleCompatibilityCatalog" RemoveProperties="HexalithEventStoreVersion;UseHexalithProjectReferences">
+      <Output TaskParameter="TargetOutputs" ItemName="_CompatibilityCatalogPackage" />
+    </MSBuild>
+    <Error Condition="'@(_CompatibilityCatalogPackage)' == ''" Text="The direct pinned Builds catalog contains no EventStore package selection." />
+    <Error Condition="'%(_CompatibilityCatalogPackage.Version)' != '$(MinimalModuleCompatibilityEventStoreVersion)'" Text="MinimalModule compatibility selection $(MinimalModuleCompatibilityEventStoreVersion) differs from the direct pinned Builds catalog: %(_CompatibilityCatalogPackage.Identity) %(_CompatibilityCatalogPackage.Version). Qualify the compatibility overlay and successor locks deliberately." />
+    <ItemGroup>
+      <_CompatibilityEventStoreProject Include="@(ProjectReference)" Condition="$([System.String]::Copy('%(ProjectReference.Filename)').StartsWith('Hexalith.EventStore.'))" />
+      <ProjectReference Remove="@(_CompatibilityEventStoreProject)" />
+      <PackageReference Include="@(_CompatibilityEventStoreProject->'%(Filename)')" Version="$(MinimalModuleCompatibilityEventStoreVersion)" />
+    </ItemGroup>
+  </Target>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'Hexalith.Conversations.MinimalModule.Tests'">
+    <Compile Include="$(MSBuildThisFileDirectory)RegisteredCommandTests.cs" Link="Compatibility/RegisteredCommandTests.cs" />
+  </ItemGroup>
+</Project>

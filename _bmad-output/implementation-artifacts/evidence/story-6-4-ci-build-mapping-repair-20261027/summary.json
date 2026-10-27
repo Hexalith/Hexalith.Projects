@@ -1,0 +1,166 @@
+{
+  "recorded_at_utc": "2026-10-27T18:17:09.245479+00:00",
+  "scope": "Candidate preparation and focused tests only; no delivery, publication, CI dispatch or runtime acceptance.",
+  "source_preparation": {
+    "status": "prepared",
+    "outcome": {
+      "exitCode": "Success",
+      "phase": "None",
+      "category": "None",
+      "ruleId": null
+    },
+    "diagnostics": [
+      {
+        "ruleId": "HXW011",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Platform identity 4430ab191436ffb77aa67dea6565ce154a07bc17 has no local v<SemVer> release tag.",
+        "field": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Platform",
+        "hint": "Fetch Platform tags, then retry.",
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW009",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Builds catalog '/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Builds' is staged cad925260713718895282c69bcbdb8bc72e7b6a2, checked out cad925260713718895282c69bcbdb8bc72e7b6a2, dirty; Platform 4430ab191436ffb77aa67dea6565ce154a07bc17 pins 022668ac2dd3b0ec4b1b8e99b243debef0eee374.",
+        "field": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Builds",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW010",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Tool version 1.0.0-20261027173520 is outside Platform range [4.35.2, 5.0.0-0) at '/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Platform/hexalith-platform.json'.",
+        "field": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Platform/hexalith-platform.json",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      }
+    ],
+    "buildPreparation": {
+      "workspace": "/tmp/story64-ci-repair-20261027/verified-source",
+      "mode": "source",
+      "mappingHash": "8ad971a7718ab5796027d2274990a044d032db2af1649a6c74bb80fbd2e360e4",
+      "environment": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story64-ci-repair-20261027/verified-source/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story64-ci-repair-20261027/verified-source/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story64-ci-repair-20261027/verified-source/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story64-ci-repair-20261027/verified-source/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story64-ci-repair-20261027/verified-source/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "8ad971a7718ab5796027d2274990a044d032db2af1649a6c74bb80fbd2e360e4",
+        "Configuration": "Debug"
+      }
+    }
+  },
+  "original_source_refusal": {
+    "status": "failed",
+    "outcome": {
+      "exitCode": "PrerequisiteUnavailable",
+      "phase": "Prerequisite",
+      "category": "PrerequisiteUnavailable",
+      "ruleId": "HXW004"
+    },
+    "diagnostics": [
+      {
+        "ruleId": "HXW004",
+        "phase": "Prerequisite",
+        "category": "PrerequisiteUnavailable",
+        "message": "Required source 'Hexalith.Conversations' at '/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations' is unavailable: Checkout HEAD '536bf80d5fd5c2a64c2f64815edc67074fd5a6ea' does not match the root's staged gitlink '8039d2abcf41bcd2c01fa3dbe618cbec2f4f6da3'.",
+        "field": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+        "hint": "Stage the checked-out commit with git -C '/home/administrator/projects/hexalith/projects' add -- ':(literal)references/Hexalith.Conversations', move the checkout to the staged gitlink with git -C '/home/administrator/projects/hexalith/projects' submodule update --checkout -- ':(literal)references/Hexalith.Conversations', or deinitialize a broken checkout before retrying.",
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW011",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Platform identity 4430ab191436ffb77aa67dea6565ce154a07bc17 has no local v<SemVer> release tag.",
+        "field": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+        "hint": "Fetch Platform tags, then retry.",
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW009",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Builds catalog '/home/administrator/projects/hexalith/projects/references/Hexalith.Builds' is staged 74932ad0247203797274aba8b7b6366a4bbf92b9, checked out cad925260713718895282c69bcbdb8bc72e7b6a2, dirty; Platform 4430ab191436ffb77aa67dea6565ce154a07bc17 pins 022668ac2dd3b0ec4b1b8e99b243debef0eee374.",
+        "field": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW010",
+        "phase": "Prerequisite",
+        "category": "None",
+        "message": "Tool version 1.0.0-20261027173339 is outside Platform range [4.35.2, 5.0.0-0) at '/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json'.",
+        "field": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      }
+    ]
+  },
+  "current_package_refusal": {
+    "status": "failed",
+    "outcome": {
+      "exitCode": "PrerequisiteUnavailable",
+      "phase": "Prerequisite",
+      "category": "PrerequisiteUnavailable",
+      "ruleId": "HXW011"
+    },
+    "diagnostics": [
+      {
+        "ruleId": "HXW011",
+        "phase": "Prerequisite",
+        "category": "PrerequisiteUnavailable",
+        "message": "Platform identity 4430ab191436ffb77aa67dea6565ce154a07bc17 has no local v<SemVer> release tag.",
+        "field": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+        "hint": "Fetch Platform tags, then retry.",
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW009",
+        "phase": "Prerequisite",
+        "category": "PrerequisiteUnavailable",
+        "message": "Builds catalog '/home/administrator/projects/hexalith/projects/references/Hexalith.Builds' is staged 74932ad0247203797274aba8b7b6366a4bbf92b9, checked out cad925260713718895282c69bcbdb8bc72e7b6a2, dirty; Platform 4430ab191436ffb77aa67dea6565ce154a07bc17 pins 022668ac2dd3b0ec4b1b8e99b243debef0eee374.",
+        "field": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      },
+      {
+        "ruleId": "HXW010",
+        "phase": "Prerequisite",
+        "category": "PrerequisiteUnavailable",
+        "message": "Tool version 1.0.0-20261027173520 is outside Platform range [4.35.2, 5.0.0-0) at '/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json'.",
+        "field": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json",
+        "hint": null,
+        "source": null,
+        "location": null,
+        "row": null
+      }
+    ]
+  },
+  "frozen_fixture_files": 17,
+  "frozen_fixture_unchanged": true,
+  "windows_execution": "not performed",
+  "independent_parent_audit": "pending",
+  "producer_release_qualification": "pending"
+}

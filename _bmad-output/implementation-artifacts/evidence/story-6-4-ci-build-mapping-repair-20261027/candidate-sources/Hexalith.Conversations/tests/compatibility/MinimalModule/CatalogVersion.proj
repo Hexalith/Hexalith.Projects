@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <!-- Evaluate the direct pinned catalog's package defaults without the caller's selection overrides. -->
+    <HexalithEventStoreVersion />
+  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)../../../references/Hexalith.Builds/Props/Directory.Packages.props" />
+  <Target Name="ReadMinimalModuleCompatibilityCatalog" Returns="@(_MinimalModuleCompatibilityCatalogPackage)">
+    <ItemGroup>
+      <_MinimalModuleCompatibilityCatalogPackage Include="@(PackageVersion)" Condition="$([System.String]::Copy('%(PackageVersion.Identity)').StartsWith('Hexalith.EventStore.'))" />
+    </ItemGroup>
+  </Target>
+</Project>

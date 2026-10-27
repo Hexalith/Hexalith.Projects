@@ -1,0 +1,100 @@
+{
+  "Mode": "source",
+  "Root": "/tmp/story64-ci-repair-20261027/source-workspace",
+  "ActiveModule": "Hexalith.Conversations",
+  "Entries": [
+    {
+      "Identity": "Hexalith.AI.Tools",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.AI.Tools"
+    },
+    {
+      "Identity": "Hexalith.Builds",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Builds"
+    },
+    {
+      "Identity": "Hexalith.Commons",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Commons"
+    },
+    {
+      "Identity": "Hexalith.Conversations",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Conversations"
+    },
+    {
+      "Identity": "Hexalith.EventStore",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.EventStore"
+    },
+    {
+      "Identity": "Hexalith.Folders",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Folders"
+    },
+    {
+      "Identity": "Hexalith.FrontComposer",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.FrontComposer"
+    },
+    {
+      "Identity": "Hexalith.McpCli",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.McpCli"
+    },
+    {
+      "Identity": "Hexalith.Memories",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Memories"
+    },
+    {
+      "Identity": "Hexalith.Parties",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Parties"
+    },
+    {
+      "Identity": "Hexalith.Platform",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Platform"
+    },
+    {
+      "Identity": "Hexalith.Tenants",
+      "Origin": "source",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Tenants"
+    }
+  ],
+  "HasGit": true,
+  "PlatformIdentity": {
+    "Commit": "4430ab191436ffb77aa67dea6565ce154a07bc17",
+    "CompositionCommit": "4430ab191436ffb77aa67dea6565ce154a07bc17",
+    "CheckoutCommit": "4430ab191436ffb77aa67dea6565ce154a07bc17",
+    "PlatformPath": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Platform",
+    "ReleaseTag": null,
+    "CatalogCommit": "022668ac2dd3b0ec4b1b8e99b243debef0eee374",
+    "ToolVersionRange": "[4.35.2, 5.0.0-0)",
+    "RecordPath": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Platform/hexalith-platform.json",
+    "IsPlatformRepository": false
+  },
+  "IdentityFindings": [
+    {
+      "RuleId": "HXW011",
+      "Message": "Platform identity 4430ab191436ffb77aa67dea6565ce154a07bc17 has no local v\u003CSemVer\u003E release tag.",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Platform",
+      "Hint": "Fetch Platform tags, then retry."
+    },
+    {
+      "RuleId": "HXW009",
+      "Message": "Builds catalog \u0027/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Builds\u0027 is staged cad925260713718895282c69bcbdb8bc72e7b6a2, checked out cad925260713718895282c69bcbdb8bc72e7b6a2, dirty; Platform 4430ab191436ffb77aa67dea6565ce154a07bc17 pins 022668ac2dd3b0ec4b1b8e99b243debef0eee374.",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Builds",
+      "Hint": null
+    },
+    {
+      "RuleId": "HXW010",
+      "Message": "Tool version 1.0.0-20261027173520 is outside Platform range [4.35.2, 5.0.0-0) at \u0027/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Platform/hexalith-platform.json\u0027.",
+      "Path": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Platform/hexalith-platform.json",
+      "Hint": null
+    }
+  ],
+  "ContentHash": "8ad971a7718ab5796027d2274990a044d032db2af1649a6c74bb80fbd2e360e4"
+}

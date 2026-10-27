@@ -1,0 +1,33 @@
+[
+  {
+    "label": "current-source-mapping-tests",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Conversations.Contracts.Tests/bin/Debug/net10.0/Hexalith.Conversations.Contracts.Tests.dll",
+      "-class",
+      "Hexalith.Conversations.Contracts.Tests.PlatformEnrollmentMappingTest",
+      "-result-xml",
+      "/tmp/story64-ci-repair-20261027/current-source-mapping-tests.xml",
+      "-noLogo"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Conversations",
+    "exit": 0,
+    "seconds": 10.162
+  },
+  {
+    "label": "current-source-server-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Conversations",
+    "exit": 0,
+    "seconds": 13.834
+  }
+]

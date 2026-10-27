@@ -2,7 +2,7 @@
 title: 'Story 6.4: Authorized advisory Project suggestions'
 type: 'feature'
 created: '2026-10-17'
-updated: '2026-10-23'
+updated: '2026-10-27'
 status: 'in-progress'
 route: 'dispatch'
 story_key: '6-4-resolve-projects-with-transient-current-explanations'
@@ -512,3 +512,15 @@ The story remains in-progress. No push, publication or consumer pin was performe
 The user replied `approve` to rebasing the one-file commit onto current Conversations main and pushing. A nonrecursive fetch found `bb6ae6e6574377e8fc628266f16b51a301f9736e`, with two nonoverlapping upstream commits. The complete approved patch and full message were preserved byte-identically in rebased commit `9911b4c9ad26f125a5271fc38f070297e4a9713f`. Pinned commitlint passed; the exact 38-case prerequisite/anti-skip lane passed again after rebase with zero failures/errors/skips. An ordinary, non-force, nonrecursive push succeeded. Independent Git readback verified remote main at that full SHA, and the owner working tree is clean. Evidence: [completed fixture push handoff](evidence/6-4-advisory-resolution-20261021/review-4/parent-final/publication-prerequisite-repair-20261023/push-handoff/README.md).
 
 The pushed source has CI run `39932499668` (queued), plus CodeQL and commit-policy push runs. The exact-source publication guard exits 1 with `EXACT_CI_ABSENT` until this newest CI succeeds. The read-only semantic plan confirms exactly 1.3.1, and official release destinations are verified unused. No release dispatch, dependency pin, root Git commit or deployment was performed. Story 6.4 remains in-progress pending successful current-source CI, the separately required release approval, publication verification and consumer pins. The original frozen scope and root user changes remain preserved.
+
+## Current Resumption Result — 2026-10-27
+
+The advisory implementation is already present. Fresh focused checks passed 215 Projects cases, 116 Conversations cases and 37 planning-guard cases (368 total, zero failures/skips); both source Debug builds have zero warnings/errors. Story/index authority validation passes. Parent independently audited the fresh XML and build summaries. The frozen scope remains byte-identical. Eleven of the 39 previously recorded source files have later changes, so the older full-suite and gateway receipts remain historical rather than current-tree acceptance. Exact commands, current source hashes, passing XML and limitations: [resumption evidence](evidence/6-4-advisory-resolution-20261021/resumption-20261027/README.md).
+
+Conversations live main is observed at `536bf80d5fd5c2a64c2f64815edc67074fd5a6ea`; [exact-source CI 40499324347](https://github.com/Hexalith/Hexalith.Conversations/actions/runs/40499324347) failed. Later enrollment/build changes require a Platform source mapping absent from CI, the minimal-module fixture fails locked restore (`NU1004`), the dependency-mode tooling check fails, and Windows checkout rejects long Epic 16 fixture paths. The read-only release-source verifier exits 1 with `EXACT_CI_ABSENT`. The official verifier confirms Conversations 1.3.1 destinations remain absent; Builds and `tools/release-packages.json` still select 1.3.0.
+
+Story status remains `in-progress`. Resume producer-owned enrollment/CI remediation before the separately approved 1.3.1 publication, official package verification and consumer pins. No source/dependency edits, Git mutations, remote writes, publication or deployment were performed. No fresh full-suite, signed gateway/store or live AppHost acceptance is claimed. The frozen no-host-migration/new-platform boundary and separate publication approval remain in force.
+
+## Approved CI Repair Scope Extension — 2026-10-27
+
+The user explicitly approved including the upstream Conversations/Builds CI repairs in this run. Preparation and testing are authorized by the latest `yes`; publication remains a separate later approval. The [CI repair specification](spec-6-4-ci-build-mapping-repair.md) governs this bounded extension. Preserve the original frozen advisory behavior and all existing authorization/build gates.

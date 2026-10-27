@@ -1,0 +1,511 @@
+{
+  "date": "2026-10-27",
+  "repository_source_changes": false,
+  "spec_context_files_loaded": [
+    "_bmad-output/implementation-artifacts/epic-6-context.md",
+    "_bmad-output/planning-artifacts/sprint-change-proposal-2026-10-21-simplify-story-6-4.md"
+  ],
+  "frozen_scope_unchanged": true,
+  "source_manifest_total": 39,
+  "source_manifest_unchanged": 28,
+  "source_manifest_files": [
+    {
+      "path": "docs/supported-project-reads.md",
+      "sha256": "2e75e7353d1db18a7ae74e4fb4fd559fbd05ef9c3719a047e792562b7fda1e87",
+      "bytes": 28858,
+      "current_sha256": "f82293a444ec041d7b33fa1040ac2b6c05396b5d1b9bec612bd442fffbdb4df3",
+      "unchanged": false
+    },
+    {
+      "path": "references/Hexalith.Conversations/docs/release-notes-1.3.1.md",
+      "sha256": "ee0dd8e7a04bdf3eaff3da80862df364418bbdbf47fef8c6c0877c36741eecf0",
+      "bytes": 710,
+      "current_sha256": "ee0dd8e7a04bdf3eaff3da80862df364418bbdbf47fef8c6c0877c36741eecf0",
+      "unchanged": true
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/README.md",
+      "sha256": "3f094bd308cb6d967b60e0aba3b5731dbc706cf08657e64443f40a918230c9d4",
+      "bytes": 20861,
+      "current_sha256": "3f094bd308cb6d967b60e0aba3b5731dbc706cf08657e64443f40a918230c9d4",
+      "unchanged": true
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs",
+      "sha256": "8bd7e576e29568c9346e981bc217ba4c5fb30fc2cd150b30252ed5fd1f7d6ab6",
+      "bytes": 6215,
+      "current_sha256": "8bd7e576e29568c9346e981bc217ba4c5fb30fc2cd150b30252ed5fd1f7d6ab6",
+      "unchanged": true
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs",
+      "sha256": "adb853e0793374aa848e72f35ecf42ca00f615965cfba9d0e92a1dd51bc5611b",
+      "bytes": 7146,
+      "current_sha256": "63245d949209d651c305d95cd85332bb44166314009af29a9105799d114b4ffc",
+      "unchanged": false
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs",
+      "sha256": "9526ca7beb9647abe4f02cd0f3bb5da4e8901b4c2c2e14f304adc9574dabd8c4",
+      "bytes": 8502,
+      "current_sha256": "9526ca7beb9647abe4f02cd0f3bb5da4e8901b4c2c2e14f304adc9574dabd8c4",
+      "unchanged": true
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.Review4.cs",
+      "sha256": "61b1b4c9bd6b2c466b2449445eed7acb291e81577bb54c5b8b60fb98ffc9f0f0",
+      "bytes": 5781,
+      "current_sha256": "61b1b4c9bd6b2c466b2449445eed7acb291e81577bb54c5b8b60fb98ffc9f0f0",
+      "unchanged": true
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.cs",
+      "sha256": "921b63259a508f1c381bf2298b8a250b20f8a868add6e9f046161a5f9b6b91eb",
+      "bytes": 13058,
+      "current_sha256": "921b63259a508f1c381bf2298b8a250b20f8a868add6e9f046161a5f9b6b91eb",
+      "unchanged": true
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationQueryRegistrationTest.cs",
+      "sha256": "16c923431f9839ede13a6ac66fa6eba5ec34f8bd427b509089aaadea5118aae1",
+      "bytes": 8803,
+      "current_sha256": "16c923431f9839ede13a6ac66fa6eba5ec34f8bd427b509089aaadea5118aae1",
+      "unchanged": true
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs",
+      "sha256": "e6f451e0781d4246eeb171969317593bdf16a2490620fbcf72263dc5353f2218",
+      "bytes": 23824,
+      "current_sha256": "beac75d6ca99b1eed4709820e0ea25e0d889c1e660f3f66b0592fdb18765d479",
+      "unchanged": false
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs",
+      "sha256": "de963e3530d5e752ea091ca4f63a9e8ffc9623805220cc24424775d5d07cd5cf",
+      "bytes": 5594,
+      "current_sha256": "de963e3530d5e752ea091ca4f63a9e8ffc9623805220cc24424775d5d07cd5cf",
+      "unchanged": true
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataAccess.cs",
+      "sha256": "bac655e17acb1e801c5858737e5bc87ea67bc1cc2e90abdba1334da61685718e",
+      "bytes": 2907,
+      "current_sha256": "bac655e17acb1e801c5858737e5bc87ea67bc1cc2e90abdba1334da61685718e",
+      "unchanged": true
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs",
+      "sha256": "24980b832b33e69513fb638dade690195dea204cccab0193b24f3bdebdc554e9",
+      "bytes": 10911,
+      "current_sha256": "24980b832b33e69513fb638dade690195dea204cccab0193b24f3bdebdc554e9",
+      "unchanged": true
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs",
+      "sha256": "bdc19e4ce25f806b15fe4a5ad090a45d295669e7daf205e035e4650532348bfe",
+      "bytes": 3249,
+      "current_sha256": "6c5b5b53f8de814e821e4a575ef99e6161c281f11f5802db913c6596d90e7189",
+      "unchanged": false
+    },
+    {
+      "path": "src/Hexalith.Projects.Client/Generated/HexalithProjectsClient.g.cs",
+      "sha256": "b50226ef6b7ca084107425ba67c041a532aa42b89b5ed03478f692ed0321c4e8",
+      "bytes": 562679,
+      "current_sha256": "b50226ef6b7ca084107425ba67c041a532aa42b89b5ed03478f692ed0321c4e8",
+      "unchanged": true
+    },
+    {
+      "path": "src/Hexalith.Projects.Client/Generated/HexalithProjectsIdempotencyHelpers.g.cs",
+      "sha256": "9cf2b4ae8337b18fa8a3b6f950200ff23cfc611be22e196c089da840dff3d53f",
+      "bytes": 19307,
+      "current_sha256": "9cf2b4ae8337b18fa8a3b6f950200ff23cfc611be22e196c089da840dff3d53f",
+      "unchanged": true
+    },
+    {
+      "path": "src/Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml",
+      "sha256": "921b578700b96edb19aceec26ca2e06b14ca51282160048ae9dbe25c25b5b0ce",
+      "bytes": 167665,
+      "current_sha256": "921b578700b96edb19aceec26ca2e06b14ca51282160048ae9dbe25c25b5b0ce",
+      "unchanged": true
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs",
+      "sha256": "8f9bbf440fb0ed536e2e1638a51ae2eff4ee20071b7029e03045cbacf2af3346",
+      "bytes": 21412,
+      "current_sha256": "8f9bbf440fb0ed536e2e1638a51ae2eff4ee20071b7029e03045cbacf2af3346",
+      "unchanged": true
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/LegacyProjectResolutionAuthorization.cs",
+      "sha256": "b302b4abcd06fbbbf75f02d910e1738c39cdd17923eec7b17ba1707f6b6f529a",
+      "bytes": 3677,
+      "current_sha256": "b302b4abcd06fbbbf75f02d910e1738c39cdd17923eec7b17ba1707f6b6f529a",
+      "unchanged": true
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs",
+      "sha256": "11cbbb1e049219d60e659fad6362a81a94edd9b88c3968f4090b8cecd09fa778",
+      "bytes": 21365,
+      "current_sha256": "11cbbb1e049219d60e659fad6362a81a94edd9b88c3968f4090b8cecd09fa778",
+      "unchanged": true
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/ResolveProjectFromAttachmentsEndpoint.cs",
+      "sha256": "ba4dfe42ab3fd424c5d2d12b30b2ab7f8fe99d45c256d9f89f91a3d377560009",
+      "bytes": 10741,
+      "current_sha256": "044f6004c2b4b7a0a9d633d96f214c10995e45b907365331ab388b5447deeb20",
+      "unchanged": false
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/ResolveProjectFromConversationEndpoint.cs",
+      "sha256": "4b44df576b219436caa06952d5ab3780da15e7c14ad4113416f3792cee791f40",
+      "bytes": 11958,
+      "current_sha256": "c7f3775ea284931e7f6bd9e59064da6b18705e5e737c96eab0af05ac1a26b4e9",
+      "unchanged": false
+    },
+    {
+      "path": "src/Hexalith.Projects/Aggregates/Project/ProjectPersistedDetailValidator.cs",
+      "sha256": "b1173a18431d50919d6f4a0c9ab6b4cb4734dcee8e9751decd3c1ecbd92e0a96",
+      "bytes": 6745,
+      "current_sha256": "b1173a18431d50919d6f4a0c9ab6b4cb4734dcee8e9751decd3c1ecbd92e0a96",
+      "unchanged": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectAdvisoryContractTests.cs",
+      "sha256": "76601cef37df5f795a3642a7014301a7184c7f10dc9eb8bd4e3724c99caa634d",
+      "bytes": 6361,
+      "current_sha256": "76601cef37df5f795a3642a7014301a7184c7f10dc9eb8bd4e3724c99caa634d",
+      "unchanged": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/DelegatedDirectoryTestQueryHandler.cs",
+      "sha256": "bdac0863b7a482b95eaf33cf8f1e6531042835936cefe79ad1d501c222d50962",
+      "bytes": 877,
+      "current_sha256": "bdac0863b7a482b95eaf33cf8f1e6531042835936cefe79ad1d501c222d50962",
+      "unchanged": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/DelegatedProjectDirectoryRegistrationTests.cs",
+      "sha256": "2acca4a448e786394d88797fc127f7349599b702a3769681db3d91f770d8e6d7",
+      "bytes": 6059,
+      "current_sha256": "42a857284b168e423f95bf3650dbaa38e2d7615eef877cf2016f08eb55b08702",
+      "unchanged": false
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/AdvisoryGuardedReadStore.cs",
+      "sha256": "120bc00f663614e5e248b65fb0b50cf86f9d13684e027c293630a2fcae072b5f",
+      "bytes": 1606,
+      "current_sha256": "120bc00f663614e5e248b65fb0b50cf86f9d13684e027c293630a2fcae072b5f",
+      "unchanged": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/AdvisoryTestConversationDirectory.cs",
+      "sha256": "4274f897f54677bef4c3c77bdf096f74f338ad1fe91c79664c7bdc2573497084",
+      "bytes": 1148,
+      "current_sha256": "4274f897f54677bef4c3c77bdf096f74f338ad1fe91c79664c7bdc2573497084",
+      "unchanged": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/AdvisoryTestLogger.cs",
+      "sha256": "b7bf1e005bcab588587b66dfc5481a8274f193f32d401a8c3965b17383ca9850",
+      "bytes": 848,
+      "current_sha256": "b7bf1e005bcab588587b66dfc5481a8274f193f32d401a8c3965b17383ca9850",
+      "unchanged": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAdvisoryQueryTests.Review4.cs",
+      "sha256": "40862eab5034c561e3e54afbb9418a0b1725205d60f76ee762c666b98499d694",
+      "bytes": 14689,
+      "current_sha256": "40862eab5034c561e3e54afbb9418a0b1725205d60f76ee762c666b98499d694",
+      "unchanged": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAdvisoryQueryTests.cs",
+      "sha256": "6a85490b3014c755618c53b54783fb2da4f6e56b0aca126a9a249c066ae61614",
+      "bytes": 44016,
+      "current_sha256": "6a85490b3014c755618c53b54783fb2da4f6e56b0aca126a9a249c066ae61614",
+      "unchanged": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadTestFolders.cs",
+      "sha256": "28bdd9de03a59be33fc3758eab13f4c0cc1490fd7239ab38927626bcd158794e",
+      "bytes": 1893,
+      "current_sha256": "134f8837a33fbfb9a8eab0f74985709ae471b6bda7079c0872034c05dae34f30",
+      "unchanged": false
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ResolveProjectFromAttachmentsTests.cs",
+      "sha256": "44bd11217e0c9dbe3bcdb04a478b82107bd18e75beb7bab2d4803b7dfa76f4ed",
+      "bytes": 34721,
+      "current_sha256": "3481360b4e4cecf37a5974d87e438f7c0d8054a5042d01ffe2345a9e898ec44f",
+      "unchanged": false
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ResolveProjectFromConversationTests.cs",
+      "sha256": "07997354370238a953a1f2febdc99067bad8fb1a6cf3dd223bd24a2e31266cff",
+      "bytes": 35975,
+      "current_sha256": "b8dfafdaf9b8ba8dfd073898d44626067cc70998383bf1c21fc1533e3aae57a0",
+      "unchanged": false
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "sha256": "0f2c88d742cc2395e901a1fc92ec4d72f9d5dee3334bb02af988152e20f4d7f5",
+      "bytes": 33073,
+      "current_sha256": "0f2c88d742cc2395e901a1fc92ec4d72f9d5dee3334bb02af988152e20f4d7f5",
+      "unchanged": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.cs",
+      "sha256": "00d1869e8c135b8bb6af10835d393226a537f7f57eb3af277515fdaadb96b79d",
+      "bytes": 27666,
+      "current_sha256": "00d1869e8c135b8bb6af10835d393226a537f7f57eb3af277515fdaadb96b79d",
+      "unchanged": true
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectShadowTests.cs",
+      "sha256": "b8fb8585a4e19f957d59f0700b9194901ab815113c2f8ce76c87d1c98e77d880",
+      "bytes": 11725,
+      "current_sha256": "b8fb8585a4e19f957d59f0700b9194901ab815113c2f8ce76c87d1c98e77d880",
+      "unchanged": true
+    },
+    {
+      "path": "tests/e2e/specs/projects-resolution.spec.ts",
+      "sha256": "6e6f8885a98dd713e475b78a640916995c9297c0c22809af9fc3b812b4a869f9",
+      "bytes": 9577,
+      "current_sha256": "6e6f8885a98dd713e475b78a640916995c9297c0c22809af9fc3b812b4a869f9",
+      "unchanged": true
+    },
+    {
+      "path": "tools/planning/validate_production_authority.py",
+      "sha256": "586567f6c6f837f1bc1921a832e807cf043b68e16a76ac7dcb5fc43a395df14f",
+      "bytes": 28399,
+      "current_sha256": "747b668a258bc60c7a4bf67a02c6c5326cee85c905e56cdb748d6937577b2d80",
+      "unchanged": false
+    }
+  ],
+  "historical_reference_audit": {
+    "matrix.json": {
+      "references": 65,
+      "all_reference_tests_passed": true,
+      "rows": [
+        "Advisory",
+        "Protected",
+        "Order/archive",
+        "Bounded",
+        "Degraded",
+        "Revoked",
+        "Effects"
+      ]
+    },
+    "patch-coverage.json": {
+      "references": 256,
+      "all_reference_tests_passed": true,
+      "rows": []
+    }
+  },
+  "fresh_source_debug_builds": {
+    "projects": {
+      "exit_code": 0,
+      "warnings": 0,
+      "errors": 0,
+      "log": "/tmp/story64-local-audit-projects-build-20261027.log"
+    },
+    "conversations": {
+      "exit_code": 0,
+      "warnings": 0,
+      "errors": 0,
+      "log": "/tmp/story64-local-audit-conversations-build-20261027.log"
+    }
+  },
+  "fresh_focused_tests": [
+    {
+      "owner": "projects",
+      "xml": "/tmp/story64-local-audit-projects-focused-20261027.xml",
+      "sha256": "ae3587f9bd5df7a4f80aab777750cf322b9229019ff81f1f9a7a68dd59bc469a",
+      "totals": {
+        "total": "215",
+        "passed": "215",
+        "failed": "0",
+        "errors": "0",
+        "skipped": "0",
+        "not-run": "0"
+      },
+      "retained_xml": "projects-focused.xml"
+    },
+    {
+      "owner": "conversations",
+      "xml": "/tmp/story64-local-audit-conversations-focused-20261027.xml",
+      "sha256": "a4227285cc5ed5eebf0a84cc8d270c8911af6b5a55a64f1ad51fd88096535544",
+      "totals": {
+        "total": "116",
+        "passed": "116",
+        "failed": "0",
+        "errors": "0",
+        "skipped": "0",
+        "not-run": "0"
+      },
+      "retained_xml": "conversations-focused.xml"
+    }
+  ],
+  "planning_guard": {
+    "command": "python3 -m unittest discover -s tests/tools -p test_production_authority_guard.py",
+    "passed": 37,
+    "failed": 0
+  },
+  "authority_checks": [
+    {
+      "command": "python3 tools/planning/validate_production_authority.py --story-id 6.4",
+      "exit_code": 0,
+      "output": "PASS: Story 6.4 is within production authority"
+    },
+    {
+      "command": "python3 tools/planning/validate_production_authority.py --validate-index",
+      "exit_code": 0,
+      "output": "PASS: production-authority index is [6, 7, 8]"
+    }
+  ],
+  "limitations": [
+    "No full current Server suite rerun",
+    "No fresh signed gateway/Dapr/Redis integration or live AppHost/browser/deployment run",
+    "Historical receipts verify the recorded source, while eleven source-manifest files have later changes",
+    "Conversations 1.3.1 publication, verified package consumption and consumer pins remain unfinished and require the approvals recorded in the spec",
+    "Files remain explicitly unsupported/incomplete; existing unlabeled metadata benefits after reprojection or the next update"
+  ],
+  "commands": [
+    {
+      "name": "projects-source-debug-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "-p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+        "-p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+        "-v:minimal"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "private_log": "/tmp/story64-local-audit-projects-build-20261027.log"
+    },
+    {
+      "name": "projects-focused",
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+        "-class",
+        "*ProjectAdvisoryQueryTests",
+        "-class",
+        "*ResolveProjectFromAttachmentsTests",
+        "-class",
+        "*ResolveProjectFromConversationTests",
+        "-class",
+        "*DelegatedProjectDirectoryRegistrationTests",
+        "-result-xml",
+        "/tmp/story64-local-audit-projects-focused-20261027.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "private_log": "/tmp/story64-local-audit-projects-focused-20261027.log",
+      "xml": "/tmp/story64-local-audit-projects-focused-20261027.xml"
+    },
+    {
+      "name": "conversations-source-debug-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+        "-p:HexalithCommonsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Commons",
+        "-p:HexalithTenantsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+        "-v:minimal"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "exit_code": 0,
+      "private_log": "/tmp/story64-local-audit-conversations-build-20261027.log"
+    },
+    {
+      "name": "conversations-focused",
+      "argv": [
+        "dotnet",
+        "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll",
+        "-class",
+        "*ConversationAdvisoryMetadataQueryHandlerTest",
+        "-class",
+        "*ConversationResolutionMetadataQueryHandlerTest",
+        "-class",
+        "*ConversationQueryRegistrationTest",
+        "-result-xml",
+        "/tmp/story64-local-audit-conversations-focused-20261027.xml"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "private_log": "/tmp/story64-local-audit-conversations-focused-20261027.log",
+      "xml": "/tmp/story64-local-audit-conversations-focused-20261027.xml"
+    },
+    {
+      "name": "planning-guard",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_production_authority_guard.py"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "private_log": null,
+      "tool_output": ".....................................\n----------------------------------------------------------------------\nRan 37 tests in 8.509s\n\nOK\n"
+    },
+    {
+      "name": "authority-story-corrected",
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.4"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "private_log": null,
+      "tool_output": "PASS: Story 6.4 is within production authority\n"
+    },
+    {
+      "name": "authority-index",
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "private_log": null,
+      "tool_output": "PASS: production-authority index is [6, 7, 8]\n"
+    },
+    {
+      "name": "authority-initial-syntax-error",
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6-4"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 1,
+      "private_log": null,
+      "tool_output": "BLOCKED: invalid story identifier '6-4'\n",
+      "disposition": "Corrected story identifier syntax to 6.4; subsequent authority check passed. This was not a product blocker."
+    }
+  ],
+  "dotnet_sdk": "10.0.402"
+}

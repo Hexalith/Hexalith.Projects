@@ -1,0 +1,20 @@
+{
+  "command": [
+    "dotnet",
+    "tool",
+    "run",
+    "hexalith-module",
+    "--",
+    "validate",
+    "--manifest",
+    "module/hexalith.module-manifest.v2.json",
+    "--output",
+    "json"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+  "exit_code": 1,
+  "stdout": "{\"status\":\"failed\",\"outcome\":{\"exitCode\":\"UsageOrManifest\",\"phase\":\"Manifest\",\"category\":\"Manifest\",\"ruleId\":\"HXP002\"},\"diagnostics\":[{\"ruleId\":\"HXP002\",\"phase\":\"Manifest\",\"category\":\"Manifest\",\"message\":\"Use a nonblank value matching the schema\\u0027s declared format and length.\",\"field\":\"modules[0].integration.secrets[1].configurationKey\",\"hint\":null,\"source\":\"module/hexalith.module-manifest.v2.json\",\"location\":null,\"row\":null},{\"ruleId\":\"HXP002\",\"phase\":\"Manifest\",\"category\":\"Manifest\",\"message\":\"Use a nonblank value matching the schema\\u0027s declared format and length.\",\"field\":\"modules[0].runtime.extensions[0].configurationInputs[12].key\",\"hint\":null,\"source\":\"module/hexalith.module-manifest.v2.json\",\"location\":null,\"row\":null}]}\n",
+  "stderr": "",
+  "read_only_validation": true,
+  "accepted_tool_pin": "4.35.2"
+}

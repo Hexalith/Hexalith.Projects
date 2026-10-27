@@ -1,0 +1,22 @@
+{
+  "name": "hexalith-conversations",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
+    "commitlint": "commitlint --config commitlint.config.mjs",
+    "test": "cd tests/tooling && python3 -m unittest -v test_check_root_submodules test_ext_conv_ai_1_live_runner test_ext_conv_ai_1_qualification test_minimal_module_compatibility_results test_minimal_module_compatibility_overlay test_release_tooling",
+    "verify:release-plan": "node scripts/verify-semantic-release-plan.mjs"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
+    "@semantic-release/commit-analyzer": "13.0.1",
+    "@semantic-release/exec": "7.1.0",
+    "@semantic-release/github": "12.0.10",
+    "@semantic-release/release-notes-generator": "14.1.1",
+    "semantic-release": "25.0.9"
+  }
+}

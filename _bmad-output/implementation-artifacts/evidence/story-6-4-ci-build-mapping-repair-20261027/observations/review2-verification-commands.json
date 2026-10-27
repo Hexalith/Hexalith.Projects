@@ -1,0 +1,84 @@
+[
+  {
+    "label": "review2-producer-build",
+    "command": [
+      "dotnet",
+      "build",
+      "test/Hexalith.Builds.Module.Tests/Hexalith.Builds.Module.Tests.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "review2-producer-build.log.gz"
+  },
+  {
+    "label": "review2-producer-helper8",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Github/prepare-module-build/tests",
+      "-v"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "review2-producer-helper-tests.log.gz"
+  },
+  {
+    "label": "review2-preparation11",
+    "command": [
+      "dotnet",
+      "test/Hexalith.Builds.Module.Tests/bin/Debug/net10.0/Hexalith.Builds.Module.Tests.dll",
+      "-class",
+      "Hexalith.Builds.ModuleTool.Tests.Workspace.BuildPreparationTests",
+      "-failSkips",
+      "-result-xml",
+      "/tmp/story64-ci-repair-20261027/review2-producer-preparation-tests.xml",
+      "-noLogo"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "review2-producer-preparation-tests.log.gz"
+  },
+  {
+    "label": "review2-cancellation-control1",
+    "command": [
+      "dotnet",
+      "test/Hexalith.Builds.Module.Tests/bin/Debug/net10.0/Hexalith.Builds.Module.Tests.dll",
+      "-method",
+      "*CancellationAfterMaterializationStartsRemovesOwnedOutputAsync",
+      "-failSkips",
+      "-result-xml",
+      "/tmp/story64-ci-repair-20261027/review2-cancellation-control.xml",
+      "-noLogo"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "review2-cancellation-control.log.gz"
+  },
+  {
+    "label": "review2-compatibility-overlay3",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tooling",
+      "-p",
+      "test_minimal_module_compatibility_overlay.py",
+      "-v"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/standalone-compatibility",
+    "exit": 0,
+    "observation": "review2-compatibility-overlay-tests.log.gz",
+    "fixture": "Identical current source files and the exact recorded db897eac catalog blob; direct catalog only, no dependency initialization or lock generation."
+  }
+]

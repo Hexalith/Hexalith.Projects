@@ -1,0 +1,478 @@
+[
+  {
+    "label": "producer-debug-build",
+    "command": [
+      "dotnet",
+      "build",
+      "test/Hexalith.Builds.Module.Tests/Hexalith.Builds.Module.Tests.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "build-producer-tests.log.gz"
+  },
+  {
+    "label": "producer-public-preparation6",
+    "command": [
+      "dotnet",
+      "test/Hexalith.Builds.Module.Tests/bin/Debug/net10.0/Hexalith.Builds.Module.Tests.dll",
+      "-class",
+      "Hexalith.Builds.ModuleTool.Tests.Workspace.BuildPreparationTests",
+      "-result-xml",
+      "/tmp/story64-ci-repair-20261027/producer-preparation-tests.xml",
+      "-noLogo"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "producer-preparation-tests.log.gz"
+  },
+  {
+    "label": "producer-helper5",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Github/prepare-module-build/tests"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "producer-helper-tests.log.gz"
+  },
+  {
+    "label": "producer-provenance38",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Github/governed-provenance/tests"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "producer-provenance-helper-tests.log.gz"
+  },
+  {
+    "label": "consumer-tooling27",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tooling",
+      "-p",
+      "test_release_tooling.py"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 0,
+    "observation": "conversations-tooling-tests.log.gz"
+  },
+  {
+    "label": "compatibility-overlay1",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tooling",
+      "-p",
+      "test_minimal_module_compatibility_overlay.py"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 0,
+    "observation": "compatibility-overlay-tests.log.gz"
+  },
+  {
+    "label": "compatibility-validator8",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tooling",
+      "-p",
+      "test_minimal_module_compatibility_results.py"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 0,
+    "observation": "compatibility-validator-tests.log.gz"
+  },
+  {
+    "label": "original-frozen-lock-refusal",
+    "command": [
+      "dotnet",
+      "restore",
+      "tests/fixtures/Hexalith.Conversations.MinimalModule/Hexalith.Conversations.MinimalModule.slnx",
+      "--locked-mode",
+      "-p:Configuration=Debug",
+      "-p:FixtureEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+      "-p:CustomAfterMicrosoftCommonTargets=/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/compatibility/MinimalModule/RegisteredCommand.targets",
+      "-p:NuGetAudit=false",
+      "-m:1"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 1,
+    "observation": "fixture-original-locked-restore.log.gz"
+  },
+  {
+    "label": "deliberate-successor-generation",
+    "command": [
+      "dotnet",
+      "restore",
+      "tests/fixtures/Hexalith.Conversations.MinimalModule/Hexalith.Conversations.MinimalModule.slnx",
+      "--force-evaluate",
+      "-p:Configuration=Release",
+      "-p:MinimalModuleCompatibilityMode=package",
+      "-p:MinimalModuleCompatibilityUseSuccessorLocks=true",
+      "-p:CustomAfterMicrosoftCommonTargets=/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/compatibility/MinimalModule/RegisteredCommand.targets",
+      "-p:NuGetAudit=false",
+      "-m:1"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 0,
+    "observation": "fixture-successor-lock-generation.log.gz"
+  },
+  {
+    "label": "successor-locked-restore",
+    "command": [
+      "dotnet",
+      "restore",
+      "tests/fixtures/Hexalith.Conversations.MinimalModule/Hexalith.Conversations.MinimalModule.slnx",
+      "--locked-mode",
+      "-p:Configuration=Release",
+      "-p:MinimalModuleCompatibilityMode=package",
+      "-p:MinimalModuleCompatibilityUseSuccessorLocks=true",
+      "-p:CustomAfterMicrosoftCommonTargets=/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/compatibility/MinimalModule/RegisteredCommand.targets",
+      "-p:NuGetAudit=false",
+      "-m:1"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 0,
+    "observation": "fixture-successor-locked-restore.log.gz"
+  },
+  {
+    "label": "umbrella-ambient-analyzer-refusal",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/fixtures/Hexalith.Conversations.MinimalModule/Hexalith.Conversations.MinimalModule.slnx",
+      "--configuration",
+      "Release",
+      "--no-restore",
+      "-p:MinimalModuleCompatibilityMode=package",
+      "-p:MinimalModuleCompatibilityUseSuccessorLocks=true",
+      "-p:CustomAfterMicrosoftCommonTargets=/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/compatibility/MinimalModule/RegisteredCommand.targets",
+      "-p:NuGetAudit=false",
+      "-m:1"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 1,
+    "observation": "fixture-successor-build.log.gz"
+  },
+  {
+    "label": "standalone-ci-layout-locked-restore",
+    "command": [
+      "dotnet",
+      "restore",
+      "tests/fixtures/Hexalith.Conversations.MinimalModule/Hexalith.Conversations.MinimalModule.slnx",
+      "--locked-mode",
+      "-p:Configuration=Release",
+      "-p:MinimalModuleCompatibilityMode=package",
+      "-p:MinimalModuleCompatibilityUseSuccessorLocks=true",
+      "-p:CustomAfterMicrosoftCommonTargets=/tmp/story64-ci-repair-20261027/standalone-compatibility/tests/compatibility/MinimalModule/RegisteredCommand.targets",
+      "-m:1"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/standalone-compatibility",
+    "exit": 0,
+    "observation": "standalone-fixture-locked-restore.log.gz"
+  },
+  {
+    "label": "standalone-ci-layout-package-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/fixtures/Hexalith.Conversations.MinimalModule/Hexalith.Conversations.MinimalModule.slnx",
+      "--configuration",
+      "Release",
+      "--no-restore",
+      "-p:MinimalModuleCompatibilityMode=package",
+      "-p:MinimalModuleCompatibilityUseSuccessorLocks=true",
+      "-p:CustomAfterMicrosoftCommonTargets=/tmp/story64-ci-repair-20261027/standalone-compatibility/tests/compatibility/MinimalModule/RegisteredCommand.targets",
+      "-m:1"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/standalone-compatibility",
+    "exit": 0,
+    "observation": "standalone-fixture-build.log.gz"
+  },
+  {
+    "label": "compatibility7",
+    "command": [
+      "dotnet",
+      "tests/fixtures/Hexalith.Conversations.MinimalModule/tests/Hexalith.Conversations.MinimalModule.Tests/bin/Release/net10.0/Hexalith.Conversations.MinimalModule.Tests.dll",
+      "-automated",
+      "sync",
+      "-failSkips",
+      "-result-xml",
+      "/tmp/story64-ci-repair-20261027/compatibility-results.xml"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/standalone-compatibility",
+    "exit": 0,
+    "observation": "compatibility-tests.log.gz"
+  },
+  {
+    "label": "exact-compatibility-result-gate",
+    "command": [
+      "python3",
+      "tests/compatibility/MinimalModule/verify_results.py",
+      "/tmp/story64-ci-repair-20261027/compatibility-results.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 0,
+    "observation": "compatibility-verification.log.gz"
+  },
+  {
+    "label": "owning-source-gitlink-refusal",
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/bin/Debug/net10.0/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story64-ci-repair-20261027/conversations-source",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 2,
+    "observation": "conversations-source-prepare.json"
+  },
+  {
+    "label": "current-package-tuple-refusal",
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/bin/Debug/net10.0/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "package",
+      "--workspace",
+      "/tmp/story64-ci-repair-20261027/current-package",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 2,
+    "observation": "current-package-prepare.json"
+  },
+  {
+    "label": "disposable-direct-workspace-source-success",
+    "command": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/bin/Debug/net10.0/Hexalith.Builds.Module.Cli.dll",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story64-ci-repair-20261027/verified-source",
+      "--output",
+      "json"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Conversations",
+    "exit": 0,
+    "observation": "verified-source-prepare.json"
+  },
+  {
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Conversations.Contracts.Tests/Hexalith.Conversations.Contracts.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Conversations",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-ci-repair-20261027/verified-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-ci-repair-20261027/verified-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-ci-repair-20261027/verified-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-ci-repair-20261027/verified-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-ci-repair-20261027/verified-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "8ad971a7718ab5796027d2274990a044d032db2af1649a6c74bb80fbd2e360e4",
+      "Configuration": "Debug"
+    },
+    "exit": 0,
+    "seconds": 32.17
+  },
+  {
+    "label": "current-source-mapping-tests",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Conversations.Contracts.Tests/bin/Debug/net10.0/Hexalith.Conversations.Contracts.Tests.dll",
+      "-class",
+      "Hexalith.Conversations.Contracts.Tests.PlatformEnrollmentMappingTest",
+      "-result-xml",
+      "/tmp/story64-ci-repair-20261027/current-source-mapping-tests.xml",
+      "-noLogo"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Conversations",
+    "exit": 0,
+    "seconds": 10.162
+  },
+  {
+    "label": "current-source-server-build",
+    "command": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Conversations",
+    "exit": 0,
+    "seconds": 13.834
+  },
+  {
+    "label": "current-source-advisory48",
+    "command": [
+      "dotnet",
+      "tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll",
+      "-class",
+      "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest",
+      "-result-xml",
+      "/tmp/story64-ci-repair-20261027/current-source-advisory-tests.xml",
+      "-noLogo"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/source-workspace/references/Hexalith.Conversations",
+    "exit": 0,
+    "observation": "current-source-advisory-tests.log.gz"
+  },
+  {
+    "label": "established-conversations-tooling95",
+    "command": [
+      "npm",
+      "test"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "exit": 0,
+    "observation": "conversations-npm-tests.log.gz",
+    "count": 95
+  },
+  {
+    "label": "windows-checkout-contract-review-regression",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "-v",
+      "test_release_tooling.ReleaseToolingTests.test_ci_and_security_automation_cover_release_boundary"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/tooling",
+    "exit": 0,
+    "started_at_utc": "2026-10-27T17:48:52.458377+00:00",
+    "seconds": 0.081,
+    "observation": "windows-checkout-contract-test.log.gz"
+  },
+  {
+    "label": "review2-producer-build",
+    "command": [
+      "dotnet",
+      "build",
+      "test/Hexalith.Builds.Module.Tests/Hexalith.Builds.Module.Tests.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "review2-producer-build.log.gz"
+  },
+  {
+    "label": "review2-producer-helper8",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Github/prepare-module-build/tests",
+      "-v"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "review2-producer-helper-tests.log.gz"
+  },
+  {
+    "label": "review2-preparation11",
+    "command": [
+      "dotnet",
+      "test/Hexalith.Builds.Module.Tests/bin/Debug/net10.0/Hexalith.Builds.Module.Tests.dll",
+      "-class",
+      "Hexalith.Builds.ModuleTool.Tests.Workspace.BuildPreparationTests",
+      "-failSkips",
+      "-result-xml",
+      "/tmp/story64-ci-repair-20261027/review2-producer-preparation-tests.xml",
+      "-noLogo"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "review2-producer-preparation-tests.log.gz"
+  },
+  {
+    "label": "review2-cancellation-control1",
+    "command": [
+      "dotnet",
+      "test/Hexalith.Builds.Module.Tests/bin/Debug/net10.0/Hexalith.Builds.Module.Tests.dll",
+      "-method",
+      "*CancellationAfterMaterializationStartsRemovesOwnedOutputAsync",
+      "-failSkips",
+      "-result-xml",
+      "/tmp/story64-ci-repair-20261027/review2-cancellation-control.xml",
+      "-noLogo"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "exit": 0,
+    "observation": "review2-cancellation-control.log.gz"
+  },
+  {
+    "label": "review2-compatibility-overlay3",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tooling",
+      "-p",
+      "test_minimal_module_compatibility_overlay.py",
+      "-v"
+    ],
+    "cwd": "/tmp/story64-ci-repair-20261027/standalone-compatibility",
+    "exit": 0,
+    "observation": "review2-compatibility-overlay-tests.log.gz",
+    "fixture": "Identical current source files and the exact recorded db897eac catalog blob; direct catalog only, no dependency initialization or lock generation."
+  }
+]

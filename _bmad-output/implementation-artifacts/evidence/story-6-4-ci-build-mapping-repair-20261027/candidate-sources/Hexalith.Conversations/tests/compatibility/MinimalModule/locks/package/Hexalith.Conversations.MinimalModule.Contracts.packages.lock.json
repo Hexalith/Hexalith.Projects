@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "Hexalith.EventStore.Contracts": {
+        "type": "Direct",
+        "requested": "[3.128.0, )",
+        "resolved": "3.128.0",
+        "contentHash": "YQok6MYWVzfyg+AkAOdsr7Ez7Y71/XtG/Idzlvx6u8ulXkObem1fX1BWVQ2OC3vLh3yuwTpRziYpx4yblJKtuw==",
+        "dependencies": {
+          "ByteAether.Ulid": "1.4.2",
+          "Hexalith.Commons.UniqueIds": "2.30.3"
+        }
+      },
+      "ByteAether.Ulid": {
+        "type": "Transitive",
+        "resolved": "1.4.2",
+        "contentHash": "LCOjm7QFSdM2X779Db2K+i3pPei4f8PJEcY1wGehkdgYNmpQaP5uF7U8aZMMBWeYe+zV2Ues9j/nFpW4Pw10wQ=="
+      },
+      "Hexalith.Commons.UniqueIds": {
+        "type": "Transitive",
+        "resolved": "2.30.3",
+        "contentHash": "e0tQgVfkT4CkozW/fO1Nl0i4m9dmfk4/Er6WJXjOduSftvHW2bo3ppIQQ/ncYwpC+2hUlqezwWMeFpjZzd+1Tw==",
+        "dependencies": {
+          "ByteAether.Ulid": "1.4.2"
+        }
+      }
+    }
+  }
+}

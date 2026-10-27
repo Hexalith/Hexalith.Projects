@@ -1,0 +1,222 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: release-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify-source:
+    name: Verify exact green main and planned release destinations
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      publish-enabled: ${{ steps.source.outputs.publish-enabled }}
+      release-version: ${{ steps.plan.outputs.release-version }}
+    steps:
+      - name: Check out complete release history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Resolve freeze and verify source
+        id: source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PUBLISH_ENABLED: ${{ vars.HEXALITH_RELEASE_PUBLISH_ENABLED }}
+        run: >-
+          python3 scripts/verify-release-source.py
+          --publish-enabled "${PUBLISH_ENABLED-}"
+          --repository "${{ github.repository }}"
+          --dispatch-ref "${{ github.ref }}"
+          --dispatch-sha "${{ github.sha }}"
+          --workflow ci.yml
+          --destination-state deferred
+          --github-output "$GITHUB_OUTPUT"
+
+      - name: Set up supported Node
+        if: ${{ steps.source.outputs.publish-enabled == 'true' }}
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install locked release tooling
+        if: ${{ steps.source.outputs.publish-enabled == 'true' }}
+        run: npm ci --ignore-scripts
+
+      - name: Verify npm dependency provenance and signatures
+        if: ${{ steps.source.outputs.publish-enabled == 'true' }}
+        run: npm audit signatures
+
+      - name: Resolve the semantic-release version
+        id: plan
+        if: ${{ steps.source.outputs.publish-enabled == 'true' }}
+        run: npm run verify:release-plan
+
+      - name: Verify planned release destinations
+        if: ${{ steps.source.outputs.publish-enabled == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ steps.plan.outputs.release-version }}
+        run: >-
+          python3 scripts/verify-release-source.py
+          --publish-enabled true
+          --repository "${{ github.repository }}"
+          --dispatch-ref "${{ github.ref }}"
+          --dispatch-sha "${{ github.sha }}"
+          --workflow ci.yml
+          --release-version "$RELEASE_VERSION"
+
+  release:
+    needs: verify-source
+    if: ${{ needs.verify-source.outputs.publish-enabled == 'true' }}
+    name: Publish Conversations packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: production
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Check out complete release history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          submodules: false
+          persist-credentials: false
+
+      - name: Check out approved Builds actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: Hexalith/Hexalith.Builds
+          ref: b93e9889e9e7b67036837015b4b2b115e326c4da
+          path: .hexalith/builds-execution
+          persist-credentials: false
+
+      - name: Validate approved Builds execution identity
+        run: test "$(git -C .hexalith/builds-execution rev-parse HEAD)" = "b93e9889e9e7b67036837015b4b2b115e326c4da"
+
+      - name: Initialize root-declared submodules
+        uses: ./.hexalith/builds-execution/Github/initialize-build
+
+      - name: Initialize .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+
+      - name: Prepare package build imports
+        uses: ./references/Hexalith.Builds/Github/prepare-module-build
+        with:
+          manifest: module/hexalith.module-manifest.v2.json
+
+      - name: Set up supported Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Cache NuGet packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ hashFiles('Directory.Packages.props', 'global.json', 'references/Hexalith.Builds/Props/Directory.Packages.props') }}
+          restore-keys: nuget-
+
+      - name: Validate declared package count
+        run: test "$(jq -r '.packages | length' tools/release-packages.json)" = '4'
+
+      - name: Install locked release tooling
+        run: npm ci --ignore-scripts
+
+      - name: Verify npm dependency provenance and signatures
+        run: npm audit signatures
+
+      - name: Restore
+        run: dotnet restore Hexalith.Conversations.slnx
+
+      - name: Build
+        run: dotnet build Hexalith.Conversations.slnx --no-restore --configuration Release -warnaserror
+
+      - name: Revalidate current source and release destinations
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ needs.verify-source.outputs.release-version }}
+        run: >-
+          python3 scripts/verify-release-source.py
+          --publish-enabled true
+          --repository "${{ github.repository }}"
+          --dispatch-ref "${{ github.ref }}"
+          --dispatch-sha "${{ github.sha }}"
+          --workflow ci.yml
+          --release-version "$RELEASE_VERSION"
+
+      - name: Validate trusted publishing account
+        env:
+          NUGET_TRUSTED_PUBLISHING_USER: ${{ vars.NUGET_TRUSTED_PUBLISHING_USER }}
+        run: |
+          if [ -z "${NUGET_TRUSTED_PUBLISHING_USER//[[:space:]]/}" ]; then
+            echo "NUGET_TRUSTED_PUBLISHING_USER must name the nuget.org policy creator." >&2
+            exit 1
+          fi
+
+      - name: Exchange GitHub OIDC for temporary NuGet key
+        id: nuget-login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ vars.NUGET_TRUSTED_PUBLISHING_USER }}
+
+      - name: Require the semantic plan to match the resolved version
+        env:
+          RELEASE_VERSION: ${{ needs.verify-source.outputs.release-version }}
+        run: npm run verify:release-plan -- "$RELEASE_VERSION"
+
+      - name: Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          HEXALITH_BUILDS_EXECUTION_SHA: b93e9889e9e7b67036837015b4b2b115e326c4da
+          HEXALITH_RELEASE_ENVIRONMENT: production
+          HEXALITH_RELEASE_SOURCE_BRANCH: main
+          HEXALITH_RELEASE_SOURCE_CI_WORKFLOW: ci.yml
+          HEXALITH_RELEASE_PACKAGE_MANIFEST: tools/release-packages.json
+          HEXALITH_RELEASE_EXPECTED_PACKAGE_COUNT: '4'
+          HEXALITH_RELEASE_REQUIRE_AUTHORITY: 'false'
+        run: npm exec --no -- semantic-release
+
+  verify-publication:
+    name: Verify exact packages, symbols, tag, and source
+    if: ${{ needs.verify-source.outputs.publish-enabled == 'true' }}
+    needs: [verify-source, release]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - name: Check out released source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Poll official publication endpoints
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ needs.verify-source.outputs.release-version }}
+        run: >-
+          python3 scripts/verify-release-state.py present "$RELEASE_VERSION"
+          --repository "${{ github.repository }}"
+          --source-sha "${{ github.sha }}"
+          --attempts 61
+          --delay-seconds 15

@@ -1,0 +1,164 @@
+# Preserve intentional CommonMark hard breaks in the signed release-owner summary.
+docs/release-evidence/success-metric-report-and-attestation-v1-release-owner-decision.md whitespace=-blank-at-eol
+
+# Planning authority and signed release evidence are hashed and parsed byte-for-byte by the conformance
+# gate (frozen epic prefix, signed v1 manifest, append-only overlay boundary). Without an explicit eol
+# policy, a clone with core.autocrlf=true checks these out as CRLF and every hash and boundary assertion
+# fails for a reason unrelated to planning authority -- CRLF would be reported as evidence tampering.
+# Scoped deliberately by extension: the repository's shared agent entry points are intentionally CRLF and
+# are excluded, and a directory-wide rule would force text conversion on binary evidence screenshots,
+# corrupting PNG bytes that happen to contain CRLF sequences.
+_bmad-output/**/*.md text eol=lf
+_bmad-output/**/*.json text eol=lf
+_bmad-output/**/*.yaml text eol=lf
+_bmad-output/**/*.yml text eol=lf
+docs/release-evidence/**/*.md text eol=lf
+docs/release-evidence/**/*.json text eol=lf
+tests/Hexalith.Conversations.TestSupport/Hexalith.Conversations.TestSupport.csproj text eol=lf
+tests/Hexalith.Conversations.TestSupport.Tests/Hexalith.Conversations.TestSupport.Tests.csproj text eol=lf
+
+# Completion-gate body bytes must match the committed blobs and in-memory render twins.
+.agents/skills/bmad-build/step-05-present.md text eol=lf
+.agents/skills/bmad-build/step-oneshot.md text eol=lf
+.agents/skills/bmad-build-auto/step-04-review.md text eol=lf
+.agents/skills/bmad-code-review/steps/step-04-present.md text eol=lf
+.claude/skills/bmad-build/step-05-present.md text eol=lf
+.claude/skills/bmad-build/step-oneshot.md text eol=lf
+.claude/skills/bmad-build-auto/step-04-review.md text eol=lf
+.claude/skills/bmad-code-review/steps/step-04-present.md text eol=lf
+
+# Never line-ending-convert binary evidence.
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary
+
+# Retain the original Story 9.1 machine-result bytes used by the Story 9.2 floor.
+docs/release-evidence/conformance-oracle-pre-split-story-9.2.trx -text whitespace=-blank-at-eol
+
+# Bind the new review gates and retained Story 10.3 receipt bytes across checkouts.
+.agents/skills/bmad-build/step-04-review.md text eol=lf
+.claude/skills/bmad-build/step-04-review.md text eol=lf
+artifacts/v9/10.3/*.json text eol=lf
+artifacts/v9/10.3/*.xml text eol=lf
+tests/Hexalith.Conversations.TestSupport.Runner/Hexalith.Conversations.TestSupport.Runner.csproj text eol=lf
+# The pinned C# consumer is authored with the required CRLF convention.
+tests/Hexalith.Conversations.TestSupport.Runner/Program.cs -text diff
+
+# Story 10.4 entry and measured receipts are byte-hashed across checkouts.
+artifacts/v9/10.4/*.json text eol=lf
+artifacts/v9/10.4/*.xml text eol=lf
+artifacts/v9/10.4/*.trx text eol=lf
+
+# Fresh Epic 10 follow-up fault receipts retain their measured bytes.
+_bmad-output/implementation-artifacts/tests/epic-10-retro-a1-a2-faults.xml text eol=lf
+
+# Story 11.2 minimal-module fixture sources are hand-authored LF text and byte-hashed; receipts keep measured bytes.
+tests/fixtures/Hexalith.Conversations.MinimalModule/** text eol=lf
+artifacts/v9/11.2/*.json text eol=lf
+artifacts/v9/11.2/*.xml text eol=lf
+artifacts/v9/11.2/*.trx text eol=lf
+artifacts/v9/11.2/*.log text eol=lf
+
+# Story 11.3 receipts retain their source-bound measured bytes across checkouts.
+artifacts/v9/11.3/*.json text eol=lf
+artifacts/v9/11.3/*.xml text eol=lf
+artifacts/v9/11.3/*.trx text eol=lf
+# Story 11.3 binds these implementation bytes across Git checkout policies.
+_bmad/scripts/generate_sm2_evidence.py text eol=lf
+_bmad/scripts/verify_sm2_evidence.py text eol=lf
+_bmad/scripts/verify_story_candidate.py text eol=lf
+_bmad/scripts/generate_story_record.py text eol=lf
+_bmad/scripts/tests/test_sm2_evidence.py text eol=lf
+_bmad/scripts/tests/test_generate_story_record.py text eol=lf
+_bmad/schemas/story-final-record-v2.schema.json text eol=lf
+tests/Hexalith.Conversations.Contracts.Tests/Documentation/MinimalModuleAuthoringCostBaselineValidationTest.cs -text diff
+
+# Story 6.4 current cross-Tenant execution is byte-hashed by its additive proof successor.
+docs/release-evidence/projection-read-store-population-story-6.4-v3-cross-tenant.xunit.xml text eol=lf
+
+# Epic 16 v2 binds these root-owned bytes independently of checkout conversion.
+# Existing planning/fixture rules above already preserve their LF inputs.
+.gitattributes text eol=lf
+.gitmodules text eol=lf
+.config/dotnet-tools.json text eol=lf
+_bmad/schemas/epic-16-adoption-v1.schema.json text eol=lf
+_bmad/schemas/epic-16-adoption-v2.schema.json text eol=lf
+_bmad/schemas/epic-16-prerequisites-v1.schema.json text eol=lf
+_bmad/scripts/contained_reader.py text eol=lf
+_bmad/scripts/verify_epic_16_adoption.py text eol=lf
+_bmad/scripts/verify_epic_16_adoption_v2.py text eol=lf
+_bmad/scripts/verify_epic_16_prerequisites.py text eol=lf
+_bmad/scripts/tests/test_verify_epic_16_adoption.py text eol=lf
+_bmad/scripts/tests/test_verify_epic_16_adoption_v2.py text eol=lf
+_bmad/scripts/tests/fixtures/epic16-*.json text eol=lf
+docs/runbooks/current-change-validation.md text eol=lf
+module/README.md text eol=lf
+module/hexalith.module-manifest.v2.json text eol=lf
+module/hosting-inventory.json text eol=lf
+module/sm-2-checklist.md text eol=lf
+# Native observations retain their exact bytes, including any raw CRLF.
+module/validation/*.json -text diff
+module/validation/*.txt -text diff
+module/validation/epic-16-adoption-v2/* -text diff
+src/Hexalith.Conversations.AppHost/Hexalith.Conversations.AppHost.csproj text eol=lf
+src/Hexalith.Conversations.Server/TenantAccess/ConversationTenantAccessServiceCollectionExtensions.cs text eol=lf
+# The pinned server entry point is intentionally stored as CRLF.
+src/Hexalith.Conversations.Server/Program.cs -text diff
+
+# Additive Epic 16 tooling keeps source and protocol identities stable across checkouts.
+_bmad/scripts/epic16_*.py text eol=lf
+_bmad/scripts/verify_story_16_*.py text eol=lf
+_bmad/scripts/tests/test_epic16_tooling.py text eol=lf
+_bmad/scripts/tests/fixtures/epic16-adoption-v2-gitattributes.txt -text
+_bmad/scripts/tests/fixtures/epic16-adoption-v2-generator.py.gz binary
+_bmad/schemas/epic-16-tooling-v1.schema.json text eol=lf
+module/validation/epic-16-prerequisite-implementation/** -text diff -whitespace
+
+# The helper fixture preserves exact upstream source bytes.
+_bmad/scripts/epic16_native_helper/* text eol=lf
+_bmad/scripts/epic16_native_helper/ReadModelBatchCanonicalJson.cs -text diff
+# The metadata inspector follows the shared C# CRLF convention byte-for-byte.
+_bmad/scripts/epic16_native_helper/Program.cs -text diff
+
+# Newly bound shared helpers must retain their committed LF bytes.
+_bmad/scripts/authoring_outputs.py text eol=lf
+_bmad/scripts/evidence_boundary_current.py text eol=lf
+_bmad/scripts/config_utils.py text eol=lf
+_bmad/scripts/verify_story_completion_workflows.py text eol=lf
+# Native tests follow the C# CRLF convention; measured/publication bytes are opaque.
+tests/Hexalith.Conversations.IntegrationTests/Epic16/*.cs -text diff
+artifacts/epic16-runtime/** -text diff
+artifacts/epic16-tooling-fixture/** -text diff
+artifacts/native/** -text diff
+docs/release-evidence/story-16.*-final-record-v2.* -text diff
+
+# SDK policy is bound verbatim; retained PE artifacts stay binary in normal review diffs.
+global.json text eol=lf
+module/validation/epic-16-prerequisite-implementation/**/*.dll -text -diff
+module/validation/epic-16-prerequisite-implementation/**/*.dll.bytes -text -diff
+artifacts/epic16-runtime/**/*.dll -text -diff
+artifacts/epic16-tooling-fixture/**/*.dll -text -diff
+artifacts/native/**/*.dll -text -diff
+artifacts/epic16-runtime/**/*.dll.bytes -text -diff
+artifacts/epic16-tooling-fixture/**/*.dll.bytes -text -diff
+artifacts/native/**/*.dll.bytes -text -diff
+# Additional fixed native inspectors follow the same CRLF byte policy.
+_bmad/scripts/epic16_native_helper/ProductMetadata.cs -text diff
+_bmad/scripts/epic16_native_helper/SignatureNames.cs -text diff
+
+# Fixed metadata-only constructor admission helper retains its authored CRLF bytes.
+_bmad/scripts/epic16_native_helper/TestConstruction.cs -text diff
+
+# Retained native debug symbols, signing keys, opaque build caches and apphosts.
+# Keep source, schema, command streams and untouched raw TRX readable as text.
+module/validation/epic-16-prerequisite-implementation/**/*.pdb -text -diff
+module/validation/epic-16-prerequisite-implementation/**/*.snk -text -diff
+module/validation/epic-16-prerequisite-implementation/**/*.cache -text -diff
+module/validation/epic-16-prerequisite-implementation/**/apphost -text -diff
+module/validation/epic-16-prerequisite-implementation/**/Epic16.NativeHelper -text -diff
+module/validation/epic-16-prerequisite-implementation/**/Evidence -text -diff
+module/validation/epic-16-prerequisite-implementation/**/Goldens -text -diff
+
+# Preserve the existing authored CRLF mapping test without whitespace false positives.
+tests/Hexalith.Conversations.Contracts.Tests/PlatformEnrollmentMappingTest.cs -text diff whitespace=cr-at-eol

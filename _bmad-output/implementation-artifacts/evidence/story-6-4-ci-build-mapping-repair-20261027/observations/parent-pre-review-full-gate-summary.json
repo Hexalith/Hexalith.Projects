@@ -1,0 +1,26 @@
+{
+  "command": [
+    "dotnet",
+    "test/Hexalith.Builds.Module.Tests/bin/Debug/net10.0/Hexalith.Builds.Module.Tests.dll",
+    "-failSkips",
+    "-result-xml",
+    "/tmp/story64-ci-parent-20261027/builds-module-full.xml"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+  "exit_code": 1,
+  "total": 2174,
+  "passed": 2172,
+  "failures": [
+    {
+      "name": "Hexalith.Builds.ModuleTool.Tests.CompositionNativeProcessDiscoveryTests.NativeTaggedChildRemovalPreservesIndependentPeerAsync",
+      "result": "Fail",
+      "message": "FAIL_SKIP : Native process inspection is explicitly gated to Windows and macOS."
+    },
+    {
+      "name": "Hexalith.Builds.ModuleTool.Tests.Workspace.WorkspaceAppHostTests.PlatformPlanDelegatesToThePinnedModelAsync",
+      "result": "Fail",
+      "message": "FAIL_SKIP : This integration assertion requires the enclosing Platform checkout."
+    }
+  ],
+  "new_preparation_cases": 6
+}
