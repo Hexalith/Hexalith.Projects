@@ -1,0 +1,57 @@
+{
+  "candidate_source_files": 30,
+  "source_copies_and_live_hashes_match": true,
+  "original_frozen_scope_unchanged": true,
+  "frozen_fixture_files": 17,
+  "frozen_fixture_unchanged": true,
+  "passing_xml": [
+    {
+      "file": "observations/compatibility-results.xml",
+      "tests": 7,
+      "all_passed": true
+    },
+    {
+      "file": "observations/producer-preparation-tests.xml",
+      "tests": 6,
+      "all_passed": true
+    },
+    {
+      "file": "observations/current-source-advisory-tests.xml",
+      "tests": 48,
+      "all_passed": true
+    },
+    {
+      "file": "observations/current-source-mapping-tests.xml",
+      "tests": 10,
+      "all_passed": true
+    }
+  ],
+  "npm95_verified_from_log": true,
+  "matrix": {
+    "Prepare": [
+      "PublicPreparationEvaluatesMappedMsBuildAsync"
+    ],
+    "Refuse": [
+      "InvalidAndMissingManifestRefuseAsync",
+      "ExistingAndEscapingOutputRefuseAsync",
+      "InvalidPackageProvenanceRefusesAsync",
+      "CancelledPreparationRefusesAsync"
+    ],
+    "Consume": [
+      "test_exact_pin_package_command_and_export_without_shell_evaluation",
+      "test_verified_environment_and_unsafe_results",
+      "test_all_workflow_jobs_opt_in_before_restore"
+    ],
+    "Isolate": [
+      "test_standalone_consumers_remove_parent_mapping_imports"
+    ],
+    "Windows": [
+      "test_ci_and_security_automation_cover_release_boundary (focused post-correction execution: 1 passed)"
+    ],
+    "Fixture": [
+      "test_actual_overlay_selects_packages_and_external_successor_locks",
+      "compatibility-results.xml"
+    ]
+  },
+  "full_producer_gate": "running separately; known environment-dependent FAIL_SKIP retained"
+}

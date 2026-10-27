@@ -1,0 +1,68 @@
+{
+  "recorded_at_utc": "2026-10-27T18:23:38.260029+00:00",
+  "post_review_patch_checks": [
+    {
+      "lane": "producer-final",
+      "total": 430,
+      "passed": 430,
+      "failed": 0,
+      "skipped": 0,
+      "raw_xml_sha256": "a4d29c31dc6e5f7af81ded929b5553474cf53a9400dbf0f230884f2ecfe6daab",
+      "retained_xml": "builds-focused-final.xml.gz"
+    },
+    {
+      "lane": "compatibility-final",
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "raw_xml_sha256": "79de86999af3fab89c5aca7f6e231da72acc02e2118c645d0ae077640486fda5",
+      "retained_xml": "compatibility-final.xml.gz"
+    }
+  ],
+  "helper_tests": {
+    "passed": 8,
+    "exit_code": 0,
+    "log": "helper-final.log"
+  },
+  "compatibility_overlay_tests": {
+    "passed": 3,
+    "exit_code": 0,
+    "layout": "standalone CI layout with exact direct db897eac9f2819220b32d237109d7255218b46a9 catalog",
+    "log": "compatibility-overlay-standalone-final.log"
+  },
+  "actual_umbrella_overlay_attempt": {
+    "exit_code": 1,
+    "errors": 2,
+    "reason": "Direct nested Builds is intentionally not initialized in the umbrella; standalone CI-layout evidence is separate.",
+    "log": "compatibility-overlay-final.log"
+  },
+  "pre_patch_full_gate": {
+    "attempted": 2174,
+    "passed": 2172,
+    "fail_skip_failures": 2,
+    "exit_code": 1,
+    "details": "full-gate-summary.json"
+  },
+  "final_source_files": 33,
+  "source_copies_hashes_verified": true,
+  "frozen_fixture_files": 17,
+  "frozen_fixture_unchanged": true,
+  "owning_indices_empty": true,
+  "owner_whitespace_checks": "pass",
+  "review_layers": 3,
+  "individual_findings_triaged": 12,
+  "accepted_patch_groups": 6,
+  "accepted_patch_groups_resolved": 6,
+  "unresolved_implementation_findings": 0,
+  "producer_package_qualification": "pending",
+  "upstream_ci": "Externally triggered; exact current observations in external-current-ci.json",
+  "publication": "not performed",
+  "next_action": "Latest exact-source Builds CI must succeed before separate producer qualification/publication approval. No duplicate commit/push is required for the already externally landed source.",
+  "external_landing_observed": true,
+  "externally_landed_commits": {
+    "Hexalith.Builds": "22569245259c70f212e3073b5241c660b5d01487",
+    "Hexalith.Conversations": "cec9a1e1bbdf7e8efb2cb3aa299add7f52c2a6ef"
+  },
+  "source_commit_or_push_created_by_session": false
+}

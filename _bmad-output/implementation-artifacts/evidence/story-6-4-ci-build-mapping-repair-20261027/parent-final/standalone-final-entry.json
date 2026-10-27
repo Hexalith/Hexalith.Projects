@@ -1,0 +1,18 @@
+{
+  "standalone": "/tmp/story64-ci-parent-20261027/standalone-final",
+  "owning_baseline": "536bf80d5fd5c2a64c2f64815edc67074fd5a6ea",
+  "direct_catalog_pin": "db897eac9f2819220b32d237109d7255218b46a9",
+  "catalog_git_blob_sha256": "140e161c0ac14183be0cca8babce5cc896355174e1c621979b92d49826bdadb2",
+  "copied_source": "exact current frozen fixture, compatibility overlay/locks/tests and CI source; no nested checkout initialized",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests/tooling",
+    "-p",
+    "test_minimal_module_compatibility_overlay.py",
+    "-v"
+  ]
+}

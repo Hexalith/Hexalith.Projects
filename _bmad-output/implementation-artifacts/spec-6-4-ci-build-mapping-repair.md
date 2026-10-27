@@ -2,7 +2,7 @@
 title: 'Story 6.4 prerequisite: producer-owned CI build mapping'
 type: 'bugfix'
 created: '2026-10-27'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 baseline_commit: '83c6bef90bbac3bb74f41cdb77fe7e84d53c82e0'
 review_loop_iteration: 0
@@ -91,3 +91,13 @@ All three layers reported before triage: Blind Hunter, Edge Case Hunter (no find
 | VG1: helper rejection tests absent from CI | medium / patch | Pre-verified missing normal invocation accepted. Same location and defect as BH1; keep one registration patch after this individual verdict. |
 
 Surviving patches: helper CI registration (BH1/VG1), metadata containment (BH3), exact enum type (BH4), post-ownership cancellation regression (BH6), input diagnostic metadata (BH7), and selected-catalog compatibility binding (BH8). These require no change to frozen intent or public command surface.
+
+## Review Resolution and Scoped Completion
+
+All six accepted patch groups are resolved and independently verified. Final affected producer lane: 430 passing cases, zero failures/skips; helper 8, compatibility overlay 3 and actual compatibility assertions 7 pass. Final locked restore/package build passes in the byte-identical standalone CI layout. All 33 source copies/hashes and all 17 original frozen fixture files match. Three independent review layers completed; no unresolved implementation finding remains. [Final audit](evidence/story-6-4-ci-build-mapping-repair-20261027/parent-final/README.md) retains exact commands, XML, review disposition, pre-patch full-suite/environment blockers and current tuple limitations.
+
+This specification is done only for the user-approved preparation/testing scope. Original Story 6.4 remains in-progress pending separately authorized producer qualification/publication, compatible tuple/pins and Conversations delivery. No source staging, commit, push or publication was performed; the explicit prepare/test-only boundary overrides the generic workflow local-commit step. The next concrete action is approval of the reviewed Builds producer commit/push so its normal CI can run; publication remains a later decision.
+
+## External Source Landing Observed — 2026-10-27
+
+A separate `/pushall` operation committed and pushed the exact reviewed candidate files as Builds `22569245259c70f212e3073b5241c660b5d01487` and Conversations `cec9a1e1bbdf7e8efb2cb3aa299add7f52c2a6ef`; all 33 canonical Git blob IDs match the reviewed bytes. This session created no commit or push, and no duplicate is needed. Source trees/indices are clean. Later external updates superseded initial CI; the latest exact-source Builds run remains pending/in progress. Conversations' real package compatibility job now passes and Windows checkout succeeds; its preparation still correctly refuses the old 4.35.2 CLI's unavailable command. [Current landing/CI audit](evidence/story-6-4-ci-build-mapping-repair-20261027/parent-final/README.md) supersedes the earlier next-commit proposal. Source preparation/testing is complete; Story6.4 delivery and separate producer/publication/accepted tuple/pins remain pending.

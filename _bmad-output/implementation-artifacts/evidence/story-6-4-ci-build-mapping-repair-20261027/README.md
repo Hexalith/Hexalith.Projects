@@ -103,3 +103,6 @@ existing layout/OS-dependent FAIL_SKIP failures. Its clean affected lane passed 
 425 cases. Their original summaries, logs, XML and pre-review source hashes are
 retained separately as `observations/parent-pre-review-*`; they describe the checkpoint
 before this follow-up and are not presented as post-fix full verification.
+
+
+Final parent audit: [resolved review and final checks](parent-final/README.md). The current source-preparation scope is complete; Story 6.4 delivery remains pending.
