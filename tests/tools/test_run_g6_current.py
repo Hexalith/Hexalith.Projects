@@ -158,5 +158,25 @@ class CurrentRunnerImageTests(unittest.TestCase):
         self.assertNotEqual([self.IMAGE] * 2, images)
 
 
+class SupportSelectorInventoryTests(unittest.TestCase):
+    def test_empty_workflow_uses_the_retained_oracle_and_rejects_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            eventstore = Path(temporary)
+            workflow = eventstore / ".github/workflows/integration.yml"
+            workflow.parent.mkdir(parents=True)
+            workflow.write_text("name: Integration Tests\n", encoding="utf-8")
+            oracle = eventstore / "tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Actors/IdempotencyAdmissionOq8PostgresqlTests.cs"
+            oracle.parent.mkdir(parents=True)
+            names = [f"Hexalith.EventStore.Server.Tests.Sample.Method{index:02d}" for index in range(21)]
+            body = ",\n".join(f'                "{name}"' for name in names)
+            oracle.write_text(
+                "deterministicSupportOracles = new[]\n            {\n" + body + "\n            },\n",
+                encoding="utf-8")
+            self.assertEqual(names, RUNNER.support_selectors(eventstore))
+            oracle.write_text(oracle.read_text(encoding="utf-8").replace(names[-1], names[0]), encoding="utf-8")
+            drifted = RUNNER.support_selectors(eventstore)
+            self.assertNotEqual(21, len(set(drifted)))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -40,6 +40,26 @@ def audit(output: Path, policy: Path) -> dict:
     return json.loads(output.read_text(encoding="utf-8"))
 
 
+def support_selectors(eventstore: Path) -> list[str]:
+    """Return the deterministic Server.Tests methods the support proof must run.
+
+    The integration workflow used to carry this inventory. When it no longer
+    lists those methods, the live OQ8 test retains the same names as
+    deterministicSupportOracles. Either source must still be exactly 21 unique
+    selectors; an empty or drifted inventory stays a failure.
+    """
+    workflow = (eventstore / ".github/workflows/integration.yml").read_text(encoding="utf-8")
+    selectors = re.findall(r"-method (Hexalith\.EventStore\.Server\.Tests\.\S+)", workflow)
+    if selectors:
+        return selectors
+    oracle = eventstore / "tests/Hexalith.EventStore.Server.LiveSidecar.Tests/Actors/IdempotencyAdmissionOq8PostgresqlTests.cs"
+    text = oracle.read_text(encoding="utf-8")
+    match = re.search(r"deterministicSupportOracles = new\[\]\s*\{(?P<body>.*?)\},", text, re.DOTALL)
+    if match is None:
+        return []
+    return re.findall(r'"(Hexalith\.EventStore\.Server\.Tests\.[^"]+)"', match.group("body"))
+
+
 def counts(path: Path) -> dict:
     if not path.is_file():
         return {"total": 0, "passed": 0, "failed": 1, "skipped": 0}
@@ -163,8 +183,7 @@ def main(arguments: list[str] | None = None) -> int:
                 "-method", historical.QUALIFIER, "-noColor", "-result-ctrf", str(scratch / "qualifier-ctrf.json")], EVENTSTORE, 900)
         else:
             errors.append("Fresh qualifier build failed; old binaries were not executed")
-        workflow = (EVENTSTORE / ".github/workflows/integration.yml").read_text(encoding="utf-8")
-        selectors = re.findall(r"-method (Hexalith\.EventStore\.Server\.Tests\.\S+)", workflow)
+        selectors = support_selectors(EVENTSTORE)
         if len(selectors) != len(set(selectors)) or len(selectors) != 21:
             errors.append("Deterministic support selector inventory changed")
         elif support_build == 0:

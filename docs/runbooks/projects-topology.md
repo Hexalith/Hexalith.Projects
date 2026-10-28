@@ -119,7 +119,7 @@ dummy credentials merely to make the process start.
 G-6 now audits the effective versions and resolved consumer packages against
 `references/Hexalith.Builds/Tools/g6-current-policy-2026-10-20.json`. Both the
 local runner and CI wrapper default to this October 20 policy: SDK `10.0.402`,
-Aspire `13.6.1` and Toolkit `13.6.1-beta.935`. Its approval covers tuple selection
+Aspire `13.6.4` and Toolkit `13.6.1-beta.935`. Its approval covers tuple selection
 and execution preparation; qualification-result acceptance is a separate decision.
 Historical attempt 16 accepted Toolkit
 `13.6.0-beta.910` at `2026-10-01T14:58:12Z` on reviewed packet SHA-256
