@@ -1,0 +1,18 @@
+ .../spec-13-6-qualify-full-topology-readiness.md   |  16 +++
+ eng/verify-isolated-readiness.py                   | 130 ++++++++++++++++++---
+ references/Hexalith.Builds                         |   2 +-
+ references/Hexalith.EventStore                     |   2 +-
+ references/Hexalith.Memories                       |   2 +-
+ references/Hexalith.Parties                        |   2 +-
+ references/Hexalith.Tenants                        |   2 +-
+ .../accesscontrol.frontcomposer-ui.yaml            |  18 +++
+ .../DaprComponents/accesscontrol.tenants-api.yaml  |  67 +++++++++++
+ .../DaprComponents/accesscontrol.tenants-ui.yaml   |  18 +++
+ .../Hexalith.FrontComposer.AppHost.csproj          |   4 +
+ .../HexalithTenantsApi.cs                          |  13 +++
+ .../LocalReadinessConfiguration.cs                 |   3 +-
+ .../LocalReadinessTopology.cs                      |   5 +-
+ src/Hexalith.FrontComposer.AppHost/Program.cs      |  60 ++++++++--
+ .../Integration/FrontComposerUiAppHostTests.cs     |  34 +++++-
+ .../e2e/scripts/verify-isolated-readiness.test.py  |  59 +++++++++-
+ 17 files changed, 401 insertions(+), 36 deletions(-)

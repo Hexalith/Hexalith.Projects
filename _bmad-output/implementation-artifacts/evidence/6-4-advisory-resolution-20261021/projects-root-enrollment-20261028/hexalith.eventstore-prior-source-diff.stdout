@@ -1,0 +1,22 @@
+ Directory.Build.targets                            |   5 +-
+ ...dempotency-catalog-schema-codec-and-envelope.md |  47 +++++
+ references/Hexalith.Builds                         |   2 +-
+ references/Hexalith.FrontComposer                  |   2 +-
+ references/Hexalith.McpCli                         |   2 +-
+ references/Hexalith.Memories                       |   2 +-
+ references/Hexalith.Platform                       |   2 +-
+ references/Hexalith.Tenants                        |   2 +-
+ ...EventReplayProjectionActor.ReplayPublication.cs |  27 +++
+ .../Actors/EventReplayProjectionActor.cs           |   2 +-
+ .../IProjectionBoundReplayCompletionActor.cs       |  10 +
+ .../DaprProjectionRebuildWriteGateway.cs           |  11 +
+ .../IProjectionReplayPublicationGateway.cs         |   4 +
+ .../ProjectionUpdateOrchestrator.LegacyReplay.cs   |  35 ++-
+ ...actsPackageDependencyTests.SecurityException.cs |   8 +-
+ .../Actors/ReplayPublicationReleasedShapeTests.cs  |  41 ++++
+ .../DaprProjectionRebuildWriteGatewayTests.cs      |  66 ++++++
+ .../Projections/LegacyReplayProductionHarness.cs   |  13 ++
+ ...nRebuildProductionPathTests.LegacyCompletion.cs | 235 +++++++++++++++++++++
+ ...ionRebuildProductionPathTests.LegacyRecovery.cs |  16 +-
+ ...ctionRebuildProductionPathTests.LegacyReplay.cs |   1 +
+ 21 files changed, 509 insertions(+), 24 deletions(-)

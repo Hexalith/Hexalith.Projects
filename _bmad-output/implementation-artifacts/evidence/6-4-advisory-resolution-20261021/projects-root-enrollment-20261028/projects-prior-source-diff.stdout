@@ -1,0 +1,921 @@
+ .../.gitattributes                                 |     1 +
+ .../NarrowOwnerCheck.Directory.Packages.props.txt  |     1 +
+ .../NarrowOwnerCheck.csproj.txt                    |    17 +
+ .../platform-builds-preparation-20261028/README.md |    71 +
+ .../SHA256SUMS.json                                |   802 ++
+ .../after-builds-status.stderr                     |     0
+ .../after-builds-status.stdout                     |     2 +
+ .../after-conversations-status.stderr              |     0
+ .../after-conversations-status.stdout              |     1 +
+ .../after-platform-status.stderr                   |     0
+ .../after-platform-status.stdout                   |     4 +
+ .../after-projects-status.stderr                   |     0
+ .../after-projects-status.stdout                   |    16 +
+ .../audit-positive-negative-controls.stderr        |     0
+ .../audit-positive-negative-controls.stdout        |     4 +
+ .../available-cli-package.stderr                   |     0
+ .../available-cli-package.stdout                   |    11 +
+ .../before-builds-diff.stderr                      |     0
+ .../before-builds-diff.stdout                      |    37 +
+ .../before-builds-head.stderr                      |     0
+ .../before-builds-head.stdout                      |     1 +
+ .../before-builds-index.stderr                     |     0
+ .../before-builds-index.stdout.gz                  |   Bin 0 -> 78550 bytes
+ .../before-builds-refs.stderr                      |     0
+ .../before-builds-refs.stdout                      |   327 +
+ .../before-builds-status.stderr                    |     0
+ .../before-builds-status.stdout                    |     2 +
+ .../before-conversations-diff.stderr               |     0
+ .../before-conversations-diff.stdout               |     0
+ .../before-conversations-head.stderr               |     0
+ .../before-conversations-head.stdout               |     1 +
+ .../before-conversations-index.stderr              |     0
+ .../before-conversations-index.stdout.gz           |   Bin 0 -> 746793 bytes
+ .../before-conversations-refs.stderr               |     0
+ .../before-conversations-refs.stdout               |     9 +
+ .../before-conversations-status.stderr             |     0
+ .../before-conversations-status.stdout             |     1 +
+ .../before-platform-diff.stderr                    |     0
+ .../before-platform-diff.stdout                    |     0
+ .../before-platform-head.stderr                    |     0
+ .../before-platform-head.stdout                    |     1 +
+ .../before-platform-index.stderr                   |     0
+ .../before-platform-index.stdout.gz                |   Bin 0 -> 291978 bytes
+ .../before-platform-refs.stderr                    |     0
+ .../before-platform-refs.stdout                    |     5 +
+ .../before-platform-status.stderr                  |     0
+ .../before-platform-status.stdout                  |     1 +
+ .../before-projects-diff.stderr                    |     0
+ .../before-projects-diff.stdout                    |    27 +
+ .../before-projects-head.stderr                    |     0
+ .../before-projects-head.stdout                    |     1 +
+ .../before-projects-index.stderr                   |     0
+ .../before-projects-index.stdout.gz                |   Bin 0 -> 174947 bytes
+ .../before-projects-refs.stderr                    |     0
+ .../before-projects-refs.stdout                    |    16 +
+ .../before-projects-status.stderr                  |     0
+ .../before-projects-status.stdout                  |    15 +
+ .../builds-4381-actual-embedded-catalog.stderr     |     0
+ .../builds-4381-actual-embedded-catalog.stdout     |    16 +
+ .../builds-4381-check-runs.stderr                  |     0
+ .../builds-4381-check-runs.stdout                  |     1 +
+ .../builds-4381-embedded-catalog.stderr            |     1 +
+ .../builds-4381-embedded-catalog.stdout            |     0
+ .../builds-4381-inventory-download.stderr          |     0
+ .../builds-4381-inventory-download.stdout          |     0
+ .../builds-4381-native-ci-jobs.stderr              |     0
+ .../builds-4381-native-ci-jobs.stdout              |     1 +
+ .../builds-4381-native-release-jobs.stderr         |     0
+ .../builds-4381-native-release-jobs.stdout         |     1 +
+ .../builds-4381-nuget-verify.stderr                |     0
+ .../builds-4381-nuget-verify.stdout                |     8 +
+ .../builds-4381-official-nupkg.stderr              |     3 +
+ .../builds-4381-official-nupkg.stdout              |     0
+ .../builds-4381-release.stderr                     |     0
+ .../builds-4381-release.stdout                     |     1 +
+ .../builds-4381-runs.stderr                        |     0
+ .../builds-4381-runs.stdout                        |     1 +
+ .../builds-4381-source-catalog.stderr              |     0
+ .../builds-4381-source-catalog.stdout              |   364 +
+ .../builds-focused-build.stderr                    |     0
+ .../builds-focused-build.stdout                    |    32 +
+ .../builds-focused.xml                             |     1 +
+ ...uilds-identity-preparation-catalog-tests.stderr |     0
+ ...uilds-identity-preparation-catalog-tests.stdout |     7 +
+ .../builds-release-asset-list.stderr               |     0
+ .../builds-release-asset-list.stdout               |     1 +
+ .../candidate-dapr-cli-assets.stderr               |     0
+ .../candidate-dapr-cli-assets.stdout               |     1 +
+ .../candidate-dapr-runtime-assets.stderr           |     0
+ .../candidate-dapr-runtime-assets.stdout           |     1 +
+ .../commands.json                                  |  1521 ++
+ .../conversations-131-release-source.stderr        |     0
+ .../conversations-131-release-source.stdout        |     1 +
+ .../conversations-131-release.stderr               |     0
+ .../conversations-131-release.stdout               |     1 +
+ .../fetch-platform-release-tags.stderr             |     0
+ .../fetch-platform-release-tags.stdout             |     0
+ .../final-root-whitespace.stderr                   |     0
+ .../final-root-whitespace.stdout                   |     0
+ .../g4-tool-package-inventory.json                 |  1788 +++
+ .../inspect-tool-catalog.ps1                       |     5 +
+ .../nuget-cli-4381-feed-catalog.stderr             |     0
+ .../nuget-cli-4381-feed-catalog.stdout.gz          |   Bin 0 -> 7840 bytes
+ .../nuget-cli-4381-feed-hash.stderr                |     1 +
+ .../nuget-cli-4381-feed-hash.stdout                |     0
+ .../nuget-cli-4381-registration.stderr             |     0
+ .../nuget-cli-4381-registration.stdout             |   Bin 0 -> 356 bytes
+ .../official-tool-identity.json                    |    24 +
+ .../package-after-tag-refresh.stderr               |     0
+ .../package-after-tag-refresh.stdout               |     1 +
+ .../package-before-retry.stderr                    |     0
+ .../package-before-retry.stdout                    |     1 +
+ .../package-before.stderr                          |     0
+ .../package-before.stdout                          |     1 +
+ .../package-final.stderr                           |     0
+ .../package-final.stdout                           |     1 +
+ .../package-reviewed.stderr                        |     0
+ .../package-reviewed.stdout                        |     1 +
+ .../platform-before-.config_dotnet-tools.json      |    13 +
+ .../platform-before-README.md                      |   349 +
+ .../platform-before-hexalith-platform.json         |     4 +
+ .../platform-builds-gitlink.UNAPPLIED.patch        |     7 +
+ .../platform-candidate-diff.stderr                 |     0
+ .../platform-candidate-diff.stdout                 |    88 +
+ .../platform-candidate-final-diff.stderr           |     0
+ .../platform-candidate-final-diff.stdout           |    97 +
+ .../platform-candidate-tool-restore.stderr         |     0
+ .../platform-candidate-tool-restore.stdout         |     3 +
+ .../platform-candidate-tool-version.stderr         |     0
+ .../platform-candidate-tool-version.stdout         |     1 +
+ .../platform-committed-builds-pin.stderr           |     0
+ .../platform-committed-builds-pin.stdout           |     1 +
+ .../platform-current-builds-pin.stderr             |     0
+ .../platform-current-builds-pin.stdout             |     1 +
+ .../platform-existing-inventory-test.stderr        |     0
+ .../platform-existing-inventory-test.stdout        |     7 +
+ .../platform-existing-pin-test.stderr              |     0
+ .../platform-existing-pin-test.stdout              |    34 +
+ .../platform-fetched-tags.stderr                   |     0
+ .../platform-fetched-tags.stdout                   |     4 +
+ .../platform-gitlink-patch-check.stderr            |     0
+ .../platform-gitlink-patch-check.stdout            |     0
+ .../platform-identity-tags.stderr                  |     0
+ .../platform-identity-tags.stdout                  |     0
+ .../platform-inventory.xml                         |     1 +
+ ...latform-narrow-existing-test-build-retry.stderr |     0
+ ...latform-narrow-existing-test-build-retry.stdout |    12 +
+ .../platform-narrow-existing-test-build.stderr     |     0
+ .../platform-narrow-existing-test-build.stdout     |    12 +
+ .../platform-pin.xml                               |    24 +
+ .../platform-reviewed-diff.stderr                  |     0
+ .../platform-reviewed-diff.stdout                  |   172 +
+ .../platform-reviewed-whitespace.stderr            |     0
+ .../platform-reviewed-whitespace.stdout            |     0
+ .../platform-tags-local.stderr                     |     0
+ .../platform-tags-local.stdout                     |     2 +
+ .../platform-test-build-before.stderr              |     0
+ .../platform-test-build-before.stdout              |    50 +
+ .../platform-whitespace.stderr                     |     0
+ .../platform-whitespace.stdout                     |     0
+ .../post-checkpoint-readonly-audit.stderr          |     0
+ .../post-checkpoint-readonly-audit.stdout          |    58 +
+ .../release-inventory-identity.json                |     6 +
+ .../remote-Builds-main.stderr                      |     0
+ .../remote-Builds-main.stdout                      |     1 +
+ .../remote-Builds-releases.stderr                  |     0
+ .../remote-Builds-releases.stdout                  |     1 +
+ .../remote-Builds-tags.stderr                      |     0
+ .../remote-Builds-tags.stdout                      |   180 +
+ .../remote-Conversations-main.stderr               |     0
+ .../remote-Conversations-main.stdout               |     1 +
+ .../remote-Conversations-releases.stderr           |     0
+ .../remote-Conversations-releases.stdout.gz        |   Bin 0 -> 31464 bytes
+ .../remote-Conversations-tags.stderr               |     0
+ .../remote-Conversations-tags.stdout               |     6 +
+ .../remote-Platform-main.stderr                    |     0
+ .../remote-Platform-main.stdout                    |     1 +
+ .../remote-Platform-releases.stderr                |     0
+ .../remote-Platform-releases.stdout                |     1 +
+ .../remote-Platform-tags.stderr                    |     0
+ .../remote-Platform-tags.stdout                    |     4 +
+ .../review-triage.md                               |    18 +
+ .../reviewed-immutable-audit.stderr                |     0
+ .../reviewed-immutable-audit.stdout                |    58 +
+ .../reviewed-source-baseline.json                  |    18 +
+ .../root-planning-guard.stderr                     |     0
+ .../root-planning-guard.stdout                     |     3 +
+ .../semantic-and-preservation-verification.stderr  |     0
+ .../semantic-and-preservation-verification.stdout  |    69 +
+ .../semantic-final-verification.stderr             |     0
+ .../semantic-final-verification.stdout             |    69 +
+ .../source-final.stderr                            |     0
+ .../source-final.stdout                            |     1 +
+ .../source-reviewed.stderr                         |     0
+ .../source-reviewed.stdout                         |     1 +
+ .../tool-version.stderr                            |     0
+ .../tool-version.stdout                            |     1 +
+ .../verification.json                              |    69 +
+ .../verify-audit-controls.py                       |    34 +
+ .../verify-preparation.initial.py.txt              |    65 +
+ .../verify-preparation.py                          |   141 +
+ .../resumption-20261028/README.md                  |    29 +
+ .../accepted-package-preparation.log.gz            |   Bin 0 -> 445 bytes
+ .../accepted-preparation-help.log.gz               |   Bin 0 -> 252 bytes
+ .../accepted-source-preparation.log.gz             |   Bin 0 -> 719 bytes
+ .../resumption-20261028/commands.json              |   196 +
+ .../conversations-focused.log.gz                   |   Bin 0 -> 652 bytes
+ .../conversations-focused.xml.gz                   |   Bin 0 -> 17613 bytes
+ .../conversations-mapped-source-build.log.gz       |   Bin 0 -> 1143 bytes
+ .../resumption-20261028/manifest.json              |    99 +
+ .../resumption-20261028/parent-audit.json          |    64 +
+ .../projects-contracts-source-build.log.gz         |   Bin 0 -> 341 bytes
+ .../projects-conversation-mapping-refusal.log.gz   |   Bin 0 -> 282 bytes
+ .../projects-source-build.log.gz                   |   Bin 0 -> 520 bytes
+ .../resumption-20261028/source-audit.json          |   282 +
+ .../resumption-20261028/source-mapping.json        |    94 +
+ .../resumption-20261028/tool-version.log.gz        |   Bin 0 -> 65 bytes
+ .../source-verification-20261028/.gitattributes    |     1 +
+ .../Hexalith.AI.Tools-final-source-head.stderr     |     0
+ .../Hexalith.AI.Tools-final-source-head.stdout     |     1 +
+ .../Hexalith.AI.Tools-final-staged-source.stderr   |     0
+ .../Hexalith.AI.Tools-final-staged-source.stdout   |     0
+ .../Hexalith.AI.Tools-final-unstaged-source.stderr |     0
+ .../Hexalith.AI.Tools-final-unstaged-source.stdout |     0
+ .../Hexalith.Builds-final-source-head.stderr       |     0
+ .../Hexalith.Builds-final-source-head.stdout       |     1 +
+ .../Hexalith.Builds-final-staged-source.stderr     |     0
+ .../Hexalith.Builds-final-staged-source.stdout     |     0
+ .../Hexalith.Builds-final-unstaged-source.stderr   |     0
+ .../Hexalith.Builds-final-unstaged-source.stdout   |     0
+ .../Hexalith.Commons-final-source-head.stderr      |     0
+ .../Hexalith.Commons-final-source-head.stdout      |     1 +
+ .../Hexalith.Commons-final-staged-source.stderr    |     0
+ .../Hexalith.Commons-final-staged-source.stdout    |     0
+ .../Hexalith.Commons-final-unstaged-source.stderr  |     0
+ .../Hexalith.Commons-final-unstaged-source.stdout  |     0
+ ...Hexalith.Conversations-final-source-head.stderr |     0
+ ...Hexalith.Conversations-final-source-head.stdout |     1 +
+ ...xalith.Conversations-final-staged-source.stderr |     0
+ ...xalith.Conversations-final-staged-source.stdout |     0
+ ...lith.Conversations-final-unstaged-source.stderr |     0
+ ...lith.Conversations-final-unstaged-source.stdout |     0
+ .../Hexalith.EventStore-final-source-head.stderr   |     0
+ .../Hexalith.EventStore-final-source-head.stdout   |     1 +
+ .../Hexalith.EventStore-final-staged-source.stderr |     0
+ .../Hexalith.EventStore-final-staged-source.stdout |     0
+ ...exalith.EventStore-final-unstaged-source.stderr |     0
+ ...exalith.EventStore-final-unstaged-source.stdout |     0
+ .../Hexalith.Folders-final-source-head.stderr      |     0
+ .../Hexalith.Folders-final-source-head.stdout      |     1 +
+ .../Hexalith.Folders-final-staged-source.stderr    |     0
+ .../Hexalith.Folders-final-staged-source.stdout    |     0
+ .../Hexalith.Folders-final-unstaged-source.stderr  |     0
+ .../Hexalith.Folders-final-unstaged-source.stdout  |     0
+ ...Hexalith.FrontComposer-final-source-head.stderr |     0
+ ...Hexalith.FrontComposer-final-source-head.stdout |     1 +
+ ...xalith.FrontComposer-final-staged-source.stderr |     0
+ ...xalith.FrontComposer-final-staged-source.stdout |     0
+ ...lith.FrontComposer-final-unstaged-source.stderr |     0
+ ...lith.FrontComposer-final-unstaged-source.stdout |     0
+ .../Hexalith.McpCli-final-source-head.stderr       |     0
+ .../Hexalith.McpCli-final-source-head.stdout       |     1 +
+ .../Hexalith.McpCli-final-staged-source.stderr     |     0
+ .../Hexalith.McpCli-final-staged-source.stdout     |     0
+ .../Hexalith.McpCli-final-unstaged-source.stderr   |     0
+ .../Hexalith.McpCli-final-unstaged-source.stdout   |     0
+ .../Hexalith.Memories-final-source-head.stderr     |     0
+ .../Hexalith.Memories-final-source-head.stdout     |     1 +
+ .../Hexalith.Memories-final-staged-source.stderr   |     0
+ .../Hexalith.Memories-final-staged-source.stdout   |     0
+ .../Hexalith.Memories-final-unstaged-source.stderr |     0
+ .../Hexalith.Memories-final-unstaged-source.stdout |     0
+ .../Hexalith.Parties-final-source-head.stderr      |     0
+ .../Hexalith.Parties-final-source-head.stdout      |     1 +
+ .../Hexalith.Parties-final-staged-source.stderr    |     0
+ .../Hexalith.Parties-final-staged-source.stdout    |     0
+ .../Hexalith.Parties-final-unstaged-source.stderr  |     0
+ .../Hexalith.Parties-final-unstaged-source.stdout  |     0
+ .../Hexalith.Platform-final-source-head.stderr     |     0
+ .../Hexalith.Platform-final-source-head.stdout     |     1 +
+ .../Hexalith.Platform-final-staged-source.stderr   |     0
+ .../Hexalith.Platform-final-staged-source.stdout   |     0
+ .../Hexalith.Platform-final-unstaged-source.stderr |     0
+ .../Hexalith.Platform-final-unstaged-source.stdout |     0
+ .../Hexalith.Tenants-final-source-head.stderr      |     0
+ .../Hexalith.Tenants-final-source-head.stdout      |     1 +
+ .../Hexalith.Tenants-final-staged-source.stderr    |     0
+ .../Hexalith.Tenants-final-staged-source.stdout    |     0
+ .../Hexalith.Tenants-final-unstaged-source.stderr  |     0
+ .../Hexalith.Tenants-final-unstaged-source.stdout  |     0
+ .../source-verification-20261028/README.md         |    92 +
+ .../source-verification-20261028/SHA256SUMS.json   |   690 +
+ .../accepted-tool-signature.stderr                 |     0
+ .../accepted-tool-signature.stdout                 |     8 +
+ .../accepted-tool-version.stderr                   |     0
+ .../accepted-tool-version.stdout                   |     1 +
+ .../accepted-tool.nuspec                           |    19 +
+ .../audit-controls.json                            |    88 +
+ .../source-verification-20261028/audit-controls.py |    60 +
+ .../builds-dirty-catalog.stderr                    |     0
+ .../builds-dirty-catalog.stdout                    |    37 +
+ .../builds-qualified-tag.stderr                    |     0
+ .../builds-qualified-tag.stdout                    |     1 +
+ .../capture-inputs.initial.py.txt                  |    44 +
+ .../source-verification-20261028/capture-inputs.py |    51 +
+ ...e-v2-Hexalith.AI.Tools-final-source-head.stderr |     0
+ ...e-v2-Hexalith.AI.Tools-final-source-head.stdout |     1 +
+ ...v2-Hexalith.AI.Tools-final-staged-source.stderr |     0
+ ...v2-Hexalith.AI.Tools-final-staged-source.stdout |     0
+ ...-Hexalith.AI.Tools-final-unstaged-source.stderr |     0
+ ...-Hexalith.AI.Tools-final-unstaged-source.stdout |     0
+ ...ure-v2-Hexalith.Builds-final-source-head.stderr |     0
+ ...ure-v2-Hexalith.Builds-final-source-head.stdout |     1 +
+ ...e-v2-Hexalith.Builds-final-staged-source.stderr |     0
+ ...e-v2-Hexalith.Builds-final-staged-source.stdout |     0
+ ...v2-Hexalith.Builds-final-unstaged-source.stderr |     0
+ ...v2-Hexalith.Builds-final-unstaged-source.stdout |     0
+ ...re-v2-Hexalith.Commons-final-source-head.stderr |     0
+ ...re-v2-Hexalith.Commons-final-source-head.stdout |     1 +
+ ...-v2-Hexalith.Commons-final-staged-source.stderr |     0
+ ...-v2-Hexalith.Commons-final-staged-source.stdout |     0
+ ...2-Hexalith.Commons-final-unstaged-source.stderr |     0
+ ...2-Hexalith.Commons-final-unstaged-source.stdout |     0
+ ...Hexalith.Conversations-final-source-head.stderr |     0
+ ...Hexalith.Conversations-final-source-head.stdout |     1 +
+ ...xalith.Conversations-final-staged-source.stderr |     0
+ ...xalith.Conversations-final-staged-source.stdout |     0
+ ...lith.Conversations-final-unstaged-source.stderr |     0
+ ...lith.Conversations-final-unstaged-source.stdout |     0
+ ...v2-Hexalith.EventStore-final-source-head.stderr |     0
+ ...v2-Hexalith.EventStore-final-source-head.stdout |     1 +
+ ...-Hexalith.EventStore-final-staged-source.stderr |     0
+ ...-Hexalith.EventStore-final-staged-source.stdout |     0
+ ...exalith.EventStore-final-unstaged-source.stderr |     0
+ ...exalith.EventStore-final-unstaged-source.stdout |     0
+ ...re-v2-Hexalith.Folders-final-source-head.stderr |     0
+ ...re-v2-Hexalith.Folders-final-source-head.stdout |     1 +
+ ...-v2-Hexalith.Folders-final-staged-source.stderr |     0
+ ...-v2-Hexalith.Folders-final-staged-source.stdout |     0
+ ...2-Hexalith.Folders-final-unstaged-source.stderr |     0
+ ...2-Hexalith.Folders-final-unstaged-source.stdout |     0
+ ...Hexalith.FrontComposer-final-source-head.stderr |     0
+ ...Hexalith.FrontComposer-final-source-head.stdout |     1 +
+ ...xalith.FrontComposer-final-staged-source.stderr |     0
+ ...xalith.FrontComposer-final-staged-source.stdout |     0
+ ...lith.FrontComposer-final-unstaged-source.stderr |     0
+ ...lith.FrontComposer-final-unstaged-source.stdout |     0
+ ...ure-v2-Hexalith.McpCli-final-source-head.stderr |     0
+ ...ure-v2-Hexalith.McpCli-final-source-head.stdout |     1 +
+ ...e-v2-Hexalith.McpCli-final-staged-source.stderr |     0
+ ...e-v2-Hexalith.McpCli-final-staged-source.stdout |     0
+ ...v2-Hexalith.McpCli-final-unstaged-source.stderr |     0
+ ...v2-Hexalith.McpCli-final-unstaged-source.stdout |     0
+ ...e-v2-Hexalith.Memories-final-source-head.stderr |     0
+ ...e-v2-Hexalith.Memories-final-source-head.stdout |     1 +
+ ...v2-Hexalith.Memories-final-staged-source.stderr |     0
+ ...v2-Hexalith.Memories-final-staged-source.stdout |     0
+ ...-Hexalith.Memories-final-unstaged-source.stderr |     0
+ ...-Hexalith.Memories-final-unstaged-source.stdout |     0
+ ...re-v2-Hexalith.Parties-final-source-head.stderr |     0
+ ...re-v2-Hexalith.Parties-final-source-head.stdout |     1 +
+ ...-v2-Hexalith.Parties-final-staged-source.stderr |     0
+ ...-v2-Hexalith.Parties-final-staged-source.stdout |     0
+ ...2-Hexalith.Parties-final-unstaged-source.stderr |     0
+ ...2-Hexalith.Parties-final-unstaged-source.stdout |     0
+ ...e-v2-Hexalith.Platform-final-source-head.stderr |     0
+ ...e-v2-Hexalith.Platform-final-source-head.stdout |     1 +
+ ...v2-Hexalith.Platform-final-staged-source.stderr |     0
+ ...v2-Hexalith.Platform-final-staged-source.stdout |     0
+ ...-Hexalith.Platform-final-unstaged-source.stderr |     0
+ ...-Hexalith.Platform-final-unstaged-source.stdout |     0
+ ...re-v2-Hexalith.Tenants-final-source-head.stderr |     0
+ ...re-v2-Hexalith.Tenants-final-source-head.stdout |     1 +
+ ...-v2-Hexalith.Tenants-final-staged-source.stderr |     0
+ ...-v2-Hexalith.Tenants-final-staged-source.stdout |     0
+ ...2-Hexalith.Tenants-final-unstaged-source.stderr |     0
+ ...2-Hexalith.Tenants-final-unstaged-source.stdout |     0
+ .../capture-v2-platform-owned-exact-catalog.stderr |     0
+ .../capture-v2-platform-owned-exact-catalog.stdout |   364 +
+ .../capture-v2-projects-final-source-head.stderr   |     0
+ .../capture-v2-projects-final-source-head.stdout   |     1 +
+ ...apture-v2-projects-final-unstaged-source.stderr |     0
+ ...apture-v2-projects-final-unstaged-source.stdout |     0
+ ...e-v3-Hexalith.AI.Tools-final-source-head.stderr |     0
+ ...e-v3-Hexalith.AI.Tools-final-source-head.stdout |     1 +
+ ...v3-Hexalith.AI.Tools-final-staged-source.stderr |     0
+ ...v3-Hexalith.AI.Tools-final-staged-source.stdout |     0
+ ...-Hexalith.AI.Tools-final-unstaged-source.stderr |     0
+ ...-Hexalith.AI.Tools-final-unstaged-source.stdout |     0
+ ...ure-v3-Hexalith.Builds-final-source-head.stderr |     0
+ ...ure-v3-Hexalith.Builds-final-source-head.stdout |     1 +
+ ...e-v3-Hexalith.Builds-final-staged-source.stderr |     0
+ ...e-v3-Hexalith.Builds-final-staged-source.stdout |     0
+ ...v3-Hexalith.Builds-final-unstaged-source.stderr |     0
+ ...v3-Hexalith.Builds-final-unstaged-source.stdout |     0
+ ...re-v3-Hexalith.Commons-final-source-head.stderr |     0
+ ...re-v3-Hexalith.Commons-final-source-head.stdout |     1 +
+ ...-v3-Hexalith.Commons-final-staged-source.stderr |     0
+ ...-v3-Hexalith.Commons-final-staged-source.stdout |     0
+ ...3-Hexalith.Commons-final-unstaged-source.stderr |     0
+ ...3-Hexalith.Commons-final-unstaged-source.stdout |     0
+ ...Hexalith.Conversations-final-source-head.stderr |     0
+ ...Hexalith.Conversations-final-source-head.stdout |     1 +
+ ...xalith.Conversations-final-staged-source.stderr |     0
+ ...xalith.Conversations-final-staged-source.stdout |     0
+ ...lith.Conversations-final-unstaged-source.stderr |     0
+ ...lith.Conversations-final-unstaged-source.stdout |     0
+ ...v3-Hexalith.EventStore-final-source-head.stderr |     0
+ ...v3-Hexalith.EventStore-final-source-head.stdout |     1 +
+ ...-Hexalith.EventStore-final-staged-source.stderr |     0
+ ...-Hexalith.EventStore-final-staged-source.stdout |     0
+ ...exalith.EventStore-final-unstaged-source.stderr |     0
+ ...exalith.EventStore-final-unstaged-source.stdout |     0
+ ...re-v3-Hexalith.Folders-final-source-head.stderr |     0
+ ...re-v3-Hexalith.Folders-final-source-head.stdout |     1 +
+ ...-v3-Hexalith.Folders-final-staged-source.stderr |     0
+ ...-v3-Hexalith.Folders-final-staged-source.stdout |     0
+ ...3-Hexalith.Folders-final-unstaged-source.stderr |     0
+ ...3-Hexalith.Folders-final-unstaged-source.stdout |     0
+ ...Hexalith.FrontComposer-final-source-head.stderr |     0
+ ...Hexalith.FrontComposer-final-source-head.stdout |     1 +
+ ...xalith.FrontComposer-final-staged-source.stderr |     0
+ ...xalith.FrontComposer-final-staged-source.stdout |     0
+ ...lith.FrontComposer-final-unstaged-source.stderr |     0
+ ...lith.FrontComposer-final-unstaged-source.stdout |     0
+ ...ure-v3-Hexalith.McpCli-final-source-head.stderr |     0
+ ...ure-v3-Hexalith.McpCli-final-source-head.stdout |     1 +
+ ...e-v3-Hexalith.McpCli-final-staged-source.stderr |     0
+ ...e-v3-Hexalith.McpCli-final-staged-source.stdout |     0
+ ...v3-Hexalith.McpCli-final-unstaged-source.stderr |     0
+ ...v3-Hexalith.McpCli-final-unstaged-source.stdout |     0
+ ...e-v3-Hexalith.Memories-final-source-head.stderr |     0
+ ...e-v3-Hexalith.Memories-final-source-head.stdout |     1 +
+ ...v3-Hexalith.Memories-final-staged-source.stderr |     0
+ ...v3-Hexalith.Memories-final-staged-source.stdout |     0
+ ...-Hexalith.Memories-final-unstaged-source.stderr |     0
+ ...-Hexalith.Memories-final-unstaged-source.stdout |     0
+ ...re-v3-Hexalith.Parties-final-source-head.stderr |     0
+ ...re-v3-Hexalith.Parties-final-source-head.stdout |     1 +
+ ...-v3-Hexalith.Parties-final-staged-source.stderr |     0
+ ...-v3-Hexalith.Parties-final-staged-source.stdout |     0
+ ...3-Hexalith.Parties-final-unstaged-source.stderr |     0
+ ...3-Hexalith.Parties-final-unstaged-source.stdout |     0
+ ...e-v3-Hexalith.Platform-final-source-head.stderr |     0
+ ...e-v3-Hexalith.Platform-final-source-head.stdout |     1 +
+ ...v3-Hexalith.Platform-final-staged-source.stderr |     0
+ ...v3-Hexalith.Platform-final-staged-source.stdout |     0
+ ...-Hexalith.Platform-final-unstaged-source.stderr |     0
+ ...-Hexalith.Platform-final-unstaged-source.stdout |     0
+ ...re-v3-Hexalith.Tenants-final-source-head.stderr |     0
+ ...re-v3-Hexalith.Tenants-final-source-head.stdout |     1 +
+ ...-v3-Hexalith.Tenants-final-staged-source.stderr |     0
+ ...-v3-Hexalith.Tenants-final-staged-source.stdout |     0
+ ...3-Hexalith.Tenants-final-unstaged-source.stderr |     0
+ ...3-Hexalith.Tenants-final-unstaged-source.stdout |     0
+ .../capture-v3-platform-owned-exact-catalog.stderr |     0
+ .../capture-v3-platform-owned-exact-catalog.stdout |   364 +
+ .../capture-v3-projects-final-source-head.stderr   |     0
+ .../capture-v3-projects-final-source-head.stdout   |     1 +
+ ...apture-v3-projects-final-unstaged-source.stderr |     0
+ ...apture-v3-projects-final-unstaged-source.stdout |     0
+ .../source-verification-20261028/clone-root.stderr |     2 +
+ .../source-verification-20261028/clone-root.stdout |     0
+ .../source-verification-20261028/commands.json     |  7409 ++++++++++
+ .../commons-exact-delta.stderr                     |     0
+ .../commons-exact-delta.stdout                     |    48 +
+ .../contracts-build.stderr                         |     0
+ .../contracts-build.stdout                         |    33 +
+ .../contracts-tests.stderr                         |     0
+ .../contracts-tests.stdout                         |     7 +
+ .../contracts-tests.xml                            |     1 +
+ .../detach-root.stderr                             |     1 +
+ .../detach-root.stdout                             |     0
+ .../executable-closure.json                        |  1007 ++
+ .../final-contracts-build.stderr                   |     0
+ .../final-contracts-build.stdout                   |    22 +
+ .../final-contracts-tests.stderr                   |     0
+ .../final-contracts-tests.stdout                   |     7 +
+ .../final-contracts-tests.xml                      |     1 +
+ .../final-dotnet-info.stderr                       |     0
+ .../final-dotnet-info.stdout                       |    54 +
+ .../final-dotnet-resolution.stderr                 |     0
+ .../final-dotnet-resolution.stdout                 |     2 +
+ .../final-original-preservation-audit.stderr       |     0
+ .../final-original-preservation-audit.stdout       |     1 +
+ .../final-server-build.stderr                      |     0
+ .../final-server-build.stdout                      |    38 +
+ .../final-server-tests.stderr                      |     0
+ .../final-server-tests.stdout                      |    11 +
+ .../final-server-tests.xml                         |     1 +
+ .../final-verification.py                          |    39 +
+ .../generated-input-hashes.json                    |    19 +
+ .../Hexalith.EventStore.CatalogConstruction.proj   |     1 +
+ .../Hexalith.EventStore.QueryRouting.Tests.proj    |     1 +
+ ...xalith.EventStore.Server.LiveSidecar.Tests.proj |     1 +
+ .../Hexalith.EventStore.Server.Tests.proj          |     1 +
+ .../Hexalith.Folders.Aspire.proj                   |     1 +
+ .../SourceMapping.before-targets.props             |     1 +
+ .../SourceMapping.final.targets                    |    35 +
+ .../SourceMapping.late.props                       |    74 +
+ .../generated-source-mapping/SourceMapping.props   |     3 +
+ .../generated-source-mapping/SourceMapping.targets |     6 +
+ .../SourceMapping.values.props                     |    54 +
+ .../SourceMapping.values.targets                   |   320 +
+ .../__HXW_DefaultCatalog__.proj                    |     1 +
+ .../generated-source-mapping/catalog-versions.json |     1 +
+ .../generated-source-mapping/mapping.json          |   100 +
+ .../pinned-tree/Props/Directory.Packages.props     |   364 +
+ .../routing-catalog.cs.proj                        |     1 +
+ .../hexalith.ai.tools-absorb-direct.stderr         |     3 +
+ .../hexalith.ai.tools-absorb-direct.stdout         |     0
+ .../hexalith.ai.tools-clone.stderr                 |     2 +
+ .../hexalith.ai.tools-clone.stdout                 |     0
+ .../hexalith.ai.tools-detach.stderr                |     1 +
+ .../hexalith.ai.tools-detach.stdout                |     0
+ .../hexalith.ai.tools-history.stderr               |     0
+ .../hexalith.ai.tools-history.stdout               |     5 +
+ .../hexalith.ai.tools-identity.stderr              |     0
+ .../hexalith.ai.tools-identity.stdout              |     1 +
+ .../hexalith.ai.tools-isolated-gitlink.stderr      |     0
+ .../hexalith.ai.tools-isolated-gitlink.stdout      |     0
+ .../hexalith.ai.tools-isolated-parent.stderr       |     0
+ .../hexalith.ai.tools-isolated-parent.stdout       |     1 +
+ .../hexalith.ai.tools-owner-gitlinks.stderr        |     0
+ .../hexalith.ai.tools-owner-gitlinks.stdout        |     0
+ .../hexalith.ai.tools-remote-main.stderr           |     0
+ .../hexalith.ai.tools-remote-main.stdout           |     1 +
+ .../hexalith.ai.tools-remotes.stderr               |     0
+ .../hexalith.ai.tools-remotes.stdout               |     2 +
+ .../hexalith.ai.tools-selected-commit.stderr       |     0
+ .../hexalith.ai.tools-selected-commit.stdout       |     7 +
+ .../hexalith.ai.tools-selected-object.stderr       |     0
+ .../hexalith.ai.tools-selected-object.stdout       |     1 +
+ .../hexalith.ai.tools-status.stderr                |     0
+ .../hexalith.ai.tools-status.stdout                |     1 +
+ .../hexalith.builds-absorb-direct.stderr           |     3 +
+ .../hexalith.builds-absorb-direct.stdout           |     0
+ .../hexalith.builds-clone.stderr                   |     2 +
+ .../hexalith.builds-clone.stdout                   |     0
+ .../hexalith.builds-detach.stderr                  |     1 +
+ .../hexalith.builds-detach.stdout                  |     0
+ .../hexalith.builds-history.stderr                 |     0
+ .../hexalith.builds-history.stdout                 |     5 +
+ .../hexalith.builds-identity.stderr                |     0
+ .../hexalith.builds-identity.stdout                |     1 +
+ .../hexalith.builds-isolated-gitlink.stderr        |     0
+ .../hexalith.builds-isolated-gitlink.stdout        |     0
+ .../hexalith.builds-isolated-parent.stderr         |     0
+ .../hexalith.builds-isolated-parent.stdout         |     1 +
+ .../hexalith.builds-owner-gitlinks.stderr          |     0
+ .../hexalith.builds-owner-gitlinks.stdout          |     1 +
+ .../hexalith.builds-remote-main.stderr             |     0
+ .../hexalith.builds-remote-main.stdout             |     1 +
+ .../hexalith.builds-remotes.stderr                 |     0
+ .../hexalith.builds-remotes.stdout                 |     2 +
+ .../hexalith.builds-selected-commit.stderr         |     0
+ .../hexalith.builds-selected-commit.stdout         |     7 +
+ .../hexalith.builds-selected-object.stderr         |     0
+ .../hexalith.builds-selected-object.stdout         |     1 +
+ .../hexalith.builds-status.stderr                  |     0
+ .../hexalith.builds-status.stdout                  |     2 +
+ .../hexalith.commons-absorb-direct.stderr          |     3 +
+ .../hexalith.commons-absorb-direct.stdout          |     0
+ .../hexalith.commons-clone.stderr                  |     2 +
+ .../hexalith.commons-clone.stdout                  |     0
+ .../hexalith.commons-detach.stderr                 |     1 +
+ .../hexalith.commons-detach.stdout                 |     0
+ .../hexalith.commons-history.stderr                |     0
+ .../hexalith.commons-history.stdout                |     5 +
+ .../hexalith.commons-identity.stderr               |     0
+ .../hexalith.commons-identity.stdout               |     1 +
+ .../hexalith.commons-isolated-gitlink.stderr       |     0
+ .../hexalith.commons-isolated-gitlink.stdout       |     0
+ .../hexalith.commons-isolated-parent.stderr        |     0
+ .../hexalith.commons-isolated-parent.stdout        |     1 +
+ .../hexalith.commons-owner-gitlinks.stderr         |     0
+ .../hexalith.commons-owner-gitlinks.stdout         |     4 +
+ .../hexalith.commons-remote-main.stderr            |     0
+ .../hexalith.commons-remote-main.stdout            |     1 +
+ .../hexalith.commons-remotes.stderr                |     0
+ .../hexalith.commons-remotes.stdout                |     2 +
+ .../hexalith.commons-selected-commit.stderr        |     0
+ .../hexalith.commons-selected-commit.stdout        |     7 +
+ .../hexalith.commons-selected-object.stderr        |     0
+ .../hexalith.commons-selected-object.stdout        |     1 +
+ .../hexalith.commons-status.stderr                 |     0
+ .../hexalith.commons-status.stdout                 |     1 +
+ .../hexalith.conversations-absorb-direct.stderr    |     3 +
+ .../hexalith.conversations-absorb-direct.stdout    |     0
+ .../hexalith.conversations-clone.stderr            |     2 +
+ .../hexalith.conversations-clone.stdout            |     0
+ .../hexalith.conversations-detach.stderr           |     1 +
+ .../hexalith.conversations-detach.stdout           |     0
+ .../hexalith.conversations-history.stderr          |     0
+ .../hexalith.conversations-history.stdout          |     5 +
+ .../hexalith.conversations-identity.stderr         |     0
+ .../hexalith.conversations-identity.stdout         |     1 +
+ .../hexalith.conversations-isolated-gitlink.stderr |     0
+ .../hexalith.conversations-isolated-gitlink.stdout |     0
+ .../hexalith.conversations-isolated-parent.stderr  |     0
+ .../hexalith.conversations-isolated-parent.stdout  |     1 +
+ .../hexalith.conversations-owner-gitlinks.stderr   |     0
+ .../hexalith.conversations-owner-gitlinks.stdout   |    12 +
+ .../hexalith.conversations-remote-main.stderr      |     0
+ .../hexalith.conversations-remote-main.stdout      |     1 +
+ .../hexalith.conversations-remotes.stderr          |     0
+ .../hexalith.conversations-remotes.stdout          |     2 +
+ .../hexalith.conversations-selected-commit.stderr  |     0
+ .../hexalith.conversations-selected-commit.stdout  |     9 +
+ .../hexalith.conversations-selected-object.stderr  |     0
+ .../hexalith.conversations-selected-object.stdout  |     1 +
+ .../hexalith.conversations-status.stderr           |     0
+ .../hexalith.conversations-status.stdout           |     1 +
+ .../hexalith.eventstore-absorb-direct.stderr       |     3 +
+ .../hexalith.eventstore-absorb-direct.stdout       |     0
+ .../hexalith.eventstore-clone.stderr               |     2 +
+ .../hexalith.eventstore-clone.stdout               |     0
+ .../hexalith.eventstore-detach.stderr              |     1 +
+ .../hexalith.eventstore-detach.stdout              |     0
+ .../hexalith.eventstore-history.stderr             |     0
+ .../hexalith.eventstore-history.stdout             |     5 +
+ .../hexalith.eventstore-identity.stderr            |     0
+ .../hexalith.eventstore-identity.stdout            |     1 +
+ .../hexalith.eventstore-isolated-gitlink.stderr    |     0
+ .../hexalith.eventstore-isolated-gitlink.stdout    |     0
+ .../hexalith.eventstore-isolated-parent.stderr     |     0
+ .../hexalith.eventstore-isolated-parent.stdout     |     1 +
+ .../hexalith.eventstore-owner-gitlinks.stderr      |     0
+ .../hexalith.eventstore-owner-gitlinks.stdout      |     9 +
+ .../hexalith.eventstore-remote-main.stderr         |     0
+ .../hexalith.eventstore-remote-main.stdout         |     1 +
+ .../hexalith.eventstore-remotes.stderr             |     0
+ .../hexalith.eventstore-remotes.stdout             |     2 +
+ .../hexalith.eventstore-selected-commit.stderr     |     0
+ .../hexalith.eventstore-selected-commit.stdout     |     9 +
+ .../hexalith.eventstore-selected-object.stderr     |     0
+ .../hexalith.eventstore-selected-object.stdout     |     1 +
+ .../hexalith.eventstore-status.stderr              |     0
+ .../hexalith.eventstore-status.stdout              |     1 +
+ .../hexalith.folders-absorb-direct.stderr          |     3 +
+ .../hexalith.folders-absorb-direct.stdout          |     0
+ .../hexalith.folders-clone.stderr                  |     2 +
+ .../hexalith.folders-clone.stdout                  |     0
+ .../hexalith.folders-detach.stderr                 |     1 +
+ .../hexalith.folders-detach.stdout                 |     0
+ .../hexalith.folders-history.stderr                |     0
+ .../hexalith.folders-history.stdout                |     5 +
+ .../hexalith.folders-identity.stderr               |     0
+ .../hexalith.folders-identity.stdout               |     1 +
+ .../hexalith.folders-isolated-gitlink.stderr       |     0
+ .../hexalith.folders-isolated-gitlink.stdout       |     0
+ .../hexalith.folders-isolated-parent.stderr        |     0
+ .../hexalith.folders-isolated-parent.stdout        |     1 +
+ .../hexalith.folders-owner-gitlinks.stderr         |     0
+ .../hexalith.folders-owner-gitlinks.stdout         |    12 +
+ .../hexalith.folders-remote-main.stderr            |     0
+ .../hexalith.folders-remote-main.stdout            |     1 +
+ .../hexalith.folders-remotes.stderr                |     0
+ .../hexalith.folders-remotes.stdout                |     2 +
+ .../hexalith.folders-selected-commit.stderr        |     0
+ .../hexalith.folders-selected-commit.stdout        |     9 +
+ .../hexalith.folders-selected-object.stderr        |     0
+ .../hexalith.folders-selected-object.stdout        |     1 +
+ .../hexalith.folders-status.stderr                 |     0
+ .../hexalith.folders-status.stdout                 |     1 +
+ .../hexalith.frontcomposer-absorb-direct.stderr    |     3 +
+ .../hexalith.frontcomposer-absorb-direct.stdout    |     0
+ .../hexalith.frontcomposer-clone.stderr            |     2 +
+ .../hexalith.frontcomposer-clone.stdout            |     0
+ .../hexalith.frontcomposer-detach.stderr           |     1 +
+ .../hexalith.frontcomposer-detach.stdout           |     0
+ .../hexalith.frontcomposer-history.stderr          |     0
+ .../hexalith.frontcomposer-history.stdout          |     5 +
+ .../hexalith.frontcomposer-identity.stderr         |     0
+ .../hexalith.frontcomposer-identity.stdout         |     1 +
+ .../hexalith.frontcomposer-isolated-gitlink.stderr |     0
+ .../hexalith.frontcomposer-isolated-gitlink.stdout |     0
+ .../hexalith.frontcomposer-isolated-parent.stderr  |     0
+ .../hexalith.frontcomposer-isolated-parent.stdout  |     1 +
+ .../hexalith.frontcomposer-owner-gitlinks.stderr   |     0
+ .../hexalith.frontcomposer-owner-gitlinks.stdout   |     8 +
+ .../hexalith.frontcomposer-remote-main.stderr      |     0
+ .../hexalith.frontcomposer-remote-main.stdout      |     1 +
+ .../hexalith.frontcomposer-remotes.stderr          |     0
+ .../hexalith.frontcomposer-remotes.stdout          |     2 +
+ .../hexalith.frontcomposer-selected-commit.stderr  |     0
+ .../hexalith.frontcomposer-selected-commit.stdout  |     9 +
+ .../hexalith.frontcomposer-selected-object.stderr  |     0
+ .../hexalith.frontcomposer-selected-object.stdout  |     1 +
+ .../hexalith.frontcomposer-status.stderr           |     0
+ .../hexalith.frontcomposer-status.stdout           |     1 +
+ .../hexalith.mcpcli-absorb-direct.stderr           |     3 +
+ .../hexalith.mcpcli-absorb-direct.stdout           |     0
+ .../hexalith.mcpcli-clone.stderr                   |     2 +
+ .../hexalith.mcpcli-clone.stdout                   |     0
+ .../hexalith.mcpcli-detach.stderr                  |     1 +
+ .../hexalith.mcpcli-detach.stdout                  |     0
+ .../hexalith.mcpcli-history.stderr                 |     0
+ .../hexalith.mcpcli-history.stdout                 |     5 +
+ .../hexalith.mcpcli-identity.stderr                |     0
+ .../hexalith.mcpcli-identity.stdout                |     1 +
+ .../hexalith.mcpcli-isolated-gitlink.stderr        |     0
+ .../hexalith.mcpcli-isolated-gitlink.stdout        |     0
+ .../hexalith.mcpcli-isolated-parent.stderr         |     0
+ .../hexalith.mcpcli-isolated-parent.stdout         |     1 +
+ .../hexalith.mcpcli-owner-gitlinks.stderr          |     0
+ .../hexalith.mcpcli-owner-gitlinks.stdout          |    17 +
+ .../hexalith.mcpcli-remote-main.stderr             |     0
+ .../hexalith.mcpcli-remote-main.stdout             |     1 +
+ .../hexalith.mcpcli-remotes.stderr                 |     0
+ .../hexalith.mcpcli-remotes.stdout                 |     2 +
+ .../hexalith.mcpcli-selected-commit.stderr         |     0
+ .../hexalith.mcpcli-selected-commit.stdout         |    16 +
+ .../hexalith.mcpcli-selected-object.stderr         |     0
+ .../hexalith.mcpcli-selected-object.stdout         |     1 +
+ .../hexalith.mcpcli-status.stderr                  |     0
+ .../hexalith.mcpcli-status.stdout                  |     1 +
+ .../hexalith.memories-absorb-direct.stderr         |     3 +
+ .../hexalith.memories-absorb-direct.stdout         |     0
+ .../hexalith.memories-clone.stderr                 |     2 +
+ .../hexalith.memories-clone.stdout                 |     0
+ .../hexalith.memories-detach.stderr                |     1 +
+ .../hexalith.memories-detach.stdout                |     0
+ .../hexalith.memories-history.stderr               |     0
+ .../hexalith.memories-history.stdout               |     5 +
+ .../hexalith.memories-identity.stderr              |     0
+ .../hexalith.memories-identity.stdout              |     1 +
+ .../hexalith.memories-isolated-gitlink.stderr      |     0
+ .../hexalith.memories-isolated-gitlink.stdout      |     0
+ .../hexalith.memories-isolated-parent.stderr       |     0
+ .../hexalith.memories-isolated-parent.stdout       |     1 +
+ .../hexalith.memories-owner-gitlinks.stderr        |     0
+ .../hexalith.memories-owner-gitlinks.stdout        |     9 +
+ .../hexalith.memories-remote-main.stderr           |     0
+ .../hexalith.memories-remote-main.stdout           |     1 +
+ .../hexalith.memories-remotes.stderr               |     0
+ .../hexalith.memories-remotes.stdout               |     2 +
+ .../hexalith.memories-selected-commit.stderr       |     0
+ .../hexalith.memories-selected-commit.stdout       |     9 +
+ .../hexalith.memories-selected-object.stderr       |     0
+ .../hexalith.memories-selected-object.stdout       |     1 +
+ .../hexalith.memories-status.stderr                |     0
+ .../hexalith.memories-status.stdout                |     1 +
+ .../hexalith.parties-absorb-direct.stderr          |     3 +
+ .../hexalith.parties-absorb-direct.stdout          |     0
+ .../hexalith.parties-clone.stderr                  |     2 +
+ .../hexalith.parties-clone.stdout                  |     0
+ .../hexalith.parties-detach.stderr                 |     1 +
+ .../hexalith.parties-detach.stdout                 |     0
+ .../hexalith.parties-history.stderr                |     0
+ .../hexalith.parties-history.stdout                |     5 +
+ .../hexalith.parties-identity.stderr               |     0
+ .../hexalith.parties-identity.stdout               |     1 +
+ .../hexalith.parties-isolated-gitlink.stderr       |     0
+ .../hexalith.parties-isolated-gitlink.stdout       |     0
+ .../hexalith.parties-isolated-parent.stderr        |     0
+ .../hexalith.parties-isolated-parent.stdout        |     1 +
+ .../hexalith.parties-owner-gitlinks.stderr         |     0
+ .../hexalith.parties-owner-gitlinks.stdout         |    11 +
+ .../hexalith.parties-remote-main.stderr            |     0
+ .../hexalith.parties-remote-main.stdout            |     1 +
+ .../hexalith.parties-remotes.stderr                |     0
+ .../hexalith.parties-remotes.stdout                |     2 +
+ .../hexalith.parties-selected-commit.stderr        |     0
+ .../hexalith.parties-selected-commit.stdout        |     7 +
+ .../hexalith.parties-selected-object.stderr        |     0
+ .../hexalith.parties-selected-object.stdout        |     1 +
+ .../hexalith.parties-status.stderr                 |     0
+ .../hexalith.parties-status.stdout                 |     1 +
+ .../hexalith.platform-absorb-direct.stderr         |     3 +
+ .../hexalith.platform-absorb-direct.stdout         |     0
+ .../hexalith.platform-clone.stderr                 |     2 +
+ .../hexalith.platform-clone.stdout                 |     0
+ .../hexalith.platform-detach.stderr                |     1 +
+ .../hexalith.platform-detach.stdout                |     0
+ .../hexalith.platform-history.stderr               |     0
+ .../hexalith.platform-history.stdout               |     5 +
+ .../hexalith.platform-identity.stderr              |     0
+ .../hexalith.platform-identity.stdout              |     1 +
+ .../hexalith.platform-isolated-gitlink.stderr      |     0
+ .../hexalith.platform-isolated-gitlink.stdout      |     0
+ .../hexalith.platform-isolated-parent.stderr       |     0
+ .../hexalith.platform-isolated-parent.stdout       |     1 +
+ .../hexalith.platform-owner-gitlinks.stderr        |     0
+ .../hexalith.platform-owner-gitlinks.stdout        |    17 +
+ .../hexalith.platform-remote-main.stderr           |     0
+ .../hexalith.platform-remote-main.stdout           |     1 +
+ .../hexalith.platform-remotes.stderr               |     0
+ .../hexalith.platform-remotes.stdout               |     2 +
+ .../hexalith.platform-selected-commit.stderr       |     0
+ .../hexalith.platform-selected-commit.stdout       |     9 +
+ .../hexalith.platform-selected-object.stderr       |     0
+ .../hexalith.platform-selected-object.stdout       |     1 +
+ .../hexalith.platform-status.stderr                |     0
+ .../hexalith.platform-status.stdout                |     4 +
+ .../hexalith.tenants-absorb-direct.stderr          |     3 +
+ .../hexalith.tenants-absorb-direct.stdout          |     0
+ .../hexalith.tenants-clone.stderr                  |     2 +
+ .../hexalith.tenants-clone.stdout                  |     0
+ .../hexalith.tenants-detach.stderr                 |     1 +
+ .../hexalith.tenants-detach.stdout                 |     0
+ .../hexalith.tenants-history.stderr                |     0
+ .../hexalith.tenants-history.stdout                |     5 +
+ .../hexalith.tenants-identity.stderr               |     0
+ .../hexalith.tenants-identity.stdout               |     1 +
+ .../hexalith.tenants-isolated-gitlink.stderr       |     0
+ .../hexalith.tenants-isolated-gitlink.stdout       |     0
+ .../hexalith.tenants-isolated-parent.stderr        |     0
+ .../hexalith.tenants-isolated-parent.stdout        |     1 +
+ .../hexalith.tenants-owner-gitlinks.stderr         |     0
+ .../hexalith.tenants-owner-gitlinks.stdout         |     9 +
+ .../hexalith.tenants-remote-main.stderr            |     0
+ .../hexalith.tenants-remote-main.stdout            |     1 +
+ .../hexalith.tenants-remotes.stderr                |     0
+ .../hexalith.tenants-remotes.stdout                |     2 +
+ .../hexalith.tenants-selected-commit.stderr        |     0
+ .../hexalith.tenants-selected-commit.stdout        |     7 +
+ .../hexalith.tenants-selected-object.stderr        |     0
+ .../hexalith.tenants-selected-object.stdout        |     1 +
+ .../hexalith.tenants-status.stderr                 |     0
+ .../hexalith.tenants-status.stdout                 |     1 +
+ .../initial-root.stderr                            |     0
+ .../initial-root.stdout                            |    18 +
+ .../isolated-head.stderr                           |     0
+ .../isolated-head.stdout                           |     1 +
+ .../isolated-index.stderr                          |     0
+ .../isolated-index.stdout                          |    12 +
+ .../isolated-package-refusal.stderr                |     0
+ .../isolated-package-refusal.stdout                |     1 +
+ .../isolated-root-no-recursion.stderr              |     0
+ .../isolated-root-no-recursion.stdout              |     0
+ .../isolated-source-diff.stderr                    |     0
+ .../isolated-source-diff.stdout                    |    77 +
+ .../isolated-source-preparation.stderr             |     0
+ .../isolated-source-preparation.stdout             |     1 +
+ .../isolated-status.stderr                         |     0
+ .../isolated-status.stdout                         |    12 +
+ .../isolated-tool-restore.stderr                   |     0
+ .../isolated-tool-restore.stdout                   |     3 +
+ .../isolated-tool-version.stderr                   |     0
+ .../isolated-tool-version.stdout                   |     1 +
+ .../original-preservation-audit.stderr             |     0
+ .../original-preservation-audit.stdout             |     1 +
+ .../original-source-refusal.stderr                 |     0
+ .../original-source-refusal.stdout                 |     1 +
+ .../outer-invocations.json                         |    24 +
+ .../owner-identities.json                          |    54 +
+ .../platform-owned-exact-catalog.stderr            |     0
+ .../platform-owned-exact-catalog.stdout            |   364 +
+ .../platform-release-tags.stderr                   |     0
+ .../platform-release-tags.stdout                   |     4 +
+ .../prepare-command-help.stderr                    |     0
+ .../prepare-command-help.stdout                    |    13 +
+ .../prepare-workspace.py                           |    45 +
+ .../preservation-after.json                        |   345 +
+ .../preservation-before.json                       |   345 +
+ .../projects-contracts-actual-mapping.stderr       |     0
+ .../projects-contracts-actual-mapping.stdout       |     9 +
+ .../projects-final-source-head.stderr              |     0
+ .../projects-final-source-head.stdout              |     1 +
+ .../projects-final-unstaged-source.stderr          |     0
+ .../projects-final-unstaged-source.stdout          |     0
+ .../projects-history.stderr                        |     0
+ .../projects-history.stdout                        |     5 +
+ .../projects-identity.stderr                       |     0
+ .../projects-identity.stdout                       |     1 +
+ .../projects-owner-gitlinks.stderr                 |     0
+ .../projects-owner-gitlinks.stdout                 |    12 +
+ .../projects-remote-main.stderr                    |     0
+ .../projects-remote-main.stdout                    |     1 +
+ .../projects-remotes.stderr                        |     0
+ .../projects-remotes.stdout                        |     2 +
+ .../projects-server-actual-mapping.stderr          |     0
+ .../projects-server-actual-mapping.stdout          |     9 +
+ .../projects-status.stderr                         |     0
+ .../projects-status.stdout                         |    18 +
+ .../qualified-builds-input.json                    |    31 +
+ .../source-verification-20261028/review-closure.md |     7 +
+ .../source-verification-20261028/review-triage.md  |    18 +
+ .../reviewed-original-preservation-audit.stderr    |     0
+ .../reviewed-original-preservation-audit.stdout    |     1 +
+ .../reviewed-source-capture.stderr                 |     0
+ .../reviewed-source-capture.stdout                 |    41 +
+ .../reviewed-verification-harness.stderr           |     0
+ .../reviewed-verification-harness.stdout           |     7 +
+ .../root-head-gitlinks.stderr                      |     0
+ .../root-head-gitlinks.stdout                      |    12 +
+ .../root-history.stderr                            |     0
+ .../root-history.stdout                            |     8 +
+ .../source-verification-20261028/root-index.stderr |     0
+ .../source-verification-20261028/root-index.stdout |    12 +
+ .../root-remotes.stderr                            |     0
+ .../root-remotes.stdout                            |     2 +
+ .../source-verification-20261028/run.py            |   108 +
+ .../selected-inputs.json                           |    80 +
+ .../selected-source-hashes.json                    | 13976 +++++++++++++++++++
+ .../server-build.stderr                            |     0
+ .../server-build.stdout                            |    67 +
+ .../server-tests.stderr                            |     0
+ .../server-tests.stdout                            |    11 +
+ .../source-verification-20261028/server-tests.xml  |     1 +
+ .../story-authority.stderr                         |     0
+ .../story-authority.stdout                         |     1 +
+ .../source-verification-20261028/test-results.json |    63 +
+ .../verify-evidence.py                             |   134 +
+ .../source-verification-20261028/verify-lanes.py   |    44 +
+ .../spec-6-4-current-source-verification.md        |    54 +
+ ...spec-6-4-platform-builds-package-preparation.md |    43 +
+ ...projects-with-transient-current-explanations.md |    22 +-
+ references/Hexalith.Builds                         |     2 +-
+ references/Hexalith.Commons                        |     2 +-
+ references/Hexalith.Conversations                  |     2 +-
+ references/Hexalith.EventStore                     |     2 +-
+ references/Hexalith.Folders                        |     2 +-
+ references/Hexalith.FrontComposer                  |     2 +-
+ references/Hexalith.McpCli                         |     2 +-
+ references/Hexalith.Memories                       |     2 +-
+ references/Hexalith.Parties                        |     2 +-
+ references/Hexalith.Platform                       |     2 +-
+ references/Hexalith.Tenants                        |     2 +-
+ 920 files changed, 35705 insertions(+), 12 deletions(-)

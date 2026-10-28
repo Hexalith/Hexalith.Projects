@@ -1,0 +1,22 @@
+ .../implementation-artifacts/deferred-work.md      |  30 +-
+ .../spec-five-deferred-generator-inputs.md         |  50 +++
+ .../spec-five-deferred-safety-inputs.md            |  39 +++
+ docs/contract/contract-parity-ci-gates.md          |   2 +-
+ docs/contract/contract-spine-ci-gates.md           |   2 +-
+ docs/contract/parity-oracle-generator.md           |   2 +
+ docs/contract/safety-invariant-ci-gates.md         |   6 +
+ references/Hexalith.Builds                         |   2 +-
+ references/Hexalith.McpCli                         |   2 +-
+ references/Hexalith.Memories                       |   2 +-
+ references/Hexalith.Parties                        |   2 +-
+ references/Hexalith.Platform                       |   2 +-
+ references/Hexalith.Tenants                        |   2 +-
+ .../Hexalith.Folders.Server.csproj                 |  12 +-
+ .../OpenApi/ParityOracleGeneratorTests.cs          | 346 ++++++++++++++++++++-
+ .../OpenApi/SafetyInvariantGateTests.InputTests.cs | 232 ++++++++++++++
+ .../OpenApi/SafetyInvariantGateTests.Inputs.cs     | 231 ++++++++++++++
+ .../OpenApi/SafetyInvariantGateTests.cs            |  63 ++--
+ tests/fixtures/safety-channel-inventory.json       |   6 +-
+ tests/tools/parity-oracle-generator/Program.cs     | 135 +++++++-
+ tests/tools/parity-oracle-generator/README.md      |  11 +-
+ 21 files changed, 1090 insertions(+), 89 deletions(-)

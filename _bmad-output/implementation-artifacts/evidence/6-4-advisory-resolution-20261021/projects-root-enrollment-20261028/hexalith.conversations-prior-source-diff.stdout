@@ -1,0 +1,124 @@
+ .../.gitattributes                                 |    1 +
+ .../attempt-20261028-apphost-baseline-02/README.md |   21 +
+ .../aspire-describe-after.json                     |   40 +
+ .../aspire-describe-after.stderr.txt               |    1 +
+ .../aspire-describe-after.stdout.txt               |    0
+ .../aspire-describe-help.json                      |   27 +
+ .../aspire-describe-help.stderr.txt                |    0
+ .../aspire-describe-help.stdout.txt                |   21 +
+ .../aspire-describe-initial.json                   |   45 +
+ .../aspire-describe-initial.stderr.txt             |    0
+ .../aspire-describe-initial.stdout.txt             |  934 +++++++++++++++
+ .../aspire-describe-ready.json                     |   45 +
+ .../aspire-describe-ready.stderr.txt               |    0
+ .../aspire-describe-ready.stdout.txt               | 1208 +++++++++++++++++++
+ .../aspire-logs-final.json                         |   42 +
+ .../aspire-logs-final.stderr.txt                   |    1 +
+ .../aspire-logs-final.stdout.txt                   |  404 +++++++
+ .../aspire-logs-help.json                          |   35 +
+ .../aspire-logs-help.stderr.txt                    |    0
+ .../aspire-logs-help.stdout.txt                    |   24 +
+ .../aspire-otel-logs-help.json                     |   36 +
+ .../aspire-otel-logs-help.stderr.txt               |    0
+ .../aspire-otel-logs-help.stdout.txt               |   26 +
+ .../aspire-otel-warnings.json                      |   44 +
+ .../aspire-otel-warnings.stderr.txt                |    0
+ .../aspire-otel-warnings.stdout.txt                |    1 +
+ .../aspire-ps-after.json                           |   37 +
+ .../aspire-ps-after.stderr.txt                     |    0
+ .../aspire-ps-after.stdout.txt                     |    1 +
+ .../aspire-ps-before-cleanup.json                  |   42 +
+ .../aspire-ps-before-cleanup.stderr.txt            |    0
+ .../aspire-ps-before-cleanup.stdout.txt            |   11 +
+ .../aspire-ps-before.json                          |   29 +
+ .../aspire-ps-before.stderr.txt                    |    0
+ .../aspire-ps-before.stdout.txt                    |    1 +
+ .../aspire-ps-help.json                            |   27 +
+ .../aspire-ps-help.stderr.txt                      |    0
+ .../aspire-ps-help.stdout.txt                      |   16 +
+ .../aspire-ps-ownership-check.json                 |   42 +
+ .../aspire-ps-ownership-check.stderr.txt           |    0
+ .../aspire-ps-ownership-check.stdout.txt           |   11 +
+ .../aspire-run-help.json                           |   27 +
+ .../aspire-run-help.stderr.txt                     |    0
+ .../aspire-run-help.stdout.txt                     |   23 +
+ .../aspire-run.json                                |   46 +
+ .../aspire-run.stderr.txt                          |    1 +
+ .../aspire-run.stdout.txt                          |    7 +
+ .../aspire-stop-help.json                          |   27 +
+ .../aspire-stop-help.stderr.txt                    |    0
+ .../aspire-stop-help.stdout.txt                    |   18 +
+ .../aspire-stop-owned.json                         |   37 +
+ .../aspire-stop-owned.stderr.txt                   |    0
+ .../aspire-stop-owned.stdout.txt                   |    6 +
+ .../aspire-version.json                            |   26 +
+ .../aspire-version.stderr.txt                      |    0
+ .../aspire-version.stdout.txt                      |    1 +
+ .../aspire-wait-admin-web.json                     |   42 +
+ .../aspire-wait-admin-web.stderr.txt               |    0
+ .../aspire-wait-admin-web.stdout.txt               |    3 +
+ .../aspire-wait-conversations.json                 |   42 +
+ .../aspire-wait-conversations.stderr.txt           |    0
+ .../aspire-wait-conversations.stdout.txt           |    3 +
+ .../aspire-wait-eventstore.json                    |   42 +
+ .../aspire-wait-eventstore.stderr.txt              |    0
+ .../aspire-wait-eventstore.stdout.txt              |    3 +
+ .../aspire-wait-help.json                          |   27 +
+ .../aspire-wait-help.stderr.txt                    |    0
+ .../aspire-wait-help.stdout.txt                    |   20 +
+ .../aspire-wait-security.json                      |   42 +
+ .../aspire-wait-security.stderr.txt                |    0
+ .../aspire-wait-security.stdout.txt                |    3 +
+ .../capture-driver.py.txt                          |   65 +
+ .../cleanup-ownership.json                         |    8 +
+ .../dependency-preflight.json                      |   25 +
+ .../diagnostic-log-inventory.json                  |   11 +
+ .../diagnostic-summary.json                        |  112 ++
+ .../entry-state.json                               |  748 ++++++++++++
+ .../evidence-integrity-check.json                  |   28 +
+ .../exit-state.json                                |  748 ++++++++++++
+ .../finalization-driver.py.txt                     |   70 ++
+ .../mapped-apphost-evaluation-check.json           |   23 +
+ .../mapped-apphost-evaluation.json                 |   39 +
+ .../mapped-apphost-evaluation.stderr.txt           |    0
+ .../mapped-apphost-evaluation.stdout.txt           |  136 +++
+ .../Hexalith.EventStore.CatalogConstruction.proj   |    1 +
+ .../Hexalith.EventStore.QueryRouting.Tests.proj    |    1 +
+ ...xalith.EventStore.Server.LiveSidecar.Tests.proj |    1 +
+ .../Hexalith.EventStore.Server.Tests.proj          |    1 +
+ .../source-mapping/Hexalith.Folders.Aspire.proj    |    1 +
+ .../SourceMapping.before-targets.props             |    1 +
+ .../source-mapping/SourceMapping.final.targets     |   37 +
+ .../source-mapping/SourceMapping.late.props        |   78 ++
+ .../source-mapping/SourceMapping.props             |    3 +
+ .../source-mapping/SourceMapping.targets           |    6 +
+ .../source-mapping/SourceMapping.values.props      |   57 +
+ .../source-mapping/SourceMapping.values.targets    |  338 ++++++
+ .../source-mapping/__HXW_DefaultCatalog__.proj     |    1 +
+ .../source-mapping/catalog-versions.json           |    1 +
+ .../prepared-imports/source-mapping/mapping.json   |  111 ++
+ .../pinned-tree/Props/Directory.Packages.props     |  364 ++++++
+ .../source-mapping/routing-catalog.cs.proj         |    1 +
+ .../producer-cli-debug-build.json                  |   31 +
+ .../producer-cli-debug-build.stderr.txt            |    0
+ .../producer-cli-debug-build.stdout.txt            |   12 +
+ .../resource-readiness.json                        |  367 ++++++
+ .../results.json                                   | 1261 ++++++++++++++++++++
+ .../safe-diagnostic-redactions.json                |   29 +
+ .../sdk-version.json                               |   26 +
+ .../sdk-version.stderr.txt                         |    0
+ .../sdk-version.stdout.txt                         |    1 +
+ .../source-environment.json                        |    9 +
+ .../source-preparation-inventory.json              |  167 +++
+ .../source-prepare.json                            |   35 +
+ .../source-prepare.stderr.txt                      |    0
+ .../source-prepare.stdout.txt                      |    1 +
+ .../temporary-workspace.json                       |    5 +
+ references/Hexalith.Builds                         |    2 +-
+ references/Hexalith.EventStore                     |    2 +-
+ references/Hexalith.Folders                        |    2 +-
+ references/Hexalith.FrontComposer                  |    2 +-
+ references/Hexalith.McpCli                         |    2 +-
+ references/Hexalith.Memories                       |    2 +-
+ references/Hexalith.Platform                       |    2 +-
+ 123 files changed, 8586 insertions(+), 7 deletions(-)

@@ -1,0 +1,337 @@
+ .../clone-root.stderr                              |    2 +
+ .../clone-root.stdout                              |    0
+ .../commands.json                                  | 8102 ++++++++++++++++++++
+ .../create-isolated-workspace.stderr               |    0
+ .../create-isolated-workspace.stdout               |   92 +
+ .../detach-root.stderr                             |    1 +
+ .../detach-root.stdout                             |    0
+ .../hexalith.ai.tools-absorb-direct.stderr         |    3 +
+ .../hexalith.ai.tools-absorb-direct.stdout         |    0
+ .../hexalith.ai.tools-clone.stderr                 |    2 +
+ .../hexalith.ai.tools-clone.stdout                 |    0
+ .../hexalith.ai.tools-detach.stderr                |    1 +
+ .../hexalith.ai.tools-detach.stdout                |    0
+ .../hexalith.ai.tools-head-pins.stderr             |    0
+ .../hexalith.ai.tools-head-pins.stdout             |    0
+ .../hexalith.ai.tools-history.stderr               |    0
+ .../hexalith.ai.tools-history.stdout               |    5 +
+ .../hexalith.ai.tools-isolated-gitlink.stderr      |    0
+ .../hexalith.ai.tools-isolated-gitlink.stdout      |    0
+ .../hexalith.ai.tools-isolated-parent.stderr       |    0
+ .../hexalith.ai.tools-isolated-parent.stdout       |    1 +
+ .../hexalith.ai.tools-remote-main.stderr           |    0
+ .../hexalith.ai.tools-remote-main.stdout           |    1 +
+ .../hexalith.ai.tools-remotes.stderr               |    0
+ .../hexalith.ai.tools-remotes.stdout               |    2 +
+ .../hexalith.ai.tools-selected-commit.stderr       |    0
+ .../hexalith.ai.tools-selected-commit.stdout       |    7 +
+ .../hexalith.ai.tools-selected-object.stderr       |    0
+ .../hexalith.ai.tools-selected-object.stdout       |    1 +
+ .../hexalith.ai.tools-status.stderr                |    0
+ .../hexalith.ai.tools-status.stdout                |    1 +
+ .../hexalith.builds-absorb-direct.stderr           |    3 +
+ .../hexalith.builds-absorb-direct.stdout           |    0
+ .../hexalith.builds-clone.stderr                   |    2 +
+ .../hexalith.builds-clone.stdout                   |    0
+ .../hexalith.builds-detach.stderr                  |    1 +
+ .../hexalith.builds-detach.stdout                  |    0
+ .../hexalith.builds-head-pins.stderr               |    0
+ .../hexalith.builds-head-pins.stdout               |    1 +
+ .../hexalith.builds-history.stderr                 |    0
+ .../hexalith.builds-history.stdout                 |    5 +
+ .../hexalith.builds-isolated-gitlink.stderr        |    0
+ .../hexalith.builds-isolated-gitlink.stdout        |    0
+ .../hexalith.builds-isolated-parent.stderr         |    0
+ .../hexalith.builds-isolated-parent.stdout         |    1 +
+ .../hexalith.builds-remote-main.stderr             |    0
+ .../hexalith.builds-remote-main.stdout             |    1 +
+ .../hexalith.builds-remotes.stderr                 |    0
+ .../hexalith.builds-remotes.stdout                 |    2 +
+ .../hexalith.builds-selected-commit.stderr         |    0
+ .../hexalith.builds-selected-commit.stdout         |    7 +
+ .../hexalith.builds-selected-object.stderr         |    0
+ .../hexalith.builds-selected-object.stdout         |    1 +
+ .../hexalith.builds-status.stderr                  |    0
+ .../hexalith.builds-status.stdout                  |    1 +
+ .../hexalith.commons-absorb-direct.stderr          |    3 +
+ .../hexalith.commons-absorb-direct.stdout          |    0
+ .../hexalith.commons-clone.stderr                  |    2 +
+ .../hexalith.commons-clone.stdout                  |    0
+ .../hexalith.commons-detach.stderr                 |    1 +
+ .../hexalith.commons-detach.stdout                 |    0
+ .../hexalith.commons-head-pins.stderr              |    0
+ .../hexalith.commons-head-pins.stdout              |    4 +
+ .../hexalith.commons-history.stderr                |    0
+ .../hexalith.commons-history.stdout                |    5 +
+ .../hexalith.commons-isolated-gitlink.stderr       |    0
+ .../hexalith.commons-isolated-gitlink.stdout       |    0
+ .../hexalith.commons-isolated-parent.stderr        |    0
+ .../hexalith.commons-isolated-parent.stdout        |    1 +
+ .../hexalith.commons-remote-main.stderr            |    0
+ .../hexalith.commons-remote-main.stdout            |    1 +
+ .../hexalith.commons-remotes.stderr                |    0
+ .../hexalith.commons-remotes.stdout                |    2 +
+ .../hexalith.commons-selected-commit.stderr        |    0
+ .../hexalith.commons-selected-commit.stdout        |    7 +
+ .../hexalith.commons-selected-object.stderr        |    0
+ .../hexalith.commons-selected-object.stdout        |    1 +
+ .../hexalith.commons-status.stderr                 |    0
+ .../hexalith.commons-status.stdout                 |    1 +
+ .../hexalith.conversations-absorb-direct.stderr    |    3 +
+ .../hexalith.conversations-absorb-direct.stdout    |    0
+ .../hexalith.conversations-clone.stderr            |    2 +
+ .../hexalith.conversations-clone.stdout            |    0
+ .../hexalith.conversations-detach.stderr           |    1 +
+ .../hexalith.conversations-detach.stdout           |    0
+ .../hexalith.conversations-head-pins.stderr        |    0
+ .../hexalith.conversations-head-pins.stdout        |   12 +
+ .../hexalith.conversations-history.stderr          |    0
+ .../hexalith.conversations-history.stdout          |    5 +
+ .../hexalith.conversations-isolated-gitlink.stderr |    0
+ .../hexalith.conversations-isolated-gitlink.stdout |    0
+ .../hexalith.conversations-isolated-parent.stderr  |    0
+ .../hexalith.conversations-isolated-parent.stdout  |    1 +
+ .../hexalith.conversations-remote-main.stderr      |    0
+ .../hexalith.conversations-remote-main.stdout      |    1 +
+ .../hexalith.conversations-remotes.stderr          |    0
+ .../hexalith.conversations-remotes.stdout          |    2 +
+ .../hexalith.conversations-selected-commit.stderr  |    0
+ .../hexalith.conversations-selected-commit.stdout  |    7 +
+ .../hexalith.conversations-selected-object.stderr  |    0
+ .../hexalith.conversations-selected-object.stdout  |    1 +
+ .../hexalith.conversations-status.stderr           |    0
+ .../hexalith.conversations-status.stdout           |    1 +
+ .../hexalith.eventstore-absorb-direct.stderr       |    3 +
+ .../hexalith.eventstore-absorb-direct.stdout       |    0
+ .../hexalith.eventstore-clone.stderr               |    2 +
+ .../hexalith.eventstore-clone.stdout               |    0
+ .../hexalith.eventstore-detach.stderr              |    1 +
+ .../hexalith.eventstore-detach.stdout              |    0
+ .../hexalith.eventstore-head-pins.stderr           |    0
+ .../hexalith.eventstore-head-pins.stdout           |    9 +
+ .../hexalith.eventstore-history.stderr             |    0
+ .../hexalith.eventstore-history.stdout             |    5 +
+ .../hexalith.eventstore-isolated-gitlink.stderr    |    0
+ .../hexalith.eventstore-isolated-gitlink.stdout    |    0
+ .../hexalith.eventstore-isolated-parent.stderr     |    0
+ .../hexalith.eventstore-isolated-parent.stdout     |    1 +
+ .../hexalith.eventstore-remote-main.stderr         |    0
+ .../hexalith.eventstore-remote-main.stdout         |    1 +
+ .../hexalith.eventstore-remotes.stderr             |    0
+ .../hexalith.eventstore-remotes.stdout             |    2 +
+ .../hexalith.eventstore-selected-commit.stderr     |    0
+ .../hexalith.eventstore-selected-commit.stdout     |    7 +
+ .../hexalith.eventstore-selected-object.stderr     |    0
+ .../hexalith.eventstore-selected-object.stdout     |    1 +
+ .../hexalith.eventstore-status.stderr              |    0
+ .../hexalith.eventstore-status.stdout              |    1 +
+ .../hexalith.folders-absorb-direct.stderr          |    3 +
+ .../hexalith.folders-absorb-direct.stdout          |    0
+ .../hexalith.folders-clone.stderr                  |    2 +
+ .../hexalith.folders-clone.stdout                  |    0
+ .../hexalith.folders-detach.stderr                 |    1 +
+ .../hexalith.folders-detach.stdout                 |    0
+ .../hexalith.folders-head-pins.stderr              |    0
+ .../hexalith.folders-head-pins.stdout              |   12 +
+ .../hexalith.folders-history.stderr                |    0
+ .../hexalith.folders-history.stdout                |    5 +
+ .../hexalith.folders-isolated-gitlink.stderr       |    0
+ .../hexalith.folders-isolated-gitlink.stdout       |    0
+ .../hexalith.folders-isolated-parent.stderr        |    0
+ .../hexalith.folders-isolated-parent.stdout        |    1 +
+ .../hexalith.folders-remote-main.stderr            |    0
+ .../hexalith.folders-remote-main.stdout            |    1 +
+ .../hexalith.folders-remotes.stderr                |    0
+ .../hexalith.folders-remotes.stdout                |    2 +
+ .../hexalith.folders-selected-commit.stderr        |    0
+ .../hexalith.folders-selected-commit.stdout        |    7 +
+ .../hexalith.folders-selected-object.stderr        |    0
+ .../hexalith.folders-selected-object.stdout        |    1 +
+ .../hexalith.folders-status.stderr                 |    0
+ .../hexalith.folders-status.stdout                 |    1 +
+ .../hexalith.frontcomposer-absorb-direct.stderr    |    3 +
+ .../hexalith.frontcomposer-absorb-direct.stdout    |    0
+ .../hexalith.frontcomposer-clone.stderr            |    2 +
+ .../hexalith.frontcomposer-clone.stdout            |    0
+ .../hexalith.frontcomposer-detach.stderr           |    1 +
+ .../hexalith.frontcomposer-detach.stdout           |    0
+ .../hexalith.frontcomposer-head-pins.stderr        |    0
+ .../hexalith.frontcomposer-head-pins.stdout        |    8 +
+ .../hexalith.frontcomposer-history.stderr          |    0
+ .../hexalith.frontcomposer-history.stdout          |    5 +
+ .../hexalith.frontcomposer-isolated-gitlink.stderr |    0
+ .../hexalith.frontcomposer-isolated-gitlink.stdout |    0
+ .../hexalith.frontcomposer-isolated-parent.stderr  |    0
+ .../hexalith.frontcomposer-isolated-parent.stdout  |    1 +
+ .../hexalith.frontcomposer-remote-main.stderr      |    0
+ .../hexalith.frontcomposer-remote-main.stdout      |    1 +
+ .../hexalith.frontcomposer-remotes.stderr          |    0
+ .../hexalith.frontcomposer-remotes.stdout          |    2 +
+ .../hexalith.frontcomposer-selected-commit.stderr  |    0
+ .../hexalith.frontcomposer-selected-commit.stdout  |    7 +
+ .../hexalith.frontcomposer-selected-object.stderr  |    0
+ .../hexalith.frontcomposer-selected-object.stdout  |    1 +
+ .../hexalith.frontcomposer-status.stderr           |    0
+ .../hexalith.frontcomposer-status.stdout           |    1 +
+ .../hexalith.mcpcli-absorb-direct.stderr           |    3 +
+ .../hexalith.mcpcli-absorb-direct.stdout           |    0
+ .../hexalith.mcpcli-clone.stderr                   |    2 +
+ .../hexalith.mcpcli-clone.stdout                   |    0
+ .../hexalith.mcpcli-detach.stderr                  |    1 +
+ .../hexalith.mcpcli-detach.stdout                  |    0
+ .../hexalith.mcpcli-head-pins.stderr               |    0
+ .../hexalith.mcpcli-head-pins.stdout               |   17 +
+ .../hexalith.mcpcli-history.stderr                 |    0
+ .../hexalith.mcpcli-history.stdout                 |    5 +
+ .../hexalith.mcpcli-isolated-gitlink.stderr        |    0
+ .../hexalith.mcpcli-isolated-gitlink.stdout        |    0
+ .../hexalith.mcpcli-isolated-parent.stderr         |    0
+ .../hexalith.mcpcli-isolated-parent.stdout         |    1 +
+ .../hexalith.mcpcli-remote-main.stderr             |    0
+ .../hexalith.mcpcli-remote-main.stdout             |    1 +
+ .../hexalith.mcpcli-remotes.stderr                 |    0
+ .../hexalith.mcpcli-remotes.stdout                 |    2 +
+ .../hexalith.mcpcli-selected-commit.stderr         |    0
+ .../hexalith.mcpcli-selected-commit.stdout         |    7 +
+ .../hexalith.mcpcli-selected-object.stderr         |    0
+ .../hexalith.mcpcli-selected-object.stdout         |    1 +
+ .../hexalith.mcpcli-status.stderr                  |    0
+ .../hexalith.mcpcli-status.stdout                  |    1 +
+ .../hexalith.memories-absorb-direct.stderr         |    3 +
+ .../hexalith.memories-absorb-direct.stdout         |    0
+ .../hexalith.memories-clone.stderr                 |    2 +
+ .../hexalith.memories-clone.stdout                 |    0
+ .../hexalith.memories-detach.stderr                |    1 +
+ .../hexalith.memories-detach.stdout                |    0
+ .../hexalith.memories-head-pins.stderr             |    0
+ .../hexalith.memories-head-pins.stdout             |    9 +
+ .../hexalith.memories-history.stderr               |    0
+ .../hexalith.memories-history.stdout               |    5 +
+ .../hexalith.memories-isolated-gitlink.stderr      |    0
+ .../hexalith.memories-isolated-gitlink.stdout      |    0
+ .../hexalith.memories-isolated-parent.stderr       |    0
+ .../hexalith.memories-isolated-parent.stdout       |    1 +
+ .../hexalith.memories-remote-main.stderr           |    0
+ .../hexalith.memories-remote-main.stdout           |    1 +
+ .../hexalith.memories-remotes.stderr               |    0
+ .../hexalith.memories-remotes.stdout               |    2 +
+ .../hexalith.memories-selected-commit.stderr       |    0
+ .../hexalith.memories-selected-commit.stdout       |    7 +
+ .../hexalith.memories-selected-object.stderr       |    0
+ .../hexalith.memories-selected-object.stdout       |    1 +
+ .../hexalith.memories-status.stderr                |    0
+ .../hexalith.memories-status.stdout                |    1 +
+ .../hexalith.parties-absorb-direct.stderr          |    3 +
+ .../hexalith.parties-absorb-direct.stdout          |    0
+ .../hexalith.parties-clone.stderr                  |    2 +
+ .../hexalith.parties-clone.stdout                  |    0
+ .../hexalith.parties-detach.stderr                 |    1 +
+ .../hexalith.parties-detach.stdout                 |    0
+ .../hexalith.parties-head-pins.stderr              |    0
+ .../hexalith.parties-head-pins.stdout              |   11 +
+ .../hexalith.parties-history.stderr                |    0
+ .../hexalith.parties-history.stdout                |    5 +
+ .../hexalith.parties-isolated-gitlink.stderr       |    0
+ .../hexalith.parties-isolated-gitlink.stdout       |    0
+ .../hexalith.parties-isolated-parent.stderr        |    0
+ .../hexalith.parties-isolated-parent.stdout        |    1 +
+ .../hexalith.parties-remote-main.stderr            |    0
+ .../hexalith.parties-remote-main.stdout            |    1 +
+ .../hexalith.parties-remotes.stderr                |    0
+ .../hexalith.parties-remotes.stdout                |    2 +
+ .../hexalith.parties-selected-commit.stderr        |    0
+ .../hexalith.parties-selected-commit.stdout        |    7 +
+ .../hexalith.parties-selected-object.stderr        |    0
+ .../hexalith.parties-selected-object.stdout        |    1 +
+ .../hexalith.parties-status.stderr                 |    0
+ .../hexalith.parties-status.stdout                 |    1 +
+ .../hexalith.platform-absorb-direct.stderr         |    3 +
+ .../hexalith.platform-absorb-direct.stdout         |    0
+ .../hexalith.platform-clone.stderr                 |    2 +
+ .../hexalith.platform-clone.stdout                 |    0
+ .../hexalith.platform-detach.stderr                |    1 +
+ .../hexalith.platform-detach.stdout                |    0
+ .../hexalith.platform-head-pins.stderr             |    0
+ .../hexalith.platform-head-pins.stdout             |   17 +
+ .../hexalith.platform-history.stderr               |    0
+ .../hexalith.platform-history.stdout               |    5 +
+ .../hexalith.platform-isolated-gitlink.stderr      |    0
+ .../hexalith.platform-isolated-gitlink.stdout      |    0
+ .../hexalith.platform-isolated-parent.stderr       |    0
+ .../hexalith.platform-isolated-parent.stdout       |    1 +
+ .../hexalith.platform-remote-main.stderr           |    0
+ .../hexalith.platform-remote-main.stdout           |    1 +
+ .../hexalith.platform-remotes.stderr               |    0
+ .../hexalith.platform-remotes.stdout               |    2 +
+ .../hexalith.platform-selected-commit.stderr       |    0
+ .../hexalith.platform-selected-commit.stdout       |    7 +
+ .../hexalith.platform-selected-object.stderr       |    0
+ .../hexalith.platform-selected-object.stdout       |    1 +
+ .../hexalith.platform-status.stderr                |    0
+ .../hexalith.platform-status.stdout                |    4 +
+ .../hexalith.tenants-absorb-direct.stderr          |    3 +
+ .../hexalith.tenants-absorb-direct.stdout          |    0
+ .../hexalith.tenants-clone.stderr                  |    2 +
+ .../hexalith.tenants-clone.stdout                  |    0
+ .../hexalith.tenants-detach.stderr                 |    1 +
+ .../hexalith.tenants-detach.stdout                 |    0
+ .../hexalith.tenants-head-pins.stderr              |    0
+ .../hexalith.tenants-head-pins.stdout              |    9 +
+ .../hexalith.tenants-history.stderr                |    0
+ .../hexalith.tenants-history.stdout                |    5 +
+ .../hexalith.tenants-isolated-gitlink.stderr       |    0
+ .../hexalith.tenants-isolated-gitlink.stdout       |    0
+ .../hexalith.tenants-isolated-parent.stderr        |    0
+ .../hexalith.tenants-isolated-parent.stdout        |    1 +
+ .../hexalith.tenants-remote-main.stderr            |    0
+ .../hexalith.tenants-remote-main.stdout            |    1 +
+ .../hexalith.tenants-remotes.stderr                |    0
+ .../hexalith.tenants-remotes.stdout                |    2 +
+ .../hexalith.tenants-selected-commit.stderr        |    0
+ .../hexalith.tenants-selected-commit.stdout        |   11 +
+ .../hexalith.tenants-selected-object.stderr        |    0
+ .../hexalith.tenants-selected-object.stdout        |    1 +
+ .../hexalith.tenants-status.stderr                 |    0
+ .../hexalith.tenants-status.stdout                 |    1 +
+ .../isolated-head.stderr                           |    0
+ .../isolated-head.stdout                           |    1 +
+ .../isolated-index.stderr                          |    0
+ .../isolated-index.stdout                          |   12 +
+ .../isolated-root-no-recursion.stderr              |    0
+ .../isolated-root-no-recursion.stdout              |    0
+ .../isolated-source-diff.stderr                    |    0
+ .../isolated-source-diff.stdout                    |    7 +
+ .../isolated-status.stderr                         |    0
+ .../isolated-status.stdout                         |    2 +
+ .../owner-identities.json                          |   54 +
+ .../platform-official-tags.stderr                  |    0
+ .../platform-official-tags.stdout                  |    4 +
+ .../prepare-workspace.py                           |   45 +
+ .../preservation-before.json                       |  123 +
+ .../projects-head-pins.stderr                      |    0
+ .../projects-head-pins.stdout                      |   12 +
+ .../projects-history.stderr                        |    0
+ .../projects-history.stdout                        |    5 +
+ .../projects-remote-main.stderr                    |    0
+ .../projects-remote-main.stdout                    |    1 +
+ .../projects-remotes.stderr                        |    0
+ .../projects-remotes.stdout                        |    2 +
+ .../projects-status.stderr                         |    0
+ .../projects-status.stdout                         |    3 +
+ .../qualified-builds-input.json                    |   31 +
+ .../qualified-builds-official-tag.stderr           |    0
+ .../qualified-builds-official-tag.stdout           |    1 +
+ .../qualified-builds-signature.stderr              |    0
+ .../qualified-builds-signature.stdout              |    8 +
+ .../projects-root-enrollment-20261028/run.py       |  108 +
+ .../sdk-info.stderr                                |    0
+ .../sdk-info.stdout                                |   54 +
+ .../selected-inputs.json                           |   80 +
+ .../tool-help.stderr                               |    0
+ .../tool-help.stdout                               |   13 +
+ .../tool-restore.stderr                            |    0
+ .../tool-restore.stdout                            |    3 +
+ .../tool-version.stderr                            |    0
+ .../tool-version.stdout                            |    1 +
+ .../spec-6-4-projects-root-enrollment.md           |   26 +
+ 336 files changed, 9197 insertions(+)

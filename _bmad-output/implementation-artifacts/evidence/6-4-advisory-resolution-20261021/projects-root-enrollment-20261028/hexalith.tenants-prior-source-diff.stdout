@@ -1,0 +1,15 @@
+ Directory.Build.props                              |   4 +-
+ .../5-4-audit-availability-state-recovery.md       |  34 +-
+ .../implementation-artifacts/deferred-work.md      |  77 +++--
+ .../dw-133-365-461-467-478-validation-evidence.md  | 385 +++++++++++++++++++++
+ ...spec-dw-133-365-461-467-478-historical-guard.md | 105 ++++++
+ docs/maintenance-backlog.md                        |  15 +-
+ docs/story-gitlink-ci.md                           |  56 ++-
+ references/Hexalith.Builds                         |   2 +-
+ references/Hexalith.EventStore                     |   2 +-
+ references/Hexalith.McpCli                         |   2 +-
+ references/Hexalith.Memories                       |   2 +-
+ references/Hexalith.Platform                       |   2 +-
+ scripts/validate-changed-story-gitlinks.py         |  96 ++++-
+ .../test_validate_changed_story_gitlinks.py        | 328 ++++++++++++++++++
+ 14 files changed, 1061 insertions(+), 49 deletions(-)

@@ -1,0 +1,16 @@
+usage: run_supported_project_reads.py [-h] [--evidence EVIDENCE]
+                                      [--timeout TIMEOUT]
+                                      [--artifacts ARTIFACTS] [--regressions]
+
+Own one disposable Aspire supported-read proof; retain only metadata and
+actual test results.
+
+options:
+  -h, --help            show this help message and exit
+  --evidence EVIDENCE   New directory for sanitized evidence (must not exist).
+  --timeout TIMEOUT
+  --artifacts ARTIFACTS
+                        Private reusable Debug artifacts for iterative triage;
+                        omitted for fresh final verification.
+  --regressions         Also run the complete Projects Integration and Server
+                        test projects before teardown.

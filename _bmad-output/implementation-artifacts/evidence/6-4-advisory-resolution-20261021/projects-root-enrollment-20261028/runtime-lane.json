@@ -1,0 +1,46 @@
+{
+  "scope": "Existing source-only bound-signing HTTP fixture; loopback service discovery, real Dapr/Redis persisted state; not Platform/runtime release acceptance",
+  "image": "docker.io/library/redis@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf",
+  "ports": {
+    "redis": 34265,
+    "http": 33647,
+    "grpc": 53439,
+    "internal": 33463,
+    "public": 37461
+  },
+  "app_id": "story64-hxw006-1045150",
+  "component_sha256": "e131376586f924d034cadca2d154b5eb06fa753532e3900170bc909e23d5cd34",
+  "started_utc": "2026-10-28T09:51:21.685670+00:00",
+  "sidecar": {
+    "argv": [
+      "/home/administrator/.dapr/bin/daprd",
+      "--app-id",
+      "story64-hxw006-1045150",
+      "--resources-path",
+      "/tmp/story64-projects-root-enrollment-20261028/runtime-components",
+      "--dapr-http-port",
+      "33647",
+      "--dapr-grpc-port",
+      "53439",
+      "--dapr-internal-grpc-port",
+      "33463",
+      "--dapr-public-port",
+      "37461",
+      "--dapr-listen-addresses",
+      "127.0.0.1",
+      "--dapr-public-listen-address",
+      "127.0.0.1",
+      "--enable-metrics=false",
+      "--scheduler-host-address=",
+      "--log-level",
+      "warn"
+    ],
+    "cwd": "/tmp/story64-projects-root-enrollment-20261028/projects",
+    "pid": 1045649,
+    "binary_sha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+  },
+  "outbound_ready": true,
+  "sidecar_exit": 0,
+  "container_absent": true,
+  "finished_utc": "2026-10-28T09:51:25.618198+00:00"
+}
