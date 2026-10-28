@@ -1,0 +1,282 @@
+{
+  "recorded_at_utc": "2026-10-28T06:46:09.337763+00:00",
+  "owning_sources": {
+    "Hexalith.Projects": {
+      "head": "0e45105476902fcfce1f8dbd8416d7234bb16b41",
+      "status": "?? _bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/resumption-20261028/\n"
+    },
+    "Hexalith.Conversations": {
+      "head": "31a76998b8f8489971c6dbcd3b8fa28d4adeeda5",
+      "status": ""
+    },
+    "Hexalith.Tenants": {
+      "head": "2079f25448625cf7a6a4bc1417ff9889e11d5781",
+      "status": ""
+    },
+    "Hexalith.Builds": {
+      "head": "1745ea0f09df9e518aeea3eeb1a7df836f67e09d",
+      "status": ""
+    },
+    "Hexalith.EventStore": {
+      "head": "eec6ed131a8959c85ae191dff75f88dd34a74832",
+      "status": ""
+    },
+    "Hexalith.Platform": {
+      "head": "a5e1389fe2c97b14e8c697a2e54f45631d07ef95",
+      "status": ""
+    }
+  },
+  "frozen_spec_sha256": "78e8a29557f949b064db4111f8d487ff4c4d15f3f7d57284e72905f797b9a7df",
+  "baseline_commit": "83781b31e06214ad6da788c6535f9044df06ed5e",
+  "source_files": [
+    {
+      "path": "docs/supported-project-reads.md",
+      "sha256": "f82293a444ec041d7b33fa1040ac2b6c05396b5d1b9bec612bd442fffbdb4df3",
+      "bytes": 69897
+    },
+    {
+      "path": "references/Hexalith.Builds/Props/Directory.Packages.props",
+      "sha256": "1eb9485804b051ed1201b28cb986b02283911b5a5d8396183804dd49988c1246",
+      "bytes": 31085
+    },
+    {
+      "path": "references/Hexalith.Conversations/.config/dotnet-tools.json",
+      "sha256": "5b826b67ce6520bba1fa80ef3982e56cc71b38d7ced437c0aaf5b1697339b411",
+      "bytes": 206
+    },
+    {
+      "path": "references/Hexalith.Conversations/Directory.Build.props",
+      "sha256": "6075e5149286cced92b0e1a3c594eab8cf8688c54432f76b4d935d5571e06a8f",
+      "bytes": 3508
+    },
+    {
+      "path": "references/Hexalith.Conversations/docs/release-notes-1.3.1.md",
+      "sha256": "ee0dd8e7a04bdf3eaff3da80862df364418bbdbf47fef8c6c0877c36741eecf0",
+      "bytes": 710
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Contracts/README.md",
+      "sha256": "3f094bd308cb6d967b60e0aba3b5731dbc706cf08657e64443f40a918230c9d4",
+      "bytes": 20861
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs",
+      "sha256": "8bd7e576e29568c9346e981bc217ba4c5fb30fc2cd150b30252ed5fd1f7d6ab6",
+      "bytes": 6215
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/ConversationResolutionMetadataAuthorization.cs",
+      "sha256": "63245d949209d651c305d95cd85332bb44166314009af29a9105799d114b4ffc",
+      "bytes": 7641
+    },
+    {
+      "path": "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs",
+      "sha256": "f396247ad8507e018659e0c1a668811571c1be0823922ea5e3c95c589903e504",
+      "bytes": 9292
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.Review4.cs",
+      "sha256": "61b1b4c9bd6b2c466b2449445eed7acb291e81577bb54c5b8b60fb98ffc9f0f0",
+      "bytes": 5781
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.cs",
+      "sha256": "921b63259a508f1c381bf2298b8a250b20f8a868add6e9f046161a5f9b6b91eb",
+      "bytes": 13058
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationQueryRegistrationTest.cs",
+      "sha256": "16c923431f9839ede13a6ac66fa6eba5ec34f8bd427b509089aaadea5118aae1",
+      "bytes": 8803
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationResolutionMetadataQueryHandlerTest.cs",
+      "sha256": "beac75d6ca99b1eed4709820e0ea25e0d889c1e660f3f66b0592fdb18765d479",
+      "bytes": 27475
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionGuardedStore.cs",
+      "sha256": "de963e3530d5e752ea091ca4f63a9e8ffc9623805220cc24424775d5d07cd5cf",
+      "bytes": 5594
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataAccess.cs",
+      "sha256": "bac655e17acb1e801c5858737e5bc87ea67bc1cc2e90abdba1334da61685718e",
+      "bytes": 2907
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionMetadataFixture.cs",
+      "sha256": "24980b832b33e69513fb638dade690195dea204cccab0193b24f3bdebdc554e9",
+      "bytes": 10911
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/ResolutionMetadata/ResolutionNativeEvidence.cs",
+      "sha256": "6c5b5b53f8de814e821e4a575ef99e6161c281f11f5802db913c6596d90e7189",
+      "bytes": 3743
+    },
+    {
+      "path": "references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/TenantAccess/ConversationTenantAccessRegistrationTest.cs",
+      "sha256": "60073fd7c880fbf41d46e1f9aa1916293d46f129805e6697a8aa6d76295a98dd",
+      "bytes": 7400
+    },
+    {
+      "path": "references/Hexalith.Platform/hexalith-platform.json",
+      "sha256": "3ba6c30a8d602bbc3216f0a4f9f90fb9e1f2e11ea985b4fb5058c3611149fb23",
+      "bytes": 68
+    },
+    {
+      "path": "references/Hexalith.Tenants/Directory.Build.targets",
+      "sha256": "79acd6770023305871cb975cc1d8db1506d9e398902214c064a22ad3db0a49b4",
+      "bytes": 4191
+    },
+    {
+      "path": "references/Hexalith.Tenants/tests/Hexalith.Tenants.Contracts.Tests/PackageGovernanceTests.cs",
+      "sha256": "2e4540dd8cd458a816786e4c2f4e5dd18a34bf91731b5896253365c266881217",
+      "bytes": 165308
+    },
+    {
+      "path": "src/Hexalith.Projects.Client/Generated/HexalithProjectsClient.g.cs",
+      "sha256": "b50226ef6b7ca084107425ba67c041a532aa42b89b5ed03478f692ed0321c4e8",
+      "bytes": 562679
+    },
+    {
+      "path": "src/Hexalith.Projects.Client/Generated/HexalithProjectsIdempotencyHelpers.g.cs",
+      "sha256": "9cf2b4ae8337b18fa8a3b6f950200ff23cfc611be22e196c089da840dff3d53f",
+      "bytes": 19307
+    },
+    {
+      "path": "src/Hexalith.Projects.Contracts/openapi/hexalith.projects.v1.yaml",
+      "sha256": "921b578700b96edb19aceec26ca2e06b14ca51282160048ae9dbe25c25b5b0ce",
+      "bytes": 167665
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/ProjectsServerServiceCollectionExtensions.cs",
+      "sha256": "8f9bbf440fb0ed536e2e1638a51ae2eff4ee20071b7029e03045cbacf2af3346",
+      "bytes": 21412
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/LegacyProjectResolutionAuthorization.cs",
+      "sha256": "b302b4abcd06fbbbf75f02d910e1738c39cdd17923eec7b17ba1707f6b6f529a",
+      "bytes": 3677
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs",
+      "sha256": "11cbbb1e049219d60e659fad6362a81a94edd9b88c3968f4090b8cecd09fa778",
+      "bytes": 21365
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/ResolveProjectFromAttachmentsEndpoint.cs",
+      "sha256": "044f6004c2b4b7a0a9d633d96f214c10995e45b907365331ab388b5447deeb20",
+      "bytes": 10026
+    },
+    {
+      "path": "src/Hexalith.Projects.Server/Queries/ResolveProjectFromConversationEndpoint.cs",
+      "sha256": "c7f3775ea284931e7f6bd9e59064da6b18705e5e737c96eab0af05ac1a26b4e9",
+      "bytes": 11243
+    },
+    {
+      "path": "src/Hexalith.Projects/Aggregates/Project/ProjectPersistedDetailValidator.cs",
+      "sha256": "b1173a18431d50919d6f4a0c9ab6b4cb4734dcee8e9751decd3c1ecbd92e0a96",
+      "bytes": 6745
+    },
+    {
+      "path": "tests/Hexalith.Projects.Contracts.Tests/Queries/ProjectAdvisoryContractTests.cs",
+      "sha256": "76601cef37df5f795a3642a7014301a7184c7f10dc9eb8bd4e3724c99caa634d",
+      "bytes": 6361
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/DelegatedDirectoryTestQueryHandler.cs",
+      "sha256": "bdac0863b7a482b95eaf33cf8f1e6531042835936cefe79ad1d501c222d50962",
+      "bytes": 877
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/DelegatedProjectDirectoryRegistrationTests.cs",
+      "sha256": "42a857284b168e423f95bf3650dbaa38e2d7615eef877cf2016f08eb55b08702",
+      "bytes": 6036
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/AdvisoryGuardedReadStore.cs",
+      "sha256": "120bc00f663614e5e248b65fb0b50cf86f9d13684e027c293630a2fcae072b5f",
+      "bytes": 1606
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/AdvisoryTestConversationDirectory.cs",
+      "sha256": "4274f897f54677bef4c3c77bdf096f74f338ad1fe91c79664c7bdc2573497084",
+      "bytes": 1148
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/AdvisoryTestLogger.cs",
+      "sha256": "b7bf1e005bcab588587b66dfc5481a8274f193f32d401a8c3965b17383ca9850",
+      "bytes": 848
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAdvisoryQueryTests.Review4.cs",
+      "sha256": "40862eab5034c561e3e54afbb9418a0b1725205d60f76ee762c666b98499d694",
+      "bytes": 14689
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAdvisoryQueryTests.cs",
+      "sha256": "6a85490b3014c755618c53b54783fb2da4f6e56b0aca126a9a249c066ae61614",
+      "bytes": 44016
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadTestFolders.cs",
+      "sha256": "134f8837a33fbfb9a8eab0f74985709ae471b6bda7079c0872034c05dae34f30",
+      "bytes": 2091
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ResolveProjectFromAttachmentsTests.cs",
+      "sha256": "3481360b4e4cecf37a5974d87e438f7c0d8054a5042d01ffe2345a9e898ec44f",
+      "bytes": 36199
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/ResolveProjectFromConversationTests.cs",
+      "sha256": "b8dfafdaf9b8ba8dfd073898d44626067cc70998383bf1c21fc1533e3aae57a0",
+      "bytes": 37364
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs",
+      "sha256": "0f2c88d742cc2395e901a1fc92ec4d72f9d5dee3334bb02af988152e20f4d7f5",
+      "bytes": 33073
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectReadTests.cs",
+      "sha256": "00d1869e8c135b8bb6af10835d393226a537f7f57eb3af277515fdaadb96b79d",
+      "bytes": 27666
+    },
+    {
+      "path": "tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectShadowTests.cs",
+      "sha256": "b8fb8585a4e19f957d59f0700b9194901ab815113c2f8ce76c87d1c98e77d880",
+      "bytes": 11725
+    },
+    {
+      "path": "tests/e2e/specs/projects-resolution.spec.ts",
+      "sha256": "6e6f8885a98dd713e475b78a640916995c9297c0c22809af9fc3b812b4a869f9",
+      "bytes": 9577
+    },
+    {
+      "path": "tools/planning/validate_production_authority.py",
+      "sha256": "747b668a258bc60c7a4bf67a02c6c5326cee85c905e56cdb748d6937577b2d80",
+      "bytes": 31763
+    },
+    {
+      "path": "tools/release-packages.json",
+      "sha256": "6de814486de2a05d8ed1a9624fa24f55eddc7ec046fcbd869056f02310b663f3",
+      "bytes": 9341
+    }
+  ],
+  "focused_tests": {
+    "total": 243,
+    "passed": 243,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "not-run": 0
+  },
+  "unique_passing_tests": 243,
+  "mapped_owner_build": "pass; zero warnings/errors",
+  "remote_ci_publication_verification": "not refreshed in this run; local tag absence is not proof of official publication absence",
+  "source_dependency_git_mutations": "none; evidence files only",
+  "story_status": "in-progress",
+  "remaining_work": "qualify producer/Platform/catalog package tuple and root-supported mapping; separately approved publication, official package verification and consumer pins"
+}

@@ -1,0 +1,44 @@
+"""Bind clean selected sources, binaries and producer-pinned catalog bytes."""
+from run import *
+import xml.etree.ElementTree as ET
+
+workspace = WORK/'projects'
+selection = json.loads((EVIDENCE/'selected-inputs.json').read_text())
+repos = [('projects',workspace,selection['head'])] + [(Path(i['path']).name,workspace/i['path'],i['selected']) for i in selection['inputs']]
+sources = {}
+for label, repo, expected in repos:
+    assert run(label+'-final-source-head',['git','rev-parse','HEAD'],repo).strip() == expected
+    assert not run(label+'-final-unstaged-source',['git','diff','--ignore-submodules=all','--name-only'],repo)
+    if repo != workspace:
+        assert not run(label+'-final-staged-source',['git','diff','--cached','--name-only'],repo)
+        assert not list((repo/'references').glob('*/.git'))
+    files = git(repo,'ls-files','-z','--','src','tests','test','*.props','*.targets','global.json','.editorconfig','.gitattributes','.config/dotnet-tools.json','module/hexalith.module-manifest.v2.json','hexalith-platform.json').split(b'\0')
+    for raw in files:
+        if not raw:
+            continue
+        p = repo/os.fsdecode(raw)
+        # Record source/configuration rather than checked-in native binaries or historical receipts.
+        if p.is_file() and (p.suffix in {'.cs','.csproj','.props','.targets'} or p.name in {'global.json','.editorconfig','.gitattributes','dotnet-tools.json','hexalith.module-manifest.v2.json','hexalith-platform.json'}):
+            sources[str(p.relative_to(workspace))] = digest(p)
+(EVIDENCE/'selected-source-hashes.json').write_text(json.dumps(sources,indent=2)+'\n')
+
+catalog = run('platform-owned-exact-catalog',['git','show','51a71cb1cfe860d5fc135eb3b8521fd80c413810:Props/Directory.Packages.props'],workspace/'references/Hexalith.Builds')
+actual = (EVIDENCE/'platform-owned-exact-catalog.stdout').read_bytes()
+assert hashlib.sha256(actual).hexdigest() == 'f5084674b831d5649e204de37772ab307de32eeb60b7e1ad84f612ff60fc3f7c'
+assert actual == (EVIDENCE/'generated-source-mapping/pinned-tree/Props/Directory.Packages.props').read_bytes()
+
+results = {}
+for label in ['contracts','server']:
+    xml = ET.parse(EVIDENCE/(label+'-tests.xml')).getroot()
+    tests = xml.findall('.//test')
+    assert len(tests) == (10 if label == 'contracts' else 243)
+    assert all(t.attrib['result']=='Pass' for t in tests)
+    assert len({t.attrib['id'] for t in tests}) == len(tests)
+    assemblies = xml.findall('assembly')
+    results[label] = dict(total=len(tests),classes=sorted({t.attrib['type'] for t in tests}),assemblies=[a.attrib for a in assemblies])
+    for a in assemblies:
+        p=Path(a.attrib['name'])
+        results[label]['binary_sha256']=digest(p)
+(EVIDENCE/'test-results.json').write_text(json.dumps(results,indent=2)+'\n')
+run('final-original-preservation-audit',['python3',str(EVIDENCE/'run.py'),'audit'])
+print('Bound',len(sources),'source/configuration files; 253 unique passing cases')

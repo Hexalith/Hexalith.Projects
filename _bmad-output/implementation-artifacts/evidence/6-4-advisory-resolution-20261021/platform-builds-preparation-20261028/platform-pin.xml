@@ -1,0 +1,24 @@
+<assemblies schema-version="3" id="9adf0809-78a0-4191-8f6b-c64a3ce213f1" computer="DESKTOP-VIOG240" user="administrator" start-rtf="2026-10-28T07:20:31.7527627+00:00" finish-rtf="2026-10-28T07:20:31.9266246+00:00" timestamp="10/28/2026 08:20:31"><assembly environment="64-bit (x64) .NET 10.0.13 [collection-per-class, parallel (collections, 14 threads)]" id="e7086407-18a6-4bd5-b049-4765116c03dc" name="/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/artifacts/story64-enrollment-check/net10.0/NarrowOwnerCheck.dll" run-date="2026-10-28" run-time="07:20:31" start-rtf="2026-10-28T07:20:31.7527627+00:00" test-framework="xUnit.net v3 4.0.2+0c7aa4991f" target-framework=".NETCoreApp,Version=v10.0" errors="0" failed="1" finish-rtf="2026-10-28T07:20:31.9266246+00:00" not-run="0" passed="0" skipped="0" time="0.174" time-rtf="00:00:00.1739999" total="1"><collection name="Test collection for Hexalith.Platform.Composition.Tests.DomainEnrollmentKitTests (id: a36a9c95e2fffed1ba7b4a23a5a30edea29d0328ceec76a33f6ce4e1123ce952)" id="12e3a1a4-95e9-4eea-a0d0-f28575e79ef5" failed="1" not-run="0" passed="0" skipped="0" time="0.089" time-rtf="00:00:00.0890000" total="1"><test id="3ec09e4c-e599-4623-adf8-ab83e128f6ac" name="Hexalith.Platform.Composition.Tests.DomainEnrollmentKitTests.AcceptedToolPinEqualsSupportedRangeFloorAsync" result="Fail" time="0.089" time-rtf="00:00:00.0890000" start-rtf="2026-10-28T07:20:31.8104163+00:00" finish-rtf="2026-10-28T07:20:31.9119549+00:00" type="Hexalith.Platform.Composition.Tests.DomainEnrollmentKitTests" method="AcceptedToolPinEqualsSupportedRangeFloorAsync" source-file="/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/DomainEnrollmentKitTests.cs" source-line="45"><failure exception-type="Shouldly.ShouldAssertException"><message>Shouldly.ShouldAssertException : code
+    should be
+0
+    but was
+128
+
+Additional Info:
+    v4.38.1^{commit}
+fatal: ambiguous argument 'v4.38.1^{commit}': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git &lt;command&gt; [&lt;revision&gt;...] -- [&lt;file&gt;...]'
+</message><stack-trace>   at Hexalith.Platform.Composition.Tests.DomainEnrollmentKitTests.GitAsync(String directory, String[] arguments) in /home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/DomainEnrollmentKitTests.cs:line 172
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at Hexalith.Platform.Composition.Tests.DomainEnrollmentKitTests.AcceptedToolPinEqualsSupportedRangeFloorAsync() in /home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/DomainEnrollmentKitTests.cs:line 60
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+--- End of stack trace from previous location ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)</stack-trace></failure></test></collection></assembly></assemblies>

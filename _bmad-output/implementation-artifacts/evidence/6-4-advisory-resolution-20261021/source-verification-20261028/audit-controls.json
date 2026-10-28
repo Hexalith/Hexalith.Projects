@@ -1,0 +1,88 @@
+[
+  {
+    "label": "positive-live-read-only",
+    "argv": [
+      "python3",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/source-verification-20261028/verify-evidence.py",
+      "--live"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "observed_utc": "2026-10-28T09:31:21.373302+00:00",
+    "exit_code": 0,
+    "stdout": "{\"status\": \"passed\", \"tests\": 253, \"evidence_files\": 686, \"live_workspaces_reverified\": true, \"story_acceptance\": false}\n",
+    "stderr": ""
+  },
+  {
+    "label": "optimized-execution-refused",
+    "argv": [
+      "python3",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/source-verification-20261028/verify-evidence.py",
+      "--live"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "PYTHONOPTIMIZE": "1"
+    },
+    "observed_utc": "2026-10-28T09:31:21.508399+00:00",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Refuse optimized Python: integrity checks require assertions\n"
+  },
+  {
+    "label": "added-untracked-source-refused",
+    "argv": [
+      "python3",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/source-verification-20261028/verify-evidence.py",
+      "--live"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "observed_utc": "2026-10-28T09:31:23.380164+00:00",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/source-verification-20261028/verify-evidence.py\", line 115, in <module>\n    assert row[:3] == b'M  ' and row[3:].decode() in expected_paths, 'Unexpected isolated root change: '+str(row)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Unexpected isolated root change: b'MM references/Hexalith.Conversations'\n"
+  },
+  {
+    "label": "production-dependency-byte-change-refused",
+    "argv": [
+      "python3",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/source-verification-20261028/verify-evidence.py",
+      "--live"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "observed_utc": "2026-10-28T09:31:27.194451+00:00",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/source-verification-20261028/verify-evidence.py\", line 132, in <module>\n    assert actual_closure == closure['after'], 'Executable output inventory/content changed'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Executable output inventory/content changed\n"
+  },
+  {
+    "label": "isolated-gitlink-drift-refused",
+    "argv": [
+      "python3",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/source-verification-20261028/verify-evidence.py",
+      "--live"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "observed_utc": "2026-10-28T09:31:27.770076+00:00",
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/source-verification-20261028/verify-evidence.py\", line 109, in <module>\n    assert git(workspace,'ls-files','--stage','references/') == (root/'isolated-index.stdout').read_bytes()\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  },
+  {
+    "label": "positive-live-after-restoration",
+    "argv": [
+      "python3",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/source-verification-20261028/verify-evidence.py",
+      "--live"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "observed_utc": "2026-10-28T09:31:31.285476+00:00",
+    "exit_code": 0,
+    "stdout": "{\"status\": \"passed\", \"tests\": 253, \"evidence_files\": 686, \"live_workspaces_reverified\": true, \"story_acceptance\": false}\n",
+    "stderr": ""
+  }
+]

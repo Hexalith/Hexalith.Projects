@@ -1,0 +1,65 @@
+from pathlib import Path
+import base64, gzip, hashlib, json, re, subprocess, xml.etree.ElementTree as ET, zipfile
+R=Path('/home/administrator/projects/hexalith/projects')
+E=R/'_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/platform-builds-preparation-20261028'
+P=R/'references/Hexalith.Platform'; B=R/'references/Hexalith.Builds'
+SHA='16ff70a2321ad576faaac3fe53088c2f1bdacae3'
+def git(root,*args):
+ return subprocess.check_output(['git',*args],cwd=root)
+def readlog(name):
+ p=E/(name+'.stdout'); b=p.read_bytes() if p.exists() else gzip.decompress((E/(name+'.stdout.gz')).read_bytes()); return b
+j=json.loads(readlog('builds-4381-release')); assert j['tag_name']=='v4.38.1' and not j['draft'] and not j['prerelease']
+assert SHA.encode()+b'\trefs/tags/v4.38.1\n' in readlog('remote-Builds-tags')
+inv=json.loads((E/'g4-tool-package-inventory.json').read_text())
+assert inv['version']=='4.38.1'
+for k in ['packageBuild','sourceValidation','controls']: assert inv['qualification'][k]['result']=='passed'
+runs=json.loads(readlog('builds-4381-runs'))['workflow_runs']
+assert any(x['head_sha']==SHA and x['name']=='CI' and x['conclusion']=='success' for x in runs)
+assert any(x['head_sha']==SHA and x['name']=='Release' and x['conclusion']=='success' for x in runs)
+archive=Path('/tmp/story64-platform-builds-20261028/hexalith.builds.module.cli.4.38.1.nupkg')
+archiveBytes=archive.read_bytes()
+feed=json.loads(readlog('nuget-cli-4381-feed-catalog'))
+assert base64.b64encode(hashlib.sha512(archiveBytes).digest()).decode()==feed['packageHash']
+assert len(archiveBytes)==feed['packageSize']
+installed=Path('/home/administrator/.nuget/packages/hexalith.builds.module.cli/4.38.1/hexalith.builds.module.cli.4.38.1.nupkg')
+assert installed.read_bytes()==archiveBytes
+with zipfile.ZipFile(archive) as z:
+ nspec=z.read(next(x for x in z.namelist() if x.endswith('.nuspec')))
+ repo=next(x for x in ET.fromstring(nspec).iter() if x.tag.endswith('repository'))
+ assert repo.attrib['commit']==SHA
+identity={'version':'4.38.1','repository_commit':SHA,'signed_archive_sha256':hashlib.sha256(archiveBytes).hexdigest(),'signed_archive_sha512':feed['packageHash'],'signed_archive_bytes':len(archiveBytes),'unsigned_qualified_inventory_sha256':next(x for x in inv['packages'] if x['id']=='Hexalith.Builds.Module.Cli')['nupkg']['sha256'],'signature_command':'builds-4381-nuget-verify','embedded_catalog':json.loads(readlog('builds-4381-actual-embedded-catalog'))}
+cmds=json.loads((E/'commands.json').read_text()); assert next(x for x in cmds if x['name']=='builds-4381-nuget-verify')['exit_code']==0
+(E/'official-tool-identity.json').write_text(json.dumps(identity,indent=2)+'\n')
+assert json.loads((P/'.config/dotnet-tools.json').read_text())['tools']['hexalith.builds.module.cli']['version']=='4.38.1'
+assert json.loads((P/'hexalith-platform.json').read_text())['toolVersionRange']=='[4.38.1, 5.0.0-0)'
+assert git(B,'rev-parse','v4.38.1^{commit}').decode().strip()==SHA
+owner=git(P,'rev-parse','HEAD:references/Hexalith.Builds').decode().strip()
+assert owner=='9f85d8e66e5c16675cee8c224f1fd88430d96007' and owner!=SHA
+assert git(P,'show-ref','--tags','-d')==readlog('remote-Platform-tags').replace(b'\t',b' ')
+remote=readlog('remote-Platform-tags').decode(); assert 'a5e1389fe2c97b14e8c697a2e54f45631d07ef95' not in remote and '8de90958bc41b7fd01b7ed22b8ab364447a800e4' not in remote
+preservation={}
+for name,path in [('projects',R),('platform',P),('builds',B),('conversations',R/'references/Hexalith.Conversations')]:
+ assert git(path,'rev-parse','HEAD')==readlog('before-'+name+'-head')
+ assert git(path,'ls-files','--stage')==readlog('before-'+name+'-index')
+ preservation[name]={'head_unchanged':True,'index_unchanged':True}
+ if name!='platform':
+  assert git(path,'diff','--binary','--ignore-submodules=all')==readlog('before-'+name+'-diff')
+  preservation[name]['existing_tracked_diff_unchanged']=True
+assert git(P,'show-ref')==readlog('before-platform-refs')
+assert git(B,'show-ref')==readlog('before-builds-refs')
+final=json.loads(readlog('package-final')); assert final['status']=='failed'
+assert {d['ruleId'] for d in final['diagnostics']}=={'HXW008','HXW009','HXW011'}
+source=json.loads(readlog('source-final')); assert source['status']=='failed' and source['outcome']['ruleId']=='HXW004'
+xml={}
+for name in ['builds-focused','platform-inventory','platform-pin']:
+ root=ET.parse(E/(name+'.xml')).getroot(); assemblies=root.findall('assembly')
+ xml[name]={k:sum(int(x.attrib.get(k,0)) for x in assemblies) for k in ['total','passed','failed','skipped','errors','not-run']}
+assert xml['builds-focused']=={'total':88,'passed':88,'failed':0,'skipped':0,'errors':0,'not-run':0}
+assert xml['platform-inventory']['passed']==1 and xml['platform-pin']['failed']==1
+files=[P/'.config/dotnet-tools.json',P/'hexalith-platform.json',P/'README.md',P/'tests/Hexalith.Platform.Composition.Tests/DomainEnrollmentKitTests.cs',B/'Props/Directory.Packages.props',B/'src/libraries/Hexalith.Builds.Tooling/Workspace/PlatformIdentityResolver.cs',B/'src/libraries/Hexalith.Builds.Tooling/Workspace/WorkspaceRootResolver.cs',B/'src/libraries/Hexalith.Builds.Tooling/Workspace/BuildPreparationService.cs',R/'tools/release-packages.json',R/'references/Hexalith.Conversations/.config/dotnet-tools.json']
+sources={str(p.relative_to(R)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+story=R/'_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md'
+frozen=re.search(rb'<frozen-after-approval.*?</frozen-after-approval>',story.read_bytes(),re.S).group()
+receipt={'owner_builds_pin':owner,'candidate_builds_pin':SHA,'preservation':preservation,'tests':xml,'source_sha256':sources,'original_story_frozen_sha256':hashlib.sha256(frozen).hexdigest(),'original_story_before_append_sha256':hashlib.sha256(story.read_bytes()).hexdigest(),'original_story_before_append_bytes':len(story.read_bytes()),'package_exit_code':2,'source_exit_code':2,'source_first_blocker':source['outcome']['ruleId']}
+(E/'verification.json').write_text(json.dumps(receipt,indent=2)+'\n')
+print(json.dumps(receipt,indent=2))

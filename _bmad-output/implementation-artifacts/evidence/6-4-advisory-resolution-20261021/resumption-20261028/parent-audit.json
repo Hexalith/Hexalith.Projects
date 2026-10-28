@@ -1,0 +1,64 @@
+{
+  "evidence_hashes_verified": 14,
+  "source_hashes_verified": 47,
+  "unique_passing_owner_cases": 243,
+  "mapped_owner_build": "pass; zero warnings/errors",
+  "frozen_sha256": "78e8a29557f949b064db4111f8d487ff4c4d15f3f7d57284e72905f797b9a7df",
+  "matrix_acceptance": "incomplete: current Projects source suite and authenticated gateway/store not executable through existing supported mapping",
+  "commands": [
+    {
+      "name": "planning-guard",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_production_authority_guard.py"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "seconds": 7.932,
+      "log": "planning-guard.log"
+    },
+    {
+      "name": "story-authority",
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.4"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "seconds": 0.074,
+      "log": "story-authority.log"
+    },
+    {
+      "name": "index-authority",
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "seconds": 0.07,
+      "log": "index-authority.log"
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "seconds": 0.108,
+      "log": "whitespace.log"
+    }
+  ]
+}

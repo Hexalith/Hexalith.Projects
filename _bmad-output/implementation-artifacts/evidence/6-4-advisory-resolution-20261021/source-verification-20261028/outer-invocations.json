@@ -1,0 +1,24 @@
+[
+  {
+    "name": "single-workflow-render",
+    "argv": ["uv", "run", "--no-cache", "/home/administrator/projects/hexalith/projects/_bmad/scripts/render_skill.py", "--project-root", "/home/administrator/projects/hexalith/projects", "--skill", "/home/administrator/projects/hexalith/projects/.agents/skills/bmad-build"],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 0,
+    "observed_stdout_from_session": "read and follow /home/administrator/projects/hexalith/projects/_bmad/render/bmad-build/projects-dc7a98dc2151/79f76896dba065d97a62/workflow.md\n",
+    "raw_outer_process_streams_retained": false,
+    "started_utc": null,
+    "seconds": null,
+    "limitation": "Observed in tool/session output before receipt runner existed; outer raw process streams, explicit environment, UTC timestamp and duration were not retained. The renderer was not repeated."
+  },
+  {
+    "name": "initial-capture-harness",
+    "argv": ["python3", "_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/source-verification-20261028/capture-inputs.py"],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "exit_code": 1,
+    "observed_traceback_excerpt_from_session": "capture-inputs.py, line 27: assert hashlib.sha256(actual).hexdigest() == 'f5084674b831d5649e204de37772ab307de32eeb60b7e1ad84f612ff60fc3f7c'\nAssertionError\n",
+    "raw_outer_process_streams_retained": false,
+    "started_utc": null,
+    "seconds": null,
+    "limitation": "Nested Git commands and raw catalog bytes were retained, but the outer failed harness process was not captured by the runner. This excerpt is a session transcription, not its original stderr stream. capture-inputs.initial.py.txt retains the failed script."
+  }
+]
