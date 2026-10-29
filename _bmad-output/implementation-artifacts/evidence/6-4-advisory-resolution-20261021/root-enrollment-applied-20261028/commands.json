@@ -1,0 +1,184 @@
+[
+  {
+    "name": "validate",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "validate",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/module/hexalith.module-manifest.v2.json",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "started": "2026-10-28T12:07:23.983538+00:00",
+    "finished": "2026-10-28T12:07:24.377114+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "source-prepare",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story64-applied-root-4ytmdti3/source",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "started": "2026-10-28T12:07:24.377482+00:00",
+    "finished": "2026-10-28T12:07:27.234303+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "package-prepare",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "package",
+      "--workspace",
+      "/tmp/story64-applied-root-4ytmdti3/package",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "started": "2026-10-28T12:07:27.234725+00:00",
+    "finished": "2026-10-28T12:07:28.133273+00:00",
+    "exit_code": 2
+  },
+  {
+    "name": "contracts-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T12:07:28.133587+00:00",
+    "finished": "2026-10-28T12:07:37.983809+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "server-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T12:07:37.984257+00:00",
+    "finished": "2026-10-28T12:08:01.500603+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "contracts-tests",
+    "argv": [
+      "dotnet",
+      "tests/Hexalith.Projects.Contracts.Tests/bin/Debug/net10.0/Hexalith.Projects.Contracts.Tests.dll",
+      "-class",
+      "*ProjectAdvisoryContractTests",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/root-enrollment-applied-20261028/contracts-tests.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T12:08:01.501320+00:00",
+    "finished": "2026-10-28T12:08:01.871750+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "server-tests",
+    "argv": [
+      "dotnet",
+      "tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "*ProjectAdvisoryQueryTests",
+      "-class",
+      "*DelegatedProjectAdvisoryConversationDirectoryTests",
+      "-class",
+      "*DelegatedProjectDirectoryRegistrationTests",
+      "-class",
+      "*ProjectQueryEnvelopePrincipalBindingTests",
+      "-class",
+      "*ProjectQueryTenantFilterTests",
+      "-class",
+      "*SupportedProjectReadHttpTests",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/root-enrollment-applied-20261028/server-tests.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T12:08:01.872101+00:00",
+    "finished": "2026-10-28T12:08:08.110965+00:00",
+    "exit_code": 1
+  }
+]

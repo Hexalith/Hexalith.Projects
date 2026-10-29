@@ -1,0 +1,125 @@
+{
+  "Advisory": {
+    "cases": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationObservationSuggestsWithoutSelectingOrInferringSessionMembership(linked: False)",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationObservationSuggestsWithoutSelectingOrInferringSessionMembership(linked: True)",
+        "result": "Pass"
+      }
+    ],
+    "fresh_signed_gateway_store_proof": false
+  },
+  "Protected": {
+    "cases": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: False)",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: True)",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedMatchingFolderInputIsNoMatchWhileProtectedConversationIsSafeDenial",
+        "result": "Pass"
+      }
+    ],
+    "fresh_signed_gateway_store_proof": false
+  },
+  "Order/archive": {
+    "cases": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DuplicateAndPermutedAttachmentsHaveIdenticalScoresReasonsAndOrdering",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: False)",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: True)",
+        "result": "Pass"
+      }
+    ],
+    "fresh_signed_gateway_store_proof": false
+  },
+  "Bounded": {
+    "cases": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawOversizeIsRejectedBeforeDeduplication",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.BoundScanUsesAtMost200DetailsInOrdinalOrderAndReportsTruncation",
+        "result": "Pass"
+      }
+    ],
+    "fresh_signed_gateway_store_proof": false
+  },
+  "Degraded": {
+    "cases": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingViewAndUnavailableOwnerReturnIncomplete",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{}\\\")",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"[]\\\")",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{\\\\\\\"metadata\\\\\\\":null,\\\\\\\"incomplete\\\\\\\":false}\\\")",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedOwnerMetadataCannotBecomeAnExhaustiveNoMatch(json: \\\"{\\\\\\\"metadata\\\\\\\":{\\\\\\\"conversationId\\\\\\\":\\\\\\\"wrong\\\\\\\",\\\\\\\"projectId\\\\\\\":\\\"\u00b7\u00b7\u00b7)",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnsupportedFilesAreExplicitAndEmptyIncompleteCannotClaimNoMatch",
+        "result": "Pass"
+      }
+    ],
+    "fresh_signed_gateway_store_proof": false
+  },
+  "Revoked": {
+    "cases": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationRevocationAndCandidateFolderRevocationDoNotDisclose",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RevokedInputIsFilteredBeforeMappingEvenWhenCandidateFolderLaterAllows",
+        "result": "Pass"
+      }
+    ],
+    "fresh_signed_gateway_store_proof": false
+  },
+  "Effects": {
+    "cases": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests.ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+        "result": "Fail"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+        "result": "Pass"
+      }
+    ],
+    "fresh_signed_gateway_store_proof": false
+  }
+}

@@ -1,0 +1,216 @@
+{
+  "schema": "hexalith.module-manifest.v2",
+  "modules": [
+    {
+      "identity": {
+        "moduleId": "projects",
+        "servers": [
+          {
+            "id": "domain",
+            "appId": "projects",
+            "resourceId": "projects",
+            "enabled": true,
+            "required": true
+          }
+        ],
+        "dependencies": [
+          "eventstore",
+          "tenants",
+          "parties",
+          "conversations",
+          "folders",
+          "memories"
+        ]
+      },
+      "runtime": {
+        "dapr": [
+          {
+            "role": "state",
+            "capability": "state",
+            "recoveryClass": "authoritative-restore",
+            "configurationKey": "Projects:StateStore:StateStoreName",
+            "servers": [
+              "domain"
+            ]
+          }
+        ],
+        "extensions": [],
+        "resources": []
+      },
+      "surfaces": {
+        "interfaces": [
+          {
+            "name": "projects-domain",
+            "server": "domain",
+            "protocol": "http",
+            "routePrefix": "/",
+            "exposure": "internal-only",
+            "surfaceClass": "service",
+            "authorization": {
+              "policy": "EventStoreWorkload:any",
+              "permissions": []
+            },
+            "callers": [
+              "eventstore"
+            ],
+            "operations": [
+              {
+                "name": "process",
+                "kind": "command",
+                "authorizationPolicy": "EventStoreWorkload:domain-service:process"
+              },
+              {
+                "name": "query",
+                "kind": "query",
+                "authorizationPolicy": "EventStoreWorkload:domain-service:query"
+              },
+              {
+                "name": "project",
+                "kind": "command",
+                "authorizationPolicy": "EventStoreWorkload:domain-service:project"
+              },
+              {
+                "name": "project-v2",
+                "kind": "command",
+                "authorizationPolicy": "EventStoreWorkload:domain-service:project"
+              },
+              {
+                "name": "project-rebuild-v1",
+                "kind": "administration",
+                "authorizationPolicy": "EventStoreWorkload:domain-service:project"
+              },
+              {
+                "name": "operational-index-metadata",
+                "kind": "administration",
+                "authorizationPolicy": "EventStoreWorkload:domain-service:metadata"
+              }
+            ],
+            "invocationRules": [
+              {
+                "caller": "eventstore",
+                "path": "/process",
+                "verbs": [
+                  "POST"
+                ]
+              },
+              {
+                "caller": "eventstore",
+                "path": "/query",
+                "verbs": [
+                  "POST"
+                ]
+              },
+              {
+                "caller": "eventstore",
+                "path": "/project",
+                "verbs": [
+                  "POST"
+                ]
+              },
+              {
+                "caller": "eventstore",
+                "path": "/project/v2",
+                "verbs": [
+                  "POST"
+                ]
+              },
+              {
+                "caller": "eventstore",
+                "path": "/project/rebuild/v1",
+                "verbs": [
+                  "POST"
+                ]
+              },
+              {
+                "caller": "eventstore",
+                "path": "/admin/operational-index-metadata",
+                "verbs": [
+                  "POST"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "integration": {
+        "topics": [],
+        "secrets": [
+          {
+            "name": "app-channel-token",
+            "configurationKey": "APP_API_TOKEN"
+          },
+          {
+            "name": "workload-client-secret",
+            "configurationKey": "Authentication:WorkloadIssuer:ClientSecret"
+          },
+          {
+            "name": "bound-stream-read-private-key",
+            "configurationKey": "Authentication:BoundStreamRead:PrivateKey"
+          }
+        ],
+        "dynamicSecretNamespaces": [],
+        "identityNeeds": [],
+        "egress": [
+          {
+            "name": "domain-oidc-metadata",
+            "protocol": "https",
+            "destination": "Authentication:JwtBearer:Authority/.well-known/openid-configuration"
+          },
+          {
+            "name": "domain-oidc-jwks",
+            "protocol": "https",
+            "destination": "Authentication:JwtBearer:Authority -> metadata.jwks_uri"
+          },
+          {
+            "name": "workload-oidc-metadata",
+            "protocol": "https",
+            "destination": "Authentication:WorkloadJwtBearer:Authority (use Authentication:JwtBearer:Authority only when the entire Authentication:WorkloadJwtBearer section is absent)/.well-known/openid-configuration"
+          },
+          {
+            "name": "workload-oidc-jwks",
+            "protocol": "https",
+            "destination": "Authentication:WorkloadJwtBearer:Authority (use Authentication:JwtBearer:Authority only when the entire Authentication:WorkloadJwtBearer section is absent) -> metadata.jwks_uri"
+          },
+          {
+            "name": "workload-token-endpoint",
+            "protocol": "https",
+            "destination": "Authentication:WorkloadIssuer:TokenEndpoint or workload authority metadata.token_endpoint"
+          }
+        ],
+        "providers": [],
+        "workers": []
+      },
+      "lifecycle": {
+        "readiness": [
+          {
+            "server": "domain",
+            "kind": "http",
+            "endpoint": "/ready"
+          }
+        ],
+        "tasks": [],
+        "recoveryHooks": [],
+        "fenceHooks": [],
+        "replay": {
+          "reopenBeforeReplay": false
+        },
+        "startup": {},
+        "criticalFlows": [
+          {
+            "name": "project-advisory-resolution",
+            "surface": "projects-domain",
+            "operations": [
+              "query"
+            ]
+          }
+        ],
+        "smokeSurfaces": [],
+        "classification": {
+          "changeClass": "additive",
+          "reason": "Declare the existing Projects domain server and supported workload callbacks; keep compatibility HTTP ingress disabled in Platform."
+        },
+        "recoveryInventory": []
+      }
+    }
+  ]
+}

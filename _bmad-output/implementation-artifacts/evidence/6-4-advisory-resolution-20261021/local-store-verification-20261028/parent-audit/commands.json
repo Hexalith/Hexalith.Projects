@@ -1,0 +1,192 @@
+[
+  {
+    "name": "planning-guard",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_production_authority_guard.py"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "started": "2026-10-28T13:18:27.686571+00:00",
+    "finished": "2026-10-28T13:18:35.402177+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "story-authority",
+    "argv": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6-4-resolve-projects-with-transient-current-explanations"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "started": "2026-10-28T13:18:35.402353+00:00",
+    "finished": "2026-10-28T13:18:35.471442+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "index-authority",
+    "argv": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "started": "2026-10-28T13:18:35.471595+00:00",
+    "finished": "2026-10-28T13:18:35.542134+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "root-whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "started": "2026-10-28T13:18:35.542282+00:00",
+    "finished": "2026-10-28T13:18:35.625169+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "owner-whitespace",
+    "argv": [
+      "git",
+      "-C",
+      "references/Hexalith.Conversations",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "started": "2026-10-28T13:18:35.625329+00:00",
+    "finished": "2026-10-28T13:18:35.646509+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "consumer-release-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "-c",
+      "Release",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "started": "2026-10-28T13:22:20.013107+00:00",
+    "finished": "2026-10-28T13:22:25.912117+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "public-package-prepare",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "package",
+      "--workspace",
+      "/tmp/story64-package-audit-w1l6e9ly",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "started": "2026-10-28T13:23:59.056143+00:00",
+    "finished": "2026-10-28T13:23:59.358407+00:00",
+    "exit_code": 2
+  },
+  {
+    "name": "public-package-prepare-final",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "package",
+      "--workspace",
+      "/tmp/story64-package-audit-final-6ntr68ak/package",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "started": "2026-10-28T13:24:11.134851+00:00",
+    "finished": "2026-10-28T13:24:12.047588+00:00",
+    "exit_code": 2
+  },
+  {
+    "name": "final-story-authority",
+    "argv": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6-4-resolve-projects-with-transient-current-explanations"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "started": "2026-10-28T13:29:47.199749+00:00",
+    "finished": "2026-10-28T13:29:47.273676+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "final-index-authority",
+    "argv": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "started": "2026-10-28T13:29:47.273701+00:00",
+    "finished": "2026-10-28T13:29:47.342722+00:00",
+    "exit_code": 0
+  },
+  {
+    "name": "final-root-whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "started": "2026-10-28T13:29:47.342744+00:00",
+    "finished": "2026-10-28T13:29:47.415539+00:00",
+    "exit_code": 0
+  }
+]

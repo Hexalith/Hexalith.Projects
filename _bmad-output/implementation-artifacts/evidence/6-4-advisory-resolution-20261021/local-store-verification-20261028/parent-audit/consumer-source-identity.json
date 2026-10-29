@@ -1,0 +1,34 @@
+{
+  "published_source": "986875bfcb5471953378b600710b5d859f3eaba4",
+  "current_conversations_head": "ef01d578a00efd527bae9226dca302f54cd012f0",
+  "published_source_is_ancestor": true,
+  "production_src_diff_empty": true,
+  "comparison_commands": [
+    [
+      "git",
+      "-C",
+      "references/Hexalith.Conversations",
+      "merge-base",
+      "--is-ancestor",
+      "986875bfcb5471953378b600710b5d859f3eaba4",
+      "HEAD"
+    ],
+    [
+      "git",
+      "-C",
+      "references/Hexalith.Conversations",
+      "diff",
+      "--stat",
+      "986875bfcb5471953378b600710b5d859f3eaba4",
+      "HEAD",
+      "--",
+      "src"
+    ]
+  ],
+  "comparison_exit_codes": [
+    0,
+    0
+  ],
+  "retained_official_receipt_and_package_hashes_match": true,
+  "fresh_remote_or_feed_observation": false
+}

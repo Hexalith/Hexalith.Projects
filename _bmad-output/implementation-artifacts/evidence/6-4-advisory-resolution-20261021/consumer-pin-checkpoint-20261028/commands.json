@@ -1,0 +1,293 @@
+{
+  "root": "/home/administrator/projects/hexalith/projects",
+  "workspace": "/tmp/story64-continuation-20261028-6763s6on",
+  "started": "2026-10-28T11:37:56.712199+00:00",
+  "commands": [
+    {
+      "name": "source-prepare",
+      "argv": [
+        "dotnet",
+        "tool",
+        "run",
+        "hexalith-module",
+        "--",
+        "prepare-build",
+        "--manifest",
+        "module/hexalith.module-manifest.v2.json",
+        "--mode",
+        "source",
+        "--workspace",
+        "/tmp/story64-continuation-20261028-6763s6on/source",
+        "--output",
+        "json"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "exit_code": 0,
+      "started": "2026-10-28T11:37:56.712241+00:00",
+      "finished": "2026-10-28T11:38:02.326706+00:00"
+    },
+    {
+      "name": "package-prepare",
+      "argv": [
+        "dotnet",
+        "tool",
+        "run",
+        "hexalith-module",
+        "--",
+        "prepare-build",
+        "--manifest",
+        "module/hexalith.module-manifest.v2.json",
+        "--mode",
+        "package",
+        "--workspace",
+        "/tmp/story64-continuation-20261028-6763s6on/package",
+        "--output",
+        "json"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "exit_code": 2,
+      "started": "2026-10-28T11:38:02.327034+00:00",
+      "finished": "2026-10-28T11:38:03.223114+00:00"
+    },
+    {
+      "name": "mapped-owner-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:NuGetAudit=false",
+        "-p:MinVerVersionOverride=1.0.0",
+        "-v:minimal"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "environment": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story64-continuation-20261028-6763s6on/source/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story64-continuation-20261028-6763s6on/source/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story64-continuation-20261028-6763s6on/source/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story64-continuation-20261028-6763s6on/source/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story64-continuation-20261028-6763s6on/source/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "7b6deb0a22db07ca052d00532ba7563f0ae67315ac6eb92a6202a8d4435bec0a",
+        "Configuration": "Debug"
+      },
+      "exit_code": 0,
+      "started": "2026-10-28T11:38:37.719385+00:00",
+      "finished": "2026-10-28T11:39:11.713787+00:00"
+    },
+    {
+      "name": "owner-focused-tests",
+      "argv": [
+        "dotnet",
+        "tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll",
+        "-class",
+        "*ConversationAdvisoryMetadataQueryHandlerTest",
+        "-class",
+        "*ConversationResolutionMetadataQueryHandlerTest",
+        "-class",
+        "*ConversationQueryRegistrationTest",
+        "-class",
+        "*ConversationTenantAccessRegistrationTest",
+        "-class",
+        "*ConversationResolutionMetadataProjectionTest",
+        "-class",
+        "*ConversationResolutionMetadataRecoveryTest",
+        "-result-xml",
+        "/tmp/story64-continuation-20261028-6763s6on/owner-focused.xml",
+        "-failSkips"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+      "environment": {},
+      "exit_code": 0,
+      "started": "2026-10-28T11:39:31.656948+00:00",
+      "finished": "2026-10-28T11:39:34.023237+00:00"
+    },
+    {
+      "name": "enrollment-evidence-audit",
+      "argv": [
+        "python3",
+        "_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/projects-root-enrollment-20261028/verify-evidence.py",
+        "--live"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {},
+      "exit_code": 0,
+      "started": "2026-10-28T11:40:01.736597+00:00",
+      "finished": "2026-10-28T11:40:28.181760+00:00"
+    },
+    {
+      "name": "isolated-projects-prepare-final",
+      "argv": [
+        "dotnet",
+        "tool",
+        "run",
+        "hexalith-module",
+        "--",
+        "prepare-build",
+        "--manifest",
+        "/tmp/story64-projects-root-enrollment-20261028/projects/module/hexalith.module-manifest.v2.json",
+        "--mode",
+        "source",
+        "--workspace",
+        "/tmp/story64-continuation-20261028-6763s6on/projects-source-final",
+        "--output",
+        "json"
+      ],
+      "cwd": "/tmp/story64-projects-root-enrollment-20261028/projects/references/Hexalith.Conversations",
+      "environment": {},
+      "exit_code": 0,
+      "started": "2026-10-28T11:41:10.838263+00:00",
+      "finished": "2026-10-28T11:41:13.270164+00:00"
+    },
+    {
+      "name": "cached-conversations-signatures-final",
+      "argv": [
+        "env",
+        "NUGET_CERT_REVOCATION_MODE=offline",
+        "dotnet",
+        "nuget",
+        "verify",
+        "--all",
+        "/home/administrator/.nuget/packages/hexalith.conversations.contracts/1.3.1/hexalith.conversations.contracts.1.3.1.nupkg",
+        "/home/administrator/.nuget/packages/hexalith.conversations.client/1.3.1/hexalith.conversations.client.1.3.1.nupkg"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {},
+      "exit_code": 0,
+      "started": "2026-10-28T11:42:24.366609+00:00",
+      "finished": "2026-10-28T11:42:24.626825+00:00"
+    },
+    {
+      "name": "projects-current-server-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:NuGetAudit=false",
+        "-p:MinVerVersionOverride=1.0.0",
+        "-v:minimal"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {},
+      "exit_code": 1,
+      "started": "2026-10-28T11:42:32.666015+00:00",
+      "finished": "2026-10-28T11:42:34.275403+00:00"
+    },
+    {
+      "name": "projects-current-contracts-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:NuGetAudit=false",
+        "-p:MinVerVersionOverride=1.0.0",
+        "-v:minimal"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {},
+      "exit_code": 1,
+      "started": "2026-10-28T11:43:03.549177+00:00",
+      "finished": "2026-10-28T11:43:04.401936+00:00"
+    },
+    {
+      "name": "mapped-current-projects-server-build",
+      "argv": [
+        "dotnet",
+        "build",
+        "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+        "-c",
+        "Debug",
+        "-m:1",
+        "-p:UseHexalithProjectReferences=true",
+        "-p:NuGetAudit=false",
+        "-p:MinVerVersionOverride=1.0.0",
+        "-v:minimal"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {
+        "CustomBeforeDirectoryBuildProps": "/tmp/story64-continuation-20261028-6763s6on/source/source-mapping/SourceMapping.targets",
+        "CustomAfterMicrosoftCommonProps": "/tmp/story64-continuation-20261028-6763s6on/source/source-mapping/SourceMapping.props",
+        "CustomBeforeDirectoryBuildTargets": "/tmp/story64-continuation-20261028-6763s6on/source/source-mapping/SourceMapping.before-targets.props",
+        "CustomAfterDirectoryBuildTargets": "/tmp/story64-continuation-20261028-6763s6on/source/source-mapping/SourceMapping.late.props",
+        "AfterMicrosoftNETSdkTargets": "/tmp/story64-continuation-20261028-6763s6on/source/source-mapping/SourceMapping.final.targets",
+        "HEXALITH_SOURCE_MAPPING_HASH": "7b6deb0a22db07ca052d00532ba7563f0ae67315ac6eb92a6202a8d4435bec0a",
+        "Configuration": "Debug"
+      },
+      "exit_code": 1,
+      "started": "2026-10-28T11:43:08.387839+00:00",
+      "finished": "2026-10-28T11:43:08.830653+00:00"
+    },
+    {
+      "name": "release-package-tools",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_release_package_tools.py"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {},
+      "exit_code": 0,
+      "started": "2026-10-28T11:43:13.806412+00:00",
+      "finished": "2026-10-28T11:43:23.297995+00:00"
+    },
+    {
+      "name": "planning-guard",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_production_authority_guard.py"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {},
+      "exit_code": 0,
+      "started": "2026-10-28T11:43:40.105187+00:00",
+      "finished": "2026-10-28T11:43:48.156656+00:00"
+    },
+    {
+      "name": "story-authority",
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6-4-resolve-projects-with-transient-current-explanations"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {},
+      "exit_code": 0,
+      "started": "2026-10-28T11:44:02.896583+00:00",
+      "finished": "2026-10-28T11:44:02.965690+00:00"
+    },
+    {
+      "name": "index-authority",
+      "argv": [
+        "python3",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {},
+      "exit_code": 0,
+      "started": "2026-10-28T11:44:08.322026+00:00",
+      "finished": "2026-10-28T11:44:08.398730+00:00"
+    }
+  ]
+}

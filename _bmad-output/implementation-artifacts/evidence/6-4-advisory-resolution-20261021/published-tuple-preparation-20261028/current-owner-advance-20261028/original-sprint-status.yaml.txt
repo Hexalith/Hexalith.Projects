@@ -1,0 +1,661 @@
+# generated: 09-20-2026 22:44
+# last_updated: 2026-10-28
+# project: projects
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → backlog: Approved course correction when every created story is blocked and no prerequisite has an accepted owner in progress
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - blocked: Story file or approved prerequisite work-package ledger exists but an accepted prerequisite or readiness gate is missing; implementation must not start
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Story Status Transitions:
+#   - backlog → blocked: An approved course correction records prerequisite work packages before a story file exists
+#   - ready-for-dev → blocked: A prerequisite or specification-readiness failure is confirmed
+#   - blocked → ready-for-dev: Every blocked_by item is accepted and the specification passes readiness
+#   - blocked → in-progress: Prohibited
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# Action Item Status:
+#   - open: Committed during a retrospective, not yet addressed
+#   - in-progress: Actively being worked on
+#   - blocked-external: Requires an independently owned, approved external input
+#   - done: Completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - A blocked story never transitions directly to in-progress; all blocked_by items must be accepted and readiness must pass first
+# - Developer typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Retrospective appends its action items to action_items; sprint-status surfaces open ones
+
+generated: 09-20-2026 22:44
+last_updated: 2026-10-28
+project: projects
+project_key: NOKEY
+tracking_system: file-system
+story_location: /home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts
+production_authority_epics: [6, 7, 8]
+p1r_acceptance_gate:
+  record_path: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
+  selected:
+    eventstore_version: 3.110.0
+    eventstore_tag: v3.110.0
+    eventstore_revision: 27279fe6431925a6ea046c3f89af61487185c7de
+    builds_revision: 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+  rollback:
+    eventstore_version: 3.70.1
+    eventstore_tag: v3.70.1
+    eventstore_revision: f13f9925fdca53efa2ab8c90d396ab106f91bb9c
+    builds_revision: 7af20f8bafbfe561df6f7705913a0800603090b5
+p1r_current_revalidation:
+  status: accepted-p1r-only-verification-complete-remediation-open
+  usable_as_prerequisite: false
+  observed_on: 2026-10-06
+  owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-current-exact-baseline-candidate.md
+  candidate:
+    eventstore_version: 3.110.0
+    eventstore_tag: v3.110.0
+    eventstore_revision: 27279fe6431925a6ea046c3f89af61487185c7de
+    builds_revision: 21ce044ab465ccb2adab58b3d66e394ffbecf3c2
+  builds_version: 4.29.1
+  projects_baseline_commit: b26129c35604689a3a0a13e8af545bab7586e77e
+  eventstore_checkout_gitlink: 8096455e4f23f2912998e36738058b8e3d961be6
+  eventstore_checkout_source_drift: "28 commits and 44 changed src paths after v3.110.0 (40 added, 4 modified); published archives and checkout are distinct coordinates"
+  eventstore_release_run: https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36608763986
+  eventstore_release_validation: "BYPASS_VALIDATION; Commitlint run 36608682105 was the publication source proof; independent tag CI 36608682063 passed"
+  eventstore_release_builds_revision: 22a578b576a515d2af214fe81859447fffc97981
+  eventstore_tag_ci: "https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36608682063 success at 27279fe6431925a6ea046c3f89af61487185c7de; Aspire and performance jobs skipped"
+  eventstore_publication_artifact: "release-evidence-36608763986-1 / 11052572354; downloaded ZIP SHA-256 6837c6db518f98228962c512106f83bdd618e2f47284bf4fa7895f95e51572d1"
+  eventstore_archive_verification: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/README.md
+  eventstore_metadata_rollback: restore-hydration-passes-old-writer-drops-retained-floor
+  eventstore_actor_replay: measured-compatible-shared-replay-seven-incompatible-dispositions
+  eventstore_checkout_compatibility: recorded-source-shared-scope-equivalent-invalid-evidence-incompatible
+  compatibility_verification:
+    report: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3110/verification/README.md
+    selected_attempt: attempt-21
+    execution: complete
+    scenarios: 17
+    cases: 72
+    assertions: 2845
+    incompatible_scenarios: [metadata-read, metadata-write, invalid-evidence, query-wire, projection-wire, mixed-api, checkout]
+    recorded_source_comparison: 2c58ffda41759e895ace4b9625c9bd931a217672
+    packet_validation: valid-against-captured-protected-workspace-before-approved-planning-update
+    captured_sprint_sha256: bc0d564d8c07a9299c9e678dca2df1d98345ae870a798a6ec99a258bf11e6a93
+    captured_sprint_git_revision: 311aa85c8e81c7c0b19d5c0004ddf36ceafd5651
+    operational_qualification: incompatible
+    remediation_status: open
+    remediation_artifact: _bmad-output/implementation-artifacts/spec-6-1-p1r-remediation.md
+    approved_proposal: _bmad-output/planning-artifacts/sprint-change-proposal-2026-10-06.md
+  builds_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Builds/actions/runs/36740809340 success at 21ce044ab465ccb2adab58b3d66e394ffbecf3c2"
+  builds_release_run: https://github.com/Hexalith/Hexalith.Builds/actions/runs/36743051740
+  builds_availability_observation: _bmad-output/implementation-artifacts/evidence/6-1-p0-20261001-preflight.json
+  ci_builds_execution_revision: 51af786cf156d2a3396dbd49f5e4898222e55c12
+  g6_builds_source_revision: 51af786cf156d2a3396dbd49f5e4898222e55c12
+  g6_baseline: references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json
+  g6_superseded_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
+  g6_superseded_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
+  g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json
+  g6_fresh_candidate_sha256: b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139
+  g6_current_qualification: accepted-committed-exact-gitlinks-accepted-only-gate-exit-0
+  g6_failures: "Attempt 16 remains accepted for its exact historical source. Jérôme Piquot approved the current preview.1.261001-0243 tuple and prerelease exception at 2026-10-03T07:15:52Z, and the local pre-check at root dac6ef2c qualified it, but that pre-check inherited TERM_PROGRAM=vscode (IDEBuild=true, IsPackable=false) and never exercised the Hexalith.Commons pack path. The CI authority run 37106225245 at e7dc4d87 failed for two reasons. The pinned PostgreSQL image was absent on the runner. The FrontComposer/Parties AppHosts hit NU5118 from a Hexalith.Commons packing defect: $(ProjectRoot)/README.md resolves to references/README.md, and this reproduces in any non-IDE shell. Current G-6 is therefore failed. The legacy attempt-16 packet gate still fails on packet-bound gitlink and Builds execution-SHA differences. Current P1R usability remains separate and false."
+  g6_run_approved_tuple: "SDK 10.0.401; Aspire SDK/CLI/hosting 13.6.0; Toolkit 13.6.0-beta.910; Dapr CLI/runtime/.NET 1.18.0/1.18.2/1.18.10; Fluent UI 5.0.0; NSubstitute 6.2.0; Fluxor 6.11.0; spec/run approval 2026-10-01T08:29:35Z; named attempt-16 acceptance 2026-10-01T14:58:12Z"
+  role_decisions:
+    EventStore Owner: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
+    Builds Owner: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
+    Solution Architect: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
+    Test Architect: "accept; Jérôme Piquot; 2026-10-01T06:17:01Z; _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json#/selected"
+  owner_decisions: "Jérôme Piquot explicitly accepted all four roles at 2026-10-01T06:17:01Z for the exact 3.110.0 / Builds 4.29.1 tuple and fixed record, including EventStore Stack rebinding, with recorded limitations; G-6 attempt 16 is separately accepted for its committed-source scope"
+  accepted_at_utc: 2026-10-01T06:17:01Z
+  prior_acceptance_evidence: _bmad-output/implementation-artifacts/evidence/6-1-p1r-acceptance-20260922-3.106.0.json
+  containment: "P1R accepts 3.110.0 / Builds 4.29.1 only; preserve archived 3.106.0 acceptance, 3.70.1 rollback, and already-done P1R/P0 Stage 1/DW-35/DW-68 statuses; current P1R usability stays false under its separate published-coordinate and verification limitations; G-6 attempt 16 usability is true only for its exact accepted committed-source scope; P0 stages 2-7, P2-P4, NOT_READY, and blocked Story 6.1 retain their states"
+  g6_superseded_20261001_attempt3_sha256: 724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd
+  g6_superseded_20261001_attempt4_sha256: 162649ffec5aa8ee9a795b5f306d33376b8bfa2e87abc6b6f010a0ca7845b8e1
+  g6_superseded_20261001_attempt5_sha256: a4aec7b8c4a676ede15335225ada47f701af9b188888691d80566141a38c9f01
+  g6_superseded_20261001_attempt6_sha256: 0eb0b46e8ed2ec8fdcaf01317cb9f6122328185942c78fc76656171aabc4d853
+  g6_superseded_20261001_attempt7_sha256: edd626a36f50a53114f3abdfe0c6b5cf725a75dad9b46801f679882342f717fa
+  g6_superseded_20261001_attempt8_sha256: dfb2ed58424678f564f1b2debceb385ee2620645ac5d7aaf2af9e0543ef69931
+  g6_superseded_20261001_attempt9_sha256: b42104afedd6e92bb8cf146f73d2cf2b48c225abbb2a1b7c9cea72363e92a48d
+  g6_superseded_20261001_attempt10_sha256: 865fa27083b6ef16907b2735116899a68b3a898c82911a93f8b0263fb1771adf
+  g6_superseded_20261001_attempt11_sha256: bbc418e944815e7d2bc0108d326367405884e076d5e6084742534da405a2124a
+  g6_superseded_20261001_attempt12_sha256: d257e7133abe74f4599c0524e8437a1f29b56cd42390bb4f5b47eb286d6b8e1a
+  g6_superseded_20261001_attempt13_sha256: ff49ce42b8eb8ecd238bce6be10b6764325b1f341339e0d981c09199f34147d1
+  g6_superseded_20261001_attempt14_sha256: 9caa2699bc6dca0c2366e0f9eaa088a9ffa9ce9ec4d27f448b31b8c53a87cfaa
+  g6_superseded_20261001_attempt15_sha256: 46159e22bbf0c2ebe4dd6a83dec5247b47c19244c5f443679b6d139524922e48
+  superseded_candidate:
+    superseded_as_current_on: 2026-10-01
+    status: technical-candidate-pending-open-gaps-and-exact-owner-decisions
+    usable_as_prerequisite: false
+    owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3109-exact-baseline-candidate.md
+    candidate:
+      eventstore_version: 3.109.0
+      eventstore_tag: v3.109.0
+      eventstore_revision: 818e28a8af421994e4f77e66327dc33a8c67ca5f
+      builds_revision: ac58d02cd69f4c74cc71fc05430983d51b58fd84
+    projects_gitlinks_commit: 9bacf3a6324f4b6402247289a1ed5a665ab91f0f
+    eventstore_checkout_gitlink: 5b9494835fcba6152789653add8f84bee5666035
+    eventstore_checkout_source_equals: 489e5d76253f68c6cf53c443aa8755ad059e621e
+    eventstore_release_run: https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36238526310
+    eventstore_release_validation: "BYPASS_VALIDATION; Commitlint run 36237813667 was the source proof, not CI"
+    eventstore_release_builds_revision: 22a578b576a515d2af214fe81859447fffc97981
+    eventstore_tag_ci: "https://github.com/Hexalith/Hexalith.EventStore/actions/runs/36237813612 failed: 3 Contracts OQ8 Story 4.15 governance tests"
+    eventstore_published_package_evidence: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/public-packages.json
+    eventstore_rollback_probe: references/Hexalith.EventStore/_bmad-output/implementation-artifacts/evidence/6-1-p1r-3109/rollback-probe/README.md
+    builds_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Builds/actions/runs/36698188312 success at ac58d02c (temporary prerelease branch, deleted after the run): Build and test, Python contract tests and CodeQL passed"
+    builds_main_merge: "fdebf0fa7505ebc18c500a4da88eeee05df1203a (parents ac58d02c and remote 125566f1); CI 36698191862 success, Commitlint 36698191621 success"
+    eventstore_main_merge: "6e972132c7b5b630246c58cff59e6b90e50d44ba (parents 5b949483 and remote bbe7582e); CI 36698207328 failure: build-and-test SecretsProtectionTests flags remote ReminderReconcilerTests.cs:234 (also fails at bbe7582e run 36685058689); contracts SharedConsumerAuthorityValidator rejects the 6-1-p1r-3109 consumer and rollback-probe projects, which 27279fe6's 6-1-p1r-3108 probe exclusions do not cover (new with the merge)"
+    projects_exact_revision_ci: "https://github.com/Hexalith/Hexalith.Projects/actions/runs/36698221404 failure at 27341e150eacf08c8279564eebcdda1c642d6ca9: workflow-gates, g6-candidate and p1r-candidate-evidence passed; g6-acceptance failed by design (Packet status must be accepted); ci/build-and-test failed package consumer validation (tools/release-packages.json expects Hexalith.EventStore.Contracts 3.106.0, Builds ac58d02c pins 3.109.0) before any test tier ran, so project-gates was skipped; Commitlint 36698221478 and CodeQL 36698221345 passed"
+    g6_baseline: references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-09-29.json
+    g6_fresh_candidate: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260929/packet.json
+    g6_superseded_fresh_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
+    g6_superseded_pending_candidate_sha256: 26d7a6e0d9b7aaa3136864529e261d36f9346a1166b08b31d6b8edda51d52000
+    g6_earlier_superseded_pending_candidate_sha256: e3090bd938ccbea7ee63ddb7427ce75ab815397f6eaa6183ab97ec2da0f8b82b
+    g6_earliest_superseded_pending_candidate_sha256: 7e7d7ea2f39256b829367c56bf289ff97889e190f6e7481db35def986d53a5bb
+    g6_current_qualification: candidate-validator-exit-0-accepted-only-exit-1-committed-source-closure-revisions-equal-gitlinks
+    g6_ci_jobs: "every G-6 check runs in g6-candidate (status-aware tests/tools/run_g6_candidate_gate.py: the validator in candidate mode while pending and accepted-only mode once accepted, then the packet-gitlink and Builds execution-SHA-equals-gitlink checks, then tests/tools/test_g6_packet_references.py) and g6-acceptance (accepted-only validator, then the packet-gitlink check); both need only workflow-gates and no job needs them, so G-6 drift fails only those two jobs while workflow-gates, ci, project-gates and e2e still run"
+    g6_acceptance_procedure: "status flip only: one Projects commit changes packet.json status from pending to accepted and adds a named decision record (approver, date, owner roles, reviewed packet SHA-256) under qualification_gates.G-6; no bound file changes, and both G-6 jobs then pass"
+    push_order: "push Builds ac58d02c and EventStore 5b949483 before Projects; integrate any advanced remote main with a merge commit; never squash or rebase the bound commits (done 2026-09-30: Builds main fdebf0fa, EventStore main 6e972132, Projects main 27341e15; gitlinks unchanged)"
+    branch_protection: "require only workflow-gates, the ci reusable-workflow jobs and project-gates; never require g6-candidate, g6-acceptance or p1r-candidate-evidence, which fail by design on G-6 drift (including routine bumps of packet-bound submodules), while the packet is pending, or when the EventStore gitlink src or the recorded EventStore disposition changes; e2e is schedule-only. release.yml needs a successful whole ci.yml run, so any such failure, including G-6 drift after acceptance, blocks releases until a recapture or evidence update"
+    projects_releases: "blocked while the G-6 packet is pending: release.yml verify-source needs a successful push CI run and g6-acceptance fails until owner acceptance"
+    g6_oq8_binaries: "LiveSidecar and Server test binaries built from EventStore checkout source 5b949483, not the published 3.109.0 archives"
+    open_technical_gaps:
+      - "EventStore release validation bypass and failing tag CI need an EventStore Owner disposition"
+      - "3.109.0 to 3.70.1 actor/domain replay, API downgrade, and operational backup/restore rehearsal are unproven; only a storage-record read passed, through a disposable Dapr state.redis store on local runtime 1.18.4 (never PostgreSQL)"
+      - "489e5d76 checkout RetainedFloor and interface changes are untested against the published packages"
+      - "Builds ac58d02c has no published tool consumer pin, persisted-run proof, or 3.109.0 exact-pair package/runner probe (exact-SHA CI 36698188312 passed)"
+      - "Projects main CI build-and-test fails package consumer validation (tools/release-packages.json expects Hexalith.EventStore.Contracts 3.106.0, Builds ac58d02c pins 3.109.0) on every main run since at least 6bc51555, so no CI test tier has run and the Folders ValidateLink_MalformedSuccess_IsUnavailable failure is not yet observed in CI"
+      - "EventStore main CI fails at merge 6e972132: the 6-1-p1r-3109 evidence projects need the same package-authority scan exclusion 27279fe6 gave the 6-1-p1r-3108 probes, and SecretsProtectionTests flags remote ReminderReconcilerTests.cs:234"
+      - "Parties and FrontComposer AppHosts do not compile; managed restart smoke not run (its preflight is deliberately run without TEST_USER_PASSWORD, exit 1 by contract); package-exception inventory exits 1 with 14 drifts"
+      - "G-6 OQ8 pass used checkout-source test binaries, not the published 3.109.0 archives; the consumer smoke compiles only types unchanged since 3.106.0"
+    superseded_candidate:
+      eventstore_version: 3.108.1
+      eventstore_revision: b15ad59abca82d5980ef92a510c2379e05f4d46f
+      builds_revision: 2326f983bad14d5398ee55bf2bdf6c86b63c39ea
+      owner_packet: _bmad-output/implementation-artifacts/6-1-p1r-3108-exact-baseline-candidate.md
+      g6_packet: _bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json
+      g6_packet_sha256: ccc2cab78b24873bb92133d4a5bc753d7bf9b7a8ffe1ff418d847572db54745d
+      current_result: "candidate validator exits 1 at the committed gitlinks: Central package pin drift: CommunityToolkit.Aspire.Hosting.Dapr"
+      superseded_on: 2026-09-29
+    owner_decisions: "Jérôme Piquot retargeted P1R to 3.109.0 and approved the Toolkit .770 exception and isolated Dapr 1.18.2 rerun on 2026-09-29; the four exact-tuple P1R role decisions and the post-run G-6 decision on superseded packet f62a8f66 were still required at that observation."
+    containment: "Keep the accepted 3.106.0 tuple and 3.70.1 rollback; P0 Stage 6 and Story 6.1 remain blocked."
+historical_development_status_sha256: ce120516809be4a3814565f67c7a1e648650b3b9f0547ed9a4135a78eba0bbaf
+production_authority_guard:
+  validator: tools/planning/validate_production_authority.py
+  project_instruction: _bmad-output/project-context.md
+  policy_source: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md#510-historical-scheduling--add-a-machine-checkable-production-authority-guard
+  historical_epics: [1, 2, 3, 4, 5]
+  historical_status_policy: immutable-done
+  validation_phase: preflight-and-post-generation-before-atomic-replacement
+  deterministic_test: tests/tools/test_production_authority_guard.py
+readiness_provenance:
+  current_report: _bmad-output/planning-artifacts/implementation-readiness-report-2026-08-02-rerun-4.md
+  current_result: NOT_READY
+  approved_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md
+  correction_scope: internal-planning-artifacts-only
+story_6_1_prerequisite_chain: "6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3 -> authorized Solution Architect sign-off on the exact corrected baseline -> 6.1-P4 exact clean-checkout acceptance -> Story 6.1 specification readiness -> independent implementation-readiness result exactly READY -> Story 6.1 may become ready-for-dev"
+
+development_status:
+  # Epic 1: Project Workspace Foundation
+  epic-1: done
+  1-1-module-scaffold-build-ci-wiring: done
+  1-2-shared-vocabulary-identifiers-payload-taxonomy: done
+  1-3-openapi-contract-spine-generated-typed-client: done
+  1-4-create-project-end-to-end-tracer-bullet: done
+  1-5-projection-rebuild-replay-idempotency: done
+  1-6-tenant-access-layered-fail-closed-authorization: done
+  1-7-open-list-projects: done
+  1-8-update-project-setup-archive-project: done
+  1-9-aspire-dapr-workers-topology-operational-skeleton: done
+  epic-1-retrospective: done
+
+  # Epic 2: Context References
+  epic-2: done
+  2-1-conversation-reference-read-acl: done
+  2-2-conversation-project-reassignment-upstream-capability: done
+  2-3-link-move-conversation-write-side: done
+  2-4-set-auto-create-project-folder: done
+  2-5-link-unlink-file-reference: done
+  2-6-memories-linkage-decision-spike: done
+  2-7-link-unlink-memory: done
+  epic-2-retrospective: done
+
+  # Epic 3: Project Context Assembly
+  epic-3: done
+  3-1-context-assembly-policy-allowlist: done
+  3-2-get-project-context: done
+  3-3-explain-context-selection: done
+  3-4-refresh-project-context: done
+  3-5-retrieve-conversation-start-setup: done
+  epic-3-retrospective: done
+
+  # Epic 4: Project Resolution
+  epic-4: done
+  4-1-resolution-engine-compute-on-demand: done
+  4-2-resolve-project-from-conversation: done
+  4-3-resolve-project-from-attachments: done
+  4-4-confirm-ambiguous-project: done
+  4-5-propose-new-project: done
+  epic-4-retrospective: done
+
+  # Epic 5: Operational Console & Audit (CLI / MCP / Web)
+  epic-5: done
+  5-1-audit-timeline-projection-metadata-only-audit-events: done
+  5-2-operator-read-access: done
+  5-3-frontcomposer-console-shell-shared-rendering: done
+  5-4-project-inventory-detail-views: done
+  5-5-reference-inventory-health-view: done
+  5-6-resolution-trace-workbench: done
+  5-7-audit-timeline-view-safe-diagnostic-export: done
+  5-8-warnings-queue-operational-dashboard: done
+  5-9-audit-first-maintenance-actions: done
+  5-10-mcp-cli-parity-surfaces: done
+  5-11-cross-surface-parity-responsive-design-accessibility-hardening: done
+  5-12-live-apphost-operational-console-verification: done
+  epic-5-retrospective: done
+
+  # Epic 6: Chatbot and Operators Retrieve Authorized Project Truth
+  epic-6: in-progress
+  6-1-list-and-open-projects-through-supported-authenticated-paths: blocked
+  # wait for eventstore 6.2
+  6-2-retrieve-conversation-start-setup-with-admission-truth: done
+  6-3-retrieve-assembled-project-context-through-supported-read-models: done
+  6-4-resolve-projects-with-transient-current-explanations: in-progress # Published Builds 4.38.2 verified and local tuple prepared; exact Platform recording, integration qualification, publication and consumer adoption remain open
+  6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface: blocked
+  6-6-inspect-projects-through-an-authenticated-cli-read-surface: backlog
+  6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback: backlog
+  6-8-split-hexalith-projects-ui-contracts-from-contracts: backlog
+  epic-6-retrospective: optional
+
+  # Epic 7: Users Complete Durable Project Decisions and Recover Them
+  epic-7: backlog
+  7-1-activate-a-project-with-exactly-one-authorized-folder: blocked
+  7-2-update-project-setup-idempotently: backlog
+  7-3-link-an-unassigned-conversation: backlog
+  7-4-move-a-conversation-between-projects: backlog
+  7-5-unlink-a-conversation: backlog
+  7-6-replace-a-project-folder: backlog
+  7-7-link-an-authorized-file-reference: backlog
+  7-8-unlink-a-file-reference: backlog
+  7-9-link-an-authorized-memory: backlog
+  7-10-unlink-a-memory: backlog
+  7-11-confirm-an-ambiguous-project-choice: backlog
+  7-12-confirm-a-proposed-new-project: backlog
+  7-13-archive-an-active-project: backlog
+  7-14-restore-an-archived-project: backlog
+  7-15-reconcile-legacy-and-interrupted-workflows: backlog
+  7-16-select-an-association-target: backlog
+  epic-7-retrospective: optional
+
+  # Epic 8: Operators Run Projects Safely and Release Owners Decide from Evidence
+  epic-8: backlog
+  8-1-inspect-task-audit-and-reconciliation-truth: backlog
+  8-2-create-a-bounded-safe-diagnostic-export: backlog
+  8-3-integrate-conformant-project-maintenance-in-the-web-console: backlog
+  8-4-operate-projects-through-a-deterministic-cli-contract: backlog
+  8-5-operate-projects-through-agent-safe-mcp-contracts: backlog
+  8-6-observe-truthful-dependency-and-projection-health: backlog
+  8-7-consume-reproducible-packages-and-supply-chain-evidence: backlog
+  8-8-integrate-authenticated-isolation-privacy-parity-and-accessibility-evidence: blocked
+  8-9-meet-bounded-performance-and-back-pressure-objectives: backlog
+  8-10-prove-cross-workflow-resilience: backlog
+  8-11-record-the-terminal-production-release-decision: blocked
+  epic-8-retrospective: optional
+
+qualification_gates:
+  G-6:
+    status: accepted
+    accepted_scope: "Historical 2026-09-06 scope remains preserved. Attempt 16 is separately accepted by Jérôme Piquot at 2026-10-01T14:58:12Z on reviewed hash b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139, for its exact committed beta.910 source and approved tuple only; current preview.1.261001-0243, published P1R archives, rollback, G-4/G-5, downstream work, release, deployment and Workflow remain outside this acceptance."
+    applicability_policy: "Approved 2026-10-02: effective controlled tuple plus matching reviewed material-input fingerprint and passing focused PostgreSQL two-sidecar proof; initial v3 disables evidence reuse pending Platform transitive-graph closure; release reruns at exact source SHA; historical packet/gitlinks remain immutable provenance."
+    current_checkout_status: qualified
+    current_checkout_usable: true
+    current_checkout_toolkit_pin: 13.6.0-preview.1.261001-0243
+    current_checkout_source_revision: 0f03582b3457a6d9212d60e2f9146a6043af5f7e
+    current_checkout_reason: "CI g6-current at root 0f03582b3457a6d9212d60e2f9146a6043af5f7e printed G6-CURRENT-QUALIFIED and validated exit 0 after Conversations, Folders, Memories and Parties gitlinks advanced. Approved tuple unchanged; audit zero issues, qualifier 1/1, support 33/33, zero skips, 10 AppHosts and McpCli compiled, all 18 commands exited 0 and every cleanup flag is true. Full CI succeeded; downloaded artifact digest and retained receipts verified; independent validator replay on a clean exact-source checkout exited 0. Qualification applies only to this recorded source; evidence reuse remains disabled. This is checkout-source proof only."
+    current_checkout_tuple_decision: "Approve; Jérôme Piquot (Builds/Platform/FrontComposer-Web); 2026-10-03T07:15:52Z; tuple 52c8d36a9db4aae09e7a32f7a62be61ed7eee4e0f33a15099215bd61ff780098; candidate result 399befab8b1035496f8b60bf59652e6e24bf55189a260f1b4ccd4d5faf97c26e; Builds c16249a6a0c88b903e14c7f6612632e2c70d4e94; _bmad-output/implementation-artifacts/spec-g-6-qualify-current-toolkit-preview-tuple.md#implementation-notes"
+    current_checkout_ci_run: https://github.com/Hexalith/Hexalith.Projects/actions/runs/37118950623
+    current_checkout_ci_artifact: "g6-current-0f03582b3457a6d9212d60e2f9146a6043af5f7e-37118950623-1 (id 11273215715, sha256:02a2eaef4d00642f90df2bf34975417f8a5265aa2c2c5992860200cdf0830108); result.json 113ffa2acb1861ef74a88b77e5a933d7d2762753e69563d1a42e1206bec0b0d9, status qualified"
+    current_checkout_local_evidence: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-checkout-refresh-20261003/SHA256SUMS (exact-source CI artifact, bound receipts, original ZIP/API metadata/job log, and clean-checkout validator replay; earlier readiness evidence remains preserved)"
+    # Preserve the reviewed pending copy; the selected accepted packet is indexed separately.
+    current_candidate_status: preserved-reviewed-pending-copy
+    current_candidate_usable: false
+    current_candidate_builds_source_revision: 51af786cf156d2a3396dbd49f5e4898222e55c12
+    current_candidate_baseline: "references/Hexalith.Builds/Tools/runtime-toolchain-baseline-2026-10-01.json"
+    current_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/reviewed-packet.json"
+    current_accepted_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/packet.json"
+    # Packet usability is true only for attempt 16's historical exact-source scope.
+    current_accepted_usable: true
+    current_accepted_reviewed_sha256: b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139
+    current_candidate_sha256: b7f940e512e17bcad98b021e4a7d4b9acce4f0c9fba4d3dc23f9d160245be139
+    current_accepted_at_utc: 2026-10-01T14:58:12Z
+    current_accepted_by: "Jérôme Piquot"
+    current_accepted_packet_sha256: 49ae8176481f5ef130aa95ba296a9f3c7ca7d30f7ee6f457a0cf94378fa20f05
+    current_accepted_acceptance_record: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001/attempt-16/acceptance.json"
+    current_accepted_validation: "2026-10-01 attempt-16: all 22 commands pass; qualifier 1, support 33 across 21 selectors, fixture 31, ten AppHosts, McpCli, strict capture, runner 12 and evidence 103 controls pass; zero failures/skips; accepted-only, status-aware and exact-gitlink gates exit 0; committed closure true; shared snapshots unchanged and four exact owned containers removed"
+    current_candidate_acceptance: "The exact reviewed pending copy is preserved without acceptance or usability; the independent named decision applies to current_accepted_packet only."
+    superseded_20260929_candidate_sha256: f62a8f661c181f5f2554bfc21bf0da918fcf6448199186bbf5a8e8d9a2fb7ac2
+    replaced_pending_candidate_sha256: 26d7a6e0d9b7aaa3136864529e261d36f9346a1166b08b31d6b8edda51d52000
+    earlier_replaced_pending_candidate_sha256: e3090bd938ccbea7ee63ddb7427ce75ab815397f6eaa6183ab97ec2da0f8b82b
+    earliest_replaced_pending_candidate_sha256: 7e7d7ea2f39256b829367c56bf289ff97889e190f6e7481db35def986d53a5bb
+    superseded_candidate_packet: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20260927/packet.json"
+    superseded_candidate_validation: "candidate-mode exits 1 at the committed gitlinks: Central package pin drift: CommunityToolkit.Aspire.Hosting.Dapr"
+    accepted_on: 2026-09-06
+    packet_recapture_accepted_at_utc: 2026-09-22T22:44:16Z
+    approved_by: "Jérôme Piquot"
+    owner_roles: ["Builds", "Platform", "FrontComposer/Web"]
+    disposition: "Explicit Dapr runtime 1.18.2 / .NET packages 1.18.5 exception; not support-table-listed"
+    evidence: "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain/packet.json"
+    containment: "G-4, G-5, deployment, and release remain unapproved"
+    superseded_20261001_attempt3_sha256: 724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd
+    superseded_20261001_attempt4_sha256: 162649ffec5aa8ee9a795b5f306d33376b8bfa2e87abc6b6f010a0ca7845b8e1
+    superseded_20261001_attempt5_sha256: a4aec7b8c4a676ede15335225ada47f701af9b188888691d80566141a38c9f01
+    superseded_20261001_attempt6_sha256: 0eb0b46e8ed2ec8fdcaf01317cb9f6122328185942c78fc76656171aabc4d853
+    superseded_20261001_attempt7_sha256: edd626a36f50a53114f3abdfe0c6b5cf725a75dad9b46801f679882342f717fa
+    superseded_20261001_attempt8_sha256: dfb2ed58424678f564f1b2debceb385ee2620645ac5d7aaf2af9e0543ef69931
+    superseded_20261001_attempt9_sha256: b42104afedd6e92bb8cf146f73d2cf2b48c225abbb2a1b7c9cea72363e92a48d
+    superseded_20261001_attempt10_sha256: 865fa27083b6ef16907b2735116899a68b3a898c82911a93f8b0263fb1771adf
+    superseded_20261001_attempt11_sha256: bbc418e944815e7d2bc0108d326367405884e076d5e6084742534da405a2124a
+    superseded_20261001_attempt12_sha256: d257e7133abe74f4599c0524e8437a1f29b56cd42390bb4f5b47eb286d6b8e1a
+    superseded_20261001_attempt13_sha256: ff49ce42b8eb8ecd238bce6be10b6764325b1f341339e0d981c09199f34147d1
+    superseded_20261001_attempt14_sha256: 9caa2699bc6dca0c2366e0f9eaa088a9ffa9ce9ec4d27f448b31b8c53a87cfaa
+    superseded_20261001_attempt15_sha256: 46159e22bbf0c2ebe4dd6a83dec5247b47c19244c5f443679b6d139524922e48
+
+action_items:
+  - epic: 5
+    action: "Provision or document the live AppHost browser route for Epic 5 operational console checks and run the remaining AppHost-backed Playwright cases."
+    owner: "Murat / Amelia"
+    status: done
+    result: "Dynamic AppHost UI/API/security routes were documented and all live Playwright cases executed; focused live result 13 passed/13 failed, full result 19 passed/56 failed. Remaining blockers are missing tenant-a access projection and operational-console UI/static-asset prerequisites."
+    evidence: "_bmad-output/implementation-artifacts/spec-5-12-live-apphost-operational-console-verification.md"
+    routed_to: "Story 8.6"
+  - epic: 5
+    action: "Record deployment state and stakeholder acceptance for Epic 5 operational surfaces before release handoff."
+    owner: "Jerome / John"
+    status: done
+    result: "Release handoff blocked; production deployment is unverified and stakeholder acceptance is not granted."
+    evidence: "_bmad-output/implementation-artifacts/epic-5-release-handoff-2026-07-14.md"
+    routed_to: "Story 8.9"
+  - epic: 5
+    action: "Resolve or explicitly scope the pre-existing CreateProject metadataClass required-field enforcement gap with OpenAPI/server tests."
+    owner: "Amelia"
+    status: done
+    result: "Implemented one shared metadata-classification validator, enforced the existing canonical CreateProject metadataClass requirement before command submission, and preserved legacy name-only and proposal-confirmation behavior. Contracts OpenAPI: 26 passed; CreateProject server: 81 passed; proposal regression: 32 passed; fingerprint gate: 41 passed; Release solution build: 0 warnings/errors. AppHost resource discovery remained environment-blocked by a separately running Memories AppHost and a later detached backchannel disconnect; the external AppHost was not stopped or altered."
+    routed_to: "Story 6.2"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
+    evidence: "_bmad-output/implementation-artifacts/spec-resolve-create-project-metadata-class-enforcement.md"
+  - epic: 5
+    action: "Add U+2028/U+2029 idempotency canonicalizer parity coverage across server and generated-client fingerprinting."
+    owner: "Amelia / Murat"
+    status: done
+    result: "Aligned server and generated-client U+2028/U+2029 canonicalization, added direct parity, boundary, non-collision, safe-rejection, stable-hash, and generated-artifact coverage, and preserved separator-free fingerprints. Fresh verification on 2026-07-31: domain 656/656, client 114/114, server 582/582, and OpenAPI fingerprint gate 99/99 passed; generated artifacts remained unchanged and git diff check passed."
+    routed_to: "Story 6.2"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-31.md"
+    evidence: "_bmad-output/implementation-artifacts/spec-u2028-u2029-idempotency-canonicalizer-parity-coverage.md"
+  - epic: 5
+    action: "Decide whether FrontComposer projection descriptors should remain in the packable Contracts assembly or move to a non-packable UI contracts boundary."
+    owner: "Winston / Amelia"
+    status: done
+    result: "Move application-specific projection descriptors to a non-packable Hexalith.Projects.UI.Contracts boundary; retain shared domain/wire vocabulary in the packable Contracts assembly."
+    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-frontcomposer-contract-boundary.md"
+    routed_to: "Story 6.2"
+  - epic: 5
+    action: "Canonicalize or explicitly document the mixed FreshnessTrustState vocabulary used by reference-health rows."
+    owner: "Paige / Amelia"
+    status: done
+    result: "Canonicalized reference-health and reference-warning freshness to current, stale, rebuilding, or unavailable through one Contracts-owned fail-closed normalizer; preserved producer enums, generated/OpenAPI/persisted schemas, top-level freshness, and dedicated authorization/redaction diagnostics. Verification on 2026-07-31: restore passed; Contracts 188/188, UI 151/151, CLI 16/16, and MCP 26/26 tests passed; solution build completed with 0 warnings/errors; git diff check passed."
+    routed_to: "Developer direct correction; Story 8.8 parity verification"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-31-freshness-trust-state-vocabulary.md"
+    evidence: "_bmad-output/implementation-artifacts/spec-canonicalize-reference-health-freshness-vocabulary.md"
+  - epic: 5
+    action: "Keep partial-failure and diagnosticUnavailable parity covered for Web, MCP, and CLI warning/dashboard outputs."
+    owner: "Murat"
+    status: done
+    result: "Hardened the canonical mixed-success regression across Web source and rendered output, MCP QueryAsync resource dispatch, and CLI warning/dashboard JSON while preserving existing surface shapes and excluding raw failure detail. Fresh verification on 2026-07-31: restore passed; UI 152/152, MCP 26/26, and CLI 16/16 tests passed with 0 skipped; named matrix tests passed 2/2 Web, 1/1 MCP, and 1/1 CLI; solution build completed with 0 warnings/errors; git diff check passed. AppHost built and reported a dashboard launch, but its detached process exited before runtime readiness inspection."
+    routed_to: "Stories 8.3 and 8.4"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
+    evidence: "_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md"
+  - epic: 6
+    id: "6.1-P0"
+    action: "Deliver the supported G-4 persisted runner and machine-checkable evidence tooling required by Story 6.1."
+    repository_authority: "Hexalith/Hexalith.Builds"
+    owner: "Builds Owner / Platform Owner / Test Architect"
+    status: open
+    execution_status: in-progress-external
+    depends_on: ["6.1-P1R"]
+    qualification_dependencies: ["6.1-P1R", "G-6"]
+    stage_status:
+      stage_1_p1r_baseline: done
+      stages_2_through_7: open
+    expected_evidence: "Owner-approved supported composition, publication, consumer pin, persisted qualification, P0 acceptance record, and owner acceptance."
+    evidence: "_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md"
+    routed_to: "Hexalith.Builds owner-repository story"
+  - epic: 6
+    id: "6.1-P1"
+    action: "Normalize EventStore source, Architecture Spine pin, central package versions, and the G-4 runner manifest into one owner-approved baseline."
+    repository_authority: "EventStore and Builds repositories; Architecture Spine through architecture-owner approval"
+    owner: "EventStore Owner / Builds Owner / Solution Architect"
+    status: done
+    target_date: uncommitted
+    authorized: "2026-07-18 by Jerome"
+    result: "Normalized on EventStore v3.70.1 (f13f9925fdca53efa2ab8c90d396ab106f91bb9c): fixed a release-blocking restore bug and two stale baseline-sync tests, cut and published v3.70.1, pinned the EventStore submodule and Builds HexalithEventStoreVersion to it, realigned the Architecture Spine Stack/G-1 text and the traceability matrix, and recorded AD-14 compatibility + rollback (v3.67.3) evidence."
+    expected_evidence: "Finite normalization record with repository revision, package versions, API signatures, compatibility results, approvals, and rollback pins"
+    evidence: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p1-eventstore-source-architecture-package-normalization-record.md"
+    routed_to: "6.1-P1R, 6.1-P2, and 6.1-P4"
+  - epic: 6
+    id: "6.1-P1R"
+    action: "Accept the selected EventStore and Builds baseline through the fixed minimal JSON record."
+    repository_authority: "EventStore and Builds owners; Solution and Test Architects"
+    owner: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
+    status: done
+    accepted_scope: "EventStore 3.110.0 / v3.110.0 / 27279fe6431925a6ea046c3f89af61487185c7de with Builds 4.29.1 / 21ce044ab465ccb2adab58b3d66e394ffbecf3c2; four exact named accepts by Jérôme Piquot at 2026-10-01T06:17:01Z; P1R boundary only."
+    current_candidate_usable: false
+    depends_on: ["6.1-P1"]
+    unblocks: ["6.1-P0", "6.1-P2", "6.1-P4"]
+    unblocks_scope: "Exact P1R tuple acceptance remains done; attempt 21 verification is complete with seven incompatibilities. Current P1R usability is false, remediation is open, and P0/P2/P3/P4/readiness retain their existing states; G-6 qualification is separate."
+    acceptance_record: "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
+    routed_to: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
+  - epic: 6
+    id: "6.1-P1R-remediation"
+    action: "Remediate the seven measured P1R incompatibilities and prepare a qualified candidate and supported rollback envelope."
+    repository_authority: "EventStore and Builds owners; Platform and Identity/Security for supported transport; Projects for planning handoff"
+    owner: "EventStore Owner / Builds Owner / Solution Architect / Test Architect; Platform and Identity/Security through P2"
+    status: open
+    target_date: uncommitted
+    planning_approved: 2026-10-06
+    planning_approved_by: Jerome
+    owner_execution_status: pending-repository-local-scope
+    handoff_status: routed
+    depends_on: ["6.1-P1R"]
+    artifact: "_bmad-output/implementation-artifacts/spec-6-1-p1r-remediation.md"
+    approval: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-10-06.md"
+    expected_evidence: "Current-source reproduction, invalid-evidence rejection, metadata-preserving restore-plus-append, complete authority/watermark/capability behavior, actual published candidate and rollback packages, independent validation and exact owner decisions"
+    current_candidate_usable: false
+    unblocks_scope: "No status advances from this handoff; usable P1R still requires the supported envelope and exact evidence/owner decisions."
+    routed_to: "EventStore Developer / Builds Owner / Platform and Identity-Security P2 implementers / Solution Architect / Test Architect / Product Owner"
+  - epic: 6
+    id: "6.1-P2"
+    action: "Supply supported dual-principal query identity, indistinguishable safe denial, and authoritative global-position watermark capabilities."
+    repository_authority: "EventStore/platform repository"
+    owner: "EventStore Owner / Identity-Security Owner / Solution Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["6.1-P1R"]
+    expected_evidence: "Public-contract, cross-Tenant negative-control, safe-denial equivalence, watermark replay/restart, G-4, pin, and rollback evidence"
+    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p2--supply-the-supported-query-security-and-projection-capabilities"
+    routed_to: "Product Manager / Solution Architect / EventStore and Identity-Security Owners"
+  - epic: 6
+    id: "6.1-P3"
+    action: "Approve the mandatory fail-closed production identity and authentication contract and supported verification fixtures."
+    repository_authority: "Identity/security platform and production configuration authority"
+    owner: "Identity-Security Owner / Projects Owner / Solution Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["6.1-P2"]
+    expected_evidence: "Configuration contract, missing-auth startup fixture, delegated identity mappings, invalid audience/scope fixtures, ownership, and rollback behavior"
+    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p3--approve-the-production-identity-and-authentication-contract"
+    routed_to: "Product Manager / Solution Architect / Identity-Security and Projects Owners"
+  - epic: 6
+    id: "6.1-P4"
+    action: "Accept the Story 6.1 entry gate from the exact P0, P1R, P2, and P3 revisions and evidence plus signed Solution-Architect conformance against the same baseline, using historical P1 as a satisfied input."
+    repository_authority: "Hexalith.Projects planning and evidence artifacts"
+    owner: "Product Owner / Solution Architect / Test Architect / prerequisite owners"
+    status: open
+    target_date: uncommitted
+    depends_on: ["6.1-P0", "6.1-P1R", "6.1-P2", "6.1-P3", "Solution Architect conformance sign-off against exact current baseline"]
+    historical_inputs: ["6.1-P1"]
+    expected_evidence: "evidence/epic6/6.1-entry-gate.yaml; accepted P0, P1R, P2, and P3 revisions and owner approvals; signed Solution-Architect conformance checklist against the same baseline; executable rollback; passing exact clean-checkout restore/run/full-test/down/evidence-validation commands"
+    evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p4--accept-the-story-61-entry-gate"
+    course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md"
+    latest_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md#54-story-61--preserve-the-literal-prerequisite-chain"
+    routed_to: "Product Manager / Solution Architect / Product Owner / Test Architect"
+  - epic: 7
+    id: "7.1-P1"
+    action: "Accept the canonical/legacy creation contracts, authorization-before-parsing behavior, exact metadata classification vocabulary, shared-validator parity, no-command rejection evidence, compatibility fingerprint, and rollback."
+    repository_authority: "Hexalith.Projects Contracts and Server owners"
+    owner: "Projects Contracts Owner / Projects Server Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["Epic-7-gate"]
+    expected_evidence: "Owner-approved contract pin; canonical and legacy fixtures; auth-before-parse negative controls; metadata classifier parity; no-command rejection; compatibility fingerprint; clean-checkout command and rollback record"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
+    routed_to: "Story 7.1"
+  - epic: 7
+    id: "7.1-P2"
+    action: "Accept the pinned Durable Task admission and Folder provisioning capabilities required by folder-first Project activation."
+    repository_authority: "EventStore/platform and Folders owner repositories"
+    owner: "EventStore-Platform Owner / Folders Owner / Solution Architect / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["Epic-7-gate"]
+    expected_evidence: "Pinned capability versions; deterministic step idempotency; receipt/status lookup; compensation behavior; clean-checkout commands; owner approvals; executable rollback"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#43-decompose-story-71"
+    routed_to: "Story 7.1"
+  - epic: 8
+    id: "8.3-P1"
+    action: "Accept the finite cross-repository Web presentation foundation defined by the 8.3-P1 package contract, preserving canonical admission, Confirmation Artifact, eight-state task truth, recovery/control, authoritative re-query, accessibility, privacy, and ownership boundaries."
+    repository_authority: "Hexalith.FrontComposer generic Web foundation and Hexalith.Projects UI-contract/adapter consumption"
+    owner: "FrontComposer-Web Owner / Projects Web Owner / Test Architect / Solution Architect / Product Owner"
+    status: open
+    target_date: uncommitted
+    depends_on: ["G-3", "G-6", "Superseding implementation-readiness result READY"]
+    expected_evidence: "Accepted G-3/G-6 and READY dispositions; immutable repository revisions and compatibility fingerprints; epic8/8.3-p1-web-foundation fixture; Story8.3P1 clean-checkout TRX results; eight-state, negative-artifact, lost-response, cancellation, authoritative-re-query, privacy/boundary, keyboard/focus/live-region/200%-zoom/320px results; evidence/epic8/8.3-p1-foundation-manifest.json with hashes, owner approvals, containment, and executable rollback"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-8.3-P1.md#41-expand-83-p1-in-epicsmd"
+    routed_to: "Story 8.3"
+  - epic: 8
+    id: "8.3-P2"
+    action: "Accept the archive and restore Web journeys, including Folder-before-activation restore and role, denial, renewal, recovery, and accessibility evidence."
+    repository_authority: "Hexalith.Projects Web adapter and FrontComposer presentation authority"
+    owner: "Projects Web Owner / Product Owner / Test Architect / Solution Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["8.3-P1", "Story 7.13", "Story 7.14", "Story 8.1", "Superseding implementation-readiness result READY"]
+    expected_evidence: "Immutable Projects/FrontComposer/platform/Folder dependency revisions; accepted P1/G-3/G-6 and Stories 7.13/7.14/8.1 pins; authenticated G-4 fixture epic8/8.3-p2-lifecycle-journeys; passing Story8.3P2, web-ops Package=8.3-P2, and evidence-validator commands; archive/restore truth, Folder-before-activation recovery, role/denial/renewal/lost-response/cancellation/terminal-state/audit/privacy/accessibility results; hashes and accountable owner dispositions"
+    evidence_manifest: "evidence/epic8/8.3-p2-lifecycle-manifest.json"
+    completion_boundary: "Every required command passes from accepted clean checkouts and the immutable manifest, hashes, results, approvals, containment, and executable rollback exist; missing tools, environments, or skips do not pass."
+    containment: "Keep Story 8.3 blocked and retain the last accepted read-only/lifecycle route and dependency tuple until P2 is independently accepted."
+    rollback: "Disable the lifecycle adapter/routes, restore the prior tuple/route, and rerun the prior smoke lane without changing domain events, task/artifact records, Folder resources, or server workflow."
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md#42-materialize-the-83-p2-archive-and-restore-web-package"
+    routed_to: "Story 8.3"
+  - epic: 8
+    id: "8.3-P3"
+    action: "Accept Conversation move, Folder replacement, and Conversation/File/Memory unlink Web journeys with owner-preserving recovery evidence."
+    repository_authority: "Hexalith.Projects Web adapter and FrontComposer presentation authority"
+    owner: "Projects Web Owner / Product Owner / Test Architect / Solution Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["8.3-P1", "Story 7.4", "Story 7.5", "Story 7.6", "Story 7.8", "Story 7.10", "Story 8.1", "Superseding implementation-readiness result READY"]
+    expected_evidence: "Immutable Projects/FrontComposer/platform/owner dependency revisions; accepted P1/G-3/G-6, G-1/G-2, Stories 7.4/7.5/7.6/7.8/7.10, and Story 8.1 pins; authenticated G-4 fixture epic8/8.3-p3-association-journeys; passing Story8.3P3, web-ops Package=8.3-P3, and evidence-validator commands; exactly-one Conversation membership, Folder invariant, unlink resource preservation, denial/recovery/cancellation/terminal-state/audit/privacy/accessibility results; hashes and accountable owner dispositions"
+    evidence_manifest: "evidence/epic8/8.3-p3-association-manifest.json"
+    completion_boundary: "Every required command passes from accepted clean checkouts and the immutable manifest, hashes, results, approvals, containment, and executable rollback exist; missing tools, environments, or skips do not pass."
+    containment: "Keep Story 8.3 blocked and retain the last accepted read-only/maintenance route and dependency tuple until P3 is independently accepted."
+    rollback: "Disable the association action adapters, restore the prior tuple/route, and rerun the prior smoke lane without changing event history, task/artifact records, owner resources, or server workflow."
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md#43-materialize-the-83-p3-association-maintenance-web-package"
+    routed_to: "Story 8.3"
+  - epic: 8
+    id: "8.8-P1"
+    action: "Acquire authenticated Web/CLI/MCP parity, cross-Tenant denial, authorization freshness, and NoPayloadLeakage evidence."
+    repository_authority: "Hexalith.Projects and supported platform/Identity adapter repositories"
+    owner: "Projects Platform-Adapter Owners / Identity Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["Stories 8.3-8.5", "G-5"]
+    expected_evidence: "Pinned revisions; authenticated commands and fixtures; semantic action/response parity manifest; cross-Tenant negative controls; authorization freshness results; NoPayloadLeakage artifacts; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#45-split-story-88"
+    routed_to: "Story 8.8"
+  - epic: 8
+    id: "8.8-P2"
+    action: "Acquire operator Web WCAG 2.2 AA automated and authenticated manual evidence at small, median, and maximum supported shapes."
+    repository_authority: "Hexalith.FrontComposer/Web owner repository and Hexalith.Projects"
+    owner: "FrontComposer-Web Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["Story 8.3", "G-3"]
+    expected_evidence: "Pinned revisions; automated accessibility results; authenticated manual keyboard and screen-reader execution at small/median/maximum shapes; 200% zoom and 320 CSS-pixel reflow; focus restoration; live-region/timing/non-color results; no unresolved critical or serious violation; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#45-split-story-88"
+    routed_to: "Story 8.8"
+  - epic: 8
+    id: "8.8-P3"
+    action: "Accept an approved, immutable owner-pinned Chatbot companion UX specification and authenticated candidate/proposal/confirmation/recovery/task/first-response evidence."
+    repository_authority: "Separately owned Hexalith.Chatbot presentation repository"
+    owner: "Chatbot Presentation Owner / Chatbot Test Owner / Product Owner / Test Architect"
+    status: blocked-external
+    target_date: uncommitted
+    depends_on: ["Approved Chatbot companion artifact"]
+    expected_evidence: "Chatbot owner repository and immutable revision; companion contract version; approval date, authority, and accountable owner; authenticated commands and deterministic fixtures; expected artifact paths and hashes; results and terminal disposition; containment/rollback for contract drift; candidate/proposal/no-preselection/confirm-cancel/expiry-staleness-replay-tamper-mismatch/lost-response/all-task-states/cancellation/recovery/authoritative-re-query/response-admission/NFR-9 coverage"
+    projects_evidence_pin: "evidence/epic8/8.8-P3-chatbot-companion-pin.json"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02.md#46-require-and-pin-the-external-chatbot-companion-ux-artifact"
+    latest_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md#45-reconcile-package-tracking-and-traceability-without-claiming-acceptance"
+    routed_to: "Story 8.8"
+  - epic: 8
+    id: "8.11-P1"
+    action: "Acquire pinned deployment/topology identity, truthful health/readiness, and authenticated smoke evidence."
+    repository_authority: "Platform deployment and release owner repository/environment"
+    owner: "Platform Deployment-Release Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["All deployable Epic 8 capabilities"]
+    expected_evidence: "Pinned deployed version and environment; topology identity; health/readiness results; authenticated smoke command, fixtures, artifact, result, and owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#46-reduce-story-811-to-the-terminal-decision"
+    routed_to: "Story 8.11"
+  - epic: 8
+    id: "8.11-P2"
+    action: "Acquire encryption-in-transit, managed encryption-at-rest, KMS rotation/revocation, fail-fast configuration, and recovery evidence."
+    repository_authority: "Security/KMS/platform owner repositories and environment"
+    owner: "Security-KMS Owner / Platform Owner / Test Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["8.11-P1"]
+    expected_evidence: "Pinned configuration and revisions; transport/at-rest encryption results; rotation and revocation commands/results; fail-fast negative controls; recovery evidence; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#46-reduce-story-811-to-the-terminal-decision"
+    routed_to: "Story 8.11"
+  - epic: 8
+    id: "8.11-P3"
+    action: "Execute and accept the routing, package, and deployment rollback drill."
+    repository_authority: "Release engineering and supported deployment owner repositories/environment"
+    owner: "Release Engineering Owner / Test Architect / Solution Architect"
+    status: open
+    target_date: uncommitted
+    depends_on: ["8.11-P1", "8.11-P2"]
+    expected_evidence: "Executed rollback commands; before/after pins; timing; health and integrity checks; recovery proof; artifact hashes; owner disposition"
+    planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md#46-reduce-story-811-to-the-terminal-decision"
+    routed_to: "Story 8.11"

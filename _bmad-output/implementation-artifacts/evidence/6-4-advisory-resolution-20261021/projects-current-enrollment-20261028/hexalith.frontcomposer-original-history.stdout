@@ -1,0 +1,33 @@
+commit 28d2c7f47849bcfba19501f7c18cd9f67f0fc61c
+Author:     Jérôme Piquot <jpiquot@itaneo.com>
+AuthorDate: Wed Oct 28 08:20:35 2026 +0100
+Commit:     Jérôme Piquot <jpiquot@itaneo.com>
+CommitDate: Wed Oct 28 08:20:35 2026 +0100
+
+    fix: submodules
+
+commit 5f665c4d38afb2255a7dde4620330e09824a40a1
+Author:     Jérôme Piquot <jpiquot@itaneo.com>
+AuthorDate: Wed Oct 28 07:33:28 2026 +0100
+Commit:     Jérôme Piquot <jpiquot@itaneo.com>
+CommitDate: Wed Oct 28 07:33:28 2026 +0100
+
+    build: sync local changes via /pushall
+    
+    Co-authored-by: Cursor <cursoragent@cursor.com>
+
+commit 1ccb4afc47ec8f1bb5379fd98452242546bbd06c
+Author:     Jérôme Piquot <jpiquot@itaneo.com>
+AuthorDate: Wed Oct 28 03:09:33 2026 +0100
+Commit:     Jérôme Piquot <jpiquot@itaneo.com>
+CommitDate: Wed Oct 28 03:09:33 2026 +0100
+
+    fix(ci): recognize the inactive EventStore catalog qualification
+    
+    Keep the FrontComposer catalog profile on its unique literal Tenants default
+    while recognizing only the exact package-only override for five EventStore
+    qualification projects. Other profiles and malformed or broadened scopes
+    retain strict rejection.
+    
+    Cover temporary-hook removal, caller opt-in, scope/value mutations, placement,
+    duplicates and invalid defaults without changing dependency policy or packages.

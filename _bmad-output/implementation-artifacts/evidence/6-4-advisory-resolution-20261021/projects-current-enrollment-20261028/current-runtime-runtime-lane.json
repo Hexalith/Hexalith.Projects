@@ -1,0 +1,15 @@
+{
+  "scope": "Existing source-only bound-signing HTTP fixture; loopback service discovery, real Dapr/Redis persisted state; not Platform/runtime release acceptance",
+  "image": "docker.io/library/redis@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf",
+  "ports": {
+    "redis": 51739,
+    "http": 36103,
+    "grpc": 43153,
+    "internal": 57823,
+    "public": 39389
+  },
+  "app_id": "story64-hxw006-1459277",
+  "component_sha256": "bc69c98a59f37a2999fe2af386aba5b66254cdf35ae740ec69676e1bc36a2507",
+  "started_utc": "2026-10-28T11:56:55.262841+00:00",
+  "finished_utc": "2026-10-28T11:56:55.616788+00:00"
+}

@@ -1,0 +1,349 @@
+[
+  {
+    "name": "projects-source-prepare",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story64-local-store-20261028-tr8d55g2/projects-source",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "started": "2026-10-28T13:17:45.701489+00:00",
+    "finished": "2026-10-28T13:17:49.013701+00:00",
+    "exit_code": 0,
+    "private_output": false
+  },
+  {
+    "name": "Hexalith.Projects.Contracts.Tests-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T13:17:49.014113+00:00",
+    "finished": "2026-10-28T13:18:00.028181+00:00",
+    "exit_code": 0,
+    "private_output": false
+  },
+  {
+    "name": "Hexalith.Projects.Server.Tests-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T13:18:00.028610+00:00",
+    "finished": "2026-10-28T13:18:26.078374+00:00",
+    "exit_code": 0,
+    "private_output": false
+  },
+  {
+    "name": "Hexalith.Projects.Tests-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Projects.Tests/Hexalith.Projects.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T13:18:26.078807+00:00",
+    "finished": "2026-10-28T13:18:31.096670+00:00",
+    "exit_code": 0,
+    "private_output": false
+  },
+  {
+    "name": "redis",
+    "argv": [
+      "/tmp/story64-local-store-20261028-tr8d55g2/redis-extracted/usr/bin/redis-server",
+      "--bind",
+      "127.0.0.1",
+      "--port",
+      "49903",
+      "--save",
+      "",
+      "--appendonly",
+      "no",
+      "--dir",
+      "/tmp/story64-local-store-20261028-tr8d55g2",
+      "--protected-mode",
+      "yes"
+    ],
+    "cwd": "/tmp/story64-local-store-20261028-tr8d55g2",
+    "environment": {},
+    "started": "2026-10-28T13:18:32.605854+00:00",
+    "pid": 3196917,
+    "private_output": true
+  },
+  {
+    "name": "daprd",
+    "argv": [
+      "/home/administrator/.dapr/bin/daprd",
+      "--app-id",
+      "story64-local-3179253",
+      "--resources-path",
+      "/tmp/story64-local-store-20261028-tr8d55g2/components",
+      "--dapr-http-port",
+      "42975",
+      "--dapr-grpc-port",
+      "37603",
+      "--dapr-internal-grpc-port",
+      "36447",
+      "--dapr-public-port",
+      "40243",
+      "--dapr-listen-addresses",
+      "127.0.0.1",
+      "--dapr-public-listen-address",
+      "127.0.0.1",
+      "--dapr-internal-grpc-listen-address",
+      "127.0.0.1",
+      "--enable-metrics=false",
+      "--scheduler-host-address",
+      "",
+      "--log-level",
+      "warn"
+    ],
+    "cwd": "/tmp/story64-local-store-20261028-tr8d55g2",
+    "environment": {},
+    "started": "2026-10-28T13:18:32.616864+00:00",
+    "pid": 3196924,
+    "private_output": true
+  },
+  {
+    "name": "gateway-persistence-focused",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "*SupportedProjectGatewayHttpTests",
+      "-method",
+      "*SupportedProjectReadHttpTests.ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/local-store-verification-20261028/gateway-persistence-focused.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug",
+      "STORY61_DAPR_HTTP_ENDPOINT": "http://127.0.0.1:42975",
+      "STORY61_DAPR_GRPC_ENDPOINT": "http://127.0.0.1:37603"
+    },
+    "started": "2026-10-28T13:18:32.723170+00:00",
+    "finished": "2026-10-28T13:18:32.979811+00:00",
+    "exit_code": 0,
+    "private_output": true
+  },
+  {
+    "name": "projects-server-full",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/local-store-verification-20261028/projects-server-full.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug",
+      "STORY61_DAPR_HTTP_ENDPOINT": "http://127.0.0.1:42975",
+      "STORY61_DAPR_GRPC_ENDPOINT": "http://127.0.0.1:37603"
+    },
+    "started": "2026-10-28T13:18:32.980736+00:00",
+    "finished": "2026-10-28T13:19:08.960829+00:00",
+    "exit_code": 0,
+    "private_output": true
+  },
+  {
+    "name": "projects-contracts-full",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Contracts.Tests/bin/Debug/net10.0/Hexalith.Projects.Contracts.Tests.dll",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/local-store-verification-20261028/projects-contracts-full.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T13:19:08.966433+00:00",
+    "finished": "2026-10-28T13:19:10.247004+00:00",
+    "exit_code": 0,
+    "private_output": true
+  },
+  {
+    "name": "projects-engine-confirmation",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Tests/bin/Debug/net10.0/Hexalith.Projects.Tests.dll",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/local-store-verification-20261028/projects-engine-confirmation.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T13:19:10.248613+00:00",
+    "finished": "2026-10-28T13:19:10.817126+00:00",
+    "exit_code": 0,
+    "private_output": true
+  },
+  {
+    "name": "conversations-source-prepare",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story64-local-store-20261028-tr8d55g2/owner-source",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "started": "2026-10-28T13:19:10.820479+00:00",
+    "finished": "2026-10-28T13:19:13.378378+00:00",
+    "exit_code": 0,
+    "private_output": false
+  },
+  {
+    "name": "conversations-server-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Conversations.Server.Tests/Hexalith.Conversations.Server.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/owner-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/owner-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/owner-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/owner-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/owner-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "7b6deb0a22db07ca052d00532ba7563f0ae67315ac6eb92a6202a8d4435bec0a",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T13:19:13.378860+00:00",
+    "finished": "2026-10-28T13:19:30.960877+00:00",
+    "exit_code": 0,
+    "private_output": false
+  },
+  {
+    "name": "conversations-server-full",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/local-store-verification-20261028/conversations-server-full.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/owner-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/owner-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/owner-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/owner-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/owner-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "7b6deb0a22db07ca052d00532ba7563f0ae67315ac6eb92a6202a8d4435bec0a",
+      "Configuration": "Debug"
+    },
+    "started": "2026-10-28T13:19:30.961356+00:00",
+    "finished": "2026-10-28T13:19:59.947182+00:00",
+    "exit_code": 0,
+    "private_output": true
+  }
+]

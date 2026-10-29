@@ -1,0 +1,47 @@
+{
+  "root_gitlinks": {
+    "exit_code": 0,
+    "stdout": "160000 commit 2574bf2f3da5367d8801f0d7661d66155e5d90b0\treferences/Hexalith.Builds\n160000 commit fcee54288c75feaadd673e0484da1e5b5d742cc8\treferences/Hexalith.Platform\n",
+    "stderr": ""
+  },
+  "root_index_gitlinks": {
+    "exit_code": 0,
+    "stdout": "160000 2574bf2f3da5367d8801f0d7661d66155e5d90b0 0\treferences/Hexalith.Builds\n160000 fcee54288c75feaadd673e0484da1e5b5d742cc8 0\treferences/Hexalith.Platform\n",
+    "stderr": ""
+  },
+  "platform_current_builds_pin": {
+    "exit_code": 0,
+    "stdout": "160000 commit e129a29e6c6e2f8a200581e09b861d75a9f3a7b8\treferences/Hexalith.Builds\n",
+    "stderr": ""
+  },
+  "platform_preparation_base_changes": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "builds_current_changes": {
+    "exit_code": 0,
+    "stdout": " .github/workflows/ci.yml                           |   5 +\n .github/workflows/domain-ci.md                     |   6 +-\n Props/Directory.Packages.props                     |   4 +-\n Tools/README.md                                    |  24 ++\n Tools/package-version-audit.json                   | 281 ++++++++++++++++++---\n .../runtime-toolchain-disposition-2026-09-27.json  |  34 +++\n Tools/test-runtime-toolchain-disposition.py        |  91 +++++++\n Tools/validate-runtime-toolchain-disposition.py    |  94 +++++++\n 8 files changed, 498 insertions(+), 41 deletions(-)\n",
+    "stderr": ""
+  },
+  "builds_catalog_delta": {
+    "exit_code": 0,
+    "stdout": "diff --git a/Props/Directory.Packages.props b/Props/Directory.Packages.props\nindex 23a17b8..679a0c3 100644\n--- a/Props/Directory.Packages.props\n+++ b/Props/Directory.Packages.props\n@@ -11,9 +11,7 @@\n     <HexalithFoldersVersion Condition=\"'$(HexalithFoldersVersion)' == ''\">1.3.2</HexalithFoldersVersion>\n     <HexalithMcpCliVersion Condition=\"'$(HexalithMcpCliVersion)' == ''\">1.1.0</HexalithMcpCliVersion>\n     <HexalithMemoriesVersion Condition=\"'$(HexalithMemoriesVersion)' == ''\">3.0.3</HexalithMemoriesVersion>\n-    <HexalithTenantsVersion Condition=\"'$(HexalithTenantsVersion)' == ''\">5.11.0</HexalithTenantsVersion>\n-    <!-- Temporary Story 5.12 package-only catalog consumers. Shipped package pins stay unchanged. -->\n-    <HexalithTenantsVersion Condition=\"'$(CatalogCandidateTenantsVersion)' != '' and '$(UseHexalithProjectReferences)' != 'true' and ('$(MSBuildProjectName)' == 'Hexalith.EventStore.CatalogConstruction' or '$(MSBuildProjectName)' == 'Hexalith.EventStore.Server.Tests' or '$(MSBuildProjectName)' == 'Hexalith.EventStore.QueryRouting.Tests' or '$(MSBuildProjectName)' == 'Hexalith.EventStore.Server.LiveSidecar.Tests' or '$(MSBuildProjectName)' == 'routing-catalog.cs')\">$(CatalogCandidateTenantsVersion)</HexalithTenantsVersion>\n+    <HexalithTenantsVersion Condition=\"'$(HexalithTenantsVersion)' == ''\">5.11.1</HexalithTenantsVersion>\n     <HexalithPartiesVersion Condition=\"'$(HexalithPartiesVersion)' == ''\">2.0.0</HexalithPartiesVersion>\n     <HexalithPartiesAspireVersion Condition=\"'$(HexalithPartiesAspireVersion)' == ''\">2.0.0</HexalithPartiesAspireVersion>\n     <HexalithProjectsVersion Condition=\"'$(HexalithProjectsVersion)' == ''\">1.2.0</HexalithProjectsVersion>\n",
+    "stderr": ""
+  },
+  "builds_tooling_delta": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "platform_local_tags": {
+    "exit_code": 0,
+    "stdout": "271916bc82a3ea8a92eec690620d23bb669a3d98 refs/tags/v1.0.0\nd3c4c19d5728707426e1b58a6bbbbaac9a45510f refs/tags/v1.0.1\n",
+    "stderr": ""
+  },
+  "historical_patch_check": {
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "error: patch failed: references/Hexalith.Builds:1\nerror: references/Hexalith.Builds: patch does not apply\n"
+  }
+}

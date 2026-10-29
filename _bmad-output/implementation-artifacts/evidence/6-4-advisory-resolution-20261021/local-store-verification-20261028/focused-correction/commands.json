@@ -1,0 +1,115 @@
+[
+  {
+    "name": "redis",
+    "argv": [
+      "/tmp/story64-local-store-20261028-tr8d55g2/redis-extracted/usr/bin/redis-server",
+      "--bind",
+      "127.0.0.1",
+      "--port",
+      "51115",
+      "--save",
+      "",
+      "--appendonly",
+      "no",
+      "--dir",
+      "/tmp/story64-local-store-20261028-tr8d55g2",
+      "--protected-mode",
+      "yes"
+    ],
+    "cwd": "/tmp/story64-local-store-20261028-tr8d55g2",
+    "environment": {},
+    "started": "2026-10-28T13:20:47.438629+00:00",
+    "pid": 3241685,
+    "private_output": true
+  },
+  {
+    "name": "daprd",
+    "argv": [
+      "/home/administrator/.dapr/bin/daprd",
+      "--app-id",
+      "story64-local-3241307",
+      "--resources-path",
+      "/tmp/story64-local-store-20261028-tr8d55g2/components-focused",
+      "--dapr-http-port",
+      "38605",
+      "--dapr-grpc-port",
+      "40571",
+      "--dapr-internal-grpc-port",
+      "47223",
+      "--dapr-public-port",
+      "36955",
+      "--dapr-listen-addresses",
+      "127.0.0.1",
+      "--dapr-public-listen-address",
+      "127.0.0.1",
+      "--dapr-internal-grpc-listen-address",
+      "127.0.0.1",
+      "--enable-metrics=false",
+      "--scheduler-host-address",
+      "",
+      "--log-level",
+      "warn"
+    ],
+    "cwd": "/tmp/story64-local-store-20261028-tr8d55g2",
+    "environment": {},
+    "started": "2026-10-28T13:20:47.545907+00:00",
+    "pid": 3241693,
+    "private_output": true
+  },
+  {
+    "name": "gateway-focused",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-class",
+      "*SupportedProjectGatewayHttpTests",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/local-store-verification-20261028/focused-correction/gateway-focused.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug",
+      "STORY61_DAPR_HTTP_ENDPOINT": "http://127.0.0.1:38605",
+      "STORY61_DAPR_GRPC_ENDPOINT": "http://127.0.0.1:40571"
+    },
+    "started": "2026-10-28T13:20:47.652185+00:00",
+    "finished": "2026-10-28T13:20:50.238140+00:00",
+    "exit_code": 0,
+    "private_output": true
+  },
+  {
+    "name": "persistence-focused",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+      "-method",
+      "*SupportedProjectReadHttpTests.ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/local-store-verification-20261028/focused-correction/persistence-focused.xml",
+      "-failSkips"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {
+      "CustomBeforeDirectoryBuildProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.targets",
+      "CustomAfterMicrosoftCommonProps": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.props",
+      "CustomBeforeDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.before-targets.props",
+      "CustomAfterDirectoryBuildTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.late.props",
+      "AfterMicrosoftNETSdkTargets": "/tmp/story64-local-store-20261028-tr8d55g2/projects-source/source-mapping/SourceMapping.final.targets",
+      "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+      "Configuration": "Debug",
+      "STORY61_DAPR_HTTP_ENDPOINT": "http://127.0.0.1:38605",
+      "STORY61_DAPR_GRPC_ENDPOINT": "http://127.0.0.1:40571"
+    },
+    "started": "2026-10-28T13:20:50.238973+00:00",
+    "finished": "2026-10-28T13:20:51.596068+00:00",
+    "exit_code": 0,
+    "private_output": true
+  }
+]

@@ -1,0 +1,32 @@
+commit dbce3b12a802beb0af5020ce89fa5e0ee6f12c6b
+Author:     Jérôme Piquot <jpiquot@itaneo.com>
+AuthorDate: Wed Oct 28 09:40:26 2026 +0100
+Commit:     Jérôme Piquot <jpiquot@itaneo.com>
+CommitDate: Wed Oct 28 09:40:26 2026 +0100
+
+    fix: submodules
+
+commit a34f761d1669721ecb7f37ae3cc5c87e8dfdd209
+Author:     Jérôme Piquot <jpiquot@itaneo.com>
+AuthorDate: Wed Oct 28 09:19:25 2026 +0100
+Commit:     Jérôme Piquot <jpiquot@itaneo.com>
+CommitDate: Wed Oct 28 09:20:05 2026 +0100
+
+    fix(ci): harden the blocking live semantic lane
+
+commit 2d7311cbbcc592c0ea0348463037389251d1cb4b
+Author:     Jérôme Piquot <jpiquot@itaneo.com>
+AuthorDate: Wed Oct 28 07:44:01 2026 +0100
+Commit:     Jérôme Piquot <jpiquot@itaneo.com>
+CommitDate: Wed Oct 28 07:44:01 2026 +0100
+
+    build: sync local changes via /pushall
+    
+    Advance 15 reference gitlinks to their origin main tips. The Builds move
+    (b15dab4 to abc0e1b) bumps System.CommandLine to 2.0.14, Dapr to 1.19.0,
+    JsonSchema.Net to 9.5.0 and the Microsoft.Extensions family to 10.0.14,
+    and resolves Hexalith.McpCli.Abstractions 1.1.0 in the integration
+    fixture. Align the dependency policy, the fixture closure pin, and the
+    reusable workflow pins with the new Builds gitlink.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>

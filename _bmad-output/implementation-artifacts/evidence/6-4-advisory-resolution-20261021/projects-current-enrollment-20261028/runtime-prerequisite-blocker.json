@@ -1,0 +1,31 @@
+{
+  "current_narrow_results": {
+    "passed": 181,
+    "failed": 1,
+    "skipped": 0,
+    "errors": 0,
+    "not_run": 0
+  },
+  "failed_case": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests.ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+  "failure": "FAIL_SKIP: Requires the isolated Story 6.1 Dapr persistence lane.",
+  "initial_redis_fixture": {
+    "command": "current-runtime-runtime-redis-create",
+    "exit_code": 125,
+    "cause": "Docker loopback port publishing /forwards/expose returned HTTP 500"
+  },
+  "local_redis_server_probe_exit": 127,
+  "host_network_fallback": {
+    "redis_create_exit": 0,
+    "daprd_exit": 1,
+    "stage": "before outbound readiness",
+    "component": "statestore (state.redis/v1)",
+    "cause": "Dapr could not connect to fixture Redis at 127.0.0.1:40621: connection refused",
+    "private_runtime_logs_archived": false,
+    "sidecar_exited": true,
+    "container_absent": true
+  },
+  "container_namespace_preserved": true,
+  "needed_prerequisite": "A fixture Redis endpoint reachable from the local Dapr process; Docker published ports currently fail and Docker host-network loopback is not reachable from that process.",
+  "source_fix_needed": false,
+  "story_complete": false
+}

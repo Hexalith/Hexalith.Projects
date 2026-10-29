@@ -1,0 +1,453 @@
+{
+  "suites": {
+    "projects-server-full.xml": {
+      "total": 1306,
+      "passed": 1306,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0
+    },
+    "projects-contracts-full.xml": {
+      "total": 230,
+      "passed": 230,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0
+    },
+    "projects-engine-confirmation.xml": {
+      "total": 684,
+      "passed": 684,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0
+    },
+    "conversations-server-full.xml": {
+      "total": 1372,
+      "passed": 1372,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0
+    }
+  },
+  "full_suite_case_count": 3592,
+  "matrix_rows": {
+    "Advisory": 7,
+    "Protected": 11,
+    "Order/archive": 3,
+    "Bounded": 12,
+    "Degraded": 22,
+    "Revoked": 5,
+    "Effects": 5
+  },
+  "missing_historical_references": [],
+  "spec_rows": {
+    "Advisory": [
+      {
+        "xml": "projects-server-full.xml",
+        "id": "4bdab41e-732d-4bfe-9eb9-bd7355e00e2b",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Stale, candidate: True)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "90c26662-7f15-4c16-9421-1296a801ff7e",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Rebuilding, candidate: False)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "3596a8de-f05d-4956-83f8-34b90fff1d70",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.LagCanSuggestWhileUnusableProjectionStatesCannot(freshness: Unavailable, candidate: False)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "e85a8cdd-5eb5-47ed-b99b-0aa0f6224086",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-server-full.xml",
+        "id": "95f1bff4-ecd2-42a4-9e65-38500cbf407f",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.CommittedMetadataWithoutNativeProofUsesTwoReadChecksAndLeavesBytesUnchanged",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-server-full.xml",
+        "id": "a336bebc-fcc6-4e29-a950-c90a61eadbfc",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.LaggingCommittedOwnerMetadataRemainsACompleteObservation",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-server-full.xml",
+        "id": "2580f188-2b69-4d14-aae7-8fccac5783a6",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.DefaultNonsignalStorePermissionDisclosesCommittedMetadata",
+        "result": "Pass"
+      }
+    ],
+    "Protected": [
+      {
+        "xml": "projects-server-full.xml",
+        "id": "73df1bcb-3326-498d-8692-7a2a9ab600f8",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: False)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "aade0d76-73ee-4c2a-b045-d6cb8e360f8b",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DeniedAndUnknownFoldersNeverScore(unknown: True)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "9adb4cda-aeee-4ade-97dc-d59c3fa03520",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"scope\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "3c0a6127-193e-44a2-b3fe-4053ce0713a7",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"audience\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "448493f5-e105-45f8-b29c-b44ff17b5ed7",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MissingSupportedReadAdmissionNeverCallsOwners(missing: \\\"role\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "1199fcc7-cff8-4b72-9790-37ceea9e2c7d",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: False, listOnly: False)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "00fd56bf-763f-4e77-b3f6-911880a9fdcd",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: True, listOnly: False)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "47f85cb8-4ddb-4cc7-a72c-16765aa41a6d",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: False, listOnly: True)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "8b884583-4b19-4454-9158-fa1bce106d24",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.AdvisoryRequiresReadAuthorityWithoutRequiringListAuthority(conversation: True, listOnly: True)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "639f3c18-219b-4fb5-93a6-fffca7e7484d",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnauthorizedMalformedRequestDeniesBeforeValidationOrOwnerReads",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-server-full.xml",
+        "id": "911a68c6-ce9b-4d6b-bff5-0d5b7039dd84",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.DeniedMissingAndForeignInputsShareSafeDenialAndInitialDenialAvoidsReads",
+        "result": "Pass"
+      }
+    ],
+    "Order/archive": [
+      {
+        "xml": "projects-server-full.xml",
+        "id": "3c154f60-f3ef-4f71-a419-6429918c0373",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: False)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "9a4d1d0b-5086-4f62-bcba-bb71a404e782",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ArchivedCandidatesRequireExplicitOptInAndOwnerAccess(include: True)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "471d5ba5-fa0f-4a3c-bc09-34778055aa3c",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DuplicateAndPermutedAttachmentsHaveIdenticalScoresReasonsAndOrdering",
+        "result": "Pass"
+      }
+    ],
+    "Bounded": [
+      {
+        "xml": "projects-server-full.xml",
+        "id": "0c5cc649-f12a-4a0d-b90a-df5cffeded87",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationDuringNormallyCompletedMissingOwnerMetadataPropagates(pass: 1)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "2106b143-d158-4678-ba4c-1a30d3745d4f",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CallerCancellationDuringNormallyCompletedMissingOwnerMetadataPropagates(pass: 2)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "d8ddce22-eb0e-45d3-8871-3788e115fb72",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.SharedDeadlineIsNotRestartedBetweenDependentReads",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "34e5611f-af7a-4888-a8a6-f78c17fcaa56",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawOversizeIsRejectedBeforeDeduplication",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "22e473ae-6682-49ed-af8b-03e95e3ea082",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawAttachmentLimitIncludes32(count: 32)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "3e3189ac-57ec-43e0-abbb-08cb6f39ffdf",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RawAttachmentLimitIncludes32(count: 33)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "0e9048e9-a5fe-4630-9d29-61e59bdbcac7",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: False, count: 200)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "22dcf24a-6ec1-48d2-922f-324b0c1ffb58",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: False, count: 201)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "10bd466d-13f4-43d0-895e-87be09465ed0",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: True, count: 199)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "d205e2ab-dfe2-4afb-ab63-42e0324611b5",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ValidNonmatchingRowsProveTheEnumerationTruncationBoundary(conversation: True, count: 200)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "17ee3bdf-46c8-49fa-9af5-d5b593dbb05c",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.CancellationDuringIndexScanStopsBeforeAdvancingToAnotherIdentity",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "35757cb6-6008-4988-adaf-37fcf4bf279b",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.DependencyConcurrencyIsFourAndOneDeadlineBoundsUncooperativeReads",
+        "result": "Pass"
+      }
+    ],
+    "Degraded": [
+      {
+        "xml": "projects-server-full.xml",
+        "id": "1abd5732-73f2-419f-a347-313a8c5c2c96",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MixedFolderAndFileInputsRetainSuggestionsWithExplicitIncompleteCoverage",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "6d7e996d-78b8-4175-91f7-7963abc65c7d",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"model-tenant\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "64fb0348-3a40-4f27-9032-87cc6e03928f",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"model-project\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "df508640-7f28-4634-8642-421afd7e744b",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"detail-tenant\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "48d44db4-3e84-461a-b3f1-4bef637d4da4",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"detail-project\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "d5bb6462-4bf9-4219-bdf3-5bce99b9ed1a",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"sequence\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "187c62b5-3194-4f52-9336-b1b6e8fe7fd5",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"freshness-default\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "e58eb96c-4f64-4655-adc8-0ab87ea007c1",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedReadIdentityAndSequenceNeverDiscloseForeignIds(mutation: \\\"freshness-undefined\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "e418a9b1-3b7a-43d3-be26-2a857c950e82",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"tenant\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "b5a28c06-7dd5-4d57-9296-172746553ff4",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"etag\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "47496901-9e6e-493a-9c8c-49fe13a43999",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"projects\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "4ae74016-c6f6-4c87-a280-9e7e470c7019",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedIndexStructureCannotClaimCompleteNoMatch(mutation: \\\"unavailable\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "37eeb07b-50b6-4261-8d84-fbb106dc46f8",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"lifecycle\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "4a627272-508a-4cb3-b68a-6288da53f0e3",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"label\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "62fbd436-81f3-41fe-bdea-80230ecf7cbd",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"blank-project\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "8a89f03a-a484-4c20-b329-599689f671b3",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"untrimmed-project\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "ecd1e5aa-6511-45a0-b310-28d39e167425",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"invalid-project\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "0e48ab7f-0d99-45e9-bdde-ed478f2e9ce3",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.MalformedConsumedOwnerMetadataIsIncomplete(mutation: \\\"incomplete\\\")",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "6aed009a-779b-41ea-a2a2-ce5ebd92e5a0",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.UnsupportedFilesAreExplicitAndEmptyIncompleteCannotClaimNoMatch",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "10df7721-393e-403c-a174-52fefbca2e3e",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FailedFinalCandidateReadRetainsSuccessfullyFinalizedPeer",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "7ff1e5e6-6647-43cc-bf7e-30306665853f",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion(linked: False)",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "36a7d0dd-08a6-47fc-afba-456c967dd058",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.IncompleteOwnerMetadataRetainsAnyAuthorizedSuggestion(linked: True)",
+        "result": "Pass"
+      }
+    ],
+    "Revoked": [
+      {
+        "xml": "projects-server-full.xml",
+        "id": "b34b2e88-dad0-4d20-81f6-992cc7510c7d",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationRevocationAndCandidateFolderRevocationDoNotDisclose",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "8f9eeebb-e6c6-4868-b101-086060169d75",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ExactProjectAuthorizationPrecedesMetadataAndIsRepeatedBeforeDisclosure",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "53495d6f-05e9-4d4a-8400-bef4fe0f6dfd",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.RevokedInputIsFilteredBeforeMappingEvenWhenCandidateFolderLaterAllows",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "13985566-0a05-4e4c-a939-14bc30742dd2",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.FinalDisclosureUsesTheNewCommittedFolderAnchorAndLifecycle",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-server-full.xml",
+        "id": "f8828aed-754b-4858-961c-0ff3a6d0b4b4",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.RevocationBeforeDisclosureWithholdsTheReadMetadata",
+        "result": "Pass"
+      }
+    ],
+    "Effects": [
+      {
+        "xml": "projects-server-full.xml",
+        "id": "e85a8cdd-5eb5-47ed-b99b-0aa0f6224086",
+        "name": "Hexalith.Projects.Server.Tests.Queries.ProjectAdvisoryQueryTests.ConversationLinkAndMetadataProduceDeterministicUnselectedSuggestionsWithoutWrites",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-server-full.xml",
+        "id": "95f4bad7-d4ab-447e-809d-95330ec5bd86",
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "result": "Pass"
+      },
+      {
+        "xml": "conversations-server-full.xml",
+        "id": "95f1bff4-ecd2-42a4-9e65-38500cbf407f",
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.CommittedMetadataWithoutNativeProofUsesTwoReadChecksAndLeavesBytesUnchanged",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-engine-confirmation.xml",
+        "id": "ecc3f82f-422f-4421-9ea2-50503bbd6b23",
+        "name": "Hexalith.Projects.Tests.Aggregates.Project.ProjectAggregateResolutionTests.ConfirmResolution_ArchivedTarget_IsRejected",
+        "result": "Pass"
+      },
+      {
+        "xml": "projects-engine-confirmation.xml",
+        "id": "513851a9-0ca3-472d-b3b9-bf5ca135b64a",
+        "name": "Hexalith.Projects.Tests.Aggregates.Project.ProjectAggregateResolutionTests.ConfirmResolution_Accepted_EmitsMetadataOnlyConfirmedEvent",
+        "result": "Pass"
+      }
+    ]
+  }
+}

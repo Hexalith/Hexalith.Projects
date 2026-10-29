@@ -1,0 +1,31 @@
+commit 9239c531f3b0cbb4a998c419e537463b597ff14b
+Author:     Jérôme Piquot <jpiquot@itaneo.com>
+AuthorDate: Wed Oct 28 07:37:00 2026 +0100
+Commit:     Jérôme Piquot <jpiquot@itaneo.com>
+CommitDate: Wed Oct 28 07:37:00 2026 +0100
+
+    build: sync local changes via /pushall
+
+commit 3e1dd7cac6ee4db1db48d1bfb478e1b5848f7b8e
+Author:     Jérôme Piquot <jpiquot@itaneo.com>
+AuthorDate: Wed Oct 28 05:16:39 2026 +0100
+Commit:     Jérôme Piquot <jpiquot@itaneo.com>
+CommitDate: Wed Oct 28 05:16:39 2026 +0100
+
+    fix(ci): prepare external runtime hosts serially
+
+commit f7bd8ffa7943499f6e10db2aa02ab793c5a29a91
+Author:     Jérôme Piquot <jpiquot@itaneo.com>
+AuthorDate: Wed Oct 28 04:36:29 2026 +0100
+Commit:     Jérôme Piquot <jpiquot@itaneo.com>
+CommitDate: Wed Oct 28 04:36:29 2026 +0100
+
+    fix(test): wait for owned app channel listeners
+    
+    Make cold gateway and enabled Memories sidecars discover the actual HTTP
+    listener before loading actor configuration. Preserve the existing direct
+    Admin UI listener, dynamic allocation, mTLS and persisted-state assertions.
+    
+    Resolve Admin.Server through the generated CLI consumer endpoint instead
+    of its producer-only target-port template. Cover deferred URI reallocation
+    and generated Dapr app ports against injected listener controls.

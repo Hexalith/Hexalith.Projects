@@ -1,0 +1,23 @@
+{
+  "name": "platform-composition-debug-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "-p:MinVerVersionOverride=1.0.0",
+    "-v:minimal"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-28T15:09:28.900916+00:00",
+  "finished_utc": "2026-10-28T15:10:34.154882+00:00",
+  "seconds": 65.258,
+  "exit_code": 1,
+  "stdout": "platform-composition-debug-build.stdout",
+  "stderr": "platform-composition-debug-build.stderr"
+}

@@ -1,0 +1,44 @@
+{
+  "status": "prepared; Platform qualification and release/adoption blocked",
+  "future_platform_commit": null,
+  "platform_source_base": "fcee54288c75feaadd673e0484da1e5b5d742cc8",
+  "platform_prepared_files": {
+    "references/Hexalith.Platform/.config/dotnet-tools.json": "f718f3ed50cc549069b785e38325a00af635f45d09a6926590e08d142a850c20",
+    "references/Hexalith.Platform/hexalith-platform.json": "16b64bdefea73f9230f70bf9503643bed62c9bb53784279f686f69be70408d6b",
+    "references/Hexalith.Platform/README.md": "5c4db2f0d7b245849d6798e5d050b17753aaa8e792a4cba4612734a93252893e"
+  },
+  "platform_gitlink_patch": {
+    "path": "platform-builds-gitlink.UNAPPLIED.patch",
+    "applied": false,
+    "old": "81ab049208678bd6616828824729c0ddac02f7d1",
+    "required": "2574bf2f3da5367d8801f0d7661d66155e5d90b0"
+  },
+  "official_builds": {
+    "version": "4.38.2",
+    "source": "2574bf2f3da5367d8801f0d7661d66155e5d90b0",
+    "official_tag": "https://github.com/Hexalith/Hexalith.Builds/releases/tag/v4.38.2"
+  },
+  "consumer_base": "ef01d578a00efd527bae9226dca302f54cd012f0",
+  "consumer_prepared_files": {
+    "references/Hexalith.Conversations/.config/dotnet-tools.json": "f718f3ed50cc549069b785e38325a00af635f45d09a6926590e08d142a850c20",
+    "references/Hexalith.Conversations/module/README.md": "d2cf05c76719c3a9dc91ac13c6f8e9592f8f88ed62633b6cee1190b1787d930d"
+  },
+  "unchanged_umbrella_head": "22c99ad1ae0aa88cd563f2d85346c9d680acc2ca",
+  "next_actions_for_separate_approval": [
+    "Review the exact prepared Platform files and unapplied Builds gitlink patch; record a real owner identity only with explicit staging/commit approval. No future SHA is guessed.",
+    "Resolve the existing Platform analyzer blockers under separate scope and perform required exact-candidate integration qualification/CI with the released tool and its actual Aspire/Dapr/catalog prerequisites. Source or standalone configuration checks cannot substitute.",
+    "Only after that qualification, obtain separate approval for owner push/publication; publish and verify the resulting exact Platform identity/tag and package/catalog/tool bindings. This candidate is not ready for immediate release dispatch.",
+    "Then prepare and separately approve real consumer/umbrella adoption of that recorded qualified identity, keeping Builds exactly at 2574bf2 and the prepared Conversations tool at 4.38.2. Re-run actual original-checkout package preparation and complete consumer/release acceptance."
+  ],
+  "not_authorized": [
+    "staging",
+    "commits including fixture commits",
+    "branches",
+    "pushes",
+    "publication",
+    "deployment",
+    "nested initialization",
+    "check suppression",
+    "unqualified adoption"
+  ]
+}

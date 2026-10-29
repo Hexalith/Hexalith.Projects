@@ -1,0 +1,54 @@
+{
+  "status": "blocked; external owner/catalog advancement preserved; no compatible current published Platform tuple established",
+  "future_platform_commit": null,
+  "umbrella_head": "22c99ad1ae0aa88cd563f2d85346c9d680acc2ca",
+  "root_head_and_index_platform": "fcee54288c75feaadd673e0484da1e5b5d742cc8",
+  "root_head_and_index_builds": "2574bf2f3da5367d8801f0d7661d66155e5d90b0",
+  "root_recorded_platform_builds_pin": "81ab049208678bd6616828824729c0ddac02f7d1",
+  "current_platform_head": "1d748b70d5f728f237a7d86048e8f4636f770601",
+  "current_platform_builds_pin": "e129a29e6c6e2f8a200581e09b861d75a9f3a7b8",
+  "current_builds_head": "e909ffd9fe9a6097e36d932010b983d029396968",
+  "current_catalog_tenants_version": "5.11.1",
+  "prepared_tool_pin_and_floor": "4.38.2",
+  "historical_published_builds_candidate": {
+    "version": "4.38.2",
+    "source": "2574bf2f3da5367d8801f0d7661d66155e5d90b0",
+    "status": "Previously verified published candidate; its catalog selects Tenants5.11.0 and is not the current advanced checkout catalog."
+  },
+  "historical_gitlink_patch": {
+    "path": "../platform-builds-gitlink.UNAPPLIED.patch",
+    "applied": false,
+    "check_current_index_exit": 1,
+    "status": "Does not apply to advanced Platform. Preserve historical bytes; no automatic retarget or catalog downgrade is authorized."
+  },
+  "prepared_files_sha256": {
+    "references/Hexalith.Platform/.config/dotnet-tools.json": "f718f3ed50cc549069b785e38325a00af635f45d09a6926590e08d142a850c20",
+    "references/Hexalith.Platform/hexalith-platform.json": "16b64bdefea73f9230f70bf9503643bed62c9bb53784279f686f69be70408d6b",
+    "references/Hexalith.Platform/README.md": "5c4db2f0d7b245849d6798e5d050b17753aaa8e792a4cba4612734a93252893e",
+    "references/Hexalith.Conversations/.config/dotnet-tools.json": "f718f3ed50cc549069b785e38325a00af635f45d09a6926590e08d142a850c20",
+    "references/Hexalith.Conversations/module/README.md": "d2cf05c76719c3a9dc91ac13c6f8e9592f8f88ed62633b6cee1190b1787d930d",
+    "tools/release-packages.json": "873cf512f5e68e89adb97a932306f6803121823fde5aff582af3755dd8cd618b",
+    "module/hexalith.module-manifest.v2.json": "7028d15cca15ac35fb8172a43537e45000307127f42499196817ca5a3772a754",
+    "module/README.md": "2df275e4312a1790f0f4c272d54f2f72faf0fb2cd13bb383438a235e1cfeb7bc"
+  },
+  "next_actions_for_separate_scope_or_approval": [
+    "Reconcile the current Platform owner Builds pin e129a29 with the externally advanced Builds e909ffd checkout and the root-recorded2574bf2 catalog; verify a compatible exact published release without downgrading the current catalog. Current local4.38.2 preparation is preserved, not newly adopted.",
+    "Resolve all four current Platform analyzer errors under separately authorized source scope; retain the analyzer gate and rerun the actual owning tests.",
+    "Review exact current owner/configuration/gitlink inputs, then obtain explicit staging/commit authorization to record the intended real owner identity. No future SHA is guessed.",
+    "Qualify that exact recorded candidate with the matching published tool/catalog/runtime prerequisites and exact-source CI before separately approved push/publication. Verify the resulting official released Platform identity.",
+    "Prepare and separately approve real consumer/umbrella adoption; rerun original-checkout public package preparation and finish consumer/release qualification."
+  ],
+  "not_authorized": [
+    "staging",
+    "commits including fixtures",
+    "branches",
+    "pushes",
+    "publication",
+    "deployment",
+    "nested initialization",
+    "suppression",
+    "unqualified adoption",
+    "catalog downgrade"
+  ],
+  "remote_observation_refreshed": false
+}

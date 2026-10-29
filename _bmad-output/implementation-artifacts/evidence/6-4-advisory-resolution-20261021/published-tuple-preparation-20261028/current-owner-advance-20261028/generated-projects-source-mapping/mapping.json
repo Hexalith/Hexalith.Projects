@@ -1,0 +1,111 @@
+{
+  "Mode": "source",
+  "Root": "/home/administrator/projects/hexalith/projects",
+  "ActiveModule": "Hexalith.Projects",
+  "Entries": [
+    {
+      "Identity": "Hexalith.AI.Tools",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.AI.Tools"
+    },
+    {
+      "Identity": "Hexalith.Builds",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds"
+    },
+    {
+      "Identity": "Hexalith.Commons",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Commons"
+    },
+    {
+      "Identity": "Hexalith.Conversations",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations"
+    },
+    {
+      "Identity": "Hexalith.EventStore",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore"
+    },
+    {
+      "Identity": "Hexalith.Folders",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders"
+    },
+    {
+      "Identity": "Hexalith.FrontComposer",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.FrontComposer"
+    },
+    {
+      "Identity": "Hexalith.McpCli",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.McpCli"
+    },
+    {
+      "Identity": "Hexalith.Memories",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Memories"
+    },
+    {
+      "Identity": "Hexalith.Parties",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Parties"
+    },
+    {
+      "Identity": "Hexalith.Platform",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform"
+    },
+    {
+      "Identity": "Hexalith.Projects",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects"
+    },
+    {
+      "Identity": "Hexalith.Tenants",
+      "Origin": "source",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants"
+    }
+  ],
+  "HasGit": true,
+  "PlatformIdentity": {
+    "Commit": "fcee54288c75feaadd673e0484da1e5b5d742cc8",
+    "CompositionCommit": "fcee54288c75feaadd673e0484da1e5b5d742cc8",
+    "CheckoutCommit": "1d748b70d5f728f237a7d86048e8f4636f770601",
+    "PlatformPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "ReleaseTag": null,
+    "CatalogCommit": "81ab049208678bd6616828824729c0ddac02f7d1",
+    "ToolVersionRange": "[4.35.2, 5.0.0-0)",
+    "RecordPath": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/hexalith-platform.json",
+    "IsPlatformRepository": false
+  },
+  "IdentityFindings": [
+    {
+      "RuleId": "HXW008",
+      "Message": "Platform checkout \u0027/home/administrator/projects/hexalith/projects/references/Hexalith.Platform\u0027 is 1d748b70d5f728f237a7d86048e8f4636f770601; staged composition gitlink is fcee54288c75feaadd673e0484da1e5b5d742cc8.",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "Hint": null
+    },
+    {
+      "RuleId": "HXW011",
+      "Message": "Platform identity fcee54288c75feaadd673e0484da1e5b5d742cc8 has no local v\u003CSemVer\u003E release tag.",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "Hint": "Fetch Platform tags, then retry."
+    },
+    {
+      "RuleId": "HXW011",
+      "Message": "Platform checkout \u0027/home/administrator/projects/hexalith/projects/references/Hexalith.Platform\u0027 has changes.",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "Hint": null
+    },
+    {
+      "RuleId": "HXW009",
+      "Message": "Builds catalog \u0027/home/administrator/projects/hexalith/projects/references/Hexalith.Builds\u0027 is staged 2574bf2f3da5367d8801f0d7661d66155e5d90b0, checked out e909ffd9fe9a6097e36d932010b983d029396968; Platform fcee54288c75feaadd673e0484da1e5b5d742cc8 pins 81ab049208678bd6616828824729c0ddac02f7d1.",
+      "Path": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+      "Hint": null
+    }
+  ],
+  "ContentHash": "1909b914fa172759e933d04833c037b16e86386298fa751e305753bbb036f12e"
+}

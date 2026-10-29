@@ -1,0 +1,50 @@
+{
+  "before": {
+    "head": "22c99ad1ae0aa88cd563f2d85346c9d680acc2ca",
+    "index_sha256": "e748cb4121598d9442cdf4b1983993c9de21cd6eecf6e8d365fbb60413a36da9"
+  },
+  "after": {
+    "head": "22c99ad1ae0aa88cd563f2d85346c9d680acc2ca",
+    "index_sha256": "e748cb4121598d9442cdf4b1983993c9de21cd6eecf6e8d365fbb60413a36da9"
+  },
+  "results": {
+    "contracts": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0,
+      "nonpassing": []
+    },
+    "server": {
+      "total": 174,
+      "passed": 173,
+      "failed": 1,
+      "skipped": 0,
+      "errors": 0,
+      "not-run": 0,
+      "nonpassing": [
+        {
+          "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadHttpTests.ProtectedSdkDispatchAndReadsSurviveHostAndStoreClientRestart",
+          "message": "FAIL_SKIP : Requires the isolated Story 6.1 Dapr persistence lane."
+        }
+      ]
+    }
+  },
+  "files": {
+    "module/hexalith.module-manifest.v2.json": "7028d15cca15ac35fb8172a43537e45000307127f42499196817ca5a3772a754",
+    "module/README.md": "2df275e4312a1790f0f4c272d54f2f72faf0fb2cd13bb383438a235e1cfeb7bc",
+    "tools/release-packages.json": "873cf512f5e68e89adb97a932306f6803121823fde5aff582af3755dd8cd618b"
+  },
+  "story_complete": false,
+  "source_mapping": {
+    "CustomBeforeDirectoryBuildProps": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story64-applied-root-4ytmdti3/source/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "aaf0f8e00a42408fca74d55b26d3ee80770a7969f21cbfbcf434cb91030a49ec",
+    "Configuration": "Debug"
+  }
+}
