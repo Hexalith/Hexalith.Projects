@@ -1,0 +1,15 @@
+<Project>
+  <UsingTask TaskName="AssignProjectConfiguration" AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll" />
+  <ItemGroup>
+    <Fixture Include="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.ArchiveProcessFixture/Hexalith.Platform.Secrets.ArchiveProcessFixture.csproj" />
+  </ItemGroup>
+  <Target Name="Inspect">
+    <AssignProjectConfiguration ProjectReferences="@(Fixture)"
+        CurrentProject="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Runtime.Tests/Hexalith.Platform.Secrets.Runtime.Tests.csproj"
+        SolutionConfigurationContents="$(CurrentSolutionConfigurationContents)"
+        ShouldUnsetParentConfigurationAndPlatform="true">
+      <Output TaskParameter="AssignedProjects" ItemName="Mapped" />
+      <Output TaskParameter="UnassignedProjects" ItemName="Mapped" />
+    </AssignProjectConfiguration>
+  </Target>
+</Project>

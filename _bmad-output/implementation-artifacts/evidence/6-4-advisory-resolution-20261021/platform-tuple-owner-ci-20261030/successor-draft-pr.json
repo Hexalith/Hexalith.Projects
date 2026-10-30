@@ -1,0 +1,47 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Action completed."
+    }
+  ],
+  "structuredContent": {
+    "url": "https://github.com/Hexalith/Hexalith.Platform/pull/10",
+    "number": 10,
+    "state": "open",
+    "merged": false,
+    "mergeable": false,
+    "draft": true,
+    "body": "The package-only Release tuple preflight exposed a worker-test setup race: its caller timeout began before all four workers entered. The test now arms the same 200 ms timeout after setup, retains all slot/late-completion assertions, and cancels/observes callers before cleanup. The changed C# file follows the required CRLF convention.\n\nFresh preflight passed for exact frozen candidate `6a186754102b33c3cfea823efc55e49264efbb84`: https://github.com/Hexalith/Hexalith.Platform/actions/runs/41014652010 — clean source, verified signed Builds 4.38.3 artifacts, 27 package graphs retained, complete solution Release build with zero warnings/errors, 14 binding controls and 82/82 required cases with no skips. Local Debug build and all 80 class cases also pass with two processors. Independent review closed the cleanup and formatting findings.\n\nThe preceding solution mapping correction is in parent `0e524c17333ba181ff7a6a2384b680da9760489e`; both earlier failed CI runs and their exact artifacts remain retained. #9 was closed after other pushes incorporated prior candidate work.\n\nThis remains draft because the tested frozen candidate pins published Builds `d1931b1e803144048d927fff16cb8119afde541e`, while independently advanced main records a different Builds source/catalog with tool 4.38.3 (last observed `a13d7972395f989955cf00f1047f1ba50b1a6b73`). The frozen branch result does not qualify the actual merged head/base candidate or that catalog. Resolve the exact published tuple, then run fresh integration/runtime evidence against the real selected revision under the owner policy. No publication, deployment or consumer adoption is requested; story 6.4 remains in progress.",
+    "title": "test(platform): stabilize tuple preflight worker setup",
+    "base": "main",
+    "base_sha": "e3822304436e69f4caa58df7def79a1c8899cece",
+    "head": "fix/story-6-4-builds-4-38-3-candidate-20261030",
+    "head_sha": "6a186754102b33c3cfea823efc55e49264efbb84",
+    "head_repo_id": 1328589450,
+    "head_repo_full_name": "Hexalith/Hexalith.Platform",
+    "merge_commit_sha": null,
+    "user": {
+      "login": "jpiquot",
+      "name": "jpiquot",
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+      "id": 6775094
+    },
+    "requested_reviewers": null,
+    "requested_team_reviewers": null,
+    "diff": null,
+    "comments": null,
+    "created_at": "2026-10-30T06:37:21Z",
+    "updated_at": "2026-10-30T06:37:21Z",
+    "closed_at": null,
+    "merged_at": null,
+    "commits": 1,
+    "changed_files": 2,
+    "additions": 94,
+    "deletions": 87,
+    "display_url": "https://github.com/Hexalith/Hexalith.Platform/pull/10",
+    "display_title": "test(platform): stabilize tuple preflight worker setup"
+  },
+  "isError": false
+}

@@ -1,0 +1,411 @@
+{
+  "kind": "tuple-ci-preflight",
+  "candidateAcceptance": false,
+  "status": "graph-verified",
+  "tests": [],
+  "commands": [
+    {
+      "name": "revision",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-0",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Composition/Hexalith.Platform.Composition.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-1",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-2",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-3",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Works.Tests/Hexalith.Platform.Works.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-4",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Identity/Hexalith.Platform.Identity.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-5",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.EventStoreHost/Hexalith.Platform.EventStoreHost.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-6",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Identity.Tests/Hexalith.Platform.Identity.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-7",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Custody/Hexalith.Platform.Custody.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-8",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Custody.Component/Hexalith.Platform.Custody.Component.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-9",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Custody.Tests/Hexalith.Platform.Custody.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-10",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Custody.Component.Tests/Hexalith.Platform.Custody.Component.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-11",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Secrets.Runtime/Hexalith.Platform.Secrets.Runtime.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-12",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Protection/Hexalith.Platform.Protection.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-13",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Secrets.Qualification.Enrollment/Hexalith.Platform.Secrets.Qualification.Enrollment.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-14",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Secrets.Qualification.Executor/Hexalith.Platform.Secrets.Qualification.Executor.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-15",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Secrets.Qualification.Observer/Hexalith.Platform.Secrets.Qualification.Observer.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-16",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Secrets.Runtime.Tests/Hexalith.Platform.Secrets.Runtime.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-17",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Protection.Tests/Hexalith.Platform.Protection.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-18",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Secrets.Inventory/Hexalith.Platform.Secrets.Inventory.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-19",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host/Hexalith.Platform.TenantRegistry.Host.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-20",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Secrets.Inventory.Tests/Hexalith.Platform.Secrets.Inventory.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-21",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.OwnerServices.Tests/Hexalith.Platform.OwnerServices.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-22",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Secrets.Authority/Hexalith.Platform.Secrets.Authority.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-23",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Secrets.Authority.Tests/Hexalith.Platform.Secrets.Authority.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-24",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Secrets.Custody/Hexalith.Platform.Secrets.Custody.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    },
+    {
+      "name": "graph-25",
+      "argv": [
+        "dotnet",
+        "msbuild",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Secrets.Custody.Tests/Hexalith.Platform.Secrets.Custody.Tests.csproj",
+        "-nologo",
+        "-p:Configuration=Release",
+        "-p:UseHexalithProjectReferences=false",
+        "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+        "-getItem:ProjectReference,Reference"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exitCode": 0
+    }
+  ],
+  "platformRevision": "494ecb32802d1454c15704066487fa206f5bcec0",
+  "toolRoot": "/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+  "limitation": "CI build/test preflight only. Fresh authenticated candidate-decision and live generated/direct-host runtime evidence remain separate mandatory gates."
+}

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/Directory.Build.props" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <OutputPath>/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/artifacts/story64-recorded-owner-checkpoint-20261029/</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/DomainEnrollmentKitTests.cs" />
+    <ProjectReference Include="/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Hexalith.Builds.Tooling.csproj" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Shouldly" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

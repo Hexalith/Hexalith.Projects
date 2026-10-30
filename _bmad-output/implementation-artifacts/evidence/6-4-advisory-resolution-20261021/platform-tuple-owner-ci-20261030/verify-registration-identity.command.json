@@ -1,0 +1,17 @@
+{
+  "name": "verify-registration-identity",
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,json,hashlib; run=lambda *a:subprocess.check_output([\"git\",*a]).decode().strip(); merged=\"357d8cfc074d79042dc4395cf7fc2ff51034c74b\"; base=\"f60f2c7596b1fa3010c91d1d546c71600da24715\"; names=run(\"diff\",\"--name-only\",base,merged); assert names==\".github/workflows/tuple-ci.yml\",names; candidate=\"9f43cefe11bd246ce0de1cd0740261b557c0c7a0\"; a=subprocess.check_output([\"git\",\"show\",merged+\":.github/workflows/tuple-ci.yml\"]); b=subprocess.check_output([\"git\",\"show\",candidate+\":.github/workflows/tuple-ci.yml\"]); assert a==b; print(json.dumps({\"registeredMerge\":merged,\"originalBase\":base,\"parents\":run(\"show\",\"-s\",\"--format=%P\",merged),\"actualRemoteMain\":run(\"rev-parse\",\"origin/main\"),\"candidateUnchanged\":run(\"rev-parse\",\"HEAD\"),\"diffNames\":names,\"workflowHash\":hashlib.sha256(a).hexdigest(),\"mainBuilds\":run(\"rev-parse\",merged+\":references/Hexalith.Builds\"),\"candidateBuilds\":run(\"rev-parse\",candidate+\":references/Hexalith.Builds\")},indent=2))"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:07:31.493621+00:00",
+  "finished_utc": "2026-10-30T06:07:31.524065+00:00",
+  "seconds": 0.03,
+  "exit_code": 0,
+  "stdout": "verify-registration-identity.stdout",
+  "stderr": "verify-registration-identity.stderr"
+}

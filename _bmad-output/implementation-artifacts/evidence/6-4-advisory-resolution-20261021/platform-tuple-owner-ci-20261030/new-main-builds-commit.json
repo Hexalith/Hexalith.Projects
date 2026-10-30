@@ -1,0 +1,40 @@
+{
+  "commit": {
+    "sha": "2980efdf51f305dc5c39bb854261c252d13465f5",
+    "message": "build: merge origin/dependabot/github_actions/github/codeql-action-4.39.1 into main via /pushall\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+    "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/2980efdf51f305dc5c39bb854261c252d13465f5",
+    "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/2980efdf51f305dc5c39bb854261c252d13465f5",
+    "diff": "@@ -43,10 +43,10 @@ jobs:\n         with:\n           submodules: false\n       - name: Initialize CodeQL\n-        uses: github/codeql-action/init@v4.39.0\n+        uses: github/codeql-action/init@v4.39.1\n         with:\n           languages: ${{ inputs.languages }}\n           build-mode: ${{ inputs.build-mode }}\n           config-file: ${{ inputs.config-file }}\n       - name: Perform CodeQL Analysis\n-        uses: github/codeql-action/analyze@v4.39.0\n+        uses: github/codeql-action/analyze@v4.39.1",
+    "files": [
+      {
+        "filename": ".github/workflows/codeql.yml",
+        "patch": "@@ -43,10 +43,10 @@ jobs:\n         with:\n           submodules: false\n       - name: Initialize CodeQL\n-        uses: github/codeql-action/init@v4.39.0\n+        uses: github/codeql-action/init@v4.39.1\n         with:\n           languages: ${{ inputs.languages }}\n           build-mode: ${{ inputs.build-mode }}\n           config-file: ${{ inputs.config-file }}\n       - name: Perform CodeQL Analysis\n-        uses: github/codeql-action/analyze@v4.39.0\n+        uses: github/codeql-action/analyze@v4.39.1"
+      }
+    ],
+    "repository_full_name": "Hexalith/Hexalith.Builds",
+    "comments": null,
+    "author": {
+      "login": "jpiquot",
+      "name": null,
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+      "id": 6775094
+    },
+    "committer": {
+      "login": "jpiquot",
+      "name": null,
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+      "id": 6775094
+    },
+    "created_at": "2026-10-30T05:49:59Z",
+    "git_author_email": null,
+    "display_url": "https://github.com/Hexalith/Hexalith.Builds/commit/2980efdf51f305dc5c39bb854261c252d13465f5",
+    "display_title": "build: merge origin/dependabot/github_actions/github/codeql-action-4.39.1 into main via /pushall"
+  },
+  "url": "https://github.com/Hexalith/Hexalith.Builds/commit/2980efdf51f305dc5c39bb854261c252d13465f5",
+  "title": "build: merge origin/dependabot/github_actions/github/codeql-action-4.39.1 into main via /pushall\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+  "diff": "@@ -43,10 +43,10 @@ jobs:\n         with:\n           submodules: false\n       - name: Initialize CodeQL\n-        uses: github/codeql-action/init@v4.39.0\n+        uses: github/codeql-action/init@v4.39.1\n         with:\n           languages: ${{ inputs.languages }}\n           build-mode: ${{ inputs.build-mode }}\n           config-file: ${{ inputs.config-file }}\n       - name: Perform CodeQL Analysis\n-        uses: github/codeql-action/analyze@v4.39.0\n+        uses: github/codeql-action/analyze@v4.39.1",
+  "display_url": "https://github.com/Hexalith/Hexalith.Builds/commit/2980efdf51f305dc5c39bb854261c252d13465f5",
+  "display_title": "build: merge origin/dependabot/github_actions/github/codeql-action-4.39.1 into main via /pushall\n\nCo-authored-by: Cursor <cursoragent@cursor.com>"
+}

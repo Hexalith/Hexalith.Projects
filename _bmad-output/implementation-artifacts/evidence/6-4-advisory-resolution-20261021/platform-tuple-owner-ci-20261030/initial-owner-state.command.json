@@ -1,0 +1,17 @@
+{
+  "name": "initial-owner-state",
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,json; commands=[[\"git\",\"status\",\"--short\",\"--branch\"],[\"git\",\"remote\",\"-v\"],[\"git\",\"log\",\"--format=%H %s\",\"-8\"],[\"git\",\"rev-list\",\"--left-right\",\"--count\",\"HEAD...origin/main\"],[\"git\",\"ls-tree\",\"origin/main\",\"references/Hexalith.Builds\",\"references/Hexalith.Folders\"],[\"git\",\"ls-tree\",\"HEAD\",\"references/Hexalith.Builds\"],[\"git\",\"show\",\"origin/main:.config/dotnet-tools.json\"],[\"git\",\"show\",\"origin/main:.github/CODEOWNERS\"]]; print(json.dumps([{ \"argv\":a,\"result\":subprocess.run(a,text=True,capture_output=True).__dict__} for a in commands],indent=2))"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:03:41.649280+00:00",
+  "finished_utc": "2026-10-30T06:03:41.702996+00:00",
+  "seconds": 0.054,
+  "exit_code": 0,
+  "stdout": "initial-owner-state.stdout",
+  "stderr": "initial-owner-state.stderr"
+}

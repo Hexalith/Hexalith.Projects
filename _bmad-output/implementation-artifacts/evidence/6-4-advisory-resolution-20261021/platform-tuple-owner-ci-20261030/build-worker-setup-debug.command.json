@@ -1,0 +1,26 @@
+{
+  "name": "build-worker-setup-debug",
+  "argv": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "-p:MinVerVersionOverride=1.0.0",
+    "-p:HexalithBuildsRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "-p:HexalithEventStoreRoot=/home/administrator/projects/hexalith/projects/references/Hexalith.EventStore",
+    "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+    "-v:minimal"
+  ],
+  "cwd": "/tmp/story64-platform-tuple-candidate-20261030",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:27:13.525873+00:00",
+  "finished_utc": "2026-10-30T06:27:26.058178+00:00",
+  "seconds": 12.534,
+  "exit_code": 0,
+  "stdout": "build-worker-setup-debug.stdout",
+  "stderr": "build-worker-setup-debug.stderr"
+}

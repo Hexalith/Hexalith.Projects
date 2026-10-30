@@ -1,0 +1,19 @@
+{
+  "name": "platform-evaluated-debug",
+  "argv": [
+    "dotnet",
+    "msbuild",
+    "tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj",
+    "-p:Configuration=Debug",
+    "-getProperty:Configuration,EnableNETAnalyzers,TreatWarningsAsErrors,UseHexalithProjectReferences,HexalithBuildsResolvedRoot,HexalithTenantsVersion,HexalithEventStoreVersion"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-29T17:21:10.091011+00:00",
+  "finished_utc": "2026-10-29T17:21:10.464731+00:00",
+  "seconds": 0.374,
+  "exit_code": 0,
+  "stdout": "platform-evaluated-debug.stdout",
+  "stderr": "platform-evaluated-debug.stderr"
+}

@@ -1,0 +1,200 @@
+.FFFF....FFFF.F
+======================================================================
+FAIL: test_debug_keeps_eventstore_compatibility_import_after_selected_catalog (__main__.HostBuildsResolutionTests.test_debug_keeps_eventstore_compatibility_import_after_selected_catalog)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 101, in test_debug_keeps_eventstore_compatibility_import_after_selected_catalog
+    self.assert_selection(selected, "debug", "-p:Configuration=Debug")
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 61, in assert_selection
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        [pathlib.Path(item["FullPath"]).resolve() for item in evaluated["Items"]["ProjectReference"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [(selected / TOOLING).resolve()])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [Posi[28 chars]lith.Platform/references/Hexalith.EventStore/s[704 chars]oj')] != [Posi[28 chars]lith.Builds/src/libraries/Hexalith.Builds.Tool[32 chars]oj')]
+
+First differing element 0:
+Posix[27 chars]lith.Platform/references/Hexalith.EventStore/s[60 chars]roj')
+Posix[27 chars]lith.Builds/src/libraries/Hexalith.Builds.Tool[31 chars]roj')
+
+First list contains 5 additional elements.
+First extra element 1:
+PosixPath('/tmp/tmp786edryb/Hexalith.Platform/references/Hexalith.EventStore/src/Hexalith.EventStore.ServiceDefaults/Hexalith.EventStore.ServiceDefaults.csproj')
+
+Diff is 1165 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_explicit_root_binds_both_catalog_and_tooling (__main__.HostBuildsResolutionTests.test_explicit_root_binds_both_catalog_and_tooling)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 82, in test_explicit_root_binds_both_catalog_and_tooling
+    self.assert_selection(selected, "explicit", f"-p:HexalithBuildsRoot={selected}")
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 61, in assert_selection
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        [pathlib.Path(item["FullPath"]).resolve() for item in evaluated["Items"]["ProjectReference"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [(selected / TOOLING).resolve()])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [Posi[105 chars]roj'), PosixPath('/tmp/tmpgt2xoxvi/Hexalith.Pl[319 chars]oj')] != [Posi[105 chars]roj')]
+
+First list contains 3 additional elements.
+First extra element 1:
+PosixPath('/tmp/tmpgt2xoxvi/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj')
+
+Diff is 851 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_late_mapping_binds_catalog_tooling_and_seed_to_selected_root (__main__.HostBuildsResolutionTests.test_late_mapping_binds_catalog_tooling_and_seed_to_selected_root) (root=PosixPath('/tmp/tmplcmc0o5q/mapped-builds'))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 131, in test_late_mapping_binds_catalog_tooling_and_seed_to_selected_root
+    self.assert_selection(selected, "mapped", mapped)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 61, in assert_selection
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        [pathlib.Path(item["FullPath"]).resolve() for item in evaluated["Items"]["ProjectReference"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [(selected / TOOLING).resolve()])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [Posi[103 chars]roj'), PosixPath('/tmp/tmplcmc0o5q/Hexalith.Pl[319 chars]oj')] != [Posi[103 chars]roj')]
+
+First list contains 3 additional elements.
+First extra element 1:
+PosixPath('/tmp/tmplcmc0o5q/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj')
+
+Diff is 843 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_late_mapping_binds_catalog_tooling_and_seed_to_selected_root (__main__.HostBuildsResolutionTests.test_late_mapping_binds_catalog_tooling_and_seed_to_selected_root) (root='../mapped-builds')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 131, in test_late_mapping_binds_catalog_tooling_and_seed_to_selected_root
+    self.assert_selection(selected, "mapped", mapped)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 61, in assert_selection
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        [pathlib.Path(item["FullPath"]).resolve() for item in evaluated["Items"]["ProjectReference"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [(selected / TOOLING).resolve()])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [Posi[103 chars]roj'), PosixPath('/tmp/tmplcmc0o5q/Hexalith.Pl[319 chars]oj')] != [Posi[103 chars]roj')]
+
+First list contains 3 additional elements.
+First extra element 1:
+PosixPath('/tmp/tmplcmc0o5q/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj')
+
+Diff is 843 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_relative_explicit_root_is_relative_to_platform_for_every_consumer (__main__.HostBuildsResolutionTests.test_relative_explicit_root_is_relative_to_platform_for_every_consumer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 92, in test_relative_explicit_root_is_relative_to_platform_for_every_consumer
+    self.assert_selection(selected, "relative", "-p:HexalithBuildsRoot=../Hexalith.Builds")
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 61, in assert_selection
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        [pathlib.Path(item["FullPath"]).resolve() for item in evaluated["Items"]["ProjectReference"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [(selected / TOOLING).resolve()])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [Posi[105 chars]roj'), PosixPath('/tmp/tmpgw8evwkv/Hexalith.Pl[319 chars]oj')] != [Posi[105 chars]roj')]
+
+First list contains 3 additional elements.
+First extra element 1:
+PosixPath('/tmp/tmpgw8evwkv/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj')
+
+Diff is 851 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_runner_assembly_override_does_not_add_a_source_reference (__main__.HostBuildsResolutionTests.test_runner_assembly_override_does_not_add_a_source_reference)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 180, in test_runner_assembly_override_does_not_add_a_source_reference
+    self.assertEqual(json.loads(result.stdout)["Items"]["ProjectReference"], [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [{'Identity': '../Hexalith.Platform.Works.[2736 chars]oj'}] != []
+
+First list contains 3 additional elements.
+First extra element 0:
+{'Identity': '../Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj', 'Targets': '', 'OutputItemType': '', 'ReferenceSourceTarget': 'ProjectReference', 'FullPath': '/tmp/tmpruhlxt2x/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj', 'RootDir': '/', 'Filename': 'Hexalith.Platform.Works.Runtime', 'Extension': '.csproj', 'RelativeDir': '../Hexalith.Platform.Works.Runtime/', 'Directory': 'tmp/tmpruhlxt2x/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/', 'RecursiveDir': '', 'ModifiedTime': '', 'CreatedTime': '', 'AccessedTime': '', 'DefiningProjectFullPath': '/tmp/tmpruhlxt2x/Hexalith.Platform/src/Hexalith.Platform.Composition/Hexalith.Platform.Composition.csproj', 'DefiningProjectDirectory': '/tmp/tmpruhlxt2x/Hexalith.Platform/src/Hexalith.Platform.Composition/', 'DefiningProjectName': 'Hexalith.Platform.Composition', 'DefiningProjectExtension': '.csproj'}
+
+Diff is 3001 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_sibling_keeps_existing_catalog_precedence (__main__.HostBuildsResolutionTests.test_sibling_keeps_existing_catalog_precedence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 73, in test_sibling_keeps_existing_catalog_precedence
+    self.assert_selection(selected, "workspace")
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 61, in assert_selection
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        [pathlib.Path(item["FullPath"]).resolve() for item in evaluated["Items"]["ProjectReference"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [(selected / TOOLING).resolve()])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [Posi[105 chars]roj'), PosixPath('/tmp/tmp67umvnkp/Hexalith.Pl[319 chars]oj')] != [Posi[105 chars]roj')]
+
+First list contains 3 additional elements.
+First extra element 1:
+PosixPath('/tmp/tmp67umvnkp/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj')
+
+Diff is 851 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_standalone_initialized_dependency_is_supported (__main__.HostBuildsResolutionTests.test_standalone_initialized_dependency_is_supported)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 77, in test_standalone_initialized_dependency_is_supported
+    self.assert_selection(selected, "standalone")
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 61, in assert_selection
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        [pathlib.Path(item["FullPath"]).resolve() for item in evaluated["Items"]["ProjectReference"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [(selected / TOOLING).resolve()])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [Posi[134 chars]roj'), PosixPath('/tmp/tmpftyh714y/Hexalith.Pl[319 chars]oj')] != [Posi[134 chars]roj')]
+
+First list contains 3 additional elements.
+First extra element 1:
+PosixPath('/tmp/tmpftyh714y/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj')
+
+Diff is 967 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_workspace_sibling_is_used_without_nested_initialization (__main__.HostBuildsResolutionTests.test_workspace_sibling_is_used_without_nested_initialization)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 67, in test_workspace_sibling_is_used_without_nested_initialization
+    self.assert_selection(selected, "workspace")
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/test_host_builds_resolution.py", line 61, in assert_selection
+    self.assertEqual(
+    ~~~~~~~~~~~~~~~~^
+        [pathlib.Path(item["FullPath"]).resolve() for item in evaluated["Items"]["ProjectReference"]],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        [(selected / TOOLING).resolve()])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [Posi[105 chars]roj'), PosixPath('/tmp/tmpzvpow9e5/Hexalith.Pl[319 chars]oj')] != [Posi[105 chars]roj')]
+
+First list contains 3 additional elements.
+First extra element 1:
+PosixPath('/tmp/tmpzvpow9e5/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj')
+
+Diff is 851 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 14 tests in 6.714s
+
+FAILED (failures=9)

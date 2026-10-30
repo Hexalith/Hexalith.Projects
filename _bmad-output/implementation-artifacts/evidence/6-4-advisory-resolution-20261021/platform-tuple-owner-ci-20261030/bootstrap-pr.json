@@ -1,0 +1,47 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Action completed."
+    }
+  ],
+  "structuredContent": {
+    "url": "https://github.com/Hexalith/Hexalith.Platform/pull/8",
+    "number": 8,
+    "state": "open",
+    "merged": false,
+    "mergeable": false,
+    "draft": false,
+    "body": "Platform's frozen Builds 4.38.3 candidate is now available at `9f43cefe11bd246ce0de1cd0740261b557c0c7a0`, but its manual workflow cannot be dispatched until registered on the default branch.\n\nThis adds only `.github/workflows/tuple-ci.yml`, byte-for-byte from that reviewed candidate, on current main `f60f2c7596b1fa3010c91d1d546c71600da24715`. The workflow checks out the explicit full candidate SHA, verifies the exact published Builds source/tool artifacts, builds package-only Release, runs its scoped 82-case preflight and 14 binding controls, and retains successful or failed evidence. Permissions are read-only; the sole trigger is `workflow_dispatch`.\n\nValidation: exact workflow bytes verified; YAML and embedded shell syntax passed; whitespace and pinned commitlint passed. No dependencies or current main source are changed. Registering/running this preflight grants no candidate, runtime, publication, or consumer acceptance; story 6.4 remains in progress.\n\nAuthorized scope: user approved branch push, default-branch workflow registration, and exact-candidate CI. The ruleset requires review and identifies the repository owner's configured bypass; any use of that exception must be recorded separately from policy-bound candidate acceptance.",
+    "title": "ci(platform): register exact-candidate tuple preflight",
+    "base": "main",
+    "base_sha": "f60f2c7596b1fa3010c91d1d546c71600da24715",
+    "head": "fix/register-platform-tuple-ci-20261030",
+    "head_sha": "a7f23df00007ddbb4232221ba99e857879d43075",
+    "head_repo_id": 1328589450,
+    "head_repo_full_name": "Hexalith/Hexalith.Platform",
+    "merge_commit_sha": null,
+    "user": {
+      "login": "jpiquot",
+      "name": "jpiquot",
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+      "id": 6775094
+    },
+    "requested_reviewers": null,
+    "requested_team_reviewers": null,
+    "diff": null,
+    "comments": null,
+    "created_at": "2026-10-30T06:06:31Z",
+    "updated_at": "2026-10-30T06:06:31Z",
+    "closed_at": null,
+    "merged_at": null,
+    "commits": 1,
+    "changed_files": 1,
+    "additions": 88,
+    "deletions": 0,
+    "display_url": "https://github.com/Hexalith/Hexalith.Platform/pull/8",
+    "display_title": "ci(platform): register exact-candidate tuple preflight"
+  },
+  "isError": false
+}

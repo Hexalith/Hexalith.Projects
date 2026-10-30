@@ -1,0 +1,152 @@
+[
+  {
+    "argv": [
+      "git",
+      "status",
+      "--short",
+      "--branch"
+    ],
+    "result": {
+      "args": [
+        "git",
+        "status",
+        "--short",
+        "--branch"
+      ],
+      "returncode": 0,
+      "stdout": "## main...origin/main [ahead 2, behind 32]\n",
+      "stderr": ""
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "remote",
+      "-v"
+    ],
+    "result": {
+      "args": [
+        "git",
+        "remote",
+        "-v"
+      ],
+      "returncode": 0,
+      "stdout": "origin\thttps://github.com/Hexalith/Hexalith.Platform.git (fetch)\norigin\thttps://github.com/Hexalith/Hexalith.Platform.git (push)\n",
+      "stderr": ""
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "log",
+      "--format=%H %s",
+      "-8"
+    ],
+    "result": {
+      "args": [
+        "git",
+        "log",
+        "--format=%H %s",
+        "-8"
+      ],
+      "returncode": 0,
+      "stdout": "9f43cefe11bd246ce0de1cd0740261b557c0c7a0 fix(platform): align the published Builds tuple\n494ecb32802d1454c15704066487fa206f5bcec0 build: sync local changes via /pushall\n1d748b70d5f728f237a7d86048e8f4636f770601 fix: stories 2.5 5.4\n0f2b6ea8f788b236333772a11e78193b851a2725 fix: spec 2.2\n74611767af26874aba107d865049d5a21f3877c1 fix: story 2.5\nab539bd7542070ca5cd8c420411ac6d8e47fd915 fix(platform): complete local run lifecycle review fixes\nfcee54288c75feaadd673e0484da1e5b5d742cc8 fix(secrets): bound next-baseline metadata reconciliation\n5889400b50e6e2cefb4ed6976ca53d086d3989e2 build: advance the Builds gitlink after the Radzen catalog update\n",
+      "stderr": ""
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "rev-list",
+      "--left-right",
+      "--count",
+      "HEAD...origin/main"
+    ],
+    "result": {
+      "args": [
+        "git",
+        "rev-list",
+        "--left-right",
+        "--count",
+        "HEAD...origin/main"
+      ],
+      "returncode": 0,
+      "stdout": "2\t32\n",
+      "stderr": ""
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "ls-tree",
+      "origin/main",
+      "references/Hexalith.Builds",
+      "references/Hexalith.Folders"
+    ],
+    "result": {
+      "args": [
+        "git",
+        "ls-tree",
+        "origin/main",
+        "references/Hexalith.Builds",
+        "references/Hexalith.Folders"
+      ],
+      "returncode": 0,
+      "stdout": "160000 commit 2980efdf51f305dc5c39bb854261c252d13465f5\treferences/Hexalith.Builds\n160000 commit a00a0175eb06712840fc81e3bb386703b968e17c\treferences/Hexalith.Folders\n",
+      "stderr": ""
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "ls-tree",
+      "HEAD",
+      "references/Hexalith.Builds"
+    ],
+    "result": {
+      "args": [
+        "git",
+        "ls-tree",
+        "HEAD",
+        "references/Hexalith.Builds"
+      ],
+      "returncode": 0,
+      "stdout": "160000 commit d1931b1e803144048d927fff16cb8119afde541e\treferences/Hexalith.Builds\n",
+      "stderr": ""
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "show",
+      "origin/main:.config/dotnet-tools.json"
+    ],
+    "result": {
+      "args": [
+        "git",
+        "show",
+        "origin/main:.config/dotnet-tools.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\n  \"version\": 1,\n  \"isRoot\": true,\n  \"tools\": {\n    \"hexalith.builds.module.cli\": {\n      \"version\": \"4.35.2\",\n      \"commands\": [\n        \"hexalith-module\"\n      ],\n      \"rollForward\": false\n    }\n  }\n}\n",
+      "stderr": ""
+    }
+  },
+  {
+    "argv": [
+      "git",
+      "show",
+      "origin/main:.github/CODEOWNERS"
+    ],
+    "result": {
+      "args": [
+        "git",
+        "show",
+        "origin/main:.github/CODEOWNERS"
+      ],
+      "returncode": 0,
+      "stdout": "# Administrator owns all changes, including workflows and this ownership policy.\n* @jpiquot\n/.github/workflows/** @jpiquot\n/.github/CODEOWNERS @jpiquot\n",
+      "stderr": ""
+    }
+  }
+]

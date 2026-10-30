@@ -1,0 +1,23 @@
+{
+  "name": "solution-configuration-before",
+  "argv": [
+    "dotnet",
+    "msbuild",
+    "Hexalith.Platform.slnx",
+    "-nologo",
+    "-target:ValidateSolutionConfiguration",
+    "-p:Configuration=Release",
+    "-v:diagnostic"
+  ],
+  "cwd": "/tmp/story64-platform-tuple-candidate-20261030",
+  "environment": {
+    "MSBUILDEMITSOLUTION": "1"
+  },
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:15:48.662773+00:00",
+  "finished_utc": "2026-10-30T06:15:49.296200+00:00",
+  "seconds": 0.633,
+  "exit_code": 0,
+  "stdout": "solution-configuration-before.stdout",
+  "stderr": "solution-configuration-before.stderr"
+}

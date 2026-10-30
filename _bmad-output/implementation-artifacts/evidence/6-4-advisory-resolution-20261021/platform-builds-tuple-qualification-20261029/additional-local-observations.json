@@ -1,0 +1,21 @@
+{
+  "controlled_environment": {
+    "HEXALITH_DAPR_HOME": "/home/administrator/.hexalith/dapr/cli-1.18.2-runtime-1.18.7"
+  },
+  "dotnet_version": "10.0.403",
+  "platform_workflows": [],
+  "platform_direct_apphost_directives": [
+    "#:sdk Aspire.AppHost.Sdk@13.6.4",
+    "#:property ManagePackageVersionsCentrally=false",
+    "#:package Aspire.Hosting.Docker@13.6.4",
+    "#:package Aspire.Hosting.Kubernetes@13.6.4-preview.1.26523.11",
+    "#:package Aspire.Hosting.Redis@13.6.4",
+    "#:package Aspire.Hosting.Keycloak@13.6.4-preview.1.26523.11",
+    "#:package CommunityToolkit.Aspire.Hosting.Dapr@13.6.1-beta.935",
+    "#:package Hexalith.EventStore.Aspire@3.128.0",
+    "#:package Hexalith.EventStore.ServiceDefaults@3.128.0",
+    "#:project src/Hexalith.Platform.Composition/Hexalith.Platform.Composition.csproj"
+  ],
+  "projects_release_builds_execution_sha": "a07078ad74d3727bc5a6b6d85d47d56a6e5c9fec",
+  "projects_ci_builds_workflow_sha": "51af786cf156d2a3396dbd49f5e4898222e55c12"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "aligned-eventstore-readiness",
+  "argv": [
+    "aspire",
+    "wait",
+    "eventstore",
+    "--status",
+    "healthy",
+    "--timeout",
+    "10",
+    "--apphost",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs",
+    "--non-interactive"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-29T18:14:19.151752+00:00",
+  "finished_utc": "2026-10-29T18:14:29.412750+00:00",
+  "seconds": 10.262,
+  "exit_code": 17,
+  "stdout": "aligned-eventstore-readiness.stdout",
+  "stderr": "aligned-eventstore-readiness.stderr"
+}

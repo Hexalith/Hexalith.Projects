@@ -1,0 +1,599 @@
+[
+  {
+    "name": "platform-tool-restore",
+    "argv": [
+      "dotnet",
+      "tool",
+      "restore"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:43.826102+00:00",
+    "finished_utc": "2026-10-29T09:14:44.023814+00:00",
+    "seconds": 0.198,
+    "exit_code": 0,
+    "stdout": "platform-tool-restore.stdout",
+    "stderr": "platform-tool-restore.stderr"
+  },
+  {
+    "name": "platform-tool-version",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "--version"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:44.024130+00:00",
+    "finished_utc": "2026-10-29T09:14:44.231127+00:00",
+    "seconds": 0.207,
+    "exit_code": 0,
+    "stdout": "platform-tool-version.stdout",
+    "stderr": "platform-tool-version.stderr"
+  },
+  {
+    "name": "platform-tool-help",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--help"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:44.231451+00:00",
+    "finished_utc": "2026-10-29T09:14:44.449657+00:00",
+    "seconds": 0.218,
+    "exit_code": 0,
+    "stdout": "platform-tool-help.stdout",
+    "stderr": "platform-tool-help.stderr"
+  },
+  {
+    "name": "consumer-tool-restore",
+    "argv": [
+      "dotnet",
+      "tool",
+      "restore"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:44.450009+00:00",
+    "finished_utc": "2026-10-29T09:14:44.656937+00:00",
+    "seconds": 0.207,
+    "exit_code": 0,
+    "stdout": "consumer-tool-restore.stdout",
+    "stderr": "consumer-tool-restore.stderr"
+  },
+  {
+    "name": "consumer-tool-version",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "--version"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:44.657330+00:00",
+    "finished_utc": "2026-10-29T09:14:44.872911+00:00",
+    "seconds": 0.216,
+    "exit_code": 0,
+    "stdout": "consumer-tool-version.stdout",
+    "stderr": "consumer-tool-version.stderr"
+  },
+  {
+    "name": "consumer-tool-help",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--help"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:44.873278+00:00",
+    "finished_utc": "2026-10-29T09:14:45.117274+00:00",
+    "seconds": 0.244,
+    "exit_code": 0,
+    "stdout": "consumer-tool-help.stdout",
+    "stderr": "consumer-tool-help.stderr"
+  },
+  {
+    "name": "public-package-current",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "package",
+      "--workspace",
+      "/tmp/story64-recorded-owner-20261029-9q_w2ua_/package",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:45.117674+00:00",
+    "finished_utc": "2026-10-29T09:14:49.254533+00:00",
+    "seconds": 4.138,
+    "exit_code": 2,
+    "stdout": "public-package-current.stdout",
+    "stderr": "public-package-current.stderr"
+  },
+  {
+    "name": "public-source-current",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story64-recorded-owner-20261029-9q_w2ua_/source",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:49.254947+00:00",
+    "finished_utc": "2026-10-29T09:14:50.501167+00:00",
+    "seconds": 1.246,
+    "exit_code": 2,
+    "stdout": "public-source-current.stdout",
+    "stderr": "public-source-current.stderr"
+  },
+  {
+    "name": "consumer-package-release-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+      "-c",
+      "Release",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:50.501569+00:00",
+    "finished_utc": "2026-10-29T09:14:54.498813+00:00",
+    "seconds": 3.997,
+    "exit_code": 0,
+    "stdout": "consumer-package-release-build.stdout",
+    "stderr": "consumer-package-release-build.stderr"
+  },
+  {
+    "name": "package-tooling-tests",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_release_package_tools.py"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:54.499526+00:00",
+    "finished_utc": "2026-10-29T09:14:59.925885+00:00",
+    "seconds": 5.426,
+    "exit_code": 0,
+    "stdout": "package-tooling-tests.stdout",
+    "stderr": "package-tooling-tests.stderr"
+  },
+  {
+    "name": "planning-guard",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_production_authority_guard.py"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:14:59.926262+00:00",
+    "finished_utc": "2026-10-29T09:15:07.747932+00:00",
+    "seconds": 7.822,
+    "exit_code": 0,
+    "stdout": "planning-guard.stdout",
+    "stderr": "planning-guard.stderr"
+  },
+  {
+    "name": "story-authority",
+    "argv": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6.4"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:15:07.748546+00:00",
+    "finished_utc": "2026-10-29T09:15:07.819535+00:00",
+    "seconds": 0.071,
+    "exit_code": 0,
+    "stdout": "story-authority.stdout",
+    "stderr": "story-authority.stderr"
+  },
+  {
+    "name": "index-authority",
+    "argv": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:15:07.820127+00:00",
+    "finished_utc": "2026-10-29T09:15:07.889933+00:00",
+    "seconds": 0.07,
+    "exit_code": 0,
+    "stdout": "index-authority.stdout",
+    "stderr": "index-authority.stderr"
+  },
+  {
+    "name": "platform-official-tags",
+    "argv": [
+      "git",
+      "ls-remote",
+      "--tags",
+      "origin"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:15:07.890315+00:00",
+    "finished_utc": "2026-10-29T09:15:08.361261+00:00",
+    "seconds": 0.471,
+    "exit_code": 0,
+    "stdout": "platform-official-tags.stdout",
+    "stderr": "platform-official-tags.stderr"
+  },
+  {
+    "name": "platform-official-releases",
+    "argv": [
+      "gh",
+      "api",
+      "repos/Hexalith/Hexalith.Platform/releases",
+      "--paginate",
+      "--jq",
+      "[.[] | {tag_name,target_commitish,published_at,html_url,draft,prerelease}]"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:15:08.361650+00:00",
+    "finished_utc": "2026-10-29T09:15:08.795810+00:00",
+    "seconds": 0.434,
+    "exit_code": 0,
+    "stdout": "platform-official-releases.stdout",
+    "stderr": "platform-official-releases.stderr"
+  },
+  {
+    "name": "pinned-builds-object-before",
+    "argv": [
+      "git",
+      "cat-file",
+      "-t",
+      "e129a29e6c6e2f8a200581e09b861d75a9f3a7b8"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:15:33.292954+00:00",
+    "finished_utc": "2026-10-29T09:15:33.294915+00:00",
+    "seconds": 0.002,
+    "exit_code": 128,
+    "stdout": "pinned-builds-object-before.stdout",
+    "stderr": "pinned-builds-object-before.stderr"
+  },
+  {
+    "name": "pinned-builds-object-fetch",
+    "argv": [
+      "git",
+      "fetch",
+      "--no-tags",
+      "--no-recurse-submodules",
+      "--no-write-fetch-head",
+      "origin",
+      "e129a29e6c6e2f8a200581e09b861d75a9f3a7b8"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:15:33.295342+00:00",
+    "finished_utc": "2026-10-29T09:15:33.845728+00:00",
+    "seconds": 0.55,
+    "exit_code": 0,
+    "stdout": "pinned-builds-object-fetch.stdout",
+    "stderr": "pinned-builds-object-fetch.stderr"
+  },
+  {
+    "name": "pinned-builds-object-after",
+    "argv": [
+      "git",
+      "cat-file",
+      "-t",
+      "e129a29e6c6e2f8a200581e09b861d75a9f3a7b8"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:15:33.849337+00:00",
+    "finished_utc": "2026-10-29T09:15:33.851167+00:00",
+    "seconds": 0.002,
+    "exit_code": 0,
+    "stdout": "pinned-builds-object-after.stdout",
+    "stderr": "pinned-builds-object-after.stderr"
+  },
+  {
+    "name": "public-package-object-available",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "package",
+      "--workspace",
+      "/tmp/story64-recorded-owner-20261029-9q_w2ua_/package-object-available",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:15:33.851491+00:00",
+    "finished_utc": "2026-10-29T09:15:34.765354+00:00",
+    "seconds": 0.914,
+    "exit_code": 2,
+    "stdout": "public-package-object-available.stdout",
+    "stderr": "public-package-object-available.stderr"
+  },
+  {
+    "name": "public-source-object-available",
+    "argv": [
+      "dotnet",
+      "tool",
+      "run",
+      "hexalith-module",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "/home/administrator/projects/hexalith/projects/module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/story64-recorded-owner-20261029-9q_w2ua_/source-object-available",
+      "--output",
+      "json"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:15:34.765823+00:00",
+    "finished_utc": "2026-10-29T09:15:37.255122+00:00",
+    "seconds": 2.489,
+    "exit_code": 0,
+    "stdout": "public-source-object-available.stdout",
+    "stderr": "public-source-object-available.stderr"
+  },
+  {
+    "name": "platform-composition-debug-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:16:01.459318+00:00",
+    "finished_utc": "2026-10-29T09:16:41.075292+00:00",
+    "seconds": 39.617,
+    "exit_code": 1,
+    "stdout": "platform-composition-debug-build.stdout",
+    "stderr": "platform-composition-debug-build.stderr"
+  },
+  {
+    "name": "platform-narrow-owner-build",
+    "argv": [
+      "dotnet",
+      "build",
+      "/tmp/story64-recorded-owner-20261029-9q_w2ua_/owner-check/NarrowOwnerCheck.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:NuGetAudit=false",
+      "-p:MinVerVersionOverride=1.0.0",
+      "-v:minimal"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:17:45.243019+00:00",
+    "finished_utc": "2026-10-29T09:18:11.307531+00:00",
+    "seconds": 26.066,
+    "exit_code": 0,
+    "stdout": "platform-narrow-owner-build.stdout",
+    "stderr": "platform-narrow-owner-build.stderr"
+  },
+  {
+    "name": "platform-existing-inventory-test",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/artifacts/story64-recorded-owner-checkpoint-20261029/net10.0/NarrowOwnerCheck.dll",
+      "-method",
+      "Hexalith.Platform.Composition.Tests.DomainEnrollmentKitTests.InventoryAndHumanChecklistKeepUnobservedEvidencePending",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/published-tuple-preparation-20261028/recorded-owner-checkpoint-20261029/platform-existing-inventory.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:18:11.307995+00:00",
+    "finished_utc": "2026-10-29T09:18:11.603076+00:00",
+    "seconds": 0.295,
+    "exit_code": 0,
+    "stdout": "platform-existing-inventory-test.stdout",
+    "stderr": "platform-existing-inventory-test.stderr"
+  },
+  {
+    "name": "platform-existing-owner-pin-test",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/artifacts/story64-recorded-owner-checkpoint-20261029/net10.0/NarrowOwnerCheck.dll",
+      "-method",
+      "Hexalith.Platform.Composition.Tests.DomainEnrollmentKitTests.AcceptedToolPinEqualsSupportedRangeFloorAsync",
+      "-result-xml",
+      "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/published-tuple-preparation-20261028/recorded-owner-checkpoint-20261029/platform-existing-owner-pin.xml"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:18:11.603517+00:00",
+    "finished_utc": "2026-10-29T09:18:11.970925+00:00",
+    "seconds": 0.367,
+    "exit_code": 1,
+    "stdout": "platform-existing-owner-pin-test.stdout",
+    "stderr": "platform-existing-owner-pin-test.stderr"
+  },
+  {
+    "name": "final-story-authority",
+    "argv": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--story-id",
+      "6.4"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:20:11.784464+00:00",
+    "finished_utc": "2026-10-29T09:20:11.851408+00:00",
+    "seconds": 0.067,
+    "exit_code": 0,
+    "stdout": "final-story-authority.stdout",
+    "stderr": "final-story-authority.stderr"
+  },
+  {
+    "name": "final-index-authority",
+    "argv": [
+      "python3",
+      "tools/planning/validate_production_authority.py",
+      "--validate-index"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:20:11.851849+00:00",
+    "finished_utc": "2026-10-29T09:20:11.917634+00:00",
+    "seconds": 0.066,
+    "exit_code": 0,
+    "stdout": "final-index-authority.stdout",
+    "stderr": "final-index-authority.stderr"
+  },
+  {
+    "name": "root-whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:20:11.918015+00:00",
+    "finished_utc": "2026-10-29T09:20:11.985386+00:00",
+    "seconds": 0.067,
+    "exit_code": 0,
+    "stdout": "root-whitespace.stdout",
+    "stderr": "root-whitespace.stderr"
+  },
+  {
+    "name": "platform-whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:20:11.985795+00:00",
+    "finished_utc": "2026-10-29T09:20:11.990978+00:00",
+    "seconds": 0.005,
+    "exit_code": 0,
+    "stdout": "platform-whitespace.stdout",
+    "stderr": "platform-whitespace.stderr"
+  },
+  {
+    "name": "conversations-whitespace",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+    "environment": {},
+    "inherited_environment": "Existing process environment; no credentials archived.",
+    "started_utc": "2026-10-29T09:20:11.991254+00:00",
+    "finished_utc": "2026-10-29T09:20:12.003720+00:00",
+    "seconds": 0.012,
+    "exit_code": 0,
+    "stdout": "conversations-whitespace.stdout",
+    "stderr": "conversations-whitespace.stderr"
+  }
+]

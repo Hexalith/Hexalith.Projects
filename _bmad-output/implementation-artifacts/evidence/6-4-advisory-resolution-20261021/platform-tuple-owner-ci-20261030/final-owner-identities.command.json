@@ -1,0 +1,17 @@
+{
+  "name": "final-owner-identities",
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,json,datetime; run=lambda *a:subprocess.check_output([\"git\",*a],text=True).strip(); main=run(\"rev-parse\",\"origin/main\"); pin=run(\"rev-parse\",main+\":references/Hexalith.Builds\"); out={\"observedUtc\":datetime.datetime.now(datetime.timezone.utc).isoformat(),\"main\":main,\"mainBuilds\":pin,\"mainToolManifest\":json.loads(run(\"show\",main+\":.config/dotnet-tools.json\")),\"candidate\":run(\"rev-parse\",\"HEAD\"),\"candidateBuilds\":run(\"rev-parse\",\"HEAD:references/Hexalith.Builds\"),\"candidateStatus\":run(\"status\",\"--short\"),\"workflowBlobMain\":run(\"rev-parse\",main+\":.github/workflows/tuple-ci.yml\"),\"workflowBlobCandidate\":run(\"rev-parse\",\"HEAD:.github/workflows/tuple-ci.yml\"),\"remainingDiff\":run(\"diff\",\"--stat\",main+\"...HEAD\"),\"originalOwnerHead\":subprocess.check_output([\"git\",\"rev-parse\",\"HEAD\"],cwd=\"/home/administrator/projects/hexalith/projects/references/Hexalith.Platform\",text=True).strip(),\"originalSiblingBuildsHead\":subprocess.check_output([\"git\",\"rev-parse\",\"HEAD\"],cwd=\"/home/administrator/projects/hexalith/projects/references/Hexalith.Builds\",text=True).strip()};print(json.dumps(out,indent=2))"
+  ],
+  "cwd": "/tmp/story64-platform-tuple-candidate-20261030",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:37:55.765942+00:00",
+  "finished_utc": "2026-10-30T06:37:55.822679+00:00",
+  "seconds": 0.057,
+  "exit_code": 0,
+  "stdout": "final-owner-identities.stdout",
+  "stderr": "final-owner-identities.stderr"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "close-worker-test-cleanup",
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; p=Path(\"tests/Hexalith.Platform.Composition.Tests/PortableDevelopmentCompositionTests.cs\"); data=p.read_text(); old=\"        var allEntered=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);var allFinished=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);\\n\"; new=old+\"        using var callers=new CancellationTokenSource();Task<byte[]>[] workers=[];\\n\"; assert data.count(old)==1; data=data.replace(old,new,1); data=data.replace(\"            using var callers=new CancellationTokenSource();\\n\",\"\",1).replace(\"            var workers=Enumerable.Range(0,4).Select(_=>Start()).ToArray();\", \"            workers=Enumerable.Range(0,4).Select(_=>Start()).ToArray();\",1); old=\"        finally { release.Set();File.Delete(path); }\"; new=\"        finally\\n        {\\n            callers.Cancel();release.Set();\\n            try { await Task.WhenAll(workers); }catch(OperationCanceledException) { }\\n            File.Delete(path);\\n        }\"; assert data.count(old)==1; data=data.replace(old,new,1); assert \"ArgumentNullException.ThrowIfNull(fault);\" in data; p.write_bytes(data.replace(\"\\r\\n\",\"\\n\").replace(\"\\n\",\"\\r\\n\").encode()); print(\"Cancel callers before releasing workers, observe all public caller tasks, then delete input; preserve analyzer correction; normalize the changed C# file to required CRLF.\")"
+  ],
+  "cwd": "/tmp/story64-platform-tuple-candidate-20261030",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:30:32.085124+00:00",
+  "finished_utc": "2026-10-30T06:30:32.099569+00:00",
+  "seconds": 0.014,
+  "exit_code": 0,
+  "stdout": "close-worker-test-cleanup.stdout",
+  "stderr": "close-worker-test-cleanup.stderr"
+}

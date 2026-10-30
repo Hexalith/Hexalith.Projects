@@ -1,0 +1,47 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Action completed."
+    }
+  ],
+  "structuredContent": {
+    "url": "https://github.com/Hexalith/Hexalith.Platform/pull/10",
+    "number": 10,
+    "state": "open",
+    "merged": false,
+    "mergeable": false,
+    "draft": true,
+    "body": "The tuple preflight exposed a worker-test setup race: its caller timeout began before all four workers entered. The test now arms the same 200 ms timeout after setup, retains all occupied-slot/late-completion assertions, and cancels/observes callers before cleanup. The changed C# file follows required CRLF.\n\nFresh exact-candidate preflight passed for `6a186754102b33c3cfea823efc55e49264efbb84`: https://github.com/Hexalith/Hexalith.Platform/actions/runs/41014652010 — clean source; verified signed Builds 4.38.3 artifacts at `d1931b1e803144048d927fff16cb8119afde541e`; 27 durable restored graphs; solution Release build with zero warnings/errors; 14 binding controls; 82/82 required cases, no skips. Local Debug build and all 80 class cases pass with two processors. Independent review closed cleanup and formatting findings. Both earlier failed runs and artifacts remain retained.\n\nThis remains draft. Main advanced independently and incorporated earlier candidate work (#9 closed); as of 2026-10-30T06:37:55Z its head is `e3822304436e69f4caa58df7def79a1c8899cece`, Builds pin `157b4dacdd90148de76e576396f61dd5859556f3`, tool 4.38.3. That source/catalog differs from the published tuple tested here. The branch result cannot qualify the current merged head/base candidate.\n\nArtifact review also found a separate qualification blocker: TenantRegistry.Host's own Directory.Packages.props pins Gateway 3.124.0, yielding seven EventStore 3.124.0 libraries and Commons.UniqueIds 2.30.1. A one-line unapplied 3.128.4 alignment proposal is retained in the story evidence; changing that dependency requires separate authority and a newly restored/qualified candidate. No package version changes are part of this test correction.\n\nResolve those exact tuple/host identities and run fresh policy-bound owner/runtime evidence before acceptance. No publication, deployment or consumer adoption is requested. Story 6.4 remains in progress.",
+    "title": "test(platform): stabilize tuple preflight worker setup",
+    "base": "main",
+    "base_sha": "e3822304436e69f4caa58df7def79a1c8899cece",
+    "head": "fix/story-6-4-builds-4-38-3-candidate-20261030",
+    "head_sha": "6a186754102b33c3cfea823efc55e49264efbb84",
+    "head_repo_id": 1328589450,
+    "head_repo_full_name": "Hexalith/Hexalith.Platform",
+    "merge_commit_sha": null,
+    "user": {
+      "login": "jpiquot",
+      "name": "jpiquot",
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+      "id": 6775094
+    },
+    "requested_reviewers": null,
+    "requested_team_reviewers": null,
+    "diff": null,
+    "comments": null,
+    "created_at": "2026-10-30T06:37:21Z",
+    "updated_at": "2026-10-30T06:46:15Z",
+    "closed_at": null,
+    "merged_at": null,
+    "commits": 1,
+    "changed_files": 2,
+    "additions": 94,
+    "deletions": 87,
+    "display_url": "https://github.com/Hexalith/Hexalith.Platform/pull/10",
+    "display_title": "test(platform): stabilize tuple preflight worker setup"
+  },
+  "isError": false
+}

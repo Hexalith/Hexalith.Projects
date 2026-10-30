@@ -1,0 +1,45 @@
+{
+  "story": "6.4",
+  "story_status": "in-progress",
+  "preparation_only": true,
+  "selected_builds_version": "4.38.3",
+  "selected_builds_source": "d1931b1e803144048d927fff16cb8119afde541e",
+  "selected_catalog_git_blob_sha256": "501d72650e3a42afc8fde0345a69208669e7fabdb98b6300f20afca07585d405",
+  "selected_signed_tool_archive_sha256": "6c074186a9bbfb66c558fe5d1090e1e35fdd58577c0396266074bd1cea8919fd",
+  "platform_current_revision": "494ecb32802d1454c15704066487fa206f5bcec0",
+  "platform_recorded_builds_revision": "e129a29e6c6e2f8a200581e09b861d75a9f3a7b8",
+  "prepared_tool_version": "4.38.2",
+  "prepared_tool_source": "2574bf2f3da5367d8801f0d7661d66155e5d90b0",
+  "actual_sibling_builds_revision": "e909ffd9fe9a6097e36d932010b983d029396968",
+  "future_platform_revision": null,
+  "future_platform_version": null,
+  "published_builds_producer_identity_verified": true,
+  "platform_candidate_accepted": false,
+  "published_platform_tuple_accepted": false,
+  "consumer_tuple_qualified": false,
+  "changes_applied": false,
+  "patches": {
+    "platform-tuple-correction.UNAPPLIED.patch": "fa07b9e67d8f75fd96397da026365748ecc1dc40d68f425e88bad29a18f75447",
+    "platform-direct-apphost-alignment.UNAPPLIED.patch": "3d884f41bdd5f4d21e73b986399e110d9591cbde0b4129693351cc55f6e7be88"
+  },
+  "required_authorizations": [
+    "Apply both proposed Platform patches, explicitly including gitlink/tool/floor and file-host dependency version changes; preserve four analyzer corrections.",
+    "Resolve owner CI artifact bindings: supported BuildsToolingAssemblyPath must use verified4.38.3 DLL/closure; unconditional Builds.Module.EventStoreHost source alias needs an owner-reviewed Release artifact/package binding before final candidate selection.",
+    "Record the exact Platform candidate with ordinary commit validation; no future SHA is presumed.",
+    "Identify or establish trusted owner integration CI and authorize an exact-candidate run; no tracked Platform workflow exists.",
+    "After owner acceptance, separately authorize publication and verify official resulting identities.",
+    "Separately authorize Projects/participating-owner tuple adoption and consumer acceptance-inventory refresh, then run all-package/symbol/runtime qualifications."
+  ],
+  "current_blockers": [
+    "Unpublished/untagged current Platform SHA and uncommitted analyzer inputs (two HXW011 findings).",
+    "Platform recorded Builds pin differs from actual umbrella Builds index/checkout (HXW009).",
+    "Prepared CLI4.38.2/catalog Tenants5.11.0 differs from selected4.38.3/Tenants5.11.1.",
+    "Owner-pin test lacks legitimate direct-owner release-tag context in current nested-uninitialized workspace.",
+    "Direct apphost EventStore3.128.0/Toolkit13.6.1-beta.935 differs from selected3.128.4/13.6.2-beta.959.",
+    "Owner qualifying CI entry point and suite/decision bindings not established in this checkout.",
+    "Consumer acceptance manifest has46 common-ID version differences across18 dependency IDs; new restored closure and explicit symbol acceptance remain required.",
+    "UseHexalithProjectReferences=false still leaves foreign Builds.Tooling and Builds.Module.EventStoreHost project references; exact Release artifact bindings remain an owner configuration prerequisite.",
+    "FrontComposer.Shell4.7.1 metadata also requires FrontComposer.Contracts.UI>=4.7.1, absent from pinned catalog; its actual selection remains a fresh restore/closure check."
+  ],
+  "immediate_next_action": "Owner authorizes both unapplied Platform patches, resolves the explicit owner CI artifact-binding/configuration gate, records the final exact candidate under separate authority, and runs its trusted integration CI before publication or consumer adoption."
+}

@@ -1,0 +1,17 @@
+{
+  "name": "fix-worker-setup-timer",
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; p=Path(\"tests/Hexalith.Platform.Composition.Tests/PortableDevelopmentCompositionTests.cs\"); data=p.read_bytes(); a=b\"            using var callers=new CancellationTokenSource(TimeSpan.FromMilliseconds(200));\\n\"; b=b\"            using var callers=new CancellationTokenSource();\\r\\n\"; assert data.count(a)==1; data=data.replace(a,b,1); old=b\"            var workers=Enumerable.Range(0,4).Select(_=>Start()).ToArray();await allEntered.Task.WaitAsync(TimeSpan.FromSeconds(2),TestContext.Current.CancellationToken);\\n\"; new=b\"            var workers=Enumerable.Range(0,4).Select(_=>Start()).ToArray();await allEntered.Task.WaitAsync(TimeSpan.FromSeconds(10),TestContext.Current.CancellationToken);\\r\\n            callers.CancelAfter(TimeSpan.FromMilliseconds(200));\\r\\n\"; assert data.count(old)==1; p.write_bytes(data.replace(old,new,1)); a=Path(\".gitattributes\"); addition=b\"tests/Hexalith.Platform.Composition.Tests/PortableDevelopmentCompositionTests.cs whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\\n\"; assert addition not in a.read_bytes(); a.write_bytes(a.read_bytes()+addition); print(\"Arm the unchanged 200 ms caller timeout after all four workers enter; setup remains bounded at 10 s. Preserve all untouched source bytes and analyzer fix.\")"
+  ],
+  "cwd": "/tmp/story64-platform-tuple-candidate-20261030",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:27:13.432007+00:00",
+  "finished_utc": "2026-10-30T06:27:13.447980+00:00",
+  "seconds": 0.016,
+  "exit_code": 0,
+  "stdout": "fix-worker-setup-timer.stdout",
+  "stderr": "fix-worker-setup-timer.stderr"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "prepare-workflow-only",
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; import subprocess,hashlib,json; path=Path(\".github/workflows/tuple-ci.yml\"); assert not path.exists(); path.parent.mkdir(parents=True,exist_ok=True); data=subprocess.check_output([\"git\",\"show\",\"9f43cefe11bd246ce0de1cd0740261b557c0c7a0:.github/workflows/tuple-ci.yml\"]); path.write_bytes(data); print(json.dumps({\"sourceCandidate\":\"9f43cefe11bd246ce0de1cd0740261b557c0c7a0\",\"bootstrapBase\":subprocess.check_output([\"git\",\"rev-parse\",\"HEAD\"]).decode().strip(),\"file\":str(path),\"sha256\":hashlib.sha256(data).hexdigest(),\"byteIdenticalToReviewedWorkflow\":True},indent=2))"
+  ],
+  "cwd": "/tmp/story64-platform-tuple-workflow-20261030",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:04:43.289918+00:00",
+  "finished_utc": "2026-10-30T06:04:43.313739+00:00",
+  "seconds": 0.024,
+  "exit_code": 0,
+  "stdout": "prepare-workflow-only.stdout",
+  "stderr": "prepare-workflow-only.stderr"
+}

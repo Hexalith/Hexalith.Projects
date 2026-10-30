@@ -1,0 +1,20 @@
+{
+  "name": "platform-official-releases",
+  "argv": [
+    "gh",
+    "api",
+    "repos/Hexalith/Hexalith.Platform/releases",
+    "--paginate",
+    "--jq",
+    "[.[] | {tag_name,target_commitish,published_at,html_url,draft,prerelease}]"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials archived.",
+  "started_utc": "2026-10-29T09:15:08.361650+00:00",
+  "finished_utc": "2026-10-29T09:15:08.795810+00:00",
+  "seconds": 0.434,
+  "exit_code": 0,
+  "stdout": "platform-official-releases.stdout",
+  "stderr": "platform-official-releases.stderr"
+}

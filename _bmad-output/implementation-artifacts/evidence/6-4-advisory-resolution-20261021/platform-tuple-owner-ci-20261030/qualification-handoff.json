@@ -1,0 +1,66 @@
+{
+  "story": "6.4",
+  "storyStatus": "in-progress",
+  "selectedCandidate": "6a186754102b33c3cfea823efc55e49264efbb84",
+  "selectedTool": "4.38.3",
+  "selectedBuilds": "d1931b1e803144048d927fff16cb8119afde541e",
+  "tenants": "5.11.1",
+  "eventStore": "3.128.4",
+  "platformCiPreflight": {
+    "run": 41014652010,
+    "attempt": 1,
+    "job": 123928122261,
+    "status": "passed",
+    "workflowHead": "1e4e447c84109f2d8ba6e7e2357953e5cdbef9a4",
+    "requiredPassed": 82,
+    "bindingControls": 14,
+    "projectGraphs": 27,
+    "restoredGraphsRetained": 27,
+    "releaseWarnings": 0,
+    "releaseErrors": 0,
+    "artifact": 12959311920,
+    "artifactSha256": "31e316d0a13050da2377bee2cf72e322fc7ebc836a171a7b20d36c913baf67cf"
+  },
+  "workflowRegistration": {
+    "pr": 8,
+    "merge": "357d8cfc074d79042dc4395cf7fc2ff51034c74b",
+    "configuredOwnerExceptionUsed": true,
+    "ruleChanges": false
+  },
+  "reviewPr": 10,
+  "originalCandidate": "9f43cefe11bd246ce0de1cd0740261b557c0c7a0",
+  "intermediateCandidate": "0e524c17333ba181ff7a6a2384b680da9760489e",
+  "failedRunsRetained": [
+    41012249519,
+    41013494873
+  ],
+  "mainObservation": {
+    "utc": "2026-10-30T06:37:55.783235Z",
+    "platform": "e3822304436e69f4caa58df7def79a1c8899cece",
+    "builds": "157b4dacdd90148de76e576396f61dd5859556f3",
+    "tool": "4.38.3",
+    "catalogSha256": "fa3df877f1304db565456dd6c79da7d13ad2cff600fea94331ea093523568a10",
+    "publishedTupleMatched": false
+  },
+  "tenantRegistryHost": {
+    "actualGateway": "3.124.0",
+    "catalogGateway": "3.128.4",
+    "actualEventStoreLibrariesAt31240": 7,
+    "actualUniqueIds": "2.30.1",
+    "proposal": "tenant-registry-catalog-alignment.UNAPPLIED.patch",
+    "proposalApplied": false,
+    "patchCheckPassed": true
+  },
+  "candidateAccepted": false,
+  "runtimeQualified": false,
+  "publishedTupleAccepted": false,
+  "currentMainQualified": false,
+  "consumerAdopted": false,
+  "publicationPerformed": false,
+  "deploymentPerformed": false,
+  "dependencyVersionsChangedThisCiOperation": false,
+  "umbrellaNestedInitialized": false,
+  "originalRepositoryHeadsAndIndexesPreserved": true,
+  "nextAuthorization": "Apply the concrete TenantRegistry.Host Gateway 3.124.0 -> 3.128.4 proposal and qualify its actual restored closure; prepare/reconcile an officially published Builds tuple for current main's newer catalog without silently rolling it back. Publication itself and consumer adoption require separate authority after qualified concrete release candidates exist.",
+  "nextPlan": "qualification-next-actions.md"
+}

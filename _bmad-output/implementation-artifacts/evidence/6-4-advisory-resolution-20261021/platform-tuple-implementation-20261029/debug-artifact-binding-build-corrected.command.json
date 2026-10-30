@@ -1,0 +1,24 @@
+{
+  "name": "debug-artifact-binding-build-corrected",
+  "argv": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "-p:MinVerVersionOverride=1.0.0",
+    "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+    "-v:minimal"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-29T18:09:51.430811+00:00",
+  "finished_utc": "2026-10-29T18:09:55.742032+00:00",
+  "seconds": 4.311,
+  "exit_code": 0,
+  "stdout": "debug-artifact-binding-build-corrected.stdout",
+  "stderr": "debug-artifact-binding-build-corrected.stderr"
+}

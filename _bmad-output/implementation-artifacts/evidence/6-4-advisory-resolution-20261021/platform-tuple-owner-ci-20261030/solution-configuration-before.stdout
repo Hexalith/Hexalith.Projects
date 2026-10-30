@@ -1,0 +1,423 @@
+/home/administrator/.dotnet/sdk/10.0.403/MSBuild --nologo --property:Configuration=Release --target:ValidateSolutionConfiguration --verbosity:m --verbosity:diagnostic -distributedlogger:Microsoft.DotNet.Cli.Commands.MSBuild.MSBuildLogger,/home/administrator/.dotnet/sdk/10.0.403/dotnet.dll*Microsoft.DotNet.Cli.Commands.MSBuild.MSBuildForwardingLogger,/home/administrator/.dotnet/sdk/10.0.403/dotnet.dll -maxcpucount -tlp:default=auto Hexalith.Platform.slnx
+Build started 10/30/2026 07:15:49.
+Environment at start of build:
+DOTNET_ROOT = /home/administrator/.dotnet
+MSBuildLoadMicrosoftTargetsReadOnly = true
+DOTNET_CLI_TELEMETRY_SESSIONID = 5fb21cb0-c7aa-48aa-a96a-7992e95a8a55
+DOTNET_BUNDLE_EXTRACT_BASE_DIR = /home/administrator/.cache/dotnet_bundle_extract
+DOTNET_HOST_PATH = /home/administrator/.dotnet/dotnet
+MSBUILDEMITSOLUTION = 1
+MSBuildSDKsPath = /home/administrator/.dotnet/sdk/10.0.403/Sdks
+MSBuildExtensionsPath = /home/administrator/.dotnet/sdk/10.0.403/
+MSBUILDFAILONDRIVEENUMERATINGWILDCARD = 1
+
+07:15:49.012     0>Enabled loggers: MSBuildLogger, CentralForwardingLogger, CentralForwardingLogger, ConsoleLogger
+                   Terminal Logger was not used because the output is being redirected to a file.
+                   Process = "/home/administrator/.dotnet/dotnet"
+                   MSBuild executable path = "/home/administrator/.dotnet/sdk/10.0.403/MSBuild"
+                   Command line arguments = "/home/administrator/.dotnet/sdk/10.0.403/MSBuild -maxcpucount --verbosity:m -tlp:default=auto --property:Configuration=Release --target:ValidateSolutionConfiguration --verbosity:diagnostic --nologo Hexalith.Platform.slnx -distributedlogger:Microsoft.DotNet.Cli.Commands.MSBuild.MSBuildLogger,/home/administrator/.dotnet/sdk/10.0.403/dotnet.dll*Microsoft.DotNet.Cli.Commands.MSBuild.MSBuildForwardingLogger,/home/administrator/.dotnet/sdk/10.0.403/dotnet.dll"
+                   Current directory = "/tmp/story64-platform-tuple-candidate-20261030"
+                   MSBuild version = "18.9.15+5a2162bea"
+                   /tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx.metaproj : message : Property 'MSBuildExtensionsPath' with value '/home/administrator/.dotnet/sdk/10.0.403/' expanded from the environment.
+                   Assembly loaded during Evaluation: System.Threading.Tasks.Parallel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a (location: /home/administrator/.dotnet/shared/Microsoft.NETCore.App/10.0.14/System.Threading.Tasks.Parallel.dll, MVID: 8c150649-a7fd-4ac7-9117-8e151b1c032e, AssemblyLoadContext: Default)
+                   /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets(125,5): message : Property reassignment: $(_GenerateRestoreGraphProjectEntryInputProperties)="
+                   /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets(125,5): message :       ExcludeRestorePackageImports=true;
+                   /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets(125,5): message :       _RestoreSolutionFileUsed=true;
+                   /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets(125,5): message :       SolutionDir=/tmp/story64-platform-tuple-candidate-20261030/;
+                   /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets(125,5): message :       SolutionName=Hexalith.Platform;
+                   /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets(125,5): message :       SolutionFileName=Hexalith.Platform.slnx;
+                   /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets(125,5): message :       SolutionPath=/tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx;
+                   /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets(125,5): message :       SolutionExt=.slnx;
+                   /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets(125,5): message :     " (previous value: "ExcludeRestorePackageImports=true") at /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets (125,5)
+                   The target "_MTPBuild" listed in a BeforeTargets attribute at "/home/administrator/.dotnet/sdk/10.0.403/Current/SolutionFile/ImportAfter/Microsoft.NET.Sdk.Solution.targets (24,11)" does not exist in the project, and will be ignored.
+                   The target "Store" listed in a BeforeTargets attribute at "/home/administrator/.dotnet/sdk/10.0.403/Current/SolutionFile/ImportAfter/Microsoft.NET.Sdk.Solution.targets (33,11)" does not exist in the project, and will be ignored.
+                   The target "VSTest" listed in a BeforeTargets attribute at "/home/administrator/.dotnet/sdk/10.0.403/Current/SolutionFile/ImportAfter/Microsoft.NET.Sdk.Solution.targets (33,11)" does not exist in the project, and will be ignored.
+                   The target "_MTPBuild" listed in a BeforeTargets attribute at "/home/administrator/.dotnet/sdk/10.0.403/Current/SolutionFile/ImportAfter/Microsoft.NET.Sdk.Solution.targets (33,11)" does not exist in the project, and will be ignored.
+                   The target "_CheckForInvalidConfigurationAndPlatform" listed in a BeforeTargets attribute at "/home/administrator/.dotnet/sdk/10.0.403/NuGet.targets (705,11)" does not exist in the project, and will be ignored.
+07:15:49.169     0>Initial Properties:
+                   _DirectorySolutionPropsBasePath = 
+                   _DirectorySolutionPropsFile = Directory.Solution.props
+                   _DirectorySolutionTargetsBasePath = 
+                   _DirectorySolutionTargetsFile = Directory.Solution.targets
+                   _GenerateRestoreGraphProjectEntryInputProperties = 
+                         ExcludeRestorePackageImports=true;
+                         _RestoreSolutionFileUsed=true;
+                         SolutionDir=/tmp/story64-platform-tuple-candidate-20261030/;
+                         SolutionName=Hexalith.Platform;
+                         SolutionFileName=Hexalith.Platform.slnx;
+                         SolutionPath=/tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx;
+                         SolutionExt=.slnx;
+                       
+                   _RestoreSolutionFileUsed = true
+                   AspNetConfiguration = Release
+                   Configuration = Release
+                   CurrentSolutionConfigurationContents = <SolutionConfiguration>
+                     <ProjectConfiguration Project="{854C8888-48C5-3532-EC22-D1925DAFCF4D}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Composition/Hexalith.Platform.Composition.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{C762EFE0-52D5-E218-7057-9BAD99D00F70}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Custody.Component/Hexalith.Platform.Custody.Component.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{FE1AAC3E-5E46-A99C-726A-126D94BF5D04}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Custody/Hexalith.Platform.Custody.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{925F2DB2-7519-718A-10E2-77BA54EC7E71}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.EventStoreHost/Hexalith.Platform.EventStoreHost.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{8DADBD7F-6248-80A0-4143-A91252FC10FA}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Identity/Hexalith.Platform.Identity.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{7FD4F9EB-B474-97FC-380B-69E64BE4CF4E}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Protection/Hexalith.Platform.Protection.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{6D462A0E-5044-9665-E994-C8A42441DE3E}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Authority/Hexalith.Platform.Secrets.Authority.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{C815463B-7C92-3ABC-91B2-92AD68D138D7}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Custody/Hexalith.Platform.Secrets.Custody.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{F0E99533-58EE-37ED-528D-70A4648571CC}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Inventory/Hexalith.Platform.Secrets.Inventory.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{A301B434-4ADC-2055-F838-701C98625689}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Enrollment/Hexalith.Platform.Secrets.Qualification.Enrollment.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{482BA295-74AD-54B3-611B-7871BAB47A9A}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Executor/Hexalith.Platform.Secrets.Qualification.Executor.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{CBE05906-7A6B-E10F-7753-7226D5289B8C}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Observer/Hexalith.Platform.Secrets.Qualification.Observer.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{6EDF9517-C6A1-B6BC-DA34-871AEFBBC22B}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Runtime/Hexalith.Platform.Secrets.Runtime.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{F8295717-EA48-6F48-CEF7-09F5641483B1}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.TenantRegistry.Host/Hexalith.Platform.TenantRegistry.Host.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{E68DD3C3-79C8-5249-FA09-B5D5722617AF}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{7080A055-6455-E301-9894-8B402AF3B8F4}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{B7E43659-C340-30A7-9BDC-F38C397284BE}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Custody.Component.Tests/Hexalith.Platform.Custody.Component.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{949C04A0-B349-A923-07F1-F257D4A1A207}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Custody.Tests/Hexalith.Platform.Custody.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{94EAC984-1E45-0134-9C20-B19711A46F76}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Identity.Tests/Hexalith.Platform.Identity.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{3B430588-A9D1-1243-3DD7-ECE0DCD9683B}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Protection.Tests/Hexalith.Platform.Protection.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{EE4FF6C1-C44F-78C1-DFDC-36A765A57DA2}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Authority.Tests/Hexalith.Platform.Secrets.Authority.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{2F796CD5-AA71-1877-812E-FA2D788C6416}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Custody.Tests/Hexalith.Platform.Secrets.Custody.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{D58CF410-219A-3AA3-1117-90F76EDD4564}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Inventory.Tests/Hexalith.Platform.Secrets.Inventory.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{81F14084-576A-2A9A-D637-A8A18534A712}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Runtime.Tests/Hexalith.Platform.Secrets.Runtime.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{009FC27A-1B9C-6ABF-EAD7-91E5190B4763}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Works.Tests/Hexalith.Platform.Works.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{133C4404-AFD7-D523-8D98-BC6A3592A0D0}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.OwnerServices.Tests/Hexalith.Platform.OwnerServices.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                   </SolutionConfiguration>
+                   DefaultImplicitPackages = Microsoft.NETCore.App;NETStandard.Library
+                   DOTNET_BUNDLE_EXTRACT_BASE_DIR = /home/administrator/.cache/dotnet_bundle_extract
+                   DOTNET_CLI_TELEMETRY_SESSIONID = 5fb21cb0-c7aa-48aa-a96a-7992e95a8a55
+                   DOTNET_HOST_PATH = /home/administrator/.dotnet/dotnet
+                   DOTNET_ROOT = /home/administrator/.dotnet
+                   DotnetCliToolTargetFramework = netcoreapp2.2
+                   GetReferenceNearestTargetFrameworkTaskSupportsTargetFrameworkPropertyParameter = true
+                   GetReferenceNearestTargetFrameworkTaskSupportsTargetPlatformParameter = true
+                   HideWarningsAndErrors = false
+                   IsRestoreTargetsFileLoaded = true
+                   MicrosoftNETBuildTasksAssembly = /home/administrator/.dotnet/sdk/10.0.403/Sdks/Microsoft.NET.Sdk/targets/../tools/net10.0/Microsoft.NET.Build.Tasks.dll
+                   MicrosoftNETBuildTasksDirectory = /home/administrator/.dotnet/sdk/10.0.403/Sdks/Microsoft.NET.Sdk/targets/../tools/net10.0/
+                   MicrosoftNETBuildTasksDirectoryRoot = /home/administrator/.dotnet/sdk/10.0.403/Sdks/Microsoft.NET.Sdk/targets/../tools/
+                   MicrosoftNETBuildTasksTFM = net10.0
+                   MSBuildAllProjects = /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets
+                   MSBuildAssemblyVersion = 18.0
+                   MSBuildBinPath = /home/administrator/.dotnet/sdk/10.0.403
+                   MSBuildDisableFeaturesFromVersion = 999.999
+                   MSBUILDEMITSOLUTION = 1
+                   MSBuildExtensionsPath = /home/administrator/.dotnet/sdk/10.0.403/
+                   MSBuildExtensionsPath32 = /home/administrator/.dotnet/sdk/10.0.403
+                   MSBuildExtensionsPath64 = /home/administrator/.dotnet/sdk/10.0.403
+                   MSBUILDFAILONDRIVEENUMERATINGWILDCARD = 1
+                   MSBuildFileVersion = 18.9.15.52412
+                   MSBuildFrameworkToolsRoot = /home/administrator/.dotnet/shared/Microsoft.NETCore.App
+                   MSBuildLoadMicrosoftTargetsReadOnly = true
+                   MSBuildNodeCount = 1
+                   MSBuildProgramFiles32 = 
+                   MSBuildProjectDefaultTargets = Build
+                   MSBuildProjectDirectory = /tmp/story64-platform-tuple-candidate-20261030
+                   MSBuildProjectDirectoryNoRoot = tmp/story64-platform-tuple-candidate-20261030
+                   MSBuildProjectExtension = .metaproj
+                   MSBuildProjectFile = Hexalith.Platform.slnx.metaproj
+                   MSBuildProjectFullPath = /tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx.metaproj
+                   MSBuildProjectName = Hexalith.Platform.slnx
+                   MSBuildRuntimeType = Core
+                   MSBuildSDKsPath = /home/administrator/.dotnet/sdk/10.0.403/Sdks
+                   MSBuildSemanticVersion = 18.9.15+5a2162bea
+                   MSBuildStartupDirectory = /tmp/story64-platform-tuple-candidate-20261030
+                   MSBuildToolsPath = /home/administrator/.dotnet/sdk/10.0.403
+                   MSBuildToolsVersion = Current
+                   MSBuildUserExtensionsPath = /home/administrator/.local/share/Microsoft\MSBuild
+                   MSBuildVersion = 18.9.15
+                   NuGetAudit = true
+                   NuGetAuditLevel = low
+                   NuGetAuditMode = direct
+                   NuGetInteractive = 
+                   NuGetRestoreTargets = /home/administrator/.dotnet/sdk/10.0.403/NuGet.targets
+                   OS = Unix
+                   PackageDownloadSupported = true
+                   Platform = Any CPU
+                   RestoreBuildInParallel = true
+                   RestoreContinueOnError = WarnAndContinue
+                   RestoreEnablePackagePruning = false
+                   RestorePackagePruningDefault = false
+                   RestoreRecursive = true
+                   RestoreTaskAssemblyFile = NuGet.Build.Tasks.dll
+                   RestoreUseSkipNonexistentTargets = true
+                   RoslynTargetsPath = /home/administrator/.dotnet/sdk/10.0.403/Roslyn
+                   SolutionDir = /tmp/story64-platform-tuple-candidate-20261030/
+                   SolutionExt = .slnx
+                   SolutionFileName = Hexalith.Platform.slnx
+                   SolutionName = Hexalith.Platform
+                   SolutionPath = /tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx
+                   TargetFrameworkVersion = v4.0
+                   ValidateRuntimeIdentifierCompatibility = false
+                   VisualStudioVersion = 18.0
+
+07:15:49.169     0>Initial Items:
+                   ProjectReference
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Composition/Hexalith.Platform.Composition.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Custody.Component/Hexalith.Platform.Custody.Component.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Custody/Hexalith.Platform.Custody.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.EventStoreHost/Hexalith.Platform.EventStoreHost.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Identity/Hexalith.Platform.Identity.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Protection/Hexalith.Platform.Protection.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Authority/Hexalith.Platform.Secrets.Authority.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Custody/Hexalith.Platform.Secrets.Custody.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Inventory/Hexalith.Platform.Secrets.Inventory.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Enrollment/Hexalith.Platform.Secrets.Qualification.Enrollment.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Executor/Hexalith.Platform.Secrets.Qualification.Executor.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Observer/Hexalith.Platform.Secrets.Qualification.Observer.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Runtime/Hexalith.Platform.Secrets.Runtime.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.TenantRegistry.Host/Hexalith.Platform.TenantRegistry.Host.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Custody.Component.Tests/Hexalith.Platform.Custody.Component.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Custody.Tests/Hexalith.Platform.Custody.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Identity.Tests/Hexalith.Platform.Identity.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.OwnerServices.Tests/Hexalith.Platform.OwnerServices.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Protection.Tests/Hexalith.Platform.Protection.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Authority.Tests/Hexalith.Platform.Secrets.Authority.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Custody.Tests/Hexalith.Platform.Secrets.Custody.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Inventory.Tests/Hexalith.Platform.Secrets.Inventory.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Runtime.Tests/Hexalith.Platform.Secrets.Runtime.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                       /tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Works.Tests/Hexalith.Platform.Works.Tests.csproj
+                           AdditionalProperties = Configuration=Release; Platform=AnyCPU
+                           Platform = AnyCPU
+                           Configuration = Release
+                           ToolsVersion = 
+                           SkipNonexistentProjects = False
+                   SolutionConfiguration
+                       Debug|Any CPU
+                           Content = <SolutionConfiguration>
+                     <ProjectConfiguration Project="{854C8888-48C5-3532-EC22-D1925DAFCF4D}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Composition/Hexalith.Platform.Composition.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{C762EFE0-52D5-E218-7057-9BAD99D00F70}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Custody.Component/Hexalith.Platform.Custody.Component.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{FE1AAC3E-5E46-A99C-726A-126D94BF5D04}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Custody/Hexalith.Platform.Custody.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{925F2DB2-7519-718A-10E2-77BA54EC7E71}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.EventStoreHost/Hexalith.Platform.EventStoreHost.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{8DADBD7F-6248-80A0-4143-A91252FC10FA}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Identity/Hexalith.Platform.Identity.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{7FD4F9EB-B474-97FC-380B-69E64BE4CF4E}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Protection/Hexalith.Platform.Protection.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{6D462A0E-5044-9665-E994-C8A42441DE3E}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Authority/Hexalith.Platform.Secrets.Authority.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{C815463B-7C92-3ABC-91B2-92AD68D138D7}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Custody/Hexalith.Platform.Secrets.Custody.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{F0E99533-58EE-37ED-528D-70A4648571CC}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Inventory/Hexalith.Platform.Secrets.Inventory.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{A301B434-4ADC-2055-F838-701C98625689}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Enrollment/Hexalith.Platform.Secrets.Qualification.Enrollment.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{482BA295-74AD-54B3-611B-7871BAB47A9A}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Executor/Hexalith.Platform.Secrets.Qualification.Executor.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{CBE05906-7A6B-E10F-7753-7226D5289B8C}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Observer/Hexalith.Platform.Secrets.Qualification.Observer.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{6EDF9517-C6A1-B6BC-DA34-871AEFBBC22B}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Runtime/Hexalith.Platform.Secrets.Runtime.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{F8295717-EA48-6F48-CEF7-09F5641483B1}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.TenantRegistry.Host/Hexalith.Platform.TenantRegistry.Host.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{E68DD3C3-79C8-5249-FA09-B5D5722617AF}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{7080A055-6455-E301-9894-8B402AF3B8F4}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{B7E43659-C340-30A7-9BDC-F38C397284BE}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Custody.Component.Tests/Hexalith.Platform.Custody.Component.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{949C04A0-B349-A923-07F1-F257D4A1A207}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Custody.Tests/Hexalith.Platform.Custody.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{94EAC984-1E45-0134-9C20-B19711A46F76}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Identity.Tests/Hexalith.Platform.Identity.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{3B430588-A9D1-1243-3DD7-ECE0DCD9683B}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Protection.Tests/Hexalith.Platform.Protection.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{EE4FF6C1-C44F-78C1-DFDC-36A765A57DA2}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Authority.Tests/Hexalith.Platform.Secrets.Authority.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{2F796CD5-AA71-1877-812E-FA2D788C6416}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Custody.Tests/Hexalith.Platform.Secrets.Custody.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{D58CF410-219A-3AA3-1117-90F76EDD4564}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Inventory.Tests/Hexalith.Platform.Secrets.Inventory.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{81F14084-576A-2A9A-D637-A8A18534A712}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Runtime.Tests/Hexalith.Platform.Secrets.Runtime.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{009FC27A-1B9C-6ABF-EAD7-91E5190B4763}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Works.Tests/Hexalith.Platform.Works.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{133C4404-AFD7-D523-8D98-BC6A3592A0D0}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.OwnerServices.Tests/Hexalith.Platform.OwnerServices.Tests.csproj" BuildProjectInSolution="True">Debug|AnyCPU</ProjectConfiguration>
+                   </SolutionConfiguration>
+                           Platform = Any CPU
+                           Configuration = Debug
+                       Release|Any CPU
+                           Content = <SolutionConfiguration>
+                     <ProjectConfiguration Project="{854C8888-48C5-3532-EC22-D1925DAFCF4D}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Composition/Hexalith.Platform.Composition.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{C762EFE0-52D5-E218-7057-9BAD99D00F70}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Custody.Component/Hexalith.Platform.Custody.Component.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{FE1AAC3E-5E46-A99C-726A-126D94BF5D04}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Custody/Hexalith.Platform.Custody.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{925F2DB2-7519-718A-10E2-77BA54EC7E71}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.EventStoreHost/Hexalith.Platform.EventStoreHost.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{8DADBD7F-6248-80A0-4143-A91252FC10FA}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Identity/Hexalith.Platform.Identity.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{7FD4F9EB-B474-97FC-380B-69E64BE4CF4E}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Protection/Hexalith.Platform.Protection.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{6D462A0E-5044-9665-E994-C8A42441DE3E}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Authority/Hexalith.Platform.Secrets.Authority.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{C815463B-7C92-3ABC-91B2-92AD68D138D7}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Custody/Hexalith.Platform.Secrets.Custody.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{F0E99533-58EE-37ED-528D-70A4648571CC}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Inventory/Hexalith.Platform.Secrets.Inventory.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{A301B434-4ADC-2055-F838-701C98625689}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Enrollment/Hexalith.Platform.Secrets.Qualification.Enrollment.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{482BA295-74AD-54B3-611B-7871BAB47A9A}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Executor/Hexalith.Platform.Secrets.Qualification.Executor.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{CBE05906-7A6B-E10F-7753-7226D5289B8C}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Qualification.Observer/Hexalith.Platform.Secrets.Qualification.Observer.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{6EDF9517-C6A1-B6BC-DA34-871AEFBBC22B}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Secrets.Runtime/Hexalith.Platform.Secrets.Runtime.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{F8295717-EA48-6F48-CEF7-09F5641483B1}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.TenantRegistry.Host/Hexalith.Platform.TenantRegistry.Host.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{E68DD3C3-79C8-5249-FA09-B5D5722617AF}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{7080A055-6455-E301-9894-8B402AF3B8F4}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{B7E43659-C340-30A7-9BDC-F38C397284BE}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Custody.Component.Tests/Hexalith.Platform.Custody.Component.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{949C04A0-B349-A923-07F1-F257D4A1A207}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Custody.Tests/Hexalith.Platform.Custody.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{94EAC984-1E45-0134-9C20-B19711A46F76}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Identity.Tests/Hexalith.Platform.Identity.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{3B430588-A9D1-1243-3DD7-ECE0DCD9683B}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Protection.Tests/Hexalith.Platform.Protection.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{EE4FF6C1-C44F-78C1-DFDC-36A765A57DA2}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Authority.Tests/Hexalith.Platform.Secrets.Authority.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{2F796CD5-AA71-1877-812E-FA2D788C6416}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Custody.Tests/Hexalith.Platform.Secrets.Custody.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{D58CF410-219A-3AA3-1117-90F76EDD4564}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Inventory.Tests/Hexalith.Platform.Secrets.Inventory.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{81F14084-576A-2A9A-D637-A8A18534A712}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Secrets.Runtime.Tests/Hexalith.Platform.Secrets.Runtime.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{009FC27A-1B9C-6ABF-EAD7-91E5190B4763}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.Works.Tests/Hexalith.Platform.Works.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                     <ProjectConfiguration Project="{133C4404-AFD7-D523-8D98-BC6A3592A0D0}" AbsolutePath="/tmp/story64-platform-tuple-candidate-20261030/tests/Hexalith.Platform.OwnerServices.Tests/Hexalith.Platform.OwnerServices.Tests.csproj" BuildProjectInSolution="True">Release|AnyCPU</ProjectConfiguration>
+                   </SolutionConfiguration>
+                           Platform = Any CPU
+                           Configuration = Release
+
+07:15:49.187     1>Project "/tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx" on node 1 (ValidateSolutionConfiguration target(s)).
+07:15:49.192     1>Target "ValidateSolutionConfiguration: (TargetId:2)" in file "/tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx.metaproj" from project "/tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx" (entry point):
+07:15:49.199     1>Using "Message" task from assembly "Microsoft.Build.Tasks.Core, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
+                   Task "Message" (TaskId:2)
+                     Task Parameter:Text=Building solution configuration "Release|Any CPU". (TaskId:2)
+                     Building solution configuration "Release|Any CPU". (TaskId:2)
+                   Done executing task "Message". (TaskId:2)
+07:15:49.205     1>Done building target "ValidateSolutionConfiguration" in project "Hexalith.Platform.slnx".: (TargetId:2)
+07:15:49.205     1>Target "ValidateToolsVersions: (TargetId:3)" in file "/tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx.metaproj" from project "/tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx" (entry point):
+07:15:49.206     1>Done building target "ValidateToolsVersions" in project "Hexalith.Platform.slnx".: (TargetId:3)
+07:15:49.206     1>Target "ValidateProjects: (TargetId:4)" in file "/tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx.metaproj" from project "/tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx" (entry point):
+07:15:49.206     1>Done building target "ValidateProjects" in project "Hexalith.Platform.slnx".: (TargetId:4)
+                   Target "ValidateSolutionConfiguration" skipped. Previously built successfully.
+07:15:49.207     1>Done Building Project "/tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx" (ValidateSolutionConfiguration target(s)).
+Deferred Messages
+07:15:49.216     0>
+Detailed Build Summary
+======================
+     (TaskId:0)
+                     
+                     ============================== Build Hierarchy (IDs represent configurations) =====================================================
+                     Id                  : Exclusive Time   Total Time   Path (Targets)
+                     ----------------------------------------------------------------------------------------------------------------------------------- (TaskId:0)
+                     0                   : 0.033s           0.033s       /tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx (ValidateSolutionConfiguration)  (TaskId:0)
+                     
+                     ============================== Node Utilization (IDs represent configurations) ====================================================
+                     Timestamp:            1        Duration   Cumulative
+                     ----------------------------------------------------------------------------------------------------------------------------------- (TaskId:0)
+                     639289377491815124:   0        0.034s     0.034s  (TaskId:0)
+                     -----------------------------------------------------------------------------------------------------------------------------------
+                     Utilization:          100.0    Average Utilization: 100.0 (TaskId:0)
+
+Project Evaluation Performance Summary:
+       91 ms  /tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx.metaproj   1 calls
+
+Project Performance Summary:
+       20 ms  /tmp/story64-platform-tuple-candidate-20261030/Hexalith.Platform.slnx   1 calls
+                 20 ms  ValidateSolutionConfiguration              1 calls
+
+Target Performance Summary:
+        0 ms  ValidateProjects                           1 calls
+        0 ms  ValidateToolsVersions                      1 calls
+       13 ms  ValidateSolutionConfiguration              1 calls
+
+Task Performance Summary:
+        6 ms  Message                                    1 calls
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.25

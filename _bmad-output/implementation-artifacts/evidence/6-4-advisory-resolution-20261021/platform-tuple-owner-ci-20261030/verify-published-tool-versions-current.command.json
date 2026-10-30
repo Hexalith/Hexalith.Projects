@@ -1,0 +1,17 @@
+{
+  "name": "verify-published-tool-versions-current",
+  "argv": [
+    "python3",
+    "-c",
+    "import urllib.request,json; url=\"https://api.nuget.org/v3-flatcontainer/hexalith.builds.module.cli/index.json\"; data=json.load(urllib.request.urlopen(url,timeout=60)); print(json.dumps({\"url\":url,\"versions\":data[\"versions\"]},indent=2))"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:34:04.612700+00:00",
+  "finished_utc": "2026-10-30T06:34:04.830482+00:00",
+  "seconds": 0.218,
+  "exit_code": 0,
+  "stdout": "verify-published-tool-versions-current.stdout",
+  "stderr": "verify-published-tool-versions-current.stderr"
+}

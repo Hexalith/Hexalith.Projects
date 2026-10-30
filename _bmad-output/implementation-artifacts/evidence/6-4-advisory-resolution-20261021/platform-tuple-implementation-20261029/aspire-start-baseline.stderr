@@ -1,0 +1,48 @@
+Starting Aspire AppHost in the background...
+❌ Failed to start the AppHost.
+ℹ️ Recent AppHost startup output:
+NativeCertificateToolRunner: Failed to trust the certificate in the NSS database in '/home/administrator/.pki/nssdb'. This will likely affect the Chromium 
+family of browsers. This likely indicates that the database already contains an entry for the certificate under a different name. Please remove it and try 
+again.
+NativeCertificateToolRunner: The certificate is only partially trusted - some clients will not accept it.
+NativeCertificateToolRunner: The certificate is not trusted by OpenSSL.  Ensure that the SSL_CERT_DIR environment variable is set correctly.
+NativeCertificateToolRunner: The certificate is not trusted in the NSS database in '/home/administrator/.pki/nssdb'. This will likely affect the Chromium family
+of browsers.
+  Determining projects to restore...
+  Restored 
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Custody.Component/Hexalith.Platform.Custody.Component.csproj 
+(in 439 ms).
+  Restored 
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Secrets.Runtime/Hexalith.Platform.Secrets.Runtime.csproj (in 
+438 ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Custody/Hexalith.Platform.Custody.csproj (in 438 
+ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Tooling/Hexalith.Builds.Tooling.csproj (in 
+438 ms).
+  Restored 
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Works.Runtime/Hexalith.Platform.Works.Runtime.csproj (in 439 
+ms).
+  Restored /home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.Composition/Hexalith.Platform.Composition.csproj 
+(in 460 ms).
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs.csproj : error NU1605: Warning As Error: Detected package downgrade: 
+CommunityToolkit.Aspire.Hosting.Dapr from 13.6.2-beta.959 to 13.6.1-beta.935. Reference the package directly from the project to select a different version. 
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs.csproj : error NU1605:  apphost -> Hexalith.Platform.Composition -> 
+CommunityToolkit.Aspire.Hosting.Dapr (>= 13.6.2-beta.959) 
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs.csproj : error NU1605:  apphost -> CommunityToolkit.Aspire.Hosting.Dapr 
+(>= 13.6.1-beta.935)
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs.csproj : error NU1605: Warning As Error: Detected package downgrade: 
+Hexalith.EventStore.Aspire from 3.128.4 to 3.128.0. Reference the package directly from the project to select a different version. 
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs.csproj : error NU1605:  apphost -> Hexalith.Platform.Composition -> 
+Hexalith.EventStore.Aspire (>= 3.128.4) 
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs.csproj : error NU1605:  apphost -> Hexalith.EventStore.Aspire (>= 
+3.128.0)
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs.csproj : error NU1605: Warning As Error: Detected package downgrade: 
+Hexalith.EventStore.ServiceDefaults from 3.128.4 to 3.128.0. Reference the package directly from the project to select a different version. 
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs.csproj : error NU1605:  apphost -> Hexalith.Platform.Composition -> 
+Hexalith.EventStore.ServiceDefaults (>= 3.128.4) 
+/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs.csproj : error NU1605:  apphost -> Hexalith.EventStore.ServiceDefaults 
+(>= 3.128.0)
+  Failed to restore /home/administrator/projects/hexalith/projects/references/Hexalith.Platform/apphost.cs.csproj (in 839 ms).
+❌ AppHost failed to build.
+📄 See logs at /home/administrator/.aspire/logs/cli_20261029T180539_7d869185.log
+🔍 See AppHost logs at /home/administrator/.aspire/logs/cli_20261029T180539170_detach-child_3d553ddb90954cc189e13c2a000036a4.log

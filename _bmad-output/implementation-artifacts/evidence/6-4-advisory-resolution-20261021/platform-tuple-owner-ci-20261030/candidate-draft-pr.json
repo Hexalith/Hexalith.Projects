@@ -1,0 +1,47 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Action completed."
+    }
+  ],
+  "structuredContent": {
+    "url": "https://github.com/Hexalith/Hexalith.Platform/pull/9",
+    "number": 9,
+    "state": "open",
+    "merged": false,
+    "mergeable": false,
+    "draft": true,
+    "body": "Platform's prepared tool and recorded Builds source did not identify one published release. This frozen candidate aligns both with Builds 4.38.3 at `d1931b1e803144048d927fff16cb8119afde541e`, retains Tenants 5.11.1, preserves the four analyzer corrections, aligns direct AppHost packages, and binds CI to verified published Builds artifacts.\n\nValidation already recorded: Debug build with zero warnings/errors, 82 existing focused cases, 14 binding controls, and a 27-project package graph audit. Fresh package-only Release preflight: https://github.com/Hexalith/Hexalith.Platform/actions/runs/41012249519 (explicit checkout `9f43cefe11bd246ce0de1cd0740261b557c0c7a0`; run workflow head is the separate registration merge).\n\nThis PR is an integration review point, not an acceptance request. Current main advanced independently: its Builds gitlink is `2980efdf51f305dc5c39bb854261c252d13465f5`, while its tool remains 4.35.2. A read-only merge preview against `357d8cfc074d79042dc4395cf7fc2ff51034c74b` reports conflicts in `.gitattributes` and the Builds gitlink. Preserve all newer main changes; do not silently roll back its Builds source. Reconcile the exact tuple and record a new integration revision, then qualify the real committed merge-result SHA for its exact head/base pair with fresh authenticated policy/runtime evidence. The frozen branch preflight cannot be relabelled as that result.\n\nStory 6.4 remains in progress. No candidate integration, Platform publication, deployment, or consumer adoption is requested by this draft. Workflow registration is isolated in #8.",
+    "title": "fix(platform): qualify the published Builds 4.38.3 tuple",
+    "base": "main",
+    "base_sha": "7cf6e24db38bbd58a65d4bea2636c0468e6c3b11",
+    "head": "fix/story-6-4-builds-4-38-3-candidate-20261030",
+    "head_sha": "9f43cefe11bd246ce0de1cd0740261b557c0c7a0",
+    "head_repo_id": 1328589450,
+    "head_repo_full_name": "Hexalith/Hexalith.Platform",
+    "merge_commit_sha": null,
+    "user": {
+      "login": "jpiquot",
+      "name": "jpiquot",
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+      "id": 6775094
+    },
+    "requested_reviewers": null,
+    "requested_team_reviewers": null,
+    "diff": null,
+    "comments": null,
+    "created_at": "2026-10-30T06:09:26Z",
+    "updated_at": "2026-10-30T06:09:27Z",
+    "closed_at": null,
+    "merged_at": null,
+    "commits": 2,
+    "changed_files": 19,
+    "additions": 504,
+    "deletions": 38,
+    "display_url": "https://github.com/Hexalith/Hexalith.Platform/pull/9",
+    "display_title": "fix(platform): qualify the published Builds 4.38.3 tuple"
+  },
+  "isError": false
+}

@@ -1,0 +1,23 @@
+{
+  "name": "consumer-package-release-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "src/Hexalith.Projects.Server/Hexalith.Projects.Server.csproj",
+    "-c",
+    "Release",
+    "-m:1",
+    "-p:NuGetAudit=false",
+    "-p:MinVerVersionOverride=1.0.0",
+    "-v:minimal"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials archived.",
+  "started_utc": "2026-10-29T09:14:50.501569+00:00",
+  "finished_utc": "2026-10-29T09:14:54.498813+00:00",
+  "seconds": 3.997,
+  "exit_code": 0,
+  "stdout": "consumer-package-release-build.stdout",
+  "stderr": "consumer-package-release-build.stderr"
+}

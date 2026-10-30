@@ -1,0 +1,17 @@
+{
+  "name": "refresh-remote-integration-state",
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,json; commands=[[\"git\",\"ls-remote\",\"origin\",\"refs/heads/main\",\"refs/heads/fix/story-6-4-builds-4-38-3-candidate-20261030\"],[\"gh\",\"api\",\"repos/Hexalith/Hexalith.Platform/pulls/9\"],[\"gh\",\"api\",\"repos/Hexalith/Hexalith.Platform/actions/runs/41013494873\"]]; print(json.dumps([{ \"argv\":a,\"result\":subprocess.run(a,text=True,capture_output=True).__dict__} for a in commands],indent=2))"
+  ],
+  "cwd": "/tmp/story64-platform-tuple-candidate-20261030",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:24:20.919865+00:00",
+  "finished_utc": "2026-10-30T06:24:22.431708+00:00",
+  "seconds": 1.512,
+  "exit_code": 0,
+  "stdout": "refresh-remote-integration-state.stdout",
+  "stderr": "refresh-remote-integration-state.stderr"
+}

@@ -1,0 +1,85 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--quiet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+        "/tmp/story64-platform-recorded-owner-20261029"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--no-hardlinks",
+        "--quiet",
+        "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+        "/tmp/story64-platform-recorded-owner-20261029/references/Hexalith.Builds"
+      ],
+      "cwd": "/tmp/story64-platform-recorded-owner-20261029",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "checkout",
+        "--detach",
+        "d1931b1e803144048d927fff16cb8119afde541e"
+      ],
+      "cwd": "/tmp/story64-platform-recorded-owner-20261029/references/Hexalith.Builds",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "HEAD is now at d1931b1 build(deps): refresh the Tenants package audit\n"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/tmp/story64-platform-recorded-owner-20261029",
+      "exit_code": 0,
+      "stdout": "9f43cefe11bd246ce0de1cd0740261b557c0c7a0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "exit_code": 0,
+      "stdout": "9f43cefe11bd246ce0de1cd0740261b557c0c7a0\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "v4.38.3^{commit}"
+      ],
+      "cwd": "/tmp/story64-platform-recorded-owner-20261029/references/Hexalith.Builds",
+      "exit_code": 0,
+      "stdout": "d1931b1e803144048d927fff16cb8119afde541e\n",
+      "stderr": ""
+    }
+  ],
+  "owner": "/tmp/story64-platform-recorded-owner-20261029",
+  "kind": "Standalone clone of actual recorded candidate; real direct Builds checkout/tag; no nested umbrella initialization.",
+  "assembly_provenance": "Copied byte-identical local Debug test output for the narrow Git identity check; not a candidate Release build or runtime acceptance.",
+  "baseline_copy": {
+    "path": "/tmp/story64-platform-recorded-owner-20261029/hexalith-llm-instructions.md",
+    "sha256": "49e0fc0c04960b6f986343e87250462313394642ce9f9451de7ddca34e849bb4",
+    "state": "Untracked exact baseline copy for standalone instruction lookup; no source compilation or acceptance occurs in this diagnostic context."
+  }
+}

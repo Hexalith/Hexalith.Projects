@@ -1,0 +1,35 @@
+{
+  "projects_revision": "0338d6ebf9f1be1bd38a8745759984d2066da5e7",
+  "platform_revision": "494ecb32802d1454c15704066487fa206f5bcec0",
+  "platform_committed_builds_revision": "e129a29e6c6e2f8a200581e09b861d75a9f3a7b8",
+  "umbrella_builds_revision": "e909ffd9fe9a6097e36d932010b983d029396968",
+  "conversations_revision": "a40cfb3ed68f20201cb759f754270b83ea02efb3",
+  "prepared_tool_version": "4.38.2",
+  "prepared_tool_source": "2574bf2f3da5367d8801f0d7661d66155e5d90b0",
+  "file_sha256": {
+    "references/Hexalith.Platform/.config/dotnet-tools.json": "f718f3ed50cc549069b785e38325a00af635f45d09a6926590e08d142a850c20",
+    "references/Hexalith.Platform/hexalith-platform.json": "16b64bdefea73f9230f70bf9503643bed62c9bb53784279f686f69be70408d6b",
+    "references/Hexalith.Platform/README.md": "5c4db2f0d7b245849d6798e5d050b17753aaa8e792a4cba4612734a93252893e",
+    "references/Hexalith.Conversations/.config/dotnet-tools.json": "f718f3ed50cc549069b785e38325a00af635f45d09a6926590e08d142a850c20",
+    "references/Hexalith.Conversations/module/README.md": "d2cf05c76719c3a9dc91ac13c6f8e9592f8f88ed62633b6cee1190b1787d930d",
+    "references/Hexalith.Builds/Props/Directory.Packages.props": "443beb3037f215fc602fb0a2bc7eca06ae1bb46fc16ef1df0a2c3fb3b468d2b0",
+    "tools/release-packages.json": "873cf512f5e68e89adb97a932306f6803121823fde5aff582af3755dd8cd618b",
+    "module/hexalith.module-manifest.v2.json": "7028d15cca15ac35fb8172a43537e45000307127f42499196817ca5a3772a754",
+    "module/README.md": "2df275e4312a1790f0f4c272d54f2f72faf0fb2cd13bb383438a235e1cfeb7bc"
+  },
+  "current_selected_catalog_versions": {
+    "HexalithConversationsVersion": "1.3.1",
+    "HexalithTenantsVersion": "5.11.1",
+    "HexalithEventStoreVersion": "3.128.4",
+    "HexalithFrontComposerVersion": "4.7.1"
+  },
+  "required_next_actions": [
+    "Select and qualify an exact published Builds/catalog tuple that preserves the intended current dependencies; neither this working source nor the historical 4.38.2 patch establishes that selection.",
+    "Resolve the four current Platform analyzer failures within a separately authorized upstream repair scope.",
+    "Record an approved Platform correction with the exact matching Builds pin, then qualify that exact candidate through Platform integration and CI.",
+    "Obtain the separate publication approval, verify the resulting official Platform identity and package/source qualification, and approve consumer/umbrella adoption.",
+    "Retry actual public Projects package preparation on the adopted tuple and finish remaining all-package/symbol acceptance."
+  ],
+  "future_platform_revision": null,
+  "changes_applied": false
+}

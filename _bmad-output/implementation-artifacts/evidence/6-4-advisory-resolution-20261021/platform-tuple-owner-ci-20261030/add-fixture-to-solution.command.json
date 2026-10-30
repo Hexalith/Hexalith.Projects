@@ -1,0 +1,17 @@
+{
+  "name": "add-fixture-to-solution",
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; import xml.etree.ElementTree as ET,json; p=Path(\"Hexalith.Platform.slnx\"); data=p.read_bytes(); needle=b\"  <Project Path=\\\"tests/Hexalith.Platform.Secrets.Runtime.Tests/Hexalith.Platform.Secrets.Runtime.Tests.csproj\\\" />\"; assert data.count(needle)==1; addition=b\"  <Project Path=\\\"tests/Hexalith.Platform.Secrets.ArchiveProcessFixture/Hexalith.Platform.Secrets.ArchiveProcessFixture.csproj\\\" />\\n\"; assert b\"ArchiveProcessFixture\" not in data; p.write_bytes(data.replace(needle,addition+needle,1)); projects=[x.attrib[\"Path\"] for x in ET.parse(p).iter(\"Project\")]; assert len(projects)==len(set(projects))==27; print(json.dumps({\"directSolutionProjects\":len(projects),\"fixtureIncluded\":True,\"existingBytesPreserved\":p.read_bytes().replace(addition,b\"\",1)==data},indent=2))"
+  ],
+  "cwd": "/tmp/story64-platform-tuple-candidate-20261030",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:16:06.702826+00:00",
+  "finished_utc": "2026-10-30T06:16:06.732427+00:00",
+  "seconds": 0.03,
+  "exit_code": 0,
+  "stdout": "add-fixture-to-solution.stdout",
+  "stderr": "add-fixture-to-solution.stderr"
+}

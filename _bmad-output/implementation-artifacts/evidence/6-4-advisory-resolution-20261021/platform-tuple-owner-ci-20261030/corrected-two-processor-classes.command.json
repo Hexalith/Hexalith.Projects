@@ -1,0 +1,30 @@
+{
+  "name": "corrected-two-processor-classes",
+  "argv": [
+    "dotnet",
+    "tests/Hexalith.Platform.Composition.Tests/bin/Debug/net10.0/Hexalith.Platform.Composition.Tests.dll",
+    "-class",
+    "Hexalith.Platform.Composition.Tests.AcceptedLaunchBoundaryTests",
+    "-class",
+    "Hexalith.Platform.Composition.Tests.AgentsAdmissionCurrentBoundaryTests",
+    "-class",
+    "Hexalith.Platform.Composition.Tests.AgentsHostStartupBoundaryTests",
+    "-class",
+    "Hexalith.Platform.Composition.Tests.PortableDevelopmentCompositionTests",
+    "-class",
+    "Hexalith.Platform.Composition.Tests.GatewaySeedSubscriptionTests",
+    "-result-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/platform-tuple-owner-ci-20261030/corrected-two-processor-classes.xml"
+  ],
+  "cwd": "/tmp/story64-platform-tuple-candidate-20261030",
+  "environment": {
+    "DOTNET_PROCESSOR_COUNT": "2"
+  },
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:28:21.217525+00:00",
+  "finished_utc": "2026-10-30T06:28:25.275035+00:00",
+  "seconds": 4.058,
+  "exit_code": 0,
+  "stdout": "corrected-two-processor-classes.stdout",
+  "stderr": "corrected-two-processor-classes.stderr"
+}

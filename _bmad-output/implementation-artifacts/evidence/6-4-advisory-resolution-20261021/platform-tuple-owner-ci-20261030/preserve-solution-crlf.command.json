@@ -1,0 +1,17 @@
+{
+  "name": "preserve-solution-crlf",
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; p=Path(\"Hexalith.Platform.slnx\"); b=p.read_bytes(); line=b\"  <Project Path=\\\"tests/Hexalith.Platform.Secrets.ArchiveProcessFixture/Hexalith.Platform.Secrets.ArchiveProcessFixture.csproj\\\" />\"; assert b.count(line+b\"\\n\")==1; p.write_bytes(b.replace(line+b\"\\n\",line+b\"\\r\\n\",1)); a=Path(\".gitattributes\"); data=a.read_bytes(); addition=b\"Hexalith.Platform.slnx whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol\\n\"; assert addition not in data; a.write_bytes(data+addition); print(\"New solution entry preserves CRLF; attribute recognizes CR while retaining ordinary whitespace checks.\")"
+  ],
+  "cwd": "/tmp/story64-platform-tuple-candidate-20261030",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:18:26.484475+00:00",
+  "finished_utc": "2026-10-30T06:18:26.498431+00:00",
+  "seconds": 0.014,
+  "exit_code": 0,
+  "stdout": "preserve-solution-crlf.stdout",
+  "stderr": "preserve-solution-crlf.stderr"
+}

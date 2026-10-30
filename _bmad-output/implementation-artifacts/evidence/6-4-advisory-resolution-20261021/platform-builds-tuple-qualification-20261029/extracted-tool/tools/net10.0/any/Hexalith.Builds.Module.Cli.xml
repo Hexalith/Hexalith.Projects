@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Hexalith.Builds.Module.Cli</name>
+    </assembly>
+    <members>
+        <member name="T:Hexalith.Builds.ModuleTool.Cli.ModuleCommandApplication">
+            <summary>
+            Hosts the public <c>hexalith-module</c> command contract.
+            </summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleTool.Cli.ModuleCommandApplication.InvokeAsync(System.String[],System.IO.TextWriter,System.IO.TextWriter,System.Threading.CancellationToken,System.String,Hexalith.Builds.Tooling.Runtime.CompositionEngineOptions)">
+            <summary>
+            Invokes the module command application.
+            </summary>
+            <param name="arguments">The command-line arguments.</param>
+            <param name="standardOutput">The standard output writer.</param>
+            <param name="standardError">The standard error writer.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <param name="descriptorChildEntryAssemblyPath">The optional private descriptor child entry assembly.</param>
+            <param name="compositionOptions">The optional runner-owned composition settings.</param>
+            <returns>The stable process exit code.</returns>
+        </member>
+    </members>
+</doc>

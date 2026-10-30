@@ -1,0 +1,426 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Hexalith.Builds.Module.AppHost</name>
+    </assembly>
+    <members>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.AppHostRunner">
+            <summary>
+            Runs one composed G-4 run until the runner asks it to stop.
+            </summary>
+        </member>
+        <member name="F:Hexalith.Builds.ModuleHosts.AppHost.AppHostRunner._aspireStorePathKey">
+            <summary>The Aspire configuration key for the local store root.</summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.AppHostRunner.RunAsync(System.String[])">
+            <summary>
+            Composes, starts, reports readiness for, and gracefully stops one run.
+            </summary>
+            <param name="args">The AppHost arguments.</param>
+            <returns>Zero after a graceful stop; three when a resource could not become healthy.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.AppHostRunner.RunAsync(System.String[],Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String,System.Action{Aspire.Hosting.IDistributedApplicationBuilder,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String},System.IO.Stream,System.Func{Aspire.Hosting.DistributedApplication,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String,System.Threading.CancellationToken,System.Threading.Tasks.Task})">
+            <summary>Executes the runner protocol with an explicit composition boundary.</summary>
+            <param name="args">The AppHost arguments.</param>
+            <param name="plan">The selected run plan.</param>
+            <param name="signingKey">The per-run signing key.</param>
+            <param name="compose">The topology composer.</param>
+            <param name="standardInput">The input owned by the listener for an isolated run, or actual standard input.</param>
+            <param name="activate">The writer cutover operation, or null for the normal cutover.</param>
+            <returns>The validation or run exit code.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.AppHostRunner.CreateBuilder(System.String[],System.Func{System.String,System.String})">
+            <summary>
+            Creates the distributed application builder, replacing the AppHost directory and Aspire store path baked
+            into this assembly's metadata with the run-private directories named by the runner.
+            </summary>
+            <param name="args">The AppHost arguments.</param>
+            <param name="environment">The environment lookup.</param>
+            <returns>The builder.</returns>
+            <remarks>
+            Aspire adds <c>AppHost:Directory</c> and <c>Aspire:Store:Path</c> after the environment configuration source,
+            so the runner's values are applied here rather than through Aspire configuration keys. The DCP and dashboard
+            paths are ordinary <c>DcpPublisher</c> configuration that Aspire reads from the environment.
+            </remarks>
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.DaprDirectEndpointSubscriber">
+            <summary>
+            Makes the ports assigned to Dapr CLI resources the ports on which daprd actually listens.
+            </summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.DaprDirectEndpointSubscriber.SubscribeAsync(Aspire.Hosting.Eventing.IDistributedApplicationEventing,Aspire.Hosting.DistributedApplicationExecutionContext,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.RedisPingHealthCheck">
+            <summary>
+            Reports the run-scoped Redis endpoint healthy once it answers <c>PING</c>.
+            </summary>
+            <param name="port">The run-scoped Redis port.</param>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RedisPingHealthCheck.#ctor(System.Int32)">
+            <summary>
+            Reports the run-scoped Redis endpoint healthy once it answers <c>PING</c>.
+            </summary>
+            <param name="port">The run-scoped Redis port.</param>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RedisPingHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.RetainedApplicationLifecycle">
+            <summary>The AppHost's failure-retention wait and bounded stop orchestration, usable with inert offline delegates.</summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RetainedApplicationLifecycle.StopAsync(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.Int32,System.Boolean,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Threading.CancellationToken)">
+            <summary>Retains a failed local application until an explicit stop, then bounds its stop operation.</summary>
+            <param name="plan">The selected run plan.</param>
+            <param name="exitCode">The startup outcome.</param>
+            <param name="stopRequested">Whether an explicit stop has already arrived.</param>
+            <param name="waitForShutdown">The application's shutdown wait.</param>
+            <param name="stopApplication">The application's actual stop operation.</param>
+            <param name="stopToken">The explicit owner stop signal.</param>
+            <returns>The orchestration task.</returns>
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.RetainedDiagnosticWriter">
+            <summary>Decouples retained children from parent pipes while retaining only output observation metadata.</summary>
+            <param name="sink">The process-owned metadata sink.</param>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RetainedDiagnosticWriter.#ctor(System.IO.TextWriter)">
+            <summary>Decouples retained children from parent pipes while retaining only output observation metadata.</summary>
+            <param name="sink">The process-owned metadata sink.</param>
+        </member>
+        <member name="F:Hexalith.Builds.ModuleHosts.AppHost.RetainedDiagnosticWriter.MaximumObservations">
+            <summary>The maximum retained observation count per AppHost process.</summary>
+        </member>
+        <member name="P:Hexalith.Builds.ModuleHosts.AppHost.RetainedDiagnosticWriter.Encoding">
+            <inheritdoc />
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RetainedDiagnosticWriter.Write(System.Char)">
+            <inheritdoc />
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RetainedDiagnosticWriter.Write(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RetainedDiagnosticWriter.WriteLine(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RetainedDiagnosticWriter.Dispose(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.RunEndpoints">
+            <summary>
+            Resolves allocated HTTP endpoints of run resources.
+            </summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunEndpoints.TryGet(Aspire.Hosting.DistributedApplication,System.String)">
+            <summary>
+            Gets the allocated HTTP endpoint of a resource, or null when it is not allocated yet.
+            </summary>
+            <param name="app">The distributed application.</param>
+            <param name="name">The resource name.</param>
+            <returns>The endpoint, or null.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunEndpoints.WaitForAsync(Aspire.Hosting.DistributedApplication,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Waits until a resource HTTP endpoint is allocated.
+            </summary>
+            <param name="app">The distributed application.</param>
+            <param name="name">The resource name.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The allocated endpoint.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunEndpoints.Observe(Aspire.Hosting.ApplicationModel.IResource)">
+            <summary>Captures only endpoints actually allocated by the running orchestrator.</summary>
+            <param name="resource">The observed resource.</param>
+            <returns>The observed endpoint set.</returns>
+            <exception cref="T:System.IO.InvalidDataException">A healthy resource still lacks an allocated endpoint.</exception>
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.RunPlanSource">
+            <summary>
+            Reads the runner-written run plan and the per-run signing key from the AppHost environment.
+            </summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunPlanSource.LoadAsync(System.Threading.CancellationToken)">
+            <summary>
+            Loads and checks the run plan named by the runner.
+            </summary>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The run plan.</returns>
+            <exception cref="T:System.InvalidOperationException">The plan is missing, malformed, or not for this run.</exception>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunPlanSource.TakeSigningKey">
+            <summary>
+            Reads the per-run signing key and removes it from this process environment, so the orchestrator and
+            every resource it starts never inherit it. It reaches only the resources that validate tokens.
+            </summary>
+            <returns>The signing key.</returns>
+            <exception cref="T:System.InvalidOperationException">The key is missing.</exception>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunPlanSource.DaprCliPath(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan)">
+            <summary>
+            Gets the verified Dapr CLI path.
+            </summary>
+            <param name="plan">The run plan.</param>
+            <returns>The CLI path.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunPlanSource.DaprBinaryPath(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String)">
+            <summary>
+            Gets a verified Dapr runtime binary path.
+            </summary>
+            <param name="plan">The run plan.</param>
+            <param name="name">The binary name.</param>
+            <returns>The binary path.</returns>
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.RunReadiness">
+            <summary>
+            Waits until every composed resource is healthy and writes the metadata-only readiness document.
+            </summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunReadiness.WaitAndWriteAsync(Aspire.Hosting.DistributedApplication,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.Threading.CancellationToken)">
+            <summary>
+            Waits for every runnable resource and writes readiness, or reports a resource that cannot become healthy.
+            </summary>
+            <param name="app">The started distributed application.</param>
+            <param name="plan">The run plan.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>True when readiness was written; false when a resource reached a terminal state.</returns>
+            <exception cref="T:System.InvalidOperationException">A required endpoint was not allocated.</exception>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunReadiness.ReportStartupStallAsync(Aspire.Hosting.DistributedApplication,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan)">
+            <summary>
+            Reports every stalled resource when the AppHost startup bound expires.
+            </summary>
+            <param name="app">The distributed application.</param>
+            <param name="plan">The run plan.</param>
+            <returns>A task that completes after the metadata-only failure is written.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunReadiness.ReportFailureAsync(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String,System.String,System.String,System.String)">
+            <summary>
+            Writes a specific, metadata-only startup failure for the runner to report.
+            </summary>
+            <param name="plan">The run plan.</param>
+            <param name="ruleId">The stable rule identity.</param>
+            <param name="resource">The stalled resource or probe.</param>
+            <param name="appId">The relevant Dapr app ID, or a dash.</param>
+            <param name="status">The bounded probe status.</param>
+            <returns>A task that completes after the failure document is written.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunReadiness.ReportFailureAsync(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String,System.String,System.String,System.String,System.Collections.Generic.IReadOnlyList{Hexalith.Builds.Tooling.Runtime.CompositionResourceReadiness},System.String)">
+            <summary>
+            Writes a startup failure that names every unready resource and, when present, the failing startup task.
+            </summary>
+            <param name="plan">The run plan.</param>
+            <param name="ruleId">The stable rule identity.</param>
+            <param name="resource">The stalled resource or probe.</param>
+            <param name="appId">The relevant Dapr app ID, or a dash.</param>
+            <param name="status">The bounded probe status.</param>
+            <param name="unready">Every unready resource, when more than the primary resource is known.</param>
+            <param name="failingTask">The startup task that failed, when one did.</param>
+            <returns>A task that completes after the failure document is written.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunReadiness.WaitForModuleInvocationAsync(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,Aspire.Hosting.ApplicationModel.DistributedApplicationModel,System.Threading.CancellationToken,Aspire.Hosting.ApplicationModel.ResourceNotificationService)">
+            <summary>Proves selected server readiness through the existing bounded Dapr invocation boundary.</summary>
+            <param name="plan">The signed run plan.</param>
+            <param name="model">The actual selected resource model.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <param name="notifications">The resource notifications used to name every unready resource, when available.</param>
+            <returns>True when every selected server can be invoked.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunReadiness.InvocationProbes(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,Aspire.Hosting.ApplicationModel.DistributedApplicationModel)">
+            <summary>Derives v2 probes from composed bindings while retaining v1 alive endpoints.</summary>
+            <param name="plan">The signed run plan.</param>
+            <param name="model">The actual selected resource model.</param>
+            <returns>The resource, sidecar identity, and declared endpoint.</returns>
+            <exception cref="T:System.IO.InvalidDataException">The model has no annotated gateway.</exception>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunReadiness.WaitForPlatformSidecarsAsync(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,Aspire.Hosting.ApplicationModel.DistributedApplicationModel,System.Threading.CancellationToken,System.Nullable{System.TimeSpan},Aspire.Hosting.ApplicationModel.ResourceNotificationService)">
+            <summary>Checks authenticated sidecar health and retains structured refusal evidence on timeout.</summary>
+            <param name="plan">The run owning the failure document.</param>
+            <param name="model">The selected resource model.</param>
+            <param name="cancellationToken">The caller cancellation token.</param>
+            <param name="probeBound">An optional bounded probe duration for focused verification.</param>
+            <param name="notifications">The resource notifications used to name every unready resource, when available.</param>
+            <returns>Whether every selected sidecar became ready.</returns>
+            <exception cref="T:System.IO.InvalidDataException">A selected sidecar has no HTTP listener.</exception>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunReadiness.CurrentUnready(Aspire.Hosting.DistributedApplication)">
+            <summary>Reads every runnable resource that is not currently healthy.</summary>
+            <param name="app">The distributed application.</param>
+            <returns>The unready resources, or an empty list when every runnable resource is healthy.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunReadiness.RefreshAsync(Aspire.Hosting.DistributedApplication,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String,System.Threading.CancellationToken)">
+            <summary>Evaluates module-defined health again after successful startup tasks.</summary>
+            <param name="app">The composed application.</param>
+            <param name="plan">The owning run plan.</param>
+            <param name="refreshId">The owning refresh request.</param>
+            <param name="cancellationToken">The original startup deadline token.</param>
+            <returns>Whether a fresh readiness document was written.</returns>
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.RunReadinessHealth">
+            <summary>Requires a new evaluation of the declared health checks after startup tasks finish.</summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunReadinessHealth.WaitAsync(Aspire.Hosting.DistributedApplication,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.Collections.Generic.IReadOnlyList{Aspire.Hosting.ApplicationModel.IResource},System.Threading.CancellationToken)">
+            <summary>Waits for all resource health checks to pass using the original finite deadline.</summary>
+            <param name="app">The running distributed application.</param>
+            <param name="plan">The owning startup plan.</param>
+            <param name="resources">The required runnable resources.</param>
+            <param name="cancellationToken">The startup deadline token.</param>
+            <returns>A task that completes only after a fresh healthy evaluation.</returns>
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.RunResourceControl">
+            <summary>
+            Handles the private resource-control protocol for an active qualification run.
+            </summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunResourceControl.RunAsync(Aspire.Hosting.DistributedApplication,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.Threading.CancellationToken)">
+            <summary>
+            Processes EventStore lifecycle requests and startup readiness refreshes for the owning run.
+            </summary>
+            <param name="app">The running Aspire application.</param>
+            <param name="plan">The owning run plan.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A task that runs until cancellation.</returns>
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.RunTopology">
+            <summary>
+            Composes the run-scoped topology described by one run plan.
+            </summary>
+        </member>
+        <member name="F:Hexalith.Builds.ModuleHosts.AppHost.RunTopology.EventStoreName">
+            <summary>The EventStore resource name.</summary>
+        </member>
+        <member name="F:Hexalith.Builds.ModuleHosts.AppHost.RunTopology.SecondEventStoreName">
+            <summary>The optional second EventStore resource name.</summary>
+        </member>
+        <member name="F:Hexalith.Builds.ModuleHosts.AppHost.RunTopology.UiName">
+            <summary>The FrontComposer UI host resource name.</summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunTopology.Compose(Aspire.Hosting.IDistributedApplicationBuilder,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String)">
+            <summary>
+            Adds every run resource to the builder.
+            </summary>
+            <param name="builder">The distributed application builder.</param>
+            <param name="plan">The run plan.</param>
+            <param name="signingKey">The per-run signing key.</param>
+            <exception cref="T:System.InvalidOperationException">The optional peer has incomplete ports.</exception>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunTopology.ResolvePackageEventStoreSeed(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String)">
+            <summary>Resolves the sole package-mode EventStore host seed from the packaged layout or Platform checkout.</summary>
+            <param name="plan">The signed Platform run plan.</param>
+            <param name="baseDirectory">The AppHost package directory.</param>
+            <returns>The EventStore host seed project.</returns>
+            <exception cref="T:System.IO.InvalidDataException">The package-mode Platform checkout path is missing.</exception>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunTopology.VerifyPlatformDeclaration(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan)">
+            <summary>Refuses an edited declaration before the Platform model can add resources.</summary>
+            <param name="plan">The signed run plan.</param>
+            <exception cref="T:System.IO.InvalidDataException">The selected declaration changed or is unavailable.</exception>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunTopology.AddEventStoreProject(Aspire.Hosting.IDistributedApplicationBuilder,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String)">
+            <summary>
+            Adds an EventStore host. From a package, each resource builds its own private shim copy, so the installed
+            tool stays read-only and parallel resources never share an obj/bin directory.
+            </summary>
+            <param name="builder">The distributed application builder.</param>
+            <param name="plan">The run plan.</param>
+            <param name="name">The resource name.</param>
+            <returns>The project resource.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.RunTopology.AddUiProject(Aspire.Hosting.IDistributedApplicationBuilder,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan)">
+            <summary>
+            Adds the FrontComposer UI host, from a private shim copy when the AppHost runs from a package.
+            </summary>
+            <param name="builder">The distributed application builder.</param>
+            <param name="plan">The run plan.</param>
+            <returns>The project resource.</returns>
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.StopSignal">
+            <summary>
+            Signals a stop when the runner writes the stop command, or when a nonpersistent run loses standard input.
+            </summary>
+        </member>
+        <member name="P:Hexalith.Builds.ModuleHosts.AppHost.StopSignal.Token">
+            <summary>
+            Gets the token cancelled when the run must stop.
+            </summary>
+        </member>
+        <member name="P:Hexalith.Builds.ModuleHosts.AppHost.StopSignal.IsStopRequested">
+            <summary>
+            Gets a value indicating whether a stop was requested.
+            </summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.StopSignal.Listen(Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.IO.Stream)">
+            <summary>
+            Starts listening on standard input.
+            </summary>
+            <param name="plan">The run plan used for a metadata-only listener failure.</param>
+            <param name="input">The owned input stream, or standard input when omitted.</param>
+            <returns>The signal.</returns>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.StopSignal.DisposeAsync">
+            <inheritdoc />
+        </member>
+        <member name="T:Hexalith.Builds.ModuleHosts.AppHost.WriterProtocolCutover">
+            <summary>Preserves the runner's fresh-store writer-protocol startup operation.</summary>
+        </member>
+        <member name="M:Hexalith.Builds.ModuleHosts.AppHost.WriterProtocolCutover.ActivateAsync(Aspire.Hosting.DistributedApplication,Hexalith.Builds.Tooling.Runtime.CompositionRunPlan,System.String,System.Threading.CancellationToken)">
+            <summary>Activates the protocol after the gateway's other dependencies are healthy.</summary>
+            <param name="app">The distributed application.</param>
+            <param name="plan">The isolated run plan.</param>
+            <param name="signingKey">The in-memory operator signing key.</param>
+            <param name="cancellationToken">The bounded readiness cancellation.</param>
+            <returns>The activation task.</returns>
+        </member>
+        <member name="T:Program">
+            <summary>
+            Auto-generated public partial Program class for top-level statement apps.
+            </summary>
+        </member>
+        <member name="T:Projects.Hexalith_Builds_Module_EventStoreHost">
+            <summary>
+            Metadata for the Hexalith_Builds_Module_EventStoreHost project.
+            </summary>
+        </member>
+        <member name="P:Projects.Hexalith_Builds_Module_EventStoreHost.ProjectPath">
+            <summary>
+            The path to the Hexalith_Builds_Module_EventStoreHost project.
+            </summary>
+        </member>
+        <member name="P:Projects.Hexalith_Builds_Module_EventStoreHost.SuppressBuild">
+            <summary>
+            Gets a value indicating whether building the project before running it should be suppressed.
+            </summary>
+            <remarks>
+            Projects added via ProjectReference items in the AppHost project file are built as part of building the AppHost project process
+            so building them again before running is unnecessary. This property always returns true.
+            </remarks>
+        </member>
+        <member name="T:Projects.Hexalith_Builds_Module_UiHost">
+            <summary>
+            Metadata for the Hexalith_Builds_Module_UiHost project.
+            </summary>
+        </member>
+        <member name="P:Projects.Hexalith_Builds_Module_UiHost.ProjectPath">
+            <summary>
+            The path to the Hexalith_Builds_Module_UiHost project.
+            </summary>
+        </member>
+        <member name="P:Projects.Hexalith_Builds_Module_UiHost.SuppressBuild">
+            <summary>
+            Gets a value indicating whether building the project before running it should be suppressed.
+            </summary>
+            <remarks>
+            Projects added via ProjectReference items in the AppHost project file are built as part of building the AppHost project process
+            so building them again before running is unnecessary. This property always returns true.
+            </remarks>
+        </member>
+        <member name="T:Projects.Hexalith_Builds_Module_AppHost">
+            <summary>
+            Metadata for the Aspire AppHost project.
+            </summary>
+        </member>
+        <member name="P:Projects.Hexalith_Builds_Module_AppHost.ProjectPath">
+            <summary>
+            The path to the Aspire Host project.
+            </summary>
+        </member>
+    </members>
+</doc>

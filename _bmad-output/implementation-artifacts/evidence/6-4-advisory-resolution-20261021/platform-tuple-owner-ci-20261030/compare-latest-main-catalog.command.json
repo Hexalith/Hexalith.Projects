@@ -1,0 +1,17 @@
+{
+  "name": "compare-latest-main-catalog",
+  "argv": [
+    "python3",
+    "-c",
+    "from pathlib import Path; import json,subprocess,difflib,hashlib; p=Path(\"_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/platform-tuple-owner-ci-20261030\"); s=json.loads((p/\"latest-main-builds-catalog.json\").read_text())[\"structuredContent\"]; b=s[\"content\"].encode(); old=subprocess.check_output([\"git\",\"show\",\"d1931b1e803144048d927fff16cb8119afde541e:Props/Directory.Packages.props\"],cwd=\"references/Hexalith.Builds\"); blob=hashlib.sha1(b\"blob \"+str(len(b)).encode()+b\"\\0\"+b).hexdigest(); assert blob==s[\"sha\"]; print(json.dumps({\"newMainBuilds\":\"a13d7972395f989955cf00f1047f1ba50b1a6b73\",\"catalogBlob\":s[\"sha\"],\"catalogSha256\":hashlib.sha256(b).hexdigest(),\"publishedCatalogSha256\":hashlib.sha256(old).hexdigest(),\"byteIdenticalCatalog\":b==old},indent=2)); print(\"\".join(difflib.unified_diff(old.decode(\"utf-8-sig\").splitlines(keepends=True),b.decode(\"utf-8-sig\").splitlines(keepends=True),fromfile=\"published-d193\",tofile=\"main-a13d\")))"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "environment": {},
+  "inherited_environment": "Existing process environment; no credentials are archived.",
+  "started_utc": "2026-10-30T06:34:04.883137+00:00",
+  "finished_utc": "2026-10-30T06:34:04.909834+00:00",
+  "seconds": 0.027,
+  "exit_code": 0,
+  "stdout": "compare-latest-main-catalog.stdout",
+  "stderr": "compare-latest-main-catalog.stderr"
+}
