@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Platform.Composition.Tests/Hexalith.Platform.Composition.Tests.csproj",
+    "--no-restore",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-p:UseHexalithProjectReferences=false",
+    "-p:HexalithBuildsPublishedToolRoot=/tmp/story64-platform-4383-artifacts-20261029/published/tools/net10.0/any",
+    "-p:NuGetAudit=false",
+    "-p:MinVerVersionOverride=1.0.0"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+  "environment": {},
+  "inheritedEnvironment": "Current process; no credentials archived.",
+  "timeoutSeconds": 300,
+  "startedUtc": "2026-10-30T11:32:55.329384+00:00",
+  "exitCode": 0,
+  "finishedUtc": "2026-10-30T11:33:05.388920+00:00",
+  "elapsedSeconds": 10.06
+}

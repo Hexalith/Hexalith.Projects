@@ -1,0 +1,15 @@
+{
+  "source": "Sanitized built-in health result fields from command-owned private host log; complete private log is not archived.",
+  "checks": [
+    {
+      "HealthCheckName": "projection-delivery-writer-protocol",
+      "HealthStatus": "Unhealthy",
+      "HealthCheckDescription": "Projection delivery writer protocol v2 is not active."
+    },
+    {
+      "HealthCheckName": "dapr-actor-placement",
+      "HealthStatus": "Unhealthy",
+      "HealthCheckDescription": "DAPR actor host not ready (placement: disconnected, runtimeStatus=DISABLED). Actor invocations (projection queries, command aggregates) will hang until timeout. Check the DAPR placement service."
+    }
+  ]
+}
