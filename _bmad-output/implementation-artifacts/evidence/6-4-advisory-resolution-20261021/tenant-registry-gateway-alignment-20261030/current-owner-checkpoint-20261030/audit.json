@@ -1,0 +1,98 @@
+{
+  "recordedUtc": "2026-10-30T17:20:21.484088+00:00",
+  "sourcePatchRequired": false,
+  "sourceFilesAtCheckpoint": {
+    "src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs": "11cbbb1e049219d60e659fad6362a81a94edd9b88c3968f4090b8cecd09fa778",
+    "src/Hexalith.Projects.Server/Queries/ProjectReadQueryAdmission.cs": "b8e9ac4995d421f427f6d34e4386c68ffdea20b91850f556f7d6a44e3658cd93",
+    "src/Hexalith.Projects.Contracts/Queries/ResolveProjectFromConversationQuery.cs": "f66f0af63423dd8f35161c531923d685d6c888263140384aa92d6fe3af128fce",
+    "src/Hexalith.Projects.Contracts/Queries/ResolveProjectFromAttachmentsQuery.cs": "057aca6b2f96d8112394d7228693b3fa1db32bffe918941a301840f94fd521d6",
+    "src/Hexalith.Projects.Contracts/Queries/ProjectAdvisoryResolutionResponse.cs": "47c4483fb621b79f3bab4d9a3015075a81140772b36db4680ba7df7e5a55aba4",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs": "f396247ad8507e018659e0c1a668811571c1be0823922ea5e3c95c589903e504",
+    "references/Hexalith.Conversations/src/Hexalith.Conversations.Server/Projections/ConversationResolutionMetadataReadModel.cs": "8bd7e576e29568c9346e981bc217ba4c5fb30fc2cd150b30252ed5fd1f7d6ab6",
+    "references/Hexalith.Conversations/.config/dotnet-tools.json": "1ea6be710eaed92fdaa4f0d9c9c6fce11f4efcaca81a555cdae18fd6ead4fa6d",
+    "references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host/Directory.Packages.props": "af07af77a7ca12ad9120686d89e878e3701754e34ac4c40d3cb931507a152c23",
+    "references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host/Program.cs": "b14e988029c11dbdd1aa958e8d8b9ecc33ae341e79d9723fbe50afd59d9e1bad",
+    "references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host/Hexalith.Platform.TenantRegistry.Host.csproj": "15873b993a2a8a8f8c369219c5276d3e3489ac1d19daf399fa96d80d23552a4c",
+    "references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/GatewaySeedSubscriptionTests.cs": "93cb2a58440fa50c5d54fae5fccc32eb872066b16e7375b478652828746cca29",
+    "references/Hexalith.Platform/Directory.Build.props": "12841cc5f8afef81c77043e78d25a2fce604f84da45932ce7949e3e26ac165cc",
+    "references/Hexalith.Platform/Directory.Build.targets": "a9f7aa9a60e9fe3821a5f607b991bf91ebfe56ad3d6471ee6755fd413efe4dd2",
+    "references/Hexalith.Platform/Directory.Packages.props": "71bbbb3b3bf472b00e24c0fa29130ee60851f9c929b8e2e0f32ae19c6c1c8b29",
+    "references/Hexalith.Platform/global.json": "4ec97d7c7e6bee864d2da2c965f18b94b0bd84e71058427f1f6fa69ee6824652",
+    "module/hexalith.module-manifest.v2.json": "7028d15cca15ac35fb8172a43537e45000307127f42499196817ca5a3772a754",
+    "module/README.md": "2df275e4312a1790f0f4c272d54f2f72faf0fb2cd13bb383438a235e1cfeb7bc",
+    "tools/release-packages.json": "873cf512f5e68e89adb97a932306f6803121823fde5aff582af3755dd8cd618b"
+  },
+  "specificationBefore": {
+    "sha256": "0ee5112f848a710e0fa7f825e2fb6ec932163414b85440edc1f673f32eca84b9",
+    "bytes": 144222
+  },
+  "trackingBefore": {
+    "sha256": "e348f10609ce7347941b099ec6d10afba88aa0b9691e693b8811040267c72e11",
+    "bytes": 59012
+  },
+  "duringChecksGitStateEqual": false,
+  "externalDuringChecksChanges": [
+    {
+      "repository": ".",
+      "field": "status",
+      "before": "M references/Hexalith.Conversations\n m references/Hexalith.Platform",
+      "after": "M references/Hexalith.AI.Tools\n M references/Hexalith.Conversations\n m references/Hexalith.Platform"
+    },
+    {
+      "repository": "references/Hexalith.AI.Tools",
+      "field": "head",
+      "before": "875758e37755c212d12344861dfdcf84ee340a1e",
+      "after": "9b78aa008cfc62cd88ad0ea4b39b1f07311956ce"
+    },
+    {
+      "repository": "references/Hexalith.AI.Tools",
+      "field": "index",
+      "before": "3b335b39d77c3579aa29bf043d51f439d90d262484d6b58ad26c5ba8d1c9f516",
+      "after": "6d9f09d95b82aaf7726179f2ddaf5a9e27be10eab9c2d857bffcaeb0dfd209c0"
+    },
+    {
+      "repository": "references/Hexalith.AI.Tools",
+      "field": "refs",
+      "removed": [
+        "875758e37755c212d12344861dfdcf84ee340a1e refs/heads/main",
+        "875758e37755c212d12344861dfdcf84ee340a1e refs/remotes/origin/HEAD",
+        "875758e37755c212d12344861dfdcf84ee340a1e refs/remotes/origin/main"
+      ],
+      "added": [
+        "9b78aa008cfc62cd88ad0ea4b39b1f07311956ce refs/heads/main",
+        "9b78aa008cfc62cd88ad0ea4b39b1f07311956ce refs/remotes/origin/HEAD",
+        "9b78aa008cfc62cd88ad0ea4b39b1f07311956ce refs/remotes/origin/main"
+      ]
+    },
+    {
+      "repository": "references/Hexalith.EventStore",
+      "field": "refs",
+      "removed": [
+        "a5b55e8c34892c30fb4feccefd5498dfe0363585 refs/remotes/origin/HEAD",
+        "a5b55e8c34892c30fb4feccefd5498dfe0363585 refs/remotes/origin/main"
+      ],
+      "added": [
+        "e92e6694a93c79531368fa3bbf6c06462fd05484 refs/remotes/origin/HEAD",
+        "e92e6694a93c79531368fa3bbf6c06462fd05484 refs/remotes/origin/main"
+      ]
+    }
+  ],
+  "packagePreparation": {
+    "exitCode": 2,
+    "diagnosticRuleIds": [
+      "HXW011",
+      "HXW011"
+    ],
+    "hxw009Emitted": false,
+    "platformHead": "bdfb8c068bbb6a81c3fa0a3eee7e4bb84d68c63c",
+    "buildsHead": "25dae308a5cfc954345f5f6ac7e090ca3dc1dd71"
+  },
+  "freshTests": {
+    "planningGuardPassed": 37
+  },
+  "repeatedSourceStoreSuites": false,
+  "remoteOperationsPerformed": false,
+  "gitMutationsPerformed": false,
+  "specificationPrefixPreserved": true,
+  "trackingChangedOnlyStoryComment": true
+}
