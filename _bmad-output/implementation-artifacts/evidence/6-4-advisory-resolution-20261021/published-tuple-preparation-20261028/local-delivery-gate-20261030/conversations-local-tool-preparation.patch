@@ -1,0 +1,34 @@
+diff --git a/.config/dotnet-tools.json b/.config/dotnet-tools.json
+index b570c50f..40b08a2a 100644
+--- a/.config/dotnet-tools.json
++++ b/.config/dotnet-tools.json
+@@ -3,7 +3,7 @@
+   "isRoot": true,
+   "tools": {
+     "hexalith.builds.module.cli": {
+-      "version": "4.38.2",
++      "version": "4.38.3",
+       "commands": [
+         "hexalith-module"
+       ],
+diff --git a/module/README.md b/module/README.md
+index 981e5b22..d7de5d6f 100644
+--- a/module/README.md
++++ b/module/README.md
+@@ -1,5 +1,16 @@
+ # Conversations Platform enrollment prerequisite source slice
+ 
++For Story 6.4's local preparation on 2026-10-30, the tool manifest prepares
++`hexalith.builds.module.cli` **4.38.3**, matching the recorded Platform
++candidate's range floor `[4.38.3, 5.0.0-0)`. Its published source is
++`d1931b1e803144048d927fff16cb8119afde541e`. This local pin removes the
++out-of-range tool prerequisite; the current umbrella still selects a different
++Builds revision, and its Platform identity has no local release tag. Package
++preparation therefore remains blocked by the exact-identity guards. This change
++does not adopt a qualified tuple or change .NET dependencies. Exact integration,
++publication and consumer acceptance remain separate gates. The dated 4.38.2
++preparation below remains historical.
++
+ For Story 6.4's local published-tuple preparation on 2026-10-28, the tool
+ manifest now prepares `hexalith.builds.module.cli` **4.38.2**, matching the
+ prepared direct Platform range floor. The published tool identifies Builds
