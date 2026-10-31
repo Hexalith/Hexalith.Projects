@@ -17,6 +17,8 @@ using Hexalith.EventStore.Client.Gateway;
 using Hexalith.EventStore.Contracts.Queries;
 using Hexalith.EventStore.Controllers;
 using Hexalith.EventStore.Server.Queries;
+using Hexalith.EventStore.ServiceDefaults.Authentication;
+using Hexalith.EventStore.ServiceDefaults.Routing;
 using Hexalith.Projects.Authorization;
 using Hexalith.Projects.Contracts.Events;
 using Hexalith.Projects.Contracts.Ui;
@@ -1171,6 +1173,8 @@ public sealed class ProjectsAuthenticationContractTests
                     new Claim("permissions", "[\"projects:read\",\"query:read\"]"),
                     new Claim("azp", workload),
                     new Claim(scopeClaimType, "projects.read projects.list"),
+                    // The signed surface claim EventStore requires before dispatching a UI-only operation.
+                    new Claim(RouteCatalogSurfacePolicy.ClaimType, "ui"),
                 ];
                 if (delegated)
                 {
@@ -1198,6 +1202,9 @@ public sealed class ProjectsAuthenticationContractTests
                 payload.GetProperty("audience").EnumerateArray().Select(static audience => audience.GetString())
                     .ShouldBe([TestAudience]);
             }
+
+            // Each forwarded query dispatched only under a committed catalog lease.
+            app.Services.GetRequiredService<ProjectsQueryRouteCatalog>().AcquisitionCount.ShouldBe(2);
         }
         finally
         {
@@ -1266,6 +1273,16 @@ public sealed class ProjectsAuthenticationContractTests
             builder.Services.AddSingleton<ITenantValidator, ClaimsTenantValidator>();
             builder.Services.AddSingleton<IRbacValidator, ClaimsRbacValidator>();
             builder.Services.AddSingleton<IETagService>(new DaprETagService(new ActorProxyFactory(), NullLogger<DaprETagService>.Instance));
+            // The real query action requires EventStore's named human policy. Register that exact policy
+            // without the rest of EventStore's host boundary, which would replace this host's
+            // Projects default and fallback policies.
+            _ = builder.Services.AddAuthorizationBuilder().AddPolicy(
+                EventStoreHttpHostSecurityExtensions.HumanPolicy,
+                EventStoreHttpHostSecurityExtensions.CreateHumanPolicy());
+            // The real query controller dispatches only routes in committed catalog authority.
+            builder.Services.AddSingleton(new ProjectsQueryRouteCatalog("tenant-a"));
+            builder.Services.AddSingleton<IRouteCatalogAuthority>(
+                static services => services.GetRequiredService<ProjectsQueryRouteCatalog>());
             _ = builder.Services.AddControllers().AddApplicationPart(typeof(QueriesController).Assembly);
         }
 
