@@ -29,6 +29,37 @@ POLICY = BUILDS / "Tools/g6-current-policy-2026-10-20.json"
 AUDITOR = BUILDS / "Tools/g6_current.py"
 DEFAULT_OUTPUT = ROOT / ".g6-current-evidence/current"
 CURRENT_API = historical.module("g6_compact_validator", AUDITOR)
+CONVERSATIONS_PREFIX = "references/Hexalith.Conversations/"
+MODULE_CLI = BUILDS / "src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj"
+
+
+def conversations_source_mapping(run: historical.Qualification, scratch: Path) -> list[str]:
+    """Prepare the Platform tool-selected source mapping that Conversations builds require.
+
+    Mirrors the CI G-6 restore: Conversations projects build with this mapping while every
+    other selected project keeps Conversations on packages.
+    """
+    prepared = scratch / "conversations-source-mapping.json"
+    command = ["dotnet", "run", "--project", str(MODULE_CLI), "--", "prepare-build",
+               "--manifest", "module/hexalith.module-manifest.v2.json", "--mode", "source",
+               "--workspace", str(scratch / "conversations-source-mapping"), "--output", "json"]
+    # The raw JSON names unsanitized scratch paths, so it stays in scratch, not in the log.
+    code = run.run("prepare Conversations source mapping",
+                   ["sh", "-c", 'out="$1"; shift; exec "$@" > "$out"', "sh", str(prepared), *command],
+                   ROOT / CONVERSATIONS_PREFIX)
+    if code != 0:
+        raise RuntimeError("Conversations source mapping could not be prepared")
+    data = json.loads(prepared.read_text(encoding="utf-8"))
+    if data.get("status") != "prepared":
+        raise RuntimeError("Conversations source mapping was not prepared")
+    environment = data["buildPreparation"]["environment"]
+    assignments = []
+    for key in sorted(environment):
+        value = environment[key]
+        if not isinstance(value, str) or any(ord(character) < 32 for character in value):
+            raise RuntimeError(f"invalid Conversations mapping environment value for {key}")
+        assignments.append(f"{key}={value}")
+    return assignments
 
 
 def audit(output: Path, policy: Path) -> dict:
@@ -208,10 +239,15 @@ def main(arguments: list[str] | None = None) -> int:
         # them to the workspace's root-declared copies instead.
         frontcomposer_roots = [f"-p:HexalithBuildsRoot={BUILDS}",
                                f"-p:HexalithPlatformRoot={ROOT / 'references/Hexalith.Platform'}"]
+        conversations_mapping = conversations_source_mapping(run, scratch)
         for item in baseline["pinAudit"]["appHostProjects"]:
             project = ROOT / item["path"]
             roots = frontcomposer_roots if item["path"].startswith("references/Hexalith.FrontComposer/") else []
-            code = run.run("AppHost build " + project.parent.name, ["dotnet", "build", str(project), *build, *roots], project.parent)
+            if item["path"].startswith(CONVERSATIONS_PREFIX):
+                command = ["env", *conversations_mapping, "dotnet", "build", str(project), *build]
+            else:
+                command = ["dotnet", "build", str(project), *build, "-p:HexalithConversationsFromSource=false", *roots]
+            code = run.run("AppHost build " + project.parent.name, command, project.parent)
             apphosts.append({"path": item["path"], "exitCode": code, "dependencyMode": "source"})
         platform = ROOT / "references/Hexalith.Platform/apphost.cs"
         # A shared BaseIntermediateOutputPath collapses every project onto one assets
