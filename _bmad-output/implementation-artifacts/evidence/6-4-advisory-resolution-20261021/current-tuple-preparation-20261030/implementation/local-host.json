@@ -1,0 +1,156 @@
+{
+  "kind": "local-Debug-host-probe",
+  "candidateAcceptance": false,
+  "observations": [
+    {
+      "name": "liveness",
+      "method": "GET",
+      "path": "/alive",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "startedUtc": "2026-10-30T18:13:06.147272+00:00",
+      "finishedUtc": "2026-10-30T18:13:06.153708+00:00",
+      "responseBytes": 7,
+      "responseSha256": "7f1e323b6272c6209a590fe8684bc64142a226cc9f73783bc027befede0ea0ee"
+    },
+    {
+      "name": "readiness-without-actor-placement",
+      "method": "GET",
+      "path": "/ready",
+      "expectedStatus": 503,
+      "actualStatus": 503,
+      "startedUtc": "2026-10-30T18:13:06.154205+00:00",
+      "finishedUtc": "2026-10-30T18:13:06.181302+00:00",
+      "responseBytes": 1799,
+      "responseSha256": "8e77d88ac7f1a990789398144aaebd0381ab1b7d69821c5db800e1964daab2ab"
+    },
+    {
+      "name": "health-without-actor-placement",
+      "method": "GET",
+      "path": "/health",
+      "expectedStatus": 503,
+      "actualStatus": 503,
+      "startedUtc": "2026-10-30T18:13:06.181757+00:00",
+      "finishedUtc": "2026-10-30T18:13:06.186184+00:00",
+      "responseBytes": 1929,
+      "responseSha256": "68262665e33fb95b578ad2d77ca45fe380d5d6279e7edd7d5298fc8e181c0f4d"
+    },
+    {
+      "name": "dynamic-subscription",
+      "method": "GET",
+      "path": "/dapr/subscribe",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "startedUtc": "2026-10-30T18:13:06.186409+00:00",
+      "finishedUtc": "2026-10-30T18:13:06.208688+00:00",
+      "responseBytes": 99,
+      "responseSha256": "3676a1b4ee0cebf646bb81cf0d877295c4563ab7d8976daca7d3534cfef4c65c"
+    },
+    {
+      "name": "anonymous-query-denied",
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "startedUtc": "2026-10-30T18:13:06.209145+00:00",
+      "finishedUtc": "2026-10-30T18:13:06.225466+00:00",
+      "responseBytes": 230,
+      "responseSha256": "c018045a8d621f066444d3f4bd2e52364b97298d59bb54e96e9e37c62ebe36d9"
+    },
+    {
+      "name": "malformed-bearer-denied",
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "startedUtc": "2026-10-30T18:13:06.225894+00:00",
+      "finishedUtc": "2026-10-30T18:13:06.234221+00:00",
+      "responseBytes": 224,
+      "responseSha256": "8d305003b33e3971954e7ea8a1493fd4f5a94cf3505fe0b232ceb5a2698e68eb"
+    },
+    {
+      "name": "wrong-signature-denied",
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "startedUtc": "2026-10-30T18:13:06.234599+00:00",
+      "finishedUtc": "2026-10-30T18:13:06.245296+00:00",
+      "responseBytes": 224,
+      "responseSha256": "8d305003b33e3971954e7ea8a1493fd4f5a94cf3505fe0b232ceb5a2698e68eb"
+    },
+    {
+      "name": "wrong-audience-denied",
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "startedUtc": "2026-10-30T18:13:06.245624+00:00",
+      "finishedUtc": "2026-10-30T18:13:06.250346+00:00",
+      "responseBytes": 224,
+      "responseSha256": "8d305003b33e3971954e7ea8a1493fd4f5a94cf3505fe0b232ceb5a2698e68eb"
+    },
+    {
+      "name": "authenticated-nonmember-query-denied",
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "expectedStatus": 403,
+      "actualStatus": 403,
+      "startedUtc": "2026-10-30T18:13:06.250765+00:00",
+      "finishedUtc": "2026-10-30T18:13:06.347597+00:00",
+      "responseBytes": 430,
+      "responseSha256": "8e293088e508700ea9948c349f9727e854876b1a5d13b8ae9d38cf0e10b53fcd"
+    },
+    {
+      "name": "authenticated-command-only-query-denied",
+      "method": "POST",
+      "path": "/api/v1/queries",
+      "expectedStatus": 403,
+      "actualStatus": 403,
+      "startedUtc": "2026-10-30T18:13:06.348077+00:00",
+      "finishedUtc": "2026-10-30T18:13:06.358322+00:00",
+      "responseBytes": 413,
+      "responseSha256": "bc2f2734622efe1a8c929050f95d4fea21488ed646e849b9dd692c3885ec3a3b"
+    }
+  ],
+  "runtime": {
+    "/tmp/story64-tenant-registry-alignment-20261030/redis-server": {
+      "sha256": "0f3f5d696b7dabd9af484c2d8844dbb0c9bc7722ddf794f63b911a9795509293",
+      "version": "Redis server v=8.0.5 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=d47fc40702b1fad8"
+    },
+    "/home/administrator/.dapr/bin/daprd": {
+      "sha256": "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488",
+      "version": "1.18.7"
+    }
+  },
+  "host": {
+    "source": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host",
+    "assembly": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host/bin/Debug/net10.0/Hexalith.EventStore.dll",
+    "assemblySha256": "056555aa9027b382e628c153a808b2a5e1c12036822bc70f7ff159e925a9007e"
+  },
+  "daprOutboundHealthStatus": 204,
+  "subscriptionCount": 1,
+  "status": "passed-local-controls",
+  "limitations": "No Tenants DomainService, actor placement/scheduler or native writer initialization. Readiness stays unavailable; no successful authorized owner query or complete runtime/tuple/release acceptance is claimed.",
+  "cleanup": [
+    {
+      "name": "tenant-registry-host",
+      "pid": 1392167,
+      "exitCode": 0,
+      "stopped": true
+    },
+    {
+      "name": "daprd",
+      "pid": 1392110,
+      "exitCode": 0,
+      "stopped": true
+    },
+    {
+      "name": "redis",
+      "pid": 1392007,
+      "exitCode": 0,
+      "stopped": true
+    }
+  ],
+  "finishedUtc": "2026-10-30T18:13:06.568060+00:00"
+}

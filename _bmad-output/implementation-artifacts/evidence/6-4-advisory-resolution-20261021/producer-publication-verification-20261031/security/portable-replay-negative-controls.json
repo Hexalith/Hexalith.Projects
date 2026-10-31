@@ -1,0 +1,43 @@
+{
+  "result": "passed",
+  "controls": [
+    {
+      "case": "existing-output",
+      "argv": [
+        "/usr/bin/python3",
+        "-O",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-verification-20261031/security/replay-proposed-gate-portable.py",
+        "--candidate-root",
+        "/var/tmp/story64-security-reconstruction.LZ6yTG/source",
+        "--capsule",
+        "/var/tmp/story64-security-reconstruction.LZ6yTG/capsule",
+        "--output-dir",
+        "/var/tmp/story64-security-reconstruction.LZ6yTG/replay"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Refusing to overwrite existing replay output directory: /var/tmp/story64-security-reconstruction.LZ6yTG/replay\n",
+      "existingStreamsPreserved": true
+    },
+    {
+      "case": "missing-node",
+      "argv": [
+        "/usr/bin/python3",
+        "-O",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-verification-20261031/security/replay-proposed-gate-portable.py",
+        "--candidate-root",
+        "/var/tmp/story64-security-reconstruction.LZ6yTG/source",
+        "--capsule",
+        "/var/tmp/story64-security-reconstruction.LZ6yTG/capsule",
+        "--output-dir",
+        "/var/tmp/story64-security-reconstruction.LZ6yTG/missing-node-output",
+        "--node-executable",
+        "story64-missing-node"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Node executable is unavailable\n",
+      "existingStreamsPreserved": true
+    }
+  ]
+}

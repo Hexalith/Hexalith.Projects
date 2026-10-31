@@ -1,0 +1,72 @@
+{
+  "result": "passed",
+  "commandCount": 13,
+  "expectedFailureCommandsRetained": true,
+  "commands": [
+    {
+      "command": "audit-locked",
+      "exitCode": 1,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "installed-tree",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "release-path-probe",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "installed-signatures",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "correction-lock-experiment",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "proposed-gate-controls",
+      "exitCode": 1,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "proposed-gate-controls-corrected",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "npm-gate-patch-check",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "corrected-release-contract",
+      "exitCode": 1,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "corrected-release-contract-complete",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "fresh-output-gate-replay",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "replay-overwrite-refusal",
+      "exitCode": 1,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "optimized-reviewed-replay-controls",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "scope": "Nonpublishing future-gate replay; dependency remediation remains unresolved",
+  "inputHashes": {
+    "package.json": "6b24b99692d3ea18a3554e6018a271b951bd5a4c83db5895e1a83a98218d61a9",
+    "package-lock.json": "1ff1ac5a67d88d1c16eb10ac4b861e989d5c9c629f73a461ccc151c1f7e87724"
+  },
+  "candidateHashes": {
+    ".github/workflows/build-release.yml": "378275b2944d2aa6bc297229314083d751af63d47057b509599a3ed1d4ce9f1e",
+    "Github/create-release/action.yml": "fd95be3c120f9594b25d69ac233240052a9da3de10ad4f56e8f07a6d5a371edb"
+  },
+  "cases": [
+    {
+      "candidate": ".github/workflows/build-release.yml",
+      "argv": [
+        "bash",
+        "-e",
+        "-o",
+        "pipefail",
+        "-c",
+        "npm audit --audit-level=moderate\nprintf \"STORY64_RELEASE_CONTINUED\n\""
+      ],
+      "cwd": "/tmp/story64-producer-verification-1e388du9/npm-original",
+      "publicEnvironment": {
+        "HOME": "/tmp/story64-producer-verification-1e388du9/npm-gate-replay-01/home",
+        "PATH": "/home/administrator/.nvm/versions/node/v24.21.0/bin:/usr/bin:/bin",
+        "NO_COLOR": "1"
+      },
+      "startedUtc": "2026-10-31T07:04:39.321743+00:00",
+      "finishedUtc": "2026-10-31T07:04:41.109637+00:00",
+      "exitCode": 1,
+      "publicationContinuationReached": false,
+      "stdout": {
+        "file": "workflow.stdout.log",
+        "sha256": "5aaa0bd3604cf84cef4dce9a066f5306f8d3b21fe5c1ec65ebfa3179fe89f825",
+        "sizeBytes": 9620
+      },
+      "stderr": {
+        "file": "workflow.stderr.log",
+        "sha256": "0c5e2568b4c79c13debcc497cf347b98e7a01e636ae2bed42cf3faa742048c94",
+        "sizeBytes": 209
+      }
+    },
+    {
+      "candidate": "Github/create-release/action.yml",
+      "argv": [
+        "bash",
+        "-e",
+        "-o",
+        "pipefail",
+        "-c",
+        "npm audit --audit-level=moderate\nprintf \"STORY64_RELEASE_CONTINUED\n\""
+      ],
+      "cwd": "/tmp/story64-producer-verification-1e388du9/npm-original",
+      "publicEnvironment": {
+        "HOME": "/tmp/story64-producer-verification-1e388du9/npm-gate-replay-01/home",
+        "PATH": "/home/administrator/.nvm/versions/node/v24.21.0/bin:/usr/bin:/bin",
+        "NO_COLOR": "1"
+      },
+      "startedUtc": "2026-10-31T07:04:41.109889+00:00",
+      "finishedUtc": "2026-10-31T07:04:41.966837+00:00",
+      "exitCode": 1,
+      "publicationContinuationReached": false,
+      "stdout": {
+        "file": "action.stdout.log",
+        "sha256": "5aaa0bd3604cf84cef4dce9a066f5306f8d3b21fe5c1ec65ebfa3179fe89f825",
+        "sizeBytes": 9620
+      },
+      "stderr": {
+        "file": "action.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "sizeBytes": 0
+      }
+    }
+  ],
+  "passed": true
+}

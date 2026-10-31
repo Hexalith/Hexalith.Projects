@@ -1,0 +1,32 @@
+{
+  "capturedUtc": "2026-10-31T07:50:57.662849+00:00",
+  "result": "passed",
+  "tests": "Eight reviewed-recorder controls, eight metadata cases, selected-source reconstruction/portable replay, two portable negative controls; no full source suite",
+  "commands": [
+    {
+      "scope": "local",
+      "command": "reviewed-recorder-controls",
+      "exitCode": 0,
+      "streamsVerified": true
+    },
+    {
+      "scope": "local",
+      "command": "original-checkout-monitoring",
+      "exitCode": 0,
+      "streamsVerified": true
+    },
+    {
+      "scope": "security",
+      "command": "portable-reconstruction",
+      "exitCode": 1,
+      "streamsVerified": true
+    },
+    {
+      "scope": "security",
+      "command": "portable-reconstruction-corrected",
+      "exitCode": 0,
+      "streamsVerified": true
+    }
+  ],
+  "originalCheckoutComparison": "22 canonical protected inputs,10 available historical checkout hashes, dirty file and exact patch match; absent historical detached index/ref/symbolic state remains unknown."
+}

@@ -1,0 +1,90 @@
+{
+  "result": "passed",
+  "controls": [
+    {
+      "name": "valid official pre-signing envelope",
+      "result": "passed"
+    },
+    {
+      "name": "compressed payload tamper changes digest",
+      "result": "passed"
+    },
+    {
+      "name": "trailing data",
+      "result": "passed",
+      "rejection": "ZIP comment or trailing data"
+    },
+    {
+      "name": "unsupported signature envelope",
+      "result": "passed",
+      "rejection": "Unexpected signature compression"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Tag binding mismatch"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Push CI source/workflow mismatch"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "sourceValidation did not pass"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Inventory is ineligible"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Qualified source tree mismatch"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Duplicate fixture inventory path"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Fixture checkout bytes mismatch: check-suites/runner.py"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Required evidence coverage mismatch"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Delivered producer binding differs from verified publication or acceptance is not false"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Delivered producer binding differs from verified publication or acceptance is not false"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Delivered producer binding differs from verified publication or acceptance is not false"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Retained catalog differs from fresh selected-source evaluation"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Fresh signature verification failed: X.509 certificate chain validation will use the fallback certificate bundle at '/home/administrator/.dotnet/sdk/10.0.403/trustedroots/codesignctl.pem'.\nX.509 certificate chain validation will use the fallback certificate bundle at '/home/administrator/.dotnet/sdk/10.0.403/trustedroots/timestampctl.pem'.\n\nVerifying Hexalith.Builds.Evidence.Cli.4.39.0\nContent hash: QmxDzGCS8zFbjLBiTIDVkwOeQhTPcie2tmis40FPJ+FnGmtcqlzSZpUyHSmZDuylehvHI89AwaPrFAi8XBS2jQ==\n/tmp/story64-publication-control-c7d6zh1x/downloads/hexalith.builds.evidence.cli.4.39.0.nupkg\ndebug: System.Security.Cryptography.CryptographicException: An unexpected error occurred while verifying a package signature.\ndebug:  ---> System.Security.Cryptography.CryptographicException: ASN1 corrupted data.\ndebug:  ---> System.Formats.Asn1.AsnContentException: The provided data is tagged with 'Universal' class value '17', but it should have been 'Universal' class value '16'.\ndebug:    at System.Formats.Asn1.AsnDecoder.CheckExpectedTag(Asn1Tag tag, Asn1Tag expectedTag, UniversalTagNumber tagNumber)\ndebug:    at System.Formats.Asn1.AsnDecoder.ReadSequence(ReadOnlySpan`1 source, AsnEncodingRules ruleSet, Int32& contentOffset, Int32& contentLength, Int32& bytesConsumed, Nullable`1 expectedTag)\ndebug:    at System.Formats.Asn1.AsnValueReader.ReadSequence(Nullable`1 expectedTag)\ndebug:    at System.Security.Cryptography.Asn1.Pkcs7.ContentInfoAsn.DecodeCore(AsnValueReader& reader, Asn1Tag expectedTag, ReadOnlyMemory`1 rebind, ContentInfoAsn& decoded)\ndebug:    at System.Security.Cryptography.Asn1.Pkcs7.ContentInfoAsn.Decode(AsnValueReader& reader, Asn1Tag expectedTag, ReadOnlyMemory`1 rebind, ContentInfoAsn& decoded)\ndebug:    --- End of inner exception stack trace ---\ndebug:    at System.Security.Cryptography.Asn1.Pkcs7.ContentInfoAsn.Decode(AsnValueReader& reader, Asn1Tag expectedTag, ReadOnlyMemory`1 rebind, ContentInfoAsn& decoded)\ndebug:    at System.Security.Cryptography.Pkcs.SignedCms.<Decode>g__CopyContent|29_0(ReadOnlySpan`1 encodedMessage)\ndebug:    at System.Security.Cryptography.Pkcs.SignedCms.Decode(ReadOnlySpan`1 encodedMessage)\ndebug:    at System.Security.Cryptography.Pkcs.SignedCms.Decode(Byte[] encodedMessage)\ndebug:    at NuGet.Packaging.Signing.PrimarySignature.Decode(Byte[] bytes)\ndebug:    --- End of inner exception stack trace ---\ndebug:    at NuGet.Packaging.Signing.PrimarySignature.Decode(Byte[] bytes)\ndebug:    at NuGet.Packaging.Signing.PrimarySignature.Load(Byte[] data)\ndebug:    at NuGet.Packaging.Signing.PrimarySignature.Load(Stream stream)\ndebug:    at NuGet.Packaging.PackageArchiveReader.GetPrimarySignatureAsync(CancellationToken token)\ndebug:    at NuGet.Packaging.Signing.PackageSignatureVerifier.VerifySignaturesAsync(ISignedPackageReader package, SignedPackageVerifierSettings settings, CancellationToken token, Guid parentId)\n\nFinished with 1 errors and 0 warnings.\nerror: NU3003: The package signature is invalid or cannot be verified on this platform.\n\nPackage signature validation failed.\n"
+    }
+  ],
+  "count": 17,
+  "inputs": "Official retained bytes; synthetic inputs exist only inside disposable TemporaryDirectory scopes"
+}

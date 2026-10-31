@@ -1,0 +1,60 @@
+{
+  "result": "passed",
+  "controls": [
+    {
+      "name": "valid official pre-signing envelope",
+      "result": "passed"
+    },
+    {
+      "name": "compressed payload tamper changes digest",
+      "result": "passed"
+    },
+    {
+      "name": "trailing data",
+      "result": "passed",
+      "rejection": "ZIP comment or trailing data"
+    },
+    {
+      "name": "unsupported signature envelope",
+      "result": "passed",
+      "rejection": "Unexpected signature compression"
+    },
+    {
+      "name": "foreign tag source",
+      "result": "passed",
+      "rejection": "Tag binding mismatch"
+    },
+    {
+      "name": "foreign CI source",
+      "result": "passed",
+      "rejection": "Push CI source/workflow mismatch"
+    },
+    {
+      "name": "skipped source validation",
+      "result": "passed",
+      "rejection": "sourceValidation did not pass"
+    },
+    {
+      "name": "ineligible inventory",
+      "result": "passed",
+      "rejection": "Inventory is ineligible"
+    },
+    {
+      "name": "foreign qualified source",
+      "result": "passed",
+      "rejection": "Qualified source tree mismatch"
+    },
+    {
+      "name": "fixture byte tamper",
+      "result": "passed",
+      "rejection": "Fixture checkout bytes mismatch: check-suites/runner.py"
+    },
+    {
+      "name": "missing evidence coverage",
+      "result": "passed",
+      "rejection": "Required evidence coverage mismatch"
+    }
+  ],
+  "count": 11,
+  "inputs": "Official retained bytes; synthetic inputs exist only inside disposable TemporaryDirectory scopes"
+}

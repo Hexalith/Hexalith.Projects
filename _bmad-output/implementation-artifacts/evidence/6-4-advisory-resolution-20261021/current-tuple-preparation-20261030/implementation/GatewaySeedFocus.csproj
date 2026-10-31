@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <DirectoryBuildPropsPath>/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/Directory.Build.props</DirectoryBuildPropsPath>
+    <DirectoryBuildTargetsPath>/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/Directory.Build.targets</DirectoryBuildTargetsPath>
+    <DirectoryPackagesPropsPath>/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/Directory.Packages.props</DirectoryPackagesPropsPath>
+  </PropertyGroup>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <PropertyGroup><OutputType>Exe</OutputType><IsPackable>false</IsPackable><EnableDefaultCompileItems>false</EnableDefaultCompileItems></PropertyGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Compile Include="/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/tests/Hexalith.Platform.Composition.Tests/GatewaySeedSubscriptionTests.cs" Link="GatewaySeedSubscriptionTests.cs" />
+    <ProjectReference Include="/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.EventStoreHost/Hexalith.Platform.EventStoreHost.csproj" Aliases="platformseed" />
+    <ProjectReference Include="/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/hosts/Hexalith.Builds.Module.EventStoreHost/Hexalith.Builds.Module.EventStoreHost.csproj" Aliases="buildsseed" />
+    <PackageReference Include="xunit.v3" /><PackageReference Include="Shouldly" /><PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" /><PackageReference Include="Dapr.Client" />
+  </ItemGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

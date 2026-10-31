@@ -1,0 +1,31 @@
+{
+  "capturedUtc": "2026-10-31T07:30:50.065729+00:00",
+  "qualifierExitCode": 1,
+  "moduleTestChildExitCode": 2,
+  "elapsedSeconds": 840.411,
+  "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "tree": "18d735e56eeb17332e2d2b57a6b116097f42fdec",
+  "status": "",
+  "submoduleStatus": "-9b78aa008cfc62cd88ad0ea4b39b1f07311956ce references/Hexalith.AI.Tools",
+  "evidenceTests": {
+    "passed": 191,
+    "failed": 0,
+    "skipped": 0
+  },
+  "moduleTests": {
+    "passed": 2628,
+    "failed": 1,
+    "skipped": 5
+  },
+  "integrationTests": "not reached",
+  "packages": "not built",
+  "inventory": "not emitted",
+  "localReleaseEligible": false,
+  "failures": [
+    "Hexalith.Builds.ModuleTool.Tests.Workspace.WorkspaceCommandModeTests.PublicCommandWritesResolvedMappingIntoEnginePlanAsync(command: \"test\", mode: null) (6s 961ms)"
+  ],
+  "exactDiagnostic": "HXR021: resources not healthy within original5s readiness bound for command=test, mode=null. Root cause not established; source test timing/host contention remains a possibility, not a proven exemption.",
+  "historicalFailedFixtureDiagnostics": "/tmp/hexalith-workspace-tests/c9adbcf27ffd4686b59f46e3ba43444b/state/diagnostics/dc9ecbba3b63a4ce81c2e1b78b4dd78b",
+  "historicalFailedFixtureStillExists": false,
+  "disposition": "Local complete gate blocked after final authorized full attempt. No further full retry, no guard/timing/source changes, no local package/inventory proof. Existing official successful hosted qualification is separate."
+}

@@ -1,0 +1,36 @@
+{
+  "result": "passed",
+  "count": 5,
+  "controls": [
+    {
+      "name": "same-commit attachment change detected",
+      "result": "passed",
+      "oldComparedStateEqual": true,
+      "symbolicBefore": {
+        "symbolicHead": null,
+        "headFileSha256": "2efc4cc2f32b0580c706e4d43da04cd7d2bb21e5420c4cf854421c16783f6d73"
+      },
+      "symbolicAfter": {
+        "symbolicHead": "refs/heads/same-source",
+        "headFileSha256": "95b9c549cf35f0d0e64c02487c98e4b80c80ffc35bd9ee5c9b42542759b79e23"
+      }
+    },
+    {
+      "name": "new unrelated source path detected",
+      "result": "passed"
+    },
+    {
+      "name": "only exact evidence and scoped spec additions allowed",
+      "result": "passed"
+    },
+    {
+      "name": "unrelated submodule status change detected",
+      "result": "passed"
+    },
+    {
+      "name": "authorized evidence status allowed",
+      "result": "passed"
+    }
+  ],
+  "realRepositoriesMutated": false
+}

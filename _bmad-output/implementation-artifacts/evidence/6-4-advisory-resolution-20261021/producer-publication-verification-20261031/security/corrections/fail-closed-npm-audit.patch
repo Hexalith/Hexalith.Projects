@@ -1,0 +1,26 @@
+--- a/.github/workflows/build-release.yml
++++ b/.github/workflows/build-release.yml
+@@ -129,6 +129,10 @@
+     - name: Verify npm dependency provenance and signatures
+       run: npm audit signatures
+ 
++    - name: Verify npm vulnerability audit
++      shell: bash
++      run: npm audit --audit-level=moderate
++
+     - name: Test commitlint workflow contracts
+       shell: pwsh
+       run: pwsh -NoProfile -File ./Tools/test-commitlint-workflow.ps1
+--- a/Github/create-release/action.yml
++++ b/Github/create-release/action.yml
+@@ -28,6 +28,10 @@
+       shell: bash
+       run: npm audit signatures
+ 
++    - name: Verify npm vulnerability audit
++      shell: bash
++      run: npm audit --audit-level=moderate
++
+     - name: Semantic Release
+       shell: bash
+       env:

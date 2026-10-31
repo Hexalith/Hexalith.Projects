@@ -1,0 +1,59 @@
+{
+  "suites": [
+    {
+      "lane": "diagnostic source-validation qualifier",
+      "project": "Hexalith.Builds.Evidence.Tests",
+      "utc": "2026-10-31T05:53:32.3112742Z",
+      "total": 191,
+      "failed": 0,
+      "passed": 191,
+      "skipped": 0
+    },
+    {
+      "lane": "diagnostic source-validation qualifier",
+      "project": "Hexalith.Builds.Module.Tests",
+      "utc": "2026-10-31T06:04:55.0152269Z",
+      "total": 2634,
+      "failed": 0,
+      "passed": 2629,
+      "skipped": 5
+    },
+    {
+      "lane": "diagnostic source-validation qualifier",
+      "project": "Hexalith.Builds.Tooling.IntegrationTests",
+      "utc": "2026-10-31T06:04:59.4050114Z",
+      "total": 13,
+      "failed": 0,
+      "passed": 1,
+      "skipped": 12
+    },
+    {
+      "lane": "4.39.0 pre-tag qualification",
+      "project": "Hexalith.Builds.Evidence.Tests",
+      "utc": "2026-10-31T06:11:48.6337323Z",
+      "total": 191,
+      "failed": 0,
+      "passed": 191,
+      "skipped": 0
+    },
+    {
+      "lane": "4.39.0 pre-tag qualification",
+      "project": "Hexalith.Builds.Module.Tests",
+      "utc": "2026-10-31T06:23:50.4243939Z",
+      "total": 2634,
+      "failed": 0,
+      "passed": 2629,
+      "skipped": 5
+    },
+    {
+      "lane": "4.39.0 pre-tag qualification",
+      "project": "Hexalith.Builds.Tooling.IntegrationTests",
+      "utc": "2026-10-31T06:23:54.5954035Z",
+      "total": 13,
+      "failed": 0,
+      "passed": 1,
+      "skipped": 12
+    }
+  ],
+  "note": "The diagnostic release qualifier and real 4.39.0 pre-tag qualifier each run source suites. These are overlapping executions, not additive distinct test coverage."
+}

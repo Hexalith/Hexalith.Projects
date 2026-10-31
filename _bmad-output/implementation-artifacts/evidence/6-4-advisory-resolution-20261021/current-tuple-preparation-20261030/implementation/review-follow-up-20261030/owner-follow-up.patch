@@ -1,0 +1,190 @@
+--- a/eng/builds_tuple.py
++++ b/eng/builds_tuple.py
+@@ -24,20 +24,24 @@
+         raise ValueError("Producer catalog path and SHA-256 are required.")
+     if require_publication:
+         publication = binding["publication"]
+-        required = ("version", "sourceRevision", "releaseTag", "catalogSha256", "archiveSha256", "toolingSha256")
++        required = ("version", "sourceRevision", "releaseTag", "catalogSha256", "archiveSha256", "toolingSha256", "inventorySha256", "inventoryUrl")
+         missing = [key for key in required if not publication.get(key)]
+         if missing:
+             raise ValueError("Official publication binding is unavailable: " + ", ".join(missing) + ". Preparation is unqualified.")
+         version = publication["version"]
+-        if not isinstance(version, str) or not re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?", version):
+-            raise ValueError("Publication requires an exact package semantic version.")
++        match = re.fullmatch(r"4\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?", version) if isinstance(version, str) else None
++        if not match or any(int(number) > 2147483647 for number in match.group(1, 2)) or any(identifier.isdigit() and len(identifier) > 1 and identifier.startswith("0") for identifier in (match.group(3) or "").split(".")):
++            raise ValueError("Publication requires an exact supported 4.x NuGet semantic version with valid prerelease identifiers.")
+         if publication["sourceRevision"] != producer["sourceRevision"] or publication["releaseTag"] != "v" + version:
+             raise ValueError("Publication source/tag differs from the exact producer binding.")
+         if publication["catalogSha256"] != catalog["sha256"]:
+             raise ValueError("Publication catalog differs from the prepared source catalog.")
+-        for key in ("archiveSha256", "toolingSha256"):
++        for key in ("archiveSha256", "toolingSha256", "inventorySha256"):
+             if not isinstance(publication[key], str) or not re.fullmatch(r"[0-9a-f]{64}", publication[key]):
+                 raise ValueError("Publication requires a lowercase SHA-256 for " + key + ".")
++        expected_inventory = "https://github.com/Hexalith/Hexalith.Builds/releases/download/" + publication["releaseTag"] + "/g4-tool-package-inventory.json"
++        if publication["inventoryUrl"] != expected_inventory:
++            raise ValueError("Qualification inventory requires the exact official release asset locator.")
+     return binding
+ 
+ 
+@@ -67,7 +71,12 @@
+         raise ValueError("Recorded catalog blob differs from the producer binding.")
+     if hashlib.sha256(git("show", "HEAD:" + catalog["path"])).hexdigest() != catalog["sha256"]:
+         raise ValueError("Recorded catalog SHA-256 differs from the producer binding.")
+-    subprocess.run(["git", "diff", "--exit-code", "HEAD", "--", catalog["path"]], cwd=builds_root, check=True, capture_output=True)
++    command = ["git", "diff", "--exit-code", "HEAD", "--", catalog["path"]]
++    comparison = subprocess.run(command, cwd=builds_root, capture_output=True, text=True)
++    if comparison.returncode:
++        observation = {"argv": command, "cwd": str(builds_root), "exitCode": comparison.returncode,
++                       "stdout": comparison.stdout, "stderr": comparison.stderr}
++        raise ValueError("Builds catalog checkout comparison failed: " + json.dumps(observation, sort_keys=True))
+     return builds_root / catalog["path"]
+ 
+ 
+--- a/eng/builds-tuple.json
++++ b/eng/builds-tuple.json
+@@ -16,6 +16,8 @@
+     "releaseTag": null,
+     "catalogSha256": null,
+     "archiveSha256": null,
+-    "toolingSha256": null
++    "toolingSha256": null,
++    "inventorySha256": null,
++    "inventoryUrl": null
+   }
+ }
+--- a/eng/test_builds_tuple.py
++++ b/eng/test_builds_tuple.py
+@@ -34,7 +34,9 @@
+             "version": "4.38.3", "sourceRevision": self.binding["producer"]["sourceRevision"],
+             "releaseTag": "v4.38.3", "catalogSha256": self.binding["producer"]["catalog"]["sha256"],
+             "archiveSha256": "6c074186a9bbfb66c558fe5d1090e1e35fdd58577c0396266074bd1cea8919fd",
+-            "toolingSha256": "4e307577ae4fb02104914951a9905a1c9dd453447a80735443d24fbc83496823"}
++            "toolingSha256": "4e307577ae4fb02104914951a9905a1c9dd453447a80735443d24fbc83496823",
++            "inventorySha256": "2421408b564af44ba75a83670aee147d21347d09ed5b823d091c24a6dbc29b5e",
++            "inventoryUrl": "https://github.com/Hexalith/Hexalith.Builds/releases/download/v4.38.3/g4-tool-package-inventory.json"}
+ 
+     def load(self):
+         self.path.write_text(json.dumps(self.binding))
+@@ -49,6 +51,30 @@
+                 original = self.binding["publication"][key]
+                 self.binding["publication"][key] = None
+                 with self.assertRaisesRegex(ValueError, "publication binding is unavailable"):
++                    self.load()
++                self.binding["publication"][key] = original
++
++    def test_supported_nuget_version_boundaries(self):
++        valid = ("4.0.0", "4.38.3", "4.38.3-0", "4.38.3-beta--x", "4.38.3-alpha.0", "4.2147483647.2147483647")
++        invalid = ("5.0.0", "3.9.9", "4.0", "04.0.0", "4.01.0", "4.0.01", "4.38.3-01", "4.38.3-beta.01", "4.38.3-alpha..x", "4.38.3-beta_x", "4.38.3+build", "4.2147483648.0")
++        for version in (*valid, *invalid):
++            with self.subTest(version=version):
++                self.binding["publication"].update(version=version, releaseTag="v" + version,
++                    inventoryUrl="https://github.com/Hexalith/Hexalith.Builds/releases/download/v" + version + "/g4-tool-package-inventory.json")
++                if version in valid:
++                    self.assertEqual(self.load()["publication"]["version"], version)
++                else:
++                    with self.assertRaisesRegex(ValueError, "exact supported 4.x NuGet"):
++                        self.load()
++
++    def test_inventory_requires_digest_and_exact_official_release_asset(self):
++        for key, value, message in (("inventorySha256", "unavailable", "SHA-256"),
++                                   ("inventoryUrl", "https://example.com/g4-tool-package-inventory.json", "official release asset"),
++                                   ("inventoryUrl", "https://github.com/Hexalith/Hexalith.Builds/releases/download/v4.35.2/g4-tool-package-inventory.json", "official release asset")):
++            with self.subTest(key=key, value=value):
++                original = self.binding["publication"][key]
++                self.binding["publication"][key] = value
++                with self.assertRaisesRegex(ValueError, message):
+                     self.load()
+                 self.binding["publication"][key] = original
+ 
+@@ -105,6 +131,61 @@
+                                  ([self.binding["producer"]["sourceRevision"].encode(), self.binding["producer"]["catalog"]["blob"].encode(), b"changed"], "catalog SHA-256 differs")):
+             with self.subTest(message=message), patch("builds_tuple.subprocess.check_output", side_effect=outputs), self.assertRaisesRegex(ValueError, message):
+                 verify_catalog(self.binding, self.root)
++
++    def test_real_catalog_checkout_returns_path_with_git_crlf_normalization(self):
++        # Read the existing dependency only; never create fixture commits or change its checkout/index.
++        sibling = ROOT.parent / "Hexalith.Builds"
++        builds = sibling if (sibling / "Props/Directory.Packages.props").is_file() else ROOT / "references/Hexalith.Builds"
++        catalog = builds / "Props/Directory.Packages.props"
++        def git(*arguments):
++            return subprocess.check_output(["git", *arguments], cwd=builds)
++        committed = git("show", "HEAD:Props/Directory.Packages.props")
++        self.assertNotIn(b"\r\n", committed)
++        self.assertIn(b"\r\n", catalog.read_bytes())
++        self.assertEqual(catalog.read_bytes().replace(b"\r\n", b"\n"), committed)
++        self.binding["producer"]["sourceRevision"] = git("rev-parse", "HEAD").decode().strip()
++        self.binding["producer"]["catalog"].update(
++            blob=git("rev-parse", "HEAD:Props/Directory.Packages.props").decode().strip(),
++            sha256=hashlib.sha256(committed).hexdigest())
++        self.assertEqual(verify_catalog(self.binding, builds), catalog)
++
++    def test_dirty_catalog_and_git_errors_retain_public_diff_observation(self):
++        canonical = b"<Project />\n"
++        self.binding["producer"]["catalog"]["sha256"] = hashlib.sha256(canonical).hexdigest()
++        outputs = [self.binding["producer"]["sourceRevision"].encode(), self.binding["producer"]["catalog"]["blob"].encode(), canonical]
++        public_diff = "diff --git a/Props/Directory.Packages.props b/Props/Directory.Packages.props\n-<Project />\n+<Project Changed='true' />\n"
++        command = ["git", "diff", "--exit-code", "HEAD", "--", "Props/Directory.Packages.props"]
++        for code, stdout, stderr in ((1, public_diff, ""), (128, "", "fatal: public catalog comparison failed")):
++            with self.subTest(exitCode=code), patch("builds_tuple.subprocess.check_output", side_effect=outputs), patch("builds_tuple.subprocess.run", return_value=subprocess.CompletedProcess(command, code, stdout, stderr)):
++                with self.assertRaisesRegex(ValueError, "catalog checkout comparison failed") as failure:
++                    verify_catalog(self.binding, self.root)
++                observation = json.loads(str(failure.exception).split(": ", 1)[1])
++                self.assertEqual(observation, {"argv": command, "cwd": str(self.root), "exitCode": code, "stdout": stdout, "stderr": stderr})
++
++    def test_recorded_pin_and_catalog_refusals_precede_all_artifact_side_effects(self):
++        source = self.binding["producer"]["sourceRevision"]
++        other = load_binding(require_publication=False)["producer"]["sourceRevision"]
++        for name, pin, dirty, catalog_error in (("pin", other, False, None), ("dirty", source, True, None), ("catalog", source, False, ValueError("catalog identity mismatch"))):
++            with self.subTest(refusal=name), contextlib.ExitStack() as stack:
++                output = self.root / ("recorded-" + name)
++                stack.enter_context(patch.object(sys, "argv", ["prepare", "--output", str(output), "--require-recorded"]))
++                stack.enter_context(patch.object(prepare_builds_artifacts, "load_binding", return_value=self.binding))
++                stack.enter_context(patch.object(prepare_builds_artifacts, "validate_owner_pins"))
++                stack.enter_context(patch.object(prepare_builds_artifacts, "source_state", return_value={"dirty": dirty}))
++                reads = stack.enter_context(patch.object(prepare_builds_artifacts.subprocess, "check_output", side_effect=[source, pin]))
++                catalog_check = stack.enter_context(patch.object(prepare_builds_artifacts, "verify_catalog", side_effect=catalog_error))
++                signature = stack.enter_context(patch.object(prepare_builds_artifacts.subprocess, "run"))
++                download = stack.enter_context(patch.object(prepare_builds_artifacts.urllib.request, "urlopen"))
++                with self.assertRaisesRegex(ValueError, "catalog identity mismatch" if catalog_error else "clean recorded Platform"):
++                    prepare_builds_artifacts.main()
++                self.assertFalse(output.exists())
++                self.assertEqual(reads.call_count, 2)  # Owner HEAD and pin only; no executable invocation.
++                signature.assert_not_called()
++                download.assert_not_called()
++                if catalog_error:
++                    catalog_check.assert_called_once()
++                else:
++                    catalog_check.assert_not_called()
+ 
+     def test_archive_control_checks_executable_source_and_keeps_package_version(self):
+         # Synthetic bytes exercise extraction/receipt mechanics; they are never publication evidence.
+--- a/eng/test_host_builds_resolution.py
++++ b/eng/test_host_builds_resolution.py
+@@ -174,7 +174,7 @@
+     def test_tenant_registry_inherits_transitive_catalog_and_keeps_one_gateway_pin(self):
+         selected = self.builds(self.workspace / "Hexalith.Builds", "tenant")
+         catalog = selected / "Props/Directory.Packages.props"
+-        catalog.write_text('<Project><ItemGroup><PackageVersion Include="Hexalith.Commons.UniqueIds" Version="2.30.7" /><PackageVersion Include="Hexalith.EventStore.Gateway" Version="3.128.4" /></ItemGroup></Project>')
++        catalog.write_text('<Project><ItemGroup><PackageVersion Include="Hexalith.Commons.UniqueIds" Version="2.30.7" /><PackageVersion Include="Hexalith.EventStore.Gateway" Version="3.124.0" /></ItemGroup></Project>')
+         project = self.platform / "src/Hexalith.Platform.TenantRegistry.Host/Hexalith.Platform.TenantRegistry.Host.csproj"
+         project.parent.mkdir(parents=True)
+         for name in (project.name, "Directory.Packages.props"):
+--- a/docs/current-tuple-preparation.md
++++ b/docs/current-tuple-preparation.md
+@@ -40,6 +40,13 @@
+    inventory, embedded tool version/source, Tooling bytes and source catalog.
+    Fill every `publication` field in `eng/builds-tuple.json` with those observed
+    identities. Its `sourceRevision` and `catalogSha256` must match `producer`.
++   `inventorySha256` and `inventoryUrl` bind the verified inventory digest and
++   exact official release asset. They remain unavailable until the actual producer
++   evidence is retained and verified. Existing producer controls at
++   `Tools/test-g4-tool-package-contracts.ps1:983` generate the evaluated expected
++   runtime catalog; line 1051 compares it with installed embedded catalog bytes.
++   Retain that verified actual producer evidence before filling these fields;
++   Platform's binding records the observation and does not repeat qualification.
+    Keep `candidateAcceptance:false`. The binding is deliberately incomplete
+    until the real version and hashes exist.
+ 5. Align `.config/dotnet-tools.json`, the range floor in `hexalith-platform.json`

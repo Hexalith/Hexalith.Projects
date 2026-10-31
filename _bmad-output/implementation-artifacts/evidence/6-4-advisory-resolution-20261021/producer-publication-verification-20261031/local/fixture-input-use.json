@@ -1,0 +1,20 @@
+{
+  "test/fixtures/module": {
+    "trackedFileCount": 90,
+    "hiddenTrackedFiles": []
+  },
+  "test/fixtures/evidence": {
+    "trackedFileCount": 188,
+    "hiddenTrackedFiles": []
+  },
+  "omittedTemplate": {
+    "file": "test/fixtures/package-consumer/.config/dotnet-tools.json",
+    "sha256": "ce9f4d539428d221a70a893a250aec45d244694050dc9216b490f6517eb626f4",
+    "toolVersions": [
+      "4.29.1",
+      "4.29.1"
+    ],
+    "consumedByFullQualifier": false,
+    "reason": "Qualifier synthesizes consumer tool manifest with both tools at supplied Version and copies only module/ and evidence/ subtrees."
+  }
+}

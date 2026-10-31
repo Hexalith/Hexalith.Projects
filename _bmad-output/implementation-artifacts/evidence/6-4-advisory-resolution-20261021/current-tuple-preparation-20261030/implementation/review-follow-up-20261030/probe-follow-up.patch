@@ -1,0 +1,71 @@
+--- a/run-local-host.py
++++ b/review-follow-up-20261030/run-local-host.py
+@@ -4,7 +4,7 @@
+ ROOT=Path('/home/administrator/projects/hexalith/projects')
+ OWNER=ROOT/'references/Hexalith.Platform'
+ E=Path(__file__).resolve().parent
+-W=Path(tempfile.mkdtemp(prefix='story64-current-tuple-host-'))
++W=Path(tempfile.mkdtemp(prefix='story64-review-follow-up-host-'))
+ if (E/'local-host.json').exists():raise ValueError('Choose a new output directory for a fresh host attempt')
+ commands=[];children=[];result={'kind':'local-Debug-host-probe','candidateAcceptance':False,'observations':[]}
+ now=lambda:datetime.datetime.now(datetime.timezone.utc).isoformat()
+@@ -39,6 +39,39 @@
+  item={'name':name,'method':method,'path':path,'expectedStatus':expected,'actualStatus':code,'startedUtc':started,'finishedUtc':now(),'responseBytes':len(body),'responseSha256':hashlib.sha256(body).hexdigest()}
+  result['observations'].append(item);save();assert code==expected,(name,code,expected)
+  return body
++# Expected names come from the restored 3.128.4 owner's health registrations.
++EXPECTED_READY={
++ 'dapr-sidecar':'Healthy','dapr-actor-placement':'Unhealthy',
++ 'dapr-statestore':'Healthy','dapr-pubsub':'Healthy','dapr-configstore':'Healthy',
++ 'dapr-app-channel-token':'Healthy','projection-delivery-writer-protocol':'Unhealthy',
++ 'projection-delivery-unresolved-conflict':'Healthy'}
++def check_health(path,body):
++ report=json.loads(body);entries=report['results']
++ actual={name:entry['status'] for name,entry in entries.items()}
++ expected=dict(EXPECTED_READY)
++ if path=='/health':expected['self']='Healthy'
++ sanitized={'status':report['status'],'checks':actual,'expectedChecks':expected,'validated':False}
++ result.setdefault('health',{})[path]=sanitized;save()
++ if report['status']!='Unhealthy' or actual!=expected:
++  raise RuntimeError('Unexpected named health statuses at '+path)
++ actor=entries['dapr-actor-placement'].get('description','')
++ if not (actor.startswith('DAPR actor host not ready (') and 'placement: disconnected' in actor and 'runtimeStatus=DISABLED' in actor):
++  raise RuntimeError('Unexpected actor-placement failure cause at '+path)
++ if entries['projection-delivery-writer-protocol'].get('description')!='Projection delivery writer protocol v2 is not active.':
++  raise RuntimeError('Unexpected projection writer failure cause at '+path)
++ sanitized['expectedFailureCauses']={'dapr-actor-placement':'placement-disconnected-runtime-disabled','projection-delivery-writer-protocol':'writer-protocol-v2-inactive'}
++ sanitized['validated']=True;save()
++def check_subscriptions(body):
++ subscriptions=json.loads(body)
++ selected=[]
++ for item in subscriptions:
++  fields={key.lower():value for key,value in item.items()}
++  selected.append({'pubsub':fields.get('pubsubname'),'topic':fields.get('topic'),
++    'route':fields.get('route',fields.get('routes',{}).get('default'))})
++ expected=[{'pubsub':'eventstore-pubsub','topic':'*.*.projection-changed','route':'projections/changed'}]
++ result['subscriptions']={'actual':selected,'expected':expected,'validated':selected==expected};result['subscriptionCount']=len(subscriptions);save()
++ if selected!=expected:raise RuntimeError('Subscription pubsub/topic/route differs from the declared owner contract')
++
+ key=secrets.token_urlsafe(48)
+ def jwt(extra=None,bad=False):
+  enc=lambda value:base64.urlsafe_b64encode(json.dumps(value,separators=(',',':')).encode()).rstrip(b'=')
+@@ -63,14 +96,14 @@
+  else:raise RuntimeError('Isolated Redis did not become ready')
+  api_token=secrets.token_urlsafe(32);app_token=secrets.token_urlsafe(32)
+  d=launch('daprd',[str(dapr),'--app-id',app_id,'--resources-path',str(components),'--dapr-http-port',str(http_port),'--dapr-grpc-port',str(grpc_port),'--dapr-internal-grpc-port',str(internal_port),'--dapr-public-port',str(public_port),'--dapr-listen-addresses','127.0.0.1','--dapr-public-listen-address','127.0.0.1','--dapr-internal-grpc-listen-address','127.0.0.1','--enable-metrics=false','--scheduler-host-address','','--log-level','warn'],W,{'DAPR_API_TOKEN':api_token,'APP_API_TOKEN':app_token})
+- status,_=wait_http('http://127.0.0.1:'+str(http_port)+'/v1.0/healthz/outbound',d,20);result['daprOutboundHealthStatus']=status
++ status,_=wait_http('http://127.0.0.1:'+str(http_port)+'/v1.0/healthz/outbound',d,20);result['daprOutboundHealthStatus']=status;assert status==204,'Dapr outbound health is unavailable'
+  env={'ASPNETCORE_ENVIRONMENT':'Development','ASPNETCORE_URLS':base,'DAPR_HTTP_ENDPOINT':'http://127.0.0.1:'+str(http_port),'DAPR_GRPC_ENDPOINT':'http://127.0.0.1:'+str(grpc_port),'DAPR_HTTP_PORT':str(http_port),'DAPR_GRPC_PORT':str(grpc_port),'DAPR_API_TOKEN':api_token,'APP_API_TOKEN':app_token,'Authentication__JwtBearer__Issuer':'local-story64-issuer','Authentication__JwtBearer__Audience':'hexalith-eventstore','Authentication__JwtBearer__SigningKey':key,'Authentication__JwtBearer__AllowedAlgorithms__0':'HS256','Authentication__JwtBearer__RequireHttpsMetadata':'false','EventStore__OpenApi__Enabled':'false','EventStore__CommandStatus__StateStoreName':'eventstore-statestore','EventStore__Projections__CheckpointStateStoreName':'eventstore-statestore','EventStore__Projections__ReadModelStateStoreName':'eventstore-statestore','EventStore__Publisher__PubSubName':'eventstore-pubsub','EventStore__ProjectionChanges__PubSubName':'eventstore-pubsub','EventStore__RateLimiting__ConfigurationStoreName':'eventstore-configstore','Logging__LogLevel__Default':'Warning'}
+  host=launch('tenant-registry-host',['dotnet',result['host']['assembly']],OWNER/'src/Hexalith.Platform.TenantRegistry.Host',env)
+  wait_http(base+'/alive',host,65)
+- observe('liveness','GET','/alive',200)
+- observe('readiness-without-actor-placement','GET','/ready',503)
+- observe('health-without-actor-placement','GET','/health',503)
+- body=observe('dynamic-subscription','GET','/dapr/subscribe',200);result['subscriptionCount']=len(json.loads(body))
++ body=observe('liveness','GET','/alive',200);assert body.decode()=='Healthy','Unexpected liveness response'
++ body=observe('readiness-without-actor-placement','GET','/ready',503);check_health('/ready',body)
++ body=observe('health-without-actor-placement','GET','/health',503);check_health('/health',body)
++ body=observe('dynamic-subscription','GET','/dapr/subscribe',200);check_subscriptions(body)
+  payload={'tenant':'local-tenant','domain':'tenants','aggregateId':'local-aggregate','queryType':'GetTenant','payload':{}}
+  observe('anonymous-query-denied','POST','/api/v1/queries',401,payload)
+  observe('malformed-bearer-denied','POST','/api/v1/queries',401,payload,'not-a-jwt')

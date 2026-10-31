@@ -1,0 +1,40 @@
+{
+  "createdUtc": "2026-10-31T06:46:06.077983+00:00",
+  "temporaryRoot": "/tmp/story64-producer-verification-1e388du9",
+  "sourceRoot": "/tmp/story64-producer-verification-1e388du9/source",
+  "isolatedHome": "/tmp/story64-producer-verification-1e388du9/home",
+  "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "tree": "18d735e56eeb17332e2d2b57a6b116097f42fdec",
+  "status": "",
+  "submoduleStatus": "-9b78aa008cfc62cd88ad0ea4b39b1f07311956ce references/Hexalith.AI.Tools",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--shared",
+        "--no-checkout",
+        "--no-hardlinks",
+        "/tmp/story64-builds-producer-2186b9a4",
+        "/tmp/story64-producer-verification-1e388du9/source"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "Cloning into '/tmp/story64-producer-verification-1e388du9/source'...\ndone.\n"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/tmp/story64-producer-verification-1e388du9/source",
+        "checkout",
+        "--detach",
+        "2186b9a4bc507a116a457c590c80945c2e232cbd"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "HEAD is now at 2186b9a fix(security): validate disposition paths explicitly\n"
+    }
+  ],
+  "configSha256": "7a77c63a438cdf0524dc336da4bf2191d3f259645de430f5a4c61b3edd52fa9f"
+}
