@@ -1,0 +1,41 @@
+{
+  "capturedUtc": "2026-10-31T07:27:38.117993+00:00",
+  "scope": "Only active full Module test process and descendants; no command arguments or unrelated process data retained",
+  "processes": [
+    {
+      "pid": 1516710,
+      "parentPid": 1508311,
+      "elapsed": "13:26",
+      "command": "dotnet",
+      "cpuPercent": "0.8"
+    },
+    {
+      "pid": 1518662,
+      "parentPid": 1516710,
+      "elapsed": "13:21",
+      "command": "Hexalith.Builds",
+      "cpuPercent": "14.7"
+    },
+    {
+      "pid": 2106498,
+      "parentPid": 1518662,
+      "elapsed": "00:09",
+      "command": "dotnet",
+      "cpuPercent": "2.1"
+    },
+    {
+      "pid": 2106513,
+      "parentPid": 2106498,
+      "elapsed": "00:09",
+      "command": "sh",
+      "cpuPercent": "0.0"
+    },
+    {
+      "pid": 2106514,
+      "parentPid": 2106513,
+      "elapsed": "00:09",
+      "command": "dotnet",
+      "cpuPercent": "0.4"
+    }
+  ]
+}

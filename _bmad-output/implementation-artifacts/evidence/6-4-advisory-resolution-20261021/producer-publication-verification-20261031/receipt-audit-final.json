@@ -1,0 +1,75 @@
+{
+  "utc": "2026-10-31T08:07:42.848250+00:00",
+  "result": "passed",
+  "streamBoundReceiptsChecked": 41,
+  "failedCommandsRemainFailed": [
+    {
+      "path": "local/full-qualification-bounded.command.json",
+      "exitCode": 1,
+      "status": "legacy completed-command receipt"
+    },
+    {
+      "path": "local/full-qualification-retry.command.json",
+      "exitCode": 1,
+      "status": "legacy completed-command receipt"
+    },
+    {
+      "path": "local/full-qualification.command.json",
+      "exitCode": 1,
+      "status": "legacy completed-command receipt"
+    },
+    {
+      "path": "local/original-helper-hidden-controls.command.json",
+      "exitCode": 1,
+      "status": "legacy completed-command receipt"
+    },
+    {
+      "path": "local/reviewed-recorder-case-evidence/invalid-cwd.command.json",
+      "exitCode": 127,
+      "status": "launch-failed"
+    },
+    {
+      "path": "local/reviewed-recorder-case-evidence/missing-executable.command.json",
+      "exitCode": 127,
+      "status": "launch-failed"
+    },
+    {
+      "path": "local/reviewed-recorder-case-evidence/nonzero-child.command.json",
+      "exitCode": 23,
+      "status": "child-failed"
+    },
+    {
+      "path": "security/audit-locked.command.json",
+      "exitCode": 1,
+      "status": "legacy completed-command receipt"
+    },
+    {
+      "path": "security/corrected-release-contract.command.json",
+      "exitCode": 1,
+      "status": "legacy completed-command receipt"
+    },
+    {
+      "path": "security/portable-reconstruction.command.json",
+      "exitCode": 1,
+      "status": "child-failed"
+    },
+    {
+      "path": "security/proposed-gate-controls.command.json",
+      "exitCode": 1,
+      "status": "legacy completed-command receipt"
+    },
+    {
+      "path": "security/replay-overwrite-refusal.command.json",
+      "exitCode": 1,
+      "status": "legacy completed-command receipt"
+    }
+  ],
+  "legacyObservationReceiptsWithoutStreamBindings": [
+    "observations/catalog-evaluation.command.json",
+    "observations/hexalith.builds.evidence.cli.signature.command.json",
+    "observations/hexalith.builds.module.cli.signature.command.json",
+    "observations/official-loader.command.json"
+  ],
+  "legacyLimit": "These earlier observation records do not assert stream digests; their bytes and companion logs are covered by the package manifest. Current acceptance uses fresh input-bound verification.",
+  "mismatches": []
+}

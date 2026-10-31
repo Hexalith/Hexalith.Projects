@@ -1,0 +1,221 @@
+{
+  "candidateAcceptance": false,
+  "commands": [
+    {
+      "name": "incomplete-final-preflight.command",
+      "argv": [
+        "python3",
+        "-B",
+        "eng/run_tuple_ci.py",
+        "--evidence",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-tuple-preparation-20261030/parent-final/actual-preflight",
+        "--audit-only"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "startedUtc": "2026-10-30T18:34:13.643272+00:00",
+      "finishedUtc": "2026-10-30T18:34:14.456716+00:00",
+      "exitCode": 1,
+      "expectedExitCode": 1
+    },
+    {
+      "name": "index-authority.command",
+      "argv": [
+        "python3",
+        "-B",
+        "tools/planning/validate_production_authority.py",
+        "--validate-index"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "startedUtc": "2026-10-30T18:34:13.469033+00:00",
+      "finishedUtc": "2026-10-30T18:34:13.543123+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "name": "planning-guard.command",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/tools",
+        "-p",
+        "test_production_authority_guard.py"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "startedUtc": "2026-10-30T18:34:04.944591+00:00",
+      "finishedUtc": "2026-10-30T18:34:13.393118+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "name": "platform-whitespace.command",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "startedUtc": "2026-10-30T18:34:13.634608+00:00",
+      "finishedUtc": "2026-10-30T18:34:13.643160+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "name": "root-whitespace.command",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "startedUtc": "2026-10-30T18:34:13.543235+00:00",
+      "finishedUtc": "2026-10-30T18:34:13.634458+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "name": "story-authority.command",
+      "argv": [
+        "python3",
+        "-B",
+        "tools/planning/validate_production_authority.py",
+        "--story-id",
+        "6.4"
+      ],
+      "cwd": "/home/administrator/projects/hexalith/projects",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "startedUtc": "2026-10-30T18:34:13.393304+00:00",
+      "finishedUtc": "2026-10-30T18:34:13.468822+00:00",
+      "exitCode": 0,
+      "expectedExitCode": 0
+    }
+  ],
+  "planningGuardPassed": 37,
+  "integrity": {
+    "implementation/file-integrity.json": {
+      "files": 116,
+      "changed": []
+    },
+    "implementation/review-follow-up-20261030/file-integrity.json": {
+      "files": 32,
+      "changed": []
+    }
+  },
+  "actualHexalithPackages": {
+    "Hexalith.Commons.UniqueIds": "2.30.7",
+    "Hexalith.EventStore.Admin.Abstractions": "3.128.4",
+    "Hexalith.EventStore.Client": "3.128.4",
+    "Hexalith.EventStore.Contracts": "3.128.4",
+    "Hexalith.EventStore.DomainService": "3.128.4",
+    "Hexalith.EventStore.Gateway": "3.128.4",
+    "Hexalith.EventStore.Server": "3.128.4",
+    "Hexalith.EventStore.ServiceDefaults": "3.128.4"
+  },
+  "freshHttpControls": 10,
+  "preflightBlocker": "Official publication binding is unavailable: version, sourceRevision, releaseTag, catalogSha256, archiveSha256, toolingSha256, inventorySha256, inventoryUrl. Preparation is unqualified.",
+  "repositoryIdentities": {
+    ".": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "5724c2400c102c466247890c05bbbdabb898e7a4"
+    },
+    "references/Hexalith.AI.Tools": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "9b78aa008cfc62cd88ad0ea4b39b1f07311956ce"
+    },
+    "references/Hexalith.EventStore": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "e92e6694a93c79531368fa3bbf6c06462fd05484"
+    },
+    "references/Hexalith.Tenants": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "8919dd0c5bca3e505ed3de25c37f8326f9e8b814"
+    },
+    "references/Hexalith.FrontComposer": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "dd575b67c82c377bd17c34fb3d14366277d2ac62"
+    },
+    "references/Hexalith.Conversations": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "11c2f4b875be952a1a75485de1f410c9dc64a916"
+    },
+    "references/Hexalith.Folders": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "947716833f5a221c38b222a32252d50548cc2abe"
+    },
+    "references/Hexalith.Parties": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "8b0e23e437296691d0233fe86afc765063f9fef5"
+    },
+    "references/Hexalith.Commons": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "0604bcf5304fc09a569f7abbd8e5d1b9049c02b7"
+    },
+    "references/Hexalith.Builds": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "1160a3a7ddc0f4c6927456b5735a2963261016a0"
+    },
+    "references/Hexalith.Memories": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "71a721a87ebbb34c557c08517b5c39884a7417da"
+    },
+    "references/Hexalith.Platform": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "a185bfaa5541f8de675fb82e4f553e1e49931201"
+    },
+    "references/Hexalith.McpCli": {
+      "headPreserved": true,
+      "indexPreserved": true,
+      "refsPreserved": true,
+      "head": "e74d215739766a663cb9e910f4534f383e7973ff"
+    }
+  },
+  "originalStoryPrefixPreserved": true,
+  "platformPatchSha256": "6aa930d23b28eca0f99a8ca0907171ef5e7af6fad7bd16b75ef1f3ef36941933",
+  "finishedUtc": "2026-10-30T18:36:37.181779+00:00",
+  "initialReviewedPlatformPatchSha256": "49572aee25d0fd40a4e7c40e16787b6832b67fb6bf6c137cfa9bc6d9522a77e7",
+  "sequenceClarification": "Defer umbrella pointer to separately approved consumer adoption after Platform publication; existing producer commit needs no duplicate recording.",
+  "finalPreflightReceipt": "actual-preflight-after-sequence-clarification/tuple-ci-result.json"
+}

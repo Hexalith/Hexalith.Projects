@@ -1,0 +1,47 @@
+{
+  "capturedUtc": "2026-10-31T07:00:40.269537+00:00",
+  "qualifierExitCode": 1,
+  "moduleTestChildExitCode": 2,
+  "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "evidenceTests": {
+    "passed": 191,
+    "failed": 0,
+    "skipped": 0
+  },
+  "moduleTests": {
+    "passed": 2623,
+    "failed": 6,
+    "skipped": 5
+  },
+  "integrationTests": "not reached",
+  "packages": "not built",
+  "inventory": "not emitted",
+  "releaseEligible": false,
+  "failures": [
+    {
+      "case": "Hexalith.Builds.ModuleTool.Tests.CompositionRunStateStoreTests.DefaultDirectoriesArePerUser (27ms)",
+      "category": "isolated HOME under system temporary directory"
+    },
+    {
+      "case": "Hexalith.Builds.ModuleTool.Tests.Workspace.PlatformModelCatalogTests.ModelBuildAppliesPinnedCatalogOnceBeforeOwnerPropsAsync(mode: Source, changeLiveCatalog: False) (8s 227ms)",
+      "category": "explicit NUGET_PACKAGES overrides fixture cache config"
+    },
+    {
+      "case": "Hexalith.Builds.ModuleTool.Tests.Workspace.PlatformModelCatalogTests.ModelBuildAppliesPinnedCatalogOnceBeforeOwnerPropsAsync(mode: Source, changeLiveCatalog: True) (6s 239ms)",
+      "category": "explicit NUGET_PACKAGES overrides fixture cache config"
+    },
+    {
+      "case": "Hexalith.Builds.ModuleTool.Tests.Workspace.PlatformModelCatalogTests.ModelBuildAppliesPinnedCatalogOnceBeforeOwnerPropsAsync(mode: Package, changeLiveCatalog: True) (6s 218ms)",
+      "category": "explicit NUGET_PACKAGES overrides fixture cache config"
+    },
+    {
+      "case": "Hexalith.Builds.ModuleTool.Tests.Workspace.PlatformModelCatalogTests.ModelBuildAppliesPinnedCatalogOnceBeforeOwnerPropsAsync(mode: Package, changeLiveCatalog: False) (5s 067ms)",
+      "category": "explicit NUGET_PACKAGES overrides fixture cache config"
+    },
+    {
+      "case": "Hexalith.Builds.ModuleTool.Tests.Workspace.WorkspaceCommandModeTests.PublicCommandWritesResolvedMappingIntoEnginePlanAsync(command: \"test\", mode: null) (9s 525ms)",
+      "category": "5-second readiness deadline; contention not yet established"
+    }
+  ],
+  "next": "Focused unchanged-source environment correction; full retry if these pass. Do not substitute focused result for a full qualification result."
+}

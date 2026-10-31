@@ -1,0 +1,57 @@
+{
+  "result": "passed",
+  "commandCount": 10,
+  "expectedFullFailuresRemainFailures": true,
+  "commands": [
+    {
+      "command": "full-qualification",
+      "exitCode": 1,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "full-qualification-retry",
+      "exitCode": 1,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "full-qualification-bounded",
+      "exitCode": 1,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "focused-environment-retry",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "focused-contention-retry",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "final-workspace-diagnosis",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "corrected-artifact-validator",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "original-helper-hidden-controls",
+      "exitCode": 1,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "fixture-enumeration",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    },
+    {
+      "command": "hidden-fixture-patch-check",
+      "exitCode": 0,
+      "streamDigestsVerified": true
+    }
+  ]
+}

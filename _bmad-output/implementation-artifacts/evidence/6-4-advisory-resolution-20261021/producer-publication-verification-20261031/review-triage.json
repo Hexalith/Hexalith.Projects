@@ -1,0 +1,114 @@
+{
+  "utc": "2026-10-31T07:57:58.271433+00:00",
+  "reviewers": [
+    "Blind Hunter",
+    "Edge Case Hunter",
+    "Verification Gap"
+  ],
+  "verificationGapReviewer": "No verification gaps found",
+  "allFindingsTriagedIndividually": true,
+  "findings": [
+    {
+      "id": "BH1",
+      "verdict": "medium",
+      "route": "patch",
+      "claim": "Publication replay omitted delivered binding",
+      "evidence": "verify-publication-reviewed.py checks every evidence binding field and requires literal candidateAcceptance:false; three binding-tamper controls pass."
+    },
+    {
+      "id": "BH2",
+      "verdict": "medium",
+      "route": "patch",
+      "claim": "Catalog receipt was not input-bound",
+      "evidence": "Reviewed replay extracts evaluator/catalog/global configuration from selected Git bytes into disposable scratch and re-evaluates; stale catalog control fails closed."
+    },
+    {
+      "id": "BH3",
+      "verdict": "medium",
+      "route": "patch",
+      "claim": "Signature result was not archive-bound",
+      "evidence": "Reviewed replay freshly runs dotnet nuget verify for each exact archive, records its input digest and full output, and detects archive changes; corrupt-signature control rejects old success text."
+    },
+    {
+      "id": "BH4",
+      "verdict": "medium",
+      "route": "patch with disclosed historical limit",
+      "claim": "Commit-only audit missed same-SHA attachment change",
+      "evidence": "Reviewed audit captures and compares symbolic HEAD and HEAD-file digest across the review phase. Initial snapshot lacked those fields; no retroactive proof is claimed. Actual Git fixture control preserves commit/refs/index while changing attachment and is detected."
+    },
+    {
+      "id": "BH5",
+      "verdict": "medium",
+      "route": "patch",
+      "claim": "Preservation omitted new paths/status deltas",
+      "evidence": "Reviewed audit compares all tracked/nonignored paths and statuses against original capture, allowing only the exact packet/scoped-spec additions and canonical/sprint edits. New unrelated path/status controls pass."
+    },
+    {
+      "id": "BH6",
+      "verdict": "medium",
+      "route": "patch with disclosed historical limit",
+      "claim": "Protected original detached checkout absent from primary capture",
+      "evidence": "Historical dirty hash/patch, 22 committed inputs and ten raw checkout hashes match. Supplement verifies historical HEAD/status/empty staged paths/submodules; missing historical raw index/ref/symbolic state remains explicit, with new monitoring separate."
+    },
+    {
+      "id": "BH7",
+      "verdict": "medium",
+      "route": "patch",
+      "claim": "Capture helpers could truncate orphan streams",
+      "evidence": "Executed helpers retained capture-only. local/record-command-reviewed.py refuses every existing component, opens outputs exclusively, and passes orphan/overwrite controls."
+    },
+    {
+      "id": "BH8",
+      "verdict": "medium",
+      "route": "patch",
+      "claim": "Launch errors lacked receipts",
+      "evidence": "Reviewed recorder emits launch-failed JSON, UTC times, retained streams and nonzero status for missing executable and invalid cwd; nonzero-child propagation also passes."
+    },
+    {
+      "id": "BH9",
+      "verdict": "low",
+      "route": "patch",
+      "claim": "Patched-version field falsely said same branch",
+      "evidence": "Current applicability.json uses firstPatchedVersion and marks glob/minimatch major upgrades with compatibility requirements. Original metadata remains in applicability-executed-history.json."
+    },
+    {
+      "id": "BH10",
+      "verdict": "medium",
+      "route": "patch",
+      "claim": "Security reconstruction depended on disposable/user paths",
+      "evidence": "Reviewed reconstruction script has explicit prerequisites, exact selected commit/tree/file hashes, script-disabled audited locked installation and scratch-only patch/replay. One fresh reconstruction passes; both vulnerability guards refuse affected tree."
+    },
+    {
+      "id": "EC1",
+      "verdict": "medium",
+      "route": "patch (duplicate root cause BH7)",
+      "claim": "Orphan stream truncation boundary",
+      "evidence": "Same exclusive reviewed recorder fixes this independently reported path; original helpers/logs are untouched."
+    },
+    {
+      "id": "EC2",
+      "verdict": "medium",
+      "route": "patch with disclosed historical limit (duplicate BH4)",
+      "claim": "Symbolic HEAD attachment boundary",
+      "evidence": "Same review-phase HEAD capture/comparison plus honest initial-coverage limit fixes future checking without inventing the missing original observation."
+    },
+    {
+      "id": "F1",
+      "verdict": "low",
+      "route": "patch",
+      "claim": "Nested loop shadows tamper-case label",
+      "evidence": "verification-controls-final.py uses helper_name and enforces unique result names; original code/capture retained unchanged. Fresh optimized 17-case report must contain 17 unique names."
+    }
+  ],
+  "deferred": [],
+  "remainingProductBlockers": [
+    "Local full qualifier readiness failure",
+    "npm vulnerability/application assessment unresolved"
+  ],
+  "historicalPreservationLimitsDisclosed": true,
+  "followUp": {
+    "blindHunter": "Original ten findings addressed; one new control-label defect reported and corrected",
+    "edgeCaseHunter": "Both boundaries closed; historical limits accurately disclosed; no remaining defect",
+    "verificationGap": "No verification gaps found"
+  }
+}

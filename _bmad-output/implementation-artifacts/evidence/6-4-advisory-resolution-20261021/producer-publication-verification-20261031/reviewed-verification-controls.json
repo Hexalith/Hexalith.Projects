@@ -1,0 +1,80 @@
+{
+  "result": "passed",
+  "controls": [
+    {
+      "name": "valid official pre-signing envelope",
+      "result": "passed"
+    },
+    {
+      "name": "compressed payload tamper changes digest",
+      "result": "passed"
+    },
+    {
+      "name": "trailing data",
+      "result": "passed",
+      "rejection": "ZIP comment or trailing data"
+    },
+    {
+      "name": "unsupported signature envelope",
+      "result": "passed",
+      "rejection": "Unexpected signature compression"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Tag binding mismatch"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Push CI source/workflow mismatch"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "sourceValidation did not pass"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Inventory is ineligible"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Qualified source tree mismatch"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Duplicate fixture inventory path"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Fixture checkout bytes mismatch: check-suites/runner.py"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Required evidence coverage mismatch"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Delivered producer binding differs from verified publication or acceptance is not false"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Delivered producer binding differs from verified publication or acceptance is not false"
+    },
+    {
+      "name": "verified-producer-binding.json",
+      "result": "passed",
+      "rejection": "Delivered producer binding differs from verified publication or acceptance is not false"
+    }
+  ],
+  "count": 15,
+  "inputs": "Official retained bytes; synthetic inputs exist only inside disposable TemporaryDirectory scopes"
+}

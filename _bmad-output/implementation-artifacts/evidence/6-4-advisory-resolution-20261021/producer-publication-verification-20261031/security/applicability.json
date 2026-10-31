@@ -1,0 +1,127 @@
+{
+  "capturedUtc": "2026-10-31T06:55:21.033063+00:00",
+  "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "versionUnderAssessment": "4.39.0",
+  "overall": "unresolved; no vulnerability-pass or exception",
+  "selectedLockPreserved": true,
+  "uniqueAdvisories": [
+    {
+      "advisory": "GHSA-3g3m-2fjr-6pw4",
+      "officialUrl": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+      "installedLeaf": "node_modules/npm/node_modules/glob",
+      "installedVersion": "13.0.6",
+      "affectedRange": ">=9.0.0 <=14.0.1",
+      "applicability": "Aborted traversal can continue reading directories. npm commands resolve this module through map-workspaces/package-json/cacache. Selected root has no workspaces; reviewed npm callers do not pass an AbortSignal. Absence of an observed abort is not a general nonreachability proof.",
+      "disposition": "Insufficient proof for a blanket vulnerability pass; affected on disk.",
+      "firstPatchedVersion": "14.0.2",
+      "majorUpgradeRequired": true,
+      "compatibilityRequirement": "Major-version upgrade: review API/runtime compatibility and npm bundled-dependency integration, regenerate lock and test a clean script-disabled install."
+    },
+    {
+      "advisory": "GHSA-rxp7-6hxx-x8q5",
+      "officialUrl": "https://github.com/advisories/GHSA-rxp7-6hxx-x8q5",
+      "installedLeaf": "node_modules/npm/node_modules/ip-address",
+      "installedVersion": "10.7.2",
+      "affectedRange": "<=10.7.3",
+      "applicability": "npm network helpers resolve socks-proxy-agent -> socks -> ip-address. Observed socks Address6 calls use fromByteArray over an exactly 16-byte SOCKS reply, and outbound IPv6 is screened by net.isIPv6; that path does not feed an unbounded zone string into Address6. Generic Address6 APIs remain vulnerable.",
+      "disposition": "No vulnerable string path found in inspected SOCKS calls; affected on disk.",
+      "firstPatchedVersion": "10.7.4",
+      "majorUpgradeRequired": false,
+      "compatibilityRequirement": "Same-major target; verify npm bundled-dependency integration, regenerate lock and test a clean script-disabled install."
+    },
+    {
+      "advisory": "GHSA-g3hv-75wg-m249",
+      "officialUrl": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+      "installedLeaf": "node_modules/npm/node_modules/minimatch",
+      "installedVersion": "10.2.5",
+      "affectedRange": "<11.0.1",
+      "applicability": "glob forces optimizationLevel=2, the affected preprocessing mode. Other npm callers and TUF/ignore filtering also use minimatch. Exact root has no workspaces and no hostile pattern was observed, but package/workspace/glob inputs require stronger trust proof. Module-load tracing cannot establish that proof.",
+      "disposition": "Potential executable path remains unresolved; fail closed.",
+      "firstPatchedVersion": "11.0.1",
+      "majorUpgradeRequired": true,
+      "compatibilityRequirement": "Major-version upgrade: review API/runtime compatibility and npm bundled-dependency integration, regenerate lock and test a clean script-disabled install."
+    },
+    {
+      "advisory": "GHSA-4qv8-2p9j-2685",
+      "officialUrl": "https://github.com/advisories/GHSA-4qv8-2p9j-2685",
+      "installedLeaf": "node_modules/npm/node_modules/undici",
+      "installedVersion": "6.29.0",
+      "affectedRange": ">=6.5.0 <6.29.1",
+      "applicability": "Bundled undici is imported by node-gyp/download.js, which uses Agent/EnvHttpProxyAgent/RetryAgent/fetch. It does not use EventSource. Actual configured GitHub plugin resolves to external undici7.30.1. No EventSource constructor occurs in inspected selected command paths.",
+      "disposition": "Feature not observed in selected paths; affected on disk.",
+      "firstPatchedVersion": "6.29.1",
+      "majorUpgradeRequired": false,
+      "compatibilityRequirement": "Same-major target; verify npm bundled-dependency integration, regenerate lock and test a clean script-disabled install."
+    },
+    {
+      "advisory": "GHSA-xjj6-f33q-929c",
+      "officialUrl": "https://github.com/advisories/GHSA-xjj6-f33q-929c",
+      "installedLeaf": "node_modules/npm/node_modules/undici",
+      "installedVersion": "6.29.0",
+      "affectedRange": ">=6.23.0 <6.29.1",
+      "applicability": "node-gyp fetch is a real network sink. Both npm ci invocations and npx in the official workflow use --ignore-scripts; installed-signature tracing records no bundled undici resolution. Explicit node-gyp/native-build use would expose the vulnerable fetch path. GitHub fetch uses fixed7.30.1.",
+      "disposition": "No execution of bundled fetch shown for retained workflow; callable vulnerable sink remains on disk.",
+      "firstPatchedVersion": "6.29.1",
+      "majorUpgradeRequired": false,
+      "compatibilityRequirement": "Same-major target; verify npm bundled-dependency integration, regenerate lock and test a clean script-disabled install."
+    },
+    {
+      "advisory": "GHSA-2m5v-pch6-74hx",
+      "officialUrl": "https://github.com/advisories/GHSA-2m5v-pch6-74hx",
+      "installedLeaf": "node_modules/npm/node_modules/undici",
+      "installedVersion": "6.29.0",
+      "affectedRange": ">=4.0.0 <6.29.1",
+      "applicability": "Requires a function-valued custom tls verifier dropped by Agent cloning. node-gyp supplies custom CA through connect/requestTls/proxyTls, not tls callbacks. GitHub plugin uses fixed7.30.1. No matching custom-tls use found in selected command paths.",
+      "disposition": "Trigger not found in inspected calls; affected on disk.",
+      "firstPatchedVersion": "6.29.1",
+      "majorUpgradeRequired": false,
+      "compatibilityRequirement": "Same-major target; verify npm bundled-dependency integration, regenerate lock and test a clean script-disabled install."
+    },
+    {
+      "advisory": "GHSA-qrxm-fqhp-jwvm",
+      "officialUrl": "https://github.com/advisories/GHSA-qrxm-fqhp-jwvm",
+      "installedLeaf": "node_modules/npm/node_modules/undici",
+      "installedVersion": "6.29.0",
+      "affectedRange": ">=4.2.1 <6.29.1",
+      "applicability": "The node-gyp Agent/fetch path can use TLS1.2; no version restriction is present. Scripts are ignored in the retained workflow, but a later explicit node-gyp download could reach this sink. GitHub external undici7.30.1 and hosted Node24.22.1 builtin7.30.1 are fixed.",
+      "disposition": "Not observed during retained commands; callable vulnerable sink remains on disk.",
+      "firstPatchedVersion": "6.29.1",
+      "majorUpgradeRequired": false,
+      "compatibilityRequirement": "Same-major target; verify npm bundled-dependency integration, regenerate lock and test a clean script-disabled install."
+    },
+    {
+      "advisory": "GHSA-9fm3-97px-rjf6",
+      "officialUrl": "https://github.com/advisories/GHSA-9fm3-97px-rjf6",
+      "installedLeaf": "node_modules/npm/node_modules/undici",
+      "installedVersion": "6.29.0",
+      "affectedRange": ">=5.15.0 <6.29.1",
+      "applicability": "Requires WebSocket PING/PONG handling. node-gyp imports fetch and agents, not WebSocket. No WebSocket construction occurs in selected npm/release paths. Fixed external GitHub undici is a separate resolution.",
+      "disposition": "Feature not observed in selected paths; affected on disk.",
+      "firstPatchedVersion": "6.29.1",
+      "majorUpgradeRequired": false,
+      "compatibilityRequirement": "Same-major target; verify npm bundled-dependency integration, regenerate lock and test a clean script-disabled install."
+    }
+  ],
+  "affectedPaths": "affected-dependency-paths.json (all38 entries, installed/locked identities and declared paths)",
+  "proposedCorrection": "corrections/fail-closed-npm-audit.patch (unapplied prevention gate, not dependency remediation)",
+  "dependencyRemediation": "Blocked: ordinary overrides did not replace npm-bundled leaves. A verified fixed npm distribution or reviewed upstream/vendor integration plus regenerated lock and actual clean installation is still required. No future producer revision or version is assigned. Separately remediate/content-verify the hosted npm frontend; a clean project audit does not audit that global frontend or Node builtin modules.",
+  "resolutionTraceLimit": "Module hooks record resolution, including require.resolve. They do not independently establish module execution, sink invocation, or safe sink inputs.",
+  "hostedFrontend": {
+    "version": "11.19.1",
+    "evidence": "hosted-npm-frontend/observation.json",
+    "bundledAffectedVersions": {
+      "glob": "13.0.6",
+      "minimatch": "10.2.5",
+      "ip-address": "10.5.0",
+      "undici": "6.28.0"
+    },
+    "allEightRetainedAdvisoryRangesApplyToBundledFrontendLeaves": true,
+    "callPaths": "Inspected actual frontend ci/exec/audit/signature/node-gyp/SOCKS sources. Lifecycle scripts are ignored in retained workflow; node-gyp fetch remains callable; SOCKS Address6 receives bounded byte arrays. Pattern-input applicability remains unresolved.",
+    "separation": "These frontend copies are outside selected project lock audit counts. Tarball was read-only inspected, never installed or executed."
+  },
+  "metadataCorrection": {
+    "historicalAssessment": "applicability-executed-history.json",
+    "reason": "firstPatchedVersion does not imply a same-major fix. glob13 ->14 and minimatch10 ->11 require major-version compatibility assessment.",
+    "securityDisposition": "Unchanged: unresolved; no dependency or raw receipt changed."
+  }
+}

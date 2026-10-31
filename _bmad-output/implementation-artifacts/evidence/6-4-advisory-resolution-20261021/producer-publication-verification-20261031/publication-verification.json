@@ -1,0 +1,244 @@
+{
+  "schema": "story64.official-publication-verification.v1",
+  "verifiedUtc": "2026-10-31T06:51:32.007588+00:00",
+  "result": "passed",
+  "storyStatus": "in-progress",
+  "candidateAcceptance": false,
+  "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "tree": "18d735e56eeb17332e2d2b57a6b116097f42fdec",
+  "version": "4.39.0",
+  "releaseRun": "https://github.com/Hexalith/Hexalith.Builds/actions/runs/41172847732",
+  "release": "https://github.com/Hexalith/Hexalith.Builds/releases/tag/v4.39.0",
+  "tag": "v4.39.0",
+  "inventoryUrl": "https://github.com/Hexalith/Hexalith.Builds/releases/download/v4.39.0/g4-tool-package-inventory.json",
+  "inventorySha256": "f07332c8c005bfa91896034933fd556ae0dfef47c3f759f712f797251c8bf555",
+  "releaseEligible": true,
+  "fixturesVerified": 292,
+  "trackedFixtureCount": 293,
+  "trackedFixtureOmissions": [
+    "test/fixtures/package-consumer/.config/dotnet-tools.json"
+  ],
+  "fixtureCoverageLimit": "Selected qualifier enumerates without -Force; hidden paths are outside its manifest. Every listed fixture matches selected Git checkout bytes, including tracked .gitattributes conversions recorded separately.",
+  "qualificationEvidenceEntries": 55,
+  "requiredEvidenceEntriesCovered": 55,
+  "qualificationEvidenceLimit": "Original 55 control-output files are represented by official inventory digests; their raw bytes were not attached to the release. Hosted log and independent local qualifier provide separate execution evidence.",
+  "catalogBlob": "37148298dfd3a4ae35d89dd5f4677e06e89149ad",
+  "catalogSha256": "986b463e12daaf1818c261c8d509f38b9803bc2f9f328c48d591d3f0caec8e6a",
+  "embeddedCatalogSha256": "b14406f169e1800f30a021aa79d83fb0230514532c0259f59617f72371a092d0",
+  "toolingSha256": "2c006033f77e21db812c9b245a4eb3bc52107cc602f44e997ba2d17c46179dda",
+  "packages": [
+    {
+      "id": "Hexalith.Builds.Evidence.Cli",
+      "version": "4.39.0",
+      "signedSha256": "8b7d1de983b4f5abf4b05e68e4623766446930c6050976263efa0ea5046c1c93",
+      "signedSize": 2849559,
+      "qualifiedUnsignedSha256": "6bc43c2c4275ecc000d5908922267a6880d9cb423f14c93742cf3556b2b845a4",
+      "qualifiedUnsignedSize": 2836472,
+      "symbolsSha256": "a656d52f286651527a391c24ceef3f4b5cac29268a2c3b80371f5f14893faa70",
+      "symbolsSize": 164885,
+      "symbolPdbs": [
+        {
+          "path": "tools/net10.0/any/Hexalith.Builds.Evidence.Cli.pdb",
+          "sha256": "3b0af1b7c40e482bd778c51fbf6ad7b2476b19d2d9261c7210ae397004728930",
+          "size": 14424
+        },
+        {
+          "path": "tools/net10.0/any/Hexalith.Builds.Tooling.pdb",
+          "sha256": "940d30ae3eaa2805c0028fda6bd17a8555d4526b4ba976f603ab4b235873d8a0",
+          "size": 311072
+        }
+      ],
+      "tooling": [
+        {
+          "path": "tools/net10.0/any/Hexalith.Builds.Tooling.dll",
+          "sha256": "2c006033f77e21db812c9b245a4eb3bc52107cc602f44e997ba2d17c46179dda",
+          "identity": "Hexalith.Builds.Tooling, Version=4.39.0.0, Culture=neutral, PublicKeyToken=null",
+          "informationalVersion": "4.39.0+2186b9a4bc507a116a457c590c80945c2e232cbd",
+          "embeddedCatalogSha256": "b14406f169e1800f30a021aa79d83fb0230514532c0259f59617f72371a092d0"
+        }
+      ],
+      "signature": "verified NuGet.org repository / owner Hexalith"
+    },
+    {
+      "id": "Hexalith.Builds.Module.Cli",
+      "version": "4.39.0",
+      "signedSha256": "111d621a2b4e659ab21b32c340717def3bf7c9e5757b728f8679785396aca192",
+      "signedSize": 37832383,
+      "qualifiedUnsignedSha256": "0b5ef972c45a5f2756689550eddbb6c136dffd154915952e3124ebe6178d3d86",
+      "qualifiedUnsignedSize": 37819297,
+      "symbolsSha256": "79d6ffe29718fa7adccb6a49311cbc39ebab558e718e4a7f95c761915d2416f2",
+      "symbolsSize": 383955,
+      "symbolPdbs": [
+        {
+          "path": "tools/net10.0/any/Hexalith.Builds.Module.Cli.pdb",
+          "sha256": "f3bb0bc8dd41ed4d0004b81145d45d5b589c7487bbf813e5ffd20932ec1e4964",
+          "size": 16948
+        },
+        {
+          "path": "tools/net10.0/any/Hexalith.Builds.Tooling.pdb",
+          "sha256": "940d30ae3eaa2805c0028fda6bd17a8555d4526b4ba976f603ab4b235873d8a0",
+          "size": 311072
+        },
+        {
+          "path": "tools/net10.0/any/g4-host/Hexalith.Builds.Module.AppHost.pdb",
+          "sha256": "55a77ed0efe70cfbcf08f06fd758b3cb7456f2c77a3967b28d032d2d3d3c6f0c",
+          "size": 41984
+        },
+        {
+          "path": "tools/net10.0/any/g4-host/Hexalith.Builds.Tooling.pdb",
+          "sha256": "940d30ae3eaa2805c0028fda6bd17a8555d4526b4ba976f603ab4b235873d8a0",
+          "size": 311072
+        },
+        {
+          "path": "tools/net10.0/any/g4-host/bin/EventStoreHost/Hexalith.Builds.Module.EventStoreHost.pdb",
+          "sha256": "3af9e425f4f9c553ab846575461dc63ddae24fbccb2f622c2ef7ec26f19eabaa",
+          "size": 36528
+        },
+        {
+          "path": "tools/net10.0/any/g4-host/bin/UiHost/Hexalith.Builds.Module.UiHost.pdb",
+          "sha256": "63361e0a10ebf30f9a23f36ac2c99d93632b15ba011458b82df572c2556ace33",
+          "size": 29184
+        }
+      ],
+      "tooling": [
+        {
+          "path": "tools/net10.0/any/Hexalith.Builds.Tooling.dll",
+          "sha256": "2c006033f77e21db812c9b245a4eb3bc52107cc602f44e997ba2d17c46179dda",
+          "identity": "Hexalith.Builds.Tooling, Version=4.39.0.0, Culture=neutral, PublicKeyToken=null",
+          "informationalVersion": "4.39.0+2186b9a4bc507a116a457c590c80945c2e232cbd",
+          "embeddedCatalogSha256": "b14406f169e1800f30a021aa79d83fb0230514532c0259f59617f72371a092d0"
+        },
+        {
+          "path": "tools/net10.0/any/g4-host/Hexalith.Builds.Tooling.dll",
+          "sha256": "2c006033f77e21db812c9b245a4eb3bc52107cc602f44e997ba2d17c46179dda",
+          "identity": "Hexalith.Builds.Tooling, Version=4.39.0.0, Culture=neutral, PublicKeyToken=null",
+          "informationalVersion": "4.39.0+2186b9a4bc507a116a457c590c80945c2e232cbd",
+          "embeddedCatalogSha256": "b14406f169e1800f30a021aa79d83fb0230514532c0259f59617f72371a092d0"
+        }
+      ],
+      "signature": "verified NuGet.org repository / owner Hexalith"
+    }
+  ],
+  "fixtureCheckoutConversions": [
+    {
+      "file": "module/executable/P0Fixture.Inventory.Descriptor/ModuleDescriptorV1.cs",
+      "gitBytesSha256": "9cc9cbcbff61ade96ff17fcff617bfce687ee8af1cbdecc89dcfa9352885af7f",
+      "checkoutSha256": "2e0fe2791e077589fea0272564cb80d941f29f8857e9679bc796c136cd42f232"
+    },
+    {
+      "file": "module/executable/P0Fixture.Inventory/Program.cs",
+      "gitBytesSha256": "a97212099e5a567bcfa58e3d4b760ad1b67d7fbbb15d3820cc18f136001ae877",
+      "checkoutSha256": "e475e7d058e0af8828f2f98c91f1a5a5c3f1ac41eb8de9112f909a2860a7fb70"
+    },
+    {
+      "file": "module/executable/P0Fixture.Inventory/ReserveStock.cs",
+      "gitBytesSha256": "10acabf52d5aab29b601f458a7377c055394e14e8e390c4790bb6a9502b330f3",
+      "checkoutSha256": "1d57c9105b20ead40ffa02fd438929beb92f0839aa99ba34175952eb2afda752"
+    },
+    {
+      "file": "module/executable/P0Fixture.Inventory/StockAggregate.cs",
+      "gitBytesSha256": "bfb362f84ca34a2e403db6b0b750c350cc9de1c82f860285bc561d5e00409001",
+      "checkoutSha256": "9c4c3db06ec9aa5ec50df9953584d897ed0d3e64b5b2137ec4de018db6b6e916"
+    },
+    {
+      "file": "module/executable/P0Fixture.Inventory/StockReserved.cs",
+      "gitBytesSha256": "007873a766fd6be4c6fac8f9c41227f0bfa275c86e0624d64ee75670df8c7e53",
+      "checkoutSha256": "01f2b22a63c0550bd633429e2ab1271bfdaaaa55ebe4688faf9f5fa26cb169c1"
+    },
+    {
+      "file": "module/executable/P0Fixture.Inventory/StockState.cs",
+      "gitBytesSha256": "f98d575043e4715e7e8543117b3084083c9348c86e7ac0077561d690ab6d1690",
+      "checkoutSha256": "79a10f18e66980676b387153695f9ead55641cdc994ff69987a4645a174a79f1"
+    },
+    {
+      "file": "module/executable/P0Fixture.Inventory/StockSummaryProjection.cs",
+      "gitBytesSha256": "85e55966f8aeec67aa4145665a20b1b7270239ea809a8daf2fdeb92622bd65b3",
+      "checkoutSha256": "82be6e04e6eb114d8760e55c7c7c8af11e385738884e519dc0486abf65a15d0f"
+    },
+    {
+      "file": "module/executable/P0Fixture.NativeMetadataProbe/Program.cs",
+      "gitBytesSha256": "485686649ea32414a07bca0df1fc0320b38725d0b3b1cd40c023ee2f0c863b8b",
+      "checkoutSha256": "48a5a55ef67378519bdd988bc6aba12548cfdd23b7b2e744660ec327decfbe6b"
+    },
+    {
+      "file": "module/executable/P0Fixture.NativeTests/RunHandoff.cs",
+      "gitBytesSha256": "4b9db00c3ed4d8bccae1b3f358c7561b3ffaacc6106d0b868aa16facb909a203",
+      "checkoutSha256": "407167b5a607eaa549c31901d4ff0d68be679da1ea253a2cfd172dda62bbb3a9"
+    },
+    {
+      "file": "module/executable/P0Fixture.NativeTests/RunHandoffTests.cs",
+      "gitBytesSha256": "468cef5fcf6e50da832b6e8d995faa4acb5ea76882122a9e2b8cf868300db45b",
+      "checkoutSha256": "ac8b0f575b12f42dff862c734a9bdeded23fd5a1ad041fd369082d269079df01"
+    },
+    {
+      "file": "module/executable/P0Fixture.Orders.Descriptor/ModuleDescriptorV1.cs",
+      "gitBytesSha256": "3d28dbd90d3c3a25fd5f227112f594c331707fe5ae772fb370aeae114e2e5d80",
+      "checkoutSha256": "ff48f0b6ba8b481c60f30b26572ec838e18a6331b701c054eb40c936e1c2215e"
+    },
+    {
+      "file": "module/executable/P0Fixture.Orders/OrderAggregate.cs",
+      "gitBytesSha256": "2ecf5f2d96e609cc44aba1c404a16b5a33fc7b72a2d4ad555c7c7996910fc898",
+      "checkoutSha256": "a734f87f5c760c3b5fcdfe3bea8daaad69b01241426ed2d3a9cad2dfcd07ebba"
+    },
+    {
+      "file": "module/executable/P0Fixture.Orders/OrderPlaced.cs",
+      "gitBytesSha256": "2071acc421761b2b1e6ff4fc2ed34c428735088bc9eb64a4f8541bca07536342",
+      "checkoutSha256": "25c2ac2399270d54a79f963ccfb1960a751be6b8426000399c2a4bc6e96903f7"
+    },
+    {
+      "file": "module/executable/P0Fixture.Orders/OrderState.cs",
+      "gitBytesSha256": "17cc3f519f6a446a4b62b9ef601d5264828498ae54ed79ac6a9a9b468d30a0f8",
+      "checkoutSha256": "616fe1765602d54b25e51f303f148c13f8332f8607f78e42b94ad744c114583b"
+    },
+    {
+      "file": "module/executable/P0Fixture.Orders/OrderSummaryProjection.cs",
+      "gitBytesSha256": "7ca1f80b7378467ea6ecb29758df543c2f176405d0d623c9b5f2ce44827ce5d7",
+      "checkoutSha256": "14e0b4e9d3d8d39dff1f87c62772fd0edd6105b5ef372a48cac8a12f789f79f4"
+    },
+    {
+      "file": "module/executable/P0Fixture.Orders/PlaceOrder.cs",
+      "gitBytesSha256": "c277095d2ca3a68ea01e9563b877814332d495fa47745628817766c71b9db2ce",
+      "checkoutSha256": "e20f6943e7428b8943e0f42163e9abc7fa1d84116a8dfb88a9efdc6dd021a247"
+    },
+    {
+      "file": "module/executable/P0Fixture.Orders/Program.cs",
+      "gitBytesSha256": "a97212099e5a567bcfa58e3d4b760ad1b67d7fbbb15d3820cc18f136001ae877",
+      "checkoutSha256": "e475e7d058e0af8828f2f98c91f1a5a5c3f1ac41eb8de9112f909a2860a7fb70"
+    },
+    {
+      "file": "module/executable/P0Fixture.Ui.Descriptor/UiDescriptorV1.cs",
+      "gitBytesSha256": "56a147aefd12defd0a9b5aab2973f9cde5b5aad9eba441834c3dc3bf78d3c6ef",
+      "checkoutSha256": "5879dcbc5ae708acf8e81439899dff8a914ccc17555bf37d3d746335c11f1b73"
+    },
+    {
+      "file": "module/executable/P0Fixture.Ui/InventoryUiMarker.cs",
+      "gitBytesSha256": "8354234310a1237e88203fcf5cda26e6ae5a5ff1d196ed2d4e371fea4c3972bf",
+      "checkoutSha256": "d2f17a9faa5aadec9ed63d1e85929ada381d6478d7ca39ddf8c64f4f225fed64"
+    },
+    {
+      "file": "module/executable/P0Fixture.Ui/OrdersUiMarker.cs",
+      "gitBytesSha256": "cda1b9d4811d7ecbd333222bd46661fab0426bfb75fab0dec7c7a0409326d9f8",
+      "checkoutSha256": "79aa69fcb1a68e5a31d6f1df5c63b25f2c89a485d1e68ad6d29b6f8b154bb372"
+    },
+    {
+      "file": "module/executable/P0Fixture.Ui/PlaceOrderUiCommand.cs",
+      "gitBytesSha256": "82c72de06b7b25da151ae718d9c81c169ab5c06edc409eab8ef6d9d6b2edd9bd",
+      "checkoutSha256": "980e5084096731d83449c75234dec8bf1982dce25cd7e21394ad1a31b3d3468f"
+    },
+    {
+      "file": "module/executable/P0Fixture.Ui/ReserveStockUiCommand.cs",
+      "gitBytesSha256": "08b29b73b299a1e1faf7999a583fa64b3b28dfdc21ec32f80b38f5f7ec6f5afd",
+      "checkoutSha256": "65eac95828e59e36338277308b996887d2839e4d358c664929dd866ea7518dad"
+    },
+    {
+      "file": "module/platform-loader/PlatformAppModel.cs",
+      "gitBytesSha256": "61ce41bfe2d1fa5ae562616bf9a66960b13af55136a1d30748c322a144433fe4",
+      "checkoutSha256": "2577647ab789251a229ff5b4ca378a6b9316b4762e03931c1315875fdc7ecdda"
+    },
+    {
+      "file": "module/platform-loader/PlatformServerAnnotation.cs",
+      "gitBytesSha256": "ebee04a58bc4c2ab65989355187956d54a447d82127995b1045d186d20d128fb",
+      "checkoutSha256": "709da72a2a6972fc228eed6e939e9980bb5d5a27afb58f047db8009c08b4311d"
+    }
+  ]
+}

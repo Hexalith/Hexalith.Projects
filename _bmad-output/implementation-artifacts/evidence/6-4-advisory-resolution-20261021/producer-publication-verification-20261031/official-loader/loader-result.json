@@ -1,0 +1,52 @@
+{
+  "package": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-verification-20261031/downloads/hexalith.builds.module.cli.4.39.0.nupkg",
+  "packageSha256": "111D621A2B4E659AB21B32C340717DEF3BF7C9E5757B728F8679785396ACA192",
+  "result": "passed",
+  "validation": {
+    "argv": [
+      "dotnet",
+      "exec",
+      "/tmp/story64-official-loader-85o8ndxe/package/tools/net10.0/any/g4-host/Hexalith.Builds.Module.AppHost.dll",
+      "--validate-platform"
+    ],
+    "exitCode": 0,
+    "timedOut": false,
+    "diagnosticsComplete": true,
+    "operationBoundSeconds": 60,
+    "stdout": "/tmp/story64-official-loader-85o8ndxe/validation.stdout.log",
+    "stderr": "/tmp/story64-official-loader-85o8ndxe/validation.stderr.log",
+    "durationMilliseconds": 184
+  },
+  "runtime": {
+    "argv": [
+      "dotnet",
+      "exec",
+      "/tmp/story64-official-loader-85o8ndxe/package/tools/net10.0/any/g4-host/Hexalith.Builds.Module.AppHost.dll"
+    ],
+    "exitCode": 0,
+    "timedOut": false,
+    "diagnosticsComplete": true,
+    "operationBoundSeconds": 60,
+    "stdout": "/tmp/story64-official-loader-85o8ndxe/runtime.stdout.log",
+    "stderr": "/tmp/story64-official-loader-85o8ndxe/runtime.stderr.log",
+    "durationMilliseconds": 303,
+    "observed": {
+      "storeBasePath": "/tmp/story64-official-loader-85o8ndxe/workspace/aspire-store/.aspire",
+      "storeExists": true,
+      "appHostDirectory": "/tmp/story64-official-loader-85o8ndxe/workspace/apphost",
+      "dcpCliPath": "/home/administrator/.nuget/packages/aspire.hosting.orchestration.linux-x64/13.6.4/tools/dcp",
+      "dashboardPath": "/home/administrator/.nuget/packages/aspire.dashboard.sdk.linux-x64/13.6.4/tools/Aspire.Dashboard"
+    }
+  },
+  "rootTooling": {
+    "path": "/tmp/story64-official-loader-85o8ndxe/package/tools/net10.0/any/Hexalith.Builds.Tooling.dll",
+    "identity": "Hexalith.Builds.Tooling, Version=4.39.0.0, Culture=neutral, PublicKeyToken=null",
+    "sha256": "2C006033F77E21DB812C9B245A4EB3BC52107CC602F44E997BA2D17C46179DDA"
+  },
+  "hostTooling": {
+    "path": "/tmp/story64-official-loader-85o8ndxe/package/tools/net10.0/any/g4-host/Hexalith.Builds.Tooling.dll",
+    "identity": "Hexalith.Builds.Tooling, Version=4.39.0.0, Culture=neutral, PublicKeyToken=null",
+    "sha256": "2C006033F77E21DB812C9B245A4EB3BC52107CC602F44E997BA2D17C46179DDA"
+  },
+  "durationMilliseconds": 3847
+}

@@ -1,0 +1,57 @@
+--- a/Tools/G4PackageQualification.functions.ps1
++++ b/Tools/G4PackageQualification.functions.ps1
+@@ -421,7 +421,7 @@
+     )
+ 
+     $mismatches = [System.Collections.Generic.List[string]]::new()
+-    $files = @(Get-ChildItem -LiteralPath $FixtureDirectory -File -Recurse | Sort-Object -Property FullName)
++    $files = @(Get-ChildItem -LiteralPath $FixtureDirectory -File -Recurse -Force | Sort-Object -Property FullName)
+     foreach ($file in $files) {
+         $relativePath = ([IO.Path]::GetRelativePath($FixtureDirectory, $file.FullName)).Replace('\', '/')
+         $trackedPath = "$RepositoryRelativeRoot/$relativePath"
+--- a/Tools/test-g4-tool-package-contracts.ps1
++++ b/Tools/test-g4-tool-package-contracts.ps1
+@@ -333,7 +333,7 @@
+     )
+ 
+     $files = @(
+-        Get-ChildItem -LiteralPath $Directory -File -Recurse |
++        Get-ChildItem -LiteralPath $Directory -File -Recurse -Force |
+             Sort-Object -Property FullName |
+             ForEach-Object {
+                 [ordered] @{
+--- a/Tools/test-g4-tool-package-artifact-validator.ps1
++++ b/Tools/test-g4-tool-package-artifact-validator.ps1
+@@ -305,6 +305,32 @@
+     Test-Throws -Name 'Edited copied fixture is rejected' -ExpectedMessageFragment 'bytes differ from the bytes tracked at' -ScriptBlock {
+         Assert-TrackedFixtureBytesMatchHead -RepositoryRoot $cleanRepoRoot -SourceRevision $headRevision `
+             -FixtureDirectory $copiedFixtureDirectory -RepositoryRelativeRoot 'test/fixtures/module'
++    }
++
++    # Hidden files are equally bound to the source; use a separate copy so existing visible-fixture controls remain independent.
++    $hiddenFixtureDirectory = Join-Path $fixtureSubdirectory '.config'
++    $null = New-Item -ItemType Directory -Path $hiddenFixtureDirectory -Force
++    [IO.File]::WriteAllText((Join-Path $hiddenFixtureDirectory 'dotnet-tools.json'), '{"version":1}')
++    & git -C $cleanRepoRoot add -A
++    & git -C $cleanRepoRoot commit --quiet -m 'test: add hidden fixture'
++    $hiddenRevision = (& git -C $cleanRepoRoot rev-parse HEAD).Trim()
++    $hiddenCopyDirectory = Join-Path $temporaryRoot 'hidden-copy'
++    Copy-Item -LiteralPath $fixtureSubdirectory -Destination $hiddenCopyDirectory -Recurse -Force
++    Test-Succeeds -Name 'Hidden and visible copied fixtures match HEAD' -ScriptBlock {
++        $count = Assert-TrackedFixtureBytesMatchHead -RepositoryRoot $cleanRepoRoot -SourceRevision $hiddenRevision `
++            -FixtureDirectory $hiddenCopyDirectory -RepositoryRelativeRoot 'test/fixtures/module'
++        if ($count -ne 2) { throw "expected 2 matched files including hidden fixture, got $count" }
++    }
++    [IO.File]::WriteAllText((Join-Path $hiddenCopyDirectory '.config/dotnet-tools.json'), '{"version":2}')
++    Test-Throws -Name 'Edited hidden fixture is rejected' -ExpectedMessageFragment 'bytes differ from the bytes tracked at' -ScriptBlock {
++        Assert-TrackedFixtureBytesMatchHead -RepositoryRoot $cleanRepoRoot -SourceRevision $hiddenRevision `
++            -FixtureDirectory $hiddenCopyDirectory -RepositoryRelativeRoot 'test/fixtures/module'
++    }
++    Copy-Item -LiteralPath (Join-Path $hiddenFixtureDirectory 'dotnet-tools.json') -Destination (Join-Path $hiddenCopyDirectory '.config/dotnet-tools.json') -Force
++    [IO.File]::WriteAllText((Join-Path $hiddenCopyDirectory '.config/untracked.json'), '{}')
++    Test-Throws -Name 'Untracked hidden fixture is rejected' -ExpectedMessageFragment 'is not readable at' -ScriptBlock {
++        Assert-TrackedFixtureBytesMatchHead -RepositoryRoot $cleanRepoRoot -SourceRevision $hiddenRevision `
++            -FixtureDirectory $hiddenCopyDirectory -RepositoryRelativeRoot 'test/fixtures/module'
+     }
+ 
+     [IO.File]::WriteAllText((Join-Path $cleanRepoRoot '.gitattributes'), "*.cs text eol=crlf`n")

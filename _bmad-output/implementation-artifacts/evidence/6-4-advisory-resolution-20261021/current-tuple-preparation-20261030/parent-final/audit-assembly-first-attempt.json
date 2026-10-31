@@ -1,0 +1,6 @@
+{
+  "status": "failed-audit-assembly-only",
+  "error": "RuntimeError: ('unknown repository', 'references/Hexalith.AI.Tools')",
+  "cause": "Parent audit treated already workspace-relative repository keys as short names. Recorded command executions succeeded; only summary assembly failed.",
+  "correction": "Resolve each repository key directly against workspace; preserve and reuse existing command receipts without rerunning them."
+}

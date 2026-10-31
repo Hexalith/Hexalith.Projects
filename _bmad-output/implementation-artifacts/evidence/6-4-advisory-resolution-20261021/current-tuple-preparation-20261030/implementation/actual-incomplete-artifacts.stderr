@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/prepare_builds_artifacts.py", line 87, in <module>
+    main()
+    ~~~~^^
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/prepare_builds_artifacts.py", line 32, in main
+    binding = load_binding()
+  File "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/eng/builds_tuple.py", line 30, in load_binding
+    raise ValueError("Official publication binding is unavailable: " + ", ".join(missing) + ". Preparation is unqualified.")
+ValueError: Official publication binding is unavailable: version, sourceRevision, releaseTag, catalogSha256, archiveSha256, toolingSha256. Preparation is unqualified.

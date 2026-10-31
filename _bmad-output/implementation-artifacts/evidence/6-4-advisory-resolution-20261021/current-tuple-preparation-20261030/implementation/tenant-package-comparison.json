@@ -1,0 +1,612 @@
+{
+  "kind": "actual-host-package-catalog-comparison",
+  "candidateAcceptance": false,
+  "assetsSha256": "358584361ee97a25a9ab821ee2d7565fe86b87989789bbb8af8e67a4ed22eb73",
+  "evaluatedProperties": {
+    "HexalithBuildsResolvedRoot": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+    "CentralPackageTransitivePinningEnabled": "true",
+    "HexalithCommonsVersion": "2.30.7",
+    "HexalithEventStoreVersion": "3.128.4"
+  },
+  "actualHexalithPackages": [
+    {
+      "id": "Hexalith.Commons.UniqueIds",
+      "expected": "2.30.7",
+      "actual": "2.30.7",
+      "matches": true
+    },
+    {
+      "id": "Hexalith.EventStore.Admin.Abstractions",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "matches": true
+    },
+    {
+      "id": "Hexalith.EventStore.Client",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "matches": true
+    },
+    {
+      "id": "Hexalith.EventStore.Contracts",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "matches": true
+    },
+    {
+      "id": "Hexalith.EventStore.DomainService",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "matches": true
+    },
+    {
+      "id": "Hexalith.EventStore.Gateway",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "matches": true
+    },
+    {
+      "id": "Hexalith.EventStore.Server",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "matches": true
+    },
+    {
+      "id": "Hexalith.EventStore.ServiceDefaults",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "matches": true
+    }
+  ],
+  "evaluatedHexalithCatalog": [
+    {
+      "id": "Hexalith.Applications",
+      "expected": "1.0.6",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Applications.Abstractions",
+      "expected": "1.0.6",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Applications.Commands",
+      "expected": "1.0.6",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Applications.Commands.Abstractions",
+      "expected": "1.0.6",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Chatbot.Contracts",
+      "expected": "1.80.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.Aspire",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.Configurations",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.Diagnostics",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.Http",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.Metadatas",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.Publication",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.Serialization",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.ServiceDefaults",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.StringEncoders",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.TenantAccess",
+      "expected": "2.30.7",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Commons.UniqueIds",
+      "expected": "2.30.7",
+      "actual": "2.30.7",
+      "inHostClosure": true
+    },
+    {
+      "id": "Hexalith.Conversations.Client",
+      "expected": "1.3.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Conversations.Contracts",
+      "expected": "1.3.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Documents",
+      "expected": "2.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Documents.ApiServer",
+      "expected": "2.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Documents.Commands",
+      "expected": "2.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Documents.Requests",
+      "expected": "2.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Documents.UI.Components",
+      "expected": "2.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Documents.WebApp",
+      "expected": "2.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Documents.WebServer",
+      "expected": "2.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Domains",
+      "expected": "2.0.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Domains.Abstractions",
+      "expected": "2.0.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.EventStore.Admin.Abstractions",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "inHostClosure": true
+    },
+    {
+      "id": "Hexalith.EventStore.Admin.Server",
+      "expected": "3.128.4",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.EventStore.Aspire",
+      "expected": "3.128.4",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.EventStore.Client",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "inHostClosure": true
+    },
+    {
+      "id": "Hexalith.EventStore.Contracts",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "inHostClosure": true
+    },
+    {
+      "id": "Hexalith.EventStore.DomainService",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "inHostClosure": true
+    },
+    {
+      "id": "Hexalith.EventStore.Gateway",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "inHostClosure": true
+    },
+    {
+      "id": "Hexalith.EventStore.RestApi.Generators",
+      "expected": "3.128.4",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.EventStore.Server",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "inHostClosure": true
+    },
+    {
+      "id": "Hexalith.EventStore.ServiceDefaults",
+      "expected": "3.128.4",
+      "actual": "3.128.4",
+      "inHostClosure": true
+    },
+    {
+      "id": "Hexalith.EventStore.SignalR",
+      "expected": "3.128.4",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.EventStore.Testing",
+      "expected": "3.128.4",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.EventStore.Testing.Integration",
+      "expected": "3.128.4",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Folders",
+      "expected": "1.3.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Folders.Aspire",
+      "expected": "1.3.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Folders.Client",
+      "expected": "1.3.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Folders.Contracts",
+      "expected": "1.3.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Folders.Testing",
+      "expected": "1.3.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.FrontComposer.Contracts",
+      "expected": "4.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.FrontComposer.Contracts.UI",
+      "expected": "4.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.FrontComposer.Mcp",
+      "expected": "4.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.FrontComposer.Shell",
+      "expected": "4.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.FrontComposer.SourceTools",
+      "expected": "4.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.FrontComposer.Testing",
+      "expected": "4.7.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.IdentityStores",
+      "expected": "1.4.5",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.IdentityStores.Abstractions",
+      "expected": "1.4.5",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.IdentityStores.UI",
+      "expected": "1.4.5",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.KeyValueStorages",
+      "expected": "2.1.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.KeyValueStorages.Abstractions",
+      "expected": "2.1.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.KeyValueStorages.DaprComponents",
+      "expected": "2.1.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.KeyValueStorages.Files",
+      "expected": "2.1.2",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.McpCli.Abstractions",
+      "expected": "1.1.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Memories.Aspire",
+      "expected": "3.0.10",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Memories.Client.Rest",
+      "expected": "3.0.10",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Memories.Contracts",
+      "expected": "3.0.10",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Memories.EventStore",
+      "expected": "3.0.10",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Memories.EventStoreExtensions",
+      "expected": "3.0.10",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.NetAspire.Defaults",
+      "expected": "1.4.8",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.NetAspire.Hosting",
+      "expected": "1.4.8",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Parties.AdminPortal",
+      "expected": "2.0.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Parties.Aspire",
+      "expected": "2.0.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Parties.Client",
+      "expected": "2.0.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Parties.ConsumerPortal",
+      "expected": "2.0.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Parties.Contracts",
+      "expected": "2.0.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Parties.EventStoreExtensions",
+      "expected": "2.0.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Parties.Picker",
+      "expected": "2.0.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Parties.Testing",
+      "expected": "2.0.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.PolymorphicSerializations",
+      "expected": "1.19.6",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.PolymorphicSerializations.CodeGenerators",
+      "expected": "1.19.6",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Projects",
+      "expected": "1.2.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Projects.Client",
+      "expected": "1.2.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Projects.Contracts",
+      "expected": "1.2.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Projects.ServiceDefaults",
+      "expected": "1.2.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Projects.Testing",
+      "expected": "1.2.0",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Security.ApiServer",
+      "expected": "2.14.9",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Security.WebApp",
+      "expected": "2.14.9",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Security.WebServer",
+      "expected": "2.14.9",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Tenants.Aspire",
+      "expected": "5.11.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Tenants.Client",
+      "expected": "5.11.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Tenants.Contracts",
+      "expected": "5.11.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Tenants.Server",
+      "expected": "5.11.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Tenants.Testing",
+      "expected": "5.11.1",
+      "actual": null,
+      "inHostClosure": false
+    },
+    {
+      "id": "Hexalith.Works.Contracts",
+      "expected": "1.0.2",
+      "actual": null,
+      "inHostClosure": false
+    }
+  ],
+  "sourceProjectLibraries": [],
+  "mismatches": [],
+  "scope": "Every actual restored Hexalith package is compared; unused catalog entries are explicitly absent, not restore requirements."
+}

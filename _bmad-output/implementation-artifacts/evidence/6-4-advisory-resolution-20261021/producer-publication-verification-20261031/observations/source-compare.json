@@ -1,0 +1,407 @@
+{
+  "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/compare/2186b9a4bc507a116a457c590c80945c2e232cbd...ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+  "capturedAt": "2026-10-31T06:45:48.079Z",
+  "data": {
+    "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/compare/2186b9a4bc507a116a457c590c80945c2e232cbd...ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+    "html_url": "https://github.com/Hexalith/Hexalith.Builds/compare/2186b9a4bc507a116a457c590c80945c2e232cbd...ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+    "permalink_url": "https://github.com/Hexalith/Hexalith.Builds/compare/Hexalith:2186b9a...Hexalith:ff1c295",
+    "diff_url": "https://github.com/Hexalith/Hexalith.Builds/compare/2186b9a4bc507a116a457c590c80945c2e232cbd...ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d.diff",
+    "patch_url": "https://github.com/Hexalith/Hexalith.Builds/compare/2186b9a4bc507a116a457c590c80945c2e232cbd...ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d.patch",
+    "base_commit": {
+      "sha": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+      "node_id": "C_kwDOOMzNRdoAKDIxODZiOWE0YmM1MDdhMTE2YTQ1N2M1OTBjODA5NDVjMmUyMzJjYmQ",
+      "commit": {
+        "author": {
+          "name": "Jérôme Piquot",
+          "email": "jpiquot@itaneo.com",
+          "date": "2026-10-31T05:10:47Z"
+        },
+        "committer": {
+          "name": "Jérôme Piquot",
+          "email": "jpiquot@itaneo.com",
+          "date": "2026-10-31T05:10:47Z"
+        },
+        "message": "fix(security): validate disposition paths explicitly\n\nResolve explicit CLI file selections inside the workspace before\nreading either input, while keeping repository-owned default paths.\nDocument the boundary for alternate historical fixtures.",
+        "tree": {
+          "sha": "18d735e56eeb17332e2d2b57a6b116097f42fdec",
+          "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/git/trees/18d735e56eeb17332e2d2b57a6b116097f42fdec"
+        },
+        "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/git/commits/2186b9a4bc507a116a457c590c80945c2e232cbd",
+        "comment_count": 0,
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      },
+      "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/2186b9a4bc507a116a457c590c80945c2e232cbd",
+      "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/2186b9a4bc507a116a457c590c80945c2e232cbd",
+      "comments_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/2186b9a4bc507a116a457c590c80945c2e232cbd/comments",
+      "author": {
+        "login": "jpiquot",
+        "id": 6775094,
+        "node_id": "MDQ6VXNlcjY3NzUwOTQ=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/jpiquot",
+        "html_url": "https://github.com/jpiquot",
+        "followers_url": "https://api.github.com/users/jpiquot/followers",
+        "following_url": "https://api.github.com/users/jpiquot/following{/other_user}",
+        "gists_url": "https://api.github.com/users/jpiquot/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/jpiquot/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/jpiquot/subscriptions",
+        "organizations_url": "https://api.github.com/users/jpiquot/orgs",
+        "repos_url": "https://api.github.com/users/jpiquot/repos",
+        "events_url": "https://api.github.com/users/jpiquot/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/jpiquot/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "committer": {
+        "login": "jpiquot",
+        "id": 6775094,
+        "node_id": "MDQ6VXNlcjY3NzUwOTQ=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/jpiquot",
+        "html_url": "https://github.com/jpiquot",
+        "followers_url": "https://api.github.com/users/jpiquot/followers",
+        "following_url": "https://api.github.com/users/jpiquot/following{/other_user}",
+        "gists_url": "https://api.github.com/users/jpiquot/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/jpiquot/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/jpiquot/subscriptions",
+        "organizations_url": "https://api.github.com/users/jpiquot/orgs",
+        "repos_url": "https://api.github.com/users/jpiquot/repos",
+        "events_url": "https://api.github.com/users/jpiquot/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/jpiquot/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "parents": [
+        {
+          "sha": "d22ff2d7f3c2408826ab92849ab7ef91c764914d",
+          "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/d22ff2d7f3c2408826ab92849ab7ef91c764914d",
+          "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/d22ff2d7f3c2408826ab92849ab7ef91c764914d"
+        }
+      ]
+    },
+    "merge_base_commit": {
+      "sha": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+      "node_id": "C_kwDOOMzNRdoAKDIxODZiOWE0YmM1MDdhMTE2YTQ1N2M1OTBjODA5NDVjMmUyMzJjYmQ",
+      "commit": {
+        "author": {
+          "name": "Jérôme Piquot",
+          "email": "jpiquot@itaneo.com",
+          "date": "2026-10-31T05:10:47Z"
+        },
+        "committer": {
+          "name": "Jérôme Piquot",
+          "email": "jpiquot@itaneo.com",
+          "date": "2026-10-31T05:10:47Z"
+        },
+        "message": "fix(security): validate disposition paths explicitly\n\nResolve explicit CLI file selections inside the workspace before\nreading either input, while keeping repository-owned default paths.\nDocument the boundary for alternate historical fixtures.",
+        "tree": {
+          "sha": "18d735e56eeb17332e2d2b57a6b116097f42fdec",
+          "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/git/trees/18d735e56eeb17332e2d2b57a6b116097f42fdec"
+        },
+        "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/git/commits/2186b9a4bc507a116a457c590c80945c2e232cbd",
+        "comment_count": 0,
+        "verification": {
+          "verified": false,
+          "reason": "unsigned",
+          "signature": null,
+          "payload": null,
+          "verified_at": null
+        }
+      },
+      "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/2186b9a4bc507a116a457c590c80945c2e232cbd",
+      "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/2186b9a4bc507a116a457c590c80945c2e232cbd",
+      "comments_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/2186b9a4bc507a116a457c590c80945c2e232cbd/comments",
+      "author": {
+        "login": "jpiquot",
+        "id": 6775094,
+        "node_id": "MDQ6VXNlcjY3NzUwOTQ=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/jpiquot",
+        "html_url": "https://github.com/jpiquot",
+        "followers_url": "https://api.github.com/users/jpiquot/followers",
+        "following_url": "https://api.github.com/users/jpiquot/following{/other_user}",
+        "gists_url": "https://api.github.com/users/jpiquot/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/jpiquot/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/jpiquot/subscriptions",
+        "organizations_url": "https://api.github.com/users/jpiquot/orgs",
+        "repos_url": "https://api.github.com/users/jpiquot/repos",
+        "events_url": "https://api.github.com/users/jpiquot/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/jpiquot/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "committer": {
+        "login": "jpiquot",
+        "id": 6775094,
+        "node_id": "MDQ6VXNlcjY3NzUwOTQ=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/jpiquot",
+        "html_url": "https://github.com/jpiquot",
+        "followers_url": "https://api.github.com/users/jpiquot/followers",
+        "following_url": "https://api.github.com/users/jpiquot/following{/other_user}",
+        "gists_url": "https://api.github.com/users/jpiquot/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/jpiquot/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/jpiquot/subscriptions",
+        "organizations_url": "https://api.github.com/users/jpiquot/orgs",
+        "repos_url": "https://api.github.com/users/jpiquot/repos",
+        "events_url": "https://api.github.com/users/jpiquot/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/jpiquot/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "parents": [
+        {
+          "sha": "d22ff2d7f3c2408826ab92849ab7ef91c764914d",
+          "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/d22ff2d7f3c2408826ab92849ab7ef91c764914d",
+          "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/d22ff2d7f3c2408826ab92849ab7ef91c764914d"
+        }
+      ]
+    },
+    "status": "ahead",
+    "ahead_by": 2,
+    "behind_by": 0,
+    "total_commits": 2,
+    "commits": [
+      {
+        "sha": "de02c6fd892b9fc3477bfa758bbee7b97547380e",
+        "node_id": "C_kwDOOMzNRdoAKGRlMDJjNmZkODkyYjlmYzM0NzdiZmE3NThiYmVlN2I5NzU0NzM4MGU",
+        "commit": {
+          "author": {
+            "name": "Jérôme Piquot",
+            "email": "jpiquot@itaneo.com",
+            "date": "2026-10-30T20:41:40Z"
+          },
+          "committer": {
+            "name": "Jérôme Piquot",
+            "email": "jpiquot@itaneo.com",
+            "date": "2026-10-31T06:23:15Z"
+          },
+          "message": "fix(testing): require Parties evidence and validate native scope",
+          "tree": {
+            "sha": "b5ec2341aaadd6b629868edea29f0f7df7b40b61",
+            "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/git/trees/b5ec2341aaadd6b629868edea29f0f7df7b40b61"
+          },
+          "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/git/commits/de02c6fd892b9fc3477bfa758bbee7b97547380e",
+          "comment_count": 0,
+          "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null,
+            "verified_at": null
+          }
+        },
+        "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/de02c6fd892b9fc3477bfa758bbee7b97547380e",
+        "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/de02c6fd892b9fc3477bfa758bbee7b97547380e",
+        "comments_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/de02c6fd892b9fc3477bfa758bbee7b97547380e/comments",
+        "author": {
+          "login": "jpiquot",
+          "id": 6775094,
+          "node_id": "MDQ6VXNlcjY3NzUwOTQ=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/jpiquot",
+          "html_url": "https://github.com/jpiquot",
+          "followers_url": "https://api.github.com/users/jpiquot/followers",
+          "following_url": "https://api.github.com/users/jpiquot/following{/other_user}",
+          "gists_url": "https://api.github.com/users/jpiquot/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/jpiquot/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/jpiquot/subscriptions",
+          "organizations_url": "https://api.github.com/users/jpiquot/orgs",
+          "repos_url": "https://api.github.com/users/jpiquot/repos",
+          "events_url": "https://api.github.com/users/jpiquot/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/jpiquot/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "committer": {
+          "login": "jpiquot",
+          "id": 6775094,
+          "node_id": "MDQ6VXNlcjY3NzUwOTQ=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/jpiquot",
+          "html_url": "https://github.com/jpiquot",
+          "followers_url": "https://api.github.com/users/jpiquot/followers",
+          "following_url": "https://api.github.com/users/jpiquot/following{/other_user}",
+          "gists_url": "https://api.github.com/users/jpiquot/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/jpiquot/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/jpiquot/subscriptions",
+          "organizations_url": "https://api.github.com/users/jpiquot/orgs",
+          "repos_url": "https://api.github.com/users/jpiquot/repos",
+          "events_url": "https://api.github.com/users/jpiquot/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/jpiquot/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "parents": [
+          {
+            "sha": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+            "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/2186b9a4bc507a116a457c590c80945c2e232cbd",
+            "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/2186b9a4bc507a116a457c590c80945c2e232cbd"
+          }
+        ]
+      },
+      {
+        "sha": "ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+        "node_id": "C_kwDOOMzNRdoAKGZmMWMyOTUyZmE2YWVjMTEzOTc1YmJlNzhiNGQyNDg3ZDZlYzBiM2Q",
+        "commit": {
+          "author": {
+            "name": "Jérôme Piquot",
+            "email": "jpiquot@itaneo.com",
+            "date": "2026-10-31T05:39:33Z"
+          },
+          "committer": {
+            "name": "Jérôme Piquot",
+            "email": "jpiquot@itaneo.com",
+            "date": "2026-10-31T06:23:15Z"
+          },
+          "message": "test(module): cover scoped native identity, endpoint channel refusal and readiness preparation outputs\n\n- Assert a prepared native scope that differs from the fallback reaches the\n  decoded HEXALITH_G4_ACCESS_TOKEN claims (domains, tenants,\n  eventstore:surface=agent) and the sorted HEXALITH_G4_DOMAINS handoff.\n- Refuse an unsafe or inconsistent endpoint-credential channel (missing file,\n  group-readable mode, foreign run id, endpoints without path) with HXT008 at\n  the executor before the child launches, beside a launched valid control.\n- Publish a registered ICompositionRunPreparation's native scope, bound\n  invocation endpoint and fixed credential path into readiness, and refuse\n  endpoints without path, path without endpoints and a path outside the\n  workspace without publishing readiness.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "tree": {
+            "sha": "d81de66c65c7451f715f11c43735aa6739a3c842",
+            "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/git/trees/d81de66c65c7451f715f11c43735aa6739a3c842"
+          },
+          "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/git/commits/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+          "comment_count": 0,
+          "verification": {
+            "verified": false,
+            "reason": "unsigned",
+            "signature": null,
+            "payload": null,
+            "verified_at": null
+          }
+        },
+        "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+        "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+        "comments_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/comments",
+        "author": {
+          "login": "jpiquot",
+          "id": 6775094,
+          "node_id": "MDQ6VXNlcjY3NzUwOTQ=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/jpiquot",
+          "html_url": "https://github.com/jpiquot",
+          "followers_url": "https://api.github.com/users/jpiquot/followers",
+          "following_url": "https://api.github.com/users/jpiquot/following{/other_user}",
+          "gists_url": "https://api.github.com/users/jpiquot/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/jpiquot/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/jpiquot/subscriptions",
+          "organizations_url": "https://api.github.com/users/jpiquot/orgs",
+          "repos_url": "https://api.github.com/users/jpiquot/repos",
+          "events_url": "https://api.github.com/users/jpiquot/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/jpiquot/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "committer": {
+          "login": "jpiquot",
+          "id": 6775094,
+          "node_id": "MDQ6VXNlcjY3NzUwOTQ=",
+          "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/jpiquot",
+          "html_url": "https://github.com/jpiquot",
+          "followers_url": "https://api.github.com/users/jpiquot/followers",
+          "following_url": "https://api.github.com/users/jpiquot/following{/other_user}",
+          "gists_url": "https://api.github.com/users/jpiquot/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/jpiquot/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/jpiquot/subscriptions",
+          "organizations_url": "https://api.github.com/users/jpiquot/orgs",
+          "repos_url": "https://api.github.com/users/jpiquot/repos",
+          "events_url": "https://api.github.com/users/jpiquot/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/jpiquot/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "parents": [
+          {
+            "sha": "de02c6fd892b9fc3477bfa758bbee7b97547380e",
+            "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/de02c6fd892b9fc3477bfa758bbee7b97547380e",
+            "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/de02c6fd892b9fc3477bfa758bbee7b97547380e"
+          }
+        ]
+      }
+    ],
+    "files": [
+      {
+        "sha": "54037650dd81c47d4fc247a135ed1ed5fb4bff06",
+        "filename": "src/libraries/Hexalith.Builds.Tooling/Runtime/NativeTestExecutor.cs",
+        "status": "modified",
+        "additions": 2,
+        "deletions": 1,
+        "changes": 3,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/src%2Flibraries%2FHexalith.Builds.Tooling%2FRuntime%2FNativeTestExecutor.cs",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/src%2Flibraries%2FHexalith.Builds.Tooling%2FRuntime%2FNativeTestExecutor.cs",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/src%2Flibraries%2FHexalith.Builds.Tooling%2FRuntime%2FNativeTestExecutor.cs?ref=ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+        "patch": "@@ -521,7 +521,8 @@ private static async Task<NativeTestExecutionResult> ExecuteSelectedAsync(Compos\n         }\n \n         (NativeTestReportLoadResult report, byte[]? bytes) = await SelectedNativeTestReport.ReadAsync(reportPath, session.Plan.Workspace, handoffSecrets, processing.Token).ConfigureAwait(false);\n-        bool requiresObservations = selection is { ModuleId: \"memories\", Name: \"functional-retention\" } || File.Exists(observationPath);\n+        bool requiresObservations = selection is { ModuleId: \"memories\", Name: \"functional-retention\" }\n+            or { ModuleId: \"parties\", Name: \"platform-source\" or \"platform-package\" } || File.Exists(observationPath);\n         byte[]? observations = requiresObservations\n             ? await SelectedNativeTestReport.ReadObservationsAsync(observationPath, session.Plan.Workspace, session.Plan.RunId, handoffSecrets, processing.Token).ConfigureAwait(false)\n             : null;"
+      },
+      {
+        "sha": "5072a6b8085bda1ab0cc61b3d3f1e70eb37d37fb",
+        "filename": "test/Hexalith.Builds.Module.Tests/ModuleTestSelectionTests.cs",
+        "status": "modified",
+        "additions": 69,
+        "deletions": 8,
+        "changes": 77,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/test%2FHexalith.Builds.Module.Tests%2FModuleTestSelectionTests.cs",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/test%2FHexalith.Builds.Module.Tests%2FModuleTestSelectionTests.cs",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/test%2FHexalith.Builds.Module.Tests%2FModuleTestSelectionTests.cs?ref=ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+        "patch": "@@ -94,6 +94,9 @@ public async Task InvalidSelectionNeverStartsAsync(string scenario)\n     [InlineData(\"secret\", 6, 0, \"retained\")]\n     [InlineData(\"app-secret\", 6, 0, \"retained\")]\n     [InlineData(\"dapr-secret\", 6, 0, \"retained\")]\n+    [InlineData(\"endpoint-secret\", 6, 0, \"retained\")]\n+    [InlineData(\"parties-source-missing-detail\", 6, 0, \"retained\")]\n+    [InlineData(\"parties-package-missing-detail\", 6, 0, \"retained\")]\n     [InlineData(\"entry-drift\", 4, 0, \"retained\")]\n     [InlineData(\"manifest-drift\", 4, 0, \"retained\")]\n     [InlineData(\"ci-failure\", 4, 1, \"removed\")]\n@@ -106,7 +109,12 @@ public async Task PythonCommandBindsRealReportAndCleanupAsync(string scenario, i\n         ArgumentNullException.ThrowIfNull(scenario);\n         using PlatformManifestTestWorkspace workspace = new();\n         Declare(workspace, scenario);\n-        string profile = scenario.StartsWith(\"memories-\", StringComparison.Ordinal) ? \"functional-retention\" : \"verify\";\n+        string profile = scenario switch\n+        {\n+            \"parties-source-missing-detail\" => \"platform-source\",\n+            \"parties-package-missing-detail\" => \"platform-package\",\n+            _ => scenario.StartsWith(\"memories-\", StringComparison.Ordinal) ? \"functional-retention\" : \"verify\",\n+        };\n         string manifest = workspace.Save();\n         using Process appHost = new();\n         using CancellationTokenSource owner = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);\n@@ -144,6 +152,33 @@ public async Task PythonCommandBindsRealReportAndCleanupAsync(string scenario, i\n                     readiness = readiness with { TestObservation = new CompositionTestObservation { RunId = selectedPlan.RunId, ModuleId = \"memories\", ProfileHash = \"offline\", ProfileJson = \"offline\", AccessPath = accessPath } };\n                 }\n \n+                if (scenario == \"endpoint-secret\")\n+                {\n+                    Uri invocation = new(\"http://127.0.0.1:20012/v1.0/invoke/sample/method/api/v1/\");\n+                    string credentialPath = Path.Combine(selectedPlan.Workspace, NativeTestHandoff.EndpointCredentialsFileName);\n+                    CompositionWorkspace.CreatePrivateDirectory(selectedPlan.Workspace);\n+                    string credentialJson = JsonSerializer.Serialize(new\n+                    {\n+                        schema = NativeTestHandoff.EndpointCredentialsSchema,\n+                        runId = selectedPlan.RunId,\n+                        syntheticTenantId = selectedPlan.TenantNamespace,\n+                        dataIsolationId = selectedPlan.ResourceNamespace,\n+                        endpoints = new[] { new { resourceId = \"owned-resource\", moduleId = \"sample\", endpointName = \"dapr-invocation\", uri = invocation.AbsoluteUri, headerName = \"dapr-api-token\", value = \"fixture-endpoint-key\" } },\n+                    });\n+                    await File.WriteAllTextAsync(credentialPath, credentialJson, TestContext.Current.CancellationToken).ConfigureAwait(true);\n+                    if (!OperatingSystem.IsWindows())\n+                    {\n+                        File.SetUnixFileMode(credentialPath, UnixFileMode.UserRead | UnixFileMode.UserWrite);\n+                    }\n+\n+                    readiness = readiness with\n+                    {\n+                        NativeEndpointCredentialsPath = credentialPath,\n+                        NativeHttpEndpoints = [new(\"owned-resource\", \"sample\", \"dapr-invocation\", invocation, \"owned-sidecar\")],\n+                        Resources = [.. readiness.Resources.Select(resource => resource with { Endpoints = [.. resource.Endpoints, new(\"dapr-invocation\", \"http\", invocation)] })],\n+                    };\n+                }\n+\n                 if (scenario == \"observed-identities\")\n                 {\n                     readiness = readiness with { TestObservation = new CompositionTestObservation { RunId = selectedPlan.RunId, ModuleId = \"sample\", ProfileHash = \"offline\", ProfileJson = \"offline\", ObservedCandidateHash = new string('a', 64), ObservedBackendIdentity = \"offline fixture backend\" } };\n@@ -221,10 +256,10 @@ public async Task PythonCommandBindsRealReportAndCleanupAsync(string scenario, i\n             File.Exists(Path.Combine(options.StateDirectory, \"diagnostics\", CompositionTestFiles.RunId, \"functional-observations.json\")).ShouldBeTrue();\n         }\n \n-        if (scenario == \"memories-missing-detail\")\n+        if (scenario == \"memories-missing-detail\" || scenario.StartsWith(\"parties-\", StringComparison.Ordinal))\n         {\n-            selectedRun.GetProperty(\"selection\").GetProperty(\"moduleId\").GetString().ShouldBe(\"memories\");\n-            selectedRun.GetProperty(\"selection\").GetProperty(\"name\").GetString().ShouldBe(\"functional-retention\");\n+            selectedRun.GetProperty(\"selection\").GetProperty(\"moduleId\").GetString().ShouldBe(scenario == \"memories-missing-detail\" ? \"memories\" : \"parties\");\n+            selectedRun.GetProperty(\"selection\").GetProperty(\"name\").GetString().ShouldBe(profile);\n             selectedRun.GetProperty(\"terminalOutcome\").GetProperty(\"ruleId\").GetString().ShouldBe(\"HXT008\");\n             selectedRun.GetProperty(\"terminalStatus\").GetString().ShouldBe(\"failed\");\n         }\n@@ -281,8 +316,16 @@ public async Task PythonCommandBindsRealReportAndCleanupAsync(string scenario, i\n             }\n         }\n \n-        if (scenario is \"secret\" or \"app-secret\" or \"dapr-secret\")\n+        if (scenario is \"secret\" or \"app-secret\" or \"dapr-secret\" or \"endpoint-secret\")\n         {\n+            selectedRun.GetProperty(\"terminalOutcome\").GetProperty(\"ruleId\").GetString().ShouldBe(\"HXT008\");\n+            selectedRun.GetProperty(\"reportHash\").ValueKind.ShouldBe(JsonValueKind.Null);\n+            if (scenario == \"endpoint-secret\")\n+            {\n+                File.Exists(Path.Combine(workspace.Root, \"endpoint-child-executed\")).ShouldBeTrue();\n+            }\n+\n+            File.Exists(Path.Combine(workspace.Root, \"evidence/result.python3.trx\")).ShouldBeFalse();\n             File.Exists(Path.Combine(selectedPlan!.Workspace, \"native-tests/native.trx\")).ShouldBeFalse();\n             File.Exists(Path.Combine(options.StateDirectory, \"diagnostics\", CompositionTestFiles.RunId, \"native.trx\")).ShouldBeFalse();\n         }\n@@ -460,10 +503,21 @@ private static void Declare(PlatformManifestTestWorkspace workspace, string scen\n         }\n \n         string owner = scenario.StartsWith(\"memories-\", StringComparison.Ordinal) ? \"memories\" : \"sample\";\n-        if (owner == \"memories\")\n+        if (scenario.StartsWith(\"parties-\", StringComparison.Ordinal))\n+        {\n+            owner = \"parties\";\n+        }\n+\n+        if (owner is \"memories\" or \"parties\")\n         {\n-            workspace.Document[\"modules\"]![0] = JsonNode.Parse(workspace.Document[\"modules\"]![0]!.ToJsonString().Replace(\"sample\", \"memories\", StringComparison.Ordinal));\n-            workspace.Change(\"modules.0.tests.0.name\", \"\\\"functional-retention\\\"\");\n+            workspace.Document[\"modules\"]![0] = JsonNode.Parse(workspace.Document[\"modules\"]![0]!.ToJsonString().Replace(\"sample\", owner, StringComparison.Ordinal));\n+            string profile = scenario switch\n+            {\n+                \"parties-source-missing-detail\" => \"platform-source\",\n+                \"parties-package-missing-detail\" => \"platform-package\",\n+                _ => \"functional-retention\",\n+            };\n+            workspace.Change(\"modules.0.tests.0.name\", JsonSerializer.Serialize(profile));\n         }\n \n         string report = scenario switch\n@@ -472,11 +526,17 @@ private static void Declare(PlatformManifestTestWorkspace workspace, string scen\n             \"skipped\" => \"<TestRun><ResultSummary outcome=\\\"Completed\\\"><Counters total=\\\"2\\\" passed=\\\"1\\\" failed=\\\"0\\\" notExecuted=\\\"1\\\" /></ResultSummary></TestRun>\",\n             _ => \"<TestRun><ResultSummary outcome=\\\"Completed\\\"><Counters total=\\\"1\\\" passed=\\\"1\\\" failed=\\\"0\\\" /></ResultSummary></TestRun>\",\n         };\n+        if (scenario == \"endpoint-secret\")\n+        {\n+            report = report.Replace(\"</TestRun>\", \"<Output><StdOut>__ENDPOINT_SECRET__</StdOut></Output></TestRun>\", StringComparison.Ordinal);\n+        }\n+\n         string secretSuffix = scenario switch\n         {\n             \"secret\" => \" + os.environ['HEXALITH_G4_ACCESS_TOKEN']\",\n             \"app-secret\" => \" + 'fixture-app-credential'\",\n             \"dapr-secret\" => \" + 'fixture-dapr-credential'\",\n+            \"endpoint-secret\" => \".replace('__ENDPOINT_SECRET__', json.loads(pathlib.Path(os.environ['HEXALITH_TEST_ENDPOINT_CREDENTIALS_PATH']).read_text())['endpoints'][0]['value'])\",\n             _ => string.Empty,\n         };\n         string detailValue = scenario switch\n@@ -503,6 +563,7 @@ private static void Declare(PlatformManifestTestWorkspace workspace, string scen\n             + \"assert os.environ['HEXALITH_G4_TEST_OWNER'] == '\" + owner + \"'\\n\"\n             + \"assert os.environ['HEXALITH_G4_DOMAINS'] == '\" + owner + \"'\\n\"\n             + \"assert 0 <= (datetime.datetime.fromisoformat(os.environ['HEXALITH_G4_CREDENTIAL_EXPIRY_UTC']) - datetime.datetime.fromisoformat(os.environ['HEXALITH_G4_EXECUTION_DEADLINE_UTC'])).total_seconds() < 1\\n\"\n+            + (scenario == \"endpoint-secret\" ? \"pathlib.Path(__file__).with_name('endpoint-child-executed').touch()\\n\" : string.Empty)\n             + (scenario == \"timeout\" ? \"time.sleep(30)\\n\" : string.Empty)\n             + (scenario is \"missing\" or \"detail-no-report\" ? string.Empty : \"pathlib.Path(os.environ['HEXALITH_G4_TEST_REPORT_PATH']).write_text(\" + JsonSerializer.Serialize(report) + secretSuffix + \")\\n\")\n             + (scenario.StartsWith(\"detail-\", StringComparison.Ordinal) || scenario == \"memories-detail-pass\" ? \"pathlib.Path(os.environ['HEXALITH_G4_TEST_REPORT_PATH']).with_name('functional-observations.json').write_text(\" + detailValue + \")\\n\" : string.Empty)"
+      },
+      {
+        "sha": "7ac9032da52646ea5d9e6e19c7372c6f010fdfe6",
+        "filename": "test/Hexalith.Builds.Module.Tests/NativeTestExecutorTests.cs",
+        "status": "modified",
+        "additions": 174,
+        "deletions": 1,
+        "changes": 175,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/test%2FHexalith.Builds.Module.Tests%2FNativeTestExecutorTests.cs",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/test%2FHexalith.Builds.Module.Tests%2FNativeTestExecutorTests.cs",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/test%2FHexalith.Builds.Module.Tests%2FNativeTestExecutorTests.cs?ref=ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+        "patch": "@@ -5,11 +5,16 @@\n \n namespace Hexalith.Builds.ModuleTool.Tests;\n \n+using System.Diagnostics;\n using System.Text;\n+using System.Text.Json;\n+using System.Text.Json.Nodes;\n \n using Hexalith.Builds.Tooling.Diagnostics;\n+using Hexalith.Builds.Tooling.Manifest;\n using Hexalith.Builds.Tooling.Runtime;\n using Hexalith.Builds.Tooling.TestReports;\n+using Hexalith.Builds.Tooling.Workspace;\n \n using Shouldly;\n \n@@ -20,6 +25,8 @@ namespace Hexalith.Builds.ModuleTool.Tests;\n /// </summary>\n public sealed class NativeTestExecutorTests\n {\n+    private const string _markerRunner = \"import pathlib\\npathlib.Path(__file__).with_name('child-executed').touch()\\n\";\n+\n     private static readonly NativeTestReportLoadResult _passingReport = new(new NativeTestReport(\"native.trx\", new string('A', 64), 2, 2, 0, 0), null);\n \n     private static readonly byte[] _reportBytes = Encoding.UTF8.GetBytes(\"<TestRun><ResultSummary outcome=\\\"Completed\\\" /></TestRun>\");\n@@ -156,6 +163,172 @@ public void RetainedReportPathFollowsEvidencePath()\n         NativeTestExecutor.RetainedReportPath(\"full.json\", \"mtp\").ShouldBe(\"full.mtp.trx\");\n     }\n \n+    /// <summary>Prepared scopes reject invalid identities before launch, while the valid control actually executes.</summary>\n+    /// <param name=\"mutation\">The independently invalid owner scope.</param>\n+    /// <returns>The refusal and never-executed entry assertions.</returns>\n+    /// <exception cref=\"ArgumentOutOfRangeException\">The fixture mutation is unknown.</exception>\n+    [Theory]\n+    [InlineData(\"valid\")]\n+    [InlineData(\"foreign-run\")]\n+    [InlineData(\"foreign-module\")]\n+    [InlineData(\"wildcard-domain\")]\n+    [InlineData(\"wildcard-tenant\")]\n+    [InlineData(\"absent-synthetic-tenant\")]\n+    public async Task PreparedScopeGatesChildExecutionAsync(string mutation)\n+    {\n+        using PlatformManifestTestWorkspace workspace = new();\n+        string marker = Path.Combine(workspace.Root, \"child-executed\");\n+        (CompositionRunPlan plan, ModuleTestSelection selection, string manifest) = await PrepareSelectedRunAsync(workspace, _markerRunner).ConfigureAwait(true);\n+        CompositionNativeTestScope scope = new(plan.RunId, \"sample\", new string('a', 64), [\"sample\"], [plan.TenantNamespace]);\n+        scope = mutation switch\n+        {\n+            \"valid\" => scope,\n+            \"foreign-run\" => scope with { RunId = \"foreign-run\" },\n+            \"foreign-module\" => scope with { ModuleId = \"foreign-module\" },\n+            \"wildcard-domain\" => scope with { Domains = [\"sample*\"] },\n+            \"wildcard-tenant\" => scope with { Tenants = [plan.TenantNamespace, \"*\"] },\n+            \"absent-synthetic-tenant\" => scope with { Tenants = [\"other-tenant\"] },\n+            _ => throw new ArgumentOutOfRangeException(nameof(mutation)),\n+        };\n+        CompositionReadiness readiness = HealthyReadiness(plan) with { NativeTestScope = scope };\n+        using Process process = new();\n+        NativeTestExecutionResult result = await NativeTestExecutor.ExecuteAsync(new CompositionRunSession(plan, readiness, \"private-signing-key-value\", process), new PersistedProfileNativeTests(\"runner.py\", \"python3\"), manifest, TestContext.Current.CancellationToken, selection: selection).ConfigureAwait(true);\n+        if (mutation == \"valid\")\n+        {\n+            File.Exists(marker).ShouldBeTrue();\n+\n+            // The valid scope launches the marker-only child; its intentionally missing TRX remains a test failure.\n+            result.Result.Outcome.RuleId.ShouldBe(\"HXT002\");\n+        }\n+        else\n+        {\n+            AssertNotPassing(result, \"HXT009\", ToolExitCode.ProductOrTest);\n+            File.Exists(marker).ShouldBeFalse();\n+        }\n+    }\n+\n+    /// <summary>A prepared scope that differs from the fallback identity is what the launched child actually receives.</summary>\n+    /// <returns>The decoded token claim and domain handoff assertions.</returns>\n+    [Fact]\n+    public async Task PreparedScopeBindsNativeTokenAndDomainHandoffAsync()\n+    {\n+        using PlatformManifestTestWorkspace workspace = new();\n+        string observedPath = Path.Combine(workspace.Root, \"child-identity.json\");\n+        const string identityRunner = \"import base64, json, os, pathlib\\n\"\n+            + \"claims = json.loads(base64.urlsafe_b64decode(os.environ['HEXALITH_G4_ACCESS_TOKEN'].split('.')[1] + '=='))\\n\"\n+            + \"observed = {key: claims.get(key) for key in ['sub', 'tenants', 'domains', 'eventstore:surface']}\\n\"\n+            + \"observed['HEXALITH_G4_DOMAINS'] = os.environ['HEXALITH_G4_DOMAINS']\\n\"\n+            + \"pathlib.Path(__file__).with_name('child-identity.json').write_text(json.dumps(observed))\\n\";\n+        (CompositionRunPlan plan, ModuleTestSelection selection, string manifest) = await PrepareSelectedRunAsync(workspace, identityRunner).ConfigureAwait(true);\n+\n+        // Unsorted domains and an extra tenant differ from the fallback identity ([\"sample\"], [synthetic tenant]).\n+        CompositionNativeTestScope scope = new(plan.RunId, \"sample\", new string('a', 64), [\"tenants\", \"party\"], [plan.TenantNamespace, \"system\"]);\n+        CompositionReadiness readiness = HealthyReadiness(plan) with { NativeTestScope = scope };\n+        using Process process = new();\n+\n+        NativeTestExecutionResult result = await NativeTestExecutor.ExecuteAsync(new CompositionRunSession(plan, readiness, \"private-signing-key-value\", process), new PersistedProfileNativeTests(\"runner.py\", \"python3\"), manifest, TestContext.Current.CancellationToken, selection: selection).ConfigureAwait(true);\n+\n+        File.Exists(observedPath).ShouldBeTrue(\"The scoped child must launch and record its decoded identity.\");\n+        using JsonDocument observed = JsonDocument.Parse(await File.ReadAllTextAsync(observedPath, TestContext.Current.CancellationToken).ConfigureAwait(true));\n+        JsonElement identity = observed.RootElement;\n+        identity.GetProperty(\"sub\").GetString().ShouldBe(\"g4-native-tests\");\n+        identity.GetProperty(\"domains\").GetString().ShouldNotBeNull().Split(' ').ShouldBe([\"party\", \"tenants\"], ignoreOrder: true);\n+        identity.GetProperty(\"tenants\").GetString().ShouldNotBeNull().Split(' ').ShouldBe([plan.TenantNamespace, \"system\"], ignoreOrder: true);\n+        identity.GetProperty(\"eventstore:surface\").GetString().ShouldBe(\"agent\");\n+        identity.GetProperty(\"HEXALITH_G4_DOMAINS\").GetString().ShouldBe(\"party,tenants\");\n+\n+        // The identity-only child writes no TRX, so the launched run still fails on its missing report.\n+        result.Result.Outcome.RuleId.ShouldBe(\"HXT002\");\n+    }\n+\n+    /// <summary>An unsafe or inconsistent endpoint-credential channel refuses at the executor before the child launches.</summary>\n+    /// <param name=\"fault\">The private-channel mutation, or valid for the launched control.</param>\n+    /// <returns>The refusal and never-executed entry assertions.</returns>\n+    [Theory]\n+    [InlineData(\"valid\")]\n+    [InlineData(\"missing\")]\n+    [InlineData(\"group-readable\")]\n+    [InlineData(\"foreign-run\")]\n+    [InlineData(\"endpoints-without-path\")]\n+    public async Task EndpointCredentialChannelGatesChildExecutionAsync(string fault)\n+    {\n+        fault.ShouldBeOneOf(\"valid\", \"missing\", \"group-readable\", \"foreign-run\", \"endpoints-without-path\");\n+        using PlatformManifestTestWorkspace workspace = new();\n+        string marker = Path.Combine(workspace.Root, \"child-executed\");\n+        (CompositionRunPlan plan, ModuleTestSelection selection, string manifest) = await PrepareSelectedRunAsync(workspace, _markerRunner).ConfigureAwait(true);\n+        Uri invocation = new(\"http://127.0.0.1:20012/v1.0/invoke/sample/method/api/v1/\");\n+        string credentialPath = Path.Combine(plan.Workspace, NativeTestHandoff.EndpointCredentialsFileName);\n+        CompositionWorkspace.CreatePrivateDirectory(plan.Workspace);\n+        if (fault != \"missing\")\n+        {\n+            JsonObject channel = new()\n+            {\n+                [\"schema\"] = NativeTestHandoff.EndpointCredentialsSchema,\n+                [\"runId\"] = fault == \"foreign-run\" ? \"foreign-run\" : plan.RunId,\n+                [\"syntheticTenantId\"] = plan.TenantNamespace,\n+                [\"dataIsolationId\"] = plan.ResourceNamespace,\n+                [\"endpoints\"] = new JsonArray(new JsonObject\n+                {\n+                    [\"resourceId\"] = \"owned-resource\",\n+                    [\"moduleId\"] = \"sample\",\n+                    [\"endpointName\"] = \"dapr-invocation\",\n+                    [\"uri\"] = invocation.AbsoluteUri,\n+                    [\"headerName\"] = \"dapr-api-token\",\n+                    [\"value\"] = \"fixture-endpoint-key\",\n+                }),\n+            };\n+            await File.WriteAllTextAsync(credentialPath, channel.ToJsonString(), TestContext.Current.CancellationToken).ConfigureAwait(true);\n+            if (!OperatingSystem.IsWindows())\n+            {\n+                File.SetUnixFileMode(credentialPath, UnixFileMode.UserRead | UnixFileMode.UserWrite | (fault == \"group-readable\" ? UnixFileMode.GroupRead : UnixFileMode.None));\n+            }\n+        }\n+\n+        CompositionReadiness readiness = HealthyReadiness(plan);\n+        readiness = readiness with\n+        {\n+            NativeEndpointCredentialsPath = fault == \"endpoints-without-path\" ? null : credentialPath,\n+            NativeHttpEndpoints = [new(\"owned-resource\", \"sample\", \"dapr-invocation\", invocation, \"owned-sidecar\")],\n+            Resources = [.. readiness.Resources.Select(resource => resource with { Endpoints = [.. resource.Endpoints, new(\"dapr-invocation\", \"http\", invocation)] })],\n+        };\n+        using Process process = new();\n+\n+        NativeTestExecutionResult result = await NativeTestExecutor.ExecuteAsync(new CompositionRunSession(plan, readiness, \"private-signing-key-value\", process), new PersistedProfileNativeTests(\"runner.py\", \"python3\"), manifest, TestContext.Current.CancellationToken, selection: selection).ConfigureAwait(true);\n+\n+        // Windows has no group mode bit to refuse, so its group-readable fixture is the valid control.\n+        if (fault == \"valid\" || (fault == \"group-readable\" && OperatingSystem.IsWindows()))\n+        {\n+            File.Exists(marker).ShouldBeTrue();\n+\n+            // The valid channel launches the marker-only child; its intentionally missing TRX remains a test failure.\n+            result.Result.Outcome.RuleId.ShouldBe(\"HXT002\");\n+        }\n+        else\n+        {\n+            AssertNotPassing(result, \"HXT008\", ToolExitCode.EvidenceSchemaOrPolicy);\n+            File.Exists(marker).ShouldBeFalse();\n+        }\n+    }\n+\n+    private static async Task<(CompositionRunPlan Plan, ModuleTestSelection Selection, string Manifest)> PrepareSelectedRunAsync(PlatformManifestTestWorkspace workspace, string runner)\n+    {\n+        workspace.Document[\"modules\"]![0]![\"tests\"] = JsonNode.Parse(\"\"\"\n+            [{\"name\":\"verify\",\"executor\":\"python3\",\"entry\":\"runner.py\",\"reportFormat\":\"trx\",\"executionTimeoutSeconds\":60,\"stopTimeoutSeconds\":30,\"mode\":\"source\"}]\n+            \"\"\");\n+        await File.WriteAllTextAsync(Path.Combine(workspace.Root, \"runner.py\"), runner, TestContext.Current.CancellationToken).ConfigureAwait(false);\n+        string manifest = workspace.Save();\n+        PlatformManifestValidationResult validated = PlatformManifestValidator.Validate([manifest], TestContext.Current.CancellationToken);\n+        validated.IsValid.ShouldBeTrue();\n+        ModuleTestSelection selection = ModuleTestSelection.Select(validated.Declarations!, \"verify\", manifest, DateTimeOffset.UtcNow).ShouldNotBeNull();\n+        SourceMapping mapping = new(WorkspaceMode.Source, workspace.Root, \"sample\", [new SourceMappingEntry(\"sample\", \"source\", workspace.Root)], false);\n+        CompositionRunPlan plan = CompositionTestFiles.CreatePlan(workspace.Root) with { SelectedTest = selection, SourceMapping = mapping, Modules = [], UiMarkers = [] };\n+        plan = await TestEnvironmentProvisioningFixture.PrepareAsync(plan, manifest, workspace.Root).ConfigureAwait(false);\n+        return (plan, selection, manifest);\n+    }\n+\n+    private static CompositionReadiness HealthyReadiness(CompositionRunPlan plan) =>\n+        TestEnvironmentProvisioningFixture.Observe(new CompositionReadiness(CompositionReadiness.SupportedSchema, plan.RunId, new Uri(\"http://127.0.0.1:20012/\"), null, [new(\"owned-resource\", \"process\", \"Healthy\")]), \"sample\");\n+\n     private static void AssertNotPassing(NativeTestExecutionResult result, string ruleId, ToolExitCode exitCode)\n     {\n         result.Result.Outcome.ExitCode.ShouldBe(exitCode);\n@@ -164,4 +337,4 @@ private static void AssertNotPassing(NativeTestExecutionResult result, string ru\n         result.Report.ShouldBeNull();\n         result.ReportBytes.ShouldBeNull();\n     }\n-}\n\\ No newline at end of file\n+}\r\n\\ No newline at end of file"
+      },
+      {
+        "sha": "d47d7183f1b2e3267c7738fb9b80f418f6733a17",
+        "filename": "test/Hexalith.Builds.Module.Tests/Workspace/AppHostRunnerValidationTests.cs",
+        "status": "modified",
+        "additions": 72,
+        "deletions": 0,
+        "changes": 72,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/test%2FHexalith.Builds.Module.Tests%2FWorkspace%2FAppHostRunnerValidationTests.cs",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/test%2FHexalith.Builds.Module.Tests%2FWorkspace%2FAppHostRunnerValidationTests.cs",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/test%2FHexalith.Builds.Module.Tests%2FWorkspace%2FAppHostRunnerValidationTests.cs?ref=ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+        "patch": "@@ -515,6 +515,78 @@ public async Task HealthyResourcesWaitForOwnerPreparationBeforePublishingAsync()\n         }\n     }\n \n+    /// <summary>Verifies readiness publishes registered owner preparation outputs and refuses an inconsistent credential channel.</summary>\n+    /// <param name=\"fault\">The prepared channel inconsistency, or none for the published control.</param>\n+    /// <returns>The published or refused readiness assertions.</returns>\n+    [Theory]\n+    [InlineData(\"none\")]\n+    [InlineData(\"endpoints-without-path\")]\n+    [InlineData(\"path-without-endpoints\")]\n+    [InlineData(\"path-outside-workspace\")]\n+    public async Task HealthyReadinessPublishesOwnerPreparationOutputsAsync(string fault)\n+    {\n+        fault.ShouldBeOneOf(\"none\", \"endpoints-without-path\", \"path-without-endpoints\", \"path-outside-workspace\");\n+        string root = CompositionTestFiles.CreateDirectory();\n+        try\n+        {\n+            CompositionRunPlan plan = CompositionTestFiles.CreatePlan(root) with { Modules = [], UiMarkers = [] };\n+            IDistributedApplicationBuilder builder = CreateBuilder();\n+            ExecutableResource eventStore = builder.AddExecutable(\"eventstore\", \"unused\", root).WithHttpEndpoint(port: 32125).Resource;\n+            ExecutableResource owner = builder.AddExecutable(\"sample\", \"unused\", root).Resource;\n+            owner.Annotations.Add(new PlatformResourceOwnerAnnotation(\"sample\"));\n+            ExecutableResource sidecar = builder.AddExecutable(\"sample-dapr-cli\", \"unused\", root).WithHttpEndpoint(port: 32126).Resource;\n+            foreach (ExecutableResource allocated in new[] { eventStore, sidecar })\n+            {\n+                EndpointAnnotation endpoint = allocated.Annotations.OfType<EndpointAnnotation>().Single();\n+                endpoint.AllocatedEndpoint = new AllocatedEndpoint(endpoint, \"127.0.0.1\", endpoint.Port!.Value);\n+            }\n+\n+            Uri invocation = new(\"http://127.0.0.1:32126/v1.0/invoke/sample/method/api/v1/\");\n+            CompositionNativeHttpEndpoint prepared = new(\"sample\", \"sample\", \"dapr-invocation\", invocation, \"sample-dapr-cli\");\n+            CompositionNativeTestScope scope = new(plan.RunId, \"sample\", new string('a', 64), [\"party\", \"tenants\"], [plan.TenantNamespace, \"system\"]);\n+            string credentialPath = fault == \"path-outside-workspace\"\n+                ? Path.Combine(root, NativeTestHandoff.EndpointCredentialsFileName)\n+                : Path.Combine(Path.GetFullPath(plan.Workspace), NativeTestHandoff.EndpointCredentialsFileName);\n+            _ = builder.Services.AddSingleton<ICompositionRunPreparation>(new PreparedOutputsRunPreparation(\n+                scope,\n+                fault == \"path-without-endpoints\" ? [] : [prepared],\n+                fault == \"endpoints-without-path\" ? null : credentialPath));\n+            await using DistributedApplication app = builder.Build();\n+            ResourceNotificationService notifications = app.Services.GetRequiredService<ResourceNotificationService>();\n+            await PublishAsync(notifications, eventStore, HealthStatus.Healthy, 4244).ConfigureAwait(true);\n+            await PublishAsync(notifications, owner, HealthStatus.Healthy, 4245).ConfigureAwait(true);\n+            await PublishAsync(notifications, sidecar, HealthStatus.Healthy, 4246).ConfigureAwait(true);\n+            using CancellationTokenSource bound = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);\n+            bound.CancelAfter(TimeSpan.FromSeconds(5));\n+\n+            if (fault != \"none\")\n+            {\n+                _ = await Should.ThrowAsync<InvalidDataException>(() => RunReadiness.WaitAndWriteAsync(app, plan, bound.Token)).ConfigureAwait(true);\n+                File.Exists(plan.ReadinessPath).ShouldBeFalse();\n+                return;\n+            }\n+\n+            (await RunReadiness.WaitAndWriteAsync(app, plan, bound.Token).ConfigureAwait(true)).ShouldBeTrue();\n+            CompositionReadiness readiness = (await CompositionDocumentStore.TryReadAsync<CompositionReadiness>(plan.ReadinessPath, TestContext.Current.CancellationToken).ConfigureAwait(true)).ShouldNotBeNull();\n+            CompositionNativeTestScope published = readiness.NativeTestScope.ShouldNotBeNull();\n+            published.RunId.ShouldBe(plan.RunId);\n+            published.ModuleId.ShouldBe(\"sample\");\n+            published.RoutingCatalogRoot.ShouldBe(new string('a', 64));\n+            published.Domains.ShouldBe([\"party\", \"tenants\"]);\n+            published.Tenants.ShouldBe([plan.TenantNamespace, \"system\"]);\n+            readiness.NativeHttpEndpoints.ShouldHaveSingleItem().ShouldBe(prepared);\n+            CompositionResourceEndpoint ownerEndpoint = readiness.Resources.Single(resource => resource.Name == \"sample\").Endpoints.ShouldHaveSingleItem();\n+            ownerEndpoint.Name.ShouldBe(\"dapr-invocation\");\n+            ownerEndpoint.Protocol.ShouldBe(\"http\");\n+            ownerEndpoint.Uri.ShouldBe(invocation);\n+            readiness.NativeEndpointCredentialsPath.ShouldBe(credentialPath);\n+        }\n+        finally\n+        {\n+            CompositionTestFiles.Delete(root);\n+        }\n+    }\n+\n     /// <summary>Verifies a real runner cutover failure reports the current unready list.</summary>\n     /// <returns>The HXR027 document assertions.</returns>\n     [Fact]"
+      },
+      {
+        "sha": "8b465ddace912e546d7d0f05e6f86b2e14963b1e",
+        "filename": "test/Hexalith.Builds.Module.Tests/Workspace/PreparedOutputsRunPreparation.cs",
+        "status": "added",
+        "additions": 27,
+        "deletions": 0,
+        "changes": 27,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/test%2FHexalith.Builds.Module.Tests%2FWorkspace%2FPreparedOutputsRunPreparation.cs",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d/test%2FHexalith.Builds.Module.Tests%2FWorkspace%2FPreparedOutputsRunPreparation.cs",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/test%2FHexalith.Builds.Module.Tests%2FWorkspace%2FPreparedOutputsRunPreparation.cs?ref=ff1c2952fa6aec113975bbe78b4d2487d6ec0b3d",
+        "patch": "@@ -0,0 +1,27 @@\n+// <copyright file=\"PreparedOutputsRunPreparation.cs\" company=\"ITANEO\">\n+// Copyright (c) ITANEO (https://www.itaneo.com). All rights reserved.\n+// Licensed under the MIT license. See LICENSE file in the project root for full license information.\n+// </copyright>\n+\n+namespace Hexalith.Builds.ModuleTool.Tests.Workspace;\n+\n+using Hexalith.Builds.Tooling.Runtime;\n+\n+/// <summary>Reports fixed owner preparation outputs so readiness publication can be observed without live services.</summary>\n+/// <param name=\"scope\">The owner-derived native scope.</param>\n+/// <param name=\"endpoints\">The metadata-only invocation endpoints.</param>\n+/// <param name=\"credentialsPath\">The private endpoint credential channel path, or null when none is prepared.</param>\n+internal sealed class PreparedOutputsRunPreparation(CompositionNativeTestScope? scope, IReadOnlyList<CompositionNativeHttpEndpoint> endpoints, string? credentialsPath) : ICompositionRunPreparation\n+{\n+    /// <inheritdoc/>\n+    public CompositionNativeTestScope? NativeTestScope => scope;\n+\n+    /// <inheritdoc/>\n+    public IReadOnlyList<CompositionNativeHttpEndpoint> NativeHttpEndpoints => endpoints;\n+\n+    /// <inheritdoc/>\n+    public string? NativeEndpointCredentialsPath => credentialsPath;\n+\n+    /// <inheritdoc/>\n+    public Task PrepareAsync(IServiceProvider services, CancellationToken cancellationToken) => Task.CompletedTask;\n+}"
+      }
+    ]
+  }
+}

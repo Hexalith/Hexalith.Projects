@@ -1,0 +1,96 @@
+[
+  {
+    "name": "redis",
+    "argv": [
+      "/tmp/story64-tenant-registry-alignment-20261030/redis-server",
+      "--bind",
+      "127.0.0.1",
+      "--port",
+      "55183",
+      "--save",
+      "",
+      "--appendonly",
+      "no",
+      "--dir",
+      "/tmp/story64-review-follow-up-host-umgfb1nq",
+      "--protected-mode",
+      "yes"
+    ],
+    "cwd": "/tmp/story64-review-follow-up-host-umgfb1nq",
+    "environment": {},
+    "startedUtc": "2026-10-30T18:30:28.202868+00:00",
+    "pid": 1826882,
+    "privateLog": "/tmp/story64-review-follow-up-host-umgfb1nq/redis.private.log"
+  },
+  {
+    "name": "daprd",
+    "argv": [
+      "/home/administrator/.dapr/bin/daprd",
+      "--app-id",
+      "story64-tenant-registry-1826629",
+      "--resources-path",
+      "/tmp/story64-review-follow-up-host-umgfb1nq/components",
+      "--dapr-http-port",
+      "57751",
+      "--dapr-grpc-port",
+      "54257",
+      "--dapr-internal-grpc-port",
+      "34767",
+      "--dapr-public-port",
+      "48205",
+      "--dapr-listen-addresses",
+      "127.0.0.1",
+      "--dapr-public-listen-address",
+      "127.0.0.1",
+      "--dapr-internal-grpc-listen-address",
+      "127.0.0.1",
+      "--enable-metrics=false",
+      "--scheduler-host-address",
+      "",
+      "--log-level",
+      "warn"
+    ],
+    "cwd": "/tmp/story64-review-follow-up-host-umgfb1nq",
+    "environment": {
+      "DAPR_API_TOKEN": "<ephemeral secret; not retained>",
+      "APP_API_TOKEN": "<ephemeral secret; not retained>"
+    },
+    "startedUtc": "2026-10-30T18:30:28.311988+00:00",
+    "pid": 1826901,
+    "privateLog": "/tmp/story64-review-follow-up-host-umgfb1nq/daprd.private.log"
+  },
+  {
+    "name": "tenant-registry-host",
+    "argv": [
+      "dotnet",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host/bin/Debug/net10.0/Hexalith.EventStore.dll"
+    ],
+    "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Platform/src/Hexalith.Platform.TenantRegistry.Host",
+    "environment": {
+      "ASPNETCORE_ENVIRONMENT": "Development",
+      "ASPNETCORE_URLS": "http://127.0.0.1:59421",
+      "DAPR_HTTP_ENDPOINT": "http://127.0.0.1:57751",
+      "DAPR_GRPC_ENDPOINT": "http://127.0.0.1:54257",
+      "DAPR_HTTP_PORT": "57751",
+      "DAPR_GRPC_PORT": "54257",
+      "DAPR_API_TOKEN": "<ephemeral secret; not retained>",
+      "APP_API_TOKEN": "<ephemeral secret; not retained>",
+      "Authentication__JwtBearer__Issuer": "local-story64-issuer",
+      "Authentication__JwtBearer__Audience": "hexalith-eventstore",
+      "Authentication__JwtBearer__SigningKey": "<ephemeral secret; not retained>",
+      "Authentication__JwtBearer__AllowedAlgorithms__0": "HS256",
+      "Authentication__JwtBearer__RequireHttpsMetadata": "false",
+      "EventStore__OpenApi__Enabled": "false",
+      "EventStore__CommandStatus__StateStoreName": "eventstore-statestore",
+      "EventStore__Projections__CheckpointStateStoreName": "eventstore-statestore",
+      "EventStore__Projections__ReadModelStateStoreName": "eventstore-statestore",
+      "EventStore__Publisher__PubSubName": "eventstore-pubsub",
+      "EventStore__ProjectionChanges__PubSubName": "eventstore-pubsub",
+      "EventStore__RateLimiting__ConfigurationStoreName": "eventstore-configstore",
+      "Logging__LogLevel__Default": "Warning"
+    },
+    "startedUtc": "2026-10-30T18:30:28.420630+00:00",
+    "pid": 1826918,
+    "privateLog": "/tmp/story64-review-follow-up-host-umgfb1nq/tenant-registry-host.private.log"
+  }
+]

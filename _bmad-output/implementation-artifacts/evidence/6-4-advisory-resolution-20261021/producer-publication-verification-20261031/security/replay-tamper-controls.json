@@ -1,0 +1,40 @@
+{
+  "result": "passed",
+  "scope": "Only disposable input copies were tampered; no original retained helper/output/input changed",
+  "controls": [
+    {
+      "case": "yaml",
+      "argv": [
+        "python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-verification-20261031/security/replay-proposed-gate.py",
+        "--candidate-root",
+        "/tmp/story64-producer-verification-1e388du9/gate-replay-tamper-controls/candidate",
+        "--capsule",
+        "/tmp/story64-producer-verification-1e388du9/gate-replay-tamper-controls/capsule",
+        "--output-dir",
+        "/tmp/story64-producer-verification-1e388du9/gate-replay-tamper-controls/yaml-output"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Candidate YAML digest differs: .github/workflows/build-release.yml\n",
+      "outputCreated": false
+    },
+    {
+      "case": "lock",
+      "argv": [
+        "python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-verification-20261031/security/replay-proposed-gate.py",
+        "--candidate-root",
+        "/tmp/story64-producer-verification-1e388du9/gate-replay-tamper-controls/candidate",
+        "--capsule",
+        "/tmp/story64-producer-verification-1e388du9/gate-replay-tamper-controls/capsule",
+        "--output-dir",
+        "/tmp/story64-producer-verification-1e388du9/gate-replay-tamper-controls/lock-output"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Selected dependency input digest differs: package-lock.json\n",
+      "outputCreated": false
+    }
+  ]
+}

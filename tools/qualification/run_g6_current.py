@@ -203,9 +203,15 @@ def main(arguments: list[str] | None = None) -> int:
         # Compile every selected AppHost and a transitive consumer. The file-based Platform
         # AppHost consumes packages; the remaining projects use source references in Debug.
         baseline = json.loads((BUILDS / "Tools/runtime-toolchain-baseline-2026-10-01.json").read_text())
+        # FrontComposer links canonical hosting helpers from its own root-declared Builds and
+        # Platform copies, which stay uninitialized nested submodules in this workspace. Bind
+        # them to the workspace's root-declared copies instead.
+        frontcomposer_roots = [f"-p:HexalithBuildsRoot={BUILDS}",
+                               f"-p:HexalithPlatformRoot={ROOT / 'references/Hexalith.Platform'}"]
         for item in baseline["pinAudit"]["appHostProjects"]:
             project = ROOT / item["path"]
-            code = run.run("AppHost build " + project.parent.name, ["dotnet", "build", str(project), *build], project.parent)
+            roots = frontcomposer_roots if item["path"].startswith("references/Hexalith.FrontComposer/") else []
+            code = run.run("AppHost build " + project.parent.name, ["dotnet", "build", str(project), *build, *roots], project.parent)
             apphosts.append({"path": item["path"], "exitCode": code, "dependencyMode": "source"})
         platform = ROOT / "references/Hexalith.Platform/apphost.cs"
         # A shared BaseIntermediateOutputPath collapses every project onto one assets

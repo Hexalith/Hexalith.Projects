@@ -1,0 +1,208 @@
+{
+  "capturedUtc": "2026-10-31T06:49:42.438537+00:00",
+  "officialRun": 41172847732,
+  "attempt": 1,
+  "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "rawLog": "../observations/release-job.log",
+  "rawLogSha256": "51aecc9f39aa034bb53af0cb46d9a2246f03eacd6331749cbae4a60730fea289",
+  "controlSuites": [
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-authoritative-package-catalog.ps1",
+      "startLine": 365,
+      "endLine": 371,
+      "observedOutput": [
+        "2026-10-31T05:31:14.6094951Z Authoritative package catalog tests passed for 51 approved package identities and 4 shared package versions."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-central-package-version-validator.ps1",
+      "startLine": 372,
+      "endLine": 378,
+      "observedOutput": [
+        "2026-10-31T05:31:29.1813434Z Central package validator tests passed: 17 scenarios."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-package-version-audit-generator.ps1",
+      "startLine": 386,
+      "endLine": 433,
+      "observedOutput": [
+        "2026-10-31T05:32:26.4684152Z Package version audit generator tests passed: 115 scenarios."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-package-version-audit-validator.ps1",
+      "startLine": 434,
+      "endLine": 440,
+      "observedOutput": [
+        "2026-10-31T05:39:52.4330187Z Package version audit validator tests passed: 103 scenarios."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-consumer-package-authority-validator.ps1",
+      "startLine": 448,
+      "endLine": 454,
+      "observedOutput": [
+        "2026-10-31T05:40:41.2367104Z Consumer package authority validator tests passed: 32 scenarios."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-package-version-exception-validator.ps1",
+      "startLine": 462,
+      "endLine": 468,
+      "observedOutput": [
+        "2026-10-31T05:41:38.7475956Z Package version exception validator tests passed: 30 scenarios."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-platform-version-catalog.ps1",
+      "startLine": 476,
+      "endLine": 572,
+      "observedOutput": [
+        "2026-10-31T05:44:15.9549058Z Platform version catalog tests passed: 96 scenarios. No Platform acceptance granted."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-dapr-package-version-validator.ps1",
+      "startLine": 580,
+      "endLine": 622,
+      "observedOutput": [
+        "2026-10-31T05:44:42.5126442Z Dapr validator fixture suite passed: 36 scenarios."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-domain-workflow-test-platforms.ps1",
+      "startLine": 623,
+      "endLine": 629,
+      "observedOutput": [
+        "2026-10-31T05:44:49.4383774Z Domain workflow test-platform checks passed: 411 assertions."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-commitlint-workflow.ps1",
+      "startLine": 679,
+      "endLine": 696,
+      "observedOutput": [
+        "2026-10-31T05:45:02.6723268Z Commitlint workflow tests passed."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-publish-packages.ps1",
+      "startLine": 697,
+      "endLine": 705,
+      "observedOutput": [
+        "2026-10-31T05:45:03.3819605Z Legacy package publisher checks passed."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-publish-g4-tool-packages.ps1",
+      "startLine": 706,
+      "endLine": 772,
+      "observedOutput": [
+        "2026-10-31T05:50:00.2880779Z G-4 tool package publisher checks passed."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-g4-release-contract.ps1",
+      "startLine": 773,
+      "endLine": 779,
+      "observedOutput": [
+        "2026-10-31T05:50:00.9037688Z G-4 release lifecycle and pre-tag credential contracts passed."
+      ]
+    },
+    {
+      "command": "bash ./Tools/test-g4-release-source.sh",
+      "startLine": 780,
+      "endLine": 786,
+      "observedOutput": [
+        "2026-10-31T05:50:01.1212145Z G-4 release source guard checks passed."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-g4-tool-package-contract-gate.ps1",
+      "startLine": 793,
+      "endLine": 816,
+      "observedOutput": [
+        "2026-10-31T05:51:22.9758759Z Official package wrapper controls passed: version propagation and post-pack loader refusal.",
+        "2026-10-31T05:51:33.3114067Z G-4 tool package artifact validator tests passed: 63 scenarios.",
+        "2026-10-31T05:51:33.3571726Z G-4 tool package qualification gate checks passed: reused, pre-package, post-package, and duplicate-output failures expose no inventory."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-g4-tool-package-artifact-validator.ps1",
+      "startLine": 817,
+      "endLine": 824,
+      "observedOutput": [
+        "2026-10-31T05:51:34.6159268Z G-4 tool package artifact validator tests passed: 63 scenarios."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-g4-tool-package-contracts.ps1 -Version \"0.0.0-ci.$env:GITHUB_RUN_NUMBER\" -RequireControls",
+      "startLine": 825,
+      "endLine": 1062,
+      "observedOutput": [
+        "2026-10-31T05:53:32.3114583Z /home/runner/work/Hexalith.Builds/Hexalith.Builds/test/Hexalith.Builds.Evidence.Tests/bin/Release/net10.0/Hexalith.Builds.Evidence.Tests.dll (net10.0|x64) passed (5s 531ms)",
+        "2026-10-31T05:53:32.3115381Z Test run summary: Passed!",
+        "2026-10-31T06:04:55.0178545Z /home/runner/work/Hexalith.Builds/Hexalith.Builds/test/Hexalith.Builds.Module.Tests/bin/Release/net10.0/Hexalith.Builds.Module.Tests.dll (net10.0|x64) passed (11m 18s 311ms)",
+        "2026-10-31T06:04:55.0179830Z Test run summary: Passed!",
+        "2026-10-31T06:04:59.4113911Z /home/runner/work/Hexalith.Builds/Hexalith.Builds/test/Hexalith.Builds.Tooling.IntegrationTests/bin/Release/net10.0/Hexalith.Builds.Tooling.IntegrationTests.dll (net10.0|x64) passed (486ms)",
+        "2026-10-31T06:04:59.4114673Z Test run summary: Passed!",
+        "2026-10-31T06:06:45.9235956Z Packaged Platform loader passed offline; contract Hexalith.Builds.Tooling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null; runtime start reached the run-private Aspire store '/tmp/hexalith-builds-g4-packages-a2ccd18ac546459aa31465b89563d63a/platform-loader/workspace/aspire-store/.aspire'; no resources started. Receipt: /tmp/hexalith-builds-g4-packages-a2ccd18ac546459aa31465b89563d63a/platform-loader",
+        "2026-10-31T06:09:06.8985952Z Packaged seed configured/declarative HTTP and receiver metadata checks passed.",
+        "2026-10-31T06:09:31.9046101Z Packed G-4 tool contract qualification passed for version '0.0.0-ci.460'; inventory recorded at '/tmp/hexalith-builds-g4-packages-a2ccd18ac546459aa31465b89563d63a/g4-tool-package-inventory.json'."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-publish-containers.ps1",
+      "startLine": 1063,
+      "endLine": 1263,
+      "observedOutput": [
+        "2026-10-31T06:09:40.7441079Z An undeclared authority is a supported posture, not a bypassed check. ... ok",
+        "2026-10-31T06:09:43.7617097Z Container publisher fixture tests passed."
+      ]
+    },
+    {
+      "command": "pwsh -NoProfile -File ./Tools/test-governed-provenance.ps1",
+      "startLine": 1284,
+      "endLine": 1394,
+      "observedOutput": [
+        "2026-10-31T06:09:46.5619353Z Governed workflow provenance tests passed."
+      ]
+    }
+  ],
+  "qualification4_39_0": [
+    {
+      "line": 641,
+      "text": "2026-10-31T05:44:50.4336849Z node: v24.22.1"
+    },
+    {
+      "line": 642,
+      "text": "2026-10-31T05:44:50.4337069Z npm: 11.19.1"
+    },
+    {
+      "line": 772,
+      "text": "2026-10-31T05:50:00.2880779Z G-4 tool package publisher checks passed."
+    },
+    {
+      "line": 1435,
+      "text": "2026-10-31T06:09:50.8114852Z node: v24.22.1"
+    },
+    {
+      "line": 1436,
+      "text": "2026-10-31T06:09:50.8115181Z npm: 11.19.1"
+    },
+    {
+      "line": 1497,
+      "text": "2026-10-31T06:10:01.1035174Z [6:10:01 AM] [semantic-release] \u203a \u2714  Loaded plugin \"publish\" from \"@semantic-release/exec\""
+    },
+    {
+      "line": 1498,
+      "text": "2026-10-31T06:10:01.1036486Z [6:10:01 AM] [semantic-release] \u203a \u2714  Loaded plugin \"publish\" from \"@semantic-release/github\""
+    },
+    {
+      "line": 2211,
+      "text": "2026-10-31T06:28:19.9870507Z Packed G-4 tool contract qualification passed for version '4.39.0'; inventory recorded at '/home/runner/work/Hexalith.Builds/Hexalith.Builds/artifacts/g4-tool-packages/4.39.0/g4-tool-package-inventory.json'."
+    }
+  ],
+  "conclusion": "All previously missing publication control suites have successful exact-source hosted log evidence. Reused hosted results are not added to local counts. Publisher-test publication messages are fixture doubles; official release publication is separately verified by parent."
+}

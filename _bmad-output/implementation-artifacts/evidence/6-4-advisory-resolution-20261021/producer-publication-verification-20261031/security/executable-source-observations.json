@@ -1,0 +1,443 @@
+[
+  {
+    "file": "node_modules/semantic-release/lib/plugins/index.js",
+    "sha256": "67012bfe8d1c7fc6ad5cf7f8a41e13822bd259c0e17302e9344a20baf1082231",
+    "sizeBytes": 3449,
+    "lines": [
+      {
+        "line": 5,
+        "text": "import { loadPlugin, parseConfig, validatePlugin, validateStep } from \"./utils.js\";"
+      },
+      {
+        "line": 13,
+        "text": "  const plugins = options.plugins"
+      },
+      {
+        "line": 14,
+        "text": "    ? await castArray(options.plugins).reduce(async (eventualPluginsList, plugin) => {"
+      },
+      {
+        "line": 15,
+        "text": "        const pluginsList = await eventualPluginsList;"
+      },
+      {
+        "line": 18,
+        "text": "          plugin = isString(name) ? await loadPlugin(context, name, pluginsPath) : name;"
+      },
+      {
+        "line": 28,
+        "text": "                pluginsList[type] = [...(pluginsList[type] || []), [func, config]];"
+      },
+      {
+        "line": 38,
+        "text": "        return pluginsList;"
+      }
+    ]
+  },
+  {
+    "file": "node_modules/@semantic-release/github/lib/octokit.js",
+    "sha256": "3f7b62a0169286c1ed5e21f8a3116d9fdf81c769fd11c8cc12eaa27f06406924",
+    "sizeBytes": 3028,
+    "lines": [
+      {
+        "line": 17,
+        "text": "import { Agent, ProxyAgent, fetch as undiciFetch } from \"undici\";"
+      },
+      {
+        "line": 73,
+        "text": "  const fetchWithDispatcher = (url, opts) =>"
+      },
+      {
+        "line": 74,
+        "text": "    undiciFetch(url, {"
+      },
+      {
+        "line": 77,
+        "text": "        ? new ProxyAgent({ uri: options.proxy })"
+      },
+      {
+        "line": 78,
+        "text": "        : new Agent(),"
+      },
+      {
+        "line": 84,
+        "text": "    request: { agent, fetch: fetchWithDispatcher },"
+      }
+    ]
+  },
+  {
+    "file": "node_modules/npm/lib/commands/ci.js",
+    "sha256": "fb9ed5eb26d841dfcdf8cffaa3c33be3edda6ee27797b5db5ccbfbaba86e4315",
+    "sizeBytes": 4851,
+    "lines": [
+      {
+        "line": 1,
+        "text": "const reifyFinish = require('../utils/reify-finish.js')"
+      },
+      {
+        "line": 4,
+        "text": "const runScript = require('@npmcli/run-script')"
+      },
+      {
+        "line": 25,
+        "text": "    'ignore-scripts',"
+      },
+      {
+        "line": 48,
+        "text": "    const ignoreScripts = this.npm.config.get('ignore-scripts')"
+      },
+      {
+        "line": 110,
+        "text": "    await arb.reify(opts)"
+      },
+      {
+        "line": 125,
+        "text": "        await runScript({"
+      },
+      {
+        "line": 134,
+        "text": "    await reifyFinish(this.npm, arb)"
+      }
+    ]
+  },
+  {
+    "file": "node_modules/npm/lib/commands/exec.js",
+    "sha256": "f341403051a805d7f970d3c0d19d5d374d20c859aef73330ada18e4f0402949d",
+    "sizeBytes": 3989,
+    "lines": [
+      {
+        "line": 2,
+        "text": "const libexec = require('libnpmexec')"
+      },
+      {
+        "line": 49,
+        "text": "    // This is where libnpmexec will actually run the scripts from"
+      },
+      {
+        "line": 56,
+        "text": "      // libnpmexec will NOT look in the project root for the bin entry"
+      },
+      {
+        "line": 88,
+        "text": "    return libexec({"
+      }
+    ]
+  },
+  {
+    "file": "node_modules/npm/lib/utils/verify-signatures.js",
+    "sha256": "7c39ad2ca991d5edf6ddcd9623aea1ff1820007484e6e0bc6a422330df278b6c",
+    "sizeBytes": 12793,
+    "lines": [
+      {
+        "line": 1,
+        "text": "const npmFetch = require('npm-registry-fetch')"
+      },
+      {
+        "line": 2,
+        "text": "const localeCompare = require('@isaacs/string-locale-compare')('en')"
+      },
+      {
+        "line": 3,
+        "text": "const npa = require('npm-package-arg')"
+      },
+      {
+        "line": 4,
+        "text": "const pacote = require('pacote')"
+      },
+      {
+        "line": 5,
+        "text": "const tufClient = require('@sigstore/tuf')"
+      },
+      {
+        "line": 6,
+        "text": "const { log, output } = require('proc-log')"
+      },
+      {
+        "line": 37,
+        "text": "    const tuf = await tufClient.initTUF({"
+      },
+      {
+        "line": 203,
+        "text": "      keys = await npmFetch.json('/-/npm/v1/keys', {"
+      },
+      {
+        "line": 254,
+        "text": "    return npmFetch.pickRegistry(spec, this.npm.flatOptions)"
+      },
+      {
+        "line": 301,
+        "text": "    } = await pacote.manifest(`${name}@${version}`, {"
+      },
+      {
+        "line": 308,
+        "text": "      // leaving it set makes pacote throw ETARGET for any version newer than"
+      }
+    ]
+  },
+  {
+    "file": "node_modules/npm/node_modules/node-gyp/lib/download.js",
+    "sha256": "e136afe6ae2828114abf0ddae296d1fdd0c8e418922f7f6f6363bc51761db5fe",
+    "sizeBytes": 2504,
+    "lines": [
+      {
+        "line": 2,
+        "text": "const { Agent, EnvHttpProxyAgent, RetryAgent, fetch } = require('undici')"
+      },
+      {
+        "line": 19,
+        "text": "    res = await fetch(url, requestOpts)"
+      },
+      {
+        "line": 51,
+        "text": "    return new RetryAgent(new Agent(), { maxRetries: 3 })"
+      },
+      {
+        "line": 61,
+        "text": "    opts.connect = { ca }"
+      },
+      {
+        "line": 62,
+        "text": "    opts.requestTls = { ca }"
+      },
+      {
+        "line": 63,
+        "text": "    opts.proxyTls = { ca }"
+      }
+    ]
+  },
+  {
+    "file": "node_modules/npm/node_modules/@npmcli/map-workspaces/lib/index.js",
+    "sha256": "1deb734fa3b190cfe235f2c3bbffbd269f85496feadbd2d3e495cd07850bb4dd",
+    "sizeBytes": 6571,
+    "lines": [
+      {
+        "line": 4,
+        "text": "const { minimatch } = require('minimatch')"
+      },
+      {
+        "line": 35,
+        "text": "        if (minimatch(pattern, negatedPattern)) {"
+      },
+      {
+        "line": 46,
+        "text": "    for (const pattern of minimatch.match(patterns, negated)) {"
+      },
+      {
+        "line": 53,
+        "text": "function getPatterns (workspaces) {"
+      },
+      {
+        "line": 54,
+        "text": "  const workspacesDeclaration ="
+      },
+      {
+        "line": 55,
+        "text": "    Array.isArray(workspaces.packages)"
+      },
+      {
+        "line": 56,
+        "text": "      ? workspaces.packages"
+      },
+      {
+        "line": 57,
+        "text": "      : workspaces"
+      },
+      {
+        "line": 59,
+        "text": "  if (!Array.isArray(workspacesDeclaration)) {"
+      },
+      {
+        "line": 61,
+        "text": "      message: 'workspaces config expects an Array',"
+      },
+      {
+        "line": 66,
+        "text": "  return appendNegatedPatterns(workspacesDeclaration)"
+      },
+      {
+        "line": 100,
+        "text": "  const { workspaces = [] } = opts.pkg"
+      },
+      {
+        "line": 101,
+        "text": "  const { patterns, negatedPatterns } = getPatterns(workspaces)"
+      },
+      {
+        "line": 109,
+        "text": "  const getGlobOpts = () => ({"
+      },
+      {
+        "line": 119,
+        "text": "  let matches = await glob(patterns.map((p) => getGlobPattern(p)), getGlobOpts())"
+      },
+      {
+        "line": 128,
+        "text": "      return minimatch(m, pattern, { partial: true, windowsPathsNoEscape: true })"
+      },
+      {
+        "line": 154,
+        "text": "  const errorMessageArray = ['must not have multiple workspaces with the same name']"
+      },
+      {
+        "line": 198,
+        "text": "  const { workspaces = [] } = packages[''] || {}"
+      },
+      {
+        "line": 201,
+        "text": "  const { patterns, negatedPatterns } = getPatterns(workspaces)"
+      },
+      {
+        "line": 209,
+        "text": "    for (const packageKey of minimatch.match(packageKeys, pattern)) {"
+      },
+      {
+        "line": 215,
+        "text": "    for (const packageKey of minimatch.match(packageKeys, pattern)) {"
+      }
+    ]
+  },
+  {
+    "file": "node_modules/npm/node_modules/glob/dist/commonjs/glob.js",
+    "sha256": "3c707e4e8f27c17247412789ddbea9f70fbbcc1570f5dd79e25037ebe6e4404f",
+    "sizeBytes": 8582,
+    "lines": [
+      {
+        "line": 154,
+        "text": "            optimizationLevel: 2,"
+      },
+      {
+        "line": 159,
+        "text": "        const mms = this.pattern.map(p => new minimatch_1.Minimatch(p, mmo));"
+      }
+    ]
+  },
+  {
+    "file": "node_modules/npm/node_modules/glob/dist/commonjs/walker.js",
+    "sha256": "1138ced9d5429681a1740af32d13391a38184a3376d1d9d56eea64b7a43274a1",
+    "sizeBytes": 12869,
+    "lines": [
+      {
+        "line": 70,
+        "text": "        if (this.signal?.aborted)"
+      },
+      {
+        "line": 80,
+        "text": "        if (this.signal?.aborted)"
+      },
+      {
+        "line": 187,
+        "text": "        if (this.signal?.aborted)"
+      },
+      {
+        "line": 188,
+        "text": "            cb();"
+      },
+      {
+        "line": 194,
+        "text": "            return cb();"
+      },
+      {
+        "line": 195,
+        "text": "        if (this.signal?.aborted)"
+      },
+      {
+        "line": 196,
+        "text": "            cb();"
+      },
+      {
+        "line": 208,
+        "text": "                cb();"
+      },
+      {
+        "line": 235,
+        "text": "                cb();"
+      },
+      {
+        "line": 251,
+        "text": "        if (this.signal?.aborted)"
+      },
+      {
+        "line": 252,
+        "text": "            cb();"
+      },
+      {
+        "line": 258,
+        "text": "            return cb();"
+      },
+      {
+        "line": 259,
+        "text": "        if (this.signal?.aborted)"
+      },
+      {
+        "line": 260,
+        "text": "            cb();"
+      },
+      {
+        "line": 272,
+        "text": "                cb();"
+      },
+      {
+        "line": 294,
+        "text": "                cb();"
+      },
+      {
+        "line": 318,
+        "text": "        if (this.signal?.aborted)"
+      },
+      {
+        "line": 325,
+        "text": "                if (this.signal?.aborted) {"
+      },
+      {
+        "line": 336,
+        "text": "        if (this.signal?.aborted)"
+      },
+      {
+        "line": 343,
+        "text": "            if (this.signal?.aborted)"
+      }
+    ]
+  },
+  {
+    "file": "node_modules/npm/node_modules/socks/build/client/socksclient.js",
+    "sha256": "4b473feca4862b5c66ec0efa39ea2d40d07c845886b6081813b07d489fabd897",
+    "sizeBytes": 35626,
+    "lines": [
+      {
+        "line": 166,
+        "text": "        else if (net.isIPv6(options.remoteHost.host)) {"
+      },
+      {
+        "line": 195,
+        "text": "            remoteHost = ip_address_1.Address6.fromByteArray(Array.from(buff.readBuffer(16))).canonicalForm();"
+      },
+      {
+        "line": 615,
+        "text": "        else if (net.isIPv6(this.options.destination.host)) {"
+      },
+      {
+        "line": 688,
+        "text": "                    host: ip_address_1.Address6.fromByteArray(Array.from(buff.readBuffer(16))).canonicalForm(),"
+      },
+      {
+        "line": 779,
+        "text": "                    host: ip_address_1.Address6.fromByteArray(Array.from(buff.readBuffer(16))).canonicalForm(),"
+      }
+    ]
+  },
+  {
+    "file": "node_modules/npm/node_modules/ignore-walk/lib/index.js",
+    "sha256": "10610ac2fdc62669c21893f3ff772f2dc8b5831b54d80040629a121aae70c0d6",
+    "sizeBytes": 8795,
+    "lines": [
+      {
+        "line": 104,
+        "text": "    const mmopt = {"
+      },
+      {
+        "line": 113,
+        "text": "        return new Minimatch(rule.trim(), mmopt)"
+      }
+    ]
+  }
+]

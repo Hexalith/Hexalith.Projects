@@ -1,0 +1,101 @@
+{
+  "schema": "story64.producer-qualification-publication-package.v1",
+  "updatedUtc": "2026-10-31T07:31:50.593842+00:00",
+  "storyStatus": "in-progress",
+  "candidateAcceptance": false,
+  "selectedSource": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "selectedTree": "18d735e56eeb17332e2d2b57a6b116097f42fdec",
+  "publishedVersion": "4.39.0",
+  "publicationVerified": true,
+  "officialQualificationInventory": {
+    "releaseEligible": true,
+    "url": "https://github.com/Hexalith/Hexalith.Builds/releases/download/v4.39.0/g4-tool-package-inventory.json",
+    "sha256": "f07332c8c005bfa91896034933fd556ae0dfef47c3f759f712f797251c8bf555",
+    "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+    "fixturesVerified": 292,
+    "trackedFixtureOmissions": [
+      "test/fixtures/package-consumer/.config/dotnet-tools.json"
+    ],
+    "qualifiedSourceTests": {
+      "passed": 2821,
+      "failed": 0,
+      "skipped": 17
+    }
+  },
+  "binding": "verified-producer-binding.json",
+  "publicationVerification": "publication-verification-final-proof.json",
+  "latestObservedMain": "a22b55f0a4f6d2aaa3a5ccc505896064ac595364",
+  "latestMainAdopted": false,
+  "fullLocalQualification": {
+    "result": "blocked",
+    "releaseEligibleInventoryEmitted": false,
+    "attempts": [
+      {
+        "receipt": "local/full-qualification.command.json",
+        "exitCode": 1,
+        "elapsedSeconds": 715.713
+      },
+      {
+        "receipt": "local/full-qualification-retry.command.json",
+        "exitCode": 1,
+        "elapsedSeconds": 646.263
+      },
+      {
+        "receipt": "local/full-qualification-bounded.command.json",
+        "exitCode": 1,
+        "elapsedSeconds": 840.411
+      }
+    ],
+    "latestModule": {
+      "passed": 2628,
+      "failed": 1,
+      "skipped": 5
+    },
+    "evidencePassed": 191,
+    "failedCase": "WorkspaceCommandModeTests.PublicCommandWritesResolvedMappingIntoEnginePlanAsync(command: test, mode: null)",
+    "failureRule": "HXR021",
+    "readinessBoundSeconds": 5,
+    "integrationAndPackageStages": "not reached",
+    "focusedPassIsNotFullPass": true
+  },
+  "security": {
+    "result": "unresolved",
+    "auditExitCode": 1,
+    "moderateDependencyEntries": 37,
+    "highDependencyEntries": 1,
+    "uniqueAdvisories": 8,
+    "scope": "Project lock counts; actual frontend npm distribution assessed separately",
+    "remediatedLock": false,
+    "applicability": "security/README.md",
+    "preparedGuardPatch": "security/corrections/fail-closed-npm-audit.patch",
+    "policyException": false
+  },
+  "localCorrections": [
+    {
+      "path": "local/corrections/include-hidden-fixtures.patch",
+      "status": "unapplied future-source robustness correction; 66 controls pass"
+    },
+    {
+      "path": "security/corrections/fail-closed-npm-audit.patch",
+      "status": "unapplied proposed future-source guard; not dependency remediation or adopted policy"
+    }
+  ],
+  "platformBindingChanged": false,
+  "consumerPinsChanged": false,
+  "workflowsDispatchedOrRerun": false,
+  "publishedByThisSession": false,
+  "blockers": [
+    "Full local qualification stops at unchanged five-second fixture readiness failure; no local eligible inventory or local package-stage pass",
+    "Bundled npm vulnerability findings and glob/minimatch applicability remain unresolved; no remediated supported distribution selected",
+    "Platform owner/tuple/policy/runtime/publication and consumer adoption remain independently gated and outside this producer-verification scope"
+  ],
+  "nextCommands": "next-commands.md",
+  "review": "review-triage.json",
+  "preservation": "preservation-final-reviewed.json",
+  "preservationLimits": [
+    "Initial symbolic HEAD identities not fully captured; review-phase monitoring is separate",
+    "Protected detached checkout historical raw index/ref/symbolic state absent; exact available source/dirty fingerprints checked"
+  ],
+  "reviewedVerificationControls": 17,
+  "reviewedControlResults": "parent-final-distinct-controls.stdout.log"
+}
