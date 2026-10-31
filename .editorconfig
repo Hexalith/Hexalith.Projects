@@ -64,3 +64,19 @@ dotnet_diagnostic.CA1062.severity = warning
 dotnet_diagnostic.CA1822.severity = warning
 dotnet_diagnostic.CA2007.severity = warning
 dotnet_diagnostic.CA1014.severity = none
+
+# Root-declared submodules without their own .editorconfig (Conversations, Platform)
+# build under analyzer defaults in their repositories. Keep the Projects-only severities
+# above off their sources when this workspace compiles them.
+[references/**.cs]
+dotnet_diagnostic.CA1062.severity = none
+dotnet_diagnostic.CA1822.severity = suggestion
+dotnet_diagnostic.CA2007.severity = none
+
+# FrontComposer links the canonical Platform mTLS helper unchanged and exempts it from
+# these adoption controls in its own .editorconfig. Mirror that owner policy for the
+# umbrella root-declared copy compiled by the G-6 FrontComposer source build.
+[references/Hexalith.Platform/DaprSelfHostedMtls.cs]
+dotnet_diagnostic.CA1050.severity = none
+dotnet_diagnostic.CA1859.severity = none
+dotnet_diagnostic.CS1591.severity = none
