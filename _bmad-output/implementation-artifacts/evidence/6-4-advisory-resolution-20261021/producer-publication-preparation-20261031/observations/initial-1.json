@@ -1,0 +1,237 @@
+{
+  "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+  "observedAt": "2026-10-31T05:22:50.021Z",
+  "body": {
+    "sha": "6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+    "node_id": "C_kwDOOMzNRdoAKDZjYzk2YjRmZjIzYzQwYzc3NjUxZTFlNGY4NWVkMzE3MGMyNWM3YTQ",
+    "commit": {
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:52:59Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:52:59Z"
+      },
+      "message": "fix(security): confine qualification file arguments\n\nKeep G-6 policy, evidence and audit paths inside the selected workspace.\nBind recovery state and gate evidence to their workspace boundaries and\nreject symlink escapes before reading, writing or calling external tools.\n\nUse the platform temporary directory for read-only metadata probes and\ngenerate redaction control values at runtime. Add hermetic boundary tests\nwithout changing the security quality gate.",
+      "tree": {
+        "sha": "c1c4e623f7c0a523868bed89f12638054d50b9ee",
+        "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/git/trees/c1c4e623f7c0a523868bed89f12638054d50b9ee"
+      },
+      "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/git/commits/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+      "comment_count": 0,
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+    "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+    "comments_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/comments",
+    "author": {
+      "login": "jpiquot",
+      "id": 6775094,
+      "node_id": "MDQ6VXNlcjY3NzUwOTQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jpiquot",
+      "html_url": "https://github.com/jpiquot",
+      "followers_url": "https://api.github.com/users/jpiquot/followers",
+      "following_url": "https://api.github.com/users/jpiquot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jpiquot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jpiquot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jpiquot/subscriptions",
+      "organizations_url": "https://api.github.com/users/jpiquot/orgs",
+      "repos_url": "https://api.github.com/users/jpiquot/repos",
+      "events_url": "https://api.github.com/users/jpiquot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jpiquot/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "jpiquot",
+      "id": 6775094,
+      "node_id": "MDQ6VXNlcjY3NzUwOTQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6775094?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jpiquot",
+      "html_url": "https://github.com/jpiquot",
+      "followers_url": "https://api.github.com/users/jpiquot/followers",
+      "following_url": "https://api.github.com/users/jpiquot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jpiquot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jpiquot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jpiquot/subscriptions",
+      "organizations_url": "https://api.github.com/users/jpiquot/orgs",
+      "repos_url": "https://api.github.com/users/jpiquot/repos",
+      "events_url": "https://api.github.com/users/jpiquot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jpiquot/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "849b0be6849f14c097ab05ff9bafbc115bdabe7e",
+        "url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/commits/849b0be6849f14c097ab05ff9bafbc115bdabe7e",
+        "html_url": "https://github.com/Hexalith/Hexalith.Builds/commit/849b0be6849f14c097ab05ff9bafbc115bdabe7e"
+      }
+    ],
+    "stats": {
+      "total": 208,
+      "additions": 195,
+      "deletions": 13
+    },
+    "files": [
+      {
+        "sha": "88b3451bbf4e6a6fad28d71cbacc94b6a17303bb",
+        "filename": ".github/workflows/ci.yml",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 0,
+        "changes": 5,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/.github%2Fworkflows%2Fci.yml",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/.github%2Fworkflows%2Fci.yml",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/.github%2Fworkflows%2Fci.yml?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -260,6 +260,11 @@ jobs:\n       - name: Test self-CI required status\n         run: python3 Tools/test-self-ci.py\n \n+      - name: Test qualification file boundaries\n+        run: |\n+          python3 Tools/test-g6-cli-paths.py\n+          python3 -m unittest discover -s test/qualification -p test_stage3_live_qualification.py -v\n+\n       - name: Test G-6 runtime/toolchain evidence validator\n         env:\n           PYTHONDONTWRITEBYTECODE: '1'"
+      },
+      {
+        "sha": "ce417839e9e2ec891609cc0e307e4e151dd5cb65",
+        "filename": "Github/governed-provenance/README.md",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 0,
+        "changes": 5,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Github%2Fgoverned-provenance%2FREADME.md",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Github%2Fgoverned-provenance%2FREADME.md",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/Github%2Fgoverned-provenance%2FREADME.md?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -163,6 +163,11 @@ failed, skipped, pending, malformed or changing attempts refuse admission and\n retain JSON observations. Conditional jobs inside a successful workflow do not\n become additional required gates.\n \n+The CLI evidence destination must resolve inside its current workspace. Recovery\n+state and provenance file arguments must resolve inside the selected source\n+workspace. Absolute paths inside that boundary are supported; traversal and\n+symlink escapes are refused before accessing the destination.\n+\n `execution_identity.py` binds recovery to the unique literal\n `HEXALITH_BUILDS_EXECUTION_SHA` approved by the source `release.yml`. Capture and\n verification compare the actual Builds checkout, helper Git blobs, source"
+      },
+      {
+        "sha": "fccf6c8b4143a51ecb0ec9b742d62c4cdafae38c",
+        "filename": "Github/governed-provenance/execution_identity.py",
+        "status": "modified",
+        "additions": 11,
+        "deletions": 2,
+        "changes": 13,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Github%2Fgoverned-provenance%2Fexecution_identity.py",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Github%2Fgoverned-provenance%2Fexecution_identity.py",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/Github%2Fgoverned-provenance%2Fexecution_identity.py?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -15,6 +15,15 @@\n HELPER_DIRECTORIES = (\"Github/governed-provenance\", \"Github/publish-containers\")\n \n \n+def workspace_file(workspace, value):\n+    \"\"\"Confine recovery state and provenance files to the selected source workspace.\"\"\"\n+    root = Path(workspace).resolve()\n+    path = (root / value).resolve()\n+    if path == root or not path.is_relative_to(root):\n+        raise ValueError(\"recovery file path escapes the selected source workspace\")\n+    return path\n+\n+\n def git(root, *arguments, binary=False):\n     result = subprocess.run([\"git\", \"-C\", str(root), *arguments], capture_output=True)\n     if result.returncode:\n@@ -132,7 +141,7 @@ def identity(workspace, builds_root, source, declared, provenance=None):\n               \"builds_execution_sha\": approved, \"builds_root\": str(builds_root),\n               \"source_workflow_sha256\": hashlib.sha256(workflow_bytes).hexdigest(), \"helpers\": helpers}\n     if provenance:\n-        payload = Path(provenance).read_bytes()\n+        payload = workspace_file(workspace, provenance).read_bytes()\n         document = json.loads(payload)\n         if (document.get(\"candidate\") != source or document.get(\"workflow_mode\") != \"standalone\"\n                 or document.get(\"builds_execution_sha\") != approved or document.get(\"stage\") != \"release\"):\n@@ -169,8 +178,8 @@ def main():\n             return 0\n         if not args.state:\n             raise ValueError(\"execution identity state path is required\")\n+        path = workspace_file(args.workspace, args.state)\n         current = identity(args.workspace, args.builds_root, args.source, args.declared, args.provenance)\n-        path = Path(args.state)\n         if args.mode == \"verify\":\n             if json.loads(path.read_text()) != current:\n                 raise ValueError(\"recovery tooling or provenance changed after validation\")"
+      },
+      {
+        "sha": "b5c63e91df6e9f609d48cd99d6b0ccc146417ab3",
+        "filename": "Github/governed-provenance/source_workflow_gates.py",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 1,
+        "changes": 6,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Github%2Fgoverned-provenance%2Fsource_workflow_gates.py",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Github%2Fgoverned-provenance%2Fsource_workflow_gates.py",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/Github%2Fgoverned-provenance%2Fsource_workflow_gates.py?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -154,7 +154,11 @@ def main():\n     parser.add_argument(\"--evidence\", required=True)\n     args = parser.parse_args()\n     try:\n-        qualify(args.repository, args.source, args.branch, args.workflow, args.evidence)\n+        workspace = Path.cwd().resolve()\n+        evidence = (workspace / args.evidence).resolve()\n+        if evidence == workspace or not evidence.is_relative_to(workspace):\n+            raise GateError(\"evidence path escapes the current workspace\")\n+        qualify(args.repository, args.source, args.branch, args.workflow, evidence)\n     except GateError as error:\n         print(f\"[source-workflow-gates] {error}\", file=sys.stderr)\n         return 1"
+      },
+      {
+        "sha": "192c730b8d977b8aa0ba5043174abf7bd30a814a",
+        "filename": "Github/governed-provenance/tests/test_execution_identity.py",
+        "status": "modified",
+        "additions": 16,
+        "deletions": 0,
+        "changes": 16,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Github%2Fgoverned-provenance%2Ftests%2Ftest_execution_identity.py",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Github%2Fgoverned-provenance%2Ftests%2Ftest_execution_identity.py",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/Github%2Fgoverned-provenance%2Ftests%2Ftest_execution_identity.py?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -56,6 +56,22 @@ def test_valid_identity_binds_source_execution_and_provenance(self):\n         self.assertEqual(len(result[\"helpers\"]), 2)\n         self.assertEqual(len(result[\"provenance_sha256\"]), 64)\n \n+    def test_cli_refuses_state_escape_before_reading_source(self):\n+        with mock.patch.object(sys, \"argv\", [\n+            \"execution_identity.py\", \"capture\", \"--workspace\", str(self.source),\n+            \"--source\", self.source_sha, \"--state\", \"../outside.json\",\n+        ]), mock.patch.object(identity, \"identity\") as capture:\n+            self.assertEqual(identity.main(), 1)\n+            capture.assert_not_called()\n+        self.assertFalse((self.root / \"outside.json\").exists())\n+\n+    def test_provenance_outside_the_source_workspace_is_refused(self):\n+        outside = self.root / \"outside.json\"\n+        outside.write_text(\"preserved\")\n+        with self.assertRaisesRegex(ValueError, \"escapes the selected source workspace\"):\n+            self.capture(provenance=outside)\n+        self.assertEqual(\"preserved\", outside.read_text())\n+\n     def test_resolve_refuses_unvalidated_git_arguments_before_reading_source(self):\n         for source in (\"main\", \"--output=unapproved-file\", \"a\" * 40 + \"\\n\"):\n             with self.subTest(source=source), mock.patch.object("
+      },
+      {
+        "sha": "944bffacfd2f048553edb1791ea48c74310f473d",
+        "filename": "Github/governed-provenance/tests/test_source_workflow_gates.py",
+        "status": "modified",
+        "additions": 24,
+        "deletions": 0,
+        "changes": 24,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Github%2Fgoverned-provenance%2Ftests%2Ftest_source_workflow_gates.py",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Github%2Fgoverned-provenance%2Ftests%2Ftest_source_workflow_gates.py",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/Github%2Fgoverned-provenance%2Ftests%2Ftest_source_workflow_gates.py?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -23,6 +23,30 @@ def run(**changes):\n \n \n class SourceWorkflowGateTests(unittest.TestCase):\n+    def test_cli_refuses_evidence_escape_before_api_requests(self):\n+        with tempfile.TemporaryDirectory() as directory:\n+            workspace = Path(directory).resolve()\n+            for evidence in (\"../outside.json\", str(workspace.parent / \"outside.json\")):\n+                with self.subTest(evidence=evidence), mock.patch.object(gates.Path, \"cwd\", return_value=workspace), \\\n+                        mock.patch.object(sys, \"argv\", [\n+                            \"source_workflow_gates.py\", \"--repository\", \"owner/repository\", \"--source\", SOURCE,\n+                            \"--workflow\", WORKFLOW, \"--evidence\", evidence,\n+                        ]), mock.patch.object(gates, \"qualify\") as qualify:\n+                    self.assertEqual(gates.main(), 1)\n+                    qualify.assert_not_called()\n+\n+    def test_cli_accepts_absolute_evidence_inside_the_workspace(self):\n+        with tempfile.TemporaryDirectory() as directory:\n+            workspace = Path(directory).resolve()\n+            evidence = workspace / \"evidence.json\"\n+            with mock.patch.object(gates.Path, \"cwd\", return_value=workspace), \\\n+                    mock.patch.object(sys, \"argv\", [\n+                        \"source_workflow_gates.py\", \"--repository\", \"owner/repository\", \"--source\", SOURCE,\n+                        \"--workflow\", WORKFLOW, \"--evidence\", str(evidence),\n+                    ]), mock.patch.object(gates, \"qualify\") as qualify:\n+                self.assertEqual(gates.main(), 0)\n+                self.assertEqual(evidence, qualify.call_args.args[-1])\n+\n     def test_accepts_latest_exact_source_success(self):\n         selected = gates.select_latest([{\"workflow_runs\": [run(id=6, run_number=2), run()]}], SOURCE, \"main\", WORKFLOW)\n         self.assertEqual(gates.require_success(selected, SOURCE, \"main\", WORKFLOW)[\"id\"], 7)"
+      },
+      {
+        "sha": "da48d848979605185fa172410a058a54a2547847",
+        "filename": "Tools/README.md",
+        "status": "modified",
+        "additions": 5,
+        "deletions": 0,
+        "changes": 5,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Tools%2FREADME.md",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Tools%2FREADME.md",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/Tools%2FREADME.md?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -525,6 +525,11 @@ stale restored packages, a checkout/root-gitlink mismatch, or tuple drift are\n reported as `issues` and set `tupleApproved` to false. An audit does not claim\n that the live runtime passed.\n \n+CLI policy, evidence and audit output paths must resolve inside the selected\n+workspace. Relative paths and absolute paths inside that workspace are accepted;\n+parent traversal and symlink escapes are refused before reading or writing.\n+Run `python3 Tools/test-g6-cli-paths.py` for the isolated boundary controls.\n+\n The v3 policy approves the current Toolkit pin `13.6.0-preview.1.261001-0243`\n and its prerelease exception. Jérôme Piquot, as Builds/Platform/FrontComposer-Web\n owner, answered verbatim \"Approve\" at `2026-10-03T07:15:52Z` for tuple"
+      },
+      {
+        "sha": "a0e0442a0ae019a3ad98fb3688676b34733bdd3d",
+        "filename": "Tools/g6_current.py",
+        "status": "modified",
+        "additions": 16,
+        "deletions": 6,
+        "changes": 22,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Tools%2Fg6_current.py",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Tools%2Fg6_current.py",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/Tools%2Fg6_current.py?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -107,6 +107,14 @@ def workspace_path(workspace: Path, relative: str) -> Path:\n     return path\n \n \n+def cli_workspace_path(workspace: Path, value: Path, context: str) -> Path:\n+    \"\"\"Confine explicit CLI file arguments, including symlinks, to their selected workspace.\"\"\"\n+    candidate = (workspace / value).resolve()\n+    require(candidate != workspace and candidate.is_relative_to(workspace),\n+            f\"{context} escapes the selected workspace: {value}\")\n+    return candidate\n+\n+\n def policy_document(path: Path) -> dict[str, Any]:\n     policy = read_json(path)\n     require(policy.get(\"schema\") == \"hexalith.g6-current-policy.v1\", \"unsupported G-6 policy schema\")\n@@ -524,20 +532,22 @@ def main(argv: list[str] | None = None) -> int:\n             command.add_argument(\"--evidence\", type=Path, required=True)\n             command.add_argument(\"--release\", action=\"store_true\")\n     args = parser.parse_args(argv)\n-    workspace = args.workspace.resolve()\n-    policy = args.policy if args.policy.is_absolute() else workspace / args.policy\n     try:\n+        workspace = args.workspace.resolve(strict=True)\n+        require(workspace.is_dir(), \"the selected workspace must be a directory\")\n+        policy = cli_workspace_path(workspace, args.policy, \"policy path\")\n         if args.mode == \"audit\":\n+            target = cli_workspace_path(workspace, args.out, \"audit output path\") if args.out else None\n             result = audit(workspace, policy)\n             output = json.dumps(result, ensure_ascii=False, indent=2) + \"\\n\"\n-            if args.out:\n-                target = args.out if args.out.is_absolute() else workspace / args.out\n+            if target is not None:\n                 target.parent.mkdir(parents=True, exist_ok=True)\n-                target.write_text(output, encoding=\"utf-8\")\n+                with target.open(\"w\", encoding=\"utf-8\") as stream:\n+                    stream.write(output)\n             else:\n                 print(output, end=\"\")\n             return 0\n-        evidence = args.evidence if args.evidence.is_absolute() else workspace / args.evidence\n+        evidence = cli_workspace_path(workspace, args.evidence, \"evidence path\")\n         validate(workspace, policy, evidence, args.release)\n         print(\"G6-CURRENT-QUALIFIED: approved tuple, material inputs, critical proof, cleanup and source verified\")\n         return 0"
+      },
+      {
+        "sha": "b6ad40573e3defb1d78acb80c7f181064d620ab2",
+        "filename": "Tools/run-g4-stage3-live-qualification.py",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 2,
+        "changes": 6,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Tools%2Frun-g4-stage3-live-qualification.py",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Tools%2Frun-g4-stage3-live-qualification.py",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/Tools%2Frun-g4-stage3-live-qualification.py?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -11,6 +11,7 @@\n import shlex\n import subprocess\n import sys\n+import tempfile\n import time\n \n \n@@ -154,10 +155,11 @@ def probe_processes(proc_root=Path(\"/proc\"), since_ticks=0):\n     return outcome\n \n \n-def probe_workspaces(temp_root=Path(\"/tmp\")):\n+def probe_workspaces(temp_root=None):\n+    temp_root = Path(tempfile.gettempdir()) if temp_root is None else Path(temp_root)\n     try:\n         with os.scandir(temp_root) as entries:\n-            count = sum(entry.name.startswith(\"hexalith-g4-it-\") and entry.is_dir()\n+            count = sum(entry.name.startswith(\"hexalith-g4-it-\") and entry.is_dir(follow_symlinks=False)\n                         for entry in entries)\n         return {\"command\": f\"scan {temp_root}/hexalith-g4-it-*\", \"exit\": 0,\n                 \"count\": count, \"errors\": [], \"status\": \"verified\"}"
+      },
+      {
+        "sha": "f60ac23f0ed130a3ebf0950474c88ddcd178a214",
+        "filename": "Tools/test-g6-cli-paths.py",
+        "status": "added",
+        "additions": 80,
+        "deletions": 0,
+        "changes": 80,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Tools%2Ftest-g6-cli-paths.py",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Tools%2Ftest-g6-cli-paths.py",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/Tools%2Ftest-g6-cli-paths.py?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -0,0 +1,80 @@\n+#!/usr/bin/env python3\n+\"\"\"Hermetic controls for the G-6 CLI's selected-workspace file boundary.\"\"\"\n+\n+import contextlib\n+import importlib.util\n+import io\n+import json\n+from pathlib import Path\n+import tempfile\n+import unittest\n+from unittest.mock import patch\n+\n+\n+SPEC = importlib.util.spec_from_file_location(\"g6_cli_paths\", Path(__file__).with_name(\"g6_current.py\"))\n+G6 = importlib.util.module_from_spec(SPEC)\n+SPEC.loader.exec_module(G6)\n+\n+\n+class CliPathTests(unittest.TestCase):\n+    def test_audit_writes_relative_and_absolute_workspace_outputs(self):\n+        with tempfile.TemporaryDirectory() as temporary:\n+            workspace = Path(temporary).resolve()\n+            for output in (\"evidence/audit.json\", str(workspace / \"absolute.json\")):\n+                with self.subTest(output=output), patch.object(G6, \"audit\", return_value={\"issues\": []}):\n+                    self.assertEqual(0, G6.main([\n+                        \"audit\", \"--workspace\", str(workspace), \"--policy\", \"policy.json\", \"--out\", output,\n+                    ]))\n+                    self.assertEqual({\"issues\": []}, json.loads((workspace / output).read_text()))\n+\n+    def test_output_traversal_is_refused_before_audit_or_overwrite(self):\n+        with tempfile.TemporaryDirectory() as temporary:\n+            base = Path(temporary).resolve()\n+            workspace = base / \"workspace\"\n+            workspace.mkdir()\n+            protected = base / \"protected.json\"\n+            protected.write_text(\"preserved\")\n+            for output in (\"../protected.json\", str(protected)):\n+                with self.subTest(output=output), patch.object(G6, \"audit\") as audit, \\\n+                        contextlib.redirect_stderr(io.StringIO()):\n+                    self.assertEqual(1, G6.main([\n+                        \"audit\", \"--workspace\", str(workspace), \"--policy\", \"policy.json\", \"--out\", output,\n+                    ]))\n+                    audit.assert_not_called()\n+                    self.assertEqual(\"preserved\", protected.read_text())\n+\n+    def test_symlink_output_escape_is_refused(self):\n+        with tempfile.TemporaryDirectory() as temporary:\n+            base = Path(temporary).resolve()\n+            workspace = base / \"workspace\"\n+            workspace.mkdir()\n+            outside = base / \"outside\"\n+            outside.mkdir()\n+            try:\n+                (workspace / \"link\").symlink_to(outside, target_is_directory=True)\n+            except OSError as error:\n+                self.skipTest(f\"directory symlinks unavailable: {error}\")\n+            with patch.object(G6, \"audit\") as audit, contextlib.redirect_stderr(io.StringIO()):\n+                self.assertEqual(1, G6.main([\n+                    \"audit\", \"--workspace\", str(workspace), \"--policy\", \"policy.json\",\n+                    \"--out\", \"link/audit.json\",\n+                ]))\n+                audit.assert_not_called()\n+            self.assertFalse((outside / \"audit.json\").exists())\n+\n+    def test_policy_and_evidence_escapes_are_refused_before_validation(self):\n+        with tempfile.TemporaryDirectory() as temporary:\n+            workspace = Path(temporary).resolve()\n+            for arguments in (\n+                [\"audit\", \"--policy\", \"../policy.json\"],\n+                [\"validate\", \"--policy\", \"policy.json\", \"--evidence\", \"../evidence.json\"],\n+            ):\n+                with self.subTest(arguments=arguments), patch.object(G6, \"audit\") as audit, \\\n+                        patch.object(G6, \"validate\") as validate, contextlib.redirect_stderr(io.StringIO()):\n+                    self.assertEqual(1, G6.main([*arguments, \"--workspace\", str(workspace)]))\n+                    audit.assert_not_called()\n+                    validate.assert_not_called()\n+\n+\n+if __name__ == \"__main__\":\n+    unittest.main()"
+      },
+      {
+        "sha": "2cfca68bc378d29e2ddf8ebd425c1778fea913f9",
+        "filename": "Tools/test-runtime-toolchain-evidence-validator.py",
+        "status": "modified",
+        "additions": 4,
+        "deletions": 2,
+        "changes": 6,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Tools%2Ftest-runtime-toolchain-evidence-validator.py",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/Tools%2Ftest-runtime-toolchain-evidence-validator.py",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/Tools%2Ftest-runtime-toolchain-evidence-validator.py?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -24,6 +24,7 @@\n import importlib.util\n import json\n import re\n+import secrets\n import subprocess\n import sys\n import tempfile\n@@ -595,9 +596,10 @@ def reject_observation(label: str, mutation: dict) -> None:\n         changed = copy.deepcopy(packet); refresh_artifact(changed, \"source-state\", paths[\"source_state\"])\n         expect_rejected(workspace, baseline_path, baseline, paths[\"packet\"], changed, \"malformed nested structure\")\n \n+        redaction_control = secrets.token_urlsafe(24)\n         for label, diagnostic in (\n-            (\"secret-bearing artifact\", \"Bearer mutation-control-value\"),\n-            (\"quoted JSON credential\", {'password': 'mutation-control-value'}),\n+            (\"secret-bearing artifact\", f\"Bearer {redaction_control}\"),\n+            (\"quoted JSON credential\", {'password': redaction_control}),\n             (\"macOS private path\", \"/Users/alice/private/output.json\"),\n             (\"Windows private path\", r\"C:\\Users\\alice\\private\\output.json\"),\n         ):"
+      },
+      {
+        "sha": "83add5372a07ff08c9849bee3e1eefb5b5ee1c1a",
+        "filename": "test/qualification/test_stage3_live_qualification.py",
+        "status": "modified",
+        "additions": 20,
+        "deletions": 0,
+        "changes": 20,
+        "blob_url": "https://github.com/Hexalith/Hexalith.Builds/blob/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/test%2Fqualification%2Ftest_stage3_live_qualification.py",
+        "raw_url": "https://github.com/Hexalith/Hexalith.Builds/raw/6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4/test%2Fqualification%2Ftest_stage3_live_qualification.py",
+        "contents_url": "https://api.github.com/repos/Hexalith/Hexalith.Builds/contents/test%2Fqualification%2Ftest_stage3_live_qualification.py?ref=6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "patch": "@@ -14,6 +14,26 @@\n \n \n class Stage3LiveQualificationTests(unittest.TestCase):\n+    def test_workspace_probe_uses_the_platform_temp_directory_without_following_links(self):\n+        with tempfile.TemporaryDirectory() as directory:\n+            root = Path(directory)\n+            (root / \"hexalith-g4-it-owned\").mkdir()\n+            (root / \"unrelated\").mkdir()\n+            try:\n+                (root / \"hexalith-g4-it-link\").symlink_to(root / \"unrelated\", target_is_directory=True)\n+            except OSError as error:\n+                self.skipTest(f\"directory symlinks unavailable: {error}\")\n+            with mock.patch.object(qualification.tempfile, \"gettempdir\", return_value=directory):\n+                result = qualification.probe_workspaces()\n+            self.assertEqual(\"verified\", result[\"status\"])\n+            self.assertEqual(1, result[\"count\"])\n+\n+    def test_inaccessible_workspace_probe_cannot_report_zero(self):\n+        with mock.patch.object(qualification.os, \"scandir\", side_effect=PermissionError(\"denied\")):\n+            result = qualification.probe_workspaces()\n+        self.assertEqual(\"unverified\", result[\"status\"])\n+        self.assertIsNone(result[\"count\"])\n+\n     def test_inaccessible_owned_process_environment_is_unverified(self):\n         with tempfile.TemporaryDirectory() as directory:\n             proc = Path(directory) / \"12345\""
+      }
+    ]
+  }
+}

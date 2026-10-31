@@ -1,0 +1,7 @@
+{
+  "recordedAfterExecution": true,
+  "parentAuditExit": 1,
+  "failure": "AssertionError: checker-refuses-existing-result",
+  "cause": "Parent initially interpreted expectedExit:1 as an exact exit instead of the control runner\u2019s documented zero/nonzero class. argparse correctly refused overwrite with exit 2 and the exact expected diagnostic. No successful qualification result was affected.",
+  "correction": "Match the actual control contract and independently verify each expected diagnostic and raw stream digest."
+}

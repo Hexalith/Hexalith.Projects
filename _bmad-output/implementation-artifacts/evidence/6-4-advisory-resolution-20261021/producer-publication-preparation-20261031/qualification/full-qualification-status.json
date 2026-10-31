@@ -1,0 +1,25 @@
+{
+  "utc": "2026-10-31T05:32:12.265652+00:00",
+  "status": "not-executed-scope-blocked",
+  "result": "not-passed",
+  "exitCode": null,
+  "selectedSource": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "proposedVersion": "4.39.0",
+  "requiredArgv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "./Tools/test-g4-tool-package-contracts.ps1",
+    "-Version",
+    "4.39.0",
+    "-PackageDirectory",
+    "/tmp/story64-full-source-packages-4.39.0",
+    "-RequireControls",
+    "-RetainPackageDirectory"
+  ],
+  "requiredCwd": "a clean checkout of the selected source, after scope is resolved; /tmp/story64-builds-producer-2186b9a4 currently carries a separately identified dirty fixture correction",
+  "reason": "Existing source tests invoked by Tools/test-g4-tool-package-contracts.ps1:936 stage/commit/tag and create nested local fixture submodules. Parent has asked for clarification of the no-stage/no-commit/no-nested-initialization scope; no answer at this checkpoint.",
+  "noBypass": "No SkipSourceValidation, custom package builder or external fixture argument was passed to this qualifier. It was never invoked.",
+  "sourceFailure": "Official package builder failed only under stricter Projects output-parent CA1062 policy; the original existing loader passes in isolated /tmp context.",
+  "publicationBlocked": true
+}

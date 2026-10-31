@@ -1,0 +1,16 @@
+{
+  "recordedAfterExecution": true,
+  "repository": "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds",
+  "operations": [
+    {
+      "argv": ["git", "-c", "submodule.recurse=false", "fetch", "--no-tags", "--no-write-fetch-head", "--recurse-submodules=no", "origin", "2186b9a4bc507a116a457c590c80945c2e232cbd"],
+      "observation": "The tool shell completed successfully with no fetch error, and git rev-parse returned exactly 2186b9a4bc507a116a457c590c80945c2e232cbd. The command fetched official objects without a refspec, tag update, FETCH_HEAD write or submodule recursion."
+    },
+    {
+      "argv": ["git", "worktree", "add", "--detach", "/tmp/story64-builds-producer-2186b9a4", "2186b9a4bc507a116a457c590c80945c2e232cbd"],
+      "exit": 0,
+      "output": "Preparing worktree (detached HEAD 2186b9a)\nHEAD is now at 2186b9a fix(security): validate disposition paths explicitly\n",
+      "observation": "Creates only an isolated detached worktree and its metadata; no branch, tag or original checkout change. The original repository identity audit is retained separately."
+    }
+  ]
+}

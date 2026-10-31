@@ -1,0 +1,24 @@
+{
+  "utc": "2026-10-31T05:32:12.227374+00:00",
+  "originalStrictContext": {
+    "builderExit": 1,
+    "fixtureBuild": "CA1062 builder/plan",
+    "outputParent": "Projects evidence under Projects .editorconfig",
+    "artifactPath": "official-local-package-build.command.json"
+  },
+  "correctedStrictContext": {
+    "exit": 0,
+    "receipt": "corrected-loader-focused-check.command.json",
+    "source": "local dirty two-guard correction only; source archive unchanged"
+  },
+  "originalIsolatedContext": {
+    "exit": 0,
+    "receipt": "exact-loader-isolated-context.command.json",
+    "source": "original loader and fixture blobs copied unchanged from selected SHA",
+    "proof": "exact-loader-isolated-proof/loader-result.json"
+  },
+  "conclusion": "Selected-source fixture is compatible with existing isolated /tmp output context. Two guards fix the stricter inherited Projects CA1062 policy; no universal hosted or default-path loader failure is inferred. No complete producer qualification passed; original builder failure and missing inventory remain retained.",
+  "projectsEditorConfigSha256": "b703637e2bf829f7628ac63a6b11761e55a4e23a6d29e4520ca1a262cf06d4ea",
+  "projectsEditorConfigRule": "dotnet_diagnostic.CA1062.severity = warning",
+  "archiveHashesUnchanged": true
+}

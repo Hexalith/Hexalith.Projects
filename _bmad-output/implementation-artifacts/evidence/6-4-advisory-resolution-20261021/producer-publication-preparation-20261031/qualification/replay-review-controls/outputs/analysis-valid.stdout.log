@@ -1,0 +1,463 @@
+Found 95 commits since last release
+Analyzing commit: fix(security): validate disposition paths explicitly
+
+Resolve explicit CLI file selections inside the workspace before
+reading either input, while keeping repository-owned default paths.
+Document the boundary for alternate historical fixtures.
+The release type for the commit is patch
+Analyzing commit: fix(security): bound workflow tool file access
+
+Confine split-publication action paths and historical-disposition CLI
+inputs to the selected workspace, including resolved symlink targets.
+
+Keep Git repository roots in the process working directory and verify
+blob coordinates through the existing batch-input reader. Write JSON
+and release notes through explicit streams at bounded destinations.
+
+Cover traversal, absolute escapes, symlinks and valid workspace inputs
+without relaxing security or release gates.
+The release type for the commit is patch
+Analyzing commit: fix(ci): align dependency audit and tool fixtures
+
+Bind the package audit to the current AppHost declaration and refresh
+all feed observations while retaining prior audit history.
+
+Align the active FrontComposer schema, test manifests and synthetic
+acceptance corpus with the 4.7.2 catalog selection, including their
+artifact hashes. Preserve deliberate negative controls.
+The release type for the commit is patch
+Analyzing commit: build(deps): refresh central package versions
+
+Update FrontComposer to 4.7.2, AngleSharp to 1.9.0, and JsonSchema.Net
+to 9.6.0 from the current NuGet feed. Keep the latest stable .NET SDK
+10.0.403 and the existing package compatibility constraints.
+The commit should not trigger a release
+Analyzing commit: feat(release): add split publication workflow
+
+Separate candidate builds from authenticated publication through an
+opt-in reusable workflow and preserve the existing release modes.
+
+Validate archive identity, workflow provenance, publication boundaries
+and verification handoffs before publishing candidate packages.
+The release type for the commit is minor
+Analyzing commit: build: merge origin/main into main
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+The commit should not trigger a release
+Analyzing commit: build: merge origin/main into main
+
+Resolve the CanHoldAttachments documentation comment conflict and keep
+the local outcome assertion with the isolated local attacher context.
+Story 2.7 attachment command tests that assume a local attacher now pass
+the same explicit context as the rest of the fixture.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+The commit should not trigger a release
+Analyzing commit: fix(security): confine qualification file arguments
+
+Keep G-6 policy, evidence and audit paths inside the selected workspace.
+Bind recovery state and gate evidence to their workspace boundaries and
+reject symlink escapes before reading, writing or calling external tools.
+
+Use the platform temporary directory for read-only metadata probes and
+generate redaction control values at runtime. Add hermetic boundary tests
+without changing the security quality gate.
+The release type for the commit is patch
+Analyzing commit: docs: clarify attached-failure retention in run listings
+
+Listings of a passed owner with live holds show cleanup as pending unless
+an attached failure retained the environment (Story 2.7).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+The commit should not trigger a release
+Analyzing commit: test(module): keep removed owner tracking after cancellation
+
+Cover owner cancellation after a completed explicit down: it must not
+recreate the removed state entry or listing (Story 2.7).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+The commit should not trigger a release
+Analyzing commit: fix(module): require measured execution timing for passing candidates
+
+Refuse a passed candidate result whose execution deadline was never
+populated; execution timing must be populated or explicitly not declared.
+
+Close the remaining Story 3.1 follow-up review test gaps: the unissued
+owned-run fallback, release-kind writer and public startup bindings,
+uppercase-hex caller content identities and the exact domain-ci
+permissions block. Note that no consumer workflow is enrolled yet.
+Retain the review3 verification and mutation evidence.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+The release type for the commit is patch
+Analyzing commit: docs: resolve vulnerability policy review findings
+
+Let a scoped Administrator exception clear an Unknown finding, which
+otherwise blocks like High until trusted classification. Define the
+refusal outcome and per-attempt classification lifetime, fix v1 scan age
+at 86,400 seconds, allow fresh pre-admission scan attempts, limit v1 to
+vulnerability findings, accept one direct recorded approval for several
+records, bind approvedAt to the approval event and define revocation
+timing. Fix v1 at the revision completing Story 5.2.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+(cherry picked from commit edc16e3cb41818cb7cda60a130f1df3b86a9d92f)
+The commit should not trigger a release
+Analyzing commit: build: sync local changes via /pushall
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The commit should not trigger a release
+Analyzing commit: fix(test): wait for owner outcome lock writes
+
+Acquire cancellation test obstruction locks with a bounded wait so
+concurrent owner publication cannot fail test setup. Retain all cleanup
+and durable failure assertions.
+The release type for the commit is patch
+Analyzing commit: docs: resolve vulnerability policy review findings
+
+Let a scoped Administrator exception clear an Unknown finding, which
+otherwise blocks like High until trusted classification. Define the
+refusal outcome and per-attempt classification lifetime, fix v1 scan age
+at 86,400 seconds, allow fresh pre-admission scan attempts, limit v1 to
+vulnerability findings, accept one direct recorded approval for several
+records, bind approvedAt to the approval event and define revocation
+timing. Fix v1 at the revision completing Story 5.2.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+The commit should not trigger a release
+Analyzing commit: build(deps): refresh the complete package audit
+
+Record current feed observations for every catalog family after the
+stable package updates, retaining prior observations and exceptions.
+The commit should not trigger a release
+Analyzing commit: fix(ci): initialize nuget settings for releases
+
+Apply the proven disposable runner configuration before the release
+package gates, matching self-CI. Document the current stable SDK.
+The release type for the commit is patch
+Analyzing commit: build(deps): refresh stable package versions
+
+Update Commons, Google APIs, gRPC and Identity Client to current stable
+versions and refresh the npm transitive dependency lock.
+The commit should not trigger a release
+Analyzing commit: build(deps): sync ai tools with upstream
+The commit should not trigger a release
+Analyzing commit: fix(module): complete attached-run withdrawal and retention review
+The release type for the commit is patch
+Analyzing commit: build: merge origin/main into main
+The commit should not trigger a release
+Analyzing commit: fix(ci): initialize nuget settings before package build gates
+
+Use the checked-in public feed configuration on the disposable contract runner.
+An empty inherited user config must not break package qualification.
+The release type for the commit is patch
+Analyzing commit: fix(test): isolate live owners from parallel cleanup
+
+Give attachment owners fresh run identities and prove unrelated cleanup cannot discover their hosts.
+Run the independent catalog suite in parallel and require all validation jobs to pass.
+The release type for the commit is patch
+Analyzing commit: build(deps): refresh the redis package audit
+The commit should not trigger a release
+Analyzing commit: build(deps): update redis to the latest stable patch
+The commit should not trigger a release
+Analyzing commit: fix(ci): isolate attachment fixtures and parallelize validation
+
+Keep the default attachment context bound to the actual process environment.
+Require both parallel validation jobs to pass the existing required status.
+Allow package qualification enough time and align the SDK fallback.
+The release type for the commit is patch
+Analyzing commit: build: sync local changes via /pushall
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The commit should not trigger a release
+Analyzing commit: fix(test): honor the retained host stop protocol
+
+Keep the dummy AppHost alive on EOF until the explicit stop command,
+matching the real retained AppHost behavior.
+Exercise EOF before cancellation while preserving durable-publication
+and live-process assertions.
+The release type for the commit is patch
+Analyzing commit: fix(module): finish attached-run withdrawal review fixes
+
+Stop non-attachable session AppHosts before cleanup and report each
+cleanup recording failure (HXT008) once per result. Verify the ready
+session's locality against the recorded owner execution context, and keep
+delayed native fixtures within their execution limit.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+The release type for the commit is patch
+Analyzing commit: fix(test): align the native fixture sdk pin
+
+Match the VSTest fixture SDK to the repository global.json pin.
+The release type for the commit is patch
+Analyzing commit: build(deps): refresh host declaration audit
+The commit should not trigger a release
+Analyzing commit: fix(ci): restore published host compatibility
+
+Document attachment admission with XML comments for RCS1181.
+Compile source-only EventStore APIs only for the mapped source host.
+Keep the published host sidecar authorization policy and refuse
+unsupported route catalogs before startup.
+The release type for the commit is patch
+Analyzing commit: build(deps): refresh commons and serialization package audit
+The commit should not trigger a release
+Analyzing commit: build(deps): refresh commons and serialization package audit
+The commit should not trigger a release
+Analyzing commit: fix(deps): consume the latest commons and serialization packages
+
+Update the shared Commons family to 2.30.4 and PolymorphicSerializations to 1.19.6.
+Refresh npm lockfile dependencies within the declared version ranges.
+The release type for the commit is patch
+Analyzing commit: fix: stop non-attachable sessions before cleanup so the AppHost cannot stay running
+The release type for the commit is patch
+Analyzing commit: test: record story 3.1 source fingerprints at the retained Builds head
+The commit should not trigger a release
+Analyzing commit: fix: select the mapped Builds EventStore host and bound writer cutover to startup
+The release type for the commit is patch
+Analyzing commit: fix: require exact candidate release authority before composition ownership
+The release type for the commit is patch
+Analyzing commit: fix: materialize source-mapped platform catalogs for module hosts
+The release type for the commit is patch
+Analyzing commit: fix(module): finish attachment withdrawal cleanup regressions
+The release type for the commit is patch
+Analyzing commit: test: record attachment cleanup review evidence
+The commit should not trigger a release
+Analyzing commit: fix: continue owner cleanup when attachments cannot be held
+The release type for the commit is patch
+Analyzing commit: fix: refresh package version audit after catalog declaration changes
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The release type for the commit is patch
+Analyzing commit: build: merge origin/main into main via pushall follow-up
+The commit should not trigger a release
+Analyzing commit: build: sync local changes via /pushall
+The commit should not trigger a release
+Analyzing commit: build: sync local changes via /pushall
+The commit should not trigger a release
+Analyzing commit: build: merge origin/main into main
+The commit should not trigger a release
+Analyzing commit: build: merge origin/main into main
+The commit should not trigger a release
+Analyzing commit: fix(ci): remove candidate wiring from domain-ci
+
+GitHub validates called-workflow job permissions before evaluating if:, so
+the opt-in candidate jobs requesting id-token: write broke every @main
+caller that grants only contents: read with startup_failure.
+candidate-policy.yml stays a standalone reusable workflow; a separate
+opt-in consumer workflow follows with live issuer enrollment.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+The release type for the commit is patch
+Analyzing commit: feat(module): enforce candidate selection policy
+
+Harden authenticated CI selection and immutable evidence bindings.
+The release type for the commit is minor
+Analyzing commit: feat(module): gate runs with the candidate selection policy
+The release type for the commit is minor
+Analyzing commit: docs: define image and dependency vulnerability policy
+The commit should not trigger a release
+Analyzing commit: test(module): preserve final withdrawal review logs
+The commit should not trigger a release
+Analyzing commit: fix(module): harden attachment withdrawal reporting and retention
+The release type for the commit is patch
+Analyzing commit: fix(module): refuse attachments while cleanup is pending
+The release type for the commit is patch
+Analyzing commit: test(module): retain attachment withdrawal verification evidence
+The commit should not trigger a release
+Analyzing commit: feat(module): record attachment outcomes and retain failed environments
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The release type for the commit is minor
+Analyzing commit: build: merge fix/story13-6-root-catalog-fallback into main via /pushall
+The commit should not trigger a release
+Analyzing commit: build: refresh frontcomposer catalog audit after merge
+The commit should not trigger a release
+Analyzing commit: build: merge fix/parties-contracts-ui-catalog into main via /pushall
+The commit should not trigger a release
+Analyzing commit: build: merge origin/dependabot/github_actions/github/codeql-action-4.39.1 into main via /pushall
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The commit should not trigger a release
+Analyzing commit: build: merge origin/dependabot/github_actions/actions/setup-node-7.1.0 into main via /pushall
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The commit should not trigger a release
+Analyzing commit: build: merge origin/dependabot/github_actions/Hexalith/Hexalith.Builds/Github/initialize-build-4.38.0 into main via /pushall
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The commit should not trigger a release
+Analyzing commit: build: merge origin/dependabot/github_actions/Hexalith/Hexalith.Builds/Github/dapr-init-4.38.0 into main via /pushall
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The commit should not trigger a release
+Analyzing commit: build: merge origin/dependabot/github_actions/Github/publish-container-to-registry/docker/login-action-4.7.0 into main via /pushall
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The commit should not trigger a release
+Analyzing commit: ci(deps): bump docker/login-action
+
+Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0.
+- [Release notes](https://github.com/docker/login-action/releases)
+- [Commits](https://github.com/docker/login-action/compare/v4.6.0...v4.7.0)
+
+---
+updated-dependencies:
+- dependency-name: docker/login-action
+  dependency-version: 4.7.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+The commit should not trigger a release
+Analyzing commit: ci(deps): bump actions/setup-node from 7.0.0 to 7.1.0
+
+Bumps [actions/setup-node](https://github.com/actions/setup-node) from 7.0.0 to 7.1.0.
+- [Release notes](https://github.com/actions/setup-node/releases)
+- [Commits](https://github.com/actions/setup-node/compare/v7...v7.1.0)
+
+---
+updated-dependencies:
+- dependency-name: actions/setup-node
+  dependency-version: 7.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+The commit should not trigger a release
+Analyzing commit: ci(deps): bump github/codeql-action from 4.39.0 to 4.39.1
+
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4.39.0...v4.39.1)
+
+---
+updated-dependencies:
+- dependency-name: github/codeql-action
+  dependency-version: 4.39.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+The commit should not trigger a release
+Analyzing commit: ci(deps): bump Hexalith/Hexalith.Builds/Github/dapr-init
+
+Bumps [Hexalith/Hexalith.Builds/Github/dapr-init](https://github.com/hexalith/hexalith.builds) from 4.35.0 to 4.38.0.
+- [Release notes](https://github.com/hexalith/hexalith.builds/releases)
+- [Changelog](https://github.com/Hexalith/Hexalith.Builds/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/hexalith/hexalith.builds/compare/fff4a212180d8cd1c5c0759655a9bc4fb6963c45...e171c5a788eab183b32683431b084198c9b8d373)
+
+---
+updated-dependencies:
+- dependency-name: Hexalith/Hexalith.Builds/Github/dapr-init
+  dependency-version: 4.38.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+The commit should not trigger a release
+Analyzing commit: ci(deps): bump Hexalith/Hexalith.Builds/Github/initialize-build
+
+Bumps [Hexalith/Hexalith.Builds/Github/initialize-build](https://github.com/hexalith/hexalith.builds) from 4.35.0 to 4.38.0.
+- [Release notes](https://github.com/hexalith/hexalith.builds/releases)
+- [Changelog](https://github.com/Hexalith/Hexalith.Builds/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/hexalith/hexalith.builds/compare/fff4a212180d8cd1c5c0759655a9bc4fb6963c45...e171c5a788eab183b32683431b084198c9b8d373)
+
+---
+updated-dependencies:
+- dependency-name: Hexalith/Hexalith.Builds/Github/initialize-build
+  dependency-version: 4.38.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <support@github.com>
+The commit should not trigger a release
+Analyzing commit: build: merge remote main and preserve local catalog history
+The commit should not trigger a release
+Analyzing commit: build(deps): refresh the FrontComposer catalog audit
+The commit should not trigger a release
+Analyzing commit: fix(deps): include FrontComposer UI contracts in the shared catalog
+The release type for the commit is patch
+Analyzing commit: build: sync local changes via /pushall
+The commit should not trigger a release
+Analyzing commit: build: merge review/2-5-patches into main via /pushall
+The commit should not trigger a release
+Analyzing commit: build: merge fix/story-2-6-review into main via /pushall
+The commit should not trigger a release
+Analyzing commit: fix(test): refuse attach to CI owners and cover no-wait and human output
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+The release type for the commit is patch
+Analyzing commit: build: merge origin/main into main via /pushall follow-up
+The commit should not trigger a release
+Analyzing commit: build(deps): refresh changed package audit
+
+Bind the audit to the current catalog and consumer declarations.
+Refresh Memories, Key Vault Secrets, and HotChocolate observations
+while retaining all other family observations and prior history.
+The commit should not trigger a release
+Analyzing commit: build: sync AI Tools instructions
+The commit should not trigger a release
+Analyzing commit: fix: update versions
+The release type for the commit is patch
+Analyzing commit: build: merge origin/main to synchronize local changes
+The commit should not trigger a release
+Analyzing commit: build: sync local changes via /pushall
+The commit should not trigger a release
+Analyzing commit: fix(test): check owner state and job on attach retries
+
+Run context and owner-state checks before retry lineage, decide owner state
+again under the attachment lock, require a local owner for the failure-retained
+exception, treat corrupt attachment metadata as unverifiable, record expiry as
+the end time of an expired hold, reject mixed attach options, and keep CI owners
+out of hold-deferred cleanup listings.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+The release type for the commit is patch
+Analyzing commit: feat(test): attach a run to a compatible environment
+
+Add `hexalith-module attach` with explicit hold admission under
+hexalith.platform.candidate-and-attachment-policy.v1, persisted holds,
+listing of attached runs and hold deadlines, published holds in results
+and descriptors, and owner success-cleanup that waits for live holds.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+The release type for the commit is minor
+Analyzing commit: build(audit): refresh FrontComposer catalog evidence
+The commit should not trigger a release
+Analyzing commit: fix(catalog): inherit FrontComposer UI contracts at the family version
+The release type for the commit is patch
+Analyzing commit: fix: domain ci
+The release type for the commit is patch
+Analyzing commit: fix(workspace): ignore empty AdditionalProperties entries
+
+A trailing semicolon produced an empty assignment and a spurious HXW006.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+The release type for the commit is patch
+Analyzing commit: fix(tooling): record the historical SDK split without qualification
+The release type for the commit is patch
+Analyzing commit: fix(test): map failed terminal outcome and cover validate option guards
+The release type for the commit is patch
+Analyzing commit: fix(test): harden local run retention and cleanup
+The release type for the commit is patch
+Analyzing commit: build(deps): refresh the Radzen package audit
+
+Bind the catalog selection to the listed 12.1.8 stable candidate.
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The commit should not trigger a release
+Analyzing commit: fix(deps): select Radzen.Blazor 12.1.8
+
+Keep the shared catalog on the latest listed stable release.
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+The release type for the commit is patch
+Analysis of 95 commits complete: minor release
+The next release version is 4.39.0
+{"proposedVersion":"4.39.0","releaseType":"minor","commitCount":95,"executedLifecycle":false}

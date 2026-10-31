@@ -1,0 +1,2508 @@
+{
+  "schema": "story64.analysis-only.v1",
+  "analyzedUtc": "2026-10-31T05:25:30.799Z",
+  "node": "v24.21.0",
+  "selectedRevision": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "selectedTree": "18d735e56eeb17332e2d2b57a6b116097f42fdec",
+  "previousRelease": {
+    "version": "4.38.3",
+    "gitTag": "v4.38.3",
+    "channels": [
+      null
+    ],
+    "gitHead": "v4.38.3",
+    "name": "v4.38.3"
+  },
+  "previousReleaseCommit": "d1931b1e803144048d927fff16cb8119afde541e",
+  "commits": [
+    {
+      "commit": {
+        "long": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+        "short": "2186b9a"
+      },
+      "tree": {
+        "long": "18d735e56eeb17332e2d2b57a6b116097f42fdec",
+        "short": "18d735e"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-31T05:10:47.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-31T05:10:47.000Z"
+      },
+      "subject": "fix(security): validate disposition paths explicitly",
+      "body": "Resolve explicit CLI file selections inside the workspace before\nreading either input, while keeping repository-owned default paths.\nDocument the boundary for alternate historical fixtures.\n",
+      "hash": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+      "committerDate": "2026-10-31T05:10:47.000Z",
+      "message": "fix(security): validate disposition paths explicitly\n\nResolve explicit CLI file selections inside the workspace before\nreading either input, while keeping repository-owned default paths.\nDocument the boundary for alternate historical fixtures.",
+      "gitTags": "(HEAD)"
+    },
+    {
+      "commit": {
+        "long": "d22ff2d7f3c2408826ab92849ab7ef91c764914d",
+        "short": "d22ff2d"
+      },
+      "tree": {
+        "long": "fd169ce5f837619046d5b447f7af40b340681f82",
+        "short": "fd169ce"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-31T05:06:43.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-31T05:06:43.000Z"
+      },
+      "subject": "fix(security): bound workflow tool file access",
+      "body": "Confine split-publication action paths and historical-disposition CLI\ninputs to the selected workspace, including resolved symlink targets.\n\nKeep Git repository roots in the process working directory and verify\nblob coordinates through the existing batch-input reader. Write JSON\nand release notes through explicit streams at bounded destinations.\n\nCover traversal, absolute escapes, symlinks and valid workspace inputs\nwithout relaxing security or release gates.\n",
+      "hash": "d22ff2d7f3c2408826ab92849ab7ef91c764914d",
+      "committerDate": "2026-10-31T05:06:43.000Z",
+      "message": "fix(security): bound workflow tool file access\n\nConfine split-publication action paths and historical-disposition CLI\ninputs to the selected workspace, including resolved symlink targets.\n\nKeep Git repository roots in the process working directory and verify\nblob coordinates through the existing batch-input reader. Write JSON\nand release notes through explicit streams at bounded destinations.\n\nCover traversal, absolute escapes, symlinks and valid workspace inputs\nwithout relaxing security or release gates.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "4bdef83c3ffe32cf3bfc1ff5bf8414925727432c",
+        "short": "4bdef83"
+      },
+      "tree": {
+        "long": "07d7b13c9b5167a3cd73ff446656799fa847a872",
+        "short": "07d7b13"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-31T04:58:06.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-31T04:58:06.000Z"
+      },
+      "subject": "fix(ci): align dependency audit and tool fixtures",
+      "body": "Bind the package audit to the current AppHost declaration and refresh\nall feed observations while retaining prior audit history.\n\nAlign the active FrontComposer schema, test manifests and synthetic\nacceptance corpus with the 4.7.2 catalog selection, including their\nartifact hashes. Preserve deliberate negative controls.\n",
+      "hash": "4bdef83c3ffe32cf3bfc1ff5bf8414925727432c",
+      "committerDate": "2026-10-31T04:58:06.000Z",
+      "message": "fix(ci): align dependency audit and tool fixtures\n\nBind the package audit to the current AppHost declaration and refresh\nall feed observations while retaining prior audit history.\n\nAlign the active FrontComposer schema, test manifests and synthetic\nacceptance corpus with the 4.7.2 catalog selection, including their\nartifact hashes. Preserve deliberate negative controls.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "3b1098127d0cafd5647569417b3b991a3b5daf7e",
+        "short": "3b10981"
+      },
+      "tree": {
+        "long": "ea4d1880f295ee88eaada3b074ed64c93a42d8c7",
+        "short": "ea4d188"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-31T04:55:08.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-31T04:55:08.000Z"
+      },
+      "subject": "build(deps): refresh central package versions",
+      "body": "Update FrontComposer to 4.7.2, AngleSharp to 1.9.0, and JsonSchema.Net\nto 9.6.0 from the current NuGet feed. Keep the latest stable .NET SDK\n10.0.403 and the existing package compatibility constraints.\n",
+      "hash": "3b1098127d0cafd5647569417b3b991a3b5daf7e",
+      "committerDate": "2026-10-31T04:55:08.000Z",
+      "message": "build(deps): refresh central package versions\n\nUpdate FrontComposer to 4.7.2, AngleSharp to 1.9.0, and JsonSchema.Net\nto 9.6.0 from the current NuGet feed. Keep the latest stable .NET SDK\n10.0.403 and the existing package compatibility constraints.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "daed31053919862fa7b65c94706a1d2c66d80701",
+        "short": "daed310"
+      },
+      "tree": {
+        "long": "8e70f14706600a49570daa2c022841ab7818e20b",
+        "short": "8e70f14"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-31T04:52:09.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-31T04:52:09.000Z"
+      },
+      "subject": "feat(release): add split publication workflow",
+      "body": "Separate candidate builds from authenticated publication through an\nopt-in reusable workflow and preserve the existing release modes.\n\nValidate archive identity, workflow provenance, publication boundaries\nand verification handoffs before publishing candidate packages.\n",
+      "hash": "daed31053919862fa7b65c94706a1d2c66d80701",
+      "committerDate": "2026-10-31T04:52:09.000Z",
+      "message": "feat(release): add split publication workflow\n\nSeparate candidate builds from authenticated publication through an\nopt-in reusable workflow and preserve the existing release modes.\n\nValidate archive identity, workflow provenance, publication boundaries\nand verification handoffs before publishing candidate packages.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "76aafc85122fb7ae4b2668ed4895e4bc213c404a",
+        "short": "76aafc8"
+      },
+      "tree": {
+        "long": "f11780c23730f43518d467ece65f65252acbe109",
+        "short": "f11780c"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T18:01:52.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T18:01:52.000Z"
+      },
+      "subject": "build: merge origin/main into main",
+      "body": "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n",
+      "hash": "76aafc85122fb7ae4b2668ed4895e4bc213c404a",
+      "committerDate": "2026-10-30T18:01:52.000Z",
+      "message": "build: merge origin/main into main\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "143b222bbd43d7db7f933998207af979081922be",
+        "short": "143b222"
+      },
+      "tree": {
+        "long": "ec99cf8f1233b37eff4bbf162697a63f5a0257b5",
+        "short": "ec99cf8"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T18:01:38.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T18:01:38.000Z"
+      },
+      "subject": "build: merge origin/main into main",
+      "body": "Resolve the CanHoldAttachments documentation comment conflict and keep\nthe local outcome assertion with the isolated local attacher context.\nStory 2.7 attachment command tests that assume a local attacher now pass\nthe same explicit context as the rest of the fixture.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n",
+      "hash": "143b222bbd43d7db7f933998207af979081922be",
+      "committerDate": "2026-10-30T18:01:38.000Z",
+      "message": "build: merge origin/main into main\n\nResolve the CanHoldAttachments documentation comment conflict and keep\nthe local outcome assertion with the isolated local attacher context.\nStory 2.7 attachment command tests that assume a local attacher now pass\nthe same explicit context as the rest of the fixture.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+        "short": "6cc96b4"
+      },
+      "tree": {
+        "long": "c1c4e623f7c0a523868bed89f12638054d50b9ee",
+        "short": "c1c4e62"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:52:59.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:52:59.000Z"
+      },
+      "subject": "fix(security): confine qualification file arguments",
+      "body": "Keep G-6 policy, evidence and audit paths inside the selected workspace.\nBind recovery state and gate evidence to their workspace boundaries and\nreject symlink escapes before reading, writing or calling external tools.\n\nUse the platform temporary directory for read-only metadata probes and\ngenerate redaction control values at runtime. Add hermetic boundary tests\nwithout changing the security quality gate.\n",
+      "hash": "6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+      "committerDate": "2026-10-30T17:52:59.000Z",
+      "message": "fix(security): confine qualification file arguments\n\nKeep G-6 policy, evidence and audit paths inside the selected workspace.\nBind recovery state and gate evidence to their workspace boundaries and\nreject symlink escapes before reading, writing or calling external tools.\n\nUse the platform temporary directory for read-only metadata probes and\ngenerate redaction control values at runtime. Add hermetic boundary tests\nwithout changing the security quality gate.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "ffa5244028756042363a5bd473a72a2b570bdd44",
+        "short": "ffa5244"
+      },
+      "tree": {
+        "long": "684e1b41eb18e435a3731a0e915745e2211fe51e",
+        "short": "684e1b4"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:51:06.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:51:06.000Z"
+      },
+      "subject": "docs: clarify attached-failure retention in run listings",
+      "body": "Listings of a passed owner with live holds show cleanup as pending unless\nan attached failure retained the environment (Story 2.7).\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n",
+      "hash": "ffa5244028756042363a5bd473a72a2b570bdd44",
+      "committerDate": "2026-10-30T17:51:06.000Z",
+      "message": "docs: clarify attached-failure retention in run listings\n\nListings of a passed owner with live holds show cleanup as pending unless\nan attached failure retained the environment (Story 2.7).\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "0697e4416c32104516f015e864801ab38a641340",
+        "short": "0697e44"
+      },
+      "tree": {
+        "long": "ee0cf33fe05ce116b4d4748ec572802ae3a2f279",
+        "short": "ee0cf33"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:51:06.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:51:06.000Z"
+      },
+      "subject": "test(module): keep removed owner tracking after cancellation",
+      "body": "Cover owner cancellation after a completed explicit down: it must not\nrecreate the removed state entry or listing (Story 2.7).\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n",
+      "hash": "0697e4416c32104516f015e864801ab38a641340",
+      "committerDate": "2026-10-30T17:51:06.000Z",
+      "message": "test(module): keep removed owner tracking after cancellation\n\nCover owner cancellation after a completed explicit down: it must not\nrecreate the removed state entry or listing (Story 2.7).\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "5ef23023db3844ef7dbae602d20551a635fda01a",
+        "short": "5ef2302"
+      },
+      "tree": {
+        "long": "57d3dfb695ac2ce45f9e0a4424a3743c89b1524f",
+        "short": "57d3dfb"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:50:53.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:50:53.000Z"
+      },
+      "subject": "fix(module): require measured execution timing for passing candidates",
+      "body": "Refuse a passed candidate result whose execution deadline was never\npopulated; execution timing must be populated or explicitly not declared.\n\nClose the remaining Story 3.1 follow-up review test gaps: the unissued\nowned-run fallback, release-kind writer and public startup bindings,\nuppercase-hex caller content identities and the exact domain-ci\npermissions block. Note that no consumer workflow is enrolled yet.\nRetain the review3 verification and mutation evidence.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n",
+      "hash": "5ef23023db3844ef7dbae602d20551a635fda01a",
+      "committerDate": "2026-10-30T17:50:53.000Z",
+      "message": "fix(module): require measured execution timing for passing candidates\n\nRefuse a passed candidate result whose execution deadline was never\npopulated; execution timing must be populated or explicitly not declared.\n\nClose the remaining Story 3.1 follow-up review test gaps: the unissued\nowned-run fallback, release-kind writer and public startup bindings,\nuppercase-hex caller content identities and the exact domain-ci\npermissions block. Note that no consumer workflow is enrolled yet.\nRetain the review3 verification and mutation evidence.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "849b0be6849f14c097ab05ff9bafbc115bdabe7e",
+        "short": "849b0be"
+      },
+      "tree": {
+        "long": "daaa05c36a451d621f3d809c8a111a23b7bdc560",
+        "short": "daaa05c"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:04:35.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:29:28.000Z"
+      },
+      "subject": "docs: resolve vulnerability policy review findings",
+      "body": "Let a scoped Administrator exception clear an Unknown finding, which\notherwise blocks like High until trusted classification. Define the\nrefusal outcome and per-attempt classification lifetime, fix v1 scan age\nat 86,400 seconds, allow fresh pre-admission scan attempts, limit v1 to\nvulnerability findings, accept one direct recorded approval for several\nrecords, bind approvedAt to the approval event and define revocation\ntiming. Fix v1 at the revision completing Story 5.2.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n(cherry picked from commit edc16e3cb41818cb7cda60a130f1df3b86a9d92f)\n",
+      "hash": "849b0be6849f14c097ab05ff9bafbc115bdabe7e",
+      "committerDate": "2026-10-30T17:29:28.000Z",
+      "message": "docs: resolve vulnerability policy review findings\n\nLet a scoped Administrator exception clear an Unknown finding, which\notherwise blocks like High until trusted classification. Define the\nrefusal outcome and per-attempt classification lifetime, fix v1 scan age\nat 86,400 seconds, allow fresh pre-admission scan attempts, limit v1 to\nvulnerability findings, accept one direct recorded approval for several\nrecords, bind approvedAt to the approval event and define revocation\ntiming. Fix v1 at the revision completing Story 5.2.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n(cherry picked from commit edc16e3cb41818cb7cda60a130f1df3b86a9d92f)",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "69701dfcf54cb9c69fc6cb0c51b031af8d218142",
+        "short": "69701df"
+      },
+      "tree": {
+        "long": "1a7e7ac05750f5e8d2c8b87a99e7371d3a25860b",
+        "short": "1a7e7ac"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:08:43.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:08:43.000Z"
+      },
+      "subject": "build: sync local changes via /pushall",
+      "body": "Co-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "69701dfcf54cb9c69fc6cb0c51b031af8d218142",
+      "committerDate": "2026-10-30T17:08:43.000Z",
+      "message": "build: sync local changes via /pushall\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "1160a3a7ddc0f4c6927456b5735a2963261016a0",
+        "short": "1160a3a"
+      },
+      "tree": {
+        "long": "66a9702debef0773369134708286d58cddf6917a",
+        "short": "66a9702"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:08:05.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:08:05.000Z"
+      },
+      "subject": "fix(test): wait for owner outcome lock writes",
+      "body": "Acquire cancellation test obstruction locks with a bounded wait so\nconcurrent owner publication cannot fail test setup. Retain all cleanup\nand durable failure assertions.\n",
+      "hash": "1160a3a7ddc0f4c6927456b5735a2963261016a0",
+      "committerDate": "2026-10-30T17:08:05.000Z",
+      "message": "fix(test): wait for owner outcome lock writes\n\nAcquire cancellation test obstruction locks with a bounded wait so\nconcurrent owner publication cannot fail test setup. Retain all cleanup\nand durable failure assertions.",
+      "gitTags": "(origin/main, origin/HEAD, main)"
+    },
+    {
+      "commit": {
+        "long": "edc16e3cb41818cb7cda60a130f1df3b86a9d92f",
+        "short": "edc16e3"
+      },
+      "tree": {
+        "long": "4f812735f19a49ef64a04b47e52bde7e7e492f73",
+        "short": "4f81273"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:04:35.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:04:35.000Z"
+      },
+      "subject": "docs: resolve vulnerability policy review findings",
+      "body": "Let a scoped Administrator exception clear an Unknown finding, which\notherwise blocks like High until trusted classification. Define the\nrefusal outcome and per-attempt classification lifetime, fix v1 scan age\nat 86,400 seconds, allow fresh pre-admission scan attempts, limit v1 to\nvulnerability findings, accept one direct recorded approval for several\nrecords, bind approvedAt to the approval event and define revocation\ntiming. Fix v1 at the revision completing Story 5.2.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n",
+      "hash": "edc16e3cb41818cb7cda60a130f1df3b86a9d92f",
+      "committerDate": "2026-10-30T17:04:35.000Z",
+      "message": "docs: resolve vulnerability policy review findings\n\nLet a scoped Administrator exception clear an Unknown finding, which\notherwise blocks like High until trusted classification. Define the\nrefusal outcome and per-attempt classification lifetime, fix v1 scan age\nat 86,400 seconds, allow fresh pre-admission scan attempts, limit v1 to\nvulnerability findings, accept one direct recorded approval for several\nrecords, bind approvedAt to the approval event and define revocation\ntiming. Fix v1 at the revision completing Story 5.2.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "96dc22928af914ed22d44789090dd2f65c9e598e",
+        "short": "96dc229"
+      },
+      "tree": {
+        "long": "29cea0aa647da4d7dbf549f11748e6ba2432fd8d",
+        "short": "29cea0a"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:03:21.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T17:03:21.000Z"
+      },
+      "subject": "build(deps): refresh the complete package audit",
+      "body": "Record current feed observations for every catalog family after the\nstable package updates, retaining prior observations and exceptions.\n",
+      "hash": "96dc22928af914ed22d44789090dd2f65c9e598e",
+      "committerDate": "2026-10-30T17:03:21.000Z",
+      "message": "build(deps): refresh the complete package audit\n\nRecord current feed observations for every catalog family after the\nstable package updates, retaining prior observations and exceptions.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "90f1da006e770caf0bcaff42bd2ec9eb785f9a1f",
+        "short": "90f1da0"
+      },
+      "tree": {
+        "long": "9d1165cfa6b2613473717b98cc543bd45a6540d6",
+        "short": "9d1165c"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T16:57:48.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T16:57:48.000Z"
+      },
+      "subject": "fix(ci): initialize nuget settings for releases",
+      "body": "Apply the proven disposable runner configuration before the release\npackage gates, matching self-CI. Document the current stable SDK.\n",
+      "hash": "90f1da006e770caf0bcaff42bd2ec9eb785f9a1f",
+      "committerDate": "2026-10-30T16:57:48.000Z",
+      "message": "fix(ci): initialize nuget settings for releases\n\nApply the proven disposable runner configuration before the release\npackage gates, matching self-CI. Document the current stable SDK.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "a6bbc24fd4cc76b356b968b06cc3aa393c2eba45",
+        "short": "a6bbc24"
+      },
+      "tree": {
+        "long": "4b0e80941149379a94659141b1821b73461ecbde",
+        "short": "4b0e809"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T16:57:48.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T16:57:48.000Z"
+      },
+      "subject": "build(deps): refresh stable package versions",
+      "body": "Update Commons, Google APIs, gRPC and Identity Client to current stable\nversions and refresh the npm transitive dependency lock.\n",
+      "hash": "a6bbc24fd4cc76b356b968b06cc3aa393c2eba45",
+      "committerDate": "2026-10-30T16:57:48.000Z",
+      "message": "build(deps): refresh stable package versions\n\nUpdate Commons, Google APIs, gRPC and Identity Client to current stable\nversions and refresh the npm transitive dependency lock.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "20d0f8dd6b0580328169e185553173d96513b76a",
+        "short": "20d0f8d"
+      },
+      "tree": {
+        "long": "222fd93e3502f0892df4e1ae61d2bbcb5f654463",
+        "short": "222fd93"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T16:57:41.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T16:57:41.000Z"
+      },
+      "subject": "build(deps): sync ai tools with upstream",
+      "body": "",
+      "hash": "20d0f8dd6b0580328169e185553173d96513b76a",
+      "committerDate": "2026-10-30T16:57:41.000Z",
+      "message": "build(deps): sync ai tools with upstream",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "cc0db51b800be1d0d5badc3780395cfb5953d0f5",
+        "short": "cc0db51"
+      },
+      "tree": {
+        "long": "4a6fa6f505abb53502b144c3050c0c142139a0e0",
+        "short": "4a6fa6f"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T15:54:53.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T15:54:53.000Z"
+      },
+      "subject": "fix(module): complete attached-run withdrawal and retention review",
+      "body": "",
+      "hash": "cc0db51b800be1d0d5badc3780395cfb5953d0f5",
+      "committerDate": "2026-10-30T15:54:53.000Z",
+      "message": "fix(module): complete attached-run withdrawal and retention review",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "a6cd5532cf3003a12c89f05fb0e08d8cbc5c4b25",
+        "short": "a6cd553"
+      },
+      "tree": {
+        "long": "a3df8671b447d314a3ff60e781897bd83405108a",
+        "short": "a3df867"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T15:46:32.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T15:46:32.000Z"
+      },
+      "subject": "build: merge origin/main into main",
+      "body": "",
+      "hash": "a6cd5532cf3003a12c89f05fb0e08d8cbc5c4b25",
+      "committerDate": "2026-10-30T15:46:32.000Z",
+      "message": "build: merge origin/main into main",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "aeb57b3177c4e8b3dd3929a6308a4c576b297d9e",
+        "short": "aeb57b3"
+      },
+      "tree": {
+        "long": "a3df8671b447d314a3ff60e781897bd83405108a",
+        "short": "a3df867"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T15:42:07.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T15:42:07.000Z"
+      },
+      "subject": "fix(ci): initialize nuget settings before package build gates",
+      "body": "Use the checked-in public feed configuration on the disposable contract runner.\nAn empty inherited user config must not break package qualification.\n",
+      "hash": "aeb57b3177c4e8b3dd3929a6308a4c576b297d9e",
+      "committerDate": "2026-10-30T15:42:07.000Z",
+      "message": "fix(ci): initialize nuget settings before package build gates\n\nUse the checked-in public feed configuration on the disposable contract runner.\nAn empty inherited user config must not break package qualification.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "ff6210e049d5d9e0ec8e7a6a34c606a903495cba",
+        "short": "ff6210e"
+      },
+      "tree": {
+        "long": "c0b2fe6a2b6db40c11d109064715b8c447d8bf3a",
+        "short": "c0b2fe6"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T15:18:40.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T15:18:40.000Z"
+      },
+      "subject": "fix(test): isolate live owners from parallel cleanup",
+      "body": "Give attachment owners fresh run identities and prove unrelated cleanup cannot discover their hosts.\nRun the independent catalog suite in parallel and require all validation jobs to pass.\n",
+      "hash": "ff6210e049d5d9e0ec8e7a6a34c606a903495cba",
+      "committerDate": "2026-10-30T15:18:40.000Z",
+      "message": "fix(test): isolate live owners from parallel cleanup\n\nGive attachment owners fresh run identities and prove unrelated cleanup cannot discover their hosts.\nRun the independent catalog suite in parallel and require all validation jobs to pass.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "3707d04a95e3bd132c386142af8594efbcae39e9",
+        "short": "3707d04"
+      },
+      "tree": {
+        "long": "758baa365df29c8339afec2ff8da1da8c379e5e5",
+        "short": "758baa3"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T14:51:59.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T14:51:59.000Z"
+      },
+      "subject": "build(deps): refresh the redis package audit",
+      "body": "",
+      "hash": "3707d04a95e3bd132c386142af8594efbcae39e9",
+      "committerDate": "2026-10-30T14:51:59.000Z",
+      "message": "build(deps): refresh the redis package audit",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "8dab941bb1efd3f02e02cd09dd6149e78776c9af",
+        "short": "8dab941"
+      },
+      "tree": {
+        "long": "17d3ad5d3d289b1fbdd2bd66af3c0e2fb3af0480",
+        "short": "17d3ad5"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T14:50:31.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T14:50:31.000Z"
+      },
+      "subject": "build(deps): update redis to the latest stable patch",
+      "body": "",
+      "hash": "8dab941bb1efd3f02e02cd09dd6149e78776c9af",
+      "committerDate": "2026-10-30T14:50:31.000Z",
+      "message": "build(deps): update redis to the latest stable patch",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "0829062f01611d0f9a5269544293faf68cdb98dc",
+        "short": "0829062"
+      },
+      "tree": {
+        "long": "c4bfd1a43f09b1c6b07094863f64b636921b1637",
+        "short": "c4bfd1a"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T14:48:18.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T14:48:18.000Z"
+      },
+      "subject": "fix(ci): isolate attachment fixtures and parallelize validation",
+      "body": "Keep the default attachment context bound to the actual process environment.\nRequire both parallel validation jobs to pass the existing required status.\nAllow package qualification enough time and align the SDK fallback.\n",
+      "hash": "0829062f01611d0f9a5269544293faf68cdb98dc",
+      "committerDate": "2026-10-30T14:48:18.000Z",
+      "message": "fix(ci): isolate attachment fixtures and parallelize validation\n\nKeep the default attachment context bound to the actual process environment.\nRequire both parallel validation jobs to pass the existing required status.\nAllow package qualification enough time and align the SDK fallback.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "bdd369c9544af78b1b975c0230f75a753fa4433b",
+        "short": "bdd369c"
+      },
+      "tree": {
+        "long": "6e5038562adee209726c5bab34a7f39044d8eff1",
+        "short": "6e50385"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:48:30.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:48:30.000Z"
+      },
+      "subject": "build: sync local changes via /pushall",
+      "body": "Co-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "bdd369c9544af78b1b975c0230f75a753fa4433b",
+      "committerDate": "2026-10-30T13:48:30.000Z",
+      "message": "build: sync local changes via /pushall\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "6360bfcab4b4c9dbe8f514c61be8ea898a0b4b36",
+        "short": "6360bfc"
+      },
+      "tree": {
+        "long": "7fd6bdd25901aa1eaaaa15090748334f8b63999e",
+        "short": "7fd6bdd"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:46:25.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:46:25.000Z"
+      },
+      "subject": "fix(test): honor the retained host stop protocol",
+      "body": "Keep the dummy AppHost alive on EOF until the explicit stop command,\nmatching the real retained AppHost behavior.\nExercise EOF before cancellation while preserving durable-publication\nand live-process assertions.\n",
+      "hash": "6360bfcab4b4c9dbe8f514c61be8ea898a0b4b36",
+      "committerDate": "2026-10-30T13:46:25.000Z",
+      "message": "fix(test): honor the retained host stop protocol\n\nKeep the dummy AppHost alive on EOF until the explicit stop command,\nmatching the real retained AppHost behavior.\nExercise EOF before cancellation while preserving durable-publication\nand live-process assertions.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "84ac6d3f0714491d818bfd03d3a659494c6786ea",
+        "short": "84ac6d3"
+      },
+      "tree": {
+        "long": "7511d1bf127a366331fd877dd1820fa80e132be5",
+        "short": "7511d1b"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:42:57.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:42:57.000Z"
+      },
+      "subject": "fix(module): finish attached-run withdrawal review fixes",
+      "body": "Stop non-attachable session AppHosts before cleanup and report each\ncleanup recording failure (HXT008) once per result. Verify the ready\nsession's locality against the recorded owner execution context, and keep\ndelayed native fixtures within their execution limit.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n",
+      "hash": "84ac6d3f0714491d818bfd03d3a659494c6786ea",
+      "committerDate": "2026-10-30T13:42:57.000Z",
+      "message": "fix(module): finish attached-run withdrawal review fixes\n\nStop non-attachable session AppHosts before cleanup and report each\ncleanup recording failure (HXT008) once per result. Verify the ready\nsession's locality against the recorded owner execution context, and keep\ndelayed native fixtures within their execution limit.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "7f5aa3ae59b6843b6d8c16fa46e338aaed3e2b1e",
+        "short": "7f5aa3a"
+      },
+      "tree": {
+        "long": "3ed713c2c518b604ad1e0bd91d2531c1bd24b612",
+        "short": "3ed713c"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:25:56.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:25:56.000Z"
+      },
+      "subject": "fix(test): align the native fixture sdk pin",
+      "body": "Match the VSTest fixture SDK to the repository global.json pin.\n",
+      "hash": "7f5aa3ae59b6843b6d8c16fa46e338aaed3e2b1e",
+      "committerDate": "2026-10-30T13:25:56.000Z",
+      "message": "fix(test): align the native fixture sdk pin\n\nMatch the VSTest fixture SDK to the repository global.json pin.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "ce2fe0f149fbeadae370c29e1d9f962fd25c6de8",
+        "short": "ce2fe0f"
+      },
+      "tree": {
+        "long": "91ebcd387e3398dc0a5439e24ddb3afee452bdca",
+        "short": "91ebcd3"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:09:37.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:09:37.000Z"
+      },
+      "subject": "build(deps): refresh host declaration audit",
+      "body": "",
+      "hash": "ce2fe0f149fbeadae370c29e1d9f962fd25c6de8",
+      "committerDate": "2026-10-30T13:09:37.000Z",
+      "message": "build(deps): refresh host declaration audit",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "6cee7b08c8ab96f31c1899d1404dc05b08c160ad",
+        "short": "6cee7b0"
+      },
+      "tree": {
+        "long": "eb75d2a6b7c734eeba1b520cd6720bd63125c89a",
+        "short": "eb75d2a"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:08:30.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T13:08:30.000Z"
+      },
+      "subject": "fix(ci): restore published host compatibility",
+      "body": "Document attachment admission with XML comments for RCS1181.\nCompile source-only EventStore APIs only for the mapped source host.\nKeep the published host sidecar authorization policy and refuse\nunsupported route catalogs before startup.\n",
+      "hash": "6cee7b08c8ab96f31c1899d1404dc05b08c160ad",
+      "committerDate": "2026-10-30T13:08:30.000Z",
+      "message": "fix(ci): restore published host compatibility\n\nDocument attachment admission with XML comments for RCS1181.\nCompile source-only EventStore APIs only for the mapped source host.\nKeep the published host sidecar authorization policy and refuse\nunsupported route catalogs before startup.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "3dfe5e3ec7d8df462b7d8230d2501c83a182d30c",
+        "short": "3dfe5e3"
+      },
+      "tree": {
+        "long": "5eef7596fbe53302b1b4d5bfaa3332daefcf9a13",
+        "short": "5eef759"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:31:55.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:31:55.000Z"
+      },
+      "subject": "build(deps): refresh commons and serialization package audit",
+      "body": "",
+      "hash": "3dfe5e3ec7d8df462b7d8230d2501c83a182d30c",
+      "committerDate": "2026-10-30T12:31:55.000Z",
+      "message": "build(deps): refresh commons and serialization package audit",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "d5e1b02f656f6190fcc34b5f0f8baa2262f21ce1",
+        "short": "d5e1b02"
+      },
+      "tree": {
+        "long": "b4e5e87a7ffeffe50d5433673dbc0446f1a8c785",
+        "short": "b4e5e87"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:29:58.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:29:58.000Z"
+      },
+      "subject": "build(deps): refresh commons and serialization package audit",
+      "body": "",
+      "hash": "d5e1b02f656f6190fcc34b5f0f8baa2262f21ce1",
+      "committerDate": "2026-10-30T12:29:58.000Z",
+      "message": "build(deps): refresh commons and serialization package audit",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "4cb3e9ac9e1faaa727bf91f1142feeef6ddecf65",
+        "short": "4cb3e9a"
+      },
+      "tree": {
+        "long": "4d819eda7b719ae9821ee09a2e9a43aa3ddd1cb0",
+        "short": "4d819ed"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:28:10.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:29:58.000Z"
+      },
+      "subject": "fix(deps): consume the latest commons and serialization packages",
+      "body": "Update the shared Commons family to 2.30.4 and PolymorphicSerializations to 1.19.6.\nRefresh npm lockfile dependencies within the declared version ranges.\n",
+      "hash": "4cb3e9ac9e1faaa727bf91f1142feeef6ddecf65",
+      "committerDate": "2026-10-30T12:29:58.000Z",
+      "message": "fix(deps): consume the latest commons and serialization packages\n\nUpdate the shared Commons family to 2.30.4 and PolymorphicSerializations to 1.19.6.\nRefresh npm lockfile dependencies within the declared version ranges.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "d409ba1cba8736592a957b9c06717d1bd9e2eae3",
+        "short": "d409ba1"
+      },
+      "tree": {
+        "long": "86171b49c4d03d7d8fd7fd5b148ff441d177f457",
+        "short": "86171b4"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:27:11.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:27:11.000Z"
+      },
+      "subject": "fix: stop non-attachable sessions before cleanup so the AppHost cannot stay running",
+      "body": "",
+      "hash": "d409ba1cba8736592a957b9c06717d1bd9e2eae3",
+      "committerDate": "2026-10-30T12:27:11.000Z",
+      "message": "fix: stop non-attachable sessions before cleanup so the AppHost cannot stay running",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "25dae308a5cfc954345f5f6ac7e090ca3dc1dd71",
+        "short": "25dae30"
+      },
+      "tree": {
+        "long": "c9a88044b98a28e3c56d46924fb2dc0d95e69c9f",
+        "short": "c9a8804"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:20:55.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:20:55.000Z"
+      },
+      "subject": "test: record story 3.1 source fingerprints at the retained Builds head",
+      "body": "",
+      "hash": "25dae308a5cfc954345f5f6ac7e090ca3dc1dd71",
+      "committerDate": "2026-10-30T12:20:55.000Z",
+      "message": "test: record story 3.1 source fingerprints at the retained Builds head",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "632474cb3fee7a09ccf89ea6eef5ade11b0466df",
+        "short": "632474c"
+      },
+      "tree": {
+        "long": "bf3c644c04eb1c76a354493bab94790c3b62020c",
+        "short": "bf3c644"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:19:40.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:19:40.000Z"
+      },
+      "subject": "fix: select the mapped Builds EventStore host and bound writer cutover to startup",
+      "body": "",
+      "hash": "632474cb3fee7a09ccf89ea6eef5ade11b0466df",
+      "committerDate": "2026-10-30T12:19:40.000Z",
+      "message": "fix: select the mapped Builds EventStore host and bound writer cutover to startup",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "d080758ebb90cae67a122237da35bd2b9bdee4cc",
+        "short": "d080758"
+      },
+      "tree": {
+        "long": "869b9897f33121d2de3bf570845c9775e04d8275",
+        "short": "869b989"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:16:33.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T12:16:33.000Z"
+      },
+      "subject": "fix: require exact candidate release authority before composition ownership",
+      "body": "",
+      "hash": "d080758ebb90cae67a122237da35bd2b9bdee4cc",
+      "committerDate": "2026-10-30T12:16:33.000Z",
+      "message": "fix: require exact candidate release authority before composition ownership",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "b8d1952696963af1492a9aa5c513f42aabb27ee2",
+        "short": "b8d1952"
+      },
+      "tree": {
+        "long": "e07ab8893d3cafd487a853ca66cca8c3c300d720",
+        "short": "e07ab88"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:54:40.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:54:40.000Z"
+      },
+      "subject": "fix: materialize source-mapped platform catalogs for module hosts",
+      "body": "",
+      "hash": "b8d1952696963af1492a9aa5c513f42aabb27ee2",
+      "committerDate": "2026-10-30T11:54:40.000Z",
+      "message": "fix: materialize source-mapped platform catalogs for module hosts",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "e10d259b9e563624f781f390fbdcb879173d871f",
+        "short": "e10d259"
+      },
+      "tree": {
+        "long": "ce0160785ca158be5ec493b1ac27aa33ba344063",
+        "short": "ce01607"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:48:18.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:48:18.000Z"
+      },
+      "subject": "fix(module): finish attachment withdrawal cleanup regressions",
+      "body": "",
+      "hash": "e10d259b9e563624f781f390fbdcb879173d871f",
+      "committerDate": "2026-10-30T11:48:18.000Z",
+      "message": "fix(module): finish attachment withdrawal cleanup regressions",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "4be4b28d90c992d5aaedaf32ea036556e236057e",
+        "short": "4be4b28"
+      },
+      "tree": {
+        "long": "da003fede01dd1e6e93c5405a6c377377c45c0f7",
+        "short": "da003fe"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:28:04.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:28:04.000Z"
+      },
+      "subject": "test: record attachment cleanup review evidence",
+      "body": "",
+      "hash": "4be4b28d90c992d5aaedaf32ea036556e236057e",
+      "committerDate": "2026-10-30T11:28:04.000Z",
+      "message": "test: record attachment cleanup review evidence",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "c7b16ec02ddff114d5ccc7863d20d5d4dc29f7bf",
+        "short": "c7b16ec"
+      },
+      "tree": {
+        "long": "e06311b4e0aa4142e63890f928e5aa261efdb80c",
+        "short": "e06311b"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:26:50.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:26:50.000Z"
+      },
+      "subject": "fix: continue owner cleanup when attachments cannot be held",
+      "body": "",
+      "hash": "c7b16ec02ddff114d5ccc7863d20d5d4dc29f7bf",
+      "committerDate": "2026-10-30T11:26:50.000Z",
+      "message": "fix: continue owner cleanup when attachments cannot be held",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "7f7b64056812c12f926c91de4543cdee0a9ee813",
+        "short": "7f7b640"
+      },
+      "tree": {
+        "long": "371c03719709a01dd0e31e68e2a10cc2134e76f2",
+        "short": "371c037"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:25:01.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:25:01.000Z"
+      },
+      "subject": "fix: refresh package version audit after catalog declaration changes",
+      "body": "Co-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "7f7b64056812c12f926c91de4543cdee0a9ee813",
+      "committerDate": "2026-10-30T11:25:01.000Z",
+      "message": "fix: refresh package version audit after catalog declaration changes\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "5e24c8b2d2fa766274a29219bfcfbd74a4c77a28",
+        "short": "5e24c8b"
+      },
+      "tree": {
+        "long": "54871cd659b618fc31d63dbe61d117563015d6e6",
+        "short": "54871cd"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:13:09.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:13:09.000Z"
+      },
+      "subject": "build: merge origin/main into main via pushall follow-up",
+      "body": "",
+      "hash": "5e24c8b2d2fa766274a29219bfcfbd74a4c77a28",
+      "committerDate": "2026-10-30T11:13:09.000Z",
+      "message": "build: merge origin/main into main via pushall follow-up",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "4dc24c9a1f8d18dc36ecf685c2c799858f7d6368",
+        "short": "4dc24c9"
+      },
+      "tree": {
+        "long": "6179f14e4cb36b40c20d0fc517c147c899e5c795",
+        "short": "6179f14"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:13:09.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:13:09.000Z"
+      },
+      "subject": "build: sync local changes via /pushall",
+      "body": "",
+      "hash": "4dc24c9a1f8d18dc36ecf685c2c799858f7d6368",
+      "committerDate": "2026-10-30T11:13:09.000Z",
+      "message": "build: sync local changes via /pushall",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "f826e0b42c94a3ef288416eaaae78ffd2ec31ece",
+        "short": "f826e0b"
+      },
+      "tree": {
+        "long": "8219b08289bc45b0bb5bc10b5267d30f11359e69",
+        "short": "8219b08"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:10:39.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T11:10:39.000Z"
+      },
+      "subject": "build: sync local changes via /pushall",
+      "body": "",
+      "hash": "f826e0b42c94a3ef288416eaaae78ffd2ec31ece",
+      "committerDate": "2026-10-30T11:10:39.000Z",
+      "message": "build: sync local changes via /pushall",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "144af4c6ccfacdc4f5eaff5823093e5a403e8c69",
+        "short": "144af4c"
+      },
+      "tree": {
+        "long": "dbb6864c0a0af073ffb3cc5426db2d9ffa103bad",
+        "short": "dbb6864"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T09:37:49.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T09:37:49.000Z"
+      },
+      "subject": "build: merge origin/main into main",
+      "body": "",
+      "hash": "144af4c6ccfacdc4f5eaff5823093e5a403e8c69",
+      "committerDate": "2026-10-30T09:37:49.000Z",
+      "message": "build: merge origin/main into main",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "c13b50975508d635e898c8c4ddaeca8f38da8d90",
+        "short": "c13b509"
+      },
+      "tree": {
+        "long": "2bb85eb04bdc33a113c7d41c53699747d163011f",
+        "short": "2bb85eb"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T09:37:35.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T09:37:35.000Z"
+      },
+      "subject": "build: merge origin/main into main",
+      "body": "",
+      "hash": "c13b50975508d635e898c8c4ddaeca8f38da8d90",
+      "committerDate": "2026-10-30T09:37:35.000Z",
+      "message": "build: merge origin/main into main",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "74b8723a708e7851d47455630ea86b518391efd6",
+        "short": "74b8723"
+      },
+      "tree": {
+        "long": "27605dff1a1e899292b7ee1af9ab63cf722acb68",
+        "short": "27605df"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T09:37:31.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T09:37:31.000Z"
+      },
+      "subject": "fix(ci): remove candidate wiring from domain-ci",
+      "body": "GitHub validates called-workflow job permissions before evaluating if:, so\nthe opt-in candidate jobs requesting id-token: write broke every @main\ncaller that grants only contents: read with startup_failure.\ncandidate-policy.yml stays a standalone reusable workflow; a separate\nopt-in consumer workflow follows with live issuer enrollment.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n",
+      "hash": "74b8723a708e7851d47455630ea86b518391efd6",
+      "committerDate": "2026-10-30T09:37:31.000Z",
+      "message": "fix(ci): remove candidate wiring from domain-ci\n\nGitHub validates called-workflow job permissions before evaluating if:, so\nthe opt-in candidate jobs requesting id-token: write broke every @main\ncaller that grants only contents: read with startup_failure.\ncandidate-policy.yml stays a standalone reusable workflow; a separate\nopt-in consumer workflow follows with live issuer enrollment.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "70ac3de6328157547096e025140c11144b1cd86f",
+        "short": "70ac3de"
+      },
+      "tree": {
+        "long": "3f3816b7374470aeff8339172d13b1512dafdeeb",
+        "short": "3f3816b"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T09:04:36.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T09:04:36.000Z"
+      },
+      "subject": "feat(module): enforce candidate selection policy",
+      "body": "Harden authenticated CI selection and immutable evidence bindings.\n",
+      "hash": "70ac3de6328157547096e025140c11144b1cd86f",
+      "committerDate": "2026-10-30T09:04:36.000Z",
+      "message": "feat(module): enforce candidate selection policy\n\nHarden authenticated CI selection and immutable evidence bindings.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "1884a88ab80d3d0ae80c09a5ed9dfe23867d9fb9",
+        "short": "1884a88"
+      },
+      "tree": {
+        "long": "48a63dfd617a369e9e97c43effd724ec4cf50264",
+        "short": "48a63df"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T07:57:56.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T07:57:56.000Z"
+      },
+      "subject": "feat(module): gate runs with the candidate selection policy",
+      "body": "",
+      "hash": "1884a88ab80d3d0ae80c09a5ed9dfe23867d9fb9",
+      "committerDate": "2026-10-30T07:57:56.000Z",
+      "message": "feat(module): gate runs with the candidate selection policy",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "64949791383203c358a685d3b132b1fceed67742",
+        "short": "6494979"
+      },
+      "tree": {
+        "long": "a38b624fc1c4a12b37324e55037c365f63adc294",
+        "short": "a38b624"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T07:49:53.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T07:49:53.000Z"
+      },
+      "subject": "docs: define image and dependency vulnerability policy",
+      "body": "",
+      "hash": "64949791383203c358a685d3b132b1fceed67742",
+      "committerDate": "2026-10-30T07:49:53.000Z",
+      "message": "docs: define image and dependency vulnerability policy",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "0b17f8022cdc23b8b242b000f5b2aa15580184ac",
+        "short": "0b17f80"
+      },
+      "tree": {
+        "long": "a1aea6c41bba97d7a3ba397b941395d67451fc14",
+        "short": "a1aea6c"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T07:10:43.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T07:10:43.000Z"
+      },
+      "subject": "test(module): preserve final withdrawal review logs",
+      "body": "",
+      "hash": "0b17f8022cdc23b8b242b000f5b2aa15580184ac",
+      "committerDate": "2026-10-30T07:10:43.000Z",
+      "message": "test(module): preserve final withdrawal review logs",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "ba81bb1a1fccc1b20305de4a05a60de19a65ef66",
+        "short": "ba81bb1"
+      },
+      "tree": {
+        "long": "46e05f37e4e97f7c82a14026ecdeb3d3556863a6",
+        "short": "46e05f3"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T07:10:03.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T07:10:03.000Z"
+      },
+      "subject": "fix(module): harden attachment withdrawal reporting and retention",
+      "body": "",
+      "hash": "ba81bb1a1fccc1b20305de4a05a60de19a65ef66",
+      "committerDate": "2026-10-30T07:10:03.000Z",
+      "message": "fix(module): harden attachment withdrawal reporting and retention",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "4d93e4fdec4f0e3805a42f4206bc0c8ddb92ac26",
+        "short": "4d93e4f"
+      },
+      "tree": {
+        "long": "14fb42c9696084e93830978ecc16c79c9789e183",
+        "short": "14fb42c"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:35:43.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:36:10.000Z"
+      },
+      "subject": "fix(module): refuse attachments while cleanup is pending",
+      "body": "",
+      "hash": "4d93e4fdec4f0e3805a42f4206bc0c8ddb92ac26",
+      "committerDate": "2026-10-30T06:36:10.000Z",
+      "message": "fix(module): refuse attachments while cleanup is pending",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "157b4dacdd90148de76e576396f61dd5859556f3",
+        "short": "157b4da"
+      },
+      "tree": {
+        "long": "047afb81503d11516995a4653762524a3caf5ad1",
+        "short": "047afb8"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:29:12.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:29:12.000Z"
+      },
+      "subject": "test(module): retain attachment withdrawal verification evidence",
+      "body": "",
+      "hash": "157b4dacdd90148de76e576396f61dd5859556f3",
+      "committerDate": "2026-10-30T06:29:12.000Z",
+      "message": "test(module): retain attachment withdrawal verification evidence",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "a13d7972395f989955cf00f1047f1ba50b1a6b73",
+        "short": "a13d797"
+      },
+      "tree": {
+        "long": "5b3e4e2986414362b299e530c97b118f6752066a",
+        "short": "5b3e4e2"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:25:22.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:25:28.000Z"
+      },
+      "subject": "feat(module): record attachment outcomes and retain failed environments",
+      "body": "Co-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "a13d7972395f989955cf00f1047f1ba50b1a6b73",
+      "committerDate": "2026-10-30T06:25:28.000Z",
+      "message": "feat(module): record attachment outcomes and retain failed environments\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "184a79ab92ef69d53281518e71d9f1587e443c43",
+        "short": "184a79a"
+      },
+      "tree": {
+        "long": "78f9dcd54bbf1a55e72358bbc4ccaf70f1a7d010",
+        "short": "78f9dcd"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:23:23.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:23:23.000Z"
+      },
+      "subject": "build: merge fix/story13-6-root-catalog-fallback into main via /pushall",
+      "body": "",
+      "hash": "184a79ab92ef69d53281518e71d9f1587e443c43",
+      "committerDate": "2026-10-30T06:23:23.000Z",
+      "message": "build: merge fix/story13-6-root-catalog-fallback into main via /pushall",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "f0a25a183bd5952570af2487bff3b8570dcd892f",
+        "short": "f0a25a1"
+      },
+      "tree": {
+        "long": "3b6ee4e307141daa3fa5ddbb33a16cb815477389",
+        "short": "3b6ee4e"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:23:13.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:23:13.000Z"
+      },
+      "subject": "build: refresh frontcomposer catalog audit after merge",
+      "body": "",
+      "hash": "f0a25a183bd5952570af2487bff3b8570dcd892f",
+      "committerDate": "2026-10-30T06:23:13.000Z",
+      "message": "build: refresh frontcomposer catalog audit after merge",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "3cb58082331b2c7ee1ac4bb65d18df9cc9880f89",
+        "short": "3cb5808"
+      },
+      "tree": {
+        "long": "0afd370668603714f1bfa0336128557070f2c063",
+        "short": "0afd370"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:22:36.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T06:22:36.000Z"
+      },
+      "subject": "build: merge fix/parties-contracts-ui-catalog into main via /pushall",
+      "body": "",
+      "hash": "3cb58082331b2c7ee1ac4bb65d18df9cc9880f89",
+      "committerDate": "2026-10-30T06:22:36.000Z",
+      "message": "build: merge fix/parties-contracts-ui-catalog into main via /pushall",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "2980efdf51f305dc5c39bb854261c252d13465f5",
+        "short": "2980efd"
+      },
+      "tree": {
+        "long": "05d7d955d7e783d4a89e8b412c3c11c9494af99b",
+        "short": "05d7d95"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T05:49:59.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T05:49:59.000Z"
+      },
+      "subject": "build: merge origin/dependabot/github_actions/github/codeql-action-4.39.1 into main via /pushall",
+      "body": "Co-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "2980efdf51f305dc5c39bb854261c252d13465f5",
+      "committerDate": "2026-10-30T05:49:59.000Z",
+      "message": "build: merge origin/dependabot/github_actions/github/codeql-action-4.39.1 into main via /pushall\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "51e0b6d4561f4a37ed69495629fd8aa0f982caac",
+        "short": "51e0b6d"
+      },
+      "tree": {
+        "long": "d3fcdf3fffa4409eee7b4ba68daabea3e146ca99",
+        "short": "d3fcdf3"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T05:49:59.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T05:49:59.000Z"
+      },
+      "subject": "build: merge origin/dependabot/github_actions/actions/setup-node-7.1.0 into main via /pushall",
+      "body": "Co-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "51e0b6d4561f4a37ed69495629fd8aa0f982caac",
+      "committerDate": "2026-10-30T05:49:59.000Z",
+      "message": "build: merge origin/dependabot/github_actions/actions/setup-node-7.1.0 into main via /pushall\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "788e133f21e41c5a6f82898048f32c2ce308c3d6",
+        "short": "788e133"
+      },
+      "tree": {
+        "long": "6e7714725126f5861b371bbaec1fd0c852734f58",
+        "short": "6e77147"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T05:49:59.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T05:49:59.000Z"
+      },
+      "subject": "build: merge origin/dependabot/github_actions/Hexalith/Hexalith.Builds/Github/initialize-build-4.38.0 into main via /pushall",
+      "body": "Co-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "788e133f21e41c5a6f82898048f32c2ce308c3d6",
+      "committerDate": "2026-10-30T05:49:59.000Z",
+      "message": "build: merge origin/dependabot/github_actions/Hexalith/Hexalith.Builds/Github/initialize-build-4.38.0 into main via /pushall\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "7d0f8b189f57dd3059faf27772922f5b0eae5595",
+        "short": "7d0f8b1"
+      },
+      "tree": {
+        "long": "659477c21f1bf790ad09d3d2a8470fa455319d5a",
+        "short": "659477c"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T05:49:59.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T05:49:59.000Z"
+      },
+      "subject": "build: merge origin/dependabot/github_actions/Hexalith/Hexalith.Builds/Github/dapr-init-4.38.0 into main via /pushall",
+      "body": "Co-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "7d0f8b189f57dd3059faf27772922f5b0eae5595",
+      "committerDate": "2026-10-30T05:49:59.000Z",
+      "message": "build: merge origin/dependabot/github_actions/Hexalith/Hexalith.Builds/Github/dapr-init-4.38.0 into main via /pushall\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "0e8d51bb5ff958230794b23663bb2c1370443973",
+        "short": "0e8d51b"
+      },
+      "tree": {
+        "long": "89209c941583017763261bf2b1026997a58ebdd1",
+        "short": "89209c9"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T05:49:59.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-30T05:49:59.000Z"
+      },
+      "subject": "build: merge origin/dependabot/github_actions/Github/publish-container-to-registry/docker/login-action-4.7.0 into main via /pushall",
+      "body": "Co-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "0e8d51bb5ff958230794b23663bb2c1370443973",
+      "committerDate": "2026-10-30T05:49:59.000Z",
+      "message": "build: merge origin/dependabot/github_actions/Github/publish-container-to-registry/docker/login-action-4.7.0 into main via /pushall\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "d2036619e24572fcc6dd2af09a48bdbd4c01befb",
+        "short": "d203661"
+      },
+      "tree": {
+        "long": "89209c941583017763261bf2b1026997a58ebdd1",
+        "short": "89209c9"
+      },
+      "author": {
+        "name": "dependabot[bot]",
+        "email": "49699333+dependabot[bot]@users.noreply.github.com",
+        "date": "2026-10-29T23:07:02.000Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-10-29T23:07:02.000Z"
+      },
+      "subject": "ci(deps): bump docker/login-action",
+      "body": "Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0.\n- [Release notes](https://github.com/docker/login-action/releases)\n- [Commits](https://github.com/docker/login-action/compare/v4.6.0...v4.7.0)\n\n---\nupdated-dependencies:\n- dependency-name: docker/login-action\n  dependency-version: 4.7.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+      "hash": "d2036619e24572fcc6dd2af09a48bdbd4c01befb",
+      "committerDate": "2026-10-29T23:07:02.000Z",
+      "message": "ci(deps): bump docker/login-action\n\nBumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0.\n- [Release notes](https://github.com/docker/login-action/releases)\n- [Commits](https://github.com/docker/login-action/compare/v4.6.0...v4.7.0)\n\n---\nupdated-dependencies:\n- dependency-name: docker/login-action\n  dependency-version: 4.7.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "37c49e1c5ce65ad77bbf0bd97295dcafd4f95029",
+        "short": "37c49e1"
+      },
+      "tree": {
+        "long": "5b1bca28d6e5d386e79bd2fbc1a5bcda679a72ef",
+        "short": "5b1bca2"
+      },
+      "author": {
+        "name": "dependabot[bot]",
+        "email": "49699333+dependabot[bot]@users.noreply.github.com",
+        "date": "2026-10-29T23:06:36.000Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-10-29T23:06:36.000Z"
+      },
+      "subject": "ci(deps): bump actions/setup-node from 7.0.0 to 7.1.0",
+      "body": "Bumps [actions/setup-node](https://github.com/actions/setup-node) from 7.0.0 to 7.1.0.\n- [Release notes](https://github.com/actions/setup-node/releases)\n- [Commits](https://github.com/actions/setup-node/compare/v7...v7.1.0)\n\n---\nupdated-dependencies:\n- dependency-name: actions/setup-node\n  dependency-version: 7.1.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+      "hash": "37c49e1c5ce65ad77bbf0bd97295dcafd4f95029",
+      "committerDate": "2026-10-29T23:06:36.000Z",
+      "message": "ci(deps): bump actions/setup-node from 7.0.0 to 7.1.0\n\nBumps [actions/setup-node](https://github.com/actions/setup-node) from 7.0.0 to 7.1.0.\n- [Release notes](https://github.com/actions/setup-node/releases)\n- [Commits](https://github.com/actions/setup-node/compare/v7...v7.1.0)\n\n---\nupdated-dependencies:\n- dependency-name: actions/setup-node\n  dependency-version: 7.1.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "76511969083ccb4514d51f758df07809db3cd6eb",
+        "short": "7651196"
+      },
+      "tree": {
+        "long": "da3757e61e8550af4f8b5820310fea2a0685bac2",
+        "short": "da3757e"
+      },
+      "author": {
+        "name": "dependabot[bot]",
+        "email": "49699333+dependabot[bot]@users.noreply.github.com",
+        "date": "2026-10-29T23:06:29.000Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-10-29T23:06:29.000Z"
+      },
+      "subject": "ci(deps): bump github/codeql-action from 4.39.0 to 4.39.1",
+      "body": "Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.\n- [Release notes](https://github.com/github/codeql-action/releases)\n- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/github/codeql-action/compare/v4.39.0...v4.39.1)\n\n---\nupdated-dependencies:\n- dependency-name: github/codeql-action\n  dependency-version: 4.39.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+      "hash": "76511969083ccb4514d51f758df07809db3cd6eb",
+      "committerDate": "2026-10-29T23:06:29.000Z",
+      "message": "ci(deps): bump github/codeql-action from 4.39.0 to 4.39.1\n\nBumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.\n- [Release notes](https://github.com/github/codeql-action/releases)\n- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/github/codeql-action/compare/v4.39.0...v4.39.1)\n\n---\nupdated-dependencies:\n- dependency-name: github/codeql-action\n  dependency-version: 4.39.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "d60ac12fe9062637de700462264e700cde1291bd",
+        "short": "d60ac12"
+      },
+      "tree": {
+        "long": "2ec39ccbad8cef99488b0fe89062bbf85ef7c7eb",
+        "short": "2ec39cc"
+      },
+      "author": {
+        "name": "dependabot[bot]",
+        "email": "49699333+dependabot[bot]@users.noreply.github.com",
+        "date": "2026-10-29T23:05:32.000Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-10-29T23:05:32.000Z"
+      },
+      "subject": "ci(deps): bump Hexalith/Hexalith.Builds/Github/dapr-init",
+      "body": "Bumps [Hexalith/Hexalith.Builds/Github/dapr-init](https://github.com/hexalith/hexalith.builds) from 4.35.0 to 4.38.0.\n- [Release notes](https://github.com/hexalith/hexalith.builds/releases)\n- [Changelog](https://github.com/Hexalith/Hexalith.Builds/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/hexalith/hexalith.builds/compare/fff4a212180d8cd1c5c0759655a9bc4fb6963c45...e171c5a788eab183b32683431b084198c9b8d373)\n\n---\nupdated-dependencies:\n- dependency-name: Hexalith/Hexalith.Builds/Github/dapr-init\n  dependency-version: 4.38.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+      "hash": "d60ac12fe9062637de700462264e700cde1291bd",
+      "committerDate": "2026-10-29T23:05:32.000Z",
+      "message": "ci(deps): bump Hexalith/Hexalith.Builds/Github/dapr-init\n\nBumps [Hexalith/Hexalith.Builds/Github/dapr-init](https://github.com/hexalith/hexalith.builds) from 4.35.0 to 4.38.0.\n- [Release notes](https://github.com/hexalith/hexalith.builds/releases)\n- [Changelog](https://github.com/Hexalith/Hexalith.Builds/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/hexalith/hexalith.builds/compare/fff4a212180d8cd1c5c0759655a9bc4fb6963c45...e171c5a788eab183b32683431b084198c9b8d373)\n\n---\nupdated-dependencies:\n- dependency-name: Hexalith/Hexalith.Builds/Github/dapr-init\n  dependency-version: 4.38.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "87e8dc85cb31bbfbc354911ce9f1940022a9059f",
+        "short": "87e8dc8"
+      },
+      "tree": {
+        "long": "31647fcd3c0c3e8a2a4fe02d1f6147fb92790eb0",
+        "short": "31647fc"
+      },
+      "author": {
+        "name": "dependabot[bot]",
+        "email": "49699333+dependabot[bot]@users.noreply.github.com",
+        "date": "2026-10-29T23:05:27.000Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-10-29T23:05:27.000Z"
+      },
+      "subject": "ci(deps): bump Hexalith/Hexalith.Builds/Github/initialize-build",
+      "body": "Bumps [Hexalith/Hexalith.Builds/Github/initialize-build](https://github.com/hexalith/hexalith.builds) from 4.35.0 to 4.38.0.\n- [Release notes](https://github.com/hexalith/hexalith.builds/releases)\n- [Changelog](https://github.com/Hexalith/Hexalith.Builds/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/hexalith/hexalith.builds/compare/fff4a212180d8cd1c5c0759655a9bc4fb6963c45...e171c5a788eab183b32683431b084198c9b8d373)\n\n---\nupdated-dependencies:\n- dependency-name: Hexalith/Hexalith.Builds/Github/initialize-build\n  dependency-version: 4.38.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+      "hash": "87e8dc85cb31bbfbc354911ce9f1940022a9059f",
+      "committerDate": "2026-10-29T23:05:27.000Z",
+      "message": "ci(deps): bump Hexalith/Hexalith.Builds/Github/initialize-build\n\nBumps [Hexalith/Hexalith.Builds/Github/initialize-build](https://github.com/hexalith/hexalith.builds) from 4.35.0 to 4.38.0.\n- [Release notes](https://github.com/hexalith/hexalith.builds/releases)\n- [Changelog](https://github.com/Hexalith/Hexalith.Builds/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/hexalith/hexalith.builds/compare/fff4a212180d8cd1c5c0759655a9bc4fb6963c45...e171c5a788eab183b32683431b084198c9b8d373)\n\n---\nupdated-dependencies:\n- dependency-name: Hexalith/Hexalith.Builds/Github/initialize-build\n  dependency-version: 4.38.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "84422f2342ee7d52dfbd4782af80ff4dbf0e4b8d",
+        "short": "84422f2"
+      },
+      "tree": {
+        "long": "b9f9dc7d67dd0389e3d33ad7273ea8a97d278fa7",
+        "short": "b9f9dc7"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T13:44:37.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T13:44:37.000Z"
+      },
+      "subject": "build: merge remote main and preserve local catalog history",
+      "body": "",
+      "hash": "84422f2342ee7d52dfbd4782af80ff4dbf0e4b8d",
+      "committerDate": "2026-10-29T13:44:37.000Z",
+      "message": "build: merge remote main and preserve local catalog history",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "81225bcb6151c38ae891abd9110af17385e1b3b9",
+        "short": "81225bc"
+      },
+      "tree": {
+        "long": "3910577df3eff908bba3695cdc0ac65e0a2c1e25",
+        "short": "3910577"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T12:46:13.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T12:46:13.000Z"
+      },
+      "subject": "build(deps): refresh the FrontComposer catalog audit",
+      "body": "",
+      "hash": "81225bcb6151c38ae891abd9110af17385e1b3b9",
+      "committerDate": "2026-10-29T12:46:13.000Z",
+      "message": "build(deps): refresh the FrontComposer catalog audit",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "11ef2cab441433c5fe25a2fb3ddcfc282e3a7f0e",
+        "short": "11ef2ca"
+      },
+      "tree": {
+        "long": "41c7c4f4ec28a10b6b67b25d2a8874f291520f30",
+        "short": "41c7c4f"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T12:29:23.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T12:29:23.000Z"
+      },
+      "subject": "fix(deps): include FrontComposer UI contracts in the shared catalog",
+      "body": "",
+      "hash": "11ef2cab441433c5fe25a2fb3ddcfc282e3a7f0e",
+      "committerDate": "2026-10-29T12:29:23.000Z",
+      "message": "fix(deps): include FrontComposer UI contracts in the shared catalog",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "a9455fb3b57a65233020f4b3fc61426514521d7c",
+        "short": "a9455fb"
+      },
+      "tree": {
+        "long": "79895d76071c50ed8e95ecbd0ebcf8e19f287fab",
+        "short": "79895d7"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T09:45:29.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T10:10:16.000Z"
+      },
+      "subject": "build: sync local changes via /pushall",
+      "body": "",
+      "hash": "a9455fb3b57a65233020f4b3fc61426514521d7c",
+      "committerDate": "2026-10-29T10:10:16.000Z",
+      "message": "build: sync local changes via /pushall",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "e38700b3a8de8ef57342688e9dfbbe3f573201ff",
+        "short": "e38700b"
+      },
+      "tree": {
+        "long": "b9f9dc7d67dd0389e3d33ad7273ea8a97d278fa7",
+        "short": "b9f9dc7"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T09:44:43.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T09:44:43.000Z"
+      },
+      "subject": "build: merge review/2-5-patches into main via /pushall",
+      "body": "",
+      "hash": "e38700b3a8de8ef57342688e9dfbbe3f573201ff",
+      "committerDate": "2026-10-29T09:44:43.000Z",
+      "message": "build: merge review/2-5-patches into main via /pushall",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "6e778381635bf829245aefae33b9fa1013bd1631",
+        "short": "6e77838"
+      },
+      "tree": {
+        "long": "82346db58d3bf2b72d9c2a9095b39df11326dab4",
+        "short": "82346db"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T09:44:43.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T09:44:43.000Z"
+      },
+      "subject": "build: merge fix/story-2-6-review into main via /pushall",
+      "body": "",
+      "hash": "6e778381635bf829245aefae33b9fa1013bd1631",
+      "committerDate": "2026-10-29T09:44:43.000Z",
+      "message": "build: merge fix/story-2-6-review into main via /pushall",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "1a3bbc157843516f9d409dfc9fa3820687ac90bc",
+        "short": "1a3bbc1"
+      },
+      "tree": {
+        "long": "4066117af66daeaa12852586f7620cbe856ec533",
+        "short": "4066117"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T08:48:15.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T08:48:15.000Z"
+      },
+      "subject": "fix(test): refuse attach to CI owners and cover no-wait and human output",
+      "body": "Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n",
+      "hash": "1a3bbc157843516f9d409dfc9fa3820687ac90bc",
+      "committerDate": "2026-10-29T08:48:15.000Z",
+      "message": "fix(test): refuse attach to CI owners and cover no-wait and human output\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "ed64aae652f153001aa52ef839a74f9bda873df0",
+        "short": "ed64aae"
+      },
+      "tree": {
+        "long": "1b2d61ef4133d875845ba63bac0bf285f1508f3f",
+        "short": "1b2d61e"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T08:35:30.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T08:35:30.000Z"
+      },
+      "subject": "build: merge origin/main into main via /pushall follow-up",
+      "body": "",
+      "hash": "ed64aae652f153001aa52ef839a74f9bda873df0",
+      "committerDate": "2026-10-29T08:35:30.000Z",
+      "message": "build: merge origin/main into main via /pushall follow-up",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "4775fb72e3ca3c05059830733e31a98995818cb6",
+        "short": "4775fb7"
+      },
+      "tree": {
+        "long": "e6ee4755881b2d7e45e988352ad89d9b1ce84e23",
+        "short": "e6ee475"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T04:29:36.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T04:29:36.000Z"
+      },
+      "subject": "build(deps): refresh changed package audit",
+      "body": "Bind the audit to the current catalog and consumer declarations.\nRefresh Memories, Key Vault Secrets, and HotChocolate observations\nwhile retaining all other family observations and prior history.\n",
+      "hash": "4775fb72e3ca3c05059830733e31a98995818cb6",
+      "committerDate": "2026-10-29T04:29:36.000Z",
+      "message": "build(deps): refresh changed package audit\n\nBind the audit to the current catalog and consumer declarations.\nRefresh Memories, Key Vault Secrets, and HotChocolate observations\nwhile retaining all other family observations and prior history.",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "dddfc0b6c43b2cbb50cf52b9fddfc0ad0ee2f123",
+        "short": "dddfc0b"
+      },
+      "tree": {
+        "long": "435dae660bfab6e02478753c5e1d6f1129502357",
+        "short": "435dae6"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T04:28:09.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T04:28:09.000Z"
+      },
+      "subject": "build: sync AI Tools instructions",
+      "body": "",
+      "hash": "dddfc0b6c43b2cbb50cf52b9fddfc0ad0ee2f123",
+      "committerDate": "2026-10-29T04:28:09.000Z",
+      "message": "build: sync AI Tools instructions",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "afedcb2b814ceeb4884a445c13ae05375293b2a9",
+        "short": "afedcb2"
+      },
+      "tree": {
+        "long": "2b437cfb5dee2e613a5adb35bfbce63f4250999d",
+        "short": "2b437cf"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T04:26:04.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T04:26:04.000Z"
+      },
+      "subject": "fix: update versions",
+      "body": "",
+      "hash": "afedcb2b814ceeb4884a445c13ae05375293b2a9",
+      "committerDate": "2026-10-29T04:26:04.000Z",
+      "message": "fix: update versions",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "aa46f0c534206b4645b8d9eef08c9a90e1ab540e",
+        "short": "aa46f0c"
+      },
+      "tree": {
+        "long": "75a74134067a369c1808f852f803953a6073fe9a",
+        "short": "75a7413"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T03:48:45.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T03:48:45.000Z"
+      },
+      "subject": "build: merge origin/main to synchronize local changes",
+      "body": "",
+      "hash": "aa46f0c534206b4645b8d9eef08c9a90e1ab540e",
+      "committerDate": "2026-10-29T03:48:45.000Z",
+      "message": "build: merge origin/main to synchronize local changes",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "7581db8a28d7ab182c28cfe0d5361966359d5ddb",
+        "short": "7581db8"
+      },
+      "tree": {
+        "long": "177e427fae208b81e75126dea732ebba71325b0f",
+        "short": "177e427"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T03:37:59.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T03:37:59.000Z"
+      },
+      "subject": "build: sync local changes via /pushall",
+      "body": "",
+      "hash": "7581db8a28d7ab182c28cfe0d5361966359d5ddb",
+      "committerDate": "2026-10-29T03:37:59.000Z",
+      "message": "build: sync local changes via /pushall",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "4ebd4d869fe1d3958d73e586bcaa74bd86e2ce42",
+        "short": "4ebd4d8"
+      },
+      "tree": {
+        "long": "7f572428f62043eb558b745c6a6ed0e39c4b03ed",
+        "short": "7f57242"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T02:33:52.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T02:33:52.000Z"
+      },
+      "subject": "fix(test): check owner state and job on attach retries",
+      "body": "Run context and owner-state checks before retry lineage, decide owner state\nagain under the attachment lock, require a local owner for the failure-retained\nexception, treat corrupt attachment metadata as unverifiable, record expiry as\nthe end time of an expired hold, reject mixed attach options, and keep CI owners\nout of hold-deferred cleanup listings.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n",
+      "hash": "4ebd4d869fe1d3958d73e586bcaa74bd86e2ce42",
+      "committerDate": "2026-10-29T02:33:52.000Z",
+      "message": "fix(test): check owner state and job on attach retries\n\nRun context and owner-state checks before retry lineage, decide owner state\nagain under the attachment lock, require a local owner for the failure-retained\nexception, treat corrupt attachment metadata as unverifiable, record expiry as\nthe end time of an expired hold, reject mixed attach options, and keep CI owners\nout of hold-deferred cleanup listings.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "eb0332b1effef35fd3d07eb52c331e36ee59cac5",
+        "short": "eb0332b"
+      },
+      "tree": {
+        "long": "c1f0cd2e881c88179253cbb1a517b7f10611d6b7",
+        "short": "c1f0cd2"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T02:26:23.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-29T02:26:23.000Z"
+      },
+      "subject": "feat(test): attach a run to a compatible environment",
+      "body": "Add `hexalith-module attach` with explicit hold admission under\nhexalith.platform.candidate-and-attachment-policy.v1, persisted holds,\nlisting of attached runs and hold deadlines, published holds in results\nand descriptors, and owner success-cleanup that waits for live holds.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n",
+      "hash": "eb0332b1effef35fd3d07eb52c331e36ee59cac5",
+      "committerDate": "2026-10-29T02:26:23.000Z",
+      "message": "feat(test): attach a run to a compatible environment\n\nAdd `hexalith-module attach` with explicit hold admission under\nhexalith.platform.candidate-and-attachment-policy.v1, persisted holds,\nlisting of attached runs and hold deadlines, published holds in results\nand descriptors, and owner success-cleanup that waits for live holds.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "326af3d248974b5f3849ff667e97a5d61e3e3f30",
+        "short": "326af3d"
+      },
+      "tree": {
+        "long": "03622d2ce31a4c098f659c3e28c78813d09a9b21",
+        "short": "03622d2"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T19:44:30.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T19:44:30.000Z"
+      },
+      "subject": "build(audit): refresh FrontComposer catalog evidence",
+      "body": "",
+      "hash": "326af3d248974b5f3849ff667e97a5d61e3e3f30",
+      "committerDate": "2026-10-28T19:44:30.000Z",
+      "message": "build(audit): refresh FrontComposer catalog evidence",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "94d38129932f750a46adb7a0f6bb0b25b3415b23",
+        "short": "94d3812"
+      },
+      "tree": {
+        "long": "19414f7ba5b05cd5bb16d8950446cb53f36ec14d",
+        "short": "19414f7"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T19:15:28.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T19:15:28.000Z"
+      },
+      "subject": "fix(catalog): inherit FrontComposer UI contracts at the family version",
+      "body": "",
+      "hash": "94d38129932f750a46adb7a0f6bb0b25b3415b23",
+      "committerDate": "2026-10-28T19:15:28.000Z",
+      "message": "fix(catalog): inherit FrontComposer UI contracts at the family version",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "e909ffd9fe9a6097e36d932010b983d029396968",
+        "short": "e909ffd"
+      },
+      "tree": {
+        "long": "01d5cbc3f90bceda5878853e91fb773ce1b994ae",
+        "short": "01d5cbc"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T16:55:39.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T16:55:39.000Z"
+      },
+      "subject": "fix: domain ci",
+      "body": "",
+      "hash": "e909ffd9fe9a6097e36d932010b983d029396968",
+      "committerDate": "2026-10-28T16:55:39.000Z",
+      "message": "fix: domain ci",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "992850be21cc8b7b10e06cde85e9cc0d0f1f9e1f",
+        "short": "992850b"
+      },
+      "tree": {
+        "long": "c99a434405264cef054eb95b4c3846d416dd40ac",
+        "short": "c99a434"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T15:27:19.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T15:27:19.000Z"
+      },
+      "subject": "fix(workspace): ignore empty AdditionalProperties entries",
+      "body": "A trailing semicolon produced an empty assignment and a spurious HXW006.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n",
+      "hash": "992850be21cc8b7b10e06cde85e9cc0d0f1f9e1f",
+      "committerDate": "2026-10-28T15:27:19.000Z",
+      "message": "fix(workspace): ignore empty AdditionalProperties entries\n\nA trailing semicolon produced an empty assignment and a spurious HXW006.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "505230a24339070aa2dbf5ac927cd430050bb902",
+        "short": "505230a"
+      },
+      "tree": {
+        "long": "f0146d28dae369bd3fe9d8ca6343482f3dcc4fa2",
+        "short": "f0146d2"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T14:13:27.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T14:13:27.000Z"
+      },
+      "subject": "fix(tooling): record the historical SDK split without qualification",
+      "body": "",
+      "hash": "505230a24339070aa2dbf5ac927cd430050bb902",
+      "committerDate": "2026-10-28T14:13:27.000Z",
+      "message": "fix(tooling): record the historical SDK split without qualification",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "4f8f4c0e6d0eb4e5b3f253a257deeae1a4c0aa33",
+        "short": "4f8f4c0"
+      },
+      "tree": {
+        "long": "1993a74e2e10b47c6ad4f1d6435448d71594550c",
+        "short": "1993a74"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T11:06:05.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T11:06:05.000Z"
+      },
+      "subject": "fix(test): map failed terminal outcome and cover validate option guards",
+      "body": "",
+      "hash": "4f8f4c0e6d0eb4e5b3f253a257deeae1a4c0aa33",
+      "committerDate": "2026-10-28T11:06:05.000Z",
+      "message": "fix(test): map failed terminal outcome and cover validate option guards",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "e129a29e6c6e2f8a200581e09b861d75a9f3a7b8",
+        "short": "e129a29"
+      },
+      "tree": {
+        "long": "f111f44371ea6b2ef0284a35f77657d310196aa8",
+        "short": "f111f44"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T09:20:48.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T09:20:48.000Z"
+      },
+      "subject": "fix(test): harden local run retention and cleanup",
+      "body": "",
+      "hash": "e129a29e6c6e2f8a200581e09b861d75a9f3a7b8",
+      "committerDate": "2026-10-28T09:20:48.000Z",
+      "message": "fix(test): harden local run retention and cleanup",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "50a054a687d29a727c1f9f4b5350cfb814a5d467",
+        "short": "50a054a"
+      },
+      "tree": {
+        "long": "0f9044e46d848089b9176b0aa270c4e055db689b",
+        "short": "0f9044e"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T07:19:38.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T07:19:38.000Z"
+      },
+      "subject": "build(deps): refresh the Radzen package audit",
+      "body": "Bind the catalog selection to the listed 12.1.8 stable candidate.\n\nCo-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "50a054a687d29a727c1f9f4b5350cfb814a5d467",
+      "committerDate": "2026-10-28T07:19:38.000Z",
+      "message": "build(deps): refresh the Radzen package audit\n\nBind the catalog selection to the listed 12.1.8 stable candidate.\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    },
+    {
+      "commit": {
+        "long": "0b6e8928a53250596e57fe5072ae0a454b7c5a01",
+        "short": "0b6e892"
+      },
+      "tree": {
+        "long": "27398d59fdbb52e672308ab130b9dc1017c76b4f",
+        "short": "27398d5"
+      },
+      "author": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T07:18:48.000Z"
+      },
+      "committer": {
+        "name": "Jérôme Piquot",
+        "email": "jpiquot@itaneo.com",
+        "date": "2026-10-28T07:18:48.000Z"
+      },
+      "subject": "fix(deps): select Radzen.Blazor 12.1.8",
+      "body": "Keep the shared catalog on the latest listed stable release.\n\nCo-authored-by: Cursor <cursoragent@cursor.com>\n",
+      "hash": "0b6e8928a53250596e57fe5072ae0a454b7c5a01",
+      "committerDate": "2026-10-28T07:18:48.000Z",
+      "message": "fix(deps): select Radzen.Blazor 12.1.8\n\nKeep the shared catalog on the latest listed stable release.\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+      "gitTags": ""
+    }
+  ],
+  "analyzerConfiguration": {},
+  "releaseType": "minor",
+  "proposedVersion": "4.39.0",
+  "semanticReleaseVersion": "25.0.9",
+  "commitAnalyzerVersion": "13.0.1",
+  "packageJsonSha256": "6b24b99692d3ea18a3554e6018a271b951bd5a4c83db5895e1a83a98218d61a9",
+  "packageLockSha256": "1ff1ac5a67d88d1c16eb10ac4b861e989d5c9c629f73a461ccc151c1f7e87724",
+  "verifiedInputsSha256": "a375e5cf10186ca2f07e591ec4602fad7df066fae464dcbfba00f1518a44174b",
+  "moduleHashes": {
+    "semantic-release/lib/get-last-release.js": "8112e4ada86518032834898fa3e6cae2524a444b7b354b31f2e12fe5f78c99e1",
+    "semantic-release/lib/get-commits.js": "2353ebf3c41456b1925f74adf8c957662153885f06fbe303343e67ace3e27fa4",
+    "semantic-release/lib/get-next-version.js": "023e1aaa80ef7639b572d41949693b47e64f245fcdcda9393640ca5b8d4845ad",
+    "semantic-release/lib/git.js": "2c2eb888bfa6765a5adb15b6ea0b63d05ebe1fe1a4b3cad27fc8f614e25f4c0c",
+    "@semantic-release/commit-analyzer/index.js": "7f8d1f3b46f1b62c175fab88f443dc47b3d40cf5b9cb9f7161bf7fd0bc3b66b3",
+    "@semantic-release/commit-analyzer/lib/default-release-rules.js": "8f0be9b41af708a46bc5d0173c3e2058aca7c648f5f4d1fc149dfc4ac1d8106b",
+    "@semantic-release/commit-analyzer/lib/load-parser-config.js": "24487b6ee9becf8c41dfa6a30d7726ca78a556f0d1fc396fbf8d32f282b949d5"
+  },
+  "executedLifecycle": false,
+  "notes": "Conditional proposal for selected exact source. No plugins other than analyzeCommits loaded; no push verification, tag, verifyRelease, publish, or lifecycle call."
+}

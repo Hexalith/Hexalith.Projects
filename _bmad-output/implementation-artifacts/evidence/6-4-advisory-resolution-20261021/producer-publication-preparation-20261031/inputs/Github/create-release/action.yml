@@ -1,0 +1,37 @@
+name: Create Release
+description: 'Run the repository-configured semantic-release lifecycle (version, package publication, GitHub release)'
+
+inputs:
+  github-token:
+    description: 'GitHub publication token, scoped to the semantic-release step.'
+    required: true
+  nuget-api-key:
+    description: 'Short-lived NuGet.org Trusted Publishing key, scoped to the semantic-release step for stable releases.'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v7.1.0
+      with:
+        # Pin the major line: 'node' (latest) would silently jump majors on a
+        # publication path. 24 is Active LTS, satisfies semantic-release 25's
+        # >=24.10.0, and ships the npm 11 that package-lock.json was built with.
+        node-version: '24'
+
+    - name: Install semantic-release dependencies
+      shell: bash
+      run: npm ci --ignore-scripts
+
+    - name: Verify dependency provenance and signatures
+      shell: bash
+      run: npm audit signatures
+
+    - name: Semantic Release
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        NUGET_API_KEY: ${{ inputs.nuget-api-key }}
+        HEXALITH_NUGET_VERIFY_ATTEMPTS: ${{ env.HEXALITH_NUGET_VERIFY_ATTEMPTS || '180' }}
+      run: npx --no-install --ignore-scripts semantic-release

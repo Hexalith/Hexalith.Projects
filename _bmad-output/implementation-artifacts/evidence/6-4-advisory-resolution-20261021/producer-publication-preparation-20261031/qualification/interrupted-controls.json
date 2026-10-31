@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-31T05:32:12.265723+00:00",
+  "orchestrator": "run-safe-controls.py",
+  "termination": "SIGTERM sent to command-owned orchestrator PID 2501882 after transitive fixture mutation discovery",
+  "observedOrchestratorExit": 143,
+  "inFlightControl": "consumer-authority-controls",
+  "result": "interrupted; no complete child command receipt or final exit observed, not counted passing",
+  "retainedRawOutput": [
+    "consumer-authority-controls.stdout.log",
+    "consumer-authority-controls.stderr.log"
+  ],
+  "notStartedControls": [
+    "package-exceptions",
+    "package-exception-controls",
+    "platform-catalog",
+    "dapr-versions",
+    "dapr-version-controls",
+    "workflow-test-platform-controls",
+    "commitlint-workflow-controls",
+    "legacy-publisher-controls"
+  ],
+  "otherSourceTestsUnexecuted": "Full Module.Tests; remaining Git-mutating source/release fixtures pending scope decision"
+}

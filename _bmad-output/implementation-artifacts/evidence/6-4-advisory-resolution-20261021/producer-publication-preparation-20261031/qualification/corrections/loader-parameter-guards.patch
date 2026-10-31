@@ -1,0 +1,13 @@
+diff --git a/test/fixtures/module/platform-loader/PlatformAppModel.cs b/test/fixtures/module/platform-loader/PlatformAppModel.cs
+index 29bf197..4c9f76f 100644
+--- a/test/fixtures/module/platform-loader/PlatformAppModel.cs
++++ b/test/fixtures/module/platform-loader/PlatformAppModel.cs
+@@ -25,6 +25,8 @@ public static class PlatformAppModel
+     /// <param name="seed">An unused package seed.</param>
+     public static void ComposeRun(IDistributedApplicationBuilder builder, CompositionRunPlan plan, string signingKey, string? seed)
+     {
++        ArgumentNullException.ThrowIfNull(builder);
++        ArgumentNullException.ThrowIfNull(plan);
+         _ = signingKey;
+         _ = seed;
+         _ = builder.Eventing.Subscribe<BeforeStartEvent>((startEvent, _) =>

@@ -1,0 +1,57 @@
+{
+  "createdUtc": "2026-10-31T05:42:10.661449+00:00",
+  "historicalFilesModified": false,
+  "preservedImplementationFileCount": 116,
+  "trustedHistoricalImplementationManifestSha256": "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6",
+  "helpers": [
+    {
+      "file": "analyzer/analyze-release-reviewed.mjs",
+      "sha256": "4b32efefdfaa717c04c2ef13c1cde41de35817baf4d7c03de8b9027c2f72987b"
+    },
+    {
+      "file": "qualification/run-controls-reviewed.py",
+      "sha256": "cb1b671c44a49ff6a9f07a2096d0cd0a7268ca8bd92a0fb9da94ff004156fd77"
+    },
+    {
+      "file": "qualification/verify-receipts-reviewed.py",
+      "sha256": "6a70f356a60e62e85b8d4a8122b803cfffb3ab2dd96ce10327011bb9629686f5"
+    }
+  ],
+  "focusedControlProgram": {
+    "file": "qualification/replay-review-controls/test-reviewed-replays.py",
+    "sha256": "2ab158e6732cea8f8afef9a87c59a5858ae3bf780ddaf5a1e86edd9531c38b3a"
+  },
+  "focusedControlResults": {
+    "file": "qualification/replay-review-controls/focused-controls.json",
+    "sha256": "9bba404cdf2f7dac9377e3806b352a5da5155caff205a5e0678f18ec5590acf1",
+    "passed": 20
+  },
+  "cleanSourceAnalysis": {
+    "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+    "tree": "18d735e56eeb17332e2d2b57a6b116097f42fdec",
+    "proposedVersion": "4.39.0",
+    "releaseType": "minor",
+    "referenceAnalysisSha256": "2ab874a9d79464526d9f970c21b58251ea752558af7b7948373a4e05b1bda19e",
+    "implementationManifestSha256": "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6",
+    "installedModuleFingerprintsValidated": 7,
+    "semanticReleaseVersion": "25.0.9",
+    "commitAnalyzerVersion": "13.0.1",
+    "executedLifecycle": false,
+    "output": "qualification/replay-review-controls/outputs/analysis-valid-result/analysis-result-reviewed.json"
+  },
+  "setup": {
+    "argv": [
+      "git",
+      "worktree",
+      "add",
+      "--detach",
+      "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "2186b9a4bc507a116a457c590c80945c2e232cbd"
+    ],
+    "cwd": "/tmp/story64-builds-producer-2186b9a4",
+    "exit": 0,
+    "authorization": "Parent explicitly allowed a fresh detached checkout of the existing selected SHA. No branches, tags or source/ref substitution. Existing installed dependencies copied to the fresh checkout; no npm install or update."
+  },
+  "originalBlockedAndSecurityResultsModified": false,
+  "realControlListOrFullQualifierRerun": false
+}

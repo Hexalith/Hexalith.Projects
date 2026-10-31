@@ -1,0 +1,383 @@
+{
+  "testedHelpers": [
+    "analyzer/analyze-release-reviewed.mjs",
+    "qualification/run-controls-reviewed.py",
+    "qualification/verify-receipts-reviewed.py"
+  ],
+  "tests": [
+    {
+      "name": "analysis-valid",
+      "argv": [
+        "/home/administrator/.nvm/versions/node/v24.21.0/bin/node",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs",
+        "/tmp/story64-producer-replay-reviewed-2186b9a4",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/analysis-valid",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/analysis-valid-result",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:08.953424+00:00",
+      "finishedUtc": "2026-10-31T05:41:10.646588+00:00",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "expectedDiagnostic": null,
+      "stdoutSha256": "08dab70d4037816e606a8cfcedef7be762357e94865d152c6cb753b7a1c3f3f0",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "analysis-refuses-existing-result",
+      "argv": [
+        "/home/administrator/.nvm/versions/node/v24.21.0/bin/node",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs",
+        "/tmp/story64-producer-replay-reviewed-2186b9a4",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/analysis-refuses-existing-result",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/analysis-valid-result",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:10.649801+00:00",
+      "finishedUtc": "2026-10-31T05:41:10.688114+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "Output directory already exists",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "7f46d98f2af0b49df56f115662c575696e92ac8d221791cd25393d133cff096a"
+    },
+    {
+      "name": "analysis-rejects-working-package",
+      "argv": [
+        "/home/administrator/.nvm/versions/node/v24.21.0/bin/node",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs",
+        "/tmp/story64-producer-replay-reviewed-2186b9a4",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/analysis-rejects-working-package",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/analysis-rejects-working-package-result",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:10.691298+00:00",
+      "finishedUtc": "2026-10-31T05:41:10.771584+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "Working package.json mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "939eb833cca260a2481472c6b2b7b8de62a9e1f62b844b728583f11685473cae"
+    },
+    {
+      "name": "analysis-rejects-working-lock",
+      "argv": [
+        "/home/administrator/.nvm/versions/node/v24.21.0/bin/node",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs",
+        "/tmp/story64-producer-replay-reviewed-2186b9a4",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/analysis-rejects-working-lock",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/analysis-rejects-working-lock-result",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:10.776993+00:00",
+      "finishedUtc": "2026-10-31T05:41:10.848918+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "Working package-lock.json mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "934e432da5673dc02df76035658536ed337195c94c6b6c0092c2bc0118c4c3b0"
+    },
+    {
+      "name": "analysis-rejects-module-hash",
+      "argv": [
+        "/home/administrator/.nvm/versions/node/v24.21.0/bin/node",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs",
+        "/tmp/story64-producer-replay-reviewed-2186b9a4",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/analysis-rejects-module-hash",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/analysis-rejects-module-hash-result",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:10.852095+00:00",
+      "finishedUtc": "2026-10-31T05:41:10.905862+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "Installed module semantic-release/lib/get-next-version.js mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "a0e567be4d9c1fdbd107f7cb89e63eda0070901ff3a73b4dadc0839e6fbac65a"
+    },
+    {
+      "name": "analysis-rejects-module-version",
+      "argv": [
+        "/home/administrator/.nvm/versions/node/v24.21.0/bin/node",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs",
+        "/tmp/story64-producer-replay-reviewed-2186b9a4",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/analysis-rejects-module-version",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/analysis-rejects-module-version-result",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:10.910572+00:00",
+      "finishedUtc": "2026-10-31T05:41:10.962986+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "Installed semantic-release version mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "412fc4413d7af83cc3532c882ab0e9cab1205213fb585a61327871fdf928e6c3"
+    },
+    {
+      "name": "analysis-bad-approved-digest",
+      "argv": [
+        "/home/administrator/.nvm/versions/node/v24.21.0/bin/node",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs",
+        "/tmp/story64-producer-replay-reviewed-2186b9a4",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/analysis-bad-approved-digest",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/analysis-bad-approved-digest-result",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:10.966191+00:00",
+      "finishedUtc": "2026-10-31T05:41:10.999121+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "Approval analysis digest mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "b7300e864b2bf0ab17c2d87e1c2e29669fb93da3f992ec21bf2a1fe57db0bc3d"
+    },
+    {
+      "name": "analysis-bad-verified-inputs",
+      "argv": [
+        "/home/administrator/.nvm/versions/node/v24.21.0/bin/node",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs",
+        "/tmp/story64-producer-replay-reviewed-2186b9a4",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/analysis-bad-verified-inputs",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/analysis-bad-verified-inputs-result",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.002472+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.033661+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "Retained analyzer/verified-inputs.json digest mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e6636ce8f991a8ea81065721c4a1d5589324fdbfbc363f5a4467a6482532de20"
+    },
+    {
+      "name": "checker-valid",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/verify-receipts-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/checker-valid",
+        "--manifest-sha256",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.036598+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.154183+00:00",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "expectedDiagnostic": null,
+      "stdoutSha256": "943661a330f4a01b70e6b7a4257c5da1e08a6476f852c51c7f68be0d3e74e518",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "checker-bad-approved-digest",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/verify-receipts-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/checker-bad-approved-digest",
+        "--manifest-sha256",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.157976+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.252495+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "approval analysis digest mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "712669b03f5f0c6ab27aa7bc26eb1d6ebf5ab7cc327db499089058f854b7ca6b"
+    },
+    {
+      "name": "checker-bad-manifest-digest",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/verify-receipts-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/checker-bad-manifest-digest",
+        "--manifest-sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.256407+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.297611+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "trusted implementation manifest digest mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "9e93b7a2600f28257f5ecaed37c5a8e5cdd3edaadf6ec6eb7d464aeca1feba59"
+    },
+    {
+      "name": "checker-bad-manifest-file",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/verify-receipts-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/checker-bad-manifest-file",
+        "--manifest-sha256",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.301868+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.353713+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "implementation manifest file mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "a7ac4608a6803829c1c4857688c6558e5d50bef227c8255e95bb2a784f3ad55b"
+    },
+    {
+      "name": "checker-bad-verified-inputs-binding",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/verify-receipts-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/checker-bad-verified-inputs-binding",
+        "--manifest-sha256",
+        "872f76b9df6efc3c73fc2c1fec4bb02288dd60e6e2ea2453d34a18f99b69740b"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.360055+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.445188+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "verified inputs digest mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "70fe47250e3d5c9a50ce3973e1ce354720c1650d6d3275a816fc25feb6a5cc8c"
+    },
+    {
+      "name": "checker-bad-stream-binding",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/verify-receipts-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/checker-bad-stream-binding",
+        "--manifest-sha256",
+        "c27270cbcb391867951c35d3df97450837f58d499964bfa98cac80f002da158a"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.448683+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.555227+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "command stream mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "a275f8411648a244a7495d34864dfcb2615c04c46c80dcf0525bee39d922b0e0"
+    },
+    {
+      "name": "checker-bad-security-claim",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/verify-receipts-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/checker-bad-security-claim",
+        "--manifest-sha256",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.561567+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.699282+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": "security finding counts mismatch",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "9c20c9991f2bb6ca45ef29abcbe3e6d71e02973973e120bb1113eb916e2f0b88"
+    },
+    {
+      "name": "checker-refuses-existing-result",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/verify-receipts-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/inputs/checker-refuses-existing-result",
+        "--manifest-sha256",
+        "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6",
+        "--output",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/checker-existing-result.json"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.702219+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.740388+00:00",
+      "exitCode": 2,
+      "expectedExit": 1,
+      "expectedDiagnostic": "result already exists",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "196b5e1f5ad289fd9aedc3b809b15c3499e680fa148ef0d971a4f825ed89f268"
+    },
+    {
+      "name": "orchestrator-all-pass",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/run-controls-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/orchestrator-all-pass.plan.json",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/orchestrator-all-pass.result.json"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.740566+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.797340+00:00",
+      "exitCode": 0,
+      "expectedExit": 0,
+      "expectedDiagnostic": null,
+      "stdoutSha256": "bce18ea3a5c3f269cb98c0c4e9b76d0cfa17511363bbda46d34fdfd769d76392",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "orchestrator-earlier-failure",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/run-controls-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/orchestrator-earlier-failure.plan.json",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/orchestrator-earlier-failure.result.json"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.797601+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.848908+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": null,
+      "stdoutSha256": "302c77677f705f47b58216340bc3fd4d3a6d434d55ea31dd0ddccad1ff8ce99d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "orchestrator-late-failure",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/run-controls-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/orchestrator-late-failure.plan.json",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/orchestrator-late-failure.result.json"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.849118+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.898299+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": null,
+      "stdoutSha256": "db4360caad630a6fec17c2b13f63d4be19e544b28e1bdccba16427f7c82946e6",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "orchestrator-start-failure",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/run-controls-reviewed.py",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/orchestrator-start-failure.plan.json",
+        "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/qualification/replay-review-controls/outputs/orchestrator-start-failure.result.json"
+      ],
+      "cwd": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+      "startedUtc": "2026-10-31T05:41:11.898555+00:00",
+      "finishedUtc": "2026-10-31T05:41:11.931782+00:00",
+      "exitCode": 1,
+      "expectedExit": 1,
+      "expectedDiagnostic": null,
+      "stdoutSha256": "abb19d580926b4f7dd7ecb6c0a1cbba3e15df309338dcb3c733655f3afa0289a",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "passed": 20,
+  "original116FilesPreserved": true,
+  "originalImplementationManifestSha256": "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6",
+  "cleanSelectedSource": "/tmp/story64-producer-replay-reviewed-2186b9a4",
+  "selectedRevision": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "fixtureCommitsTagsOrInitialization": false,
+  "fullQualifierExecuted": false,
+  "note": "Only the explicit fresh detached checkout was created. Orchestrator controls use process doubles; real historical control list was not rerun. Synthetic tamper inputs are isolated copies and are never acceptance evidence."
+}

@@ -1,0 +1,19 @@
+{
+  "observedUtc": "2026-10-31T05:29:11.712415+00:00",
+  "kind": "agent-scope-audit-error",
+  "entryCommand": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "./Tools/test-g4-tool-package-contract-gate.ps1"
+  ],
+  "entryReceipt": "package-gate-controls.command.json",
+  "transitiveCommand": "Tools/test-g4-tool-package-contract-gate.ps1:305 invokes pwsh -NoProfile -File Tools/test-g4-tool-package-artifact-validator.ps1",
+  "mutations": "The validator creates /tmp/g4-artifact-validator-<uuid>/clean-repo, runs git init/config, stages and commits four fixture states (lines 259-264, 290-291, 313-314, 347-348), and checks out tracked.txt at line 277. Those are disposable fixture writes, but were executed while the broader no-stage/no-commit boundary was unresolved.",
+  "actualOutcome": "Exit 0; nested artifact validator reports 63 scenarios. Exact fixture commit hashes and randomly generated directory were not emitted or captured before cleanup.",
+  "cleanup": "The existing validator finally removes its generated temporaryRoot recursively; it returned successfully. A subsequent /tmp discovery is recorded separately.",
+  "response": "Immediately informed parent; stopped further unverified transitive suites and the orchestration process before its next suite. Full qualifier remains unexecuted. Only separately audited read-only controls, source proofs, official package builder and documentation continue.",
+  "sourceStatusAfter": "",
+  "sourceHeadAfter": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "artifactFixtureRootsRemaining": []
+}

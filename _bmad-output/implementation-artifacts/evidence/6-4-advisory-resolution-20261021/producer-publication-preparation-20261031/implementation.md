@@ -1,0 +1,57 @@
+**Publication blocked.** The actual pinned analyzer proposes **4.39.0**, a minor release from 95 commits after official `v4.38.3` (`d1931b1e803144048d927fff16cb8119afde541e`). This is a conditional version proposal for exact official source `2186b9a4bc507a116a457c590c80945c2e232cbd`, tree `18d735e56eeb17332e2d2b57a6b116097f42fdec`, and does not reserve or publish a version. Canonical Story 6.4 remains in progress.
+
+| Gate / evidence | Actual result |
+| --- | --- |
+| [Analyzer](analyzer/analysis-result.json), [executable script](analyzer/analyze-release.mjs), [command/log](analyzer/analysis.command.json) | semantic-release 25.0.9 `get-last-release`, `get-commits`, `get-next-version` and commit-analyzer 13.0.1 default configuration executed under existing Node 24.21.0. No lifecycle, push verification, verifyRelease or publication hook executed by the analyzer. |
+| [Official tag verification](analyzer/verified-inputs.json), [replay script](analyzer/verify-tags.py), [receipt](analyzer/tag-verification.command.json) | All 182 observed official stable tag targets are reachable from selected source; local tag targets match. Highest reachable stable tag is independently verified 4.38.3. The repository is not shallow. |
+| [Locked npm restore](analyzer/npm-ci-node24.command.json), [signature audit](analyzer/npm-audit-signatures.command.json) | Both exit 0; 495 packages audited, 495 registry signatures and 130 attestations verified. The initial successful Node 26 install is also retained; the analyzer and signature audit use hosted-compatible Node major 24. npm ci additionally reports 38 vulnerabilities (37 moderate, 1 high); signature verification is a distinct gate. No lock or dependency update. |
+| [Read-only vulnerability audit](analyzer/npm-vulnerability-audit.command.json), [raw advisory report](analyzer/npm-vulnerability-audit.stdout.log) | Exit **1**: 38 findings (37 moderate, 1 high), with high-severity findings in locked transitive `npm/node_modules/undici`. These are retained security findings; the configured signature gate is separate and passed. No dependency remediation or new release-policy exemption was invented. |
+| [Actual source restore](qualification/source-restore-original-home.command.json), [Release build](qualification/source-release-build.command.json) | Both exit 0, build zero warnings/errors. Original HOME/NuGet configuration worked and was not modified; no isolated retry was needed. |
+| [Evidence tests](qualification/evidence-source-tests.command.json), [Module catalog tests](qualification/module-catalog-source-tests.command.json), [integration project](qualification/tooling-source-tests.command.json) | 191 + 46 + 1 passed; integration project additionally skipped 12 opt-in live cases. Skips confer no live/runtime qualification. Full Module suite was not executed. |
+| Existing release/source/catalog controls | Source guard and release lifecycle controls pass. Central validation covers 311 entries; authoritative catalog verifies 51 package identities / 4 shared versions; central validator 17 scenarios, package audit 311 packages / 151 families, consumer authority 23 projects, Platform catalog 96 scenarios all pass. Exact commands, UTC, allowlisted public environment, exits and raw streams are retained in `qualification/*.command.json`. |
+| [Official local package builder](qualification/official-local-package-build.command.json) | Exit **1** after producing both tool `.nupkg`/`.snupkg` pairs at 4.39.0. Copied loader fixture fails CA1062 for `builder` and `plan` beneath the Projects evidence output parent, whose `.editorconfig` enables CA1062. This failure remains unsuppressed. No official inventory was emitted. |
+| [Three-context loader comparison](qualification/loader-context-comparison.json) | Original immutable loader/fixture passes in existing isolated `/tmp` context. Two local guard calls make the fixture pass in the stricter Projects output context. Both use the same original archives. No universal producer/default-path or hosted loader failure is inferred. |
+| [Full source/package qualifier status](qualification/full-qualification-status.json) | **Not invoked; no exit result and no pass.** Its full source test suite performs disposable fixture staging/commits/tags and nested local fixture-submodule creation, whose authorization is pending clarification of the stated prohibitions. No `-SkipSourceValidation`, custom builder or external fixture argument was passed to the qualifier. |
+| [Scope deviation](qualification/scope-deviation.json), [follow-up](qualification/scope-deviation-follow-up.json) | Package gate self-test indirectly invoked the artifact-validator suite at line 305, creating four disposable fixture commits before detection. Its 63 scenarios pass technically; this lane is recorded separately with the scope deviation. Parent was informed immediately, the temporary fixture root was cleaned, and further unverified suites stopped. No false “no Git mutations” claim is made. |
+
+The [interrupted-controls receipt](qualification/interrupted-controls.json) identifies the incomplete consumer-authority control run and controls never started. The standalone Git-mutating publisher and package-audit generator/validator suites were not run. The full qualifier reaches source tests at `Tools/test-g4-tool-package-contracts.ps1:936`; `WorkspaceGitFixture.cs:68-69,141-170` and `CandidateRunnerTests.cs:455-459` demonstrate the fixture mutations. The gate self-test's indirect artifact-validator call was missed in the initial audit; [parent original repository preservation](preservation-post-fixture-deviation.json) and [selected source preservation](selected-worktree-post-deviation.json) remain separate evidence.
+
+The only source correction is [the two null guards](qualification/corrections/loader-parameter-guards.patch) in `test/fixtures/module/platform-loader/PlatformAppModel.cs`. Its [fingerprints](qualification/corrections/corrected-source.json) identify a **dirty local fixture correction**, based on the selected SHA, with no new recorded revision. The [corrected strict-context check](qualification/corrected-loader-focused-check.command.json) passes; the [original isolated-context check](qualification/exact-loader-isolated-context.command.json) and [original fixture blob manifest](qualification/exact-loader-snapshot.json) also pass. The correction is required for this tested stricter output-parent policy and is not established as necessary for the existing isolated/default producer path. It does not change the original archive source attribution. Whitespace passes. The original owner checkout remains untouched; the prepared change exists only in the detached worktree and saved patch.
+
+**Artifacts and fingerprints.** [Archive observations](qualification/local-archive-observations.json) retain all four archive SHA-256 values, sizes, exact nuspec IDs/version/repository source and the catalog-bearing Tooling assembly hash. These local archives are **unsigned, unpublished and unqualified**; there is no successful official inventory or inventory digest to bind into Platform. Their source is the clean selected SHA before the local fixture edit. Both loader probes leave archive hashes unchanged. `local-archive-observations.json` is an observation receipt, not a release inventory.
+
+The selected catalog blob is `37148298dfd3a4ae35d89dd5f4677e06e89149ad`. [Selected source state](qualification/selected-source-state.json) proves that only FrontComposer 4.7.1→4.7.2, AngleSharp 1.8.6→1.9.0 and JsonSchema.Net 9.5.0→9.6.0 change from historical producer `6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4`; every other catalog selection survives. Full release-input blob IDs, source bytes and hashes are in [source-inputs.json](source-inputs.json).
+
+| Selected input | SHA-256 of committed bytes |
+| --- | --- |
+| `Props/Directory.Packages.props` | `986b463e12daaf1818c261c8d509f38b9803bc2f9f328c48d591d3f0caec8e6a` |
+| `package.json` | `6b24b99692d3ea18a3554e6018a271b951bd5a4c83db5895e1a83a98218d61a9` |
+| `package-lock.json` | `1ff1ac5a67d88d1c16eb10ac4b861e989d5c9c629f73a461ccc151c1f7e87724` |
+| `.github/workflows/build-release.yml` | `d44b7024c84492f66ef4f34ccfd5444ba70cb09e0efb253131ecb5bd681c02ea` |
+| `Tools/verify-g4-release-source.sh` | `d22e0a41ccb50cd6727ad4f78c9cb22196453d1f02e926862520695bbf1f8ae5` |
+| `Tools/verify-g4-tool-release.ps1` | `66f0b6a24a5de4fa9f44c43a8716276fa356182d28e8bab11d3894bc12986461` |
+| `Tools/test-g4-tool-package-contracts.ps1` | `6e83de03126a48a794053e644f0234c900638a405aab63a2e862868f4d13104c` |
+| `Tools/G4PackageQualification.functions.ps1` | `6aa8edcb2144f7563bccaedd5a2e6ac95f954203bd2072b16b32eb0f84b4d1c7` |
+| `Tools/build-g4-tool-packages.ps1` | `6f39697f9e707e467d33338e7ba4af006279dbba2b21b116ce82c6fc51409a98` |
+| `Tools/publish-g4-tool-packages.ps1` | `9802b155c61b3c6352f5abaf66fb8947968e6552ebd8e1ddfadead8b7cb908b3` |
+
+**Next qualification and publication order.** Resolve the disposable fixture-Git scope; select either the unchanged producer with isolated output or separately review/record any stricter-context fixture correction. A dirty fixture result cannot become release-eligible for the selected clean SHA. Reconcile live main and exact-SHA successful push CI before dispatch. Source qualification stays bound to the selected SHA even if main advances. If a correction is recorded as another source, recompute its version using actual analyzer inputs and qualify that clean identity separately; never replace source under an already published version.
+
+From a clean selected-source checkout, after fixture authorization is resolved, run the existing full gate with a new absent directory. These commands are **conditional and unexecuted**; the current detached checkout intentionally fails the clean-tree precondition while its local correction is present:
+
+```bash
+cd /tmp/story64-builds-producer-2186b9a4
+test "$(git rev-parse HEAD)" = 2186b9a4bc507a116a457c590c80945c2e232cbd
+test -z "$(git status --porcelain=v1)"
+pwsh -NoProfile -File ./Tools/test-g4-tool-package-contracts.ps1 \
+  -Version 4.39.0 -PackageDirectory /tmp/story64-full-source-packages-4.39.0 \
+  -RequireControls -RetainPackageDirectory
+```
+
+Require an official clean-source, full-source-validation, required-controls inventory with `releaseEligible:true`, and all protected workflow controls, before seeking publication approval. The [parent publication commands](publication-commands.md) give the exact read-only recheck and later protected dispatch. Only after separate publication approval, reconciled current main, successful exact-source push CI and all release prerequisites does the concrete command become eligible:
+
+```bash
+gh workflow run build-release.yml --repo Hexalith/Hexalith.Builds --ref main
+```
+
+That workflow recomputes the actual next version, rechecks live source, requires the protected environment, qualifies before tagging, and publishes through Trusted Publishing. No release/publication dispatch was executed by this implementation. Verify the official release/tag/source, signed package and symbol payloads, inventory digest and embedded catalog/Tooling hashes before any separately authorized Platform binding/recording, Platform release or consumer adoption. Existing Platform pins/bindings and original repositories were not changed by this implementation. No full Story 6.4 rerun or completion is claimed.

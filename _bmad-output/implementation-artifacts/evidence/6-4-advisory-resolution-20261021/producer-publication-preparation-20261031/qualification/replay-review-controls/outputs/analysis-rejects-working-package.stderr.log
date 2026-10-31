@@ -1,0 +1,12 @@
+file:///home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs:22
+const requireEqual = (actual, expected, label) => { if (actual !== expected) throw new Error(`${label} mismatch`); };
+                                                                                   ^
+
+Error: Working package.json mismatch
+    at requireEqual (file:///home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs:22:84)
+    at file:///home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-preparation-20261031/analyzer/analyze-release-reviewed.mjs:49:3
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.21.0

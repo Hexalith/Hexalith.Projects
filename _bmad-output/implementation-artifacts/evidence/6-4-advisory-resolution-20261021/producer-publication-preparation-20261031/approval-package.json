@@ -1,0 +1,240 @@
+{
+  "schema": "story64.producer-publication-approval-package.v1",
+  "storyStatus": "in-progress",
+  "candidateAcceptance": false,
+  "publicationAuthorized": false,
+  "selectedSource": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+  "selectedTree": "18d735e56eeb17332e2d2b57a6b116097f42fdec",
+  "historicalCandidate": "6cc96b4ff23c40c77651e1e4f85ed3170c25c7a4",
+  "catalog": {
+    "blob": "37148298dfd3a4ae35d89dd5f4677e06e89149ad",
+    "sha256": "986b463e12daaf1818c261c8d509f38b9803bc2f9f328c48d591d3f0caec8e6a",
+    "size": 30509
+  },
+  "releaseInputs": {
+    "Directory.Build.props": {
+      "blob": "5b1979e526772b1977da6dbdab84cd4e07fa088d",
+      "sha256": "87831265b6dc7e43269e0638f6fc875230861e6283d383ec803472f4e749f59d",
+      "size": 724
+    },
+    "Directory.Packages.props": {
+      "blob": "03e2f4af544ee39ec1cbf2e56703bb875405bf0b",
+      "sha256": "c3d41f4a1a5d0f9fbc0e40ba0997ace2f8c22b996864f864d6cd1bff2b4e9515",
+      "size": 152
+    },
+    ".editorconfig": {
+      "blob": "09798825c05bbe1003c8e009a311d5b8eb89957c",
+      "sha256": "e49be9fedb13fe305e692c2c022b3a5571f00050b107b06c9f1d450c171eb25a",
+      "size": 12618
+    },
+    ".gitattributes": {
+      "blob": "22782367e9113d75a035271a37eb41fd823a4249",
+      "sha256": "b60fb9d0bc573e1a044f8258fa168825c00e563fc94d975f89d2f51b444cd6e4",
+      "size": 1600
+    },
+    "global.json": {
+      "blob": "bad1806f68f26e0e8c3af8a2a5d65689e51c9e1d",
+      "sha256": "722b3c748e87aea67cd06e65b9af200bf22aa69ec601a3d1fbc6e163e1cf3bb5",
+      "size": 139
+    },
+    "package.json": {
+      "blob": "97b96f5544405c070cdeb0c80f9b851b5655e947",
+      "sha256": "6b24b99692d3ea18a3554e6018a271b951bd5a4c83db5895e1a83a98218d61a9",
+      "size": 1317
+    },
+    "package-lock.json": {
+      "blob": "9ee52a74eab64a94172779b1c1df2841cdcc426d",
+      "sha256": "1ff1ac5a67d88d1c16eb10ac4b861e989d5c9c629f73a461ccc151c1f7e87724",
+      "size": 211651
+    },
+    ".github/workflows/ci.yml": {
+      "blob": "4b3d95061e0a014d0f5b6be0bba6d839e7630402",
+      "sha256": "b6812f8393d79e9b0f1d354a0d7451f542e20b7b792d617be8297b2f2a12660b",
+      "size": 11629
+    },
+    ".github/workflows/build-release.yml": {
+      "blob": "a6e2d11416ac9d4e027e7d992c3e8111a5656e08",
+      "sha256": "d44b7024c84492f66ef4f34ccfd5444ba70cb09e0efb253131ecb5bd681c02ea",
+      "size": 7339
+    },
+    "Github/create-release/action.yml": {
+      "blob": "82b835a0ad8fdeb5a0cd98b157f111b04db98606",
+      "sha256": "b8353cc0855a6cddbd7488a854d3ce9dee73429a3f6bb2db387642f8aa8ed988",
+      "size": 1325
+    },
+    "Github/initialize-dotnet/action.yml": {
+      "blob": "1ac8df0d31b6828824aaa867d57933d56beba16a",
+      "sha256": "1c3427360179d1f0c4399f04a8063b4eda1e81d7cd6d93c34bcdad85b859da61",
+      "size": 1129
+    },
+    "Tools/verify-g4-release-source.sh": {
+      "blob": "92de8a787f7552c632af339029e9362afbfc9e40",
+      "sha256": "d22e0a41ccb50cd6727ad4f78c9cb22196453d1f02e926862520695bbf1f8ae5",
+      "size": 1242
+    },
+    "Tools/verify-g4-tool-release.ps1": {
+      "blob": "aed256d62e9931e43c3d470de7a88422f3917dbe",
+      "sha256": "66f0b6a24a5de4fa9f44c43a8716276fa356182d28e8bab11d3894bc12986461",
+      "size": 1336
+    },
+    "Tools/build-g4-tool-packages.ps1": {
+      "blob": "d53216bccbe727e312a0c9d63762950060843064",
+      "sha256": "6f39697f9e707e467d33338e7ba4af006279dbba2b21b116ce82c6fc51409a98",
+      "size": 6247
+    },
+    "Tools/test-g4-tool-package-contracts.ps1": {
+      "blob": "19fff76a0268190bd2c5deba9d0f12ef4f81af5d",
+      "sha256": "6e83de03126a48a794053e644f0234c900638a405aab63a2e862868f4d13104c",
+      "size": 77056
+    },
+    "Tools/G4PackageQualification.functions.ps1": {
+      "blob": "920a920f65558c3b451117d2ce60ef0befe81bfe",
+      "sha256": "6aa8edcb2144f7563bccaedd5a2e6ac95f954203bd2072b16b32eb0f84b4d1c7",
+      "size": 27311
+    },
+    "Tools/publish-g4-tool-packages.ps1": {
+      "blob": "ee297f62ca5bba89f441ff4dee1eb932171265a0",
+      "sha256": "9802b155c61b3c6352f5abaf66fb8947968e6552ebd8e1ddfadead8b7cb908b3",
+      "size": 29068
+    },
+    "Tools/test-g4-packaged-platform-loader.ps1": {
+      "blob": "b21a427cb90f913a125a637fe762626b819daf62",
+      "sha256": "56988d265d85c76deb786e61426701f11c20478c34f28e3bac42165994ebd73e",
+      "size": 12946
+    },
+    "Tools/test-g4-packaged-seed-subscriptions.ps1": {
+      "blob": "8caf5a4bd47408175bdf6664edda2e66b8bf7e65",
+      "sha256": "aaf81d01b946c6c4ee3e0f50d1074feba3e5832c0a9fe09c5450df7523ee7aea",
+      "size": 2042
+    },
+    "Tools/package-version-audit.json": {
+      "blob": "de21e7a93ee3a77aee77ecda38d912a8aab101c1",
+      "sha256": "7bbf397beeeea3a76e2c2985697a510f9927627513a5d896d3f25908a7a34448",
+      "size": 14998572
+    },
+    "Tools/package-version-exceptions.json": {
+      "blob": "3cc661e5d2f78f67a7a14120ec10479dee550350",
+      "sha256": "80457734c0e94a884c9c4c426b4989be110de243f6d6ee4b0de0e0ae4374c6b8",
+      "size": 6281
+    }
+  },
+  "versionProposal": {
+    "version": "4.39.0",
+    "type": "minor",
+    "previousTag": "v4.38.3",
+    "previousSource": "d1931b1e803144048d927fff16cb8119afde541e",
+    "commitCount": 95,
+    "semanticRelease": "25.0.9",
+    "commitAnalyzer": "13.0.1",
+    "analysisSha256": "2ab874a9d79464526d9f970c21b58251ea752558af7b7948373a4e05b1bda19e",
+    "lifecycleExecuted": false
+  },
+  "ci": {
+    "repository": "Hexalith/Hexalith.Builds",
+    "runId": 41171553609,
+    "event": "push",
+    "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+    "workflow": ".github/workflows/ci.yml",
+    "attempt": 1,
+    "lastObservedStatus": "completed",
+    "lastObservedConclusion": "success",
+    "evidence": "observations/ci-late.json",
+    "sourceGuardReceipt": "source-guard-green-ci.json"
+  },
+  "officialPublication": {
+    "observedLatest": "4.38.3",
+    "selectedVersionTag": null,
+    "selectedVersionRelease": null,
+    "signedPackages": null,
+    "symbols": null,
+    "officialQualificationInventory": null
+  },
+  "fullLocalQualification": {
+    "status": "not-run",
+    "reason": "Pending scope clarification for disposable fixture Git operations; no skipped source-validation substitution",
+    "releaseEligible": false
+  },
+  "deviation": "A nested artifact-validator test created four temporary fixture commits before its indirect call was caught. Original repositories remained unchanged. The selected detached checkout was clean immediately after the deviation audit; it subsequently received the separately fingerprinted two-null-guard correction and is now dirty. Historical in-flight child exit/termination is unknown; later scoped process inspection found no matching owned control/capture descendants.",
+  "requiredCommands": "publication-commands.md",
+  "blockers": [
+    "Full local source/package qualification has not run pending fixture-scope clarification; no release-eligible 4.39.0 inventory verified",
+    "Independent release run active: do not dispatch duplicate",
+    "Protected publication approval not given in this session",
+    "Official selected-version package/symbol and qualification-inventory identities not yet verified",
+    "npm vulnerability findings retained; remediation or applicability assessment remains unresolved; signature audit is a separate passed gate"
+  ],
+  "publicationReady": false,
+  "independentPublicationRun": {
+    "id": 41172847732,
+    "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+    "actor": "jpiquot",
+    "observedStatus": "in_progress",
+    "observedConclusion": null,
+    "createdAt": "2026-10-31T05:30:19Z",
+    "dispatchedByThisSession": false,
+    "approvedByThisSession": false,
+    "duplicateDispatchPermitted": false,
+    "evidence": "observations/dispatches-after-green-ci.json"
+  },
+  "localBuilder": {
+    "version": "4.39.0",
+    "source": "2186b9a4bc507a116a457c590c80945c2e232cbd",
+    "exit": 1,
+    "inventoryEmitted": false,
+    "reason": "Packaged-loader fixture inherits Projects .editorconfig in evidence output and triggers two CA1062 errors. Original loader passes in isolated default /tmp context; no universal producer failure is asserted.",
+    "receipt": "qualification/official-local-package-build.command.json",
+    "contextComparison": "qualification/loader-context-comparison.json"
+  },
+  "localCorrection": {
+    "path": "test/fixtures/module/platform-loader/PlatformAppModel.cs",
+    "patch": "qualification/corrections/loader-parameter-guards.patch",
+    "scope": "Two null guards in detached worktree only, proven in stricter output context. Optional robustness correction; not attributed to selected clean SHA. Adoption requires new recorded source, analysis and CI before publication.",
+    "correctedSource": "qualification/corrections/corrected-source.json"
+  },
+  "securityObservation": {
+    "signatureAuditExit": 0,
+    "verifiedRegistrySignatures": 495,
+    "verifiedAttestations": 130,
+    "vulnerabilityAuditExit": 1,
+    "vulnerableDependencyEntries": {
+      "moderate": 37,
+      "high": 1,
+      "total": 38
+    },
+    "highPackage": "node_modules/npm/node_modules/undici",
+    "installedVersion": "6.29.0",
+    "fixed6xVersion": "6.29.1",
+    "npmDependencyRemediated": false,
+    "exploitabilityAssessed": false,
+    "policyExceptionInvented": false,
+    "receipt": "analyzer/npm-vulnerability-audit.command.json"
+  },
+  "cleanupAudit": "parent-validation/interrupted-control-cleanup-audit.json",
+  "review": {
+    "independentLayers": [
+      "Blind Hunter",
+      "Edge Case Hunter",
+      "Verification Gap"
+    ],
+    "reviewedHelpers": [
+      "analyzer/analyze-release-reviewed.mjs",
+      "qualification/run-controls-reviewed.py",
+      "qualification/verify-receipts-reviewed.py"
+    ],
+    "helperControlsPassed": 20,
+    "dispatchProcessDoubleControlsPassed": 3,
+    "noRealDispatchInControls": true,
+    "trustedImplementationManifestSha256": "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6",
+    "originalImplementationFilesPreserved": 116,
+    "fullQualificationStillOpen": true
+  },
+  "finalOfficialObservations": {
+    "main": "observations/final-main.json",
+    "latestRelease": "observations/final-latest-release.json",
+    "proposedTag": "observations/final-proposed-tag.json",
+    "nugetIndexes": "observations/final-nuget-indexes.json",
+    "independentReleaseRun": "observations/final-release-run.json"
+  },
+  "preservationDeliveryReceipt": "preservation-delivery.json",
+  "originalImplementationManifestSha256": "e2f627c35e5a27b98b0f82da4f83594b203ae3ca47a1169552eb9cfd17cc1fb6"
+}
