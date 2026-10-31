@@ -233,20 +233,15 @@ def main(arguments: list[str] | None = None) -> int:
         support_count = counts(scratch / "support-ctrf.json")
         # Compile every selected AppHost and a transitive consumer. The file-based Platform
         # AppHost consumes packages; the remaining projects use source references in Debug.
+        # FrontComposer resolves this workspace's root-declared Builds and Platform siblings itself.
         baseline = json.loads((BUILDS / "Tools/runtime-toolchain-baseline-2026-10-01.json").read_text())
-        # FrontComposer links canonical hosting helpers from its own root-declared Builds and
-        # Platform copies, which stay uninitialized nested submodules in this workspace. Bind
-        # them to the workspace's root-declared copies instead.
-        frontcomposer_roots = [f"-p:HexalithBuildsRoot={BUILDS}",
-                               f"-p:HexalithPlatformRoot={ROOT / 'references/Hexalith.Platform'}"]
         conversations_mapping = conversations_source_mapping(run, scratch)
         for item in baseline["pinAudit"]["appHostProjects"]:
             project = ROOT / item["path"]
-            roots = frontcomposer_roots if item["path"].startswith("references/Hexalith.FrontComposer/") else []
             if item["path"].startswith(CONVERSATIONS_PREFIX):
                 command = ["env", *conversations_mapping, "dotnet", "build", str(project), *build]
             else:
-                command = ["dotnet", "build", str(project), *build, "-p:HexalithConversationsFromSource=false", *roots]
+                command = ["dotnet", "build", str(project), *build, "-p:HexalithConversationsFromSource=false"]
             code = run.run("AppHost build " + project.parent.name, command, project.parent)
             apphosts.append({"path": item["path"], "exitCode": code, "dependencyMode": "source"})
         platform = ROOT / "references/Hexalith.Platform/apphost.cs"

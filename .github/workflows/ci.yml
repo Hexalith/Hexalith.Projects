@@ -240,11 +240,6 @@ jobs:
             # This dedicated Debug source proof retains the normal package-only CI guard.
             if [[ "$project" == references/Hexalith.Conversations/* ]]; then
               env -u CI "${mapping_args[@]}" dotnet restore "$project" -p:UseHexalithProjectReferences=true
-            elif [[ "$project" == references/Hexalith.FrontComposer/* ]]; then
-              # FrontComposer's own root-declared Builds and Platform copies are uninitialized
-              # nested submodules here; bind them to this workspace's root-declared copies.
-              env -u CI dotnet restore "$project" -p:UseHexalithProjectReferences=true -p:HexalithConversationsFromSource=false \
-                -p:HexalithBuildsRoot="$PWD/references/Hexalith.Builds" -p:HexalithPlatformRoot="$PWD/references/Hexalith.Platform"
             else
               # Conversations source projects require their own mapping. Keep that module on
               # packages while the rest of this source graph is restored.
