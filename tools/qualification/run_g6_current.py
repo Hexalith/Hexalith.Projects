@@ -31,6 +31,19 @@ DEFAULT_OUTPUT = ROOT / ".g6-current-evidence/current"
 CURRENT_API = historical.module("g6_compact_validator", AUDITOR)
 CONVERSATIONS_PREFIX = "references/Hexalith.Conversations/"
 MODULE_CLI = BUILDS / "src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj"
+# The live fixture writes observations.json; this runner projects the two test documents.
+CAPTURE_FILES = ("observations.json", "test-results.json", "deterministic-support.json")
+
+
+def support_coverage_issues(path: Path) -> list[str]:
+    """Every selected support method must be observed and pass; unknown cases are failures."""
+    document = json.loads(path.read_text(encoding="utf-8"))
+    issues = []
+    if document.get("unrecognizedCases"):
+        issues.append("Deterministic support produced cases outside the selected methods")
+    if any(item["observedCases"] < 1 or item["passedCases"] != item["observedCases"] for item in document["methods"]):
+        issues.append("A deterministic support selector was not observed passing")
+    return issues
 
 
 def conversations_source_mapping(run: historical.Qualification, scratch: Path) -> list[str]:
@@ -223,12 +236,12 @@ def main(arguments: list[str] | None = None) -> int:
                 "-result-ctrf", str(scratch / "support-ctrf.json")], EVENTSTORE)
         else:
             errors.append("Fresh support build failed; old binaries were not executed")
-        validator = EVENTSTORE / "tools/validate-oq8-platform-evidence.py"
-        if (scratch / "qualifier-ctrf.json").is_file() and (scratch / "support-ctrf.json").is_file() and validator.is_file():
-            run.run("strict EventStore capture validation", ["python3", "tools/validate-oq8-platform-evidence.py",
-                "--capture-directory", str(capture), "--ctrf", str(scratch / "qualifier-ctrf.json"),
-                "--support-ctrf", str(scratch / "support-ctrf.json"), "--expected-runtime-version",
-                policy["tuple"]["daprRuntime"], "--expected-configuration", "Debug"], EVENTSTORE)
+        # EventStore retired its OQ8 capture validator; retain portable test documents from CTRF.
+        if (scratch / "qualifier-ctrf.json").is_file():
+            historical.retain_qualifier_result(scratch / "qualifier-ctrf.json", capture / "test-results.json")
+        if (scratch / "support-ctrf.json").is_file():
+            historical.retain_support_results(scratch / "support-ctrf.json", capture / "deterministic-support.json", selectors)
+            errors.extend(support_coverage_issues(capture / "deterministic-support.json"))
         live_count = counts(scratch / "qualifier-ctrf.json")
         support_count = counts(scratch / "support-ctrf.json")
         # Compile every selected AppHost and a transitive consumer. The file-based Platform
@@ -279,12 +292,12 @@ def main(arguments: list[str] | None = None) -> int:
         errors.append("Selected AppHosts did not all compile")
     capture = output / "capture"
     receipt_files = []
-    for name in ("observations.json", "test-results.json", "deterministic-support.json", "capture-validation.json"):
+    for name in CAPTURE_FILES:
         path = capture / name
         if path.is_file():
             receipt_files.append({"name": name, "sha256": historical.API.sha256(path)})
-    if len(receipt_files) != 4:
-        errors.append("The four required EventStore capture documents were not retained")
+    if len(receipt_files) != len(CAPTURE_FILES):
+        errors.append("The three required EventStore capture documents were not retained")
     qualified = not errors and after.get("tupleApproved") is True and not after.get("issues")
     status = "qualified" if qualified else "failed" if errors else "not verified"
     receipt_logs = [{"purpose": item["purpose"], "path": item["logPath"], "sha256": item["logSha256"]}

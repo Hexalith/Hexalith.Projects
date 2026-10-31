@@ -178,5 +178,33 @@ class SupportSelectorInventoryTests(unittest.TestCase):
             self.assertNotEqual(21, len(set(drifted)))
 
 
+class RetainedTestDocumentTests(unittest.TestCase):
+    def test_capture_receipt_binds_only_documents_this_runner_can_produce(self) -> None:
+        self.assertEqual(("observations.json", "test-results.json", "deterministic-support.json"), RUNNER.CAPTURE_FILES)
+
+    def test_every_selected_support_method_must_be_observed_passing(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ctrf = root / "support-ctrf.json"
+            destination = root / "deterministic-support.json"
+            selectors = ["Hexalith.EventStore.Server.Tests.One", "Hexalith.EventStore.Server.Tests.Two"]
+            for label, tests, expected in (
+                ("all observed", [{"name": selectors[0], "status": "passed"},
+                                  {"name": selectors[1] + "(case: 1)", "status": "passed"}], []),
+                ("selector unobserved", [{"name": selectors[0], "status": "passed"},
+                                         {"name": selectors[0] + "(case: 2)", "status": "passed"}],
+                 ["A deterministic support selector was not observed passing"]),
+                ("unknown case", [{"name": selectors[0], "status": "passed"}, {"name": selectors[1], "status": "passed"},
+                                  {"name": "Hexalith.EventStore.Server.Tests.Other", "status": "passed"}],
+                 ["Deterministic support produced cases outside the selected methods"]),
+            ):
+                with self.subTest(label=label):
+                    passed = sum(item["status"] == "passed" for item in tests)
+                    RUNNER.historical.write(ctrf, {"results": {"summary": {"tests": len(tests), "passed": passed,
+                                                                           "failed": 0, "skipped": 0}, "tests": tests}})
+                    RUNNER.historical.retain_support_results(ctrf, destination, selectors)
+                    self.assertEqual(expected, RUNNER.support_coverage_issues(destination))
+
+
 if __name__ == "__main__":
     unittest.main()

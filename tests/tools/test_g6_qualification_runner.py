@@ -229,15 +229,51 @@ class QualificationEvidenceRetentionTests(unittest.TestCase):
             RUNNER.write(ctrf, {"results": {"summary": {"tests": 2, "passed": 0, "failed": 1, "skipped": 1}, "tests": [
                 {"name": "Fixture.Support.One(protected-argument-marker)", "status": "failed", "message": "protected-output-marker"},
                 {"name": "Fixture.Support.Two", "status": "skipped", "output": "protected-output-marker"}]}})
-            oq8 = types.SimpleNamespace(EXPECTED_SUPPORT_METHOD_CASES=methods, SUPPORT_CURRENT_COMMAND="dotnet /Release/support.dll", expected_support_classifications=lambda: {})
             destination = root / "safe.json"
-            RUNNER.retain_support_results(ctrf, destination, oq8)
+            RUNNER.retain_support_results(ctrf, destination, list(methods))
             document = json.loads(destination.read_text())
             self.assertEqual(document["summary"], {"tests": 2, "passed": 0, "failed": 1, "skipped": 1})
             self.assertEqual(document["methods"][0]["failedCases"], 1)
             self.assertEqual(document["methods"][1]["skippedCases"], 1)
             self.assertEqual(document["selectors"], list(methods))
+            self.assertEqual(RUNNER.SUPPORT_COMMAND, document["command"])
             self.assertNotIn("protected-", destination.read_text())
+
+    def test_qualifier_projection_keeps_counts_and_hashes_foreign_identities(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ctrf = root / "raw.json"
+            destination = root / "test-results.json"
+            RUNNER.write(ctrf, {"results": {"summary": {"tests": 1, "passed": 1, "failed": 0, "skipped": 0}, "tests": [
+                {"name": RUNNER.QUALIFIER, "status": "passed", "duration": 12, "labels": {"Category": "LiveSidecar"},
+                 "message": "protected-output-marker"}]}})
+            RUNNER.retain_qualifier_result(ctrf, destination)
+            document = json.loads(destination.read_text())
+            self.assertEqual({"tests": 1, "passed": 1, "failed": 0, "skipped": 0}, document["summary"])
+            self.assertEqual({"name": RUNNER.QUALIFIER, "status": "passed", "durationMilliseconds": 12,
+                              "traits": {"Category": ["LiveSidecar"]}}, document["test"])
+            self.assertEqual(RUNNER.FOCUSED_COMMAND, document["command"])
+            self.assertNotIn("protected-", destination.read_text())
+            RUNNER.write(ctrf, {"results": {"summary": {"tests": 1, "passed": 0, "failed": 1, "skipped": 0}, "tests": [
+                {"name": "Foreign(protected-argument-marker)", "status": "failed"}]}})
+            RUNNER.retain_qualifier_result(ctrf, destination)
+            document = json.loads(destination.read_text())
+            self.assertEqual({"tests": 1, "passed": 0, "failed": 1, "skipped": 0}, document["summary"])
+            self.assertIsNone(document["test"]["name"])
+            self.assertEqual(64, len(document["test"]["identitySha256"]))
+            self.assertNotIn("protected-", destination.read_text())
+            RUNNER.write(ctrf, {"results": {"summary": {"tests": 0, "passed": 0, "failed": 0, "skipped": 0}, "tests": []}})
+            RUNNER.retain_qualifier_result(ctrf, destination)
+            self.assertEqual(0, json.loads(destination.read_text())["summary"]["tests"])
+
+    def test_runners_no_longer_depend_on_the_retired_eventstore_validator(self):
+        for name in ("run_g6_qualification.py", "run_g6_current.py"):
+            source = (ROOT / "tools/qualification" / name).read_text(encoding="utf-8")
+            with self.subTest(runner=name):
+                self.assertNotIn("validate-oq8-platform-evidence", source)
+                self.assertNotIn("strict EventStore capture validation", source)
+        # The historical v2 packet keeps a "not produced" placeholder; the current runner retains none.
+        self.assertNotIn("capture-validation.json", (ROOT / "tools/qualification/run_g6_current.py").read_text(encoding="utf-8"))
 
     def test_failed_fresh_build_never_executes_fixture_dll(self):
         run = types.SimpleNamespace(run=lambda purpose, command, cwd: commands.append(command) or 1)

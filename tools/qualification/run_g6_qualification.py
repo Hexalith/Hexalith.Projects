@@ -32,6 +32,11 @@ BUILDS = ROOT / "references/Hexalith.Builds"
 EVENTSTORE = ROOT / "references/Hexalith.EventStore"
 DEFAULT_OUTPUT = ROOT / "_bmad-output/implementation-artifacts/qualification-evidence/g-6-runtime-toolchain-20261001"
 QUALIFIER = "Hexalith.EventStore.Server.LiveSidecar.Tests.Actors.IdempotencyAdmissionOq8PostgresqlTests.ProductionMatrix_IndependentProcessesPreserveAuthorityReplayExpiryAndLeakageInvariants"
+# Portable command identities for the retained test documents; raw runner paths stay in scratch.
+FOCUSED_COMMAND = ("dotnet tests/Hexalith.EventStore.Server.LiveSidecar.Tests/bin/Debug/net10.0/"
+                   f"Hexalith.EventStore.Server.LiveSidecar.Tests.dll -method {QUALIFIER} -noColor -result-ctrf raw-runner-temp")
+SUPPORT_COMMAND = ("dotnet tests/Hexalith.EventStore.Server.Tests/bin/Debug/net10.0/"
+                   "Hexalith.EventStore.Server.Tests.dll -method (21 exact selectors) -noColor -result-ctrf raw-runner-temp")
 
 
 def module(name: str, path: Path):
@@ -282,12 +287,29 @@ def resolved(projects: list[str], baseline: dict, scratch: Path) -> list[dict]:
     return result
 
 
-def retain_support_results(ctrf: Path, destination: Path, oq8) -> None:
-    """Project only counts and pinned method identities before passing-only validation."""
+def retain_qualifier_result(ctrf: Path, destination: Path) -> None:
+    """Project the focused CTRF into counts, the pinned identity and traits, never runner output."""
+    results = API.read_json(ctrf)["results"]
+    summary = API.result_summary({field: results["summary"][field] for field in ("tests", "passed", "failed", "skipped")}, "Actual qualifier")
+    tests = results.get("tests") or [{}]
+    test = tests[0] if isinstance(tests[0], dict) else {}
+    name = test.get("name")
+    status = test.get("status") if test.get("status") in {"passed", "failed", "skipped"} else "unknown"
+    labels = test.get("labels") if isinstance(test.get("labels"), dict) else {}
+    document = {"schemaVersion": 1, "runner": "xUnit.net v3", "command": FOCUSED_COMMAND, "summary": summary,
+                "test": {"name": name if name == QUALIFIER else None, "status": status,
+                         "durationMilliseconds": test.get("duration"),
+                         "traits": {key: [value] for key, value in labels.items()}}}
+    if name != QUALIFIER:
+        document["test"]["identitySha256"] = hashlib.sha256(str(name).encode()).hexdigest()
+    write(destination, document)
+
+
+def retain_support_results(ctrf: Path, destination: Path, selectors: list[str]) -> None:
+    """Project only counts and the selected method identities; unknown cases keep only hashes."""
     results = API.read_json(ctrf)["results"]
     summary = API.result_summary({field: results["summary"][field] for field in ("tests", "passed", "failed", "skipped")}, "Actual support")
-    methods = {identity: {"identity": identity, "expectedCases": expected, "observedCases": 0, "passedCases": 0}
-               for identity, expected in oq8.EXPECTED_SUPPORT_METHOD_CASES.items()}
+    methods = {identity: {"identity": identity, "observedCases": 0, "passedCases": 0} for identity in selectors}
     failed = summary["failed"] != 0 or summary["skipped"] != 0
     if failed:
         for method in methods.values():
@@ -306,8 +328,8 @@ def retain_support_results(ctrf: Path, destination: Path, oq8) -> None:
             method["passedCases"] += 1
         elif failed:
             method[status + "Cases"] += 1
-    document = {"schemaVersion": 1, "runner": "xUnit.net v3", "command": oq8.SUPPORT_CURRENT_COMMAND.replace("/Release/", "/Debug/"),
-                "selectors": list(methods), "summary": summary, "methods": list(methods.values()), "classifications": oq8.expected_support_classifications()}
+    document = {"schemaVersion": 1, "runner": "xUnit.net v3", "command": SUPPORT_COMMAND,
+                "selectors": list(methods), "summary": summary, "methods": list(methods.values())}
     if unknown:
         document["unrecognizedCases"] = unknown
     write(destination, document)
@@ -408,15 +430,11 @@ def main() -> int:
         API.require(len(selectors) == len(set(selectors)) == 21, "Integration workflow support selector set drifted")
         support_command = ["dotnet", str(support_dll)] + [argument for selector in selectors for argument in ("-method", selector)] + ["-noColor", "-result-ctrf", str(scratch / "support-ctrf.json")]
         run.run("21 exact deterministic support selectors", support_command if support_build == 0 else ["python3", "-c", "raise SystemExit('Fresh support build failed; stale binaries were not executed')"], EVENTSTORE)
-        run.run("strict EventStore capture validation", ["python3", "tools/validate-oq8-platform-evidence.py", "--capture-directory", str(capture), "--ctrf", str(scratch / "qualifier-ctrf.json"), "--support-ctrf", str(scratch / "support-ctrf.json"), "--expected-runtime-version", "1.18.2", "--expected-configuration", "Debug"], EVENTSTORE)
-        # Preserve actual counts even when strict capture validation rejects the observations.
-        oq8 = module("g6_oq8_result_projection", EVENTSTORE / "tools/validate-oq8-platform-evidence.py")
-        if not (capture / "test-results.json").exists() and (scratch / "qualifier-ctrf.json").exists():
-            raw = API.read_json(scratch / "qualifier-ctrf.json")["results"]
-            test = raw["tests"][0]
-            write(capture / "test-results.json", {"schemaVersion": 1, "runner": "xUnit.net v3", "command": oq8.FOCUSED_CURRENT_COMMAND.replace("/Release/", "/Debug/"), "summary": {field: raw["summary"][field] for field in ["tests", "passed", "failed", "skipped"]}, "test": {"name": test["name"], "status": test["status"], "durationMilliseconds": test["duration"], "traits": {name: [value] for name, value in test.get("labels", {}).items()}}})
-        if not (capture / "deterministic-support.json").exists() and (scratch / "support-ctrf.json").exists():
-            retain_support_results(scratch / "support-ctrf.json", capture / "deterministic-support.json", oq8)
+        # EventStore retired its OQ8 capture validator; retain actual counts from the raw CTRF.
+        if (scratch / "qualifier-ctrf.json").exists():
+            retain_qualifier_result(scratch / "qualifier-ctrf.json", capture / "test-results.json")
+        if (scratch / "support-ctrf.json").exists():
+            retain_support_results(scratch / "support-ctrf.json", capture / "deterministic-support.json", selectors)
         if (scratch / "fixture-diagnostics.json").exists():
             diagnostic = run.sanitize((scratch / "fixture-diagnostics.json").read_text())
             (output / "fixture-diagnostics.json").write_text(diagnostic)
