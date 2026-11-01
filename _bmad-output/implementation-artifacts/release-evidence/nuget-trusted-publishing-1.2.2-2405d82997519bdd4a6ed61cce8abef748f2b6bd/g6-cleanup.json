@@ -1,0 +1,169 @@
+{
+  "schema": "hexalith.runtime-toolchain-cleanup.v2",
+  "before": {
+    "containers": [],
+    "binaries": []
+  },
+  "after": {
+    "containers": [],
+    "binaries": []
+  },
+  "ownedContainers": [
+    {
+      "name": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee-placement",
+      "role": "placement",
+      "id": "ec810758305092ee68b3bce688f9496130259f9741215cd4c143d98691749eec",
+      "image": "daprio/dapr@sha256:1146cf75f6a900f098489f995bcb2145bf9b040f87ab70eb0de2db21000d01bb"
+    },
+    {
+      "name": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee-scheduler",
+      "role": "scheduler",
+      "id": "83391869c02473dafce3dd61d5d1f933c486e16a7a77523dbc0bd18616a5dea0",
+      "image": "daprio/dapr@sha256:1146cf75f6a900f098489f995bcb2145bf9b040f87ab70eb0de2db21000d01bb"
+    },
+    {
+      "name": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee-redis",
+      "role": "redis",
+      "id": "db68a2739ade5008dd904e362698ef3123a066b399a5295cfb4d803f17f3e637",
+      "image": "redis:7.4"
+    },
+    {
+      "name": "fixture-owned-postgresql",
+      "role": "postgresql",
+      "id": "855525adacc051a6fd6e07df590933447bdde98440cdb65b8c5fade985b6df1b",
+      "image": "postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636"
+    }
+  ],
+  "removedContainerIds": [
+    "db68a2739ade5008dd904e362698ef3123a066b399a5295cfb4d803f17f3e637",
+    "83391869c02473dafce3dd61d5d1f933c486e16a7a77523dbc0bd18616a5dea0",
+    "ec810758305092ee68b3bce688f9496130259f9741215cd4c143d98691749eec",
+    "855525adacc051a6fd6e07df590933447bdde98440cdb65b8c5fade985b6df1b"
+  ],
+  "ownedProcessesStopped": true,
+  "scratchRemoved": true,
+  "fixtureScratchRemoved": true,
+  "ownedProcessGroups": [
+    4555,
+    4985,
+    5072,
+    5148,
+    5163,
+    6042,
+    6057,
+    6411,
+    6542,
+    6618,
+    6700,
+    6786,
+    7150,
+    7228,
+    7284,
+    7544,
+    7727,
+    8039
+  ],
+  "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+  "sidecarNamespaceObservations": [
+    {
+      "node": "sample",
+      "appId": "sample",
+      "processId": 5458,
+      "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "914f93df7b7c595a1c114afeb45c536fb6f68d3f6286bf00a7418ee47b9f9b07",
+      "discoveryConfigurationSha256": "41856c4040cabb5aab8430598b8aa7389a8eab6cd990ea88967d9d417039c2f7",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-1",
+      "appId": "eventstore",
+      "processId": 5492,
+      "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "914f93df7b7c595a1c114afeb45c536fb6f68d3f6286bf00a7418ee47b9f9b07",
+      "discoveryConfigurationSha256": "41856c4040cabb5aab8430598b8aa7389a8eab6cd990ea88967d9d417039c2f7",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-2",
+      "appId": "eventstore",
+      "processId": 5529,
+      "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "914f93df7b7c595a1c114afeb45c536fb6f68d3f6286bf00a7418ee47b9f9b07",
+      "discoveryConfigurationSha256": "41856c4040cabb5aab8430598b8aa7389a8eab6cd990ea88967d9d417039c2f7",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-2",
+      "appId": "eventstore",
+      "processId": 5642,
+      "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "914f93df7b7c595a1c114afeb45c536fb6f68d3f6286bf00a7418ee47b9f9b07",
+      "discoveryConfigurationSha256": "41856c4040cabb5aab8430598b8aa7389a8eab6cd990ea88967d9d417039c2f7",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-1",
+      "appId": "eventstore",
+      "processId": 5679,
+      "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "914f93df7b7c595a1c114afeb45c536fb6f68d3f6286bf00a7418ee47b9f9b07",
+      "discoveryConfigurationSha256": "41856c4040cabb5aab8430598b8aa7389a8eab6cd990ea88967d9d417039c2f7",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-2",
+      "appId": "eventstore",
+      "processId": 5714,
+      "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "914f93df7b7c595a1c114afeb45c536fb6f68d3f6286bf00a7418ee47b9f9b07",
+      "discoveryConfigurationSha256": "41856c4040cabb5aab8430598b8aa7389a8eab6cd990ea88967d9d417039c2f7",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "sample",
+      "appId": "sample",
+      "processId": 5750,
+      "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "914f93df7b7c595a1c114afeb45c536fb6f68d3f6286bf00a7418ee47b9f9b07",
+      "discoveryConfigurationSha256": "41856c4040cabb5aab8430598b8aa7389a8eab6cd990ea88967d9d417039c2f7",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-1",
+      "appId": "eventstore",
+      "processId": 5784,
+      "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "914f93df7b7c595a1c114afeb45c536fb6f68d3f6286bf00a7418ee47b9f9b07",
+      "discoveryConfigurationSha256": "41856c4040cabb5aab8430598b8aa7389a8eab6cd990ea88967d9d417039c2f7",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "eventstore-2",
+      "appId": "eventstore",
+      "processId": 5820,
+      "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "914f93df7b7c595a1c114afeb45c536fb6f68d3f6286bf00a7418ee47b9f9b07",
+      "discoveryConfigurationSha256": "41856c4040cabb5aab8430598b8aa7389a8eab6cd990ea88967d9d417039c2f7",
+      "privateDiscoveryRegistryObserved": true
+    },
+    {
+      "node": "sample",
+      "appId": "sample",
+      "processId": 5857,
+      "daprNamespace": "g6-oq8-6505b3bcb9a34503bf0ac2125dffb1ee",
+      "nameResolver": "sqlite",
+      "discoveryRegistryIdentitySha256": "914f93df7b7c595a1c114afeb45c536fb6f68d3f6286bf00a7418ee47b9f9b07",
+      "discoveryConfigurationSha256": "41856c4040cabb5aab8430598b8aa7389a8eab6cd990ea88967d9d417039c2f7",
+      "privateDiscoveryRegistryObserved": true
+    }
+  ]
+}

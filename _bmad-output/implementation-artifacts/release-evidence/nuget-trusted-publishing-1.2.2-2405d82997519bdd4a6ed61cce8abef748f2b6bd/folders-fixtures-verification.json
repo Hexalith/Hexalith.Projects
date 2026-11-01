@@ -1,0 +1,101 @@
+{
+  "repository": "/home/administrator/projects/hexalith/projects/references/Hexalith.Folders",
+  "spec": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-folders-ci-fixtures-2026-11-01.md",
+  "spec_status": "in-progress",
+  "summary": "Repaired stale CI conformance assertions and synthetic fixture authorization composition; four integration topology tests retain the packaged Memories sibling-resolution blocker.",
+  "changed_files": [
+    "_bmad-output/implementation-artifacts/evidence/story-12-2-v2-source-requalification-pending.yaml",
+    "scripts/pd10-v2-story-owned-paths.txt",
+    "src/Hexalith.Folders.Testing/Hosting/FoldersServerTestHostServiceCollectionExtensions.cs",
+    "tests/Hexalith.Folders.Contracts.Tests/Deployment/BaselineCiWorkflowConformanceTests.cs",
+    "tests/Hexalith.Folders.Contracts.Tests/Deployment/ContractParityCiWorkflowConformanceTests.cs",
+    "tests/Hexalith.Folders.Contracts.Tests/Deployment/ReleasePackageConformanceTests.cs",
+    "tests/Hexalith.Folders.Contracts.Tests/Deployment/ScheduledDriftAndPolicyWorkflowConformanceTests.cs",
+    "tests/Hexalith.Folders.IntegrationTests/Authorization/ContextReadAuthorityTests.cs",
+    "tests/Hexalith.Folders.IntegrationTests/EndToEnd/GoldenLifecycleParityTests.cs",
+    "tests/Hexalith.Folders.IntegrationTests/Hexalith.Folders.IntegrationTests.csproj",
+    "tests/Hexalith.Folders.IntegrationTests/MixedSurfaceHandoff/MixedSurfaceHandoffTests.cs",
+    "tests/Hexalith.Folders.IntegrationTests/Routing/RoutingModeTestHost.cs",
+    "tests/Hexalith.Folders.Server.Tests/Authentication/FoldersProductionAuthenticationTests.cs",
+    "tests/Hexalith.Folders.Testing.Tests/Hosting/FoldersServerTestDefaultsTests.cs",
+    "tests/Hexalith.Folders.Testing.Tests/ScaffoldContractTests.cs",
+    "tests/Hexalith.Folders.Contracts.Tests/Deployment/PinnedDomainCiWorkflow.cs"
+  ],
+  "results": {
+    "testing": {
+      "build_command": "env CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet build tests/Hexalith.Folders.Testing.Tests/Hexalith.Folders.Testing.Tests.csproj -c Release -m:1 -p:UseHexalithProjectReferences=false -p:UseNuGetDeps=true -p:NuGetAudit=false",
+      "build_exit_code": 0,
+      "build_warnings": 0,
+      "build_errors": 0,
+      "build_log": "/tmp/folders-fixtures-testing-build.log",
+      "test_command": "env CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet test --project tests/Hexalith.Folders.Testing.Tests/Hexalith.Folders.Testing.Tests.csproj -c Release --no-build --no-restore -p:UseHexalithProjectReferences=false -p:UseNuGetDeps=true",
+      "test_exit_code": 0,
+      "passed": 72,
+      "failed": 0,
+      "skipped": 0,
+      "test_log": "/tmp/folders-fixtures-testing-test.log"
+    },
+    "integration": {
+      "build_command": "env CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet build tests/Hexalith.Folders.IntegrationTests/Hexalith.Folders.IntegrationTests.csproj -c Release -m:1 -p:UseHexalithProjectReferences=false -p:UseNuGetDeps=true -p:NuGetAudit=false",
+      "build_exit_code": 0,
+      "build_warnings": 0,
+      "build_errors": 0,
+      "build_log": "/tmp/folders-fixtures-integration-build.log",
+      "test_command": "env CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet test --project tests/Hexalith.Folders.IntegrationTests/Hexalith.Folders.IntegrationTests.csproj -c Release --no-build --no-restore -p:UseHexalithProjectReferences=false -p:UseNuGetDeps=true",
+      "test_exit_code": 2,
+      "passed": 849,
+      "failed": 4,
+      "skipped": 0,
+      "test_log": "/tmp/folders-fixtures-integration-test.log"
+    },
+    "contracts": {
+      "build_command": "env CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet build tests/Hexalith.Folders.Contracts.Tests/Hexalith.Folders.Contracts.Tests.csproj -c Release -m:1 -p:UseHexalithProjectReferences=false -p:UseNuGetDeps=true -p:NuGetAudit=false",
+      "build_exit_code": 0,
+      "build_warnings": 0,
+      "build_errors": 0,
+      "build_log": "/tmp/folders-fixtures-contracts-build.log",
+      "test_command": "env CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet test --project tests/Hexalith.Folders.Contracts.Tests/Hexalith.Folders.Contracts.Tests.csproj -c Release --no-build --no-restore -p:UseHexalithProjectReferences=false -p:UseNuGetDeps=true",
+      "test_exit_code": 0,
+      "passed": 634,
+      "failed": 0,
+      "skipped": 0,
+      "test_log": "/tmp/folders-fixtures-contracts-test.log"
+    },
+    "server": {
+      "build_command": "env CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet build tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj -c Release -m:1 -p:UseHexalithProjectReferences=false -p:UseNuGetDeps=true -p:NuGetAudit=false",
+      "build_exit_code": 0,
+      "build_warnings": 0,
+      "build_errors": 0,
+      "build_log": "/tmp/folders-fixtures-server-build.log",
+      "test_command": "env CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet test --project tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj -c Release --no-build --no-restore -p:UseHexalithProjectReferences=false -p:UseNuGetDeps=true",
+      "test_exit_code": 0,
+      "passed": 1315,
+      "failed": 0,
+      "skipped": 0,
+      "test_log": "/tmp/folders-fixtures-server-test.log"
+    }
+  },
+  "parity_generator_prerequisite_build": "env CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet build tests/tools/parity-oracle-generator/Hexalith.Folders.ParityOracleGenerator.csproj -c Release -m:1 -p:UseHexalithProjectReferences=false -p:UseNuGetDeps=true -p:NuGetAudit=false",
+  "pending_manifest_regeneration": "python3 scripts/generate-pd10-v2-conformance-set.py",
+  "format_command": "env CI=true UseHexalithProjectReferences=false UseNuGetDeps=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet format whitespace Hexalith.Folders.CI.slnx --no-restore --verify-no-changes --include src/Hexalith.Folders.Testing/Hosting/FoldersServerTestHostServiceCollectionExtensions.cs tests/Hexalith.Folders.Contracts.Tests/Deployment/BaselineCiWorkflowConformanceTests.cs tests/Hexalith.Folders.Contracts.Tests/Deployment/ContractParityCiWorkflowConformanceTests.cs tests/Hexalith.Folders.Contracts.Tests/Deployment/ReleasePackageConformanceTests.cs tests/Hexalith.Folders.Contracts.Tests/Deployment/ScheduledDriftAndPolicyWorkflowConformanceTests.cs tests/Hexalith.Folders.IntegrationTests/Authorization/ContextReadAuthorityTests.cs tests/Hexalith.Folders.IntegrationTests/EndToEnd/GoldenLifecycleParityTests.cs tests/Hexalith.Folders.IntegrationTests/MixedSurfaceHandoff/MixedSurfaceHandoffTests.cs tests/Hexalith.Folders.IntegrationTests/Routing/RoutingModeTestHost.cs tests/Hexalith.Folders.Server.Tests/Authentication/FoldersProductionAuthenticationTests.cs tests/Hexalith.Folders.Testing.Tests/Hosting/FoldersServerTestDefaultsTests.cs tests/Hexalith.Folders.Testing.Tests/ScaffoldContractTests.cs tests/Hexalith.Folders.Contracts.Tests/Deployment/PinnedDomainCiWorkflow.cs",
+  "format_exit_code": 0,
+  "format_note": "Workspace-loading warning only; no format differences. LF verified for all 13 edited C# files.",
+  "git_diff_check_exit_code": 0,
+  "nested_repository_markers": 0,
+  "unresolved": {
+    "package": "Hexalith.Memories.Aspire 3.0.14",
+    "cause": "RepositoryProjectPaths.ResolveReferencedModuleProjectPath rejects the existing sibling root and demands the absent nested checkout; AddHexalithMemoriesSearchIndexServer exposes no project path/metadata override.",
+    "failed_methods": [
+      "Hexalith.Folders.IntegrationTests.AspireTopologyTests.AddHexalithMemoriesSearchIndexServerShouldRegisterMemoriesSidecarComponentsAndContainers",
+      "Hexalith.Folders.IntegrationTests.AspireTopologyTests.AddHexalithMemoriesSearchIndexServerShouldReuseSharedStateStoreAndPubSubWithoutCreatingCopies",
+      "Hexalith.Folders.IntegrationTests.AspireTopologyTests.ComposingMemoriesAlongsideFoldersShouldRemainAdditiveWithStandaloneMemoriesSidecar",
+      "Hexalith.Folders.IntegrationTests.AspireTopologyTests.MemoriesServerShouldCarryFoldersToFoldersIndexSourceRoutingWhenRoutingApplied"
+    ],
+    "owner": "Parent to handle production Memories resolver/release decision"
+  },
+  "limits": [
+    "Synthetic fixtures do not establish live acceptance.",
+    "Production authorization unchanged.",
+    "No staging, commit, push, branch, dependency update, submodule initialization, or gitlink change performed."
+  ]
+}

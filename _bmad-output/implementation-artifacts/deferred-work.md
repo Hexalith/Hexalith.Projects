@@ -1244,3 +1244,15 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-release-maintenance-2026-11-01.md`
   summary: Verify the updated axe and Playwright dependencies against the real managed Projects AppHost accessibility and application lanes.
   evidence: No regression was demonstrated; 24 harness tests and typecheck pass, but three existing live lifecycle cases were skipped and the accessibility suite was not run. A successful actual managed AppHost/application/accessibility run settles this medium unverified compatibility concern; retain normal automated release qualification independently.
+
+- source_spec: `spec-release-maintenance-2026-11-01.md`
+  summary: Verify build/runtime project selection for a deliberately partial direct dependency checkout (unverified medium).
+  evidence: Runtime sibling fallback uses requested-project existence while existing MSBuild roots use Contracts-directory existence; actual workspace dependencies are complete or deinitialized, so a partial-checkout source-build reproduction is needed to establish a reachable mismatch.
+
+- source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
+  summary: Extend the preexisting readiness polling regression matrix for non-serving, wrong-root and temporarily unavailable catalog observations.
+  evidence: Existing bootstrap polling rejects these states and retries inside a linked deadline, but focused tests cover ready, blocked, expired and cancelled observations rather than a transient sequence; no runtime defect was demonstrated.
+
+- source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
+  summary: Bound the preexisting bootstrap transport response buffer while preserving the SDK resilience and body-read cancellation policy.
+  evidence: Default HttpClient.SendAsync buffers the full response before the existing8KiB diagnostic probe runs; the new classifier bounds only parsed input. A transport completion-mode change needs its own timeout and byte-consumption coverage.

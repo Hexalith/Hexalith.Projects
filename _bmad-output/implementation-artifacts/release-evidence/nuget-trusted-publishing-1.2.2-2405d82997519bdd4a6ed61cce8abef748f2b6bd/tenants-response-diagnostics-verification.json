@@ -1,0 +1,49 @@
+{
+  "repository": "/home/administrator/projects/hexalith/projects/references/Hexalith.Tenants",
+  "baseline": "86244ede82095a0d07c8715dee537bd97cbef0e8",
+  "validatedEventStoreSource": "7776e64fdb5b9b86d0d180a3a8f47c1f11379466",
+  "changed_files": [
+    "src/Hexalith.Tenants/Bootstrap/TenantBootstrapHostedService.cs",
+    "tests/Hexalith.Tenants.Server.Tests/Bootstrap/TenantBootstrapHostedServiceTests.cs",
+    "docs/production-auth-readiness.md"
+  ],
+  "sha256": {
+    "src/Hexalith.Tenants/Bootstrap/TenantBootstrapHostedService.cs": "88c1adb8472b762e0817dd6d45671fc040939b30bace33176c3fe477e8904c51",
+    "tests/Hexalith.Tenants.Server.Tests/Bootstrap/TenantBootstrapHostedServiceTests.cs": "bbc68862f5abfbfce71deafce7cb50e483053552696b591ac940a85bbf458003",
+    "docs/production-auth-readiness.md": "fc716be57055092254461a53e9b74de65596a26c85e297e4f1215c2dd19c9497"
+  },
+  "review_patches": [
+    "Malformed escaped scalar data now uses the closed non-json/none fallback while retaining event2003 and actual HTTP status.",
+    "Fixed literal mappings include existing SDK human/workload authorization failures and command problem types; reason-suffixed domain problem URIs return a fixed family label without exposing their suffix.",
+    "Added canonical-code-only, known/unknown reasonCode precedence, actual SDK503 admission failure and actual SDK-generated domain rejection shape coverage.",
+    "Added accepted8192/rejected8193 UTF-8 byte tests for ASCII and multibyte data, declared/understated lengths, empty/whitespace input and bounded/oversized409 markers; all assert closed code/status/privacy outcomes.",
+    "Operator docs explain ResponseKind/ResponseCode, fallbacks, the diagnostic-only boundary and unchanged HTTP completion policy."
+  ],
+  "build": {
+    "exit_code": 0,
+    "warnings": 0,
+    "errors": 0,
+    "log": "/tmp/tenants-bootstrap-response-review-build-final.log",
+    "command": "CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet build tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj --configuration Debug --no-restore -p:BuildProjectReferences=false -p:UseHexalithProjectReferences=true -p:UseNuGetDeps=false -p:NuGetAudit=false -m:1 -nr:false --disable-build-servers",
+    "note": "The preceding serial source build compiled the production source graph at EventStore7776 and found only CS8122 in a new Shouldly expression-tree assertion. That assertion was corrected to equality/or; this focused build then recompiled the test project against those unchanged source outputs."
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 175,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/tmp/tenants-bootstrap-response-review-tests.log",
+    "xml": "/tmp/tenants-bootstrap-response-review-tests.xml",
+    "command": "CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.Tenants.Server.Tests.dll -class Hexalith.Tenants.Server.Tests.Bootstrap.TenantBootstrapHostedServiceTests -noColor -result-xml /tmp/tenants-bootstrap-response-review-tests.xml"
+  },
+  "format": {
+    "exit_code": 0,
+    "log": "/tmp/tenants-bootstrap-response-review-format-verify.log",
+    "command": "CI=true Configuration=Debug UseHexalithProjectReferences=true UseNuGetDeps=false NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet format whitespace Hexalith.Tenants.slnx --no-restore --verify-no-changes --include src/Hexalith.Tenants/Bootstrap/TenantBootstrapHostedService.cs tests/Hexalith.Tenants.Server.Tests/Bootstrap/TenantBootstrapHostedServiceTests.cs",
+    "note": "Workspace-loading warning only."
+  },
+  "limits": [
+    "No authentication/grant/transport/receipt/status-membership assertion changes; no production persistence changes.",
+    "No commits, pushes, dependency updates, nested initialization or shared backend operations. Parent owns full verification and hosted rerun."
+  ]
+}

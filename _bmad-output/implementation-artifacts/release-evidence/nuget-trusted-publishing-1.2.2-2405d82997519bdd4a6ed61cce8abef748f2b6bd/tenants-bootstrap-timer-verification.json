@@ -1,0 +1,33 @@
+{
+  "changed_files": [
+    "src/Hexalith.Tenants/Bootstrap/TenantBootstrapBoundCommand.cs",
+    "tests/Hexalith.Tenants.Server.Tests/Bootstrap/TenantBootstrapBoundCommandTests.cs"
+  ],
+  "sha256": {
+    "src/Hexalith.Tenants/Bootstrap/TenantBootstrapBoundCommand.cs": "7a4e47529ddbc60b1303f05167d29f903c9d142a6748a8fb42f9369355648cb1",
+    "tests/Hexalith.Tenants.Server.Tests/Bootstrap/TenantBootstrapBoundCommandTests.cs": "78d53b2597852d2c9e4080536d340ba3b4d37458c1224e3f6c7a7201a201c072"
+  },
+  "change": "Readiness CTS uses the existing TimeProvider; deterministic NSubstitute TimeProvider/ITimer cases assert one-shot due times of 100 seconds for infinite transport timeout and 1 second for the finite case, fire the real CTS callback while caller is uncancelled, require cancellation and timer disposal. Separate existing caller-cancellation case retained.",
+  "build": {
+    "exit_code": 0,
+    "warnings": 0,
+    "errors": 0,
+    "log": "/tmp/tenants-bootstrap-timer-build.log",
+    "command": "CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet build tests/Hexalith.Tenants.Server.Tests/Hexalith.Tenants.Server.Tests.csproj --configuration Debug -p:UseHexalithProjectReferences=true -p:UseNuGetDeps=false -p:NuGetAudit=false -m:1 -nr:false --disable-build-servers"
+  },
+  "tests": {
+    "exit_code": 0,
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/tmp/tenants-bootstrap-timer-tests.log",
+    "xml": "/tmp/tenants-bootstrap-timer-tests.xml",
+    "command": "CI=true NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet tests/Hexalith.Tenants.Server.Tests/bin/Debug/net10.0/Hexalith.Tenants.Server.Tests.dll -class Hexalith.Tenants.Server.Tests.Bootstrap.TenantBootstrapBoundCommandTests -noColor -result-xml /tmp/tenants-bootstrap-timer-tests.xml"
+  },
+  "format": {
+    "exit_code": 0,
+    "log": "/tmp/tenants-bootstrap-timer-format.log",
+    "command": "CI=true Configuration=Debug UseHexalithProjectReferences=true UseNuGetDeps=false NUGET_PACKAGES=/tmp/projects-release-maintenance/nuget dotnet format whitespace Hexalith.Tenants.slnx --no-restore --verify-no-changes --include src/Hexalith.Tenants/Bootstrap/TenantBootstrapBoundCommand.cs tests/Hexalith.Tenants.Server.Tests/Bootstrap/TenantBootstrapBoundCommandTests.cs"
+  },
+  "limits": "No broader tests, live topology, dependency/package/public API changes or git mutations; parent owns full verification."
+}

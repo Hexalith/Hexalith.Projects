@@ -1,0 +1,7 @@
+Release v1.2.2 was published by workflow 41333151082 from exact source 2405d82997519bdd4a6ed61cce8abef748f2b6bd after CI 41330638275 and a fresh qualified G-6 run. The tag resolves directly to that source. All five versions were absent before dispatch; all five public NuGet indexes now include 1.2.2, actual packages downloaded, exact manifest/source metadata validated, and all five NuGet repository-signature verifications passed. No archive normalization was performed on published packages.
+
+The release job exchanged GitHub OIDC successfully and the NuGet service accepted all five uploads. Publication was immediately refrozen after terminal success: repository HEXALITH_RELEASE_PUBLISH_ENABLED=false, confirmed by REST API. Production had no required human reviewer rules; the user's explicit release authorization waived human validation while automated gates remained enabled.
+
+NuGet policy dashboard activation/permanence was not independently inspected because no authenticated NuGet account session is available. Successful trusted login and publication establish that the configured policy accepted this release. Legacy credentials were neither accessed nor retired; that separate account-administration action is outside this maintenance request.
+
+All five isolated consumers restored and compiled the actual downloaded public packages, with project fallbacks refused. See published-consumer-validation.log.
