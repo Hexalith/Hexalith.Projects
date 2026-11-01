@@ -1,0 +1,42 @@
+{
+  "sourceSha": "48ba1fcb74779e8dc9dd4851d55e1055762eebab",
+  "change": "Buffer existing signed Web JsonContent before dispatch with caller cancellation and failure disposal; preserve authority/receipt and Dapr policies.",
+  "sourceBuild": {
+    "configuration": "Debug",
+    "eventStoreVersion": "3.131.0",
+    "warnings": 0,
+    "errors": 0,
+    "log": "/tmp/tenants-bootstrap-replay-final-tuple-build.log"
+  },
+  "tests": {
+    "boundCommand": {
+      "total": 24,
+      "failed": 0,
+      "skipped": 0
+    },
+    "hostedBootstrap": {
+      "total": 205,
+      "failed": 0,
+      "skipped": 0
+    },
+    "ambientEndpointControl": {
+      "total": 2,
+      "failed": 0
+    }
+  },
+  "actualDaprProof": "tenants-dapr-replay-proof-2026-11-01.json",
+  "review": {
+    "layers": 3,
+    "patches": [
+      "Isolate owned loopback endpoint from ambient Kestrel configuration",
+      "Assert unchanged workload assertion alongside requester proof on both sends"
+    ],
+    "outstandingBlockingFindings": 0
+  },
+  "nestedCheckoutsInitialized": false,
+  "hostedQualification": {
+    "head": "331c528219e921e990402a6134fed9bfc50f0441",
+    "runId": 41347795093,
+    "status": "pending"
+  }
+}

@@ -1256,3 +1256,11 @@ status: open
 - source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
   summary: Bound the preexisting bootstrap transport response buffer while preserving the SDK resilience and body-read cancellation policy.
   evidence: Default HttpClient.SendAsync buffers the full response before the existing8KiB diagnostic probe runs; the new classifier bounds only parsed input. A transport completion-mode change needs its own timeout and byte-consumption coverage.
+
+- source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
+  summary: Harden the existing Tenants package-consumer verifier against exclusive/minimum-only SDK ranges and mismatched resolved EventStore cohorts.
+  evidence: The unchanged parser extracts a dependency lower bound and validates only the restored Tenants archives; an exclusive(3.131.0,) range can be labeled3.131.0 before restore. Current produced candidates use inclusive3.131.0 dependencies and pass the real consumer; malformed-range and resolved-closure controls remain a separate preexisting follow-up.
+
+- source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
+  summary: Pin the SDK inside the existing temporary Tenants packed-consumer workspace.
+  evidence: The existing verifier creates a temporary project without global.json. Current direct observation selects10.0.403, equal to the repository pin, with only older alternatives installed; a later newer installed SDK could change this selection. Copying or otherwise explicitly binding the pin and exercising a conflicting installed-SDK case would settle the follow-up.

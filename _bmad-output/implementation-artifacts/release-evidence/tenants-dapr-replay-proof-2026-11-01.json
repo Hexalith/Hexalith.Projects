@@ -1,0 +1,139 @@
+{
+  "assertions": {
+    "actualDaprRetriesObserved": true,
+    "allCallbacksMatchedOwnedNamespace": true,
+    "allPassed": true,
+    "firstAttemptBodiesEqual": true,
+    "knownLengthRetryBodyIdentical": true,
+    "knownLengthRetrySucceeded": true,
+    "policiesUnchangedAcrossCases": true,
+    "unknownLengthRetryBodyEmpty": true
+  },
+  "cases": [
+    {
+      "callbackCount": 2,
+      "callbacks": [
+        {
+          "attempt": 1,
+          "bodyLength": 304,
+          "bodySha256": "52e403de16556a074bdba94422aff88a8e1cb0bb02e2757ea9737aeea2ecc8ae",
+          "calleeAppId": "eventstore",
+          "callerAppId": "eventstore",
+          "callerNamespace": "tenants-replay-70dncqsq",
+          "contentLength": null,
+          "responseStatus": 202,
+          "transferEncoding": "chunked"
+        },
+        {
+          "attempt": 2,
+          "bodyLength": 0,
+          "bodySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "calleeAppId": "eventstore",
+          "callerAppId": "eventstore",
+          "callerNamespace": "tenants-replay-70dncqsq",
+          "contentLength": null,
+          "responseStatus": 400,
+          "transferEncoding": "chunked"
+        }
+      ],
+      "contentImplementation": "System.Net.Http.Json.JsonContent",
+      "elapsedMilliseconds": 6052,
+      "expectedBodyLength": 304,
+      "expectedBodySha256": "52e403de16556a074bdba94422aff88a8e1cb0bb02e2757ea9737aeea2ecc8ae",
+      "initialContentLength": null,
+      "mode": "unknown-length-json-content",
+      "outerStatus": 400
+    },
+    {
+      "callbackCount": 2,
+      "callbacks": [
+        {
+          "attempt": 1,
+          "bodyLength": 304,
+          "bodySha256": "52e403de16556a074bdba94422aff88a8e1cb0bb02e2757ea9737aeea2ecc8ae",
+          "calleeAppId": "eventstore",
+          "callerAppId": "eventstore",
+          "callerNamespace": "tenants-replay-70dncqsq",
+          "contentLength": "304",
+          "responseStatus": 202,
+          "transferEncoding": null
+        },
+        {
+          "attempt": 2,
+          "bodyLength": 304,
+          "bodySha256": "52e403de16556a074bdba94422aff88a8e1cb0bb02e2757ea9737aeea2ecc8ae",
+          "calleeAppId": "eventstore",
+          "callerAppId": "eventstore",
+          "callerNamespace": "tenants-replay-70dncqsq",
+          "contentLength": "304",
+          "responseStatus": 202,
+          "transferEncoding": null
+        }
+      ],
+      "contentImplementation": "System.Net.Http.ByteArrayContent",
+      "elapsedMilliseconds": 6004,
+      "expectedBodyLength": 304,
+      "expectedBodySha256": "52e403de16556a074bdba94422aff88a8e1cb0bb02e2757ea9737aeea2ecc8ae",
+      "initialContentLength": 304,
+      "mode": "known-length-json-bytes",
+      "outerStatus": 202
+    }
+  ],
+  "cleanup": {
+    "credentialsRetained": false,
+    "ownedLoopbackApplicationStopped": true,
+    "ownedSidecarProcessGroupExited": true,
+    "ownedTemporaryDirectoryRemoved": true,
+    "probeRerunForPersistence": false,
+    "rawRequestContentRetained": false
+  },
+  "client": {
+    "allowAutoRedirect": false,
+    "framework": "net10.0",
+    "httpVersion": "1.1",
+    "timeoutSeconds": 30,
+    "useProxy": false,
+    "versionPolicy": "RequestVersionExact"
+  },
+  "executedOn": "2026-11-01",
+  "isolation": {
+    "allListenAddresses": "127.0.0.1",
+    "appIds": [
+      "eventstore"
+    ],
+    "childEnvironmentAllowlisted": true,
+    "configAndSubscriptionDiscoveryDisabled": true,
+    "namespace": "tenants-replay-70dncqsq",
+    "noActors": true,
+    "noBusinessBackend": true,
+    "noContainers": true,
+    "noPubSub": true,
+    "noRepositoryChanges": true,
+    "noStateStore": true,
+    "noUnownedPlacementOrSchedulerContactObserved": true,
+    "placementAddressExplicitlyEmpty": true,
+    "resourcesDirectoryContainedOnlyOwnedResiliencyYaml": true,
+    "schedulerAddressExplicitlyEmpty": true,
+    "selfInvocationOnly": true,
+    "sixDistinctDynamicallyAllocatedPorts": true
+  },
+  "kind": "actual-dapr-http-retry-body-replay-proof",
+  "provenance": {
+    "executionOutput": "Completed parent-session tool result, session79533, chunk558ba4",
+    "persistence": "Transcribed from completed probe output; no probe processes or deleted files recreated."
+  },
+  "runtime": {
+    "gitCommit": "b32a815fa2260983e181b95272ea555fe17d3895",
+    "version": "1.18.7"
+  },
+  "scenario": {
+    "bodyIdentity": "Synthetic bound-bootstrap shape; exact Web JSON shared by both cases. Raw content not retained.",
+    "firstCallbackDelaySeconds": 6.5,
+    "policyMaxRetries": 3,
+    "policyRetryDelaySeconds": 1,
+    "policyTimeoutSeconds": 5,
+    "sidecarRetryWarnings": 2,
+    "targetAppId": "eventstore"
+  },
+  "schemaVersion": 1
+}

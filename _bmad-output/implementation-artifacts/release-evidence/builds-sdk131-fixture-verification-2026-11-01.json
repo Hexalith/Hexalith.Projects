@@ -1,0 +1,46 @@
+{
+  "sourceSha": "4d2ef11ea7f36b955ed701fef5af1f26a6414942",
+  "catalogEventStoreVersion": "3.131.0",
+  "change": "Align synthetic fixture pins and exact matched hash bindings plus schema constant; historical runtime evidence and exact negative expectations unchanged.",
+  "changedFiles": 106,
+  "syntheticAcceptanceConsistency": {
+    "changedFiles": 0,
+    "passed": true
+  },
+  "preparationControls": {
+    "total": 7,
+    "failed": 0
+  },
+  "evidenceTests": {
+    "total": 191,
+    "failed": 0,
+    "skipped": 0
+  },
+  "publisherContracts": "passed",
+  "moduleFullRun": {
+    "total": 2733,
+    "passed": 2727,
+    "failed": 3,
+    "skipped": 3,
+    "failures": [
+      "Old schema constant; corrected to3.131.0 and focused parity passed1/1",
+      "ArchiveRejectsChildCreatedParentAndFileLinksAsync workspace-entry; isolated7-case rerun passed",
+      "FailedBatchIdentifiesAttemptedAndNotAttemptedEntriesAsync false; isolated7-case rerun passed"
+    ],
+    "focusedFinalReruns": {
+      "schemaParity": {
+        "total": 1,
+        "failed": 0
+      },
+      "provisioning": {
+        "total": 7,
+        "failed": 0
+      }
+    }
+  },
+  "hostedCi": {
+    "runId": 41345961190,
+    "conclusion": "success",
+    "url": "https://github.com/Hexalith/Hexalith.Builds/actions/runs/41345961190"
+  }
+}
