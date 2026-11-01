@@ -674,6 +674,46 @@ source_spec: _bmad-output/implementation-artifacts/spec-6-1-p1r-requalify-with-s
 reason: Preserved `.nupkg` and `.snupkg` artifacts have no bounded retention, pruning, or Git LFS policy, so historical evidence growth remains unbounded.
 status: open
 
+### DW-74: Resolve the Builds release-tooling npm audit findings.
+
+origin: moved out of Story 6.4 by sprint-change-proposal-2026-11-01-close-story-6-4.md
+location: references/Hexalith.Builds release tooling npm dependency graph
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01-close-story-6-4.md
+reason: The refreshed audit exits 1 with 37 moderate and one high entry across eight unique advisories in bundled npm leaves; glob/minimatch reachability is unresolved. A fail-closed vulnerability-audit patch and its controls are prepared under _bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-verification-20261031/. Owner: Hexalith.Builds. Gates Builds release security only, never a Projects story.
+status: open
+
+### DW-75: Stabilize Builds Module CLI local full qualification.
+
+origin: moved out of Story 6.4 by sprint-change-proposal-2026-11-01-close-story-6-4.md
+location: references/Hexalith.Builds Module CLI test suite
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01-close-story-6-4.md
+reason: Full local qualification fails PublicCommandWritesResolvedMappingIntoEnginePlanAsync(test, null) with HXR021 at its five-second readiness bound and shows intermittent port-bind/file-lock failures, while hosted qualification passes. Also apply or drop the prepared, unapplied hidden-file robustness patch recorded under _bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/producer-publication-verification-20261031/. Owner: Hexalith.Builds. Gates Builds qualification only.
+status: open
+
+### DW-76: Restore green Projects main CI after the 2026-11-01 submodule sync.
+
+origin: observed while closing Story 6.4 by sprint-change-proposal-2026-11-01-close-story-6-4.md
+location: .github CI run 41298330907 at ded1e704 (ci / build-and-test, G-6 current runtime qualification)
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01-close-story-6-4.md
+reason: Validate package consumer references fails with `Package Hexalith.Projects dependency graph differs from the manifest; wrong_versions=['Hexalith.EventStore.Contracts']`, so no test shard runs; G-6 fails one real PostgreSQL two-sidecar stop/restart qualifier case. The last fully green run is 41229091248 at 353cfd33. Owner: Projects build hygiene with Hexalith.EventStore. Not a story gate.
+status: open
+
+### DW-77: Record and publish a coherent Platform identity for package-mode preparation.
+
+origin: moved out of Story 6.4 by sprint-change-proposal-2026-11-01-close-story-6-4.md
+location: references/Hexalith.Platform release tag and committed Builds pin
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01-close-story-6-4.md
+reason: Package-mode preparation last exited 2 on 2026-10-30 with HXW011 (no SemVer release tag at the recorded Platform identity) and HXW009 (Platform's committed Builds pin differs from the umbrella checkout). Re-check before acting. Owner: Hexalith.Platform with Hexalith.Builds. Gates Story 6.7 / Epic 8 release, not Story 6.4.
+status: open
+
+### DW-78: Provide an owner-backed File identity mapping for advisory resolution.
+
+origin: Story 6.4 completion boundary, recorded by sprint-change-proposal-2026-11-01-close-story-6-4.md
+location: src/Hexalith.Projects.Server/Queries advisory attachment composition; File identity owner
+source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01-close-story-6-4.md
+reason: Advisory resolution reports File inputs as explicitly unsupported/incomplete because no production owner-backed File mapping provider exists; identity must never be guessed from a path, Folder ID or Projects reference ID. Owner: Hexalith.Folders (File identity). Needs its own story; consumers are an advisory File follow-up and Story 7.7.
+status: open
+
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
   summary: Allowlist live `answers.core` keys the same way legacy import allowlists `_CORE_KEYS`.
   evidence: `merge_config` still writes every non-user core answer onto the shared root, so a crafted answers file can overwrite another module section. This is preserved vendor success behavior, not an atomicity regression.
@@ -1176,7 +1216,7 @@ status: open
 
 - source_spec: `spec-6-4-owner-host-qualification.md`
   summary: Enroll the real Folders production catalog observer from independently retained topology, authentication and installed owner policy inputs before accepting conforming producer activation.
-  evidence: RouteCatalogAuthority.ValidateAsync requires IRouteCatalogHostObserver; Folders Program currently registers none. Configuration fingerprints and the receiver-only fixture authority cannot establish this adoption gate; retain fail-closed behavior and main Story 6.4 in-progress.
+  evidence: RouteCatalogAuthority.ValidateAsync requires IRouteCatalogHostObserver; Folders Program currently registers none. Configuration fingerprints and the receiver-only fixture authority cannot establish this adoption gate; retain fail-closed behavior; gates Folders deployment/consumer adoption (Epic 8), not Story 6.4.
 - source_spec: `spec-6-4-owner-host-qualification.md`
   summary: Run the gateway advisory acceptance lane through actual guarded and independently activated owner compositions before accepting deployment or consumer adoption.
   evidence: SupportedProjectGatewayHttpTests uses the pre-existing manually composed Folders and Conversations owner endpoints. Its signed gateway/store assertions and separate owner filter/HTTP cases do not prove a complete installed owner catalog boundary.

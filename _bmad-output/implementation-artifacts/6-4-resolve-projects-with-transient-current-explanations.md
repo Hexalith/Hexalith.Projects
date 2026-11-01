@@ -1,7 +1,10 @@
 ---
 story_id: '6.4'
 title: 'Resolve authorized advisory Project suggestions'
-status: in-progress
+status: done
+completed: '2026-11-01'
+accepted_at: 'Projects 353cfd33e54270a1acb028c1c66ecb7cd548f3e7; CI run 41229091248'
+closure_approval: 'sprint-change-proposal-2026-11-01-close-story-6-4.md'
 scope_approval: 'User yes on 2026-10-21 to the advisory scope-reset proposal'
 ---
 
@@ -25,3 +28,7 @@ Advisory results never establish AD-32 context usability, Conversation first-res
 Strict native-head/generation/rebuild certification, complete-current RTI, common-runner rollout and broad host migration no longer block this story. Completed prior SDK work remains available. Deployed authorization, release performance and production acceptance remain separate requirements and are never fabricated from source tests.
 
 Implementation evidence: [executed tests and limitations](evidence/6-4-advisory-resolution-20261021/README.md). The delivered scope is Conversation/Folder suggestions with explicit unsupported File inputs, not full File matching or deployment acceptance.
+
+## Closure — 2026-11-01
+
+Accepted on the four acceptance items above at Projects `353cfd33` (full CI run 41229091248 green), per [the closure proposal](../planning-artifacts/sprint-change-proposal-2026-11-01-close-story-6-4.md). Current-source local qualification: [owner-host review verification](evidence/6-4-advisory-resolution-20261021/owner-host-review-verification-20261101/README.md) (5,047 cases, zero failures/skips). Delivered scope: Conversation/Folder advisory suggestions; File inputs remain explicitly unsupported/incomplete (DW-78). Not claimed: deployed authorization, production release (Epic 8), Builds/Platform publication or security (DW-74, DW-75, DW-77). Later upstream changes do not reopen this story; regressions are ordinary defects.

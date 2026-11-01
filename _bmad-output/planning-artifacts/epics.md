@@ -1339,6 +1339,8 @@ obligation without making unrelated later-surface gates prerequisites for Story 
   does not revoke matching tuple approval or runtime proof. Release reruns the
   focused qualifier on its exact source.
 
+**Story completion rule (2026-11-01).** A story is done when its own acceptance criteria pass at a recorded commit, with CI green on that commit or an equivalent recorded local run. Later upstream or submodule movement does not reopen it; a regression is an ordinary defect. Publication, consumer adoption, producer security, platform qualification and deployment belong to their owning repository or Epic 8 and never extend a story's done criteria. A gate discovered during a story becomes a deferred-work entry or a new story, not another resumption of the same story. Story evidence is the commit SHA, the exact test commands, the pass totals and their XML; byte-preservation snapshots and hash ledgers of unchanged files are optional. Approved by `sprint-change-proposal-2026-11-01-close-story-6-4.md`.
+
 **Story 6.1 prerequisite work packages.** These are enablement packages, not user-value stories and
 not Story 6.1 implementation subtasks. The approved routing and complete acceptance contracts are in
 `sprint-change-proposal-2026-07-17.md`, the historical 2026-08-01 P1R candidate correction, the

@@ -2,8 +2,8 @@
 title: 'Story 6.4: Authorized advisory Project suggestions'
 type: 'feature'
 created: '2026-10-17'
-updated: '2026-10-28'
-status: 'in-progress'
+updated: '2026-11-01'
+status: 'done'
 route: 'dispatch'
 story_key: '6-4-resolve-projects-with-transient-current-explanations'
 baseline_commit: '83781b31e06214ad6da788c6535f9044df06ed5e'
@@ -781,3 +781,7 @@ The final complete local attempt, with DOTNET_PROCESSOR_COUNT=2 and the correcte
 Independent review follow-up: three lenses completed; twelve original findings and one follow-up control-label issue are triaged. Reviewed replay now verifies the delivered binding field by field, freshly evaluates selected Git catalog/evaluator bytes in disposable scratch, and freshly validates both exact signed archives with input digests and full outputs. Seventeen distinct optimized publication controls, five preservation controls and eight recorder controls pass. The audited portable security reconstruction fetches nonrecursively and still fails both explicit vulnerability gates on the affected tree. Executed historical helpers/results remain unchanged. Original dirty correction/hash/patch and available historical source/worktree fingerprints match.
 
 Preservation coverage is explicit: the original thirteen commit/index/named-ref/config snapshots and tracked/nonignored bytes are compared, new paths/statuses use the exact task allowlist, and symbolic HEAD is monitored during review. The initial snapshot did not capture all symbolic HEAD identities, and the protected detached checkout lacks a historical raw index/ref/symbolic snapshot; no retroactive proof of those missing observations is claimed. Ignored build/cache files are outside the file audit. These limits do not grant an exception or acceptance. Local broad qualification and npm security remain blocked, and Story 6.4 stays in-progress with candidateAcceptance false and no adoption.
+
+## Closure — 2026-11-01
+
+Story 6.4 is closed as done at Projects `353cfd33` (CI run 41229091248) on its approved advisory acceptance; see the story file closure and [the closure proposal](../planning-artifacts/sprint-change-proposal-2026-11-01-close-story-6-4.md). Builds security/qualification, Platform publication, red current-main CI and File identity mapping moved to DW-74 through DW-78 under their owners. No further resumption sections. New findings become deferred-work entries or new stories.
