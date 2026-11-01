@@ -244,8 +244,8 @@ def main(arguments: list[str] | None = None) -> int:
             errors.extend(support_coverage_issues(capture / "deterministic-support.json"))
         live_count = counts(scratch / "qualifier-ctrf.json")
         support_count = counts(scratch / "support-ctrf.json")
-        # Compile every selected AppHost and a transitive consumer. The file-based Platform
-        # AppHost consumes packages; the remaining projects use source references in Debug.
+        # Compile every selected AppHost and a transitive consumer in Debug/source mode.
+        # The file-based Platform host needs the source choice as a global property too.
         # FrontComposer resolves this workspace's root-declared Builds and Platform siblings itself.
         baseline = json.loads((BUILDS / "Tools/runtime-toolchain-baseline-2026-10-01.json").read_text())
         conversations_mapping = conversations_source_mapping(run, scratch)
@@ -263,8 +263,9 @@ def main(arguments: list[str] | None = None) -> int:
         # directory per project outside the repository.
         code = run.run("AppHost build Hexalith.Platform", ["dotnet", "build", str(platform),
             "--configuration", "Debug", "--no-incremental", "-v:minimal",
+            "-p:UseHexalithProjectReferences=true",
             f"--artifacts-path={scratch / 'platform-artifacts'}"], platform.parent)
-        apphosts.append({"path": platform.relative_to(ROOT).as_posix(), "exitCode": code, "dependencyMode": "packages"})
+        apphosts.append({"path": platform.relative_to(ROOT).as_posix(), "exitCode": code, "dependencyMode": "source"})
         mcp = ROOT / "references/Hexalith.McpCli/src/Hexalith.McpCli/Hexalith.McpCli.csproj"
         run.run("McpCli transitive Dapr consumer", ["dotnet", "build", str(mcp), *build], mcp.parent)
     except Exception as error:
