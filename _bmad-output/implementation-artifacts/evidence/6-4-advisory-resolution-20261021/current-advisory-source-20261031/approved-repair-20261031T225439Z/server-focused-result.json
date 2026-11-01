@@ -1,0 +1,28 @@
+{
+  "exit_code": 1,
+  "executable_closure_unchanged": true,
+  "xml_present": true,
+  "total": 317,
+  "passed": 314,
+  "failed": 3,
+  "skipped": 0,
+  "errors": 0,
+  "not-run": 0,
+  "nonpassing": [
+    {
+      "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"projection\\\")",
+      "result": "Fail",
+      "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+    },
+    {
+      "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"actor\\\")",
+      "result": "Fail",
+      "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+    },
+    {
+      "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"uncommitted-query\\\")",
+      "result": "Fail",
+      "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+    }
+  ]
+}

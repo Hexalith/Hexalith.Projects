@@ -1,0 +1,37 @@
+{
+  "name": "verified-contracts-advisory",
+  "argv": [
+    "dotnet",
+    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Contracts.Tests/bin/Debug/net10.0/Hexalith.Projects.Contracts.Tests.dll",
+    "-class",
+    "*ProjectAdvisoryContractTests",
+    "-result-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/verified-contracts-advisory.xml",
+    "-failSkips"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "CustomBeforeDirectoryBuildProps": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "a5f258754fd4897376d6945c91e70c6971789dc263b50337b5c856b513559363",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-10-31T22:33:05.920564+00:00",
+  "finished_utc": "2026-10-31T22:33:06.438386+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/tmp/story64-current-advisory-glv8lf4w/verified-contracts-advisory.stdout.log",
+  "stderr": "/tmp/story64-current-advisory-glv8lf4w/verified-contracts-advisory.stderr.log",
+  "stdout_sha256": "8382cbfcc0b090fc81e9493b3156544536f2316a66e0c9de9a243c1398cbaab6",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": true
+}

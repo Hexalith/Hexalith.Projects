@@ -637,5 +637,5 @@ public sealed partial class ProjectAdvisoryQueryTests
     private static QueryEnvelope Query(SupportedProjectReadFixture f, object input)
         => f.Query(input) with { QueryType = input is ResolveProjectFromConversationQuery ? ResolveProjectFromConversationQuery.QueryType : ResolveProjectFromAttachmentsQuery.QueryType };
     private static ProjectAdvisoryResolutionResponse Read(QueryResult result)
-    { result.Success.ShouldBeTrue(result.ErrorMessage); return result.GetPayload().Deserialize<ProjectAdvisoryResolutionResponse>(JsonSerializerOptions.Web)!; }
+    { result.Success.ShouldBeTrue(result.ErrorMessage); result.ProjectionType.ShouldBeNull(); return result.GetPayload().Deserialize<ProjectAdvisoryResolutionResponse>(JsonSerializerOptions.Web)!; }
 }

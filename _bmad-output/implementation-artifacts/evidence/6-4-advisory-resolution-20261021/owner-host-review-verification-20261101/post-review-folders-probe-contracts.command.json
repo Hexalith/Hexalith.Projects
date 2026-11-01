@@ -1,0 +1,35 @@
+{
+  "name": "post-review-folders-probe-contracts",
+  "argv": [
+    "dotnet",
+    "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Contracts.Tests/bin/Debug/net10.0/Hexalith.Folders.Contracts.Tests.dll",
+    "-class",
+    "Hexalith.Folders.Contracts.Tests.Deployment.ProductionObservabilityConformanceTests",
+    "-class",
+    "Hexalith.Folders.Contracts.Tests.Deployment.OperationsAuditDocsConformanceTests",
+    "-parallel",
+    "none",
+    "-result-xml",
+    "/tmp/story64-review-parent-ky066n88/post-review-folders-probe-contracts.xml",
+    "-failSkips"
+  ],
+  "cwd": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-11-01T01:51:17.342577+00:00",
+  "finished_utc": "2026-11-01T01:51:17.857894+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/tmp/story64-review-parent-ky066n88/post-review-folders-probe-contracts.stdout.log",
+  "stderr": "/tmp/story64-review-parent-ky066n88/post-review-folders-probe-contracts.stderr.log",
+  "stdout_sha256": "8146a2e36bc6d9f0e51226c8b572bb2a7049881b43a435353df9538c18bbfc34",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": true
+}

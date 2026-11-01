@@ -1,6 +1,9 @@
 namespace Hexalith.Projects.Server.Tests.Queries;
 
+using System.Net;
+using System.Net.Http.Json;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Hexalith.EventStore.Contracts.Queries;
@@ -12,18 +15,63 @@ using Hexalith.Projects.Contracts.Queries;
 using Hexalith.Projects.Contracts.Ui;
 using Hexalith.Projects.Server.Projections.ProjectReads;
 using Hexalith.Projects.Server.Queries;
+using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
 
 public sealed partial class SupportedProjectReadTests
 {
+#if HEXALITH_SOURCE_FIXTURE
+    [Theory]
+    [InlineData("projection")]
+    [InlineData("actor")]
+    [InlineData("uncommitted-query")]
+    public async Task GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(string mismatch)
+    {
+        ProjectReadAuthorityFixture fixture = await ProjectReadAuthorityFixture.CreateAsync();
+        await using var lifetime = fixture.ConfigureAwait(true);
+        fixture.Gateway.Environment.EnvironmentName.ShouldBe("Production");
+        fixture.Projects.Environment.EnvironmentName.ShouldBe("Production");
+        fixture.Folders.Environment.EnvironmentName.ShouldBe("Production");
+        fixture.AuthorityOptions.NonconformingDevelopmentFixture.ShouldBeTrue();
+        ProjectAuthoritySnapshot[] before = await fixture.SnapshotAsync();
+        SubmitQueryRequest request = mismatch switch
+        {
+            "projection" => fixture.Open() with { ProjectionType = GetProjectQuery.QueryType },
+            "actor" => fixture.Open() with { ProjectionActorType = "uncommitted-actor" },
+            _ => fixture.List() with { QueryType = ResolveProjectFromAttachmentsQuery.QueryType },
+        };
+        int acquisitions = fixture.Gateway.Services.GetRequiredService<GatewayFixtureRouteCatalog>().AcquisitionCount;
+        using HttpResponseMessage response = await fixture.Client.PostAsJsonAsync("/api/v1/queries", request, TestContext.Current.CancellationToken);
+        response.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+        string body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        foreach (string sensitive in new[] { fixture.Tenant, "project-a", "actor-1", "uncommitted-actor", request.QueryType })
+            body.ShouldNotContain(sensitive);
+        fixture.Gateway.Services.GetRequiredService<GatewayFixtureRouteCatalog>().AcquisitionCount.ShouldBeGreaterThan(acquisitions);
+        await fixture.AssertUnchangedAsync(before);
+        ProjectAuthoritySnapshot[] after = await fixture.SnapshotAsync();
+        static object Digest(ProjectAuthoritySnapshot snapshot) => new
+        {
+            KeySha256 = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(snapshot.Key))),
+            BytesSha256 = Convert.ToHexStringLower(SHA256.HashData(snapshot.Bytes)),
+            ETagSha256 = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(snapshot.ETag))),
+        };
+        TestContext.Current.TestOutputHelper!.WriteLine(JsonSerializer.Serialize(new
+        {
+            Before = before.Select(Digest), After = after.Select(Digest),
+        }));
+    }
+#endif
+
     [Fact]
     public async Task ListDefaultsToFiftyAndPreservesConversationPolicy()
     {
         SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
         for (int index = 0; index < 52; index++) { await fixture.SeedAsync($"project-{index:D3}", index * 10 + 100); }
         int writes = fixture.Store.Count;
-        ProjectListPage page = SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery()), TestContext.Current.CancellationToken));
+        QueryResult result = await fixture.Executor.ListAsync(fixture.Query(new ListProjectsQuery()), TestContext.Current.CancellationToken);
+        result.Success.ShouldBeTrue(); result.ProjectionType.ShouldBeNull(); result.Metadata.ShouldBeNull();
+        ProjectListPage page = SupportedProjectReadFixture.Payload<ProjectListPage>(result);
         page.Items.Count.ShouldBe(50);
         page.HasMore.ShouldBeTrue();
         page.Cursor.ShouldNotBeNull();
@@ -104,13 +152,15 @@ public sealed partial class SupportedProjectReadTests
         ProjectReadModel before = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName, ProjectReadModelKeys.Detail("tenant-a", "project-a"))!;
         int count = fixture.Store.Count;
         QueryResult safe = await fixture.Executor.GetAsync(fixture.Query(new GetProjectQuery(), "project-a"), TestContext.Current.CancellationToken);
-        safe.Success.ShouldBeTrue();
+        safe.Success.ShouldBeTrue(); safe.ProjectionType.ShouldBeNull(); safe.Metadata.ShouldBeNull();
         using JsonDocument safePayload = JsonDocument.Parse(safe.PayloadBytes!);
         safePayload.RootElement.TryGetProperty("name", out _).ShouldBeFalse();
         Encoding.UTF8.GetString(safe.PayloadBytes!).ShouldNotContain("Project project-a");
         fixture.Store.Count.ShouldBe(count);
         QueryEnvelope inspected = fixture.Query(new GetProjectQuery(true), "project-a");
-        GetProjectResponse detail = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(inspected, TestContext.Current.CancellationToken));
+        QueryResult inspectedResult = await fixture.Executor.GetAsync(inspected, TestContext.Current.CancellationToken);
+        inspectedResult.Success.ShouldBeTrue(); inspectedResult.ProjectionType.ShouldBeNull(); inspectedResult.Metadata.ShouldBeNull();
+        GetProjectResponse detail = SupportedProjectReadFixture.Payload<GetProjectResponse>(inspectedResult);
         detail.Name.ShouldBe("Project project-a");
         detail.Setup.ShouldNotBeNull();
         fixture.Store.Count.ShouldBe(count + 1);

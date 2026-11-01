@@ -1,0 +1,748 @@
+{
+  "contracts-advisory": {
+    "exit_code": 0,
+    "executable_closure_unchanged": true,
+    "xml_present": true,
+    "total": 8,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "not-run": 0,
+    "nonpassing": []
+  },
+  "engine-mappers": {
+    "exit_code": 0,
+    "executable_closure_unchanged": true,
+    "xml_present": true,
+    "total": 107,
+    "passed": 107,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "not-run": 0,
+    "nonpassing": []
+  },
+  "conversations-advisory-strict": {
+    "exit_code": 0,
+    "executable_closure_unchanged": true,
+    "xml_present": true,
+    "total": 119,
+    "passed": 119,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "not-run": 0,
+    "nonpassing": []
+  },
+  "server-focused": {
+    "exit_code": 1,
+    "executable_closure_unchanged": true,
+    "xml_present": true,
+    "total": 317,
+    "passed": 314,
+    "failed": 3,
+    "skipped": 0,
+    "errors": 0,
+    "not-run": 0,
+    "nonpassing": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"projection\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"actor\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"uncommitted-query\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      }
+    ]
+  },
+  "gateway-owner-store": {
+    "exit_code": 0,
+    "executable_closure_unchanged": true,
+    "xml_present": true,
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "not-run": 0,
+    "nonpassing": []
+  },
+  "projects-contracts-full": {
+    "exit_code": 0,
+    "executable_closure_unchanged": true,
+    "xml_present": true,
+    "total": 230,
+    "passed": 230,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "not-run": 0,
+    "nonpassing": []
+  },
+  "projects-core-full": {
+    "exit_code": 0,
+    "executable_closure_unchanged": true,
+    "xml_present": true,
+    "total": 684,
+    "passed": 684,
+    "failed": 0,
+    "skipped": 0,
+    "errors": 0,
+    "not-run": 0,
+    "nonpassing": []
+  },
+  "projects-server-full": {
+    "exit_code": 1,
+    "executable_closure_unchanged": true,
+    "xml_present": true,
+    "total": 1309,
+    "passed": 1264,
+    "failed": 45,
+    "skipped": 0,
+    "errors": 0,
+    "not-run": 0,
+    "nonpassing": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"projection\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"actor\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"uncommitted-query\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata(target: \\\"projects\\\", fault: \\\"actor\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata(target: \\\"projects\\\", fault: \\\"tenant\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata(target: \\\"projects\\\", fault: \\\"target\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata(target: \\\"projects\\\", fault: \\\"payload\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata(target: \\\"projects\\\", fault: \\\"audience\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata(target: \\\"folders\\\", fault: \\\"actor\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata(target: \\\"folders\\\", fault: \\\"tenant\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata(target: \\\"folders\\\", fault: \\\"target\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata(target: \\\"folders\\\", fault: \\\"payload\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.AlteringAnAlreadyIssuedQueryAtEitherHopRefusesProtectedMetadata(target: \\\"folders\\\", fault: \\\"audience\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.DelegatedChatbotListsAndOpensOnlyCurrentFolderAuthorizedProjects",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.RealBrokerAndBothRs256ReceiversAuthorizeListOpenAndContinuationWithoutDomainWrites",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.CorrectlySignedWrongRecipientAssertionsAreRejectedByBothReceivers(target: \\\"projects\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.CorrectlySignedWrongRecipientAssertionsAreRejectedByBothReceivers(target: \\\"folders\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.ExceptionalTeardownStillAttemptsEveryHostAndDisposesPrivateMaterial",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.ReceiverAcceptsOnlyTheConfiguredExpiryAndClockSkewWindow(target: \\\"projects\\\", secondsPastExpiry: 30)",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.ReceiverAcceptsOnlyTheConfiguredExpiryAndClockSkewWindow(target: \\\"folders\\\", secondsPastExpiry: 30)",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.ReceiverAcceptsOnlyTheConfiguredExpiryAndClockSkewWindow(target: \\\"projects\\\", secondsPastExpiry: 65)",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.ReceiverAcceptsOnlyTheConfiguredExpiryAndClockSkewWindow(target: \\\"folders\\\", secondsPastExpiry: 65)",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.InspectionNeedsDistinctPermissionAndDurableMetadataOnlyAuditIncludingUnchangedRetries(branch: \\\"open\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.InspectionNeedsDistinctPermissionAndDurableMetadataOnlyAuditIncludingUnchangedRetries(branch: \\\"list\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.RealFolderAuthorityPreservesFilteringSafeDenialAndHonestDegradation(fault: \\\"denied\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.RealFolderAuthorityPreservesFilteringSafeDenialAndHonestDegradation(fault: \\\"absent\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.RealFolderAuthorityPreservesFilteringSafeDenialAndHonestDegradation(fault: \\\"stale\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.RealFolderAuthorityPreservesFilteringSafeDenialAndHonestDegradation(fault: \\\"unavailable\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.ReceiverObserverRecordsStrippedAndMalformedAssertionsBeforeRealRejection(target: \\\"projects\\\", fault: \\\"missing\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.ReceiverObserverRecordsStrippedAndMalformedAssertionsBeforeRealRejection(target: \\\"projects\\\", fault: \\\"malformed\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.ReceiverObserverRecordsStrippedAndMalformedAssertionsBeforeRealRejection(target: \\\"folders\\\", fault: \\\"missing\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.ReceiverObserverRecordsStrippedAndMalformedAssertionsBeforeRealRejection(target: \\\"folders\\\", fault: \\\"malformed\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.RevokingLoadedGrantStopsNewIssuanceWhileAnExistingJwtRetainsItsBoundedLifetime",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.PublicUserIssuerCannotAuthenticateAtDedicatedWorkloadReceivers(target: \\\"projects\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.PublicUserIssuerCannotAuthenticateAtDedicatedWorkloadReceivers(target: \\\"folders\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.MissingEnrollmentFailsClosedWithoutAnUnboundRetry(hop: \\\"projects\\\", fault: \\\"binding-disabled\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.MissingEnrollmentFailsClosedWithoutAnUnboundRetry(hop: \\\"projects\\\", fault: \\\"wrong-client\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.MissingEnrollmentFailsClosedWithoutAnUnboundRetry(hop: \\\"projects\\\", fault: \\\"wrong-grant\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.MissingEnrollmentFailsClosedWithoutAnUnboundRetry(hop: \\\"projects\\\", fault: \\\"wrong-issuer\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.MissingEnrollmentFailsClosedWithoutAnUnboundRetry(hop: \\\"owner-gateway\\\", fault: \\\"wrong-client\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.MissingEnrollmentFailsClosedWithoutAnUnboundRetry(hop: \\\"owner-gateway\\\", fault: \\\"revoked\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.MissingEnrollmentFailsClosedWithoutAnUnboundRetry(hop: \\\"folders\\\", fault: \\\"wrong-grant\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.MissingEnrollmentFailsClosedWithoutAnUnboundRetry(hop: \\\"folders\\\", fault: \\\"revoked\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.BrokerObserverRecordsMissingAndMalformedProfileBeforeRealRejection(fault: \\\"missing\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectAuthorityHttpTests.BrokerObserverRecordsMissingAndMalformedProfileBeforeRealRejection(fault: \\\"malformed\\\")",
+        "result": "Fail",
+        "message": "Microsoft.Extensions.Options.OptionsValidationException : The embedded authority requires an explicitly nonconforming Development fixture."
+      }
+    ]
+  },
+  "conversations-server-full": {
+    "exit_code": 1,
+    "executable_closure_unchanged": true,
+    "xml_present": true,
+    "total": 1508,
+    "passed": 1429,
+    "failed": 79,
+    "skipped": 0,
+    "errors": 0,
+    "not-run": 0,
+    "nonpassing": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"missing\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"generation\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"native-proof\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"projection-version\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"batch\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"receipt\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"owner\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"head-sequence\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"head-message\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"owner-version\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"freshness\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"null-owner\\\", interruptRepair: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"missing\\\", interruptRepair: True)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"batch\\\", interruptRepair: True)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.RebuildOriginSelectionRepairPreservesGenerationAndPublishesValidReplacementReceipt(corruption: \\\"missing\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.RebuildOriginSelectionRepairPreservesGenerationAndPublishesValidReplacementReceipt(corruption: \\\"batch\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.SelectionEtagInterleavingReopensProofAndRepairsBeforeReportingCompletion",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsActualReceiptWithoutChangingOriginalMetadata(missing: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsActualReceiptWithoutChangingOriginalMetadata(missing: True)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.HistoricalV1PreparedRebuildRefusesBeforeMarkerReadWithVirginOrPreviousMetadata(previous: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.HistoricalV1PreparedRebuildRefusesBeforeMarkerReadWithVirginOrPreviousMetadata(previous: True)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.DirectRichWriterBarrierStillWithholdsACompletedRebuild(pending: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.DirectRichWriterBarrierStillWithholdsACompletedRebuild(pending: True)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"prepared\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"installed\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"proof\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"metadata\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"detail\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"index\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"ledger\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"fence\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"selection\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"receipt\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"completion\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(change: \\\"matching\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(change: \\\"completion\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(change: \\\"source\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(change: \\\"catalog\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(change: \\\"permission\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"missing\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"malformed\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"fingerprint\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"scope\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"batch\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"owner\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"selection\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"native\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"catalog\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"source\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"legacy\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"arbitrary\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedOriginalRebuildIsReadThroughActualSdkOwnerEndpointAndSignedDelegatedAdapter",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedRebuildRetainsOriginalEvidenceAndPublishesContentFreeSdkCompletion",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.ReconciliationPreservesOriginalGenerationAndSelectionTamperingRefusesProof",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: False, interrupted: False, loseLedger: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: False, interrupted: True, loseLedger: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: True, interrupted: False, loseLedger: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: True, interrupted: True, loseLedger: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: False, interrupted: False, loseLedger: True)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: False, interrupted: True, loseLedger: True)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: True, interrupted: False, loseLedger: True)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: True, interrupted: True, loseLedger: True)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.ExplicitEnrollmentNegotiatesAndReadsActualPersistedSdkOwnerProofWithoutContentOrWrites",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"event\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"proof\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"replacement\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.LegacyLedgerWithoutAdmissionEvidenceCannotAcquireProofAfterVerifierRecovery",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.VerifierOutageCannotHideExactHintedMetadataMutation(mutation: \\\"null-empty\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.VerifierOutageCannotHideExactHintedMetadataMutation(mutation: \\\"timestamp-offset\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.VerifierOutageCannotHideExactHintedMetadataMutation(mutation: \\\"segment-boundary\\\")",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.DefaultLegacyAndCompatibilityDeliveryPreserveRoutesWithoutGuardCertificate",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.DirectRichWriterInvalidatesEnrolledMetadataBeforeEitherPublicEntryPoint(markPending: False)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.DirectRichWriterInvalidatesEnrolledMetadataBeforeEitherPublicEntryPoint(markPending: True)",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.InterruptedEnrolledDeliveryRecoversTheSameOriginalEvidenceThroughReconciliation",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.OutboundClientsDisableRedirects",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : handler\n    should be of type\nSystem.Net.Http.SocketsHttpHandler\n    but was\nHexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler\n\nAdditional Info:\n    Hexalith.Conversations.DeletionReceiverLookup"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.RuntimeIdentityRouteAuthenticatesCallersWithTheSharedContract",
+        "result": "Fail",
+        "message": "System.InvalidOperationException : HTTP endpoint inventory failed: /api/v1/conversations/{conversationId}/participants: every protected endpoint must name a policy."
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.MismatchedReceiptQuarantinesWithoutAcknowledgement",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : await DeliverAsync()\n    should be\nConversationAgentsOutcome.Quarantined\n    but was\nConversationAgentsOutcome.Unavailable"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.PumpAdvancesOnlyAfterAnIndependentExactAcknowledgement",
+        "result": "Fail",
+        "message": "Shouldly.ShouldAssertException : pending.LastAttemptId\n    should not be null but was"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.ParticipantRouteMapsTheTokenSubjectAndRejectsAPresetNameIdentifier",
+        "result": "Fail",
+        "message": "System.InvalidOperationException : HTTP endpoint inventory failed: /api/v1/conversations/{conversationId}/participants: every protected endpoint must name a policy."
+      }
+    ]
+  }
+}

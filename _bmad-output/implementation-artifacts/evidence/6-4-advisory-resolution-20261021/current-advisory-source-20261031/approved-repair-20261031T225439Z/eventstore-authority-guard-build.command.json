@@ -1,0 +1,32 @@
+{
+  "name": "eventstore-authority-guard-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.EventStore/tests/Hexalith.EventStore.ServiceDefaults.Tests/Hexalith.EventStore.ServiceDefaults.Tests.csproj",
+    "-c",
+    "Debug",
+    "-p:UseHexalithProjectReferences=true",
+    "-m:1",
+    "-v:minimal"
+  ],
+  "cwd": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.EventStore",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-10-31T23:05:54.125822+00:00",
+  "finished_utc": "2026-10-31T23:05:56.450281+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/approved-repair-20261031T225439Z/eventstore-authority-guard-build.stdout.log",
+  "stderr": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/approved-repair-20261031T225439Z/eventstore-authority-guard-build.stderr.log",
+  "stdout_sha256": "7eccdf12ed711c48a364a1c029e73cca4f3aa7cf239ee60b4191d73ad8973641",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": false
+}

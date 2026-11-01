@@ -1,0 +1,45 @@
+{
+  "name": "conversations-owner",
+  "argv": [
+    "dotnet",
+    "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations/tests/Hexalith.Conversations.Server.Tests/bin/Debug/net10.0/Hexalith.Conversations.Server.Tests.dll",
+    "-class",
+    "*ConversationAdvisoryMetadataQueryHandlerTest",
+    "-class",
+    "*ConversationQueryRegistrationTest",
+    "-class",
+    "*ConversationResolutionMetadataProjectionTest",
+    "-class",
+    "*ConversationResolutionMetadataRecoveryTest",
+    "-class",
+    "*ConversationResolutionMetadataQueryHandlerTest",
+    "-result-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/conversations-owner.xml",
+    "-failSkips"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects/references/Hexalith.Conversations",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "CustomBeforeDirectoryBuildProps": "/tmp/story64-current-advisory-glv8lf4w/conversations-source/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story64-current-advisory-glv8lf4w/conversations-source/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story64-current-advisory-glv8lf4w/conversations-source/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story64-current-advisory-glv8lf4w/conversations-source/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story64-current-advisory-glv8lf4w/conversations-source/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "937bf315bc3457cc9a87123da9b6b1e6fc61cbfa18754b3349578e85b3900d0f",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-10-31T22:38:06.623324+00:00",
+  "finished_utc": "2026-10-31T22:38:09.947846+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/tmp/story64-current-advisory-glv8lf4w/conversations-owner.stdout.log",
+  "stderr": "/tmp/story64-current-advisory-glv8lf4w/conversations-owner.stderr.log",
+  "stdout_sha256": "1b066da79e363c0f1115905e16cd5f66b7d7ce00dd55b1afdaaa7147b81598a5",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": true
+}

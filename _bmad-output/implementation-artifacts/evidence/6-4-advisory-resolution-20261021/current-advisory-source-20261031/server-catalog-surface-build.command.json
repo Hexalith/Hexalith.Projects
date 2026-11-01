@@ -1,0 +1,37 @@
+{
+  "name": "server-catalog-surface-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-v:minimal"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "CustomBeforeDirectoryBuildProps": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "a5f258754fd4897376d6945c91e70c6971789dc263b50337b5c856b513559363",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-10-31T22:31:53.775143+00:00",
+  "finished_utc": "2026-10-31T22:32:07.607560+00:00",
+  "exit_code": 1,
+  "launch_or_timeout_error": null,
+  "stdout": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/server-catalog-surface-build.stdout.log",
+  "stderr": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/server-catalog-surface-build.stderr.log",
+  "stdout_sha256": "978a1945b3451b44b4c32ad9399be61de16b32a6c54febbbb42381ae67510139",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": false
+}

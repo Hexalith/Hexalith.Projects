@@ -1,0 +1,54 @@
+{
+  "exit_code": 1,
+  "executable_closure_unchanged": true,
+  "total": 39,
+  "passed": 32,
+  "failed": 7,
+  "skipped": 0,
+  "errors": 0,
+  "not-run": 0,
+  "nonpassing": [
+    {
+      "name": "Hexalith.Folders.Server.Tests.FoldersCallbackBoundaryTests.QueryCallbackMapsInputErrorsAndSanitizesOtherFailures(scenario: \\\"unknown-handler\\\", expected: NotFound)",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : response.StatusCode\n    should be\nHttpStatusCode.NotFound\n    but was\nHttpStatusCode.ServiceUnavailable",
+      "stack": "   at Hexalith.Folders.Server.Tests.FoldersCallbackBoundaryTests.QueryCallbackMapsInputErrorsAndSanitizesOtherFailures(String scenario, HttpStatusCode expected) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersCallbackBoundaryTests.cs:line 145\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at Hexalith.Folders.Server.Tests.FoldersCallbackBoundaryTests.QueryCallbackMapsInputErrorsAndSanitizesOtherFailures(String scenario, HttpStatusCode expected) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersCallbackBoundaryTests.cs:line 159\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)\n--- End of stack trace from previous location ---\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)"
+    },
+    {
+      "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(repository: \\\"folder\\\", memoryFallback: False, message: \\\"actor-folded folder repository\\\")",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : failure.Message\n    should contain (case insensitive comparison)\n\\\"actor-folded folder repository\\\"\n    but was actually\n\\\"Domain-service internal credentials are not configured: Authentication:JwtBearer:AllowedAlgorithms m...\\\"",
+      "stack": "   at Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(String repository, Boolean memoryFallback, String message) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FolderRepositoryStartupAssertionTests.cs:line 88\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)\n--- End of stack trace from previous location ---\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)"
+    },
+    {
+      "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(repository: \\\"folder\\\", memoryFallback: True, message: \\\"actor-folded folder repository\\\")",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : failure.Message\n    should contain (case insensitive comparison)\n\\\"actor-folded folder repository\\\"\n    but was actually\n\\\"Domain-service internal credentials are not configured: Authentication:JwtBearer:AllowedAlgorithms m...\\\"",
+      "stack": "   at Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(String repository, Boolean memoryFallback, String message) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FolderRepositoryStartupAssertionTests.cs:line 88\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)\n--- End of stack trace from previous location ---\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)"
+    },
+    {
+      "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(repository: \\\"binding\\\", memoryFallback: False, message: \\\"actor-folded organization repository\\\")",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : failure.Message\n    should contain (case insensitive comparison)\n\\\"actor-folded organization repository\\\"\n    but was actually\n\\\"Domain-service internal credentials are not configured: Authentication:JwtBearer:AllowedAlgorithms m...\\\"",
+      "stack": "   at Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(String repository, Boolean memoryFallback, String message) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FolderRepositoryStartupAssertionTests.cs:line 88\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)\n--- End of stack trace from previous location ---\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)"
+    },
+    {
+      "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(repository: \\\"binding\\\", memoryFallback: True, message: \\\"actor-folded organization repository\\\")",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : failure.Message\n    should contain (case insensitive comparison)\n\\\"actor-folded organization repository\\\"\n    but was actually\n\\\"Domain-service internal credentials are not configured: Authentication:JwtBearer:AllowedAlgorithms m...\\\"",
+      "stack": "   at Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(String repository, Boolean memoryFallback, String message) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FolderRepositoryStartupAssertionTests.cs:line 88\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)\n--- End of stack trace from previous location ---\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)"
+    },
+    {
+      "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(repository: \\\"acl\\\", memoryFallback: False, message: \\\"actor-folded organization ACL repository\\\")",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : failure.Message\n    should contain (case insensitive comparison)\n\\\"actor-folded organization ACL repository\\\"\n    but was actually\n\\\"Domain-service internal credentials are not configured: Authentication:JwtBearer:AllowedAlgorithms m...\\\"",
+      "stack": "   at Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(String repository, Boolean memoryFallback, String message) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FolderRepositoryStartupAssertionTests.cs:line 88\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)\n--- End of stack trace from previous location ---\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)"
+    },
+    {
+      "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostStartsWithActorFoldedRepositories",
+      "result": "Fail",
+      "message": "System.InvalidOperationException : Domain-service internal credentials are not configured: Authentication:JwtBearer:AllowedAlgorithms must contain at least one non-blank supported asymmetric algorithm and must not contain symmetric or unknown algorithms.",
+      "stack": "   at Hexalith.EventStore.DomainService.EventStoreDomainServiceSecurityStartupValidator.StartingAsync(CancellationToken cancellationToken) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.DomainService/EventStoreDomainServiceSecurityStartupValidator.cs:line 81\n   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)\n   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>g__LogAndRethrow|14_3(<>c__DisplayClass14_0&)\n   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)\n   at Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostStartsWithActorFoldedRepositories() in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FolderRepositoryStartupAssertionTests.cs:line 30\n--- End of stack trace from previous location ---"
+    }
+  ]
+}

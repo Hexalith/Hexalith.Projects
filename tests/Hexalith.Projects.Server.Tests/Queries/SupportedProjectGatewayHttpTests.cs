@@ -35,6 +35,7 @@ using Hexalith.EventStore.Server.DomainServices;
 using Hexalith.EventStore.Server.Pipeline;
 using Hexalith.EventStore.Server.Queries;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
+using Hexalith.EventStore.ServiceDefaults.Routing;
 using Hexalith.Folders;
 using Hexalith.Folders.Aggregates.Folder;
 using Hexalith.Folders.Authorization;
@@ -83,7 +84,7 @@ public sealed class SupportedProjectGatewayHttpTests
         WebApplication projects = await StartProjectsAsync(http!, grpc!, transport, ownerKey, now).ConfigureAwait(true);
         await using var projectsLifetime = projects.ConfigureAwait(true);
         transport.Add("projects", projects);
-        WebApplication gateway = await StartGatewayAsync(http!, grpc!, transport, ownerKey).ConfigureAwait(true);
+        WebApplication gateway = await StartGatewayAsync(http!, grpc!, transport, ownerKey, tenant).ConfigureAwait(true);
         await using var gatewayLifetime = gateway.ConfigureAwait(true);
         transport.Add("eventstore", gateway);
         var tenantProjection = new ProjectTenantAccessProjection { TenantId = tenant, Enabled = true, Watermark = 1,
@@ -235,6 +236,14 @@ public sealed class SupportedProjectGatewayHttpTests
         await StatusAsync(client, Open(new GetProjectQuery(), "project-b"), HttpStatusCode.NotFound);
         transport.HumanBearerForwarded.ShouldBeFalse();
         transport.OwnerQueries.ShouldBeGreaterThan(0);
+        gateway.Services.GetRequiredService<GatewayFixtureRouteCatalog>().AcquisitionCount.ShouldBeGreaterThan(0);
+        byte[][] beforeMissingSurface = await StoreBytesAsync();
+        int ownerQueriesBeforeMissingSurface = transport.OwnerQueries;
+        client.DefaultRequestHeaders.Authorization = new("Bearer", HumanToken(tenant, inspection: false, includeSurface: false));
+        await StatusAsync(client, SuggestAttachments(new ProjectAdvisoryAttachment("file", "unsupported")), HttpStatusCode.Forbidden);
+        byte[][] afterMissingSurface = await StoreBytesAsync();
+        for (int i = 0; i < observedKeys.Length; i++) afterMissingSurface[i].ShouldBe(beforeMissingSurface[i]);
+        transport.OwnerQueries.ShouldBe(ownerQueriesBeforeMissingSurface);
         await conversations.StopAsync(TestContext.Current.CancellationToken); await gateway.StopAsync(TestContext.Current.CancellationToken); await projects.StopAsync(TestContext.Current.CancellationToken); await folders.StopAsync(TestContext.Current.CancellationToken);
     }
 
@@ -249,7 +258,7 @@ public sealed class SupportedProjectGatewayHttpTests
             ["Authentication:JwtBearer:AllowedAlgorithms:0"] = "HS256", ["Authentication:JwtBearer:RequireHttpsMetadata"] = "false",
             ["Authentication:WorkloadIssuer:Workload"] = workload,
         });
-        builder.Logging.ClearProviders();
+        builder.Logging.ClearProviders().AddConsole().SetMinimumLevel(LogLevel.Error);
         builder.Services.AddSingleton(_ => new DaprClientBuilder().UseHttpEndpoint(http).UseGrpcEndpoint(grpc).Build());
         builder.Services.AddHttpContextAccessor(); builder.Services.AddAuthorization(); builder.Services.AddEventStoreWorkloadAssertionIssuer();
         builder.Services.AddHttpClient(Options.DefaultName).ConfigurePrimaryHttpMessageHandler(() => new GatewayFixtureLoopbackHandler(routes));
@@ -310,7 +319,7 @@ public sealed class SupportedProjectGatewayHttpTests
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
     }
 
-    private static async Task<WebApplication> StartGatewayAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key)
+    private static async Task<WebApplication> StartGatewayAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, string tenant)
     {
         var builder = Builder("eventstore", http, grpc, routes);
         builder.Configuration["Authentication:BoundStreamRead:PublicKeys:projects"] = Convert.ToBase64String(key.ExportSubjectPublicKeyInfo());
@@ -329,6 +338,8 @@ public sealed class SupportedProjectGatewayHttpTests
         builder.Services.AddEventStoreWorkloadPolicies(DaprInternalAuthenticationOptions.SchemeName, [EventStoreWorkloadOperations.GatewayOwnerAuthorityQuery]);
         builder.Services.Configure<Microsoft.AspNetCore.Authorization.AuthorizationOptions>(options =>
             options.DefaultPolicy = Hexalith.EventStore.Extensions.EventStoreServiceCollectionExtensions.CreateHumanDefaultPolicy());
+        builder.Services.AddAuthorizationBuilder().AddPolicy(
+            EventStoreHttpHostSecurityExtensions.HumanPolicy, EventStoreHttpHostSecurityExtensions.CreateHumanPolicy());
         builder.Services.AddControllers().AddApplicationPart(typeof(QueriesController).Assembly);
         builder.Services.AddMediatR(options => options.RegisterServicesFromAssembly(typeof(QueryEnvelope).Assembly));
         builder.Services.AddTransient<MediatR.IRequestHandler<Hexalith.EventStore.Server.Pipeline.Queries.SubmitQuery, Hexalith.EventStore.Server.Pipeline.Queries.SubmitQueryResult>, SubmitQueryHandler>();
@@ -337,7 +348,9 @@ public sealed class SupportedProjectGatewayHttpTests
         builder.Services.AddSingleton<IDomainServiceResolver, GatewayFixtureRoutesResolver>();
         builder.Services.AddSingleton<IDomainQueryHandlerRegistry, DaprDomainQueryHandlerRegistry>();
         builder.Services.AddSingleton<IDomainQueryInvoker, DaprDomainQueryInvoker>();
-        builder.Services.AddSingleton<IQueryRouter>(sp => new HandlerAwareQueryRouter(new GatewayFixtureUnsupportedActorRouter(), sp.GetRequiredService<IDomainQueryHandlerRegistry>(),
+        builder.Services.AddSingleton(new GatewayFixtureRouteCatalog(tenant, includeAdvisoryQueries: true));
+        builder.Services.AddSingleton<IRouteCatalogAuthority>(sp => sp.GetRequiredService<GatewayFixtureRouteCatalog>());
+        builder.Services.AddSingleton<IQueryRouter>(sp => new HandlerAwareQueryRouter(sp.GetRequiredService<IRouteCatalogAuthority>(), new GatewayFixtureUnsupportedActorRouter(), sp.GetRequiredService<IDomainQueryHandlerRegistry>(),
             sp.GetRequiredService<IDomainQueryInvoker>(), sp.GetRequiredService<ILogger<HandlerAwareQueryRouter>>()));
         builder.Services.AddTransient<DomainServiceWorkloadAssertionHandler>();
         builder.Services.AddHttpClient(Options.DefaultName).AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
@@ -346,13 +359,14 @@ public sealed class SupportedProjectGatewayHttpTests
         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
     }
 
-    private static string HumanToken(string tenant, bool inspection, bool projectUser = false)
+    private static string HumanToken(string tenant, bool inspection, bool projectUser = false, bool includeSurface = true)
     {
         List<Claim> claims = [new("sub", "actor-1"), new("tenant_id", tenant), new("eventstore:tenant", tenant), new("azp", projectUser ? "chatbot" : "operator-web"),
             new("client_id", "issuing-client"), new("act", "{\"sub\":\"delegation-1\"}"), new("scope", "projects.read projects.list"),
             new("projects:role", projectUser ? "ProjectUser" : "TenantOperator"), new("eventstore:permission", "query:read"),
             new("eventstore:permission", "read_metadata"), new("eventstore:permission", Hexalith.Projects.Server.ProjectAuthorizationGate.ReadProjectAction),
             new("eventstore:permission", Hexalith.Projects.Server.ProjectAuthorizationGate.ListProjectsAction)];
+        if (includeSurface) claims.Add(new(RouteCatalogSurfacePolicy.ClaimType, projectUser ? "agent" : "ui"));
         if (inspection) claims.Add(new("eventstore:permission", ProjectReadQueryExecutor.InspectionPermission));
         var handler = new JwtSecurityTokenHandler(); handler.OutboundClaimTypeMap.Clear();
         return handler.CreateEncodedJwt(new SecurityTokenDescriptor { Issuer = Issuer, Audience = Audience,

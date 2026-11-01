@@ -1,0 +1,100 @@
+{
+  "Mode": "source",
+  "Root": "/tmp/story64-approved-repair-kvtivzn1/source/projects",
+  "ActiveModule": "Hexalith.Conversations",
+  "Entries": [
+    {
+      "Identity": "Hexalith.AI.Tools",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.AI.Tools"
+    },
+    {
+      "Identity": "Hexalith.Builds",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Builds"
+    },
+    {
+      "Identity": "Hexalith.Commons",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Commons"
+    },
+    {
+      "Identity": "Hexalith.Conversations",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Conversations"
+    },
+    {
+      "Identity": "Hexalith.EventStore",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.EventStore"
+    },
+    {
+      "Identity": "Hexalith.Folders",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders"
+    },
+    {
+      "Identity": "Hexalith.FrontComposer",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.FrontComposer"
+    },
+    {
+      "Identity": "Hexalith.McpCli",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.McpCli"
+    },
+    {
+      "Identity": "Hexalith.Memories",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Memories"
+    },
+    {
+      "Identity": "Hexalith.Parties",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Parties"
+    },
+    {
+      "Identity": "Hexalith.Platform",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Platform"
+    },
+    {
+      "Identity": "Hexalith.Tenants",
+      "Origin": "source",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Tenants"
+    }
+  ],
+  "HasGit": true,
+  "PlatformIdentity": {
+    "Commit": "82c9a31a0565c6dfd47750f5c67c087b487e6300",
+    "CompositionCommit": "82c9a31a0565c6dfd47750f5c67c087b487e6300",
+    "CheckoutCommit": "82c9a31a0565c6dfd47750f5c67c087b487e6300",
+    "PlatformPath": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Platform",
+    "ReleaseTag": null,
+    "CatalogCommit": "a22b55f0a4f6d2aaa3a5ccc505896064ac595364",
+    "ToolVersionRange": "[4.38.3, 5.0.0-0)",
+    "RecordPath": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Platform/hexalith-platform.json",
+    "IsPlatformRepository": false
+  },
+  "IdentityFindings": [
+    {
+      "RuleId": "HXW011",
+      "Message": "Platform identity 82c9a31a0565c6dfd47750f5c67c087b487e6300 has no local v\u003CSemVer\u003E release tag.",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Platform",
+      "Hint": "Fetch Platform tags, then retry."
+    },
+    {
+      "RuleId": "HXW009",
+      "Message": "Builds catalog \u0027/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Builds\u0027 is staged 2132fe0e276059dcd9fc35a7115fd2a1795ce538, checked out 2132fe0e276059dcd9fc35a7115fd2a1795ce538, dirty; Platform 82c9a31a0565c6dfd47750f5c67c087b487e6300 pins a22b55f0a4f6d2aaa3a5ccc505896064ac595364.",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Builds",
+      "Hint": null
+    },
+    {
+      "RuleId": "HXW010",
+      "Message": "Tool version 1.0.0-20261031225716 is outside Platform range [4.38.3, 5.0.0-0) at \u0027/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Platform/hexalith-platform.json\u0027.",
+      "Path": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Platform/hexalith-platform.json",
+      "Hint": null
+    }
+  ],
+  "ContentHash": "02690f0577e94ca95c5304198fe4ff3df69ab024221d20be399b84160b8821c4"
+}

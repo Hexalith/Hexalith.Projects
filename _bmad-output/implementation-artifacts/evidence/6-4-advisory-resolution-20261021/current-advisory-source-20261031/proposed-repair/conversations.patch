@@ -1,0 +1,20 @@
+--- a/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs
++++ b/src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs
+@@ -134,6 +134,5 @@
+     private static bool Canonical(string? value) => !string.IsNullOrWhiteSpace(value) && value == value.Trim();
+     private static QueryResult Unavailable() => Success(new(null, true));
+     private static QueryResult Success(ConversationAdvisoryMetadataResult result)
+-        => QueryResult.FromPayload(JsonSerializer.SerializeToElement(result, ConversationsJsonContext.Default.ConversationAdvisoryMetadataResult),
+-            GetConversationAdvisoryMetadataQuery.QueryType);
++        => QueryResult.FromPayload(JsonSerializer.SerializeToElement(result, ConversationsJsonContext.Default.ConversationAdvisoryMetadataResult));
+ }
+--- a/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.cs
++++ b/tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.cs
+@@ -219,6 +219,6 @@
+ 
+     private static ConversationAdvisoryMetadataResult Payload(QueryResult result)
+     {
+-        result.Success.ShouldBeTrue(); return result.GetPayload().Deserialize<ConversationAdvisoryMetadataResult>(JsonSerializerOptions.Web)!;
++        result.Success.ShouldBeTrue(); result.ProjectionType.ShouldBeNull(); return result.GetPayload().Deserialize<ConversationAdvisoryMetadataResult>(JsonSerializerOptions.Web)!;
+     }
+ }

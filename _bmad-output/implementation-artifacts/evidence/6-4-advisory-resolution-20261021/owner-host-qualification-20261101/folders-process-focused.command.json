@@ -1,0 +1,35 @@
+{
+  "name": "folders-process-focused",
+  "argv": [
+    "dotnet",
+    "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/bin/Debug/net10.0/Hexalith.Folders.Server.Tests.dll",
+    "-class",
+    "*ProductionProcessWireEventTests",
+    "-class",
+    "*FoldersProductionAuthenticationTests",
+    "-parallel",
+    "none",
+    "-result-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/owner-host-qualification-20261101/folders-process-focused.xml",
+    "-failSkips"
+  ],
+  "cwd": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-11-01T00:44:31.189572+00:00",
+  "finished_utc": "2026-11-01T00:44:35.063123+00:00",
+  "exit_code": 1,
+  "launch_or_timeout_error": null,
+  "stdout": "/tmp/story64-owner-host-ex8__xn3/folders-process-focused.stdout.log",
+  "stderr": "/tmp/story64-owner-host-ex8__xn3/folders-process-focused.stderr.log",
+  "stdout_sha256": "140a2a867d9d492e95fbf1e2fe7787652782be0424dd9799c2ecff835c39c1fd",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": true
+}

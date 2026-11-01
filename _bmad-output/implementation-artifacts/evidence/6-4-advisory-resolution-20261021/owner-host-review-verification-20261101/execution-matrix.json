@@ -1,0 +1,1464 @@
+{
+  "coverage": {
+    "host_endpoint_source_named_policies_and_routing": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.ServerEndpointRegistrationTests.ProductionHostNamesEveryPolicyAndEnrollsTheSdkEndpointSource",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(mode: V1Only, route: \\\"/api/v1/folders/folder-0123456789abcdef/acl\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(mode: Coexistence, route: \\\"/api/v2/folders/folder-0123456789abcdef/acl\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(mode: V2Only, route: \\\"/api/v2/folders/folder-0123456789abcdef/acl\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionCallbackUsesItsOperationPolicy(route: \\\"/process\\\", operation: \\\"domain-service:process\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionCallbackUsesItsOperationPolicy(route: \\\"/project\\\", operation: \\\"domain-service:project\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionCallbackUsesItsOperationPolicy(route: \\\"/query\\\", operation: \\\"domain-service:query\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionCallbackUsesItsOperationPolicy(route: \\\"/admin/operational-index-metadata\\\", operation: \\\"domain-service:metadata\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostStartsWithActorFoldedRepositories",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "valid_catalog_dispatch_metadata_and_recovery": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"missing\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"generation\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"native-proof\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"projection-version\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"batch\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"receipt\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"owner\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"head-sequence\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"head-message\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"owner-version\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"freshness\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"null-owner\\\", interruptRepair: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"missing\\\", interruptRepair: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration(corruption: \\\"batch\\\", interruptRepair: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.RebuildOriginSelectionRepairPreservesGenerationAndPublishesValidReplacementReceipt(corruption: \\\"missing\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.RebuildOriginSelectionRepairPreservesGenerationAndPublishesValidReplacementReceipt(corruption: \\\"batch\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.SelectionEtagInterleavingReopensProofAndRepairsBeforeReportingCompletion",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsActualReceiptWithoutChangingOriginalMetadata(missing: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest.CompletedRedeliveryRepairsActualReceiptWithoutChangingOriginalMetadata(missing: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.HistoricalV1PreparedRebuildRefusesBeforeMarkerReadWithVirginOrPreviousMetadata(previous: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.HistoricalV1PreparedRebuildRefusesBeforeMarkerReadWithVirginOrPreviousMetadata(previous: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.DirectRichWriterBarrierStillWithholdsACompletedRebuild(pending: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.DirectRichWriterBarrierStillWithholdsACompletedRebuild(pending: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"prepared\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"installed\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"proof\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"metadata\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"detail\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"index\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"ledger\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"fence\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"selection\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"receipt\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity(boundary: \\\"completion\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(change: \\\"matching\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(change: \\\"completion\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(change: \\\"source\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(change: \\\"catalog\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates(change: \\\"permission\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"missing\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"malformed\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"fingerprint\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"scope\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"batch\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"owner\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"selection\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"native\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"catalog\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"source\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"legacy\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback(change: \\\"arbitrary\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.CompletedOriginalRebuildIsReadThroughActualSdkOwnerEndpointAndSignedDelegatedAdapter",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest.UnsupportedStoreCannotFallBackToResolvingReadsOrObtainNativeEvidence",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedRebuildRetainsOriginalEvidenceAndPublishesContentFreeSdkCompletion",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.ReconciliationPreservesOriginalGenerationAndSelectionTamperingRefusesProof",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: False, interrupted: False, loseLedger: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: False, interrupted: True, loseLedger: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: True, interrupted: False, loseLedger: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: True, interrupted: True, loseLedger: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: False, interrupted: False, loseLedger: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: False, interrupted: True, loseLedger: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: True, interrupted: False, loseLedger: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery(initiallyAvailable: True, interrupted: True, loseLedger: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.ExplicitEnrollmentNegotiatesAndReadsActualPersistedSdkOwnerProofWithoutContentOrWrites",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"event\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"proof\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.GuardedOriginalInputTamperingRejectsBeforePersistedEffects(change: \\\"replacement\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.LegacyLedgerWithoutAdmissionEvidenceCannotAcquireProofAfterVerifierRecovery",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.VerifierOutageCannotHideExactHintedMetadataMutation(mutation: \\\"null-empty\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.VerifierOutageCannotHideExactHintedMetadataMutation(mutation: \\\"timestamp-offset\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.VerifierOutageCannotHideExactHintedMetadataMutation(mutation: \\\"segment-boundary\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.DefaultLegacyAndCompatibilityDeliveryPreserveRoutesWithoutGuardCertificate",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.DirectRichWriterInvalidatesEnrolledMetadataBeforeEitherPublicEntryPoint(markPending: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.DirectRichWriterInvalidatesEnrolledMetadataBeforeEitherPublicEntryPoint(markPending: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest.InterruptedEnrolledDeliveryRecoversTheSameOriginalEvidenceThroughReconciliation",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "root_epoch_host_target_tenant_capability_and_service_refusals": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"missing-root\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"wrong-root\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"missing-epoch\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"wrong-epoch\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"missing-surface\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"wrong-surface\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"missing-host\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"wrong-target\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"wrong-tenant\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"wrong-capability\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionReceiverGuardTest.ReceiverRefusesUncommittedAuthorityWithoutChangingPersistedState(fault: \\\"wrong-projection\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "signed_workload_channel_operation_and_caller_refusals": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersCallbackBoundaryTests.ProductionCallbacksRejectMissingInvalidAndWrongOperationCredentials(route: \\\"/process\\\", operation: \\\"domain-service:process\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersCallbackBoundaryTests.ProductionCallbacksRejectMissingInvalidAndWrongOperationCredentials(route: \\\"/project\\\", operation: \\\"domain-service:project\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersCallbackBoundaryTests.ProductionCallbacksRejectMissingInvalidAndWrongOperationCredentials(route: \\\"/query\\\", operation: \\\"domain-service:query\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersCallbackBoundaryTests.ProductionCallbacksRejectMissingInvalidAndWrongOperationCredentials(route: \\\"/admin/operational-index-metadata\\\", operation: \\\"domain-service:metadata\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "signed_process_events_legacy_replay_and_no_operational_writes": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.ProductionProcessWireEventTests.SignedWorkloadAndHumanReceiptAreAcceptedByProductionProcessRegistration",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "repository_startup_failures": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(repository: \\\"folder\\\", memoryFallback: False, message: \\\"actor-folded folder repository\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(repository: \\\"folder\\\", memoryFallback: True, message: \\\"actor-folded folder repository\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(repository: \\\"binding\\\", memoryFallback: False, message: \\\"actor-folded organization repository\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(repository: \\\"binding\\\", memoryFallback: True, message: \\\"actor-folded organization repository\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderRepositoryStartupAssertionTests.ProductionHostRefusesMissingOrMemoryRepository(repository: \\\"acl\\\", memoryFallback: False, message: \\\"actor-folded organization ACL repository\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "transport_redirect_refusal_and_real_inner_handler": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.OutboundClientsDisableRedirects",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.LookupInvocationRefusesRedirectAndUncommittedTargetWithoutTransferringAuthority",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "generic_api_binary_and_default_policy_compatibility": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.ParticipantMappingPreservesBinarySignatureAndSelectedPolicy(named: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.ParticipantMappingPreservesBinarySignatureAndSelectedPolicy(named: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.ConversationClientNeverMixesCallerAndWorkerIdentities",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.ParticipantRouteMapsTheTokenSubjectAndRejectsAPresetNameIdentifier",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "persisted_pending_retry_quarantine_and_acknowledgement": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.MismatchedReceiptQuarantinesWithoutAcknowledgement",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests.PumpAdvancesOnlyAfterAnIndependentExactAcknowledgement",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "real_gateway_advisory_and_physical_zero_write_refusals": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "xml": "post-review-projects-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"projection\\\")",
+        "xml": "post-review-projects-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"actor\\\")",
+        "xml": "post-review-projects-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"uncommitted-query\\\")",
+        "xml": "post-review-projects-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "advisory_owner_regressions": [
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.CancellationPropagates",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.LabelAbsenceAndExactBoundArePreservedWhileOverBoundScoringIsUnavailable(length: null, complete: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.LabelAbsenceAndExactBoundArePreservedWhileOverBoundScoringIsUnavailable(length: 160, complete: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.LabelAbsenceAndExactBoundArePreservedWhileOverBoundScoringIsUnavailable(length: 161, complete: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.RealAccessServicePreservesOnlyCheckedHealthAndStillRequiresNativeEvidence",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"unverified\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"origin-context\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"origin-kind\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"workload\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"actor\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"delegation\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"scopes\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"audience\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"payload\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"purpose\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"null-payload\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"entity\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"paging\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"admin-override\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedAuthorityAndPurposeDenyBeforeLookup(scenario: \\\"route-case\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.AuthorizedAtIsTheFinalOwnerCheckInstantAndNeverReplacesNativeGenerationTime",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.PersistedOwnerClassificationIsRequiredAndInspectionPurposeCannotBorrowReadAuthority",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.SupportedAggregateLength256IsPreservedExactly",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.LocalHealthWithPreservedPermissionEvidenceCannotReplaceNativeAuthorization",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.NonNullDecisionEvidenceMustIndependentlyMatchStableHealthySignalBeforeLookup(mismatch: \\\"version\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.NonNullDecisionEvidenceMustIndependentlyMatchStableHealthySignalBeforeLookup(mismatch: \\\"watermark\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.OlderImplicitClassificationOrAnotherPurposeCannotAuthorizeScoring(purpose: null)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.OlderImplicitClassificationOrAnotherPurposeCannotAuthorizeScoring(purpose: \\\"inspection\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.NonCurrentNativePermissionEvidenceWithholdsBeforeLookup(scenario: \\\"missing-signal\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.NonCurrentNativePermissionEvidenceWithholdsBeforeLookup(scenario: \\\"missing-decision\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.NonCurrentNativePermissionEvidenceWithholdsBeforeLookup(scenario: \\\"stale\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.NonCurrentNativePermissionEvidenceWithholdsBeforeLookup(scenario: \\\"gap\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.NonCurrentNativePermissionEvidenceWithholdsBeforeLookup(scenario: \\\"rollback\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.NonCurrentNativePermissionEvidenceWithholdsBeforeLookup(scenario: \\\"poison\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.NonCurrentNativePermissionEvidenceWithholdsBeforeLookup(scenario: \\\"malformed\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.StaleProjectionAndPendingProofCannotDiscloseMembershipOrLabel",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.FinalNativeVerificationUsesTheClockAfterResourceIoWithoutChangingProjectionGenerationTime",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.OmittedCollectionsAndValidOriginalDelegationAreCompatible(empty: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.OmittedCollectionsAndValidOriginalDelegationAreCompatible(empty: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.CancellationDuringEvidenceAwaitsPropagatesWithoutUsableResponse(boundary: \\\"first-read\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.CancellationDuringEvidenceAwaitsPropagatesWithoutUsableResponse(boundary: \\\"final-auth\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.CancellationDuringEvidenceAwaitsPropagatesWithoutUsableResponse(boundary: \\\"confirmation-read\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.FutureNativeVerificationIsWithheldAtEachAuthorizationAndInitialLookupBoundary(sample: 1)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.FutureNativeVerificationIsWithheldAtEachAuthorizationAndInitialLookupBoundary(sample: 2)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.FutureNativeVerificationIsWithheldAtEachAuthorizationAndInitialLookupBoundary(sample: 3)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.FutureNativeVerificationIsWithheldAtEachAuthorizationAndInitialLookupBoundary(sample: 4)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.TwoIndividuallyCoherentDifferentCompletedGenerationsCannotBeCombinedAcrossOwnerChecks",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.VerifiedCurrentReadReturnsOnlyClassifiedSubsetAndNativeEvidenceWithoutMutations",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.NativeEvidenceChangingInsideThePolicyCheckWithholdsBeforeLookup",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.UnsupportedFreshnessSchemaIsWithheldEvenWhenProofAndMetadataAgree",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.FutureNativeTenantEvidenceIsUnavailableBeforeMetadataReads",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.DeniedAbsentAndCrossTenantAreIndistinguishable(scenario: \\\"denied\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.DeniedAbsentAndCrossTenantAreIndistinguishable(scenario: \\\"absent\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.DeniedAbsentAndCrossTenantAreIndistinguishable(scenario: \\\"cross-tenant\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.BoundedUnclassifiableLabelsWithholdCompleteScoringWithoutTruncation(label: \\\"secret value\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.BoundedUnclassifiableLabelsWithholdCompleteScoringWithoutTruncation(label: \\\"https://private.example/document\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.BoundedUnclassifiableLabelsWithholdCompleteScoringWithoutTruncation(label: \\\"line\\\\nbreak\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.BoundedUnclassifiableLabelsWithholdCompleteScoringWithoutTruncation(label: \\\"   \\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.AuthorityAndGenerationMustRemainStableThroughEveryLookup(scenario: \\\"revision-first-read\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.AuthorityAndGenerationMustRemainStableThroughEveryLookup(scenario: \\\"revocation-first-read\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.AuthorityAndGenerationMustRemainStableThroughEveryLookup(scenario: \\\"revision-final-read\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.AuthorityAndGenerationMustRemainStableThroughEveryLookup(scenario: \\\"resource-final-read\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.FinalNativeVerificationMustNotBeInTheFutureAfterTheLastProjectionRead(offsetTicks: -1, available: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.FinalNativeVerificationMustNotBeInTheFutureAfterTheLastProjectionRead(offsetTicks: 0, available: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationResolutionMetadataQueryHandlerTest.FinalNativeVerificationMustNotBeInTheFutureAfterTheLastProjectionRead(offsetTicks: 1, available: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionScoringLabelProjectionTest.NativeClassificationRebuildRetainsSourceTimestampAndImmutableRetryGenerationTime",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionScoringLabelProjectionTest.DescriptiveLabelUpdateInvalidatesNativeClassificationThroughNormalProjectionAndRebuild",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionScoringLabelProjectionTest.SafeLegacyLabelCannotBeClassifiedByProjectionOrMetadataQuery",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionScoringLabelProjectionTest.ExplicitNativeMetadataReclassificationAdmitsALegacyLabelWithoutRewritingHistory(label: null)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionScoringLabelProjectionTest.ExplicitNativeMetadataReclassificationAdmitsALegacyLabelWithoutRewritingHistory(label: \\\"Scoring label\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionScoringLabelProjectionTest.UnrelatedMetadataUpdatePreservesNativeClassificationAndAuthorizedSafeLabel",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FenceChangedDuringAdvisoryReadWithholdsMetadata(mutation: \\\"null-current\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FenceChangedDuringAdvisoryReadWithholdsMetadata(mutation: \\\"completed-replacement\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FenceChangedDuringAdvisoryReadWithholdsMetadata(mutation: \\\"pending-current\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FenceChangedDuringAdvisoryReadWithholdsMetadata(mutation: \\\"barrier\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.DeniedMissingAndForeignInputsShareSafeDenialAndInitialDenialAvoidsReads",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.ExistingSummaryWithoutIsolatedMetadataIsIncompleteWhileAbsentSummaryIsDenied",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"origin-context\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"origin-kind\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"actor\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"delegation\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"scopes\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"array\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"nonempty\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"null-payload\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"oversize\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"entity\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"paging\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"admin\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnsupportedAdvisoryAuthorityDeniesBeforeAccessOrStorage(mutation: \\\"domain-case\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.RevocationBeforeDisclosureWithholdsTheReadMetadata",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.UnclassifiedLabelIsOmittedWithoutLosingAuthorizedLinkHint",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MissingVerifiedCallerAndTamperedWorkloadReadNoMetadata",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.CancellationPropagates",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess(mutation: \\\"requirement\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess(mutation: \\\"tenant\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess(mutation: \\\"actor\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.FinalOrdinaryReadDecisionStillRequiresExactIdentityAndNonretryableSuccess(mutation: \\\"retryable\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.AbsenceOfBothLabelsIsCompleteWhileUnclassifiedTextIsIncomplete(label: null, complete: True)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.AbsenceOfBothLabelsIsCompleteWhileUnclassifiedTextIsIncomplete(label: \\\"Unclassified label\\\", complete: False)",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.RetryableOwnerDenialReturnsUnavailableWithoutMetadataReads",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.CommittedMetadataWithoutNativeProofUsesTwoReadChecksAndLeavesBytesUnchanged",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"missing-etag\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"dispatch\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"lifecycle\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"tenant\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"resource\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"pending\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"schema\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Rebuilding\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Unavailable\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.MalformedOrPendingMetadataWithholdsObservations(mutation: \\\"Forbidden\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.DefaultNonsignalStorePermissionDisclosesCommittedMetadata",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.KnownErasedNativeSourceWithholdsMetadata",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.OrdinaryFinalPermissionDoesNotRequireProjectionEvidence(mutation: \\\"missing\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.OrdinaryFinalPermissionDoesNotRequireProjectionEvidence(mutation: \\\"negative\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.OrdinaryFinalPermissionDoesNotRequireProjectionEvidence(mutation: \\\"blank\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.OrdinaryFinalPermissionDoesNotRequireProjectionEvidence(mutation: \\\"oversized\\\")",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Conversations.Server.Tests.Queries.ConversationAdvisoryMetadataQueryHandlerTest.LaggingCommittedOwnerMetadataRemainsACompleteObservation",
+        "xml": "post-review-conversations-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.UnverifiedMalformedQueryRetainsSafeDenial(shape: \\\"malformed-json\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.UnverifiedMalformedQueryRetainsSafeDenial(shape: \\\"empty-payload\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.UnverifiedMalformedQueryRetainsSafeDenial(shape: \\\"non-object\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.UnverifiedMalformedQueryRetainsSafeDenial(shape: \\\"nonempty-object\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.UnverifiedMalformedQueryRetainsSafeDenial(shape: \\\"mismatched-entity\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.UnverifiedMalformedQueryRetainsSafeDenial(shape: \\\"missing-entity\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.UnverifiedMalformedQueryRetainsSafeDenial(shape: \\\"paging\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.HandlerRejectsUnverifiedMalformedQueryBeforeShapeValidation",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.DispatcherReauthorizesDelegatedActorAgainstCurrentLayeredOwnerEvidence(state: \\\"allowed\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.DispatcherReauthorizesDelegatedActorAgainstCurrentLayeredOwnerEvidence(state: \\\"revoked\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.DispatcherReauthorizesDelegatedActorAgainstCurrentLayeredOwnerEvidence(state: \\\"missing-permission\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.DispatcherReauthorizesDelegatedActorAgainstCurrentLayeredOwnerEvidence(state: \\\"stale\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.DispatcherReauthorizesDelegatedActorAgainstCurrentLayeredOwnerEvidence(state: \\\"unavailable\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.DispatcherReauthorizesDelegatedActorAgainstCurrentLayeredOwnerEvidence(state: \\\"tenant-stale\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"malformed-json\\\", evidenceStatus: Stale)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"empty-payload\\\", evidenceStatus: Stale)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"non-object\\\", evidenceStatus: Stale)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"nonempty-object\\\", evidenceStatus: Stale)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"mismatched-entity\\\", evidenceStatus: Stale)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"missing-entity\\\", evidenceStatus: Stale)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"paging\\\", evidenceStatus: Stale)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"malformed-json\\\", evidenceStatus: Unavailable)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"empty-payload\\\", evidenceStatus: Unavailable)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"non-object\\\", evidenceStatus: Unavailable)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"nonempty-object\\\", evidenceStatus: Unavailable)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"mismatched-entity\\\", evidenceStatus: Unavailable)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"missing-entity\\\", evidenceStatus: Unavailable)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.VerifiedMalformedShapeIsRejectedBeforeReadingCurrentOwnerEvidence(shape: \\\"paging\\\", evidenceStatus: Unavailable)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.ValidBoundQueryRetainsCurrentOwnerEvidenceOutcome(evidenceStatus: Stale, expectedOutcome: Stale)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FolderOwnerReadQueryHandlerTests.ValidBoundQueryRetainsCurrentOwnerEvidenceOutcome(evidenceStatus: Unavailable, expectedOutcome: Unavailable)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "review-ConfiguredOtlpStartsOneProviderPerSignalAndSubscribesFoldersSignals": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ConfiguredOtlpStartsOneProviderPerSignalAndSubscribesFoldersSignals",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "review-SdkDefaultsInstallOneResilienceHandlerAndPartitionDaprTargets": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.SdkDefaultsInstallOneResilienceHandlerAndPartitionDaprTargets",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "review-ProductionReadinessReportsHealthyDegradedAndUnavailableDapr": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionReadinessReportsHealthyDegradedAndUnavailableDapr(daprHealthy: True, tenantsDegraded: False, lag: 500, status: OK, body: \\\"Healthy\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionReadinessReportsHealthyDegradedAndUnavailableDapr(daprHealthy: True, tenantsDegraded: False, lag: 501, status: OK, body: \\\"Degraded\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionReadinessReportsHealthyDegradedAndUnavailableDapr(daprHealthy: True, tenantsDegraded: True, lag: 0, status: OK, body: \\\"Degraded\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionReadinessReportsHealthyDegradedAndUnavailableDapr(daprHealthy: False, tenantsDegraded: False, lag: 0, status: ServiceUnavailable, body: \\\"Unhealthy\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "review-DeclaredServerProbesMatchTheActualProductionHost": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.DeclaredServerProbesMatchTheActualProductionHost",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "review-CatalogLifecycleEndpointsRetainNamedPoliciesAndRefuseMissingOrWrongAuthority": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.CatalogLifecycleEndpointsRetainNamedPoliciesAndRefuseMissingOrWrongAuthority(route: \\\"/internal/routing/catalog-generation\\\", readback: True)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.CatalogLifecycleEndpointsRetainNamedPoliciesAndRefuseMissingOrWrongAuthority(route: \\\"/internal/routing/catalog/prepare\\\", readback: False)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.CatalogLifecycleEndpointsRetainNamedPoliciesAndRefuseMissingOrWrongAuthority(route: \\\"/internal/routing/catalog/ready\\\", readback: False)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.CatalogLifecycleEndpointsRetainNamedPoliciesAndRefuseMissingOrWrongAuthority(route: \\\"/internal/routing/catalog/commit\\\", readback: False)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.CatalogLifecycleEndpointsRetainNamedPoliciesAndRefuseMissingOrWrongAuthority(route: \\\"/internal/routing/catalog/rollback\\\", readback: False)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.CatalogLifecycleEndpointsRetainNamedPoliciesAndRefuseMissingOrWrongAuthority(route: \\\"/internal/routing/catalog/reconcile\\\", readback: False)",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "review-CatalogActivationStillRefusesAnUntrustedCandidate": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.CatalogActivationStillRefusesAnUntrustedCandidate",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "review-ProductionHostRoutesBeforeSharedSecurityInEveryApiMode": [
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(mode: V1Only, route: \\\"/api/v1/folders/folder-0123456789abcdef/acl\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(mode: Coexistence, route: \\\"/api/v2/folders/folder-0123456789abcdef/acl\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      },
+      {
+        "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(mode: V2Only, route: \\\"/api/v2/folders/folder-0123456789abcdef/acl\\\")",
+        "xml": "post-review-folders-server-full.xml",
+        "result": "Pass"
+      }
+    ],
+    "review-OperationsDescribeTheSixActualQueryAndResultPairs": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.GatewayFixtureRouteCatalogTests.OperationsDescribeTheSixActualQueryAndResultPairs",
+        "xml": "post-review-projects-server-full.xml",
+        "result": "Pass"
+      }
+    ]
+  },
+  "all_cases_executed_and_passed": true,
+  "source_build_command": "folders-post-review-build.command.json"
+}

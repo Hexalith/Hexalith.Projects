@@ -1,0 +1,33 @@
+{
+  "name": "folders-fresh-dependencies-test-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "--no-restore",
+    "-p:BuildProjectReferences=false",
+    "-m:1",
+    "-v:minimal"
+  ],
+  "cwd": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-10-31T23:02:06.269775+00:00",
+  "finished_utc": "2026-10-31T23:02:11.348077+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/approved-repair-20261031T225439Z/folders-fresh-dependencies-test-build.stdout.log",
+  "stderr": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/approved-repair-20261031T225439Z/folders-fresh-dependencies-test-build.stderr.log",
+  "stdout_sha256": "cc7253eedfc8505482796c79b9ea1c811bd02a3e0153ad05c67f9076ff16391e",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": false
+}

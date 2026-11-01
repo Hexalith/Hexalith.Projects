@@ -1173,3 +1173,14 @@ status: open
 - source_spec: `_bmad-output/implementation-artifacts/spec-6-4-resolve-projects-with-transient-current-explanations.md`
   summary: Make EventStore Admin source edges compatible with producer-owned mapping without per-edge EventStore version overrides.
   evidence: Pre-existing EventStore Directory.Build.targets appends HexalithEventStoreVersion to its Tenants.Contracts edge. With the unchanged generated Conversations source mapping environment, `dotnet msbuild src/Hexalith.EventStore.Admin.Server/Hexalith.EventStore.Admin.Server.csproj -target:HexalithReconcileSourceMapping -getItem:ProjectReference -nologo` from EventStore exits 1 with HXW006 on that metadata. The current mapped Conversations Debug graph passes after the narrow Tenants correction; no whole-workspace source acceptance is claimed. Exact command/environment and output are retained under `evidence/6-4-advisory-resolution-20261021/resumption-after-landing-20261027/mapping-correction/`.
+
+- source_spec: `spec-6-4-owner-host-qualification.md`
+  summary: Enroll the real Folders production catalog observer from independently retained topology, authentication and installed owner policy inputs before accepting conforming producer activation.
+  evidence: RouteCatalogAuthority.ValidateAsync requires IRouteCatalogHostObserver; Folders Program currently registers none. Configuration fingerprints and the receiver-only fixture authority cannot establish this adoption gate; retain fail-closed behavior and main Story 6.4 in-progress.
+- source_spec: `spec-6-4-owner-host-qualification.md`
+  summary: Run the gateway advisory acceptance lane through actual guarded and independently activated owner compositions before accepting deployment or consumer adoption.
+  evidence: SupportedProjectGatewayHttpTests uses the pre-existing manually composed Folders and Conversations owner endpoints. Its signed gateway/store assertions and separate owner filter/HTTP cases do not prove a complete installed owner catalog boundary.
+
+- source_spec: `spec-6-4-owner-host-qualification.md`
+  summary: Support and qualify synchronous OTLP HTTP/protobuf export through the SDK route-catalog HTTP wrapper.
+  evidence: The new actual-host export probe reached synchronous HttpClient.Send, while RouteCatalogInvocationHandler overrides only SendAsync; the exporter reports an unsupported synchronous send. Retained failed execution distinguishes this SDK producer limitation from the owner-defaults startup fix. Do not claim export delivery from the provider-startup test.

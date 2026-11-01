@@ -1,0 +1,49 @@
+{
+  "name": "server-advisory",
+  "argv": [
+    "dotnet",
+    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+    "-class",
+    "*ProjectAdvisoryQueryTests",
+    "-class",
+    "*DelegatedProjectAdvisoryConversationDirectoryTests",
+    "-class",
+    "*SupportedProjectReadHttpTests",
+    "-class",
+    "*ProjectsServerModuleTests",
+    "-class",
+    "*ResolveProjectFromAttachmentsTests",
+    "-class",
+    "*ResolveProjectFromConversationTests",
+    "-class",
+    "*ConfirmAmbiguousProjectTests",
+    "-result-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/server-advisory.xml",
+    "-failSkips"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "CustomBeforeDirectoryBuildProps": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "a5f258754fd4897376d6945c91e70c6971789dc263b50337b5c856b513559363",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-10-31T22:32:08.715675+00:00",
+  "finished_utc": "2026-10-31T22:32:18.762402+00:00",
+  "exit_code": 1,
+  "launch_or_timeout_error": null,
+  "stdout": "/tmp/story64-current-advisory-glv8lf4w/server-advisory.stdout.log",
+  "stderr": "/tmp/story64-current-advisory-glv8lf4w/server-advisory.stderr.log",
+  "stdout_sha256": "0143d4916940ad946ecc709e0c70792ec148a654a5190767c4da6c3790455c23",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": true
+}

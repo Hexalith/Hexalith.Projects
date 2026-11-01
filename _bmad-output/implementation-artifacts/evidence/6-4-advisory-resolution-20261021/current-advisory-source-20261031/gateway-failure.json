@@ -1,0 +1,11 @@
+{
+  "http_status": 500,
+  "exception_observations": [
+    "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException: The query response disagrees with its committed projection identity.",
+    "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException: The query response disagrees with its committed projection identity."
+  ],
+  "private_log_sha256": "d5823a85b76b95a0eab1a3ffdb75f96c4893fb6f79e980c27a894ce692e64e31",
+  "result_xml_sha256": "77e857e20de1bca6ff80183253987225d265428c3370b389cb1e60e5d4665689",
+  "diagnosis": "A computed query returns QueryType in QueryResult.ProjectionType; the committed computed route declares no projection identity. DaprDomainQueryInvoker rejects the mismatch.",
+  "proposed_correction_applied": false
+}

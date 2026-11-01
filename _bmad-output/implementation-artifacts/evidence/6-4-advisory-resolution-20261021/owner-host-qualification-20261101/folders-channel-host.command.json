@@ -1,0 +1,37 @@
+{
+  "name": "folders-channel-host",
+  "argv": [
+    "dotnet",
+    "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/bin/Debug/net10.0/Hexalith.Folders.Server.Tests.dll",
+    "-class",
+    "*FoldersServerHostCompositionTests",
+    "-class",
+    "*FoldersCallbackBoundaryTests",
+    "-class",
+    "*FolderRepositoryStartupAssertionTests",
+    "-parallel",
+    "none",
+    "-result-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/owner-host-qualification-20261101/folders-channel-host.xml",
+    "-failSkips"
+  ],
+  "cwd": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-11-01T00:32:29.211130+00:00",
+  "finished_utc": "2026-11-01T00:34:19.301164+00:00",
+  "exit_code": 1,
+  "launch_or_timeout_error": null,
+  "stdout": "/tmp/story64-owner-host-ex8__xn3/folders-channel-host.stdout.log",
+  "stderr": "/tmp/story64-owner-host-ex8__xn3/folders-channel-host.stderr.log",
+  "stdout_sha256": "a847f63a7ec52a2ada3868675511db1bccab7831f4e233739881ee5aa69f4b52",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": true
+}

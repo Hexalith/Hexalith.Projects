@@ -1,0 +1,29 @@
+--- a/src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs
++++ b/src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs
+@@ -46,7 +46,7 @@
+             ? Evidence(final.AllowedContext, (accessor.HttpContext?.RequestServices.GetService(typeof(TimeProvider)) as TimeProvider ?? TimeProvider.System).GetUtcNow())
+             : null;
+         return QueryResult.FromPayload(JsonSerializer.SerializeToElement(new FolderOwnerReadResult(FolderOwnerReadOutcome.Allowed)
+-        { Evidence = evidence }, JsonSerializerOptions.Web), FolderOwnerReadQuery.QueryType);
++        { Evidence = evidence }, JsonSerializerOptions.Web));
+     }
+ 
+     /// <summary>Compares exact native revision observations, including a revoke/regrant that ends Allowed.</summary>
+@@ -64,5 +64,5 @@
+             : null;
+ 
+     private static QueryResult Success(FolderOwnerReadOutcome outcome)
+-        => QueryResult.FromPayload(JsonSerializer.SerializeToElement(new FolderOwnerReadResult(outcome), JsonSerializerOptions.Web), FolderOwnerReadQuery.QueryType);
++        => QueryResult.FromPayload(JsonSerializer.SerializeToElement(new FolderOwnerReadResult(outcome), JsonSerializerOptions.Web));
+ }
+--- a/tests/Hexalith.Folders.Server.Tests/FolderOwnerReadQueryHandlerTests.cs
++++ b/tests/Hexalith.Folders.Server.Tests/FolderOwnerReadQueryHandlerTests.cs
+@@ -151,7 +151,7 @@
+             QueryWithShape("valid"), evidenceStatus, verified: true);
+ 
+         result.Success.ShouldBeTrue();
+-        result.ProjectionType.ShouldBe(FolderOwnerReadQuery.QueryType);
++        result.ProjectionType.ShouldBeNull();
+         var payload = JsonSerializer.Deserialize<FolderOwnerReadResult>(result.PayloadBytes!, JsonSerializerOptions.Web)!;
+         payload.Outcome.ShouldBe(expectedOutcome);
+         payload.Evidence.ShouldBeNull();

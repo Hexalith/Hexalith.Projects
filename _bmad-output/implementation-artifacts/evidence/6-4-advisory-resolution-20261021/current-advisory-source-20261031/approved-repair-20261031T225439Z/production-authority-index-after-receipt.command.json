@@ -1,0 +1,26 @@
+{
+  "name": "production-authority-index-after-receipt",
+  "argv": [
+    "python3",
+    "tools/planning/validate_production_authority.py",
+    "--validate-index"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-10-31T23:13:54.999936+00:00",
+  "finished_utc": "2026-10-31T23:13:55.115496+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/approved-repair-20261031T225439Z/production-authority-index-after-receipt.stdout.log",
+  "stderr": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/approved-repair-20261031T225439Z/production-authority-index-after-receipt.stderr.log",
+  "stdout_sha256": "c274c826271c8deb37763d6a7c88e938720d54fe487f8a75d46112309b03c451",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": false
+}

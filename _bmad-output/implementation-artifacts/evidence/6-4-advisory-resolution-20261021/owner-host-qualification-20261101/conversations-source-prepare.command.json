@@ -1,0 +1,34 @@
+{
+  "name": "conversations-source-prepare",
+  "argv": [
+    "dotnet",
+    "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/bin/Debug/net10.0/Hexalith.Builds.Module.Cli.dll",
+    "prepare-build",
+    "--manifest",
+    "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Conversations/module/hexalith.module-manifest.v2.json",
+    "--mode",
+    "source",
+    "--workspace",
+    "/tmp/story64-owner-host-ex8__xn3/conversations-mapping",
+    "--output",
+    "json"
+  ],
+  "cwd": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Conversations",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-11-01T00:24:07.896850+00:00",
+  "finished_utc": "2026-11-01T00:24:09.417771+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/owner-host-qualification-20261101/conversations-source-prepare.stdout.log",
+  "stderr": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/owner-host-qualification-20261101/conversations-source-prepare.stderr.log",
+  "stdout_sha256": "eeaecfa31f93c5160a438c5e81d46aa51ec5d6897a5fed43c5cbc53d92b7a172",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": false
+}

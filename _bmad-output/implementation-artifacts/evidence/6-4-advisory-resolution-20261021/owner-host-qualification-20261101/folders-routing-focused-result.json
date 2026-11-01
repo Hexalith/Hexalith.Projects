@@ -1,0 +1,24 @@
+{
+  "exit_code": 1,
+  "executable_closure_unchanged": true,
+  "total": 10,
+  "passed": 8,
+  "failed": 2,
+  "skipped": 0,
+  "errors": 0,
+  "not-run": 0,
+  "nonpassing": [
+    {
+      "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(mode: Coexistence, route: \\\"/api/v2/folders/folder-a/acl\\\")",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : denied.StatusCode\n    should be\nHttpStatusCode.Unauthorized\n    but was\nHttpStatusCode.NotFound",
+      "stack": "   at Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(FoldersApiRoutingMode mode, String route) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersServerHostCompositionTests.cs:line 165\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(FoldersApiRoutingMode mode, String route) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersServerHostCompositionTests.cs:line 170\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(FoldersApiRoutingMode mode, String route) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersServerHostCompositionTests.cs:line 170\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)\n--- End of stack trace from previous location ---\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)"
+    },
+    {
+      "name": "Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(mode: V2Only, route: \\\"/api/v2/folders/folder-a/acl\\\")",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : denied.StatusCode\n    should be\nHttpStatusCode.Unauthorized\n    but was\nHttpStatusCode.NotFound",
+      "stack": "   at Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(FoldersApiRoutingMode mode, String route) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersServerHostCompositionTests.cs:line 165\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(FoldersApiRoutingMode mode, String route) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersServerHostCompositionTests.cs:line 170\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at Hexalith.Folders.Server.Tests.FoldersServerHostCompositionTests.ProductionHostRoutesBeforeSharedSecurityInEveryApiMode(FoldersApiRoutingMode mode, String route) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersServerHostCompositionTests.cs:line 170\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)\n--- End of stack trace from previous location ---\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\n   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)"
+    }
+  ]
+}

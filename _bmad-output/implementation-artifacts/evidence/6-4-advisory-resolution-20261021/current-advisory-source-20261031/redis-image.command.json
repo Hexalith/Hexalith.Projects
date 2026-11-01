@@ -1,0 +1,27 @@
+{
+  "name": "redis-image",
+  "argv": [
+    "docker",
+    "image",
+    "inspect",
+    "redis:7.4-alpine"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-10-31T22:33:07.046808+00:00",
+  "finished_utc": "2026-10-31T22:33:07.164550+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/redis-image.stdout.log",
+  "stderr": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/redis-image.stderr.log",
+  "stdout_sha256": "ebe45af8a69d1aa1c616b156a297a8fc00dcd866b37f5bb5bfa3707dd12cc0da",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": false
+}

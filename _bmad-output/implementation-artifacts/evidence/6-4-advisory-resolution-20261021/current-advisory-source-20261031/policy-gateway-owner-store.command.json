@@ -1,0 +1,39 @@
+{
+  "name": "policy-gateway-owner-store",
+  "argv": [
+    "dotnet",
+    "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll",
+    "-class",
+    "*SupportedProjectGatewayHttpTests",
+    "-result-xml",
+    "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/policy-gateway-owner-store.xml",
+    "-failSkips"
+  ],
+  "cwd": "/home/administrator/projects/hexalith/projects",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "CustomBeforeDirectoryBuildProps": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story64-current-advisory-glv8lf4w/projects-source/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "a5f258754fd4897376d6945c91e70c6971789dc263b50337b5c856b513559363",
+    "Configuration": "Debug",
+    "STORY61_DAPR_HTTP_ENDPOINT": "http://127.0.0.1:52119",
+    "STORY61_DAPR_GRPC_ENDPOINT": "http://127.0.0.1:48977"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-10-31T22:37:15.762209+00:00",
+  "finished_utc": "2026-10-31T22:37:17.581151+00:00",
+  "exit_code": 1,
+  "launch_or_timeout_error": null,
+  "stdout": "/tmp/story64-current-advisory-glv8lf4w/policy-gateway-owner-store.stdout.log",
+  "stderr": "/tmp/story64-current-advisory-glv8lf4w/policy-gateway-owner-store.stderr.log",
+  "stdout_sha256": "d5823a85b76b95a0eab1a3ffdb75f96c4893fb6f79e980c27a894ce692e64e31",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": true
+}

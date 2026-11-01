@@ -1,0 +1,30 @@
+{
+  "name": "isolated-builds-cli-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-v:minimal"
+  ],
+  "cwd": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Builds",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-10-31T22:57:15.123755+00:00",
+  "finished_utc": "2026-10-31T22:57:59.213465+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/approved-repair-20261031T225439Z/isolated-builds-cli-build.stdout.log",
+  "stderr": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/current-advisory-source-20261031/approved-repair-20261031T225439Z/isolated-builds-cli-build.stderr.log",
+  "stdout_sha256": "c84dc1ec2e659feafe76b7d338cecba9fc7073ea4fa7415ad27b43f48e09d78f",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": false
+}

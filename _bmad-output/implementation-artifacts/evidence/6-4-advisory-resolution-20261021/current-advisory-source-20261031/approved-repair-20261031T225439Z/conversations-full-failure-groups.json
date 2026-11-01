@@ -1,0 +1,64 @@
+{
+  "classes": {
+    "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionSelectionRecoveryTest": {
+      "count": 19,
+      "messages": {
+        "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503": 19
+      },
+      "methods": [
+        "CompletedRedeliveryRepairsActualReceiptWithoutChangingOriginalMetadata",
+        "CompletedRedeliveryRepairsSelectedOwnerWithoutChangingOriginalGeneration",
+        "RebuildOriginSelectionRepairPreservesGenerationAndPublishesValidReplacementReceipt",
+        "SelectionEtagInterleavingReopensProofAndRepairsBeforeReportingCompletion"
+      ]
+    },
+    "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionRebuildCompletionTest": {
+      "count": 33,
+      "messages": {
+        "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503": 33
+      },
+      "methods": [
+        "AlteredActualCompletionOrAuthorityRefusesThroughDelegatedAdapterWithoutFallback",
+        "CompletedOriginalRebuildIsReadThroughActualSdkOwnerEndpointAndSignedDelegatedAdapter",
+        "CompletedRebuildExecutesProductionMetadataQueryHandlerAndFinalAuthorityGates",
+        "DirectRichWriterBarrierStillWithholdsACompletedRebuild",
+        "HistoricalV1PreparedRebuildRefusesBeforeMarkerReadWithVirginOrPreviousMetadata",
+        "InterruptedActualSdkRebuildRefusesWithoutRichReadsAndRestartRecoversOriginalIdentity"
+      ]
+    },
+    "Hexalith.Conversations.Server.Tests.Projections.ConversationResolutionNativeEnrollmentTest": {
+      "count": 22,
+      "messages": {
+        "Shouldly.ShouldAssertException : context.Response.StatusCode\n    should be\n200\n    but was\n503": 22
+      },
+      "methods": [
+        "DefaultLegacyAndCompatibilityDeliveryPreserveRoutesWithoutGuardCertificate",
+        "DirectRichWriterInvalidatesEnrolledMetadataBeforeEitherPublicEntryPoint",
+        "ExplicitEnrollmentNegotiatesAndReadsActualPersistedSdkOwnerProofWithoutContentOrWrites",
+        "GuardedOriginalInputTamperingRejectsBeforePersistedEffects",
+        "GuardedRebuildRetainsOriginalEvidenceAndPublishesContentFreeSdkCompletion",
+        "InterruptedEnrolledDeliveryRecoversTheSameOriginalEvidenceThroughReconciliation",
+        "LegacyLedgerWithoutAdmissionEvidenceCannotAcquireProofAfterVerifierRecovery",
+        "OriginalAdmissionProofOrAbsenceSurvivesVerifierOutageAndRecovery",
+        "ReconciliationPreservesOriginalGenerationAndSelectionTamperingRefusesProof",
+        "VerifierOutageCannotHideExactHintedMetadataMutation"
+      ]
+    },
+    "Hexalith.Conversations.Server.Tests.Agents.ConversationDeletionRuntimeHostTests": {
+      "count": 5,
+      "messages": {
+        "Shouldly.ShouldAssertException : handler\n    should be of type\nSystem.Net.Http.SocketsHttpHandler\n    but was\nHexalith.EventStore.ServiceDefaults.Routing.RouteCatalogInvocationHandler\n\nAdditional Info:\n    Hexalith.Conversations.DeletionReceiverLookup": 1,
+        "System.InvalidOperationException : HTTP endpoint inventory failed: /api/v1/conversations/{conversationId}/participants: every protected endpoint must name a policy.": 2,
+        "Shouldly.ShouldAssertException : await DeliverAsync()\n    should be\nConversationAgentsOutcome.Quarantined\n    but was\nConversationAgentsOutcome.Unavailable": 1,
+        "Shouldly.ShouldAssertException : pending.LastAttemptId\n    should not be null but was": 1
+      },
+      "methods": [
+        "MismatchedReceiptQuarantinesWithoutAcknowledgement",
+        "OutboundClientsDisableRedirects",
+        "ParticipantRouteMapsTheTokenSubjectAndRejectsAPresetNameIdentifier",
+        "PumpAdvancesOnlyAfterAnIndependentExactAcknowledgement",
+        "RuntimeIdentityRouteAuthenticatesCallersWithTheSharedContract"
+      ]
+    }
+  }
+}

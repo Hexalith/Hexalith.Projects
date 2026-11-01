@@ -67,7 +67,7 @@ public sealed partial class ProjectAdvisoryQueryExecutor(IReadModelStore store, 
         {
             LogFailure(query, exception);
             return QueryResult.FromPayload(JsonSerializer.SerializeToElement(
-                new ProjectAdvisoryResolutionResponse(null, [], clock.GetUtcNow(), true, []), Json), query.QueryType);
+                new ProjectAdvisoryResolutionResponse(null, [], clock.GetUtcNow(), true, []), Json));
         }
         if (query.AggregateId != "projects" || query.Paging is not null || query.IsGlobalAdmin
             || query.EntityId is not null && query.EntityId != query.AggregateId) return Invalid();
@@ -102,7 +102,7 @@ public sealed partial class ProjectAdvisoryQueryExecutor(IReadModelStore store, 
             return QueryResult.FromPayload(JsonSerializer.SerializeToElement(new ProjectAdvisoryResolutionResponse(
                 incomplete != 0 && resolved.Candidates.Count == 0 ? null : resolved.Result,
                 resolved.Candidates.Select(item => new ProjectAdvisoryCandidate(item.ProjectId, item.ReasonCodes, item.Rank, item.Score)).ToArray(),
-                evaluatedAt, incomplete != 0, unsupportedFiles ? ["file"] : []), Json), query.QueryType);
+                evaluatedAt, incomplete != 0, unsupportedFiles ? ["file"] : []), Json));
         }
 
         try

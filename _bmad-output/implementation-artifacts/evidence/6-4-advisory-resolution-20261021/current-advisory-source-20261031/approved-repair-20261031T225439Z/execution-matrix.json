@@ -1,0 +1,126 @@
+{
+  "query_routes": [
+    {
+      "route_id": "projects-list",
+      "query_discriminator": "Hexalith.Projects.Queries.ListProjects.v1",
+      "result_projection_type": null
+    },
+    {
+      "route_id": "projects-open",
+      "query_discriminator": "Hexalith.Projects.Queries.GetProject.v1",
+      "result_projection_type": null
+    },
+    {
+      "route_id": "projects-suggest-conversation",
+      "query_discriminator": "Hexalith.Projects.Queries.ResolveProjectFromConversation.v1",
+      "result_projection_type": null
+    },
+    {
+      "route_id": "projects-suggest-attachments",
+      "query_discriminator": "Hexalith.Projects.Queries.ResolveProjectFromAttachments.v1",
+      "result_projection_type": null
+    },
+    {
+      "route_id": "folders-owner-read",
+      "query_discriminator": "Hexalith.Folders.Queries.AuthorizeFolderRead.v1",
+      "result_projection_type": null
+    },
+    {
+      "route_id": "conversations-advisory-metadata",
+      "query_discriminator": "Hexalith.Conversations.Queries.GetConversationAdvisoryMetadata.v1",
+      "result_projection_type": null
+    }
+  ],
+  "coverage": {
+    "computed_list_open": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.ListDefaultsToFiftyAndPreservesConversationPolicy",
+        "result": "Pass",
+        "method": "ListDefaultsToFiftyAndPreservesConversationPolicy"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.SafeMetadataAndInspectedMetadataHaveDurableAuditOnlyEffects",
+        "result": "Pass",
+        "method": "SafeMetadataAndInspectedMetadataHaveDurableAuditOnlyEffects"
+      }
+    ],
+    "catalog_refusals": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"projection\\\")",
+        "result": "Pass",
+        "method": "GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"actor\\\")",
+        "result": "Pass",
+        "method": "GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites"
+      },
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectReadTests.GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites(mismatch: \\\"uncommitted-query\\\")",
+        "result": "Pass",
+        "method": "GatewayCatalogRefusesTargetsOutsideCommittedAuthorityWithoutWrites"
+      }
+    ],
+    "enforced_six_query_gateway": [
+      {
+        "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+        "result": "Pass",
+        "method": "GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures"
+      }
+    ],
+    "advisory_queries": {
+      "class": "ProjectAdvisoryQueryTests",
+      "total": 139,
+      "outcomes": {
+        "Pass": 139
+      },
+      "selected_xml": "snapshot-final-projects-server-full.xml"
+    },
+    "delegated_conversation_owner": {
+      "class": "DelegatedProjectAdvisoryConversationDirectoryTests",
+      "total": 13,
+      "outcomes": {
+        "Pass": 13
+      },
+      "selected_xml": "snapshot-final-projects-server-full.xml"
+    },
+    "supported_http": {
+      "class": "SupportedProjectReadHttpTests",
+      "total": 4,
+      "outcomes": {
+        "Pass": 4
+      },
+      "selected_xml": "snapshot-final-projects-server-full.xml"
+    },
+    "module_registration": {
+      "class": "ProjectsServerModuleTests",
+      "total": 16,
+      "outcomes": {
+        "Pass": 16
+      },
+      "selected_xml": "snapshot-final-projects-server-full.xml"
+    }
+  },
+  "advisory_payload_observations": {
+    "conversation_scores": [
+      50,
+      20
+    ],
+    "folder_score": 45,
+    "files": {
+      "incomplete": true,
+      "result": null,
+      "unsupported_input_kinds": [
+        "file"
+      ]
+    },
+    "selection_minted": false
+  },
+  "zero_write_proof": {
+    "advisory_physical_snapshots_compared": 5,
+    "advisory_snapshots_exported": false,
+    "catalog_controls": "zero-write-snapshots.json",
+    "catalog_control_snapshot_count_each": 14,
+    "inspection_retains_existing_durable_audit_only_semantics": true
+  }
+}

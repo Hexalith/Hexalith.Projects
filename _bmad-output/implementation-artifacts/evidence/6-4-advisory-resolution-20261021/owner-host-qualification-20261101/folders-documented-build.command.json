@@ -1,0 +1,33 @@
+{
+  "name": "folders-documented-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/Hexalith.Folders.Server.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-v:minimal",
+    "-p:UseHexalithProjectReferences=true",
+    "-p:UseNuGetDeps=false"
+  ],
+  "cwd": "/tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-11-01T00:38:15.761164+00:00",
+  "finished_utc": "2026-11-01T00:38:21.550955+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/owner-host-qualification-20261101/folders-documented-build.stdout.log",
+  "stderr": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/owner-host-qualification-20261101/folders-documented-build.stderr.log",
+  "stdout_sha256": "f6022bd47dcf12f99cd027af809e31118c5b694a551d71484c9612da80ca19f7",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": false
+}

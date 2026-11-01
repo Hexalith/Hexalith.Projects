@@ -65,7 +65,7 @@ public sealed class ProjectReadQueryExecutor(
                 || index.LastVerifiedAt == default || index.UnavailableProjectIds.Count > 0
                 || !index.ProjectIds.SequenceEqual(index.ProjectIds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)))
             {
-                return Success(new ProjectListPage([], null, false, Unavailable(index?.LastVerifiedAt ?? default)), query.QueryType);
+                return Success(new ProjectListPage([], null, false, Unavailable(index?.LastVerifiedAt ?? default)));
             }
 
             // Observe the whole filtered view before decoding a continuation, including identities before its boundary.
@@ -74,20 +74,20 @@ public sealed class ProjectReadQueryExecutor(
             QueryCursorScope visibility = QueryCursorScope.Create();
             foreach (string projectId in index.ProjectIds)
             {
-                if (!SafeIdentity(query.TenantId, projectId)) { return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt)), query.QueryType); }
+                if (!SafeIdentity(query.TenantId, projectId)) { return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt))); }
                 ProjectReadModel? model = await ReadAsync(query.TenantId, projectId, cancellationToken).ConfigureAwait(false);
                 if (model?.Detail is not { } detail || model.TenantId != query.TenantId || model.ProjectId != projectId
                     || detail.TenantId != query.TenantId || detail.ProjectId != projectId || !Enum.IsDefined(detail.Lifecycle)
                     || !ValidObservation(model))
                 {
-                    return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt)), query.QueryType);
+                    return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt)));
                 }
 
                 if (input.LifecycleState is not null && detail.Lifecycle.ToString() != input.LifecycleState) { continue; }
                 ProjectAuthorizationResult? projectAuthorization = await AuthorizeProjectAsync(query, model, cancellationToken).ConfigureAwait(false);
                 if (projectAuthorization is { IsAllowed: false } denied && (denied.Retryable || denied.Reason is ReferenceState.Stale or ReferenceState.Unavailable))
                 {
-                    return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt, "Authorization")), query.QueryType);
+                    return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt, "Authorization")));
                 }
                 visibility.Add("project", projectId).Add("allowed", (projectAuthorization?.IsAllowed == true).ToString())
                     .Add("authorization", projectAuthorization?.EventStoreValidationResult?.FreshnessWatermark);
@@ -97,7 +97,7 @@ public sealed class ProjectReadQueryExecutor(
                 if (chatbot && folderState is ReferenceState.Stale or ReferenceState.Unavailable)
                 {
                     return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt, "FolderVisibility",
-                        folderState == ReferenceState.Stale ? EvidenceFreshnessState.Stale : EvidenceFreshnessState.Unavailable)), query.QueryType);
+                        folderState == ReferenceState.Stale ? EvidenceFreshnessState.Stale : EvidenceFreshnessState.Unavailable)));
                 }
                 if (chatbot && folderState != ReferenceState.Included) { continue; }
                 bool valid = ProjectPersistedDetailValidator.IsHeaderValid(detail);
@@ -125,7 +125,7 @@ public sealed class ProjectReadQueryExecutor(
                 ProjectReadModelKeys.Index(query.TenantId), cancellationToken).ConfigureAwait(false);
             ProjectAuthorizationResult? finalScope = await AuthorizeScopeAsync(query, true, cancellationToken).ConfigureAwait(false);
             if (!StableScope(scope, finalScope)) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
-            if (!SameIndex(indexEntry, after)) { return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt)), query.QueryType); }
+            if (!SameIndex(indexEntry, after)) { return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt))); }
 
             ProjectListRow[] remaining = visible.Where(row => continuation is null || string.CompareOrdinal(row.ProjectId, continuation.ProjectId) > 0)
                 .Take(input.PageSize + 1).ToArray();
@@ -139,11 +139,11 @@ public sealed class ProjectReadQueryExecutor(
                 return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
             }
 
-            return Success(new ProjectListPage(rows, next, hasMore, PageSnapshot(rows, index)), query.QueryType);
+            return Success(new ProjectListPage(rows, next, hasMore, PageSnapshot(rows, index)));
         }
         catch (Exception) when (!cancellationToken.IsCancellationRequested)
         {
-            return Success(new ProjectListPage([], null, false, Unavailable(default)), query.QueryType);
+            return Success(new ProjectListPage([], null, false, Unavailable(default)));
         }
     }
 
@@ -202,7 +202,7 @@ public sealed class ProjectReadQueryExecutor(
             return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
         }
 
-        return Success(response, query.QueryType);
+        return Success(response);
     }
 
     private async Task<ProjectAuthorizationResult?> AuthorizeScopeAsync(QueryEnvelope query, bool list, CancellationToken cancellationToken)
@@ -397,7 +397,7 @@ public sealed class ProjectReadQueryExecutor(
         return QueryResult.Failure("safe-denial");
     }
 
-    private static QueryResult Success<T>(T value, string queryType) => QueryResult.FromPayload(JsonSerializer.SerializeToElement(value, JsonOptions), queryType);
+    private static QueryResult Success<T>(T value) => QueryResult.FromPayload(JsonSerializer.SerializeToElement(value, JsonOptions));
     private static QueryResult Invalid() => QueryResult.Failure(QueryAdapterFailureReason.InvalidEnvelope);
     private static QueryResult InvalidCursor() => QueryResult.Failure(QueryAdapterFailureReason.InvalidCursor);
 }

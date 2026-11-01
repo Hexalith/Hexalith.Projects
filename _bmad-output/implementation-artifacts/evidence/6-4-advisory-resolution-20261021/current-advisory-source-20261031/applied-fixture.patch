@@ -1,0 +1,235 @@
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs
+@@ -24,6 +24,7 @@
+ using Hexalith.EventStore.Server.Pipeline;
+ using Hexalith.EventStore.Server.Queries;
+ using Hexalith.EventStore.ServiceDefaults.Authentication;
++using Hexalith.EventStore.ServiceDefaults.Routing;
+ using Hexalith.Folders;
+ using Hexalith.Folders.Aggregates.Folder;
+ using Hexalith.Folders.Authorization;
+@@ -139,6 +140,7 @@
+     public string HumanToken(bool inspection = false, bool projectUser = false)
+     {
+         List<Claim> claims = [new("sub", "actor-1"), new("tenant_id", Tenant), new("eventstore:tenant", Tenant),
++            new(RouteCatalogSurfacePolicy.ClaimType, projectUser ? "agent" : "ui"),
+             new("azp", projectUser ? "chatbot" : "operator-web"), new("client_id", "issuing-client"),
+             new("act", "{\"sub\":\"delegation-1\"}"), new("scope", "projects.read projects.list"),
+             new("projects:role", projectUser ? "ProjectUser" : "TenantOperator"), new("eventstore:permission", "query:read"),
+@@ -485,6 +487,8 @@
+         builder.Services.AddEventStoreWorkloadPolicies(DaprInternalAuthenticationOptions.SchemeName, [EventStoreWorkloadOperations.GatewayOwnerAuthorityQuery]);
+         builder.Services.Configure<Microsoft.AspNetCore.Authorization.AuthorizationOptions>(options =>
+             options.DefaultPolicy = Hexalith.EventStore.Extensions.EventStoreServiceCollectionExtensions.CreateHumanDefaultPolicy());
++        builder.Services.AddAuthorizationBuilder().AddPolicy(
++            EventStoreHttpHostSecurityExtensions.HumanPolicy, EventStoreHttpHostSecurityExtensions.CreateHumanPolicy());
+         builder.Services.AddControllers().AddApplicationPart(typeof(QueriesController).Assembly);
+         builder.Services.AddMediatR(options => options.RegisterServicesFromAssembly(typeof(QueryEnvelope).Assembly));
+         builder.Services.AddTransient<MediatR.IRequestHandler<Hexalith.EventStore.Server.Pipeline.Queries.SubmitQuery, Hexalith.EventStore.Server.Pipeline.Queries.SubmitQueryResult>, SubmitQueryHandler>();
+@@ -493,7 +497,9 @@
+         builder.Services.AddSingleton<IDomainServiceResolver, GatewayFixtureRoutesResolver>();
+         builder.Services.AddSingleton<IDomainQueryHandlerRegistry, DaprDomainQueryHandlerRegistry>();
+         builder.Services.AddSingleton<IDomainQueryInvoker, DaprDomainQueryInvoker>();
+-        builder.Services.AddSingleton<IQueryRouter>(sp => new HandlerAwareQueryRouter(new GatewayFixtureUnsupportedActorRouter(), sp.GetRequiredService<IDomainQueryHandlerRegistry>(),
++        builder.Services.AddSingleton(new GatewayFixtureRouteCatalog(Tenant));
++        builder.Services.AddSingleton<IRouteCatalogAuthority>(sp => sp.GetRequiredService<GatewayFixtureRouteCatalog>());
++        builder.Services.AddSingleton<IQueryRouter>(sp => new HandlerAwareQueryRouter(sp.GetRequiredService<IRouteCatalogAuthority>(), new GatewayFixtureUnsupportedActorRouter(), sp.GetRequiredService<IDomainQueryHandlerRegistry>(),
+             sp.GetRequiredService<IDomainQueryInvoker>(), sp.GetRequiredService<ILogger<HandlerAwareQueryRouter>>()));
+         builder.Services.AddTransient<DomainServiceWorkloadAssertionHandler>();
+         builder.Services.AddHttpClient(Options.DefaultName).AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs
+@@ -35,6 +35,7 @@
+ using Hexalith.EventStore.Server.Pipeline;
+ using Hexalith.EventStore.Server.Queries;
+ using Hexalith.EventStore.ServiceDefaults.Authentication;
++using Hexalith.EventStore.ServiceDefaults.Routing;
+ using Hexalith.Folders;
+ using Hexalith.Folders.Aggregates.Folder;
+ using Hexalith.Folders.Authorization;
+@@ -83,7 +84,7 @@
+         WebApplication projects = await StartProjectsAsync(http!, grpc!, transport, ownerKey, now).ConfigureAwait(true);
+         await using var projectsLifetime = projects.ConfigureAwait(true);
+         transport.Add("projects", projects);
+-        WebApplication gateway = await StartGatewayAsync(http!, grpc!, transport, ownerKey).ConfigureAwait(true);
++        WebApplication gateway = await StartGatewayAsync(http!, grpc!, transport, ownerKey, tenant).ConfigureAwait(true);
+         await using var gatewayLifetime = gateway.ConfigureAwait(true);
+         transport.Add("eventstore", gateway);
+         var tenantProjection = new ProjectTenantAccessProjection { TenantId = tenant, Enabled = true, Watermark = 1,
+@@ -235,6 +236,9 @@
+         await StatusAsync(client, Open(new GetProjectQuery(), "project-b"), HttpStatusCode.NotFound);
+         transport.HumanBearerForwarded.ShouldBeFalse();
+         transport.OwnerQueries.ShouldBeGreaterThan(0);
++        gateway.Services.GetRequiredService<GatewayFixtureRouteCatalog>().AcquisitionCount.ShouldBeGreaterThan(0);
++        client.DefaultRequestHeaders.Authorization = new("Bearer", HumanToken(tenant, inspection: false, includeSurface: false));
++        await StatusAsync(client, SuggestAttachments(new ProjectAdvisoryAttachment("file", "unsupported")), HttpStatusCode.Forbidden);
+         await conversations.StopAsync(TestContext.Current.CancellationToken); await gateway.StopAsync(TestContext.Current.CancellationToken); await projects.StopAsync(TestContext.Current.CancellationToken); await folders.StopAsync(TestContext.Current.CancellationToken);
+     }
+ 
+@@ -249,7 +253,7 @@
+             ["Authentication:JwtBearer:AllowedAlgorithms:0"] = "HS256", ["Authentication:JwtBearer:RequireHttpsMetadata"] = "false",
+             ["Authentication:WorkloadIssuer:Workload"] = workload,
+         });
+-        builder.Logging.ClearProviders();
++        builder.Logging.ClearProviders().AddConsole().SetMinimumLevel(LogLevel.Error);
+         builder.Services.AddSingleton(_ => new DaprClientBuilder().UseHttpEndpoint(http).UseGrpcEndpoint(grpc).Build());
+         builder.Services.AddHttpContextAccessor(); builder.Services.AddAuthorization(); builder.Services.AddEventStoreWorkloadAssertionIssuer();
+         builder.Services.AddHttpClient(Options.DefaultName).ConfigurePrimaryHttpMessageHandler(() => new GatewayFixtureLoopbackHandler(routes));
+@@ -310,7 +314,7 @@
+         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
+     }
+ 
+-    private static async Task<WebApplication> StartGatewayAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key)
++    private static async Task<WebApplication> StartGatewayAsync(string http, string grpc, GatewayFixtureLocalRoutes routes, RSA key, string tenant)
+     {
+         var builder = Builder("eventstore", http, grpc, routes);
+         builder.Configuration["Authentication:BoundStreamRead:PublicKeys:projects"] = Convert.ToBase64String(key.ExportSubjectPublicKeyInfo());
+@@ -329,6 +333,8 @@
+         builder.Services.AddEventStoreWorkloadPolicies(DaprInternalAuthenticationOptions.SchemeName, [EventStoreWorkloadOperations.GatewayOwnerAuthorityQuery]);
+         builder.Services.Configure<Microsoft.AspNetCore.Authorization.AuthorizationOptions>(options =>
+             options.DefaultPolicy = Hexalith.EventStore.Extensions.EventStoreServiceCollectionExtensions.CreateHumanDefaultPolicy());
++        builder.Services.AddAuthorizationBuilder().AddPolicy(
++            EventStoreHttpHostSecurityExtensions.HumanPolicy, EventStoreHttpHostSecurityExtensions.CreateHumanPolicy());
+         builder.Services.AddControllers().AddApplicationPart(typeof(QueriesController).Assembly);
+         builder.Services.AddMediatR(options => options.RegisterServicesFromAssembly(typeof(QueryEnvelope).Assembly));
+         builder.Services.AddTransient<MediatR.IRequestHandler<Hexalith.EventStore.Server.Pipeline.Queries.SubmitQuery, Hexalith.EventStore.Server.Pipeline.Queries.SubmitQueryResult>, SubmitQueryHandler>();
+@@ -337,7 +343,9 @@
+         builder.Services.AddSingleton<IDomainServiceResolver, GatewayFixtureRoutesResolver>();
+         builder.Services.AddSingleton<IDomainQueryHandlerRegistry, DaprDomainQueryHandlerRegistry>();
+         builder.Services.AddSingleton<IDomainQueryInvoker, DaprDomainQueryInvoker>();
+-        builder.Services.AddSingleton<IQueryRouter>(sp => new HandlerAwareQueryRouter(new GatewayFixtureUnsupportedActorRouter(), sp.GetRequiredService<IDomainQueryHandlerRegistry>(),
++        builder.Services.AddSingleton(new GatewayFixtureRouteCatalog(tenant, includeAdvisoryQueries: true));
++        builder.Services.AddSingleton<IRouteCatalogAuthority>(sp => sp.GetRequiredService<GatewayFixtureRouteCatalog>());
++        builder.Services.AddSingleton<IQueryRouter>(sp => new HandlerAwareQueryRouter(sp.GetRequiredService<IRouteCatalogAuthority>(), new GatewayFixtureUnsupportedActorRouter(), sp.GetRequiredService<IDomainQueryHandlerRegistry>(),
+             sp.GetRequiredService<IDomainQueryInvoker>(), sp.GetRequiredService<ILogger<HandlerAwareQueryRouter>>()));
+         builder.Services.AddTransient<DomainServiceWorkloadAssertionHandler>();
+         builder.Services.AddHttpClient(Options.DefaultName).AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();
+@@ -346,13 +354,14 @@
+         await app.StartAsync(TestContext.Current.CancellationToken).ConfigureAwait(false); return app;
+     }
+ 
+-    private static string HumanToken(string tenant, bool inspection, bool projectUser = false)
++    private static string HumanToken(string tenant, bool inspection, bool projectUser = false, bool includeSurface = true)
+     {
+         List<Claim> claims = [new("sub", "actor-1"), new("tenant_id", tenant), new("eventstore:tenant", tenant), new("azp", projectUser ? "chatbot" : "operator-web"),
+             new("client_id", "issuing-client"), new("act", "{\"sub\":\"delegation-1\"}"), new("scope", "projects.read projects.list"),
+             new("projects:role", projectUser ? "ProjectUser" : "TenantOperator"), new("eventstore:permission", "query:read"),
+             new("eventstore:permission", "read_metadata"), new("eventstore:permission", Hexalith.Projects.Server.ProjectAuthorizationGate.ReadProjectAction),
+             new("eventstore:permission", Hexalith.Projects.Server.ProjectAuthorizationGate.ListProjectsAction)];
++        if (includeSurface) claims.Add(new(RouteCatalogSurfacePolicy.ClaimType, projectUser ? "agent" : "ui"));
+         if (inspection) claims.Add(new("eventstore:permission", ProjectReadQueryExecutor.InspectionPermission));
+         var handler = new JwtSecurityTokenHandler(); handler.OutboundClaimTypeMap.Clear();
+         return handler.CreateEncodedJwt(new SecurityTokenDescriptor { Issuer = Issuer, Audience = Audience,
+--- /dev/null
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/GatewayFixtureRouteCatalog.cs
+@@ -0,0 +1,111 @@
++#if HEXALITH_SOURCE_FIXTURE
++namespace Hexalith.Projects.Server.Tests.Queries;
++
++using System.Text.Json;
++using Hexalith.Conversations.Contracts.Queries;
++using Hexalith.Conversations.Server.Queries;
++using Hexalith.EventStore.Contracts.Authorization;
++using Hexalith.EventStore.Contracts.Queries;
++using Hexalith.EventStore.Contracts.Routing;
++using Hexalith.EventStore.ServiceDefaults.Routing;
++using Hexalith.Folders.Contracts;
++using Hexalith.Folders.Server.Queries;
++using Hexalith.Projects.Contracts.Queries;
++using Hexalith.Projects.Server.Queries;
++
++/// <summary>Commits only the query routes exercised by an isolated gateway fixture.</summary>
++/// <param name="tenant">The only tenant served by this fixture's committed routes.</param>
++/// <param name="includeAdvisoryQueries">Whether to include the advisory slice and its Conversation owner hop.</param>
++internal sealed class GatewayFixtureRouteCatalog(string tenant, bool includeAdvisoryQueries = false) : IRouteCatalogAuthority
++{
++    private readonly CommittedRouteCatalogSnapshot _snapshot = CreateSnapshot(tenant, includeAdvisoryQueries);
++
++    private int _acquisitionCount;
++
++    /// <summary>Gets the number of dispatch leases acquired by the real gateway components.</summary>
++    internal int AcquisitionCount => Volatile.Read(ref _acquisitionCount);
++
++    /// <inheritdoc/>
++    public Task<RouteCatalogDispatchLease> AcquireAsync(CancellationToken cancellationToken = default)
++    {
++        cancellationToken.ThrowIfCancellationRequested();
++        _ = Interlocked.Increment(ref _acquisitionCount);
++        return Task.FromResult(new RouteCatalogDispatchLease(_snapshot, static () => Task.CompletedTask));
++    }
++
++    /// <inheritdoc/>
++    public Task<RouteCatalogGenerationReadback> ReadbackAsync(CancellationToken cancellationToken = default)
++    {
++        cancellationToken.ThrowIfCancellationRequested();
++        RouteCatalogEnvelope envelope = _snapshot.Envelope;
++        return Task.FromResult(new RouteCatalogGenerationReadback(
++            _snapshot.Epoch, envelope.Generation, _snapshot.RootDigest,
++            envelope.RouteFacetDigest, envelope.IdempotencyFacetDigest, envelope.Profile, [], true));
++    }
++
++    /// <inheritdoc/>
++    public Task PrepareAsync(RouteCatalogActivation candidate, CancellationToken cancellationToken = default)
++        => Task.FromException(Immutable());
++
++    /// <inheritdoc/>
++    public Task<RouteCatalogHostAttestation> ReadyAsync(string attemptId, CancellationToken cancellationToken = default)
++        => Task.FromException<RouteCatalogHostAttestation>(Immutable());
++
++    /// <inheritdoc/>
++    public Task CommitAsync(string attemptId, CancellationToken cancellationToken = default)
++        => Task.FromException(Immutable());
++
++    /// <inheritdoc/>
++    public Task RollbackAsync(RouteCatalogRollbackRequest request, CancellationToken cancellationToken = default)
++        => Task.FromException(Immutable());
++
++    /// <inheritdoc/>
++    public Task ReconcileAsync(RouteCatalogQuiescenceRequest request, CancellationToken cancellationToken = default)
++        => Task.FromException(Immutable());
++
++    private static CommittedRouteCatalogSnapshot CreateSnapshot(string tenant, bool includeAdvisoryQueries)
++    {
++        ArgumentException.ThrowIfNullOrWhiteSpace(tenant);
++        List<(string RouteId, string Domain, string QueryType, Type Handler, bool Internal)> queries =
++        [
++            ("projects-list", "projects", ListProjectsQuery.QueryType, typeof(ListProjectsQueryHandler), false),
++            ("projects-open", "projects", GetProjectQuery.QueryType, typeof(GetProjectQueryHandler), false),
++            ("folders-owner-read", "folders", FolderOwnerReadQuery.QueryType, typeof(FolderOwnerReadQueryHandler), true),
++        ];
++        if (includeAdvisoryQueries)
++        {
++            queries.Add(("projects-suggest-conversation", "projects", ResolveProjectFromConversationQuery.QueryType, typeof(ResolveProjectFromConversationQueryHandler), false));
++            queries.Add(("projects-suggest-attachments", "projects", ResolveProjectFromAttachmentsQuery.QueryType, typeof(ResolveProjectFromAttachmentsQueryHandler), false));
++            queries.Add(("conversations-advisory-metadata", "conversations", GetConversationAdvisoryMetadataQuery.QueryType, typeof(GetConversationAdvisoryMetadataDomainQueryHandler), true));
++        }
++
++        List<RouteContractDeclaration> declarations = [];
++        List<RouteCatalogEntry> bindings = [];
++        List<RouteOperationContract> operations = [];
++        foreach (var query in queries)
++        {
++            RouteContractDeclaration declaration = new(
++                query.RouteId, "query", query.Domain, query.QueryType, null,
++                "v1", null, "workload", EventStoreOperationIdentifiers.DomainServiceQuery, null, [],
++                new RouteExecutionDeclaration(query.Handler.FullName!, "exact", [query.QueryType],
++                    "domain-service", "computed", [], RequiresDelegatedContext: query.Internal));
++            RouteOperationContract operation = RouteOperationSchema.Create(
++                declaration, typeof(SubmitQueryRequest), typeof(SubmitQueryResponse),
++                query.Internal ? "internal" : "public", "agent-eligible", JsonSerializerOptions.Web);
++            declarations.Add(declaration);
++            operations.Add(operation);
++            bindings.Add(new RouteCatalogEntry(declaration.RouteId, 1,
++                RouteCatalogCodec.ComputeDeclarationDigest(declaration), query.Domain, "query", "v1",
++                declaration.CredentialKind, declaration.Operation, false, tenant, operation.Digest));
++        }
++
++        RouteCatalogEnvelope envelope = RouteCatalogCodec.Seal(new RouteCatalogEnvelope(
++            3, 1, "Development", false, declarations, bindings, [], string.Empty, string.Empty, operations, []));
++        return new CommittedRouteCatalogSnapshot(
++            RouteCatalogCodec.Encode(envelope), RouteCatalogCodec.ComputeRootDigest(envelope), 1);
++    }
++
++    private static RouteCatalogUnavailableException Immutable()
++        => new("The isolated gateway fixture's committed query catalog is immutable.");
++}
++#endif

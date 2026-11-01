@@ -1,0 +1,25 @@
+--- a/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs
++++ b/tests/Hexalith.Projects.Server.Tests/Queries/ProjectReadAuthorityFixture.cs
+@@ -51,7 +51,7 @@
+ using Shouldly;
+ using Xunit;
+ 
+-/// <summary>Owned production-mode broker, issuer and receiver hosts over real persisted Project and Folder handlers.</summary>
++/// <summary>Owned Development test issuer and Production-configured receivers over real persisted Project and Folder handlers.</summary>
+ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
+ {
+     /// <summary>The separate synthetic public-user issuer.</summary>
+@@ -437,11 +437,12 @@
+ 
+     private async Task StartAuthorityAsync()
+     {
+-        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Production });
++        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
+         builder.Logging.ClearProviders(); builder.WebHost.ConfigureKestrel(server => server.Listen(IPAddress.Loopback, 0, endpoint => endpoint.UseHttps(_certificate)));
+         builder.Services.AddEventStoreWorkloadBindingAuthority(builder.Configuration);
+         builder.Services.AddOptions<WorkloadAuthorityOptions>().Configure(options =>
+         {
++            options.NonconformingDevelopmentFixture = true;
+             options.Enabled = true; options.Issuer = Issuer; options.KeyId = "synthetic-projects-authority";
+             options.SigningCertificatePath = Path.Combine(_directory, "synthetic.pfx"); options.SigningCertificatePassword = _password;
+             options.Grants = [QueryGrant("projects"), QueryGrant("folders"), new()

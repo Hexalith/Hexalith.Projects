@@ -1,0 +1,47 @@
+# Story 6.4 current-source verification and catalog compatibility checkpoint
+
+Story 6.4 remains in progress. **591 distinct existing tests pass**, with no skips in those lanes. The actual authenticated gateway/owner/store case fails HTTP 500 under EventStore's required catalog enforcement. Full Server qualification is not reached. A concrete seven-file protocol correction is prepared but **unapplied and unexecuted**; the [build specification](../../../spec-6-4-current-advisory-source-revalidation.md) is back in draft for its required scope checkpoint. The three local test-fixture changes compile, but are not accepted as a passing integration fix.
+
+## Executed evidence
+
+| Lane | Passed | Failed / skipped | Current result |
+| --- | ---: | --- | --- |
+| Projects advisory contracts | 8 | 0 / 0 | `verified-contracts-advisory.xml` |
+| Resolution engine, mappers and aggregate confirmation | 107 | 0 / 0 | `verified-engine-confirmation.xml` |
+| Advisory, delegation, HTTP, legacy resolution and module registration | 244 | 0 / 0 | `local-server-advisory.xml` |
+| Conversation advisory/strict metadata, registration, projection and recovery | 232 | 0 / 0 | `conversations-owner.xml` |
+| Real signed gateway/owner/store case after human-policy registration | 0 | 1 / 0 | `policy-gateway-owner-store.xml` |
+
+Earlier repeated successful cases are subsets, not additional cases. The 244-case lane includes the actual SDK persistence/restart HTTP case against the owned Dapr state store. The gateway case fails before its advisory score and five-key zero-write assertions; those assertions are **not** claimed executed successfully at this source. No complete Server, Folders Server, deployed policy/runtime or release acceptance is claimed.
+
+The Builds CLI, Projects Contracts/Server/core test projects and Conversations Server test project build successfully in Debug with zero warnings/errors. The original current-source Server build failed CS7036 at two gateway router registrations. A later negative-surface assertion introduced CS8752; its explicit attachment construction is corrected. Successful later build receipts are separate. All exact argv, cwd, explicit environment, UTC times and exits are in `*.command.json`. Runtime/test output is private outside the repository; retained XML, result summaries and output digests are public.
+
+The initial verification driver mistakenly continued after a build failure, used unsupported xUnit filter `*Resolution*Tests`, and ran a persistence case before starting storage. It retained an invalid filter exit 3 and one `FAIL_SKIP` failure, and started no resources. Its Server assembly was from the prior successful build, so that run does not certify the then-current edited source. `verify-suites-initial.py` preserves the executed driver. The later namespace/suffix filters and owned-runtime ordering correct these problems; output paths remain distinct. A Docker loopback-port readiness attempt also failed, then removed its exact container and preserved all five pre-existing container IDs. None of these failed attempts is a passing qualification.
+
+## Current source and producer selection
+
+Root baseline is `353cfd33e54270a1acb028c1c66ecb7cd548f3e7`. EventStore is `5938ab989d905bf37ed4f72136ea65ff6094a802`, Conversations `8a26cb03ee1d5413c034eb60aee71618f3ebd31a`, Folders `765544efc5c8aa395895f3a3d5911d4364658639`, Builds `2132fe0e276059dcd9fc35a7115fd2a1795ce538`, and Platform `82c9a31a0565c6dfd47750f5c67c087b487e6300`. `git-before.json` records all thirteen repositories and exact gitlinks. Source files and build configuration are bound by the compressed original inventory; test results bind copied executable closures before/after execution where recorded.
+
+The current source-built CLI prepares Projects through its own real module declaration, and Conversations through a separate owner mapping. Both emitted environments are used unchanged. Generated imports and pinned-tree catalog bytes are copied unchanged and hashed in `generated-inputs.json`. Source-mode HXW011 (Platform lacks a local release tag), HXW009 (Platform pins Builds `a22b55f0a4f6d2aaa3a5ccc505896064ac595364`, while checkout/index use `2132fe0e276059dcd9fc35a7115fd2a1795ce538`) and HXW010 (development CLI version outside Platform's published tool range) remain explicit. This does not qualify a published tuple or change any dependency pin.
+
+## Demonstrated blocker and proposed correction
+
+`gateway-failure.json` retains only the safe exception type/message extracted from private runtime output, bound to its original log digest. `DaprDomainQueryInvoker` rejects a callback result whose `QueryResult.ProjectionType` differs from its committed route. The exercised read/advisory handlers currently put their full query discriminator into that cache/projection field. Current catalog projection names must be kebab-case; these computed handlers have no independently declared projection output. Their query discriminators remain valid routing keys.
+
+`applied-fixture.patch` and `fixture-source.json` bind the three local fixture changes: schema-three immutable, exact-tenant computed query routes; real catalog authority in controller/registry/router/invoker; SDK's named human policy; and signed UI/agent surface claims. Catalog checks are not bypassed. The missing-surface refusal assertion is present but not reached because the first successful-read expectation currently fails.
+
+`proposed-repair.json` binds seven exact current/candidate files across Projects, Conversations and Folders. Each repository's patch passes read-only `git apply --check`. The proposal removes only fabricated projection metadata from Projects list/open/advisory results and the Folder/Conversation owner responses, and updates focused assertions. Payload schemas, query discriminators, scoring, authorization, persisted projection names and writes stay outside the proposed change. Add successful list/open metadata assertions and prove the full existing gateway case and affected test projects during implementation. No production patch has been applied or compiled; applicability checks do not prove that it fixes the failure.
+
+The active Parties publication hold was acknowledged. No further shared Parties builds or producer transport/publication operations will run while that hold applies. Implementation can use isolated dependencies where authorized, or wait for the publication task to release the hold. Independent producer security, Platform publication and consumer/deployment acceptance remain separate.
+
+## Owned runtime and preservation
+
+The AppHost pre-change check used the exact Projects AppHost through Aspire, with Keycloak disabled and Redis/placement/scheduler set to unused loopback endpoints. It started, exposed mixed finished/running resource states, and was stopped through the exact Aspire lifecycle target before source edits. It is not a healthy distributed baseline. Only sanitized states are retained; dashboard credentials and raw CLI output remain private.
+
+The actual test runtime copied the installed Redis-tools server binary to a command-owned private directory: Redis 8.0.5 and Dapr 1.18.7, both loopback-only, no Redis persistence and a unique app scope. The binary digest and actual version are retained. This supplies local state storage, not current G-6 runtime acceptance. Every owned Redis/Dapr child stopped with exit 0 and exact process absence; the failed Docker attempt's exact container was removed. The unrelated Tenants AppHost identity remains present and the owned Projects AppHost is absent afterward.
+
+`preservation-verified.json` checks all thirteen HEAD/tree/symbolic-HEAD/index/ref/gitlink identities, the original 57,174 selected source/configuration hashes, exact task-owned fixture changes and exact copied generated inputs, plus unchanged canonical Story 6.4/story/sprint bytes. The first inspection flagged the sixteen copied generated `.props`/`.targets` evidence files because the Git pathspec also selects those suffixes inside evidence. That observation remains in `preservation.json`; the next check still failed because its allowlist used evidence-relative paths against root-relative inventory names. The corrected, exit-enforcing check in `preservation-verified.json` allows only their already-captured exact root-relative paths and hashes, not arbitrary new source. Both earlier observations remain retained. Ignored build/cache outputs and repository skill directories are outside this source inventory. No production source, index, ref, branch, dependency or historical qualification evidence is modified.
+
+Production-authority `--story-id 6.4`, `--validate-index`, and tracked whitespace checks pass. Capture drivers are historical executions with fixed output paths; they refuse existing command output files and should not be replayed into this directory. Initial outer shell invocations do not have separate durable stdout/timing receipts; the individual child commands, test XML, build outputs and identified failures are retained. `SHA256SUMS` binds this packet's file bytes; it is not an external signature or acceptance decision.
+
+Final packaging initially ran with a root-relative packet path from the packet working directory and failed FileNotFoundError before changing files; the following checksum command also found no manifest. The corrected packaging invocation uses its actual working directory. This is a packaging-path error, separate from source validation.

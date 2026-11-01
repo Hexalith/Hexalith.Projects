@@ -1,0 +1,18 @@
+{
+  "exit_code": 1,
+  "executable_closure_unchanged": true,
+  "xml_present": true,
+  "total": 1,
+  "passed": 0,
+  "failed": 1,
+  "skipped": 0,
+  "errors": 0,
+  "not-run": 0,
+  "nonpassing": [
+    {
+      "name": "Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : response.StatusCode\n    should be\nHttpStatusCode.OK\n    but was\nHttpStatusCode.InternalServerError\n\nAdditional Info:\n    {\\\"type\\\":\\\"https://tools.ietf.org/html/rfc9110#section-15.6.1\\\",\\\"title\\\":\\\"An error occurred while processing your request.\\\",\\\"status\\\":500,\\\"traceId\\\":\\\"00-77836b310aedbcc203a549bdde46e7a3-0da7f6ea5a940de1-00\\\"}"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+<assemblies schema-version="3" id="151f87a5-7d82-4cdf-8784-987515f5396d" computer="DESKTOP-VIOG240" user="administrator" start-rtf="2026-10-31T22:37:15.9564280+00:00" finish-rtf="2026-10-31T22:37:17.5203158+00:00" timestamp="10/31/2026 23:37:17"><assembly environment="64-bit (x64) .NET 10.0.14 [collection-per-class, parallel (collections, 2 threads)]" id="16ceebcf-2815-4d4b-b53d-5d7596132078" name="/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/bin/Debug/net10.0/Hexalith.Projects.Server.Tests.dll" run-date="2026-10-31" run-time="22:37:15" start-rtf="2026-10-31T22:37:15.9564280+00:00" test-framework="xUnit.net v3 4.0.2+0c7aa4991f" target-framework=".NETCoreApp,Version=v10.0" errors="0" failed="1" finish-rtf="2026-10-31T22:37:17.5203158+00:00" not-run="0" passed="0" skipped="0" time="1.564" time-rtf="00:00:01.5640000" total="1"><collection name="Test collection for Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests (id: d241a68b07d02be2e8d02b539c118afad6a6bb3aefd03c1557ecb8d6c2e86fcc)" id="36cbdfc4-7754-4b50-8735-d2f0b37e83c4" failed="1" not-run="0" passed="0" skipped="0" time="1.459" time-rtf="00:00:01.4590000" total="1"><test id="54a4ff46-850d-4ab5-97f5-e994ae13a556" name="Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures" result="Fail" time="1.459" time-rtf="00:00:01.4590000" start-rtf="2026-10-31T22:37:16.0331500+00:00" finish-rtf="2026-10-31T22:37:17.5049611+00:00" type="Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests" method="GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures" source-file="/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs" source-line="68"><failure exception-type="Shouldly.ShouldAssertException"><message>Shouldly.ShouldAssertException : response.StatusCode
+    should be
+HttpStatusCode.OK
+    but was
+HttpStatusCode.InternalServerError
+
+Additional Info:
+    {\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.6.1\",\"title\":\"An error occurred while processing your request.\",\"status\":500,\"traceId\":\"00-77836b310aedbcc203a549bdde46e7a3-0da7f6ea5a940de1-00\"}</message><stack-trace>   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.ReadAsync[T](HttpClient client, SubmitQueryRequest query) in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs:line 376
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs:line 176
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs:line 242
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs:line 242
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs:line 242
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Hexalith.Projects.Server.Tests.Queries.SupportedProjectGatewayHttpTests.GatewayCallerAuthorityAndCurrentFolderAclControlListOpenAndSafeFailures() in /home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Server.Tests/Queries/SupportedProjectGatewayHttpTests.cs:line 242
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)
+--- End of stack trace from previous location ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task, ConfigureAwaitOptions options)</stack-trace></failure></test></collection></assembly></assemblies>

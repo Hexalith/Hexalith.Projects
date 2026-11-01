@@ -1,0 +1,27 @@
+{
+  "exit_code": 1,
+  "executable_closure_unchanged": false,
+  "xml_present": true,
+  "total": 1284,
+  "passed": 1282,
+  "failed": 2,
+  "skipped": 0,
+  "errors": 0,
+  "not-run": 0,
+  "nonpassing": [
+    {
+      "name": "Hexalith.Folders.Server.Tests.Authentication.FoldersProductionAuthenticationTests.ProgramShouldUseAuthenticationBeforeAuthorizationAndEndpointMapping",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : endpoints\n    should be greater than\n7659\n    but was\n-1"
+    },
+    {
+      "name": "Hexalith.Folders.Server.Tests.ProductionProcessWireEventTests.SignedWorkloadAndHumanReceiptAreAcceptedByProductionProcessRegistration",
+      "result": "Fail",
+      "message": "Shouldly.ShouldAssertException : response.StatusCode\n    should be\nHttpStatusCode.OK\n    but was\nHttpStatusCode.InternalServerError\n\nAdditional Info:\n    System.InvalidOperationException: Unable to resolve service for type 'Hexalith.EventStore.DomainService.IDomainRouteCatalogGuard' while attempting to activate 'Hexalith.EventStore.DomainService.DomainRouteCatalogFilter'.\n   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ThrowHelperUnableToResolveService(Type type, Type requiredBy)\n   at lambda_method49920(Closure, IServiceProvider, Object[])\n   at Microsoft.AspNetCore.Http.EndpointFilterExtensions.<>c__DisplayClass1_1`2.<AddEndpointFilter>b__1(EndpointFilterInvocationContext context)\n   at Hexalith.Folders.Server.FolderAuditEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/FolderAuditEndpointFilter.cs:line 44\n   at Hexalith.Folders.Server.FolderAuditEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/src/Hexalith.Folders.Server/FolderAuditEndpointFilter.cs:line 57\n   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|130_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)\n   at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()\n--- End of stack trace from previous location ---\n   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)\n   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)\n   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)\n   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)\n\nHEADERS\n=======\nHost: 127.0.0.1:39843\nContent-Type: application/json; charset=utf-8\nTransfer-Encoding: chunked\ndapr-api-token: [redacted synthetic test channel credential]\nX-Hexalith-Workload-Assertion: [redacted synthetic test assertion]\ndapr-caller-app-id: eventstore\n"
+    }
+  ],
+  "native_xml_private": "/tmp/story64-owner-host-ex8__xn3/retained-private-failure/folders-server-full.xml",
+  "public_xml": "folders-server-full.sanitized.xml",
+  "public_xml_is_native": false,
+  "redaction": "Synthetic test assertion/channel header values omitted; exact native failure XML and original summary retained privately with hashes."
+}

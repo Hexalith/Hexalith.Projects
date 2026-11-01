@@ -1,0 +1,37 @@
+{
+  "name": "projects-contracts-post-review-build",
+  "argv": [
+    "dotnet",
+    "build",
+    "/tmp/story64-approved-repair-kvtivzn1/source/projects/tests/Hexalith.Projects.Contracts.Tests/Hexalith.Projects.Contracts.Tests.csproj",
+    "-c",
+    "Debug",
+    "-m:1",
+    "-v:minimal"
+  ],
+  "cwd": "/tmp/story64-approved-repair-kvtivzn1/source/projects",
+  "explicit_environment": {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "DOTNET_PROCESSOR_COUNT": "2",
+    "MSBUILDDISABLENODEREUSE": "1",
+    "CustomBeforeDirectoryBuildProps": "/tmp/story64-owner-host-ex8__xn3/projects-mapping/source-mapping/SourceMapping.targets",
+    "CustomAfterMicrosoftCommonProps": "/tmp/story64-owner-host-ex8__xn3/projects-mapping/source-mapping/SourceMapping.props",
+    "CustomBeforeDirectoryBuildTargets": "/tmp/story64-owner-host-ex8__xn3/projects-mapping/source-mapping/SourceMapping.before-targets.props",
+    "CustomAfterDirectoryBuildTargets": "/tmp/story64-owner-host-ex8__xn3/projects-mapping/source-mapping/SourceMapping.late.props",
+    "AfterMicrosoftNETSdkTargets": "/tmp/story64-owner-host-ex8__xn3/projects-mapping/source-mapping/SourceMapping.final.targets",
+    "HEXALITH_SOURCE_MAPPING_HASH": "b9d834b53db3efff3033cd65ea69662afcffaf8745241cb479c357fb3905b5cc",
+    "Configuration": "Debug"
+  },
+  "removed_environment": [
+    "CI"
+  ],
+  "started_utc": "2026-11-01T01:42:29.651540+00:00",
+  "finished_utc": "2026-11-01T01:42:32.374951+00:00",
+  "exit_code": 0,
+  "launch_or_timeout_error": null,
+  "stdout": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/owner-host-review-verification-20261101/projects-contracts-post-review-build.stdout.log",
+  "stderr": "/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/evidence/6-4-advisory-resolution-20261021/owner-host-review-verification-20261101/projects-contracts-post-review-build.stderr.log",
+  "stdout_sha256": "d671dc4a13e59e78a8203781d54644b32c9b9d16de2aed12f28b45d67f911bdd",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "private_output": false
+}

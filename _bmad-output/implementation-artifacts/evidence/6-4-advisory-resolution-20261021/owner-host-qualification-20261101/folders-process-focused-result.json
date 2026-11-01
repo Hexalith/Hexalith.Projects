@@ -1,0 +1,18 @@
+{
+  "exit_code": 1,
+  "executable_closure_unchanged": true,
+  "total": 11,
+  "passed": 10,
+  "failed": 1,
+  "skipped": 0,
+  "errors": 0,
+  "not-run": 0,
+  "nonpassing": [
+    {
+      "name": "Hexalith.Folders.Server.Tests.ProductionProcessWireEventTests.SignedWorkloadAndHumanReceiptAreAcceptedByProductionProcessRegistration",
+      "result": "Fail",
+      "message": "Hexalith.EventStore.Contracts.Routing.RouteCatalogValidationException : Route catalog rejected: $.descriptor.fields[0].name: missing-or-invalid-name",
+      "stack": "   at Hexalith.EventStore.Contracts.Routing.RouteCatalogValidator.Require(Boolean condition, String path, String code) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidator.cs:line 383\n   at Hexalith.EventStore.Contracts.Routing.RouteCatalogValidator.Name(String value, String path) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidator.cs:line 360\n   at Hexalith.EventStore.Contracts.Routing.RouteCatalogValidator.CheckDescriptor(IdempotencyDescriptorSchema descriptor, String path) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidator.cs:line 349\n   at Hexalith.EventStore.Contracts.Routing.RouteCatalogValidator.ValidateDescriptor(IdempotencyDescriptorSchema descriptor) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogValidator.cs:line 30\n   at Hexalith.EventStore.Contracts.Routing.RouteCatalogCodec.ComputeDescriptorDigest(IdempotencyDescriptorSchema descriptor) in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.EventStore/src/Hexalith.EventStore.Contracts/Routing/RouteCatalogCodec.cs:line 130\n   at Hexalith.Folders.Server.Tests.FoldersCallbackRouteCatalog.CreateSnapshot() in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersCallbackRouteCatalog.cs:line 80\n   at Hexalith.Folders.Server.Tests.FoldersCallbackRouteCatalog.get_Snapshot() in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/FoldersCallbackRouteCatalog.cs:line 28\n   at Hexalith.Folders.Server.Tests.ProductionProcessWireEventTests.SignedWorkloadAndHumanReceiptAreAcceptedByProductionProcessRegistration() in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/ProductionProcessWireEventTests.cs:line 139\n   at Hexalith.Folders.Server.Tests.ProductionProcessWireEventTests.SignedWorkloadAndHumanReceiptAreAcceptedByProductionProcessRegistration() in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/ProductionProcessWireEventTests.cs:line 258\n   at Hexalith.Folders.Server.Tests.ProductionProcessWireEventTests.SignedWorkloadAndHumanReceiptAreAcceptedByProductionProcessRegistration() in /tmp/story64-approved-repair-kvtivzn1/source/projects/references/Hexalith.Folders/tests/Hexalith.Folders.Server.Tests/ProductionProcessWireEventTests.cs:line 258\n--- End of stack trace from previous location ---"
+    }
+  ]
+}

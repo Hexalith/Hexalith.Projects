@@ -24,6 +24,7 @@ using Hexalith.EventStore.Server.DomainServices;
 using Hexalith.EventStore.Server.Pipeline;
 using Hexalith.EventStore.Server.Queries;
 using Hexalith.EventStore.ServiceDefaults.Authentication;
+using Hexalith.EventStore.ServiceDefaults.Routing;
 using Hexalith.Folders;
 using Hexalith.Folders.Aggregates.Folder;
 using Hexalith.Folders.Authorization;
@@ -50,7 +51,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shouldly;
 using Xunit;
 
-/// <summary>Owned production-mode broker, issuer and receiver hosts over real persisted Project and Folder handlers.</summary>
+/// <summary>Owned Development test issuer and Production-configured receivers over real persisted Project and Folder handlers.</summary>
 internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
 {
     /// <summary>The separate synthetic public-user issuer.</summary>
@@ -139,6 +140,7 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
     public string HumanToken(bool inspection = false, bool projectUser = false)
     {
         List<Claim> claims = [new("sub", "actor-1"), new("tenant_id", Tenant), new("eventstore:tenant", Tenant),
+            new(RouteCatalogSurfacePolicy.ClaimType, projectUser ? "agent" : "ui"),
             new("azp", projectUser ? "chatbot" : "operator-web"), new("client_id", "issuing-client"),
             new("act", "{\"sub\":\"delegation-1\"}"), new("scope", "projects.read projects.list"),
             new("projects:role", projectUser ? "ProjectUser" : "TenantOperator"), new("eventstore:permission", "query:read"),
@@ -435,11 +437,12 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
 
     private async Task StartAuthorityAsync()
     {
-        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Production });
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Development });
         builder.Logging.ClearProviders(); builder.WebHost.ConfigureKestrel(server => server.Listen(IPAddress.Loopback, 0, endpoint => endpoint.UseHttps(_certificate)));
         builder.Services.AddEventStoreWorkloadBindingAuthority(builder.Configuration);
         builder.Services.AddOptions<WorkloadAuthorityOptions>().Configure(options =>
         {
+            options.NonconformingDevelopmentFixture = true;
             options.Enabled = true; options.Issuer = Issuer; options.KeyId = "synthetic-projects-authority";
             options.SigningCertificatePath = Path.Combine(_directory, "synthetic.pfx"); options.SigningCertificatePassword = _password;
             options.Grants = [QueryGrant("projects"), QueryGrant("folders"), new()
@@ -485,6 +488,8 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
         builder.Services.AddEventStoreWorkloadPolicies(DaprInternalAuthenticationOptions.SchemeName, [EventStoreWorkloadOperations.GatewayOwnerAuthorityQuery]);
         builder.Services.Configure<Microsoft.AspNetCore.Authorization.AuthorizationOptions>(options =>
             options.DefaultPolicy = Hexalith.EventStore.Extensions.EventStoreServiceCollectionExtensions.CreateHumanDefaultPolicy());
+        builder.Services.AddAuthorizationBuilder().AddPolicy(
+            EventStoreHttpHostSecurityExtensions.HumanPolicy, EventStoreHttpHostSecurityExtensions.CreateHumanPolicy());
         builder.Services.AddControllers().AddApplicationPart(typeof(QueriesController).Assembly);
         builder.Services.AddMediatR(options => options.RegisterServicesFromAssembly(typeof(QueryEnvelope).Assembly));
         builder.Services.AddTransient<MediatR.IRequestHandler<Hexalith.EventStore.Server.Pipeline.Queries.SubmitQuery, Hexalith.EventStore.Server.Pipeline.Queries.SubmitQueryResult>, SubmitQueryHandler>();
@@ -493,7 +498,9 @@ internal sealed class ProjectReadAuthorityFixture : IAsyncDisposable
         builder.Services.AddSingleton<IDomainServiceResolver, GatewayFixtureRoutesResolver>();
         builder.Services.AddSingleton<IDomainQueryHandlerRegistry, DaprDomainQueryHandlerRegistry>();
         builder.Services.AddSingleton<IDomainQueryInvoker, DaprDomainQueryInvoker>();
-        builder.Services.AddSingleton<IQueryRouter>(sp => new HandlerAwareQueryRouter(new GatewayFixtureUnsupportedActorRouter(), sp.GetRequiredService<IDomainQueryHandlerRegistry>(),
+        builder.Services.AddSingleton(new GatewayFixtureRouteCatalog(Tenant));
+        builder.Services.AddSingleton<IRouteCatalogAuthority>(sp => sp.GetRequiredService<GatewayFixtureRouteCatalog>());
+        builder.Services.AddSingleton<IQueryRouter>(sp => new HandlerAwareQueryRouter(sp.GetRequiredService<IRouteCatalogAuthority>(), new GatewayFixtureUnsupportedActorRouter(), sp.GetRequiredService<IDomainQueryHandlerRegistry>(),
             sp.GetRequiredService<IDomainQueryInvoker>(), sp.GetRequiredService<ILogger<HandlerAwareQueryRouter>>()));
         builder.Services.AddTransient<DomainServiceWorkloadAssertionHandler>();
         builder.Services.AddHttpClient(Options.DefaultName).AddHttpMessageHandler<DomainServiceWorkloadAssertionHandler>();

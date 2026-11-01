@@ -1,0 +1,67 @@
+{
+  "projects": {
+    "head": "353cfd33e54270a1acb028c1c66ecb7cd548f3e7",
+    "patch": "proposed-repair/projects.patch",
+    "patch_sha256": "0e2ee5a17f86835844969c8b9321eca4dbaec1d68387954ed1ab9cb0357ca3ae",
+    "apply_check_exit": 0,
+    "files": [
+      {
+        "path": "src/Hexalith.Projects.Server/Queries/ProjectAdvisoryQueryExecutor.cs",
+        "current_sha256": "11cbbb1e049219d60e659fad6362a81a94edd9b88c3968f4090b8cecd09fa778",
+        "candidate_sha256": "ac34b0c5c86c8a85ddf8591f73ddb02d32dc3a63db47a206b42688f2c696df8d"
+      },
+      {
+        "path": "src/Hexalith.Projects.Server/Queries/ProjectReadQueryExecutor.cs",
+        "current_sha256": "7fc9bfeb8c4c418efb7ee30ed81aba7d4cb7b7088cea22650e80605346df3a2b",
+        "candidate_sha256": "7cf06791ca24295040e92154a2dea8638b4ddfd4690169b094c9957cf4fcc085"
+      },
+      {
+        "path": "tests/Hexalith.Projects.Server.Tests/Queries/ProjectAdvisoryQueryTests.cs",
+        "current_sha256": "6a85490b3014c755618c53b54783fb2da4f6e56b0aca126a9a249c066ae61614",
+        "candidate_sha256": "bdde261cf9cdf0b5a0e5f6833f26b4c9a3d03978dc0d1932bad6498d1994b5e3"
+      }
+    ],
+    "applied": false,
+    "compiled_or_executed": false
+  },
+  "conversations": {
+    "head": "8a26cb03ee1d5413c034eb60aee71618f3ebd31a",
+    "patch": "proposed-repair/conversations.patch",
+    "patch_sha256": "5db6f67dab31bebbac5960350426016551cbff8d7d723f19bf0e23cf7e0064fc",
+    "apply_check_exit": 0,
+    "files": [
+      {
+        "path": "src/Hexalith.Conversations.Server/Queries/GetConversationAdvisoryMetadataDomainQueryHandler.cs",
+        "current_sha256": "f396247ad8507e018659e0c1a668811571c1be0823922ea5e3c95c589903e504",
+        "candidate_sha256": "48bb26274fd0feecb9595c576988ee5d2baebdc44ce7443f41ff3eaa38b29cf8"
+      },
+      {
+        "path": "tests/Hexalith.Conversations.Server.Tests/Queries/ConversationAdvisoryMetadataQueryHandlerTest.cs",
+        "current_sha256": "921b63259a508f1c381bf2298b8a250b20f8a868add6e9f046161a5f9b6b91eb",
+        "candidate_sha256": "c2e69dd0c642551397843006da8416c17d6e50f2d21c640971e53c36b16a8a7d"
+      }
+    ],
+    "applied": false,
+    "compiled_or_executed": false
+  },
+  "folders": {
+    "head": "765544efc5c8aa395895f3a3d5911d4364658639",
+    "patch": "proposed-repair/folders.patch",
+    "patch_sha256": "7d91f65366091fce1ae16c57bd032476727cce6a9e7e8de469dc8159b07676d5",
+    "apply_check_exit": 0,
+    "files": [
+      {
+        "path": "src/Hexalith.Folders.Server/Queries/FolderOwnerReadQueryHandler.cs",
+        "current_sha256": "ec11a3196e7752ae973e1919b4bb629a5a64f5010b0b6bfb796437b0cabfd463",
+        "candidate_sha256": "05cc007d052f80199041a60bfb61af9513674128142df8f14ce5d70ebcdf5ee9"
+      },
+      {
+        "path": "tests/Hexalith.Folders.Server.Tests/FolderOwnerReadQueryHandlerTests.cs",
+        "current_sha256": "460c3b73de83c9645410cb4024577ec229d79e45085a1c1f929aa6c150fdf994",
+        "candidate_sha256": "d8cedfdc5ea73a297315a5cddc83e8353b4c996e5e7c0173df7ad294d7d7289a"
+      }
+    ],
+    "applied": false,
+    "compiled_or_executed": false
+  }
+}
