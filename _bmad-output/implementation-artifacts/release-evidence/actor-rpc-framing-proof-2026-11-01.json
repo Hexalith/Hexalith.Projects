@@ -1,0 +1,64 @@
+{
+  "sdk": "Dapr.Actors",
+  "version": "1.19.0",
+  "targetFramework": "net10.0",
+  "packageRepositoryCommit": "05f093ad5ee38de377872fee9021010fe5b6dc35",
+  "dllSha256": "8b4ac5fb122eeb1d25fad4b3b24f76a832c05377ae581f306b915707d94e5201",
+  "interfaceType": "IFramingProbeActor",
+  "useJsonSerialization": false,
+  "initial": [
+    {
+      "contentType": "System.Net.Http.ByteArrayContent",
+      "initialContentLength": 194,
+      "initialTransferEncodingChunked": null,
+      "daprApiTokenAbsent": true
+    },
+    {
+      "contentType": "System.Net.Http.ByteArrayContent",
+      "initialContentLength": 194,
+      "initialTransferEncodingChunked": null,
+      "daprApiTokenAbsent": true
+    }
+  ],
+  "wire": [
+    {
+      "requestMethod": "PUT",
+      "requestPath": "/v1.0/actors/FramingProbeActor/synthetic-owned-probe/method/AcceptAsync",
+      "contentLength": 194,
+      "transferEncoding": null,
+      "chunked": false,
+      "actualBodyBytes": 194,
+      "bodySha256": "bf597e1d14e69460b3ebfde7db0d73750c857b2ee31faeb84bea824478a30178",
+      "daprApiTokenAbsent": true,
+      "contentType": "application/octet-stream; charset=utf-8"
+    },
+    {
+      "requestMethod": "PUT",
+      "requestPath": "/v1.0/actors/FramingProbeActor/synthetic-owned-probe/method/AcceptAsync",
+      "contentLength": 194,
+      "transferEncoding": null,
+      "chunked": false,
+      "actualBodyBytes": 194,
+      "bodySha256": "bf597e1d14e69460b3ebfde7db0d73750c857b2ee31faeb84bea824478a30178",
+      "daprApiTokenAbsent": true,
+      "contentType": "application/octet-stream; charset=utf-8"
+    }
+  ],
+  "outcomes": [
+    "synthetic-503-observed",
+    "synthetic-503-observed"
+  ],
+  "scope": "Owned temporary 127.0.0.1 TCP listener; no Dapr runtime, actors, placement, scheduler, backend, state or containers",
+  "initialHeadersObservedBeforeAnyContentReadOrBuffering": true,
+  "twoCallsAreManualInvocationsNotDaprRetryExecution": true,
+  "sdkBinaryPath": "/home/administrator/.nuget/packages/dapr.actors/1.19.0/lib/net10.0/Dapr.Actors.dll",
+  "sdkMethod": "Dapr.Actors.DaprHttpInteractor.InvokeActorMethodWithRemotingAsync -> local RequestFunc -> new ByteArrayContent(serializedMsgBody) -> SendAsyncHandleSecurityExceptions -> HttpClient.SendAsync",
+  "decompilationCommand": "ilspycmd -t Dapr.Actors.DaprHttpInteractor /home/administrator/.nuget/packages/dapr.actors/1.19.0/lib/net10.0/Dapr.Actors.dll",
+  "cleanup": {
+    "listenerStoppedInFinally": true,
+    "processExited": true,
+    "temporaryProbeDirectoryRemoved": true,
+    "retainedArtifact": "This credential-free proof JSON only"
+  },
+  "productionPathObservation": "EventStore CommandRouter.CreateActorProxy supplies no ActorProxyOptions; source registration contains no UseJsonSerialization override, matching the probed typed remoting default."
+}

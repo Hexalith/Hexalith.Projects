@@ -1,0 +1,63 @@
+{
+  "observedAtUtc": "2026-11-01T23:15:07.355905+00:00",
+  "scope": "Reviewed owner repairs; local checks complete, hosted qualification pending",
+  "eventStoreSource": "a82555477689e3e021c3c74bcab0ccfefd4ff307",
+  "tenantsUpstreamSource": "5a21dd2c4f0a96cd3cfafe418c61e1e197c99c42",
+  "checks": [
+    {
+      "name": "EventStore final four affected classes",
+      "passed": 104,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "198b1ffd142a204b2ab8db7a155060eb0375693f2a9710bf49c4c4be182b0324"
+    },
+    {
+      "name": "EventStore parent15-class regression",
+      "passed": 571,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "de4ba61173957e899419f1c18fd7600845171c72bd17d9ab4ce651e49016cca0"
+    },
+    {
+      "name": "EventStore staged tracked-content security",
+      "passed": 246,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "b7b84c24ddd39e1542b48ac8befaa785f6c2002a70c21766b6a7450680d0ede6"
+    },
+    {
+      "name": "Owned Redis SAVE policy and full backup-chain negatives, no live backend",
+      "passed": 250,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "2f2d28f04c026d7f94bdc591ee9d9d896cafda6bbed0ba5d4fc2b58a4c013e3d"
+    },
+    {
+      "name": "Tenants affected UI flows",
+      "passed": 745,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "7b2c978a9bc4f4ef8187c8a932f71312b987356321a72af57a84e410939b8e90"
+    }
+  ],
+  "review": {
+    "layers": 3,
+    "allFindingsIndividuallyTriaged": true,
+    "preexistingDeferred": 2,
+    "acceptedPatchesApplied": true
+  },
+  "nestedCheckoutsInitialized": false,
+  "hostedQualificationComplete": false,
+  "tenantsSource": "434fefb0f8140afc78d33747d398051e388fdf41",
+  "finalSourceAppHostBuild": {
+    "warnings": 0,
+    "errors": 0,
+    "logSha256": "c81df13b34f571e29bd2877339586cc99bb5ec6635d43e7d91aeca4f8590952a"
+  },
+  "hostedRunsPending": {
+    "eventStoreMain": 41360994832,
+    "eventStoreIntegration": 41360994325,
+    "tenantsMain": 41361188874,
+    "tenantsSource": 41361188323
+  }
+}

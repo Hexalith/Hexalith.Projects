@@ -1264,3 +1264,11 @@ status: open
 - source_spec: `spec-tenants-bootstrap-timeout-2026-11-01.md`
   summary: Pin the SDK inside the existing temporary Tenants packed-consumer workspace.
   evidence: The existing verifier creates a temporary project without global.json. Current direct observation selects10.0.403, equal to the repository pin, with only older alternatives installed; a later newer installed SDK could change this selection. Copying or otherwise explicitly binding the pin and exercising a conflicting installed-SDK case would settle the follow-up.
+
+- source_spec: `spec-durable-projection-command-response-2026-11-01.md`
+  summary: Preserve durable projection activation for ambiguous actor commits whose RPC result is lost and whose caller never reconciles.
+  evidence: Baselinefa can consume pre-route old-head activation before an actor commit; a lost RPC result skips inline projection and returns no ACK. New accepted-response restoration and successful reconciliation are covered, but independently recovering never-retried unacknowledged outcomes requires a separate protocol change.
+
+- source_spec: `spec-tenant-flow-disposal-2026-11-01.md`
+  summary: Harden retained-flow cleanup against an authorization cancellation callback that throws before unsubscribe/detach.
+  evidence: InvalidateAdmission precedes unsubscribe/detach in the unchanged baseline Dispose ordering. The current five-flow fix removes proven disposed-provider lookups; callback-exception cleanup is a preexisting distinct hardening case.
