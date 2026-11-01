@@ -696,7 +696,13 @@ origin: observed while closing Story 6.4 by sprint-change-proposal-2026-11-01-cl
 location: .github CI run 41298330907 at ded1e704 (ci / build-and-test, G-6 current runtime qualification)
 source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01-close-story-6-4.md
 reason: Validate package consumer references fails with `Package Hexalith.Projects dependency graph differs from the manifest; wrong_versions=['Hexalith.EventStore.Contracts']`, so no test shard runs; G-6 fails one real PostgreSQL two-sidecar stop/restart qualifier case. The last fully green run is 41229091248 at 353cfd33. Owner: Projects build hygiene with Hexalith.EventStore. Not a story gate.
-status: open
+status: in-progress
+investigation: Builds gitlink 2132fe0e276059dcd9fc35a7115fd2a1795ce538 -> d3fb9d3d62c32953a1769a6b4cdb63ad3c983a3f includes catalog commit 69f07af0aadd4166f75f6b965ebfac9b4fd51de2, raising HexalithEventStoreVersion 3.129.0 -> 3.130.1. Projects imports that catalog with transitive pinning; its four tools/release-packages.json Contracts expectations were stale. Corrected those four values to 3.130.1 in Projects; no catalog override or rollback.
+validation: With CI=true and NUGET_PACKAGES=/tmp/dw76/nuget, dotnet build Hexalith.Projects.CI.slnx --configuration Release -m:1 --disable-build-servers passed (0 warnings/errors); python3 -m unittest tests/tools/test_release_package_tools.py -q passed 19 tests; python3 scripts/pack-release-packages.py /tmp/dw76/packages 0.0.0-ci-test, python3 scripts/validate-nuget-packages.py /tmp/dw76/packages and python3 scripts/validate-consumer-package-references.py /tmp/dw76/packages passed all five packages/isolated consumers.
+upstream: Reproduced the one PostgreSQL qualifier once (1 failed, 0 skipped) with Dapr 1.18.2 and the pinned PostgreSQL image. EventStore child startup cannot load Contracts 3.130.1.0 after the support build overwrites shared source output with 3.129.0 from the Tenants edge; the support build also fails MSB3030 on missing Contracts/ServiceDefaults 3.129.0 paths. Tracked as EventStore DW-545; no Projects runtime, qualifier or gate change.
+completion: Pending approval to commit/push the Projects manifest correction and the separate EventStore ledger entry, followed by an observed green Projects main CI run. EventStore DW-545 remains independently open; no Story 6.x reopening, evidence receipt or new gate.
+
+supersession: 2026-11-01; the later explicit user authorization in spec-release-maintenance-2026-11-01.md supersedes the pending commit/push approval and manifest-only/G-6-immaterial assumptions above. Preserve the investigation and failed evidence as historical. The current dependency synchronization requires fresh current-source G-6 qualification and exact-current-main CI before release; no additional human approval pause is required.
 
 ### DW-77: Record and publish a coherent Platform identity for package-mode preparation.
 
@@ -712,6 +718,16 @@ origin: Story 6.4 completion boundary, recorded by sprint-change-proposal-2026-1
 location: src/Hexalith.Projects.Server/Queries advisory attachment composition; File identity owner
 source_spec: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01-close-story-6-4.md
 reason: Advisory resolution reports File inputs as explicitly unsupported/incomplete because no production owner-backed File mapping provider exists; identity must never be guessed from a path, Folder ID or Projects reference ID. Owner: Hexalith.Folders (File identity). Needs its own story; consumers are an advisory File follow-up and Story 7.7.
+status: open
+
+
+### DW-79: Remove the Projects release tooling's bundled undici advisory exposure.
+
+origin: 2026-11-01 maintenance npm audit and implementation review
+location: root package-lock.json release-tooling dependency graph
+source_spec: _bmad-output/implementation-artifacts/spec-release-maintenance-2026-11-01.md
+reason: Projects' locked semantic-release 25.0.9 -> @semantic-release/npm 13.2.0 -> npm 11.21.1 -> node-gyp 12.4.0 -> bundled undici 6.29.0 retains high advisories GHSA-xjj6-f33q-929c, GHSA-2m5v-pch6-74hx and GHSA-qrxm-fqhp-jwvm. Owner: Hexalith.Projects release-tooling maintainer; consume a compatible upstream fix without forced dependency overrides. This follows the Projects root graph only; Builds DW-74 retains its own scope.
+removal_condition: A supported upstream refresh removes the affected bundled version (all three high advisories are fixed at undici 6.29.1 or later); a fresh root npm audit no longer reports these IDs on this chain, registry signatures verify, and the existing release-tooling checks pass. Record the verified lock version and audit result before closing.
 status: open
 
 - source_spec: `/home/administrator/projects/hexalith/projects/_bmad-output/implementation-artifacts/spec-bmad-config-merge-atomicity.md`
@@ -1224,3 +1240,7 @@ status: open
 - source_spec: `spec-6-4-owner-host-qualification.md`
   summary: Support and qualify synchronous OTLP HTTP/protobuf export through the SDK route-catalog HTTP wrapper.
   evidence: The new actual-host export probe reached synchronous HttpClient.Send, while RouteCatalogInvocationHandler overrides only SendAsync; the exporter reports an unsupported synchronous send. Retained failed execution distinguishes this SDK producer limitation from the owner-defaults startup fix. Do not claim export delivery from the provider-startup test.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-release-maintenance-2026-11-01.md`
+  summary: Verify the updated axe and Playwright dependencies against the real managed Projects AppHost accessibility and application lanes.
+  evidence: No regression was demonstrated; 24 harness tests and typecheck pass, but three existing live lifecycle cases were skipped and the accessibility suite was not run. A successful actual managed AppHost/application/accessibility run settles this medium unverified compatibility concern; retain normal automated release qualification independently.
