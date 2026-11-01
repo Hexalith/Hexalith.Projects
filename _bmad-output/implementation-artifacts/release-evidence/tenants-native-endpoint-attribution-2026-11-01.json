@@ -1,0 +1,33 @@
+{
+  "observedAtUtc": "2026-11-01T23:34:37.284263+00:00",
+  "runId": 41361188323,
+  "url": "https://github.com/Hexalith/Hexalith.Tenants/actions/runs/41361188323",
+  "tenantsSource": "434fefb0f8140afc78d33747d398051e388fdf41",
+  "eventStoreSource": "a82555477689e3e021c3c74bcab0ccfefd4ff307",
+  "conclusion": "failure",
+  "failure": "bootstrap-authority-timeout",
+  "partialRuntimeObservations": {
+    "bootstrapAcceptedAtUtc": "2026-11-01T23:27:20.211Z",
+    "postRouteActivationMilliseconds": 10,
+    "inlineProjectionReplayObserved": false,
+    "globalAdministratorProjectionEventCount": 1,
+    "globalAdministratorProjectionOutcome": "completed"
+  },
+  "rootCause": {
+    "nativeAuthorityAttempts": 19,
+    "httpStartRecords": 38,
+    "httpResponseHeaderOrEndRecords": 0,
+    "exactEndpointRefusals": 19,
+    "sameSchemeAndPort": true,
+    "configuredAuthorityHost": "localhost",
+    "rewrittenRequestHost": "127.0.0.1",
+    "firstRefusalAtUtc": "2026-11-01T23:27:27.934Z",
+    "lastRefusalAtUtc": "2026-11-01T23:29:05.327Z",
+    "boundary": "RouteCatalogInvocationHandler.OwnedEndpoint",
+    "finding": "Tenants native gateway rewrites its configured Dapr host. The unchanged v2 catalog guard correctly refuses that different endpoint before transport."
+  },
+  "requiredCorrection": "Preserve the configured DAPR_HTTP_ENDPOINT in the owning typed-client registration; retain exact endpoint and native proof validation.",
+  "sourceLogSha256": "01168a6d7e82df84725636cbcb3570f800486f36d2a41e521538d3a8f7445982",
+  "qualificationAccepted": false,
+  "nestedCheckoutsInitialized": false
+}
