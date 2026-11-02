@@ -5,11 +5,13 @@ namespace Hexalith.Projects.Contracts.Queries;
 /// <param name="Cursor">The opaque continuation issued for this exact authorized view.</param>
 /// <param name="PageSize">The requested number of rows, from one through 200.</param>
 /// <param name="InspectDescriptiveMetadata">Requests separately authorized descriptive metadata.</param>
+/// <param name="IncludeQuarantined">Selects the separately audited Administrator inventory of unbound Active Projects.</param>
 public sealed record ListProjectsQuery(
     string? LifecycleState = null,
     string? Cursor = null,
     int PageSize = 50,
-    bool InspectDescriptiveMetadata = false)
+    bool InspectDescriptiveMetadata = false,
+    bool IncludeQuarantined = false)
 {
     /// <summary>The supported query discriminator.</summary>
     public const string QueryType = "Hexalith.Projects.Queries.ListProjects.v1";

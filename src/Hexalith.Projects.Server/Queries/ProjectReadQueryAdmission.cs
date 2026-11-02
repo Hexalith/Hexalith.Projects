@@ -37,6 +37,10 @@ internal static class ProjectReadQueryAdmission
         => query.AuthenticatedWorkloadId == "chatbot" && query.IsDelegated && !string.IsNullOrWhiteSpace(query.DelegationId)
             && binding.HttpContext is { } http && HasRole(http.User, "ProjectUser");
 
+    /// <summary>Recognizes the Tenant role required for quarantine inventory.</summary>
+    internal static bool IsTenantProjectAdministrator(ProjectQueryEnvelopePrincipalBinding binding)
+        => binding.HttpContext is { } http && HasRole(http.User, "TenantProjectAdministrator");
+
     private static bool HasRole(ClaimsPrincipal principal, string role)
         => principal.IsInRole(role) || principal.HasClaim("role", role) || principal.HasClaim("projects:role", role);
 }

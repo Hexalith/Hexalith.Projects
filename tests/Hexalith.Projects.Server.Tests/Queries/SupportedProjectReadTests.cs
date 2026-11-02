@@ -274,9 +274,10 @@ public sealed partial class SupportedProjectReadTests
     [Fact]
     public async Task FolderlessHistoryIsInspectableButUnavailableAndOptionalOmissionsArePartial()
     {
-        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync(inspection: true, administrator: true);
         await fixture.SeedAsync("project-a", folder: false);
-        GetProjectResponse response = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(fixture.Query(new GetProjectQuery(), "project-a"), TestContext.Current.CancellationToken));
+        (await fixture.Executor.GetAsync(fixture.Query(new GetProjectQuery(), "project-a"), TestContext.Current.CancellationToken)).Success.ShouldBeFalse();
+        GetProjectResponse response = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(fixture.Query(new GetProjectQuery(InspectQuarantined: true), "project-a"), TestContext.Current.CancellationToken));
         response.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         await fixture.SeedAsync("project-b", 200);
         string key = ProjectReadModelKeys.Detail("tenant-a", "project-b");

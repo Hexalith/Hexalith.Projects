@@ -115,9 +115,9 @@ public static class SupportedProjectReadFixtureProfile
         string root = ResolveProjectRoot(configuration["HexalithFoldersRoot"] ?? builder.AppHostDirectory);
 #if SUPPORTED_PROJECT_READ_SOURCE
         IResourceBuilder<ProjectResource> folders = builder.AddProject<global::Projects.Hexalith_Folders_Server>("folders",
-            options => options.ExcludeLaunchProfile = true).WithHttpEndpoint().WithHttpHealthCheck("/health/live");
+            options => options.ExcludeLaunchProfile = true).WithHttpEndpoint().WithHttpHealthCheck("/alive");
         IResourceBuilder<ProjectResource> folderWorkers = builder.AddProject<global::Projects.Hexalith_Folders_Workers>("folders-workers",
-            options => options.ExcludeLaunchProfile = true).WithHttpEndpoint().WithHttpHealthCheck("/health/live");
+            options => options.ExcludeLaunchProfile = true).WithHttpEndpoint().WithHttpHealthCheck("/alive");
 #else
         string foldersRoot = configuration["HexalithFoldersRoot"] ?? Path.Combine(root, "references", "Hexalith.Folders");
         IResourceBuilder<ProjectResource> folders = builder.AddProject("folders", Path.Combine(foldersRoot, "src", "Hexalith.Folders.Server", "Hexalith.Folders.Server.csproj")).WithHttpEndpoint();
@@ -171,12 +171,14 @@ public static class SupportedProjectReadFixtureProfile
                     AppId = name, Config = Required(configuration, Prefix + "DiscoveryConfiguration"), ResourcesPaths = [resourcesPath, ownerResources],
                     PlacementHostAddress = Required(configuration, "Dapr:PlacementHostAddress"),
                     SchedulerHostAddress = Required(configuration, "Dapr:SchedulerHostAddress"),
-                    EnableAppHealthCheck = true, AppHealthCheckPath = name is "folders" or "folders-workers" ? "/health/live" : "/alive",
+                    EnableAppHealthCheck = true, AppHealthCheckPath = "/alive",
                 }).WithReference(state).WithReference(pubsub);
                 sidecar.Resource.Annotations.Add(new EnvironmentCallbackAnnotation(context => context.EnvironmentVariables["NAMESPACE"] = isolation));
             }).WithEventStoreAppChannelToken(channel);
         }
-        _ = authority.WithEnvironment("Authentication__WorkloadAuthority__Enabled", "true")
+        _ = authority.WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
+            .WithEnvironment("Authentication__WorkloadAuthority__Enabled", "true")
+            .WithEnvironment("Authentication__WorkloadAuthority__NonconformingDevelopmentFixture", "true")
             .WithEnvironment("Authentication__WorkloadAuthority__Issuer", issuer)
             .WithEnvironment("Authentication__WorkloadAuthority__KeyId", isolation)
             .WithEnvironment("Authentication__WorkloadAuthority__SigningCertificatePath", Required(configuration, Prefix + "CertificatePath"))

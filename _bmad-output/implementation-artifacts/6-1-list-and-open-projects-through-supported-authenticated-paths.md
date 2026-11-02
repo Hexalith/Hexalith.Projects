@@ -4,7 +4,7 @@ story_key: 6-1-list-and-open-projects-through-supported-authenticated-paths
 epic: "Epic 6: Authorized Project Reads on the Supported Platform"
 created: 2026-07-17
 source_story_status: backlog
-status: ready-for-dev
+status: in-progress
 blocked_by: []
 baseline_commit: 90e481c
 traceability:
@@ -22,7 +22,7 @@ estimate: M
 
 # Story 6.1: List and Open Projects Through Supported Authenticated Paths
 
-Status: ready-for-dev
+Status: in-progress
 
 **Current authority:** [approved entry correction](../planning-artifacts/sprint-change-proposal-2026-11-01.md), applied 2026-11-02. The dated July/August gate decisions in the Change Log are historical.
 
@@ -155,6 +155,14 @@ GPT-5 Codex
 - `_bmad-output/implementation-artifacts/6-1-list-and-open-projects-through-supported-authenticated-paths.md`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
 
+### Implementation and verification attempt (2026-11-02)
+
+The supported list/open path now excludes Active folderless Projects from ordinary reads. Explicit Tenant Project Administrator quarantine inspection exposes only the narrowly allowed name/receipt metadata, with one durable metadata-only audit per returned Project. Projection tests classify the complete known event catalog and fail unknown, corrupt, or undecodable duplicate events. The isolated AppHost fixture now opts into the current SDK Development authority contract and probes Folders' anonymous `/alive`.
+
+[Evidence and exact commands](evidence/story-6-1-20261102/README.md) retain native XML, the sanitized launcher report, build logs, tested Projects/direct dependency commits, and cleanup results. Projects.Server build: 0 warnings/errors. Projection class: 28 pass, 0 fail, 0 skip. Targeted quarantine cases: 6 pass, 0 fail, 0 skip. Broader read class: 73 pass, 3 fail, 0 skip because the standalone selector lacked live Dapr endpoints. Fresh distributed lane: 1 fail, 0 pass, 0 skip at `BootstrapGlobalAdmin` HTTP 503; EventStore logged `RouteCatalogUnavailableException`. Its owned services were healthy, its Integration.Tests build passed, and cleanup preserved preexisting resources; no persisted matrix completed. Full source Server.Tests build failed with 8 Conversations.Server missing EventStore checkpoint/tenant snapshot type errors.
+
+Story acceptance remains open pending current route-catalog enrollment for the isolated lane, source compatibility, and a clean authenticated persisted matrix covering no-domain-write, replay/restart, cursor, and authority change.
+
 ## Change Log
 
 | Date | Change |
@@ -163,3 +171,4 @@ GPT-5 Codex
 | 2026-07-17 | Approved course correction set the story to blocked, externalized platform enablement as 6.1-P0 through 6.1-P4, and removed cross-repository gate resolution from Story 6.1 tasks. |
 | 2026-08-01 | Approved Correct Course proposal inserted 6.1-P1R after post-P1 dependency drift and retained Story 6.1 as blocked through P4 plus a passing readiness rerun. |
 | 2026-11-02 | Applied approved E1–E7 entry correction; focused readiness permits finishing/review of existing implementation. Qualification remains open, P4 superseded; no feature acceptance. |
+| 2026-11-02 | Started supported read implementation review, added quarantine/event-catalog safeguards, corrected the isolated fixture, and retained failed verification evidence; story remains in progress. |

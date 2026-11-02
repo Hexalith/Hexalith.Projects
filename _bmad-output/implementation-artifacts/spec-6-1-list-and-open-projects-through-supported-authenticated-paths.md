@@ -2,7 +2,8 @@
 title: 'Story 6.1: List and open Projects through supported authenticated paths'
 type: 'feature'
 created: '2026-07-17T11:38:50+02:00'
-status: 'ready-for-dev'
+status: 'in-progress'
+baseline_commit: '47a1ffd02cb3e1cde80bd7697ac1b46fdefda8cc'
 blocked_by: []
 review_loop_iteration: 0
 followup_review_recommended: false
@@ -53,10 +54,10 @@ warnings: [oversized]
 ## Tasks & Acceptance
 
 **Execution:**
-- Finish/review supported list/open against the [current story](6-1-list-and-open-projects-through-supported-authenticated-paths.md), including its metadata allowlist, query ordering, quarantine and inspection rules.
-- Classify the complete event catalog explicitly: known relevant events apply; explicitly catalogued harmless additive events are deterministic no-ops proven by compatibility tests. Unknown potentially relevant, corrupt or undecodable events fail projection/rebuild honestly and yield Unavailable; neither blanket skip nor blanket rejection of harmless additions satisfies NFR-10.
-- Preserve additive contracts and retained legacy routing; use the existing comparator as a regression and hand exhaustive output/key/watermark/cursor/normalization equivalence to 6.7.
-- Inspect available recorded receipts, run relevant missing verification and record tested Projects/direct dependency commits, exact commands, native XML, pass/fail/skip totals and the real result report. Do not require publication or another immutable hash inventory.
+- [ ] Finish/review supported list/open against the [current story](6-1-list-and-open-projects-through-supported-authenticated-paths.md), including its metadata allowlist, query ordering, quarantine and inspection rules.
+- [x] Classify the complete event catalog explicitly: known relevant events apply; explicitly catalogued harmless additive events are deterministic no-ops proven by compatibility tests. Unknown potentially relevant, corrupt or undecodable events fail projection/rebuild honestly and yield Unavailable; neither blanket skip nor blanket rejection of harmless additions satisfies NFR-10.
+- [ ] Preserve additive contracts and retained legacy routing; use the existing comparator as a regression and hand exhaustive output/key/watermark/cursor/normalization equivalence to 6.7.
+- [ ] Inspect available recorded receipts, run relevant missing verification and record tested Projects/direct dependency commits, exact commands, native XML, pass/fail/skip totals and the real result report. Do not require publication or another immutable hash inventory.
 
 **Acceptance Criteria:**
 - Given a real authenticated authorized caller, when list/open traverses the supported gateway, SDK and owner handlers, then current Folder authority filters before paging; list uses default 50/cap 200, deterministic ordering and scoped platform cursors; Tenant-role output is Safe Metadata unless inspection permission and durable metadata-only audit authorize disclosure.
@@ -101,3 +102,11 @@ Failing criterion: **Sufficient**. Known dependency and implementation gaps rema
 ### Supersession — 2026-11-02
 
 The preceding Auto Run Result is the historical old-gate assessment, not the current scheduling disposition. Jerome approved E1–E7 of [the November 1 proposal](../planning-artifacts/sprint-change-proposal-2026-11-01.md); it replaces the P0–P4 development ceremony with concrete supported-read/authority capability readiness. The focused check in the current story found the existing seams and commands, so this spec is ready-for-dev for finishing/review. Historical pass counts are unaccepted feature evidence until available receipts and coverage are checked. No live qualification or list/open feature change was performed by the correction.
+
+## Implementation Attempt — 2026-11-02
+
+Projects-owned list/open now quarantines Active Projects without a Folder, exposes the Administrator inventory only through an explicit opt-in, and audits each disclosed Project. Projection tests now cover the finite event catalog and reject malformed duplicate deliveries. The supported-read AppHost fixture sets the SDK's Development authority flag and uses Folders' anonymous `/alive` liveness path.
+
+[Native XML, exact commands, tested revisions, and the sanitized result report](evidence/story-6-1-20261102/README.md) record the attempted verification. Projects.Server built cleanly; projection tests passed 28/28, and five targeted quarantine selectors passed 6/6. The broader read class had 73 passes and three live-fixture failures without Dapr endpoints. The full source Server.Tests build failed with eight Conversations.Server missing EventStore checkpoint/tenant snapshot type errors. The fresh authenticated launcher started all owner resources healthy and built Integration.Tests, but its distributed test failed during `BootstrapGlobalAdmin` with gateway HTTP 503 and `RouteCatalogUnavailableException`; no matrix completed.
+
+Acceptance remains open. The current EventStore route catalog must be independently activated for the isolated Development lane, and the Conversations source compatibility error must be resolved before a clean full run can verify all matrix rows. This attempt makes no claim about package publication, production enrollment, or public routing.

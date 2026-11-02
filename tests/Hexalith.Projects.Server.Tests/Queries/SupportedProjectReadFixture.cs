@@ -41,7 +41,7 @@ internal sealed class SupportedProjectReadFixture
     public string Workload { get; private set; } = "operator-web";
     public ClaimsIdentity Identity => (ClaimsIdentity)Http.User.Identity!;
 
-    public static async Task<SupportedProjectReadFixture> CreateAsync(bool chatbot = false, bool inspection = false)
+    public static async Task<SupportedProjectReadFixture> CreateAsync(bool chatbot = false, bool inspection = false, bool administrator = false)
     {
         SupportedProjectReadFixture fixture = new() { Workload = chatbot ? "chatbot" : "operator-web" };
         List<Claim> claims =
@@ -51,7 +51,7 @@ internal sealed class SupportedProjectReadFixture
             new("scope", "projects.read projects.list"), new("aud", "configured-read-audience"),
             new("eventstore:permission", ProjectAuthorizationGate.ReadProjectAction),
             new("eventstore:permission", ProjectAuthorizationGate.ListProjectsAction),
-            new("projects:role", chatbot ? "ProjectUser" : "TenantOperator"),
+            new("projects:role", chatbot ? "ProjectUser" : administrator ? "TenantProjectAdministrator" : "TenantOperator"),
         ];
         if (inspection) { claims.Add(new("eventstore:permission", ProjectReadQueryExecutor.InspectionPermission)); }
         fixture.Http.User = new(new ClaimsIdentity(claims, "authenticated-test"));

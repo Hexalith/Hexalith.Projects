@@ -23,7 +23,7 @@ public sealed partial class SupportedProjectReadTests
     [InlineData(true)]
     public async Task TenantCanInspectFolderlessHistoryWithoutChangingProjectState(bool pendingReceipt)
     {
-        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync(inspection: true);
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync(inspection: true, administrator: true);
         await fixture.SeedAsync("legacy-project", folder: false);
         if (pendingReceipt)
         {
@@ -37,16 +37,19 @@ public sealed partial class SupportedProjectReadTests
         ReadModelEntry<ProjectReadModel> before = await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken);
         byte[] beforeBytes = fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key)!;
         int count = fixture.Store.Count;
-        GetProjectResponse safe = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(
-            fixture.Query(new GetProjectQuery(), "legacy-project"), TestContext.Current.CancellationToken));
-        safe.Name.ShouldBeNull();
-        safe.Setup.ShouldBeNull();
-        fixture.Store.Count.ShouldBe(count);
+        QueryResult ordinary = await fixture.Executor.GetAsync(
+            fixture.Query(new GetProjectQuery(), "legacy-project"), TestContext.Current.CancellationToken);
+        ordinary.Success.ShouldBeFalse();
+        SupportedProjectReadFixture.Payload<ProjectListPage>(await fixture.Executor.ListAsync(
+            fixture.Query(new ListProjectsQuery()), TestContext.Current.CancellationToken)).Items.ShouldBeEmpty();
+        fixture.Store.Count.ShouldBe(count + 1);
 
         GetProjectResponse inspected = SupportedProjectReadFixture.Payload<GetProjectResponse>(await fixture.Executor.GetAsync(
-            fixture.Query(new GetProjectQuery(true), "legacy-project", "inspect-history"), TestContext.Current.CancellationToken));
+            fixture.Query(new GetProjectQuery(InspectQuarantined: true), "legacy-project", "inspect-history"), TestContext.Current.CancellationToken));
         inspected.Name.ShouldBe("Project legacy-project");
-        inspected.Description.ShouldBe("Safe description");
+        inspected.Description.ShouldBeNull();
+        inspected.Setup.ShouldBeNull();
+        inspected.SetupMetadata.ShouldBeNull();
         inspected.Snapshot.ResponseState.ShouldBe(AdmissionResponseState.Unavailable);
         inspected.Snapshot.Components.ShouldContain(component => component.Name == "Folder" && !component.Included);
         if (pendingReceipt)
@@ -63,9 +66,10 @@ public sealed partial class SupportedProjectReadTests
 
         fixture.Store.SnapshotRaw(ProjectReadModelKeys.StoreName, key).ShouldBe(beforeBytes);
         (await fixture.Store.GetAsync<ProjectReadModel>(ProjectReadModelKeys.StoreName, key, TestContext.Current.CancellationToken)).ETag.ShouldBe(before.ETag);
-        fixture.Store.Count.ShouldBe(count + 1);
-        fixture.AuditStore.Keys.Count.ShouldBe(1);
-        fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, fixture.AuditStore.Keys.Single())!.Outcome.ShouldBe("Inspection");
+        fixture.Store.Count.ShouldBe(count + 2);
+        fixture.AuditStore.Keys.Count.ShouldBe(2);
+        fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName,
+            fixture.AuditStore.Keys.Single(key => fixture.Store.Snapshot<ProjectReadAuditRecord>(ProjectReadModelKeys.StoreName, key)!.Outcome == "Inspection"))!.FieldClass.ShouldBe("ProjectName");
         fixture.Folders.Reads.ShouldBe(0);
     }
 

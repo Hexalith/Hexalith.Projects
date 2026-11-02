@@ -34,6 +34,12 @@ public sealed class ProjectReadProjectionHandler(IReadModelStore store, IReadMod
         typeof(ProjectResolutionConfirmationRejected),
     }.ToDictionary(static type => type.FullName!, StringComparer.Ordinal);
 
+    /// <summary>Gets the finite catalog of events that change supported Project reads.</summary>
+    internal static IReadOnlyCollection<Type> RelevantEventTypes => Relevant.Values.ToArray();
+
+    /// <summary>Gets the explicitly classified harmless events that advance evidence only.</summary>
+    internal static IReadOnlyCollection<Type> NoOpEventTypes => Irrelevant.Values.ToArray();
+
     /// <inheritdoc/>
     public string Domain => ProjectsServerModule.DomainName;
 
@@ -192,13 +198,7 @@ public sealed class ProjectReadProjectionHandler(IReadModelStore store, IReadMod
             : initial with { Freshness = EvidenceFreshnessState.Current };
         foreach (ProjectionEventDto item in request.Events)
         {
-            if (item.SequenceNumber <= current.Sequence)
-            {
-                continue;
-            }
-
-            if (current.Freshness != EvidenceFreshnessState.Current || item.SequenceNumber != current.Sequence + 1
-                || item.GlobalPosition <= current.GlobalPosition || item.Timestamp == default
+            if (item.SequenceNumber <= 0 || item.GlobalPosition <= 0 || item.Timestamp == default
                 || item.SerializationFormat != "json" || item.Payload is null || string.IsNullOrWhiteSpace(item.EventTypeName)
                 || (!Relevant.TryGetValue(item.EventTypeName, out Type? type) && !Irrelevant.TryGetValue(item.EventTypeName, out type)))
             {
@@ -217,6 +217,17 @@ public sealed class ProjectReadProjectionHandler(IReadModelStore store, IReadMod
 
             if (value is null || value is IProjectEvent projectEvent
                 && (projectEvent.TenantId != request.TenantId || projectEvent.ProjectId != request.AggregateId))
+            {
+                return failed;
+            }
+
+            if (item.SequenceNumber <= current.Sequence)
+            {
+                continue;
+            }
+
+            if (current.Freshness != EvidenceFreshnessState.Current || item.SequenceNumber != current.Sequence + 1
+                || item.GlobalPosition <= current.GlobalPosition)
             {
                 return failed;
             }

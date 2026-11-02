@@ -40,7 +40,7 @@ public sealed class ProjectReadQueryExecutor(
         ArgumentNullException.ThrowIfNull(query);
         ProjectAuthorizationResult? scope = await AuthorizeScopeAsync(query, true, cancellationToken).ConfigureAwait(false);
         if (scope is null) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
-        if (!TryPayload(query, ["lifecycleState", "cursor", "pageSize", "inspectDescriptiveMetadata"], out ListProjectsQuery? input)
+        if (!TryPayload(query, ["lifecycleState", "cursor", "pageSize", "inspectDescriptiveMetadata", "includeQuarantined"], out ListProjectsQuery? input)
             || input is null || input.PageSize is < 1 or > ListProjectsQuery.MaximumPageSize
             || input.LifecycleState is not (null or "Active" or "Archived") || query.Paging is not null
             || query.EntityId is not null && query.EntityId != query.AggregateId || query.AggregateId != "projects"
@@ -50,8 +50,9 @@ public sealed class ProjectReadQueryExecutor(
         }
 
         bool chatbot = IsChatbot(query);
-        bool descriptive = chatbot || input.InspectDescriptiveMetadata;
-        if (!MayInspect(input.InspectDescriptiveMetadata, chatbot))
+        bool descriptive = chatbot || input.InspectDescriptiveMetadata || input.IncludeQuarantined;
+        if (!MayInspect(input.InspectDescriptiveMetadata, chatbot)
+            || input.IncludeQuarantined && !MayInspectQuarantined(chatbot))
         {
             return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
         }
@@ -71,6 +72,7 @@ public sealed class ProjectReadQueryExecutor(
             // Observe the whole filtered view before decoding a continuation, including identities before its boundary.
             // Owner revisions are unavailable, so each page pays for a complete current authorization sweep.
             List<ProjectListRow> visible = [];
+            Dictionary<string, (ProjectReadModel Model, ProjectAuthorizationResult Authorization, ReferenceState Folder)> observations = new(StringComparer.Ordinal);
             QueryCursorScope visibility = QueryCursorScope.Create();
             foreach (string projectId in index.ProjectIds)
             {
@@ -94,15 +96,19 @@ public sealed class ProjectReadQueryExecutor(
                 if (projectAuthorization?.IsAllowed != true) { continue; }
                 ReferenceState folderState = await FolderStateAsync(detail, cancellationToken, query.CorrelationId).ConfigureAwait(false);
                 visibility.Add("folder", folderState.ToString());
+                bool quarantined = IsQuarantined(detail);
+                visibility.Add("quarantined", quarantined.ToString());
                 if (chatbot && folderState is ReferenceState.Stale or ReferenceState.Unavailable)
                 {
                     return Success(new ProjectListPage([], null, false, Unavailable(index.LastVerifiedAt, "FolderVisibility",
                         folderState == ReferenceState.Stale ? EvidenceFreshnessState.Stale : EvidenceFreshnessState.Unavailable)));
                 }
                 if (chatbot && folderState != ReferenceState.Included) { continue; }
+                if (quarantined != input.IncludeQuarantined) { continue; }
                 bool valid = ProjectPersistedDetailValidator.IsHeaderValid(detail);
                 visible.Add(new(projectId, descriptive && valid ? detail.Name : null, detail.Lifecycle,
                     folderState, Snapshot(model, folderState)));
+                observations.Add(projectId, (model, projectAuthorization, folderState));
             }
 
             string visibilityFingerprint = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(visibility.Build())));
@@ -134,7 +140,19 @@ public sealed class ProjectReadQueryExecutor(
             string? next = hasMore ? cursors.Encode(query.QueryType, cursorScope,
                 JsonSerializer.Serialize(new ProjectReadCursorPosition(rows[^1].ProjectId,
                     continuation?.ExpiresAt ?? clock.GetUtcNow().AddMinutes(15)), JsonOptions)) : null;
-            if (descriptive && !await audit.RecordAsync(query, true, rows.Length, cursorScope, cancellationToken).ConfigureAwait(false))
+            if (input.IncludeQuarantined)
+            {
+                foreach (ProjectListRow row in rows)
+                {
+                    (ProjectReadModel inspected, ProjectAuthorizationResult authority, ReferenceState folder) = observations[row.ProjectId];
+                    if (!await audit.RecordAsync(query, true, 1,
+                        OpenObservation(inspected, scope, authority, folder), cancellationToken).ConfigureAwait(false))
+                    {
+                        return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
+                    }
+                }
+            }
+            else if (descriptive && !await audit.RecordAsync(query, true, rows.Length, cursorScope, cancellationToken).ConfigureAwait(false))
             {
                 return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
             }
@@ -153,7 +171,7 @@ public sealed class ProjectReadQueryExecutor(
         ArgumentNullException.ThrowIfNull(query);
         ProjectAuthorizationResult? scope = await AuthorizeScopeAsync(query, false, cancellationToken).ConfigureAwait(false);
         if (scope is null) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
-        if (!TryPayload(query, ["inspectDescriptiveMetadata"], out GetProjectQuery? input) || input is null
+        if (!TryPayload(query, ["inspectDescriptiveMetadata", "inspectQuarantined"], out GetProjectQuery? input) || input is null
             || !SafeIdentity(query.TenantId, query.AggregateId) || query.EntityId is not null && query.EntityId != query.AggregateId
             || query.Paging is not null)
         {
@@ -161,8 +179,12 @@ public sealed class ProjectReadQueryExecutor(
         }
 
         bool chatbot = IsChatbot(query);
-        bool descriptive = chatbot || input.InspectDescriptiveMetadata;
-        if (!MayInspect(input.InspectDescriptiveMetadata, chatbot)) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
+        bool descriptive = chatbot || input.InspectDescriptiveMetadata || input.InspectQuarantined;
+        if (!MayInspect(input.InspectDescriptiveMetadata, chatbot)
+            || input.InspectQuarantined && !MayInspectQuarantined(chatbot))
+        {
+            return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
+        }
         ProjectReadModel? model;
         try { model = await ReadAsync(query.TenantId, query.AggregateId, cancellationToken).ConfigureAwait(false); }
         catch (Exception) when (!cancellationToken.IsCancellationRequested) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
@@ -175,6 +197,8 @@ public sealed class ProjectReadQueryExecutor(
 
         ProjectAuthorizationResult? projectAuthorization = await AuthorizeProjectAsync(query, model, cancellationToken).ConfigureAwait(false);
         if (projectAuthorization?.IsAllowed != true) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
+        bool quarantined = IsQuarantined(detail);
+        if (quarantined != input.InspectQuarantined) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
         ReferenceState folderState = await FolderStateAsync(detail, cancellationToken, query.CorrelationId).ConfigureAwait(false);
         if (chatbot && folderState != ReferenceState.Included) { return await DenyAsync(query, cancellationToken).ConfigureAwait(false); }
         try
@@ -191,13 +215,14 @@ public sealed class ProjectReadQueryExecutor(
         bool valid = ProjectPersistedDetailValidator.IsHeaderValid(detail);
         bool referencesValid = valid && ProjectPersistedDetailValidator.IsValid(detail);
         GetProjectResponse response = new(detail.ProjectId, descriptive && valid ? detail.Name : null,
-            descriptive && valid ? detail.Description : null,
+            descriptive && valid && !quarantined ? detail.Description : null,
             detail.Lifecycle,
             valid ? detail.CreatedAt : default, valid ? detail.UpdatedAt : default,
-            descriptive && valid ? detail.Setup ?? ProjectSetup.Empty : null,
-            descriptive && valid ? detail.SetupMetadata : null,
-            referencesValid ? References(detail, descriptive, folderState) : [], Snapshot(model, folderState));
-        if (descriptive && !await audit.RecordAsync(query, true, 1, OpenObservation(model, scope, projectAuthorization, folderState), cancellationToken).ConfigureAwait(false))
+            descriptive && valid && !quarantined ? detail.Setup ?? ProjectSetup.Empty : null,
+            descriptive && valid && !quarantined ? detail.SetupMetadata : null,
+            referencesValid ? quarantined ? QuarantineReferences(detail, folderState) : References(detail, descriptive, folderState) : [], Snapshot(model, folderState));
+        if (descriptive && !await audit.RecordAsync(query, true, 1,
+            OpenObservation(model, scope, projectAuthorization, folderState), quarantined, cancellationToken).ConfigureAwait(false))
         {
             return await DenyAsync(query, cancellationToken).ConfigureAwait(false);
         }
@@ -216,6 +241,13 @@ public sealed class ProjectReadQueryExecutor(
 
     private bool MayInspect(bool requested, bool chatbot)
         => !requested || chatbot || binding.HttpContext?.User.HasClaim("eventstore:permission", InspectionPermission) == true;
+
+    private bool MayInspectQuarantined(bool chatbot)
+        => !chatbot && ProjectReadQueryAdmission.IsTenantProjectAdministrator(binding)
+            && binding.HttpContext?.User.HasClaim("eventstore:permission", InspectionPermission) == true;
+
+    private static bool IsQuarantined(ProjectDetailItem detail)
+        => detail.Lifecycle == ProjectLifecycle.Active && detail.ProjectFolder?.FolderId is null;
 
     private async Task<ProjectAuthorizationResult?> AuthorizeProjectAsync(QueryEnvelope query, ProjectReadModel model, CancellationToken cancellationToken)
     {
@@ -306,6 +338,12 @@ public sealed class ProjectReadQueryExecutor(
         return result;
     }
 
+    private static IReadOnlyList<ProjectReadReference> QuarantineReferences(ProjectDetailItem detail, ReferenceState folderState)
+        => detail.ProjectFolder is { } folder
+            ? [new ProjectReadReference("ProjectFolder", folder.FolderId, null, null, null,
+                folderState, SafeReason(folderState), folder.ObservedAt)]
+            : [];
+
     private static string? SafeReason(ReferenceState state) => state == ReferenceState.Included ? null : "ReferenceUnavailable";
 
     private static bool TryPayload<T>(QueryEnvelope query, IReadOnlyList<string> fields, out T? input)
@@ -335,7 +373,8 @@ public sealed class ProjectReadQueryExecutor(
             .Add("delegated", query.IsDelegated.ToString()).Add("scopes", JsonSerializer.Serialize(query.Scopes))
             .Add("audience", JsonSerializer.Serialize(query.Audience)).Add("action", ProjectAuthorizationGate.ListProjectsAction)
             .Add("lifecycle", input.LifecycleState).Add("pageSize", input.PageSize.ToString(CultureInfo.InvariantCulture))
-            .Add("inspect", input.InspectDescriptiveMetadata.ToString()).Add("policy", "project-list-v1-50-200-15m")
+            .Add("inspect", input.InspectDescriptiveMetadata.ToString()).Add("quarantine", input.IncludeQuarantined.ToString())
+            .Add("policy", "project-list-v1-50-200-15m")
             .Add("authority", authorization.TenantAccessResult?.ProjectionWatermark)
             .Add("eventStoreAuthority", authorization.EventStoreValidationResult?.FreshnessWatermark)
             .Add("eventStoreFreshness", authorization.EventStoreValidationResult?.FreshnessClass)

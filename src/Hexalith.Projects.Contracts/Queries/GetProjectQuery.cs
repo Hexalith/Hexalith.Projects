@@ -2,7 +2,8 @@ namespace Hexalith.Projects.Contracts.Queries;
 
 /// <summary>Opens one Project bound to the envelope target, without paging.</summary>
 /// <param name="InspectDescriptiveMetadata">Requests separately authorized descriptive metadata.</param>
-public sealed record GetProjectQuery(bool InspectDescriptiveMetadata = false)
+/// <param name="InspectQuarantined">Requests the narrowly scoped Administrator inspection of an unbound Active Project.</param>
+public sealed record GetProjectQuery(bool InspectDescriptiveMetadata = false, bool InspectQuarantined = false)
 {
     /// <summary>The supported query discriminator.</summary>
     public const string QueryType = "Hexalith.Projects.Queries.GetProject.v1";

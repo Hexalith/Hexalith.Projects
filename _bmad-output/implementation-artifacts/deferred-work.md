@@ -1288,3 +1288,11 @@ status: open
 - source_spec: `spec-native-query-admin-transport-budget-2026-11-02.md`
   summary: Bound native-query response-body consumption independently of the standard resilience header deadline.
   evidence: Blind1 and independent Edge1 reproduce a stalled body beyond a shortened standard total; baselinea825 already used the global standard client with infinite HttpClient.Timeout and unchanged SendAsync/ReadFromJsonAsync caller-token buffering. The scoped named30/30 client retains this preexisting body behavior; AdminApi keeps its independent outer30s timeout. A future owning body deadline needs delayed-content/caller controls while retaining payload bounds, proof and ambiguity semantics.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths.md`
+  summary: Enroll the isolated Story 6.1 supported-read Development lane in the current EventStore route catalog before persisted acceptance.
+  evidence: The 2026-11-02 owned run started all services healthy and built Integration.Tests, but `BootstrapGlobalAdmin` received gateway HTTP 503 with `RouteCatalogUnavailableException`; `evidence/story-6-1-20261102/distributed.xml` and `distributed-run.json` retain the failed result. Current EventStore requires independently observed, activated route-catalog authority; the existing Projects fixture does not compose that cohort. Do not bypass the catalog or claim the persisted matrix passed.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-6-1-list-and-open-projects-through-supported-authenticated-paths.md`
+  summary: Restore full source Server.Tests build compatibility between the current Conversations and EventStore revisions.
+  evidence: The mapped Debug `dotnet build tests/Hexalith.Projects.Server.Tests/Hexalith.Projects.Server.Tests.csproj -c Debug -m:1 -p:NuGetAudit=false` fails with 8 Conversations.Server errors for missing EventStore `Checkpointed`, `ITenantProjectionSnapshotStore`, and `TenantProjectionSnapshot`; see `evidence/story-6-1-20261102/server-tests-source-build.log`. The fallback test build uses prebuilt sibling assemblies and cannot establish full source acceptance. No sibling edits were made in Story 6.1.

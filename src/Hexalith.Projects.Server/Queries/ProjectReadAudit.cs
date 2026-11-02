@@ -13,11 +13,16 @@ public sealed class ProjectReadAudit(IReadModelStore store, TimeProvider clock)
     public Task<bool> RecordAsync(QueryEnvelope query, bool inspection, int count, CancellationToken cancellationToken)
         => RecordAsync(query, inspection, count, null, cancellationToken);
 
+    /// <summary>Persists an observation-bound metadata audit for ordinary inspection.</summary>
     internal async Task<bool> RecordAsync(QueryEnvelope query, bool inspection, int count, string? observedRevision, CancellationToken cancellationToken)
+        => await RecordAsync(query, inspection, count, observedRevision, false, cancellationToken).ConfigureAwait(false);
+
+    /// <summary>Persists the narrower name-only field class for quarantine inspection.</summary>
+    internal async Task<bool> RecordAsync(QueryEnvelope query, bool inspection, int count, string? observedRevision, bool quarantined, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
         string outcome = inspection ? "Inspection" : "SafeDenial";
-        string fieldClass = inspection ? query.QueryType == ListProjectsQueryType ? "ProjectName" : "ProjectNameDescriptionSetupReferenceLabels" : "None";
+        string fieldClass = inspection ? quarantined || query.QueryType == ListProjectsQueryType ? "ProjectName" : "ProjectNameDescriptionSetupReferenceLabels" : "None";
         string surrogate = CreateRequestSurrogate(query, inspection, observedRevision);
         ProjectReadAuditRecord proposed = new(surrogate, outcome, count, fieldClass, clock.GetUtcNow());
         try

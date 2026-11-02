@@ -18,6 +18,71 @@ using Xunit;
 public sealed partial class SupportedProjectProjectionTests
 {
     [Fact]
+    public async Task CompleteCatalogClassifiesHarmlessEventsAsDeterministicNoOps()
+    {
+        Type[] relevant = ProjectReadProjectionHandler.RelevantEventTypes.OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray();
+        Type[] noOps = ProjectReadProjectionHandler.NoOpEventTypes.OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray();
+        Type[] contracts = typeof(IProjectEvent).Assembly.GetTypes()
+            .Where(type => type.IsClass && !type.IsAbstract && type.Namespace == typeof(IProjectEvent).Namespace
+                && (typeof(IProjectEvent).IsAssignableFrom(type) || type.Name.EndsWith("Rejected", StringComparison.Ordinal)))
+            .OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray();
+        relevant.Concat(noOps).OrderBy(type => type.FullName, StringComparer.Ordinal).ShouldBe(contracts);
+        relevant.Intersect(noOps).ShouldBeEmpty();
+
+        foreach (Type noOp in noOps)
+        {
+            InMemoryReadModelStore incremental = new();
+            ProjectionEventDto created = SupportedProjectReadFixture.Request("project-a").Events[0];
+            ProjectionEventDto harmless = new(noOp.FullName!,
+                "{\"tenantId\":\"tenant-a\",\"projectId\":\"project-a\"}"u8.ToArray(),
+                "json", 2, SupportedProjectReadFixture.EventTime, "projection", "harmless", "actor-1", 101);
+            ProjectReadProjectionHandler handler = new(incremental, incremental);
+            (await handler.ProjectAsync(new("tenant-a", "projects", "project-a", [created]),
+                "create", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+            (await handler.ProjectAsync(new("tenant-a", "projects", "project-a", [harmless]),
+                "harmless", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+            ProjectReadModel after = incremental.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName,
+                ProjectReadModelKeys.Detail("tenant-a", "project-a"))!;
+            after.Detail!.Name.ShouldBe("Project project-a");
+            after.Sequence.ShouldBe(2);
+            after.GlobalPosition.ShouldBe(101);
+
+            InMemoryReadModelStore replay = new();
+            (await new ProjectReadProjectionHandler(replay, replay).ProjectAsync(
+                new("tenant-a", "projects", "project-a", [created, harmless]),
+                "replay", TestContext.Current.CancellationToken)).Status.ShouldBe(ProjectionDispatchStatus.Completed);
+            JsonSerializer.Serialize(replay.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName,
+                ProjectReadModelKeys.Detail("tenant-a", "project-a"))).ShouldBe(JsonSerializer.Serialize(after));
+        }
+    }
+
+    [Theory]
+    [InlineData("unknown")]
+    [InlineData("corrupt")]
+    [InlineData("undecodable")]
+    public async Task InvalidDuplicateDeliveryFailsRatherThanBeingSkipped(string fault)
+    {
+        SupportedProjectReadFixture fixture = await SupportedProjectReadFixture.CreateAsync();
+        await fixture.SeedAsync("project-a");
+        ProjectionEventDto duplicate = SupportedProjectReadFixture.Request("project-a").Events[0];
+        duplicate = fault switch
+        {
+            "unknown" => duplicate with { EventTypeName = "New.PotentiallyRelevantEvent" },
+            "corrupt" => duplicate with { Payload = "broken"u8.ToArray() },
+            _ => duplicate with { SerializationFormat = "unrecognized" },
+        };
+        ProjectionRequest request = new("tenant-a", "projects", "project-a", [duplicate]);
+        (await fixture.Projection.ProjectAsync(request, "invalid-duplicate", TestContext.Current.CancellationToken))
+            .Status.ShouldBe(ProjectionDispatchStatus.Failed);
+        ProjectReadModel model = fixture.Store.Snapshot<ProjectReadModel>(ProjectReadModelKeys.StoreName,
+            ProjectReadModelKeys.Detail("tenant-a", "project-a"))!;
+        model.Sequence.ShouldBe(2);
+        model.Freshness.ShouldBe(EvidenceFreshnessState.Unavailable);
+        fixture.Store.Snapshot<ProjectReadIndex>(ProjectReadModelKeys.StoreName,
+            ProjectReadModelKeys.Index("tenant-a"))!.UnavailableProjectIds.ShouldContain("project-a");
+    }
+
+    [Fact]
     public async Task IncrementalReplayDuplicateAndRestartPreserveExactGlobalPositions()
     {
         InMemoryReadModelStore store = new();
