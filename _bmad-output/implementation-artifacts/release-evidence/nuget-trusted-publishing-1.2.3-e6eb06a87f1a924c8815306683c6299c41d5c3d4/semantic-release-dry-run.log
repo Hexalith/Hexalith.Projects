@@ -1,0 +1,76 @@
+[3:18:00 AM] [semantic-release] › ℹ  Running semantic-release version 25.0.9
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "verifyConditions" from "@semantic-release/exec"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "verifyConditions" from "@semantic-release/github"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "analyzeCommits" from "@semantic-release/commit-analyzer"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "analyzeCommits" from "@semantic-release/exec"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "verifyRelease" from "@semantic-release/exec"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "generateNotes" from "@semantic-release/release-notes-generator"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "generateNotes" from "@semantic-release/exec"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "prepare" from "@semantic-release/exec"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "publish" from "@semantic-release/exec"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "publish" from "@semantic-release/github"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "addChannel" from "@semantic-release/exec"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "addChannel" from "@semantic-release/github"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "success" from "@semantic-release/exec"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "success" from "@semantic-release/github"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "fail" from "@semantic-release/exec"
+[3:18:00 AM] [semantic-release] › ✔  Loaded plugin "fail" from "@semantic-release/github"
+[3:18:02 AM] [semantic-release] › ⚠  Run automated release from branch main on repository https://github.com/Hexalith/Hexalith.Projects.git in dry-run mode
+[3:18:03 AM] [semantic-release] › ✔  Allowed to push to the Git repository
+[3:18:03 AM] [semantic-release] › ℹ  Start step "verifyConditions" of plugin "@semantic-release/exec"
+[3:18:03 AM] [semantic-release] › ✔  Completed step "verifyConditions" of plugin "@semantic-release/exec"
+[3:18:03 AM] [semantic-release] › ℹ  Start step "verifyConditions" of plugin "@semantic-release/github"
+[3:18:03 AM] [semantic-release] [@semantic-release/github] › ℹ  Verify GitHub authentication
+[3:18:04 AM] [semantic-release] › ✔  Completed step "verifyConditions" of plugin "@semantic-release/github"
+[3:18:04 AM] [semantic-release] › ℹ  Found git tag v1.2.2 associated with version 1.2.2 on branch main
+[3:18:04 AM] [semantic-release] › ℹ  Found 9 commits since last release
+[3:18:04 AM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "@semantic-release/commit-analyzer"
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  Analyzing commit: chore(deps): consume the current released eventstore sdk
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  The commit should not trigger a release
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  Analyzing commit: fix(ci): align native query and admin source budgets
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  The release type for the commit is patch
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  Analyzing commit: fix(ci): synchronize the tenant query budget repair
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  The release type for the commit is patch
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  Analyzing commit: fix(ci): align tenant host budget with native authority checks
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  The release type for the commit is patch
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  Analyzing commit: fix(ci): adopt current tenant native endpoint binding
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  The release type for the commit is patch
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  Analyzing commit: fix(ci): synchronize durable delivery and current main modules
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  The release type for the commit is patch
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  Analyzing commit: chore(evidence): preserve raw release log whitespace
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  The commit should not trigger a release
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  Analyzing commit: fix(ci): finalize current sdk and module release qualification
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  The release type for the commit is patch
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  Analyzing commit: fix(ci): synchronize current module fixes and published dependencies
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  The release type for the commit is patch
+[3:18:04 AM] [semantic-release] [@semantic-release/commit-analyzer] › ℹ  Analysis of 9 commits complete: patch release
+[3:18:04 AM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "@semantic-release/commit-analyzer"
+[3:18:04 AM] [semantic-release] › ℹ  Start step "analyzeCommits" of plugin "@semantic-release/exec"
+[3:18:04 AM] [semantic-release] › ✔  Completed step "analyzeCommits" of plugin "@semantic-release/exec"
+[3:18:04 AM] [semantic-release] › ℹ  The next release version is 1.2.3
+[3:18:04 AM] [semantic-release] › ℹ  Start step "verifyRelease" of plugin "@semantic-release/exec"
+[3:18:04 AM] [semantic-release] › ✔  Completed step "verifyRelease" of plugin "@semantic-release/exec"
+[3:18:04 AM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "@semantic-release/release-notes-generator"
+[3:18:04 AM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "@semantic-release/release-notes-generator"
+[3:18:04 AM] [semantic-release] › ℹ  Start step "generateNotes" of plugin "@semantic-release/exec"
+[3:18:04 AM] [semantic-release] › ✔  Completed step "generateNotes" of plugin "@semantic-release/exec"
+[3:18:04 AM] [semantic-release] › ⚠  Skip step "prepare" of plugin "@semantic-release/exec" in dry-run mode
+[3:18:04 AM] [semantic-release] › ⚠  Skip v1.2.3 tag creation in dry-run mode
+[3:18:04 AM] [semantic-release] › ⚠  Skip step "publish" of plugin "@semantic-release/exec" in dry-run mode
+[3:18:04 AM] [semantic-release] › ⚠  Skip step "publish" of plugin "@semantic-release/github" in dry-run mode
+[3:18:04 AM] [semantic-release] › ⚠  Skip step "success" of plugin "@semantic-release/exec" in dry-run mode
+[3:18:04 AM] [semantic-release] › ⚠  Skip step "success" of plugin "@semantic-release/github" in dry-run mode
+[3:18:04 AM] [semantic-release] › ✔  Published release 1.2.3 on default channel
+[3:18:04 AM] [semantic-release] › ℹ  Release note for version 1.2.3:
+## 1.2.3 (https://github.com/Hexalith/Hexalith.Projects/compare/v1.2.2...v1.2.3) (2026-11-02)
+
+### Bug Fixes
+
+    * **ci:** adopt current tenant native endpoint binding ([bdf7094](https://github.com/Hexalith/Hexalith.Projects/commit/bdf70940958a76eed2a8adb89d7c655557f07bcc))
+    * **ci:** align native query and admin source budgets ([d5b3f5a](https://github.com/Hexalith/Hexalith.Projects/commit/d5b3f5a6955b8447b13f85cbbd1cc8fa8d8f4bec))
+    * **ci:** align tenant host budget with native authority checks ([695ad27](https://github.com/Hexalith/Hexalith.Projects/commit/695ad27422f51f6ac05e80fd56e66abee1f0434e))
+    * **ci:** finalize current sdk and module release qualification ([c1be46b](https://github.com/Hexalith/Hexalith.Projects/commit/c1be46b27690aae360315177555a1f1520752bba))
+    * **ci:** synchronize current module fixes and published dependencies ([5027aee](https://github.com/Hexalith/Hexalith.Projects/commit/5027aee0fd56808bcfaa2ac150d1553bcc34191a))
+    * **ci:** synchronize durable delivery and current main modules ([cfb67ef](https://github.com/Hexalith/Hexalith.Projects/commit/cfb67ef52472291c43b443965f92d6f3e54a0ce7))
+    * **ci:** synchronize the tenant query budget repair ([5c201a7](https://github.com/Hexalith/Hexalith.Projects/commit/5c201a79bd0f8ecd7987d5a6e2ba21a1f264ea44))
+

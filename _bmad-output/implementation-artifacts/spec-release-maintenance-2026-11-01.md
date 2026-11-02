@@ -2,7 +2,7 @@
 title: 'Synchronize and publish current Projects packages'
 type: 'chore'
 created: '2026-11-01'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 0
 baseline_commit: '7a1652a926b9f478b65f0f961c09e81a000a6954'
@@ -43,7 +43,7 @@ Never initialize nested submodules, reset or clean user work, fabricate acceptan
 - [x] Record exact passing checks and any remaining upstream or environment blocker without altering frozen historical evidence.
 - [x] Parent: finalize the follow-up catalog/root gitlinks and push all recorded evidence (SDK and owner fixes already pushed).
 - [x] Parent: observe exact-current-main CI, dispatch Release and verify GitHub release and all five public NuGet downloads/signatures.
-- [ ] Parent: observe follow-up owner/final-sync CI and close remaining real failures.
+- [x] Parent: observe follow-up owner/final-sync CI and close remaining real failures.
 
 **Acceptance Criteria:**
 - Given current registry metadata, when dependencies are audited, then SDK and compatible package selections are current and any compatibility hold has a concrete reason.
@@ -218,3 +218,11 @@ Public EventStore3.132.0 arrived during final work atbb1 via its independent man
 ### Latest released SDK consumer qualification
 
 The prospective3.132hold above is resolved for Projects. Root Directory.Packages.props selects releasedEventStore3.132.0 before the shared catalog import while respecting explicit producer/operator values; sibling defaults and Tenants finite binary cohort remain unchanged. The exact four expectedContracts dependencies advance in the authoritative five-package manifest. The Release CI solution build passes0warnings/errors; all five actual packed archives match the new graph and all five isolated real-API consumers compile. This is a local uncommitted-working-tree compatibility trial (0.0.0-sdk132), not public release/source acceptance; hashes are projects-sdk132-local-qualification-2026-11-02.json. The final committed root receives fresh exact-source CI/G6 before release. Existing actual owner/source success atEvent0ace/Tenants2d is preserved. d5preview is superseded only for this verified package-graph advance, and its owner proof is preserved independently.
+
+## Final public release closure (2026-11-02)
+
+Final source e6eb06a87f1a924c8815306683c6299c41d5c3d4 uses stable.NETSDK10.0.403 and releasedEventStore3.132.0. Root exactCI41376917554 passes all five enabled jobs including fresh G6; every required EventStore0ace/Tenants2d owner workflow passes, including full published/live-sidecar integration and actual six-read/Admin/refusal/persistence/zero-lease source qualification. All12 root-declared modules were synchronized to clean fetched main tips before this frozen cut, without nested initialization.
+
+Guarded Release41380245331 succeeds for this exact source, including a separate fresh qualified G6 result, manifest, OIDC and live-head revalidation. GitHub v1.2.3 has exactly five assets and its tag resolves to the source above. The publication variable was restored tofalse immediately on observed terminal completion and independently read back. No human approval was introduced, and no automated proof/receipt/authorization/runtime gate was waived.
+
+All five versions are present in public NuGet indexes and their actual repository-signed nupkgs were downloaded and hashed. Strict manifest/version/source validation passes without normalization. dotnet nuget verify --all passes separately for all five files; all five isolated real-API consumers compile with project fallback refused. Fresh G6's five approved raw JSON records, public metadata/hashes, signatures, consumer logs and signed files are retained under release-evidence/nuget-trusted-publishing-1.2.3-e6eb06a87f1a924c8815306683c6299c41d5c3d4/. Known framework/API compatibility holds, upstream npm audit findings, and preexisting shared response-body/readiness-fixture follow-ups remain explicitly recorded; they are not represented as repaired or as failing required CI. Final evidence-only root commit follows publication; it does not request another release or change the qualified package/runtime graph.
