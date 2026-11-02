@@ -1190,6 +1190,25 @@ def main() -> int:
         inputs = source_manifest()
         (evidence / "source-manifest.json").write_text(json.dumps(inputs, sort_keys=True, indent=2) + "\n")
         report["sourceManifestSha256"] = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
+        # The AppHost compiles source-referenced sibling projects. Bind the complete Projects
+        # graph to the Platform-selected mapping before Aspire builds any of those sources.
+        mapping_keys = {"CustomBeforeDirectoryBuildProps", "CustomAfterMicrosoftCommonProps",
+                        "CustomBeforeDirectoryBuildTargets", "CustomAfterDirectoryBuildTargets",
+                        "AfterMicrosoftNETSdkTargets", "HEXALITH_SOURCE_MAPPING_HASH", "Configuration"}
+        for key in mapping_keys:
+            env.pop(key, None)
+        env["HexalithBuildsRoot"] = str(ROOT / "references/Hexalith.Builds")
+        mapping = json.loads(run(["dotnet", "run", "--project",
+            str(ROOT / "references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj"),
+            "--", "prepare-build", "--manifest", "module/hexalith.module-manifest.v2.json",
+            "--mode", "source", "--workspace", str(private / "source-mapping"), "--output", "json"]))
+        selected = mapping.get("buildPreparation", {}).get("environment")
+        if (mapping.get("status") != "prepared" or not isinstance(selected, dict) or set(selected) != mapping_keys
+                or selected.get("Configuration") != "Debug"
+                or any(not isinstance(value, str) or any(ord(character) < 32 for character in value) for value in selected.values())):
+            raise RuntimeError("The Platform source mapping did not prepare the exact Debug build graph.")
+        env.update(selected)
+        report["sourceMappingHash"] = selected["HEXALITH_SOURCE_MAPPING_HASH"]
         password = secrets.token_hex(32)
         (private / "password").write_text(password)
         execute(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "1", "-subj", "/CN=localhost",
@@ -1202,7 +1221,7 @@ def main() -> int:
         execute(["openssl", "pkcs8", "-topk8", "-nocrypt", "-in", str(private / "owner.pem"), "-outform", "DER", "-out", str(private / "owner.der")])
         execute(["openssl", "pkey", "-in", str(private / "owner.pem"), "-pubout", "-outform", "DER", "-out", str(private / "owner-public.der")])
         for path in private.iterdir():
-            os.chmod(path, 0o600)
+            os.chmod(path, 0o700 if path.is_dir() else 0o600)
         for name in ("eventstore", "tenants", "projects", "projects-workers", "folders", "folders-workers"):
             (private / ("data-" + name)).mkdir(mode=0o700)
         user_issuer = f"https://127.0.0.1:{free_port()}/users"
@@ -1397,6 +1416,13 @@ def main() -> int:
                     report["result"] = "failed"
             try:
                 if private is not None:
+                    # The Platform mapping may create owner-only directories without
+                    # execute permission. Restore owner traversal before secure teardown.
+                    for current, directories, _ in os.walk(private):
+                        for directory in directories:
+                            path = Path(current, directory)
+                            if not path.is_symlink():
+                                path.chmod(0o700)
                     shutil.rmtree(private)
             except BaseException:
                 report["result"] = "failed"

@@ -1,0 +1,814 @@
+{
+  "qualification": "local-distributed-proof",
+  "acceptedEquivalence": false,
+  "productionReadiness": false,
+  "commands": [
+    [
+      "aspire",
+      "describe",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "ps",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "dotnet",
+      "run",
+      "--project",
+      "/home/administrator/projects/hexalith/projects/references/Hexalith.Builds/src/libraries/Hexalith.Builds.Module.Cli/Hexalith.Builds.Module.Cli.csproj",
+      "--",
+      "prepare-build",
+      "--manifest",
+      "module/hexalith.module-manifest.v2.json",
+      "--mode",
+      "source",
+      "--workspace",
+      "/tmp/supported-project-reads-private-152vb40z/source-mapping",
+      "--output",
+      "json"
+    ],
+    [
+      "docker",
+      "create",
+      "--cidfile",
+      "/tmp/supported-project-reads-private-152vb40z/RedisHost.cid",
+      "--name",
+      "reads-d32d6201043ab01fed09245a-redishost",
+      "--label",
+      "hexalith.supported-reads=reads-d32d6201043ab01fed09245a",
+      "-p",
+      "127.0.0.1::6379",
+      "redis:6"
+    ],
+    [
+      "docker",
+      "start",
+      "d4c913913e108d34e89a0f2a8c28d87f1d48cee7302034e939fd70c526b7f340"
+    ],
+    [
+      "docker",
+      "port",
+      "d4c913913e108d34e89a0f2a8c28d87f1d48cee7302034e939fd70c526b7f340",
+      "6379/tcp"
+    ],
+    [
+      "docker",
+      "create",
+      "--cidfile",
+      "/tmp/supported-project-reads-private-152vb40z/PlacementHostAddress.cid",
+      "--name",
+      "reads-d32d6201043ab01fed09245a-placementhostaddress",
+      "--label",
+      "hexalith.supported-reads=reads-d32d6201043ab01fed09245a",
+      "-p",
+      "127.0.0.1::50005",
+      "daprio/dapr:1.18.7",
+      "./placement",
+      "--port",
+      "50005"
+    ],
+    [
+      "docker",
+      "start",
+      "996e2f8bd144054ce9fc5d65f303f6e3c0080a177d49c95ff8c64f75c9b359f0"
+    ],
+    [
+      "docker",
+      "port",
+      "996e2f8bd144054ce9fc5d65f303f6e3c0080a177d49c95ff8c64f75c9b359f0",
+      "50005/tcp"
+    ],
+    [
+      "docker",
+      "create",
+      "--cidfile",
+      "/tmp/supported-project-reads-private-152vb40z/SchedulerHostAddress.cid",
+      "--name",
+      "reads-d32d6201043ab01fed09245a-schedulerhostaddress",
+      "--label",
+      "hexalith.supported-reads=reads-d32d6201043ab01fed09245a",
+      "-p",
+      "127.0.0.1::50006",
+      "daprio/dapr:1.18.7",
+      "./scheduler",
+      "--port",
+      "50006",
+      "--etcd-data-dir",
+      "/tmp/data"
+    ],
+    [
+      "docker",
+      "start",
+      "55c4ed5bd4d9e572a2c73f263ddb2d478b68cec2adb5b6e2619f49298349ff29"
+    ],
+    [
+      "docker",
+      "port",
+      "55c4ed5bd4d9e572a2c73f263ddb2d478b68cec2adb5b6e2619f49298349ff29",
+      "50006/tcp"
+    ],
+    [
+      "aspire",
+      "start",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--isolated",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "supported-read-authority",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "tenants",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "eventstore",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-workers",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "folders",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "folders-workers",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "tenants-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "eventstore-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "projects-workers-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "folders-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "wait",
+      "folders-workers-dapr-cli",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--timeout",
+      "900",
+      "--non-interactive"
+    ],
+    [
+      "aspire",
+      "describe",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--format",
+      "Json",
+      "--non-interactive"
+    ],
+    [
+      "dotnet",
+      "build",
+      "/home/administrator/projects/hexalith/projects/tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj",
+      "-c",
+      "Debug",
+      "-m:1",
+      "-p:SupportedProjectReadDistributed=true",
+      "--artifacts-path",
+      "/tmp/supported-project-reads-private-152vb40z/artifacts"
+    ],
+    [
+      "dotnet",
+      "/tmp/supported-project-reads-private-152vb40z/artifacts/bin/Hexalith.Projects.Integration.Tests/debug/Hexalith.Projects.Integration.Tests.dll",
+      "-class",
+      "*SupportedProjectReadDistributedTests",
+      "-xml",
+      "/tmp/supported-project-reads-evidence-0942b7bf8c7f192a/distributed.xml"
+    ],
+    [
+      "aspire",
+      "stop",
+      "--apphost",
+      "/home/administrator/projects/hexalith/projects/src/Hexalith.Projects.AppHost/Hexalith.Projects.AppHost.csproj",
+      "--non-interactive"
+    ]
+  ],
+  "cleanup": [
+    {
+      "resource": "exact-apphost",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-d32d6201043ab01fed09245a-schedulerhostaddress",
+      "containerId": "55c4ed5bd4d9e572a2c73f263ddb2d478b68cec2adb5b6e2619f49298349ff29",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-d32d6201043ab01fed09245a-placementhostaddress",
+      "containerId": "996e2f8bd144054ce9fc5d65f303f6e3c0080a177d49c95ff8c64f75c9b359f0",
+      "removed": true,
+      "absenceVerified": true
+    },
+    {
+      "resource": "reads-d32d6201043ab01fed09245a-redishost",
+      "containerId": "d4c913913e108d34e89a0f2a8c28d87f1d48cee7302034e939fd70c526b7f340",
+      "removed": true,
+      "absenceVerified": true
+    }
+  ],
+  "matrixCompleted": false,
+  "launcherControls": {
+    "command": [
+      "/usr/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/tools",
+      "-p",
+      "test_supported_project_reads_launcher.py",
+      "-v"
+    ],
+    "total": 63,
+    "passed": 63,
+    "failed": 0,
+    "skipped": 0
+  },
+  "preexistingResources": {
+    "apphosts": {
+      "1073488": "/home/administrator/projects/hexalith/eventstore/src/Hexalith.EventStore.AppHost/Hexalith.EventStore.AppHost.csproj"
+    },
+    "containers": [
+      "24fc75887410",
+      "2d3156441f64",
+      "8623af8b7bbd",
+      "8d0788f8322f",
+      "cb7c12622c18",
+      "f1e0a30a3a93",
+      "fe6c35911851"
+    ],
+    "sidecars": {
+      "1079838": {
+        "appId": "eventstore",
+        "configurationSha256": "91bd31b0ae43ed4054fafd14b3866c443dfe6edb00d2c0ede234f3dc99b01e65",
+        "resolver": "mdns-default"
+      },
+      "1079881": {
+        "appId": "eventstore-admin",
+        "configurationSha256": "8c1e7f8fc4fc2e28aacc349835679099edb5e3afa8466aaae0cdb6ed09d07280",
+        "resolver": "mdns-default"
+      },
+      "1080147": {
+        "appId": "sample",
+        "configurationSha256": "1ac234088a36d52682817643d296afb69dcc4e57d837a3dd65546c41b1ab9a1c",
+        "resolver": "mdns-default"
+      },
+      "1080191": {
+        "appId": "sample-blazor-ui",
+        "configurationSha256": "66bfad2ed3aaf160aa131950701f4ca6c7dc25e1540af855305b5d0cd98eb1f6",
+        "resolver": "mdns-default"
+      },
+      "1080235": {
+        "appId": "tenants-api",
+        "configurationSha256": "66bfad2ed3aaf160aa131950701f4ca6c7dc25e1540af855305b5d0cd98eb1f6",
+        "resolver": "mdns-default"
+      },
+      "1080237": {
+        "appId": "sample-api",
+        "configurationSha256": "66bfad2ed3aaf160aa131950701f4ca6c7dc25e1540af855305b5d0cd98eb1f6",
+        "resolver": "mdns-default"
+      },
+      "1080257": {
+        "appId": "eventstore-admin-ui",
+        "configurationSha256": "66bfad2ed3aaf160aa131950701f4ca6c7dc25e1540af855305b5d0cd98eb1f6",
+        "resolver": "mdns-default"
+      },
+      "1080305": {
+        "appId": "tenants",
+        "configurationSha256": "c9d6ca3f5962873e92b656338f54e16d7c69f3c380be5ce63b9a0cfef666558a",
+        "resolver": "mdns-default"
+      }
+    }
+  },
+  "versions": {
+    "dotnet": "10.0.403",
+    "aspire": "13.6.4+c89352703f78ae46de90fbf751ed8b52b77b89bf",
+    "dockerServer": "29.8.2"
+  },
+  "revisions": {
+    ".": "3f2931a4680180db177d315aab327087eee05fef",
+    "references/Hexalith.Commons": "11555ace9efcae2928a00122dcba91243e5a8a1a",
+    "references/Hexalith.Memories": "e8956eb5c1bd49297f86702f9606eb9b013bc2f1",
+    "references/Hexalith.Platform": "c42c4a017ce72ad1c911c355bf16dc84afdf2008",
+    "references/Hexalith.Folders": "531bee88db685b703c7092ea5e2eaf683f15cede",
+    "references/Hexalith.EventStore": "7c93a1234d14c66f5ee85ed48caaee1d30a671f3",
+    "references/Hexalith.Tenants": "964d64561b8fdd06e146ef7e304f25f51d276ace",
+    "references/Hexalith.Parties": "8059ce0b8d5dbc75e4d7ecc96e0bddfa9590cd0d",
+    "references/Hexalith.AI.Tools": "1745b6663ad32bb1288167135ed0f979366c53a0",
+    "references/Hexalith.Conversations": "c9e6fdebc7725df3462a1db991f5d69a4b1f22b9",
+    "references/Hexalith.Builds": "d2a430c988462a634674a69c562ea4afd1f06ef4",
+    "references/Hexalith.McpCli": "e1fa6d5ab50270add568c77abc328382f926bdbd",
+    "references/Hexalith.FrontComposer": "8479a7c5396fc42964618d99f8079219f4665a9c"
+  },
+  "sourceDiffSha256": "7c899ea4885922f5c3596d7068c33e2b90b99694d91d8fc87457467a96d13b2b",
+  "sourceManifestSha256": "31731478f351749e41a4338b2943585779b902477d40e08cb87d66cc4c428f7c",
+  "sourceMappingHash": "d4ec16e86d1561b8e2e77be87cf29ccdbdc8cf5c434ff57211932bf4b6fa25fe",
+  "containerImages": {
+    "RedisHost": "sha256:c35b83ce044bb6d148c484d36e059ad28e02d5714ba6731fb55b6421e2ed0ccf",
+    "PlacementHostAddress": "sha256:0ac4fadf0016be85065cdebab952a8350e468cf9283d26777b0307a14a10aecc",
+    "SchedulerHostAddress": "sha256:0ac4fadf0016be85065cdebab952a8350e468cf9283d26777b0307a14a10aecc"
+  },
+  "configurationFingerprint": "9afb21a901c49fdf153cc119fcafe99655ef5dcbc1a91191a5aa63313bf1a465",
+  "ownedAppHostSession": {
+    "configurationSha256": "17369e4fcdda1958f876c368da2d260ec1ef0a5381b49c260a70757175782411",
+    "configurationPathSha256": "862804610d44acc4bd07757e3c30611b938ff7fd3a36dc958d63336e99f8190e",
+    "appHostPid": 1592469,
+    "appHostStartTicks": "599518",
+    "cliPid": 1578524,
+    "cliStartTicks": "595680"
+  },
+  "liveHostSourceReferences": {
+    "Hexalith.Projects.Server": {
+      "rootAvailableReferences": 23,
+      "allSourceProjects": true,
+      "assetsSha256": "a01b6eac2466e1fec1ce6a26ecc6c38c13d2f92eb3e580768e4349496677c620",
+      "runtimeFiles": 100,
+      "runtimeFilesSha256": "eec515db4c262d2cfbb57660703b0dc9529cb177d90a80a46cd286d48ae5cbd7"
+    },
+    "Hexalith.Projects.Workers": {
+      "rootAvailableReferences": 15,
+      "allSourceProjects": true,
+      "assetsSha256": "0199dda3eeb509852d1ee7bf0be7f125724e6ca53e2d47f78ecdbc8b57a629c0",
+      "runtimeFiles": 74,
+      "runtimeFilesSha256": "ce675d55642b40d92e4e7f1659f404c1aec5fe05fc07618deb1e2de7b6e0b18f"
+    },
+    "Hexalith.Projects.AppHost": {
+      "rootAvailableReferences": 6,
+      "allSourceProjects": true,
+      "assetsSha256": "24723838af090174d8499655792ae626a35ebebdf96ad5056f4e16a6b86f4006",
+      "runtimeFiles": 145,
+      "runtimeFilesSha256": "b379569f0dec9f06e8574c7f8752a3c23222199505a04e078ceec29672f0fa28"
+    },
+    "Hexalith.Projects.ReadAuthority": {
+      "rootAvailableReferences": 3,
+      "allSourceProjects": true,
+      "assetsSha256": "8e834843366b6de3789fda761f6a594e826eb264e396a75bb62fb66bbee27254",
+      "runtimeFiles": 38,
+      "runtimeFilesSha256": "2b320d7499abfa5ebaeead36e8876af0d54cbf2b4cdacbeabbc7785f8893cf03"
+    },
+    "Hexalith.EventStore": {
+      "rootAvailableReferences": 8,
+      "allSourceProjects": true,
+      "assetsSha256": "19530b9eef07f2056a4ab3ffedf7fdb547a382f20e0410f52c492c809c5abbca",
+      "runtimeFiles": 69,
+      "runtimeFilesSha256": "f4b4b11669523abfcbbb91463c2dce9501cd1b71f38191f29dcabe949706b8dd"
+    },
+    "Hexalith.Tenants": {
+      "rootAvailableReferences": 11,
+      "allSourceProjects": true,
+      "assetsSha256": "d003cac4466cae4af53d58b3eed5b44fdbe815b0b934291ec7f42ae112c474eb",
+      "runtimeFiles": 72,
+      "runtimeFilesSha256": "442a9b9aa1c856e12e82b05af616778b13b973f814d6b7c8b42ba65b8da64433"
+    },
+    "Hexalith.Folders": {
+      "rootAvailableReferences": 4,
+      "allSourceProjects": true,
+      "assetsSha256": "9847571f290bd0b90fe6d3a05314227e6bbbfd105fd4fd0135a1ad50f3320627",
+      "runtimeFiles": 6,
+      "runtimeFilesSha256": "c6d3fbbcdd68ac566e96ea1a51dabe03ceaf713dece1e18dfbe6040007f4032e"
+    },
+    "Hexalith.Folders.Server": {
+      "rootAvailableReferences": 13,
+      "allSourceProjects": true,
+      "assetsSha256": "f86e22fa787de9922dddce344e1a208eb162de70fb73c4554c627f8d6efa6daf",
+      "runtimeFiles": 65,
+      "runtimeFilesSha256": "2425b018f6c0257ebe5cbc5a166fd194d189579ead42a205f82b6de7fd90d262"
+    },
+    "Hexalith.Folders.Workers": {
+      "rootAvailableReferences": 12,
+      "allSourceProjects": true,
+      "assetsSha256": "be18bec60b99e4bf1e7753ce94b905674b232f9070fb562bbdab139a9ba9d8f4",
+      "runtimeFiles": 64,
+      "runtimeFilesSha256": "0bbb04e836e9f488d5548f12d229eefbc7cb3529932f201e370e7ee81a7c5bba"
+    }
+  },
+  "nestedOwnerResiliencySha256": "baa403a328935097e1d3f9cec687e165ac7c8a616989b2820111dbd5ba811c73",
+  "discovery": {
+    "resolver": "sqlite",
+    "version": "v1",
+    "alphaTestInfrastructureOnly": true,
+    "daprdSha256": [
+      "e988a6f53abec017fc9ebcb4f89de9bed11bce005eb49bd8e85e8d3d6adbf488"
+    ],
+    "configurationSha256": "9e2ae39de18bed5452545401bb7e828a67e4d792f3075a7330fabc37c3b25f12",
+    "registryIdentitySha256": "a5e356226e1e914269fd217988c10b779ff5a38378fc0c1502b1450e24d7fcf6",
+    "ownedSidecars": [
+      {
+        "appId": "eventstore",
+        "pid": 1594237,
+        "namespaceVerified": true,
+        "registryAddressVerified": true
+      },
+      {
+        "appId": "folders",
+        "pid": 1594403,
+        "namespaceVerified": true,
+        "registryAddressVerified": true
+      },
+      {
+        "appId": "folders-workers",
+        "pid": 1593464,
+        "namespaceVerified": true,
+        "registryAddressVerified": true
+      },
+      {
+        "appId": "projects",
+        "pid": 1594331,
+        "namespaceVerified": true,
+        "registryAddressVerified": true
+      },
+      {
+        "appId": "projects-workers",
+        "pid": 1593448,
+        "namespaceVerified": true,
+        "registryAddressVerified": true
+      },
+      {
+        "appId": "tenants",
+        "pid": 1594116,
+        "namespaceVerified": true,
+        "registryAddressVerified": true
+      }
+    ],
+    "observationsRequired": 1
+  },
+  "runtimeConfigurationSha256": "8862b0e626729873a94b21c282b3b3cc194e1188dc22db5f01af637e94c2332d",
+  "resourceStates": [
+    {
+      "name": "eventstore-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "eventstore",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "folders-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "folders",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "folders-workers-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "folders-workers",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-ui",
+      "state": "NotStarted",
+      "health": null
+    },
+    {
+      "name": "projects",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-workers-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "projects-workers",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "supported-read-authority",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "tenants-dapr-cli",
+      "state": "Running",
+      "health": "Healthy"
+    },
+    {
+      "name": "tenants",
+      "state": "Running",
+      "health": "Healthy"
+    }
+  ],
+  "freshArtifacts": true,
+  "testAssemblySha256": "67ca7f48588c152050d4ff455bebe7e92f438bc780e4d015a05b70d7fed48bd0",
+  "testProcessCleanup": [
+    {
+      "groupId": 1609728,
+      "descendantsAbsent": true
+    }
+  ],
+  "result": "failed",
+  "failure": "Qualification requires actual nonempty passing test results without skips.",
+  "runtimeFailureTypes": {
+    "supported-read-authority": [],
+    "eventstore": [
+      "Dapr.DaprException",
+      "Grpc.Core.RpcException",
+      "Hexalith.EventStore.ServiceDefaults.Routing.RouteCatalogUnavailableException",
+      "InnerException",
+      "RouteCatalogUnavailableException"
+    ],
+    "tenants": [],
+    "projects": [],
+    "projects-workers": [],
+    "folders": [],
+    "folders-workers": [],
+    "eventstore-dapr-cli": [],
+    "projects-dapr-cli": [],
+    "folders-dapr-cli": []
+  },
+  "runtimeLogFacts": {
+    "supported-read-authority": {
+      "templateSha256": [],
+      "closedFacts": [],
+      "missingAssemblies": []
+    },
+    "eventstore": {
+      "templateSha256": [
+        "070bd906a4ec47672142b1b585e90e27e0aad31f34c9e3960ee8c23fc0bfee78",
+        "19996b31edabeac668fadacfdbe363b82ab992e02acad8b1515fdf13c5f85273",
+        "1fc35f241726b27093788103dce84eb73b0e964ac440d19b65f06fb985e8b95c",
+        "266df41db6293932928e05b152e6a1e4f5de48166f864e8584562c149c29b139",
+        "352db90245b84fb47cf6df277fe7937317283b23e6a7f4697497f4718941f712",
+        "35ce657e6f49b6f3a18398a4a5ce5e81dbbe86169366888442b20e40c0cb664a",
+        "4dcbdebdb13a7679a7417c518e30e371065f463a8db7957263e21dbfc70f875c",
+        "71dc76cd8d3673e3cea5833b700721b5f1727a23186b9f5f35c0c11c62aea553",
+        "8ae1613c31f82d2c0cdad68225dfaabcfa9924f6a11cfc360d97e08d2ffbc122",
+        "a7179d5ab37f4f309d5767cb73e3e9ba60a94f3375f8bd15074005ffb126473e",
+        "badc013aeb802fc3b99148f6e73ac70ba39bad1e9b3834700c669bc66b5c4efd",
+        "c36a46a18d17f6efcd576fb158a9be98aae6a8dfd1282de6022539827b5bc410",
+        "d003c85e04ed53ae129f4efcb6251d118b91c430418e029476495ee559de54f1",
+        "d24f8db5bfd2b102c947093cd74038f3d4d8ea29f9d714abf932590dc7e430ea",
+        "e3929a1225897d70d59acee1cd3abf46e572e894b04c5ee086158f00c7d4cc97",
+        "f5c6f3ca1fd98f1a6855e13ff4b23dc6c36c6784403b41a3608ae9cda80b5516",
+        "fe4817f9558647194fe0f00a6e48ad973726aa29f07571646c583840e5ebca37"
+      ],
+      "closedFacts": [
+        "ExceptionTypeSha256=c959fd8cd7749e271ee3e7d7f10c5664d31624fe46a83b32a1a83498755574ab"
+      ],
+      "missingAssemblies": []
+    },
+    "tenants": {
+      "templateSha256": [
+        "1fc35f241726b27093788103dce84eb73b0e964ac440d19b65f06fb985e8b95c",
+        "2f97c011adf2878861587576c86c7e3f3dd475d21d04e687c8f7bfd4d3200916",
+        "352db90245b84fb47cf6df277fe7937317283b23e6a7f4697497f4718941f712",
+        "4ca5f4f0f122d3ba7690689569d4adfc4af9f177a94fdd29cd1f4e625647bbb9",
+        "4dcbdebdb13a7679a7417c518e30e371065f463a8db7957263e21dbfc70f875c",
+        "71dc76cd8d3673e3cea5833b700721b5f1727a23186b9f5f35c0c11c62aea553",
+        "7c3073859e81ab75fb745769796dc37db9daad0dd587acf36fb3ede641828964",
+        "bf70376e0a90b565ef360b2c3dd7c35e238b90d37222a0102acefb5c9449bdca",
+        "e3929a1225897d70d59acee1cd3abf46e572e894b04c5ee086158f00c7d4cc97"
+      ],
+      "closedFacts": [
+        "ReasonSha256=7ac01a41f392152b3e0759e84998e58b5ff469a92c63d148df0c51ab1e5877bb"
+      ],
+      "missingAssemblies": []
+    },
+    "projects": {
+      "templateSha256": [
+        "1fc35f241726b27093788103dce84eb73b0e964ac440d19b65f06fb985e8b95c",
+        "48f13a7bddf475274d0d3e5d3ebf254a8ea5bb6a3152280e984d1c13ea4614ee",
+        "4dcbdebdb13a7679a7417c518e30e371065f463a8db7957263e21dbfc70f875c",
+        "5684760feb572c3f1919424048c838a2d9f7ebd3ba5c770a6179b33a67a7d69e",
+        "579b550385c76bcecf57691bdf3596efe89b893d35db434acd2067e33b81ed45",
+        "5b79cb854015e8b952f387f443ec7bc0dd4cca3ca02e35c03380d95e35f3975c",
+        "71dc76cd8d3673e3cea5833b700721b5f1727a23186b9f5f35c0c11c62aea553",
+        "7bbc19e85aeda45c60a0405f42bdd1466918efd5586056485928e731758e90c2",
+        "c2e9b2c36f4749177fa914975843db05f43da8121a3f7ba6d9b86801261bc6ba",
+        "e3929a1225897d70d59acee1cd3abf46e572e894b04c5ee086158f00c7d4cc97"
+      ],
+      "closedFacts": [],
+      "missingAssemblies": []
+    },
+    "projects-workers": {
+      "templateSha256": [
+        "1fc35f241726b27093788103dce84eb73b0e964ac440d19b65f06fb985e8b95c",
+        "48f13a7bddf475274d0d3e5d3ebf254a8ea5bb6a3152280e984d1c13ea4614ee",
+        "4dcbdebdb13a7679a7417c518e30e371065f463a8db7957263e21dbfc70f875c",
+        "5684760feb572c3f1919424048c838a2d9f7ebd3ba5c770a6179b33a67a7d69e",
+        "579b550385c76bcecf57691bdf3596efe89b893d35db434acd2067e33b81ed45",
+        "71dc76cd8d3673e3cea5833b700721b5f1727a23186b9f5f35c0c11c62aea553",
+        "7bbc19e85aeda45c60a0405f42bdd1466918efd5586056485928e731758e90c2",
+        "c2e9b2c36f4749177fa914975843db05f43da8121a3f7ba6d9b86801261bc6ba",
+        "e3929a1225897d70d59acee1cd3abf46e572e894b04c5ee086158f00c7d4cc97"
+      ],
+      "closedFacts": [],
+      "missingAssemblies": []
+    },
+    "folders": {
+      "templateSha256": [
+        "1fc35f241726b27093788103dce84eb73b0e964ac440d19b65f06fb985e8b95c",
+        "352db90245b84fb47cf6df277fe7937317283b23e6a7f4697497f4718941f712",
+        "48f13a7bddf475274d0d3e5d3ebf254a8ea5bb6a3152280e984d1c13ea4614ee",
+        "4dcbdebdb13a7679a7417c518e30e371065f463a8db7957263e21dbfc70f875c",
+        "579b550385c76bcecf57691bdf3596efe89b893d35db434acd2067e33b81ed45",
+        "5b79cb854015e8b952f387f443ec7bc0dd4cca3ca02e35c03380d95e35f3975c",
+        "71dc76cd8d3673e3cea5833b700721b5f1727a23186b9f5f35c0c11c62aea553",
+        "e3929a1225897d70d59acee1cd3abf46e572e894b04c5ee086158f00c7d4cc97"
+      ],
+      "closedFacts": [],
+      "missingAssemblies": []
+    },
+    "folders-workers": {
+      "templateSha256": [],
+      "closedFacts": [],
+      "missingAssemblies": []
+    },
+    "eventstore-dapr-cli": {
+      "templateSha256": [],
+      "closedFacts": [],
+      "missingAssemblies": []
+    },
+    "projects-dapr-cli": {
+      "templateSha256": [],
+      "closedFacts": [],
+      "missingAssemblies": []
+    },
+    "folders-dapr-cli": {
+      "templateSha256": [],
+      "closedFacts": [],
+      "missingAssemblies": []
+    }
+  },
+  "runtimeDenialReasons": {
+    "supported-read-authority": [],
+    "eventstore": [],
+    "tenants": [
+      "7ac01a41f392152b3e0759e84998e58b5ff469a92c63d148df0c51ab1e5877bb"
+    ],
+    "projects": [],
+    "projects-workers": [],
+    "folders": [],
+    "folders-workers": [],
+    "eventstore-dapr-cli": [],
+    "projects-dapr-cli": [],
+    "folders-dapr-cli": []
+  },
+  "runtimeTransportStatuses": {
+    "supported-read-authority": [],
+    "eventstore": [],
+    "tenants": [],
+    "projects": [],
+    "projects-workers": [],
+    "folders": [],
+    "folders-workers": [],
+    "eventstore-dapr-cli": [],
+    "projects-dapr-cli": [],
+    "folders-dapr-cli": []
+  },
+  "runtimeStartupFailures": {
+    "supported-read-authority": [],
+    "eventstore": [],
+    "tenants": [],
+    "projects": [],
+    "projects-workers": [],
+    "folders": [],
+    "folders-workers": [],
+    "eventstore-dapr-cli": [],
+    "projects-dapr-cli": [],
+    "folders-dapr-cli": []
+  },
+  "runtimeInvalidIdentityComponents": {
+    "supported-read-authority": [],
+    "eventstore": [],
+    "tenants": [],
+    "projects": [],
+    "projects-workers": [],
+    "folders": [],
+    "folders-workers": [],
+    "eventstore-dapr-cli": [],
+    "projects-dapr-cli": [],
+    "folders-dapr-cli": []
+  },
+  "ownedSidecarsObservedBeforeStop": 6,
+  "ownedSidecarsAbsent": true,
+  "preexistingResourcesPreserved": true,
+  "privateMaterialRemoved": true
+}

@@ -163,6 +163,22 @@ The supported list/open path now excludes Active folderless Projects from ordina
 
 Story acceptance remains open pending current route-catalog enrollment for the isolated lane, source compatibility, and a clean authenticated persisted matrix covering no-domain-write, replay/restart, cursor, and authority change.
 
+### Follow-up implementation and verification (2026-11-02)
+
+The isolated launcher now prepares the Platform-selected Projects Debug source mapping itself. It keeps mapping directories traversable only to the owner and removes them during owned cleanup. No Project query/projection source, sibling source, public route, domain event, or dependency version changed in this follow-up.
+
+[Fresh evidence packet](evidence/story-6-1-20261102-followup/README.md) records Projects HEAD `3f2931a4680180db177d315aab327087eee05fef` plus its uncommitted launcher change bound by `sourceManifestSha256`; direct dependencies EventStore `7c93a1234d14c66f5ee85ed48caaee1d30a671f3`, Tenants `964d64561b8fdd06e146ef7e304f25f51d276ace`, Folders `531bee88db685b703c7092ea5e2eaf683f15cede`, Conversations `c9e6fdebc7725df3462a1db991f5d69a4b1f22b9`, and Builds `d2a430c988462a634674a69c562ea4afd1f06ef4`. The exact prescribed command ran from the Projects root:
+
+```bash
+MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 python3 tools/qualification/run_supported_project_reads.py --regressions --timeout 900
+```
+
+Launcher controls passed 63/63. The Integration assembly built, and all owned services were healthy. Native [distributed XML](evidence/story-6-1-20261102-followup/distributed.xml) records 0 pass, 1 fail, 0 skip: `BootstrapGlobalAdmin` HTTP 503 with EventStore `RouteCatalogUnavailableException`. The [sanitized report](evidence/story-6-1-20261102-followup/run.json) records `matrixCompleted=false`, exact AppHost/owned-container removal, preexisting resource preservation, and private material removal. No persisted matrix or launcher regressions ran.
+
+Local [projection XML](evidence/story-6-1-20261102-followup/projection.xml) passed 28/28; quarantine and inventory selectors passed 3/3. The broader [read XML](evidence/story-6-1-20261102-followup/read.xml) passed 73/76; its three live gateway cases failed because the standalone process lacked the launcher's owned Dapr endpoints. A prepared AppHost Debug source build passed with 0 warnings/errors, while the full Server.Tests source build failed with eight missing Conversations.Server/EventStore checkpoint and Tenant snapshot types; the prebuilt-sibling fallback passed with 0 warnings/errors. Exact commands and logs are in the packet.
+
+AC7 remains blocked. The authenticated persisted parts of AC1–3 and AC5–6 therefore remain unaccepted at this source revision. The AC4 local comparator passed separately (1/1; [native XML](evidence/story-6-1-20261102-followup/shadow.xml)), while the launcher did not reach its regression phase. Route-catalog enrollment and sibling source repair are outside this story's approved scope; exhaustive cutover equivalence remains Story 6.7. Status stays in progress.
+
 ## Change Log
 
 | Date | Change |
@@ -172,3 +188,4 @@ Story acceptance remains open pending current route-catalog enrollment for the i
 | 2026-08-01 | Approved Correct Course proposal inserted 6.1-P1R after post-P1 dependency drift and retained Story 6.1 as blocked through P4 plus a passing readiness rerun. |
 | 2026-11-02 | Applied approved E1–E7 entry correction; focused readiness permits finishing/review of existing implementation. Qualification remains open, P4 superseded; no feature acceptance. |
 | 2026-11-02 | Started supported read implementation review, added quarantine/event-catalog safeguards, corrected the isolated fixture, and retained failed verification evidence; story remains in progress. |
+| 2026-11-02 | Prepared the isolated launcher's Projects source mapping, reran focused and distributed checks, and retained native XML and cleanup evidence; route catalog and sibling source blockers keep the story in progress. |

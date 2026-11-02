@@ -1,0 +1,16 @@
+The '-xml' switch has been deprecated in favor of '-result-xml' and will be removed in the next major version
+
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: Hexalith.Projects.Integration.Tests
+  Discovered:  Hexalith.Projects.Integration.Tests
+  Starting:    Hexalith.Projects.Integration.Tests
+    Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.SupportedReadsTraverseCurrentDistributedOwnersWithoutDomainWritesAsync [FAIL]
+      System.InvalidOperationException : Supported fixture command refused: BootstrapGlobalAdmin (HTTP 503).
+      Stack Trace:
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(686,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.CommandAsync(String tenant, String domain, String aggregate, String type, Object payload, String actorTenant)
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedFixture.cs(92,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedFixture.SeedAsync()
+        tests/Hexalith.Projects.Integration.Tests/SupportedProjectReadDistributedTests.cs(19,0): at Hexalith.Projects.Integration.Tests.SupportedProjectReadDistributedTests.SupportedReadsTraverseCurrentDistributedOwnersWithoutDomainWritesAsync()
+        --- End of stack trace from previous location ---
+  Finished:    Hexalith.Projects.Integration.Tests (ID = '0680a7c274d7dc3db0e1596069662a5a337d21fb8ccc60fa3697634e81232364')
+=== TEST EXECUTION SUMMARY ===
+   Hexalith.Projects.Integration.Tests  Total: 1, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 0.333s
