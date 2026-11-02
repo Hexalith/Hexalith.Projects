@@ -43,7 +43,7 @@ public sealed class SupportedProjectShadowTests
             var ownerRead = await legacyOwner.RefreshFolderReferenceAsync(new ProjectId(row.ProjectId), detail.ProjectFolder!.FolderId!, "legacy-shadow", TestContext.Current.CancellationToken);
             bool included = ownerRead.Outcome == ProjectFolderValidationOutcome.Accepted;
             legacyVisibility.Add("project", row.ProjectId).Add("allowed", bool.TrueString).Add("authorization", legacyAuthority.Watermark)
-                .Add("folder", included ? ReferenceState.Included.ToString() : ReferenceState.Unauthorized.ToString());
+                .Add("folder", included ? ReferenceState.Included.ToString() : ReferenceState.Unauthorized.ToString()).Add("quarantined", bool.FalseString);
             if (included) { legacyVisible.Add(row); }
         }
         QueryEnvelope listQuery = fixture.Query(new ListProjectsQuery(PageSize: 1));
@@ -54,7 +54,7 @@ public sealed class SupportedProjectShadowTests
             .Add("workload", listQuery.AuthenticatedWorkloadId).Add("delegation", listQuery.DelegationId)
             .Add("delegated", listQuery.IsDelegated.ToString()).Add("scopes", JsonSerializer.Serialize(listQuery.Scopes))
             .Add("audience", JsonSerializer.Serialize(listQuery.Audience)).Add("action", ProjectAuthorizationGate.ListProjectsAction)
-            .Add("lifecycle", (string?)null).Add("pageSize", "1").Add("inspect", bool.FalseString).Add("policy", "project-list-v1-50-200-15m")
+            .Add("lifecycle", (string?)null).Add("pageSize", "1").Add("inspect", bool.FalseString).Add("quarantine", bool.FalseString).Add("policy", "project-list-v1-50-200-15m")
             .Add("authority", tenantAuthority.ProjectionWatermark).Add("eventStoreAuthority", legacyAuthority.Watermark).Add("eventStoreFreshness", "fresh")
             .Add("indexETag", observedIndex.ETag).Add("visibility", Digest(legacyVisibility.Build())).AddProjectionWatermark(sourceHead).Build();
         expectedScope = Digest(expectedScope);
