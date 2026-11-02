@@ -1276,3 +1276,10 @@ status: open
 - source_spec: `spec-tenant-domain-invocation-budget-2026-11-01.md`
   summary: Align standalone Tenants gateway and production Dapr invocation policies with bounded native authority verification.
   evidence: At baseline6b, deploy/source-authority-settings.example.json omits the invocation override and deploy/dapr/resiliency.yaml targets tenants with5seconds, while the authority verifier allows10seconds plus a2second final observation. The actual AppHost trace demonstrates valid verification can exceed5seconds; standalone deployment policy was unchanged by the scoped AppHost correction. Preserve proof checks and validate the full deployed timeout chain before changing those policies.
+
+- source_spec: `spec-tenant-api-query-budget-2026-11-02.md`
+  summary: Qualify and bound response-body consumption in the shared gateway transport independently of the HTTP resilience header deadline.
+  evidence: The unchanged SDK SendAsync/ReadFromJsonAsync path buffers or reads response content after the standard resilience handler returns response headers, with the caller token and the inherited infinite HttpClient timeout. A delayed-content handler plus caller cancellation controls should establish an explicit owning body bound without weakening native proof or transport ownership. This behavior predates the scoped API attempt correction.
+
+- source_spec: `spec-tenant-domain-invocation-budget-2026-11-01.md`
+  resolution: 2026-11-02; upstream Tenants ca93fe19847d3535353c8b4850497350aaba47d3 aligns deploy/dapr/resiliency.yaml tenantsInvocation and deploy/source-authority-settings.example.json gateway invocation with30seconds, with SourceAuthorityInvocationBudgetTests and configuration controls. Preserved by fast-forward. Its exact main CI41366387993 passes all six enabled jobs including both published SDK profiles and authenticated live routes. This resolves the earlier standalone policy follow-up; the separate first REST source-profile failure remains open under the API query budget spec.

@@ -1,0 +1,53 @@
+{
+  "observedAtUtc": "2026-11-02T00:44:35.296004+00:00",
+  "runId": 41364760838,
+  "url": "https://github.com/Hexalith/Hexalith.Tenants/actions/runs/41364760838",
+  "tenantsSource": "020e40e68dca2d489d5341e0911e70baeb7d35c2",
+  "eventStoreSource": "a82555477689e3e021c3c74bcab0ccfefd4ff307",
+  "conclusion": "failure",
+  "failure": "first REST ListTenants IsSuccess false",
+  "ownedBootstrapAndCurrentAuthorityPassed": true,
+  "createTenantAcceptedCompletedAndPersisted": true,
+  "firstGatewayAttemptStartedAtUtc": "2026-11-02T00:12:34.022Z",
+  "queryReceivedAtUtc": "2026-11-02T00:12:36.115Z",
+  "nativeReads": [
+    {
+      "role": "head",
+      "start": "00:12:38.035Z",
+      "end": "00:12:40.197Z",
+      "status": 200
+    },
+    {
+      "role": "event page",
+      "start": "00:12:40.199Z",
+      "end": "00:12:42.729Z",
+      "status": 200
+    },
+    {
+      "role": "final head",
+      "start": "00:12:42.732Z",
+      "canceledAt": "00:12:44.033Z"
+    }
+  ],
+  "attemptTimeout": {
+    "atUtc": "2026-11-02T00:12:44.023Z",
+    "elapsedMilliseconds": 10002.55,
+    "pipelineName": "-standard",
+    "strategyName": "Standard-AttemptTimeout"
+  },
+  "retryStartedAtUtc": "2026-11-02T00:12:46.121Z",
+  "assertionFailedAtUtc": "2026-11-02T00:12:47.656Z",
+  "nativeWholeReadBudgetSeconds": 10,
+  "finalMetadataBudgetSeconds": 2,
+  "callerHttpBudgetSeconds": 60,
+  "finalRestStatusAndFailureKindCaptured": false,
+  "qualificationAccepted": false,
+  "sourceLogSha256": "7eb16c7a1c3531a0c8592427746c87d2e92978ac29d8bd4ccfae39f41be5cc6f",
+  "repeatFailure": {
+    "runId": 41366387653,
+    "tenantsSource": "ca93fe19847d3535353c8b4850497350aaba47d3",
+    "sameFirstRestAssertion": true,
+    "bodyElapsedSeconds": 28.012
+  },
+  "nestedCheckoutsInitialized": false
+}

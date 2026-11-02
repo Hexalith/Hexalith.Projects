@@ -1,0 +1,87 @@
+{
+  "observedAtUtc": "2026-11-02T01:07:26.661128+00:00",
+  "tenantsSource": "3a603db76f894c4ffacbae16683eb04f179d5f99",
+  "policySeconds": {
+    "attempt": 30,
+    "total": 30,
+    "breakerSampling": 60
+  },
+  "actualProductionClient": true,
+  "oneStandardHandler": true,
+  "handlerOrder": [
+    "resilience",
+    "service discovery",
+    "inbound bearer",
+    "Dapr invocation"
+  ],
+  "otherClientsUnchanged": true,
+  "nativeProofAndBoundsUnchanged": true,
+  "checks": [
+    {
+      "profile": "source gateway",
+      "passed": 5,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "not-run": 0,
+      "seconds": 42.564,
+      "logSha256": "649402b255321fc6a506754accec003954de6d429ac29d680c8fef71b4b8ae7b"
+    },
+    {
+      "profile": "source readiness",
+      "total": "6",
+      "passed": "6",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "6.544",
+      "logSha256": "bc5a2110945d43bfee3905656a83bbd1cc385c720502af98a3ff569ce986a012"
+    },
+    {
+      "profile": "published current3.131.0",
+      "total": "5",
+      "passed": "5",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "42.401",
+      "logSha256": "f9f401828304ec2c625e2c571910a73770fb82e44220a01a14f0e426b6ed31c4",
+      "buildWarnings": 0,
+      "buildErrors": 0,
+      "buildLogSha256": "8a38766f99bc5571eb700ede8206b9df5beaf1a21bf12313a5febcc20c61744f"
+    },
+    {
+      "profile": "published floor3.129.0",
+      "total": "5",
+      "passed": "5",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "44.611",
+      "logSha256": "28a432ab57105a77f9733044808058a1623727b9b783d05898e9340e9d18e8ea",
+      "buildWarnings": 0,
+      "buildErrors": 0,
+      "buildLogSha256": "e814c6dffd0d694cff2d44ccd8bfdf0c580e9af24440db82b596e1623f01d075"
+    }
+  ],
+  "review": {
+    "layers": 3,
+    "allFindingsTriaged": true,
+    "acceptedPatchesRemaining": 0,
+    "sharedBodyDeadlinePreexistingDeferred": true
+  },
+  "preexistingPackageReadinessFixture": {
+    "current31310": {
+      "total": 6,
+      "passed": 2,
+      "failed": 4
+    },
+    "reason": "Old mock primary omits catalog-owned redirect-disabled invocation transport",
+    "changed": false
+  },
+  "hostedSourceQualificationComplete": false,
+  "nestedCheckoutsInitialized": false
+}
