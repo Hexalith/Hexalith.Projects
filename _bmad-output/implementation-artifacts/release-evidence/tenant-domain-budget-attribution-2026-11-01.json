@@ -1,0 +1,47 @@
+{
+  "observedAtUtc": "2026-11-01T23:53:36.992467+00:00",
+  "runId": 41362685140,
+  "url": "https://github.com/Hexalith/Hexalith.Tenants/actions/runs/41362685140",
+  "tenantsSource": "6b034a2d3b70533024343e721c47ffdfd1830a10",
+  "eventStoreSource": "a82555477689e3e021c3c74bcab0ccfefd4ff307",
+  "conclusion": "failure",
+  "failedCommand": "CreateTenant",
+  "expectedHttpStatus": 202,
+  "actualHttpStatus": 500,
+  "bootstrapAndNativeAuthorityPassed": true,
+  "invocationStartedAtUtc": "2026-11-01T23:46:19.858Z",
+  "nativeReadWindows": [
+    {
+      "start": "23:46:20.344Z",
+      "end": "23:46:21.815Z",
+      "httpStatus": 200
+    },
+    {
+      "start": "23:46:21.838Z",
+      "end": "23:46:23.756Z",
+      "httpStatus": 200
+    },
+    {
+      "start": "23:46:23.761Z",
+      "end": null,
+      "role": "authoritative final head recheck"
+    }
+  ],
+  "configuredTimeout": {
+    "elapsedAtUtc": "2026-11-01T23:46:24.863Z",
+    "seconds": 5,
+    "configuredTimeoutElapsed": true,
+    "outerActorCallerCanceled": false
+  },
+  "thirdReceiverCanceledAtUtc": "2026-11-01T23:46:24.864Z",
+  "separateFinalMetadataObservationReached": false,
+  "existingNativeReadBudgetSeconds": 10,
+  "existingFinalMetadataBudgetSeconds": 2,
+  "domainTraceHasProofOrEndpointRefusal": false,
+  "domainTraceHasCatalogCasExhaustion": false,
+  "earlierSeparateCatalogCasExhaustion": true,
+  "correction": "Configure the owning Tenants AppHost gateway default30seconds with explicit operator override precedence; shared SDK default and all proof/reader/test bounds remain unchanged.",
+  "sourceLogSha256": "2133b54a767ff285e921115253d53335581465919484a769c289a82814e18278",
+  "qualificationAccepted": false,
+  "nestedCheckoutsInitialized": false
+}

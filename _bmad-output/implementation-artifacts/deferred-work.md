@@ -1272,3 +1272,7 @@ status: open
 - source_spec: `spec-tenant-flow-disposal-2026-11-01.md`
   summary: Harden retained-flow cleanup against an authorization cancellation callback that throws before unsubscribe/detach.
   evidence: InvalidateAdmission precedes unsubscribe/detach in the unchanged baseline Dispose ordering. The current five-flow fix removes proven disposed-provider lookups; callback-exception cleanup is a preexisting distinct hardening case.
+
+- source_spec: `spec-tenant-domain-invocation-budget-2026-11-01.md`
+  summary: Align standalone Tenants gateway and production Dapr invocation policies with bounded native authority verification.
+  evidence: At baseline6b, deploy/source-authority-settings.example.json omits the invocation override and deploy/dapr/resiliency.yaml targets tenants with5seconds, while the authority verifier allows10seconds plus a2second final observation. The actual AppHost trace demonstrates valid verification can exceed5seconds; standalone deployment policy was unchanged by the scoped AppHost correction. Preserve proof checks and validate the full deployed timeout chain before changing those policies.

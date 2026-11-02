@@ -2,7 +2,7 @@
 title: 'Preserve the enrolled Dapr endpoint for native tenant authority reads'
 type: 'fix'
 created: '2026-11-01'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 0
 baseline_commit: '434fefb0f8140afc78d33747d398051e388fdf41'
@@ -31,12 +31,16 @@ Keep the shared exact endpoint guard, all native stream proof/authority validati
 
 ## Tasks & Acceptance
 
-- [ ] Preserve the configured Dapr URI in production typed-client registration; retain the absent-endpoint fallback.
-- [ ] Correct the existing production wire test expectation and add meaningful source-only actual v2 guard coverage for matching localhost coordinates and different host/port rejection before transport. Prove real production registration, existing signing/tokens/body/proofs and guard execution; a guard-removal mutation must not pass the refusal cases.
-- [ ] Run only affected owner tests and the narrowest required serial Debug/source build with SDK producer3.131.0, no nested initialization. Report exact command/count/logs and changed files; then freeze. Parent conducts combined review and actual hosted qualification.
+- [x] Preserve the configured Dapr URI in production typed-client registration; retain the absent-endpoint fallback.
+- [x] Correct the existing production wire test expectation and add meaningful source-only actual v2 guard coverage for matching localhost coordinates and different host/port rejection before transport. Prove real production registration, existing signing/tokens/body/proofs and guard execution; a guard-removal mutation must not pass the refusal cases.
+- [x] Run only affected owner tests and the narrowest required serial Debug/source build with SDK producer3.131.0, no nested initialization. Report exact command/count/logs and changed files; then freeze. Parent conducts combined review and actual hosted qualification.
 
 Given a configured localhost Dapr endpoint equal to the enrolled v2 authority coordinates, native authority reads reach the real guarded transport without rewriting its host. Given a request with neighboring host/port coordinates, the unchanged shared guard refuses before transport. All existing native proof, stream binding, resource scope and cancellation behavior remains enforced.
 
 ## Upstream adoption
 
 Before implementation edits, a fresh fetch found114badd2f4c7b796f9441996bc7d8b99abf4c2c6 already fixes this exact owner boundary, with actual v2 endpoint controls and explicit current/floor/source workflow gates. Subsequent6b034a2d3b70533024343e721c47ffdfd1830a10 preserves the required service-surface claim in its noncanonical native-authority regression. The owner checkout was fast-forwarded cleanly to6b034a2d; no duplicate implementation was authored. The source registration uses SDK RouteCatalogStateCoordinates.Capture to agree with effective configured runtime coordinates, while package mode preserves its configured endpoint/fallback. The shared guard is unchanged. Independent local focused verification and actual hosted source/main qualification are pending.
+
+## Verification closure
+
+Independent serial Debug/source build passes with zero warnings/errors; actual production/v2 owner-source25/25 and changed native authority1/1 cases pass without skips. Actual hosted source run41362685140 gets through owned bootstrap/current authority and starts the profile body; the former endpoint refusal is resolved. Its later CreateTenant invocation timeout is separately attributed in spec-tenant-domain-invocation-budget-2026-11-01.md and does not relabel the whole failed run successful. No duplicate source implementation was authored.
