@@ -179,6 +179,10 @@ Local [projection XML](evidence/story-6-1-20261102-followup/projection.xml) pass
 
 AC7 remains blocked. The authenticated persisted parts of AC1–3 and AC5–6 therefore remain unaccepted at this source revision. The AC4 local comparator passed separately (1/1; [native XML](evidence/story-6-1-20261102-followup/shadow.xml)), while the launcher did not reach its regression phase. Route-catalog enrollment and sibling source repair are outside this story's approved scope; exhaustive cutover equivalence remains Story 6.7. Status stays in progress.
 
+### Catalog prototype diagnostic (2026-11-02)
+
+An uncommitted Projects-owned Development route-catalog prototype reached committed catalog receipts on EventStore, Tenants, Projects, and Folders. Its live distributed test still failed before list/open: Tenants' bound bootstrap received Dapr `ERR_DIRECT_INVOKE` (HTTP 500), with no mTLS caller identity available to the closed Dapr ACL. The [diagnostic packet](evidence/story-6-1-20261102-catalog-prototype/README.md) retains the tested revisions, command, sanitized report, and native XML (**0 pass, 1 fail, 0 skip**). The prototype was removed because enrollment is outside this story's approved scope. No authenticated persisted matrix completed, and no AC7 or live AC1–3/5–6 acceptance is claimed. Story status remains in progress.
+
 ## Change Log
 
 | Date | Change |
@@ -189,3 +193,4 @@ AC7 remains blocked. The authenticated persisted parts of AC1–3 and AC5–6 th
 | 2026-11-02 | Applied approved E1–E7 entry correction; focused readiness permits finishing/review of existing implementation. Qualification remains open, P4 superseded; no feature acceptance. |
 | 2026-11-02 | Started supported read implementation review, added quarantine/event-catalog safeguards, corrected the isolated fixture, and retained failed verification evidence; story remains in progress. |
 | 2026-11-02 | Prepared the isolated launcher's Projects source mapping, reran focused and distributed checks, and retained native XML and cleanup evidence; route catalog and sibling source blockers keep the story in progress. |
+| 2026-11-02 | Recorded a failed route-catalog prototype diagnostic and removed its out-of-scope edits; authenticated Dapr caller identity and enrollment remain external blockers. |
