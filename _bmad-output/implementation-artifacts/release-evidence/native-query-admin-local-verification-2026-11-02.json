@@ -1,0 +1,98 @@
+{
+  "observedAtUtc": "2026-11-02T01:58:51.820072+00:00",
+  "eventStoreSource": "0ace1545c433bf234f54cef3a57ac77d62b4175f",
+  "preservedUpstreamEventStore": "bb1e93c57180c7aeb6093564608738ddd1a7c28e",
+  "tenantsSource": "2d5bd1637eb54b30a161c9ecb42716abd2ef93aa",
+  "preservedUpstreamTenants": "3a32b8d74f954832dd8426f5b0151205a6be4e47",
+  "ownedClients": [
+    "domain-query-invocation",
+    "AdminApi"
+  ],
+  "seconds": {
+    "attempt": 30,
+    "standardTotal": 30,
+    "breakerSampling": 60,
+    "AdminOuter": 30
+  },
+  "defaultAndUnrelatedClientsUnchanged": true,
+  "targetCircuitPartitionPreserved": true,
+  "ambiguityRetentionUnchanged": true,
+  "checks": [
+    {
+      "name": "latest-server-tests",
+      "total": "172",
+      "passed": "172",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "107.314",
+      "logSha256": "eda18b9eed9de494e1ace5757c37fe81725eda5077fe6046a4d78b579cacbce5"
+    },
+    {
+      "name": "latest-ui-tests",
+      "total": "15",
+      "passed": "15",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "45.265",
+      "logSha256": "11a1d43e1945e9a239873c0c596366ca6dc73f28a5c2de30cccca4b8c0ae7e66"
+    },
+    {
+      "name": "staged-secret-final",
+      "total": "1",
+      "passed": "1",
+      "failed": "0",
+      "errors": "0",
+      "skipped": "0",
+      "not-run": "0",
+      "time": "4.866",
+      "logSha256": "57a50bfacfb6329fad8e1f4c09380df138f8a9b0cae1fa0863834e2714f4db7a"
+    },
+    {
+      "name": "final inert AdminApi fixture",
+      "passed": 6,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "seconds": 44.616,
+      "logSha256": "b7382c45a5215c13294d00394637b9946c4719f8726de8948fd4085bac0a64b0"
+    }
+  ],
+  "builds": [
+    {
+      "name": "latest-server-build",
+      "warnings": 0,
+      "errors": 0,
+      "logSha256": "9a8936fc2c2490865aae0d26057d06cdfbbf2ba0d0c42d99d1fc9fa813f136d5"
+    },
+    {
+      "name": "latest-ui-build",
+      "warnings": 0,
+      "errors": 0,
+      "logSha256": "aec8697ec7df05a55eb2ad4ca73d9e734ed21cfb5ffc76adb1abcf25c15f6e00"
+    },
+    {
+      "name": "redacted-ui-build",
+      "warnings": 0,
+      "errors": 0,
+      "logSha256": "6ca5f585298c8bf08bd43febf34a080e4d027e1a04d3d52bbfb9565133c5e614"
+    }
+  ],
+  "selectorSensitivity": {
+    "normalPassed": true,
+    "authorityOnlyExpectedFailure": "healthy.Success false",
+    "sourceAndCompiledRestoredPassed": true
+  },
+  "review": {
+    "layers": 3,
+    "individualFindingsTriaged": 9,
+    "acceptedPatchesRemaining": 0,
+    "preexistingBodyDeadlineDeferred": true
+  },
+  "nestedCheckoutInitialized": false,
+  "finalHostedQualificationComplete": false
+}

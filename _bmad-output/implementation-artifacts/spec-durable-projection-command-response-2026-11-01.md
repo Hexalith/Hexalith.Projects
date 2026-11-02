@@ -2,7 +2,7 @@
 title: 'Return committed command acceptance without awaiting durable projection replay'
 type: 'bugfix'
 created: '2026-11-01'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 baseline_commit: 'fa978a283b29deb05a9c988ff54e3299de9606fc'
 review_loop_iteration: 1
@@ -131,3 +131,7 @@ Parent acceptance audit restored StopAsync caller-deadline behavior while the ac
 All accepted final combined findings are patched: bounded active-ID scan allowance (including batch1/int.MaxValue), actual eight-slot/ninth-work saturation and owned shutdown, custom-preserving handler composition in both assembly-scan orders, positive real IMediator dispatch, finite refusal reasons, actual completion recovery, persisted conditional defer readback, and forced same-shard ETag retry. All15 findings remain individually recorded above; two preexisting gaps are deferred in the ledger. Parent read the final patches. Four affected classes pass104/104; the independent15-class regression run passes571/571 with zero skips. The staged tracked-content security suite passes246/246 after replacing a synthetic credential-shaped negative fixture with an explicit inert redacted placeholder; scanner rules remain unchanged. Serial source builds pass with zero warnings/errors.
 
 EventStore owner commit a82555477689e3e021c3c74bcab0ccfefd4ff307 is pushed to main with commitlint and hooks active. Hosted main/Integration qualification is pending. Tenants enables the default-off behavior only with a separate exact fresh-preparer opt-in inside the source-profile guard; generic retained source profiles remain off. The existing fresh-backend proof/refusal tests pass2 tests including13 refused preparations. A newly fetched upstream Tenants commit5a21dd2c4f0a96cd3cfafe418c61e1e197c99c42 independently changes bootstrap transport and its EventStore invocation budget to30s; it is preserved. The old5a21 source run41358425596 reached bootstrap-authority-timeout against EventStorefa; it does not qualify the new pinned source.
+
+## Exact hosted qualification closure
+
+EventStorea82555477689e3e021c3c74bcab0ccfefd4ff307 completes all seven exact-source workflows successfully, including mainCI41360994832 and both actual published compatibility/live-sidecar Integration41360994325 jobs. Tenants3a32b8d74f954832dd8426f5b0151205a6be4e47 actual source41372568646 passes the complete cohort/bootstrap/command/persistence prefix, six REST and conditional reads, actual Admin UI proxy/owner read, refused descendant, persisted Redis tenant and zero outstanding leases. Its successful artifact is preserved in release-evidence/tenant-a825-owner-source-qualification-2026-11-02.json. Earlier failed evidence is retained; a later successful run does not erase the separately demonstrated premature10s native-query/AdminApi race, tracked in its own transport-budget spec. This closes this scoped functional repair only; final maintenance release remains pending its final source cut/publication. The standalone deployment-policy budget follow-up is resolved by preserved upstreamca93 and its tests.

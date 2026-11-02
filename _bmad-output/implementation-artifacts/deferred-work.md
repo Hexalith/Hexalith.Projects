@@ -1283,3 +1283,7 @@ status: open
 
 - source_spec: `spec-tenant-domain-invocation-budget-2026-11-01.md`
   resolution: 2026-11-02; upstream Tenants ca93fe19847d3535353c8b4850497350aaba47d3 aligns deploy/dapr/resiliency.yaml tenantsInvocation and deploy/source-authority-settings.example.json gateway invocation with30seconds, with SourceAuthorityInvocationBudgetTests and configuration controls. Preserved by fast-forward. Its exact main CI41366387993 passes all six enabled jobs including both published SDK profiles and authenticated live routes. This resolves the earlier standalone policy follow-up; the separate first REST source-profile failure remains open under the API query budget spec.
+
+- source_spec: `spec-native-query-admin-transport-budget-2026-11-02.md`
+  summary: Bound native-query response-body consumption independently of the standard resilience header deadline.
+  evidence: Blind1 and independent Edge1 reproduce a stalled body beyond a shortened standard total; baselinea825 already used the global standard client with infinite HttpClient.Timeout and unchanged SendAsync/ReadFromJsonAsync caller-token buffering. The scoped named30/30 client retains this preexisting body behavior; AdminApi keeps its independent outer30s timeout. A future owning body deadline needs delayed-content/caller controls while retaining payload bounds, proof and ambiguity semantics.

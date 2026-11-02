@@ -1,0 +1,49 @@
+{
+  "observedAtUtc": "2026-11-02T01:26:10.821903+00:00",
+  "sourceRun": 41370746958,
+  "sourceJob": 125040490575,
+  "tenantsSource": "3a603db76f894c4ffacbae16683eb04f179d5f99",
+  "eventStoreSource": "a82555477689e3e021c3c74bcab0ccfefd4ff307",
+  "rawLogSha256": "a847b62373dfbdd5d08c34871761d07a961c4921932ae4d4e5b011932fda64e0",
+  "passedPrefix": {
+    "completeV2Cohort": true,
+    "ownedBootstrap": true,
+    "completedAndPersistedCommand": true,
+    "restReads": 6,
+    "conditionalRead": true,
+    "actualAdminUiProxyAndOwnerRead": true,
+    "refusedDescendant": true,
+    "persistedRedisTenant": true
+  },
+  "failedGate": {
+    "sourceLine": 92,
+    "operation": "wait for zero outstanding catalog leases",
+    "bodySeconds": 120,
+    "result": "TaskCanceledException"
+  },
+  "provenPrematureAttempts": [
+    {
+      "client": "Default domain query",
+      "startUtc": "2026-11-02T01:18:04.821Z",
+      "attemptTimeoutUtc": "2026-11-02T01:18:14.827Z",
+      "attemptMilliseconds": 10027.0543,
+      "receiverFailureUtc": "2026-11-02T01:18:14.831Z",
+      "retryStartUtc": "2026-11-02T01:18:17.223Z",
+      "retryHttp200Utc": "2026-11-02T01:18:23.494Z"
+    },
+    {
+      "client": "AdminApi",
+      "attemptTimeoutUtc": "2026-11-02T01:19:45.036Z",
+      "attemptMilliseconds": 10025.6455,
+      "receiverFailuresUtc": [
+        "2026-11-02T01:19:45.038Z",
+        "2026-11-02T01:19:45.049Z",
+        "2026-11-02T01:19:45.159Z"
+      ],
+      "laterHtmlAssertionsPassed": true
+    }
+  ],
+  "retainedFenceSemanticsMustRemain": true,
+  "finalLeaseContentsCaptured": false,
+  "qualificationComplete": false
+}

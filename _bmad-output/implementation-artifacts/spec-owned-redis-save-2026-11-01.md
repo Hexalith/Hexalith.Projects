@@ -2,7 +2,7 @@
 title: 'Wait for an owned Redis SAVE acknowledgement within the original deadline'
 type: 'bugfix'
 created: '2026-11-01'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 baseline_commit: 'fa978a283b29deb05a9c988ff54e3299de9606fc'
 context: []
@@ -60,3 +60,7 @@ Debug/source-pinned PublishedCompatibility build passed0warnings/errors. Five af
 ## Combined review closure
 
 The combined three-layer review is complete. All findings were individually triaged in spec-durable-projection-command-response-2026-11-01.md. No further code changes apply to this scoped repair. Existing local verification remains passing; hosted exact-source qualification is pending.
+
+## Exact hosted qualification closure
+
+EventStorea82555477689e3e021c3c74bcab0ccfefd4ff307 completes all seven exact-source workflows successfully, including mainCI41360994832 and both actual published compatibility/live-sidecar Integration41360994325 jobs. Tenants3a32b8d74f954832dd8426f5b0151205a6be4e47 actual source41372568646 passes the complete cohort/bootstrap/command/persistence prefix, six REST and conditional reads, actual Admin UI proxy/owner read, refused descendant, persisted Redis tenant and zero outstanding leases. Its successful artifact is preserved in release-evidence/tenant-a825-owner-source-qualification-2026-11-02.json. Earlier failed evidence is retained; a later successful run does not erase the separately demonstrated premature10s native-query/AdminApi race, tracked in its own transport-budget spec. This closes this scoped functional repair only; final maintenance release remains pending its final source cut/publication. The standalone deployment-policy budget follow-up is resolved by preserved upstreamca93 and its tests.

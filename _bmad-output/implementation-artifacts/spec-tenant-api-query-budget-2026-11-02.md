@@ -2,7 +2,7 @@
 title: 'Align the API gateway query attempt with native authority verification'
 type: 'fix'
 created: '2026-11-02'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 0
 baseline_commit: 'ca93fe19847d3535353c8b4850497350aaba47d3'
@@ -64,3 +64,5 @@ All three layers launched before triage. Parent read the final source and tests.
 Package-profile control observation before review patches: current3.131.0 Release/package build passes with0warnings/errors; all five new gateway tests pass. Four of six preexisting readiness cases fail because their CaptureHandler replaces the catalog invocation primary transport without configuring the SDK-owned redirect-disabled invocation transport (RouteCatalogUnavailableException), before their handler is invoked. Readiness registration is outside the changed gateway builder and the six source-mode controls already pass. Do not relabel this11-case receipt as green: /tmp/tenant-api-budget-published-31310-tests.xml records7pass/4fail/0skip. The unchanged upstreamca93 exact main CI41366387993 independently passes all six enabled jobs, including current/floor published HTTP, authenticated live routes and Aspire. Final new gateway cases will be rerun in both package profiles after the direct review patches; actual hosted source qualification remains mandatory.
 
 Final reviewed candidate is committed/pushed as 3a603db76f894c4ffacbae16683eb04f179d5f99. All three direct review corrections are applied and parent-read. Source owning API and test compile pass0warnings/errors; source gateway5/5 and readiness6/6 pass with0skips. Final Release/package builds pass0warnings/errors for current3.131.0 and floor3.129.0; gateway5/5 pass in each (42.401s/44.611s), including the restored actual handler order and monotonic near30second cancellation. Credential-free counts/log hashes are in release-evidence/tenant-api-query-local-verification-2026-11-02.json. Commit message preflight and hooks remain enabled. Actual fresh hosted source/main/root qualification is pending; no release acceptance is inferred from local checks.
+
+Hosted run41370746958 at exact3a603db7 passes the complete v2/bootstrap/command prefix, all six REST reads and conditional metadata, actual Admin UI proxy/owner-read, refusal and persisted Redis assertions. The demonstrated first REST interruption is repaired. This run still fails the separate final zero-leases wait atline92 after120seconds; bounded attribution is release-evidence/tenant-zero-lease-runtime-attribution-2026-11-02.json and a separately scoped native-query/AdminApi transport repair is active. This closes the API client correction only; complete owner profile and final release remain unqualified.

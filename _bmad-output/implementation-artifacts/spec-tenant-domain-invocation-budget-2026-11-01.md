@@ -2,7 +2,7 @@
 title: 'Align the Tenants gateway invocation budget with native authority verification'
 type: 'fix'
 created: '2026-11-01'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 0
 baseline_commit: '6b034a2d3b70533024343e721c47ffdfd1830a10'
@@ -50,3 +50,7 @@ The source AppHost.Tests build passes with zero warnings/errors. Three offline p
 - Verification-gap reviewer — no gaps.
 
 Parent read both final hunks. All layers were launched before results were triaged. No code patch follows review; hosted exact-source qualification remains required.
+
+## Exact hosted qualification closure
+
+EventStorea82555477689e3e021c3c74bcab0ccfefd4ff307 completes all seven exact-source workflows successfully, including mainCI41360994832 and both actual published compatibility/live-sidecar Integration41360994325 jobs. Tenants3a32b8d74f954832dd8426f5b0151205a6be4e47 actual source41372568646 passes the complete cohort/bootstrap/command/persistence prefix, six REST and conditional reads, actual Admin UI proxy/owner read, refused descendant, persisted Redis tenant and zero outstanding leases. Its successful artifact is preserved in release-evidence/tenant-a825-owner-source-qualification-2026-11-02.json. Earlier failed evidence is retained; a later successful run does not erase the separately demonstrated premature10s native-query/AdminApi race, tracked in its own transport-budget spec. This closes this scoped functional repair only; final maintenance release remains pending its final source cut/publication. The standalone deployment-policy budget follow-up is resolved by preserved upstreamca93 and its tests.
