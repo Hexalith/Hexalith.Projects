@@ -2,7 +2,7 @@
 title: 'Prevent premature native-query and Admin UI attempts from retaining successful catalog work'
 type: 'fix'
 created: '2026-11-02'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 0
 baseline_commit: 'a82555477689e3e021c3c74bcab0ccfefd4ff307'
@@ -71,3 +71,7 @@ Both accepted test corrections are applied. Actual named-query target-circuit te
 Nonoverlapping upstreamEventbb1e93c57 PR382 is preserved via clean fast-forward, including bounded terminal-refusal guards and npm tooling; initial baselinea825 remains recorded. The combined latest source Server build and UI build pass0warnings/errors. Parent172query/terminal-refusal/workload/privacy cases and15Admin cases pass0skips. Actual staged-content scanner initially flags a synthetic sidecar literal; replacing both fixture occurrences with explicit[redacted] preserves header checks, final Admin6/6 and tracked-content1/1 pass, scanner unchanged. Final owning build0warnings/errors. Credential-free counts/hashes are native-query-admin-local-verification-2026-11-02.json.
 
 EventStore0ace1545c433bf234f54cef3a57ac77d62b4175f is committed/pushed with staged-file guard and commitlint active. Tenants2d5bd1637eb54b30a161c9ecb42716abd2ef93aa advances only its exact EventStore gitlink without initializing its nested checkout, preserving upstream caller-credential fix3a32. New exact owner main/Integration/source qualification and final rootCI remain mandatory.
+
+## Exact hosted owner qualification
+
+Tenants2d5bd163 actualsource41375123127 succeeds at exactEventStore0ace1545c433bf234f54cef3a57ac77d62b4175f. Its real result records owned bootstrap terminal/projected membership, completed persisted command, six REST and conditional reads, actual Admin UI proxy/selected owner read, refused descendant, persisted Redis tenant and zero outstanding leases. Fresh artifact was downloaded and all required fields asserted; final release evidence contains tenants-final-owner-source.json. This closes the demonstrated transport race without clearing retained ambiguity or changing caller/native/test bounds. Final rootCI and public release remain separately pending.

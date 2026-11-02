@@ -1,0 +1,55 @@
+{
+  "observedAtUtc": "2026-11-02T02:07:03.958571+00:00",
+  "tenantsSource": "2d5bd1637eb54b30a161c9ecb42716abd2ef93aa",
+  "sourceRun": 41375123127,
+  "workflowConclusion": "success",
+  "result": {
+    "sdkSource": "0ace1545c433bf234f54cef3a57ac77d62b4175f",
+    "sdkProducerVersion": "3.131.0",
+    "AttemptId": "7581610a0a1240fab2f3eb522b778ac2",
+    "RootDigest": "f43e77e842ba1fb985905916d7e990e8f56f276d860f0bea3de521c243cbd6c8",
+    "activationBindingDigest": "1355538bf6ad2ba9923e8f506fd922d3058342ab28f91f5c91df65f377f83394",
+    "Epoch": 1,
+    "generation": 1,
+    "requiredHosts": [
+      {
+        "HostId": "eventstore",
+        "AppId": "eventstore",
+        "InventoryDigest": "91a500188dccec81d491aa914ee763f09e0ce2632d7c35edee918a4563319c80",
+        "TopologyDigest": "dfeafeb843e5045d9dd608bf692de39045a92b5e0d1254c20cc744e3ae547852",
+        "AuthenticationFingerprint": "e920efef83d474ff1e5b4dca2a84f5b704523a5cc48486b819b5be970f47dbc0"
+      },
+      {
+        "HostId": "eventstore-admin",
+        "AppId": "eventstore-admin",
+        "InventoryDigest": "5efbffdd4f8f33c4922639e5d7247ce82e9cd2e43991675492e7b33e5a426e86",
+        "TopologyDigest": "a49443e084619de47b8f2f4b52eb276a0a7b3267a2812c47e33acfae3ae7bfbe",
+        "AuthenticationFingerprint": "5daec429a81d37b3ca0997e9038a793ebbb032c19ea1d0332bfef3f4bc764298"
+      },
+      {
+        "HostId": "tenants",
+        "AppId": "tenants",
+        "InventoryDigest": "fa35615fd4ce596d0d241696e8016d93ceb128890c94477bc3f3b11ad6a4c357",
+        "TopologyDigest": "4b82f8200e399af9457bffd2b7e61584c9b89dd061bb67d82fcdc6b2e8b57a3b",
+        "AuthenticationFingerprint": "8263c2460d927590a66ac33e470c4fd44b193e151694412cc627af003b728abc",
+        "ExecutableDigest": "41e4e5c50dae1e3d4de6196779872ab84114a3995414fb258b85614d3c227f83"
+      },
+      {
+        "HostId": "tenants-api",
+        "AppId": "tenants-api",
+        "InventoryDigest": "92086b054305957464ff5d8f9867c0b4c3ffb8ab586fca6a0433878199230cc6",
+        "TopologyDigest": "a40b3adf48f93220a27694999c019e0abbd908def581353be4f73359fdde77e9",
+        "AuthenticationFingerprint": "c3db56875bd17aa646f91c23c52e4c52faca028574659b29554fb240601f3694"
+      }
+    ],
+    "operations": 22,
+    "ownedBootstrapTerminalAndProjectedMembership": true,
+    "realRestReads": 6,
+    "conditionalRead": true,
+    "actualAdminUiProxyAndOwnerRead": true,
+    "refusedDescendant": true,
+    "persistedTenant": true,
+    "outstandingLeases": 0
+  },
+  "qualificationComplete": true
+}
