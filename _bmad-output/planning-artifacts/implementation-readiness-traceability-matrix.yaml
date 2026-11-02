@@ -22,12 +22,13 @@ sources:
   course_correction_readiness_rerun_3: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-3.md
   course_correction_post_p1r: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03.md
   course_correction_g4_p0: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-03-g4-p0.md
+  entry_gate_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01.md
   course_correction_e31: _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md
 
 # ── Validation contract (AD-30) ──────────────────────────────────────────────
 validation:
   command: "dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml"
-  tool_status: published-stale-pin-not-supported   # Version 4.23.0 is remotely published from Builds release revision 7ac2849d79e603b88c7cb76e178cd2ba106eaf00 but embeds EventStore 3.70.1; no accepted Projects consumer pin, supported composition, P0 acceptance validator, persisted qualification, or owner acceptance exists. Until independent P0 acceptance, rows MUST NOT be `passed`.
+  tool_status: published-stale-pin-not-supported   # Version 4.23.0 is remotely published from Builds release revision 7ac2849d79e603b88c7cb76e178cd2ba106eaf00 but embeds EventStore 3.70.1; no accepted Projects consumer pin, supported composition, P0 acceptance validator, persisted qualification, or owner acceptance exists. Full G-4/release qualification remains unaccepted; 6.1 feature rows use the explicit Development overrides below and require actual feature evidence.
   rejects:
     - duplicate-key
     - missing-required-key
@@ -56,11 +57,11 @@ status_legend:
 # ── Containment ──────────────────────────────────────────────────────────────
 containment:
   overall_readiness: "NOT READY (2026-08-02 implementation-readiness rerun 4; 2026-07-17 READY remains historical planning-layer authorization only)"
-  freeze: "The approved internal corrections are reconciled, but production-authority implementation remains blocked by the exact sequence 6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3 -> authorized Solution Architect sign-off on the exact corrected baseline -> 6.1-P4 exact clean-checkout acceptance -> Story 6.1 specification readiness -> independent implementation-readiness result exactly READY -> Story 6.1 may become ready-for-dev; historical 6.1-P1 remains a satisfied input only"
+  freeze: "Broader historical NOT READY remains; approved 2026-11-02 E1-E7 permits 6.1 focused capability/spec readiness and 6.5 after accepted 6.1-6.4 plus usable FrontComposer authentication/current-Tenant/per-circuit credentials and DW-1 done. P0/P1R-remediation/P2/P3 remain open under Epic 8; P4 superseded. 6.7 retains exhaustive legacy equivalence and reversible routing; Epic 7 writer and Epic 8 qualification/release obligations remain."
   release_block: "production + consequential MCP confirmation by a human actor + MCP Selection Evidence + proposed-Project confirmation on MCP blocked until row 'release-stakeholder-acceptance' (Story 8.11) passes with dated Jerome + John acceptance together with §9 A-7; autonomous MCP confirmation stays excluded"
   open_triggers:
-    - "Story 6.1: 6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3 -> authorized Solution Architect sign-off on the exact corrected baseline -> 6.1-P4 exact clean-checkout acceptance -> Story 6.1 specification readiness -> independent implementation-readiness result exactly READY -> Story 6.1 may become ready-for-dev; external owners and target dates remain uncommitted"
-    - "6.1-P1R: the pending multi-coordinate candidate separates EventStore source checkout 7854f8e51ce9b852bb6c3cac6012670122e93792 (v3.89.0-9-g7854f8e5) from package tag/revision v3.89.0/c590590bc581a3f72ef6e67148eda988ba4b8fe6; the Builds catalog selects 3.89.0 from 10af541e7b2a5a4664be37c9495930844e0954a8, current runner source remains the superseded unaccepted 3.88.0 candidate at observed Builds 7bdbd293991985d150dfca62f77709e61152de76, published G-4 4.23.0 from 7ac2849d79e603b88c7cb76e178cd2ba106eaf00 embeds 3.70.1, and Architecture/rollback remain 3.70.1; owner selection, atomic alignment, clean qualification, executable rollback, immutable accepted revisions, and four-owner acceptance are unresolved"
+    - "Story 6.1: usable supported SDK query/projection/store/cursor behavior + real fail-closed authenticated actor/Folder authority -> focused spec readiness -> finishing/review and actual feature acceptance; no release acceptance inferred"
+    - "Historical 2026-08-03 6.1-P1R observation (current exact accepted record and false usability remain in sprint-status): the pending multi-coordinate candidate separates EventStore source checkout 7854f8e51ce9b852bb6c3cac6012670122e93792 (v3.89.0-9-g7854f8e5) from package tag/revision v3.89.0/c590590bc581a3f72ef6e67148eda988ba4b8fe6; the Builds catalog selects 3.89.0 from 10af541e7b2a5a4664be37c9495930844e0954a8, current runner source remains the superseded unaccepted 3.88.0 candidate at observed Builds 7bdbd293991985d150dfca62f77709e61152de76, published G-4 4.23.0 from 7ac2849d79e603b88c7cb76e178cd2ba106eaf00 embeds 3.70.1, and Architecture/rollback remain 3.70.1; owner selection, atomic alignment, clean qualification, executable rollback, immutable accepted revisions, and four-owner acceptance are unresolved"
     - "6.1-P0: Builds is observed at 7bdbd293991985d150dfca62f77709e61152de76; manifest, module-run-evidence, and readiness-validator foundations are implemented but unaccepted; the P0 acceptance validator and supported composition are not implemented; persisted qualification is not run; published 4.23.0 tools are stale-pin/not-supported; the Projects consumer pin and owner acceptance are absent; P0 remains open and externally in progress behind P1R and its G-6 qualification dependency"
     - "E-6: live E2E 19 passed / 56 failed (row release-smoke / release-e2e)"
     - "E-7: 9 P1 + 7 P2 audit findings (finding-* rows)"
@@ -106,14 +107,16 @@ rows:
     user_journeys: [UJ-1]
     primary_story: "6.1"
     supporting_stories: []
-    entry_gates: ["6.1-P0", "6.1-P1", "6.1-P1R", "6.1-P2", "6.1-P3", "6.1-P4"]
+    entry_gates: [usable-supported-sdk-reads, authenticated-actor-folder-authority, focused-story-spec-readiness]
+    environment: "Existing controlled Development composition with real JWT validation, workload assertions, owner handlers and persisted storage; individual Debug/source test projects; no production enrollment claim"
+    pinned_revision: "Record Projects and directly used dependency commits with actual feature results; 2026-11-02 focused source readiness at Projects 710c992fe703878f20732044584c97757d6dad05; this inspection is not feature acceptance"
     fixture: epic6/6.1-authorized-reads
-    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.1"
-    evidence_artifact: evidence/epic6/6.1-authorized-reads.trx
+    verification_command: "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 python3 tools/qualification/run_supported_project_reads.py --regressions --timeout 900"
+    evidence_artifact: evidence/epic6/6.1-authorized-reads.xml
     estimate: M
-    status: blocked-external
-    blocker: "6.1-P0, P1R, P2..P4 (historical P1 normalized 3.70.1 on 2026-07-18; post-P1 Builds candidate drift is unresolved): G-4 runner and acceptance record, exact revalidated baseline, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record"
-    notes: "Planning coverage is complete; Story 6.1 implementation remains non-startable."
+    status: pending
+    blocker: "Feature acceptance outstanding; inspect available actual receipts and run relevant missing coverage. No identified capability blocker in the focused readiness inspection."
+    notes: "Approved E1-E7 applied 2026-11-02. Security, current Folder-before-paging, safe denial, inspection audit, AD-32, quarantine, scoped cursors and persisted no-domain-write/replay/restart remain mandatory. At feature acceptance retain actual distributed.xml at evidence/epic6/6.1-authorized-reads.xml and keep its original run.json, matrix.json, integration.xml and server.xml together under evidence/epic6/6.1-authorized-reads/, recording original receipt locations and tested commits. These are retention destinations, not new receipts or execution claims. Historical results are not rerun or passed here; exhaustive equivalence is 6.7, qualification is Epic 8."
   - key: fr-3
     category: fr
     ids: [FR-3]
@@ -151,14 +154,16 @@ rows:
     architecture_decisions: [AD-14, AD-19, AD-20, AD-27]
     primary_story: "6.1"
     supporting_stories: []
-    entry_gates: ["6.1-P0", "6.1-P1", "6.1-P1R", "6.1-P2", "6.1-P3", "6.1-P4"]
+    entry_gates: [usable-supported-sdk-reads, authenticated-actor-folder-authority, focused-story-spec-readiness]
+    environment: "Existing controlled Development composition with real JWT validation, workload assertions, owner handlers and persisted storage; individual Debug/source test projects; no production enrollment claim"
+    pinned_revision: "Record Projects and directly used dependency commits with actual feature results; 2026-11-02 focused source readiness at Projects 710c992fe703878f20732044584c97757d6dad05; this inspection is not feature acceptance"
     fixture: epic6/6.1-authorized-reads
-    verification_command: "dotnet tool run hexalith-module test --profile reads --filter Story=6.1"
-    evidence_artifact: evidence/epic6/6.1-authorized-reads.trx
+    verification_command: "MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 python3 tools/qualification/run_supported_project_reads.py --regressions --timeout 900"
+    evidence_artifact: evidence/epic6/6.1-authorized-reads.xml
     estimate: M
-    status: blocked-external
-    blocker: "6.1-P0, P1R, P2..P4 (historical P1 normalized 3.70.1 on 2026-07-18; post-P1 Builds candidate drift is unresolved): G-4 runner and acceptance record, exact revalidated baseline, dual-principal identity, safe denial, global watermark, production auth contract, and accepted gate record"
-    notes: "Planning coverage is complete; Story 6.1 implementation remains non-startable."
+    status: pending
+    blocker: "Feature acceptance outstanding; inspect available actual receipts and run relevant missing coverage. No identified capability blocker in the focused readiness inspection."
+    notes: "Approved E1-E7 applied 2026-11-02. Security, current Folder-before-paging, safe denial, inspection audit, AD-32, quarantine, scoped cursors and persisted no-domain-write/replay/restart remain mandatory. At feature acceptance retain actual distributed.xml at evidence/epic6/6.1-authorized-reads.xml and keep its original run.json, matrix.json, integration.xml and server.xml together under evidence/epic6/6.1-authorized-reads/, recording original receipt locations and tested commits. These are retention destinations, not new receipts or execution claims. Historical results are not rerun or passed here; exhaustive equivalence is 6.7, qualification is Epic 8."
   - key: fr-6
     category: fr
     ids: [FR-6]
@@ -389,13 +394,20 @@ rows:
     primary_story: "6.5 / 6.6"
     supporting_stories: ["8.1", "8.3", "8.4", "8.5"]
     entry_gates: [Epic-6-gate, G-3, G-5]
+    environment: "6.5: existing controlled Development FrontComposer server-authenticated current-Tenant/per-circuit credential composition, individual Debug/source UI and topology tests and managed live-browser route; 6.6: unchanged deterministic persisted-boundary fixture on the G-4 platform composition runner. Release qualification unchanged."
     fixture: epic6/read-surfaces
-    verification_command: "dotnet tool run hexalith-module test --profile web-reads,cli-reads --filter Story=6.5|6.6"
+    verification_command: |
+      mkdir -p evidence/epic6
+      dotnet build tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj --configuration Debug
+      dotnet tests/Hexalith.Projects.UI.Tests/bin/Debug/net10.0/Hexalith.Projects.UI.Tests.dll -xml evidence/epic6/6.5-ui.xml
+      dotnet build tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --configuration Debug
+      dotnet tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll -class '*AspireTopologyTests' -xml evidence/epic6/6.5-topology.xml
+      npm --prefix tests/e2e run test:live:managed
     evidence_artifact: evidence/epic6/read-surfaces.trx
     estimate: L
     status: blocked-external
     blocker: "G-3 FrontComposer adapters + G-5 identity; the Story 8.3 maintenance contribution additionally requires accepted immutable 8.3-P1/P2/P3 packages"
-    notes: "Stories 6.5/6.6 deliver inventory/detail/health/current-trace reads only. Story 8.1 owns first production audit truth and later enables the Web audit timeline and CLI audit command without a backward dependency. Story 8.3 consumes evidence/epic8/8.3-p1-foundation-manifest.json, evidence/epic8/8.3-p2-lifecycle-manifest.json, and evidence/epic8/8.3-p3-association-manifest.json; those component packages do not substitute for full authenticated NFR-9 release evidence."
+    notes: "6.5 remains blocked behind accepted 6.1-6.4, usable FrontComposer authentication/current-Tenant/per-circuit relay and DW-1 done. Its G-3/G-5 feature contribution requires the actual usable authentication/authority capability, not common-runner publication or live production enrollment. Future verification retains nonempty native evidence/epic6/6.5-ui.xml and evidence/epic6/6.5-topology.xml plus actual tests/e2e/test-results/junit.xml and tests/e2e/playwright-report/index.html through the existing managed browser route; no new receipts or execution are claimed here. The separate 6.6 command remains dotnet tool run hexalith-module test --profile cli-reads --filter Story=6.6; its CLI gates/evidence and full deployed release qualification remain unchanged. This row combines FR-22 contributions, not an instruction to wait for CLI before completing 6.5. Stories 6.5/6.6 deliver inventory/detail/health/current-trace reads only. Story 8.1 owns first production audit truth and later enables the Web audit timeline and CLI audit command without a backward dependency. Story 8.3 consumes evidence/epic8/8.3-p1-foundation-manifest.json, evidence/epic8/8.3-p2-lifecycle-manifest.json, and evidence/epic8/8.3-p3-association-manifest.json; those component packages do not substitute for full authenticated NFR-9 release evidence."
   - key: fr-23
     category: fr
     ids: [FR-23]
@@ -449,14 +461,14 @@ rows:
     architecture_decisions: [AD-11, AD-13, AD-20]
     primary_story: "8.8"
     supporting_stories: ["6.1", "6.5", "7.1"]
-    entry_gates: [Epic-8-gate, G-5, "6.1-P2", "6.1-P3", "6.1-P4", "8.8-P1"]
+    entry_gates: [Epic-8-gate, G-5, "6.1-P2", "6.1-P3", "8.8-P1"]
     fixture: epic8/8.8-P1-authenticated-security
     verification_command: "dotnet tool run hexalith-module test --profile e2e-auth --filter Package=8.8-P1"
     evidence_artifact: evidence/epic8/8.8-P1-security.trx
     estimate: S
     status: blocked-external
-    blocker: "8.8-P1 acceptance; G-5 identity; authenticated live topology; Story 6.1 P2/P3/P4 query-safety and production-auth acceptance"
-    notes: "Story 8.8 performs only integrated manifest and critical-case validation after the package passes."
+    blocker: "Epic 8 release qualification: 8.8-P1, G-5 identity/enrollment and full P2/P3 platform evidence remain open. 6.1/6.5 feature security proof uses the bounded Development exception and is not gated on this release row."
+    notes: "Story 8.8 integrates accepted package manifests. Actual actor/Folder authority, safe denial and inspection-audit defects still block the selected read path; broader release qualification is separate."
   - key: nfr-2
     category: nfr
     ids: [NFR-2]
@@ -507,13 +519,13 @@ rows:
     architecture_decisions: [AD-14, AD-15, AD-27]
     primary_story: "8.9"
     supporting_stories: ["6.1", "6.7"]
-    entry_gates: [Epic-8-gate, "6.1-P0", "6.1-P1", "6.1-P1R", "6.1-P2", "6.1-P4"]
+    entry_gates: [Epic-8-gate, "6.1-P0", "6.1-P1", "6.1-P1R", "6.1-P2"]
     fixture: epic8/8.9-performance
     verification_command: "dotnet tool run hexalith-module test --profile perf --filter Story=8.9"
     evidence_artifact: evidence/epic8/8.9-performance.json
     estimate: L
     status: blocked-external
-    blocker: "Story 6.1 P0/P1R/P2/P4 runner, revalidated baseline, watermark, machine-checkable acceptance, and accepted persisted-read evidence (historical P1 normalized 3.70.1 on 2026-07-18); final scale gate remains Story 8.9"
+    blocker: "Epic 8 scale/back-pressure and package/runner qualification remain open for 8.9. 6.1 proves bounded paging and reports observed measurements using the existing lane; no 10k/p95 release claim or feature entry dependency follows from this row."
   - key: nfr-6
     category: nfr
     ids: [NFR-6]
@@ -575,13 +587,13 @@ rows:
     architecture_decisions: [AD-6, AD-16, AD-17, AD-22]
     primary_story: "6.7"
     supporting_stories: ["6.1", "7.15", "8.7"]
-    entry_gates: [Epic-6-gate, "6.1-P1", "6.1-P1R", "6.1-P4"]
+    entry_gates: [Epic-6-gate, "6.1-P1", "6.1-P1R"]
     fixture: epic6/6.7-read-cutover
     verification_command: "dotnet tool run hexalith-module test --profile read-cutover --filter Story=6.7"
     evidence_artifact: evidence/epic6/6.7-read-cutover.json
     estimate: L
     status: blocked-external
-    blocker: "Historical 6.1-P1 version/source normalization completed on EventStore 3.70.1 (2026-07-18); post-P1 P1R revalidation and 6.1-P4 entry-gate acceptance remain pending; final cutover gate remains Story 6.7"
+    blocker: "6.7 must consume supported list/open output and existing comparator, prove exhaustive legacy output/key/watermark/cursor equivalence with finite approved normalization, consumer compatibility and reversible routing; Epic 8 retains package/rollback qualification. 6.1 only requires additive compatibility and retained routing."
   - key: nfr-11
     category: nfr
     ids: [NFR-11]

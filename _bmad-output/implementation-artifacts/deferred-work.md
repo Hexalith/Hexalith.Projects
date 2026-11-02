@@ -3,11 +3,12 @@
 ### DW-1: Deliver and accept Story 6.5 supported-read prerequisites
 
 origin: bmad-loop-resolve for spec-6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface.md, 2026-08-25
-location: _bmad-output/implementation-artifacts/spec-6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface.md:31
+location: _bmad-output/implementation-artifacts/spec-6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface.md
 severity: critical
-reason: Story 6.5 must not dispatch until its prerequisite record pins accepted Story 6.1–6.4 supported contracts, read models, projections, handlers, identity inputs, and executable G-4 profiles. Close this entry only after every artifact required by the frozen prerequisite gate exists and is accepted; legacy REST and planning-only artifacts never satisfy the gate.
+reason: Story 6.5 consumes accepted 6.1–6.4 contracts and supported handlers plus FrontComposer server authentication, current-Tenant and per-circuit gateway credentials. Record accepting commits and test references here and in ordinary story prerequisites; close only when those inputs exist and are usable, then run focused 6.5 readiness. Anonymous UI, token bleed, absent read contracts, substituted legacy REST or missing owner authority block dispatch. Common-runner publication, package/rollback qualification, live production enrollment and a second immutable hash inventory are not dispatch requirements.
 status: open
-reopened: 2026-10-06 The 2026-09-06 closure was orchestrator bookkeeping, recorded as not proof by the Story 6.5 spec on 2026-09-06 (`8bc91b2`). `prerequisite_record` remains null and Stories 6.1 and 6.4 are blocked, so the closure condition is unmet. Approved by sprint-change-proposal-2026-10-06-epic-6-tracking-reconciliation.md.
+reopened: 2026-10-06 The 2026-09-06 closure was orchestrator bookkeeping, not delivery proof. Story 6.1 remains unaccepted; Story 6.4 is now done. The former null prerequisite_record/hash/G-4 ceremony is superseded by Jerome-approved E4 of sprint-change-proposal-2026-11-01.md, applied 2026-11-02; original 2026-10-06 reopening remains valid.
+acceptance_references: pending actual Story 6.1 acceptance and usable FrontComposer authentication/current-Tenant/per-circuit relay evidence; 6.2–6.4 retain their existing accepted records.
 gate: 6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface
 
 ### DW-2: Correct the Hexalith.AI.Tools agent entrypoints to reference `hexalith-git-instructions.md` instead of the absent `hexalith-commit-instructions.md`.

@@ -427,3 +427,7 @@ implementation is complete, owner acceptance is blocked, and Story 6.1 remains
 blocked. The generic Build terminal done/sprint-sync/commit actions were not
 applied because the recorded local authorization excludes acceptance transitions
 and staging/committing, and existing user-owned changes must be preserved.
+
+## Current qualification routing — approved 2026-11-02
+
+Under Jerome-approved E3 of [the November 1 proposal](../planning-artifacts/sprint-change-proposal-2026-11-01.md), this stable work-package ID remains open and belongs to Epic 8. Identity/Platform retain production configuration, live enrollment and qualification for 8.8/8.11-P1/P2. Local fail-closed host behavior and real authenticated fixture proof remain mandatory in 6.1; security configuration semantics are unchanged. The earlier dated Story 6.1/P4/READY blocking language is historical scheduling context, superseded only for 6.1/6.5 by E1–E7. P4 is superseded, not accepted. Actual defects in the selected read/security path still block that path. The historical/frozen technical proof intent and evidence remain unchanged; this routing grants no publication or owning-repository edit authority and sends no external notification.

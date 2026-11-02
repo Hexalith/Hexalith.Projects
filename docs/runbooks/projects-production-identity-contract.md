@@ -220,3 +220,7 @@ Before deployment, the accountable owners must record the exact accepted
 Projects/EventStore/Builds revisions, package versions, deployment configuration
 revision, secret references, rollback trigger, and executable restore procedure.
 The prior historical pin and local passing tests cannot supply that approval.
+
+## Feature proof and production enrollment — 2026-11-02
+
+[Approved E1–E7](../../_bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01.md) separates the existing controlled authenticated Development proof from deployed identity enrollment. All fail-closed configuration, Tenant/original actor/workload/delegation, audience/scope, signer/receiver and expiry/skew rules above remain binding. 6.1 must prove its real gateway → Projects → Folders authority and persisted inspection-audit behavior; a service-only grant or allow stub cannot substitute. Production signer custody, protected credentials, live grants/enrollment and operational rollback remain open under Epic 8's P3/8.8/8.11-P1/P2. They are not feature dispatch prerequisites. P4 is superseded; no local run grants production trust, package acceptance or READY.

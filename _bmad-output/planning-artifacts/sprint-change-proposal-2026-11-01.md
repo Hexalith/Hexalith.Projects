@@ -1,10 +1,10 @@
 ---
 title: 'Simplify the Epic 6 entry gate for authenticated Project list/open'
 date: '2026-11-01'
-status: 'proposed-awaiting-approval'
+status: 'applied'
 change_scope: 'moderate: bounded development exception, backlog routing, and scheduling guard/tests'
 mode: 'batch'
-approval: 'pending; this document does not apply the proposed changes'
+approval: 'Jerome approved E1-E7 in this conversation on 2026-11-02; applied on 2026-11-02'
 related_proposal: 'sprint-change-proposal-2026-11-01-close-story-6-4.md'
 ---
 
@@ -162,7 +162,7 @@ For DW-1 and the 6.5 frozen Prerequisite Gate, explicitly renegotiate only the g
 
 Remove `prerequisite_record: null` and its separate schema/hash ceremony from the active spec; replace references in its matrix, AC1 and Auto Run Result with the ordinary prerequisite/evidence references. Keep DW-1 open in this application; Story 6.1 has not been accepted by this proposal. Correct its obsolete sentence that 6.4 is blocked to the current completed status. Preserve the rest of the ledger and concurrent changes.
 
-**Never run `sprint_plan.py` to write or regenerate `sprint-status.yaml`.** Prepare targeted manual edits and validate the candidate artifact set with the updated guard before replacing active files.
+**Never run `sprint_plan.py` to write or regenerate `sprint-status.yaml`.** Its stock read/validate action-status enum also does not understand `superseded`; use the existing `validate_production_authority.py --validate-index` guard plus direct/manual YAML inspection as the supported read-only alternative. Do not edit installed sprint-planning skills. Prepare targeted manual edits and validate the candidate artifact set with the updated guard before replacing active files.
 
 **Rationale:** remove the inherited process chain without admitting a Web adapter before its real dependencies.
 
@@ -270,10 +270,36 @@ Do not supply a reused evidence directory. Inspect actual XML, matrix and cleanu
 | 4.1–4.4 Options and recommendation | [x] Direct adjustment selected; rollback and MVP cuts rejected with reasons. |
 | 5.1–5.5 Proposal components and ownership | [x] Issue, impact, before/after edits, effort/risk and handoff documented. |
 | 6.1–6.2 Checklist and proposal consistency | [x] Qualification is moved without granting acceptance; actual security and persisted proof retained. |
-| 6.3 Approval | [!] Pending Jerome's explicit approval of E1–E7. |
-| 6.4 Tracking updates | [!] Proposed only; apply manually with matching guard/tests after approval. |
-| 6.5 Handoff | [x] Responsibilities and success criteria documented; implementation dispatch awaits approval. |
+| 6.3 Approval | [x] Jerome approved E1–E7 on 2026-11-02; no further approval round required. |
+| 6.4 Tracking updates | [x] Applied manual candidate-validated sprint/ledger edits together with guard/tests; P4 superseded, qualification routed to Epic 8. |
+| 6.5 Handoff | [x] Entry correction applied and verified; feature finishing/review and separate qualification owners retain the handoff below. |
 
 **Validation performed for this proposal:** current `python3 tools/planning/validate_production_authority.py --validate-index` passed; `python3 -m unittest discover -s tests/tools -p test_production_authority_guard.py` passed all 37 tests. This confirms the existing boundary, not the proposed one.
 
-**Workflow execution log:** customization resolved successfully with empty prepend/append/facts/on-complete; repository baseline and required PRD/Epics plus Architecture/UX/context inspected; trigger supplied by Jerome; batch used pending any preference correction. Only this proposal is written. E1–E7, runtime verification and status transitions remain unapplied pending approval.
+**Historical proposal workflow execution log (2026-11-01):** customization resolved successfully with empty prepend/append/facts/on-complete; repository baseline and required PRD/Epics plus Architecture/UX/context inspected; trigger supplied by Jerome; batch used pending any preference correction. Only this proposal is written. E1–E7, runtime verification and status transitions remain unapplied pending approval.
+
+## 7. Approved application — 2026-11-02
+
+Jerome approved E1–E7 in this conversation. Applied against Projects `710c992fe703878f20732044584c97757d6dad05`, preserving the release/package repairs already landed there. The moderate correction changes the scheduling guard/tests and active planning/tracking instructions only. No runtime, dependency, submodule, sealed evidence or historical frozen proof intent was changed. No Git index mutation, branch, commit, push, external notification, whole-platform run or `sprint_plan.py` writer was used.
+
+### Applied artifacts
+
+- Guard and regression suite: `tools/planning/validate_production_authority.py`, `tests/tools/test_production_authority_guard.py`; exact finite 6.1/6.5 statuses, dependency-aware DW-1/6.5 validation, exact Epic 8 action ownership, superseded P4 and unchanged historical acceptance controls.
+- Epics, Epic 6 context, current 6.1 story/spec and 6.5 prerequisite gate; the old 6.1 Auto Run Result is explicitly superseded and the historical 6.5 gate record retained as history. Focused 6.1 source/seam/command readiness is recorded in the current story, ready-for-dev to finish/review; no feature acceptance is claimed.
+- Manually prepared `sprint-status.yaml`, latest `deferred-work.md` (DW-1 only), P0 routing and P0/P1R-remediation/P2/P3 handoff notes. P1/P1R, false current usability, guarded P0 capability/stages and fixed acceptance JSON remain intact. DW-1 is open and 6.5 blocked; every non-excepted story/epic status is preserved.
+- PRD §2.3/§2.5 and addendum E-35/supersession, Architecture AD-25/AD-30/Stack, project context, traceability YAML/Markdown (FR-2/FR-5 pending, NFR-1/5/10 nonpassing release/cutover scope), Epic 6 test design, supported-read acceptance note and production-identity runbook.
+
+### Actual application validation
+
+- `python3 -m unittest discover -s tests/tools -p test_production_authority_guard.py`: **46 tests passed** after review repairs, nonempty executed results (12.862 seconds). Full-snapshot positive/negative controls cover approved 6.1 progression, accepted 6.1–6.4/DW-1-gated 6.5 progression, incomplete/missing read dependencies, missing/renamed/duplicate/invalid scheduling keys/statuses, wrong routed action owner/status, false P4 completion, usability/NOT_READY/P0 and historical tuple/role/atomicity boundaries. Historical open and accepted P1R fixtures both pass their permitted paths. Conflicting quoted/commented/indented DW-1 status fields fail full snapshot validation. Approved progression tuples are independent of guard constants; an in-memory mutation deleting review is rejected by both positive progression tests (two expected failures). Only this focused guard test file and those mutation controls were run for the review fixes; no wider verification or live/.NET/browser lane ran.
+- Complete candidate workspace: `/tmp/epic6-entry-candidate-h6pk243q`. Prepared by targeted manual edits with the latest ledger, P0 handoff and unchanged fixed-path `6-1-p1r-acceptance.json`. Candidate and active `--validate-index`, `--story-id 6.1` and `--story-id 6.5` all exit 0. Every candidate invocation supplied `--sprint-status`, `--deferred-work`, `--p0-artifact` and `--workspace-root` together. Authority success does not accept the feature or dispatch blocked 6.5.
+- `python3 tools/qualification/run_supported_project_reads.py --help`: exit 0; source inspection confirmed existing SDK handlers/projection/store/cursor, authenticated actor/Folder gateway composition, durable inspection audit and actual Server/Integration matrices. No .NET/live test result is claimed. October 27 counts remain historical receipts to inspect at their recorded revision; missing underlying artifacts or uncovered criteria require relevant verification before feature done.
+- Strict YAML/frontmatter checks (including the existing P0 explicit guarded-field parser), added local-link resolution, cross-artifact routing/status comparison and `git diff --check` pass. Protected comparison against HEAD confirms every development status except 6.1 unchanged, historical inventory/NOT_READY and qualification data unchanged, fixed acceptance JSON byte-identical, and all deferred entries after DW-1 unchanged. No full-plan READY, published-package acceptance or production trust is inferred.
+
+### Remaining feature and qualification handoff
+
+Finish/review 6.1 against its revised ACs: inspect available real XML/report receipts and coverage, run relevant missing evidence with the existing Development lane, then record tested Projects/direct dependency commits, exact commands and pass/fail/skip totals before accepting done. Only then assess usable 6.5 prerequisites, close DW-1 with ordinary accepting-commit/test references and perform focused 6.5 readiness. Preserve 6.7 exhaustive approved equivalence/consumer compatibility/reversible routing, Epic 7 capable writer boundaries, and Epic 8's open publication/adoption, platform qualification, deployment/enrollment/KMS, rollback and terminal acceptance obligations. No external owner was notified.
+
+### Final review and independent verification — 2026-11-02
+
+The three review lenses completed. All twelve individual findings are resolved, with no deferred entries: strict DW-1 field counting, independent status-policy oracles, canonical receipt paths, a 6.5 verification path independent of the retained CLI obligation, current nested DTO allowlists, restricted quarantine disclosure, additive-event no-op classification, native XML/browser handoff, supported manual status inspection and rendered history tables. The parent independently reran all 46 guard tests, active index/story authority and protected-history/scope comparisons successfully. The exact final companion bundle at /tmp/epic6-entry-final-ct_y8bxn passes --validate-index and --story-id 6.1/6.5 with all four path options. The Git index is unchanged. No feature completion or live release/qualification acceptance was added.

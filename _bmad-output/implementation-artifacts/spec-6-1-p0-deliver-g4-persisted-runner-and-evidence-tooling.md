@@ -141,3 +141,7 @@ Projects `evidence/6-1-p0-20261001-preflight.json` beside this spec records the 
 - Run `Tools/test-g4-tool-package-contracts.ps1 -Version` with a unique local version and `-RequireControls`; use fresh output.
 - In the clean remote consumer, run `dotnet tool restore`, installed `hexalith-module test` with `full`/`full-mtp`, required negative controls, and repeated `down`.
 - Run `dotnet tool run hexalith-evidence validate evidence/g4/6.1-p0-acceptance.json`; require exit 0 and all blocking controls to fail as specified.
+
+## Current qualification routing — approved 2026-11-02
+
+Under Jerome-approved E3 of [the November 1 proposal](../planning-artifacts/sprint-change-proposal-2026-11-01.md), this stable work-package ID remains open and belongs to Epic 8. Builds/Platform retain publication/adoption/qualification for 8.7/8.11. No P0 stage, capability or owner acceptance advances. The earlier dated Story 6.1/P4/READY blocking language is historical scheduling context, superseded only for 6.1/6.5 by E1–E7. P4 is superseded, not accepted. Actual defects in the selected read/security path still block that path. The historical/frozen technical proof intent and evidence remain unchanged; this routing grants no publication or owning-repository edit authority and sends no external notification.

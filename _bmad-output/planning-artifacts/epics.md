@@ -11,8 +11,8 @@ reconciledAgainst:
 productionAuthority: 'Epics 6-8 (35 stories: 8/16/11) plus explicit prerequisite/evidence work-package ledgers'
 productionAuthoritySchedulingGuard: '_bmad-output/implementation-artifacts/sprint-status.yaml::production_authority_epics, enforced by tools/planning/validate_production_authority.py'
 planningReadinessGate: 'READY on 2026-07-17 for story-file creation and sprint reconciliation; completed'
-implementationReadiness: 'NOT READY on 2026-08-02 rerun 4; production-authority implementation remains blocked'
-implementationBlockedUntil: 'Story 6.1 prerequisites are accepted, Solution Architect conformance is signed against the exact current baseline, P4 passes from a clean checkout, its story specification passes readiness, and an independent rerun returns READY'
+implementationReadiness: 'Historical NOT READY retained; bounded 6.1/6.5 feature exception approved 2026-11-02'
+implementationBlockedUntil: 'Broader qualification remains contained; 6.1 uses supported-read and authenticated actor/Folder capability readiness; 6.5 additionally requires accepted 6.1-6.4 and usable FrontComposer auth/DW-1 done (approved E1-E7, 2026-11-02)'
 releaseBlockedUntil: 'Story 8.11 passes with dated Jerome + John acceptance'
 inputDocuments:
   - _bmad-output/planning-artifacts/prds/prd-Hexalith.Projects-2026-05-24/prd.md
@@ -40,6 +40,7 @@ inputDocuments:
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-09-08.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-10-02.md
   - _bmad-output/planning-artifacts/sprint-change-proposal-2026-10-06.md
+  - _bmad-output/planning-artifacts/sprint-change-proposal-2026-11-01.md
   - _bmad-output/planning-artifacts/research/domain-eventstore-persistence-for-hexalith-projects-module-data-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-folders-integration-research-2026-05-24.md
   - _bmad-output/planning-artifacts/research/technical-hexalith-projects-referencing-conversations-research-2026-05-24.md
@@ -58,6 +59,8 @@ backup: '_bmad-output/planning-artifacts/epics.md.pre-reconcile-2026-07-16.bak'
 **Approved McpCli course correction (2026-09-27).** Stories 5.10, 6.6, 8.4, and 8.5 are reconciled to `Hexalith.McpCli` as the shared CLI/MCP target. Only agent-eligible Projects operations enter the shared heads; they deny Selection Evidence and human-confirmation actions under Platform AD-14. Completed proprietary adapter evidence remains historical; McpCli Epic 5 owns inventory, conformance, and retirement.
 
 
+**Approved entry correction — 2026-11-02.** Jerome approved E1–E7 of [the November 1 proposal](sprint-change-proposal-2026-11-01.md). Story 6.1 uses usable supported SDK reads and a fail-closed authenticated Tenant/original actor/workload/delegation/Folder authority path, followed by focused spec readiness and recorded feature evidence. Story 6.5 additionally requires accepted 6.1–6.4 contracts/handlers, usable FrontComposer server authentication/current-Tenant/per-circuit credentials and DW-1 done. Publication, package/rollback qualification, production enrollment, P4 and global READY are not feature entry gates. Historical NOT_READY and current P1R usability false remain; P4 is superseded, not accepted. No feature completion is inferred. 6.7 owns exhaustive equivalence and reversible routing; Epic 7 retains writer safety and Epic 8 retains qualification/release acceptance.
+
 ## Overview
 
 This document provides the complete epic and story breakdown for Hexalith.Projects, decomposing the requirements from the PRD, the UX Design Specification, and the Architecture Decision Document into implementable stories.
@@ -70,7 +73,7 @@ Hexalith.Projects is a **tenant-aware AI workspace boundary module** built as a 
 
 _Source: final PRD §6–§8 + addendum (FR-1–FR-25). Each FR has testable consequences in the PRD; abbreviated here._
 
-> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-02 rerun 4 returned `NOT READY`; its approved internal planning-artifact corrections are applied here, and the 2026-09-08 PRD semantic revision is landed by E-31, but production-authority implementation remains blocked until Story 6.1's prerequisite chain is accepted, Solution Architect conformance is signed against the exact current baseline, P4 passes from an accepted clean checkout, the Story 6.1 specification passes readiness, and a superseding independent rerun returns exactly `READY`. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance. Consequential MCP confirmation by a human actor (and MCP Selection Evidence) stays disabled until Story 8.11 terminal acceptance together with §9 A-7; autonomous MCP confirmation stays out of scope (PRD §2.4). CLI confirmation depends on A-7 only.
+> **Production authority is Epics 6–8.** Epics 1–5 are completed implementation history and internal evidence, **not** current release authority. Every FR, NFR, P1/P2 finding, external gate, and release case maps to an AC-bearing story in Epics 6–8 (see the Corrective Production Plan) and a canonical AD-30 evidence row (`implementation-readiness-traceability-matrix.yaml`). The 2026-07-17 `READY` result authorized story-file creation and sprint reconciliation only. The 2026-08-02 rerun 4 returned `NOT READY`; its approved internal planning-artifact corrections are applied here, and the 2026-09-08 PRD semantic revision is landed by E-31, with broader qualification still contained; the approved 2026-11-02 bounded entry correction governs 6.1 and its 6.5 consumer. Production release stays blocked until Story 8.11 passes and Jerome + John record dated terminal acceptance. Consequential MCP confirmation by a human actor (and MCP Selection Evidence) stays disabled until Story 8.11 terminal acceptance together with §9 A-7; autonomous MCP confirmation stays out of scope (PRD §2.4). CLI confirmation depends on A-7 only.
 
 > **Machine-checkable scheduling guard:** `_bmad-output/implementation-artifacts/sprint-status.yaml` owns the authoritative `production_authority_epics: [6, 7, 8]` field. Before story creation, reopening, or scheduling, and before sprint reconciliation, `tools/planning/validate_production_authority.py` must pass. The validator permits current production work only for Epics 6–8 and rejects Epic 1–5 requests while preserving their readable `done` records. The required preflight is loaded by both workflows through `_bmad-output/project-context.md`; a nonzero result is a hard stop.
 
@@ -354,16 +357,13 @@ behavior completes in Epic 7, and all release evidence in Epic 8).
 Full AC-bearing detail is in the **Corrective Production Plan (Epics 6–8)** section below. The
 2026-07-17 `READY` result completed planning-layer authorization for story-file creation and sprint
 reconciliation. The 2026-08-02 rerun 4 returned `NOT READY`; its approved internal artifact
-corrections are applied here, but production-authority implementation remains blocked by this exact
-sequence:
+corrections remain historical. The approved 2026-11-02 exception replaces the 6.1/6.5 development sequence; broader qualification remains contained:
 
 ```text
-6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3
-          -> authorized Solution Architect sign-off on the exact corrected baseline
-          -> 6.1-P4 exact clean-checkout acceptance
-          -> Story 6.1 specification readiness
-          -> independent implementation-readiness result exactly READY
-          -> Story 6.1 may become ready-for-dev
+working SDK read path + working authenticated actor/Folder authority
+  -> ordinary focused story-spec readiness
+  -> finish/review 6.1 and accept its recorded feature evidence
+  -> 6.5 readiness against accepted 6.1-6.4 contracts + usable FrontComposer auth seam / DW-1 done
 ```
 
 ## Cross-Cutting Foundational Slices (Epic 1)
@@ -1267,9 +1267,7 @@ and evidence, **not** release authority.
 **Containment (binding).** The 2026-07-17 independent assessment returned `READY` for planning-layer
 story-file creation and sprint reconciliation. The 2026-08-01 independent assessment supersedes the
 implementation disposition with `NOT READY`. The approved 2026-08-01 artifact corrections are
-applied, but production-authority implementation does not begin until the Story 6.1 entry gate is
-accepted and executable from a clean checkout, its story specification passes readiness, and a
-superseding independent rerun returns exactly `READY`.
+applied. Broader qualification retains NOT_READY; the approved 2026-11-02 bounded exception allows 6.1/6.5 focused feature readiness without the old P0–P4/READY chain.
 Production release, consequential MCP confirmation by a human actor (and MCP Selection Evidence),
 and proposed-Project confirmation on MCP remain blocked until **Story 8.11** terminal acceptance
 together with §9 A-7. Autonomous MCP confirmation stays out of scope (PRD §2.4) and is never
@@ -1307,8 +1305,7 @@ owner disposition and passing focused runtime proof).
 `implementation-readiness-traceability-matrix.yaml` (schema `hexalith.readiness-evidence.v1`) with a
 matching Markdown view, authored/reconciled alongside these stories and gated by
 `dotnet tool run hexalith-evidence validate …` — a **target** gate; rows truthfully record the
-external blocker and may not be marked `passed` until the Builds/platform owner supplies the
-G-4 capability. Required row coverage: FR-1…25, NFR-1…11, all nine P1 and seven P2 audit findings,
+actual blocker and may not be marked `passed` without real covered evidence. FR-2/FR-5 use the existing Development lane under the approved exception; common-runner delivery and full release validation remain Builds/platform and Epic 8 obligations. Required row coverage: FR-1…25, NFR-1…11, all nine P1 and seven P2 audit findings,
 and every critical NFR-11/AD-30 release category.
 
 ## Epic 6: Chatbot and Operators Retrieve Authorized Project Truth
@@ -1320,46 +1317,27 @@ with reversible routing. This is the read/query side of the vertical slice; no c
 (those are Epic 7). It closes the read-side of ARCH-001/ARCH-002/API-001/CLIENT-001/ID-001 and
 establishes the identity, contract, and platform boundary every later epic depends on.
 
-**Epic 6 entry gate (prerequisite, not delivered value).** Every read story is blocked until its
-applicable external capabilities have an owner-approved repository-local revision, reproducible
-evidence, and rollback pin. The gate is an explicit dependency ledger rather than implementation
-work assigned to the first value story. The following applicability rules preserve every G-1…G-6
-obligation without making unrelated later-surface gates prerequisites for Story 6.1:
+**Epic 6 entry gate (approved correction, 2026-11-02).** For 6.1, the only capability prerequisites are (1) usable authenticated SDK query handlers with persisted incremental/rebuild models and platform cursors, and (2) usable fail-closed Tenant/original actor/workload/delegation authority through gateway → Projects → Folders. Current Folder read authorization filters before paging; Safe Metadata and distinct durable inspection audit remain mandatory. Controlled Development composition with real JWT/workload/owner/store behavior proves these capabilities; handler-only stubs or a service-only grant do not.
 
-- Story 6.1 and later consumers of the shared read baseline require accepted work packages 6.1-P0,
-  6.1-P1, 6.1-P1R, 6.1-P2, 6.1-P3, and 6.1-P4 below.
-- Stories consuming Conversations, Folders, Memories, Parties, or Tenants additionally require the
-  applicable G-2 sibling-owner read contracts.
-- Story 6.5 additionally requires the approved G-3 FrontComposer contract; Story 6.6 requires its
-  approved CLI adapter contract.
-- G-6 applies before any affected build, runner, or evidence lane is claimed passing.
-  Current applicability requires an approved effective tuple and passing proof
-  for the reviewed material runtime inputs. Historical packet acceptance does
-  not cover a changed tuple or runtime path; unrelated gitlink movement alone
-  does not revoke matching tuple approval or runtime proof. Release reruns the
-  focused qualifier on its exact source.
+6.5 consumes accepted 6.1–6.4 contracts/handlers plus its usable FrontComposer authentication/current-Tenant/per-circuit gateway credentials; DW-1 stays open until these inputs are usable. Applicable owner read contracts remain required. CLI retains its adapter/6.8 prerequisites. Current runtime failures still fail affected tests; unrelated platform qualification does not veto focused feature evidence. G-6 retains exact-source CI/release qualification, with no inferred pass from local story results.
 
 **Story completion rule (2026-11-01).** A story is done when its own acceptance criteria pass at a recorded commit, with CI green on that commit or an equivalent recorded local run. Later upstream or submodule movement does not reopen it; a regression is an ordinary defect. Publication, consumer adoption, producer security, platform qualification and deployment belong to their owning repository or Epic 8 and never extend a story's done criteria. A gate discovered during a story becomes a deferred-work entry or a new story, not another resumption of the same story. Story evidence is the commit SHA, the exact test commands, the pass totals and their XML; byte-preservation snapshots and hash ledgers of unchanged files are optional. Approved by `sprint-change-proposal-2026-11-01-close-story-6-4.md`.
 
-**Story 6.1 prerequisite work packages.** These are enablement packages, not user-value stories and
-not Story 6.1 implementation subtasks. The approved routing and complete acceptance contracts are in
-`sprint-change-proposal-2026-07-17.md`, the historical 2026-08-01 P1R candidate correction, the
-approved 2026-08-03 post-P1R revalidation, the approved 2026-08-03 G-4/P0 refinement, the approved
-2026-08-02 rerun-3 correction for same-baseline architecture sign-off sequencing, and the approved
-rerun-4 correction preserving the complete entry chain without accepting any step.
+**Qualification work packages (routed 2026-11-02).** Stable IDs and historical evidence are retained. The active ledger is `sprint-status.yaml`; the following open packages belong to Epic 8 and are no longer 6.1 prerequisites. Actual read/security defects still block the selected path. No owning-repository edit/publication is authorized here.
 
-| ID | Repository authority | Required outcome | Accountable owners | Initial state |
+| ID | Owning epic / repository | Required outcome and consumers | Accountable owners | State |
 |---|---|---|---|---|
-| 6.1-P0 | Builds/platform tooling | Supported G-4 persisted runner, remotely restored tool packages, and fail-closed machine-checkable acceptance record | Builds Owner + Platform Owner + Test Architect | open; external implementation in progress at Builds `7bdbd293991985d150dfca62f77709e61152de76`; manifest, module-run-evidence, and readiness-validator foundations are implemented but unaccepted; P0 acceptance validation and supported composition are not implemented; persisted qualification is not run; published `4.23.0` tools embed EventStore `3.70.1` and are not the supported/accepted consumer baseline; Projects consumer pin and owner acceptance are absent; blocked by P1R with G-6 as a qualification dependency; target uncommitted |
-| 6.1-P1 | EventStore + Builds + architecture record | Historical owner-approved source/package/architecture/runner baseline and finite normalization record | EventStore Owner + Builds Owner + Solution Architect | done 2026-07-18 on 3.70.1; accepted historical evidence, satisfied but superseded for current package/runtime selection by P1R |
-| 6.1-P1R | EventStore + Builds + architecture + qualification record | Revalidated exact source/package/runner/architecture pin after post-P1 dependency drift, including compatibility and rollback proof | EventStore Owner + Builds Owner + Solution Architect + Test Architect | Historical initial state (see current disposition below): open; multi-coordinate `3.89.0` candidate pending acceptance: EventStore source checkout `7854f8e51ce9b852bb6c3cac6012670122e93792` (`v3.89.0-9-g7854f8e5`) is intentionally distinct from package tag/revision `v3.89.0` / `c590590bc581a3f72ef6e67148eda988ba4b8fe6`; Builds catalog is `3.89.0` from `10af541e7b2a5a4664be37c9495930844e0954a8`; current runner source remains the superseded unaccepted `3.88.0` candidate at observed Builds `7bdbd293991985d150dfca62f77709e61152de76`; published G-4 `4.23.0` from `7ac2849d79e603b88c7cb76e178cd2ba106eaf00` embeds `3.70.1`; Architecture and rollback remain `3.70.1`; owner selection, atomic alignment, clean qualification, executable rollback, immutable accepted revisions, and four-owner acceptance pending; target uncommitted |
-| 6.1-P2 | EventStore/platform | Supported dual-principal query envelope, indistinguishable safe denial, and authoritative global-position watermark | EventStore Owner + Identity/Security Owner + Solution Architect | open; blocked by accepted P1R |
-| 6.1-P3 | Identity/security platform | Approved mandatory fail-closed production identity/authentication contract and fixtures | Identity/Security Owner + Projects Owner + Solution Architect | open; blocked by P2 |
-| 6.1-P4 | Hexalith.Projects planning/evidence | Owner-approved 6.1 gate record linking accepted P0, historical P1, current P1R, P2, and P3 pins, signed same-baseline architecture conformance, commands, evidence, normalization, and rollback | Product Owner + Solution Architect + Test Architect + prerequisite owners | open; blocked by P0, P1R, P2, P3, and Solution Architect conformance sign-off; historical P1 is a satisfied evidence input |
+| 6.1-P0 | Epic 8 / Builds + Platform | Generic runner, publication and adoption; 8.7/8.11. AD-25 still gates old-runtime retirement. | Builds Owner + Platform Owner + Test Architect | open; Stage 1 done, stages 2–7 open; guarded capabilities unchanged |
+| 6.1-P1 | Epic 6 / historical EventStore + Builds + architecture | Accepted historical normalization on 3.70.1, retained as dated package evidence | EventStore Owner + Builds Owner + Solution Architect | done; no active 6.1 dependency |
+| 6.1-P1R | Epic 6 / historical EventStore + Builds | Exact October 1 accepted JSON/tuple/role decisions; limitations retained | EventStore Owner + Builds Owner + Solution Architect + Test Architect | done; current usability false, no rollover |
+| 6.1-P1R-remediation | Epic 8 / EventStore + Builds | Compatible published candidate and capable rollback/forward recovery; 8.7/8.10/8.11-P3 and applicable Epic 7 writer boundary | EventStore Owner + Builds Owner | open |
+| 6.1-P2 | Epic 8 / EventStore + Identity | Full platform query identity/denial/position qualification; those capabilities remain mandatory on 6.1's selected path | EventStore Owner + Identity/Security Owner + Solution Architect | open; qualification depends on P1R |
+| 6.1-P3 | Epic 8 / Identity + Platform | Production identity configuration/enrollment/qualification; 8.8 and 8.11-P1/P2. Local fail-closed authenticated fixture proof remains mandatory in 6.1. | Identity/Security Owner + Platform Owner | open; qualification depends on P2 |
+| 6.1-P4 | Epic 6 / Projects planning | Aggregate development ceremony replaced by ordinary story readiness; release-evidence links consumed by existing Epic 8 packages | Product Owner + Solution Architect + Test Architect | superseded; never delivered or accepted |
 
 ### Current P1R disposition and remediation (approved 2026-10-06)
 
-The P1R table's 3.89.0 initial state is historical. Four named October 1 decisions
+The 3.89.0 initial-state observation is preserved in the historical [August 3 proposal](sprint-change-proposal-2026-08-03.md); it is not a current table row. Four named October 1 decisions
 accept EventStore 3.110.0 / Builds 4.29.1 with recorded limitations. That acceptance,
 P0 Stage 1 and DW-35/DW-68 remain done. Attempt 21 completes the separate
 investigation (17 scenarios, 72 cases, 2,845 assertions); seven incompatible
@@ -1380,11 +1358,7 @@ proof. Repository-local implementation scope and later exact tuple/rollback
 decisions remain required. Historical binaries and investigation packets retain
 their measured outcomes. No epic or story is added or renumbered.
 
-Story 6.1 stays blocked behind usable current P1R, P0/P2/P3, same-baseline
-architect sign-off, P4, specification readiness and independent READY. Epic 7
-requires the capable single-writer boundary; Stories 8.7/8.10 and 8.11-P3 consume
-new package/resilience/rollback evidence. Story 8.11 remains the terminal release
-decision. G-6 qualification remains separate.
+The 2026-11-02 entry correction separates 6.1 feature readiness from this still-open Epic 8 qualification. Epic 7 retains the capable single-writer boundary; 8.7/8.10/8.11-P3 consume package/resilience/rollback evidence. 8.11 remains terminal release authority; G-6 is separate.
 
 **G-6 applicability correction (approved 2026-10-02).** The 2026-10-01 attempt-16
 decision remains accepted only for its recorded beta.910 source. The current
@@ -1396,42 +1370,21 @@ ledger records their operational statuses.
 _All Epic 6 stories share: **Repository authority** Hexalith.Projects (`Contracts`, read models,
 query handlers) with platform-generated read adapters; **owner** Product Owner (author) + Solution
 Architect (AD/G conformance) + Test Architect (evidence); **prior-only dependencies** — each story's
-applicable accepted entry-gate ledger items, never Epic 7/8; **compatibility/rollback** — legacy read route retained and reversible
+actual prior read/authority inputs under the approved 6.1/6.5 exception, never unrelated Epic 7/8 qualification; **compatibility/rollback** — legacy read route retained and reversible
 until Story 6.7 cutover, no event-history rewrite; **fixture** — deterministic authorized-Tenant
-persisted-boundary fixture on the G-4 runner; **release disposition** — read evidence contributes to
+persisted-boundary fixture using existing individual test projects/distributed Development composition for 6.1/6.5; common-runner rollout remains separate; **release disposition** — read evidence contributes to
 NFR-11 but no story here is a release gate._
 
 **Story 6.1 executable critical path:**
 
 ```text
-6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3
-          -> authorized Solution Architect sign-off on the exact corrected baseline
-          -> 6.1-P4 exact clean-checkout acceptance
-          -> Story 6.1 specification readiness
-          -> independent implementation-readiness result exactly READY
-          -> Story 6.1 may become ready-for-dev
+working SDK read path + working authenticated actor/Folder authority
+  -> ordinary focused story-spec readiness
+  -> finish/review 6.1 and accept its recorded feature evidence
+  -> 6.5 readiness against accepted 6.1-6.4 contracts + usable FrontComposer auth seam / DW-1 done
 ```
 
-The Solution Architect conformance review is an explicit P4 input. Its checklist must name the
-exact PRD/addendum, Architecture Spine, UX, epics, traceability matrix, and prerequisite
-revision/hash baseline reviewed; execute every applicable Section A–D check; record open G-gates as
-notes rather than accepted capabilities; and record the Epic 6/7/8 verdicts, overall verdict,
-Solution Architect identity, and date. `conforms-with-notes` may describe correctly modeled but
-unaccepted gates, but it cannot make them execution-ready. No AI assessor or Product Owner may
-manufacture the Solution Architect signature.
-
-P4 cannot be accepted from local, stale, or uncommitted binaries. It records accepted immutable
-P0/P1R/P2/P3 revisions, expected artifacts, accountable-owner approvals, the signed conformance
-checklist against the same baseline, and an executable rollback, and it must record successful
-execution of these exact commands from an accepted clean checkout:
-
-```text
-dotnet tool restore
-dotnet tool run hexalith-module run --manifest module/hexalith-projects.module.json
-dotnet tool run hexalith-module test --manifest module/hexalith-projects.module.json --profile full
-dotnet tool run hexalith-module down --manifest module/hexalith-projects.module.json
-dotnet tool run hexalith-evidence validate _bmad-output/planning-artifacts/implementation-readiness-traceability-matrix.yaml
-```
+The historical P4 conformance/clean-checkout approval ceremony is superseded, not passed. No architect signature, tool acceptance or READY verdict is manufactured. Existing Epic 8 packages retain full release evidence, owner approvals, clean-checkout/package checks and executable rollback; AD-25 still gates runtime retirement.
 
 ### Story 6.1: List and open Projects through supported authenticated paths
 
@@ -1440,7 +1393,7 @@ I want **to list visible Projects and open one Project's authorized metadata, li
 So that **operators and Chatbot get current, authorization-filtered Project truth to initialize a Conversation (FR-2, FR-5) with no legacy runtime**.
 
 - **Traceability:** FR-2, FR-5; NFR-1, NFR-5, NFR-10; AD-3, AD-14, AD-19, AD-20, AD-32, AD-33; UJ-1; findings ARCH-001/API-001 (read side); evidence rows `fr-2`, `fr-5`; §9 A-3, A-5.
-- **Implementation state:** `blocked-external`. Historical P1 and the exact October 1 P1R tuple decision are satisfied; current P1R usability remains false after the completed investigation, with `6.1-P1R-remediation` open. The blockers are usable current P1R, 6.1-P0, 6.1-P2, 6.1-P3, Solution Architect conformance sign-off, and 6.1-P4. Story 6.1 returns to `ready-for-dev` only after P4 acceptance, successful clean-checkout verification, the Story 6.1 specification passes the complete ready-for-development standard, and an independent assessment returns exactly `READY`.
+- **Implementation state:** `ready-for-dev` to finish/review existing list/open, supported by the focused source/seam/command readiness recorded in the current 6.1 story on 2026-11-02. Acceptance is outstanding. Historical P1/P1R decisions, false usability and open Epic 8 qualification remain; P4 is superseded.
 
 **Acceptance Criteria:**
 
@@ -1456,9 +1409,9 @@ So that **operators and Chatbot get current, authorization-filtered Project trut
 
 **Given** stale/rebuilding/unavailable read models, **When** the read runs, **Then** it returns `Partial`/`Unavailable` with honest component evidence rather than fabricated completeness, and `Unavailable` blocks context use.
 
-**Given** the shadow-read comparison harness, **When** the same query replays against legacy and supported read models, **Then** output, keys, watermarks, cursors, and Tenant isolation are deterministically equivalent before read routing switches.
+**Given** supported list/open is accepted, **When** consumers use it alongside legacy reads, **Then** additive contracts and readable history remain intact; public routing stays unchanged. Existing local comparator regressions remain useful; exhaustive approved legacy equivalence is required by 6.7 before cutover.
 
-- **Verification:** `dotnet tool run hexalith-module test --profile reads --filter Story=6.1`. **Evidence:** `evidence/epic6/6.1-authorized-reads.{trx,json}` + shadow-read equivalence report. **Estimate:** M. **Completion boundary:** authorized list/open served from supported read models with equivalence evidence; no write behavior.
+- **Verification:** `MSBUILDDISABLENODEREUSE=1 DOTNET_CLI_USE_MSBUILD_SERVER=0 DOTNET_PROCESSOR_COUNT=2 python3 tools/qualification/run_supported_project_reads.py --regressions --timeout 900`; individual focused Debug test projects as documented in the story. **Evidence:** actual native XML, matrix/result report, tested Projects/direct dependency commits, exact commands and pass/fail/skip totals. **Estimate:** M. **Completion boundary:** actual authorized supported list/open with persisted no-domain-write/replay/restart/cursor/authority-change proof; acceptance records covered evidence once. No public cutover or package/production qualification.
 
 ### Story 6.2: Retrieve Conversation-start setup with admission truth
 
@@ -1521,6 +1474,8 @@ As a **Project User on Chatbot**, I want unselected Project suggestions from Con
 
 ### Story 6.5: Inspect Projects through an authenticated FrontComposer read surface
 
+**Prerequisites (2026-11-02):** Accepted 6.1–6.4 contracts and supported handlers plus usable FrontComposer server authentication/current-Tenant/per-circuit credentials, accepting-commit/test references in DW-1 and ordinary story prerequisites, DW-1 done and focused spec readiness. It remains blocked; common-runner publication, production enrollment, package qualification and duplicate hash inventories are not dispatch requirements.
+
 As a **Tenant Operator or Tenant Project Administrator**,
 I want **to inspect Project inventory, detail, reference health, and current resolution traces through an authenticated FrontComposer Web read surface**,
 So that **operators get authorized, metadata-only Project truth (FR-22) with WCAG 2.2 AA behavior and no client-supplied identity**.
@@ -1537,7 +1492,7 @@ So that **operators get authorized, metadata-only Project truth (FR-22) with WCA
 
 **Given** keyboard/screen-reader/200%-zoom/320px navigation, **When** operator read journeys run, **Then** automated axe + authenticated manual evidence records WCAG 2.2 AA conformance (blocking on unresolved critical/serious).
 
-- **Verification:** `dotnet tool run hexalith-module test --profile web-reads --filter Story=6.5` (+ axe/Playwright). **Evidence:** `evidence/epic6/6.5-web-read-surface.{trx,json}` + a11y report. **Estimate:** L. **Completion boundary:** authenticated read-only operator Web surface with a11y evidence; maintenance actions are Epic 8.
+- **Verification:** individual Debug UI/Integration projects and authenticated Playwright/axe journeys in the 6.5 spec, with actual XML/browser reports. **Evidence:** `evidence/epic6/6.5-web-read-surface.{trx,json}` + a11y report. **Estimate:** L. **Completion boundary:** authenticated read-only operator Web surface with a11y evidence; maintenance actions are Epic 8.
 
 ### Story 6.6: Inspect Projects through an authenticated CLI read surface
 
@@ -1570,7 +1525,7 @@ So that **supported reads become authoritative without event-history rewrite, an
 
 **Acceptance Criteria:**
 
-**Given** the shadow-read equivalence gate has passed across all Epic 6 reads and the ULID identity, OpenAPI, and generated-consumer contracts are mechanically aligned, **When** cutover runs, **Then** read routing switches to supported models and remains **reversible** with legacy retained until Epic 8 release acceptance.
+**Given** the supported 6.1 list/open output and existing `ProjectReadShadowComparator` have been consumed by exhaustive end-to-end legacy/supported comparison across applicable Epic 6 reads, including canonical output, keys, exact watermarks, cursor boundaries/scopes and finite owner-approved normalization, and the shadow-read equivalence gate has passed and the ULID identity, OpenAPI, and generated-consumer contracts are mechanically aligned, **When** cutover runs, **Then** read routing switches to supported models and remains **reversible** with legacy retained until Epic 8 release acceptance.
 
 **Given** legacy identifiers and historical events (incl. `ProjectFolderCreationPending`), **When** reads run post-cutover, **Then** they remain readable (foreign IDs opaque, no GUID-parse) and no history is rewritten and no unsafe dual writer is introduced.
 
@@ -2140,6 +2095,8 @@ So that **actor-selected links and initial Folder binding are distinguishable fr
 ---
 
 ## Epic 8: Operators Run Projects Safely and Release Owners Decide from Evidence
+
+**Qualification ownership (2026-11-02):** Open stable IDs 6.1-P0, 6.1-P1R-remediation, 6.1-P2 and 6.1-P3 belong here under the table above. 8.7 consumes publication/adoption, 8.8 deployed identity/isolation, 8.9 scale, 8.10 resilience and 8.11-P1/P2/P3 deployment/enrollment/KMS/rollback; 8.11 retains terminal release acceptance. No Epic 8 status advances. P4 is superseded; its release links are inputs to these packages, not a new gate.
 
 Turn the corrective read and durable-workflow work into **executable production evidence** across
 operator surfaces, Safe Diagnostic Export, health/telemetry, packaging/supply chain, authenticated

@@ -17,7 +17,7 @@ owner_rollback_pin: none-greenfield; previous released Builds boundary v4.19.2 /
 owners: [Builds Owner, Platform Owner, Test Architect]
 implementation_dependencies: [6.1-P1R]
 qualification_dependencies: [6.1-P1R, G-6]
-unblocks: [6.1-P4]
+unblocks: ["8.7", "8.11"]
 p1r_stage_1:
   status: done
   acceptance_record: _bmad-output/implementation-artifacts/6-1-p1r-acceptance.json
@@ -431,3 +431,7 @@ GPT-5 Codex
 ### File List
 
 - `_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md` (new)
+
+## Current qualification routing — approved 2026-11-02
+
+Under Jerome-approved E3 of [the November 1 proposal](../planning-artifacts/sprint-change-proposal-2026-11-01.md), this stable work-package ID remains open and belongs to Epic 8. Builds/Platform own generic runner, publication and consumer adoption, consumed by 8.7/8.11. Stage 1 remains done and stages 2–7 open; every guarded capability/blocked_by field is unchanged. AD-25 still gates old-runtime retirement. The earlier dated Story 6.1/P4/READY blocking language is historical scheduling context, superseded only for 6.1/6.5 by E1–E7. P4 is superseded, not accepted. Actual defects in the selected read/security path still block that path. The historical/frozen technical proof intent and evidence remain unchanged; this routing grants no publication or owning-repository edit authority and sends no external notification.

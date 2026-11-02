@@ -1,5 +1,5 @@
 # generated: 09-20-2026 22:44
-# last_updated: 2026-11-01
+# last_updated: 2026-11-02
 # project: projects
 # project_key: NOKEY
 # tracking_system: file-system
@@ -40,6 +40,7 @@
 #   - in-progress: Actively being worked on
 #   - blocked-external: Requires an independently owned, approved external input
 #   - done: Completed
+#   - superseded: Process requirement replaced by an approved correction; never a capability pass
 #
 # WORKFLOW NOTES:
 # ===============
@@ -51,7 +52,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: 09-20-2026 22:44
-last_updated: 2026-11-01
+last_updated: 2026-11-02
 project: projects
 project_key: NOKEY
 tracking_system: file-system
@@ -129,7 +130,7 @@ p1r_current_revalidation:
   owner_decisions: "Jérôme Piquot explicitly accepted all four roles at 2026-10-01T06:17:01Z for the exact 3.110.0 / Builds 4.29.1 tuple and fixed record, including EventStore Stack rebinding, with recorded limitations; G-6 attempt 16 is separately accepted for its committed-source scope"
   accepted_at_utc: 2026-10-01T06:17:01Z
   prior_acceptance_evidence: _bmad-output/implementation-artifacts/evidence/6-1-p1r-acceptance-20260922-3.106.0.json
-  containment: "P1R accepts 3.110.0 / Builds 4.29.1 only; preserve archived 3.106.0 acceptance, 3.70.1 rollback, and already-done P1R/P0 Stage 1/DW-35/DW-68 statuses; current P1R usability stays false under its separate published-coordinate and verification limitations; G-6 attempt 16 usability is true only for its exact accepted committed-source scope; P0 stages 2-7, P2-P4, NOT_READY, and blocked Story 6.1 retain their states"
+  containment: "P1R accepts 3.110.0 / Builds 4.29.1 only; preserve archived 3.106.0 acceptance, 3.70.1 rollback, and already-done P1R/P0 Stage 1/DW-35/DW-68 statuses; current P1R usability stays false under its separate published-coordinate and verification limitations; G-6 attempt 16 usability is true only for its exact accepted committed-source scope; P0 stages 2-7, P2/P3 and NOT_READY remain; the approved 2026-11-02 correction supersedes P4 and allows focused Story 6.1 readiness"
   g6_superseded_20261001_attempt3_sha256: 724939520f2d8850073fd0091ffb7f0ada88e87231bb6ff457063bacb562a6bd
   g6_superseded_20261001_attempt4_sha256: 162649ffec5aa8ee9a795b5f306d33376b8bfa2e87abc6b6f010a0ca7845b8e1
   g6_superseded_20261001_attempt5_sha256: a4aec7b8c4a676ede15335225ada47f701af9b188888691d80566141a38c9f01
@@ -213,7 +214,8 @@ readiness_provenance:
   current_result: NOT_READY
   approved_correction: _bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md
   correction_scope: internal-planning-artifacts-only
-story_6_1_prerequisite_chain: "6.1-P1R -> {6.1-P0, 6.1-P2} -> 6.1-P3 -> authorized Solution Architect sign-off on the exact corrected baseline -> 6.1-P4 exact clean-checkout acceptance -> Story 6.1 specification readiness -> independent implementation-readiness result exactly READY -> Story 6.1 may become ready-for-dev"
+story_6_1_prerequisite_chain: "usable supported SDK reads + authenticated actor/Folder authority -> focused story readiness -> finish/review 6.1 and accept recorded feature evidence -> 6.5 readiness against accepted 6.1-6.4 contracts and FrontComposer auth seam"
+entry_gate_correction: "Jerome approved E1-E7 on 2026-11-02; sprint-change-proposal-2026-11-01.md. Bounded 6.1/6.5 development exception only; historical NOT_READY, false P1R usability and all release obligations remain. P4 superseded, not accepted."
 
 development_status:
   # Epic 1: Project Workspace Foundation
@@ -276,8 +278,7 @@ development_status:
 
   # Epic 6: Chatbot and Operators Retrieve Authorized Project Truth
   epic-6: in-progress
-  6-1-list-and-open-projects-through-supported-authenticated-paths: blocked
-  # wait for eventstore 6.2
+  6-1-list-and-open-projects-through-supported-authenticated-paths: ready-for-dev
   6-2-retrieve-conversation-start-setup-with-admission-truth: done
   6-3-retrieve-assembled-project-context-through-supported-read-models: done
   6-4-resolve-projects-with-transient-current-explanations: done # accepted 2026-11-01 at 353cfd33 (CI 41229091248) on approved advisory ACs; non-story gates moved to DW-74..DW-78 (sprint-change-proposal-2026-11-01-close-story-6-4.md)
@@ -434,9 +435,9 @@ action_items:
     routed_to: "Stories 8.3 and 8.4"
     planning_evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-14-implementation-readiness-correction.md"
     evidence: "_bmad-output/implementation-artifacts/spec-partial-failure-diagnosticunavailable-parity-coverage.md"
-  - epic: 6
+  - epic: 8
     id: "6.1-P0"
-    action: "Deliver the supported G-4 persisted runner and machine-checkable evidence tooling required by Story 6.1."
+    action: "Deliver the supported G-4 persisted runner and machine-checkable evidence tooling for Epic 8 publication/adoption and terminal qualification."
     repository_authority: "Hexalith/Hexalith.Builds"
     owner: "Builds Owner / Platform Owner / Test Architect"
     status: open
@@ -448,7 +449,7 @@ action_items:
       stages_2_through_7: open
     expected_evidence: "Owner-approved supported composition, publication, consumer pin, persisted qualification, P0 acceptance record, and owner acceptance."
     evidence: "_bmad-output/implementation-artifacts/6-1-p0-deliver-g4-persisted-runner-and-evidence-tooling.md"
-    routed_to: "Hexalith.Builds owner-repository story"
+    routed_to: "Epic 8: 8.7 / 8.11; Builds and Platform owner-repository delivery"
   - epic: 6
     id: "6.1-P1"
     action: "Normalize EventStore source, Architecture Spine pin, central package versions, and the G-4 runner manifest into one owner-approved baseline."
@@ -460,7 +461,7 @@ action_items:
     result: "Normalized on EventStore v3.70.1 (f13f9925fdca53efa2ab8c90d396ab106f91bb9c): fixed a release-blocking restore bug and two stale baseline-sync tests, cut and published v3.70.1, pinned the EventStore submodule and Builds HexalithEventStoreVersion to it, realigned the Architecture Spine Stack/G-1 text and the traceability matrix, and recorded AD-14 compatibility + rollback (v3.67.3) evidence."
     expected_evidence: "Finite normalization record with repository revision, package versions, API signatures, compatibility results, approvals, and rollback pins"
     evidence: "references/Hexalith.Builds/_bmad-output/implementation-artifacts/6-1-p1-eventstore-source-architecture-package-normalization-record.md"
-    routed_to: "6.1-P1R, 6.1-P2, and 6.1-P4"
+    routed_to: "Historical normalization; Epic 8 qualification inputs 6.1-P1R and 6.1-P2"
   - epic: 6
     id: "6.1-P1R"
     action: "Accept the selected EventStore and Builds baseline through the fixed minimal JSON record."
@@ -470,11 +471,11 @@ action_items:
     accepted_scope: "EventStore 3.110.0 / v3.110.0 / 27279fe6431925a6ea046c3f89af61487185c7de with Builds 4.29.1 / 21ce044ab465ccb2adab58b3d66e394ffbecf3c2; four exact named accepts by Jérôme Piquot at 2026-10-01T06:17:01Z; P1R boundary only."
     current_candidate_usable: false
     depends_on: ["6.1-P1"]
-    unblocks: ["6.1-P0", "6.1-P2", "6.1-P4"]
-    unblocks_scope: "Exact P1R tuple acceptance remains done; attempt 21 verification is complete with seven incompatibilities. Current P1R usability is false, remediation is open, and P0/P2/P3/P4/readiness retain their existing states; G-6 qualification is separate."
+    unblocks: ["6.1-P0", "6.1-P2"]
+    unblocks_scope: "Exact P1R tuple acceptance remains done; attempt 21 verification is complete with seven incompatibilities. Current P1R usability is false, remediation is open, and P0/P2/P3 qualification remains open; P4 is superseded under the 2026-11-02 correction. G-6 and focused feature readiness are separate."
     acceptance_record: "_bmad-output/implementation-artifacts/6-1-p1r-acceptance.json"
     routed_to: "EventStore Owner / Builds Owner / Solution Architect / Test Architect"
-  - epic: 6
+  - epic: 8
     id: "6.1-P1R-remediation"
     action: "Remediate the seven measured P1R incompatibilities and prepare a qualified candidate and supported rollback envelope."
     repository_authority: "EventStore and Builds owners; Platform and Identity/Security for supported transport; Projects for planning handoff"
@@ -491,8 +492,8 @@ action_items:
     expected_evidence: "Current-source reproduction, invalid-evidence rejection, metadata-preserving restore-plus-append, complete authority/watermark/capability behavior, actual published candidate and rollback packages, independent validation and exact owner decisions"
     current_candidate_usable: false
     unblocks_scope: "No status advances from this handoff; usable P1R still requires the supported envelope and exact evidence/owner decisions."
-    routed_to: "EventStore Developer / Builds Owner / Platform and Identity-Security P2 implementers / Solution Architect / Test Architect / Product Owner"
-  - epic: 6
+    routed_to: "Epic 8: 8.7 / 8.10 / 8.11-P3 and applicable Epic 7 writer boundary; EventStore / Builds owners"
+  - epic: 8
     id: "6.1-P2"
     action: "Supply supported dual-principal query identity, indistinguishable safe denial, and authoritative global-position watermark capabilities."
     repository_authority: "EventStore/platform repository"
@@ -502,8 +503,8 @@ action_items:
     depends_on: ["6.1-P1R"]
     expected_evidence: "Public-contract, cross-Tenant negative-control, safe-denial equivalence, watermark replay/restart, G-4, pin, and rollback evidence"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p2--supply-the-supported-query-security-and-projection-capabilities"
-    routed_to: "Product Manager / Solution Architect / EventStore and Identity-Security Owners"
-  - epic: 6
+    routed_to: "Epic 8: full platform qualification, 8.8 / 8.11; EventStore and Identity-Security Owners. Read identity/denial/watermark capabilities remain mandatory feature tests."
+  - epic: 8
     id: "6.1-P3"
     action: "Approve the mandatory fail-closed production identity and authentication contract and supported verification fixtures."
     repository_authority: "Identity/security platform and production configuration authority"
@@ -513,21 +514,21 @@ action_items:
     depends_on: ["6.1-P2"]
     expected_evidence: "Configuration contract, missing-auth startup fixture, delegated identity mappings, invalid audience/scope fixtures, ownership, and rollback behavior"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p3--approve-the-production-identity-and-authentication-contract"
-    routed_to: "Product Manager / Solution Architect / Identity-Security and Projects Owners"
+    routed_to: "Epic 8: 8.8 / 8.11-P1 / 8.11-P2 production enrollment; Identity-Security / Platform Owners. Local fail-closed authenticated proof remains mandatory."
   - epic: 6
     id: "6.1-P4"
-    action: "Accept the Story 6.1 entry gate from the exact P0, P1R, P2, and P3 revisions and evidence plus signed Solution-Architect conformance against the same baseline, using historical P1 as a satisfied input."
+    action: "Superseded aggregate development entry ceremony; ordinary focused story readiness and acceptance replace it."
     repository_authority: "Hexalith.Projects planning and evidence artifacts"
     owner: "Product Owner / Solution Architect / Test Architect / prerequisite owners"
-    status: open
+    status: superseded
     target_date: uncommitted
-    depends_on: ["6.1-P0", "6.1-P1R", "6.1-P2", "6.1-P3", "Solution Architect conformance sign-off against exact current baseline"]
+    historical_depends_on: ["6.1-P0", "6.1-P1R", "6.1-P2", "6.1-P3", "Solution Architect conformance sign-off against exact current baseline"]
     historical_inputs: ["6.1-P1"]
-    expected_evidence: "evidence/epic6/6.1-entry-gate.yaml; accepted P0, P1R, P2, and P3 revisions and owner approvals; signed Solution-Architect conformance checklist against the same baseline; executable rollback; passing exact clean-checkout restore/run/full-test/down/evidence-validation commands"
+    historical_expected_evidence: "evidence/epic6/6.1-entry-gate.yaml; accepted P0, P1R, P2, and P3 revisions and owner approvals; signed Solution-Architect conformance checklist against the same baseline; executable rollback; passing exact clean-checkout restore/run/full-test/down/evidence-validation commands"
     evidence: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-07-17.md#61-p4--accept-the-story-61-entry-gate"
     course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-01-implementation-readiness-correction.md"
     latest_course_correction: "_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-02-implementation-readiness-rerun-4.md#54-story-61--preserve-the-literal-prerequisite-chain"
-    routed_to: "Product Manager / Solution Architect / Product Owner / Test Architect"
+    routed_to: "Superseded by approved sprint-change-proposal-2026-11-01.md E1-E7 on 2026-11-02; release-evidence links consumed by existing Epic 8 packages, with no delivered/accepted claim."
   - epic: 7
     id: "7.1-P1"
     action: "Accept the canonical/legacy creation contracts, authorization-before-parsing behavior, exact metadata classification vocabulary, shared-validator parity, no-command rejection evidence, compatibility fingerprint, and rollback."

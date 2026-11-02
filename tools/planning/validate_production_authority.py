@@ -22,6 +22,9 @@ EXPECTED_HISTORICAL_STATUS_SHA256 = (
     "ce120516809be4a3814565f67c7a1e648650b3b9f0547ed9a4135a78eba0bbaf"
 )
 STORY_6_1_KEY = "6-1-list-and-open-projects-through-supported-authenticated-paths"
+STORY_6_5_KEY = "6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface"
+# Approved 2026-11-02 entry correction: feature progression grants no qualification.
+READ_FEATURE_STATUSES = {"blocked", "ready-for-dev", "in-progress", "review", "done"}
 STORY_6_4_KEY = "6-4-resolve-projects-with-transient-current-explanations"
 # User-approved advisory scope reset, 2026-10-21: ordinary story progress is allowed.
 # This exception grants no P1R, other-story or production-release acceptance.
@@ -72,10 +75,8 @@ SELECTED_REFERENCE = "#/selected"
 
 EPIC6_DEVELOPMENT_STATUSES = {
     "epic-6": "in-progress",
-    STORY_6_1_KEY: "blocked",
     "6-2-retrieve-conversation-start-setup-with-admission-truth": "done",
     "6-3-retrieve-assembled-project-context-through-supported-read-models": "done",
-    "6-5-inspect-projects-through-an-authenticated-frontcomposer-read-surface": "blocked",
     "6-6-inspect-projects-through-an-authenticated-cli-read-surface": "backlog",
     "6-7-cut-over-supported-reads-while-preserving-compatibility-and-rollback": "backlog",
     "6-8-split-hexalith-projects-ui-contracts-from-contracts": "backlog",
@@ -115,13 +116,13 @@ TRANSITIVE_EPIC_STATUSES = {
     "epic-8-retrospective": "optional",
 }
 ACTION_STATUSES = {
-    "6.1-P0": (6, "open"),
+    "6.1-P0": (8, "open"),
     "6.1-P1": (6, "done"),
     "6.1-P1R": (6, None),
-    "6.1-P1R-remediation": (6, "open"),
-    "6.1-P2": (6, "open"),
-    "6.1-P3": (6, "open"),
-    "6.1-P4": (6, "open"),
+    "6.1-P1R-remediation": (8, "open"),
+    "6.1-P2": (8, "open"),
+    "6.1-P3": (8, "open"),
+    "6.1-P4": (6, "superseded"),
     "7.1-P1": (7, "open"),
     "7.1-P2": (7, "open"),
     "8.3-P1": (8, "open"),
@@ -248,7 +249,9 @@ def parse_development_status(sprint: dict[str, Any]) -> list[tuple[str, str]]:
     return entries
 
 
-def _validate_scheduling(sprint: dict[str, Any]) -> list[tuple[str, str]]:
+def _validate_scheduling(
+    sprint: dict[str, Any], deferred_work: str | None = None
+) -> list[tuple[str, str]]:
     if sprint.get("production_authority_epics") != list(EXPECTED_PRODUCTION_EPICS):
         raise GuardViolation("production_authority_epics must remain exactly [6, 7, 8]")
     if (
@@ -273,10 +276,17 @@ def _validate_scheduling(sprint: dict[str, Any]) -> list[tuple[str, str]]:
         if tracking_key_epic(key) in EXPECTED_PRODUCTION_EPICS
     }
     expected = {**EPIC6_DEVELOPMENT_STATUSES, **TRANSITIVE_EPIC_STATUSES}
+    for key, story in ((STORY_6_1_KEY, "6.1"), (STORY_6_5_KEY, "6.5")):
+        status = production.get(key)
+        if status not in READ_FEATURE_STATUSES:
+            raise GuardViolation(f"Story {story} status is missing or invalid")
+        expected[key] = status
     advisory_status = production.get(STORY_6_4_KEY)
     if advisory_status not in STORY_6_4_STATUSES:
         raise GuardViolation("Story 6.4 advisory status is missing or invalid")
     expected[STORY_6_4_KEY] = advisory_status
+    if deferred_work is not None:
+        _validate_read_dependencies(sprint, deferred_work)
     if production != expected:
         raise GuardViolation("Epic 6-8 development statuses exceed the open boundary")
 
@@ -502,14 +512,38 @@ def _deferred_status(markdown: str, entry_id: int) -> str:
         (index for index in range(start + 1, len(lines)) if lines[index].startswith("### DW-")),
         len(lines),
     )
-    matches = [
-        match.group(1)
-        for line in lines[start + 1 : end]
-        if (match := re.fullmatch(r"status:\s*([A-Za-z][A-Za-z-]*)\s*", line))
+    fields = [
+        line for line in lines[start + 1 : end]
+        if re.match(r"^\s*status\s*:", line)
     ]
-    if len(matches) != 1:
+    if len(fields) != 1:
         raise GuardViolation(f"DW-{entry_id} must contain exactly one status field")
-    return matches[0]
+    match = re.fullmatch(r"status:\s*([A-Za-z][A-Za-z-]*)\s*", fields[0])
+    if match is None:
+        raise GuardViolation(f"DW-{entry_id} status field must have one canonical value")
+    return match.group(1)
+
+
+def _validate_read_dependencies(sprint: dict[str, Any], deferred_work: str) -> None:
+    """Keep the Web consumer behind accepted reads and its ordinary prerequisites."""
+
+    development = sprint["development_status"]
+    dw1_status = _deferred_status(deferred_work, 1)
+    if dw1_status not in {"open", "done"}:
+        raise GuardViolation("DW-1 must remain open or done")
+    web_advances = development[STORY_6_5_KEY] != "blocked"
+    if dw1_status == "done" or web_advances:
+        dependencies = (
+            ("6.1", STORY_6_1_KEY),
+            ("6.2", "6-2-retrieve-conversation-start-setup-with-admission-truth"),
+            ("6.3", "6-3-retrieve-assembled-project-context-through-supported-read-models"),
+            ("6.4", STORY_6_4_KEY),
+        )
+        missing = [story for story, key in dependencies if development.get(key) != "done"]
+        if missing:
+            raise GuardViolation("Story 6.5 / DW-1 requires done Story " + ", ".join(missing))
+    if web_advances and dw1_status != "done":
+        raise GuardViolation("Story 6.5 progression requires DW-1 done")
 
 
 def _validate_closure_boundary(
@@ -637,7 +671,7 @@ def _validated_index_entries(
     p0_text = _read_text(p0_artifact_path, "P0 artifact")
     p0_frontmatter = _p0_fields(p0_text, str(p0_artifact_path))
 
-    entries = _validate_scheduling(sprint)
+    entries = _validate_scheduling(sprint, deferred)
     _validate_gate_coordinates(sprint)
     record_path = workspace_root / ACCEPTANCE_RECORD_RELATIVE_PATH
     record = _load_acceptance_record(record_path)

@@ -86,6 +86,13 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             "  - epic:",
             "      stage_1_p1r_baseline",
         )
+        # Keep historical open/accepted fixtures independent of active feature progress.
+        index = GUARD._load_yaml_text(cls.sprint, "feature fixture")
+        cls.sprint = cls.sprint.replace(
+            f"  {GUARD.STORY_6_1_KEY}: {index['development_status'][GUARD.STORY_6_1_KEY]}",
+            f"  {GUARD.STORY_6_1_KEY}: blocked",
+            1,
+        )
         cls.accepted_revalidation_status = GUARD._load_yaml_text(
             cls.sprint, "fixture"
         )["p1r_current_revalidation"]["status"]
@@ -656,8 +663,8 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
     def test_unauthorized_closure_fails_closed(self) -> None:
         sprint = self.replace_once(
             self.accepted_sprint(),
-            f"  {GUARD.STORY_6_1_KEY}: blocked",
-            f"  {GUARD.STORY_6_1_KEY}: ready-for-dev",
+            "  6-6-inspect-projects-through-an-authenticated-cli-read-surface: backlog",
+            "  6-6-inspect-projects-through-an-authenticated-cli-read-surface: ready-for-dev",
         )
         with self.assertRaisesRegex(GUARD.GuardViolation, "open boundary"):
             self.validate_boundary(
@@ -728,7 +735,7 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
             (
                 "P4",
                 self.replace_after(
-                    accepted, '    id: "6.1-P4"', "    status: open", "    status: done"
+                    accepted, '    id: "6.1-P4"', "    status: superseded", "    status: done"
                 ),
                 "6.1-P4",
             ),
@@ -750,16 +757,16 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                 "open boundary",
             ),
             (
-                "Story 6.5 dispatch",
+                "Story 6.5 missing dependency",
                 self.replace_once(
                     accepted, f"{story_6_5}: blocked", f"{story_6_5}: ready-for-dev"
                 ),
-                "open boundary",
+                "6.1",
             ),
             (
                 "Story 6.5 regression",
                 self.replace_once(accepted, f"{story_6_5}: blocked", f"{story_6_5}: backlog"),
-                "open boundary",
+                "6.5 status",
             ),
             (
                 "Epic 7",
@@ -781,6 +788,137 @@ class ProductionAuthorityGuardTests(unittest.TestCase):
                         p0=self.accepted_p0(),
                         record=self.acceptance_record(),
                     )
+
+    def feature_snapshot(self, accepted: bool) -> dict[str, object]:
+        return {
+            "sprint": self.accepted_sprint() if accepted else self.sprint,
+            "deferred": self.accepted_deferred() if accepted else self.deferred,
+            "p0": self.accepted_p0() if accepted else self.p0,
+            "record": self.acceptance_record() if accepted else None,
+        }
+
+    def set_story(self, sprint: str, key: str, status: str) -> str:
+        value = GUARD._load_yaml_text(sprint, "fixture")["development_status"][key]
+        return self.replace_once(sprint, f"  {key}: {value}", f"  {key}: {status}")
+
+    def test_read_feature_progression_preserves_open_qualification(self) -> None:
+        approved_statuses = ("blocked", "ready-for-dev", "in-progress", "review", "done")
+        self.assertEqual(set(approved_statuses), GUARD.READ_FEATURE_STATUSES)
+        for accepted in (False, True):
+            for status in approved_statuses:
+                with self.subTest(accepted=accepted, status=status):
+                    snapshot = self.feature_snapshot(accepted)
+                    snapshot["sprint"] = self.set_story(snapshot["sprint"], GUARD.STORY_6_1_KEY, status)
+                    self.assertEqual((6, 7, 8), self.validate_boundary(**snapshot))
+                    index = GUARD._load_yaml_text(snapshot["sprint"], "fixture")
+                    self.assertEqual("NOT_READY", index["readiness_provenance"]["current_result"])
+                    actions = GUARD._action_map(index)
+                    for action in ("6.1-P0", "6.1-P2", "6.1-P3"):
+                        self.assertEqual((8, "open"), (actions[action]["epic"], actions[action]["status"]))
+                    self.assertEqual("superseded", actions["6.1-P4"]["status"])
+                    self.assertIs(False, actions["6.1-P1R"]["current_candidate_usable"])
+
+    def test_read_feature_keys_and_statuses_fail_closed(self) -> None:
+        for key in (GUARD.STORY_6_1_KEY, GUARD.STORY_6_5_KEY):
+            line = f"  {key}: blocked"
+            candidates = [
+                self.replace_once(self.sprint, line + "\n", ""),
+                self.replace_once(self.sprint, line, line.replace(key, key + "-renamed")),
+                self.replace_once(self.sprint, line, line + "\n" + line),
+            ]
+            candidates.extend(self.replace_once(self.sprint, line, f"  {key}: {status}")
+                              for status in ("released", "accepted", "ready", "backlog", "null"))
+            for candidate in candidates:
+                with self.subTest(key=key, candidate=candidate[-100:]):
+                    error = "duplicate YAML key" if candidate.count(line) == 2 else "."
+                    with self.assertRaisesRegex(GUARD.GuardViolation, error):
+                        self.validate_boundary(sprint=candidate)
+
+    def test_web_progression_requires_accepted_reads_and_closed_dw1(self) -> None:
+        approved_statuses = ("blocked", "ready-for-dev", "in-progress", "review", "done")
+        self.assertEqual(set(approved_statuses), GUARD.READ_FEATURE_STATUSES)
+        for accepted in (False, True):
+            snapshot = self.feature_snapshot(accepted)
+            snapshot["sprint"] = self.set_story(snapshot["sprint"], GUARD.STORY_6_1_KEY, "done")
+            for status in approved_statuses[1:]:
+                with self.subTest(accepted=accepted, status=status):
+                    candidate = dict(snapshot)
+                    candidate["sprint"] = self.set_story(candidate["sprint"], GUARD.STORY_6_5_KEY, status)
+                    with self.assertRaisesRegex(GUARD.GuardViolation, "DW-1"):
+                        self.validate_boundary(**candidate)
+                    candidate["deferred"] = self.replace_after(candidate["deferred"], "### DW-1:", "status: open", "status: done")
+                    self.assertEqual((6, 7, 8), self.validate_boundary(**candidate))
+
+    def test_web_or_dw1_cannot_advance_with_incomplete_read_dependency(self) -> None:
+        dependencies = (
+            GUARD.STORY_6_1_KEY,
+            "6-2-retrieve-conversation-start-setup-with-admission-truth",
+            "6-3-retrieve-assembled-project-context-through-supported-read-models",
+            GUARD.STORY_6_4_KEY,
+        )
+        for accepted in (False, True):
+            for key in dependencies:
+                for web_advances in (False, True):
+                    with self.subTest(accepted=accepted, key=key, web_advances=web_advances):
+                        snapshot = self.feature_snapshot(accepted)
+                        snapshot["sprint"] = self.set_story(snapshot["sprint"], GUARD.STORY_6_1_KEY, "done")
+                        snapshot["sprint"] = self.set_story(snapshot["sprint"], key, "blocked")
+                        snapshot["deferred"] = self.replace_after(snapshot["deferred"], "### DW-1:", "status: open", "status: done")
+                        if web_advances:
+                            snapshot["sprint"] = self.set_story(snapshot["sprint"], GUARD.STORY_6_5_KEY, "ready-for-dev")
+                        with self.assertRaisesRegex(GUARD.GuardViolation, "requires done Story " + ".".join(key.split("-")[:2])):
+                            self.validate_boundary(**snapshot)
+
+    def test_missing_web_read_dependencies_fail_closed(self) -> None:
+        for key in ("6-2-retrieve-conversation-start-setup-with-admission-truth",
+                    "6-3-retrieve-assembled-project-context-through-supported-read-models"):
+            for renamed in (False, True):
+                with self.subTest(key=key, renamed=renamed):
+                    sprint = self.set_story(self.sprint, GUARD.STORY_6_1_KEY, "done")
+                    sprint = self.set_story(sprint, GUARD.STORY_6_5_KEY, "ready-for-dev")
+                    line = f"  {key}: done"
+                    sprint = self.replace_once(sprint, line, line.replace(key, key + "-renamed") if renamed else "")
+                    deferred = self.replace_after(self.deferred, "### DW-1:", "status: open", "status: done")
+                    with self.assertRaisesRegex(GUARD.GuardViolation, "requires done Story " + ".".join(key.split("-")[:2])):
+                        self.validate_boundary(sprint=sprint, deferred=deferred)
+
+    def test_reparented_actions_keep_exact_owner_and_status(self) -> None:
+        for accepted in (False, True):
+            for action in ("6.1-P0", "6.1-P1R-remediation", "6.1-P2", "6.1-P3", "6.1-P4"):
+                for field, value in (("epic", 7), ("status", "done")):
+                    with self.subTest(accepted=accepted, action=action, field=field):
+                        snapshot = self.feature_snapshot(accepted)
+                        index = GUARD._load_yaml_text(snapshot["sprint"], "fixture")
+                        GUARD._action_map(index)[action][field] = value
+                        snapshot["sprint"] = GUARD.yaml.safe_dump(index, sort_keys=False)
+                        with self.assertRaisesRegex(GUARD.GuardViolation, action):
+                            self.validate_boundary(**snapshot)
+
+    def test_dw1_status_and_inventory_fail_closed(self) -> None:
+        for candidate in (
+            self.replace_after(self.deferred, "### DW-1:", "status: open", "status: accepted"),
+            self.deferred.replace("### DW-1:", "### DW-999:", 1),
+            self.deferred + "\n### DW-1: Duplicate\nstatus: open\n",
+        ):
+            with self.subTest(candidate=candidate[-100:]):
+                with self.assertRaisesRegex(GUARD.GuardViolation, "DW-1"):
+                    self.validate_boundary(deferred=candidate)
+
+    def test_conflicting_dw1_status_fields_fail_closed(self) -> None:
+        for accepted in (False, True):
+            for extra in ('status: "open"', 'status: open # conflicting status',
+                          'status: "open" # conflicting status', '  status: open'):
+                with self.subTest(accepted=accepted, extra=extra):
+                    snapshot = self.feature_snapshot(accepted)
+                    snapshot["sprint"] = self.set_story(snapshot["sprint"], GUARD.STORY_6_1_KEY, "done")
+                    snapshot["sprint"] = self.set_story(snapshot["sprint"], GUARD.STORY_6_5_KEY, "ready-for-dev")
+                    snapshot["deferred"] = self.replace_after(
+                        snapshot["deferred"], "### DW-1:", "status: open", "status: done\n" + extra)
+                    with self.assertRaisesRegex(GUARD.GuardViolation, "DW-1 must contain exactly one status field"):
+                        self.validate_boundary(**snapshot)
+
+    def test_active_repository_index_passes(self) -> None:
+        self.assertEqual((6, 7, 8), GUARD.validate_index())
 
     def test_p0_capability_fields_cannot_advance_or_regress(self) -> None:
         capabilities = GUARD._p0_fields(self.p0, "P0 fixture")["capability_status"]

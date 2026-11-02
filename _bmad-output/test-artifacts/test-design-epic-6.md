@@ -16,6 +16,10 @@ completedAt: '2026-07-17T08:24:47+02:00'
 
 ---
 
+## Current scope note — 2026-11-02
+
+Jerome-approved [E1–E7](../planning-artifacts/sprint-change-proposal-2026-11-01.md) supersedes this draft's pre-6.1 G-4 delivery requirement. Reuse existing supported list/open focused matrices and the real authenticated distributed Development lane (`tools/qualification/run_supported_project_reads.py --regressions --timeout 900`) for persisted no-domain-write, replay/duplicate, Projects restart, Folder revocation, audit and scoped-cursor proof. Record actual commits, commands, XML, totals and report; inspect historical receipts before rerunning missing evidence. Common-runner delivery and full platform certification remain open under Epic 8. Exhaustive legacy equivalence/approved normalization/cutover is 6.7. 6.5 still needs accepted 6.1–6.4, usable FrontComposer authentication/current-Tenant/per-circuit relay and DW-1 done. Dated risk/results below remain historical, with no manufactured pass or requirement reduction.
+
 ## Executive Summary
 
 **Scope:** Full Epic-level test design for Stories 6.1–6.7: supported list/open, conversation-start subset, context/refresh/explain, current-project resolution, authenticated FrontComposer and CLI reads, and shadow-read cutover/rollback.
@@ -44,7 +48,7 @@ The 2026-07-17 implementation-readiness verdict is **READY** for story creation 
 
 | Item | Reasoning | Mitigation |
 | --- | --- | --- |
-| Production implementation of Epic 6 or the platform SDK | This document plans verification; it does not implement the feature. | R-601/R-602 make G4 and the exact SDK surface entry gates before test execution. |
+| Production implementation of Epic 6 or the platform SDK | This document plans verification; it does not implement the feature. | R-601/R-602 retain historical risks; current 6.1 tests require the usable SDK/authority seams and existing Development lane, with G4 rollout separately owned. |
 | Remediation owned by external G3/G5/G6 platform teams | FrontComposer composition, identity, and toolchain readiness are dependencies, not Projects test work. | Track R-616 at every story entry; substitutes may support lower-level testing but cannot support release claims. |
 | Full re-test design for Epics 1–5 | Their legacy suites are already established and are not the target of this epic. | Run impacted regression suites and reuse their scenario corpus for shadow equivalence and legacy replay. |
 | Project command/write workflows | Epic 6 is metadata-only read behavior. Refresh/explain/current must prove they do not write. | Negative persistence assertions cover accidental commands, events, traces, or dual writers. |
@@ -357,7 +361,7 @@ Ranges include test harnesses, isolated data factories, automation, evidence plu
 3. Add executable entry checks for G3/G5/G6 and reject substituted release evidence.
 
 **Owners:** Platform / DevEx, Projects backend, program/platform leads  
-**Timeline:** Before Story 6.1 implementation; reevaluate at every story entry  
+**Timeline:** Existing SDK/security capability at 6.1 readiness; common-runner rollout before runtime retirement and applicable Epic 8 release qualification
 **Status:** Planned  
 **Verification:** E6.1-A01, E6-X05, clean-checkout CI evidence manifest.
 
@@ -436,7 +440,7 @@ Ranges include test harnesses, isolated data factories, automation, evidence plu
 
 ### Dependencies
 
-1. G4 runner, SDK surface, and evidence schema — required before Story 6.1 implementation.
+1. Usable SDK read and authenticated actor/Folder authority plus existing persisted Development lane — required for 6.1; G4 publication/qualification remains Epic 8 and runtime-retirement work.
 2. G5 identity/dual-principal behavior and deterministic access projection factory — required before live authorization tests.
 3. AppHost/Dapr/state-store environment — required before persisted-boundary completion claims.
 4. G3 FrontComposer composition and static assets — required before Story 6.5 live evidence.

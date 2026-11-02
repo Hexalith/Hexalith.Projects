@@ -5,7 +5,6 @@ created: '2026-08-25'
 status: blocked
 baseline_revision: dffdd677e0058240d5951f507cbd2b159b9643a5
 blocked_by: ['6.1', '6.2', '6.3', '6.4']
-prerequisite_record: null
 review_loop_iteration: 0
 followup_review_recommended: false
 context:
@@ -27,9 +26,9 @@ deferred: []
 
 **Always:** Derive identity and current Tenant from authenticated server context; use FrontComposer server security and circuit-safe gateway authorization; render only authorization-filtered metadata; preserve one coherent version-bound `Complete|Partial|Unavailable` snapshot with `asOf`, disclosable `projectVersion`, components, omissions, and recovery actions; use Fluent UI V5 and accessible page structure; prove zero domain writes and no cross-user token bleed.
 
-**Block If:** The accepted Story 6.1 list/open and AD-32 contracts, Story 6.2 Conversation-start contract, Story 6.3 context contract, or Story 6.4 transient-resolution contract and supported handlers are unavailable; the production identity boundary has no approved single-current-Tenant claim/client shape; or implementation would require edits to a sibling submodule. Do not invent local substitute contracts or promote legacy REST as the supported path.
+**Block If:** The accepted Story 6.1 list/open and AD-32 contracts, Story 6.2 Conversation-start contract, Story 6.3 context contract, or Story 6.4 transient-resolution contract and supported handlers are unavailable; the FrontComposer server-authentication/current-Tenant/per-circuit credential seam is unusable; or implementation would require edits to a sibling submodule. Do not invent local substitute contracts or promote legacy REST as the supported path.
 
-**Prerequisite Gate:** Do not re-arm or dispatch Story 6.5 while deferred-work entry `DW-1` is `open`. Close `DW-1` only after `prerequisite_record` names a committed repository-relative record that pins immutable revisions and content hashes for the accepted Story 6.1 shared AD-32/list/open contracts, persisted read models, authorization seam, and supported handlers; the Story 6.2 Conversation-start contract and handler; the Story 6.3 context contracts, projections, and handlers; the Story 6.4 transient-resolution contracts and handlers; the approved FrontComposer/OIDC single-current-Tenant contract; and a G-4 module manifest with executable `reads` and `web-reads` profiles. Every named artifact must exist at its pinned revision. Legacy endpoints, generated REST clients, draft specifications, unchecked task lists, or an `awaiting-operator` status do not satisfy this gate.
+**Prerequisite Gate (explicitly renegotiated 2026-11-02 under approved E4):** Do not dispatch while DW-1 is open. Consume accepted 6.1–6.4 contracts and supported handlers plus usable FrontComposer server authentication, current-Tenant and per-circuit gateway credentials. Record accepting commits and test references in DW-1 and ordinary story prerequisites; close DW-1 only when those inputs exist and are usable, then run focused spec readiness. Common-runner publication, package/rollback qualification, live production enrollment and a second immutable hash inventory are not dispatch requirements. Anonymous UI, token bleed, absent read contracts, substituted legacy REST or missing owner authority still block. Story 6.1 is ready-for-dev, not accepted; 6.2–6.4 are done, so DW-1 remains open and this story blocked.
 
 **Never:** Expose sibling payloads, transcripts, prompts, paths, URIs, tokens, secrets, raw owner failures, unauthorized candidates, or denial detail; query or render audit history; present maintenance/write actions; select, preselect, confirm, persist, or imply a resolution choice; mutate Project, sibling, task, audit, or read state; hand-edit generated clients; cut over or remove legacy routes before Story 6.7; write or revert `sprint-status.yaml`.
 
@@ -37,7 +36,7 @@ deferred: []
 
 | Scenario | Input / State | Expected Output / Behavior | Error Handling |
 |----------|---------------|---------------------------|----------------|
-| Prerequisite readiness | `DW-1` is open, `prerequisite_record` is null/missing, a named artifact is absent or hash-mismatched, or an acceptance is incomplete | No Story 6.5 development session starts; the orchestrator pauses at the story gate | Keep the story parked; do not substitute legacy REST, invent contracts, or treat planning/status artifacts as delivered capability |
+| Prerequisite readiness | DW-1 is open, ordinary prerequisite/evidence references show an absent read contract/handler, unusable authentication/current-Tenant/per-circuit relay, or incomplete acceptance | No Story 6.5 development session starts | Keep the story parked; no legacy substitute, anonymous UI or token bleed; close DW-1 only on usable accepted inputs |
 | Anonymous route | Browser opens inventory or detail | FrontComposer starts the approved sign-in flow | No protected UI or gateway call is rendered |
 | Authorized inventory/detail | Authenticated current-Tenant user; supported read is complete or degraded | Stable paged inventory and one metadata-only detail snapshot render canonical state, freshness, omissions, and recovery | Authorized degradation distinguishes stale, rebuilding, and unavailable without raw diagnostics |
 | Protected target | Absent, denied, cross-Tenant, or unverifiable Project | One generic safe-absence presentation | No protected identifiers, candidate facts, or distinguishable denial reason |
@@ -69,7 +68,7 @@ deferred: []
 - `tests/Hexalith.Projects.UI.Tests/`, `tests/Hexalith.Projects.Integration.Tests/AspireTopologyTests.cs`, and `tests/e2e/` -- add outer-surface security, state, isolation, read-only, and accessibility evidence.
 
 **Acceptance Criteria:**
-- Given Story 6.5 is considered for dispatch, when readiness is evaluated, then `DW-1` is closed and `prerequisite_record` resolves to committed, hash-matching, accepted 6.1–6.4, identity, and G-4 artifacts; otherwise no development session starts.
+- Given Story 6.5 is considered for dispatch, when readiness is evaluated, then DW-1 is done and ordinary accepting-commit/test references confirm usable accepted 6.1–6.4 contracts/handlers and the FrontComposer authentication/current-Tenant/per-circuit gateway credential seam; otherwise dispatch remains blocked.
 - Given an anonymous browser, when a Project route is requested, then the approved sign-in journey starts and no protected read or content is exposed.
 - Given two authenticated users in separate circuits and Tenants, when they inspect inventory and detail, then each supported gateway call relays only that user token and only authorization-filtered metadata renders.
 - Given complete, partial, stale, rebuilding, unavailable, archived, or authoritative-empty evidence, when the supported result renders, then the UI preserves the exact canonical state, version, component, omission, and recovery meaning without inference.
@@ -92,17 +91,33 @@ FrontComposer owns the session credential and relay; Projects owns authorization
 
 ## Verification
 
-**Commands:**
-- `dotnet restore Hexalith.Projects.slnx && dotnet build Hexalith.Projects.slnx --configuration Debug` -- expected: clean build with warnings as errors.
-- `dotnet test tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj --configuration Debug` -- expected: authenticated route, canonical-state, safe-absence, disclosure, and component accessibility cases pass.
-- `dotnet test tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --configuration Debug --filter FullyQualifiedName~AspireTopologyTests` -- expected: the Projects UI receives the approved OIDC settings and depends on the identity provider.
-- `npm --prefix tests/e2e test -- --project=chromium` -- expected: browser-to-supported-handler, isolation, zero-write, and accessibility journeys pass.
-- `dotnet tool run hexalith-module test --profile reads --filter Story=6.5` -- expected: the approved G-4 profile emits real persisted evidence for the browser-to-handler path.
-- `git diff --check` -- expected: no whitespace errors.
+These are future verification commands after DW-1 closes and focused readiness passes; none ran for this correction. Run each Debug/source test project separately and invoke its built xUnit v3 assembly directly. From the repository root:
+
+```bash
+mkdir -p evidence/epic6
+dotnet build tests/Hexalith.Projects.UI.Tests/Hexalith.Projects.UI.Tests.csproj --configuration Debug
+dotnet tests/Hexalith.Projects.UI.Tests/bin/Debug/net10.0/Hexalith.Projects.UI.Tests.dll -xml evidence/epic6/6.5-ui.xml
+dotnet build tests/Hexalith.Projects.Integration.Tests/Hexalith.Projects.Integration.Tests.csproj --configuration Debug
+dotnet tests/Hexalith.Projects.Integration.Tests/bin/Debug/net10.0/Hexalith.Projects.Integration.Tests.dll -class '*AspireTopologyTests' -xml evidence/epic6/6.5-topology.xml
+```
+
+Require nonempty native XML with the expected authenticated route/canonical-state/safe-absence/disclosure/accessibility cases and topology assertions; record actual pass/fail/skip totals and tested commits. Do not use project-level Microsoft.Testing.Platform filters.
+
+For authenticated browser-to-supported-handler, two-circuit isolation, zero-write and accessibility journeys, use the existing managed route from `tests/e2e/README.md` after supplying its controlled local credentials through the established environment:
+
+```bash
+npm --prefix tests/e2e run test:live:managed
+```
+
+The runner discovers real Aspire endpoints, owns exact lifecycle/teardown and runs the existing Chromium journey route. Retain its actual `tests/e2e/test-results/junit.xml` and `tests/e2e/playwright-report/index.html`, plus required authenticated manual accessibility evidence, with native XML and command/commit references. Missing supported browser coverage is a feature gap to verify, never a pass from offline selector tests. No credentials, tokens, browser storage state or protected payloads enter retained evidence. Story 6.5 remains blocked and DW-1 open; no browser or .NET execution is claimed here.
 
 ## Auto Run Result
 
 Status: blocked
-Blocking condition: prerequisite gate unsatisfied: `prerequisite_record` is null and `DW-1` has no immutable resolution record.
+Blocking condition (historical run, now superseded by the dated correction below): DW-1 lacked accepted prerequisite/evidence references. The earlier separate prerequisite_record ceremony is no longer an active requirement.
 
 No implementation session started, no production or test files changed, and no implementation verification commands ran because the prerequisite-readiness matrix requires this exact state to remain parked.
+
+### Approved prerequisite correction — 2026-11-02
+
+Jerome approved E1–E7 of [the November 1 proposal](../planning-artifacts/sprint-change-proposal-2026-11-01.md). Only the frozen prerequisite gate is renegotiated above; product/security/UI acceptance remains unchanged. The old separate prerequisite_record/hash/G-4 ceremony in the dated August log and Auto Run Result is historical. Current blocking condition is ordinary dependency acceptance: Story 6.1 is unaccepted and usable FrontComposer authentication/current-Tenant/per-circuit relay evidence must be recorded in DW-1. Story 6.4 is done. DW-1 stays open; no implementation or UI acceptance follows from this correction.

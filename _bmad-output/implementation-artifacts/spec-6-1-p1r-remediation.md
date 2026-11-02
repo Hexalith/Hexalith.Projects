@@ -151,3 +151,7 @@ Afterwards the unchanged command `python3 run_verification.py --validate attempt
 returns exit 2: `Protected inventory differs from independently checked workspace
 hashes`. This records the expected live sprint mismatch; historical packet bytes
 and captured hashes remain intact. New operational proof remains outstanding.
+
+## Current qualification routing — approved 2026-11-02
+
+Under Jerome-approved E3 of [the November 1 proposal](../planning-artifacts/sprint-change-proposal-2026-11-01.md), this stable work-package ID remains open and belongs to Epic 8. EventStore/Builds retain package compatibility and capable rollback/forward recovery for 8.7/8.10/8.11-P3 and the applicable Epic 7 writer boundary. Exact historical P1R decisions, measured incompatibilities and false current usability are unchanged. The earlier dated Story 6.1/P4/READY blocking language is historical scheduling context, superseded only for 6.1/6.5 by E1–E7. P4 is superseded, not accepted. Actual defects in the selected read/security path still block that path. The historical/frozen technical proof intent and evidence remain unchanged; this routing grants no publication or owning-repository edit authority and sends no external notification.
